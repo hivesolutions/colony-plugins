@@ -1,0 +1,331 @@
+#!/usr/bin/python
+# -*- coding: Cp1252 -*-
+
+# Hive Colony Framework
+# Copyright (C) 2008 Hive Solutions Lda.
+#
+# This file is part of Hive Colony Framework.
+#
+# Hive Colony Framework is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Hive Colony Framework is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
+
+__author__ = "João Magalhães <joamag@hive.pt>"
+""" The author(s) of the module """
+
+__version__ = "1.0.0"
+""" The version of the module """
+
+__revision__ = "$LastChangedRevision: 2126 $"
+""" The revision number of the module """
+
+__date__ = "$LastChangedDate: 2008-10-21 16:14:30 +0100 (Ter, 21 Out 2008) $"
+""" The last change date of the module """
+
+__copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
+""" The copyright for the module """
+
+__license__ = "GNU General Public License (GPL), Version 3"
+""" The license for the module """
+
+import unittest
+
+COVERAGE_FILE_PATH = "coverage.figleaf"
+TEST_METHOD_PREFIX = "test_"
+
+class MainTest:
+    """
+    The main test class
+    """
+
+    main_test_plugin = None
+    """ The main test plugin """
+
+    current_id = 0
+    """ The current id used for the test case """
+
+    loaded_test_cases_list = []
+    """ The list of loaded test cases """
+
+    loaded_plugin_test_cases_list = []
+    """ The list of loaded plugin test cases """
+
+    test_case_test_case_plugin_map = {}
+    """ The map associating the test cases with the test case plugins """
+
+    test_case_plugin_test_case_map = {}
+    """ The map associating the test case plugins with the test cases """
+
+    test_case_test_case_name_map = {}
+    """ The map associating the test case with the test case name """
+
+    test_case_name_test_cases_map = {}
+    """ The map associating a the test case name with the test cases """
+
+    plugin_test_case_plugin_test_case_plugin_map = {}
+    """ The map associating the plugin test cases with the plugin test case plugins """
+
+    plugin_test_case_plugin_plugin_test_case_map = {}
+    """ The map associating the plugin test case plugins with the plugin test cases """
+
+    loaded_test_cases_id_map = {}
+    """ The map with the loaded test cases associated with the test case id """
+
+    id_loaded_test_cases_map = {}
+    """ The map associating the test case id with the loaded test cases """
+
+    def __init__(self, main_test_plugin):
+        """
+        Constructor of the class
+        
+        @type main_test_plugin: MainTestPlugin
+        @param main_test_plugin: The main test plugin
+        """
+
+        self.main_test_plugin = main_test_plugin
+
+        self.current_id = 0
+        self.loaded_test_cases_list = []
+        self.loaded_plugin_test_cases_list = []
+        self.test_case_test_case_plugin_map = {}
+        self.test_case_plugin_test_case_map = {}
+        self.test_case_test_case_name_map = {}
+        self.test_case_name_test_cases_map = {}
+        self.plugin_test_case_plugin_test_case_plugin_map = {}
+        self.plugin_test_case_plugin_plugin_test_case_map = {}
+        self.loaded_test_cases_id_map = {}
+        self.id_loaded_test_cases_map = {}
+
+    def load_test_case(self, test_case, test_case_plugin, test_case_name = None):
+        # in case no test name is set
+        if not test_case_name:
+            # retrieves the test case name
+            test_case_name = test_case.__name__
+
+        # adds the test case to the list of test cases
+        self.loaded_test_cases_list.append(test_case)
+
+        # associates the test case with the test case plugin
+        self.test_case_test_case_plugin_map[test_case] = test_case_plugin
+
+        # associates the test case with the test case name
+        self.test_case_test_case_name_map[test_case] = test_case_name
+
+        # in case there is no test case name key in the map
+        if not test_case_name in self.test_case_name_test_cases_map:
+            self.test_case_name_test_cases_map[test_case_name] = []
+
+        # associates the test case name with the test case
+        self.test_case_name_test_cases_map[test_case_name].append(test_case)
+
+        # in case there is no test plugin key in the map
+        if not test_case_plugin in self.test_case_plugin_test_case_map:
+            self.test_case_plugin_test_case_map[test_case_plugin] = []
+
+        # associates the test case plugin with the test case
+        self.test_case_plugin_test_case_map[test_case_plugin].append(test_case)
+
+        # associates the test case with the test case id
+        self.loaded_test_cases_id_map[test_case] = self.current_id
+
+        # associates the test case id with the test case
+        self.id_loaded_test_cases_map[self.current_id] = test_case
+
+        # increments the current id
+        self.current_id += 1
+
+    def unload_test_case(self, test_case, test_case_plugin, test_case_name = None):
+        # in case no test name is set
+        if not test_case_name:
+            # retrieves the test case name
+            test_case_name = test_case.__name__
+
+        # retrieves the test case id
+        test_case_id = self.loaded_test_cases_id_map[test_case]
+
+        if test_case in self.loaded_test_cases_list:
+            self.loaded_test_cases_list.remove(test_case)
+
+        if test_case in self.test_case_test_case_plugin_map:
+            del self.test_case_test_case_plugin_map[test_case]
+
+        if test_case in self.test_case_test_case_name_map:
+            del self.test_case_test_case_name_map[test_case]
+
+        if test_case_name in self.test_case_name_test_cases_map:
+            if test_case in self.test_case_name_test_cases_map[test_case_name]:
+                self.test_case_name_test_cases_map[test_case_name].remove(test_case)
+
+        if test_case_plugin in self.test_case_plugin_test_case_map:
+            if test_case in self.test_case_plugin_test_case_map[test_case_plugin]:
+                self.test_case_plugin_test_case_map[test_case_plugin].remove(test_case)
+
+        if test_case in self.loaded_test_cases_id_map:
+            del self.loaded_test_cases_id_map[test_case]
+
+        if test_case_id in self.id_loaded_test_cases_map:
+            del self.id_loaded_test_cases_map[test_case_id]
+
+    def load_test_case_plugin(self, test_case_plugin):
+        # retrieves the test case
+        test_case = test_case_plugin.get_test_case()
+
+        # loads the test case
+        self.load_test_case(test_case, test_case_plugin)
+
+    def unload_test_case_plugin(self, test_case_plugin):
+        # retrieves the test case
+        test_case = test_case_plugin.get_test_case()
+
+        # unloads the test case
+        self.unload_test_case(test_case, test_case_plugin)
+
+    def load_test_case_bundle_plugin(self, test_case_bundle_plugin):
+        # retrieves the test case bundle
+        test_case_bundle = test_case_bundle_plugin.get_test_case_bundle()
+
+        # iterates over all the test cases in the test case bundle
+        for test_case in test_case_bundle:
+            self.load_test_case(test_case, test_case_bundle_plugin)
+
+    def unload_test_case_bundle_plugin(self, test_case_bundle_plugin):
+        # retrieves the test case bundle
+        test_case_bundle = test_case_bundle_plugin.get_test_case_bundle()
+
+        # iterates over all the test cases in the test case bundle
+        for test_case in test_case_bundle:
+            self.unload_test_case(test_case, test_case_bundle_plugin)
+
+    def load_plugin_test_case(self, plugin_test_case, plugin_test_case_plugin):
+        # retrieves the test case form the plugin test case
+        test_case = plugin_test_case.get_test_case()
+
+        # adds the plugin test case to the list of plugin test cases
+        self.loaded_plugin_test_cases_list.append(plugin_test_case)
+
+        # associates the plugin test case with the plugin test case plugin
+        self.plugin_test_case_plugin_test_case_plugin_map[plugin_test_case] = plugin_test_case_plugin
+
+        # in case there is no test plugin key in the map
+        if not plugin_test_case_plugin in self.plugin_test_case_plugin_plugin_test_case_map:
+            self.plugin_test_case_plugin_plugin_test_case_map[plugin_test_case_plugin] = []
+
+        # associates the plugin test case plugin with the plugin test case
+        self.plugin_test_case_plugin_plugin_test_case_map[plugin_test_case_plugin].append(plugin_test_case)
+
+        # loads the test case
+        self.load_test_case(test_case, plugin_test_case_plugin)
+
+    def unload_plugin_test_case(self, plugin_test_case, plugin_test_case_plugin):
+        # retrieves the test case form the plugin test case
+        test_case = plugin_test_case.get_test_case()
+
+        if plugin_test_case in self.loaded_plugin_test_cases_list:
+            self.loaded_plugin_test_cases_list.remove(plugin_test_case)
+
+        if plugin_test_case in self.plugin_test_case_plugin_test_case_plugin_map:
+            del self.plugin_test_case_plugin_test_case_plugin_map[plugin_test_case]
+
+        if plugin_test_case_plugin in self.plugin_test_case_plugin_plugin_test_case_map:
+            if plugin_test_case in self.plugin_test_case_plugin_plugin_test_case_map[plugin_test_case_plugin]:
+                self.plugin_test_case_plugin_plugin_test_case_map[plugin_test_case_plugin].remove(plugin_test_case)
+        
+        # unloads the test case
+        self.unload_test_case(test_case, plugin_test_case_plugin)
+
+    def load_plugin_test_case_plugin(self, plugin_test_case_plugin):
+        # retrieves the plugin test case
+        plugin_test_case = plugin_test_case_plugin.get_plugin_test_case()
+
+        # loads the plugin test case
+        self.load_plugin_test_case(plugin_test_case, plugin_test_case_plugin)
+
+    def unload_plugin_test_case_plugin(self, plugin_test_case_plugin):
+        # retrieves the plugin test case
+        plugin_test_case = plugin_test_case_plugin.get_plugin_test_case()
+
+        # unloads the plugin test case
+        self.unload_plugin_test_case(plugin_test_case, plugin_test_case_plugin)
+
+    def load_plugin_test_case_bundle_plugin(self, plugin_test_case_bundle_plugin):
+        # retrieves the plugin test case bundle
+        plugin_test_case_bundle = plugin_test_case_bundle_plugin.get_plugin_test_case_bundle()
+
+        # iterates over all the plugin test cases in the plugin test case bundle
+        for plugin_test_case in plugin_test_case_bundle:
+            self.load_plugin_test_case(plugin_test_case, plugin_test_case_bundle_plugin)
+
+    def unload_plugin_test_case_bundle_plugin(self, plugin_test_case_bundle_plugin):
+        # retrieves the plugin test case bundle
+        plugin_test_case_bundle = plugin_test_case_bundle_plugin.get_plugin_test_case_bundle()
+
+        # iterates over all the plugin test cases in the plugin test case bundle
+        for plugin_test_case in plugin_test_case_bundle:
+            self.unload_plugin_test_case(plugin_test_case, plugin_test_case_bundle_plugin)
+
+    def get_test_cases_by_name(self, test_case_name):
+        pass
+
+    def get_test_cases_by_names(self, test_case_names_list):
+        pass
+
+    def get_all_test_cases(self):
+        return self.loaded_test_cases_list
+
+    def start_all_test(self, code_coverage = False):
+        self.start_test(self.loaded_test_cases_list, code_coverage)
+
+    def start_test(self, test_cases_list, code_coverage = False):
+        # retrieves the code coverage plugin
+        code_coverage_plugin = self.main_test_plugin.code_coverage_plugin
+
+        # in case code coverage is activated
+        if code_coverage:
+            # starts the code coverage process
+            code_coverage_plugin.start_code_coverage()
+
+        # retrieves the unit test test loader
+        test_loader = unittest.TestLoader()
+
+        # sets the prefix for the test loader
+        test_loader.testMethodPrefix = TEST_METHOD_PREFIX
+
+        # creates the global test suite
+        global_test_suite = unittest.TestSuite()
+
+        # iterates over all the test cases
+        for test_case in test_cases_list:
+            # retrieves the test case plugin for the given test case
+            test_case_plugin = self.test_case_test_case_plugin_map[test_case]
+
+            # sets the test case plugin
+            test_case.plugin = test_case_plugin
+
+            # creates the test suite for the test case
+            test_suite = test_loader.loadTestsFromTestCase(test_case)
+
+            # adds the test suite to the global test suite
+            global_test_suite.addTest(test_suite)
+
+        # creates a new text test runner
+        runner = unittest.TextTestRunner()
+
+        # runs the text test runner
+        runner.run(global_test_suite)
+
+        # in case code coverage is activated
+        if code_coverage:
+            # stops the code coverage process
+            code_coverage_plugin.stop_code_coverage()
+
+            # writes the code coverage result to the coverage file
+            code_coverage_plugin.write_code_coverage(COVERAGE_FILE_PATH)
