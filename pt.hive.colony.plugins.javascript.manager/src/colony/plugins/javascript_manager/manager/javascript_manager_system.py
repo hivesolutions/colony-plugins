@@ -1,0 +1,178 @@
+#!/usr/bin/python
+# -*- coding: Cp1252 -*-
+
+# Hive Colony Framework
+# Copyright (C) 2008 Hive Solutions Lda.
+#
+# This file is part of Hive Colony Framework.
+#
+# Hive Colony Framework is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Hive Colony Framework is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
+
+__author__ = "João Magalhães <joamag@hive.pt>"
+""" The author(s) of the module """
+
+__version__ = "1.0.0"
+""" The version of the module """
+
+__revision__ = "$LastChangedRevision: 2140 $"
+""" The revision number of the module """
+
+__date__ = "$LastChangedDate: 2008-10-21 19:05:51 +0100 (Ter, 21 Out 2008) $"
+""" The last change date of the module """
+
+__copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
+""" The copyright for the module """
+
+__license__ = "GNU General Public License (GPL), Version 3"
+""" The license for the module """
+
+import os
+import time
+import stat
+import string
+
+import javascript_manager_parser
+
+class JavascriptManager:
+
+    javascript_manager_plugin = None
+    workspace_base_path = None
+
+    plugin_search_directories_list = []
+    plugin_descriptors_list = []
+
+    def __init__(self, javascript_manager_plugin):
+        self.javascript_manager_plugin = javascript_manager_plugin
+
+        # sets the workspace base path
+        self.workspace_base_path = "/Users/joamag/Documents/workspace"
+
+        # sets the plugin search directories list
+        self.plugin_search_directories_list = [self.workspace_base_path + "/pt.hive.colony.web/plugins",
+                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.main.gui/plugins"]
+
+        self.plugin_descriptors_list = []
+
+    def load_plugin_files(self):
+        # iterates over all the search directories
+        for plugin_search_directory in plugin_search_directories_list:
+            # the list of files in the javascript plugins directory
+            dir_list = os.listdir(plugin_search_directory)
+
+            # for all the files in the directory 
+            for file_name in dir_list:
+                # retrieves the file full path
+                full_path = search_directory + "/" + file_name
+
+                # retrieves the file stat value
+                file_stat = os.stat(full_path)
+
+                # retrieves the file last modification time
+                modified_date = time.localtime(file_stat[stat.ST_MTIME])
+
+                # retrieves the file mode
+                mode = file_stat[stat.ST_MODE]
+
+                # splits the file name
+                split = os.path.splitext(file_name)
+
+                # retrieves the extension name
+                extension_name = split[-1]
+
+                # in case it's not a directory and the extension of the file is .xml (xml file)
+                if not stat.S_ISDIR(mode) and extension_name == ".xml":
+                    # creates the plugin descriptor parser for the xml file
+                    plugin_descriptor_parser = javascript_manager_parser.PluginDescriptorParser(full_path)
+
+                    # parses the xml files
+                    plugin_descriptor_parser.parse()
+
+                    # retrieves the plugin descriptor resultant of the parsing
+                    plugin_descriptor = plugin_descriptor_parser.get_value()
+
+                    # adds the plugin descriptor to the list of plugin descriptors
+                    self.plugin_descriptors_list.append(plugin_descriptor)
+
+    def update_plugin_files(self):
+        pass
+
+    def get_plugin_descriptor(self, plugin_id):
+        pass
+
+    def get_available_plugins(self):
+        # the available plugins list
+        available_plugins_list = []
+
+        # iterates over all the available plugin descriptors
+        for plugin_descriptor in self.plugin_descriptors_list:
+            plugin_descriptor_id = plugin_descriptor.id
+            available_plugins_list.append(plugin_descriptor_id)
+
+        # creates a list object to support the list
+        available_plugins_list_list = List()
+
+        # sets the list value for the list object
+        available_plugins_list_list.list = available_plugins_list
+
+        # returns the created list object
+        return available_plugins_list_list
+
+    def get_available_plugin_descriptors(self):
+        # creates a list object to support the list
+        plugin_descriptors_list_list = List()
+
+        # sets the list value for the list object
+        plugin_descriptors_list_list.list = self.plugin_descriptors_list
+
+        # returns the created list object
+        return plugin_descriptors_list_list
+
+    def update_plugin_manager(self):
+        pass
+
+    def get_new_plugins(self):
+        return List()
+
+    def get_new_plugin_descriptors(self):
+        return List()
+
+    def get_updated_plugins(self):
+        return List()
+
+    def get_updated_plugin_descriptors(self):
+        return List()
+
+    def get_removed_plugins(self):
+        return List()
+
+    def get_removed_plugin_descriptors(self):
+        return List()
+
+    def get_plugin_search_directories_list(self):
+        return self.plugin_search_directories_list
+
+class List:
+    """
+    The generic List class
+    """
+
+    list = []
+    """ The list object for javascript list """
+
+    def __init__(self):
+        """
+        Constructor of the class
+        """
+
+        self.list = []
