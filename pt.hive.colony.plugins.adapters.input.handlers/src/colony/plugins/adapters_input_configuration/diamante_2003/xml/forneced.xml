@@ -1,0 +1,176 @@
+<?xml version="1.0"?>
+
+<!--
+ Hive Colony Framework
+ Copyright (C) 2008 Hive Solutions Lda.
+
+ This file is part of Hive Colony Framework.
+
+ Hive Colony Framework is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ Hive Colony Framework is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!-- 
+ __author__    = Tiago Silva <tsilva@hive.pt>
+ __version__   = 1.0.0
+ __revision__  = $LastChangedRevision: 2099 $
+ __date__      = $LastChangedDate: 2008-10-21 13:18:44 +0100 (Ter, 21 Out 2008) $
+ __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
+ __license__   = GNU General Public License (GPL), Version 3
+-->
+
+<input_configuration xsi:schemaLocation="http://www.hive.pt ../input_configuration.xsd" xmlns="http://www.hive.pt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<tables>
+		<table> <!-- forneced -->
+			<name>forneced</name>
+			<internal_entity>supplier</internal_entity>
+			<columns>
+				<column> <!-- Codigo -->
+					<name>Codigo</name>
+					<primary_key>true</primary_key>
+				</column>
+				<column> <!-- Sobrenome -->
+					<name>Sobrenome</name>
+					<internal_attribute>surname</internal_attribute>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- Nome -->
+					<name>Nome</name>
+					<internal_attribute>name</internal_attribute>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- Morada -->
+					<name>Morada</name>
+					<internal_attribute>address</internal_attribute>
+					<internal_entity>
+						<id>1</id>
+						<name>address</name>
+					</internal_entity>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- Tel1 -->
+					<name>Tel1</name>
+					<internal_attribute>telephone</internal_attribute>
+					<internal_entity>
+						<id>1</id>
+						<name>contact_information</name>
+					</internal_entity>
+				</column>
+				<column> <!-- Tel2 -->
+					<name>Tel2</name>
+					<internal_attribute>telephone</internal_attribute>
+					<internal_entity>
+						<id>2</id>
+						<name>contact_information</name>
+					</internal_entity>
+				</column>
+				<column> <!-- Tel3 -->
+					<name>Tel3</name>
+					<internal_attribute>telephone</internal_attribute>
+					<internal_entity>
+						<id>3</id>
+						<name>contact_information</name>
+					</internal_entity>
+				</column>
+				<column> <!-- Movel -->
+					<name>Movel</name>
+					<internal_attribute>mobilePhone</internal_attribute>
+					<internal_entity>
+						<id>1</id>
+						<name>contact_information</name>
+					</internal_entity>
+				</column>
+				<column> <!-- Fax -->
+					<name>Fax</name>
+					<internal_attribute>fax</internal_attribute>
+					<internal_entity>
+						<id>1</id>
+						<name>contact_information</name>
+					</internal_entity>
+				</column>
+				<column> <!-- Email -->
+					<name>Email</name>
+					<internal_attribute>email</internal_attribute>
+					<internal_entity>
+						<id>1</id>
+						<name>contact_information</name>
+					</internal_entity>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- Url -->
+					<name>Url</name>
+					<internal_attribute>webPageUrl</internal_attribute>
+					<internal_entity>
+						<id>1</id>
+						<name>contact_information</name>
+					</internal_entity>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- Localidad -->
+					<name>Localidad</name>
+					<internal_attribute>location</internal_attribute>
+					<internal_entity>
+						<id>1</id>
+						<name>address</name>
+					</internal_entity>					
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- Codpos -->
+					<name>Codpos</name>
+					<internal_attribute>zipCode</internal_attribute>
+					<internal_entity>
+						<id>1</id>
+						<name>address</name>
+					</internal_entity>
+				</column>
+				<column> <!-- Pais -->
+					<name>Pais</name>
+					<internal_attribute>country</internal_attribute>
+					<internal_entity>
+						<id>1</id>
+						<name>address</name>
+					</internal_entity>
+					<referenced_table>paises</referenced_table>
+				</column>
+				<column> <!-- Apontament -->
+					<name>Apontament</name>
+					<internal_attribute>notes</internal_attribute>
+				</column>
+			</columns>
+		</table>
+	</tables>
+</input_configuration>
