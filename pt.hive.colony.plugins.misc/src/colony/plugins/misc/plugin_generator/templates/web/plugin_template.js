@@ -18,8 +18,8 @@
 
 // __author__    = {author} <{email}>
 // __version__   = 1.0.0
-// __revision__  = $LastChangedRevision: 1714 $
-// __date__      = $LastChangedDate: 2008-08-17 00:37:51 +0100 (Dom, 17 Ago 2008) $
+// __revision__  = $LastChangedRevision$
+// __date__      = $LastChangedDate$
 // __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
 // __license__   = GNU General Public License (GPL), Version 3
 
