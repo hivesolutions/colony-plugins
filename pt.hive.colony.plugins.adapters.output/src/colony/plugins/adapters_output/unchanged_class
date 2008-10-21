@@ -1,0 +1,42 @@
+# Hive Colony Framework
+# Copyright (C) 2008 Hive Solutions Lda.
+#
+# This file is part of Hive Colony Framework.
+#
+# Hive Colony Framework is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Hive Colony Framework is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
+
+class @class_name(@inherited_class_name):
+
+    exclusion_list = ["exclusion_list", "_state", "__class__", "__delattr__", "__dict__", "__doc__", "__getattribute__", "__hash__", "__init", "__init__",
+                      "__mapper__", "__mapper_args__", "__metaclass__", "__module__", "__new__", "__reduce__", "__reduce_ex__",
+                      "__repr__", "__setattr__", "__str__", "__table__", "__tablename__", "__weakref__", "_class_state", "_decl_class_registry", 
+                      "c", "get_parent", "get_parent_name", "parent_class", "metadata"]
+
+    __tablename__ = "@table_name"
+
+    @discriminator
+    @mapper_args
+
+    parent_class = @parent_class_name_none_other
+
+@attribute_list
+
+    def __init__(self):
+        pass
+
+    def get_parent(self):
+        return @parent_class_name_same_other
+
+    def get_parent_name(self):
+        return self.get_parent().__name__
