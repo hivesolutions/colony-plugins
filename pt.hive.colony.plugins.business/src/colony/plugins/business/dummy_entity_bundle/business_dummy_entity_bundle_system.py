@@ -1,0 +1,100 @@
+#!/usr/bin/python
+# -*- coding: Cp1252 -*-
+
+# Hive Colony Framework
+# Copyright (C) 2008 Hive Solutions Lda.
+#
+# This file is part of Hive Colony Framework.
+#
+# Hive Colony Framework is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Hive Colony Framework is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
+
+__author__ = "João Magalhães <joamag@hive.pt>"
+""" The author(s) of the module """
+
+__version__ = "1.0.0"
+""" The version of the module """
+
+__revision__ = "$LastChangedRevision: 1610 $"
+""" The revision number of the module """
+
+__date__ = "$LastChangedDate: 2008-08-07 17:56:25 +0100 (Thu, 07 Aug 2008) $"
+""" The last change date of the module """
+
+__copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
+""" The copyright for the module """
+
+__license__ = "GNU General Public License (GPL), Version 3"
+""" The license for the module """
+
+class BusinessDummyEntityBundle:
+    """
+    The business dummy entity bundle class
+    """
+
+    business_dummy_entity_bundle_plugin = None
+    """ The business dummy entity bundle plugin """
+
+    entity_bundle = []
+    """ The bundle containing the entity classes """
+
+    entity_bundle_map = {}
+    """ The map associating the entity classes with their names """
+
+    def __init__(self, business_dummy_entity_bundle_plugin):
+        """
+        Constructor of the class
+        
+        @type business_dummy_entity_bundle_plugin: BusinessDummyEntityBundlePlugin
+        @param business_dummy_entity_bundle_plugin: The business dummy entity bundle plugin
+        """
+
+        self.business_dummy_entity_bundle_plugin = business_dummy_entity_bundle_plugin
+
+        self.entity_bundle = []
+
+    def generate_classes(self):
+        # retrieves the business helper plugin
+        business_helper_plugin = self.business_dummy_entity_bundle_plugin.business_helper_plugin
+
+        # creates the list of global values
+        global_values = []
+        
+        # retrieves the base directory name
+        base_directory_name = self.get_path_directory_name()
+
+        # imports the classes module
+        business_helper_plugin.import_class_module("business_dummy_entity_bundle_classes", globals(), locals(), global_values, base_directory_name)
+
+        # sets the entity bundle
+        self.entity_bundle = [DummyEntityBundleParent, DummyEntityBundleAssociation, DummyEntityBundle]
+
+        entity_bundle_map = {}
+
+        for entity_class in self.entity_bundle:
+            entity_class_name = entity_class.__name__
+
+            entity_bundle_map[entity_class_name] = entity_class
+
+        self.entity_bundle_map = entity_bundle_map
+
+    def get_entity_bundle(self):
+        return self.entity_bundle
+
+    def get_entity_bundle_map(self):
+        return self.entity_bundle_map
+
+    def get_path_directory_name(self):
+        import os
+        return os.path.dirname(__file__)
+
