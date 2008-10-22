@@ -44,8 +44,8 @@ class JavascriptFileHandler:
     The javascript file handler class.
     """
 
-    file_handler_plugin = None
-    """ The file handler plugin """
+    javascript_file_handler_plugin = None
+    """ The javascript file handler plugin """
 
     def __init__(self, javascript_file_handler_plugin):
         """
@@ -70,12 +70,42 @@ class JavascriptFileHandler:
             return False
 
     def handle_request(self, request):
+        # retrieves the javascript manager plugin
+        javascript_manager_plugin = self.javascript_file_handler_plugin.javascript_manager_plugin
+
         # sets the content type for the request
-        request.content_type = "text/plain;charset=utf-8"
+        request.content_type = "text/plain;charset=Cp1252"
 
-        # writes the serialized result into the buffer
-        request.write("tobias")
+        # splits the ur using the "/" character
+        uri_splited = request.uri.split("/")
 
-        #request
+        # retrieves the list o components for the relative path
+        relative_path_list = uri_splited[3:]
+
+        # start the relative path string
+        relative_path = ""
+
+        # iterates over the list of relative path
+        for relative_path_item in relative_path_list:
+            relative_path += relative_path_item + "/"
+
+        # retrieves the full path for the file
+        full_path = javascript_manager_plugin.get_file_full_path(relative_path)
+
+        # opens the file for reading
+        file = open(full_path, "r")
+
+        # reads the file contents
+        file_contents = file.read()
+
+        # closes the file
+        file.close()
+
+        # writes the file contents to the request
+        request.write(file_contents)
+
+        # writes the file footer
+        request.write("loaded(\"plugins/" + relative_path.strip("/") + "\");")
+
         # flushes the request, sending the output to the client
         request.flush()

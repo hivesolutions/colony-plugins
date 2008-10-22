@@ -41,8 +41,10 @@ import os
 import time
 import stat
 import string
+import os.path
 
 import javascript_manager_parser
+import javascript_manager_exceptions
 
 class JavascriptManager:
 
@@ -51,6 +53,7 @@ class JavascriptManager:
 
     plugin_search_directories_list = []
     plugin_descriptors_list = []
+    plugin_search_directories_map = {}
 
     def __init__(self, javascript_manager_plugin):
         self.javascript_manager_plugin = javascript_manager_plugin
@@ -63,17 +66,48 @@ class JavascriptManager:
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.main.gui/plugins"]
 
         self.plugin_descriptors_list = []
+        self.plugin_search_directories_map = {}
+
+    def index_plugin_search_directories(self):
+        # iterates over all the search directories
+        for plugin_search_directory in self.plugin_search_directories_list:
+            # sets the current plugin search directories map
+            current_plugin_search_directories_map = self.plugin_search_directories_map
+
+            # indexes the current saerch directory
+            self.index_plugin_search_directory(plugin_search_directory, current_plugin_search_directories_map)
+
+    def index_plugin_search_directory(self, plugin_search_directory, current_plugin_search_directories_map):
+        # the list of files in the javascript plugins directory
+        dir_list = os.listdir(plugin_search_directory)
+
+        # for all the files in the directory 
+        for file_name in dir_list:
+            # retrieves the file full path
+            full_path = plugin_search_directory + "/" + file_name
+
+            # retrieves the is directory value
+            is_directory = os.path.isdir(full_path)
+
+            # in case it's a directory
+            if is_directory:
+                if not file_name in current_plugin_search_directories_map:
+                    current_plugin_search_directories_map[file_name] = {}
+                current_plugin_search_directories_map_aux = current_plugin_search_directories_map[file_name]
+                self.index_plugin_search_directory(full_path, current_plugin_search_directories_map_aux)
+            else:
+                current_plugin_search_directories_map[file_name] = full_path
 
     def load_plugin_files(self):
         # iterates over all the search directories
-        for plugin_search_directory in plugin_search_directories_list:
+        for plugin_search_directory in self.plugin_search_directories_list:
             # the list of files in the javascript plugins directory
             dir_list = os.listdir(plugin_search_directory)
 
             # for all the files in the directory 
             for file_name in dir_list:
                 # retrieves the file full path
-                full_path = search_directory + "/" + file_name
+                full_path = plugin_search_directory + "/" + file_name
 
                 # retrieves the file stat value
                 file_stat = os.stat(full_path)
@@ -161,6 +195,27 @@ class JavascriptManager:
 
     def get_plugin_search_directories_list(self):
         return self.plugin_search_directories_list
+
+    def get_file_full_path(self, relative_file_path):
+        # strip the file path from "/" chararcter
+        relative_file_path_striped = relative_file_path.strip("/")
+
+        # splits the file path usgin the "/" character
+        relative_file_path_splited = relative_file_path_striped.split("/")
+
+        # retrieves the current plugin search directories map
+        current_plugin_search_directories_map = self.plugin_search_directories_map
+
+        # iterates over all the relative file path splited
+        for relative_file_path_item in relative_file_path_splited:
+            # in case the item exists in the current plugin search directories map
+            if relative_file_path_item in current_plugin_search_directories_map:
+                current_plugin_search_directories_map = current_plugin_search_directories_map[relative_file_path_item]
+            else:
+                raise javascript_manager_exceptions.InvalidFileNameException("the file: " + relative_file_path_item + " is not valid")
+
+        # returns the full file path
+        return current_plugin_search_directories_map
 
 class List:
     """

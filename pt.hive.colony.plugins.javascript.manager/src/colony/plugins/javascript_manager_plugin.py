@@ -66,6 +66,7 @@ class JavascriptManagerPlugin(colony.plugins.plugin_system.Plugin):
         global javascript_manager
         import javascript_manager.manager.javascript_manager_system
         self.javascript_manager = javascript_manager.manager.javascript_manager_system.JavascriptManager(self)
+        self.javascript_manager.index_plugin_search_directories()
         self.javascript_manager.load_plugin_files()
 
     def end_load_plugin(self):
@@ -141,3 +142,6 @@ class JavascriptManagerPlugin(colony.plugins.plugin_system.Plugin):
 
     def get_plugin_search_directories_list(self):
         return self.javascript_manager.get_plugin_search_directories_list()
+
+    def get_file_full_path(self, relative_file_path):
+        return self.javascript_manager.get_file_full_path(relative_file_path)

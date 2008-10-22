@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.plugins.plugin_system
+import colony.plugins.decorators
 
 class JavascriptFileHandlerPlugin(colony.plugins.plugin_system.Plugin):
     """
@@ -54,11 +55,14 @@ class JavascriptFileHandlerPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["javascript_file_handler", "mod_python_handler"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.javascript.manager", "1.0.0")]
     events_handled = []
     events_registrable = []
 
     javascript_file_handler = None
+
+    javascript_manager_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -81,6 +85,7 @@ class JavascriptFileHandlerPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.javascript.file_handler", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -92,3 +97,10 @@ class JavascriptFileHandlerPlugin(colony.plugins.plugin_system.Plugin):
 
     def handle_request(self, request):
         self.javascript_file_handler.handle_request(request)
+
+    def get_javascript_manager_plugin(self):
+        return self.javascript_manager_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.javascript.manager")
+    def set_javascript_manager_plugin(self, javascript_manager_plugin):
+        self.javascript_manager_plugin = javascript_manager_plugin
