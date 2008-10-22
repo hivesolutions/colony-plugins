@@ -47,20 +47,22 @@ class JavascriptFileHandlerPlugin(colony.plugins.plugin_system.Plugin):
 
     id = "pt.hive.colony.plugins.javascript.file_handler"
     name = "Javascript File Handler Plugin"
-    short_name = "Javascript File Handler Main"
+    short_name = "Javascript File Handler"
     description = "Javascript File Handler Plugin"
     version = "1.0.0"
     author = "Hive Solutions"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["javascript_file_handler", "mod_python_handler"]
-    capabilities_allowed = []
+    capabilities_allowed = ["javascript_handler"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.javascript.manager", "1.0.0")]
     events_handled = []
     events_registrable = []
 
     javascript_file_handler = None
+
+    javascript_handler_plugins = []
 
     javascript_manager_plugin = None
 
@@ -79,9 +81,11 @@ class JavascriptFileHandlerPlugin(colony.plugins.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
 
+    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.javascript.file_handler", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.javascript.file_handler", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
@@ -97,6 +101,14 @@ class JavascriptFileHandlerPlugin(colony.plugins.plugin_system.Plugin):
 
     def handle_request(self, request):
         self.javascript_file_handler.handle_request(request)
+
+    @colony.plugins.decorators.load_allowed_capability("javascript_handler")
+    def javascript_handler_load_allowed(self, plugin, capability):
+        self.javascript_handler_plugins.append(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("javascript_handler")
+    def javascript_handler_unload_allowed(self, plugin, capability):
+        self.javascript_handler_plugins.remove(plugin)
 
     def get_javascript_manager_plugin(self):
         return self.javascript_manager_plugin

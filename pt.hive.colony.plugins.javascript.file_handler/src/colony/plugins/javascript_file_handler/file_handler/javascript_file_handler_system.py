@@ -70,6 +70,9 @@ class JavascriptFileHandler:
             return False
 
     def handle_request(self, request):
+        # retrieves the javascript handler plugins
+        javascript_handler_plugins = self.javascript_file_handler_plugin.javascript_handler_plugins
+
         # retrieves the javascript manager plugin
         javascript_manager_plugin = self.javascript_file_handler_plugin.javascript_manager_plugin
 
@@ -100,6 +103,9 @@ class JavascriptFileHandler:
 
         # closes the file
         file.close()
+
+        for javascript_handler_plugin in javascript_handler_plugins:
+            file_contents = javascript_handler_plugin.handle_contents(file_contents)
 
         # writes the file contents to the request
         request.write(file_contents)
