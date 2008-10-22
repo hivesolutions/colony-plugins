@@ -76,7 +76,7 @@ class JavascriptFileHandler:
         # sets the content type for the request
         request.content_type = "text/plain;charset=Cp1252"
 
-        # splits the ur using the "/" character
+        # splits the uri using the "/" character
         uri_splited = request.uri.split("/")
 
         # retrieves the list o components for the relative path
