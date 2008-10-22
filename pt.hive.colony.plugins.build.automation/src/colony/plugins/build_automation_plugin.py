@@ -47,8 +47,8 @@ class BuildAutomationPlugin(colony.plugins.plugin_system.Plugin):
 
     id = "pt.hive.colony.plugins.build.automation"
     name = "Build Automation Plugin"
-    short_name = "Business Sqlite Engine "
-    description = "Business Sqlite Engine Plugin"
+    short_name = "Build Automation"
+    description = "A plugin to manage complete build automation"
     version = "1.0.0"
     author = "Hive Solutions"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
