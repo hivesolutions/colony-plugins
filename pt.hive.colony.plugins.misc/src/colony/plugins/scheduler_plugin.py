@@ -83,3 +83,6 @@ class SchedulerPlugin(colony.plugins.plugin_system.Plugin):
 
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    def register_console_script_task(self, time, console_script):
+        register_console_script_task(self, time, console_script)

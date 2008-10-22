@@ -54,3 +54,6 @@ class Scheduler:
         """
 
         self.scheduler_plugin = scheduler_plugin
+
+    def register_console_script_task(self, time, console_script):
+        pass
