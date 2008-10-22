@@ -19,16 +19,16 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "Tiago Silva <tsilva@hive.pt>"
+__author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
 """ The version of the module """
 
-__revision__ = "$LastChangedRevision$"
+__revision__ = "$LastChangedRevision: 72 $"
 """ The revision number of the module """
 
-__date__ = "$LastChangedDate$"
+__date__ = "$LastChangedDate: 2008-10-21 23:29:54 +0100 (Ter, 21 Out 2008) $"
 """ The last change date of the module """
 
 __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
@@ -39,37 +39,35 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.plugins.plugin_system
 
-#@todo: comment this class
-class StockQuoteWebServiceClientPlugin(colony.plugins.plugin_system.Plugin):
+class SchedulerPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Stock Quote Web Service Client Plugin
+    The main class for the Scheduler plugin
     """
 
-    id = "pt.hive.colony.plugins.misc.stock_quote_webservice_client"
-    name = "Stock Quote Web Service Client Plugin"
-    short_name = "Stock Quote Web Service Client"
-    description = "Stock Quote Web Service Client Plugin"
+    id = "pt.hive.colony.plugins.misc.scheduler"
+    name = "Scheduler Plugin"
+    short_name = "Scheduler"
+    description = "A Plugin to manage the scheduling of tasks"
     version = "1.0.0"
     author = "Hive Solutions"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["webservice_client.stock_quote","console_command_extension"]
+    capabilities = ["scheduler"]
     capabilities_allowed = []
-    dependencies = [colony.plugins.plugin_system.PackageDependency(
-                    "ZSI", "ZSI", "2.x", "http://pywebsvcs.sourceforge.net")]
+    dependencies = []
     events_handled = []
     events_registrable = []
 
-    stock_quote_client = None
-    
+    scheduler = None
+
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global misc
-        import misc.stock_quote_webservice_client.stock_quote_webservice_client_system
-        self.stock_quote_client = misc.stock_quote_webservice_client.stock_quote_webservice_client_system.StockQuoteWebServiceClient(self)
+        import misc.scheduler.scheduler_system
+        self.scheduler = misc.scheduler.scheduler_system.Scheduler(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
@@ -82,18 +80,6 @@ class StockQuoteWebServiceClientPlugin(colony.plugins.plugin_system.Plugin):
 
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
-    
+
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
-    
-    def get_quote(self, symbol):
-        return self.stock_quote_client.get_quote(symbol)
-     
-    def get_all_commands(self):
-        return self.stock_quote_client.get_all_commands()
-
-    def get_handler_command(self, command):
-        return self.stock_quote_client.get_handler_command(command)
-
-    def get_help(self):
-        return self.stock_quote_client.get_help()

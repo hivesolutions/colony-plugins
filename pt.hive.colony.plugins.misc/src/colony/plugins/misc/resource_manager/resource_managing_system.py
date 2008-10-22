@@ -64,6 +64,7 @@ class ResourceManager:
         @type parent_plugin: Plugin
         @param parent_plugin: Reference to the plugin that owns this object instance.
         """
+
         self.parent_plugin = parent_plugin
         self.resource_namespace_resources_list_map = {}
         self.resource_id_resource_map = {}
@@ -84,7 +85,7 @@ class ResourceManager:
         @type resource_data: Object
         @param resource_data: The resource one wants to store.
         """
-        
+
         resource = Resource(resource_namespace, resource_name, resource_type, resource_data)        
         # if the resource already exists remove it from all indexes
         if self.is_resource_registered(resource.get_id()):
