@@ -69,7 +69,7 @@ class JavascriptLocalizationHandler:
         pattern = re.compile(LOCALIZATION_REGEX) 
 
         # retrieves the match iterator
-        match_iterator = a.finditer(pattern)
+        match_iterator = pattern.finditer(contents)
 
         # iterates using the match iterator
         for match in match_iterator:
@@ -82,8 +82,9 @@ class JavascriptLocalizationHandler:
             # retrieves the end index for the group
             end_index = match.end()
 
-            # retrieves the local value
+            # retrieves the locale value
             locale_value = group[9:-1]
 
-        contents += "foi localizado"
+            contents = contents.replace(group, "thobias")
+
         return contents
