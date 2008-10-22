@@ -47,7 +47,7 @@ class BusinessMysqlEnginePlugin(colony.plugins.plugin_system.Plugin):
 
     id = "pt.hive.colony.plugins.business.mysql_engine"
     name = "Business Mysql Engine Plugin"
-    short_name = "Business Mysql Engine "
+    short_name = "Business Mysql Engine"
     description = "Business Mysql Engine Plugin"
     version = "1.0.0"
     author = "Hive Solutions"

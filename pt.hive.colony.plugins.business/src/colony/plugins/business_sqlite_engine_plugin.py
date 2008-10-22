@@ -47,7 +47,7 @@ class BusinessSqliteEnginePlugin(colony.plugins.plugin_system.Plugin):
 
     id = "pt.hive.colony.plugins.business.sqlite_engine"
     name = "Business Sqlite Engine Plugin"
-    short_name = "Business Sqlite Engine "
+    short_name = "Business Sqlite Engine"
     description = "Business Sqlite Engine Plugin"
     version = "1.0.0"
     author = "Hive Solutions"
