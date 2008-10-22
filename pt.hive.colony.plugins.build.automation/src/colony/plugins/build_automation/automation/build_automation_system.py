@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 class BuildAutomation:
     """
-    The build automation class
+    The build automation class.
     """
 
     build_automation_plugin = None
@@ -47,10 +47,10 @@ class BuildAutomation:
 
     def __init__(self, build_automation_plugin):
         """
-        Constructor of the class
+        Constructor of the class.
         
         @type build_automation_plugin: BuildAutomationPlugin
-        @param build_automation_plugin: The build automation plugin
+        @param build_automation_plugin: The build automation plugin.
         """
 
         self.build_automation_plugin = build_automation_plugin
