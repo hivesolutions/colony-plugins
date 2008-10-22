@@ -179,9 +179,22 @@ class PluginManagerPanel(misc_gui.tree_visualizer.tree_visualizer_system.TreeVis
             if plugin1.name > plugin2.name:
                 return 1
             return -1
+
         self.plugin_nodes_map = {}
-        plugin_list = self.parent_plugin.manager.get_all_plugins()
+
+        # retrieves the list of plugins
+        plugin_list_original = self.parent_plugin.manager.get_all_plugins()
+
+        # creates an empty list to support the duplicated plugin references
+        plugin_list = []
+
+        # extends the list with the old list contains
+        plugin_list.extend(plugin_list_original)
+
+        # sorts the plugins
         plugin_list.sort(plugin_comparer)
+
+        # sets the root node
         self.set_root("Plugins")
         self.node_list = [self.tree.GetRootItem()]
         for plugin in plugin_list:
