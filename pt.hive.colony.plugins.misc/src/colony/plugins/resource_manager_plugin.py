@@ -66,7 +66,7 @@ class ResourceManagerPlugin(colony.plugins.plugin_system.Plugin):
         import misc.resource_manager.resource_manager_system
         import misc.resource_manager.resource_manager_tests
         self.resource_manager = misc.resource_manager.resource_manager_system.ResourceManager(self)
-        self.resource_manager_test_case_class = misc.resource_manager.resource_manager_system.ResourceManagerTestCase
+        self.resource_manager_test_case_class = misc.resource_manager.resource_manager_tests.ResourceManagerTestCase
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)    

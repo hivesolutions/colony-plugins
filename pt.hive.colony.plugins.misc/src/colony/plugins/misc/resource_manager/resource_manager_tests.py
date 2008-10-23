@@ -39,8 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import unittest
 
-import resource_managing_system
-
 class ResourceManagerTestCase(unittest.TestCase):
 
     def setUp(self):
