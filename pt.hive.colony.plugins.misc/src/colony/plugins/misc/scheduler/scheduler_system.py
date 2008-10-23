@@ -114,46 +114,102 @@ class Scheduler:
             # releases the lock
             self.scheduler_lock.release()
 
-    def register_console_script_task(self, time, console_script):
-        # retrieves the guid plugin
-        gui_plugin = self.scheduler_plugin.guid_plugin
+    def register_task(self, task, time):
+        # calculates the absolute time
+        absolute_time = self.timestamp_to_absolute_timestamp(time)
 
-        # retrieves the main console plugin
-        main_console_plugin = self.scheduler_plugin.main_console_plugin
+        # registers the task
+        return self.register_task_absolute(task, absolute_time)
 
-        # generates a new item id
-        item_id = gui_plugin.generate_guid()
+    def register_task_absolute(self, task, absolute_time):
+        return self.register_task_absolute_recursive(task, absolute_time, None)
 
-        # retrieves the default console output method
-        default_console_output_method = main_console_plugin.get_default_output_method()
+    def register_task_date_time(self, task, date_time):
+        # retrieves the current date time
+        current_date_time = datetime.datetime.now()
 
-        # creates a new scheduler item
-        scheduler_item = SchedulerItem(item_id, main_console_plugin.process_command_line, [console_script, default_console_output_method], time, None)
+        # calculates the new date time
+        new_date_time = current_date_time + date_time
+
+        # converts the new date time to timestamp
+        new_timestamp = self.date_time_to_timestamp(new_date_time)
+
+        # registers the task
+        return self.register_task_absolute(task, new_timestamp)
+
+    def register_task_date_time_absolute(self, task, absolute_date_time):
+        # converts the absolute date time to timestamp
+        absolute_timestamp = self.date_time_to_timestamp(absolute_date_time)
+
+        # registers the task
+        return self.register_task_absolute(task, absolute_timestamp)
+
+    def register_task_recursive(self, task, time, recursion_list):
+        # calculates the absolute time
+        absolute_time = self.timestamp_to_absolute_timestamp(time)
+
+        # registers the task
+        return self.register_task_absolute_recursive(task, absolute_time, recursion_list)
+
+    def register_task_absolute_recursive(self, task, absolute_time, recursion_list):
+        # retrieves the task_type
+        task_type = task.task_type
+
+        # retrieves the task arguments
+        task_arguments = task.task_arguments
+
+        # in case the task is of type console_command
+        if task_type == "console_command":
+            # retrieves the console command
+            console_command = task_arguments["console_command"]
+
+            # retrieves the main console plugin
+            main_console_plugin = self.scheduler_plugin.main_console_plugin
+
+            # retrieves the default console output method
+            default_console_output_method = main_console_plugin.get_default_output_method()
+
+            # creates a new scheduler item
+            scheduler_item = self.create_scheduler_item(main_console_plugin.process_command_line, [console_command, default_console_output_method], absolute_time, recursion_list)
 
         # adds the scheduler item
         self.add_scheduler_item(scheduler_item)
 
-    def register_console_script_task_date_time(self, date_time, console_script):
-        pass
+    def register_task_date_time_recursive(self, task, date_time, recursion_list):
+        # retrieves the current date time
+        current_date_time = datetime.datetime.now()
 
-    def register_console_script_task_recursive(self, time, recursion_list, console_script):
+        # calculates the new date time
+        new_date_time = current_date_time + date_time
+
+        # converts the new date time to timestamp
+        new_timestamp = self.date_time_to_timestamp(new_date_time)
+
+        # registers the task
+        return self.register_task_absolute_recursive(task, new_timestamp, recursion_list)
+
+    def register_task_date_time_absolute_recursive(self, task, absolute_date_time, recursion_list):
+        # converts the absolute date time to timestamp
+        absolute_timestamp = self.date_time_to_timestamp(absolute_date_time)
+
+        # registers the task
+        return self.register_task_absolute_recursive(task, absolute_timestamp, recursion_list)
+
+    def get_task_class(self):
+        return SchedulerTask
+
+    def create_scheduler_item(self, task_method, task_method_arguments, absolute_time, recursion_list):
         # retrieves the guid plugin
-        gui_plugin = self.scheduler_plugin.guid_plugin
-
-        # retrieves the main console plugin
-        main_console_plugin = self.scheduler_plugin.main_console_plugin
+        guid_plugin = self.scheduler_plugin.guid_plugin
 
         # generates a new item id
-        item_id = gui_plugin.generate_guid()
+        item_id = guid_plugin.generate_guid()
 
-        # retrieves the default console output method
-        default_console_output_method = main_console_plugin.get_default_output_method()
+        # creates the new scheduler item instance
+        scheduler_item = SchedulerItem(item_id, task_method, task_method_arguments, absolute_time, recursion_list)
 
-        # creates a new scheduler item
-        scheduler_item = SchedulerItem(item_id, main_console_plugin.process_command_line, [console_script, default_console_output_method], time, recursion_list)
-
-        # adds the scheduler item
-        self.add_scheduler_item(scheduler_item)
+        # returns the scheduler item instance
+        return scheduler_item
 
     def add_scheduler_item(self, scheduler_item):
         # in case the scheduler item does not exist in the list of scheduler items
@@ -162,7 +218,7 @@ class Scheduler:
             self.scheduler_items.append(scheduler_item)
 
         # creates the new scheduler task
-        current_event = self.scheduler.enter(scheduler_item.time, 1, self.task_hander, [scheduler_item])
+        current_event = self.scheduler.enterabs(scheduler_item.absolute_time, 1, self.task_hander, [scheduler_item])
 
         # sets the current event for the scheduler item
         scheduler_item.current_event = current_event
@@ -222,11 +278,8 @@ class Scheduler:
             # converts the new date time object to a timestamp
             new_timestamp = self.date_time_to_timestamp(new_date_time)
 
-            # creates the delta timestamp
-            delta_timestamp = new_timestamp - time.time()
-
             # sets the timestamp as the new scheduler item time
-            scheduler_item.time = delta_timestamp
+            scheduler_item.absolute_time = new_timestamp
 
             # ads the new scheduler item to the scheduler
             self.add_scheduler_item(scheduler_item)
@@ -243,21 +296,40 @@ class Scheduler:
         # returns the date time timestamp
         return date_time_timestamp
 
+    def timestamp_to_absolute_timestamp(self, timestamp):
+        # retrieves the current timestamp
+        current_timestamp = time.time()
+
+        # calculates the absolute timestamp
+        absolute_timestamp = current_timestamp + timestamp
+
+        # returns the absolute timestamp
+        return absolute_timestamp
+
+class SchedulerTask:
+
+    task_type = "none"
+    task_arguments = {}
+
+    def __init__(self, task_type, task_arguments = {}):
+        self.task_type = task_type
+        self.task_arguments = task_arguments
+
 class SchedulerItem:
 
     item_id = "none"
     task_method = None
     task_method_arguments = None
-    time = None
+    absolute_time = None
     recursion_list = None
     current_event = None
     canceled = False
 
-    def __init__(self, item_id, task_method, task_method_arguments, time, recursion_list = None, current_event = None, canceled = False):
+    def __init__(self, item_id, task_method, task_method_arguments, absolute_time, recursion_list = None, current_event = None, canceled = False):
         self.item_id = item_id
         self.task_method = task_method
         self.task_method_arguments = task_method_arguments
-        self.time = time
+        self.absolute_time = absolute_time
         self.recursion_list = recursion_list
         self.current_event = current_event
         self.canceled = canceled
@@ -273,6 +345,3 @@ class SchedulerItem:
             return True
         else:
             return False
-
-def print_tobias():
-    print "ola tobias"
