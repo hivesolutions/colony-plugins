@@ -63,7 +63,12 @@ class JavascriptManager:
 
         # sets the plugin search directories list
         self.plugin_search_directories_list = [self.workspace_base_path + "/pt.hive.colony.web/plugins",
-                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.main.gui/plugins"]
+                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.gui.perspective_manager/plugins",
+                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.main.gui/plugins",
+                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.main.logic/plugins",
+                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.misc/plugins",
+                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.default_perspective/plugins",
+                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.login_window/plugins"]
 
         self.plugin_descriptors_list = []
         self.plugin_search_directories_map = {}
