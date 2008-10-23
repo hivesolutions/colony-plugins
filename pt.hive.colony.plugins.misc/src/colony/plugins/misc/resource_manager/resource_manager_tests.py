@@ -40,8 +40,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import unittest
 
 class ResourceManagerTestCase(unittest.TestCase):
+    """
+    The resource manager test case class.
+    """
 
     def setUp(self):
+        """
+        Set ups the test creating the necessary resources.
+        """
+
         self.plugin.register_resource("namespace1", "name1", "type1", "data1")
         self.plugin.register_resource("namespace1", "name2", "type1", "data2")
         self.plugin.register_resource("namespace1", "name1", "type1", "data3")
@@ -66,6 +73,10 @@ class ResourceManagerTestCase(unittest.TestCase):
         self.plugin.register_resource("namespace2.something", "name2", "type2", "data4")
 
     def tearDown(self):
+        """
+        Tears down the test removing the created resources.
+        """
+
         self.plugin.unregister_resource("namespace1.name1")
         self.plugin.unregister_resource("namespace1.name2")
         self.plugin.unregister_resource("namespace2.name1")
@@ -121,29 +132,28 @@ class ResourceManagerTestCase(unittest.TestCase):
         self.assertTrue(resource.get_type() == "type2")
         self.assertTrue(resource.get_data() == "data4")
         self.assertTrue(resource.get_namespace().get_list_value() == ["namespace2","something"])
-    
+
     def test_unregistering_resources(self):
         self.assertTrue(self.plugin.is_resource_registered("namespace1.name1"))
         self.plugin.unregister_resource("namespace1.name1")
         self.assertFalse(self.plugin.is_resource_registered("namespace1.name1"))
-        
+
         self.assertTrue(self.plugin.is_resource_registered("namespace1.name2"))
         self.plugin.unregister_resource("namespace1.name2")
         self.assertFalse(self.plugin.is_resource_registered("namespace1.name2"))
-        
+
         self.assertTrue(self.plugin.is_resource_registered("namespace2.name1"))
         self.plugin.unregister_resource("namespace2.name1")
         self.assertFalse(self.plugin.is_resource_registered("namespace2.name1"))
-        
+
         self.assertTrue(self.plugin.is_resource_registered("namespace2.name2"))
         self.plugin.unregister_resource("namespace2.name2")
         self.assertFalse(self.plugin.is_resource_registered("namespace2.name2"))
-        
+
         self.assertTrue(self.plugin.is_resource_registered("namespace2.something.name1"))
         self.plugin.unregister_resource("namespace2.something.name1")
         self.assertFalse(self.plugin.is_resource_registered("namespace2.something.name1"))
-        
+
         self.assertTrue(self.plugin.is_resource_registered("namespace2.something.name2"))
         self.plugin.unregister_resource("namespace2.something.name2")
         self.assertFalse(self.plugin.is_resource_registered("namespace2.something.name2"))
-        

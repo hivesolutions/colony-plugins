@@ -71,7 +71,6 @@ class ResourceManager:
         self.resource_name_resources_list_map = {}
         self.resource_type_resources_list_map = {}
 
-    #@todo: comment this
     def register_resource(self, resource_namespace, resource_name, resource_type, resource_data):
         """
         Registers a resource in the resource manager.
@@ -86,19 +85,25 @@ class ResourceManager:
         @param resource_data: The resource one wants to store.
         """
 
+        # creates a new resource with the given information
         resource = Resource(resource_namespace, resource_name, resource_type, resource_data)        
+
         # if the resource already exists remove it from all indexes
         if self.is_resource_registered(resource.get_id()):
             self.unregister_resource(resource.get_id())
+
         self.resource_id_resource_map[resource.get_id()] = resource
+
         # index resource by name
         if not resource.get_name() in self.resource_name_resources_list_map:
             self.resource_name_resources_list_map[resource.get_name()] = []
         self.resource_name_resources_list_map[resource.get_name()].append(resource)
+
         # index resource by type
         if not resource.get_type() in self.resource_type_resources_list_map:
             self.resource_type_resources_list_map[resource.get_type()] = []
         self.resource_type_resources_list_map[resource.get_type()].append(resource)
+        
         # index resource by namespace
         namespace_values_list = resource.get_namespace().get_list_value()
         current_namespace = ""
@@ -110,8 +115,15 @@ class ResourceManager:
                 self.resource_namespace_resources_list_map[current_namespace] = []
             self.resource_namespace_resources_list_map[current_namespace].append(resource)
 
-    #@todo: comment this
     def unregister_resource(self, resource_id):
+        """
+        Unregisters the resource with the given id from the resource manager.
+        
+        @type resource_id: String
+        @param resource_id: The id of the resource.
+        """
+
+        # in case the resource id exist in the resource id resource map
         if resource_id in self.resource_id_resource_map:
             old_resource = self.resource_id_resource_map[resource_id]
             del self.resource_id_resource_map[resource_id]
@@ -125,14 +137,31 @@ class ResourceManager:
                 current_namespace += namespace
                 self.resource_namespace_resources_list_map[current_namespace].remove(old_resource)
 
-    #@todo: comment this
     def is_resource_registered(self, resource_id):
+        """
+        Retrieves the existence (or not) of a resource with the given id.
+        
+        @type resource_id: String
+        @param resource_id: The id of the resource to be tested.
+        @rtype: bool
+        @return: The existence (or not) of a resource with the given id.
+        """
+
         if resource_id in self.resource_id_resource_map:
             return True
-        return False
-    
-    #@todo: comment this
+        else:
+            return False
+
     def get_resource(self, resource_id):
+        """
+        Retrieves the resource with the given resource id.
+        
+        @type resource_id: String
+        @param resource_id: The id of the resource to be retrieved.
+        @rtype: Resource
+        @return: The resource with the given id.
+        """
+
         if resource_id in self.resource_id_resource_map:
             return self.resource_id_resource_map[resource_id]
     
