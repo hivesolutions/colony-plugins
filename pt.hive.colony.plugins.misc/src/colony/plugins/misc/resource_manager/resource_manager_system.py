@@ -37,6 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import resource_manager_parser
+
+DESCRIPTION_FILE_PATH = "/misc/resource_manager/resources/base_resources.xml"
+
 class ResourceManager:
     """
     Stores and indexes miscellaneous resources.
@@ -70,6 +74,31 @@ class ResourceManager:
         self.resource_id_resource_map = {}
         self.resource_name_resources_list_map = {}
         self.resource_type_resources_list_map = {}
+
+    def load_base_resources(self):
+        """
+        Loads the base resources from the description file.
+        """
+
+        # retrieves the base plugin path 
+        plugin_path = self.parent_plugin.manager.get_plugin_path_by_id(self.parent_plugin.id)
+
+        # constructs the full base resources description file path
+        full_path = plugin_path + DESCRIPTION_FILE_PATH
+
+        # creates the resources file parser
+        resources_file_parser = resource_manager_parser.ResourcesFileParser(full_path)
+
+        # parses the file
+        resources_file_parser.parse()
+
+        # retrieves the resource list
+        resource_list = resources_file_parser.get_value()
+
+        # iterates over all the resources in the list
+        for resource in resource_list:
+            # registers the resource
+            self.register_resource(resource.namespace, resource.name, resource.type, resource.data)
 
     def register_resource(self, resource_namespace, resource_name, resource_type, resource_data):
         """

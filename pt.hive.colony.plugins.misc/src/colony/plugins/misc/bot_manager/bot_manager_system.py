@@ -51,21 +51,21 @@ class Bot:
     bot_engine_plugin = None
     bot_input_plugin = None
     bot_output_plugin = None
-    
+
     def __init__(self, bot_id, bot_engine_plugin, bot_input_plugin, bot_output_plugin):
         self.bot_id = bot_id
         self.bot_engine_plugin = bot_engine_plugin
         self.bot_input_plugin = bot_input_plugin
         self.bot_output_plugin = bot_output_plugin
         self.start()
-        
+
     def start(self):
         self.bot_input_plugin.register_message_handler(self.bot_id, self.handle_incoming_message)
-    
+
     def stop(self):
         print "Stop called for " + self.bot_id
         self.bot_input_plugin.register_message_handler(self.bot_id, None)
-        
+
     def handle_incoming_message(self, sender_id, message):
         response_message = self.bot_engine_plugin.respond(message)
         print response_message
@@ -73,15 +73,15 @@ class Bot:
     
 #@todo: comment this class
 class BotManager:
-    
+
     commands = ["bot_manager_list_bots", "bot_manager_start_bot", "bot_manager_stop_bot", "bot_manager_list_inputs", "bot_manager_list_outputs", "bot_manager_list_engines"]
 
     bots_map = {}
-    
+
     def __init__(self, parent_plugin):
         self.parent_plugin = parent_plugin
         self.bots_map = {}
-        
+
     def get_all_commands(self):
         return self.commands
 
@@ -93,7 +93,7 @@ class BotManager:
 
     def get_help(self):
         return HELP_TEXT
-    
+
     def process_bot_manager_start_bot(self, args, output_method):
         if len(args) >= 4:
             bot_id = args[0]
@@ -111,7 +111,7 @@ class BotManager:
                 self.bots_map[bot_id] = Bot(bot_id, bot_engine_plugin, bot_input_plugin, bot_output_plugin)
         else:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
-    
+
     def process_bot_manager_stop_bot(self, args, output_method):
         if len(args) >= 1:
             bot_id = args[0]
@@ -120,12 +120,12 @@ class BotManager:
                 del self.bots_map[bot_id]
         else:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
-    
+
     def process_bot_manager_list_bots(self, args, output_method):
         output_method("List of running bots:")
         for bot_id in self.bots_map:
             output_method("* " + bot_id)
-                
+
     def process_bot_manager_list_inputs(self, args, output_method):
         for bot_input_plugin in self.parent_plugin.bot_input_plugins:
             output_method(bot_input_plugin)
@@ -133,7 +133,7 @@ class BotManager:
     def process_bot_manager_list_engines(self, args, output_method):
         for bot_engine_plugin in self.parent_plugin.bot_engine_plugins:
             output_method(bot_engine_plugin)
-            
+
     def process_bot_manager_list_outputs(self, args, output_method):
         for bot_output_plugin in self.parent_plugin.bot_output_plugins:
             output_method(bot_output_plugin)  

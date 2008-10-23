@@ -36,6 +36,6 @@
 		<namespace>system.path</namespace>
 		<name>workspace_path</name>
 		<type>string</type>
-		<value>C:/Users/Administrator/workspace</value>
+		<data>C:/Users/Administrator/workspace</data>
 	</resource>
 </resources>
