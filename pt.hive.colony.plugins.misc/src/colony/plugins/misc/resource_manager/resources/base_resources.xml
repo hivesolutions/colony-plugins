@@ -38,4 +38,10 @@
 		<type>string</type>
 		<data>C:/Users/Administrator/workspace</data>
 	</resource>
+	<resource>
+		<namespace>system.path</namespace>
+		<name>user_home</name>
+		<type>string</type>
+		<data>C:/Users/Administrator</data>
+	</resource>
 </resources>
