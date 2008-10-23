@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.plugins.plugin_system
+import colony.plugins.decorators
 
 class SchedulerPlugin(colony.plugins.plugin_system.Plugin):
     """
@@ -52,25 +53,40 @@ class SchedulerPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["scheduler"]
+    capabilities = ["scheduler", "thread"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.guid", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.main.console", "1.0.0")]
     events_handled = []
     events_registrable = []
 
     scheduler = None
+
+    guid_plugin = None
+    main_console_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global misc
         import misc.scheduler.scheduler_system
         self.scheduler = misc.scheduler.scheduler_system.Scheduler(self)
+        self.scheduler.load_scheduler()
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
 
+        #self.register_console_script_task(5, "showall")
+
+        self.register_console_script_task_recursive(5, [0, 0, 1, 0, 0], "show 1")
+
+        # notifies the ready semaphore
+        self.release_ready_semaphore()
+
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        self.scheduler.unload_scheduler()
 
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
@@ -81,8 +97,29 @@ class SchedulerPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.misc.scheduler", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def register_console_script_task(self, time, console_script):
-        register_console_script_task(self, time, console_script)
+        self.scheduler.register_console_script_task(time, console_script)
+
+    def register_console_script_task_date_time(self, date_time, console_script):
+        self.scheduler.register_console_script_task_date_time(date_time, console_script)
+
+    def register_console_script_task_recursive(self, time, recursion_list, console_script):
+        self.scheduler.register_console_script_task_recursive(time, recursion_list, console_script)
+
+    def get_guid_plugin(self):
+        return self.guid_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.guid")
+    def set_guid_plugin(self, guid_plugin):
+        self.guid_plugin = guid_plugin
+
+    def get_main_console_plugin(self):
+        return self.main_console_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.console")
+    def set_main_console_plugin(self, main_console_plugin):
+        self.main_console_plugin = main_console_plugin
