@@ -106,5 +106,8 @@ class MainConsolePlugin(colony.plugins.plugin_system.Plugin):
     def process_command_line(self, command_line, output_method):
         self.console.process_command_line(command_line, output_method)
 
+    def get_default_output_method(self):
+        return self.console.get_default_output_method()
+
     def get_test_case(self):
         return self.console_test_case_class

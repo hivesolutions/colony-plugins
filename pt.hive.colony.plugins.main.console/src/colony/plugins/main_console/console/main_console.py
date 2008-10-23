@@ -142,6 +142,16 @@ class MainConsole:
 
             return valid
 
+    def get_default_output_method(self):
+        """
+        Retrieves the default output method
+        
+        @rtype: Method
+        @return: The default output method for console
+        """
+
+        return self.write
+
     def split_command_line_arguments(self, command_line):
         """
         Separates the various command line arguments per space or per quotes
