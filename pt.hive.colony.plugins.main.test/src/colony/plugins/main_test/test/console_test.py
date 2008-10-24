@@ -104,7 +104,7 @@ class ConsoleTest:
 
         # retrieves the main test instance
         main_test = self.main_test_plugin.main_test
-        
+
         # retrieves all the available test cases
         test_cases = main_test.get_all_test_cases()
 
@@ -112,7 +112,7 @@ class ConsoleTest:
         for test_case in test_cases:
             # retrieves the internal id of the test case
             test_case_id = main_test.loaded_test_cases_id_map[test_case]
-            
+
             # converts the internal id of the test case to string
             test_case_id_str = str(test_case_id)
 
