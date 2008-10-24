@@ -84,3 +84,6 @@ class BuildAutomationPlugin(colony.plugins.plugin_system.Plugin):
 
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    def run_automation_plugin_id(self, plugin_id):
+        self.build_automation.run_automation_plugin_id(plugin_id)

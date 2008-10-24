@@ -54,3 +54,13 @@ class BuildAutomation:
         """
 
         self.build_automation_plugin = build_automation_plugin
+
+    def run_automation_plugin_id(self, plugin_id):
+        """
+        Runs all the automation plugins for the given plugin id.
+        
+        @type plugin_id: String
+        @param plugin_id: The id of the plugin to run all the automation plugins.
+        """
+
+        pass
