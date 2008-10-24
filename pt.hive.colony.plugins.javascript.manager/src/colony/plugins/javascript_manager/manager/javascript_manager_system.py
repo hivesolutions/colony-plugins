@@ -58,8 +58,22 @@ class JavascriptManager:
     def __init__(self, javascript_manager_plugin):
         self.javascript_manager_plugin = javascript_manager_plugin
 
+        self.plugin_search_directories_list = []
+        self.plugin_descriptors_list = []
+        self.plugin_search_directories_map = {}
+
+    def set_plugin_search_directories(self):
+        # retrieves the resource manager plugin
+        resource_manager_plugin = self.javascript_manager_plugin.resource_manager_plugin
+
+        # retrieves the workspace home path resource
+        workspace_home_path_resource = resource_manager_plugin.get_resource("system.path.workspace_home")
+
+        # retrieves the workspace home path value
+        workspace_home_path = workspace_home_path_resource.data
+
         # sets the workspace base path
-        self.workspace_base_path = "/Users/joamag/Documents/workspace"
+        self.workspace_base_path = workspace_home_path
 
         # sets the plugin search directories list
         self.plugin_search_directories_list = [self.workspace_base_path + "/pt.hive.colony.web/plugins",
@@ -69,9 +83,6 @@ class JavascriptManager:
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.misc/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.default_perspective/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.login_window/plugins"]
-
-        self.plugin_descriptors_list = []
-        self.plugin_search_directories_map = {}
 
     def index_plugin_search_directories(self):
         # iterates over all the search directories

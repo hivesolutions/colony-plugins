@@ -55,22 +55,26 @@ class JavascriptManagerPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["rpc_service"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.resource_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
 
     javascript_manager = None
+
+    resource_manager_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global javascript_manager
         import javascript_manager.manager.javascript_manager_system
         self.javascript_manager = javascript_manager.manager.javascript_manager_system.JavascriptManager(self)
-        self.javascript_manager.index_plugin_search_directories()
-        self.javascript_manager.load_plugin_files()
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        self.javascript_manager.set_plugin_search_directories()
+        self.javascript_manager.index_plugin_search_directories()
+        self.javascript_manager.load_plugin_files()
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
@@ -84,6 +88,7 @@ class JavascriptManagerPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.javascript.manager", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -145,3 +150,10 @@ class JavascriptManagerPlugin(colony.plugins.plugin_system.Plugin):
 
     def get_file_full_path(self, relative_file_path):
         return self.javascript_manager.get_file_full_path(relative_file_path)
+
+    def get_resource_manager_plugin(self):
+        return self.resource_manager_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.resource_manager")
+    def set_resource_manager_plugin(self, resource_manager_plugin):
+        self.resource_manager_plugin = resource_manager_plugin
