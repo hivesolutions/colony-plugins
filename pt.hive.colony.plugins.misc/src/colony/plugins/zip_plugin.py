@@ -52,7 +52,7 @@ class ZipPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = []
+    capabilities = ["zip"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
