@@ -51,7 +51,7 @@
 		</description>
 		<addresses>
 			<address name="Local Address">
-				http://localhost/colony/repository
+				http://localhost/colony/auxiliary_repository
 			</address>
 			<address name="Example Address">
 				http://example.com/colony/auxiliary_repository
