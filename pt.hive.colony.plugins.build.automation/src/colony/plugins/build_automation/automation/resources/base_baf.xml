@@ -32,17 +32,36 @@
 <build_automation xmlns="http://www.hive.pt"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.hive.pt xsd/baf.xsd">
+	<artifact>
+		<id>pt.hive.colony.plugins.build.automation.base</id>
+		<version>1.0.0</version>
+		<type>colony</type>
+		<name>The base build automation file (baf)</name>
+		<description>The parent build automation file (baf)</description>
+		<url>http://www.hive.pt</url>
+	</artifact>
 	<build>
-		<default_goal>build</default_goal>
+		<default_stage>build</default_stage>
+		<directory>target</directory>
+		<output_directory>target/classes</output_directory>
+		<final_name>${build_automation.artifact.id}-${build_automation.artifact.version}</final_name>
+		<source_directory>src</source_directory>
 	</build>
+	<dependencies>
+		<artifact>
+			<type>colony</type>
+			<id></id>
+			<version></version>
+		</artifact>
+	</dependencies>
 	<plugins>
 		<plugin>
-			<id></id>
-			<phase></phase>
-		</plugin>
-		<plugin>
-			<id></id>
-			<phase></phase>
+			<id>pt.hive.colony.plugins.build.automation.extensions.test</id>
+			<version>1.0.0</version>
+			<stage>test</stage>
+			<configuration>
+				<default_test>test1</default_test>
+			</configuration>
 		</plugin>
 	</plugins>
 </build_automation>

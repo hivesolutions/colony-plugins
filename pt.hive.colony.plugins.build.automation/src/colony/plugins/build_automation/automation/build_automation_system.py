@@ -45,6 +45,9 @@ class BuildAutomation:
     build_automation_plugin = None
     """ The build automation plugin """
 
+    stages = ["compile", "test", "package", "install", "deploy", "clean", "site", "site-deploy"]
+    """ The build automation stages """
+
     def __init__(self, build_automation_plugin):
         """
         Constructor of the class.
