@@ -85,5 +85,5 @@ class IzpackBuildAutomationExtensionPlugin(colony.plugins.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def run_automation(self, stage, parameters, plugin):
-        self.izpack_build_automation_extension.run_automation(stage, parameters, plugin)
+    def run_automation(self, plugin, stage, parameters):
+        self.izpack_build_automation_extension.run_automation(plugin, stage, parameters)

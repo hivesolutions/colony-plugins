@@ -55,5 +55,5 @@ class IzpackBuildAutomationExtension:
 
         self.izpack_build_automation_extension_plugin = izpack_build_automation_extension_plugin
 
-    def run_automation(self, stage, parameters, plugin):
+    def run_automation(self, plugin, stage, parameters):
         pass
