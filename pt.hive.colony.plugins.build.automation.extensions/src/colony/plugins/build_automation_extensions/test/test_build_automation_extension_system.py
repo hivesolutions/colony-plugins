@@ -54,3 +54,6 @@ class TestBuildAutomationExtension:
         """
 
         self.test_build_automation_extension_plugin = test_build_automation_extension_plugin
+
+    def run_automation(self, stage, parameters, plugin):
+        pass

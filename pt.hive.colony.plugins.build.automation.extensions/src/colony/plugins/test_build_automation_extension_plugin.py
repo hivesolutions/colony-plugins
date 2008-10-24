@@ -55,11 +55,14 @@ class TestBuildAutomationExtensionPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["build_automation_extension"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.main.test", "1.0.0")]
     events_handled = []
     events_registrable = []
 
     test_build_automation_extension = None
+
+    main_test_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -82,5 +85,16 @@ class TestBuildAutomationExtensionPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.build.automation.extensions.test", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    def run_automation(self, stage, parameters, plugin):
+        self.test_build_automation_extension.run_automation(stage, parameters, plugin)
+
+    def get_main_test_plugin(self):
+        return self.main_test_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.code_coverage")
+    def set_main_test_plugin(self, main_test_plugin):
+        self.main_test_plugin = main_test_plugin
