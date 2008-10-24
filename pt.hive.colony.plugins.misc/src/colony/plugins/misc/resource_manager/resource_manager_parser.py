@@ -89,6 +89,9 @@ class ResourcesFileParser(Parser):
     def get_value(self):
         return self.resource_list
 
+    def get_resource_list(self):
+        return self.resource_list
+
     def load_resource_file(self, file_path):
         # creates the xml doument DOM object
         xml_document = xml.dom.minidom.parse(file_path)
