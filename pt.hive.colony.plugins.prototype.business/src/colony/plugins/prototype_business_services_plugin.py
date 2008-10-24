@@ -55,11 +55,14 @@ class PrototypeBusinessServicesPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["rpc_service"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.resource_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
 
     prototype_business_services = None
+
+    resource_manager_plugin = None
 
     @colony.plugins.decorators.load_plugin("pt.hive.colony.plugins.prototype.business.services", "1.0.0")
     def load_plugin(self):
@@ -67,11 +70,10 @@ class PrototypeBusinessServicesPlugin(colony.plugins.plugin_system.Plugin):
         global prototype_business_services
         import prototype_business_services.services.prototype_business_services_system
         self.prototype_business_services = prototype_business_services.services.prototype_business_services_system.PrototypeBusinessServices(self)
-        self.prototype_business_services.create_database()
-        self.prototype_business_services.get_all_users()
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        self.prototype_business_services.create_database()
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
@@ -85,6 +87,7 @@ class PrototypeBusinessServicesPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.prototype.business.services", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -207,3 +210,10 @@ class PrototypeBusinessServicesPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
     def get_all_purchases(self):
         return self.prototype_business_services.get_all_purchases()
+
+    def get_resource_manager_plugin(self):
+        return self.resource_manager_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.resource_manager")
+    def set_resource_manager_plugin(self, resource_manager_plugin):
+        self.resource_manager_plugin = resource_manager_plugin

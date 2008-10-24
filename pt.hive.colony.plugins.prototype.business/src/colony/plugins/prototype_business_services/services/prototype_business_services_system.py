@@ -41,7 +41,7 @@ import thread
 import base64
 import sqlite3
 
-DATABASE_FILE = "/Users/joamag/database.db"
+DATABASE_FILE = "database.db"
 
 TABLES = ["products", "customers", "suppliers", "sales", "sales_customers", "sales_products", "purchases", "purchases_suppliers", "purchases_products", "users"]
 
@@ -110,6 +110,15 @@ class PrototypeBusinessServices:
         self.connection_thread_id_map = {}
 
     def get_connection(self):
+        # retrieves the resource manager plugin
+        resource_manager_plugin = self.prototype_business_services_plugin.resource_manager_plugin
+
+        # retrieves the user home path resource
+        user_home_path_resource = resource_manager_plugin.get_resource("system.path.user_home")
+
+        # retrieves the user home path value
+        user_home_path = user_home_path_resource.data
+
         # gets the id of the current thread
         current_thread_id = thread.get_ident()
 
@@ -119,7 +128,7 @@ class PrototypeBusinessServices:
             connection = self.connection_thread_id_map[current_thread_id]
         else:
             # establishes connection with the database file
-            connection = sqlite3.connect(DATABASE_FILE)
+            connection = sqlite3.connect(user_home_path + "/" + DATABASE_FILE)
 
             # adds the created connection to the map that associates the thread id with the connection
             self.connection_thread_id_map[current_thread_id] = connection
