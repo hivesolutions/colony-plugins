@@ -45,19 +45,19 @@ class ResourceManager:
     """
     Stores and indexes miscellaneous resources.
     """
-    
+
     parent_plugin = None
     """ Reference to the plugin that owns this object instance. """
-    
+
     resource_id_resource_map = {}
     """ Map associating resource ids with resources. """
-    
+
     resource_name_resources_list_map = {}
     """ Map associating resource name with the correspondent resources. """ 
-    
+
     resource_type_resources_list_map = {}
     """ Map associating resource type with the correspondent resources. """
-    
+
     resource_namespace_resources_list_map = {}
     """ Map associating namespace with the correspondent resources. """
 
