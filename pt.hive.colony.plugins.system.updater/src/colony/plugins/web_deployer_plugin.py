@@ -100,7 +100,7 @@ class WebDeployerPlugin(colony.plugins.plugin_system.Plugin):
         self.web_deployer.deploy_package(zip_file, plugin_id, plugin_version)
 
     def get_deployer_type(self):
-        return "web"
+        return self.web_deployer.get_deployer_type()
 
     def get_zip_plugin(self):
         return self.zip_plugin

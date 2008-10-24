@@ -41,29 +41,29 @@ import xml.dom.minidom
 
 class Parser:
     """
-    The abstract parser class
+    The abstract parser class.
     """
 
     def __init__(self):
         """
-        Constructor of the class
+        Constructor of the class.
         """
 
         pass
 
     def parse(self):
         """
-        Parses the defined file
+        Parses the defined file.
         """
 
         pass
 
     def get_value(self):
         """
-        Retrieves the result of the parse
+        Retrieves the result of the parse.
         
         @rtype: Object
-        @return: The result of the parse
+        @return: The result of the parse.
         """
 
         pass
@@ -577,7 +577,10 @@ class PluginDependency:
     """
 
     id = "none"
+    """ The id of the plugin dependency """
+    
     version = "none"
+    """ The version of the plugin dependency """
 
     def __init__(self, id = "none", version = "none"):
         self.id = id
@@ -592,12 +595,12 @@ class PluginDependency:
 
 def valid_node(node):
     """
-    Gets if a node is valid or not for parsing
+    Gets if a node is valid or not for parsing.
     
     @type node: Node
-    @param node: The Xml node to be validated
+    @param node: The Xml node to be validated.
     @rtype: bool
-    @return: The valid or not valid value
+    @return: The valid or not valid value.
     """
 
     if node.nodeType == xml.dom.minidom.Node.ELEMENT_NODE:

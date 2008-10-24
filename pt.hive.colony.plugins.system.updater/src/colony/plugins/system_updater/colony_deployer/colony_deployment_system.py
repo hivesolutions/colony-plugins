@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+DEPLOYER_TYPE = "colony"
+
 PLUGINS_DIRECTORY = "colony/plugins"
 
 class colonyDeployer:
@@ -60,12 +62,22 @@ class colonyDeployer:
         self.colony_deployer_plugin.logger.info("Deploying zip file: " + zip_file_name + " using colony deployer")
         self.uncompress_zip_file(zip_file)
 
+    def get_deployer_type(self):
+        """
+        Retrieves the type of deployer.
+        
+        @rtype: String
+        @return: The type of deployer.
+        """
+
+        return DEPLOYER_TYPE
+
     def uncompress_zip_file(self, file):
         """
-        Uncompresses a zip file into the plugins directory
+        Uncompresses a zip file into the plugins directory.
         
         @type file: Stream
-        @param file: The file to unzip into the plugins directory
+        @param file: The file to unzip into the plugins directory.
         """
 
         # retrieves the zip file name

@@ -95,7 +95,7 @@ class ColonyDeployerPlugin(colony.plugins.plugin_system.Plugin):
         self.colony_deployer.deploy_package(zip_file, plugin_id, plugin_version)
 
     def get_deployer_type(self):
-        return "colony"
+        return self.colony_deployer.get_deployer_type()
 
     def get_zip_plugin(self):
         return self.zip_plugin

@@ -28,7 +28,7 @@
 -->
 
 <web_deployer_configuration>
-	<web_apps_path>C:/Program Files/Apache Software Foundation/Tomcat 6.0/webapps</web_apps_path>
-	<project_path>pt.hive.prototype.gui.web.framework-1.0-SNAPSHOT</project_path>
+	<web_apps_path>$(system.path.workspace_home)</web_apps_path>
+	<project_path>pt.hive.colony.web</project_path>
 	<plugins_path>plugins</plugins_path>
 </web_deployer_configuration>

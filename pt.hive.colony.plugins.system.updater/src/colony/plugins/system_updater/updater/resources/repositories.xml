@@ -39,12 +39,6 @@
 			<address name="Local Address">
 				http://localhost/colony/repository
 			</address>
-			<address name="Main Address">
-				http://latesta.hive/colony/repository
-			</address>
-			<address name="Chasso Address">
-				http://chasso.hive/colony/repository
-			</address>
 			<address name="Example Address">
 				http://example.com/colony/repository
 			</address>
@@ -58,12 +52,6 @@
 		<addresses>
 			<address name="Local Address">
 				http://localhost/colony/repository
-			</address>
-			<address name="Main Address">
-				http://latesta.hive/colony/auxiliary_repository
-			</address>
-			<address name="Chasso Address">
-				http://chasso.hive/colony/auxiliary_repository
 			</address>
 			<address name="Example Address">
 				http://example.com/colony/auxiliary_repository

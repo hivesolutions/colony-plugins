@@ -41,6 +41,8 @@ import os
 
 import web_deployment_parser
 
+DEPLOYER_TYPE = "web"
+
 class WebDeployer:
 
     web_deployer_plugin = None
@@ -81,6 +83,16 @@ class WebDeployer:
 
         # uncompresses the zip file into the target plugins directory
         self.uncompress_zip_file(zip_file, web_deployment_path)
+
+    def get_deployer_type(self):
+        """
+        Retrieves the type of deployer.
+        
+        @rtype: String
+        @return: The type of deployer.
+        """
+
+        return DEPLOYER_TYPE
 
     def uncompress_zip_file(self, file, web_deployment_path):
         """
