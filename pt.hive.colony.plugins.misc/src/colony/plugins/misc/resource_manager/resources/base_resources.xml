@@ -34,14 +34,14 @@
 	xsi:schemaLocation="http://www.hive.pt xsd/resources.xsd">
 	<resource>
 		<namespace>system.path</namespace>
-		<name>workspace_path</name>
+		<name>workspace_home</name>
 		<type>string</type>
-		<data>C:/Users/Administrator/workspace</data>
+		<data>/Users/joamag/Documents/workspace</data>
 	</resource>
 	<resource>
 		<namespace>system.path</namespace>
 		<name>user_home</name>
 		<type>string</type>
-		<data>C:/Users/Administrator</data>
+		<data>/Users/joamag</data>
 	</resource>
 </resources>
