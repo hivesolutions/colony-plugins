@@ -60,6 +60,15 @@ class DummyBusinessLogic1:
         Creates a dummy session to test it.
         """
 
+        # retrieves the resource manager plugin
+        resource_manager_plugin = self.dummy_business_logic_1_plugin.resource_manager_plugin
+
+        # retrieves the user home path resource
+        user_home_path_resource = resource_manager_plugin.get_resource("system.path.user_home")
+
+        # retrieves the user home path value
+        user_home_path = user_home_path_resource.data
+
         # creates the session manager
         session_manager = self.dummy_business_logic_1_plugin.business_session_manager_plugin.load_session_manager_entity_manager("dummy_session", "sqlite")
 
@@ -67,7 +76,7 @@ class DummyBusinessLogic1:
         entity_manager = session_manager.entity_manager
 
         # sets the connection parameters for the entity manager
-        entity_manager.set_connection_parameters({"file_path" : "/Users/joamag/test_database.db", "autocommit" : False})
+        entity_manager.set_connection_parameters({"file_path" : user_home_path + "/test_database.db", "autocommit" : False})
 
         # loads the entity manager
         entity_manager.load_entity_manager()

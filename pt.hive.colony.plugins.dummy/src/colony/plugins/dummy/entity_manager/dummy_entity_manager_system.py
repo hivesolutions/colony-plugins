@@ -64,14 +64,14 @@ class DummyEntityManager:
         # retrieves the resource manager plugin
         resource_manager_plugin = self.dummy_entity_manager_plugin.resource_manager_plugin
 
+        # retrieves the business entity manager plugin
+        business_entity_manager_plugin = self.dummy_entity_manager_plugin.business_entity_manager_plugin
+
         # retrieves the user home path resource
         user_home_path_resource = resource_manager_plugin.get_resource("system.path.user_home")
 
         # retrieves the user home path value
         user_home_path = user_home_path_resource.data
-
-        # retrieves the business entity manager plugin
-        business_entity_manager_plugin = self.dummy_entity_manager_plugin.business_entity_manager_plugin
 
         # creates a new entity manager with the sqlite engine
         entity_manager = business_entity_manager_plugin.load_entity_manager("sqlite")

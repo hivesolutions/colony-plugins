@@ -56,12 +56,15 @@ class DummyBusinessLogic1Plugin(colony.plugins.plugin_system.Plugin):
     capabilities = ["dummy_business_logic_1"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.resource_manager", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.business.session_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
 
     dummy_business_logic_1 = None
 
+    resource_manager_plugin = None
     business_session_manager_plugin = None
 
     def load_plugin(self):
@@ -92,6 +95,13 @@ class DummyBusinessLogic1Plugin(colony.plugins.plugin_system.Plugin):
 
     def create_dummy_session(self):
         return self.dummy_business_logic_1.create_dummy_session()
+
+    def get_resource_manager_plugin(self):
+        return self.resource_manager_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.resource_manager")
+    def set_resource_manager_plugin(self, resource_manager_plugin):
+        self.resource_manager_plugin = resource_manager_plugin
 
     def get_business_session_manager_plugin(self):
         return self.business_session_manager_plugin
