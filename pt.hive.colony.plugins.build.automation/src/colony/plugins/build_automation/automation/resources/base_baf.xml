@@ -46,22 +46,33 @@
 		<output_directory>target/classes</output_directory>
 		<final_name>${build_automation.artifact.id}-${build_automation.artifact.version}</final_name>
 		<source_directory>src</source_directory>
+		<dependencies>
+			<artifact>
+				<type>colony</type>
+				<id></id>
+				<version></version>
+			</artifact>
+		</dependencies>
+		<plugins>
+			<plugin>
+				<id>pt.hive.colony.plugins.build.automation.extensions.test</id>
+				<version>1.0.0</version>
+				<stage>test</stage>
+				<configuration>
+					<default_test>true</default_test>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
-	<dependencies>
-		<artifact>
-			<type>colony</type>
-			<id></id>
-			<version></version>
-		</artifact>
-	</dependencies>
-	<plugins>
-		<plugin>
-			<id>pt.hive.colony.plugins.build.automation.extensions.test</id>
-			<version>1.0.0</version>
-			<stage>test</stage>
-			<configuration>
-				<default_test>true</default_test>
-			</configuration>
-		</plugin>
-	</plugins>
+	<profiles>
+		<profile>
+			<id>default-profile</id>
+			<activation>
+				<property>
+					<name>perform_release</name>
+					<value>true</value>
+				</property>
+			</activation>
+		</profile>
+	</profiles>
 </build_automation>

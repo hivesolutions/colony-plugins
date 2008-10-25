@@ -46,21 +46,32 @@
 		<output_directory></output_directory>
 		<final_name></final_name>
 		<source_directory></source_directory>
+		<dependencies>
+			<artifact>
+				<type></type>
+				<id></id>
+				<version></version>
+			</artifact>
+		</dependencies>
+		<plugins>
+			<plugin>
+				<id></id>
+				<version></version>
+				<stage></stage>
+				<configuration>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
-	<dependencies>
-		<artifact>
-			<type></type>
+	<profiles>
+		<profile>
 			<id></id>
-			<version></version>
-		</artifact>
-	</dependencies>
-	<plugins>
-		<plugin>
-			<id></id>
-			<version></version>
-			<stage></stage>
-			<configuration>
-			</configuration>
-		</plugin>
-	</plugins>
+			<activation>
+				<property>
+					<name></name>
+					<value></value>
+				</property>
+			</activation>
+		</profile>
+	</profiles>
 </build_automation>

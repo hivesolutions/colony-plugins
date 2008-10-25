@@ -120,3 +120,38 @@ class BuildAutomation:
 
     def __init__(self, artifact = None):
         self.artifact = artifact
+
+class Artifact:
+    """
+    The artifact class.
+    """
+
+    id = "none"
+    version = "none"
+    type = "none"
+    name = "none"
+    description = "none"
+
+    def __init__(self, artifact = None):
+        self.artifact = artifact
+
+class Build:
+    """
+    The build class.
+    """
+
+    pass
+
+class Plugin:
+    """
+    The plugin class.
+    """
+
+    pass
+
+class Profile:
+    """
+    The profile class.
+    """
+
+    pass
