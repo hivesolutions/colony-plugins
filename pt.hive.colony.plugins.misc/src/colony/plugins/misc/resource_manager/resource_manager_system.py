@@ -80,8 +80,14 @@ class ResourceManager:
         Loads the base resources from the description file.
         """
 
+        # retrieves the plugin manager
+        manager = self.parent_plugin.manager
+
+        # retrieves the parent plugin id
+        parent_plugin_id = self.parent_plugin.id
+
         # retrieves the base plugin path 
-        plugin_path = self.parent_plugin.manager.get_plugin_path_by_id(self.parent_plugin.id)
+        plugin_path = manager.get_plugin_path_by_id(parent_plugin_id)
 
         # constructs the full base resources description file path
         full_path = plugin_path + DESCRIPTION_FILE_PATH
