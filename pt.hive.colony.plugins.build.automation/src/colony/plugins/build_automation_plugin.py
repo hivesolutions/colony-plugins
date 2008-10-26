@@ -66,9 +66,10 @@ class BuildAutomationPlugin(colony.plugins.plugin_system.Plugin):
         global build_automation
         import build_automation.automation.build_automation_system
         self.build_automation = build_automation.automation.build_automation_system.BuildAutomation(self)
+        self.build_automation.run_automation_plugin_id("asda")
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
