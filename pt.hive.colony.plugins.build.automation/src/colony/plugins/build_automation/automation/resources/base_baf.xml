@@ -47,11 +47,11 @@
 		<final_name>${build_automation.artifact.id}-${build_automation.artifact.version}</final_name>
 		<source_directory>src</source_directory>
 		<dependencies>
-			<artifact>
-				<type>colony</type>
-				<id></id>
-				<version></version>
-			</artifact>
+			<dependency>
+				<id>dummy</id>
+				<version>1.0.0</version>
+				<scope>compile</scope>
+			</dependency>
 		</dependencies>
 		<plugins>
 			<plugin>

@@ -47,11 +47,11 @@
 		<final_name></final_name>
 		<source_directory></source_directory>
 		<dependencies>
-			<artifact>
-				<type></type>
+			<dependency>
 				<id></id>
 				<version></version>
-			</artifact>
+				<scope></scope>
+			</dependency>
 		</dependencies>
 		<plugins>
 			<plugin>

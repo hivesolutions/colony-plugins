@@ -116,8 +116,8 @@ class BuildAutomationFileParser(Parser):
 
         if node_name == "artifact":
             build_automation.artifact = self.parse_build_automation_artifact(build_automation_element)
-        #elif node_name == "build":
-        #    build_automation.build = self.parse_build_automation_build(build_automation_element)
+        elif node_name == "build":
+            build_automation.build = self.parse_build_automation_build(build_automation_element)
         #elif node_name == "profiles":
         #    build_automation.profiles = self.parse_build_automation_profiles(build_automation_element)
 
@@ -165,6 +165,178 @@ class BuildAutomationFileParser(Parser):
         build_automation_artifact_description = artifact_description.firstChild.data.strip()
         return build_automation_artifact_description
 
+    def parse_build_automation_build(self, build_automation_build):
+        build = Build()
+        child_nodes = build_automation_build.childNodes
+
+        for child_node in child_nodes:
+            if valid_node(child_node):
+                self.parse_build_automation_build_element(child_node, build)
+
+        return build
+
+    def parse_build_automation_build_element(self, build_automation_build_element, build):
+        node_name = build_automation_build_element.nodeName
+
+        if node_name == "default_stage":
+            build.default_stage = self.parse_build_automation_build_default_stage(build_automation_build_element)
+        elif node_name == "directory":
+            build.directory = self.parse_build_automation_build_directory(build_automation_build_element)
+        elif node_name == "output_directory":
+            build.output_directory = self.parse_build_automation_build_output_directory(build_automation_build_element)
+        elif node_name == "final_name":
+            build.final_name = self.parse_build_automation_build_final_name(build_automation_build_element)
+        elif node_name == "source_directory":
+            build.source_directory = self.parse_build_automation_build_source_directory(build_automation_build_element)
+        elif node_name == "dependencies":
+            build.dependencies = self.parse_build_automation_build_dependencies(build_automation_build_element)
+        elif node_name == "plugins":
+            build.plugins = self.parse_build_automation_build_plugins(build_automation_build_element)
+
+    def parse_build_automation_build_default_stage(self, build_default_stage):
+        build_automation_build_default_stage = build_default_stage.firstChild.data.strip()
+        return build_automation_build_default_stage
+
+    def parse_build_automation_build_directory(self, build_directory):
+        build_automation_build_directory = build_directory.firstChild.data.strip()
+        return build_automation_build_directory
+
+    def parse_build_automation_build_output_directory(self, build_output_directory):
+        build_automation_build_output_directory = build_output_directory.firstChild.data.strip()
+        return build_automation_build_output_directory
+
+    def parse_build_automation_build_final_name(self, build_final_name):
+        build_automation_build_final_name = build_final_name.firstChild.data.strip()
+        return build_automation_build_final_name
+
+    def parse_build_automation_build_source_directory(self, build_source_directory):
+        build_automation_build_source_directory = build_source_directory.firstChild.data.strip()
+        return build_automation_build_source_directory
+
+    def parse_build_automation_build_dependencies(self, build_dependencies):
+        build_automation_build_dependencies_list = []
+        child_nodes = build_dependencies.childNodes
+
+        for child_node in child_nodes:
+            if valid_node(child_node):
+                build_automation_build_dependency = self.parse_build_automation_build_dependency(child_node)
+                build_automation_build_dependencies_list.append(build_automation_build_dependency)
+
+        return build_automation_build_dependencies_list
+
+    def parse_build_automation_build_dependency(self, build_dependency):
+        dependency = Dependency()
+        child_nodes = build_dependency.childNodes
+
+        for child_node in child_nodes:
+            if valid_node(child_node):
+                self.parse_build_automation_build_dependency_element(child_node, dependency)
+
+        return dependency
+
+    def parse_build_automation_build_dependency_element(self, build_automation_build_dependency_element, dependency):
+        node_name = build_automation_build_dependency_element.nodeName
+
+        if node_name == "id":
+            dependency.id = self.parse_build_automation_build_dependency_id(build_automation_build_dependency_element)
+        elif node_name == "version":
+            dependency.version = self.parse_build_automation_build_dependency_version(build_automation_build_dependency_element)
+        elif node_name == "scope":
+            dependency.scope = self.parse_build_automation_build_dependency_scope(build_automation_build_dependency_element)
+
+    def parse_build_automation_build_dependency_id(self, build_dependency_id):
+        build_automation_build_dependency_id = build_dependency_id.firstChild.data.strip()
+        return build_automation_build_dependency_id
+
+    def parse_build_automation_build_dependency_version(self, build_dependency_version):
+        build_automation_build_dependency_version = build_dependency_version.firstChild.data.strip()
+        return build_automation_build_dependency_version
+
+    def parse_build_automation_build_dependency_scope(self, build_dependency_scope):
+        build_automation_build_dependency_scope = build_dependency_scope.firstChild.data.strip()
+        return build_automation_build_dependency_scope
+
+    def parse_build_automation_build_plugins(self, build_plugins):
+        build_automation_build_plugins_list = []
+        child_nodes = build_plugins.childNodes
+
+        for child_node in child_nodes:
+            if valid_node(child_node):
+                build_automation_build_plugin = self.parse_build_automation_plugin(child_node)
+                build_automation_build_plugins_list.append(build_automation_build_plugin)
+
+        return build_automation_build_plugins_list
+
+    def parse_build_automation_plugin(self, build_automation_plugin):
+        plugin = Plugin()
+        child_nodes = build_automation_plugin.childNodes
+
+        for child_node in child_nodes:
+            if valid_node(child_node):
+                self.parse_build_automation_plugin_element(child_node, plugin)
+
+        return plugin
+
+    def parse_build_automation_plugin_element(self, build_automation_plugin_element, plugin):
+        node_name = build_automation_plugin_element.nodeName
+
+        if node_name == "id":
+            plugin.id = self.parse_build_automation_plugin_id(build_automation_plugin_element)
+        elif node_name == "version":
+            plugin.version = self.parse_build_automation_plugin_version(build_automation_plugin_element)
+        elif node_name == "stage":
+            plugin.stage = self.parse_build_automation_plugin_stage(build_automation_plugin_element)
+        elif node_name == "configuration":
+            plugin.configuration = self.parse_build_automation_plugin_configuration(build_automation_plugin_element)
+
+    def parse_build_automation_plugin_id(self, plugin_id):
+        build_automation_plugin_id = plugin_id.firstChild.data.strip()
+        return build_automation_plugin_id
+
+    def parse_build_automation_plugin_version(self, plugin_version):
+        build_automation_plugin_version = plugin_version.firstChild.data.strip()
+        return build_automation_plugin_version
+
+    def parse_build_automation_plugin_stage(self, plugin_stage):
+        build_automation_plugin_stage = plugin_stage.firstChild.data.strip()
+        return build_automation_plugin_stage
+
+    def parse_build_automation_plugin_configuration(self, plugin_configuration):
+        configuration = Configuration()
+        child_nodes = plugin_configuration.childNodes
+
+        for child_node in child_nodes:
+            if valid_node(child_node):
+                self.parse_generic_element(child_node, configuration)
+
+        return configuration
+
+    def parse_generic_element(self, generic_element, generic_structure):
+        node_name = generic_element.nodeName
+
+        if len(generic_element.childNodes) == 1 and generic_element.firstChild.nodeType == xml.dom.minidom.Node.TEXT_NODE:
+            data_value = generic_element.firstChild.data.strip()
+            setattr(generic_structure, node_name, data_value)
+        else:
+            new_generic_structure = GenericElement()
+            child_nodes = generic_element.childNodes
+
+            for child_node in child_nodes:
+                if valid_node(child_node):
+                    self.parse_generic_element(child_node, new_generic_structure)
+
+            setattr(generic_structure, node_name, new_generic_structure)
+
+class GenericElement:
+    """
+    The generic element class.
+    """
+
+    element_name = "none"
+
+    def __init__(self, element_name = "none"):
+        self.element_name = element_name
+
 class BuildAutomation:
     """
     The build automation class.
@@ -201,12 +373,48 @@ class Build:
     """
     The build class.
     """
+    
+    default_stage = "none"
+    directory = "none"
+    output_directory = "none"
+    final_name = "none"
+    source_directory = "none"
+    dependencies = []
+    plugins = []
 
-    pass
+    def __init__(self, default_stage = "none", directory = "none", output_directory = "none", final_name = "none", source_directory = "none"):
+        self.default_stage = default_stage
+        self.directory = directory
+        self.output_directory = output_directory
+        self.final_name = final_name
+        self.source_directory = source_directory
+        self.dependencies = []
+        self.plugins = []
+
+class Dependency:
+    """
+    The dependency class.
+    """
+
+    id = "none"
+    version = "none"
+    scope = "none"
+
+    def __init__(self, id = "none", version = "none", scope = "none"):
+        self.id = id
+        self.version = version
+        self.scope = scope
 
 class Plugin:
     """
     The plugin class.
+    """
+
+    pass
+
+class Configuration:
+    """
+    The configuration class.
     """
 
     pass
