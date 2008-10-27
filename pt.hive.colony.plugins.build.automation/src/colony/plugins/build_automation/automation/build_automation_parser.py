@@ -118,8 +118,8 @@ class BuildAutomationFileParser(Parser):
             build_automation.artifact = self.parse_build_automation_artifact(build_automation_element)
         elif node_name == "build":
             build_automation.build = self.parse_build_automation_build(build_automation_element)
-        #elif node_name == "profiles":
-        #    build_automation.profiles = self.parse_build_automation_profiles(build_automation_element)
+        elif node_name == "profiles":
+            build_automation.profiles = self.parse_build_automation_profiles(build_automation_element)
 
     def parse_build_automation_artifact(self, build_automation_artifact):
         artifact = Artifact()
@@ -311,6 +311,83 @@ class BuildAutomationFileParser(Parser):
 
         return configuration
 
+    def parse_build_automation_profiles(self, build_automation_profiles):
+        build_automation_profiles_list = []
+        child_nodes = build_automation_profiles.childNodes
+
+        for child_node in child_nodes:
+            if valid_node(child_node):
+                build_automation_profile = self.parse_build_automation_profile(child_node)
+                build_automation_profiles_list.append(build_automation_profile)
+
+        return build_automation_profiles_list
+
+    def parse_build_automation_profile(self, build_automation_profile):
+        profile = Profile()
+        child_nodes = build_automation_profile.childNodes
+
+        for child_node in child_nodes:
+            if valid_node(child_node):
+                self.parse_build_automation_profile_element(child_node, profile)
+
+        return profile
+
+    def parse_build_automation_profile_element(self, build_automation_profile_element, profile):
+        node_name = build_automation_profile_element.nodeName
+
+        if node_name == "id":
+            profile.id = self.parse_build_automation_profile_id(build_automation_profile_element)
+        elif node_name == "activation":
+            profile.activation = self.parse_build_automation_profile_activation(build_automation_profile_element)
+        elif node_name == "build":
+            profile.build = self.parse_build_automation_build(build_automation_profile_element)
+
+    def parse_build_automation_profile_id(self, profile_id):
+        build_automation_profile_id = profile_id.firstChild.data.strip()
+        return build_automation_profile_id
+
+    def parse_build_automation_profile_activation(self, profile_activation):
+        activation = Activation()
+        child_nodes = profile_activation.childNodes
+
+        for child_node in child_nodes:
+            if valid_node(child_node):
+                self.parse_build_automation_profile_activation_element(child_node, activation)
+
+        return activation
+
+    def parse_build_automation_profile_activation_element(self, profile_activation_element, activation):
+        node_name = profile_activation_element.nodeName
+
+        if node_name == "property":
+            activation.property = self.parse_build_automation_property(profile_activation_element)
+
+    def parse_build_automation_property(self, build_automation_property):
+        property = Property()
+        child_nodes = build_automation_property.childNodes
+
+        for child_node in child_nodes:
+            if valid_node(child_node):
+                self.parse_build_automation_property_element(child_node, property)
+
+        return property
+
+    def parse_build_automation_property_element(self, build_automation_property_element, property):
+        node_name = build_automation_property_element.nodeName
+
+        if node_name == "name":
+            property.name = self.parse_build_automation_property_name(build_automation_property_element)
+        elif node_name == "value":
+            property.value = self.parse_build_automation_property_value(build_automation_property_element)
+
+    def parse_build_automation_property_name(self, property_name):
+        build_automation_property_name = property_name.firstChild.data.strip()
+        return build_automation_property_name
+
+    def parse_build_automation_property_value(self, property_value):
+        build_automation_property_value = property_value.firstChild.data.strip()
+        return build_automation_property_value
+
     def parse_generic_element(self, generic_element, generic_structure):
         node_name = generic_element.nodeName
 
@@ -410,21 +487,60 @@ class Plugin:
     The plugin class.
     """
 
-    pass
+    id = "none"
+    version = "none"
+    stage = "none"
+    configuration = None
+
+    def __init__(self, id = "None", version = "none", stage = "none", configuration = None):
+        self.id = id
+        self.version = version
+        self.stage = stage
+        self.configuration = configuration
 
 class Configuration:
     """
     The configuration class.
     """
 
-    pass
+    def __init__(self):
+        pass
 
 class Profile:
     """
     The profile class.
     """
 
-    pass
+    id = "none"
+    activation = None
+    build = None
+
+    def __init__(self, id = "none", activation = None, build = None):
+        self.id = id
+        self.activation = activation
+        self.build = build
+
+class Activation:
+    """
+    The activation class.
+    """
+
+    property = None
+
+    def __init__(self, property = None):
+        self.property = property
+
+class Property:
+    """
+    The property class.
+    """
+
+    name = "none"
+    value = "none"
+
+    def __init__(self, name = "none", value = "none"):
+        self.name = name
+        self.value = value
 
 def valid_node(node):
     """

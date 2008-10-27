@@ -73,6 +73,7 @@
 					<value>true</value>
 				</property>
 			</activation>
+			<build></build>
 		</profile>
 	</profiles>
 </build_automation>
