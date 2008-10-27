@@ -94,5 +94,8 @@ class BuildAutomation:
                # depois tenho de sacar os plugins a usar e processar os mesmos
                return
 
+    def generate_build_automation_structure(self, build_automation_parsing_structure):
+        pass
+
     def get_all_automation_plugins(self, plugin_build_automation):
         pass
