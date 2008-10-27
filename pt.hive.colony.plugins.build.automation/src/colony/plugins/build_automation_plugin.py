@@ -54,7 +54,7 @@ class BuildAutomationPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["build_automation"]
-    capabilities_allowed = ["build_automation_extension"]
+    capabilities_allowed = ["build_automation_extension", "build_automation_item"]
     dependencies = []
     events_handled = []
     events_registrable = []

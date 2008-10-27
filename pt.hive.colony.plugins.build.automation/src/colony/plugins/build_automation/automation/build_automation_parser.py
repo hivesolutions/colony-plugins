@@ -114,12 +114,40 @@ class BuildAutomationFileParser(Parser):
     def parse_build_automation_element(self, build_automation_element, build_automation):
         node_name = build_automation_element.nodeName
 
-        if node_name == "artifact":
+        if node_name == "parent":
+            build_automation.parent = self.parse_build_automation_parent(build_automation_element)
+        elif node_name == "artifact":
             build_automation.artifact = self.parse_build_automation_artifact(build_automation_element)
         elif node_name == "build":
             build_automation.build = self.parse_build_automation_build(build_automation_element)
         elif node_name == "profiles":
             build_automation.profiles = self.parse_build_automation_profiles(build_automation_element)
+
+    def parse_build_automation_parent(self, build_automation_parent):
+        parent = Parent()
+        child_nodes = build_automation_parent.childNodes
+
+        for child_node in child_nodes:
+            if valid_node(child_node):
+                self.parse_build_automation_parent_element(child_node, parent)
+
+        return parent
+
+    def parse_build_automation_parent_element(self, build_automation_parent_element, parent):
+        node_name = build_automation_parent_element.nodeName
+
+        if node_name == "id":
+            parent.id = self.parse_build_automation_parent_id(build_automation_parent_element)
+        elif node_name == "version":
+            parent.version = self.parse_build_automation_parent_version(build_automation_parent_element)
+
+    def parse_build_automation_parent_id(self, parent_id):
+        build_automation_parent_id = parent_id.firstChild.data.strip()
+        return build_automation_parent_id
+
+    def parse_build_automation_parent_version(self, parent_version):
+        build_automation_parent_version = parent_version.firstChild.data.strip()
+        return build_automation_parent_version
 
     def parse_build_automation_artifact(self, build_automation_artifact):
         artifact = Artifact()
@@ -419,14 +447,28 @@ class BuildAutomation:
     The build automation class.
     """
 
+    parent = None
     artifact = None
     build = None
     profiles = []
 
-    def __init__(self, artifact = None, build = None):
+    def __init__(self, parent = None, artifact = None, build = None):
+        self.parent = parent
         self.artifact = artifact
         self.build = build
         self.profiles = []
+
+class Parent:
+    """
+    The parent class.
+    """
+
+    id = "none"
+    version = "none"
+
+    def __init__(self, id = "none", version = "none"):
+        self.id = id
+        self.version= version
 
 class Artifact:
     """

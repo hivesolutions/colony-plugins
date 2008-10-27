@@ -47,14 +47,14 @@ class MainConsolePlugin(colony.plugins.plugin_system.Plugin):
     id = "pt.hive.colony.plugins.main.console"
     name = "Console Main Plugin"
     short_name = "Console Main"
-    description = "Console Main Plugin"
+    description = "The main console plugin that controls the console"
     version = "1.0.0"
     author = "Hive Solutions"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    capabilities = ["main", "main_console", "test_case"]
+    capabilities = ["main", "main_console", "test_case", "build_automation_item"]
     capabilities_allowed = ["console_command_extension"]
     dependencies = []
     events_handled = []
@@ -111,3 +111,6 @@ class MainConsolePlugin(colony.plugins.plugin_system.Plugin):
 
     def get_test_case(self):
         return self.console_test_case_class
+
+    def get_build_automation_file_path(self):
+        return self.console.get_build_automation_file_path()

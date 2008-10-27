@@ -82,3 +82,6 @@ class BuildAutomation:
 
         # retrieves the build automation value
         build_automation = build_automation_file_parser.get_value()
+
+    def get_all_automation_plugins(self, plugin_build_automation):
+        pass

@@ -32,6 +32,10 @@
 <build_automation xmlns="http://www.hive.pt"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.hive.pt xsd/baf.xsd">
+	<parent>
+		<id></id>
+		<version></version>
+	</parent>
 	<artifact>
 		<id></id>
 		<version></version>

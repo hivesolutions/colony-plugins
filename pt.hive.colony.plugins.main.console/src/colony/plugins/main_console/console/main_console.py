@@ -152,6 +152,16 @@ class MainConsole:
 
         return self.write
 
+    def get_build_automation_file_path(self):
+        """
+        Retrieves the build automation file path.
+        
+        @rtype: String
+        @return: The build automation file path.
+        """
+
+        pass
+
     def split_command_line_arguments(self, command_line):
         """
         Separates the various command line arguments per space or per quotes
