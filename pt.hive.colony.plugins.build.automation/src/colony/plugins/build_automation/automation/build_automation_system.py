@@ -83,5 +83,16 @@ class BuildAutomation:
         # retrieves the build automation value
         build_automation = build_automation_file_parser.get_value()
 
+        for build_automation_item_plugin in self.build_automation_plugin.build_automation_item_plugins:
+            if build_automation_item_plugin.id == plugin_id:
+               build_automation_file_path = build_automation_item_plugin.get_build_automation_file_path()
+               build_automation_file_parser2 = build_automation_parser.BuildAutomationFileParser(build_automation_file_path)
+               build_automation_file_parser2.parse()
+               build_automation2 = build_automation_file_parser2.get_value()
+               print str(build_automation2)
+               # tenho de pegar nisto agora fazer parse misturar o parent com o child e e isso
+               # depois tenho de sacar os plugins a usar e processar os mesmos
+               return
+
     def get_all_automation_plugins(self, plugin_build_automation):
         pass

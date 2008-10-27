@@ -53,20 +53,28 @@ class BuildAutomationPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["build_automation"]
+    capabilities = ["build_automation", "console_command_extension"]
     capabilities_allowed = ["build_automation_extension", "build_automation_item"]
     dependencies = []
     events_handled = []
     events_registrable = []
 
     build_automation = None
+    console_build_automation = None
+
+    build_automation_extension_plugins = []
+    build_automation_item_plugins = []
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global build_automation
         import build_automation.automation.build_automation_system
+        import build_automation.automation.console_build_automation
         self.build_automation = build_automation.automation.build_automation_system.BuildAutomation(self)
-        self.build_automation.run_automation_plugin_id("asda")
+        self.console_build_automation = build_automation.automation.console_build_automation.ConsoleBuildAutomation(self)
+
+        self.build_automation_extension_plugins = []
+        self.build_automation_item_plugins = []
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -77,14 +85,41 @@ class BuildAutomationPlugin(colony.plugins.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
 
+    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.build.automation", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.build.automation", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def run_automation_plugin_id(self, plugin_id):
+    def get_all_commands(self):
+        return self.console_build_automation.get_all_commands()
+
+    def get_handler_command(self, command):
+        return self.console_build_automation.get_handler_command(command)
+
+    def get_help(self):
+        return self.console_build_automation.get_help()
+
+    def run_automation_plugin_id(self, plugind_id):
         self.build_automation.run_automation_plugin_id(plugin_id)
+
+    @colony.plugins.decorators.load_allowed_capability("build_automation_extension")
+    def entity_manager_engine_load_allowed(self, plugin, capability):
+        self.build_automation_extension_plugins.append(plugin)
+
+    @colony.plugins.decorators.load_allowed_capability("build_automation_item")
+    def entity_manager_engine_load_allowed(self, plugin, capability):
+        self.build_automation_item_plugins.append(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("build_automation_extension")
+    def entity_bundle_capability_unload_allowed(self, plugin, capability):
+        self.build_automation_extension_plugins.remove(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("build_automation_item")
+    def entity_bundle_capability_unload_allowed(self, plugin, capability):
+        self.build_automation_item_plugins.remove(plugin)
