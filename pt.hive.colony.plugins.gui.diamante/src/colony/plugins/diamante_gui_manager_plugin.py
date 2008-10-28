@@ -45,8 +45,8 @@ class DiamanteGuiManagerPlugin(colony.plugins.plugin_system.Plugin):
     """    
 
     id = "pt.hive.colony.plugins.gui.diamante.gui_manager"
-    name = "LCR Data Diamante GUI Manager Plugin"
-    short_name = "Diamante GUI Manager"
+    name = "LCR Data Diamante Gui Manager Plugin"
+    short_name = "Diamante Gui Manager"
     description = "Provides a graphical user interfaces for any Diamante converter version"
     version = "1.0.0"
     author = "Hive Solutions"

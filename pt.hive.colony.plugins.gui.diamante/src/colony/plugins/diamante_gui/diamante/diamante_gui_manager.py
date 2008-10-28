@@ -115,7 +115,7 @@ class PanelStructure:
         """
         Associates and event handler to a certain widget and version
         
-        @param product_version: Product version of the GUI where this event should be triggered
+        @param product_version: Product version of the Gui where this event should be triggered
         @param widget_name: Name of the widget one wants to have bind an event to
         @param handler: An Event object
         """
@@ -130,7 +130,7 @@ class PanelStructure:
         """
         Returns a dictionary of event handlers for a given product version
         
-        @param product_version: Product version of the GUI from which to take the event handlers 
+        @param product_version: Product version of the Gui from which to take the event handlers 
         @return: Dictionary of event handlers in a widget->event format
         """
 
@@ -181,7 +181,7 @@ class DiamanteGuiManager:
 
     def get_available_gui_versions(self):
         """
-        Returns a list with the versions of the available GUI widget plugins 
+        Returns a list with the versions of the available Gui widget plugins 
         
         @return: A list filled with the versions of Diamante whose interfaces can be composed with the available widget plugins
         """
@@ -192,7 +192,7 @@ class DiamanteGuiManager:
 
 #    def get_user_settings(self, logic_version):
 #        """
-#        Returns a map with the sum of the user settings specified by all the GUI widget 
+#        Returns a map with the sum of the user settings specified by all the Gui widget 
 #        plugins that compose the interface to the provided logic version
 #        
 #        @param logic_version: ID of the logic plugin whose settings specified by the user you want to retrieve  

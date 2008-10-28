@@ -45,8 +45,8 @@ class DiamanteGuiPlugin_2004(colony.plugins.plugin_system.Plugin):
     """    
 
     id = "pt.hive.colony.plugins.gui.diamante.diamante_2004"
-    name = "GUI widgets for the Diamante 2004 migrator"
-    short_name = "GUI widgets Diamante 2004"
+    name = "Gui widgets for the Diamante 2004 migrator"
+    short_name = "Gui widgets Diamante 2004"
     description = "Provides wx widgets that are required to assemble the Diamante 2004 migrator interface"
     version = "4.4.1"
     author = "Hive Solutions"
