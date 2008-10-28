@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.plugins.plugin_system
 
-class MainConsolePlugin(colony.plugins.plugin_system.Plugin):
+class ColonyBaseBuildAutomationItemPlugin(colony.plugins.plugin_system.Plugin):
     """
     The main class for the Colony Base Build Automation Item plugin
     """
