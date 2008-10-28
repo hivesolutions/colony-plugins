@@ -42,5 +42,14 @@
 	</artifact>
 	<build>
 		<default_stage>build</default_stage>
+		<plugins>
+			<plugin>
+				<id>pt.hive.colony.plugins.build.automation.extensions.izpack</id>
+				<version>1.0.0</version>
+				<stage>build</stage>
+				<configuration>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 </build_automation>
