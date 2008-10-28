@@ -56,6 +56,9 @@ class IzpackBuildAutomationExtension:
         self.izpack_build_automation_extension_plugin = izpack_build_automation_extension_plugin
 
     def run_automation(self, plugin, stage, parameters):
+        # retrieves the plugin manager
+        manager = self.izpack_build_automation_extension_plugin.manager
+
         # retrieves the resource manager plugin
         resource_manager_plugin = self.izpack_build_automation_extension_plugin.resource_manager_plugin
 
@@ -83,5 +86,8 @@ class IzpackBuildAutomationExtension:
             # creates the execution command
             izpack_execution_command = izpack_home_path + "/compile.bat"
 
+        # retrieves the main logger
+        logger = manager.logger
+
         # executes the compilation command
-        command_execution_plugin.execute_command(izpack_execution_command, ["C:/Users/Administrator/Desktop/hive_installer_test/hive_installer_test/install.xml"])
+        command_execution_plugin.execute_command_logger_execution_directory(izpack_execution_command, ["C:/Users/Administrator/Desktop/hive_installer_test/hive_installer_test/install.xml"], logger, "C:/Users/Administrator/Desktop/hive_installer_test/hive_installer_test")
