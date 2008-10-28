@@ -86,3 +86,9 @@ class CommandExecutionPlugin(colony.plugins.plugin_system.Plugin):
 
     def execute_command(self, command, arguments):
         self.command_execution.execute_command(command, arguments)
+
+    def execute_command_logger(self, command, arguments, logger):
+        self.command_execution.execute_command_logger(command, arguments, logger)
+
+    def execute_command_logger_execution_directory(self, command, arguments, logger, execution_directory):
+        self.command_execution.execute_command_logger_execution_directory(command, arguments, logger, execution_directory)

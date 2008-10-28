@@ -37,7 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
+import sys
 import subprocess
+import logging
 
 class CommandExecution:
     """
@@ -59,6 +62,39 @@ class CommandExecution:
 
     def execute_command(self, command, arguments):
         # creates the call list
+        call_list = self.create_call_list(command, arguments)
+
+        # executes the command
+        subprocess.Popen(call_list)
+
+    def execute_command_logger(self, command, arguments, logger):
+        # creates the call list
+        call_list = self.create_call_list(command, arguments)
+
+        # retrieves the logger file
+        logger_file = self.get_logger_file(logger)
+
+        # retrieves the startup info
+        startup_info = self.get_startup_info()
+
+        # opens the subprocess
+        subprocess.Popen(call_list, stdin = logger_file, stdout = logger_file, stderr = logger_file, env = os.environ, startupinfo = startup_info)
+
+    def execute_command_logger_execution_directory(self, command, arguments, logger, execution_directory):
+        # creates the call list
+        call_list = self.create_call_list(command, arguments)
+
+        # retrieves the logger file
+        logger_file = self.get_logger_file(logger)
+
+        # retrieves the startup info
+        startup_info = self.get_startup_info()
+
+        # opens the subprocess
+        subprocess.Popen(call_list, stdin = logger_file, stdout = logger_file, stderr = logger_file, cwd = execution_directory, env = os.environ, startupinfo = startup_info)
+
+    def create_call_list(self, command, arguments):
+        # constructs the call list
         call_list = []
 
         # extends the call list with the command list
@@ -67,5 +103,36 @@ class CommandExecution:
         # extends the call list with the arguments
         call_list.extend(arguments)
 
-        # executes the command
-        subprocess.call(call_list)
+        return call_list
+
+    def get_logger_file(self, logger):
+        # sets the default logger file
+        logger_file = sys.stdout
+
+        # retrieves the logger handlers
+        logger_handlers = logger.handlers
+
+        # in case the logger contains handlers
+        if logger_handlers:
+            # retrieves the logger default handler
+            handler = logger_handlers[0]
+
+            # in case the handler instance is of type StreamHandler
+            if handler.__class__ == logging.StreamHandler:
+                # retrieves the stream handler stream
+                logger_file = handler.stream
+
+        # returns the logger file
+        return logger_file
+
+    def get_startup_info(self):
+        # in case the current os is windows
+        if os.name == "nt":
+            import win32con
+            startup_info = subprocess.STARTUPINFO()
+            startup_info.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            startup_info.wShowWindow = win32con.SW_HIDE
+        else:
+            startup_info = None
+
+        return startup_info
