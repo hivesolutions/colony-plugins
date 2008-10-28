@@ -281,8 +281,24 @@ class MainTest:
     def get_all_test_cases(self):
         return self.loaded_test_cases_list
 
+    def get_all_test_cases_plugin(self, plugin_id, plugin_version):
+        # retrieves the plugin manager
+        manager = self.main_test_plugin.manager
+
+        # retrieves the plugin
+        plugin = manager._get_plugin_by_id_and_version(plugin_id, plugin_version)
+
+        # in case plugin exist in test case plugin test case map
+        if plugin in self.test_case_plugin_test_case_map:
+            # retrieves the test cases associated with the given plugin
+            plugin_test_cases = self.test_case_plugin_test_case_map[plugin]
+        else:
+            plugin_test_cases = []
+
+        return plugin_test_cases
+
     def start_all_test(self, code_coverage = False):
-        self.start_test(self.loaded_test_cases_list, code_coverage)
+        self.start_test(self.loaded_test_cases_list, code_coverage)        
 
     def start_test(self, test_cases_list, code_coverage = False):
         # retrieves the code coverage plugin
