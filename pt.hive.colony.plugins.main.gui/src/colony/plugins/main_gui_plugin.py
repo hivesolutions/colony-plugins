@@ -76,7 +76,7 @@ class MainGuiManagerPlugin(colony.plugins.plugin_system.Plugin):
         import main_gui.gui.main_window
 
         self.main_gui = main_gui.gui.main_gui_system.MainGui(self)
- 
+
         # notifies the ready semaphore
         self.release_ready_semaphore()
 
