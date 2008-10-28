@@ -55,11 +55,20 @@ class IzpackBuildAutomationExtensionPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["build_automation_extension"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.resource_manager", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.execution_environment", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.command_execution", "1.0.0")]
     events_handled = []
     events_registrable = []
 
     izpack_build_automation_extension = None
+
+    resource_manager_plugin = None
+    execution_environment_plugin = None
+    command_execution_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -82,8 +91,30 @@ class IzpackBuildAutomationExtensionPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.build.automation.extensions.izpack", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def run_automation(self, plugin, stage, parameters):
         self.izpack_build_automation_extension.run_automation(plugin, stage, parameters)
+
+    def get_resource_manager_plugin(self):
+        return self.resource_manager_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.resource_manager")
+    def set_resource_manager_plugin(self, resource_manager_plugin):
+        self.resource_manager_plugin = resource_manager_plugin
+
+    def get_execution_environment_plugin(self):
+        return self.execution_environment_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.execution_environment")
+    def set_execution_environment_plugin(self, execution_environment_plugin):
+        self.execution_environment_plugin = execution_environment_plugin
+
+    def get_command_execution_plugin(self):
+        return self.command_execution_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.command_execution")
+    def set_command_execution_plugin(self, command_execution_plugin):
+        self.command_execution_plugin = command_execution_plugin

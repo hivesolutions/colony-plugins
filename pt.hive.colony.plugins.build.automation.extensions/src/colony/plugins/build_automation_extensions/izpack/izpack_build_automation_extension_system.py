@@ -56,4 +56,32 @@ class IzpackBuildAutomationExtension:
         self.izpack_build_automation_extension_plugin = izpack_build_automation_extension_plugin
 
     def run_automation(self, plugin, stage, parameters):
-        pass
+        # retrieves the resource manager plugin
+        resource_manager_plugin = self.izpack_build_automation_extension_plugin.resource_manager_plugin
+
+        # retrieves the execution environment plugin
+        execution_environment_plugin = self.izpack_build_automation_extension_plugin.execution_environment_plugin
+
+        # retrieves the command execution plugin
+        command_execution_plugin = self.izpack_build_automation_extension_plugin.command_execution_plugin
+
+        # retrieves the izpack home path resource
+        izpack_home_path_resource = resource_manager_plugin.get_resource("system.path.izpack_home")
+
+        # in case the izpach_home resource is not defined
+        if not izpack_home_path_resource:
+            return
+
+        # retrieves the izpack home path value
+        izpack_home_path = izpack_home_path_resource.data
+
+        # retrieves the current operative system
+        current_operative_system = execution_environment_plugin.get_operative_system()
+
+        # in case the current environment is windows
+        if current_operative_system == "windows":
+            # creates the execution command
+            izpack_execution_command = izpack_home_path + "/compile.bat"
+
+        # executes the compilation command
+        command_execution_plugin.execute_command(izpack_execution_command, ["C:/Users/Administrator/Desktop/hive_installer_test/hive_installer_test/install.xml"])
