@@ -109,17 +109,17 @@ class BuildAutomationPlugin(colony.plugins.plugin_system.Plugin):
         self.build_automation.run_automation_plugin_id(plugin_id)
 
     @colony.plugins.decorators.load_allowed_capability("build_automation_extension")
-    def entity_manager_engine_load_allowed(self, plugin, capability):
+    def build_automation_extension_load_allowed(self, plugin, capability):
         self.build_automation_extension_plugins.append(plugin)
 
     @colony.plugins.decorators.load_allowed_capability("build_automation_item")
-    def entity_manager_engine_load_allowed(self, plugin, capability):
+    def build_automation_item_load_allowed(self, plugin, capability):
         self.build_automation_item_plugins.append(plugin)
 
     @colony.plugins.decorators.unload_allowed_capability("build_automation_extension")
-    def entity_bundle_capability_unload_allowed(self, plugin, capability):
+    def build_automation_extension_unload_allowed(self, plugin, capability):
         self.build_automation_extension_plugins.remove(plugin)
 
     @colony.plugins.decorators.unload_allowed_capability("build_automation_item")
-    def entity_bundle_capability_unload_allowed(self, plugin, capability):
+    def build_automation_item_unload_allowed(self, plugin, capability):
         self.build_automation_item_plugins.remove(plugin)
