@@ -51,6 +51,9 @@ class BuildAutomation:
     build_automation_plugin = None
     """ The build automation plugin """
 
+    base_build_automation_structure = None
+    """ the base build automation structure """
+
     stages = ["compile", "test", "package", "install", "deploy", "clean", "site", "site-deploy"]
     """ The build automation stages """
 
@@ -64,6 +67,46 @@ class BuildAutomation:
 
         self.build_automation_plugin = build_automation_plugin
 
+    def get_base_build_automation_structure(self):
+        # in case the structure has been already generated
+        if self.base_build_automation_structure:
+            return self.base_build_automation_structure
+
+        # retrieves the build automation plugin path
+        build_automation_plugin_path = self.build_automation_plugin.manager.get_plugin_path_by_id(self.build_automation_plugin.id)
+
+        # creates the base baf xml path
+        base_baf_xml_path = build_automation_plugin_path + "/build_automation/automation/resources/base_baf.xml"
+
+        # creates the base build automation file parser
+        base_build_automation_file_parser = build_automation_parser.BuildAutomationFileParser(base_baf_xml_path)
+
+        # parses the base baf xml file
+        base_build_automation_file_parser.parse()
+
+        # retrieves the base build automation value
+        base_build_automation = base_build_automation_file_parser.get_value()
+
+        # generates the base build automation structure
+        self.base_build_automation_structure = self.generate_build_automation_structure(base_build_automation)
+
+        # returns the base build automation structure
+        return self.base_build_automation_structure        
+
+    def get_build_automation_structure(self, build_automation_id, build_automation_version):
+        """
+        Retrieves the build automation structure with the given id and version.
+        
+        @type build_automation_id: String
+        @param build_automation_id: The build automation id.
+        @type build_automation_version: String
+        @param build_automation_version: The build automation version.
+        @rtype: BuildAutomationStructure
+        @return: The build automation structure with the given id and version.
+        """
+
+        pass
+
     def run_automation_plugin_id(self, plugin_id):
         """
         Runs all the automation plugins for the given plugin id.
@@ -72,23 +115,7 @@ class BuildAutomation:
         @param plugin_id: The id of the plugin to run all the automation plugins.
         """
 
-        # retrieves the build automation plugin path
-        build_automation_plugin_path = self.build_automation_plugin.manager.get_plugin_path_by_id(self.build_automation_plugin.id)
-
-        # creates the base baf xml path
-        base_baf_xml_path = build_automation_plugin_path + "/build_automation/automation/resources/base_baf.xml"
-
-        # creates the build automation file parser
-        build_automation_file_parser = build_automation_parser.BuildAutomationFileParser(base_baf_xml_path)
-
-        # parses the baf xml file
-        build_automation_file_parser.parse()
-
-        # retrieves the build automation value
-        build_automation = build_automation_file_parser.get_value()
-
-        # generates the base build automation structure
-        self.base_build_automation_structure = self.generate_build_automation_structure(build_automation)
+        self.get_base_build_automation_structure()
 
         for build_automation_item_plugin in self.build_automation_plugin.build_automation_item_plugins:
             if build_automation_item_plugin.id == plugin_id:
@@ -108,9 +135,18 @@ class BuildAutomation:
                return
 
     def generate_build_automation_structure(self, build_automation_parsing_structure):
+        """
+        Generates a build automation structure object from the given build automation parsing structure.
+        
+        @type build_automation_parsing_structure: BuildAutomation
+        @param build_automation_parsing_structure: The build automation parsing structure to generate the build automation structure.
+        @rtype: BuildAutomationStructure
+        @return: The generated build automation structure object.
+        """
+
         # initializes the build automation structure object
         build_automation_structure = None
-        
+
         # retrieves the parent parsing value
         parent = build_automation_parsing_structure.parent
 
@@ -123,6 +159,7 @@ class BuildAutomation:
         # retrieves the profiles parsing value
         profiles = build_automation_parsing_structure.profiles
 
+        # in case the artifact is of type colony
         if artifact.type == "colony":
             # creates the colony build automation structure object
             build_automation_structure = ColonyBuildAutomationStructure()
@@ -148,7 +185,18 @@ class BuildAutomation:
             # sets the associated plugin in the build automation structure
             build_automation_structure.associated_plugin = associated_plugin
 
-            # retrieves the list of build plugins
+            # retrieves the list of build automation dependencies
+            build_automation_dependencies = build.dependencies
+
+            # iterates over all the build automation dependencies
+            for build_automation_dependency in build_automation_dependencies:
+                # retrieves the build automation dependency id
+                build_automation_dependency_id = build_automation_dependency.id
+
+                # retrieves the build automation dependency version
+                build_automation_dependency_version = build_automation_dependency.version
+
+            # retrieves the list of build automation plugins
             build_automation_plugins = build.plugins
 
             # iterates over all the build automation plugins
@@ -161,7 +209,7 @@ class BuildAutomation:
 
                 # retrieves the build automation plugin instance
                 build_automation_plugin_instance = self.get_build_automation_extension_plugin(build_automation_plugin_id, build_automation_plugin_version)
-    
+
                 # appends the build automation plugin instance to the automation plugins list
                 build_automation_structure.automation_plugins.append(build_automation_plugin_instance)
 
@@ -169,12 +217,25 @@ class BuildAutomation:
         return build_automation_structure
 
     def get_build_automation_extension_plugin(self, plugin_id, plugin_version = None):
-        for build_automation_extension_plugin in self.build_automation_plugin.build_automation_extension_plugins:
-            if build_automation_extension_plugin.id == plugin_id and build_automation_extension_plugin.version == plugin_version:
-                return build_automation_extension_plugin
+        """
+        Retrieves the build automation extension plugin with the given id and version.
+        
+        @type plugin_id: String
+        @param plugin_id: The id of the build automation extension plugin to retrive.
+        @type plugin_version: String
+        @param plugin_version: The version of the build automation plugin to retrieve.
+        @rtype: Plugin
+        @return: The build automation extension plugin with the given id and version.
+        """
 
-    def get_all_automation_plugins(self, plugin_build_automation):
-        pass
+        # iterates over all the build automation extension plugins
+        for build_automation_extension_plugin in self.build_automation_plugin.build_automation_extension_plugins:
+            if plugin_version:
+                if build_automation_extension_plugin.id == plugin_id and build_automation_extension_plugin.version == plugin_version:
+                    return build_automation_extension_plugin
+            else:
+                if build_automation_extension_plugin.id == plugin_id:
+                    return build_automation_extension_plugin
 
 class BuildAutomationStructure:
     """

@@ -54,6 +54,7 @@
 			<dependency>
 				<id></id>
 				<version></version>
+				<run></run>
 				<scope></scope>
 			</dependency>
 		</dependencies>

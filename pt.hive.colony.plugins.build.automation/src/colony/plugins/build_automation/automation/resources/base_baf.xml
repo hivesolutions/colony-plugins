@@ -48,9 +48,10 @@
 		<source_directory>src</source_directory>
 		<dependencies>
 			<dependency>
-				<id>dummy</id>
+				<id>pt.hive.colony.plugins.build.automation</id>
 				<version>1.0.0</version>
-				<scope>compile</scope>
+				<run>false</run>
+				<scope>all</scope>
 			</dependency>
 		</dependencies>
 		<plugins>
