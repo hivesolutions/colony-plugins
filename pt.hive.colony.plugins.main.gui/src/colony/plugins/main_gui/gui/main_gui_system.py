@@ -73,6 +73,6 @@ class MainGui:
         main_gui_plugin_path = manager.get_plugin_path_by_id(main_gui_plugin_id)
 
         # retrieves the main gui baf xml path
-        main_gui_baf_path = main_console_plugin_path + "/main_gui/gui/resources/baf.xml"
+        main_gui_baf_path = main_gui_plugin_path + "/main_gui/gui/resources/baf.xml"
 
         return main_gui_baf_path

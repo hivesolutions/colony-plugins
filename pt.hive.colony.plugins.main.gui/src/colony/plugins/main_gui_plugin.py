@@ -53,8 +53,8 @@ class MainGuiManagerPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["main"]
-    capabilities_allowed = ["gui_manager", "gui_panel", "gui_progress_information", "build_automation_item"]
+    capabilities = ["main", "build_automation_item"]
+    capabilities_allowed = ["gui_manager", "gui_panel", "gui_progress_information"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.log", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
