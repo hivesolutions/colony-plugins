@@ -44,4 +44,10 @@
 		<type>string</type>
 		<data>/Users/joamag</data>
 	</resource>
+	<resource>
+		<namespace>system.path</namespace>
+		<name>izpack_home</name>
+		<type>string</type>
+		<data>C:\Program Files\IzPack\bin</data>
+	</resource>
 </resources>
