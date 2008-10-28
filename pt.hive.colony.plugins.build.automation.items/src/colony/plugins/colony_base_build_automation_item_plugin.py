@@ -44,7 +44,7 @@ class MainConsolePlugin(colony.plugins.plugin_system.Plugin):
     The main class for the Colony Base Build Automation Item plugin
     """
 
-    id = "pt.hive.colony.plugins.build.automation.colony_base"
+    id = "pt.hive.colony.plugins.build.automation.items.colony_base"
     name = "Colony Base Build Automation Item Plugin"
     short_name = "Colony Base Build Automation Item"
     description = "The build automation item fcr the base of the colony framework"
@@ -66,7 +66,7 @@ class MainConsolePlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global build_automation_items
         import build_automation_items.colony_base.colony_base_build_automation_item_system
-        self.colony_base_build_automation_item = build_automation_items.colony_base.colony_base_build_automation_item_system.ColonyBaseBuildAutamtionItem(self)
+        self.colony_base_build_automation_item = build_automation_items.colony_base.colony_base_build_automation_item_system.ColonyBaseBuildAutomationItem(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
