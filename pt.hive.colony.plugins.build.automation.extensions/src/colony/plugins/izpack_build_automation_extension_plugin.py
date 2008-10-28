@@ -45,7 +45,7 @@ class IzpackBuildAutomationExtensionPlugin(colony.plugins.plugin_system.Plugin):
     The main class for the Izpack Build Automation Extension plugin
     """
 
-    id = "pt.hive.colony.plugins.build.automation.extensions.test"
+    id = "pt.hive.colony.plugins.build.automation.extensions.izpack"
     name = "Izpack Build Automation Extension Plugin"
     short_name = "Izpack Build Automation Extension"
     description = "A plugin to manage the izpack build automation tasks"

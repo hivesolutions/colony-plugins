@@ -95,6 +95,6 @@ class TestBuildAutomationExtensionPlugin(colony.plugins.plugin_system.Plugin):
     def get_main_test_plugin(self):
         return self.main_test_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.code_coverage")
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.test")
     def set_main_test_plugin(self, main_test_plugin):
         self.main_test_plugin = main_test_plugin

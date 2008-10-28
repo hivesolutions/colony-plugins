@@ -56,4 +56,11 @@ class TestBuildAutomationExtension:
         self.test_build_automation_extension_plugin = test_build_automation_extension_plugin
 
     def run_automation(self, plugin, stage, parameters):
-        pass
+        # retrieves the main test plugin
+        main_test_plugin = self.test_build_automation_extension_plugin.main_test_plugin
+
+        # retrieves all the test cases for the given plugin
+        plugin_test_cases = main_test_plugin.get_all_test_cases_plugin(plugin.id, plugin.version)
+
+        # starts the test cases
+        main_test_plugin.start_test(plugin_test_cases)
