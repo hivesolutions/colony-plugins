@@ -42,19 +42,19 @@ import colony.plugins.decorators
 
 class MainGuiManagerPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the GUI Main plugin
+    The main class for the Gui Main plugin
     """
 
     id = "pt.hive.colony.plugins.main.gui"
-    name = "GUI Main Plugin"
-    short_name = "GUI Main"
-    description = "GUI Main Plugin for wx bindings"
+    name = "Gui Main Plugin"
+    short_name = "Gui Main"
+    description = "Gui Main Plugin for wx bindings"
     version = "1.0.0"
     author = "Hive Solutions"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["main"]
-    capabilities_allowed = ["gui_manager", "gui_panel", "gui_progress_information"]
+    capabilities_allowed = ["gui_manager", "gui_panel", "gui_progress_information", "build_automation_item"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.log", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
@@ -64,6 +64,7 @@ class MainGuiManagerPlugin(colony.plugins.plugin_system.Plugin):
     events_handled = []
     events_registrable = ["gui_widget_plugin_changed", "gui_progress_information_changed"]
 
+    main_gui = None
     application = None
 
     bitmap_loader_plugin = None
@@ -71,8 +72,11 @@ class MainGuiManagerPlugin(colony.plugins.plugin_system.Plugin):
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global main_gui
+        import main_gui.gui.main_gui_system
         import main_gui.gui.main_window
 
+        self.main_gui = main_gui.gui.main_gui_system.MainGui(self)
+ 
         # notifies the ready semaphore
         self.release_ready_semaphore()
 
@@ -127,6 +131,9 @@ class MainGuiManagerPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
         if colony.plugins.plugin_system.is_capability_or_sub_capability_in_list("bitmap_load", plugin.capabilities):
             self.bitmap_loader_plugin = plugin
+
+    def get_build_automation_file_path(self):
+        return self.main_gui.get_build_automation_file_path()
 
     def init_complete(self):
         self.application.show_main_frame()
