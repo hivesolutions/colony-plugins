@@ -63,8 +63,8 @@ class ExecutionEnvironmentPlugin(colony.plugins.plugin_system.Plugin):
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global misc
-        import misc.command_execution.command_execution_system
-        self.execution_environment = misc.command_execution.command_execution_system.CommandExecution(self)
+        import misc.execution_environment.execution_environment_system
+        self.execution_environment = misc.execution_environment.execution_environment_system.ExecutionEnvironment(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
@@ -85,4 +85,4 @@ class ExecutionEnvironmentPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_operative_system(self):
-        self.execution_environment.get_operative_system()
+        return self.execution_environment.get_operative_system()
