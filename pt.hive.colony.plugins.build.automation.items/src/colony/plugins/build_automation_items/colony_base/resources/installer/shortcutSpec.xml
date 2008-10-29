@@ -33,10 +33,10 @@
 
 	<skipIfNotSupported/>
 
-	<programGroup defaultName="Hive Solutions/Hive ERP" location="applications"/>
+	<programGroup defaultName="Hive Solutions/Hive Colony" location="applications"/>
 
 	<shortcut
-		name="Hive ERP $APP_VER"
+		name="Hive Colony $APP_VER"
 		programGroup="yes"
 		desktop="no"
 		applications="no"
@@ -45,9 +45,9 @@
 		target="$INSTALL_PATH/converter/main.bat"
 		commandLine=""
 		workingDirectory="$INSTALL_PATH/converter"
-		description="Hive ERP framework">
+		description="Hive Colony">
 
-		<createForPack name="Solid Hive Framework"/>
+		<createForPack name="Hive Colony Framework"/>
 	</shortcut>
 
 </shortcuts>
