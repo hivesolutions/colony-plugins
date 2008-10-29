@@ -44,7 +44,10 @@ class DocumentManagerPlugin(colony.plugins.plugin_system.Plugin):
     id = "pt.hive.colony.plugins.document.manager"
     name = "Document Manager plugin"
     short_name = "Document manager"
-    description = ""
+    description = "Manages open document instances, acts as a middleman" \
+    " to the plugins supporting each document format, and provides a generic" \
+    " document template object that allows the interchange of data between document" \
+    " plugins supporting different formats."
     version = "1.0.0"
     author = "Hive Solutions"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE

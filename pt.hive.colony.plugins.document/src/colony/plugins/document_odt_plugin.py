@@ -42,9 +42,10 @@ import colony.plugins.plugin_system
 class DocumentOdfPlugin(colony.plugins.plugin_system.Plugin):
 
     id = "pt.hive.colony.plugins.document.odt"
-    name = "ODF Document plugin"
-    short_name = "ODF Document"
-    description = "description here"
+    name = "ODT Document plugin"
+    short_name = "ODT Document"
+    description = "Allows the extraction of data from an Open Office ODT" \
+    "file into a document template and vice-versa."
     version = "1.0.0"
     author = "Hive Solutions"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE

@@ -42,9 +42,10 @@ import colony.plugins.plugin_system
 class DocumentTxtPlugin(colony.plugins.plugin_system.Plugin):
 
     id = "pt.hive.colony.plugins.document.txt"
-    name = "Text document document plugin"
+    name = "Text document plugin"
     short_name = "Text document"
-    description = "description here"
+    description = "Allows the extraction of data from an plain text document" \
+    "file into a document template and vice-versa."
     version = "1.0.0"
     author = "Hive Solutions"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
