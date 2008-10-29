@@ -53,9 +53,9 @@
 
 	<!-- the resources to be included -->
 	<resources>
-		<res id="LicencePanel.licence" src="license.txt"/>
-		<res id="InfoPanel.info" src="readme.txt"/>
-		<res src="shortcutSpec.xml" id="shortcutSpec.xml"/>
+		<res id="LicencePanel.licence" src="build_automation_items/colony_base/resources/installer/license.txt"/>
+		<res id="InfoPanel.info" src="build_automation_items/colony_base/resources/installer/readme.txt"/>
+		<res src="shortcutSpec.xml" id="build_automation_items/colony_base/resources/installer/shortcutSpec.xml"/>
 	</resources>
 
 	<!-- the list of panels to be included in the wizard -->
@@ -75,12 +75,12 @@
 	<packs>
 		<pack name="Hive Colony Framework" required="yes">
 			<description>The base files for the colony framework</description>
-			<file src="converter" targetdir="$INSTALL_PATH"/>
+			<file src="build_automation_items" targetdir="$INSTALL_PATH"/>
 		</pack>
-		<pack name="Console Plugin" required="no">
+		<!--<pack name="Console Plugin" required="no">
 			<description>The console plugin for simple interaction</description>
 			<file src="plugins/main_console" targetdir="$INSTALL_PATH/plugins"/>
 			<file src="plugins/main_console_plugin.py" targetdir="$INSTALL_PATH/plugins"/>
-		</pack>
+		</pack>-->
 	</packs>
 </installation>

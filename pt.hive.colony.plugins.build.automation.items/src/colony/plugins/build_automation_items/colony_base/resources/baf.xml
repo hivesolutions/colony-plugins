@@ -48,7 +48,7 @@
 				<version>1.0.0</version>
 				<stage>build</stage>
 				<configuration>
-					<install_file>${build_automation.build.source_directory}/colony/plugins/build_automation_items/colony_base/resources/installer/install.xml</install_file>
+					<install_file>build_automation_items/colony_base/resources/installer/install.xml</install_file>
 				</configuration>
 			</plugin>
 		</plugins>
