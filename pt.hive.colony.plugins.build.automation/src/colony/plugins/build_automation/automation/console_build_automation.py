@@ -82,4 +82,4 @@ class ConsoleBuildAutomation:
         plugin_id = args[0]
 
         # runs the automation for the plugin
-        self.build_automation_plugin.build_automation.run_automation_plugin_id(plugin_id)
+        self.build_automation_plugin.build_automation.run_automation_plugin_id_version(plugin_id)
