@@ -48,6 +48,6 @@
 		<namespace>system.path</namespace>
 		<name>izpack_home</name>
 		<type>string</type>
-		<data>C:\Program Files\IzPack\bin</data>
+		<data>/Applications/IzPack/bin</data>
 	</resource>
 </resources>
