@@ -55,7 +55,7 @@
 	<resources>
 		<res id="LicencePanel.licence" src="build_automation_items/colony_base/resources/installer/license.txt"/>
 		<res id="InfoPanel.info" src="build_automation_items/colony_base/resources/installer/readme.txt"/>
-		<res src="shortcutSpec.xml" id="build_automation_items/colony_base/resources/installer/shortcutSpec.xml"/>
+		<res id="shortcutSpec.xml" src="build_automation_items/colony_base/resources/installer/shortcutSpec.xml"/>
 	</resources>
 
 	<!-- the list of panels to be included in the wizard -->
