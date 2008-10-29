@@ -47,6 +47,8 @@ BASE_AUTOMATION_ID = "pt.hive.colony.plugins.build.automation.base"
 
 VARIABLE_REGEX = "\$\{[^\}]*\}"
 
+EXCLUSION_LIST = ["__doc__", "__init__", "__module__"]
+
 class BuildAutomation:
     """
     The build automation class.
@@ -95,7 +97,7 @@ class BuildAutomation:
         self.base_build_automation_structure = self.generate_build_automation_structure(base_build_automation)
 
         # returns the base build automation structure
-        return self.base_build_automation_structure        
+        return self.base_build_automation_structure
 
     def get_build_automation_structure(self, build_automation_id, build_automation_version):
         """
@@ -119,24 +121,39 @@ class BuildAutomation:
         @param plugin_id: The id of the plugin to run all the automation plugins.
         """
 
+        # retrieves the base build automation structure
         self.get_base_build_automation_structure()
 
         for build_automation_item_plugin in self.build_automation_plugin.build_automation_item_plugins:
             if build_automation_item_plugin.id == plugin_id:
-               build_automation_file_path = build_automation_item_plugin.get_build_automation_file_path()
-               build_automation_file_parser2 = build_automation_parser.BuildAutomationFileParser(build_automation_file_path)
-               build_automation_file_parser2.parse()
-               build_automation2 = build_automation_file_parser2.get_value()
-               build_automation_structure2 = self.generate_build_automation_structure(build_automation2)
+                build_automation_item_plugin_id = build_automation_item_plugin.id
+                build_automation_item_plugin_version = build_automation_item_plugin.version
+                
+                build_automation_file_path = build_automation_item_plugin.get_build_automation_file_path()
+                build_automation_file_parser = build_automation_parser.BuildAutomationFileParser(build_automation_file_path)
+                build_automation_file_parser.parse()
+                build_automation = build_automation_file_parser.get_value()
+                build_automation_structure = self.generate_build_automation_structure(build_automation)
 
-               # retrieves all the automation plugins
-               all_automation_plugins = build_automation_structure2.get_all_automation_plugins()
+                # retrieves all the automation plugins
+                all_automation_plugins = build_automation_structure.get_all_automation_plugins()
 
-               # iterates over all of the automation plugins
-               for automation_plugin in all_automation_plugins:
-                   automation_plugin.run_automation(build_automation_structure2.associated_plugin, "main", {})
+                # iterates over all of the automation plugins
+                for automation_plugin in all_automation_plugins:
+                    # retrieves the automation plugin id
+                    automation_plugin_id = automation_plugin.id
 
-               return
+                    # retrieves the automation plugin version
+                    automation_plugin_version = automation_plugin.version
+
+                    # creates the automation plugin tuple
+                    automation_plugin_tuple = (automation_plugin_id, automation_plugin_version)
+                    
+                    # retrieves the automation plugin configurations
+                    automation_plugin_configurations = build_automation_structure.get_all_automation_plugin_configurations(automation_plugin_tuple)
+
+                    # runs the automation
+                    automation_plugin.run_automation(build_automation_structure.associated_plugin, "main", automation_plugin_configurations, build_automation_structure)
 
     def generate_build_automation_structure(self, build_automation_parsing_structure):
         """
@@ -169,7 +186,7 @@ class BuildAutomation:
             build_automation_structure = ColonyBuildAutomationStructure()
 
             # sets the build automation parsing structure
-            build_automation_structure.build_automation_parsing_structure  = build_automation_parsing_structure
+            build_automation_structure.build_automation_parsing_structure = build_automation_parsing_structure
 
             # in case there is no parent defined
             if not parent:
@@ -214,11 +231,28 @@ class BuildAutomation:
                 # retrieves the build automation version
                 build_automation_plugin_version = build_automation_plugin.version
 
+                # creates the build automation plugin tuple
+                build_automation_plugin_tuple = (build_automation_plugin_id, build_automation_plugin_version)
+
                 # retrieves the build automation plugin instance
                 build_automation_plugin_instance = self.get_build_automation_extension_plugin(build_automation_plugin_id, build_automation_plugin_version)
 
                 # appends the build automation plugin instance to the automation plugins list
                 build_automation_structure.automation_plugins.append(build_automation_plugin_instance)
+
+                # retrieves the build automation plugin configuration
+                build_automation_plugin_configuration = build_automation_plugin.configuration
+
+                build_automation_structure.automation_plugins_configurations[build_automation_plugin_tuple] = {}
+
+                build_automation_plugin_configuration_item_names = dir(build_automation_plugin_configuration)
+
+                build_automation_plugin_configuration_filtered_item_names = [value for value in build_automation_plugin_configuration_item_names if value not in EXCLUSION_LIST]
+
+                # iterates over all the build automation plugin configuration filtered item names
+                for build_automation_plugin_configuration_filtered_item_name in build_automation_plugin_configuration_filtered_item_names:
+                    build_automation_plugin_configuration_item = getattr(build_automation_plugin_configuration, build_automation_plugin_configuration_filtered_item_name)
+                    build_automation_structure.automation_plugins_configurations[build_automation_plugin_tuple][build_automation_plugin_configuration_filtered_item_name] = build_automation_plugin_configuration_item
 
         # returns the build automation structure object
         return build_automation_structure
@@ -352,6 +386,27 @@ class BuildAutomationStructure:
 
         # returns the automation plugins
         return automation_plugins
+
+    def get_all_automation_plugin_configurations(self, automation_plugin_tuple):
+        if automation_plugin_tuple in self.automation_plugins_configurations:
+            # creates a copy of the automation plugins configurations for the given automation plugin tuple
+            automation_plugins_configurations = copy.copy(self.automation_plugins_configurations[automation_plugin_tuple])
+        else:
+            automation_plugins_configurations = {}
+
+        # in case it contains a parent
+        if self.parent:
+            # retrieves all of the automation plugins configurations from the parent
+            automation_plugins_configurations_parent = self.parent.get_all_automation_plugin_configurations(automation_plugin_tuple)
+
+            for automation_plugins_configurations_parent_key in automation_plugins_configurations_parent:
+                automation_plugins_configurations_parent_value = automation_plugins_configurations_parent[automation_plugins_configurations_parent_key]
+
+                if not automation_plugins_configurations_parent_key in automation_plugins_configurations:
+                    automation_plugins_configurations[automation_plugins_configurations_parent_key] = automation_plugins_configurations_parent_value
+
+        # returns the automation plugins configurations
+        return automation_plugins_configurations
 
 class ColonyBuildAutomationStructure(BuildAutomationStructure):
     """
