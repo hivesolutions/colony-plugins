@@ -53,7 +53,7 @@
 
 	<!-- the resources to be included -->
 	<resources>
-		<res id="LicencePanel.licence" src="licence.txt"/>
+		<res id="LicencePanel.licence" src="license.txt"/>
 		<res id="InfoPanel.info" src="readme.txt"/>
 		<res src="shortcutSpec.xml" id="shortcutSpec.xml"/>
 	</resources>
