@@ -37,11 +37,15 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import re
 import copy
 
+import build_automation_exceptions
 import build_automation_parser
 
 BASE_AUTOMATION_ID = "pt.hive.colony.plugins.build.automation.base"
+
+VARIABLE_REGEX = "\$\{[^\}]*\}"
 
 class BuildAutomation:
     """
@@ -164,6 +168,9 @@ class BuildAutomation:
             # creates the colony build automation structure object
             build_automation_structure = ColonyBuildAutomationStructure()
 
+            # sets the build automation parsing structure
+            build_automation_structure.build_automation_parsing_structure  = build_automation_parsing_structure
+
             # in case there is no parent defined
             if not parent:
                 # in case the artifact is not the base one
@@ -171,10 +178,10 @@ class BuildAutomation:
                     build_automation_structure.parent = self.base_build_automation_structure
 
             # retrieves the artifact id
-            artifact_id = artifact.id
+            artifact_id = self.parse_string(artifact.id, build_automation_structure)
 
             # retrieves the artifact version
-            artifact_version = artifact.version
+            artifact_version = self.parse_string(artifact.version, build_automation_structure)
 
             # retrieves the plugin manager
             manager = self.build_automation_plugin.manager
@@ -237,6 +244,70 @@ class BuildAutomation:
                 if build_automation_extension_plugin.id == plugin_id:
                     return build_automation_extension_plugin
 
+    def parse_string(self, string, build_automation_structure):
+        """
+        Parses a string for the given build automation structure.
+        
+        @type string: String
+        @param string: The string to be parsed in the given build automation structure context.
+        @type build_automation_structure: BuildAutomationStructure
+        @param build_automation_structure: The build automation structure to be used in the string parsing.
+        @rtype: String
+        @return: The string parsed in the given build automation context.
+        """
+
+        # compiles the regular expression generating the pattern
+        pattern = re.compile(VARIABLE_REGEX) 
+
+        # retrieves the match iterator
+        match_iterator = pattern.finditer(string)
+
+        # iterates using the match iterator
+        for match in match_iterator:
+            # retrieves the match group
+            group = match.group()
+
+            # retrieves the variable value
+            variable_value = group[2:-1]
+
+            # retrieves the variable list value
+            variable_list_value = variable_value.split(".")
+
+            # retrieves the variable list value without build_automation
+            variable_list_value_replaced = variable_list_value[1:]
+
+            # retrieves the real variable value
+            real_variable_value = self.get_variable_value(variable_value, variable_list_value_replaced, build_automation_structure)
+
+            # replaces the value in the string
+            string = string.replace(group, real_variable_value)
+
+        # returns the string value
+        return string
+
+    def get_variable_value(self, variable_value, variable_list_value, build_automation_structure):
+        # creates the is valid boolean flag
+        is_valid = True
+        
+        # sets the current structure selection to the build automation parsing structure
+        current_structure_selection = build_automation_structure.build_automation_parsing_structure
+
+        # iterates over the variable list value
+        for variable_list_value_item in variable_list_value:
+            if hasattr(current_structure_selection, variable_list_value_item):
+                current_structure_selection = getattr(current_structure_selection, variable_list_value_item)
+                if current_structure_selection == None or current_structure_selection == "none":
+                    is_valid = False
+                    break
+
+        if not is_valid:
+            if build_automation_structure.parent:
+                current_structure_selection = self.get_variable_value(variable_value, variable_list_value, build_automation_structure.parent)
+            else:
+                raise build_automation_exceptions.InvalidVaribleException("variable: " + variable_value + " does not exist in this context")
+
+        return current_structure_selection
+
 class BuildAutomationStructure:
     """
     The build automation structure class.
@@ -248,7 +319,10 @@ class BuildAutomationStructure:
     automation_plugins = []
     automation_plugins_configurations = {}
 
-    def __init__(self, parent = None):
+    build_automation_parsing_structure = None
+    """ The associated build automation parsing structure """
+
+    def __init__(self, parent = None, build_automation_parsing_structure = None):
         """
         Constructor of the class.
         
@@ -257,6 +331,8 @@ class BuildAutomationStructure:
         """
 
         self.parent = parent
+        self.build_automation_parsing_structure = build_automation_parsing_structure
+
         self.build_properties = {}
         self.dependecy_plugins = []
         self.automation_plugins = []
