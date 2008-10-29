@@ -85,9 +85,26 @@ class IzpackBuildAutomationExtension:
         if current_operative_system == "windows":
             # creates the execution command
             izpack_execution_command = izpack_home_path + "/compile.bat"
+        # in case the current environment is mac
+        elif current_operative_system == "mac":
+            # creates the execution command
+            izpack_execution_command = izpack_home_path + "/compile"
+        # in case the current environment is unix
+        elif current_operative_system == "unix":
+            # creates the execution command
+            izpack_execution_command = izpack_home_path + "/compile"
+
+        # retrieves the install file path from the given parameters
+        install_file_path = parameters["install_file"]
+
+        # retrieves the plugin path
+        plugin_path = manager.get_plugin_path_by_id(plugin.id)
+
+        # creates the install file full path
+        install_file_full_path = plugin_path + "/" + install_file_path
 
         # retrieves the main logger
         logger = manager.logger
 
         # executes the compilation command
-        command_execution_plugin.execute_command_logger_execution_directory(izpack_execution_command, ["C:/Users/Administrator/Desktop/hive_installer_test/hive_installer_test/install.xml"], logger, "C:/Users/Administrator/Desktop/hive_installer_test/hive_installer_test")
+        command_execution_plugin.execute_command_logger_execution_directory(izpack_execution_command, [install_file_full_path], logger, plugin_path)
