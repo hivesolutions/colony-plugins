@@ -37,8 +37,11 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
 import re
 import copy
+
+import os.path
 
 import build_automation_exceptions
 import build_automation_parser
@@ -161,6 +164,9 @@ class BuildAutomation:
         if not build_automation_structure:
             return
 
+        # creates the build automation directories
+        self.create_build_automation_directories(build_automation_structure)
+
         # retrieves all the automation plugins
         all_automation_plugins = build_automation_structure.get_all_automation_plugins()
 
@@ -260,6 +266,31 @@ class BuildAutomation:
         # retrieves the build parsing value
         build = build_automation_parsing_structure.build
 
+        if build.default_stage:
+            # retrieves the build default stage
+            build_automation_default_stage = build.default_stage
+            build_automation_structure.build_properties["default_stage"] = build_automation_default_stage
+
+        if build.directory:
+            # retrieves the build directory
+            build_automation_directory = build.directory
+            build_automation_structure.build_properties["directory"] = build_automation_directory
+
+        if build.output_directory:
+            # retrieves the build output directory
+            build_automation_output_directory = build.directory
+            build_automation_structure.build_properties["output_directory"] = build_automation_output_directory
+
+        if build.final_name:
+            # retrieves the build final name
+            build_automation_final_name = build.final_name
+            build_automation_structure.build_properties["final_name"] = build_automation_final_name
+
+        if build.source_directory:
+            # retrieves the build source directory
+            build_automation_source_directory = build.source_directory
+            build_automation_structure.build_properties["source_directory"] = build_automation_source_directory
+
         # retrieves the list of build automation dependencies
         build_automation_dependencies = build.dependencies
 
@@ -320,6 +351,18 @@ class BuildAutomation:
     def generate_build_automation_profiles_structure(self, build_automation_parsing_structure, build_automation_structure): 
         # retrieves the profiles parsing value
         profiles = build_automation_parsing_structure.profiles
+        
+    def create_build_automation_directories(self, build_automation_structure):
+        # retrieves the build properties
+        build_properties = build_automation_structure.get_all_build_properties()
+
+        # retrieves the directory path value
+        directory_path = build_properties["directory"]
+
+        # in case the directory does not exist
+        if not os.path.isdir(directory_path):
+            # creates the directory
+            os.mkdir(directory_path)
 
     def get_build_automation_extension_plugin(self, plugin_id, plugin_version = None):
         """
@@ -436,6 +479,21 @@ class BuildAutomationStructure:
         self.automation_plugins = []
         self.automation_plugins_configurations = {}
 
+    def get_all_build_properties(self):
+        # creates a copy of the build properties map
+        build_properties = copy.copy(self.build_properties)
+
+        # in case it contains a parent
+        if self.parent:
+            # retrieves all of the build properties from the parent
+            build_properties_parent = self.parent.get_all_build_properties()
+
+            # copies the contains of the build properties from the parent to the build properties
+            copy_map(build_properties_parent, build_properties)
+
+        # returns the build properties
+        return build_properties
+
     def get_all_automation_plugins(self):
         """
         Retrieves all the automation plugins using a recursive approach.
@@ -480,15 +538,8 @@ class BuildAutomationStructure:
             # retrieves all of the automation plugins configurations from the parent
             automation_plugins_configurations_parent = self.parent.get_all_automation_plugin_configurations(automation_plugin_tuple)
 
-            # iterates over all the automation plugins configurations parent keys
-            for automation_plugins_configurations_parent_key in automation_plugins_configurations_parent:
-                # retrieves the current automation plugins configurations parent value
-                automation_plugins_configurations_parent_value = automation_plugins_configurations_parent[automation_plugins_configurations_parent_key]
-
-                # in case the key is not present in the automation plugins configurations
-                if not automation_plugins_configurations_parent_key in automation_plugins_configurations:
-                    # adds the value to the automation plugins configurations
-                    automation_plugins_configurations[automation_plugins_configurations_parent_key] = automation_plugins_configurations_parent_value
+            # copies the contains of the automation plugins configurations from the parent to the automation plugins configurations
+            copy_map(automation_plugins_configurations_parent, automation_plugins_configurations)
 
         # returns the automation plugins configurations
         return automation_plugins_configurations
@@ -513,3 +564,23 @@ class ColonyBuildAutomationStructure(BuildAutomationStructure):
 
         BuildAutomationStructure.__init__(self, parent)
         self.associated_plugin = associated_plugin
+
+def copy_map(source_map, destiny_map):
+    """
+    Copies the contains of the source map to the destiny map.
+    
+    @type source_map: Dictionary
+    @param source_map: The source map of the copy.
+    @type destiny_map: Dictionary
+    @param destiny_map: The destiny map of the copy.
+    """
+
+    # iterates over all the source map keys
+    for source_map_key in source_map:
+        # retrieves the source map value
+        source_map_value = source_map[source_map_key]
+
+        # in case the key is not present in the destiny map
+        if not source_map_key in destiny_map or destiny_map[source_map_key] == None or destiny_map[source_map_key] == "none":
+            # adds the value to the destiny map
+            destiny_map[source_map_key] = source_map_value
