@@ -252,7 +252,8 @@ class BuildAutomation:
                 # iterates over all the build automation plugin configuration filtered item names
                 for build_automation_plugin_configuration_filtered_item_name in build_automation_plugin_configuration_filtered_item_names:
                     build_automation_plugin_configuration_item = getattr(build_automation_plugin_configuration, build_automation_plugin_configuration_filtered_item_name)
-                    build_automation_structure.automation_plugins_configurations[build_automation_plugin_tuple][build_automation_plugin_configuration_filtered_item_name] = build_automation_plugin_configuration_item
+                    parsed_build_automation_plugin_configuration_item = self.parse_string(build_automation_plugin_configuration_item, build_automation_structure)
+                    build_automation_structure.automation_plugins_configurations[build_automation_plugin_tuple][build_automation_plugin_configuration_filtered_item_name] = parsed_build_automation_plugin_configuration_item
 
         # returns the build automation structure object
         return build_automation_structure
