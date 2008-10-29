@@ -89,8 +89,8 @@ class TestBuildAutomationExtensionPlugin(colony.plugins.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def run_automation(self, plugin, stage, parameters):
-        self.test_build_automation_extension.run_automation(plugin, stage, parameters)
+    def run_automation(self, plugin, stage, parameters, build_automation_structure):
+        self.test_build_automation_extension.run_automation(plugin, stage, parameters, build_automation_structure)
 
     def get_main_test_plugin(self):
         return self.main_test_plugin

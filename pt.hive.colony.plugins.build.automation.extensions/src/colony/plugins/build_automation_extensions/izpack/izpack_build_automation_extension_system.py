@@ -55,7 +55,7 @@ class IzpackBuildAutomationExtension:
 
         self.izpack_build_automation_extension_plugin = izpack_build_automation_extension_plugin
 
-    def run_automation(self, plugin, stage, parameters):
+    def run_automation(self, plugin, stage, parameters, build_automation_structure):
         # retrieves the plugin manager
         manager = self.izpack_build_automation_extension_plugin.manager
 
