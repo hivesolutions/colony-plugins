@@ -103,8 +103,17 @@ class IzpackBuildAutomationExtension:
         # creates the install file full path
         install_file_full_path = plugin_path + "/" + install_file_path
 
+        # retrieves the build properties
+        build_properties = build_automation_structure.get_all_build_properties()
+
+        # retrieves the directory path value
+        directory_path = build_properties["directory"]
+
+        # retrieves output directory path
+        output_directory_path = plugin_path + "/" + directory_path
+
         # creates the output file full path
-        output_file_full_path = plugin_path + "/installer.jar"
+        output_file_full_path = output_directory_path + "/installer.jar"
 
         # retrieves the main logger
         logger = manager.logger
