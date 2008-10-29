@@ -103,8 +103,11 @@ class IzpackBuildAutomationExtension:
         # creates the install file full path
         install_file_full_path = plugin_path + "/" + install_file_path
 
+        # creates the output file full path
+        output_file_full_path = plugin_path + "/installer.jar"
+
         # retrieves the main logger
         logger = manager.logger
 
         # executes the compilation command
-        command_execution_plugin.execute_command_logger_execution_directory(izpack_execution_command, [install_file_full_path], logger, plugin_path)
+        command_execution_plugin.execute_command_logger_execution_directory(izpack_execution_command, [install_file_full_path, "-o", output_file_full_path], logger, plugin_path)
