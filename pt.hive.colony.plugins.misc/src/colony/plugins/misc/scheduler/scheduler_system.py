@@ -43,6 +43,9 @@ import time
 import datetime
 import threading
 
+METHOD_CALL_TYPE = "method_call"
+CONSOLE_COMMAND_TYPE = "console_command"
+
 class Scheduler:
     """
     The scheduler class.
@@ -158,8 +161,18 @@ class Scheduler:
         # retrieves the task arguments
         task_arguments = task.task_arguments
 
+        # in case the task type is of type method_call
+        if task_type == METHOD_CALL_TYPE:
+            # retrieves the method
+            method = task_arguments["method"]
+
+            # retrieve the method arguments
+            method_arguments = task_arguments["method_arguments"]
+
+            # creates a new scheduler item
+            scheduler_item = self.create_scheduler_item(method, method_arguments, absolute_time, recursion_list)
         # in case the task is of type console_command
-        if task_type == "console_command":
+        elif task_type == CONSOLE_COMMAND_TYPE:
             # retrieves the console command
             console_command = task_arguments["console_command"]
 
