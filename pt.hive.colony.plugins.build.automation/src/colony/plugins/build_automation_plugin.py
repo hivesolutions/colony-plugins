@@ -105,10 +105,10 @@ class BuildAutomationPlugin(colony.plugins.plugin_system.Plugin):
     def get_help(self):
         return self.console_build_automation.get_help()
 
-    def run_automation_plugin_id(self, plugind_id):
+    def run_automation_plugin_id(self, plugin_id):
         self.build_automation.run_automation_plugin_id_version(plugin_id)
 
-    def run_automation_plugin_id_plugin_version(self, plugind_id, plugin_version):
+    def run_automation_plugin_id_plugin_version(self, plugin_id, plugin_version):
         self.build_automation.run_automation_plugin_id_version(plugin_id, plugin_version)
 
     @colony.plugins.decorators.load_allowed_capability("build_automation_extension")

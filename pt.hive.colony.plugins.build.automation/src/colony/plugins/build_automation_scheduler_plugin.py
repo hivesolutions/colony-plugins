@@ -55,12 +55,18 @@ class BuildAutomationSchedulerPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["build_automation_scheduler", "console_command_extension"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.build.automation", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.scheduler", "1.0.0")]
     events_handled = []
     events_registrable = []
 
     build_automation_scheduler = None
     console_build_automation_scheduler = None
+
+    build_automation_plugin = None
+    scheduler_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -85,6 +91,7 @@ class BuildAutomationSchedulerPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.build.automation.scheduler", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -96,3 +103,23 @@ class BuildAutomationSchedulerPlugin(colony.plugins.plugin_system.Plugin):
 
     def get_help(self):
         return self.console_build_automation_scheduler.get_help()
+
+    def get_build_automation_plugin(self):
+        return self.build_automation_plugin
+
+    def register_build_automation_plugin_id(self, plugin_id, date_time, recursion_list):
+        self.build_automation_scheduler.register_build_automation_plugin_id(plugin_id, date_time, recursion_list)
+
+    def register_build_automation_plugin_id_version(self, plugin_id, plugin_version, date_time, recursion_list):
+        self.build_automation_scheduler.register_build_automation_plugin_id(plugin_id, plugin_version, date_time, recursion_list)
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.build.automation")
+    def set_build_automation_plugin(self, build_automation_plugin):
+        self.build_automation_plugin = build_automation_plugin
+
+    def get_scheduler_plugin(self):
+        return self.scheduler_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.scheduler")
+    def set_scheduler_plugin(self, scheduler_plugin):
+        self.scheduler_plugin = scheduler_plugin

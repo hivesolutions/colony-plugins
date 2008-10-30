@@ -54,3 +54,33 @@ class BuildAutomationScheduler:
         """
 
         self.build_automation_scheduler_plugin = build_automation_scheduler_plugin
+
+    def register_build_automation_plugin_id(self, plugin_id, date_time, recursion_list):
+        # retrieves the build automation plugin        
+        build_automation_plugin = self.build_automation_scheduler_plugin.build_automation_plugin
+
+        # retrieves the scheduler plugin        
+        scheduler_plugin = self.build_automation_scheduler_plugin.scheduler_plugin
+
+        # retrieves the method call
+        method_call = build_automation_plugin.run_automation_plugin_id
+
+        # creates the list of method arguments
+        method_arguments = [plugin_id]
+
+        # creates the task arguments map
+        task_arguments = {}
+
+        # sets the method in the task arguments
+        task_arguments["method"] = method_call
+
+        # sets the method arguments in the task arguments
+        task_arguments["method_arguments"] = method_arguments
+
+        # retrieves the task class
+        task_class = scheduler_plugin.get_task_class()
+
+        # creates the build automation task class
+        build_automation_task = task_class("method_call", task_arguments)
+
+        scheduler_plugin.register_task_date_time_absolute_recursive(build_automation_task, date_time, recursion_list)
