@@ -76,3 +76,22 @@ class ColonyBaseBuildAutomationItem:
         colony_base_build_automation_item_plugin_baf_path = colony_base_build_automation_item_plugin_path + "/build_automation_items/colony_base/resources/baf.xml"
 
         return colony_base_build_automation_item_plugin_baf_path
+
+    def get_build_automation_execution_path(self):
+        """
+        Retrieves the build automation execution path.
+        
+        @rtype: String
+        @return: The build automation execution path.
+        """
+
+        # retrieves the plugin manager
+        manager = self.colony_base_build_automation_item_plugin.manager
+
+        # retrieves the colony base build automation item plugin id
+        colony_base_build_automation_item_plugin_id = self.colony_base_build_automation_item_plugin.id
+
+        # retrieves the colony base build automation item plugin path
+        colony_base_build_automation_item_plugin_path = manager.get_plugin_path_by_id(colony_base_build_automation_item_plugin_id)
+
+        return colony_base_build_automation_item_plugin_path

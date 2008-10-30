@@ -42,6 +42,7 @@
 	</artifact>
 	<build>
 		<default_stage>build</default_stage>
+		<execution_directory>$call{get_build_automation_execution_path}</execution_directory>
 		<plugins>
 			<plugin>
 				<id>pt.hive.colony.plugins.build.automation.extensions.izpack</id>
