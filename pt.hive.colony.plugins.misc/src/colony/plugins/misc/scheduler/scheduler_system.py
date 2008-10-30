@@ -252,6 +252,9 @@ class Scheduler:
         for scheduler_item in self.scheduler_items:
             self.remove_active_scheduler_item(scheduler_item)
 
+    def get_all_scheduler_items(self):
+        return self.scheduler_items
+
     def task_hander(self, scheduler_item):
         item_task_method = scheduler_item.task_method
         task_method_arguments = scheduler_item.task_method_arguments

@@ -53,7 +53,7 @@ class SchedulerPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["scheduler", "thread"]
+    capabilities = ["scheduler", "thread", "console_command_extension"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.guid", "1.0.0"),
@@ -63,6 +63,7 @@ class SchedulerPlugin(colony.plugins.plugin_system.Plugin):
     events_registrable = []
 
     scheduler = None
+    console_scheduler = None
 
     guid_plugin = None
     main_console_plugin = None
@@ -71,7 +72,9 @@ class SchedulerPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global misc
         import misc.scheduler.scheduler_system
+        import misc.scheduler.console_scheduler
         self.scheduler = misc.scheduler.scheduler_system.Scheduler(self)
+        self.console_scheduler = misc.scheduler.console_scheduler.ConsoleScheduler(self)
         self.scheduler.load_scheduler()
 
     def end_load_plugin(self):
@@ -96,6 +99,15 @@ class SchedulerPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.misc.scheduler", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    def get_all_commands(self):
+        return self.console_scheduler.get_all_commands()
+
+    def get_handler_command(self, command):
+        return self.console_scheduler.get_handler_command(command)
+
+    def get_help(self):
+        return self.console_scheduler.get_help()
 
     def register_task(self, task, time):
         self.scheduler.register_task(task, time)
