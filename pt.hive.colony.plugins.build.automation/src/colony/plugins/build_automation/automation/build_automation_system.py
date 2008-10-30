@@ -71,7 +71,7 @@ class BuildAutomation:
     build_automation_item_plugin_id_map = {}
     """ The map with the loaded build automation item plugin associated with the build automation id """
 
-    plugin_id_build_automation_item_map = {}
+    id_build_automation_item_plugin_map = {}
     """ The map with the build automation id associated with the loaded build automation item plugin """
 
     base_build_automation_structure = None
@@ -92,7 +92,7 @@ class BuildAutomation:
 
         self.loaded_build_automation_item_plugins_list = []
         self.build_automation_item_plugin_id_map = {}
-        self.plugin_id_build_automation_item_map = {}
+        self.id_build_automation_item_plugin_map = {}
 
     def load_build_automation_item_plugin(self, build_automation_item_plugin):
         # adds the build automation item plugin to the list of build automation item plugins
@@ -102,7 +102,7 @@ class BuildAutomation:
         self.build_automation_item_plugin_id_map[build_automation_item_plugin] = self.current_id
 
         # associates the build automation id with the build automation item plugin
-        self.plugin_id_build_automation_item_map[self.current_id] = build_automation_item_plugin
+        self.id_build_automation_item_plugin_map[self.current_id] = build_automation_item_plugin
 
         # increments the current id
         self.current_id += 1
@@ -117,8 +117,8 @@ class BuildAutomation:
         if build_automation_item_plugin in self.build_automation_item_plugin_id_map:
             del self.build_automation_item_plugin_id_map[build_automation_item_plugin]
 
-        if build_automation_id in self.plugin_id_build_automation_item_map:
-            del self.plugin_id_build_automation_item_map[build_automation_id]
+        if build_automation_id in self.id_build_automation_item_plugin_map:
+            del self.id_build_automation_item_plugin_map[build_automation_id]
 
     def get_base_build_automation_structure(self):
         """

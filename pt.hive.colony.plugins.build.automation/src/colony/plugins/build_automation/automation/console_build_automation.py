@@ -37,12 +37,17 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import re
+
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 HELP_TEXT = "### BUILD AUTOMATION HELP ###\n\
 runautomation <plugin-id> [plugin-version] - runs the build automation in the plugin with the given id and version\
 showallautomation - shows all the build automations"
 TABLE_TOP_TEXT = "ID      BUILD AUTOMATION ID"
 COLUMN_SPACING = 8
+
+ID_REGEX = "[0-9]+"
+""" The regular expression to retrieve the id of the build automation """
 
 class ConsoleBuildAutomation:
     """
@@ -84,8 +89,11 @@ class ConsoleBuildAutomation:
         # retrieves the plugin id
         plugin_id = args[0]
 
+        # retrieves the real 
+        real_plugin_id = self.get_plugin_id(plugin_id)
+
         # runs the automation for the plugin
-        self.build_automation_plugin.build_automation.run_automation_plugin_id_version(plugin_id)
+        self.build_automation_plugin.build_automation.run_automation_plugin_id_version(real_plugin_id)
 
     def process_showallautomation(self, args, output_method):
         # prints the table top text
@@ -114,3 +122,30 @@ class ConsoleBuildAutomation:
                output_method(" ", False)
 
             output_method(build_automation_item_plugin_id, True)
+
+    def get_plugin_id(self, id):
+        plugin_id = None
+        valid = False
+
+        # compiles the regular expression
+        compilation = re.compile(ID_REGEX)
+        result = compilation.match(id)
+
+        # in case there is at least one match
+        if result:
+            valid = result.group() == id
+
+        # in case it matches the regular expression
+        if valid:
+            int_value = int(id)
+
+            # retrieves the build automation instance
+            build_automation = self.build_automation_plugin.build_automation
+
+            if int_value in build_automation.id_build_automation_item_plugin_map:
+                plugin = build_automation.id_build_automation_item_plugin_map[int_value]
+                plugin_id = plugin.id
+        else:
+            plugin_id = id
+
+        return plugin_id
