@@ -62,6 +62,18 @@ class BuildAutomation:
     build_automation_plugin = None
     """ The build automation plugin """
 
+    current_id = 0
+    """ The current id used for the build automation """
+
+    loaded_build_automation_item_plugins_list = []
+    """ The list of loaded build automation item plugins """
+
+    build_automation_item_plugin_id_map = {}
+    """ The map with the loaded build automation item plugin associated with the build automation id """
+
+    plugin_id_build_automation_item_map = {}
+    """ The map with the build automation id associated with the loaded build automation item plugin """
+
     base_build_automation_structure = None
     """ the base build automation structure """
 
@@ -77,6 +89,36 @@ class BuildAutomation:
         """
 
         self.build_automation_plugin = build_automation_plugin
+
+        self.loaded_build_automation_item_plugins_list = []
+        self.build_automation_item_plugin_id_map = {}
+        self.plugin_id_build_automation_item_map = {}
+
+    def load_build_automation_item_plugin(self, build_automation_item_plugin):
+        # adds the build automation item plugin to the list of build automation item plugins
+        self.loaded_build_automation_item_plugins_list.append(build_automation_item_plugin)
+
+        # associates the build automation item plugin with the build automation id
+        self.build_automation_item_plugin_id_map[build_automation_item_plugin] = self.current_id
+
+        # associates the build automation id with the build automation item plugin
+        self.plugin_id_build_automation_item_map[self.current_id] = build_automation_item_plugin
+
+        # increments the current id
+        self.current_id += 1
+
+    def unload_build_automation_item_plugin(self, build_automation_item_plugin):
+        # retrieves the build automation id
+        build_automation_id = self.loaded_test_cases_id_map[build_automation_item_plugin]
+
+        if build_automation_item_plugin in self.loaded_build_automation_item_plugins_list:
+            self.loaded_build_automation_item_plugins_list.remove(build_automation_item_plugin)
+
+        if build_automation_item_plugin in self.build_automation_item_plugin_id_map:
+            del self.build_automation_item_plugin_id_map[build_automation_item_plugin]
+
+        if build_automation_id in self.plugin_id_build_automation_item_map:
+            del self.plugin_id_build_automation_item_map[build_automation_id]
 
     def get_base_build_automation_structure(self):
         """
@@ -123,7 +165,7 @@ class BuildAutomation:
         @return: The build automation structure with the given id and version.
         """
 
-        for build_automation_item_plugin in self.build_automation_plugin.build_automation_item_plugins:
+        for build_automation_item_plugin in self.loaded_build_automation_item_plugins_list:
             if build_automation_item_plugin.id == build_automation_id and (build_automation_item_plugin.version == build_automation_version or not build_automation_version):
                 # retrieves the build automation item plugin id                
                 build_automation_item_plugin_id = build_automation_item_plugin.id
@@ -535,6 +577,9 @@ class BuildAutomation:
         value = method(*method_arguments_parsed)
 
         return value
+
+    def get_all_build_automation_item_plugins(self):
+        return self.loaded_build_automation_item_plugins_list
 
 class BuildAutomationStructure:
     """

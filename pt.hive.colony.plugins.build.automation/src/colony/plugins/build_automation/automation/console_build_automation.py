@@ -39,14 +39,17 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 HELP_TEXT = "### BUILD AUTOMATION HELP ###\n\
-runautomation <plugin-id> [plugin-version] - runs the build automation in the plugin with the given id and version"
+runautomation <plugin-id> [plugin-version] - runs the build automation in the plugin with the given id and version\
+showallautomation - shows all the build automations"
+TABLE_TOP_TEXT = "ID      BUILD AUTOMATION ID"
+COLUMN_SPACING = 8
 
 class ConsoleBuildAutomation:
     """
     The console build automation class.
     """
 
-    commands = ["runautomation"]
+    commands = ["runautomation", "showallautomation"]
 
     build_automation_plugin = None
     """ The build automation plugin """
@@ -83,3 +86,31 @@ class ConsoleBuildAutomation:
 
         # runs the automation for the plugin
         self.build_automation_plugin.build_automation.run_automation_plugin_id_version(plugin_id)
+
+    def process_showallautomation(self, args, output_method):
+        # prints the table top text
+        output_method(TABLE_TOP_TEXT)
+
+        # retrieves the build automation instance
+        build_automation = self.build_automation_plugin.build_automation
+
+        # retrieves all the available build automation item plugins
+        build_automation_item_plugins = build_automation.get_all_build_automation_item_plugins()
+
+        # iterates over all the build automation item plugins
+        for build_automation_item_plugin in build_automation_item_plugins:
+            # retrieves the internal id of the build automation
+            build_automation_id = build_automation.build_automation_item_plugin_id_map[build_automation_item_plugin]
+
+            # converts the internal id of the build automation to string
+            build_automation_id_str = str(build_automation_id)
+
+            # retrieves the build automation item plugin id
+            build_automation_item_plugin_id = build_automation_item_plugin.id
+
+            output_method(build_automation_id_str, False)
+
+            for x in range(COLUMN_SPACING - len(build_automation_id_str)):
+               output_method(" ", False)
+
+            output_method(build_automation_item_plugin_id, True)

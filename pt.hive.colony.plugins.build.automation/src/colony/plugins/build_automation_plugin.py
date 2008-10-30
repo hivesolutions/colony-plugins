@@ -118,6 +118,7 @@ class BuildAutomationPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.load_allowed_capability("build_automation_item")
     def build_automation_item_load_allowed(self, plugin, capability):
         self.build_automation_item_plugins.append(plugin)
+        self.build_automation.load_build_automation_item_plugin(plugin)
 
     @colony.plugins.decorators.unload_allowed_capability("build_automation_extension")
     def build_automation_extension_unload_allowed(self, plugin, capability):
@@ -126,3 +127,4 @@ class BuildAutomationPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.unload_allowed_capability("build_automation_item")
     def build_automation_item_unload_allowed(self, plugin, capability):
         self.build_automation_item_plugins.remove(plugin)
+        self.build_automation.unload_build_automation_item_plugin(plugin)
