@@ -42,10 +42,11 @@
 	</artifact>
 	<build>
 		<default_stage>build</default_stage>
-		<directory>target</directory>
+		<execution_directory>.</execution_directory>
+		<target_directory>target</target_directory>
 		<output_directory>target/classes</output_directory>
-		<final_name>${build_automation.artifact.id}-${build_automation.artifact.version}</final_name>
 		<source_directory>src</source_directory>
+		<final_name>${build_automation.artifact.id}-${build_automation.artifact.version}</final_name>
 		<dependencies>
 			<dependency>
 				<id>pt.hive.colony.plugins.build.automation</id>

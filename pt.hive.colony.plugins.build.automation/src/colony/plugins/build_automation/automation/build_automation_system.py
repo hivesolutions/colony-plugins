@@ -50,6 +50,8 @@ BASE_AUTOMATION_ID = "pt.hive.colony.plugins.build.automation.base"
 
 VARIABLE_REGEX = "\$\{[^\}]*\}"
 
+CALL_REGEX = "\$call\{(\$\{[^\}]*\}|[^\}])*\}"
+
 EXCLUSION_LIST = ["__doc__", "__init__", "__module__"]
 
 class BuildAutomation:
@@ -208,8 +210,8 @@ class BuildAutomation:
             # creates the colony build automation structure object
             build_automation_structure = ColonyBuildAutomationStructure()
 
-            # sets the build automation parsing structure
-            build_automation_structure.build_automation_parsing_structure = build_automation_parsing_structure
+        # sets the build automation parsing structure
+        build_automation_structure.build_automation_parsing_structure = build_automation_parsing_structure
 
         # generates the build automation parent structure
         self.generate_build_automation_parent_structure(build_automation_parsing_structure, build_automation_structure)
@@ -268,28 +270,33 @@ class BuildAutomation:
 
         if build.default_stage:
             # retrieves the build default stage
-            build_automation_default_stage = build.default_stage
+            build_automation_default_stage = self.parse_string(build.default_stage, build_automation_structure)
             build_automation_structure.build_properties["default_stage"] = build_automation_default_stage
 
-        if build.directory:
-            # retrieves the build directory
-            build_automation_directory = build.directory
-            build_automation_structure.build_properties["directory"] = build_automation_directory
+        if build.execution_directory:
+            # retrieves the build execution directory
+            build_automation_execution_directory = self.parse_string(build.execution_directory, build_automation_structure)
+            build_automation_structure.build_properties["execution_directory"] = build_automation_execution_directory
+
+        if build.target_directory:
+            # retrieves the build target directory
+            build_automation_target_directory = self.parse_string(build.target_directory, build_automation_structure)
+            build_automation_structure.build_properties["target_directory"] = build_automation_target_directory
 
         if build.output_directory:
             # retrieves the build output directory
-            build_automation_output_directory = build.directory
+            build_automation_output_directory = self.parse_string(build.output_directory, build_automation_structure)
             build_automation_structure.build_properties["output_directory"] = build_automation_output_directory
-
-        if build.final_name:
-            # retrieves the build final name
-            build_automation_final_name = build.final_name
-            build_automation_structure.build_properties["final_name"] = build_automation_final_name
 
         if build.source_directory:
             # retrieves the build source directory
-            build_automation_source_directory = build.source_directory
+            build_automation_source_directory = self.parse_string(build.source_directory, build_automation_structure)
             build_automation_structure.build_properties["source_directory"] = build_automation_source_directory
+
+        if build.final_name:
+            # retrieves the build final name
+            build_automation_final_name = self.parse_string(build.final_name, build_automation_structure)
+            build_automation_structure.build_properties["final_name"] = build_automation_final_name
 
         # retrieves the list of build automation dependencies
         build_automation_dependencies = build.dependencies
@@ -356,13 +363,35 @@ class BuildAutomation:
         # retrieves the build properties
         build_properties = build_automation_structure.get_all_build_properties()
 
-        # retrieves the directory path value
-        directory_path = build_properties["directory"]
+        # retrieves the execution directory path value
+        execution_directory_path = build_properties["execution_directory"]
 
-        # in case the directory does not exist
-        if not os.path.isdir(directory_path):
-            # creates the directory
-            os.mkdir(directory_path)
+        # retrieves the target directory path value
+        target_directory_path = build_properties["target_directory"]
+
+        # retrieves the output directory path value
+        output_directory_path = build_properties["output_directory"]
+
+        # creates the complete target directory path
+        complete_target_directory_path = execution_directory_path + "/" + target_directory_path
+
+        # creates the complete output directory path
+        complete_output_directory_path = execution_directory_path + "/" + output_directory_path
+
+        # in case the execution directory does not exist
+        if not os.path.isdir(execution_directory_path):
+            # creates the execution directory
+            os.mkdir(execution_directory_path)
+
+        # in case the target directory does not exist
+        if not os.path.isdir(complete_target_directory_path):
+            # creates the target directory
+            os.mkdir(complete_target_directory_path)
+
+        # in case the output directory does not exist
+        if not os.path.isdir(complete_output_directory_path):
+            # creates the target directory
+            os.mkdir(complete_output_directory_path)
 
     def get_build_automation_extension_plugin(self, plugin_id, plugin_version = None):
         """
@@ -397,16 +426,16 @@ class BuildAutomation:
         @return: The string parsed in the given build automation context.
         """
 
-        # compiles the regular expression generating the pattern
-        pattern = re.compile(VARIABLE_REGEX) 
+        # compiles the variable regular expression generating the pattern
+        variable_pattern = re.compile(VARIABLE_REGEX) 
 
-        # retrieves the match iterator
-        match_iterator = pattern.finditer(string)
+        # retrieves the variable match iterator
+        variable_match_iterator = variable_pattern.finditer(string)
 
-        # iterates using the match iterator
-        for match in match_iterator:
+        # iterates using the variable match iterator
+        for variable_match in variable_match_iterator:
             # retrieves the match group
-            group = match.group()
+            group = variable_match.group()
 
             # retrieves the variable value
             variable_value = group[2:-1]
@@ -420,8 +449,31 @@ class BuildAutomation:
             # retrieves the real variable value
             real_variable_value = self.get_variable_value(variable_value, variable_list_value_replaced, build_automation_structure)
 
+            # parses the real variable value
+            real_variable_value_parsed = self.parse_string(real_variable_value, build_automation_structure)
+
             # replaces the value in the string
-            string = string.replace(group, real_variable_value)
+            string = string.replace(group, real_variable_value_parsed)
+
+        # compiles the call regular expression generating the pattern
+        call_pattern = re.compile(CALL_REGEX) 
+
+        # retrieves the call match iterator
+        call_match_iterator = call_pattern.finditer(string)
+
+        # iterates using the call match iterator
+        for call_match in call_match_iterator:
+            # retrieves the match group
+            group = call_match.group()
+
+            # retrieves the call value
+            call_value = group[6:-1]
+
+            # retrieves the real call value
+            real_call_value = self.get_call_value(call_value, build_automation_structure)
+
+            # replaces the value in the string
+            string = string.replace(group, real_call_value)
 
         # returns the string value
         return string
@@ -448,6 +500,41 @@ class BuildAutomation:
                 raise build_automation_exceptions.InvalidVaribleException("variable: " + variable_value + " does not exist in this context")
 
         return current_structure_selection
+
+    def get_call_value(self, call_value, build_automation_structure):
+        # splits the call value
+        call_values = call_value.split(",")
+
+        # strips all the call values
+        call_values_striped = [value.strip() for value in call_values]
+
+        # retrieves the method name
+        method_name = call_values_striped[0]
+
+        # retrieves the method arguments
+        method_arguments = call_values_striped[1:]
+
+        # parses the method name
+        method_name_parsed = self.parse_string(method_name, build_automation_structure)
+
+        # creates the list containing the parsed method arguments
+        method_arguments_parsed = []
+
+        # iterates over the method arguments
+        for method_argument in method_arguments:
+            # parses the method argument
+            method_argument_parsed = self.parse_string(method_argument, build_automation_structure)
+
+            # adds the parsed method argument to the list of parsed method arguments
+            method_arguments_parsed.append(method_argument_parsed)
+
+        # retrieves the instance method
+        method = getattr(build_automation_structure.associated_plugin, method_name_parsed)
+
+        # calls the method
+        value = method(*method_arguments_parsed)
+
+        return value
 
 class BuildAutomationStructure:
     """
