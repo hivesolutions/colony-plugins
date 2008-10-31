@@ -96,5 +96,5 @@ class EmailPlugin(colony.plugins.plugin_system.Plugin):
     def get_help(self):
         return self.console_email.get_help()
 
-    def send_email(self, email_sender, email_receiver, subject, containts, smtp_server, smtp_login, smtp_password):
-        self.email.send_email(email_sender, email_receiver, subject, containts, smtp_server, smtp_login, smtp_password)
+    def send_email(self, email_sender, email_receiver, name_sender, name_receiver, subject, containts, smtp_server, smtp_login, smtp_password):
+        self.email.send_email(email_sender, email_receiver, name_sender, name_receiver, subject, containts, smtp_server, smtp_login, smtp_password)

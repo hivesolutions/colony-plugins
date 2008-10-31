@@ -64,17 +64,23 @@ class EmailMessagingExtension:
         # retrieves the email plugin
         email_plugin = self.email_messaging_extension_plugin.email_plugin
 
-        # retrieves the text part of the message
-        message_text = message_attributes["text"]
-
         # retrieves the email of the message sender
         email_sender = message_attributes["email_sender"]
 
         # retrieves the email of the message receiver
         email_receiver = message_attributes["email_receiver"]
 
+        # retrieves the name of the message sender
+        name_sender = message_attributes["name_sender"]
+
+        # retrieves the name of the message receiver
+        name_receiver = message_attributes["name_receiver"]
+
         # retrieves the subject part of the message
         subject = message_attributes["subject"]
 
+        # retrieves the text part of the message
+        contents = message_attributes["text"]
+
         # sends the email message
-        email_plugin.send_email(email_sender, email_receiver, subject, message_text, "hive.pt", "joamag", "cdnosap0zg6t")
+        email_plugin.send_email(email_sender, email_receiver, name_sender, name_receiver, subject, contents, "hive.pt", "joamag", "cdnosap0zg6t")

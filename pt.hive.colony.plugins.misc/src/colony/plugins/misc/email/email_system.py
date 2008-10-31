@@ -62,7 +62,7 @@ class Email:
 
         self.email_plugin = email_plugin
 
-    def send_email(self, email_sender = "none", email_receiver = "none", subject = "none", containts = "none", smtp_server = "none", smtp_login = "none", smtp_password = "none"):
+    def send_email(self, email_sender = "none", email_receiver = "none", name_sender = "none", name_receiver = "none", subject = "none", containts = "none", smtp_server = "none", smtp_login = "none", smtp_password = "none"):
         # establishes the connection with the smtp server
         server = smtplib.SMTP("hive.pt")
 
@@ -77,7 +77,7 @@ class Email:
             server.docmd("AUTH PLAIN")
             server.docmd(base64_passphrase)
 
-        header = HEADER_TEMPLATE % ("Tobias", email_sender, "Rabeta", email_receiver, subject)
+        header = HEADER_TEMPLATE % (name_sender, email_sender, name_receiver, email_receiver, subject)
 
         final_containts = header + containts
 
