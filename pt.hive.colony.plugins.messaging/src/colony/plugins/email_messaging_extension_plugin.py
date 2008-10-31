@@ -40,34 +40,33 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.plugins.plugin_system
 import colony.plugins.decorators
 
-class MessagingManagerPlugin(colony.plugins.plugin_system.Plugin):
+class EmailMessagingExtensionPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Messaging Manager plugin.
+    The main class for the Email Messaging Extension plugin.
     """
 
-    id = "pt.hive.colony.plugins.messaging.manager"
-    name = "Messaging Manager Plugin"
-    short_name = "Messaging Manager"
-    description = "A plugin to manage the messaging service"
+    id = "pt.hive.colony.plugins.messaging.extensions.email"
+    name = "Stdout Messaging Extension Plugin"
+    short_name = "Stdout Messaging Extension"
+    description = "A plugin to manage stdout messaging extension"
     version = "1.0.0"
     author = "Hive Solutions"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["messaging_manager"]
-    capabilities_allowed = ["messaging_extension"]
-    dependencies = []
+    capabilities = ["messaging_extension"]
+    capabilities_allowed = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.email", "1.0.0")]
     events_handled = []
     events_registrable = []
 
-    messaging_manager = None
-
-    messaging_extension_plugins = []
+    email_messaging_extension = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
-        global messaging
-        import messaging.manager.messaging_manager_system
-        self.messaging_manager = messaging.manager.messaging_manager_system.MessagingManager(self)
+        global messaging_extensions
+        import messaging_extensions.email.email_messaging_extension_system
+        self.email_messaging_extension = messaging_extensions.email.email_messaging_extension_system.EmailMessagingExtension(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -78,26 +77,25 @@ class MessagingManagerPlugin(colony.plugins.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.messaging.manager", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.messaging.manager", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.messaging.extensions.email", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def send_message(self, messaging_service_id, message_attributes):
-        self.messaging_manager.send_message(messaging_service_id, message_attributes)
+    def get_messaging_service_id(self):
+        return self.email_messaging_extension.get_messaging_service_id()
 
-    @colony.plugins.decorators.load_allowed_capability("messaging_extension")
-    def messaging_extension_load_allowed(self, plugin, capability):
-        self.messaging_extension_plugins.append(plugin)
-        self.messaging_manager.load_messaging_extension_plugin(plugin)
+    def send_message(self, message_attributes):
+        self.email_messaging_extension.send_message(message_attributes)
 
-    @colony.plugins.decorators.unload_allowed_capability("messaging_extension")
-    def messaging_extension_unload_allowed(self, plugin, capability):
-        self.messaging_extension_plugins.remove(plugin)
-        self.messaging_manager.unload_messaging_extension_plugin(plugin)
+    def get_email_plugin(self):
+        return self.email_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.email")
+    def set_email_plugin(self, email_plugin):
+        self.email_plugin = email_plugin

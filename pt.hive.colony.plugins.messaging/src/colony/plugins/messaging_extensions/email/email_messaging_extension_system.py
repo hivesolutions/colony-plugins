@@ -37,32 +37,44 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-MESSAGING_SERVICE_ID = "stdout"
+MESSAGING_SERVICE_ID = "email"
 
-class StdoutMessagingExtension:
+class EmailMessagingExtension:
     """
-    The stdout messaging extension class.
+    The email messaging extension class.
     """
 
-    stdout_messaging_extension_plugin = None
-    """ The stdout messaging extension plugin """
+    email_messaging_extension_plugin = None
+    """ The email messaging extension plugin """
 
-    def __init__(self, stdout_messaging_extension_plugin):
+    def __init__(self, email_messaging_extension_plugin):
         """
         Constructor of the class.
         
-        @type stdout_messaging_extension_plugin: StdoutMessagingExtensionPlugin
-        @param stdout_messaging_extension_plugin: The stdout messaging extension plugin.
+        @type email_messaging_extension_plugin: EmailMessagingExtensionPlugin
+        @param email_messaging_extension_plugin: The email messaging extension plugin.
         """
 
-        self.stdout_messaging_extension_plugin = stdout_messaging_extension_plugin
+        self.email_messaging_extension_plugin = email_messaging_extension_plugin
 
     def get_messaging_service_id(self):
         return MESSAGING_SERVICE_ID
 
     def send_message(self, message_attributes):
+        # retrieves the email plugin
+        email_plugin = self.email_messaging_extension_plugin.email_plugin
+
         # retrieves the text part of the message
         message_text = message_attributes["text"]
 
-        # prints the message text to the stdout
-        print message_text
+        # retrieves the email of the message sender
+        email_sender = message_attributes["email_sender"]
+
+        # retrieves the email of the message receiver
+        email_receiver = message_attributes["email_receiver"]
+
+        # retrieves the subject part of the message
+        subject = message_attributes["subject"]
+
+        # sends the email message
+        email_plugin.send_email(email_sender, email_receiver, subject, message_text, "hive.pt", "joamag", "cdnosap0zg6t")
