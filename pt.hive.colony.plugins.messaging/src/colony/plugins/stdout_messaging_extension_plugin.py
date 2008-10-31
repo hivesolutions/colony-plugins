@@ -85,6 +85,8 @@ class StdoutMessagingExtensionPlugin(colony.plugins.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    def get_messaging_service_id(self):
+        return self.stdout_messaging_extension.get_messaging_service_id()
+
     def send_message(self, message_attributes):
         self.stdout_messaging_extension.send_message(message_attributes)
-

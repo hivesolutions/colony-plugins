@@ -25,10 +25,10 @@ __author__ = "João Magalhães <joamag@hive.pt>"
 __version__ = "1.0.0"
 """ The version of the module """
 
-__revision__ = "$LastChangedRevision: 72 $"
+__revision__ = "$LastChangedRevision: 145 $"
 """ The revision number of the module """
 
-__date__ = "$LastChangedDate: 2008-10-21 23:29:54 +0100 (Ter, 21 Out 2008) $"
+__date__ = "$LastChangedDate: 2008-10-24 16:42:14 +0100 (Sex, 24 Out 2008) $"
 """ The last change date of the module """
 
 __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
@@ -37,28 +37,25 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-MESSAGING_SERVICE_ID = "stdout"
-
-class StdoutMessagingExtension:
+def MessagingManagerException(Exception):
     """
-    The stdout messaging extension class.
+    The messaging manager exception class.
     """
 
-    stdout_messaging_extension_plugin = None
-    """ The messaging manager plugin """
+    def __init__(self, message):
+        Exception.__init__(self)
+        self.message = message
 
-    def __init__(self, stdout_messaging_extension_plugin):
-        """
-        Constructor of the class.
-        
-        @type stdout_messaging_extension_plugin: StdoutMessagingExtensionPlugin
-        @param stdout_messaging_extension_plugin: The stdout messaging extension plugin.
-        """
+    def __str__(self):
+       return "Messaging manager exception: %s" % self.message
 
-        self.stdout_messaging_extension_plugin = stdout_messaging_extension_plugin
+def InvalidMessagingServiceIdException(BuildAutomationException):
+    """
+    The invalid messaging service id exception class.
+    """
 
-    def get_messaging_service_id(self):
-        return MESSAGING_SERVICE_ID
+    def __init__(self, message):
+        MessagingManagerException.__init__(self, message)
 
-    def send_message(self, message_attributes):
-        pass
+    def __str__(self):
+       return "The requested messaging service id is invalid: %s" % self.message

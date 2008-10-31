@@ -78,9 +78,11 @@ class MessagingManagerPlugin(colony.plugins.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
+    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.messaging.manager", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.messaging.manager", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
@@ -89,3 +91,13 @@ class MessagingManagerPlugin(colony.plugins.plugin_system.Plugin):
 
     def send_message(self, message_attributes):
         self.messaging_manager.send_message(message_attributes)
+
+    @colony.plugins.decorators.load_allowed_capability("messaging_extension")
+    def messaging_extension_load_allowed(self, plugin, capability):
+        self.messaging_extension_plugins.append(plugin)
+        self.messaging_manager.load_messaging_extension_plugin(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("messaging_extension")
+    def messaging_extension_unload_allowed(self, plugin, capability):
+        self.messaging_extension_plugins.remove(plugin)
+        self.messaging_manager.unload_messaging_extension_plugin(plugin)

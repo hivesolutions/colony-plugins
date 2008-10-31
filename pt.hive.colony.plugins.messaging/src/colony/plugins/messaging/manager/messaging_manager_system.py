@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import messaging_manager_exceptions
+
 class MessagingManager:
     """
     The messaging manager class.
@@ -44,6 +46,24 @@ class MessagingManager:
 
     messaging_manager_plugin = None
     """ The messaging manager plugin """
+
+    current_id = 0
+    """ The current id used for the messaging extensions """
+
+    loaded_messaging_extension_plugins_list = []
+    """ The list of loaded messaging extension plugins """
+
+    messaging_extension_plugin_messaging_service_id_map = {}
+    """ The map with the messaging extension plugin associated with the messaging service id """
+
+    messaging_service_id_messaging_extension_plugin_map = {}
+    """ The map with the messaging service id associated with the messaging extension plugin """
+
+    messaging_extension_plugin_id_map = {}
+    """ The map with the loaded messaging extension plugin associated with the messaging extension id """
+
+    id_messaging_extension_plugin_map = {}
+    """ The map with the messaging extension id associated with the loaded messaging extension plugin """
 
     def __init__(self, messaging_manager_plugin):
         """
@@ -55,5 +75,38 @@ class MessagingManager:
 
         self.messaging_manager_plugin = messaging_manager_plugin
 
-    def send_message(self, message_service_id, message_attributes):
-        pass
+        self.loaded_messaging_extension_plugins_list = []
+        self.messaging_extension_plugin_messaging_service_id_map = {}
+        self.messaging_service_id_messaging_extension_plugin_map = {}
+        self.messaging_extension_plugin_id_map = {}
+        self.id_messaging_extension_plugin_map = {}
+
+    def load_messaging_extension_plugin(self, messaging_extension_plugin):
+        # retrieves the messaging service id
+        messaging_service_id = messaging_extension_plugin.get_messaging_service_id()
+
+        # adds the messaging extension plugin to the list of messaging extension plugins
+        self.loaded_messaging_extension_plugins_list.append(messaging_extension_plugin)
+
+        self.messaging_extension_plugin_messaging_service_id_map[messaging_extension_plugin] = messaging_service_id
+        self.messaging_service_id_messaging_extension_plugin_map[messaging_service_id] = messaging_extension_plugin
+        self.messaging_extension_plugin_id_map[messaging_extension_plugin] = self.current_id
+        self.id_messaging_extension_plugin_map[self.current_id] = messaging_extension_plugin
+
+        # increments the current id
+        self.current_id += 1
+
+    def unload_messaging_extension_plugin(self, messaging_extension_plugin):
+        # retrieves the messaging service id
+        messaging_service_id = messaging_extension_plugin.get_messaging_service_id()
+
+    def send_message(self, messaging_service_id, message_attributes):
+        # in case the messaging service id exists in the messaging service id messaging extension plugin map
+        if not messaging_service_id in self.messaging_service_id_messaging_extension_plugin_map:
+            raise messaging_manager_exceptions.InvalidMessagingServiceIdException("service " + messaging_service_id + " is invalid")
+
+        # retrieves the messaging extension plugin for the given messaging service id
+        messaging_extension_plugin = self.messaging_service_id_messaging_extension_plugin_map[messaging_service_id]
+
+        # send the message to the slected messaging extension plugin
+        messaging_extension_plugin.send_message(message_attributes)
