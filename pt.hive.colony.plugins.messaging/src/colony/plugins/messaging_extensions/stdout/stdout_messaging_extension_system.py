@@ -61,4 +61,8 @@ class StdoutMessagingExtension:
         return MESSAGING_SERVICE_ID
 
     def send_message(self, message_attributes):
-        pass
+        # retrieves the text part of the message
+        message_text = message_attributes["text"]
+
+        # prints the message text to the stdout
+        print message_text
