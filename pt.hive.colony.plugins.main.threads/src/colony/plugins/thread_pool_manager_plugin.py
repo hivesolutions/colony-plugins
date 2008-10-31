@@ -82,6 +82,9 @@ class ThreadPoolManagerPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    def dependency_injected(self, plugin):
+        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+
     def create_new_thread_pool(self, name, description, number_threads, scheduling_algorithm, maximum_number_threads):
         return self.thread_pool_manager.create_new_thread_pool(name, description, number_threads, scheduling_algorithm, maximum_number_threads)
 
