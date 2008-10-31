@@ -37,23 +37,23 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class MessagingManager:
+class StdoutMessagingExtension:
     """
-    The messaging manager class.
+    The stdout messaging extension class.
     """
 
-    messaging_manager_plugin = None
+    stdout_messaging_extension_plugin = None
     """ The messaging manager plugin """
 
-    def __init__(self, messaging_manager_plugin):
+    def __init__(self, stdout_messaging_extension_plugin):
         """
         Constructor of the class.
         
-        @type messaging_manager_plugin: MessagingManagerPlugin
-        @param messaging_manager_plugin: The messaging manager plugin.
+        @type stdout_messaging_extension_plugin: StdoutMessagingExtensionPlugin
+        @param stdout_messaging_extension_plugin: The stdout messaging extension plugin.
         """
 
-        self.messaging_manager_plugin = messaging_manager_plugin
+        self.stdout_messaging_extension_plugin = stdout_messaging_extension_plugin
 
     def send_message(self, message_service_id, message_attributes):
         pass

@@ -40,34 +40,32 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.plugins.plugin_system
 import colony.plugins.decorators
 
-class MessagingManagerPlugin(colony.plugins.plugin_system.Plugin):
+class StdoutMessagingExtensionPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Messaging Manager plugin.
+    The main class for the Stdout Messaging Extension plugin.
     """
 
-    id = "pt.hive.colony.plugins.messaging.manager"
-    name = "Messaging Manager Plugin"
-    short_name = "Messaging Manager"
-    description = "A plugin to manage the messaging service"
+    id = "pt.hive.colony.plugins.messaging.extensions.stdout"
+    name = "Stdout Messaging Extension Plugin"
+    short_name = "Stdout Messaging Extension"
+    description = "A plugin to manage stdout messaging extension"
     version = "1.0.0"
     author = "Hive Solutions"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["messaging_manager"]
-    capabilities_allowed = ["messaging_extension"]
+    capabilities = ["messaging_extension"]
+    capabilities_allowed = []
     dependencies = []
     events_handled = []
     events_registrable = []
 
-    messaging_manager = None
-
-    messaging_extension_plugins = []
+    stdout_messaging_extension = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
-        global messaging
-        import messaging.manager.messaging_manager_system
-        self.messaging_manager = messaging.manager.messaging_manager_system.MessagingManager(self)
+        global messaging_extensions
+        import messaging_extensions.stdout.stdout_messaging_extension_system
+        self.stdout_messaging_extension = messaging_extensions.stdout.stdout_messaging_extension_system.StdoutMessagingExtension(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -88,4 +86,5 @@ class MessagingManagerPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def send_message(self, message_attributes):
-        self.messaging_manager.send_message(message_attributes)
+        self.stdout_messaging_extension.send_message(message_attributes)
+
