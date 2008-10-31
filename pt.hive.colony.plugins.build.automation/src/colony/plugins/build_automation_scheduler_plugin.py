@@ -58,7 +58,11 @@ class BuildAutomationSchedulerPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.build.automation", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.scheduler", "1.0.0")]
+                    "pt.hive.colony.plugins.misc.scheduler", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.messaging.manager", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.guid", "1.0.0")]
     events_handled = []
     events_registrable = []
 
@@ -67,6 +71,8 @@ class BuildAutomationSchedulerPlugin(colony.plugins.plugin_system.Plugin):
 
     build_automation_plugin = None
     scheduler_plugin = None
+    messaging_manager_plugin = None
+    guid_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -123,3 +129,17 @@ class BuildAutomationSchedulerPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.scheduler")
     def set_scheduler_plugin(self, scheduler_plugin):
         self.scheduler_plugin = scheduler_plugin
+
+    def get_messaging_manager_plugin(self):
+        return self.messaging_manager_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.messaging.manager")
+    def set_messaging_manager_plugin(self, messaging_manager_plugin):
+        self.messaging_manager_plugin = messaging_manager_plugin
+
+    def get_guid_plugin(self):
+        return self.guid_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.guid")
+    def set_guid_plugin(self, guid_plugin):
+        self.guid_plugin = guid_plugin
