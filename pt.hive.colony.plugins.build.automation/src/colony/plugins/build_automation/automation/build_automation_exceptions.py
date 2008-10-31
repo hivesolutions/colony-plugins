@@ -51,7 +51,7 @@ def BuildAutomationException(Exception):
 
 def InvalidVaribleException(BuildAutomationException):
     """
-    The build automation exception class.
+    The invalid variable exception class.
     """
 
     def __init__(self, message):
