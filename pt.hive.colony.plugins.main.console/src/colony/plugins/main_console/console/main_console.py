@@ -111,6 +111,7 @@ class MainConsole:
 
         line_split = self.split_command_line_arguments(command_line)
 
+        # in case the line is not empty
         if len(line_split) != 0:
             command = line_split[0]
             arguments = line_split[1:]
