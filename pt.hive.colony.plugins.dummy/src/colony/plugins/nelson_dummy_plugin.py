@@ -40,7 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.plugins.plugin_system
 
 HELP_TEXT = "### NELSON DUMMY PLUGIN HELP ###\n\
-getalltranslationengines - lists all the available translation engines\n\
+getalltranslationengines           - lists all the available translation engines\n\
 translate <dictionary-name> <word> - translates a word for the given dictionary name"
 
 class NelsonDummyPlugin(colony.plugins.plugin_system.Plugin):
