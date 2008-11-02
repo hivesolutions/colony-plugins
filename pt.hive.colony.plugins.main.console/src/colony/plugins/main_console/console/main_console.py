@@ -47,7 +47,7 @@ INVALID_PLUGIN_ID_MESSAGE = "invalid plugin id"
 ERROR_IN_HCS_SCRIPT = "there is an error in the hcs script"
 CARET = ">>"
 HELP_TEXT = "### PLUGIN SYSTEM HELP ###\n\
-help [extension_id] - shows this message or the referred console extension help message\n\
+help [extension-id] - shows this message or the referred console extension help message\n\
 helpall             - shows the help message of all the loaded console extensions\n\
 extensions          - shows the list of loaded console extensions\n\
 show <plugin-id>    - shows the status of the plugin with the defined id\n\
