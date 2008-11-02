@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+CONSOLE_EXTENSION_NAME = "system_updater"
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 HELP_TEXT = "### SYSTEM UPDATER HELP ###\n\
 listrepositories                              - lists the current available repositories\n\
@@ -53,6 +54,9 @@ class ConsoleSystemUpdater:
 
     def __init__(self, system_updater_plugin = None):
         self.system_updater_plugin = system_updater_plugin
+
+    def get_console_extension_name(self):
+        return CONSOLE_EXTENSION_NAME
 
     def get_all_commands(self):
         return self.commands

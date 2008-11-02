@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+CONSOLE_EXTENSION_NAME = "repository_descriptor"
 HELP_TEXT = "### REPOSITORY DESCRIPTOR GENERATOR HELP ###\n\
 generaterepositorydescriptor <file-path> [repository-name] [repository-description] - generates a repository descriptor with the available plugins"
 
@@ -48,6 +49,9 @@ class ConsoleRepositoryDescriptorGenerator:
 
     def __init__(self, repository_descriptor_generator_plugin = None):
         self.repository_descriptor_generator_plugin = repository_descriptor_generator_plugin
+
+    def get_console_extension_name(self):
+        return CONSOLE_EXTENSION_NAME
 
     def get_all_commands(self):
         return self.commands

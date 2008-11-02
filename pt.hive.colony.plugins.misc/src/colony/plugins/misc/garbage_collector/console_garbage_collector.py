@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+CONSOLE_EXTENSION_NAME = "garbage_collector"
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 HELP_TEXT = "### GARBAGE COLLECTOR HELP ###\n\
 rungarbagecollector - runs the python garbage collector"
@@ -49,6 +50,9 @@ class ConsoleGarbageCollector:
 
     def __init__(self, garbage_collector_plugin = None):
         self.garbage_collector_plugin = garbage_collector_plugin
+
+    def get_console_extension_name(self):
+        return CONSOLE_EXTENSION_NAME
 
     def get_all_commands(self):
         return self.commands

@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+CONSOLE_EXTENSION_NAME = "plugin_downloader"
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 INVALID_ADDRESS_MESSAGE = "invalid address"
 HELP_TEXT = "### PLUGIN DOWNLOADER HELP ###\n\
@@ -52,6 +53,9 @@ class ConsolePluginDownloader:
 
     def __init__(self, plugin_downloader_plugin = None):
         self.plugin_downloader_plugin = plugin_downloader_plugin
+
+    def get_console_extension_name(self):
+        return CONSOLE_EXTENSION_NAME
 
     def get_all_commands(self):
         return self.commands

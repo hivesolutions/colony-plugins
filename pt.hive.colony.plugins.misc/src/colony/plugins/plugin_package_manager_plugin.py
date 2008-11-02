@@ -87,6 +87,9 @@ class PluginPackageManagerPlugin(colony.plugins.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    def get_console_extension_name(self):
+        return self.console_plugin_package_manager.get_console_extension_name()
+
     def get_all_commands(self):
         return self.console_plugin_package_manager.get_all_commands()
 

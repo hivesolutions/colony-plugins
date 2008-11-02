@@ -42,6 +42,7 @@ import getopt
 
 import colony.plugins.util
 
+CONSOLE_EXTENSION_NAME = "ice_helper"
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 HELP_TEXT = "### ICE HELPER HELP ###\n\
 loadice <file-path>                                                   - starts the loading of the file\n\
@@ -80,6 +81,9 @@ class ConsoleIceHelper:
 
     def __init__(self, ice_helper_plugin = None):
         self.ice_helper_plugin = ice_helper_plugin
+
+    def get_console_extension_name(self):
+        return CONSOLE_EXTENSION_NAME
 
     def get_all_commands(self):
         return self.commands

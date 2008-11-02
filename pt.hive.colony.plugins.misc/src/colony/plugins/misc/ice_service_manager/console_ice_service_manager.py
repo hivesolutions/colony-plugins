@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+CONSOLE_EXTENSION_NAME = "ice_service_manager"
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 HELP_TEXT = "### ICE SERVICE MANAGER HELP ###\n\
 listiceservices                - lists all the available ice services\n\
@@ -51,6 +52,9 @@ class ConsoleIceServiceManager:
 
     def __init__(self, ice_service_manager_plugin):
         self.ice_service_manager_plugin = ice_service_manager_plugin
+
+    def get_console_extension_name(self):
+        return CONSOLE_EXTENSION_NAME
 
     def get_all_commands(self):
         return self.commands

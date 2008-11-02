@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import xmpp
 import threading
 
+CONSOLE_EXTENSION_NAME = "jabber_client"
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 HELP_TEXT = "### JABBER CLIENT HELP ###\n\
 jabber_connect <jabber_id> <password>                         - connects to a XAMPP server\n\
@@ -198,6 +199,9 @@ class JabberClient:
         if sender_jabber_id in self.clients:
             client = self.clients[sender_jabber_id]
             client.send(xmpp.protocol.Message(receiver_jabber_id, message))
+
+    def get_console_extension_name(self):
+        return CONSOLE_EXTENSION_NAME
 
     def get_all_commands(self):
         return self.commands

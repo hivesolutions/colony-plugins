@@ -106,6 +106,9 @@ class PluginDownloaderPlugin(colony.plugins.plugin_system.Plugin):
         elif colony.plugins.plugin_system.is_capability_or_sub_capability_in_list("dependencies_calculator", plugin.capabilities):
             self.dependencies_calculator_plugin = plugin
 
+    def get_console_extension_name(self):
+        return self.console_plugin_downloader.get_console_extension_name()
+
     def get_all_commands(self):
         return self.console_plugin_downloader.get_all_commands()
 

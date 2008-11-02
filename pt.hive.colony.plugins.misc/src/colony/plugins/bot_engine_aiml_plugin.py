@@ -92,6 +92,10 @@ class BotEngineAIMLPlugin(colony.plugins.plugin_system.Plugin):
         return self.bot_engine_aiml.respond(message)
 
     @colony.plugins.decorators.plugin_call(True)
+    def get_console_extension_name(self):
+        return self.bot_engine_aiml.get_console_extension_name()
+
+    @colony.plugins.decorators.plugin_call(True)
     def get_all_commands(self):
         return self.bot_engine_aiml.get_all_commands()
 

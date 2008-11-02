@@ -99,6 +99,7 @@ class JabberClientPlugin(colony.plugins.plugin_system.Plugin):
             colony.plugins.plugin_system.Plugin.event_handler(self, event_name, *event_args)
         except Exception, exception:
             colony.plugins.plugin_system.Plugin.treat_exception(self, exception)
+
     def register_message_handler(self, id, handler):
         self.generate_event("jabber_register_message_handler", [id, handler])
 
@@ -110,6 +111,9 @@ class JabberClientPlugin(colony.plugins.plugin_system.Plugin):
 
     def send(self, sender_jabber_id, receiver_jabber_id, message):
         self.generate_event("jabber_client_send", [sender_jabber_id, receiver_jabber_id, message])
+
+    def get_console_extension_name(self):
+        return self.jabber_client.get_console_extension_name()
 
     def get_all_commands(self):
         return self.jabber_client.get_all_commands()

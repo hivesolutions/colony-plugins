@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+CONSOLE_EXTENSION_NAME = "bot_manager"
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 HELP_TEXT = "### BOT MANAGER HELP ###\n\
 bot_manager_list_bots                                                 - lists the currently running bots\n\
@@ -81,6 +82,9 @@ class BotManager:
     def __init__(self, parent_plugin):
         self.parent_plugin = parent_plugin
         self.bots_map = {}
+
+    def get_console_extension_name(self):
+        return CONSOLE_EXTENSION_NAME
 
     def get_all_commands(self):
         return self.commands

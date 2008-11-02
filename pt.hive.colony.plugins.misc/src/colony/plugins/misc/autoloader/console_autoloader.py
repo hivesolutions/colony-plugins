@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+CONSOLE_EXTENSION_NAME = "autoloader"
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 HELP_TEXT = "### AUTOLOADER HELP ###\n\
 configautoloader <config-option> - configures the autoloader"
@@ -50,6 +51,9 @@ class ConsoleAutoloader:
 
     def __init__(self, downloader_plugin = None):
         self.downloader_plugin = downloader_plugin
+
+    def get_console_extension_name(self):
+        return CONSOLE_EXTENSION_NAME
 
     def get_all_commands(self):
         return self.commands

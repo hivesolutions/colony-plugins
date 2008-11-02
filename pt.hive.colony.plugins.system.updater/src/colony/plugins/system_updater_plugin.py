@@ -119,6 +119,9 @@ class SystemUpdaterPlugin(colony.plugins.plugin_system.Plugin):
     def get_repository_information_by_repository_name(self, repository_name):
         return self.system_updater.get_repository_information_by_repository_name(repository_name)
 
+    def get_console_extension_name(self):
+        return self.console_system_updater.get_console_extension_name()
+
     def get_all_commands(self):
         return self.console_system_updater.get_all_commands()
 

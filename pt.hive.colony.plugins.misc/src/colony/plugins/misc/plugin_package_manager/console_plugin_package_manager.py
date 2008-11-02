@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+CONSOLE_EXTENSION_NAME = "plugin_package_manager"
 HELP_TEXT = "### PLUGIN PACKAGE MANAGER HELP ###\n"
 
 class ConsolePluginPackageManager:
@@ -47,6 +48,9 @@ class ConsolePluginPackageManager:
 
     def __init__(self, plugin_package_manager_plugin = None):
         self.plugin_package_manager_plugin = plugin_package_manager_plugin
+
+    def get_console_extension_name(self):
+        return CONSOLE_EXTENSION_NAME
 
     def get_all_commands(self):
         return self.commands

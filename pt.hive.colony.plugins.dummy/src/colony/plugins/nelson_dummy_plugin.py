@@ -93,6 +93,9 @@ class NelsonDummyPlugin(colony.plugins.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    def get_console_extension_name(self):
+        return "nelson_dummy"
+
     def get_all_commands(self):
         return ["getalltranslationengines", "translate"]
 

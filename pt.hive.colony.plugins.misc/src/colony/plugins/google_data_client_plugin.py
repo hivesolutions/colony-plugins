@@ -130,6 +130,9 @@ class GoogleDataClientPlugin(colony.plugins.plugin_system.Plugin):
     def youtube_get_video_thumbnail_url(self, id):
         return self.google_data_client.youtube_get_video_thumbnail_url(id)
 
+    def get_console_extension_name(self):
+        return self.console_google_data_client.get_console_extension_name()
+
     def get_all_commands(self):
         return self.console_google_data_client.get_all_commands()
 

@@ -47,19 +47,23 @@ INVALID_PLUGIN_ID_MESSAGE = "invalid plugin id"
 ERROR_IN_HCS_SCRIPT = "there is an error in the hcs script"
 CARET = ">>"
 HELP_TEXT = "### PLUGIN SYSTEM HELP ###\n\
-help               - shows this message\n\
-show <plugin-id>   - show the status of the plugin with the defined id\n\
-showall            - shows the status of all the loaded plugins\n\
-info <plugin-id>   - shows information about the plugin with the defined id\n\
-infoall            - shows information about all the loaded plugins\n\
-add <plugin-path>  - adds a news plugin\n\
-remove <plugin-id> - removes a plugin\n\
-load <plugin-id>   - loads a plugin\n\
-unload <plugin-id> - unloads a plugin\n\
-exec <file-path>   - executes the given hcs script\n\
-exit - exits the system"
+help [extension_id] - shows this message or the referred console extension help message\n\
+helpall             - shows the help message of all the loaded console extensions\n\
+extensions          - shows the list of loaded console extensions\n\
+show <plugin-id>    - shows the status of the plugin with the defined id\n\
+showall             - shows the status of all the loaded plugins\n\
+info <plugin-id>    - shows information about the plugin with the defined id\n\
+infoall             - shows information about all the loaded plugins\n\
+add <plugin-path>   - adds a news plugin\n\
+remove <plugin-id>  - removes a plugin\n\
+load <plugin-id>    - loads a plugin\n\
+unload <plugin-id>  - unloads a plugin\n\
+exec <file-path>    - executes the given hcs script\n\
+exit                - exits the system"
 TABLE_TOP_TEXT = "ID      STATUS      PLUGIN ID"
+EXTENSION_TABLE_TOP_TEXT = "ID      NAME                        PLUGIN ID"
 COLUMN_SPACING = 8
+NAME_COLUMN_SPACING = 28
 
 COMMAND_LINE_REGEX = "\"[^\"]*\"|[^ \s]+"
 """ The regular expression to retrieve the command line arguments """
@@ -70,7 +74,7 @@ ID_REGEX = "[0-9]+"
 #@todo: review and comment this file
 class MainConsole:
 
-    commands = ["help", "show", "showall", "info", "infoall", "add", "remove", "load", "unload", "exec", "exit"]
+    commands = ["help", "helpall", "extensions", "show", "showall", "info", "infoall", "add", "remove", "load", "unload", "exec", "exit"]
 
     main_console_plugin = None
     manager = None
@@ -204,10 +208,38 @@ class MainConsole:
             sys.stdout.write(text)
 
     def process_help(self, args, output_method):
+        if len(args) < 1:
+            output_method(HELP_TEXT)
+        else:
+            extension_name = args[0]
+
+        for console_command_plugin in self.main_console_plugin.console_command_plugins:
+            console_command_plugin_console_extension_name = console_command_plugin.get_console_extension_name()
+            if console_command_plugin_console_extension_name == extension_name:
+                output_method(console_command_plugin.get_help())
+
+    def process_helpall(self, args, output_method):
         output_method(HELP_TEXT)
 
         for console_command_plugin in self.main_console_plugin.console_command_plugins:
             output_method(console_command_plugin.get_help())
+
+    def process_extensions(self, args, output_method):
+        output_method(EXTENSION_TABLE_TOP_TEXT)
+
+        for console_command_plugin in self.main_console_plugin.console_command_plugins:
+            # retrieves the current id for the console command plugin
+            console_command_plugin_current_id = self.manager.loaded_plugins_id_map[console_command_plugin.id]
+            console_command_plugin_current_id_str = str(console_command_plugin_current_id)
+            console_command_plugin_console_extension_name = console_command_plugin.get_console_extension_name()
+
+            output_method(console_command_plugin_current_id_str, False)
+            for x in range(COLUMN_SPACING - len(console_command_plugin_current_id_str)):
+                output_method(" ", False)
+            output_method(console_command_plugin_console_extension_name, False)
+            for x in range(NAME_COLUMN_SPACING - len(console_command_plugin_console_extension_name)):
+                output_method(" ", False)
+            output_method(console_command_plugin.id + "\n", False)
 
     def process_show(self, args, output_method):
         if len(args) < 1:
@@ -243,7 +275,7 @@ class MainConsole:
 
             output_method(plugin_instance_current_id_str, False)
             for x in range(COLUMN_SPACING - len(plugin_instance_current_id_str)):
-               output_method(" ", False)
+                output_method(" ", False)
             if plugin_instance.is_loaded():
                 output_method("ACTIVE" + "      ", False)
             else:

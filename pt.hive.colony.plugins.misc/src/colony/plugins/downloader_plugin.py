@@ -96,6 +96,9 @@ class DownloaderPlugin(colony.plugins.plugin_system.Plugin):
     def get_download_package_stream(self, address):
         return self.downloader.get_download_package_stream(address)
 
+    def get_console_extension_name(self):
+        return self.console_downloader.get_console_extension_name()
+
     def get_all_commands(self):
         return self.console_downloader.get_all_commands()
 

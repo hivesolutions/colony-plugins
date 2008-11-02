@@ -105,6 +105,9 @@ class GarbageCollectorPlugin(colony.plugins.plugin_system.Plugin):
     def get_count(self):
         return self.garbage_collector.get_count()
 
+    def get_console_extension_name(self):
+        return self.console_garbage_collector.get_console_extension_name()
+
     def get_all_commands(self):
         return self.console_garbage_collector.get_all_commands()
 

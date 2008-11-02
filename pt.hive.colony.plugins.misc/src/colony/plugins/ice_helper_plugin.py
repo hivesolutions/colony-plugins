@@ -167,6 +167,9 @@ class IceHelperPlugin(colony.plugins.plugin_system.Plugin):
     def get_default_replica_group(self):
         return self.ice_helper.get_default_replica_group()
 
+    def get_console_extension_name(self):
+        return self.console_ice_helper.get_console_extension_name()
+
     def get_all_commands(self):
         return self.console_ice_helper.get_all_commands()
 

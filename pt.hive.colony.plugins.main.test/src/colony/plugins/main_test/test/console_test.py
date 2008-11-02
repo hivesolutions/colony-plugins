@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import re
 
+CONSOLE_EXTENSION_NAME = "test"
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 INVALID_TEST_ID_MESSAGE = "invalid test id"
 HELP_TEXT = "### UNIT TESTING HELP ###\n\
@@ -61,6 +62,9 @@ class ConsoleTest:
 
     def __init__(self, main_test_plugin):
         self.main_test_plugin = main_test_plugin
+
+    def get_console_extension_name(self):
+        return CONSOLE_EXTENSION_NAME
 
     def get_all_commands(self):
         return self.commands

@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import aiml
 
+CONSOLE_EXTENSION_NAME = "bot_engine_aiml"
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 HELP_TEXT = "### AIML BOT ENGINE HELP ###\n\
 bot_engine_aiml_load_brain <path>  - loads a PyAIML brain into the AIML bot engine\n\
@@ -51,25 +52,28 @@ class BotEngineAIML:
     parent_plugin = None
 
     commands = ["bot_engine_aiml_load_brain", "bot_engine_aiml_teach_brain", "bot_engine_aiml_send"]
-    
+
     aiml_engine = None
-    
+
     def __init__(self, parent_plugin):
         self.parent_plugin = parent_plugin
         self.aiml_engine = aiml.Kernel()
-    
+
     def load_brain(self, brain_path):
         self.aiml_engine.loadBrain(brain_path)
-    
+
     def teach_brain(self, aiml_path):
         self.aiml_engine.teachBrain(aiml_path)
-        
+
     def respond(self, message):
         return self.aiml_engine.respond(message)
-    
+
     def get_id(self):
         return "bot_engine_aiml"
-    
+
+    def get_console_extension_name(self):
+        return CONSOLE_EXTENSION_NAME
+
     def get_all_commands(self):
         return self.commands
 
@@ -81,14 +85,14 @@ class BotEngineAIML:
 
     def get_help(self):
         return HELP_TEXT
-    
+
     def process_bot_engine_aiml_load_brain(self, args, output_method):
         if len(args) >= 1:
             brain_path = args[0]
             self.load_brain(brain_path)
         else:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
-    
+
     def process_bot_engine_aiml_teach_brain(self, args, output_method):
         if len(args) >= 1:
             aiml_path = args[0]
