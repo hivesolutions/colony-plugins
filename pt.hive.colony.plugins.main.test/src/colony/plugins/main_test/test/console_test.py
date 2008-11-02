@@ -43,8 +43,8 @@ INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 INVALID_TEST_ID_MESSAGE = "invalid test id"
 HELP_TEXT = "### UNIT TESTING HELP ###\n\
 starttest <unit-testid> - starts a unit test\n\
-startalltest - starts all the unit tests\n\
-showalltest - shows all the unit tests"
+startalltest            - starts all the unit tests\n\
+showalltest             - shows all the unit tests"
 TABLE_TOP_TEXT = "ID      TEST CASE NAME                PLUGIN ID"
 FIRST_COLUMN_SPACING = 8
 SECOND_COLUMN_SPACING = 30
