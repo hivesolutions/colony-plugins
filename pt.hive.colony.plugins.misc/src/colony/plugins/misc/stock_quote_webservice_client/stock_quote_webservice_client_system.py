@@ -39,20 +39,21 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import StockQuote_services
 
+CONSOLE_EXTENSION_NAME = "stock_quote"
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 HELP_TEXT = "### STOCK QUOTE CLIENT HELP ###\n\
 getstockquote <symbol> - restrives the stock quote of the company with the given symbol"
-    
+
 #@todo: comment this class
 class StockQuoteWebServiceClient:
 
     commands = ["help", "getstockquote"]
-    
+
     parent_plugin = None
-    
+
     def __init__(self, parent_plugin):
         self.parent_plugin = parent_plugin
-        
+
     def get_quote(self, symbol):
         locator = StockQuote_services.StockQuoteLocator()
         port = locator.getStockQuoteSoap()
@@ -60,7 +61,10 @@ class StockQuoteWebServiceClient:
         request._symbol = symbol
         response = port.GetQuote(request)
         return response._GetQuoteResult
-    
+
+    def get_console_extension_name(self):
+        return CONSOLE_EXTENSION_NAME
+
     def get_all_commands(self):
         return self.commands
 
@@ -72,7 +76,7 @@ class StockQuoteWebServiceClient:
 
     def get_help(self):
         return HELP_TEXT
-            
+
     def process_getstockquote(self, args, output_method):
         if len(args) >= 1:
             symbol = args[0]

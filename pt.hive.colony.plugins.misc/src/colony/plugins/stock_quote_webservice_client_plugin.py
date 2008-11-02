@@ -53,7 +53,7 @@ class StockQuoteWebServiceClientPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["webservice_client.stock_quote","console_command_extension"]
+    capabilities = ["webservice_client.stock_quote", "console_command_extension"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PackageDependency(
                     "ZSI", "ZSI", "2.x", "http://pywebsvcs.sourceforge.net")]
@@ -82,13 +82,16 @@ class StockQuoteWebServiceClientPlugin(colony.plugins.plugin_system.Plugin):
 
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
-    
+
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
-    
+
     def get_quote(self, symbol):
         return self.stock_quote_client.get_quote(symbol)
-     
+
+    def get_console_extension_name(self):
+        return self.stock_quote_client.get_console_extension_name()
+
     def get_all_commands(self):
         return self.stock_quote_client.get_all_commands()
 
