@@ -45,6 +45,9 @@ class BuildAutomationScheduler:
     build_automation_scheduler_plugin = None
     """ The build automation scheduler plugin """
 
+    build_automation_scheduling_item_list = []
+    """ The build automation scheduling item list """
+
     def __init__(self, build_automation_scheduler_plugin):
         """
         Constructor of the class.
@@ -54,6 +57,8 @@ class BuildAutomationScheduler:
         """
 
         self.build_automation_scheduler_plugin = build_automation_scheduler_plugin
+
+        self.build_automation_scheduling_item_list = []
 
     def register_build_automation_plugin_id(self, plugin_id, date_time, recursion_list):
         # retrieves the build automation plugin        
@@ -92,7 +97,11 @@ class BuildAutomationScheduler:
         # creates the build automation task class
         build_automation_task = task_class("method_call", task_arguments)
 
+        # schedules the task as absolute and recursive
         scheduler_plugin.register_task_date_time_absolute_recursive(build_automation_task, date_time, recursion_list)
+
+        # adds the build automation scheduling item to the build automation scheduling item list
+        self.build_automation_scheduling_item_list.append(build_automation_scheduling_item)
 
     def scheduling_handler(self, build_automation_scheduling_item):
         # retrieves the callback method
@@ -103,6 +112,9 @@ class BuildAutomationScheduler:
 
         # calls the callback method with the given arguments
         callback_method(*callback_method_arguments)
+
+    def get_all_build_automation_scheduling_items(self):
+        return self.build_automation_scheduling_item_list
 
 class BuildAutomationSchedulingItem:
 

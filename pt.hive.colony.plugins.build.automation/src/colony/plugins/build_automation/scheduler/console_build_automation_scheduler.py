@@ -37,18 +37,27 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import datetime
+
+CONSOLE_EXTENSION_NAME = "automation_scheduler"
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
+INVALID_DATE_TIME_MESSAGE = "invalid date time value"
+INVALID_RECURSION_MESSAGE = "invalid recursion value"
 HELP_TEXT = "### BUILD AUTOMATION SCHEDULER HELP ###\n\
-showallautomationscheduler - shows all the scheduled build automations"
-TABLE_TOP_TEXT = "ID      BUILD AUTOMATION ID"
+schedule_automation <plugin-id> <date-time> <recursion> [plugin-version] - schedules the given automation\n\
+showall_automation_scheduler - shows all the scheduled build automations"
+TABLE_TOP_TEXT = "ID      DATE_TIME      RECURSION      BUILD AUTOMATION ID"
 COLUMN_SPACING = 8
+
+DATE_FORMAT = "%d-%m-%Y"
+DATE_TIME_FORMAT = "%d-%m-%Y %H:%M:%S"
 
 class ConsoleBuildAutomationScheduler:
     """
     The console build automation scheduler class.
     """
 
-    commands = []
+    commands = ["schedule_automation", "showall_automation_scheduler"]
 
     build_automation_scheduler_plugin = None
     """ The build automation scheduler plugin """
@@ -63,6 +72,9 @@ class ConsoleBuildAutomationScheduler:
 
         self.build_automation_scheduler_plugin = build_automation_scheduler_plugin
 
+    def get_console_extension_name(self):
+        return CONSOLE_EXTENSION_NAME
+
     def get_all_commands(self):
         return self.commands
 
@@ -74,3 +86,63 @@ class ConsoleBuildAutomationScheduler:
 
     def get_help(self):
         return HELP_TEXT
+
+    def process_schedule_automation(self, args, output_method):
+        if len(args) < 3:
+            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
+            return
+
+        # retrieves the build  automation scheduler
+        build_automation_scheduler = self.build_automation_scheduler_plugin.build_automation_scheduler
+
+        # retrieves the plugin id
+        plugin_id = args[0]
+
+        # retrieves the date time
+        date_time = args[1]
+
+        # retrieves the recursionj list
+        recursion = args[2]
+
+        if len(args) > 3:
+             plugin_version = args[3]
+
+        # retrieves the date time length
+        date_time_len = len(date_time)
+
+        if date_time_len == 10:
+            date_time_value = datetime.datetime.strptime(date_time, DATE_FORMAT)
+        elif date_time_len == 19:
+            date_time_value = datetime.datetime.strptime(date_time, DATE_TIME_FORMAT)
+        else:
+            output_method(INVALID_DATE_TIME_MESSAGE)
+            return
+
+        recursion_strip = recursion.strip()
+        recursion_split = recursion_strip.split(",")
+
+        recursion_list = []
+
+        for recursion_split_item in recursion_split:
+            recursion_split_item_int = int(recursion_split_item)
+            recursion_list.append(recursion_split_item_int)
+
+        if not len(recursion_split) == 5:
+            output_method(INVALID_RECURSION_MESSAGE)
+            return
+
+        build_automation_scheduler.register_build_automation_plugin_id(plugin_id, date_time_value, recursion_list)
+
+    def process_showall_automation_scheduler(self, args, output_method):
+        # prints the table top text
+        output_method(TABLE_TOP_TEXT)
+
+        # retrieves the build automation scheduler instance
+        build_automation_scheduler = self.build_automation_scheduler_plugin.build_automation_scheduler
+
+        # retrieves all the available build automation scheduling items
+        build_automation_scheduling_items = build_automation_scheduler.get_all_build_automation_scheduling_items()
+
+        # iterates over all the build automation scheduling items
+        for build_automation_scheduling_item in build_automation_scheduling_items:
+            output_method(build_automation_scheduling_item.item_id, True)
