@@ -39,12 +39,12 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 HELP_TEXT = "### BOT MANAGER HELP ###\n\
-bot_manager_list_bots - lists the currently running bots\n\
+bot_manager_list_bots                                                 - lists the currently running bots\n\
 bot_manager_start_bot <bot_id> <bot_engine_id> <input_id> <output_id> - starts a new bot\n\
-bot_manager_stop_bot <bot_id> - stops a running bot\n\
-bot_manager_list_inputs - lists the available input plugins for the bots\n\
-bot_manager_list_engines - lists the available bot engines\n\
-bot_manager_list_outputs - lists the available output plugins for the bots"
+bot_manager_stop_bot <bot_id>                                         - stops a running bot\n\
+bot_manager_list_inputs                                               - lists the available input plugins for the bots\n\
+bot_manager_list_engines                                              - lists the available bot engines\n\
+bot_manager_list_outputs                                              - lists the available output plugins for the bots"
 
 class Bot:
     bot_id = None

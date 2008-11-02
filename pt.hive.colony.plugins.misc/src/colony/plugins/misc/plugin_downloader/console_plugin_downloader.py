@@ -40,7 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 INVALID_ADDRESS_MESSAGE = "invalid address"
 HELP_TEXT = "### PLUGIN DOWNLOADER HELP ###\n\
-plugindownload <plugin-id> [plugin-version] - starts the download of the plugin\n\
+plugindownload <plugin-id> [plugin-version]     - starts the download of the plugin\n\
 plugintestdownload <plugin-id> [plugin-version] - test the download of the plugin"
 
 #@todo: review and comment this file

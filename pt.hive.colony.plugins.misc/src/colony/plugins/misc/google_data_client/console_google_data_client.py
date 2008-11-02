@@ -40,7 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 INVALID_OPERATION_MESSAGE = "invalid operation"
 HELP_TEXT = "### GOOGLE DATA CLIENT HELP ###\n\
-googleconnect <username> <password> - connects to the google data services\n\
+googleconnect <username> <password>     - connects to the google data services\n\
 googleyoutube <operation> [arguments..] - uses one of the google services"
 
 #@todo: review and comment this file

@@ -44,19 +44,19 @@ import colony.plugins.util
 
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 HELP_TEXT = "### ICE HELPER HELP ###\n\
-loadice <file-path> - starts the loading of the file\n\
+loadice <file-path>                                                   - starts the loading of the file\n\
 createregistry <registry-name> [registry-replica-name] [properties..] - creates a new ice grid registry with the given name, replica name and properties\n\
-killregistry <registry-name> [registry-replica-name] - kills the registry with the given name and replica name\n\
-createnode <registry-name> <node-name> [properties..] - creates a new ice grid node in the registry with the given name and with the given name and properties\n\
-killnode <registry-name> <node-name> - kills the node in the registry with the given name with the given name\n\
-createupdateapplication <application-name> - creates or updates an application with the given name\n\
-createcommunicator <locator-name> [locator-endpoint] - creates a communicator with the given name and endpoint\n\
-createaccess <access-class-name> <access-name> - creates an access object for the given class and access name\n\
-createaccesstype <access-class-name> <access-type> - creates an access object for the given class and access type\n\
-createregistryaccess - creates a registry access object to control the ice grid\n\
-createadminaccess <username> <password> - creates an admin access object to administrate the ice grid\n\
-callaccess <method-name> [arguments..] - calls a method with the given name with the given arguments\n\
-showapplicationinfo <application-name> - shows information about the the application with the given name"
+killregistry <registry-name> [registry-replica-name]                  - kills the registry with the given name and replica name\n\
+createnode <registry-name> <node-name> [properties..]                 - creates a new ice grid node in the registry with the given name and with the given name and properties\n\
+killnode <registry-name> <node-name>                                  - kills the node in the registry with the given name with the given name\n\
+createupdateapplication <application-name>                            - creates or updates an application with the given name\n\
+createcommunicator <locator-name> [locator-endpoint]                  - creates a communicator with the given name and endpoint\n\
+createaccess <access-class-name> <access-name>                        - creates an access object for the given class and access name\n\
+createaccesstype <access-class-name> <access-type>                    - creates an access object for the given class and access type\n\
+createregistryaccess                                                  - creates a registry access object to control the ice grid\n\
+createadminaccess <username> <password>                               - creates an admin access object to administrate the ice grid\n\
+callaccess <method-name> [arguments..]                                - calls a method with the given name with the given arguments\n\
+showapplicationinfo <application-name>                                - shows information about the the application with the given name"
 
 ICE_REGISTRY_PARSING_VALUES = ["ice_grid_registry_path=", "ice_grid_instance_name=", "ice_grid_default_locator=",
                                "ice_grid_registry_client_endpoints=", "ice_grid_registry_server_endpoints=",

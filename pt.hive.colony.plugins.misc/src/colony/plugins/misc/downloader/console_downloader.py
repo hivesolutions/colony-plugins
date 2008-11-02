@@ -40,7 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 INVALID_ADDRESS_MESSAGE = "invalid address"
 HELP_TEXT = "### DOWNLOADER HELP ###\n\
-download <file-address> - starts the download of the file\n\
+download <file-address>     - starts the download of the file\n\
 testdownload <file-address> - test the download of the file"
 
 #@todo: review and comment this file

@@ -41,7 +41,7 @@ import StockQuote_services
 
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 HELP_TEXT = "### STOCK QUOTE CLIENT HELP ###\n\
-getstockquote <symbol>"
+getstockquote <symbol> - restrives the stock quote of the company with the given symbol"
     
 #@todo: comment this class
 class StockQuoteWebServiceClient:
