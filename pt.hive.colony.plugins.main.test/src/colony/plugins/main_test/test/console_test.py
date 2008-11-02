@@ -128,12 +128,12 @@ class ConsoleTest:
             output_method(test_case_id_str, False)
 
             for x in range(FIRST_COLUMN_SPACING - len(test_case_id_str)):
-               output_method(" ", False)
+                output_method(" ", False)
 
             output_method(test_case_name, False)
 
             for x in range(SECOND_COLUMN_SPACING - len(test_case_name)):
-               output_method(" ", False)
+                output_method(" ", False)
 
             output_method(test_case_plugin_id, True)
 
