@@ -47,16 +47,16 @@ INVALID_PLUGIN_ID_MESSAGE = "invalid plugin id"
 ERROR_IN_HCS_SCRIPT = "there is an error in the hcs script"
 CARET = ">>"
 HELP_TEXT = "### PLUGIN SYSTEM HELP ###\n\
-help - shows this message\n\
-show <plugin-id> - show the status of the plugin with the defined id\n\
-showall - shows the status of all the loaded plugins\n\
-info <plugin-id> - shows information about the plugin with the defined id\n\
-infoall - shows information about all the loaded plugins\n\
-add <plugin-path> - adds a news plugin\n\
+help               - shows this message\n\
+show <plugin-id>   - show the status of the plugin with the defined id\n\
+showall            - shows the status of all the loaded plugins\n\
+info <plugin-id>   - shows information about the plugin with the defined id\n\
+infoall            - shows information about all the loaded plugins\n\
+add <plugin-path>  - adds a news plugin\n\
 remove <plugin-id> - removes a plugin\n\
-load <plugin-id> - loads a plugin\n\
+load <plugin-id>   - loads a plugin\n\
 unload <plugin-id> - unloads a plugin\n\
-exec <file-path> - executes the given hcs script\n\
+exec <file-path>   - executes the given hcs script\n\
 exit - exits the system"
 TABLE_TOP_TEXT = "ID      STATUS      PLUGIN ID"
 COLUMN_SPACING = 8
