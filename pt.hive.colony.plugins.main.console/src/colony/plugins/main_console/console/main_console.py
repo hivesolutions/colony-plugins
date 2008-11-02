@@ -213,10 +213,10 @@ class MainConsole:
         else:
             extension_name = args[0]
 
-        for console_command_plugin in self.main_console_plugin.console_command_plugins:
-            console_command_plugin_console_extension_name = console_command_plugin.get_console_extension_name()
-            if console_command_plugin_console_extension_name == extension_name:
-                output_method(console_command_plugin.get_help())
+            for console_command_plugin in self.main_console_plugin.console_command_plugins:
+                console_command_plugin_console_extension_name = console_command_plugin.get_console_extension_name()
+                if console_command_plugin_console_extension_name == extension_name:
+                    output_method(console_command_plugin.get_help())
 
     def process_helpall(self, args, output_method):
         output_method(HELP_TEXT)
