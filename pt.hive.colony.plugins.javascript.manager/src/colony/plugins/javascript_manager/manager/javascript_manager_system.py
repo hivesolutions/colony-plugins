@@ -94,7 +94,7 @@ class JavascriptManager:
             # sets the current plugin search directories map
             current_plugin_search_directories_map = self.plugin_search_directories_map
 
-            # indexes the current saerch directory
+            # indexes the current search directory
             self.index_plugin_search_directory(plugin_search_directory, current_plugin_search_directories_map)
 
     def index_plugin_search_directory(self, plugin_search_directory, current_plugin_search_directories_map):
