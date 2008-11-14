@@ -87,7 +87,7 @@ class JavascriptManager:
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.eureka/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.login_window/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.main.gui.components/plugins"]
-        
+
     def index_plugin_search_directories(self):
         # iterates over all the search directories
         for plugin_search_directory in self.plugin_search_directories_list:
@@ -239,7 +239,7 @@ class JavascriptManager:
 
 class List:
     """
-    The generic List class
+    The generic List class.
     """
 
     list = []
