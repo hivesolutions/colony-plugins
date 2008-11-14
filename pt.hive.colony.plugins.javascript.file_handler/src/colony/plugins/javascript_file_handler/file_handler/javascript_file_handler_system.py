@@ -104,7 +104,9 @@ class JavascriptFileHandler:
         # closes the file
         file.close()
 
+        # iterates over all the javascript handler plugins
         for javascript_handler_plugin in javascript_handler_plugins:
+            # handles the contents to the javascript handler plugin
             file_contents = javascript_handler_plugin.handle_contents(file_contents)
 
         # writes the file contents to the request
