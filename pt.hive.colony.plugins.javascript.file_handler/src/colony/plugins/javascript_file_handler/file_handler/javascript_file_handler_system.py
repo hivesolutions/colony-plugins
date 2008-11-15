@@ -39,6 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 HANDLER_FILENAME = "none"
 
+CONTENT_TYPE = "text/plain;charset=Cp1252"
+
 class JavascriptFileHandler:
     """
     The javascript file handler class.
@@ -77,7 +79,7 @@ class JavascriptFileHandler:
         javascript_manager_plugin = self.javascript_file_handler_plugin.javascript_manager_plugin
 
         # sets the content type for the request
-        request.content_type = "text/plain;charset=Cp1252"
+        request.content_type = CONTENT_TYPE
 
         # splits the uri using the "/" character
         uri_splited = request.uri.split("/")

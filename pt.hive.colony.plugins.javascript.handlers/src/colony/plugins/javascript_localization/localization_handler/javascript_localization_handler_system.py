@@ -62,6 +62,13 @@ class JavascriptLocalizationHandler:
         self.javascript_localization_handler_plugin = javascript_localization_handler_plugin
 
     def get_javascript_handler_name(self):
+        """
+        Retrieves the javascript handler name.
+        
+        @rtype: String
+        @return: The javascript handler name.
+        """
+
         return HANDLER_NAME
 
     def handle_contents(self, contents):
