@@ -44,29 +44,73 @@ import sys
 import time
 import types
 
-def show_file(fname):
-    f = open(fname, "rb")
-    magic = f.read(4)
-    moddate = f.read(4)
-    modtime = time.asctime(time.localtime(struct.unpack('L', moddate)[0]))
-    print "magic %s" % (magic.encode('hex'))
-    print "moddate %s (%s)" % (moddate.encode('hex'), modtime)
-    code = marshal.load(f)
+def show_file(file_name):
+    """
+    Shows some python bytecode information about the file with the given name.
+    
+    @type file_name: String
+    @param file_name: The file name of the file to show some python bytecode information.
+    """
+
+    # opens the file in read binary mode
+    file = open(file_name, "rb")
+
+    # read the magic number
+    magic = file.read(4)
+
+    # retrieves the modification date
+    modification_date = file.read(4)
+
+    # creates the modification time structure from the modification date
+    modification_time = time.asctime(time.localtime(struct.unpack("L", modification_date)[0]))
+
+    # prints the magic number
+    print "magic %s" % (magic.encode("hex"))
+
+    # prints the modification date
+    print "moddate %s (%s)" % (moddate.encode("hex"), modtime)
+
+    # unmarshals the code object
+    code = marshal.load(file)
+
+    # show the code object information
     show_code(code)
 
-def show_code(code, indent=''):
+def show_code(code, indent = ""):
+    """
+    Shows some code information about the given code object.
+    
+    @type code: Code
+    @para code: The code object to show some code information.
+    """
+
+    # prints the code text
     print "%scode" % indent
-    indent += '   '
+
+    # idents the text
+    indent += "   "
+
+    # prints the number of arguments
     print "%sargcount %d" % (indent, code.co_argcount)
+
+    # prints the number of locals
     print "%snlocals %d" % (indent, code.co_nlocals)
+
+    # prints the stack size
     print "%sstacksize %d" % (indent, code.co_stacksize)
+
+    # prints the compilation flags
     print "%sflags %04x" % (indent, code.co_flags)
-    show_hex("code", code.co_code, indent=indent)
+
+    # prints the hexadecimal code in a string format
+    show_hex("code", code.co_code, indent = indent)
+
+    # disassembles the code 
     dis.disassemble(code)
     print "%sconsts" % indent
     for const in code.co_consts:
         if type(const) == types.CodeType:
-            show_code(const, indent+'   ')
+            show_code(const, indent+"   ")
         else:
             print "   %s%r" % (indent, const)
     print "%snames %r" % (indent, code.co_names)
@@ -79,7 +123,7 @@ def show_code(code, indent=''):
     show_hex("lnotab", code.co_lnotab, indent=indent)
 
 def show_hex(label, h, indent):
-    h = h.encode('hex')
+    h = h.encode("hex")
     if len(h) < 60:
         print "%s%s %s" % (indent, label, h)
     else:
@@ -87,4 +131,5 @@ def show_hex(label, h, indent):
         for i in range(0, len(h), 60):
             print "%s   %s" % (indent, h[i:i+60])
 
-show_file(sys.argv[1])
+if __name__ == "__main__":
+    show_file(sys.argv[1])
