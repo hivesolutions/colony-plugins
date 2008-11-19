@@ -57,8 +57,6 @@ NEW_BLOCK_CHARACTER = ":"
 
 EXIT_COMMAND = "exit()"
 
-global_context_code_information = None
-
 def get_command_from_command_list(command_list):
     command_string = ""
 
@@ -77,26 +75,27 @@ def print_information():
     # prints some help information
     print HELP_TEXT
 
-def process_command(command, processing_structure, debug = False, verbose = False, code_generation = False,):
+def process_command(command, processing_structure, global_interpretation_map, debug = False, verbose = False, code_generation = False,):
     if debug:
-        process_command_debug(command, processing_structure, verbose, code_generation)
+        process_command_debug(command, processing_structure, global_interpretation_map, verbose, code_generation)
     else:
-        process_command_normal(command, processing_structure, verbose, code_generation)
+        process_command_normal(command, processing_structure, global_interpretation_map, verbose, code_generation)
 
-def process_command_normal(command, processing_structure, verbose, code_generation):
+def process_command_normal(command, processing_structure, global_interpretation_map, verbose, code_generation):
     try:
-        interpret_command(command, processing_structure, False, verbose, code_generation)
+        interpret_command(command, processing_structure, global_interpretation_map, False, verbose, code_generation)
     except Exception, ex:
         print ex
 
-def process_command_debug(command, processing_structure, verbose, code_generation):
-    interpret_command(command, processing_structure, True, verbose, code_generation)
+def process_command_debug(command, processing_structure, global_interpretation_map, verbose, code_generation):
+    interpret_command(command, processing_structure, global_interpretation_map, True, verbose, code_generation)
 
-def interpret_command(command, processing_structure, debug, verbose, code_generation):
+def interpret_command(command, processing_structure, global_interpretation_map, debug, verbose, code_generation):
     # retrieves the parse result
     parse_result = settler_parser.parser.parse(command)
 
-    global global_context_code_information
+    # retrieves the global context code information
+    global_context_code_information = global_interpretation_map["global_context_code_information"]
 
     if not parse_result == None:
         if debug:
@@ -135,6 +134,8 @@ def interpret_command(command, processing_structure, debug, verbose, code_genera
             # retrieves the global context code information
             global_context_code_information = code_generation_visitor.get_global_context_code_information()
 
+            global_interpretation_map["global_context_code_information"] = global_context_code_information
+
             # evaluates the generated code object
             eval_result_value = eval(code_object, globals(), globals())
 
@@ -165,6 +166,12 @@ def interactive_console(debug = False, verbose = True, code_generation = False):
     # creates a new processing structure
     processing_structure = settler_processing.ProcessingStructure()
 
+    # starts the global interpretation map
+    global_interpretation_map = {}
+
+    # sets the global_context_code_information value
+    global_interpretation_map["global_context_code_information"] = None
+
     # starts the block accumulation flag
     block_accumulation = False
 
@@ -193,7 +200,7 @@ def interactive_console(debug = False, verbose = True, code_generation = False):
                 command = get_command_from_command_list(command_accumulation_list)
 
                 # processes the command
-                process_command(command, processing_structure, debug, verbose, code_generation)
+                process_command(command, processing_structure, global_interpretation_map, debug, verbose, code_generation)
 
                 # resets the block accumulation structures
                 block_accumulation = False
@@ -215,7 +222,7 @@ def interactive_console(debug = False, verbose = True, code_generation = False):
             elif block_accumulation:
                 command_accumulation_list.append(string_value)
             else:
-                process_command(string_value + "\n", processing_structure, debug, verbose, code_generation)
+                process_command(string_value + "\n", processing_structure, global_interpretation_map, debug, verbose, code_generation)
 
 def interpret_file(file_path, debug = False, verbose = False, code_generation = True):
     # opens the given file
@@ -227,8 +234,14 @@ def interpret_file(file_path, debug = False, verbose = False, code_generation = 
     # creates a new processing structure
     processing_structure = settler_processing.ProcessingStructure()
 
+    # starts the global interpretation map
+    global_interpretation_map = {}
+
+    # sets the global_context_code_information value
+    global_interpretation_map["global_context_code_information"] = None
+
     # processes the command
-    process_command(file_contents, processing_structure, debug, verbose, code_generation)
+    process_command(file_contents, processing_structure, global_interpretation_map, debug, verbose, code_generation)
 
 if __name__ == "__main__":
     # starts the verbose flag as false
