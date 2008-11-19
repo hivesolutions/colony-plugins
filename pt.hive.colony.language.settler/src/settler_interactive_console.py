@@ -46,7 +46,7 @@ import settler_interpretation
 import settler_generation
 import settler_processing
 
-BRANDING_TEXT = "Tobias 0.1 (Hive Solutions Lda. r1:Sep 19 2006)"
+BRANDING_TEXT = "Settler 0.1 (Hive Solutions Lda. r1:Sep 19 2006)"
 VERSION_PRE_TEXT = "Python "
 HELP_TEXT = "Type \"help\", \"copyright\", \"credits\" or \"license\" for more information."
 
@@ -56,6 +56,8 @@ BLOCK_CARRET = "[settler] .. "
 NEW_BLOCK_CHARACTER = ":"
 
 EXIT_COMMAND = "exit()"
+
+global_context_code_information = None
 
 def get_command_from_command_list(command_list):
     command_string = ""
@@ -91,7 +93,11 @@ def process_command_debug(command, processing_structure, verbose, code_generatio
     interpret_command(command, processing_structure, True, verbose, code_generation)
 
 def interpret_command(command, processing_structure, debug, verbose, code_generation):
+    # retrieves the parse result
     parse_result = settler_parser.parser.parse(command)
+
+    global global_context_code_information
+
     if not parse_result == None:
         if debug:
             # creates a default visitor
@@ -100,15 +106,40 @@ def interpret_command(command, processing_structure, debug, verbose, code_genera
             # accepts the default visitor in post order
             parse_result.accept_post_order(default_visitor)
 
+        # creates a code generation visitor
+        code_generation_visitor = settler_generation.PythonCodeGenerationVisitor()
+
         if code_generation:
-            # creates a code generation visitor
-            code_generation_visitor = settler_generation.PythonCodeGenerationVisitor()
+            # sets the visit mode as module
+            code_generation_visitor.set_visit_mode("module")
+        else:
+            # sets the visit mode as interactive
+            code_generation_visitor.set_visit_mode("interactive")
 
-            # accepts the code generation visitor in post order
-            parse_result.accept_post_order(code_generation_visitor)
+        # in case there is a global context code information defined
+        if global_context_code_information:
+            # sets the global context code information variables
+            code_generation_visitor.set_global_context_code_information_variables(global_context_code_information)
 
+        # accepts the code generation visitor in post order
+        parse_result.accept_post_order(code_generation_visitor)
+
+        if code_generation:
             # creates the output file
             code_generation_visitor.create_output_file()
+
+        if verbose:
+            # retrieves the code object
+            code_object = code_generation_visitor.get_code_object()
+
+            # retrieves the global context code information
+            global_context_code_information = code_generation_visitor.get_global_context_code_information()
+
+            # evaluates the python code
+            eval_result_value = eval(code_object, globals(), globals())
+
+            if not eval_result_value == None:
+                print eval_result_value
 
         # creates a interpretation visitor
 #        interpretation_visitor = settler_interpretation.InterpretationVisitor()

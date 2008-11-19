@@ -66,13 +66,13 @@ class ProcessingStructure:
 
     def get_symbol_value(self, context, name):
         if not context in self.symbols_table:
-            raise settler_exceptions.TobiasSymbolNotFound("symbol " + name + " not found in context " + context)
+            raise settler_exceptions.SettlerSymbolNotFound("symbol " + name + " not found in context " + context)
 
         # retrieves the context symbols table
         context_symbols_table = self.symbols_table[context]
 
         if not name in context_symbols_table:
-            raise settler_exceptions.TobiasSymbolNotFound("symbol " + name + " not found in context " + context)
+            raise settler_exceptions.SettlerSymbolNotFound("symbol " + name + " not found in context " + context)
 
         # retrieves the symbol value
         value = context_symbols_table[name] 
@@ -91,7 +91,7 @@ class ProcessingStructure:
             current_context = self.get_current_context()
 
             return self.get_symbol_value(current_context, name)
-        except settler_exceptions.TobiasSymbolNotFound:
+        except settler_exceptions.SettlerSymbolNotFound:
             pass
 
         return self.get_symbol_value(GLOBAL_CONTEXT_NAME, name)

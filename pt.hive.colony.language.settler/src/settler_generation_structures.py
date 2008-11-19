@@ -51,6 +51,10 @@ MULTIPLE_ADDRESSES_OPERATIONS = ["LOAD", "LOAD_CONST", "STORE_NAME", "STORE_FAST
                                  "CALL_FUNCTION", "JUMP_IF_FALSE", "JUMP_IF_TRUE", "JUMP_FORWARD", "JUMP_ABSOLUTE",
                                  "SETUP_LOOP", "BUILD_TUPLE", "BUILD_LIST", "IMPORT_NAME"]
 
+STACK_INCREMENTER_OPERATIONS = ["LOAD", "LOAD_CONST", "LOAD_NAME", "LOAD_FAST", "LOAD_GLOBAL"]
+
+STACK_DECREMENTER_OPERATIONS = ["POP_TOP", "STORE_NAME", "STORE_FAST", "STORE_GLOBAL", "STORE_ATTR", "IMPORT_NAME", "PRINT_ITEM"]
+
 class ContextCodeInformation:
     """
     The context code information class.
@@ -65,7 +69,7 @@ class ContextCodeInformation:
     number_locals = 0
     """ The number of locals """
 
-    stack_size = 5
+    stack_size = 100
     """ The stack size """
 
     flags = 0x0040
@@ -130,6 +134,9 @@ class ContextCodeInformation:
 
     meta_information_map = {}
     """ The meta information map """
+    
+    stack_size = 0
+    """ The stack size """
 
     def __init__(self):
         self.constants_list = []
@@ -261,11 +268,13 @@ class ContextCodeInformation:
         operation_tuple = (operation, arguments)
         self.operations_stack.append(operation_tuple)
         self.increment_program_counter(operation)
+        self.update_stack_size_add(operation)
 
     def remove_operation(self, operation, arguments):
         operation_tuple = (operation, arguments)
         self.operations_stack.remove(operation_tuple)
         self.decrement_program_counter(operation)
+        self.update_stack_size_remove(operation)
 
     def increment_line_number(self, line_increment = 1):
         """
@@ -310,6 +319,18 @@ class ContextCodeInformation:
         else:
             self.program_counter -= 1
 
+    def update_stack_size_add(self, operation):
+        if operation in STACK_INCREMENTER_OPERATIONS:
+            self.stack_size += 1
+        elif operation in STACK_DECREMENTER_OPERATIONS:
+            self.stack_size -= 1
+
+    def update_stack_size_remove(self, operation):
+        if operation in STACK_INCREMENTER_OPERATIONS:
+            self.stack_size -= 1
+        elif operation in STACK_DECREMENTER_OPERATIONS:
+            self.stack_size += 1
+
     def generate_lnotab_string(self):
         # create the line intervals array
         line_intervals_array = array.array("B")
@@ -348,10 +369,10 @@ class ContextCodeInformation:
                         self.add_variable(variable_name)
                         operation = "LOAD_GLOBAL"
                     else:
-                        raise settler_exceptions.TobiasSymbolNotFound("the symbol: " + variable_name + " was not found")
+                        raise settler_exceptions.SettlerSymbolNotFound("the symbol " + variable_name + " was not found")
 
             if not operation in opcode.opmap:
-                raise settler_exceptions.TobiasInvalidOperation("the operation: " + operation + " is invalid")
+                raise settler_exceptions.SettlerInvalidOperation("the operation " + operation + " is invalid")
 
             # retrieves the opcode value
             opcode_value = opcode.opmap[operation]

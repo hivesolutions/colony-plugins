@@ -26,19 +26,19 @@
 import sys
 import colony.plugins.plugin_system
 
-class Tobias1:
+class Settler1:
 	function print_hello():
 		print("hello world")
 	end
 end
 
-class Tobias2:
+class Settler2:
 	function print_hello():
 		print("hello world")
 	end
 end
 
-class Tobias extends Tobias1, Tobias2:
+class Settler extends Settler1, Settler2:
 	a = 200
 	function set_settler(b):
 		self.a = b
@@ -51,7 +51,7 @@ class Tobias extends Tobias1, Tobias2:
 	end
 end
 
-plugin TobiasPlugin implements TobiasCapability allows T1:
+plugin SettlerPlugin implements SettlerCapability allows T1:
 
 	id = "pt.hive.settler"
 
@@ -67,19 +67,19 @@ end
 platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
 
 # creates the first settler instance
-settler_instance_1 = Tobias()
+settler_instance_1 = Settler()
 
 settler_instance_1.set_settler(1)
 settler_instance_1.print_a()
 
 # creates the second settler instance
-settler_instance_2 = Tobias()
+settler_instance_2 = Settler()
 settler_instance_2.set_settler(2)
 settler_instance_2.a = 20
 settler_instance_2.print_hello()
 
 # makes a static call
-Tobias.print_settler("static call")
+Settler.print_settler("static call")
 
 # python native call
 sys.stdout.write("ola")
@@ -88,4 +88,4 @@ sys.stdout.write("ola")
 print("")
 
 # loads the settler plugin
-#load TobiasPlugin
+#load SettlerPlugin

@@ -37,31 +37,31 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class TobiasException(Exception):
+class SettlerException(Exception):
     pass
 
-class TobiasSymbolNotFound(TobiasException):
+class SettlerSymbolNotFound(SettlerException):
 
     def __init__(self, message):
-        TobiasException.__init__(self)
+        SettlerException.__init__(self)
         self.message = message
 
     def __str__(self):
        return "Symbol not found: %s" % self.message
 
-class TobiasInvalidNumberOfArguments(TobiasException):
+class SettlerInvalidNumberOfArguments(SettlerException):
 
     def __init__(self, message):
-        TobiasException.__init__(self)
+        SettlerException.__init__(self)
         self.message = message
 
     def __str__(self):
        return "Invalid number of arguments: %s" % self.message
 
-class TobiasInvalidOperation(TobiasException):
+class SettlerInvalidOperation(SettlerException):
 
     def __init__(self, message):
-        TobiasException.__init__(self)
+        SettlerException.__init__(self)
         self.message = message
 
     def __str__(self):

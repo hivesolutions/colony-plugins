@@ -42,21 +42,31 @@ import time
 import marshal
 import copy
 import string
+import mmap
 
 import settler_ast
 import settler_visitor
 import settler_generation_structures
 
-# the python 2.5 magic number (0x0A0D + 0xF2B3)
 MAGIC_NUMBER = 0x0A0DF2B3
+""" The python 2.5 magic number (0x0A0D + 0xF2B3) """
 
-# the default output file name
 DEFAULT_OUTPUT_FILE_NAME = "out.pyc"
+""" The default output file name """
+
+MODULE_MODE = "module"
+""" The module mode """
+
+INTERACTIVE_MODE = "interactive"
+""" The interactive mode """
 
 class PythonCodeGenerationVisitor(settler_visitor.Visitor):
     """
     The python code generation visitor class.
     """
+
+    visit_mode = MODULE_MODE
+    """ The visit mode """
 
     output_file = None
     """ The output file """
@@ -111,10 +121,20 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
         self.current_context_code_information.context_type = "module"
         self.previous_context_code_information = None
 
+    def set_visit_mode(self, visit_mode):
+        self.visit_mode = visit_mode
+
     def create_output_file(self, output_file_name = DEFAULT_OUTPUT_FILE_NAME):
         # creates the output file
         output_file = open(output_file_name, "wb")
 
+        # creates the output
+        self.create_output(output_file)
+
+        # closes the output file
+        output_file.close()
+
+    def create_output(self, output_file):
         # creates the pack for the magic number
         magic_number_pack = struct.pack("L", MAGIC_NUMBER)
 
@@ -135,6 +155,30 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
 
         # marshals the code object into the output file
         marshal.dump(code_object, output_file)
+
+    def get_code_object(self):
+        # generates the code object
+        code_object = self.global_context_code_information.generate_code_object()
+
+        return code_object
+
+    def get_global_context_code_information(self):
+        return self.global_context_code_information
+
+    def set_global_context_code_information_variables(self, global_context_code_information):
+        self.global_context_code_information.constants_list = global_context_code_information.constants_list
+        self.global_context_code_information.index_contants_map = global_context_code_information.index_contants_map
+        self.global_context_code_information.constants_index_map = global_context_code_information.constants_index_map
+
+        self.global_context_code_information.names_list = global_context_code_information.names_list
+        self.global_context_code_information.index_names_map = global_context_code_information.index_names_map
+        self.global_context_code_information.names_index_map = global_context_code_information.names_index_map
+
+        self.global_context_code_information.variable_names_list = global_context_code_information.variable_names_list
+        self.global_context_code_information.index_variable_names_map = global_context_code_information.index_variable_names_map
+        self.global_context_code_information.variable_names_index_map = global_context_code_information.variable_names_index_map
+
+        self.global_context_code_information.global_names_list = global_context_code_information.global_names_list
 
     def add_operation(self, operation, arguments, mark_line = False, line_increment = 1):
         if self.discard_mode_counter:
@@ -542,6 +586,9 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
             # adds the operation to the list of operations
             self.add_operation("STORE_FAST", arguments, mark_line, line_increment)
 
+    def get_stack_size(self):
+        return self.current_context_code_information.stack_size
+
     @settler_visitor._visit(settler_ast.AstNode)
     def visit_ast_node(self, node):
         pass
@@ -556,11 +603,23 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
 
     @settler_visitor._visit(settler_ast.ProgramNode)
     def visit_program_node(self, node):
-        # adds the operation to the list of operations
-        self.add_operation("LOAD_CONST", (None, ))
+        # in case the visit mode is of type module
+        if self.visit_mode == MODULE_MODE:
+            # adds the operation to the list of operations
+            self.add_operation("LOAD_CONST", (None, ))
 
-        # adds the operation to the list of operations
-        self.add_operation("RETURN_VALUE", ())
+            # adds the operation to the list of operations
+            self.add_operation("RETURN_VALUE", ())
+        else:
+            # retrieves the current stack size
+            stack_size = self.get_stack_size()
+
+            # in case the stack is empty
+            if not stack_size:
+                # adds the operation to the list of operations
+                self.add_operation("LOAD_CONST", (None, ))
+            # adds the operation to the list of operations
+            self.add_operation("RETURN_VALUE", ())
 
     @settler_visitor._visit(settler_ast.StatementsNode)
     def visit_statements_node(self, node):
