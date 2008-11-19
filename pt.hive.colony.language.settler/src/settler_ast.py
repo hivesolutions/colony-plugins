@@ -45,17 +45,28 @@ class AstNode(object):
     value = None
     """ The value """
 
-    ident = False
-    """ The identation level """
+    indent = False
+    """ The indentation level """
 
     child_nodes = []
     """ The list of child nodes """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         self.child_nodes = []
 
     def __repr__(self):
-        return "<ast_node ident:%s child_nodes:%s>" % (self.ident, len(self.child_nodes))
+        """
+        Returns the default representation of the class.
+        
+        @rtype: String
+        @return: The default representation of the class.
+        """
+
+        return "<ast_node indent:%s child_nodes:%s>" % (self.indent, len(self.child_nodes))
 
     def accept(self, visitor):
         """
@@ -86,15 +97,43 @@ class AstNode(object):
         visitor.visit(self)
 
     def set_value(self, value):
+        """
+        Sets the value value.
+        
+        @type value: Object
+        @para value: The value value.
+        """
+
         self.value = value
 
-    def set_ident(self, ident):
-        self.ident = ident
+    def set_indent(self, indent):
+        """
+        Sets the indent value.
+        
+        @type indent: int
+        @param indent: The indent value.
+        """
+
+        self.indent = indent
 
     def add_child_node(self, child_node):
+        """
+        Adds a child node to the node.
+        
+        @type child_node: AstNode
+        @param child_node: The child node to be added.
+        """
+
         self.child_nodes.append(child_node)
 
     def remove_child_node(self, child_node):
+        """
+        Removes a child node from the node.
+        
+        @type child_node: AstNode
+        @param child_node: The child node to be removed.
+        """
+
         self.child_nodes.remove(child_node)
 
 class AstSequenceNode(AstNode):
@@ -109,9 +148,20 @@ class AstSequenceNode(AstNode):
     """ The valid flag """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         AstNode.__init__(self)
 
     def __iter__(self):
+        """
+        Returns the iterator object for sequence iteration.
+        
+        @rtype: AstSequenceNodeIterator
+        @return: The iterator object for sequence iteration.
+        """
+
         # creates the ast sequence node iterator
         ast_sequence_node_iterator = AstSequenceNodeIterator(self)
 
@@ -119,9 +169,23 @@ class AstSequenceNode(AstNode):
         return ast_sequence_node_iterator
 
     def set_next_node(self, next_node):
+        """
+        Sets the next node.
+        
+        @type next_node: AstSequenceNode
+        @param next_node: The next node.
+        """
+
         self.next_node = next_node
 
     def get_last_node(self):
+        """
+        Retrieves the last node.
+        
+        @rtype: AstSequenceNode
+        @return: The last node.
+        """
+
         # sets the current sequence node
         sequence_node = self
 
@@ -135,6 +199,13 @@ class AstSequenceNode(AstNode):
         return sequence_node
 
     def get_all_nodes(self):
+        """
+        Retrieves all the nodes in the sequence.
+        
+        @rtype: List
+        @return: All the nodes in the sequence.
+        """
+
         # constructs the nodes list
         nodes_list = [value for value in self]
 
@@ -142,6 +213,13 @@ class AstSequenceNode(AstNode):
         return nodes_list
 
     def count(self):
+        """
+        Counts the number of nodes in the sequence.
+        
+        @rtype: int
+        @return: The number of nodes in the sequence. 
+        """
+
         # retrieve all nodes
         all_nodes = self.get_all_nodes()
 
@@ -152,6 +230,13 @@ class AstSequenceNode(AstNode):
         return length_all_nodes
 
     def is_valid(self):
+        """
+        Retrieves if a node is valid or not.
+        
+        @rtype: bool
+        @return: The is valid value.
+        """
+
         return self.valid
 
     def accept(self, visitor):
@@ -196,6 +281,10 @@ class AstSequenceEndNode(AstSequenceNode):
     """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         AstSequenceNode.__init__(self)
         self.valid = False
 
@@ -205,6 +294,10 @@ class RootNode(AstNode):
     """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         AstNode.__init__(self)
 
 class ProgramNode(RootNode):
@@ -216,9 +309,20 @@ class ProgramNode(RootNode):
     """ The statements node """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         RootNode.__init__(self)
 
     def set_statements_node(self, statements_node):
+        """
+        Sets the statements node.
+        
+        @type statements_node: StatementsNode
+        @param statements_node: The statements node.
+        """
+
         self.statements_node = statements_node
         self.add_child_node(statements_node)
 
@@ -231,9 +335,20 @@ class StatementsNode(AstSequenceNode):
     """ The statement node """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         AstSequenceNode.__init__(self)
 
     def set_statement_node(self, statement_node):
+        """
+        Sets the statement node.
+        
+        @type statement_node: StatementNode
+        @param statement_node: The statement node.
+        """
+
         self.statement_node = statement_node
         self.add_child_node(statement_node)
 
@@ -243,6 +358,10 @@ class StatementNode(AstNode):
     """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         AstNode.__init__(self)
 
 class PassNode(StatementNode):
@@ -251,6 +370,10 @@ class PassNode(StatementNode):
     """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         StatementNode.__init__(self)
 
 class AssignNode(StatementNode):
@@ -265,13 +388,31 @@ class AssignNode(StatementNode):
     """ The expression node """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         StatementNode.__init__(self)
 
     def set_name_reference_node(self, name_reference_node):
+        """
+        Sets the name reference node.
+        
+        @type name_reference_node: NameReferenceNode
+        @param name_reference_node: The name reference node.
+        """
+
         self.name_reference_node = name_reference_node
         self.add_child_node(name_reference_node)
 
     def set_expression_node(self, expression_node):
+        """
+        Sets the expression node.
+        
+        @type expression_node: ExpressionNode
+        @param expression_node: The expression node.
+        """
+
         self.expression_node = expression_node
         self.add_child_node(expression_node)
 
@@ -326,9 +467,20 @@ class ReturnNode(StatementNode):
     """ The expression node """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         StatementNode.__init__(self)
 
     def set_expression_node(self, expression_node):
+        """
+        Sets the expression node.
+        
+        @type expression_node: ExpressionNode
+        @param expression_node: The expression node.
+        """
+        
         self.expression_node = expression_node
         self.add_child_node(expression_node)
 
@@ -341,9 +493,20 @@ class GlobalNode(StatementNode):
     """ The name """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         StatementNode.__init__(self)
 
     def set_name(self, name):
+        """
+        Sets the name value.
+        
+        @type name: String
+        @param name: The name value.
+        """
+
         self.name = name
 
 class IfConditionNode(StatementNode):
@@ -361,17 +524,42 @@ class IfConditionNode(StatementNode):
     """ The else condition node """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         StatementNode.__init__(self)
 
     def set_expression_node(self, expression_node):
+        """
+        Sets the expression node.
+        
+        @type expression_node: ExpressionNode
+        @param expression_node: The expression node.
+        """
+
         self.expression_node = expression_node
         self.add_child_node(expression_node)
 
     def set_statements_node(self, statements_node):
+        """
+        Sets the statements node.
+        
+        @type statements_node: StatementsNode
+        @param statements_node: The statements node.
+        """
+
         self.statements_node = statements_node
         self.add_child_node(statements_node)
 
     def set_else_condition_node(self, else_condition_node):
+        """
+        Sets the else condition node.
+        
+        @type else_condition_node: ElseConditionNode
+        @param else_condition_node: The else condition node.
+        """
+
         self.else_condition_node = else_condition_node
         self.add_child_node(else_condition_node)
 
@@ -426,9 +614,20 @@ class ElseConditionNode(AstSequenceNode):
     """ The statements node """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         AstSequenceNode.__init__(self)
 
     def set_statements_node(self, statements_node):
+        """
+        Sets the statements node.
+        
+        @type statements_node: StatementsNode
+        @param statements_node: The statements node.
+        """
+
         self.statements_node = statements_node
         self.add_child_node(statements_node)
 
@@ -441,9 +640,20 @@ class ElseIfConditionNode(ElseConditionNode):
     """ The expression node """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         ElseConditionNode.__init__(self)
 
     def set_expression_node(self, expression_node):
+        """
+        Sets the expression node.
+        
+        @type expression_node: ExpressionNode
+        @param expression_node: The expression node.
+        """
+
         self.expression_node = expression_node
         self.add_child_node(expression_node)
 

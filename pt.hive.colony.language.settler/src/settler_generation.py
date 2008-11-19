@@ -1435,15 +1435,15 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
 
     @settler_visitor._visit(settler_ast.ImplementsNode)
     def visit_implements_node(self, node):
-        print "ImplementsNode: " + str(node)
+        pass
 
     @settler_visitor._visit(settler_ast.ImplementsValuesNode)
     def visit_implements_values_node(self, node):
-        print "ImplementsValuesNode: " + str(node)
+        pass
 
     @settler_visitor._visit(settler_ast.InterfaceNode)
     def visit_interface_node(self, node):
-        print "InterfaceNode: " + str(node)
+        pass
 
     @settler_visitor._visit(settler_ast.PluginNode)
     def visit_plugin_node(self, node):
@@ -1467,12 +1467,12 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
 
     @settler_visitor._visit(settler_ast.AllowsNode)
     def visit_allows_node(self, node):
-        print "AllowsNode: " + str(node)
+        pass
 
     @settler_visitor._visit(settler_ast.AllowsValuesNode)
     def visit_allows_values_node(self, node):
-        print "AllowsValuesNode: " + str(node)
+        pass
 
     @settler_visitor._visit(settler_ast.CapabilityNode)
     def visit_capability_node(self, node):
-        print "CapabilityNode: " + str(node)
+        pass

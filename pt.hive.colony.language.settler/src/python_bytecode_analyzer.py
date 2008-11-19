@@ -68,7 +68,7 @@ def show_file(file_name):
     print "magic %s" % (magic.encode("hex"))
 
     # prints the modification date
-    print "moddate %s (%s)" % (moddate.encode("hex"), modtime)
+    print "moddate %s (%s)" % (modification_date.encode("hex"), modification_time)
 
     # unmarshals the code object
     code = marshal.load(file)
@@ -76,60 +76,100 @@ def show_file(file_name):
     # show the code object information
     show_code(code)
 
-def show_code(code, indent = ""):
+def show_code(code, indentation = ""):
     """
     Shows some code information about the given code object.
     
     @type code: Code
-    @para code: The code object to show some code information.
+    @param code: The code object to show some code information.
+    @type indentation: String
+    @param indentation: The indentation value.
     """
 
     # prints the code text
-    print "%scode" % indent
+    print "%scode" % indentation
 
-    # idents the text
-    indent += "   "
+    # indents the text
+    indentation += "   "
 
     # prints the number of arguments
-    print "%sargcount %d" % (indent, code.co_argcount)
+    print "%sargcount %d" % (indentation, code.co_argcount)
 
     # prints the number of locals
-    print "%snlocals %d" % (indent, code.co_nlocals)
+    print "%snlocals %d" % (indentation, code.co_nlocals)
 
     # prints the stack size
-    print "%sstacksize %d" % (indent, code.co_stacksize)
+    print "%sstacksize %d" % (indentation, code.co_stacksize)
 
     # prints the compilation flags
-    print "%sflags %04x" % (indent, code.co_flags)
+    print "%sflags %04x" % (indentation, code.co_flags)
 
     # prints the hexadecimal code in a string format
-    show_hex("code", code.co_code, indent = indent)
+    show_hex("code", code.co_code, indentation = indentation)
 
     # disassembles the code 
     dis.disassemble(code)
-    print "%sconsts" % indent
-    for const in code.co_consts:
-        if type(const) == types.CodeType:
-            show_code(const, indent+"   ")
-        else:
-            print "   %s%r" % (indent, const)
-    print "%snames %r" % (indent, code.co_names)
-    print "%svarnames %r" % (indent, code.co_varnames)
-    print "%sfreevars %r" % (indent, code.co_freevars)
-    print "%scellvars %r" % (indent, code.co_cellvars)
-    print "%sfilename %r" % (indent, code.co_filename)
-    print "%sname %r" % (indent, code.co_name)
-    print "%sfirstlineno %d" % (indent, code.co_firstlineno)
-    show_hex("lnotab", code.co_lnotab, indent=indent)
 
-def show_hex(label, h, indent):
-    h = h.encode("hex")
-    if len(h) < 60:
-        print "%s%s %s" % (indent, label, h)
+    # prints the constants text
+    print "%sconsts" % indentation
+
+    # iterates over all the constants
+    for constant in code.co_consts:
+        # in case is of type code
+        if type(constant) == types.CodeType:
+            show_code(constant, indentation + "   ")
+        else:
+            print "   %s%r" % (indentation, constant)
+
+    # prints the names
+    print "%snames %r" % (indentation, code.co_names)
+
+    # prints the variable names
+    print "%svarnames %r" % (indentation, code.co_varnames)
+
+    # prints the free variables
+    print "%sfreevars %r" % (indentation, code.co_freevars)
+
+    # prints the cell variables
+    print "%scellvars %r" % (indentation, code.co_cellvars)
+
+    # prints the filename
+    print "%sfilename %r" % (indentation, code.co_filename)
+
+    # prints the name
+    print "%sname %r" % (indentation, code.co_name)
+
+    # prints the first line number
+    print "%sfirstlineno %d" % (indentation, code.co_firstlineno)
+
+    # prints the lnotab value in a string format
+    show_hex("lnotab", code.co_lnotab, indentation = indentation)
+
+def show_hex(label, hex_value, indentation):
+    """
+    Prints the give hexadecimal value to the stdout with the given label and indentation.
+    
+    @type label: String
+    @param label: The label value to be printed.
+    @type hex_value: String
+    @param hex_value: The hexadecimal value.
+    @type indentation: String
+    @param indent: The indentation value.
+    """
+
+    # encode the hex value in hexadecimal
+    hex_value_encoded = hex_value.encode("hex")
+
+    # in case the length of the hexadecimal value is less than 60
+    if len(hex_value_encoded) < 60:
+        print "%s%s %s" % (indentation, label, hex_value_encoded)
     else:
-        print "%s%s" % (indent, label)
-        for i in range(0, len(h), 60):
-            print "%s   %s" % (indent, h[i:i+60])
+        print "%s%s" % (indentation, label)
+        for index in range(0, len(hex_value_encoded), 60):
+            print "%s   %s" % (indentation, hex_value_encoded[index:index + 60])
 
 if __name__ == "__main__":
-    show_file(sys.argv[1])
+    if len(sys.argv) < 2:
+        print "Invalid number of arguments, the file name is required"
+    else:
+        show_file(sys.argv[1])
