@@ -166,18 +166,22 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
         return self.global_context_code_information
 
     def set_global_context_code_information_variables(self, global_context_code_information):
+        # sets the constants related structures
         self.global_context_code_information.constants_list = global_context_code_information.constants_list
         self.global_context_code_information.index_contants_map = global_context_code_information.index_contants_map
         self.global_context_code_information.constants_index_map = global_context_code_information.constants_index_map
 
+        # sets the names related structures
         self.global_context_code_information.names_list = global_context_code_information.names_list
         self.global_context_code_information.index_names_map = global_context_code_information.index_names_map
         self.global_context_code_information.names_index_map = global_context_code_information.names_index_map
 
+        # sets the variable names related structures
         self.global_context_code_information.variable_names_list = global_context_code_information.variable_names_list
         self.global_context_code_information.index_variable_names_map = global_context_code_information.index_variable_names_map
         self.global_context_code_information.variable_names_index_map = global_context_code_information.variable_names_index_map
 
+        # sets the global names related structures
         self.global_context_code_information.global_names_list = global_context_code_information.global_names_list
 
     def add_operation(self, operation, arguments, mark_line = False, line_increment = 1):
