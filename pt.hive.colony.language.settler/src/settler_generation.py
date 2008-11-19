@@ -353,9 +353,8 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
                 for extends_item in extends_list:
                     # adds the operation to the list of operations
                     self.add_operation("LOAD", (extends_item, ))
-                if len(extends_list) > 1:
-                    # adds the operation to the list of operations
-                    self.add_operation("BUILD_TUPLE", (len(extends_list), ))
+                # adds the operation to the list of operations
+                self.add_operation("BUILD_TUPLE", (len(extends_list), ))
             else:
                 # adds the operation to the list of operations
                 self.add_operation("LOAD_CONST", ((), ))
@@ -409,9 +408,8 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
                 for extends_item in extends_list:
                     # adds the operation to the list of operations
                     self.add_operation("LOAD", (extends_item, ))
-                if len(extends_list) > 1:
-                    # adds the operation to the list of operations
-                    self.add_operation("BUILD_TUPLE", (len(extends_list), ))
+                # adds the operation to the list of operations
+                self.add_operation("BUILD_TUPLE", (len(extends_list), ))
             else:
                 # adds the operation to the list of operations
                 self.add_operation("LOAD", ("colony", ))

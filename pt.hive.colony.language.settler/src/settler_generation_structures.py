@@ -54,7 +54,8 @@ MULTIPLE_ADDRESSES_OPERATIONS = ["LOAD", "LOAD_CONST", "STORE_NAME", "STORE_FAST
 STACK_INCREMENTER_OPERATIONS = ["LOAD", "LOAD_CONST", "LOAD_NAME", "LOAD_FAST", "LOAD_GLOBAL"]
 
 STACK_DECREMENTER_OPERATIONS = ["POP_TOP", "STORE_NAME", "STORE_FAST", "STORE_GLOBAL", "STORE_ATTR", "IMPORT_NAME", "PRINT_ITEM",
-                                "BINARY_ADD", "BINARY_SUBTRACT", "BINARY_MULTIPLY", "BINARY_DIVIDE", "BINARY_POWER"]
+                                "BINARY_ADD", "BINARY_SUBTRACT", "BINARY_MULTIPLY", "BINARY_DIVIDE", "BINARY_POWER", "MAKE_FUNCTION",
+                                "BUILD_CLASS"]
 
 class ContextCodeInformation:
     """
@@ -269,13 +270,13 @@ class ContextCodeInformation:
         operation_tuple = (operation, arguments)
         self.operations_stack.append(operation_tuple)
         self.increment_program_counter(operation)
-        self.update_current_stack_size_add(operation)
+        self.update_current_stack_size_add(operation, arguments)
 
     def remove_operation(self, operation, arguments):
         operation_tuple = (operation, arguments)
         self.operations_stack.remove(operation_tuple)
         self.decrement_program_counter(operation)
-        self.update_current_stack_size_remove(operation)
+        self.update_current_stack_size_remove(operation, arguments)
 
     def increment_line_number(self, line_increment = 1):
         """
@@ -320,17 +321,27 @@ class ContextCodeInformation:
         else:
             self.program_counter -= 1
 
-    def update_current_stack_size_add(self, operation):
+    def update_current_stack_size_add(self, operation, arguments):
         if operation in STACK_INCREMENTER_OPERATIONS:
             self.current_stack_size += 1
         elif operation in STACK_DECREMENTER_OPERATIONS:
             self.current_stack_size -= 1
+        elif operation == "CALL_FUNCTION":
+            # retrieves the number of arguments
+            number_of_arguments = arguments[0]
 
-    def update_current_stack_size_remove(self, operation):
+            self.current_stack_size -= number_of_arguments
+
+    def update_current_stack_size_remove(self, operation, arguments):
         if operation in STACK_INCREMENTER_OPERATIONS:
             self.current_stack_size -= 1
         elif operation in STACK_DECREMENTER_OPERATIONS:
             self.current_stack_size += 1
+        elif operation == "CALL_FUNCTION":
+            # retrieves the number of arguments
+            number_of_arguments = arguments[0]
+
+            self.current_stack_size += number_of_arguments
 
     def generate_lnotab_string(self):
         # create the line intervals array
