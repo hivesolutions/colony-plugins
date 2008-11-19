@@ -135,10 +135,12 @@ def interpret_command(command, processing_structure, debug, verbose, code_genera
             # retrieves the global context code information
             global_context_code_information = code_generation_visitor.get_global_context_code_information()
 
-            # evaluates the python code
+            # evaluates the generated code object
             eval_result_value = eval(code_object, globals(), globals())
 
+            # in case the result of the evaluation is not None
             if not eval_result_value == None:
+                # prints the result of the evaluation
                 print eval_result_value
 
         # creates a interpretation visitor

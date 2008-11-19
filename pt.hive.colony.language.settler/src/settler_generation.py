@@ -586,8 +586,8 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
             # adds the operation to the list of operations
             self.add_operation("STORE_FAST", arguments, mark_line, line_increment)
 
-    def get_stack_size(self):
-        return self.current_context_code_information.stack_size
+    def get_current_stack_size(self):
+        return self.current_context_code_information.current_stack_size
 
     @settler_visitor._visit(settler_ast.AstNode)
     def visit_ast_node(self, node):
@@ -612,10 +612,12 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
             self.add_operation("RETURN_VALUE", ())
         else:
             # retrieves the current stack size
-            stack_size = self.get_stack_size()
+            current_stack_size = self.get_current_stack_size()
 
-            # in case the stack is empty
-            if not stack_size:
+            print("stack size: " + str(current_stack_size))
+
+            # in case the current stack is empty
+            if not current_stack_size:
                 # adds the operation to the list of operations
                 self.add_operation("LOAD_CONST", (None, ))
             # adds the operation to the list of operations

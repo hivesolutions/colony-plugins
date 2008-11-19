@@ -53,7 +53,8 @@ MULTIPLE_ADDRESSES_OPERATIONS = ["LOAD", "LOAD_CONST", "STORE_NAME", "STORE_FAST
 
 STACK_INCREMENTER_OPERATIONS = ["LOAD", "LOAD_CONST", "LOAD_NAME", "LOAD_FAST", "LOAD_GLOBAL"]
 
-STACK_DECREMENTER_OPERATIONS = ["POP_TOP", "STORE_NAME", "STORE_FAST", "STORE_GLOBAL", "STORE_ATTR", "IMPORT_NAME", "PRINT_ITEM"]
+STACK_DECREMENTER_OPERATIONS = ["POP_TOP", "STORE_NAME", "STORE_FAST", "STORE_GLOBAL", "STORE_ATTR", "IMPORT_NAME", "PRINT_ITEM",
+                                "BINARY_ADD"]
 
 class ContextCodeInformation:
     """
@@ -134,9 +135,9 @@ class ContextCodeInformation:
 
     meta_information_map = {}
     """ The meta information map """
-    
-    stack_size = 0
-    """ The stack size """
+
+    current_stack_size = 0
+    """ The current stack size """
 
     def __init__(self):
         self.constants_list = []
@@ -268,13 +269,13 @@ class ContextCodeInformation:
         operation_tuple = (operation, arguments)
         self.operations_stack.append(operation_tuple)
         self.increment_program_counter(operation)
-        self.update_stack_size_add(operation)
+        self.update_current_stack_size_add(operation)
 
     def remove_operation(self, operation, arguments):
         operation_tuple = (operation, arguments)
         self.operations_stack.remove(operation_tuple)
         self.decrement_program_counter(operation)
-        self.update_stack_size_remove(operation)
+        self.update_current_stack_size_remove(operation)
 
     def increment_line_number(self, line_increment = 1):
         """
@@ -319,17 +320,17 @@ class ContextCodeInformation:
         else:
             self.program_counter -= 1
 
-    def update_stack_size_add(self, operation):
+    def update_current_stack_size_add(self, operation):
         if operation in STACK_INCREMENTER_OPERATIONS:
-            self.stack_size += 1
+            self.current_stack_size += 1
         elif operation in STACK_DECREMENTER_OPERATIONS:
-            self.stack_size -= 1
+            self.current_stack_size -= 1
 
-    def update_stack_size_remove(self, operation):
+    def update_current_stack_size_remove(self, operation):
         if operation in STACK_INCREMENTER_OPERATIONS:
-            self.stack_size -= 1
+            self.current_stack_size -= 1
         elif operation in STACK_DECREMENTER_OPERATIONS:
-            self.stack_size += 1
+            self.current_stack_size += 1
 
     def generate_lnotab_string(self):
         # create the line intervals array
