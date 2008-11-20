@@ -669,13 +669,31 @@ class WhileNode(StatementNode):
     """ The statements node """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         StatementNode.__init__(self)
 
     def set_expression_node(self, expression_node):
+        """
+        Sets the expression node.
+        
+        @type expression_node: ExpressionNode
+        @param expression_node: The expression node.
+        """
+
         self.expression_node = expression_node
         self.add_child_node(expression_node)
 
     def set_statements_node(self, statements_node):
+        """
+        Sets the statements node.
+        
+        @type statements_node: StatementsNode
+        @param statements_node: The statements node.
+        """
+
         self.statements_node = statements_node
         self.add_child_node(statements_node)
 
@@ -736,16 +754,41 @@ class ForNode(StatementNode):
     """ The statements node """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         StatementNode.__init__(self)
 
     def set_item_name(self, item_name):
+        """
+        Sets the item name.
+        
+        @type item_name: String
+        @param item_name: The item name.
+        """
+
         self.item_name = item_name
 
     def set_expression_node(self, expression_node):
+        """
+        Sets the expression node.
+        
+        @type expression_node: ExpressionNode
+        @param expression_node: The expression node.
+        """
+
         self.expression_node = expression_node
         self.add_child_node(expression_node)
 
     def set_statements_node(self, statements_node):
+        """
+        Sets the statements node.
+        
+        @type statements_node: StatementsNode
+        @param statements_node: The statements node.
+        """
+
         self.statements_node = statements_node
         self.add_child_node(statements_node)
 
@@ -755,6 +798,10 @@ class ExpressionNode(StatementNode):
     """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         StatementNode.__init__(self)
 
 class NumberExpressionNode(ExpressionNode):
@@ -763,6 +810,10 @@ class NumberExpressionNode(ExpressionNode):
     """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         ExpressionNode.__init__(self)
 
 class IntegerExpressionNode(NumberExpressionNode):
@@ -774,9 +825,20 @@ class IntegerExpressionNode(NumberExpressionNode):
     """ The integer value """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         NumberExpressionNode.__init__(self)
 
     def set_integer_value(self, integer_value):
+        """
+        Sets the integer value.
+        
+        @type integer_value: int
+        @param integer_value: The integer value.
+        """
+
         self.integer_value = integer_value
 
 class StringExpressionNode(ExpressionNode):
@@ -788,9 +850,20 @@ class StringExpressionNode(ExpressionNode):
     """ The string value """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         ExpressionNode.__init__(self)
 
     def set_string_value(self, string_value):
+        """
+        Sets the string value.
+        
+        @type string_value: String
+        @param string_value: The string value.
+        """
+
         self.string_value = string_value
 
 class BoolExpressionNode(ExpressionNode):
@@ -802,9 +875,20 @@ class BoolExpressionNode(ExpressionNode):
     """ The bool value """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         ExpressionNode.__init__(self)
 
     def set_bool_value(self, bool_value):
+        """
+        Sets the bool value.
+        
+        @type bool_value: bool
+        @param bool_value: The bool value.
+        """
+
         self.bool_value = bool_value
 
 class NameExpressionNode(ExpressionNode):
@@ -816,9 +900,20 @@ class NameExpressionNode(ExpressionNode):
     """ The name reference node """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         ExpressionNode.__init__(self)    
 
     def set_name_reference_node(self, name_reference_node):
+        """
+        Sets the name reference node.
+        
+        @type name_reference_node: NameReferenceNode
+        @param name_reference_node: The name reference node.
+        """
+
         self.name_reference_node = name_reference_node
         self.add_child_node(name_reference_node)
 
@@ -831,9 +926,20 @@ class ListExpressionNode(ExpressionNode):
     """ The list contents node """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         ExpressionNode.__init__(self)    
 
     def set_list_contents_node(self, list_contents_node):
+        """
+        Sets the list contents node.
+        
+        @type list_contents_node: ListContentsNode
+        @param list_contents_node: The list contents node.
+        """
+
         self.list_contents_node = list_contents_node
         self.add_child_node(list_contents_node)
 
@@ -846,9 +952,20 @@ class ListContentsNode(AstSequenceNode):
     """ The expression node """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         AstSequenceNode.__init__(self)
 
     def set_expression_node(self, expression_node):
+        """
+        Sets the expression node.
+        
+        @type expression_node: ExpressionNode
+        @param expression_node: The expression node.
+        """
+
         self.expression_node = expression_node
         self.add_child_node(expression_node)
 
@@ -861,9 +978,20 @@ class UnaryExpressionNode(ExpressionNode):
     """ The expression node """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         ExpressionNode.__init__(self)
 
     def set_expression_node(self, expression_node):
+        """
+        Sets the expression node.
+        
+        @type expression_node: ExpressionNode
+        @param expression_node: The expression node.
+        """
+
         self.expression_node = expression_node
         self.add_child_node(expression_node)
 
@@ -879,13 +1007,31 @@ class BinaryExpressionNode(ExpressionNode):
     """ The second expression node """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         ExpressionNode.__init__(self)
 
     def set_first_expression_node(self, first_expression_node):
+        """
+        Sets the first expression node.
+        
+        @type first_expression_node: ExpressionNode
+        @param first_expression_node: The first expression node.
+        """
+
         self.first_expression_node = first_expression_node
         self.add_child_node(first_expression_node)
 
     def set_second_expression_node(self, second_expression_node):
+        """
+        Sets the second expression node.
+        
+        @type second_expression_node: ExpressionNode
+        @param second_expression_node: The second expression node.
+        """
+
         self.second_expression_node = second_expression_node
         self.add_child_node(second_expression_node)
 
@@ -895,6 +1041,10 @@ class ArithmethicExpressionNode(BinaryExpressionNode):
     """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         BinaryExpressionNode.__init__(self)
 
 class SummationExpressionNode(ArithmethicExpressionNode):
@@ -903,6 +1053,10 @@ class SummationExpressionNode(ArithmethicExpressionNode):
     """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         ArithmethicExpressionNode.__init__(self)
 
 class SubtractionExpressionNode(ArithmethicExpressionNode):
@@ -911,6 +1065,10 @@ class SubtractionExpressionNode(ArithmethicExpressionNode):
     """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         ArithmethicExpressionNode.__init__(self)
 
 class MultiplicationExpressionNode(ArithmethicExpressionNode):
@@ -919,6 +1077,10 @@ class MultiplicationExpressionNode(ArithmethicExpressionNode):
     """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         ArithmethicExpressionNode.__init__(self)
 
 class DivisionExpressionNode(ArithmethicExpressionNode):
@@ -927,6 +1089,10 @@ class DivisionExpressionNode(ArithmethicExpressionNode):
     """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         ArithmethicExpressionNode.__init__(self)
 
 class PowerExpressionNode(ArithmethicExpressionNode):
@@ -935,6 +1101,10 @@ class PowerExpressionNode(ArithmethicExpressionNode):
     """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         ArithmethicExpressionNode.__init__(self)
 
 class BooleanExpressionNode(BinaryExpressionNode):
@@ -943,6 +1113,10 @@ class BooleanExpressionNode(BinaryExpressionNode):
     """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         BinaryExpressionNode.__init__(self)
 
 class EqualExpressionNode(BooleanExpressionNode):
@@ -951,6 +1125,10 @@ class EqualExpressionNode(BooleanExpressionNode):
     """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         BooleanExpressionNode.__init__(self)
 
 class GreaterExpressionNode(BooleanExpressionNode):
@@ -959,6 +1137,10 @@ class GreaterExpressionNode(BooleanExpressionNode):
     """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         BooleanExpressionNode.__init__(self)
 
 class GreaterEqualExpressionNode(BooleanExpressionNode):
@@ -967,6 +1149,10 @@ class GreaterEqualExpressionNode(BooleanExpressionNode):
     """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         BooleanExpressionNode.__init__(self)
 
 class AndExpressionNode(BooleanExpressionNode):
@@ -975,6 +1161,10 @@ class AndExpressionNode(BooleanExpressionNode):
     """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         BooleanExpressionNode.__init__(self)
 
     def accept(self, visitor):
@@ -1025,6 +1215,10 @@ class OrExpressionNode(BooleanExpressionNode):
     """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         BooleanExpressionNode.__init__(self)
 
     def accept(self, visitor):
@@ -1075,6 +1269,10 @@ class NotExpressionNode(UnaryExpressionNode):
     """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         UnaryExpressionNode.__init__(self)
 
 class ParenthesisExpressionNode(UnaryExpressionNode):
@@ -1083,6 +1281,10 @@ class ParenthesisExpressionNode(UnaryExpressionNode):
     """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         ExpressionNode.__init__(self)
 
 class NegativeExpressionNode(UnaryExpressionNode):
@@ -1091,6 +1293,10 @@ class NegativeExpressionNode(UnaryExpressionNode):
     """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         ExpressionNode.__init__(self)
 
 class NameReferenceNode(AstSequenceNode):
@@ -1102,9 +1308,20 @@ class NameReferenceNode(AstSequenceNode):
     """ The name reference """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         AstSequenceNode.__init__(self)
 
     def set_name_reference(self, name_reference):
+        """
+        Sets the name reference.
+        
+        @type name_reference: String
+        @param name_reference: The name reference.
+        """
+
         self.name_reference = name_reference
 
     def to_name(self):
@@ -1140,9 +1357,20 @@ class ImportNode(AstSequenceNode):
     """ The import name reference node """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         AstSequenceNode.__init__(self)
 
     def set_import_name_reference_node(self, import_name_reference_node):
+        """
+        Sets the import name reference node.
+        
+        @type import_name_reference_node: NameReferenceNode
+        @param import_name_reference_node: The import name reference node.
+        """
+
         self.import_name_reference_node = import_name_reference_node
 
 class FunctionNode(ExpressionNode):
@@ -1163,20 +1391,52 @@ class FunctionNode(ExpressionNode):
     """ The statements node """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         ExpressionNode.__init__(self)
 
     def set_function_operators_node(self, function_operators_node):
+        """
+        Sets the function operators node.
+        
+        @type function_operators_node: FunctionOperatorsNode
+        @param function_operators_node: The function operators node.
+        """
+
         self.function_operators_node = function_operators_node
         self.add_child_node(function_operators_node)
 
     def set_function_name(self, function_name):
+        """
+        Sets the function name.
+        
+        @type function_name: String
+        @param function_name: The function name.
+        """
+
         self.function_name = function_name
 
     def set_function_arguments_node(self, function_arguments_node):
+        """
+        Sets the function arguments node.
+        
+        @type function_arguments_node: FunctionArgumentsNode
+        @param function_arguments_node: The function arguments node.
+        """
+
         self.function_arguments_node = function_arguments_node
         self.add_child_node(function_arguments_node)
 
     def set_statements_node(self, statements_node):
+        """
+        Sets the statements node.
+        
+        @type statements_node: StatementsNode
+        @param statements_node: The statements node.
+        """
+
         self.statements_node = statements_node
         self.add_child_node(statements_node)
 
@@ -1252,9 +1512,20 @@ class FunctionOperatorsNode(AstSequenceNode):
     """ The function operator node """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         AstSequenceNode.__init__(self)
 
     def set_function_operator_node(self, function_operator_node):
+        """
+        Sets the statements node.
+        
+        @type statements_node: StatementsNode
+        @param statements_node: The statements node.
+        """
+
         self.function_operator_node = function_operator_node
         self.add_child_node(function_operator_node)
 
@@ -1267,9 +1538,20 @@ class FunctionOperatorNode(AstNode):
     """ The function operator name """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         AstNode.__init__(self)
 
     def set_function_operator_name(self, function_operator_name):
+        """
+        Sets the function operator name.
+        
+        @type function_operator_name: String
+        @param function_operator_name: The function operator name.
+        """
+
         self.function_operator_name = function_operator_name
 
 class StaticFunctionOperatorNode(FunctionOperatorNode):
@@ -1278,6 +1560,10 @@ class StaticFunctionOperatorNode(FunctionOperatorNode):
     """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         FunctionOperatorNode.__init__(self)
         self.set_function_operator_name("static")
 
@@ -1290,9 +1576,20 @@ class ArgumentsNode(AstSequenceNode):
     """ The argument node """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         AstSequenceNode.__init__(self)
 
     def set_argument_node(self, argument_node):
+        """
+        Sets the argument node.
+        
+        @type argument_node: ArgumentNode
+        @param argument_node: The argument node.
+        """
+
         self.argument_node = argument_node
         self.add_child_node(argument_node)
 
@@ -1305,9 +1602,20 @@ class ArgumentNode(AstNode):
     """ The name """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         AstNode.__init__(self)
 
     def set_name(self, name):
+        """
+        Sets the name value.
+        
+        @type name: String
+        @param name: The name value.
+        """
+
         self.name = name
 
 class DefaultValueArgumentNode(ArgumentNode):
@@ -1319,9 +1627,20 @@ class DefaultValueArgumentNode(ArgumentNode):
     """ The expression node """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         ArgumentNode.__init__(self)
 
     def set_expression_node(self, expression_node):
+        """
+        Sets the expression node.
+        
+        @type expression_node: ExpressionNode
+        @param expression_node: The expression node.
+        """
+
         self.expression_node = expression_node
         self.add_child_node(expression_node)
 
@@ -1337,13 +1656,31 @@ class FunctionCallNode(AstNode):
     """ The function argument values node """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         AstNode.__init__(self)
 
     def set_function_name_reference_node(self, function_name_reference_node):
+        """
+        Sets the function name reference node.
+        
+        @type function_name_reference_node: NameReferenceNode
+        @param function_name_reference_node: The name reference node.
+        """
+
         self.function_name_reference_node = function_name_reference_node
         self.add_child_node(function_name_reference_node)
 
     def set_function_argument_values_node(self, function_argument_values_node):
+        """
+        Sets the function argument values node.
+        
+        @type function_argument_values_node: ArgumentValuesNode
+        @param function_argument_values_node: The function argument values node.
+        """
+
         self.function_argument_values_node = function_argument_values_node
         self.add_child_node(function_argument_values_node)
 
@@ -1398,9 +1735,20 @@ class ArgumentValuesNode(AstSequenceNode):
     """ The argument value node """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         AstSequenceNode.__init__(self)
 
     def set_argument_value_node(self, argument_value_node):
+        """
+        Sets the argument value node.
+        
+        @type argument_value_node: ArgumentValueNode
+        @param argument_value_node: The argument value node.
+        """
+
         self.argument_value_node = argument_value_node
         self.add_child_node(argument_value_node)
 
@@ -1413,9 +1761,20 @@ class ArgumentValueNode(AstNode):
     """ The expression node """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         AstNode.__init__(self)
 
     def set_expression_node(self, expression_node):
+        """
+        Sets the expression node.
+        
+        @type expression_node: ExpressionNode
+        @param expression_node: The expression node.
+        """
+
         self.expression_node = expression_node
         self.add_child_node(expression_node)
 
@@ -1437,20 +1796,52 @@ class ClassNode(ExpressionNode):
     """ The statements node """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         ExpressionNode.__init__(self)
 
     def set_class_name(self, class_name):
+        """
+        Sets the class name.
+        
+        @type class_name: String
+        @param class_name: The class name.
+        """
+
         self.class_name = class_name
 
     def set_extends_node(self, extends_node):
+        """
+        Sets the extends node.
+        
+        @type extends_node: ExtendsNode
+        @param extends_node: The extends node.
+        """
+
         self.extends_node = extends_node
         self.add_child_node(extends_node)
 
     def set_implements_node(self, implements_node):
+        """
+        Sets the implements node.
+        
+        @type implements_node: ImplementsNode
+        @param implements_node: The implements node.
+        """
+
         self.implements_node = implements_node
         self.add_child_node(implements_node)
 
     def set_statements_node(self, statements_node):
+        """
+        Sets the statements node.
+        
+        @type statements_node: StatementsNode
+        @param statements_node: The statements node.
+        """
+
         self.statements_node = statements_node
         self.add_child_node(statements_node)
 
@@ -1505,9 +1896,20 @@ class ExtendsNode(AstNode):
     """ The extends values node """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         AstNode.__init__(self)
 
     def set_extends_values_node(self, extends_values_node):
+        """
+        Sets the extends values node.
+        
+        @type extends_values_node: ExtendsValuesNode
+        @param extends_values_node: The extends values node.
+        """
+
         self.extends_values_node = extends_values_node
         self.add_child_node(extends_values_node)
 
@@ -1520,9 +1922,20 @@ class ExtendsValuesNode(AstSequenceNode):
     """ The extends values name """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         AstSequenceNode.__init__(self)
 
     def set_extends_values_name(self, extends_values_name):
+        """
+        Sets the extends values name.
+        
+        @type extends_values_name: String
+        @param extends_values_name: The extends values name.
+        """
+
         self.extends_values_name = extends_values_name
 
 class ImplementsNode(AstNode):
@@ -1534,9 +1947,20 @@ class ImplementsNode(AstNode):
     """The implements values node """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         AstNode.__init__(self)
 
     def set_implements_values_node(self, implements_values_node):
+        """
+        Sets the implements values node.
+        
+        @type implements_values_node: ImplementsValuesNode
+        @param implements_values_node: The implements values node.
+        """
+
         self.implements_values_node = implements_values_node
         self.add_child_node(implements_values_node)
 
@@ -1549,9 +1973,20 @@ class ImplementsValuesNode(AstSequenceNode):
     """ The implements values name """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         AstSequenceNode.__init__(self)
 
     def set_implements_values_name(self, implements_values_name):
+        """
+        Sets the implements values name.
+        
+        @type implements_values_name: String
+        @param implements_values_name: The implements values name.
+        """
+
         self.implements_values_name = implements_values_name
 
 class InterfaceNode(ExpressionNode):
@@ -1569,16 +2004,41 @@ class InterfaceNode(ExpressionNode):
     """ The statements node """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         ExpressionNode.__init__(self)
 
     def set_interface_name(self, interface_name):
+        """
+        Sets the interface name.
+        
+        @type interface_name: String
+        @param interface_name: The interface name.
+        """
+
         self.interface_name = interface_name
 
     def set_extends_node(self, extends_node):
+        """
+        Sets the extends node.
+        
+        @type extends_node: ExtendsNode
+        @param extends_node: The extends node.
+        """
+
         self.extends_node = extends_node
         self.add_child_node(extends_node)
 
     def set_statements_node(self, statements_node):
+        """
+        Sets the statements node.
+        
+        @type statements_node: StatementsNode
+        @param statements_node: The statements node.
+        """
+
         self.statements_node = statements_node
         self.add_child_node(statements_node)
 
@@ -1603,24 +2063,63 @@ class PluginNode(ExpressionNode):
     """ The statements node """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         ExpressionNode.__init__(self)
 
     def set_plugin_name(self, plugin_name):
+        """
+        Sets the plugin name.
+        
+        @type plugin_name: String
+        @param plugin_name: The plugin name.
+        """
+
         self.plugin_name = plugin_name
 
     def set_extends_node(self, extends_node):
+        """
+        Sets the extends node.
+        
+        @type extends_node: ExtendsNode
+        @param extends_node: The extends node.
+        """
+
         self.extends_node = extends_node
         self.add_child_node(extends_node)
 
     def set_implements_node(self, implements_node):
+        """
+        Sets the implements node.
+        
+        @type implements_node: ImplementsNode
+        @param implements_node: The implements node.
+        """
+
         self.implements_node = implements_node
         self.add_child_node(implements_node)
 
     def set_allows_node(self, allows_node):
+        """
+        Sets the allows node.
+        
+        @type allows_node: AllowsNode
+        @param allows_node: The allows node.
+        """
+
         self.allows_node = allows_node
         self.add_child_node(allows_node)
 
     def set_statements_node(self, statements_node):
+        """
+        Sets the statements node.
+        
+        @type statements_node: StatementsNode
+        @param statements_node: The statements node.
+        """
+
         self.statements_node = statements_node
         self.add_child_node(statements_node)
 
@@ -1675,9 +2174,20 @@ class AllowsNode(AstNode):
     """The allows values node """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         AstNode.__init__(self)
 
     def set_allows_values_node(self, allows_values_node):
+        """
+        Sets the allows values node.
+        
+        @type allows_values_node: AllowsValuesNode
+        @param allows_values_node: The allows values node.
+        """
+
         self.allows_values_node = allows_values_node
         self.add_child_node(allows_values_node)
 
@@ -1690,9 +2200,20 @@ class AllowsValuesNode(AstSequenceNode):
     """ The allows values name """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         AstSequenceNode.__init__(self)
 
     def set_allows_values_name(self, allows_values_name):
+        """
+        Sets the allows values name.
+        
+        @type allows_values_name: String
+        @param allows_values_name: The allows values name.
+        """
+
         self.allows_values_name = allows_values_name
 
 class CapabilityNode(ExpressionNode):
@@ -1710,16 +2231,41 @@ class CapabilityNode(ExpressionNode):
     """ The statements node """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         ExpressionNode.__init__(self)
 
     def set_capability_name(self, capability_name):
+        """
+        Sets the capability name.
+        
+        @type capability_name: String
+        @param capability_name: The capability name.
+        """
+
         self.capability_name = capability_name
 
     def set_extends_node(self, extends_node):
+        """
+        Sets the extends node.
+        
+        @type extends_node: ExtendsNode
+        @param extends_node: The extends node.
+        """
+
         self.extends_node = extends_node
         self.add_child_node(extends_node)
 
     def set_statements_node(self, statements_node):
+        """
+        Sets the statements node.
+        
+        @type statements_node: StatementsNode
+        @param statements_node: The statements node.
+        """
+
         self.statements_node = statements_node
         self.add_child_node(statements_node)
 
@@ -1732,12 +2278,33 @@ class AstSequenceNodeIterator:
     """ The ast sequence node """
 
     def __init__(self, ast_sequence_node):
+        """
+        Constructor of the class.
+        
+        @type ast_sequence_node: AstSequenceNode
+        @param ast_sequence_node: The ast sequence node for the iterator.
+        """
+
         self.ast_sequence_node = ast_sequence_node
 
     def __iter__(self):
+        """
+        Returns the iterator object for sequence iteration.
+        
+        @rtype: AstSequenceNodeIterator
+        @return: The iterator object for sequence iteration.
+        """
+
         return self
 
     def next(self):
+        """
+        Retrieves the next ast sequence node.
+        
+        @rtype: AstSequenceNode
+        @return: The next ast sequence node.
+        """
+
         # retrieves the current ast sequence node
         current_ast_sequence_node = self.ast_sequence_node
 

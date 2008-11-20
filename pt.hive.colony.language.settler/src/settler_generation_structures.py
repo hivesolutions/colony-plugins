@@ -45,17 +45,21 @@ import types
 import settler_exceptions
 
 COMPLEX_OPERATIONS = ["LOAD"]
+""" The list of complex operations """
 
 MULTIPLE_ADDRESSES_OPERATIONS = ["LOAD", "LOAD_CONST", "STORE_NAME", "STORE_FAST", "STORE_GLOBAL", "STORE_ATTR",
                                  "LOAD_NAME", "LOAD_FAST", "LOAD_ATTR", "LOAD_GLOBAL", "COMPARE_OP", "MAKE_FUNCTION",
                                  "CALL_FUNCTION", "JUMP_IF_FALSE", "JUMP_IF_TRUE", "JUMP_FORWARD", "JUMP_ABSOLUTE",
                                  "SETUP_LOOP", "BUILD_TUPLE", "BUILD_LIST", "IMPORT_NAME"]
+""" The list of multiple addresses operations """
 
 STACK_INCREMENTER_OPERATIONS = ["LOAD", "LOAD_CONST", "LOAD_NAME", "LOAD_FAST", "LOAD_GLOBAL"]
+""" The list of stack incrementer operations """
 
 STACK_DECREMENTER_OPERATIONS = ["POP_TOP", "STORE_NAME", "STORE_FAST", "STORE_GLOBAL", "STORE_ATTR", "IMPORT_NAME", "PRINT_ITEM",
                                 "BINARY_ADD", "BINARY_SUBTRACT", "BINARY_MULTIPLY", "BINARY_DIVIDE", "BINARY_POWER", "MAKE_FUNCTION",
                                 "BUILD_CLASS"]
+""" The list of stack decrementer operations """
 
 class ContextCodeInformation:
     """
@@ -141,6 +145,10 @@ class ContextCodeInformation:
     """ The current stack size """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         self.constants_list = []
         self.index_contants_map = {}
         self.constants_index_map = {}
@@ -160,9 +168,23 @@ class ContextCodeInformation:
         self.add_constant(None)
         
     def set_global_context_code_information(self, global_context_code_information):
+        """
+        Sets the global context code information.
+        
+        @type global_context_code_information: ContextCodeInformation
+        @param global_context_code_information: The global context code information.
+        """
+
         self.global_context_code_information = global_context_code_information
 
     def add_variable(self, variable_name):
+        """
+        Adds a variable to the list of variables.
+        
+        @type variable_name: String
+        @param variable_name: The name of the variable to add to the list of variables. 
+        """
+
         if variable_name in self.names_list:
             return
 
@@ -172,6 +194,15 @@ class ContextCodeInformation:
         self.names_index_map[variable_name] = names_list_length
 
     def remove_variable(self, variable_name):
+        """
+        Removes a variable from the list of variables.
+        
+        @type variable_name: String
+        @param variable_name: The name of the variable to remove from the list of variables. 
+        @rtype: bool
+        @return: The result of the removal (if successful or not).
+        """
+
         if not variable_name in self.names_list:
             return False
         if not variable_name in self.names_index_map:
@@ -185,11 +216,27 @@ class ContextCodeInformation:
         return True
 
     def get_variable_offset(self, variable_name):
+        """
+        Retrieves the offset to the given variable.
+        
+        @type variable_name: String
+        @param variable_name: The name of the variable to retrieve the offset.
+        @rtype: int
+        @return: The offset to the given variable.
+        """
+
         if not variable_name in self.names_index_map:
             return None
         return self.names_index_map[variable_name]
 
     def add_variable_name(self, variable_name):
+        """
+        Adds a variable name to the list of variable names.
+        
+        @type variable_name: String
+        @param variable_name: The name of the variable name to add to the list of variable names. 
+        """
+
         if variable_name in self.variable_names_list:
             return
 
@@ -202,6 +249,15 @@ class ContextCodeInformation:
         self.number_locals += 1
 
     def remove_variable_name(self, variable_name):
+        """
+        Removes a variable name from the list of variable names.
+        
+        @type variable_name: String
+        @param variable_name: The name of the variable name to remove from the list of variable names. 
+        @rtype: bool
+        @return: The result of the removal (if successful or not).
+        """
+
         if not variable_name in self.variable_names_list:
             return False
         if not variable_name in self.variable_names_index_map:
@@ -218,13 +274,43 @@ class ContextCodeInformation:
 
         return True
 
+    def get_variable_name_offset(self, variable_name):
+        """
+        Retrieves the offset to the given variable name.
+        
+        @type variable_name: String
+        @param variable_name: The name of the variable name to retrieve the offset.
+        @rtype: int
+        @return: The offset to the given variable name.
+        """
+
+        if not variable_name in self.variable_names_index_map:
+            return None
+        return self.variable_names_index_map[variable_name]
+
     def add_global_name(self, global_name):
+        """
+        Adds a global name to the list of global names.
+        
+        @type global_name: String
+        @param global_name: The global name to add to the list of global names. 
+        """
+
         self.add_variable(global_name)
 
         if not global_name in self.global_names_list:
             self.global_names_list.append(global_name)
 
     def remove_global_name(self, global_name):
+        """
+        Removes a global name from the list of global names.
+        
+        @type global_name: String
+        @param global_name: The global name to remove from the list of global names.
+        @rtype: bool
+        @return: The result of the removal (if successful or not).
+        """
+
         if not self.remove_variable(variable_name):
             return False
 
@@ -233,12 +319,14 @@ class ContextCodeInformation:
 
         self.global_names_list.remove(global_name)
 
-    def get_variable_name_offset(self, variable_name):
-        if not variable_name in self.variable_names_index_map:
-            return None
-        return self.variable_names_index_map[variable_name]
-
     def add_constant(self, value):
+        """
+        Adds a constant to the list of constants.
+        
+        @type value: Object
+        @param value: The constant value to add to the list of constants.
+        """
+
         if value in self.constants_list:
             return
 
@@ -248,6 +336,15 @@ class ContextCodeInformation:
         self.constants_index_map[value] = constants_list_length
 
     def remove_constant(self, value):
+        """
+        Removes a constant from the list of constants.
+        
+        @type value: Object
+        @param value: The constant value to remove from the list of constants.
+        @rtype: bool
+        @return: The result of the removal (if successful or not).
+        """
+
         if not value in self.constants_list:
             return False
         if not value in self.constants_index_map:
@@ -262,17 +359,44 @@ class ContextCodeInformation:
         return True
 
     def get_constant_offset(self, value):
+        """
+        Retrieves the offset to the given constant.
+        
+        @type value: Object
+        @param value: The constant value to retrieve the offset.
+        @rtype: int
+        @return: The offset to the given constant value.
+        """
+
         if not value in self.constants_index_map:
             return None
         return self.constants_index_map[value]
 
     def add_operation(self, operation, arguments):
+        """
+        Adds an operation to the list of operations.
+        
+        @type operation: String
+        @param operation: The name of the operation to be added.
+        @type arguments: Tuple
+        @param arguments: The arguments of the operation to be added.        
+        """
+
         operation_tuple = (operation, arguments)
         self.operations_stack.append(operation_tuple)
         self.increment_program_counter(operation)
         self.update_current_stack_size_add(operation, arguments)
 
     def remove_operation(self, operation, arguments):
+        """
+        Removes an operation from the list of operations.
+        
+        @type operation: String
+        @param operation: The name of the operation to be removed.
+        @type arguments: Tuple
+        @param arguments: The arguments of the operation to be removed.        
+        """
+
         operation_tuple = (operation, arguments)
         self.operations_stack.remove(operation_tuple)
         self.decrement_program_counter(operation)
@@ -298,7 +422,7 @@ class ContextCodeInformation:
 
     def get_current_line_number(self):
         """
-        Retrives the current line number.
+        Retrieves the current line number.
         
         @rtype: int
         @return: The current line number.
@@ -307,21 +431,51 @@ class ContextCodeInformation:
         return self.current_line_number
 
     def get_current_program_counter(self):
+        """
+        Retrieves the current value for the program counter.
+        
+        @rtype: int
+        @return: The current value for the program counter.
+        """
+
         return self.program_counter
 
     def increment_program_counter(self, operation):
+        """
+        Increments the program counter for the given operation.
+        
+        @type operation: String
+        @param operation: The operation used to calculate the program counter increment.
+        """
+
         if operation in MULTIPLE_ADDRESSES_OPERATIONS:
             self.program_counter += 3
         else:
             self.program_counter += 1
 
     def decrement_program_counter(self, operation):
+        """
+        Decrements the program counter for the given operation.
+        
+        @type operation: String
+        @param operation: The operation used to calculate the program counter decrement.
+        """
+
         if operation in MULTIPLE_ADDRESSES_OPERATIONS:
             self.program_counter -= 3
         else:
             self.program_counter -= 1
 
     def update_current_stack_size_add(self, operation, arguments):
+        """
+        Updates the current stack size value for the addition of the given operation and arguments.
+        
+        @type operation: String
+        @param operation: The operation used to update the current stack size.
+        @type operation: Tuple
+        @param operation: The arguments used to update the current stack size.
+        """
+
         if operation in STACK_INCREMENTER_OPERATIONS:
             self.current_stack_size += 1
         elif operation in STACK_DECREMENTER_OPERATIONS:
@@ -330,9 +484,19 @@ class ContextCodeInformation:
             # retrieves the number of arguments
             number_of_arguments = arguments[0]
 
+            # decrements the stack size by the given number of arguments
             self.current_stack_size -= number_of_arguments
 
     def update_current_stack_size_remove(self, operation, arguments):
+        """
+        Updates the current stack size value for the removal of the given operation and arguments.
+        
+        @type operation: String
+        @param operation: The operation used to update the current stack size.
+        @type operation: Tuple
+        @param operation: The arguments used to update the current stack size.
+        """
+
         if operation in STACK_INCREMENTER_OPERATIONS:
             self.current_stack_size -= 1
         elif operation in STACK_DECREMENTER_OPERATIONS:
@@ -341,9 +505,17 @@ class ContextCodeInformation:
             # retrieves the number of arguments
             number_of_arguments = arguments[0]
 
+            # increments the stack size by the given number of arguments
             self.current_stack_size += number_of_arguments
 
     def generate_lnotab_string(self):
+        """
+        Generates the lnotab string.
+        
+        @rtype: String
+        @return: The generated lnotab string.
+        """
+
         # create the line intervals array
         line_intervals_array = array.array("B")
 
@@ -358,6 +530,13 @@ class ContextCodeInformation:
         return lnotab_string
 
     def generate_code_string(self):
+        """
+        Generates the code string.
+        
+        @rtype: String
+        @return: The generated code string.
+        """
+
         # create the code array
         code = array.array("B")
 
@@ -401,6 +580,18 @@ class ContextCodeInformation:
         return code_string
 
     def generate_code_arguments(self, code, operation, arguments):
+        """
+        Generates the code for the given operation and arguments,
+        appending the generated code to the the given code array object.
+        
+        @type code: Array
+        @param code: The code array object used to support the code stream.
+        @type operation: String
+        @param operation: The operation to be used in the code generation.
+        @type operation: String
+        @param operation: The arguments to be used in the code generation.
+        """
+
         if not operation in MULTIPLE_ADDRESSES_OPERATIONS:
             return
 
@@ -778,6 +969,13 @@ class ContextCodeInformation:
         return value_object
 
     def generate_code_object(self):
+        """
+        Generates the code object for the current generation structure.
+        
+        @rtype: Code
+        @return: The generated code object.
+        """
+        
         # generates the lnotab string
         lnotab_string = self.generate_lnotab_string()
 
@@ -801,7 +999,18 @@ class ContextCodeInformation:
         return self.code_object
 
     def get_operations_stack_memory_size(self, operations_stack = None):
+        """
+        Retrieves the memory size of the given operations stack.
+        
+        @type operations_stack: List
+        @param operations_stack: The stack of operation to calculate the memory size.
+        @rtype: int
+        @return: The memory size of the operations stack.
+        """
+
+        # in case operations stack is none
         if operations_stack == None:
+            # uses the operations stack in the instance
             operations_stack = self.operations_stack
 
         # creates the stack memory size
@@ -829,4 +1038,8 @@ class DeferredValue:
     """ The calculation value """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
         pass

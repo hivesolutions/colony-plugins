@@ -38,32 +38,86 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 class SettlerException(Exception):
+    """
+    The settler exception class.
+    """
+
     pass
 
 class SettlerSymbolNotFound(SettlerException):
+    """
+    The settler symbol not found class.
+    """
 
     def __init__(self, message):
+        """
+        Constructor of the class.
+        
+        @type message: String
+        @param message: The message to be printed.
+        """
+
         SettlerException.__init__(self)
         self.message = message
 
     def __str__(self):
-       return "Symbol not found: %s" % self.message
+        """
+        Returns the string representation of the class.
+        
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Symbol not found: %s" % self.message
 
 class SettlerInvalidNumberOfArguments(SettlerException):
+    """
+    The settler invalid number of arguments class.
+    """
 
     def __init__(self, message):
+        """
+        Constructor of the class.
+        
+        @type message: String
+        @param message: The message to be printed.
+        """
+
         SettlerException.__init__(self)
         self.message = message
 
     def __str__(self):
-       return "Invalid number of arguments: %s" % self.message
+        """
+        Returns the string representation of the class.
+        
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Invalid number of arguments: %s" % self.message
 
 class SettlerInvalidOperation(SettlerException):
+    """
+    The settler invalid operation class.
+    """
 
     def __init__(self, message):
+        """
+        Constructor of the class.
+        
+        @type message: String
+        @param message: The message to be printed.
+        """
+
         SettlerException.__init__(self)
         self.message = message
 
     def __str__(self):
-       return "Invalid operation: %s" % self.message
+        """
+        Returns the string representation of the class.
+        
+        @rtype: String
+        @return: The string representation of the class.
+        """
 
+        return "Invalid operation: %s" % self.message
