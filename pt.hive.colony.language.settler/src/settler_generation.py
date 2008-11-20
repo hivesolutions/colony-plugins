@@ -1338,7 +1338,11 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
         else:
             number_function_arguments = 0
 
+        # accepts the function argument values node in post order
         function_argument_values_node.accept_post_order(self)
+
+        # retrieves the python builtins module
+        python_builtins = globals()["__builtins__"]
 
         self.decrement_operations_stack_level_virtual()
 
@@ -1352,6 +1356,10 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
             # adds the operation to the list of operations
             self.add_operation("PRINT_NEWLINE", ())
         else:
+            if first_name_reference in python_builtins:
+                # adds the variable to the current context
+                self.add_variable(first_name_reference)
+
             # sets the first visit flag as true
             first_visit = True
 
