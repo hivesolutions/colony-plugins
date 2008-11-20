@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 class BusinessHelper:
     """
-    The business helper class
+    The business helper class.
     """
 
     business_helper_plugin = None
@@ -47,10 +47,10 @@ class BusinessHelper:
 
     def __init__(self, business_helper_plugin):
         """
-        Constructor of the class
+        Constructor of the class.
         
         @type business_helper_plugin: BusinessHelperPlugin
-        @param business_helper_plugin: The business helper plugin
+        @param business_helper_plugin: The business helper plugin.
         """
 
         self.business_helper_plugin = business_helper_plugin

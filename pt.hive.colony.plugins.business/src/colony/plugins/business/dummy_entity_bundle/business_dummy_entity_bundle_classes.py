@@ -45,8 +45,8 @@ class DummyEntityBundleParent:
     address = {"data_type" : "text"}
     """ The address of the entity """
 
-    #mapping_options = {"inheritance_mapping": "table_per_class"}
-    mapping_options = {"inheritance_mapping": "single_table"}
+    mapping_options = {"inheritance_mapping": "table_per_class"}
+    #mapping_options = {"inheritance_mapping": "single_table"}
     """ The object relational (o/r) options """
 
     def __init__(self):

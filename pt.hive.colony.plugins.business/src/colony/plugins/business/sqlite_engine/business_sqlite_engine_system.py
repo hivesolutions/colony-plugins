@@ -222,11 +222,13 @@ class BusinessSqliteEngine:
         # creates the initial index value
         index = 0
 
+        # retrieves the table information list size
         table_information_list_size = len(table_information_list)
 
         if not table_information_list_size == entity_class_valid_attributes_size:
             return False
 
+        # iterates over all the table information
         for table_information_item in table_information_list:
             # retrieves the attribute name
             attribute_name = table_information_item[1]
@@ -316,6 +318,15 @@ class BusinessSqliteEngine:
         pass
 
     def save_entity(self, connection, entity):
+        """
+        Saves the given entity instance in the database, using the given connection.
+        
+        @type connection: Connection
+        @param connection: The database connection to use.
+        @type entity: Object
+        @param entity: The entity instance to be saved.
+        """
+
         # retrieves the database connection from the connection object
         database_connection = connection.database_connection
 
@@ -419,6 +430,15 @@ class BusinessSqliteEngine:
         cursor.close()
 
     def remove_entity(self, connection, entity):
+        """
+        Removes the given entity instance from the database, using the given connection.
+        
+        @type connection: Connection
+        @param connection: The database connection to use.
+        @type entity: Object
+        @param entity: The entity instance to be removed.
+        """
+
         # retrieves the database connection from the connection object
         database_connection = connection.database_connection
 
