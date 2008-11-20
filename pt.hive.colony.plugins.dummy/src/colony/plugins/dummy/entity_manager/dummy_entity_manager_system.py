@@ -122,6 +122,7 @@ class DummyEntityManager:
         # creates a new entity bundle association instance
         dummy_entity_bundle_association = dummy_entity_bundle_association_class()
 
+        # sets the dummy entity bundle attributes
         dummy_entity_bundle_association.name = "test_name2"
         dummy_entity_bundle_association.address = "Tobias Street, 120"
         dummy_entity_bundle_association.hair_type = "blonde"
