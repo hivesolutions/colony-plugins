@@ -53,13 +53,13 @@ MULTIPLE_ADDRESSES_OPERATIONS = ["LOAD", "LOAD_CONST", "STORE_NAME", "STORE_FAST
                                  "SETUP_LOOP", "BUILD_TUPLE", "BUILD_LIST", "IMPORT_NAME"]
 """ The list of multiple addresses operations """
 
-STACK_INCREMENTER_OPERATIONS = ["LOAD", "LOAD_CONST", "LOAD_NAME", "LOAD_FAST", "LOAD_GLOBAL"]
-""" The list of stack incrementer operations """
+STACK_INCREMENTER_OPERATIONS = {"LOAD" : 1, "LOAD_CONST" : 1, "LOAD_NAME" : 1, "LOAD_FAST" : 1, "LOAD_GLOBAL" : 1}
+""" The list of stack incrementer operations map"""
 
-STACK_DECREMENTER_OPERATIONS = ["POP_TOP", "STORE_NAME", "STORE_FAST", "STORE_GLOBAL", "STORE_ATTR", "IMPORT_NAME", "PRINT_ITEM",
-                                "BINARY_ADD", "BINARY_SUBTRACT", "BINARY_MULTIPLY", "BINARY_DIVIDE", "BINARY_POWER", "MAKE_FUNCTION",
-                                "BUILD_CLASS"]
-""" The list of stack decrementer operations """
+STACK_DECREMENTER_OPERATIONS = {"POP_TOP" : 1, "STORE_NAME" : 1, "STORE_FAST" : 1, "STORE_GLOBAL" : 1, "STORE_ATTR" : 1,
+                                "IMPORT_NAME" : 1, "PRINT_ITEM" : 1, "BINARY_ADD" : 1, "BINARY_SUBTRACT" : 1, "BINARY_MULTIPLY" : 1,
+                                "BINARY_DIVIDE" : 1, "BINARY_POWER" : 1, "BUILD_CLASS" : 2}
+""" The list of stack decrementer operations map """
 
 class ContextCodeInformation:
     """
@@ -477,9 +477,17 @@ class ContextCodeInformation:
         """
 
         if operation in STACK_INCREMENTER_OPERATIONS:
-            self.current_stack_size += 1
+            # retrieves the increment value
+            increment_value = STACK_INCREMENTER_OPERATIONS[operation]
+
+            # increments the stack size by the given increment value
+            self.current_stack_size += increment_value
         elif operation in STACK_DECREMENTER_OPERATIONS:
-            self.current_stack_size -= 1
+            # retrieves the decrement value
+            decrement_value = STACK_DECREMENTER_OPERATIONS[operation]
+
+            # decrements the stack size by the given decrement value
+            self.current_stack_size -= decrement_value
         elif operation == "CALL_FUNCTION":
             # retrieves the number of arguments
             number_of_arguments = arguments[0]
@@ -498,9 +506,17 @@ class ContextCodeInformation:
         """
 
         if operation in STACK_INCREMENTER_OPERATIONS:
-            self.current_stack_size -= 1
+            # retrieves the increment value
+            increment_value = STACK_INCREMENTER_OPERATIONS[operation]
+
+            # decrements the stack size by the given increment value
+            self.current_stack_size -= increment_value
         elif operation in STACK_DECREMENTER_OPERATIONS:
-            self.current_stack_size += 1
+            # retrieves the decrement value
+            decrement_value = STACK_DECREMENTER_OPERATIONS[operation]
+
+            # increments the stack size by the given decrement value
+            self.current_stack_size += decrement_value
         elif operation == "CALL_FUNCTION":
             # retrieves the number of arguments
             number_of_arguments = arguments[0]
