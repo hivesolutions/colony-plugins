@@ -268,11 +268,11 @@ class MainXmlrpcManager:
                 return_tuple = tuple([True])
 
             data = xmlrpclib.dumps(return_tuple, method_name, True)
-        except main_xmlrpc_manager_exceptions.XMLEncodeException, e:
-            error_fault = xmlrpclib.Fault("XMLEncodeException", "Result Object Not Serializable")
+        except main_xmlrpc_manager_exceptions.XmlEncodeException, e:
+            error_fault = xmlrpclib.Fault("XmlEncodeException", "Result Object Not Serializable")
             data = xmlrpclib.dumps(error_fault, method_name, True)
         except:
-            error_fault = xmlrpclib.Fault("XMLEncodeException", "Result Object Not Serializable")
+            error_fault = xmlrpclib.Fault("XmlEncodeException", "Result Object Not Serializable")
             data = xmlrpclib.dumps(error_fault, method_name, True)
 
         # returns the xml data

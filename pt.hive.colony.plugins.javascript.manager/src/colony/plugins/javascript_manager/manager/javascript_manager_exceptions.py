@@ -38,10 +38,27 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 class InvalidFileNameException(Exception):
+    """
+    The invalid file name exception class.
+    """
 
     def __init__(self, message):
+        """
+        Constructor of the class.
+        
+        @type message: String
+        @param message: The message to be printed.
+        """
+
         Exception.__init__(self)
         self.message = message
 
     def __str__(self):
-       return "Invalid File Name: %s" % self.message
+        """
+        Returns the string representation of the class.
+        
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Invalid File Name: %s" % self.message

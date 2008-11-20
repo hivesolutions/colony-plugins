@@ -38,46 +38,126 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 class ServiceException(Exception):
+    """
+    The service exception class.
+    """
+
     pass
 
 class ServiceRequestNotTranslatable(ServiceException):
+    """
+    The service request not translatable class.
+    """
+
     pass
 
 class BadServiceRequest(ServiceException):
+    """
+    The bad service request class.
+    """
+
     pass
 
 class InvalidNumberArguments(BadServiceRequest):
+    """
+    The invalid number arguments class.
+    """
 
     def __init__(self, message):
+        """
+        Constructor of the class.
+        
+        @type message: String
+        @param message: The message to be printed.
+        """
+        
         BadServiceRequest.__init__(self)
         self.message = message
 
     def __str__(self):
-       return "Invalid number of arguments: %s" % self.message
+        """
+        Returns the string representation of the class.
+        
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Invalid number of arguments: %s" % self.message
 
 class InvalidMethod(BadServiceRequest):
+    """
+    The invalid method class.
+    """
 
     def __init__(self, message):
+        """
+        Constructor of the class.
+        
+        @type message: String
+        @param message: The message to be printed.
+        """
+
         BadServiceRequest.__init__(self)
         self.message = message
 
     def __str__(self):
-       return "Invalid Method: %s" % self.message
+        """
+        Returns the string representation of the class.
+        
+        @rtype: String
+        @return: The string representation of the class.
+        """
 
-class JSONEncodeException(Exception):
+        return "Invalid Method: %s" % self.message
 
-    def __init__(self, obj):
+class JsonEncodeException(Exception):
+    """
+    The json encode exception class. 
+    """
+
+    def __init__(self, object):
+        """
+        Constructor of the class.
+        
+        @type object: Object
+        @param object: The object containing the encoding problems.
+        """
+
         Exception.__init__(self)
-        self.obj = obj
+        self.object = object
 
     def __str__(self):
-       return "Object not encodeable: %s" % self.obj
+        """
+        Returns the string representation of the class.
+        
+        @rtype: String
+        @return: The string representation of the class.
+        """
 
-class JSONDecodeException(Exception):
+        return "Object not encodeable: %s" % self.object
+
+class JsonDecodeException(Exception):
+    """
+    The json decode exception class. 
+    """
 
     def __init__(self, message):
+        """
+        Constructor of the class.
+        
+        @type message: String
+        @param message: The message to be printed.
+        """
+
         Exception.__init__(self)
         self.message = message
 
     def __str__(self):
-       return self.message
+        """
+        Returns the string representation of the class.
+        
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return self.message

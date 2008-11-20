@@ -140,7 +140,7 @@ def dump_parts(obj):
     elif obj_type in [types.IntType, types.LongType, types.FloatType]:
         yield unicode(obj)
     else:
-        raise main_jsonrpc_manager_exceptions.JSONEncodeException(obj)
+        raise main_jsonrpc_manager_exceptions.JsonEncodeException(obj)
 
 def loads(s):
     stack = []
@@ -170,12 +170,12 @@ def loads(s):
                                     hex_code = chars.next() + chars.next() + chars.next() + chars.next()
                                     value += unichr(int(hex_code, 16))
                                 else:
-                                    raise main_jsonrpc_manager_exceptions.JSONDecodeException("Bad Escape Sequence Found")
+                                    raise main_jsonrpc_manager_exceptions.JsonDecodeException("Bad Escape Sequence Found")
                         else:
                             value += c
                         c = chars.next()
                 except StopIteration:
-                    raise main_jsonrpc_manager_exceptions.JSONDecodeException("Expected end of String")
+                    raise main_jsonrpc_manager_exceptions.JsonDecodeException("Expected end of String")
             elif c == "{":
                 stack.append({})
                 skip = True
@@ -213,7 +213,7 @@ def loads(s):
                                     digits.append(c)
                                     c = chars.next()
                             else:
-                                raise main_jsonrpc_manager_exceptions.JSONDecodeException("Expected + or -")
+                                raise main_jsonrpc_manager_exceptions.JsonDecodeException("Expected + or -")
                 except StopIteration:
                     pass
                 value = num_conv("".join(digits))
@@ -228,9 +228,9 @@ def loads(s):
                 elif kw == "fals" and chars.next() == "e":
                     value = False
                 else:
-                    raise main_jsonrpc_manager_exceptions.JSONDecodeException("Expected Null, False or True")
+                    raise main_jsonrpc_manager_exceptions.JsonDecodeException("Expected Null, False or True")
             else:
-                raise main_jsonrpc_manager_exceptions.JSONDecodeException("Expected []{},\" or Number, Null, False or True")
+                raise main_jsonrpc_manager_exceptions.JsonDecodeException("Expected []{},\" or Number, Null, False or True")
 
             if not skip:
                 if len(stack):
@@ -243,8 +243,8 @@ def loads(s):
                         key = stack.pop()
                         stack[-1][key] = value
                     else:
-                        raise main_jsonrpc_manager_exceptions.JSONDecodeException("Expected dictionary key, or start of a value")
+                        raise main_jsonrpc_manager_exceptions.JsonDecodeException("Expected dictionary key, or start of a value")
                 else:
                     return value
     except StopIteration:
-         raise main_jsonrpc_manager_exceptions.JSONDecodeException("Unexpected end of JSON source")
+         raise main_jsonrpc_manager_exceptions.JsonDecodeException("Unexpected end of Json source")

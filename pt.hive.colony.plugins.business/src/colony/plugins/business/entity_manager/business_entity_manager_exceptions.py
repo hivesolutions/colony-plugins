@@ -38,31 +38,86 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 class EntityManagerException(Exception):
+    """
+    The entity manager exception class.
+    """
+
     pass
 
 class EntityManagerEngineNotFound(EntityManagerException):
+    """
+    The entity manager engine not found class.
+    """
 
     def __init__(self, message):
+        """
+        Constructor of the class.
+        
+        @type message: String
+        @param message: The message to be printed.
+        """
+
         EntityManagerException.__init__(self)
         self.message = message
 
     def __str__(self):
-       return "Entity Manager engine not found: %s" % self.message
+        """
+        Returns the string representation of the class.
+        
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Entity Manager engine not found: %s" % self.message
 
 class EntityManagerEngineDuplicateEntry(EntityManagerException):
+    """
+    The entity manager engine duplicate entry class.
+    """
 
     def __init__(self, message):
+        """
+        Constructor of the class.
+        
+        @type message: String
+        @param message: The message to be printed.
+        """
+
         EntityManagerException.__init__(self)
         self.message = message
 
     def __str__(self):
-       return "Duplicate entry: %s" % self.message
+        """
+        Returns the string representation of the class.
+        
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Duplicate entry: %s" % self.message
 
 class EntityManagerEngineEntryNotFound(EntityManagerException):
+    """
+    The entity manager engine entry not found class.
+    """
 
     def __init__(self, message):
+        """
+        Constructor of the class.
+        
+        @type message: String
+        @param message: The message to be printed.
+        """
+
         EntityManagerException.__init__(self)
         self.message = message
 
     def __str__(self):
-       return "Entry not found: %s" % self.message
+        """
+        Returns the string representation of the class.
+        
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Entry not found: %s" % self.message

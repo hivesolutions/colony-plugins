@@ -38,23 +38,61 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 class BonjourException(Exception):
+    """
+    The bonjour exception class
+    """
+
     pass
 
 class BonjourServiceNotRegistrable(BonjourException):
+    """
+    The bonjour service not registrable class.
+    """
 
     def __init__(self, message):
+        """
+        Constructor of the class.
+        
+        @type message: String
+        @param message: The message to be printed.
+        """
+
         BonjourException.__init__(self)
         self.message = message
 
     def __str__(self):
-       return "Bonjour service not registrable: %s" % self.message
+        """
+        Returns the string representation of the class.
+        
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Bonjour service not registrable: %s" % self.message
 
 class BonjourBrowsingFailed(BonjourException):
+    """
+    The bonjour browsing failed class.
+    """
 
     def __init__(self, message):
+        """
+        Constructor of the class.
+        
+        @type message: String
+        @param message: The message to be printed.
+        """
+
         BonjourException.__init__(self)
         self.message = message
 
     def __str__(self):
-       return "Bonjour browsing failed: %s" % self.message
+        """
+        Returns the string representation of the class.
+        
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Bonjour browsing failed: %s" % self.message
 

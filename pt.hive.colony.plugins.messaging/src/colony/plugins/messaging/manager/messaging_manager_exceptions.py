@@ -43,11 +43,25 @@ def MessagingManagerException(Exception):
     """
 
     def __init__(self, message):
+        """
+        Constructor of the class.
+        
+        @type message: String
+        @param message: The message to be printed.
+        """
+
         Exception.__init__(self)
         self.message = message
 
     def __str__(self):
-       return "Messaging manager exception: %s" % self.message
+        """
+        Returns the string representation of the class.
+        
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Messaging manager exception: %s" % self.message
 
 def InvalidMessagingServiceIdException(BuildAutomationException):
     """
@@ -55,7 +69,21 @@ def InvalidMessagingServiceIdException(BuildAutomationException):
     """
 
     def __init__(self, message):
+        """
+        Constructor of the class.
+        
+        @type message: String
+        @param message: The message to be printed.
+        """
+
         MessagingManagerException.__init__(self, message)
 
     def __str__(self):
-       return "The requested messaging service id is invalid: %s" % self.message
+        """
+        Returns the string representation of the class.
+        
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "The requested messaging service id is invalid: %s" % self.message

@@ -43,11 +43,25 @@ def BuildAutomationException(Exception):
     """
 
     def __init__(self, message):
+        """
+        Constructor of the class.
+        
+        @type message: String
+        @param message: The message to be printed.
+        """
+
         Exception.__init__(self)
         self.message = message
 
     def __str__(self):
-       return "Build automation exception: %s" % self.message
+        """
+        Returns the string representation of the class.
+        
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Build automation exception: %s" % self.message
 
 def InvalidVaribleException(BuildAutomationException):
     """
@@ -55,7 +69,21 @@ def InvalidVaribleException(BuildAutomationException):
     """
 
     def __init__(self, message):
+        """
+        Constructor of the class.
+        
+        @type message: String
+        @param message: The message to be printed.
+        """
+
         BuildAutomationException.__init__(self, message)
 
     def __str__(self):
-       return "The requested variable is invalid: %s" % self.message
+        """
+        Returns the string representation of the class.
+        
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "The requested variable is invalid: %s" % self.message

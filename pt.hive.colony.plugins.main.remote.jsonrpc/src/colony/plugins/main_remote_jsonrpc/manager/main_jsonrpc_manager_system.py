@@ -269,8 +269,8 @@ class MainJsonrpcManager:
 
         try:
             data = main_jsonrpc_manager_serializer.dumps({"result" : result, "id" : id_, "error" : error})
-        except main_jsonrpc_manager_exceptions.JSONEncodeException, e:
-            error = {"name" : "JSONEncodeException", "message" : "Result Object Not Serializable"}
+        except main_jsonrpc_manager_exceptions.JsonEncodeException, e:
+            error = {"name" : "JsonEncodeException", "message" : "Result Object Not Serializable"}
             data = main_jsonrpc_manager_serializer.dumps({"result" : None, "id" : id_, "error" : error})
 
         # returns the json data
