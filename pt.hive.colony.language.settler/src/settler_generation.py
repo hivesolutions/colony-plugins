@@ -1331,6 +1331,9 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
         # retrieves the first name reference
         first_name_reference = function_name_reference_node.name_reference
 
+        # retrieves the name reference length
+        name_reference_length = function_name_reference_node.count()
+
         # in case the node is valid
         if function_argument_values_node.is_valid():
             # retrieves the number of argument values
@@ -1346,7 +1349,7 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
 
         self.decrement_operations_stack_level_virtual()
 
-        if first_name_reference == "print":
+        if first_name_reference == "print" and name_reference_length == 1:
             self.increment_operations_stack_level_virtual()
             self.decrement_operations_stack_level(False, True)
 
@@ -1356,7 +1359,7 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
             # adds the operation to the list of operations
             self.add_operation("PRINT_NEWLINE", ())
         else:
-            if first_name_reference in python_builtins:
+            if first_name_reference in python_builtins and name_reference_length == 1:
                 # adds the variable to the current context
                 self.add_variable(first_name_reference)
 
