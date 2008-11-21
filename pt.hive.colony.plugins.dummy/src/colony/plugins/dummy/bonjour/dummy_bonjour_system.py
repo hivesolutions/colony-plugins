@@ -58,8 +58,12 @@ class DummyBonjour:
         self.dummy_bonjour_plugin = dummy_bonjour_plugin
     
     def register_bonjour_service(self):
+        """
+        Registers the dummy bonjour service.
+        """
+
         # retrieves the bonjour plugin
         bonjour_plugin = self.dummy_bonjour_plugin.bonjour_plugin
 
         # register the dummy bonjour service
-        bonjour_plugin.register_bonjour_service(socket.gethostname() + "_colony", "_colony._tcp.", "local.", socket.gethostname(), 25)
+        bonjour_plugin.register_bonjour_service(socket.gethostname() + "_dummy_colony", "_dummy_colony._tcp.", "local.", socket.gethostname(), 25)
