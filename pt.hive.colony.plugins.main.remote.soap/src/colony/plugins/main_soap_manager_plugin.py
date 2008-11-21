@@ -52,7 +52,7 @@ class MainSoapManagerPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["soap_manager", "mod_python_handler"]
+    capabilities = ["soap_manager", "mod_python_handler", "rpc_handler"]
     capabilities_allowed = ["rpc_service"]
     dependencies = [colony.plugins.plugin_system.PackageDependency(
                     "fpconst ", "fpconst", "0.7.2", "http://pypi.python.org/pypi/fpconst")]
