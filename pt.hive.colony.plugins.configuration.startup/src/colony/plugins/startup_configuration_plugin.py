@@ -57,6 +57,7 @@ class StartupConfigurationPlugin(colony.plugins.plugin_system.PluginManagerPlugi
     dependencies = []
     events_handled = []
     events_registrable = []
+    valid = True
 
     startup_configuration = None
 
