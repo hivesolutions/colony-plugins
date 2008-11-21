@@ -57,13 +57,12 @@ class StartupConfigurationPlugin(colony.plugins.plugin_system.PluginManagerPlugi
     dependencies = []
     events_handled = []
     events_registrable = []
-    valid = True
 
     startup_configuration = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
-        global misc
+        global configuration_startup
         import configuration_startup.startup.startup_configuration_system
         self.startup_configuration = configuration_startup.startup.startup_configuration_system.StartupConfiguration(self)
         self.startup_configuration.load_startup_configuration_file()
