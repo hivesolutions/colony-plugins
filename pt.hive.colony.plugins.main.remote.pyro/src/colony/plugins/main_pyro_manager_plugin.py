@@ -90,13 +90,11 @@ class MainPyroManagerPlugin(colony.plugins.plugin_system.Plugin):
 
     @colony.plugins.decorators.load_allowed_capability("rpc_service")
     def rpc_service_capability_load_allowed(self, plugin, capability):
-        pass
-        #self.rpc_service_plugins.append(plugin)
-        #self.main_pyro_manager.update_service_methods(plugin)
+        self.rpc_service_plugins.append(plugin)
+        self.main_pyro_manager.update_service_methods(plugin)
 
     @colony.plugins.decorators.unload_allowed_capability("rpc_service")
     def rpc_servicer_capability_unload_allowed(self, plugin, capability):
-        pass
-        #if plugin in self.rpc_service_plugins:
-        #    self.rpc_service_plugins.remove(plugin)
-        #    self.main_pyro_manager.update_service_methods()
+        if plugin in self.rpc_service_plugins:
+            self.rpc_service_plugins.remove(plugin)
+            self.main_pyro_manager.update_service_methods()

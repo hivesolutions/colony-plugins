@@ -51,3 +51,6 @@ class MainPyroManager:
 
         self.service_objects = []
         self.service_methods_map = {}
+
+    def update_service_methods(self, updated_rpc_service_plugin = None):
+        pass
