@@ -41,15 +41,15 @@ import dummy_plugin
 import colony.plugins.plugin_system
 import colony.plugins.decorators
 
-class DummyPluginJsonrpcService(dummy_plugin.DummyPlugin):
+class DummyPluginRpcService(dummy_plugin.DummyPlugin):
     """
-    The main class for the Dummy Jsonrpc Service plugin
+    The main class for the Dummy Rpc Service plugin
     """
 
-    id = "pt.hive.colony.plugins.dummy.jsonrpc_service"
-    name = "Dummy Plugin Jsonrpc Service"
-    short_name = "Dummy Jsonrpc Service"
-    description = "Dummy Jsonrpc Service Plugin"
+    id = "pt.hive.colony.plugins.dummy.rpc_service"
+    name = "Dummy Plugin Rpc Service"
+    short_name = "Dummy Rpc Service"
+    description = "Dummy Rpc Service Plugin"
     version = "1.0.0"
     author = "Hive Solutions"
     loading_type = colony.plugins.plugin_system.LAZY_LOADING_TYPE
