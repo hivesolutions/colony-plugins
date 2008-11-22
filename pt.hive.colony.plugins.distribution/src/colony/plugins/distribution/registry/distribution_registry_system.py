@@ -45,6 +45,9 @@ class DistributionRegistry:
     distribution_registry_plugin = None
     """ The distribution registry plugin """
 
+    registry_entries = []
+    """ The list of registry entries """
+
     def __init__(self, distribution_registry_plugin):
         """
         Constructor of the class.
@@ -54,3 +57,56 @@ class DistributionRegistry:
         """
 
         self.distribution_registry_plugin = distribution_registry_plugin
+
+    def register_entry(self, hostname, name, type, endpoints, metadata):
+        # creates a new registry entry
+        registry_entry = RegistryEntry()
+
+        # sets the registry entry hostname
+        registry_entry.hostname = hostname
+
+        # sets the registry entry name
+        registry_entry.name = name
+
+        # sets the registry entry type
+        registry_entry.type = type
+
+        # sets the registry entry endpoints
+        registry_entry.endpoints = endpoints
+
+        # sets the registry entry metadata
+        registry_entry.metadata = metadata
+
+        # adds the registry entry to the list of registry entries
+        self.add_registry_entry(registry_entry)
+
+    def add_registry_entry(self, registry_entry):
+        self.registry_entries.append(registry_entry)
+
+class RegistryEntry:
+    """
+    The registry entry class.
+    User to represent an entry in the distribution registry.
+    """
+
+    hostname = "none"
+    """ The hostname """
+
+    name = "none"
+    """ The name """
+
+    type = "none"
+    """ The type """
+
+    endpoints = []
+    """ The list of endpoints """
+
+    metadata = {}
+    """ The metadata map """
+
+    def __init__(self, hostname = "none", name = "none", type = "none"):
+        self.hostname = hostname
+        self.name = name
+        self.type = type
+        self.endpoints = []
+        self.metadata = {}
