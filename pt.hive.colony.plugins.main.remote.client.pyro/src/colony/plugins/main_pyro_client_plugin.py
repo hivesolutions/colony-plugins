@@ -52,8 +52,8 @@ class MainPyroClientPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["jsonrpc_manager", "mod_python_handler", "rpc_handler"]
-    capabilities_allowed = ["rpc_service"]
+    capabilities = ["pyro_client", "remote_client_adapter"]
+    capabilities_allowed = []
     dependencies = []
     events_handled = []
     events_registrable = []
