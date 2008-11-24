@@ -37,6 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import Pyro.core
+
+SERVICE_NAME = "pyro"
+
 class MainPyroClient:
     """
     The main pyro client class.
@@ -54,3 +58,59 @@ class MainPyroClient:
         """
 
         self.main_pyro_client_plugin = main_pyro_client_plugin
+
+    def get_service_name(self):
+        return SERVICE_NAME
+
+    def create_remote_client(self, service_attributes):
+        # creates a new pyro client instance
+        pyro_client = PyroClient()
+
+        # retrieves the pyro main uri
+        pyro_main_uri = service_attributes["pyro_main_uri"]
+
+        pyro_client.pyro_main_uri = pyro_main_uri
+
+        return pyro_client
+
+class PyroClient:
+    """
+    The pyro client class.
+    """
+
+    pyro_main_uri = "none"
+    """ The pyro main uri """
+
+    pyro_main_proxy = None
+    """ The pyro main proxy """
+
+    def __init__(self, pyro_main_uri = "none"):
+        """
+        Constructor of the class.
+        
+        @type pyro_main_uri: String
+        @param pyro_main_uri: The pyro main uri.
+        """
+
+        self.pyro_main_uri = pyro_main_uri
+
+    def get_pyro_main_proxy(self):
+        if not self.pyro_main_proxy:
+            self.pyro_main_proxy = Pyro.core.getProxyForURI(self.pyro_main_uri)
+
+        return self.pyro_main_proxy
+
+    def __getattr__(self, name):
+        # retrieves the pyro main proxy
+        main_proxy = self.get_pyro_main_proxy()
+
+        # retrieves the name uri (remote call)
+        name_uri = main_proxy.get_proxy_uri(name)
+
+        # retrieves the pyro name proxy
+        pyro_name_proxy = Pyro.core.getProxyForURI(name_uri)
+
+        # sets the attribute
+        setattr(self, name, pyro_name_proxy)
+
+        return pyro_name_proxy

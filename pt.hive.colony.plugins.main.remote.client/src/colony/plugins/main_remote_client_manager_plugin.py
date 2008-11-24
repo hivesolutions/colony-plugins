@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.plugins.plugin_system
+import colony.plugins.decorators
 
 class MainRemoteClientManagerPlugin(colony.plugins.plugin_system.Plugin):
     """
@@ -66,7 +67,7 @@ class MainRemoteClientManagerPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global main_remote_client
         import main_remote_client.manager.main_remote_client_manager_system
-        self.remote_client_adapter_plugins = main_remote_client.manager.main_remote_client_manager_system.MainRemoteClientManager(self)
+        self.main_remote_client_manager = main_remote_client.manager.main_remote_client_manager_system.MainRemoteClientManager(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -77,11 +78,24 @@ class MainRemoteClientManagerPlugin(colony.plugins.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
 
+    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.main.remote.client.manager", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.main.remote.client.manager", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    def create_remote_client(self, service_name, service_attributes):
+        return self.main_remote_client_manager.create_remote_client(service_name, service_attributes)
+
+    @colony.plugins.decorators.load_allowed_capability("remote_client_adapter")
+    def remote_client_adapter_load_allowed(self, plugin, capability):
+        self.main_remote_client_manager.register_remote_client_adapter_plugin(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("remote_client_adapter")
+    def remote_client_adapter_unload_allowed(self, plugin, capability):
+        self.main_remote_client_manager.unregister_remote_client_adapter_plugin(plugin)

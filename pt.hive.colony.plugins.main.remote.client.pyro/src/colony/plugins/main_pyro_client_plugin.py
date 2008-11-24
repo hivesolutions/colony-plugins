@@ -85,3 +85,9 @@ class MainPyroClientPlugin(colony.plugins.plugin_system.Plugin):
 
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    def get_service_name(self):
+        return self.main_pyro_client.get_service_name()
+
+    def create_remote_client(self, service_attributes):
+        return self.main_pyro_client.create_remote_client(service_attributes)
