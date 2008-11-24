@@ -66,6 +66,13 @@ class DistributionBonjourServer:
         self.distribution_bonjour_server_plugin = distribution_bonjour_server_plugin
 
     def activate_server(self, properties):
+        """
+        Activates the distribution bonjour server.
+        
+        @type properties: Dictionary
+        @param properties: The properties for the bonjour server activation.
+        """
+
         # retrieves the bonjour plugin
         bonjour_plugin = self.distribution_bonjour_server_plugin.bonjour_plugin
 

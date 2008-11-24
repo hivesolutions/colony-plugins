@@ -56,4 +56,11 @@ class DistributionRegistryServer:
         self.distribution_registry_server_plugin = distribution_registry_server_plugin
 
     def activate_server(self, properties):
+        """
+        Activates the distribution registry server.
+        
+        @type properties: Dictionary
+        @param properties: The properties for the registry server activation.
+        """
+
         pass
