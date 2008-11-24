@@ -45,9 +45,9 @@ class MainPyroClientPlugin(colony.plugins.plugin_system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.main.remote.client.pyro"
-    name = "Jsonrpc Manager Main Plugin"
-    short_name = "Jsonrpc Manager Main"
-    description = "Jsonrpc Manager Main Plugin"
+    name = "Pyro Client Main Plugin"
+    short_name = "Pyro Client Main"
+    description = "Pyro Client Main Plugin"
     version = "1.0.0"
     author = "Hive Solutions"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
@@ -64,9 +64,9 @@ class MainPyroClientPlugin(colony.plugins.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
-        global main_remote_jsonrpc
-        import main_remote_jsonrpc.manager.main_jsonrpc_manager_system
-        self.main_jsonrpc_manager = main_remote_jsonrpc.manager.main_jsonrpc_manager_system.MainJsonrpcManager(self)
+        global main_remote_client_pyro
+        import main_remote_client_pyro.client.main_pyro_client_system
+        self.main_pyro_client = main_remote_client_pyro.client.main_pyro_client_system.MainPyroClient(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
