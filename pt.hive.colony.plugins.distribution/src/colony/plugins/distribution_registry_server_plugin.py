@@ -83,3 +83,7 @@ class DistributionRegistryServerPlugin(colony.plugins.plugin_system.Plugin):
 
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    def activate_server(self, properties):
+        self.distribution_registry_server.activate_server(properties)
+

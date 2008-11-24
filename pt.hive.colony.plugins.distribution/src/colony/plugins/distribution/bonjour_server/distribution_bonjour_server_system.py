@@ -37,11 +37,15 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import socket
+
 BASE_PROTOCOL_SUFIX = "_tcp"
 
 PROTOCOL_SUFIX = "_colony"
 
 LOCAL_DOMAIN = "local"
+
+DEFAULT_PORT = 25
 
 class DistributionBonjourServer:
     """
@@ -63,7 +67,7 @@ class DistributionBonjourServer:
 
     def activate_server(self, properties):
         # retrieves the bonjour plugin
-        bonjour_plugin = self.dummy_bonjour_plugin.bonjour_plugin
+        bonjour_plugin = self.distribution_bonjour_server_plugin.bonjour_plugin
 
         # creates the service id
         service_id = socket.gethostname() + PROTOCOL_SUFIX
@@ -78,7 +82,7 @@ class DistributionBonjourServer:
         hostname = socket.gethostname()
 
         # creates the port
-        port = 25
+        port = DEFAULT_PORT
 
         # register the dummy bonjour service
         bonjour_plugin.register_bonjour_service(service_id, complete_protocol_name, domain, hostname, port)

@@ -54,3 +54,13 @@ class DistributionClient:
         """
 
         self.distribution_client_plugin = distribution_client_plugin
+
+    def get_remote_instance_references(self):
+        """
+        Retrieves all the available remote instance references.
+        
+        @rtype: List
+        @return: All the available remote instance references.
+        """
+
+        pass

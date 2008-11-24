@@ -92,6 +92,8 @@ class DistributionServerPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.load_allowed_capability("distribution_server_adapter")
     def distribution_server_adapter_load_allowed(self, plugin, capability):
         self.distribution_server_adapter_plugins.append(plugin)
+        if plugin.id == "pt.hive.colony.plugins.distribution.bonjour_server":
+            self.distribution_server.activate_server({})
 
     @colony.plugins.decorators.unload_allowed_capability("distribution_server_adapter")
     def distribution_server_adapter_unload_allowed(self, plugin, capability):

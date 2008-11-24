@@ -54,3 +54,6 @@ class DistributionRegistryServer:
         """
 
         self.distribution_registry_server_plugin = distribution_registry_server_plugin
+
+    def activate_server(self, properties):
+        pass
