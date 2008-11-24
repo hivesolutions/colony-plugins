@@ -63,4 +63,16 @@ class DistributionClient:
         @return: All the available remote instance references.
         """
 
-        pass
+        # creates the remote references list
+        remote_references = []
+
+        # retrieves the distribution client adapter plugins
+        distribution_client_adapter_plugins = self.distribution_client_plugin.distribution_client_adapter_plugins
+
+        for distribution_client_adapter_plugin in distribution_client_adapter_plugins:
+            adapter_remote_references = distribution_client_adapter_plugins.get_remote_instance_references()
+
+            # extends the remote references with the adapter remote references
+            remote_references.extend(adapter_remote_references)
+
+        return remote_references

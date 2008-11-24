@@ -60,6 +60,8 @@ class DistributionClientPlugin(colony.plugins.plugin_system.Plugin):
 
     distribution_client = None
 
+    distribution_client_adapter_plugins = []
+
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global distribution
@@ -75,11 +77,24 @@ class DistributionClientPlugin(colony.plugins.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
 
+    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.distribution.client", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.distribution.client", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    def get_remote_instance_references(self):
+        self.distribution_client.get_remote_instance_references()
+
+    @colony.plugins.decorators.load_allowed_capability("distribution_client_adapter")
+    def distribution_client_adapter_load_allowed(self, plugin, capability):
+        self.distribution_client_adapter_plugins.append(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("distribution_client_adapter")
+    def distribution_client_adapter_unload_allowed(self, plugin, capability):
+        self.distribution_client_adapter_plugins.remove(plugin)
