@@ -37,6 +37,12 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+BASE_PROTOCOL_SUFIX = "_tcp"
+
+PROTOCOL_SUFIX = "_colony"
+
+LOCAL_DOMAIN = "local"
+
 class DistributionBonjourServer:
     """
     The distribution bonjour server class.
@@ -56,4 +62,23 @@ class DistributionBonjourServer:
         self.distribution_bonjour_server_plugin = distribution_bonjour_server_plugin
 
     def activate_server(self, properties):
-        pass
+        # retrieves the bonjour plugin
+        bonjour_plugin = self.dummy_bonjour_plugin.bonjour_plugin
+
+        # creates the service id
+        service_id = socket.gethostname() + PROTOCOL_SUFIX
+
+        # creates the complete protocol name
+        complete_protocol_name = PROTOCOL_SUFIX + "." + BASE_PROTOCOL_SUFIX
+
+        # creates the domain
+        domain = LOCAL_DOMAIN + "."
+
+        # creates the hostname
+        hostname = socket.gethostname()
+
+        # creates the port
+        port = 25
+
+        # register the dummy bonjour service
+        bonjour_plugin.register_bonjour_service(service_id, complete_protocol_name, domain, hostname, port)

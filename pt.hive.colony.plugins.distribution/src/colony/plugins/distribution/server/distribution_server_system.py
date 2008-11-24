@@ -54,3 +54,18 @@ class DistributionServer:
         """
 
         self.distribution_server_plugin = distribution_server_plugin
+
+    def activate_server(self, properties):
+        """
+        Activates the distribution server.
+        
+        @type properties: Dictionary
+        @param properties: The properties for the server activation.
+        """
+
+        # retrieves the distribution server adapter plugins
+        distribution_server_adapter_plugins = self.distribution_server_plugin.distribution_server_adapter_plugins
+
+        # iterates over all the distribution server adapter plugins
+        for distribution_server_adapter_plugin in distribution_server_adapter_plugins:
+            distribution_server_adapter_plugin.activate_server(properties)
