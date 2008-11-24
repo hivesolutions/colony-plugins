@@ -36,3 +36,24 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
+
+class ServiceException(Exception):
+    """
+    The service exception class.
+    """
+
+    pass
+
+class ServiceRequestNotTranslatable(ServiceException):
+    """
+    The service request not translatable class.
+    """
+
+    pass
+
+class BadServiceRequest(ServiceException):
+    """
+    The bad service request class.
+    """
+
+    pass
