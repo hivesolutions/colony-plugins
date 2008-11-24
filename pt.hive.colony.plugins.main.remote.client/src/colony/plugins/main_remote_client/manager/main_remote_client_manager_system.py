@@ -49,7 +49,7 @@ class MainRemoteClientManager:
         """
         Constructor of the class.
         
-        @type main_remote_client_manager_plugin: BuildAutomationPlugin
+        @type main_remote_client_manager_plugin: MainRemoteClientManagerPlugin
         @param main_remote_client_manager_plugin: The main remote client manager plugin.
         """
 
