@@ -54,7 +54,8 @@ class MainPyroClientPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["pyro_client", "remote_client_adapter"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PackageDependency(
+                    "Pyro", "Pyro", "3.8.x", "http://pyro.sourceforge.net")]
     events_handled = []
     events_registrable = []
 
