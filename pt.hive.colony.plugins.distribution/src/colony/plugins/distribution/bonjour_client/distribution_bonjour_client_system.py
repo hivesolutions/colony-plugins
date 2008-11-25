@@ -59,4 +59,7 @@ class DistributionBonjourClient:
         # retrieves the bonjour plugin
         bonjour_plugin = self.distribution_bonjour_client_plugin.bonjour_plugin
 
-        bonjour_plugin.browse_bonjour_services("_colony._tcp", "local.", 10)
+        bonjour_services = bonjour_plugin.browse_bonjour_services("_colony._tcp", "local.", 10)
+
+        for bonjour_service in bonjour_services:
+            print bonjour_service
