@@ -41,7 +41,7 @@ import colony.plugins.plugin_system
 
 class EnglishDummyDictionary(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Nelson Dummy plugin
+    The main class for the Nelson Dummy plugin.
     """
 
     id = "pt.hive.colony.plugins.dummy.english"

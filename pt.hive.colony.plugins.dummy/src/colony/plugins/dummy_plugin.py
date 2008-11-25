@@ -41,7 +41,7 @@ import colony.plugins.plugin_system
 
 class DummyPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Dummy plugin
+    The main class for the Dummy plugin.
     """
     
     id = "pt.hive.colony.plugins.dummy"

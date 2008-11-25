@@ -41,7 +41,7 @@ import colony.plugins.plugin_system
 
 class DummyDatabaseAccessPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Dummy Database Access Plugin
+    The main class for the Dummy Database Access Plugin.
     """
 
     id = "pt.hive.colony.plugins.dummy.database_access"

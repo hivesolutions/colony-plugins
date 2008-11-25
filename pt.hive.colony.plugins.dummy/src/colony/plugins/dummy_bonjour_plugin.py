@@ -42,7 +42,7 @@ import colony.plugins.decorators
 
 class DummyBonjourPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Dummy Bonjour plugin
+    The main class for the Dummy Bonjour plugin.
     """
 
     id = "pt.hive.colony.plugins.dummy.bonjour"

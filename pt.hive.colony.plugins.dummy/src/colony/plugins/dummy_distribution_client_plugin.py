@@ -40,29 +40,29 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.plugins.plugin_system
 import colony.plugins.decorators
 
-class DummyRemoteClientPlugin(colony.plugins.plugin_system.Plugin):
+class DummyDistributionClientPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Dummy Remote Client Plugin
+    The main class for the Dummy Distribution Client Plugin.
     """
 
-    id = "pt.hive.colony.plugins.dummy.remote_client"
-    name = "Dummy Remote Client Plugin"
-    short_name = "Dummy Remote Client"
-    description = "Just another dummy remote client plugin"
+    id = "pt.hive.colony.plugins.dummy.distribution_client"
+    name = "Dummy Distribution Client Plugin"
+    short_name = "Dummy Distribution Client"
+    description = "Just another dummy distribution client plugin"
     version = "1.0.0"
     author = "Hive Solutions"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["dummy_remote_client"]
+    capabilities = ["dummy_distribution_client"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.remote.client.manager", "1.0.0")]
+                    "pt.hive.colony.plugins.distribution.client", "1.0.0")]
     events_handled = []
     events_registrable = []
 
-    dummy_remote_client = None
+    dummy_distribution_client = None
 
-    remote_client_manager_plugin = None
+    distribution_client_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -93,9 +93,9 @@ class DummyRemoteClientPlugin(colony.plugins.plugin_system.Plugin):
     def create_remote_call(self):
         return self.dummy_remote_client.create_remote_call()
 
-    def get_remote_client_manager_plugin(self):
-        return self.remote_client_manager_plugin
+    def get_distribution_client_plugin(self):
+        return self.distribution_client_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.remote.client.manager")
-    def set_remote_client_manager_plugin(self, remote_client_manager_plugin):
-        self.remote_client_manager_plugin = remote_client_manager_plugin
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.distribution.client")
+    def set_distribution_client_plugin(self, distribution_client_plugin):
+        self.distribution_client_plugin = distribution_client_plugin

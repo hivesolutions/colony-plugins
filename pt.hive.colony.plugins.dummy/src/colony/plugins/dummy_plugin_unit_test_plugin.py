@@ -41,7 +41,7 @@ import colony.plugins.plugin_system
 
 class DummyPluginUnitTestPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Dummy Plugin Unit Test plugin
+    The main class for the Dummy Plugin Unit Test plugin.
     """
 
     id = "pt.hive.colony.plugins.dummy.plugin_unit_test"

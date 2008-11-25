@@ -42,7 +42,7 @@ import colony.plugins.plugin_system
 
 class DummyPluginWindowsForms(dummy_plugin.DummyPlugin):
     """
-    The main class for the Dummy Windows Forms plugin
+    The main class for the Dummy Windows Forms plugin.
     """
 
     id = "pt.hive.colony.plugins.dummy.windows_forms"

@@ -51,7 +51,7 @@ TIMEOUT = 0.5
 
 class DummyPluginAux4(dummy_plugin.DummyPlugin):
     """
-    The main class for the Dummy Aux 4 plugin
+    The main class for the Dummy Aux 4 plugin.
     """
 
     id = "pt.hive.colony.plugins.dummy.aux4"

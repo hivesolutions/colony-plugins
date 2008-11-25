@@ -41,7 +41,7 @@ import colony.plugins.plugin_system
 
 class DummyPluginAux2(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Dummy Aux 2 plugin
+    The main class for the Dummy Aux 2 plugin.
     """
 
     id = "pt.hive.colony.plugins.dummy.aux2"

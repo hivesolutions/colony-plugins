@@ -43,7 +43,7 @@ import colony.plugins.decorators
 
 class DummyPluginWindowsFormsLabel1(dummy_plugin.DummyPlugin):
     """
-    The main class for the Dummy Windows Forms Label 1 plugin
+    The main class for the Dummy Windows Forms Label 1 plugin.
     """
 
     id = "pt.hive.colony.plugins.dummy.windows_forms_label1"

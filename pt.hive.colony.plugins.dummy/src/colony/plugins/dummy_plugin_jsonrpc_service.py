@@ -43,7 +43,7 @@ import colony.plugins.decorators
 
 class DummyPluginRpcService(dummy_plugin.DummyPlugin):
     """
-    The main class for the Dummy Rpc Service plugin
+    The main class for the Dummy Rpc Service plugin.
     """
 
     id = "pt.hive.colony.plugins.dummy.rpc_service"

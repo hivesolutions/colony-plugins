@@ -45,7 +45,7 @@ translate <dictionary-name> <word> - translates a word for the given dictionary 
 
 class NelsonDummyPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Nelson Dummy plugin
+    The main class for the Nelson Dummy plugin.
     """
 
     id = "pt.hive.colony.plugins.dummy.nelson"

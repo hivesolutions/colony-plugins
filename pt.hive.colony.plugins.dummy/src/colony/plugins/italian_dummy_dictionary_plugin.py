@@ -41,7 +41,7 @@ import colony.plugins.plugin_system
 
 class ItalianDummyDictionary(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Italian Dummy plugin
+    The main class for the Italian Dummy plugin.
     """
 
     id = "pt.hive.colony.plugins.dummy.italian"

@@ -42,7 +42,7 @@ import colony.plugins.decorators
 
 class DummyEntityManagerPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Dummy Entity Manager plugin
+    The main class for the Dummy Entity Manager plugin.
     """
 
     id = "pt.hive.colony.plugins.dummy.entity_manager"
