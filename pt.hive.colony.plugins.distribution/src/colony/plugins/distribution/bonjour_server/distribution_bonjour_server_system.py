@@ -40,12 +40,16 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import socket
 
 BASE_PROTOCOL_SUFIX = "_tcp"
+""" The base protocol sufix """
 
 PROTOCOL_SUFIX = "_colony"
+""" The protocol sufix """
 
 LOCAL_DOMAIN = "local"
+""" The local domain """
 
 DEFAULT_PORT = 25
+""" The default port """
 
 class DistributionBonjourServer:
     """
