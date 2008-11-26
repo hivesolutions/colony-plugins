@@ -65,9 +65,8 @@ class DistributionBonjourClient:
         # retrieves the available bonjour services
         bonjour_services = bonjour_plugin.browse_bonjour_services("_colony._tcp", "local.", 1)
 
+        # iterates over all the bonjour services
         for bonjour_service in bonjour_services:
-            print bonjour_service
-
             # creates a new bonjour remote reference
             bonjour_remote_reference = BonjourRemoteReference()
 
@@ -80,15 +79,19 @@ class DistributionBonjourClient:
         return bonjour_remote_references
 
 class BonjourRemoteReference:
-    
+    """
+    The bonjour remote reference class.
+    """
+
     bonjour_service = None
+    """ The bonjour service """
 
     def __init__(self, bonjour_service = None):
         """
         Constructor of the class.
         
-        @type bonjour_service: BonjourService
+        @type bonjour_service: Tuple
         @param bonjour_service: The bonjour service object.
         """
-    
+
         self.bonjour_service = bonjour_service
