@@ -45,12 +45,25 @@ import threading
 MAX_COUNTER = 0xfffffffe
 
 class Guid:
+    """
+    The guid class.
+    """
 
     guid_plugin = None
+    """
+    The guid plugin.
+    """
 
     def __init__(self, guid_plugin):
-        self.guid_plugin = guid_plugin
+        """
+        Class contructor.
         
+        @type guid_plugin: GuidPlugin
+        @param guid_plugin:  The guid plugin.
+        """
+
+        self.guid_plugin = guid_plugin
+
         self.counter = 0L
         self.first_counter = MAX_COUNTER
         self.last_time = 0
@@ -60,7 +73,7 @@ class Guid:
         try:
             self.ip = socket.getaddrinfo(socket.gethostname(), 0)[-1][-1][0]
             self.hexadecimal_ip = make_hexadecimal_ip(ip)
-        # in there is no ip, defaults to someting in the 10.x.x.x private range
+        # if there is no ip, defaults to something in the 10.x.x.x private range
         except:
             self.ip = "10"
             rand = random.Random()
@@ -85,6 +98,7 @@ class Guid:
 
             # do we need to wait for the next millisecond (are we out of counters?)
             now = long(time.time() * 1000)
+
             while self.last_time == now and self.counter == self.first_counter: 
                 time.sleep(.01)
                 now = long(time.time() * 1000)
@@ -96,6 +110,7 @@ class Guid:
             if self.last_time != now:
                 # start at random position
                 self.first_counter = long(random.uniform(1, MAX_COUNTER))
+
                 self.counter = self.first_counter
             self.counter += 1
             if self.counter > MAX_COUNTER:
