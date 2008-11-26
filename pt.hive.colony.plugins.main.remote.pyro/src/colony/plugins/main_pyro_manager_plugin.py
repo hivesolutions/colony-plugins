@@ -89,6 +89,9 @@ class MainPyroManagerPlugin(colony.plugins.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    def is_active(self):
+        return self.main_pyro_manager.is_active()
+
     @colony.plugins.decorators.load_allowed_capability("rpc_service")
     def rpc_service_capability_load_allowed(self, plugin, capability):
         self.rpc_service_plugins.append(plugin)

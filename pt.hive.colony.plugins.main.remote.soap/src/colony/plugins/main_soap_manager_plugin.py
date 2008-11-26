@@ -92,6 +92,9 @@ class MainSoapManagerPlugin(colony.plugins.plugin_system.Plugin):
     def get_handler_filename(self):
         return self.main_soap_manager.get_handler_filename()
 
+    def is_active(self):
+        return self.main_soap_manager.is_active()
+
     def is_request_handler(self, request):
         return self.main_soap_manager.is_request_handler(request)
 

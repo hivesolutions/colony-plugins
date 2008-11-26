@@ -43,8 +43,14 @@ import soap_aux.Types
 
 import main_soap_manager_exceptions
 
+APACHE_CONTAINER = "apache"
+""" The apache container """
+
 HANDLER_FILENAME = "soap.py"
+""" The handler filename """
+
 LIST_METHODS_NAME = "system.listMethods"
+""" The list methods name """
 
 class MainSoapManager:
 
@@ -61,6 +67,16 @@ class MainSoapManager:
 
     def get_handler_filename(self):
         return HANDLER_FILENAME
+
+    def is_active(self):
+        # retrieves the plugin manager
+        manager = self.main_xmlrpc_manager_plugin.manager
+
+        # in case the current container is apache
+        if manager.container == APACHE_CONTAINER:
+            return True
+        else:
+            return False
 
     def is_request_handler(self, request):
         # retrieves the simple filename from the complete path filename

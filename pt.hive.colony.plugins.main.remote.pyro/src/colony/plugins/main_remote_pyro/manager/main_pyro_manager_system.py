@@ -74,6 +74,9 @@ class MainPyroManager:
         # creates the pyro daemon
         self.create_pyro_daemon()
 
+    def is_active(self):
+        return True
+
     def create_pyro_daemon(self):
         # creates the pyro daemon instance
         self.pyro_daemon = Pyro.core.Daemon()
