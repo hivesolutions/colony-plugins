@@ -135,7 +135,7 @@ class MainSoapManager:
 
     def is_active(self):
         # retrieves the plugin manager
-        manager = self.main_xmlrpc_manager_plugin.manager
+        manager = self.main_soap_manager_plugin.manager
 
         # in case the current container is apache
         if manager.container == APACHE_CONTAINER:
