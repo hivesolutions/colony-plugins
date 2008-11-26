@@ -67,12 +67,11 @@ class DummyDistributionClientPlugin(colony.plugins.plugin_system.Plugin):
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global dummy
-        import dummy.remote_client.dummy_remote_client_system
-        self.dummy_remote_client = dummy.remote_client.dummy_remote_client_system.DummyRemoteClient(self)
+        import dummy.distribution_client.dummy_distribution_client_system
+        self.dummy_distribution_client = dummy.distribution_client.dummy_distribution_client_system.DummyDistributionClient(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
-        self.create_remote_call()
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
@@ -86,12 +85,9 @@ class DummyDistributionClientPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.dummy.remote_client", "1.0.0")
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.dummy.distribution_client", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
-
-    def create_remote_call(self):
-        return self.dummy_remote_client.create_remote_call()
 
     def get_distribution_client_plugin(self):
         return self.distribution_client_plugin
