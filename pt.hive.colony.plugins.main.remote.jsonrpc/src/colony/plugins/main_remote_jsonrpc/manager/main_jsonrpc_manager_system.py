@@ -40,14 +40,14 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import main_jsonrpc_manager_serializer
 import main_jsonrpc_manager_exceptions
 
-APACHE_CONTAINER = "apache"
-""" The apache container """
-
 HANDLER_FILENAME = "jsonrpc.py"
 """ The handler filename """
 
 LIST_METHODS_NAME = "system.listMethods"
 """ The list methods name """
+
+APACHE_CONTAINER = "apache"
+""" The apache container """
 
 class MainJsonrpcManager:
 
@@ -64,16 +64,6 @@ class MainJsonrpcManager:
 
     def get_handler_filename(self):
         return HANDLER_FILENAME
-
-    def is_active(self):
-        # retrieves the plugin manager
-        manager = self.main_xmlrpc_manager_plugin.manager
-
-        # in case the current container is apache
-        if manager.container == APACHE_CONTAINER:
-            return True
-        else:
-            return False
 
     def is_request_handler(self, request):
         # retrieves the simple filename from the complete path filename
@@ -142,6 +132,16 @@ class MainJsonrpcManager:
 
         # flushes the request, sending the output to the client
         request.flush()
+
+    def is_active(self):
+        # retrieves the plugin manager
+        manager = self.main_xmlrpc_manager_plugin.manager
+
+        # in case the current container is apache
+        if manager.container == APACHE_CONTAINER:
+            return True
+        else:
+            return False
 
     def update_service_methods(self, updated_rpc_service_plugin = None):
 
