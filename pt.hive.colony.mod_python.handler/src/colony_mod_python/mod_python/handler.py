@@ -40,6 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import sys
 import mod_python
 
+import mod_python.apache
+
 CONTAINER_NAME = "apache"
 """ The container name """
 
@@ -51,28 +53,32 @@ plugin_manager = None
 
 class PluginManagerHandler:
     """
-    The plugin manager handler class for the mod_python
+    The plugin manager handler class for the mod_python.
     """
 
     req = None
     """ The http request sent by the mod_python """
 
+    local_address = None
+    """ The local address for the request """
+
     def __init__(self, req):
         """
-        Constructor of the class
+        Constructor of the class.
         
         @type req: HttpRequest
-        @param req: The http request sent by the mod_python
+        @param req: The http request sent by the mod_python.
         """
 
         self.req = req
+        self.local_address = req.connection.local_addr
 
     def handle_request(self, data):
         """
-        Handles the requested data
+        Handles the requested data.
         
         @type data: String
-        @param data: The data to handle
+        @param data: The data to handle.
         """
 
         # creates the plugin handler id object
@@ -98,10 +104,10 @@ class PluginManagerHandler:
 
     def get_plugin_manager(self, python_options = {}):
         """
-        Retrieves the plugin manager with the given python options
+        Retrieves the plugin manager with the given python options.
         
         @type python_options: List
-        @param python_options: The list of python options to the (possible) startup of the plugin manager
+        @param python_options: The list of python options to the (possible) startup of the plugin manager.
         """
 
         # in case the plugin manager is not loaded
@@ -113,10 +119,10 @@ class PluginManagerHandler:
 
     def load_plugin_manager(self, python_options):
         """
-        Loads the plugin manager with the given python options
+        Loads the plugin manager with the given python options.
         
         @type python_options: List
-        @param python_options: The list of python options to the startup of the plugin manager
+        @param python_options: The list of python options to the startup of the plugin manager.
         """
 
         # sets the plugin_manager as a global variable
@@ -139,6 +145,7 @@ class PluginManagerHandler:
         sys.argv.append("--debug")
         sys.argv.append("--noloop")
         sys.argv.append("--container=" + CONTAINER_NAME)
+        sys.argv.append("--attributes=apache_address:" + self.local_address)
         sys.argv.append("--manager_dir=" + plugin_manager_path)
 
         # starts the plugin manager
@@ -149,15 +156,17 @@ class PluginManagerHandler:
 
 def handler(req):
     """
-    The initial handler function for the mod_python
+    The initial handler function for the mod_python.
     
     @type req: HttpRequest
-    @param req: The http request sent by the mod_python
+    @param req: The http request sent by the mod_python.
     @rtype: int
-    @return: The status for the request
+    @return: The status for the request.
     """
 
+    # in case the handling was successful
     if PluginManagerHandler(req).handle_request(req):
         return mod_python.apache.OK
+    # in case the handling was unsuccessful
     else:
         return mod_python.apache.DECLINED
