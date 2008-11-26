@@ -52,6 +52,9 @@ LIST_METHODS_NAME = "system.listMethods"
 APACHE_CONTAINER = "apache"
 """ The apache container """
 
+HANDLER_NAME = "soap"
+""" The handler name """
+
 class MainSoapManager:
 
     main_soap_manager_plugin = None
@@ -142,6 +145,9 @@ class MainSoapManager:
             return True
         else:
             return False
+
+    def get_handler_name(self):
+        return HANDLER_NAME
 
     def update_service_methods(self, updated_rpc_service_plugin = None):
 

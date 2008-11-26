@@ -41,6 +41,9 @@ import Pyro.core
 
 import main_pyro_manager_exceptions
 
+HANDLER_NAME = "pyro"
+""" The handler name """
+
 class MainPyroManager:
     """
     The main pyro manager class.
@@ -76,6 +79,9 @@ class MainPyroManager:
 
     def is_active(self):
         return True
+
+    def get_handler_name(self):
+        return HANDLER_NAME
 
     def create_pyro_daemon(self):
         # creates the pyro daemon instance

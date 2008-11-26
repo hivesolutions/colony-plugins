@@ -101,6 +101,9 @@ class MainSoapManagerPlugin(colony.plugins.plugin_system.Plugin):
     def is_active(self):
         return self.main_soap_manager.is_active()
 
+    def get_handler_name(self):
+        return self.main_soap_manager.get_handler_name()
+
     @colony.plugins.decorators.load_allowed_capability("rpc_service")
     def rpc_service_capability_load_allowed(self, plugin, capability):
         self.rpc_service_plugins.append(plugin)
