@@ -54,3 +54,10 @@ class DummyDistributionClient:
         """
 
         self.dummy_distribution_client_plugin = dummy_distribution_client_plugin
+
+    def test_get_remote_instance_references(self):
+        # retrieves the distribution client plugin
+        distribution_client_plugin = self.dummy_distribution_client_plugin.distribution_client_plugin
+
+        # retrieves the remote instance references
+        remote_instance_references = distribution_client_plugin.get_remote_instance_references()
