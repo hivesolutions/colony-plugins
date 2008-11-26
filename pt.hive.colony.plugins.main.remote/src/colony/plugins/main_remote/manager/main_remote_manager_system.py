@@ -63,4 +63,15 @@ class MainRemoteManager:
         @return: The list of available rpc handlers.
         """
 
-        return []
+        # creates the available rpc handlers list
+        available_rpc_handlers = []
+
+        # retrieves the rpc handler plugins
+        rpc_handler_plugins = self.main_remote_manager_plugin.rpc_handler_plugins
+
+        # iterates over all the rpc handler plugins
+        for rpc_handler_plugin in rpc_handler_plugins:
+            if rpc_handler_plugin.is_active():
+                available_rpc_handlers.append(rpc_handler_plugin)
+
+        return available_rpc_handlers
