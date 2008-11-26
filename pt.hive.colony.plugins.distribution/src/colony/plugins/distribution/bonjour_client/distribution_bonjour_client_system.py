@@ -83,6 +83,12 @@ class BonjourRemoteReference:
     The bonjour remote reference class.
     """
 
+    hostname = "none"
+    """ The hostname """
+
+    port = None
+    """ The port """
+
     bonjour_service = None
     """ The bonjour service """
 

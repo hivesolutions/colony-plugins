@@ -89,7 +89,7 @@ class DistributionClientPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_remote_instance_references(self):
-        self.distribution_client.get_remote_instance_references()
+        return self.distribution_client.get_remote_instance_references()
 
     @colony.plugins.decorators.load_allowed_capability("distribution_client_adapter")
     def distribution_client_adapter_load_allowed(self, plugin, capability):
