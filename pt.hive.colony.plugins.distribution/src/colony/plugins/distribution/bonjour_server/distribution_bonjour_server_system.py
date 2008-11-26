@@ -77,6 +77,9 @@ class DistributionBonjourServer:
         @param properties: The properties for the bonjour server activation.
         """
 
+        # retrieves the plugin manager
+        manager = self.distribution_bonjour_server_plugin.manager
+
         # retrieves the bonjour plugin
         bonjour_plugin = self.distribution_bonjour_server_plugin.bonjour_plugin
 
@@ -86,23 +89,25 @@ class DistributionBonjourServer:
         # retrieves the available rpc handlers
         available_rpc_handlers = main_remote_manager_plugin.get_available_rpc_handlers()
 
+        # iterates over all the available rpc handlers
         for available_rpc_handler in available_rpc_handlers:
-            print available_rpc_handler
+            # retrieves the available rpc handler name
+            available_rpc_handler_name = available_rpc_handler.get_handler_name()
 
-        # creates the service id
-        service_id = socket.gethostname()
+            # creates the service id
+            service_id = manager.uid + "._" + available_rpc_handler_name
 
-        # creates the complete protocol name
-        complete_protocol_name = PROTOCOL_SUFIX + "." + BASE_PROTOCOL_SUFIX
+            # creates the complete protocol name
+            complete_protocol_name = PROTOCOL_SUFIX + "." + BASE_PROTOCOL_SUFIX
 
-        # creates the domain
-        domain = LOCAL_DOMAIN + "."
+            # creates the domain
+            domain = LOCAL_DOMAIN + "."
 
-        # creates the hostname
-        hostname = socket.gethostname()
+            # creates the hostname
+            hostname = socket.gethostname()
 
-        # creates the port
-        port = DEFAULT_PORT
+            # creates the port
+            port = DEFAULT_PORT
 
-        # register the dummy bonjour service
-        bonjour_plugin.register_bonjour_service(service_id, complete_protocol_name, domain, hostname, port)
+            # register the dummy bonjour service
+            bonjour_plugin.register_bonjour_service(service_id, complete_protocol_name, domain, hostname, port)
