@@ -56,13 +56,16 @@ class DistributionBonjourServerPlugin(colony.plugins.plugin_system.Plugin):
     capabilities = ["distribution_server_adapter"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.bonjour", "1.0.0")]
+                    "pt.hive.colony.plugins.misc.bonjour", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.main.remote.manager", "1.0.0")]
     events_handled = []
     events_registrable = []
 
     distribution_bonjour_server = None
 
     bonjour_plugin = None
+    main_remote_manager_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -98,3 +101,10 @@ class DistributionBonjourServerPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.bonjour")
     def set_bonjour_plugin(self, bonjour_plugin):
         self.bonjour_plugin = bonjour_plugin
+
+    def get_main_remote_manager_plugin(self):
+        return self.main_remote_manager_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.remote.manager")
+    def set_main_remote_manager_plugin(self, main_remote_manager_plugin):
+        self.main_remote_manager_plugin = main_remote_manager_plugin

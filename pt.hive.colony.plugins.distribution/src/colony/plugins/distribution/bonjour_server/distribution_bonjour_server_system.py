@@ -80,8 +80,17 @@ class DistributionBonjourServer:
         # retrieves the bonjour plugin
         bonjour_plugin = self.distribution_bonjour_server_plugin.bonjour_plugin
 
+        # retrieves the main remote plugin
+        main_remote_manager_plugin = self.distribution_bonjour_server_plugin.main_remote_manager_plugin
+
+        # retrieves the available rpc handlers
+        available_rpc_handlers = main_remote_manager_plugin.get_available_rpc_handlers()
+
+        for available_rpc_handler in available_rpc_handlers:
+            print available_rpc_handler
+
         # creates the service id
-        service_id = socket.gethostname() + PROTOCOL_SUFIX
+        service_id = socket.gethostname()
 
         # creates the complete protocol name
         complete_protocol_name = PROTOCOL_SUFIX + "." + BASE_PROTOCOL_SUFIX
