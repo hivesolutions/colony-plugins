@@ -61,3 +61,6 @@ class DummyDistributionClient:
 
         # retrieves the remote instance references
         remote_instance_references = distribution_client_plugin.get_remote_instance_references()
+
+        for remote_instance_reference in remote_instance_references:
+            print remote_instance_reference.bonjour_service
