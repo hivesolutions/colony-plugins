@@ -72,10 +72,12 @@ class DistributionClient:
         # iterates over all the distribution client adapter plugins
         for distribution_client_adapter_plugin in distribution_client_adapter_plugins:
             # retrieves the adapter remote references
-            adapter_remote_references = distribution_client_adapter_plugins.get_remote_instance_references()
+            adapter_remote_references = distribution_client_adapter_plugin.get_remote_instance_references()
 
-            # extends the remote references with the adapter remote references
-            remote_references.extend(adapter_remote_references)
+            # in case the retrieval was successful
+            if adapter_remote_references:
+                # extends the remote references with the adapter remote references
+                remote_references.extend(adapter_remote_references)
 
         # returns the remote references
         return remote_references

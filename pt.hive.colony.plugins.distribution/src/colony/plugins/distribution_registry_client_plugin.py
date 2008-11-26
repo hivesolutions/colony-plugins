@@ -83,3 +83,6 @@ class DistributionRegistryClientPlugin(colony.plugins.plugin_system.Plugin):
 
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    def get_remote_instance_references(self):
+        return self.distribution_registry_client.get_remote_instance_references()

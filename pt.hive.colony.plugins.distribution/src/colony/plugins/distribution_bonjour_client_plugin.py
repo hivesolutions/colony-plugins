@@ -84,11 +84,12 @@ class DistributionBonjourClientPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.distribution.bonjour_client", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_remote_instance_references(self):
-        self.distribution_bonjour_client.get_remote_instance_references()
+        return self.distribution_bonjour_client.get_remote_instance_references()
 
     def get_bonjour_plugin(self):
         return self.bonjour_plugin

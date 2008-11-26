@@ -56,10 +56,39 @@ class DistributionBonjourClient:
         self.distribution_bonjour_client_plugin = distribution_bonjour_client_plugin
 
     def get_remote_instance_references(self):
+        # creates the list of bonjour remote references
+        bonjour_remote_references = []
+        
         # retrieves the bonjour plugin
         bonjour_plugin = self.distribution_bonjour_client_plugin.bonjour_plugin
 
-        bonjour_services = bonjour_plugin.browse_bonjour_services("_colony._tcp", "local.", 10)
+        # retrieves the available bonjour services
+        bonjour_services = bonjour_plugin.browse_bonjour_services("_colony._tcp", "local.", 1)
 
         for bonjour_service in bonjour_services:
             print bonjour_service
+
+            # creates a new bonjour remote reference
+            bonjour_remote_reference = BonjourRemoteReference()
+
+            # sets the bonjour service in the bonjour remote reference
+            bonjour_remote_reference.bonjour_service = bonjour_service
+
+            # adds the created bonjour remote reference to the list of bonjour remote references
+            bonjour_remote_references.append(bonjour_remote_reference)
+
+        return bonjour_remote_references
+
+class BonjourRemoteReference:
+    
+    bonjour_service = None
+
+    def __init__(self, bonjour_service = None):
+        """
+        Constructor of the class.
+        
+        @type bonjour_service: BonjourService
+        @param bonjour_service: The bonjour service object.
+        """
+    
+        self.bonjour_service = bonjour_service
