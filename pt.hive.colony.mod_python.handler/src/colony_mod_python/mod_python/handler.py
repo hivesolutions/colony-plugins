@@ -40,9 +40,14 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import sys
 import mod_python
 
+CONTAINER_NAME = "apache"
+""" The container name """
+
 MOD_PYTHON_PLUGIN_ID = "pt.hive.colony.plugins.main.mod_python"
+""" The mod python plugin id """
 
 plugin_manager = None
+""" The plugin manager """
 
 class PluginManagerHandler:
     """
@@ -133,6 +138,7 @@ class PluginManagerHandler:
         # sets the command line arguments
         sys.argv.append("--debug")
         sys.argv.append("--noloop")
+        sys.argv.append("--container=" + CONTAINER_NAME)
         sys.argv.append("--manager_dir=" + plugin_manager_path)
 
         # starts the plugin manager
