@@ -95,7 +95,7 @@ class Bonjour:
 
         # in case the registration is not successful
         if not return_value == bonjour.kDNSServiceErr_NoError:
-            raise bonjour_exceptions.BonjourServiceNotRegistrable("service not registration not successful")
+            raise bonjour_exceptions.BonjourServiceNotRegistrable("service registration not successful")
 
         # retrieves the socket and loops
         file_descriptor = bonjour.DNSServiceRefSockFD(service_reference)
