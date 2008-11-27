@@ -55,6 +55,9 @@ class MainPyroManager:
     pyro_daemon = []
     """ The pyro daemon """
 
+    base_remote_uri = "none"
+    """ The base remote uri """
+
     service_methods = []
     """ The service methods list """
 
@@ -101,8 +104,8 @@ class MainPyroManager:
         # creates the base remote instance
         base_remote = BaseRemote()
 
-        # connects the base remote object
-        self.pyro_daemon.connect(base_remote, "base_remote")
+        # connects the base remote object, and retrieves the base proxy uri
+        self.base_remote_uri = self.pyro_daemon.connect(base_remote, "base_remote")
 
     def update_service_methods(self, updated_rpc_service_plugin = None):
 
@@ -206,6 +209,39 @@ class MainPyroManager:
                     # adds the available rpc method to the map with the service method name as key
                     self.service_methods_map[service_method_name] = available_rpc_method
 
+        self.update_pyro_proxies()
+
+    def update_pyro_service_proxies(self):
+        """
+        Updates the pyro service proxies.
+        """
+
+        # iterates over all the available service methods
+        for service_method in self.service_methods:
+            # retrieves the service class
+            service_class = self.get_service_class(service_method)
+
+            if service_class:
+                pass
+
+    def get_service_class(self, service_method):
+        """
+        Retrieves the service class for the given service method.
+        
+        @type service_method: String
+        @param service_method: The service method to retrieve the service class.
+        @rtype: String
+        @return: The service class for the given service method.
+        """
+
+        # splits the service method
+        service_method_splitted = service_method.split(".")
+
+        if len(service_method_splitted) == 2:
+            return service_method_splitted[0]
+        else:
+            return
+
 class BaseRemote(Pyro.core.ObjBase):
     """
     The base remote class.
@@ -252,3 +288,15 @@ class BaseRemote(Pyro.core.ObjBase):
 
         if name in self.name_proxy_uri_map:
             return self.name_proxy_uri_map[name]
+
+class GenericRemote(Pyro.core.ObjBase):
+    """
+    The base remote class.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        pass
