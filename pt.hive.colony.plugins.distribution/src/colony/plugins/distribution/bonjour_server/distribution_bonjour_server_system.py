@@ -39,6 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import socket
 
+PROPERTIES_SUFIX = "_pp"
+""" The properties sufix """
+
 BASE_PROTOCOL_SUFIX = "_tcp"
 """ The base protocol sufix """
 
@@ -94,8 +97,30 @@ class DistributionBonjourServer:
             # retrieves the available rpc handler name
             available_rpc_handler_name = available_rpc_handler.get_handler_name()
 
+            # retrieves the available rpc handler properties
+            available_rpc_handler_properties = available_rpc_handler.get_handler_properties()
+
+            service_id = PROPERTIES_SUFIX + "_"
+
+            is_first = True
+
+            # iterates over the available rpc handler properties
+            for available_rpc_handler_property in available_rpc_handler_properties:
+                # retrieves the available rpc handler value
+                available_rpc_handler_value = available_rpc_handler_properties[available_rpc_handler_property]
+
+                # in case it is the first value
+                if is_first:
+                    is_first = False
+                else:
+                    service_id += ":"
+
+                service_id += str(available_rpc_handler_value)
+
+            service_id += "."
+
             # creates the service id
-            service_id = manager.uid + "._" + available_rpc_handler_name
+            service_id += "_" + manager.uid + "._" + available_rpc_handler_name
 
             # creates the complete protocol name
             complete_protocol_name = PROTOCOL_SUFIX + "." + BASE_PROTOCOL_SUFIX
@@ -111,3 +136,5 @@ class DistributionBonjourServer:
 
             # register the dummy bonjour service
             bonjour_plugin.register_bonjour_service(service_id, complete_protocol_name, domain, hostname, port)
+
+            self.distribution_bonjour_server_plugin.logger.info("Registering bonjour service '%s'", (service_id))

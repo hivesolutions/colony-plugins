@@ -126,7 +126,11 @@ class DistributionBonjourClient:
         first_reference, second_reference = bonjour_service_reference_string.split("._colony._tcp.local.")
 
         # retrieves the base plugin manager unique id and the base service type
-        bonjour_service_plugin_manager_uid, bonjour_service_service_type = first_reference.split(".")
+        bonjour_service_properties, bonjour_service_plugin_manager_uid, bonjour_service_service_type = first_reference.split(".")
+
+        bonjour_service_properties = bonjour_service_properties[4:]
+
+        bonjour_service_properties_splitted = bonjour_service_properties.split(":")
 
         # retrieves the plugin manager unique id from the base plugin manager unique id
         bonjour_service_plugin_manager_uid = bonjour_service_plugin_manager_uid[:-1]
