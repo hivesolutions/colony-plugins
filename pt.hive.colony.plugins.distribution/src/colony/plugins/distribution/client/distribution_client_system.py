@@ -81,3 +81,14 @@ class DistributionClient:
 
         # returns the remote references
         return remote_references
+
+    def get_remote_plugin_reference(self):
+        """
+        Retrieves the first available plugin reference.
+        
+        @rtype: PluginReference
+        @return: The first available plugin referecence.
+        """
+
+        pass
+

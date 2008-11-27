@@ -91,6 +91,9 @@ class DistributionClientPlugin(colony.plugins.plugin_system.Plugin):
     def get_remote_instance_references(self):
         return self.distribution_client.get_remote_instance_references()
 
+    def get_remote_plugin_reference(self):
+        return self.distribution_client.get_remote_plugin_reference()
+
     @colony.plugins.decorators.load_allowed_capability("distribution_client_adapter")
     def distribution_client_adapter_load_allowed(self, plugin, capability):
         self.distribution_client_adapter_plugins.append(plugin)
