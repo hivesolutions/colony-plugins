@@ -37,6 +37,15 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+BASE_PROTOCOL_SUFIX = "_tcp"
+""" The base protocol sufix """
+
+PROTOCOL_SUFIX = "_colony"
+""" The protocol sufix """
+
+LOCAL_DOMAIN = "local"
+""" The local domain """
+
 class DistributionBonjourClient:
     """
     The distribution bonjour client class.
@@ -62,8 +71,14 @@ class DistributionBonjourClient:
         # creates the list of bonjour remote references
         bonjour_remote_references = []
 
+        # creates the complete protocol name
+        complete_protocol_name = PROTOCOL_SUFIX + "." + BASE_PROTOCOL_SUFIX
+
+        # creates the domain
+        domain = LOCAL_DOMAIN + "."
+
         # retrieves the available bonjour services
-        bonjour_services = bonjour_plugin.browse_bonjour_services("_colony._tcp", "local.", 1)
+        bonjour_services = bonjour_plugin.browse_bonjour_services(complete_protocol_name, domain, 1)
 
         # iterates over all the bonjour services
         for bonjour_service in bonjour_services:
