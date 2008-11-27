@@ -94,7 +94,7 @@ class MainPyroManager:
         return HANDLER_NAME
 
     def get_handler_properties(self):
-        return {"base_remote_uri" : self.base_remote_uri}
+        return {"object_id" : self.base_remote_uri.objectID}
 
     def activate_server(self):
         """
