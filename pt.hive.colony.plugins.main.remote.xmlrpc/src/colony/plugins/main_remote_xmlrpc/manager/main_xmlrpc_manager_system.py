@@ -141,6 +141,9 @@ class MainXmlrpcManager:
     def get_handler_name(self):
         return HANDLER_NAME
 
+    def get_handler_properties(self):
+        return {}
+
     def update_service_methods(self, updated_rpc_service_plugin = None):
 
         if updated_rpc_service_plugin:

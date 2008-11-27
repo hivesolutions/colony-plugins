@@ -103,6 +103,9 @@ class MainXmlrpcManagerPlugin(colony.plugins.plugin_system.Plugin):
     def get_handler_name(self):
         return self.main_xmlrpc_manager.get_handler_name()
 
+    def get_handler_properties(self):
+        return self.main_xmlrpc_manager.get_handler_properties()
+
     @colony.plugins.decorators.load_allowed_capability("rpc_service")
     def rpc_service_capability_load_allowed(self, plugin, capability):
         self.rpc_service_plugins.append(plugin)

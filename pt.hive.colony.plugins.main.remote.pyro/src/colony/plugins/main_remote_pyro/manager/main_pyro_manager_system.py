@@ -93,6 +93,9 @@ class MainPyroManager:
     def get_handler_name(self):
         return HANDLER_NAME
 
+    def get_handler_properties(self):
+        return {"base_remote_uri" : self.base_remote_uri}
+
     def activate_server(self):
         """
         Activates the server.
@@ -230,7 +233,7 @@ class MainPyroManager:
 
             # in case there is a service class defined
             if service_class:
-                if not service_class in self.server_class_remote_object_map:
+                if service_class in self.server_class_remote_object_map:
                     # retrieves the service class reference
                     service_class_reference = self.server_class_remote_object_map[service_class]
                 else:
