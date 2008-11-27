@@ -82,8 +82,26 @@ class DistributionBonjourClient:
 
         # iterates over all the bonjour services
         for bonjour_service in bonjour_services:
+            # unpacks the bonjour service tuple
+            bonjour_service_reference_string, bonjour_service_hostname, bonjour_service_port = bonjour_service
+
             # creates a new bonjour remote reference
             bonjour_remote_reference = BonjourRemoteReference()
+
+            # parses the bonjour service reference string retrieving the plugin manager unique id and the service type
+            bonjour_service_plugin_manager_uid, bonjour_service_service_type = self.parse_bonjour_service_reference(bonjour_service_reference_string)
+
+            # sets the plugin manager unique id in the bonjour remote reference
+            bonjour_remote_reference.plugin_manager_uid = bonjour_service_plugin_manager_uid
+
+            # sets the service type in the bonjour remote reference
+            bonjour_remote_reference.service_type = bonjour_service_service_type
+
+            # sets the hostname in the bonjour remote reference
+            bonjour_remote_reference.hostname = bonjour_service_hostname
+
+            # sets the port in the bonjour remote reference
+            bonjour_remote_reference.port = bonjour_service_port
 
             # sets the bonjour service in the bonjour remote reference
             bonjour_remote_reference.bonjour_service = bonjour_service
@@ -93,10 +111,42 @@ class DistributionBonjourClient:
 
         return bonjour_remote_references
 
+    def parse_bonjour_service_reference(self, bonjour_service_reference_string):
+        """
+        Parses the bonjour service reference, retrieving a tuple with the
+        plugin manager unique id and the service type.
+        
+        @type bonjour_service_reference_string: String
+        @param bonjour_service_reference_string: The service reference string.
+        @rtype: tuple
+        @return: A tuple containing the plugin manager unique id and the service type.
+        """
+
+        # retrieves the first and second references from the service reference string
+        first_reference, second_reference = bonjour_service_reference_string.split("._colony._tcp.local.")
+
+        # retrieves the base plugin manager unique id and the base service type
+        bonjour_service_plugin_manager_uid, bonjour_service_service_type = first_reference.split(".")
+
+        # retrieves the plugin manager unique id from the base plugin manager unique id
+        bonjour_service_plugin_manager_uid = bonjour_service_plugin_manager_uid[:-1]
+
+        # retrieves the service type from the base service type
+        bonjour_service_service_type = bonjour_service_service_type[1:]
+
+        # returns a tuple containing the plugin manager unique id and the service type
+        return (bonjour_service_plugin_manager_uid, bonjour_service_service_type)
+
 class BonjourRemoteReference:
     """
     The bonjour remote reference class.
     """
+
+    plugin_manager_uid = "none"
+    """ The plugin manager unique id """
+
+    service_type = "none"
+    """ The service type """
 
     hostname = "none"
     """ The hostname """
@@ -107,12 +157,33 @@ class BonjourRemoteReference:
     bonjour_service = None
     """ The bonjour service """
 
-    def __init__(self, bonjour_service = None):
+    def __init__(self, plugin_manager_uid = "none", service_type = "none", hostname = "none", port = None, bonjour_service = None):
         """
         Constructor of the class.
-        
+
+        @type plugin_manager_uid: String
+        @param plugin_manager_uid: The plugin manager unique id.
+        @type service_type: String
+        @param service_type: The service type.
+        @type hostname: String
+        @param hostname: The hostname.
+        @type port: int
+        @param port: The port.
         @type bonjour_service: Tuple
         @param bonjour_service: The bonjour service object.
         """
 
+        self.plugin_manager_uid = plugin_manager_uid
+        self.service_type = service_type
+        self.hostname = hostname
+        self.port = port
         self.bonjour_service = bonjour_service
+
+    def __repr__(self):
+        return "<%s, %s, %s, %s, %i>" % (
+            self.__class__.__name__,
+            self.plugin_manager_uid,
+            self.service_type,
+            self.hostname,
+            self.port
+        )
