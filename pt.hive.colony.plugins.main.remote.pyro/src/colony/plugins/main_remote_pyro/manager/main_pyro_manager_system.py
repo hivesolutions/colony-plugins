@@ -55,6 +55,9 @@ class MainPyroManager:
     pyro_daemon = []
     """ The pyro daemon """
 
+    base_remote = None
+    """ The base remote """
+
     base_remote_uri = "none"
     """ The base remote uri """
 
@@ -63,6 +66,9 @@ class MainPyroManager:
 
     service_methods_map = {}
     """ The service methods map """
+
+    server_class_remote_object_map = {}
+    """ The map relating the server class with the remote object """
 
     def __init__(self, main_pyro_manager_plugin):
         """
@@ -76,6 +82,7 @@ class MainPyroManager:
 
         self.service_objects = []
         self.service_methods_map = {}
+        self.server_class_remote_object_map = {}
 
         # creates the pyro daemon
         self.create_pyro_daemon()
@@ -102,10 +109,10 @@ class MainPyroManager:
         self.pyro_daemon = Pyro.core.Daemon()
 
         # creates the base remote instance
-        base_remote = BaseRemote()
+        self.base_remote = BaseRemote()
 
         # connects the base remote object, and retrieves the base proxy uri
-        self.base_remote_uri = self.pyro_daemon.connect(base_remote, "base_remote")
+        self.base_remote_uri = self.pyro_daemon.connect(self.base_remote, "base_remote")
 
     def update_service_methods(self, updated_rpc_service_plugin = None):
 
@@ -209,7 +216,7 @@ class MainPyroManager:
                     # adds the available rpc method to the map with the service method name as key
                     self.service_methods_map[service_method_name] = available_rpc_method
 
-        self.update_pyro_proxies()
+        self.update_pyro_service_proxies()
 
     def update_pyro_service_proxies(self):
         """
@@ -221,8 +228,40 @@ class MainPyroManager:
             # retrieves the service class
             service_class = self.get_service_class(service_method)
 
+            # in case there is a service class defined
             if service_class:
-                pass
+                if not service_class in self.server_class_remote_object_map:
+                    # retrieves the service class reference
+                    service_class_reference = self.server_class_remote_object_map[service_class]
+                else:
+                    # creates a new service class reference
+                    service_class_reference = GenericRemote()
+
+                    # sets the service class reference name
+                    service_class_reference.class_name = service_class
+
+                    # connects the service class reference object, and retrieves the proxy uri
+                    proxy_uri = self.pyro_daemon.connect(service_class_reference, service_class)
+
+                    # sets the service class proxy uri
+                    service_class_reference.proxy_uri = proxy_uri
+
+                    # sets the proxy uri in the name proxy uri map
+                    self.base_remote.name_proxy_uri_map[service_class] = proxy_uri
+
+                    # sets the service class reference in the server class remote object map
+                    self.server_class_remote_object_map[service_class] = service_class_reference
+
+                # retrieves the service method reference
+                service_method_reference = self.service_methods_map[service_method]
+
+                # retrieves the service name
+                service_name = self.get_service_name(service_method)
+
+                # in case the service class reference does not contain the current service name
+                if not hasattr(service_class_reference, service_name):
+                    # sets the service name attribute for the service class reference
+                    setattr(service_class_reference, service_name, service_method_reference)
 
     def get_service_class(self, service_method):
         """
@@ -239,6 +278,24 @@ class MainPyroManager:
 
         if len(service_method_splitted) == 2:
             return service_method_splitted[0]
+        else:
+            return
+
+    def get_service_name(self, service_method):
+        """
+        Retrieves the service name for the given service method.
+        
+        @type service_method: String
+        @param service_method: The service method to retrieve the service name.
+        @rtype: String
+        @return: The service name for the given service method.
+        """
+
+        # splits the service method
+        service_method_splitted = service_method.split(".")
+
+        if len(service_method_splitted) == 2:
+            return service_method_splitted[1]
         else:
             return
 
@@ -294,9 +351,15 @@ class GenericRemote(Pyro.core.ObjBase):
     The base remote class.
     """
 
+    class_name = "none"
+    """ The class name """
+
+    proxy_uri = "none"
+    """ The proxy uri """
+
     def __init__(self):
         """
         Constructor of the class.
         """
 
-        pass
+        Pyro.core.ObjBase.__init__(self)
