@@ -83,7 +83,18 @@ class MainPyroManager:
     def get_handler_name(self):
         return HANDLER_NAME
 
+    def activate_server(self):
+        """
+        Activates the server.
+        """
+
+        self.pyro_daemon.requestLoop()
+
     def create_pyro_daemon(self):
+        """
+        Creates the pyro daemon creating the base object and connecting it.
+        """
+
         # creates the pyro daemon instance
         self.pyro_daemon = Pyro.core.Daemon()
 
@@ -212,6 +223,17 @@ class BaseRemote(Pyro.core.ObjBase):
         self.name_proxy_uri_map = {}
 
     def add_proxy_uri(self, name, proxy_uri):
+        """
+        Adds a new proxy uri to the base remote.
+        
+        @type name: String
+        @param name: The name of the proxy uri to be added.
+        @type proxy_uri: String
+        @param proxy_uri: The proxy uri to be added.
+        @rtype: bool
+        @return: The result of the addiction (if successful or not).
+        """
+
         if name in self.name_proxy_uri_map:
             return False
         else:

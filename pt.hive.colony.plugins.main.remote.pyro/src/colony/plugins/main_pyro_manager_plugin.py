@@ -52,7 +52,7 @@ class MainPyroManagerPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["pyro_manager", "rpc_handler"]
+    capabilities = ["thread", "pyro_manager", "rpc_handler"]
     capabilities_allowed = ["rpc_service"]
     dependencies = [colony.plugins.plugin_system.PackageDependency(
                     "Pyro", "Pyro", "3.8.x", "http://pyro.sourceforge.net")]
@@ -69,8 +69,16 @@ class MainPyroManagerPlugin(colony.plugins.plugin_system.Plugin):
         import main_remote_pyro.manager.main_pyro_manager_system
         self.main_pyro_manager = main_remote_pyro.manager.main_pyro_manager_system.MainPyroManager(self)
 
+        # notifies the ready semaphore
+        self.release_ready_semaphore()
+
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+
+        # notifies the ready semaphore
+        self.release_ready_semaphore()
+
+        self.main_pyro_manager.activate_server()
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
@@ -94,6 +102,9 @@ class MainPyroManagerPlugin(colony.plugins.plugin_system.Plugin):
 
     def get_handler_name(self):
         return self.main_pyro_manager.get_handler_name()
+
+    def activate_server(self):
+        self.main_pyro_manager.activate_server()
 
     @colony.plugins.decorators.load_allowed_capability("rpc_service")
     def rpc_service_capability_load_allowed(self, plugin, capability):
