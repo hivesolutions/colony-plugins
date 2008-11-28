@@ -88,29 +88,34 @@ class DistributionBonjourClient:
             # creates a new bonjour remote reference
             bonjour_remote_reference = BonjourRemoteReference()
 
-            # parses the bonjour service reference string retrieving the plugin manager unique id and the service type
-            bonjour_service_properties_list, bonjour_service_plugin_manager_uid, bonjour_service_service_type = self.parse_bonjour_service_reference(bonjour_service_reference_string)
+            # retrieves the parsed bonjour service reference
+            parsed_bonjour_service_reference = self.parse_bonjour_service_reference(bonjour_service_reference_string)
 
-            # sets the plugin manager unique id in the bonjour remote reference
-            bonjour_remote_reference.plugin_manager_uid = bonjour_service_plugin_manager_uid
+            # in case the parse was successful
+            if parsed_bonjour_service_reference:
+                # parses the bonjour service reference string retrieving the plugin manager unique id and the service type
+                bonjour_service_properties_list, bonjour_service_plugin_manager_uid, bonjour_service_service_type = parsed_bonjour_service_reference
 
-            # sets the service type in the bonjour remote reference
-            bonjour_remote_reference.service_type = bonjour_service_service_type
+                # sets the plugin manager unique id in the bonjour remote reference
+                bonjour_remote_reference.plugin_manager_uid = bonjour_service_plugin_manager_uid
 
-            # sets the hostname in the bonjour remote reference
-            bonjour_remote_reference.hostname = bonjour_service_hostname
+                # sets the service type in the bonjour remote reference
+                bonjour_remote_reference.service_type = bonjour_service_service_type
 
-            # sets the port in the bonjour remote reference
-            bonjour_remote_reference.port = bonjour_service_port
+                # sets the hostname in the bonjour remote reference
+                bonjour_remote_reference.hostname = bonjour_service_hostname
 
-            # sets the bonjour service properties list in the bonjour remote reference
-            bonjour_remote_reference.bonjour_service_properties_list = bonjour_service_properties_list
+                # sets the port in the bonjour remote reference
+                bonjour_remote_reference.port = bonjour_service_port
 
-            # sets the bonjour service in the bonjour remote reference
-            bonjour_remote_reference.bonjour_service = bonjour_service
+                # sets the bonjour service properties list in the bonjour remote reference
+                bonjour_remote_reference.bonjour_service_properties_list = bonjour_service_properties_list
 
-            # adds the created bonjour remote reference to the list of bonjour remote references
-            bonjour_remote_references.append(bonjour_remote_reference)
+                # sets the bonjour service in the bonjour remote reference
+                bonjour_remote_reference.bonjour_service = bonjour_service
+
+                # adds the created bonjour remote reference to the list of bonjour remote references
+                bonjour_remote_references.append(bonjour_remote_reference)
 
         return bonjour_remote_references
 
@@ -127,6 +132,13 @@ class DistributionBonjourClient:
 
         # retrieves the first and second references from the service reference string
         first_reference, second_reference = bonjour_service_reference_string.split("._colony._tcp.local.")
+
+        # splits the first reference
+        first_reference_splitted = first_reference.split(".")
+
+        # in case the length of the first reference is not three
+        if not len(first_reference_splitted) == 3:
+            return
 
         # retrieves the base bonjour service properties, the base plugin manager unique id and the base service type
         bonjour_service_properties, bonjour_service_plugin_manager_uid, bonjour_service_service_type = first_reference.split(".")
