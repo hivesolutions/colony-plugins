@@ -103,6 +103,9 @@ class MainPyroManagerPlugin(colony.plugins.plugin_system.Plugin):
     def get_handler_name(self):
         return self.main_pyro_manager.get_handler_name()
 
+    def get_handler_port(self):
+        return self.main_pyro_manager.get_handler_port()
+
     def get_handler_properties(self):
         return self.main_pyro_manager.get_handler_properties()
 

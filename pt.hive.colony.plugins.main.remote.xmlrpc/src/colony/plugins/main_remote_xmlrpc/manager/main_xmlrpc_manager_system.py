@@ -141,6 +141,9 @@ class MainXmlrpcManager:
     def get_handler_name(self):
         return HANDLER_NAME
 
+    def get_handler_port(self):
+        return 80
+
     def get_handler_properties(self):
         return {}
 

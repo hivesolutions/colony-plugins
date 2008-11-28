@@ -93,6 +93,9 @@ class MainPyroManager:
     def get_handler_name(self):
         return HANDLER_NAME
 
+    def get_handler_port(self):
+        return self.base_remote_uri.port
+
     def get_handler_properties(self):
         return {"object_id" : self.base_remote_uri.objectID}
 
