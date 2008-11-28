@@ -55,12 +55,16 @@ class DummyDistributionClient:
 
         self.dummy_distribution_client_plugin = dummy_distribution_client_plugin
 
-    def test_get_remote_instance_references(self):
+    def test_get_remote_client_references(self):
         # retrieves the distribution client plugin
         distribution_client_plugin = self.dummy_distribution_client_plugin.distribution_client_plugin
 
-        # retrieves the remote instance references
-        remote_instance_references = distribution_client_plugin.get_remote_instance_references()
+        # retrieves the remote client references
+        remote_client_references = distribution_client_plugin.get_remote_client_references()
 
-        for remote_instance_reference in remote_instance_references:
-            print remote_instance_reference
+        # iterates over all the remote client references
+        for remote_client_reference in remote_client_references:
+            # retrieves all users
+            all_users = remote_client_reference.prototype_business_services.get_all_users()
+
+            print all_users

@@ -53,7 +53,7 @@ class DistributionClientPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["distribution_client"]
-    capabilities_allowed = ["distribution_client_adapter", "remote_client_adapter"]
+    capabilities_allowed = ["distribution_client_adapter", "distribution_helper"]
     dependencies = []
     events_handled = []
     events_registrable = []
@@ -61,7 +61,7 @@ class DistributionClientPlugin(colony.plugins.plugin_system.Plugin):
     distribution_client = None
 
     distribution_client_adapter_plugins = []
-    remote_client_adapter_plugins = []
+    distribution_helper_plugins = []
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -92,6 +92,9 @@ class DistributionClientPlugin(colony.plugins.plugin_system.Plugin):
     def get_remote_instance_references(self):
         return self.distribution_client.get_remote_instance_references()
 
+    def get_remote_client_references(self):
+        return self.distribution_client.get_remote_client_references()
+
     def get_remote_plugin_reference(self):
         return self.distribution_client.get_remote_plugin_reference()
 
@@ -99,14 +102,14 @@ class DistributionClientPlugin(colony.plugins.plugin_system.Plugin):
     def distribution_client_adapter_load_allowed(self, plugin, capability):
         self.distribution_client_adapter_plugins.append(plugin)
 
-    @colony.plugins.decorators.load_allowed_capability("remote_client_adapter")
-    def remote_client_adapter_load_allowed(self, plugin, capability):
-        self.remote_client_adapter_plugins.append(plugin)
+    @colony.plugins.decorators.load_allowed_capability("distribution_helper")
+    def distribution_helper_load_allowed(self, plugin, capability):
+        self.distribution_helper_plugins.append(plugin)
 
     @colony.plugins.decorators.unload_allowed_capability("distribution_client_adapter")
     def distribution_client_adapter_unload_allowed(self, plugin, capability):
         self.distribution_client_adapter_plugins.remove(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("remote_client_adapter")
-    def remote_client_adapterr_unload_allowed(self, plugin, capability):
-        self.remote_client_adapter_plugins.remove(plugin)
+    @colony.plugins.decorators.unload_allowed_capability("distribution_helper")
+    def distribution_helper_unload_allowed(self, plugin, capability):
+        self.distribution_helper_plugins.remove(plugin)

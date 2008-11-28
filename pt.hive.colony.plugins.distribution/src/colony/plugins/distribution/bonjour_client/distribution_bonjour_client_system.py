@@ -108,8 +108,8 @@ class DistributionBonjourClient:
                 # sets the port in the bonjour remote reference
                 bonjour_remote_reference.port = bonjour_service_port
 
-                # sets the bonjour service properties list in the bonjour remote reference
-                bonjour_remote_reference.bonjour_service_properties_list = bonjour_service_properties_list
+                # sets the properties list in the bonjour remote reference
+                bonjour_remote_reference.properties_list = bonjour_service_properties_list
 
                 # sets the bonjour service in the bonjour remote reference
                 bonjour_remote_reference.bonjour_service = bonjour_service
@@ -183,9 +183,9 @@ class BonjourRemoteReference:
 
     port = None
     """ The port """
-    
-    bonjour_service_properties_list = []
-    """ The bonjour service properties list """
+
+    properties_list = []
+    """ The properties list """
 
     bonjour_service = None
     """ The bonjour service """
@@ -210,7 +210,7 @@ class BonjourRemoteReference:
         self.service_type = service_type
         self.hostname = hostname
         self.port = port
-        self.bonjour_service_properties_list = []
+        self.properties_list = []
         self.bonjour_service = bonjour_service
 
     def __repr__(self):
