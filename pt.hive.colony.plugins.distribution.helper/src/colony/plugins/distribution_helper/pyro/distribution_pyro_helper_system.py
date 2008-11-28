@@ -38,6 +38,10 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 HELPER_NAME = "pyro"
+""" The helper name """
+
+PYRO_PROTOCOL_PREFIX = "PYRO://"
+""" The pyro protocol prefix """
 
 class DistributionPyroHelper:
     """
@@ -86,7 +90,7 @@ class DistributionPyroHelper:
         pyro_main_uid = properties_list[0]
 
         # creates the pyro main uri
-        pyro_main_uri = "PYRO://" + hostname + ":" + str(port) + "/" + pyro_main_uid
+        pyro_main_uri = PYRO_PROTOCOL_PREFIX + hostname + ":" + str(port) + "/" + pyro_main_uid
 
         # creates the pyro remote client
         pyro_remote_client = main_pyro_client_plugin.create_remote_client({"pyro_main_uri" : pyro_main_uri})
