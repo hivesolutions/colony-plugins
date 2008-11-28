@@ -97,6 +97,9 @@ class DistributionBonjourServer:
             # retrieves the available rpc handler name
             available_rpc_handler_name = available_rpc_handler.get_handler_name()
 
+            # retrieves the available rpc handler port
+            available_rpc_handler_port = available_rpc_handler.get_handler_port()
+
             # retrieves the available rpc handler properties
             available_rpc_handler_properties = available_rpc_handler.get_handler_properties()
 
@@ -131,10 +134,7 @@ class DistributionBonjourServer:
             # creates the hostname
             hostname = socket.gethostname()
 
-            # creates the port
-            port = DEFAULT_PORT
-
             # register the dummy bonjour service
-            bonjour_plugin.register_bonjour_service(service_id, complete_protocol_name, domain, hostname, port)
+            bonjour_plugin.register_bonjour_service(service_id, complete_protocol_name, domain, hostname, available_rpc_handler_port)
 
             self.distribution_bonjour_server_plugin.logger.info("Registering bonjour service '%s'", (service_id))

@@ -193,7 +193,7 @@ class BonjourRemoteReference:
     def __init__(self, plugin_manager_uid = "none", service_type = "none", hostname = "none", port = None, bonjour_service = None):
         """
         Constructor of the class.
-
+        
         @type plugin_manager_uid: String
         @param plugin_manager_uid: The plugin manager unique id.
         @type service_type: String
