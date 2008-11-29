@@ -83,6 +83,13 @@ class DistributionClient:
         return remote_references
 
     def get_remote_client_references(self):
+        """
+        Retrieves all the available remote client references.
+        
+        @rtype: List
+        @return: All the available remote client references.
+        """
+
         # creates the remote references list
         remote_references = []
 
@@ -98,6 +105,13 @@ class DistributionClient:
         return remote_references
 
     def get_remote_client_references_by_host(self):
+        """
+        Retrieves all the available remote client references by host.
+        
+        @rtype: Dictionary
+        @return: All the available remote client references by host.
+        """
+
         # creates the host remote client references map
         host_remote_client_references_map = {}
         
