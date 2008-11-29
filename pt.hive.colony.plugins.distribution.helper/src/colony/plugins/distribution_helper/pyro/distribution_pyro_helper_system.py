@@ -56,7 +56,7 @@ class DistributionPyroHelper:
         Constructor of the class.
         
         @type distribution_pyro_helper_plugin: DistributionPyroHelperPlugin
-        @param distribution_pyro_helper_plugin: The distribution pyro helper plugin .
+        @param distribution_pyro_helper_plugin: The distribution pyro helper plugin.
         """
 
         self.distribution_pyro_helper_plugin = distribution_pyro_helper_plugin
@@ -95,5 +95,36 @@ class DistributionPyroHelper:
         # creates the pyro remote client
         pyro_remote_client = main_pyro_client_plugin.create_remote_client({"pyro_main_uri" : pyro_main_uri})
 
-        # returns the pyro remote client
-        return pyro_remote_client
+        # creates the pyro remote client proxy
+        pyro_remote_client_proxy = PyroClientProxy(pyro_remote_client, remote_reference)
+
+        # returns the pyro remote client proxy
+        return pyro_remote_client_proxy
+
+class PyroClientProxy:
+    """
+    The pyro client proxy class.
+    """
+
+    pyro_client = None
+    """ The pyro client """
+
+    remote_reference = None
+    """ The remote reference """
+
+    def __init__(self, pyro_client = None, remote_reference = None):
+        """
+        Constructor of the class.
+        
+        @type pyro_client: PyroClient
+        @param pyro_client: The pyro client.
+        @type remote_reference: RemoteReference
+        @param remote_reference: The pyro remote reference.
+        """
+
+        self.pyro_client = pyro_client
+        self.remote_reference = remote_reference
+
+    def __getattr__(self, name):
+        if hasattr(self.pyro_client, name):
+            return getattr(self.pyro_client, name)
