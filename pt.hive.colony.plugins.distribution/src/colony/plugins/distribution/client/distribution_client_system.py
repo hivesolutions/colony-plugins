@@ -98,7 +98,27 @@ class DistributionClient:
         return remote_references
 
     def get_remote_client_references_by_host(self):
-        pass
+        # creates the host remote client references map
+        host_remote_client_references_map = {}
+        
+        # retrieves the remote client references
+        remote_client_references = self.get_remote_client_references()
+
+        # iterates over all the remote client references
+        for remote_client_reference in remote_client_references:
+            # retrieves the remote client reference hostname
+            remote_client_reference_hostname = remote_client_reference.remote_reference.hostname
+
+            # in case the remote client reference hostname is not referenced in the map keys
+            if not remote_client_reference_hostname in host_remote_client_references_map:
+                # creates the remote client reference hostname element
+                host_remote_client_references_map[remote_client_reference_hostname] = []
+
+            # adds the remote client reference to the map relating the host with the remote client references map
+            host_remote_client_references_map[remote_client_reference_hostname].append(remote_client_reference)
+
+        # returns the host remote client references map
+        return host_remote_client_references_map
 
     def get_remote_plugin_reference(self):
         """

@@ -95,6 +95,9 @@ class DistributionClientPlugin(colony.plugins.plugin_system.Plugin):
     def get_remote_client_references(self):
         return self.distribution_client.get_remote_client_references()
 
+    def get_remote_client_references_by_host(self):
+        return self.distribution_client.get_remote_client_references_by_host()
+
     def get_remote_plugin_reference(self):
         return self.distribution_client.get_remote_plugin_reference()
 
