@@ -97,6 +97,9 @@ class DistributionClient:
         # returns the remote references
         return remote_references
 
+    def get_remote_client_references_by_host(self):
+        pass
+
     def get_remote_plugin_reference(self):
         """
         Retrieves the first available plugin reference.
@@ -118,14 +121,17 @@ class DistributionClient:
         """
 
         # retrieves the remote reference service type
-        remte_reference_service_type = remote_reference.service_type
+        remote_reference_service_type = remote_reference.service_type
 
         # retrieves the distribution helper plugins
         distribution_helper_plugins = self.distribution_client_plugin.distribution_helper_plugins
 
+        # iterates over all the distribution helper plugins
         for distribution_helper_plugin in distribution_helper_plugins:
             # retrieves the helper name
             helper_name = distribution_helper_plugin.get_helper_name()
 
-            if helper_name == remte_reference_service_type:
+            # in case the helper name is the same as the remote reference service type
+            if helper_name == remote_reference_service_type:
+                # calls the helper to retrieve the client
                 return distribution_helper_plugin.create_client(remote_reference)

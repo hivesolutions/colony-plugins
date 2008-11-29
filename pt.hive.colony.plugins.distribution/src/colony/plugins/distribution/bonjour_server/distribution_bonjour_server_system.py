@@ -103,8 +103,10 @@ class DistributionBonjourServer:
             # retrieves the available rpc handler properties
             available_rpc_handler_properties = available_rpc_handler.get_handler_properties()
 
+            # starts the service id
             service_id = PROPERTIES_SUFIX + "_"
 
+            # creates the is first flag
             is_first = True
 
             # iterates over the available rpc handler properties
@@ -116,10 +118,13 @@ class DistributionBonjourServer:
                 if is_first:
                     is_first = False
                 else:
+                    # adds the property separator token
                     service_id += ":"
 
+                # adds the property value
                 service_id += str(available_rpc_handler_value)
 
+            # adds the service id separator
             service_id += "."
 
             # creates the service id
