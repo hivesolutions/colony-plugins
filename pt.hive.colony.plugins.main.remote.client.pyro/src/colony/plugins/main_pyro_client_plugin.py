@@ -61,8 +61,6 @@ class MainPyroClientPlugin(colony.plugins.plugin_system.Plugin):
 
     main_pyro_client = None
 
-    rpc_service_plugins = []
-
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global main_remote_client_pyro

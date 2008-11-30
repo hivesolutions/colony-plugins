@@ -84,15 +84,18 @@ class PyroClient:
     pyro_main_proxy = None
     """ The pyro main proxy """
 
-    def __init__(self, pyro_main_uri = "none"):
+    def __init__(self, pyro_main_uri = "none", pyro_main_proxy = None):
         """
         Constructor of the class.
         
         @type pyro_main_uri: String
         @param pyro_main_uri: The pyro main uri.
+        @type pyro_main_proxy: Proxy
+        @param pyro_main_proxy: The pyro main proxy.
         """
 
         self.pyro_main_uri = pyro_main_uri
+        self.pyro_main_proxy = pyro_main_proxy
 
     def get_pyro_main_proxy(self):
         if not self.pyro_main_proxy:
