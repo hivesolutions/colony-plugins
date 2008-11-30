@@ -64,7 +64,7 @@ class MainJsonrpcClientPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global main_remote_client_jsonrpc
         import main_remote_client_jsonrpc.client.main_jsonrpc_client_system
-        self.main_jsonrpc_client =  main_remote_client_jsonrpc.client.main_jsonrpc_client_system.MainJsonrpcClient(self)
+        self.main_jsonrpc_client = main_remote_client_jsonrpc.client.main_jsonrpc_client_system.MainJsonrpcClient(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
