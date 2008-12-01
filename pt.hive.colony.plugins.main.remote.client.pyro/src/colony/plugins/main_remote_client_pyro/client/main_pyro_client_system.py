@@ -98,6 +98,13 @@ class PyroClient:
         self.pyro_main_proxy = pyro_main_proxy
 
     def get_pyro_main_proxy(self):
+        """
+        Retrieves the pyro main proxy.
+        
+        @rtype: Proxy
+        @return: The pyro main proxy.
+        """
+
         if not self.pyro_main_proxy:
             self.pyro_main_proxy = Pyro.core.getProxyForURI(self.pyro_main_uri)
 
