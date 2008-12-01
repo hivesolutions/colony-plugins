@@ -40,7 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 HELPER_NAME = "xmlrpc"
 """ The helper name """
 
-class DistributionPyroHelper:
+class DistributionXmlrpcHelper:
     """
     The distribution xmlrpc helper class.
     """
@@ -67,7 +67,7 @@ class DistributionPyroHelper:
         
         @type remote_reference: RemoteReference
         @param remote_reference: The remote reference to retrieve the xmlrpc remote client.
-        @rtype: PyroRemoteClient
+        @rtype: XmlrpcRemoteClient
         @return: The xmlrpc remote client retrieved from a remote reference.
         """
 
