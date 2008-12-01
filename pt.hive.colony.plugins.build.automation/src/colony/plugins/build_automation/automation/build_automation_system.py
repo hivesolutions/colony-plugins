@@ -109,7 +109,7 @@ class BuildAutomation:
 
     def unload_build_automation_item_plugin(self, build_automation_item_plugin):
         # retrieves the build automation id
-        build_automation_id = self.loaded_test_cases_id_map[build_automation_item_plugin]
+        build_automation_id = self.build_automation_item_plugin_id_map[build_automation_item_plugin]
 
         if build_automation_item_plugin in self.loaded_build_automation_item_plugins_list:
             self.loaded_build_automation_item_plugins_list.remove(build_automation_item_plugin)
