@@ -70,9 +70,9 @@ class MainXmlrpcClient:
         xmlrpc_server_address = service_attributes["xmlrpc_server_address"]
 
         # sets the xmlrpc server address
-        pyro_client.xmlrpc_server_address = xmlrpc_server_address
+        xmlrpc_client.xmlrpc_server_address = xmlrpc_server_address
 
-        return pyro_client
+        return xmlrpc_client
 
 class XmlrpcClient:
     """
