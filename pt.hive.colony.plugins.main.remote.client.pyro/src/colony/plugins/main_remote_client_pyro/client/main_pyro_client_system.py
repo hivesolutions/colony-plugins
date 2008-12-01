@@ -69,6 +69,7 @@ class MainPyroClient:
         # retrieves the pyro main uri
         pyro_main_uri = service_attributes["pyro_main_uri"]
 
+        # sets the pyro main uri value
         pyro_client.pyro_main_uri = pyro_main_uri
 
         return pyro_client
