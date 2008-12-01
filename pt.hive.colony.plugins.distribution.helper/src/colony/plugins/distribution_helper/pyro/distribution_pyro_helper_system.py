@@ -69,7 +69,7 @@ class DistributionPyroHelper:
         Creates a pyro remote client from a remote reference.
         
         @type remote_reference: RemoteReference
-        @param remote_reference: The remote reference to retrieve the remote client.
+        @param remote_reference: The remote reference to retrieve the pyro remote client.
         @rtype: PyroRemoteClient
         @return: The pyro remote client retrieved from a remote reference.
         """
