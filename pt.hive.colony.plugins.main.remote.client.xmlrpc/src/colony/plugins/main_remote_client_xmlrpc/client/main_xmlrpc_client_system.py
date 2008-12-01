@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import xmlrpclib
+
 SERVICE_NAME = "xmlrpc"
 
 class MainXmlrpcClient:
@@ -61,16 +63,62 @@ class MainXmlrpcClient:
         return SERVICE_NAME
 
     def create_remote_client(self, service_attributes):
-        pass
+        # creates a new xmlrpc client instance
+        xmlrpc_client = XmlrpcClient()
+
+        # retrieves the xmlrpc server address
+        xmlrpc_server_address = service_attributes["xmlrpc_server_address"]
+
+        # sets the xmlrpc server address
+        pyro_client.xmlrpc_server_address = xmlrpc_server_address
+
+        return pyro_client
 
 class XmlrpcClient:
     """
     The xmlrpc client class.
     """
 
-    def __init__(self):
+    xmlrpc_server_address = "none"
+    """ The xmlrpc server address """
+
+    xmlrpc_server_proxy = None
+    """ The xmlrpc server proxy """
+
+    def __init__(self, xmlrpc_server_address = "none", xmlrpc_server_proxy = None):
         """
         Constructor of the class.
+        
+        @type xmlrpc_server_address: String
+        @param xmlrpc_server_address: The xmlrpc server address.
+        @type xmlrpc_server_proxy: ServerProxy
+        @param xmlrpc_server_proxy: The xmlrpc server proxy.
         """
 
-        pass
+        self.xmlrpc_server_address = xmlrpc_server_address
+        self.xmlrpc_server_proxy = xmlrpc_server_proxy
+
+    def get_xmlrpc_server_proxy(self):
+        """
+        Retrieves the server proxy.
+        
+        @rtype: ServerProxy
+        @return: The xmlrpc server proxy.
+        """
+
+        if not self.xmlrpc_server_proxy:
+            self.xmlrpc_server_proxy = xmlrpclib.ServerProxy("http://localhost/colony_mod_python/xmlrpc.py")
+
+        return self.xmlrpc_server_proxy
+
+    def __getattr__(self, name):
+        # retrieves the xmlrpc server proxy
+        xmlrpc_server_proxy = self.get_xmlrpc_server_proxy()
+
+        # retrieves the xmlrpc name proxy
+        xmlrpc_name_proxy = getattr(xmlrpc_server_proxy, name)
+
+        # sets the attribute
+        setattr(self, name, xmlrpc_name_proxy)
+
+        return xmlrpc_name_proxy
