@@ -54,7 +54,9 @@ class CommandExecutionPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["command_execution"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PackageDependency(
+                    "Win32 Extensions for Python", "win32con", "b202", "http://starship.python.net/crew/mhammond/win32",
+                    conditions_list = [colony.plugins.plugin_system.OperativeSystemCondition("windows")])]
     events_handled = []
     events_registrable = []
 
