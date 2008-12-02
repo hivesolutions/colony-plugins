@@ -93,19 +93,19 @@ class PrototypeBusinessServicesPlugin(colony.plugins.plugin_system.Plugin):
 
     @colony.plugins.decorators.plugin_call(True)
     def get_service_id(self):
-        return "prototype_business_services"
+        return self.prototype_business_services.get_service_id()
 
     @colony.plugins.decorators.plugin_call(True)
     def get_service_alias(self):
-        return []
+        return self.prototype_business_services.get_service_alias()
 
     @colony.plugins.decorators.plugin_call(True)
     def get_available_rpc_methods(self):
-        return []
+        return self.prototype_business_services.get_available_rpc_methods()
 
     @colony.plugins.decorators.plugin_call(True)
     def get_rpc_methods_alias(self):
-        return {}
+        return self.prototype_business_services.get_rpc_methods_alias()
 
     @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
     def create_user(self, username, password, picture_base64):

@@ -41,6 +41,9 @@ import thread
 import base64
 import sqlite3
 
+SERVICE_ID = "prototype_business_services"
+""" The service id """
+
 DATABASE_FILE = "database.db"
 
 TABLES = ["products", "customers", "suppliers", "sales", "sales_customers", "sales_products", "purchases", "purchases_suppliers", "purchases_products", "users"]
@@ -108,6 +111,18 @@ class PrototypeBusinessServices:
         self.prototype_business_services_plugin = prototype_business_services_plugin
 
         self.connection_thread_id_map = {}
+
+    def get_service_id(self):
+        return SERVICE_ID
+
+    def get_service_alias(self):
+        return []
+
+    def get_available_rpc_methods(self):
+        return []
+
+    def get_rpc_methods_alias(self):
+        return {}
 
     def get_connection(self):
         # retrieves the resource manager plugin
