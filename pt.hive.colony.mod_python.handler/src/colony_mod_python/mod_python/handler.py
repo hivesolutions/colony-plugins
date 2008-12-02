@@ -62,6 +62,9 @@ class PluginManagerHandler:
     local_address = None
     """ The local address for the request """
 
+    local_port = None
+    """ The local port for the request """
+
     def __init__(self, req):
         """
         Constructor of the class.
@@ -71,7 +74,7 @@ class PluginManagerHandler:
         """
 
         self.req = req
-        self.local_address = req.connection.local_addr
+        self.local_address, self.local_port = req.connection.local_addr
 
     def handle_request(self, data):
         """
@@ -145,7 +148,7 @@ class PluginManagerHandler:
         sys.argv.append("--debug")
         sys.argv.append("--noloop")
         sys.argv.append("--container=" + CONTAINER_NAME)
-        sys.argv.append("--attributes=apache_address:" + self.local_address)
+        sys.argv.append("--attributes=apache_address:" + self.local_address + ",apache_port:" + str(self.local_port))
         sys.argv.append("--manager_dir=" + plugin_manager_path)
 
         # starts the plugin manager
