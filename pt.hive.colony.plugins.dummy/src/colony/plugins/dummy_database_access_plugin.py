@@ -54,7 +54,8 @@ class DummyDatabaseAccessPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["dummy_database_access"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PackageDependency(
+                    "SQL Alchemy O/R mapper", "sqlalchemy", "0.4.x", "http://www.sqlalchemy.org")]
     events_handled = []
     events_registrable = []
 
