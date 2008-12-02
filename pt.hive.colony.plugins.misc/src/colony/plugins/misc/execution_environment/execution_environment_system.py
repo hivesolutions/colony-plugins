@@ -40,9 +40,16 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 
 WINDOWS_OS = "windows"
+""" The windows os value """
+
 MAC_OS = "mac"
+""" The mac os value """
+
 UNIX_OS = "unix"
+""" The unix os value """
+
 OTHER_OS = "other"
+""" The other os value """
 
 class ExecutionEnvironment:
     """
