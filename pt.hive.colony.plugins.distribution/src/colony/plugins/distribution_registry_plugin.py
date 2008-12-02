@@ -83,3 +83,6 @@ class DistributionRegistryPlugin(colony.plugins.plugin_system.Plugin):
 
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    def load_registry(self, properties):
+        self.distribution_registry.load_registry(properties)

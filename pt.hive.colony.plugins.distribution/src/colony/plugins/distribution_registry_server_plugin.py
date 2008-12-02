@@ -54,11 +54,14 @@ class DistributionRegistryServerPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["distribution_server_adapter"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.distribution.registry", "1.0.0")]
     events_handled = []
     events_registrable = []
 
     distribution_registry_server = None
+
+    distribution_registry_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -81,9 +84,16 @@ class DistributionRegistryServerPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.distribution.registry_server", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def activate_server(self, properties):
         self.distribution_registry_server.activate_server(properties)
 
+    def get_distribution_registry_plugin(self):
+        return self.distribution_registry_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.distribution.registry")
+    def set_distribution_registry_plugin(self, distribution_registry_plugin):
+        self.distribution_registry_plugin = distribution_registry_plugin

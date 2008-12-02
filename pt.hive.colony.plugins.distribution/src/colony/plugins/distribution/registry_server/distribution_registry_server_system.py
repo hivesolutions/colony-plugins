@@ -63,4 +63,8 @@ class DistributionRegistryServer:
         @param properties: The properties for the registry server activation.
         """
 
-        pass
+        # retrieves the distribution registry plugin
+        distribution_registry_plugin = self.distribution_registry_server_plugin.distribution_registry_plugin
+
+        # loads the registry with the given properties
+        distribution_registry_plugin.load_registry({})

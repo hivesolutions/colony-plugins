@@ -58,6 +58,16 @@ class DistributionRegistry:
 
         self.distribution_registry_plugin = distribution_registry_plugin
 
+    def load_registry(self, properties):
+        """
+        Loads the registry with the given properties.
+        
+        @type properties: List
+        @param properties: The list of properties for the load of the registry.
+        """
+
+        pass
+
     def register_entry(self, hostname, name, type, endpoints, metadata):
         # creates a new registry entry
         registry_entry = RegistryEntry()
