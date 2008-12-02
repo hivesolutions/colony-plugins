@@ -92,6 +92,12 @@ class DistributionBonjourServerPlugin(colony.plugins.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    def get_server_type(self):
+        return self.distribution_bonjour_server.get_server_type()
+
+    def get_distribution_server_type(self):
+        return self.distribution_bonjour_server.get_distribution_server_type()
+
     def activate_server(self, properties):
         self.distribution_bonjour_server.activate_server(properties)
 

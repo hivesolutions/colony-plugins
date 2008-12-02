@@ -37,6 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+DISTRIBUTION_SERVER_TYPE = "registry"
+""" The distribution server type """
+
 class DistributionRegistryServer:
     """
     The distribution registry server class.
@@ -55,6 +58,16 @@ class DistributionRegistryServer:
 
         self.distribution_registry_server_plugin = distribution_registry_server_plugin
 
+    def get_distribution_server_type(self):
+        """
+        Retrieves the distribution server type.
+        
+        @rtype: String
+        @return: The distribution server type.
+        """
+
+        return DISTRIBUTION_SERVER_TYPE
+
     def activate_server(self, properties):
         """
         Activates the distribution registry server.
@@ -63,8 +76,59 @@ class DistributionRegistryServer:
         @param properties: The properties for the registry server activation.
         """
 
+        if "registry_type" in properties:
+            # retrieves the registry type
+            registry_type = properties["registry_type"]
+
+            # in case the registry type is master
+            if registry_type == "master":
+                self.activate_server_master(properties)
+            # in case the registry type is slave
+            elif registry_type == "slave":
+                self.activate_server_slave(properties)
+            # in case the registry type is client
+            elif registry_type == client:
+                self.activate_server_client(properties)
+
+    def activate_server_master(self, properties):
+        # retrieves the plugin manager
+        manager = self.distribution_registry_server_plugin.manager
+
         # retrieves the distribution registry plugin
         distribution_registry_plugin = self.distribution_registry_server_plugin.distribution_registry_plugin
 
         # loads the registry with the given properties
         distribution_registry_plugin.load_registry({})
+
+        self.distribution_bonjour_server_plugin.logger.info("Loading the distributed registry")
+
+        # retrieves the main remote plugin
+        main_remote_manager_plugin = self.distribution_bonjour_server_plugin.main_remote_manager_plugin
+
+        # retrieves the available rpc handlers
+        available_rpc_handlers = main_remote_manager_plugin.get_available_rpc_handlers()
+
+        # retrieves the plugin manager uid
+        manager_uid = manager.uid
+
+        import socket
+
+        hostname = socket.gethostname()
+
+        distribution_registry_plugin.register_entry(hostname, "tobias", "default", [], {})
+
+        self.distribution_bonjour_server_plugin.logger.info("Local entry registered")
+
+    def activate_server_slave(self, properties):
+        # retrieves the registry hostname
+        registry_hostname = properties["registry_hostname"]
+
+        # retrieves the registry port
+        registry_hostname = properties["registry_port"]
+
+    def activate_server_client(self, properties):
+        # retrieves the registry hostname
+        registry_hostname = properties["registry_hostname"]
+
+        # retrieves the registry port
+        registry_hostname = properties["registry_port"]

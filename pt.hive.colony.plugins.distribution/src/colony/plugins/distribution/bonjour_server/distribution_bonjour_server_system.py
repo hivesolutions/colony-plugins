@@ -39,6 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import socket
 
+DISTRIBUTION_SERVER_TYPE = "bonjour"
+""" The distribution server type """
+
 PROPERTIES_SUFIX = "_pp"
 """ The properties sufix """
 
@@ -71,6 +74,16 @@ class DistributionBonjourServer:
         """
 
         self.distribution_bonjour_server_plugin = distribution_bonjour_server_plugin
+
+    def get_distribution_server_type(self):
+        """
+        Retrieves the distribution server type.
+        
+        @rtype: String
+        @return: The distribution server type.
+        """
+
+        return DISTRIBUTION_SERVER_TYPE
 
     def activate_server(self, properties):
         """
