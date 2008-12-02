@@ -165,6 +165,7 @@ class BuildAutomation:
         @return: The build automation structure with the given id and version.
         """
 
+        # iterates over all the loaded build automation item plugins
         for build_automation_item_plugin in self.loaded_build_automation_item_plugins_list:
             if build_automation_item_plugin.id == build_automation_id and (build_automation_item_plugin.version == build_automation_version or not build_automation_version):
                 # retrieves the build automation item plugin id                
