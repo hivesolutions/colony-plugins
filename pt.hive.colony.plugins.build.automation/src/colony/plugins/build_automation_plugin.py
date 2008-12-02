@@ -55,7 +55,8 @@ class BuildAutomationPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["build_automation", "console_command_extension"]
     capabilities_allowed = ["build_automation_extension", "build_automation_item"]
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.build.automation.extensions.test", "1.0.0")]
     events_handled = []
     events_registrable = []
 
