@@ -111,6 +111,9 @@ class XmlrpcClient:
 
         return self.xmlrpc_server_proxy
 
+    def __nonzero__(self):
+        return True
+
     def __getattr__(self, name):
         # retrieves the xmlrpc server proxy
         xmlrpc_server_proxy = self.get_xmlrpc_server_proxy()
