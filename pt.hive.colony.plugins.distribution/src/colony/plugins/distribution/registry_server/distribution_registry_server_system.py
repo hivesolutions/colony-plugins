@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import socket
+
 DISTRIBUTION_SERVER_TYPE = "registry"
 """ The distribution server type """
 
@@ -111,11 +113,14 @@ class DistributionRegistryServer:
         # retrieves the plugin manager uid
         manager_uid = manager.uid
 
-        import socket
-
+        # retrieves the hostname
         hostname = socket.gethostname()
 
-        distribution_registry_plugin.register_entry(hostname, "tobias", "default", [], {})
+        # retrieves the ip address
+        ip_address = socket.gethostbyname(hostname)
+
+        # registers the entry
+        distribution_registry_plugin.register_entry(ip_address, manager_uid, "default", [], {})
 
         self.distribution_registry_server_plugin.logger.info("Local entry registered")
 

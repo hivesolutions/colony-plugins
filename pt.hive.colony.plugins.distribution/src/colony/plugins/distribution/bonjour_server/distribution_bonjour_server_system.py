@@ -149,10 +149,10 @@ class DistributionBonjourServer:
             # creates the domain
             domain = LOCAL_DOMAIN + "."
 
-            # creates the hostname
+            # retrieves the hostname
             hostname = socket.gethostname()
 
-            # creates the ip address
+            # retrieves the ip address
             ip_address = socket.gethostbyname(hostname)
 
             # register the dummy bonjour service
