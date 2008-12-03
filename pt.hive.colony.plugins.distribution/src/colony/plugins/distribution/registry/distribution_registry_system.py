@@ -90,6 +90,9 @@ class DistributionRegistry:
         # adds the registry entry to the list of registry entries
         self.add_registry_entry(registry_entry)
 
+    def get_all_registry_entries(self):
+        return registry_entries
+
     def add_registry_entry(self, registry_entry):
         self.registry_entries.append(registry_entry)
 
