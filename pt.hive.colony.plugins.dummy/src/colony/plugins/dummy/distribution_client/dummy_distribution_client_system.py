@@ -67,7 +67,15 @@ class DummyDistributionClient:
 
         # iterates over all the remote client references
         for remote_client_reference in remote_client_references:
-            # retrieves all users
-            all_users = remote_client_reference.prototype_business_services.get_all_users()
+            # retrieves the service type
+            service_type = remote_client_reference.remote_reference.service_type
 
-            print all_users
+            # prints the message
+            print "The service type is: " + service_type
+
+            for index in range(10):
+                # retrieves all users
+                all_users = remote_client_reference.prototype_business_services.get_all_users()
+
+                # prints all users
+                print all_users
