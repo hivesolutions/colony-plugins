@@ -69,6 +69,21 @@ class DistributionRegistry:
         pass
 
     def register_entry(self, hostname, name, type, endpoints, metadata):
+        """
+        Registers an entry in the registry.
+        
+        @type hostname: String
+        @param hostname: The hostname.
+        @type name: String
+        @param param: The name.
+        @type type: String
+        @param type: The type.
+        @type endpoints: List
+        @param endpoints: The list of endpoints.
+        @type metadata: Map
+        @param endpoints: The metadata map.
+        """
+
         # creates a new registry entry
         registry_entry = RegistryEntry()
 
