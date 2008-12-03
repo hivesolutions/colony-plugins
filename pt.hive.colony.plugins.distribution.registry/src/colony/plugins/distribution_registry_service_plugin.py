@@ -67,8 +67,8 @@ class DistributionRegistryServicePlugin(colony.plugins.plugin_system.Plugin):
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global distribution_registry
-        import distribution_registry.service.distribution_registry_service_plugin
-        self.distribution_registry_service = distribution_registry.service.distribution_registry_service_plugin.DistributionRegistryService(self)
+        import distribution_registry.service.distribution_registry_service_system
+        self.distribution_registry_service = distribution_registry.service.distribution_registry_service_system.DistributionRegistryService(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -104,6 +104,10 @@ class DistributionRegistryServicePlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_call(True)
     def get_rpc_methods_alias(self):
         return self.distribution_registry_service.get_rpc_methods_alias()
+
+    @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
+    def register_entry(self, hostname, name, type, endpoints, metadata):
+        return self.distribution_registry_service.register_entry(hostname, name, type, endpoints, metadata)
 
     @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
     def get_all_registry_entries(self):
