@@ -99,7 +99,9 @@ class DistributionClient:
         # iterates over all the remote instance references
         for remote_instance_reference in remote_instance_references:
             remote_client_reference = self.create_client(remote_instance_reference)
-            remote_references.append(remote_client_reference)
+
+            if remote_client_reference:
+                remote_references.append(remote_client_reference)
 
         # returns the remote references
         return remote_references
@@ -114,7 +116,7 @@ class DistributionClient:
 
         # creates the host remote client references map
         host_remote_client_references_map = {}
-        
+
         # retrieves the remote client references
         remote_client_references = self.get_remote_client_references()
 

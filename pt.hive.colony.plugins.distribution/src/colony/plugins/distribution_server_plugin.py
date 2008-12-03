@@ -53,7 +53,7 @@ class DistributionServerPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["distribution_server"]
+    capabilities = ["distribution_server", "startup"]
     capabilities_allowed = ["distribution_server_adapter"]
     dependencies = []
     events_handled = []
