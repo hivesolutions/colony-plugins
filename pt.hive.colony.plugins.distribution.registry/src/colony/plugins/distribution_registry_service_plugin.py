@@ -64,6 +64,7 @@ class DistributionRegistryServicePlugin(colony.plugins.plugin_system.Plugin):
 
     distribution_registry_plugin = None
 
+    @colony.plugins.decorators.load_plugin("pt.hive.colony.plugins.distribution.registry.service", "1.0.0")
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global distribution_registry
@@ -77,7 +78,7 @@ class DistributionRegistryServicePlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
@@ -91,7 +92,7 @@ class DistributionRegistryServicePlugin(colony.plugins.plugin_system.Plugin):
 
     @colony.plugins.decorators.plugin_call(True)
     def get_service_id(self):
-        return self.prototype_business_services.get_service_id()
+        return self.distribution_registry_service.get_service_id()
 
     @colony.plugins.decorators.plugin_call(True)
     def get_service_alias(self):
@@ -105,11 +106,11 @@ class DistributionRegistryServicePlugin(colony.plugins.plugin_system.Plugin):
     def get_rpc_methods_alias(self):
         return self.distribution_registry_service.get_rpc_methods_alias()
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def register_entry(self, hostname, name, type, endpoints, metadata):
         return self.distribution_registry_service.register_entry(hostname, name, type, endpoints, metadata)
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def get_all_registry_entries(self):
         return self.distribution_registry_service.get_all_registry_entries()
 
