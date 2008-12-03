@@ -125,6 +125,11 @@ class PyroClientProxy:
         self.pyro_client = pyro_client
         self.remote_reference = remote_reference
 
+    def __nonzero__(self):
+        return True
+
     def __getattr__(self, name):
         if hasattr(self.pyro_client, name):
             return getattr(self.pyro_client, name)
+
+        raise AttributeError()

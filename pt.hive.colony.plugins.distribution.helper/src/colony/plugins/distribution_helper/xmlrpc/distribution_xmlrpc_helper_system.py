@@ -86,11 +86,14 @@ class DistributionXmlrpcHelper:
         # retrieves the remote reference properties list
         properties_list = remote_reference.properties_list
 
-        # retrieves the xmlrpc file handler name
-        xmlrpc_file_handler = properties_list[0]
+        # retrieves the xmlrpc handler base filename
+        xmlrpc_handler_base_filename = properties_list[0]
+
+        # retrieves the xmlrpc handler extension
+        xmlrpc_handler_extension = properties_list[1]
 
         # creates the xmlrpc server address
-        xmlrpc_server_address = HTTP_PROTOCOL_PREFIX + hostname + ":" + port + "/" + xmlrpc_file_handler
+        xmlrpc_server_address = HTTP_PROTOCOL_PREFIX + hostname + ":" + str(port) + "/" + xmlrpc_handler_base_filename + "." + xmlrpc_handler_extension
 
         # creates the xmlrpc remote client
         xmlrpc_remote_client = main_xmlrpc_client_plugin.create_remote_client({"xmlrpc_server_address" : xmlrpc_server_address})
@@ -125,6 +128,11 @@ class XmlrpcClientProxy:
         self.xmlrpc_client = xmlrpc_client
         self.remote_reference = remote_reference
 
+    def __nonzero__(self):
+        return True
+
     def __getattr__(self, name):
         if hasattr(self.xmlrpc_client, name):
             return getattr(self.xmlrpc_client, name)
+
+        raise AttributeError()
