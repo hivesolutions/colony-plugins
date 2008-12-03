@@ -107,7 +107,7 @@ class XmlrpcClient:
         """
 
         if not self.xmlrpc_server_proxy:
-            self.xmlrpc_server_proxy = xmlrpclib.ServerProxy("http://localhost/colony_mod_python/xmlrpc.py")
+            self.xmlrpc_server_proxy = xmlrpclib.ServerProxy(self.xmlrpc_server_address)
 
         return self.xmlrpc_server_proxy
 
