@@ -111,6 +111,9 @@ class PyroClient:
 
         return self.pyro_main_proxy
 
+    def __nonzero__(self):
+        return True
+
     def __getattr__(self, name):
         # retrieves the pyro main proxy
         main_proxy = self.get_pyro_main_proxy()
