@@ -58,6 +58,8 @@ class DistributionRegistry:
 
         self.distribution_registry_plugin = distribution_registry_plugin
 
+        self.registry_entries = []
+
     def load_registry(self, properties):
         """
         Loads the registry with the given properties.
@@ -106,6 +108,13 @@ class DistributionRegistry:
         self.add_registry_entry(registry_entry)
 
     def get_all_registry_entries(self):
+        """
+        Retrieves all the available registry entries.
+        
+        @rtype: List
+        @return: All the available registry entries.
+        """
+
         return registry_entries
 
     def add_registry_entry(self, registry_entry):
