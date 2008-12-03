@@ -40,6 +40,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 HELPER_NAME = "xmlrpc"
 """ The helper name """
 
+HTTP_PROTOCOL_PREFIX = "HTTP://"
+""" The httpd protocol prefix """
+
 class DistributionXmlrpcHelper:
     """
     The distribution xmlrpc helper class.
@@ -71,7 +74,32 @@ class DistributionXmlrpcHelper:
         @return: The xmlrpc remote client retrieved from a remote reference.
         """
 
-        pass
+        # retrieves the main xmlrpc client plugin
+        main_xmlrpc_client_plugin = self.distribution_xmlrpc_helper_plugin.main_xmlrpc_client_plugin
+
+        # retrieves the remote reference hostname
+        hostname = remote_reference.hostname
+
+        # retrieves the remote reference port
+        port = remote_reference.port
+
+        # retrieves the remote reference properties list
+        properties_list = remote_reference.properties_list
+
+        # retrieves the xmlrpc file handler name
+        xmlrpc_file_handler = properties_list[0]
+
+        # creates the xmlrpc server address
+        xmlrpc_server_address = HTTP_PROTOCOL_PREFIX + hostname + ":" + port + "/" + xmlrpc_file_handler
+
+        # creates the xmlrpc remote client
+        xmlrpc_remote_client = main_xmlrpc_client_plugin.create_remote_client({"xmlrpc_server_address" : xmlrpc_server_address})
+
+        # creates the xmlrpc remote client proxy
+        xmlrpc_remote_client_proxy = XmlrpcClientProxy(xmlrpc_remote_client, remote_reference)
+
+        # returns the xmlrpc remote client proxy
+        return xmlrpc_remote_client_proxy
 
 class XmlrpcClientProxy:
     """
