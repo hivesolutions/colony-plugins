@@ -115,7 +115,7 @@ class DistributionRegistry:
         @return: All the available registry entries.
         """
 
-        return registry_entries
+        return self.registry_entries
 
     def add_registry_entry(self, registry_entry):
         self.registry_entries.append(registry_entry)
