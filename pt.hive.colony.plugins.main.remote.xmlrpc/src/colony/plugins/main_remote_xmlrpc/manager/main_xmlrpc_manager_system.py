@@ -41,6 +41,12 @@ import xmlrpclib
 
 import main_xmlrpc_manager_exceptions
 
+HANDLER_BASE_FILENAME = "xmlrpc"
+""" The handler base filename """
+
+HANDLER_EXTENSION = "py"
+""" The handler extension """
+
 HANDLER_FILENAME = "xmlrpc.py"
 """ The handler filename """
 
@@ -145,7 +151,7 @@ class MainXmlrpcManager:
         return 80
 
     def get_handler_properties(self):
-        return {}
+        return {"handler_base_filename" : HANDLER_BASE_FILENAME, "handler_extension" : HANDLER_EXTENSION}
 
     def update_service_methods(self, updated_rpc_service_plugin = None):
 
