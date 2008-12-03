@@ -55,13 +55,16 @@ class DistributionServerPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["distribution_server", "startup"]
     capabilities_allowed = ["distribution_server_adapter"]
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.resource_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
 
     distribution_server = None
 
     distribution_server_adapter_plugins = []
+
+    resource_manager_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -86,6 +89,7 @@ class DistributionServerPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.distribution.server", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -97,3 +101,10 @@ class DistributionServerPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.unload_allowed_capability("distribution_server_adapter")
     def distribution_server_adapter_unload_allowed(self, plugin, capability):
         self.distribution_server_adapter_plugins.remove(plugin)
+
+    def get_resource_manager_plugin(self):
+        return self.resource_manager_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.resource_manager")
+    def set_resource_manager_plugin(self, resource_manager_plugin):
+        self.resource_manager_plugin = resource_manager_plugin

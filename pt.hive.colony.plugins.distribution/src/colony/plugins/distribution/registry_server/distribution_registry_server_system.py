@@ -100,10 +100,10 @@ class DistributionRegistryServer:
         # loads the registry with the given properties
         distribution_registry_plugin.load_registry({})
 
-        self.distribution_bonjour_server_plugin.logger.info("Loading the distributed registry")
+        self.distribution_registry_server_plugin.logger.info("Loading the distributed registry")
 
         # retrieves the main remote plugin
-        main_remote_manager_plugin = self.distribution_bonjour_server_plugin.main_remote_manager_plugin
+        main_remote_manager_plugin = self.distribution_registry_server_plugin.main_remote_manager_plugin
 
         # retrieves the available rpc handlers
         available_rpc_handlers = main_remote_manager_plugin.get_available_rpc_handlers()
@@ -117,7 +117,7 @@ class DistributionRegistryServer:
 
         distribution_registry_plugin.register_entry(hostname, "tobias", "default", [], {})
 
-        self.distribution_bonjour_server_plugin.logger.info("Local entry registered")
+        self.distribution_registry_server_plugin.logger.info("Local entry registered")
 
     def activate_server_slave(self, properties):
         # retrieves the registry hostname

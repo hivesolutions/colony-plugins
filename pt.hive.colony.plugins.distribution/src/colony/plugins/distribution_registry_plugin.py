@@ -86,3 +86,6 @@ class DistributionRegistryPlugin(colony.plugins.plugin_system.Plugin):
 
     def load_registry(self, properties):
         self.distribution_registry.load_registry(properties)
+
+    def register_entry(self, hostname, name, type, endpoints, metadata):
+        self.distribution_registry.register_entry(hostname, name, type, endpoints, metadata)

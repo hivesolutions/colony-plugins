@@ -66,6 +66,23 @@ class DistributionServer:
         # retrieves the distribution server adapter plugins
         distribution_server_adapter_plugins = self.distribution_server_plugin.distribution_server_adapter_plugins
 
+        # retrieves the resource manager plugin 
+        resource_manager_plugin = self.distribution_server_plugin.resource_manager_plugin
+
         # iterates over all the distribution server adapter plugins
         for distribution_server_adapter_plugin in distribution_server_adapter_plugins:
+            # retrieves the distribution server adapter plugin resources
+            distribution_server_adapter_plugin_resources = resource_manager_plugin.get_resources(distribution_server_adapter_plugin.id)
+
+            # iterates over all the distribution server adapter plugin resources
+            for distribution_server_adapter_plugin_resource in distribution_server_adapter_plugin_resources:
+                # retrieves the resource name
+                resource_name = distribution_server_adapter_plugin_resource.name
+
+                # retrieves the resource data
+                resource_data = distribution_server_adapter_plugin_resource.data
+
+                # sets the property
+                properties[resource_name] = resource_data
+
             distribution_server_adapter_plugin.activate_server(properties)
