@@ -107,107 +107,107 @@ class PrototypeBusinessServicesPlugin(colony.plugins.plugin_system.Plugin):
     def get_rpc_methods_alias(self):
         return self.prototype_business_services.get_rpc_methods_alias()
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def create_user(self, username, password, picture_base64):
         return self.prototype_business_services.create_user(username, password, picture_base64)
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def edit_user(self, username, field_names, field_values):
         return self.prototype_business_services.edit_user(username, field_names, field_values)
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def remove_user(self, username):
         return self.prototype_business_services.remove_user(username)
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def get_user(self, username):
         return self.prototype_business_services.get_user(username)
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def get_all_users(self):
         return self.prototype_business_services.get_all_users()
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def create_customer(self, name, age, address, gender, picture_base64):
         return self.prototype_business_services.create_customer(name, age, address, gender, picture_base64)
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def edit_customer(self, name, field_names, field_values):
         return self.prototype_business_services.edit_customer(name, field_names, field_values)
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def remove_customer(self, name):
         return self.prototype_business_services.remove_customer(name)
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def get_customer(self, name):
         return self.prototype_business_services.get_customer(name)
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def get_all_customers(self):
         return self.prototype_business_services.get_all_customers()
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def create_supplier(self, name, address, picture_base64):
         return self.prototype_business_services.create_supplier(name, address, picture_base64)
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def edit_supplier(self, name, field_names, field_values):
         return self.prototype_business_services.edit_supplier(name, field_names, field_values)
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def remove_supplier(self, name):
         return self.prototype_business_services.remove_supplier(name)
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def get_supplier(self, name):
         return self.prototype_business_services.get_supplier(name)
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def get_all_suppliers(self):
         return self.prototype_business_services.get_all_suppliers()
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def create_product(self, id, heading1, heading2, description, weight, height, quantity, picture_base64):
         return self.prototype_business_services.create_product(id, heading1, heading2, description, weight, height, quantity, picture_base64)
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def edit_product(self, id, field_names, field_values):
         return self.prototype_business_services.edit_product(id, field_names, field_values)
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def remove_product(self, id):
         return self.prototype_business_services.remove_product(id)
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def get_product(self, id):
         return self.prototype_business_services.get_product(id)
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def get_all_products(self):
         return self.prototype_business_services.get_all_products()
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def create_sale(self, id, payment_type, description, customer_name, product_tuples):
         return self.prototype_business_services.create_sale(id, payment_type, description, customer_name, product_tuples)
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def get_sale(self, id):
         return self.prototype_business_services.get_sale(id)
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def get_all_sales(self):
         return self.prototype_business_services.get_all_sales()
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def create_purchase(self, id, description, supplier_name, product_tuples):
         return self.prototype_business_services.create_purchase(id, description, supplier_name, product_tuples)
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def get_purchase(self, id):
         return self.prototype_business_services.get_purchase(id)
 
-    @colony.plugins.decorators.plugin_meta_information("rpc_method",  {"alias" : []})
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def get_all_purchases(self):
         return self.prototype_business_services.get_all_purchases()
 
