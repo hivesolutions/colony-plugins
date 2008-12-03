@@ -152,7 +152,10 @@ class DistributionBonjourServer:
             # creates the hostname
             hostname = socket.gethostname()
 
+            # creates the ip address
+            ip_address = socket.gethostbyname(hostname)
+
             # register the dummy bonjour service
-            bonjour_plugin.register_bonjour_service(service_id, complete_protocol_name, domain, hostname, available_rpc_handler_port)
+            bonjour_plugin.register_bonjour_service(service_id, complete_protocol_name, domain, ip_address, available_rpc_handler_port)
 
             self.distribution_bonjour_server_plugin.logger.info("Registering bonjour service '%s'", (service_id))
