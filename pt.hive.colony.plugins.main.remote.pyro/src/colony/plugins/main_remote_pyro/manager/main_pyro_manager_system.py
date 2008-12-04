@@ -106,6 +106,13 @@ class MainPyroManager:
 
         self.pyro_daemon.requestLoop()
 
+    def deactivate_server(self):
+        """
+        Deactivates the server.
+        """
+
+        self.pyro_daemon.shutdown()
+
     def create_pyro_daemon(self):
         """
         Creates the pyro daemon creating the base object and connecting it.
