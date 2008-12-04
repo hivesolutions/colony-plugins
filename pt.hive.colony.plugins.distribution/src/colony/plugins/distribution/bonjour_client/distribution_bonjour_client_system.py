@@ -188,7 +188,7 @@ class BonjourRemoteReference:
     """ The properties list """
 
     bonjour_service = None
-    """ The bonjour service """
+    """ The bonjour service tuple """
 
     def __init__(self, plugin_manager_uid = "none", service_type = "none", hostname = "none", port = None, bonjour_service = None):
         """
@@ -203,7 +203,7 @@ class BonjourRemoteReference:
         @type port: int
         @param port: The port.
         @type bonjour_service: Tuple
-        @param bonjour_service: The bonjour service object.
+        @param bonjour_service: The bonjour service tuple.
         """
 
         self.plugin_manager_uid = plugin_manager_uid

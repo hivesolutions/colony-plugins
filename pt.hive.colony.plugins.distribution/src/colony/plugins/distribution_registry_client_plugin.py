@@ -53,12 +53,14 @@ class DistributionRegistryClientPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["distribution_client_adapter"]
-    capabilities_allowed = []
+    capabilities_allowed = ["distribution_helper"]
     dependencies = []
     events_handled = []
     events_registrable = []
 
     distribution_registry_client = None
+
+    distribution_helper_plugins = []
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -75,9 +77,11 @@ class DistributionRegistryClientPlugin(colony.plugins.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
 
+    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.distribution.registry_client", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.distribution.registry_clieny", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
@@ -86,3 +90,11 @@ class DistributionRegistryClientPlugin(colony.plugins.plugin_system.Plugin):
 
     def get_remote_instance_references(self, properties):
         return self.distribution_registry_client.get_remote_instance_references(properties)
+
+    @colony.plugins.decorators.load_allowed_capability("distribution_helper")
+    def distribution_helper_load_allowed(self, plugin, capability):
+        self.distribution_helper_plugins.append(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("distribution_helper")
+    def distribution_helper_unload_allowed(self, plugin, capability):
+        self.distribution_helper_plugins.remove(plugin)

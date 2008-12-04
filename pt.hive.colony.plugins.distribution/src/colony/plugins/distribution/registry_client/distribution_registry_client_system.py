@@ -37,6 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+RESERVED_NAMES = ["registry_type", "registry_hostname", "registry_port", "registry_type", "endpoint_type"]
+""" The reserved names list """
+
 class DistributionRegistryClient:
     """
     The distribution registry client class.
@@ -56,4 +59,106 @@ class DistributionRegistryClient:
         self.distribution_registry_client_plugin = distribution_registry_client_plugin
 
     def get_remote_instance_references(self, properties):
+        # retrieves the registry client
+        registry_client = self.get_registry_client(properties)
+
         return []
+
+    def get_registry_client(self, properties):
+        """
+        Retrieves the registry client for the given properties.
+        
+        @type properties: Dictionary
+        @param properties: The properties to retrieve the registry client.
+        @rtype: 
+        """
+
+        # retrieves the distribution helper plugins list
+        distribution_helper_plugins = self.distribution_registry_client_plugin.distribution_helper_plugins
+
+        # retrieves the registry hostname
+        registry_hostname = properties["registry_hostname"]
+
+        # retrieves the registry port
+        registry_port = properties["registry_port"]
+
+        # retrieves the registry end point type
+        registry_endpoint_type = properties["endpoint_type"]
+
+        # creates the map of non reserved properties
+        non_reserved_properties = {}
+
+        # iterates over all the properties
+        for property_key in properties:
+            # in case the property key name is not reserved
+            if not property_key in RESERVED_NAMES:
+                # retrieves the property value
+                property_value = properties[property_key]
+
+                # adds the property value to the map of non reserved properties
+                non_reserved_properties[property_key] = property_value
+
+        # iterates over all the distribution helper plugins
+        for distribution_helper_plugin in distribution_helper_plugins:
+            # retrieves the helper name
+            helper_name = distribution_helper_plugin.get_helper_name()
+
+            # in case the helper name is the same as the registry endpoint type
+            if helper_name == registry_endpoint_type:
+                # calls the helper to retrieve the client using the host information
+                return distribution_helper_plugin.create_client_host(registry_hostname, registry_port, non_reserved_properties)
+
+class RegistryRemoteReference:
+    """
+    The registry remote reference class.
+    """
+
+    plugin_manager_uid = "none"
+    """ The plugin manager unique id """
+
+    service_type = "none"
+    """ The service type """
+
+    hostname = "none"
+    """ The hostname """
+
+    port = None
+    """ The port """
+
+    properties_list = []
+    """ The properties list """
+
+    registry_entry = None
+    """ The registry entry tuple """
+
+    def __init__(self, plugin_manager_uid = "none", service_type = "none", hostname = "none", port = None, registry_entry = None):
+        """
+        Constructor of the class.
+        
+        @type plugin_manager_uid: String
+        @param plugin_manager_uid: The plugin manager unique id.
+        @type service_type: String
+        @param service_type: The service type.
+        @type hostname: String
+        @param hostname: The hostname.
+        @type port: int
+        @param port: The port.
+        @type registry_entry: Tuple
+        @param registry_entry: The registry entry tuple.
+        """
+
+        self.plugin_manager_uid = plugin_manager_uid
+        self.service_type = service_type
+        self.hostname = hostname
+        self.port = port
+        self.properties_list = []
+        self.bonjour_service = bonjour_service
+
+    def __repr__(self):
+        return "<%s, %s, %s, %s, %i>" % (
+            self.__class__.__name__,
+            self.plugin_manager_uid,
+            self.service_type,
+            self.hostname,
+            self.port
+        )
