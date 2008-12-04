@@ -95,6 +95,16 @@ class DistributionRegistryServer:
             elif registry_type == "client":
                 self.activate_server_client(properties)
 
+    def deactivate_server(self, properties):
+        """
+        Deactivates the distribution registry server.
+        
+        @type properties: Dictionary
+        @param properties: The properties for the registry server deactivation.
+        """
+
+        pass
+
     def activate_server_master(self, properties):
         # retrieves the plugin manager
         manager = self.distribution_registry_server_plugin.manager

@@ -159,3 +159,13 @@ class DistributionBonjourServer:
             bonjour_plugin.register_bonjour_service(service_id, complete_protocol_name, domain, ip_address, available_rpc_handler_port)
 
             self.distribution_bonjour_server_plugin.logger.info("Registering bonjour service '%s'", (service_id))
+
+    def deactivate_server(self, properties):
+        """
+        Deactivates the distribution bonjour server.
+        
+        @type properties: Dictionary
+        @param properties: The properties for the bonjour server deactivation.
+        """
+
+        pass

@@ -101,6 +101,9 @@ class DistributionBonjourServerPlugin(colony.plugins.plugin_system.Plugin):
     def activate_server(self, properties):
         self.distribution_bonjour_server.activate_server(properties)
 
+    def deactivate_server(self, properties):
+        self.distribution_bonjour_server.deactivate_server(properties)
+
     def get_bonjour_plugin(self):
         return self.bonjour_plugin
 
