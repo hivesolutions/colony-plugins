@@ -54,7 +54,7 @@ class DistributionRegistryServerPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["distribution_server_adapter"]
-    capabilities_allowed = []
+    capabilities_allowed = ["distribution_helper"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.distribution.registry", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
@@ -63,6 +63,8 @@ class DistributionRegistryServerPlugin(colony.plugins.plugin_system.Plugin):
     events_registrable = []
 
     distribution_registry_server = None
+
+    distribution_helper_plugins = []
 
     distribution_registry_plugin = None
     main_remote_manager_plugin = None
@@ -82,9 +84,11 @@ class DistributionRegistryServerPlugin(colony.plugins.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
 
+    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.distribution.registry_server", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.distribution.registry_server", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
@@ -97,6 +101,14 @@ class DistributionRegistryServerPlugin(colony.plugins.plugin_system.Plugin):
 
     def activate_server(self, properties):
         self.distribution_registry_server.activate_server(properties)
+
+    @colony.plugins.decorators.load_allowed_capability("distribution_helper")
+    def distribution_helper_load_allowed(self, plugin, capability):
+        self.distribution_helper_plugins.append(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("distribution_helper")
+    def distribution_helper_unload_allowed(self, plugin, capability):
+        self.distribution_helper_plugins.remove(plugin)
 
     def get_distribution_registry_plugin(self):
         return self.distribution_registry_plugin

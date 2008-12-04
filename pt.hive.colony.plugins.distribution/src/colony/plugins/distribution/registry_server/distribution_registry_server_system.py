@@ -42,6 +42,9 @@ import socket
 DISTRIBUTION_SERVER_TYPE = "registry"
 """ The distribution server type """
 
+RESERVED_NAMES = ["registry_type", "registry_hostname", "registry_port", "registry_type", "endpoint_type"]
+""" The reserved names list """
+
 class DistributionRegistryServer:
     """
     The distribution registry server class.
@@ -89,7 +92,7 @@ class DistributionRegistryServer:
             elif registry_type == "slave":
                 self.activate_server_slave(properties)
             # in case the registry type is client
-            elif registry_type == client:
+            elif registry_type == "client":
                 self.activate_server_client(properties)
 
     def activate_server_master(self, properties):
@@ -125,15 +128,63 @@ class DistributionRegistryServer:
         self.distribution_registry_server_plugin.logger.info("Local entry registered")
 
     def activate_server_slave(self, properties):
-        # retrieves the registry hostname
-        registry_hostname = properties["registry_hostname"]
+        # retrieves the registry client
+        registry_client = self.retrieve_registry_client(properties)
 
-        # retrieves the registry port
-        registry_hostname = properties["registry_port"]
+        if not registry_client:
+            return
 
     def activate_server_client(self, properties):
+        # retrieves the registry client
+        registry_client = self.retrieve_registry_client(properties)
+
+        if not registry_client:
+            return
+
+        # retrieves the plugin manager
+        manager = self.distribution_registry_server_plugin.manager
+
+        # retrieves the plugin manager uid
+        manager_uid = manager.uid
+
+        # retrieves the hostname
+        hostname = socket.gethostname()
+
+        # retrieves the ip address
+        ip_address = socket.gethostbyname(hostname)
+
+        registry_client.distribution_registry.register_entry(ip_address, manager_uid, "default", [], {})
+
+    def retrieve_registry_client(self, properties):
+        # retrieves the distribution helper plugins list
+        distribution_helper_plugins = self.distribution_registry_server_plugin.distribution_helper_plugins
+
         # retrieves the registry hostname
         registry_hostname = properties["registry_hostname"]
 
         # retrieves the registry port
-        registry_hostname = properties["registry_port"]
+        registry_port = properties["registry_port"]
+
+        # retrieves the registry end point type
+        registry_endpoint_type = properties["endpoint_type"]
+
+        # creates the map of non reserved properties
+        non_reserved_properties = {}
+
+        # iterates over all the properties
+        for property_key in properties:
+            if not property_key in RESERVED_NAMES:
+                # retrieves the property value
+                property_value = properties[property_key]
+
+                # adds the property value to the map of non reserved properties
+                non_reserved_properties[property_key] = property_value
+
+        for distribution_helper_plugin in distribution_helper_plugins:
+            # retrieves the helper name
+            helper_name = distribution_helper_plugin.get_helper_name()
+
+            # in case the helper name is the same as the registry endpoint type
+            if helper_name == registry_endpoint_type:
+                # calls the helper to retrieve the client using the host information
+                return distribution_helper_plugin.create_client_host(registry_hostname, registry_port, non_reserved_properties)
