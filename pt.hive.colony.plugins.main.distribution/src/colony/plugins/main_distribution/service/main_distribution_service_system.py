@@ -80,7 +80,7 @@ class MainDistributionService:
         # unloads the plugin manager system
         manager.unload_system()
 
-    def unload_plugin(self, plugin_id):
+    def unload_plugin_by_id(self, plugin_id):
         # retrieves the plugin manager
         manager = self.main_distribution_service_plugin.manager
 

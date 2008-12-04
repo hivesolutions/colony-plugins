@@ -107,5 +107,5 @@ class MainDistributionServicePlugin(colony.plugins.plugin_system.Plugin):
         return self.main_distribution_service.unload_plugin_manager()
 
     @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
-    def unload_plugin(self, plugin_id):
-        return self.main_distribution_service.unload_plugin(plugin_id)
+    def unload_plugin_by_id(self, plugin_id):
+        return self.main_distribution_service.unload_plugin_by_id(plugin_id)

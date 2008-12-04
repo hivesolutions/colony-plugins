@@ -75,4 +75,4 @@ class DummyDistributionClient:
 
             for index in range(10):
                 # unloads gui main plugin
-                remote_client_reference.main_distribution_service.unload_plugin("pt.hive.colony.plugins.main.gui")
+                remote_client_reference.main_distribution_service.unload_plugin_by_id("pt.hive.colony.plugins.main.gui")
