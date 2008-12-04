@@ -111,6 +111,10 @@ class DistributionRegistryServicePlugin(colony.plugins.plugin_system.Plugin):
         return self.distribution_registry_service.register_entry(hostname, name, type, endpoints, metadata)
 
     @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
+    def unregister_entry(self, hostname, name):
+        return self.distribution_registry_service.unregister_entry(hostname, name)
+
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def get_all_registry_entries(self):
         return self.distribution_registry_service.get_all_registry_entries()
 

@@ -79,6 +79,12 @@ class DistributionRegistryService:
 
         distribution_registry_plugin.register_entry(hostname, name, type, endpoints, metadata)
 
+    def unregister_entry(self, hostname, name):
+        # retrieves the distribution registry plugin
+        distribution_registry_plugin = self.distribution_registry_service_plugin.distribution_registry_plugin
+
+        distribution_registry_plugin.unregister_entry(hostname, name)
+
     def get_all_registry_entries(self):
         # retrieves the distribution registry plugin
         distribution_registry_plugin = self.distribution_registry_service_plugin.distribution_registry_plugin
