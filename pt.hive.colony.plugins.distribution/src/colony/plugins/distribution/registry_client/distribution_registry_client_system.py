@@ -59,10 +59,60 @@ class DistributionRegistryClient:
         self.distribution_registry_client_plugin = distribution_registry_client_plugin
 
     def get_remote_instance_references(self, properties):
+        # creates the list of bonjour remote references
+        registry_remote_references = []
+
         # retrieves the registry client
         registry_client = self.get_registry_client(properties)
 
-        return []
+        # retrieves the registry entries
+        registry_entries = registry_client.get_all_registry_entries()
+
+        # iterates over all the registry entries
+        for registry_entry in registry_entries:
+            # retrieves the plugin manager unique id
+            plugin_manager_uid = registry_entry["name"]
+
+            # retrieves the hostname
+            hostname = registry_entry["hostname"]
+
+            # retrieves the endpoints
+            endpoints = registry_entry["endpoints"]
+
+            # iterates over all the endpoints
+            for endpoint in endpoints:
+                # retrieves the service type, port and properties map from the endpoint
+                service_type, port, properties_map = endpoint
+
+                # creates the properties list from the properties map
+                properties_list = properties_map.values()
+
+                # creates a new registry remote reference
+                registry_remote_reference = RegistryRemoteReference()
+
+                # sets the plugin manager unique id in the registry remote reference
+                registry_remote_reference.plugin_manager_uid = plugin_manager_uid
+
+                # sets the service type in the registry remote reference
+                registry_remote_reference.service_type = service_type
+
+                # sets the hostname in the registry remote reference
+                registry_remote_reference.hostname = hostname
+
+                # sets the port in the registry remote reference
+                registry_remote_reference.port = port
+
+                # sets the properties list in the registry remote reference
+                registry_remote_reference.properties_list = properties_list
+
+                # sets the registry entry list in the registry remote reference
+                registry_remote_reference.registry_entry = registry_entry
+
+                # adds the created registry remote reference to the list of registry remote references
+                registry_remote_references.append(registry_remote_reference)
+
+        # returns the registry remote references
+        return registry_remote_references
 
     def get_registry_client(self, properties):
         """
@@ -152,7 +202,7 @@ class RegistryRemoteReference:
         self.hostname = hostname
         self.port = port
         self.properties_list = []
-        self.bonjour_service = bonjour_service
+        self.registry_entry = registry_entry
 
     def __repr__(self):
         return "<%s, %s, %s, %s, %i>" % (
