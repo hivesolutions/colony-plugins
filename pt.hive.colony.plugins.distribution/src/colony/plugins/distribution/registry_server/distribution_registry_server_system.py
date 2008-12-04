@@ -122,21 +122,24 @@ class DistributionRegistryServer:
         # retrieves the ip address
         ip_address = socket.gethostbyname(hostname)
 
+        # retrieves the list of available endpoints
+        endpoints = self.get_available_endpoints()
+
         # registers the entry
-        distribution_registry_plugin.register_entry(ip_address, manager_uid, "default", [], {})
+        distribution_registry_plugin.register_entry(ip_address, manager_uid, "default", endpoints, {})
 
         self.distribution_registry_server_plugin.logger.info("Local entry registered")
 
     def activate_server_slave(self, properties):
         # retrieves the registry client
-        registry_client = self.retrieve_registry_client(properties)
+        registry_client = self.get_registry_client(properties)
 
         if not registry_client:
             return
 
     def activate_server_client(self, properties):
         # retrieves the registry client
-        registry_client = self.retrieve_registry_client(properties)
+        registry_client = self.get_registry_client(properties)
 
         if not registry_client:
             return
@@ -153,9 +156,20 @@ class DistributionRegistryServer:
         # retrieves the ip address
         ip_address = socket.gethostbyname(hostname)
 
-        registry_client.distribution_registry.register_entry(ip_address, manager_uid, "default", [], {})
+        # retrieves the list of available endpoints
+        endpoints = self.get_available_endpoints()
 
-    def retrieve_registry_client(self, properties):
+        registry_client.distribution_registry.register_entry(ip_address, manager_uid, "default", endpoints, {})
+
+    def get_registry_client(self, properties):
+        """
+        Retrieves the registry client for the given properties.
+        
+        @type properties: Dictionary
+        @param properties: The properties to retrieve the registry client.
+        @rtype: 
+        """
+        
         # retrieves the distribution helper plugins list
         distribution_helper_plugins = self.distribution_registry_server_plugin.distribution_helper_plugins
 
@@ -173,6 +187,7 @@ class DistributionRegistryServer:
 
         # iterates over all the properties
         for property_key in properties:
+            # in case the property key name is not reserved
             if not property_key in RESERVED_NAMES:
                 # retrieves the property value
                 property_value = properties[property_key]
@@ -180,6 +195,7 @@ class DistributionRegistryServer:
                 # adds the property value to the map of non reserved properties
                 non_reserved_properties[property_key] = property_value
 
+        # iterates over all the distribution helper plugins
         for distribution_helper_plugin in distribution_helper_plugins:
             # retrieves the helper name
             helper_name = distribution_helper_plugin.get_helper_name()
@@ -188,3 +204,40 @@ class DistributionRegistryServer:
             if helper_name == registry_endpoint_type:
                 # calls the helper to retrieve the client using the host information
                 return distribution_helper_plugin.create_client_host(registry_hostname, registry_port, non_reserved_properties)
+
+    def get_available_endpoints(self):
+        """
+        Retrieves the list of available endpoints.
+        
+        @rtype: List
+        @return: The list of available endpoints.
+        """
+
+        # creates the available endpoints list
+        available_endpoints = []
+
+        # retrieves the main remote plugin
+        main_remote_manager_plugin = self.distribution_registry_server_plugin.main_remote_manager_plugin
+
+        # retrieves the available rpc handlers
+        available_rpc_handlers = main_remote_manager_plugin.get_available_rpc_handlers()
+
+        # iterates over all the available rpc handlers
+        for available_rpc_handler in available_rpc_handlers:
+            # retrieves the available rpc handler name
+            available_rpc_handler_name = available_rpc_handler.get_handler_name()
+
+            # retrieves the available rpc handler port
+            available_rpc_handler_port = available_rpc_handler.get_handler_port()
+
+            # retrieves the available rpc handler properties
+            available_rpc_handler_properties = available_rpc_handler.get_handler_properties()
+
+            # creates the enpoint tuple
+            endpoint = (available_rpc_handler_name, available_rpc_handler_port, available_rpc_handler_properties)
+
+            # adds the endpoint tuple to the list of available endpoints
+            available_endpoints.append(endpoint)
+
+        # returns the available endpoints
+        return available_endpoints
