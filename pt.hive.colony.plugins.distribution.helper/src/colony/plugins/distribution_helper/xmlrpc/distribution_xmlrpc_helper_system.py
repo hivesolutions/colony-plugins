@@ -66,12 +66,12 @@ class DistributionXmlrpcHelper:
 
     def create_client(self, remote_reference):
         """
-        Creates a xmlrpc remote client from a remote reference.
+        Creates a xmlrpc client proxy from a remote reference.
         
         @type remote_reference: RemoteReference
-        @param remote_reference: The remote reference to retrieve the xmlrpc remote client.
-        @rtype: XmlrpcRemoteClient
-        @return: The xmlrpc remote client retrieved from a remote reference.
+        @param remote_reference: The remote reference to retrieve the xmlrpc client proxy.
+        @rtype: XmlrpcClientProxy
+        @return: The xmlrpc client proxy retrieved from a remote reference.
         """
 
         # retrieves the main xmlrpc client plugin
@@ -106,14 +106,16 @@ class DistributionXmlrpcHelper:
 
     def create_client_host(self, hostname, port, properties):
         """
-        Creates a xmlrpc remote client from an hostname, port and some properties.
+        Creates a xmlrpc client from an hostname, port and some properties.
         
         @type hostname: String
-        @param hostname: The hostname to create the xmlrpc remote client.
+        @param hostname: The hostname to create the xmlrpc client.
         @type port: int
-        @param port: The port to create the xmlrpc remote client.
+        @param port: The port to create the xmlrpc client.
         @type properties: Dictionary
-        @param properties: The properties to create the xmlrpc remote client.
+        @param properties: The properties to create the xmlrpc client.
+        @rtype: XmlrpcClient
+        @return: The xmlrpc client retrieved from an hostname, port and some properties.
         """
 
         # retrieves the main xmlrpc client plugin

@@ -66,12 +66,12 @@ class DistributionPyroHelper:
 
     def create_client(self, remote_reference):
         """
-        Creates a pyro remote client from a remote reference.
+        Creates a pyro client proxy from a remote reference.
         
         @type remote_reference: RemoteReference
-        @param remote_reference: The remote reference to retrieve the pyro remote client.
-        @rtype: PyroRemoteClient
-        @return: The pyro remote client retrieved from a remote reference.
+        @param remote_reference: The remote reference to retrieve the pyro client proxy.
+        @rtype: PyroClientProxy
+        @return: The pyro client proxy retrieved from a remote reference.
         """
 
         # retrieves the main pyro client plugin
