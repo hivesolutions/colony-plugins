@@ -103,7 +103,19 @@ class DistributionRegistryServer:
         @param properties: The properties for the registry server deactivation.
         """
 
-        pass
+        if "registry_type" in properties:
+            # retrieves the registry type
+            registry_type = properties["registry_type"]
+
+            # in case the registry type is master
+            if registry_type == "master":
+                self.deactivate_server_master(properties)
+            # in case the registry type is slave
+            elif registry_type == "slave":
+                self.deactivate_server_slave(properties)
+            # in case the registry type is client
+            elif registry_type == "client":
+                self.deactivate_server_client(properties)
 
     def activate_server_master(self, properties):
         # retrieves the plugin manager
@@ -170,6 +182,33 @@ class DistributionRegistryServer:
         endpoints = self.get_available_endpoints()
 
         registry_client.distribution_registry.register_entry(ip_address, manager_uid, "default", endpoints, {})
+
+    def deactivate_server_master(self, properties):
+        pass
+
+    def deactivate_server_slave(self, properties):
+        pass
+
+    def deactivate_server_client(self, properties):
+        # retrieves the registry client
+        registry_client = self.get_registry_client(properties)
+
+        if not registry_client:
+            return
+
+        # retrieves the plugin manager
+        manager = self.distribution_registry_server_plugin.manager
+
+        # retrieves the plugin manager uid
+        manager_uid = manager.uid
+
+        # retrieves the hostname
+        hostname = socket.gethostname()
+
+        # retrieves the ip address
+        ip_address = socket.gethostbyname(hostname)
+
+        registry_client.distribution_registry.unregister_entry(ip_address, manager_uid)
 
     def get_registry_client(self, properties):
         """

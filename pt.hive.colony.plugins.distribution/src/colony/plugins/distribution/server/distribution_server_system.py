@@ -55,16 +55,22 @@ class DistributionServer:
 
         self.distribution_server_plugin = distribution_server_plugin
 
-    def activate_server(self, properties):
+    def activate_server(self, plugin = None, properties = {}):
         """
         Activates the distribution server.
         
+        @type plugin: Plugin
+        @param plugin: The plugin containing the distribution server to be activated.
         @type properties: Dictionary
         @param properties: The properties for the server activation.
         """
 
-        # retrieves the distribution server adapter plugins
-        distribution_server_adapter_plugins = self.distribution_server_plugin.distribution_server_adapter_plugins
+        if plugin:
+            # sets the distribution server adapter plugins as a list containing the defined plugin
+            distribution_server_adapter_plugins = [plugin]
+        else:
+            # retrieves the distribution server adapter plugins
+            distribution_server_adapter_plugins = self.distribution_server_plugin.distribution_server_adapter_plugins
 
         # retrieves the resource manager plugin 
         resource_manager_plugin = self.distribution_server_plugin.resource_manager_plugin
@@ -88,16 +94,22 @@ class DistributionServer:
             # activates the distribution server adapter server
             distribution_server_adapter_plugin.activate_server(properties)
 
-    def deactivate_server(self, properties):
+    def deactivate_server(self, plugin = None, properties = {}):
         """
         Deactivates the distribution server.
         
+        @type plugin: Plugin
+        @param plugin: The plugin containing the distribution server to be deactivated.
         @type properties: Dictionary
         @param properties: The properties for the server deactivation.
         """
 
-        # retrieves the distribution server adapter plugins
-        distribution_server_adapter_plugins = self.distribution_server_plugin.distribution_server_adapter_plugins
+        if plugin:
+            # sets the distribution server adapter plugins as a list containing the defined plugin
+            distribution_server_adapter_plugins = [plugin]
+        else:
+            # retrieves the distribution server adapter plugins
+            distribution_server_adapter_plugins = self.distribution_server_plugin.distribution_server_adapter_plugins
 
         # retrieves the resource manager plugin 
         resource_manager_plugin = self.distribution_server_plugin.resource_manager_plugin

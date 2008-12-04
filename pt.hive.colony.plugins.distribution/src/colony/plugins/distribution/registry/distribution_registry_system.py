@@ -48,6 +48,9 @@ class DistributionRegistry:
     registry_entries = []
     """ The list of registry entries """
 
+    entry_id_registry_entries_map = []
+    """ The map relating the entry id and the registry entry """
+
     def __init__(self, distribution_registry_plugin):
         """
         Constructor of the class.
@@ -59,6 +62,7 @@ class DistributionRegistry:
         self.distribution_registry_plugin = distribution_registry_plugin
 
         self.registry_entries = []
+        self.name_registry_entries_map = {}
 
     def load_registry(self, properties):
         """
@@ -107,6 +111,30 @@ class DistributionRegistry:
         # adds the registry entry to the list of registry entries
         self.add_registry_entry(registry_entry)
 
+    def unregister_entry(self, hostname, name):
+        """
+        Unregisters an entry from the registry.
+        
+        @type hostname: String
+        @param hostname: The hostname.
+        @type name: String
+        @param param: The name.
+        """
+
+        # creates the registry entry id tuple
+        registry_entry_id = (hostname, name)
+
+        if not registry_entry_id in self.name_registry_entries_map:
+            return
+
+        # retrieves the registry entry
+        registry_entry = self.name_registry_entries_map[registry_entry_id]
+
+        del self.name_registry_entries_map[registry_entry_id]
+
+        if registry_entry in self.registry_entries:
+            self.registry_entries.remove(registry_entry)
+
     def get_all_registry_entries(self):
         """
         Retrieves all the available registry entries.
@@ -118,7 +146,17 @@ class DistributionRegistry:
         return self.registry_entries
 
     def add_registry_entry(self, registry_entry):
+        # retrieves the registry entry hostname
+        registy_entry_hostname = registry_entry.hostname
+
+        # retrieves the registry entry name
+        registy_entry_name = registry_entry.name
+
+        # creates the registry entry id tuple
+        registry_entry_id = (registy_entry_hostname, registy_entry_name)
+
         self.registry_entries.append(registry_entry)
+        self.name_registry_entries_map[registry_entry_id] = registry_entry
 
 class RegistryEntry:
     """

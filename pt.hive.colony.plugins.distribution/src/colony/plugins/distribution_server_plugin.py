@@ -96,11 +96,12 @@ class DistributionServerPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.load_allowed_capability("distribution_server_adapter")
     def distribution_server_adapter_load_allowed(self, plugin, capability):
         self.distribution_server_adapter_plugins.append(plugin)
-        self.distribution_server.activate_server({})
+        self.distribution_server.activate_server(plugin, {})
 
     @colony.plugins.decorators.unload_allowed_capability("distribution_server_adapter")
     def distribution_server_adapter_unload_allowed(self, plugin, capability):
         self.distribution_server_adapter_plugins.remove(plugin)
+        self.distribution_server.deactivate_server(plugin, {})
 
     def get_resource_manager_plugin(self):
         return self.resource_manager_plugin
