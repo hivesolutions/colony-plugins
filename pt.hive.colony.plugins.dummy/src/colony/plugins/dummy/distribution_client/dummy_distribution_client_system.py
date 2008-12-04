@@ -74,8 +74,5 @@ class DummyDistributionClient:
             print "The service type is: " + service_type
 
             for index in range(10):
-                # retrieves all users
-                all_users = remote_client_reference.prototype_business_services.get_all_users()
-
-                # prints all users
-                print all_users
+                # unloads gui main plugin
+                remote_client_reference.main_distribution_service.unload_plugin("pt.hive.colony.plugins.main.gui")
