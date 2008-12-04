@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.plugins.plugin_system
+import colony.plugins.decorators
 
 class DistributionClientPlugin(colony.plugins.plugin_system.Plugin):
     """
@@ -54,7 +55,8 @@ class DistributionClientPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["distribution_client"]
     capabilities_allowed = ["distribution_client_adapter", "distribution_helper"]
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.resource_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
 
@@ -62,6 +64,8 @@ class DistributionClientPlugin(colony.plugins.plugin_system.Plugin):
 
     distribution_client_adapter_plugins = []
     distribution_helper_plugins = []
+
+    resource_manager_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -86,6 +90,7 @@ class DistributionClientPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.distribution.client", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -116,3 +121,10 @@ class DistributionClientPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.unload_allowed_capability("distribution_helper")
     def distribution_helper_unload_allowed(self, plugin, capability):
         self.distribution_helper_plugins.remove(plugin)
+
+    def get_resource_manager_plugin(self):
+        return self.resource_manager_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.resource_manager")
+    def set_resource_manager_plugin(self, resource_manager_plugin):
+        self.resource_manager_plugin = resource_manager_plugin

@@ -80,16 +80,8 @@ class DistributionServer:
             # retrieves the distribution server adapter plugin resources
             distribution_server_adapter_plugin_resources = resource_manager_plugin.get_resources(distribution_server_adapter_plugin.id)
 
-            # iterates over all the distribution server adapter plugin resources
-            for distribution_server_adapter_plugin_resource in distribution_server_adapter_plugin_resources:
-                # retrieves the resource name
-                resource_name = distribution_server_adapter_plugin_resource.name
-
-                # retrieves the resource data
-                resource_data = distribution_server_adapter_plugin_resource.data
-
-                # sets the property
-                properties[resource_name] = resource_data
+            # merges the available properties and the gathered resources
+            self.merge_properties_resources(properties, distribution_server_adapter_plugin_resources)
 
             # activates the distribution server adapter server
             distribution_server_adapter_plugin.activate_server(properties)
@@ -119,16 +111,29 @@ class DistributionServer:
             # retrieves the distribution server adapter plugin resources
             distribution_server_adapter_plugin_resources = resource_manager_plugin.get_resources(distribution_server_adapter_plugin.id)
 
-            # iterates over all the distribution server adapter plugin resources
-            for distribution_server_adapter_plugin_resource in distribution_server_adapter_plugin_resources:
-                # retrieves the resource name
-                resource_name = distribution_server_adapter_plugin_resource.name
-
-                # retrieves the resource data
-                resource_data = distribution_server_adapter_plugin_resource.data
-
-                # sets the property
-                properties[resource_name] = resource_data
+            # merges the available properties and the gathered resources
+            self.merge_properties_resources(properties, distribution_server_adapter_plugin_resources)
 
             # deactivates the distribution server adapter server
             distribution_server_adapter_plugin.deactivate_server(properties)
+
+    def merge_properties_resources(self, properties, resources):
+        """
+        Merges the map containing properties and the given list of resources.
+        
+        @type properties: Dictionary
+        @param properties: The properties map to be merged with the given resources.
+        @type resources: List
+        @param resources: The list of resources to be merged with the properties map.
+        """
+
+        # iterates over all the resources
+        for resource in resources:
+            # retrieves the resource name
+            resource_name = resource.name
+
+            # retrieves the resource data
+            resource_data = resource.data
+
+            # sets the property
+            properties[resource_name] = resource_data

@@ -55,5 +55,5 @@ class DistributionRegistryClient:
 
         self.distribution_registry_client_plugin = distribution_registry_client_plugin
 
-    def get_remote_instance_references(self):
+    def get_remote_instance_references(self, properties):
         return []

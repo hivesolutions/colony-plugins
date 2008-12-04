@@ -55,10 +55,12 @@ class DistributionClient:
 
         self.distribution_client_plugin = distribution_client_plugin
 
-    def get_remote_instance_references(self):
+    def get_remote_instance_references(self, properties = {}):
         """
         Retrieves all the available remote instance references.
         
+        @type properties: Dictionary
+        @param properties: The properties for the retrieval of all the available remote instance references.
         @rtype: List
         @return: All the available remote instance references.
         """
@@ -69,10 +71,19 @@ class DistributionClient:
         # retrieves the distribution client adapter plugins
         distribution_client_adapter_plugins = self.distribution_client_plugin.distribution_client_adapter_plugins
 
+        # retrieves the resource manager plugin 
+        resource_manager_plugin = self.distribution_client_plugin.resource_manager_plugin
+
         # iterates over all the distribution client adapter plugins
         for distribution_client_adapter_plugin in distribution_client_adapter_plugins:
+            # retrieves the distribution client adapter plugin resources
+            distribution_client_adapter_plugin_resources = resource_manager_plugin.get_resources(distribution_client_adapter_plugin.id)
+
+            # merges the available properties and the gathered resources
+            self.merge_properties_resources(properties, distribution_client_adapter_plugin_resources)
+
             # retrieves the adapter remote references
-            adapter_remote_references = distribution_client_adapter_plugin.get_remote_instance_references()
+            adapter_remote_references = distribution_client_adapter_plugin.get_remote_instance_references(properties)
 
             # in case the retrieval was successful
             if adapter_remote_references:
@@ -171,3 +182,24 @@ class DistributionClient:
             if helper_name == remote_reference_service_type:
                 # calls the helper to retrieve the client
                 return distribution_helper_plugin.create_client(remote_reference)
+
+    def merge_properties_resources(self, properties, resources):
+        """
+        Merges the map containing properties and the given list of resources.
+        
+        @type properties: Dictionary
+        @param properties: The properties map to be merged with the given resources.
+        @type resources: List
+        @param resources: The list of resources to be merged with the properties map.
+        """
+
+        # iterates over all the resources
+        for resource in resources:
+            # retrieves the resource name
+            resource_name = resource.name
+
+            # retrieves the resource data
+            resource_data = resource.data
+
+            # sets the property
+            properties[resource_name] = resource_data

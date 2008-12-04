@@ -64,7 +64,7 @@ class DistributionBonjourClient:
 
         self.distribution_bonjour_client_plugin = distribution_bonjour_client_plugin
 
-    def get_remote_instance_references(self):
+    def get_remote_instance_references(self, properties):
         # retrieves the bonjour plugin
         bonjour_plugin = self.distribution_bonjour_client_plugin.bonjour_plugin
 
