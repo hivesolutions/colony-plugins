@@ -66,7 +66,7 @@ class MainDistributionServicePlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global main_distribution
         import main_distribution.service.main_distribution_service_system
-        self.main_distribution_service = main_distribution.service.main_distribution_service_system.DistributionRegistryService(self)
+        self.main_distribution_service = main_distribution.service.main_distribution_service_system.MainDistributionService(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -105,3 +105,7 @@ class MainDistributionServicePlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def unload_plugin_manager(self):
         return self.main_distribution_service.unload_plugin_manager()
+
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
+    def unload_plugin(self, plugin_id):
+        return self.main_distribution_service.unload_plugin(plugin_id)
