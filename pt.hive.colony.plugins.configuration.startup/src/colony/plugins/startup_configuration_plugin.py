@@ -51,7 +51,9 @@ class StartupConfigurationPlugin(colony.plugins.plugin_system.PluginManagerPlugi
     version = "1.0.0"
     author = "Hive Solutions"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
+                 colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
+                 colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
     capabilities = ["plugin_manager_extension", "plugin_manager_extension.init_plugin_load"]
     capabilities_allowed = []
     dependencies = []
