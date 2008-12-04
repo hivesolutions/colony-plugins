@@ -104,6 +104,36 @@ class DistributionXmlrpcHelper:
         # returns the xmlrpc remote client proxy
         return xmlrpc_remote_client_proxy
 
+    def create_client_host(self, hostname, port, properties):
+        """
+        Creates a xmlrpc remote client from an hostname, port and some properties.
+        
+        @type hostname: String
+        @param hostname: The hostname to create the xmlrpc remote client.
+        @type port: int
+        @param port: The port to create the xmlrpc remote client.
+        @type properties: Dictionary
+        @param properties: The properties to create the xmlrpc remote client.
+        """
+
+        # retrieves the main xmlrpc client plugin
+        main_xmlrpc_client_plugin = self.distribution_xmlrpc_helper_plugin.main_xmlrpc_client_plugin
+
+        # retrieves the xmlrpc handler base filename
+        xmlrpc_handler_base_filename = properties["handler_base_filename"]
+
+        # retrieves the xmlrpc handler extension
+        xmlrpc_handler_extension = properties["handler_extension"]
+
+        # creates the xmlrpc server address
+        xmlrpc_server_address = HTTP_PROTOCOL_PREFIX + hostname + ":" + str(port) + "/" + xmlrpc_handler_base_filename + "." + xmlrpc_handler_extension
+
+        # creates the xmlrpc remote client
+        xmlrpc_remote_client = main_xmlrpc_client_plugin.create_remote_client({"xmlrpc_server_address" : xmlrpc_server_address})
+
+        # returns the xmlrpc remote client
+        return xmlrpc_remote_client
+
 class XmlrpcClientProxy:
     """
     The xmlrpc client proxy class.

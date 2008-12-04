@@ -95,6 +95,9 @@ class DistributionXmlrpcHelperPlugin(colony.plugins.plugin_system.Plugin):
     def create_client(self, remote_reference):
         return self.distribution_xmlrpc_helper.create_client(remote_reference)
 
+    def create_client_host(self, hostname, port, properties):
+        return self.distribution_xmlrpc_helper.create_client_host(hostname, port, properties)
+
     def get_main_xmlrpc_client_plugin(self):
         return self.main_xmlrpc_client_plugin
 
