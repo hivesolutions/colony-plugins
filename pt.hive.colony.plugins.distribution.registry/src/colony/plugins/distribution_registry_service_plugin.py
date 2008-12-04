@@ -47,7 +47,7 @@ class DistributionRegistryServicePlugin(colony.plugins.plugin_system.Plugin):
 
     id = "pt.hive.colony.plugins.distribution.registry.service"
     name = "Distribution Registry Service Plugin"
-    short_name = "Distribution Registry Service Helper"
+    short_name = "Distribution Registry Service"
     description = "Distribution Registry Service Plugin"
     version = "1.0.0"
     author = "Hive Solutions"
