@@ -84,3 +84,6 @@ class DummyPluginAux3(colony.plugins.plugin_system.Plugin):
 
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    def print_dummy_aux_3(self):
+        print "dummy_aux_3"
