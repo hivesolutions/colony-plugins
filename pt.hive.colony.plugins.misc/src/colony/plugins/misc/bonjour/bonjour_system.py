@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
 import select
 import threading
 import time
@@ -44,6 +45,18 @@ import time
 import bonjour
 
 import bonjour_exceptions
+
+WINDOWS_OS = "windows"
+""" The windows os value """
+
+MAC_OS = "mac"
+""" The mac os value """
+
+UNIX_OS = "unix"
+""" The unix os value """
+
+OTHER_OS = "other"
+""" The other os value """
 
 class Bonjour:
 
@@ -59,7 +72,55 @@ class Bonjour:
         self.events_map = {}
         self.values_map = {}
 
+    def big_endian_to_little_endian(self, value):
+        final_value = 0
+
+        integer_value = []
+
+        while value > 0:
+            byte_value = value & 0xFF
+
+            integer_value.append(aux)
+
+            value = value >> 8
+
+        is_first = True
+
+        for value in integer_value:
+            if is_first:
+                is_first = False
+            else:
+                final_value = final_value << 8
+
+            final_value += value
+
+        return final_value
+
+    def get_operative_system(self):
+        """
+        Retrieves the current operative system.
+        
+        @rtype: String
+        @return: The type of the current operative system.
+        """
+    
+        # retrieves the current os name
+        os_name = os.name
+    
+        if os_name == "nt" or os_name == "dos":
+            return WINDOWS_OS
+        elif os_name == "mac":
+            return MAC_OS
+        elif os_name == "posix":
+            return UNIX_OS
+    
+        return OTHER_OS
+
     def register_bonjour_service(self, service_name, registration_type, domain, host, port):
+        if self.get_operative_system() == MAC_OS:
+            # converts port from to the target code
+            port = self.big_endian_to_little_endian(port)
+
         # the service flags for zeroconf registration
         flags = 0
 
