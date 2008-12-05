@@ -86,3 +86,16 @@ class MainDistributionService:
 
         # unloads the plugin
         manager.unload_plugin(plugin_id)
+
+    def get_plugin_proxy_by_id(self, plugin_id):
+        # retrieves the main distribution plugin system plugin
+        main_distribution_plugin_system_plugin = self.main_distribution_service_plugin.main_distribution_plugin_system_plugin
+
+        # creates the plugin proxy using the plugin id
+        plugin_proxy = main_distribution_plugin_system_plugin.create_plugin_proxy_by_id(plugin_id)
+
+        # returns the plugin proxy
+        return plugin_proxy
+
+    def call_plugin_proxy_method(self, plugin_id, plugin_version, method_name, arguments):
+        pass

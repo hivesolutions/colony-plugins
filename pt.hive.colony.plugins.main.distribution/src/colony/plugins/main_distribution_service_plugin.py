@@ -55,7 +55,8 @@ class MainDistributionServicePlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["rpc_service"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.distribution.main.plugin_system", "1.0.0")]
     events_handled = []
     events_registrable = []
 
@@ -83,6 +84,7 @@ class MainDistributionServicePlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.distribution.main.registry.service", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -109,3 +111,18 @@ class MainDistributionServicePlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def unload_plugin_by_id(self, plugin_id):
         return self.main_distribution_service.unload_plugin_by_id(plugin_id)
+
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
+    def get_plugin_proxy_by_id(self, plugin_id):
+        return self.main_distribution_service.get_plugin_proxy_by_id(plugin_id)
+
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
+    def call_plugin_proxy_method(self, plugin_id, plugin_version, method_name, arguments):
+        return self.main_distribution_service.call_plugin_proxy_method(plugin_id, plugin_version, method_name, arguments)
+
+    def get_main_distribution_plugin_system_plugin(self):
+        return self.main_distribution_plugin_system_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.distribution.main.plugin_system")
+    def set_main_distribution_plugin_system_plugin(self, main_distribution_plugin_system_plugin):
+        self.main_distribution_plugin_system_plugin = main_distribution_plugin_system_plugin

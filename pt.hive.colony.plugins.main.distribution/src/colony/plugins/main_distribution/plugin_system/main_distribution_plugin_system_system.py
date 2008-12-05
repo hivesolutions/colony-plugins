@@ -61,10 +61,20 @@ class MainDistributionPluginSystem:
         # creates the plugin proxy
         plugin_proxy = PluginProxy()
 
+        # sets the plugin proxy plugin id
         plugin_proxy.id = plugin.id
 
+        # sets the plugin proxy plugin version
         plugin_proxy.version = plugin.version
 
+        plugin_attributes = dir(plugin)
+
+        plugin_method_names = plugin_attributes
+
+        for plugin_method_name in plugin_method_names:
+            plugin_proxy.add_plugin_method(plugin_method_name)
+
+        # returns the plugin proxy
         return plugin_proxy
 
     def create_plugin_proxy_by_id(self, plugin_id):
@@ -77,6 +87,7 @@ class MainDistributionPluginSystem:
         # retrieves the plugin proxy
         plugin_proxy = self.create_plugin_proxy(plugin)
 
+        # returns the plugin proxy
         return plugin_proxy
 
 class PluginProxy:
@@ -87,14 +98,24 @@ class PluginProxy:
     client_proxy = None
     """ The client proxy """
 
+    plugin_methods = []
+    """ The list of plugin methods """
+
     id = "none"
     """ The id of the plugin """
 
     version = "none"
     """ The version of the plugin """
 
-    def __init__(self):
-        pass
+    def __init__(self, client_proxy = None, id = "none", version = "none"):
+        self.client_proxy = client_proxy
+        self.id = id
+        self.version = version
+
+        self.plugin_methods = []
+
+    def add_plugin_method(self, method_name):
+        self.plugin_methods.append(method_name)
 
     def caller(self, *args, **kwargs):
         # retrieves the calling name
@@ -108,4 +129,7 @@ class PluginProxy:
         return True
 
     def __getattr__(self, name):
-        return self.caller
+        if name in self.plugin_methods:
+            return self.caller
+
+        raise AttributeError()
