@@ -82,5 +82,8 @@ class DummyPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
         print "unloading dummy allowed..."
 
+    def print_dummy(self):
+        print "dummy"
+
     def get_dummy(self):
         return "dummy"
