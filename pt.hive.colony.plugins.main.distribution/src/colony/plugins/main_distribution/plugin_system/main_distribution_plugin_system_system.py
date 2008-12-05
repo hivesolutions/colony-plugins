@@ -65,6 +65,9 @@ class MainDistributionPluginSystem:
         # creates the plugin proxy
         plugin_proxy = PluginProxy()
 
+        # sets the plugin proxy client proxy
+        plugin_proxy.client_proxy = "null"
+
         # sets the plugin proxy plugin id
         plugin_proxy.id = plugin.id
 
@@ -120,6 +123,9 @@ class PluginProxy:
         self.version = version
 
         self.plugin_methods = []
+
+    def set_client_proxy(self, client_proxy):
+        self.client_proxy = client_proxy
 
     def add_plugin_method(self, method_name):
         self.plugin_methods.append(method_name)
