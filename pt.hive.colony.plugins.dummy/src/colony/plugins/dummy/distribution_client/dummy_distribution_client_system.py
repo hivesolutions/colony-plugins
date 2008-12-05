@@ -69,10 +69,14 @@ class DummyDistributionClient:
         for remote_client_reference in remote_client_references:
             # retrieves the service type
             service_type = remote_client_reference.remote_reference.service_type
-
+    
             # prints the message
             print "The service type is: " + service_type
-
-            for index in range(10):
-                # unloads gui main plugin
-                remote_client_reference.main_distribution_service.unload_plugin_by_id("pt.hive.colony.plugins.main.gui")
+    
+            dummy_plugin_proxy = remote_client_reference.main_distribution_service.get_plugin_proxy_by_id("pt.hive.colony.plugins.dummy")
+    
+            dummy_plugin_proxy.process_plugin_proxy(remote_client_reference)
+    
+            dummy_value = dummy_plugin_proxy.get_dummy()
+    
+            print dummy_value
