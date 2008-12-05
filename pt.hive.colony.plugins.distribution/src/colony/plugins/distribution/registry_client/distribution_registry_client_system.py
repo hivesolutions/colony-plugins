@@ -59,6 +59,10 @@ class DistributionRegistryClient:
         self.distribution_registry_client_plugin = distribution_registry_client_plugin
 
     def get_remote_instance_references(self, properties):
+        # in case there are no properties defined
+        if not properties:
+            return []
+
         # creates the list of bonjour remote references
         registry_remote_references = []
 
