@@ -64,7 +64,7 @@ class Bonjour:
     bonjour_plugin = None
 
     events_map = {}
-    
+
     values_map = {}
 
     def __init__(self, bonjour_plugin):
@@ -72,53 +72,6 @@ class Bonjour:
 
         self.events_map = {}
         self.values_map = {}
-
-    def big_endian_to_little_endian(self, value):
-        final_value = 0
-
-        integer_value = []
-
-        while value > 0:
-            byte_value = value & 0xFF
-
-            integer_value.append(byte_value)
-
-            value = value >> 8
-
-        is_first = True
-
-        for value in integer_value:
-            if is_first:
-                is_first = False
-            else:
-                final_value = final_value << 8
-
-            final_value += value
-
-        return final_value
-
-    def get_operative_system(self):
-        """
-        Retrieves the current operative system.
-        
-        @rtype: String
-        @return: The type of the current operative system.
-        """
-
-        # retrieves the current os name
-        os_name = os.name
-
-        # retrieves the current system platform
-        sys_platform = sys.platform
-
-        if os_name == "nt" or os_name == "dos" or sys_platform == "win32":
-            return WINDOWS_OS
-        elif os_name == "mac" or sys_platform == "darwin":
-            return MAC_OS
-        elif os_name == "posix":
-            return UNIX_OS
-
-        return OTHER_OS
 
     def register_bonjour_service(self, service_name, registration_type, domain, host, port):
         if self.get_operative_system() == MAC_OS:
@@ -267,3 +220,70 @@ class Bonjour:
         if not value in values_list:
             # appends an element to the list of values
             values_list.append(value)
+
+    def big_endian_to_little_endian(self, value):
+        """
+        Converts a big endian value to little endian.
+        
+        @type value: int
+        @param value: The value to be converted.
+        @rtype: int
+        @return: The converted value.
+        """
+
+        # creates the final values+
+        final_value = 0
+
+        # creates the integer value list
+        integer_value = []
+
+        while value > 0:
+            # retrieves the less significant byte value
+            byte_value = value & 0xFF
+
+            # adds the byte value to the integer value list
+            integer_value.append(byte_value)
+
+            # right shifts the value by one byte (8 bits)
+            value = value >> 8
+
+        # creates the is first flag
+        is_first = True
+
+        # iterates over all the values in integer value list
+        for value in integer_value:
+            # in case it is the first value visit
+            if is_first:
+                is_first = False
+            else:
+                # left shifts the final value by one byte (8 bits)
+                final_value = final_value << 8
+
+            # increments the final value name with the current value
+            final_value += value
+
+        # returns the final value
+        return final_value
+
+    def get_operative_system(self):
+        """
+        Retrieves the current operative system.
+        
+        @rtype: String
+        @return: The type of the current operative system.
+        """
+
+        # retrieves the current os name
+        os_name = os.name
+
+        # retrieves the current system platform
+        sys_platform = sys.platform
+
+        if os_name == "nt" or os_name == "dos" or sys_platform == "win32":
+            return WINDOWS_OS
+        elif os_name == "mac" or sys_platform == "darwin":
+            return MAC_OS
+        elif os_name == "posix":
+            return UNIX_OS
+
+        return OTHER_OS
