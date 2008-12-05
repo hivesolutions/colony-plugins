@@ -37,7 +37,11 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import types
 import inspect
+
+ATTRIBUTE_EXCLUSION_LIST = []
+""" The attribute exclusion list """
 
 class MainDistributionPluginSystem:
     """
@@ -67,10 +71,13 @@ class MainDistributionPluginSystem:
         # sets the plugin proxy plugin version
         plugin_proxy.version = plugin.version
 
+        # retrieves the plugin attributes
         plugin_attributes = dir(plugin)
 
-        plugin_method_names = plugin_attributes
+        # filters the plugin attributes retrieving only the method names
+        plugin_method_names = [value for value in plugin_attributes if not value in ATTRIBUTE_EXCLUSION_LIST and not value in dir(object) and type(getattr(plugin, value)) == types.MethodType]
 
+        # iterates over all the plugin method names
         for plugin_method_name in plugin_method_names:
             plugin_proxy.add_plugin_method(plugin_method_name)
 
@@ -117,19 +124,33 @@ class PluginProxy:
     def add_plugin_method(self, method_name):
         self.plugin_methods.append(method_name)
 
-    def caller(self, *args, **kwargs):
-        # retrieves the calling name
-        calling_name = inspect.stack()[0]
+    def process_plugin_proxy(self, client_proxy):
+        self.client_proxy = client_proxy
 
-        args.insert(0, calling_name)
+        for plugin_method in self.plugin_methods:
+            caller = self.create_caller(plugin_method)
+            setattr(self, plugin_method, caller)
 
-        client_proxy.main_distribution_service(*args, **kwargs)
+    def create_caller(self, calling_name):
+        """
+        Creates the caller method for the given calling name.
+        
+        @type calling_name: String
+        @param calling_name: The calling name for the calling method.
+        @type calling_name: function
+        @param calling_name: The caller method for the given calling name.
+        """
 
-    def __nonzero__(self):
-        return True
+        def caller(*args, **kwargs):
+            # retrieves the plugin id
+            plugin_id = self.id
 
-    def __getattr__(self, name):
-        if name in self.plugin_methods:
-            return self.caller
+            # retrieves the plugin version
+            plugin_version = self.version
 
-        raise AttributeError()
+            # call the plugin proxy method
+            return_value = self.client_proxy.main_distribution_service.call_plugin_proxy_method(plugin_id, plugin_version, calling_name, args)
+
+            return return_value
+
+        return caller

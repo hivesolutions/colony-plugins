@@ -98,4 +98,17 @@ class MainDistributionService:
         return plugin_proxy
 
     def call_plugin_proxy_method(self, plugin_id, plugin_version, method_name, arguments):
-        pass
+        # retrieves the plugin manger
+        manager = self.main_distribution_service_plugin.manager
+
+        # retrieves the plugin for the given id and version
+        plugin = manager.get_plugin_by_id_and_version(plugin_id, plugin_version)
+
+        # retrieves the method
+        method = getattr(plugin, method_name)
+
+        # calls the mehtod retrieving the return value
+        return_value = method(*arguments)
+
+        # returns the return value
+        return return_value

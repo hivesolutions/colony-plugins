@@ -89,4 +89,4 @@ class MainDistributionPluginSystemPlugin(colony.plugins.plugin_system.Plugin):
         self.main_distribution_plugin_system.create_plugin_proxy(plugin)
 
     def create_plugin_proxy_by_id(self, plugin_id):
-        self.main_distribution_plugin_system.create_plugin_proxy_by_id(plugin_id)
+        return self.main_distribution_plugin_system.create_plugin_proxy_by_id(plugin_id)
