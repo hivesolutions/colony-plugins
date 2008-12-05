@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
+import sys
 import select
 import threading
 import time
@@ -80,7 +81,7 @@ class Bonjour:
         while value > 0:
             byte_value = value & 0xFF
 
-            integer_value.append(aux)
+            integer_value.append(byte_value)
 
             value = value >> 8
 
@@ -103,17 +104,20 @@ class Bonjour:
         @rtype: String
         @return: The type of the current operative system.
         """
-    
+
         # retrieves the current os name
         os_name = os.name
-    
-        if os_name == "nt" or os_name == "dos":
+
+        # retrieves the current system platform
+        sys_platform = sys.platform
+
+        if os_name == "nt" or os_name == "dos" or sys_platform == "win32":
             return WINDOWS_OS
-        elif os_name == "mac":
+        elif os_name == "mac" or sys_platform == "darwin":
             return MAC_OS
         elif os_name == "posix":
             return UNIX_OS
-    
+
         return OTHER_OS
 
     def register_bonjour_service(self, service_name, registration_type, domain, host, port):
