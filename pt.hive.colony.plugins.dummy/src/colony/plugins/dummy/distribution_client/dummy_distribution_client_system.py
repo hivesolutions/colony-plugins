@@ -79,4 +79,4 @@ class DummyDistributionClient:
     
             dummy_value = dummy_plugin_proxy.get_dummy()
     
-            print dummy_value
+            print "THE VALUE IS: " + dummy_value
