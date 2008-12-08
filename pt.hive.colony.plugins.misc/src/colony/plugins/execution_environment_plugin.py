@@ -49,7 +49,7 @@ class ExecutionEnvironmentPlugin(colony.plugins.plugin_system.Plugin):
     short_name = "Execution Environment"
     description = "A Plugin to manage the execution environment"
     version = "1.0.0"
-    author = "Hive Solutions Lda."
+    author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["execution_environment"]
