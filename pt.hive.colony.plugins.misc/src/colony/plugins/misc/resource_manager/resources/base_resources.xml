@@ -38,19 +38,19 @@
 		<namespace>system.path</namespace>
 		<name>workspace_home</name>
 		<type>string</type>
-		<data>C:/Users/Administrator/workspace</data>
+		<data>/Users/joamag/Documents/workspace</data>
 	</resource>
 	<resource>
 		<namespace>system.path</namespace>
 		<name>user_home</name>
 		<type>string</type>
-		<data>C:/Users/Administrator</data>
+		<data>/Users/joamag</data>
 	</resource>
 	<resource>
 		<namespace>system.path</namespace>
 		<name>izpack_home</name>
 		<type>string</type>
-		<data>C:/Program Files/IzPack/bin</data>
+		<data>/Applications/IzPack/bin</data>
 	</resource>
 
 	<!-- Distribution registry server management -->
@@ -88,6 +88,39 @@
 	</resource>
 	<resource>
 		<namespace>pt.hive.colony.plugins.distribution.registry_server</namespace>
+		<name>handler_extension</name>
+		<type>string</type>
+		<data>py</data>
+	</resource>
+
+	<!-- Distribution registry client management -->
+	<resource>
+		<namespace>pt.hive.colony.plugins.distribution.registry_client</namespace>
+		<name>registry_hostname</name>
+		<type>string</type>
+		<data>localhost</data>
+	</resource>
+	<resource>
+		<namespace>pt.hive.colony.plugins.distribution.registry_client</namespace>
+		<name>registry_port</name>
+		<type>integer</type>
+		<data>80</data>
+	</resource>
+	<resource>
+		<namespace>pt.hive.colony.plugins.distribution.registry_client</namespace>
+		<name>endpoint_type</name>
+		<type>string</type>
+		<data>xmlrpc</data>
+	</resource>
+	<!-- Extra configuration options -->
+	<resource>
+		<namespace>pt.hive.colony.plugins.distribution.registry_client</namespace>
+		<name>handler_base_filename</name>
+		<type>string</type>
+		<data>colony_mod_python/xmlrpc</data>
+	</resource>
+	<resource>
+		<namespace>pt.hive.colony.plugins.distribution.registry_client</namespace>
 		<name>handler_extension</name>
 		<type>string</type>
 		<data>py</data>
