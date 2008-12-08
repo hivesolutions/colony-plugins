@@ -49,7 +49,7 @@ class TimerPlugin(colony.plugins.plugin_system.Plugin):
     short_name = "Timer"
     description = "Provides time monitoring features (start, stop, time elapsed, etc..)"
     version = "1.0.0"
-    author = "Hive Solutions"
+    author = "Hive Solutions Lda."
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["timer"]

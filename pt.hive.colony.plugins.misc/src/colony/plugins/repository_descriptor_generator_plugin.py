@@ -49,7 +49,7 @@ class RepositoryDescriptorGeneratorPlugin(colony.plugins.plugin_system.Plugin):
     short_name = "Repository Descriptor Generator"
     description = "A Plugin to generate repository descriptors"
     version = "1.0.0"
-    author = "Hive Solutions"
+    author = "Hive Solutions Lda."
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["xml_generator", "console_command_extension"]

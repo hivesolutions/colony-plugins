@@ -50,7 +50,7 @@ class BonjourPlugin(colony.plugins.plugin_system.Plugin):
     short_name = "Bonjour"
     description = "A Plugin to manage the bonjour API"
     version = "1.0.0"
-    author = "Hive Solutions"
+    author = "Hive Solutions Lda."
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["bonjour"]

@@ -49,7 +49,7 @@ class IceHelperPlugin(colony.plugins.plugin_system.Plugin):
     short_name = "Ice Helper"
     description = "Ice Helper Plugin"
     version = "1.0.0"
-    author = "Hive Solutions"
+    author = "Hive Solutions Lda."
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["ice_helper", "console_command_extension"]
