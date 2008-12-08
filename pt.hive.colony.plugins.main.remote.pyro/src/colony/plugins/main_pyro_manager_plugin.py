@@ -49,7 +49,7 @@ class MainPyroManagerPlugin(colony.plugins.plugin_system.Plugin):
     short_name = "Pyro Manager Main"
     description = "Pyro Manager Main Plugin"
     version = "1.0.0"
-    author = "Hive Solutions"
+    author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["thread", "pyro_manager", "rpc_handler"]

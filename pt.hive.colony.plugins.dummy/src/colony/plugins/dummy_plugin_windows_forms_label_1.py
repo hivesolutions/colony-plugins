@@ -51,7 +51,7 @@ class DummyPluginWindowsFormsLabel1(dummy_plugin.DummyPlugin):
     short_name = "Dummy Windows Forms Label 1"
     description = "Dummy Windows Forms Label 1 Plugin"
     version = "1.0.0"
-    author = "Hive Solutions"
+    author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.LAZY_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
     capabilities = ["dummy_windows_forms_label"]

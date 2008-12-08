@@ -49,7 +49,7 @@ class InputAdapterPlugin(colony.plugins.plugin_system.Plugin):
     short_name = "Input Adapter"
     description = "Provides a generic input adapter"
     version = "1.0.0"
-    author = "Hive Solutions"
+    author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["adapter.input"]

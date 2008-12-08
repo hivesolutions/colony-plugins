@@ -389,7 +389,7 @@ class MainFrame(wx.Frame):
             "Just another framework administrator from Hive Solutions.\n"
             "This one is targeted to everyone.\n",
             350, wx.ClientDC(self))
-        info.WebSite = ("http://www.hive.pt", "Hive Solutions")
+        info.WebSite = ("http://www.hive.pt", "Hive Solutions Lda. <development@hive.pt>")
         info.Developers = ["Joao Magalhaes", "Tiago Silva"]
         info.License = wx.lib.wordwrap.wordwrap("GPL License", 500, wx.ClientDC(self))
         info.SetIcon(self.icons_32x32_map["logo_hive_mini"])

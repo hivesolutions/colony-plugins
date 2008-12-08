@@ -50,7 +50,7 @@ class Diamante_2003_InputAdapterConfiguration(colony.plugins.plugin_system.Plugi
     short_name = "Diamante 2003 Input Adapter Configuration Plugin"
     description = "Provides an input adapter for Diamante 2003"
     version = "1.0.0"
-    author = "Hive Solutions"
+    author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["adapter.input.configuration"]

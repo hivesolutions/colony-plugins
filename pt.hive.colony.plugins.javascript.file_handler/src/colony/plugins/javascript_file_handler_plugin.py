@@ -50,7 +50,7 @@ class JavascriptFileHandlerPlugin(colony.plugins.plugin_system.Plugin):
     short_name = "Javascript File Handler"
     description = "Javascript File Handler Plugin"
     version = "1.0.0"
-    author = "Hive Solutions"
+    author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["javascript_file_handler", "mod_python_handler"]

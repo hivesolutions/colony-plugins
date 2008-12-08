@@ -49,7 +49,7 @@ class TreeVisualizerPlugin(colony.plugins.plugin_system.Plugin):
     short_name = "Tree Visualizer"
     description = "Provides a tree interface where to display and interact with appropriate data structures."
     version = "1.0.0"
-    author = "Hive Solutions"
+    author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["tree_visualizer"]

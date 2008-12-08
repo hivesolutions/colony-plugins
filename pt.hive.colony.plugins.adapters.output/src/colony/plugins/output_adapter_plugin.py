@@ -49,7 +49,7 @@ class OutputAdapterPlugin(colony.plugins.plugin_system.Plugin):
     short_name = "Output Adapter"
     description = "Provides an output adapter using SqlAlchemy and version 1.0.0 of the domain"
     version = "1.0.0"
-    author = "Hive Solutions"
+    author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["adapter.output"]

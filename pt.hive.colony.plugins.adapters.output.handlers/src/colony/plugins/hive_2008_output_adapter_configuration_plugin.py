@@ -50,7 +50,7 @@ class Hive_2008_OutputAdapterConfigurationPlugin(colony.plugins.plugin_system.Pl
     short_name = "Hive 2008 Output Adapter Configuration"
     description = "Provides a the necessary configuration parameters and functions to convert data from the internal structure to the Hive ERP 2008 version"
     version = "1.0.0"
-    author = "Hive Solutions"
+    author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["adapter.output.configuration"]

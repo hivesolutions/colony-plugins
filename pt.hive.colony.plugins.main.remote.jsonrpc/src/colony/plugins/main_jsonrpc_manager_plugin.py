@@ -49,7 +49,7 @@ class MainJsonrpcManagerPlugin(colony.plugins.plugin_system.Plugin):
     short_name = "Jsonrpc Manager Main"
     description = "Jsonrpc Manager Main Plugin"
     version = "1.0.0"
-    author = "Hive Solutions"
+    author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["jsonrpc_manager", "mod_python_handler", "rpc_handler"]

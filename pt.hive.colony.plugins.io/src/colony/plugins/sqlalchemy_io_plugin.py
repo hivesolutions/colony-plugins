@@ -46,7 +46,7 @@ class SqlAlchemyInputOutputPlugin(colony.plugins.plugin_system.Plugin):
     short_name = "SqlAlchemy I/O"
     description = "description here"
     version = "1.0.0"
-    author = "Hive Solutions"
+    author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["io.sqlalchemy"]

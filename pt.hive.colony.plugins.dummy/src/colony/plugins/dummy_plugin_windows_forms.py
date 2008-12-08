@@ -50,7 +50,7 @@ class DummyPluginWindowsForms(dummy_plugin.DummyPlugin):
     short_name = "Dummy Windows Forms"
     description = "Dummy Windows Forms Plugin"
     version = "1.0.0"
-    author = "Hive Solutions"
+    author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
     capabilities = ["main", "dummy_windows_forms"]

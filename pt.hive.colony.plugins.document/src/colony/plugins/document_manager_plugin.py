@@ -49,7 +49,7 @@ class DocumentManagerPlugin(colony.plugins.plugin_system.Plugin):
     " document template object that allows the interchange of data between document" \
     " plugins supporting different formats."
     version = "1.0.0"
-    author = "Hive Solutions"
+    author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["plugin_test_case_bundle"]

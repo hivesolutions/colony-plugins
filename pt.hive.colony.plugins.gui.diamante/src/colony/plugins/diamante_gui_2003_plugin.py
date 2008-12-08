@@ -49,7 +49,7 @@ class DiamanteGuiPlugin_2003(colony.plugins.plugin_system.Plugin):
     short_name = "Gui widgets Diamante 2003"
     description = "Provides wx widgets that are required to assemble the Diamante 2003 migrator interface"
     version = "4.4.1"
-    author = "Hive Solutions"
+    author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["diamante.gui.widgets"]

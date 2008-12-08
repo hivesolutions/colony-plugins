@@ -50,7 +50,7 @@ class DummyDistributionClientPlugin(colony.plugins.plugin_system.Plugin):
     short_name = "Dummy Distribution Client"
     description = "Just another dummy distribution client plugin"
     version = "1.0.0"
-    author = "Hive Solutions"
+    author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["dummy_distribution_client"]
