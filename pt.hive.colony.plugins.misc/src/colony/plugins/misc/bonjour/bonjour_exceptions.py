@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 class BonjourException(Exception):
     """
-    The bonjour exception class
+    The bonjour exception class.
     """
 
     pass

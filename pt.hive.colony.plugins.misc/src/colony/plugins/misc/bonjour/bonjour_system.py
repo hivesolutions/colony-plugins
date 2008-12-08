@@ -203,15 +203,25 @@ class Bonjour:
         # retrieves the current time (start time)
         initial_time = time.time()
 
+        # continuous loop
         while True:
+            # retrieves the current time
             current_time = time.time()
 
+            # in case the tiomeout is completed (current difference greater than timeout)
             if (current_time - initial_time) > timeout:
+                # deletes the values map value (temporary) for the current guid
                 del self.values_map[guid_value]
+
+                # returns the values list
                 return values_list
 
+            # retrieves the current return value
             return_value = select.select([file_descriptor], [], [], timeout)
+
+            # in case the return value is null
             if not return_value == ([], [], []):
+                # continues processing the result
                 bonjour.DNSServiceProcessResult(service_reference)
 
     def register_bonjour_callback(self, service_reference, flags, error_code, service_name, registration_type, domain, user_data):
@@ -224,7 +234,7 @@ class Bonjour:
         @param flags: The callback flags.
         @type error_code: int
         @param error_code: The callback error code.
-        @type service_name: String
+        @type service_name: String 
         @param service_name: The service name.
         @type registration_type: String
         @param registration_type: The registration type.
@@ -247,6 +257,27 @@ class Bonjour:
         event.set()
 
     def browse_bonjour_callback(self, service_reference, flags, interface_index, error_code, service_name, registration_type, domain, user_data):
+        """
+        The callback method for the bonjour service browsing, called upon service retrieval.
+        
+        @type service_reference: Tuple
+        @param service_reference: The service reference.
+        @type flags: int
+        @param flags: The callback flags.
+        @type interface_index: int
+        @param interface_index: The callback interface index.
+        @type error_code: int
+        @param error_code: The callback error code.
+        @type service_name: String
+        @param service_name: The service name.
+        @type registration_type: String
+        @param registration_type: The registration type.
+        @type domain: String
+        @param domain: The domain.
+        @type user_data: String
+        @param usar_data: The user data.
+        """
+
         # retrieves the guid value from the user data
         guid_value = user_data
 
@@ -265,9 +296,35 @@ class Bonjour:
         # resolves the service in zeroconf (bonjour)
         return_value = bonjour.pyDNSServiceResolve(service_reference, flags, interface_index, service_name, registration_type, domain, self.resolve_bonjour_callback, user_data);
 
+        # processes the zeroconf resolution
         bonjour.DNSServiceProcessResult(service_reference)
 
     def resolve_bonjour_callback(self, service_reference, flags, interface_index, error_code, service_full_name, host, port, txt_record_length, txt_record, user_data):
+        """
+        The callback method for the bonjour service resolution, called upon service resolution.
+        
+        @type service_reference: String
+        @param service_reference: The service reference.
+        @type flags: int
+        @param flags: The callback flags.
+        @type interface_index: int
+        @param interface_index: The callback interface index.
+        @type error_code: int
+        @param error_code: The callback error code.
+        @type service_full_name: String
+        @param service_full_name: The service full name.
+        @type host: String
+        @param host: The host.
+        @type port: int
+        @param The port.
+        @type txt_record_length: int
+        @param txt_record_length: The text record length.
+        @type txt_record: String
+        @param txt_record: The text record.
+        @type user_data: String
+        @param user_data: The user data.
+        """
+
         # retrieves the guid value from the user data
         guid_value = user_data
 
