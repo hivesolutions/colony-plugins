@@ -60,20 +60,49 @@ OTHER_OS = "other"
 """ The other os value """
 
 class Bonjour:
+    """
+    The bonjour class.
+    """
 
     bonjour_plugin = None
+    """ The bonjour plugin """
 
     events_map = {}
+    """ The events map """
 
     values_map = {}
+    """ The values map """
 
     def __init__(self, bonjour_plugin):
+        """
+        Constructor of the class
+        
+        @type bonjour_plugin: BonjourPlugin
+        @param bonjour_plugin: The bonjour plugin.
+        """
+
         self.bonjour_plugin = bonjour_plugin
 
         self.events_map = {}
         self.values_map = {}
 
     def register_bonjour_service(self, service_name, registration_type, domain, host, port):
+        """
+        Registers a bonjour service to the subnetwork.
+        
+        @type service_name: String
+        @param service_name: The service name.
+        @type registration_type: String
+        @param registration_type: The registration type.
+        @type domain: String
+        @param domain: The domain.
+        @type host: String
+        @param host: The host.
+        @type port: int
+        @param port: The port.
+        """
+
+        # in case the operative system is mac
         if self.get_operative_system() == MAC_OS:
             # converts port from to the target code
             port = self.big_endian_to_little_endian(port)
@@ -124,6 +153,19 @@ class Bonjour:
             bonjour.DNSServiceProcessResult(service_reference)
 
     def browse_bonjour_services(self, registration_type, domain, timeout):
+        """
+        Browses bonjour services during the given timeout time.
+        
+        @type registration_type: String
+        @param registration_type: The registration type to search.
+        @type domain: String
+        @param domain: The domain to search.
+        @type timeout: int
+        @param timeout: The timeout for the search (in seconds).
+        @rtype: List
+        @return: The list of browsed bonjour services.
+        """
+
         # retrieves the guid plugin
         guid_plugin = self.bonjour_plugin.guid_plugin
 
@@ -173,6 +215,25 @@ class Bonjour:
                 bonjour.DNSServiceProcessResult(service_reference)
 
     def register_bonjour_callback(self, service_reference, flags, error_code, service_name, registration_type, domain, user_data):
+        """
+        The callback method for the bonjour service registration, called upon registration completion.
+        
+        @type service_reference: Tuple
+        @param service_reference: The service reference tuple.
+        @type flags: int
+        @param flags: The callback flags.
+        @type error_code: int
+        @param error_code: The callback error code.
+        @type service_name: String
+        @param service_name: The service name.
+        @type registration_type: String
+        @param registration_type: The registration type.
+        @type domain: String
+        @param domain: The domain.
+        @type user_data: String.
+        @param user_data: The user data.
+        """
+
         # creates the service full name
         service_full_name = service_name + registration_type
 
