@@ -57,7 +57,7 @@ class PluginPackageManagerPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    
+
     plugin_package_manager = None
     console_plugin_package_manager = None
 
