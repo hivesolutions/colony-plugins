@@ -278,6 +278,10 @@ class Bonjour:
         @param usar_data: The user data.
         """
 
+        # in case it's a notification of type service removed
+        if not flags & bonjour.kDNSServiceFlagsAdd:
+            return
+
         # retrieves the guid value from the user data
         guid_value = user_data
 
@@ -324,10 +328,6 @@ class Bonjour:
         @type user_data: String
         @param user_data: The user data.
         """
-
-        # in case it's a notification of type service removed
-        if not flags & bonjour.kDNSServiceFlagsAdd:
-            return
 
         # retrieves the guid value from the user data
         guid_value = user_data
