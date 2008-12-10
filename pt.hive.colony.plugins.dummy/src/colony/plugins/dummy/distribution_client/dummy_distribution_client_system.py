@@ -56,6 +56,10 @@ class DummyDistributionClient:
         self.dummy_distribution_client_plugin = dummy_distribution_client_plugin
 
     def test_get_remote_client_references(self):
+        """
+        Tests the retrieval of the remote client references.
+        """
+
         # retrieves the distribution client plugin
         distribution_client_plugin = self.dummy_distribution_client_plugin.distribution_client_plugin
 
@@ -73,8 +77,11 @@ class DummyDistributionClient:
             # prints the message
             print "The service type is: " + service_type
 
+            # retrieves the remote dummy plugin proxy
             dummy_plugin_proxy = remote_client_reference.main_distribution_service.get_plugin_proxy_by_id("pt.hive.colony.plugins.dummy.aux3")
 
+            # processes the plugin proxy using the remote reference
             dummy_plugin_proxy.process_plugin_proxy(remote_client_reference)
 
-            dummy_value = dummy_plugin_proxy.print_dummy_aux_3()
+            # calls the print_dummy_aux_3 method in the remote plugin proxy
+            dummy_plugin_proxy.print_dummy_aux_3()
