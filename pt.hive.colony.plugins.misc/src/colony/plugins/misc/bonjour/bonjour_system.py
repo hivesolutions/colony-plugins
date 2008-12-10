@@ -112,8 +112,10 @@ class Bonjour:
         # creates the service tuple
         service = (registration_type, domain)
 
-        # adds the service tuple to the list of browsing services
-        self.browsing_services.add(service)
+        # in case the service does not exists in the list of browsing services
+        if not service in self.browsing_services:
+            # adds the service tuple to the list of browsing services
+            self.browsing_services.add(service)
 
     def remove_service_for_browsing(self, registration_type, domain):
         """
