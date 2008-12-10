@@ -67,6 +67,9 @@ class Bonjour:
     bonjour_plugin = None
     """ The bonjour plugin """
 
+    browsing_services = []
+    """ The browsing services list """
+
     events_map = {}
     """ The events map """
 
@@ -83,8 +86,52 @@ class Bonjour:
 
         self.bonjour_plugin = bonjour_plugin
 
+        self.browsing_services = []
         self.events_map = {}
         self.values_map = {}
+
+    def start_browsing_loop(self):
+        #registration_type = "_colony._tcp"
+        #domain = "local."
+
+        pass
+
+    def stop_browsing_loop(self):
+        pass
+
+    def add_service_for_browsing(self, registration_type, domain):
+        """
+        Adds the service with the given registration type for browsing in the given domain.
+        
+        @type registration_type: String
+        @param registration_type: The registration type of browsing.
+        @type domain: String
+        @param domain: The domain type of browsing.
+        """
+
+        # creates the service tuple
+        service = (registration_type, domain)
+
+        # adds the service tuple to the list of browsing services
+        self.browsing_services.add(service)
+
+    def remove_service_for_browsing(self, registration_type, domain):
+        """
+        Removes the service with the given registration type for browsing in the given domain.
+        
+        @type registration_type: String
+        @param registration_type: The registration type of browsing.
+        @type domain: String
+        @param domain: The domain type of browsing.
+        """
+
+        # creates the service tuple
+        service = (registration_type, domain)
+
+        # in case the service exists in the list of browsing services
+        if service in self.browsing_services:
+            # removes the service tuple to the list of browsing services
+            self.browsing_services.remove(service)
 
     def register_bonjour_service(self, service_name, registration_type, domain, host, port):
         """
