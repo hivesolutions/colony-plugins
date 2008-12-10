@@ -325,6 +325,10 @@ class Bonjour:
         @param user_data: The user data.
         """
 
+        # in case it's a notification of type service removed
+        if not flags & bonjour.kDNSServiceFlagsAdd:
+            return
+
         # retrieves the guid value from the user data
         guid_value = user_data
 
