@@ -147,7 +147,7 @@ class DistributionBonjourClient:
         bonjour_service_properties_list = []
 
         # retrieves the bonjour service properties from the base bonjour service properties
-        bonjour_service_properties = bonjour_service_properties[4:-1]
+        bonjour_service_properties = bonjour_service_properties[2:-1]
 
         # in case there are bonjour service properties defined
         if bonjour_service_properties:

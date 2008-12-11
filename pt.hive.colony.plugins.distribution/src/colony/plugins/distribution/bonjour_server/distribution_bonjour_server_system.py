@@ -42,7 +42,7 @@ import socket
 DISTRIBUTION_SERVER_TYPE = "bonjour"
 """ The distribution server type """
 
-PROPERTIES_SUFIX = "_pp"
+PROPERTIES_SUFIX = "_p"
 """ The properties sufix """
 
 BASE_PROTOCOL_SUFIX = "_tcp"
@@ -117,7 +117,7 @@ class DistributionBonjourServer:
             available_rpc_handler_properties = available_rpc_handler.get_handler_properties()
 
             # starts the service id
-            service_id = PROPERTIES_SUFIX + "_"
+            service_id = PROPERTIES_SUFIX
 
             # creates the is first flag
             is_first = True
