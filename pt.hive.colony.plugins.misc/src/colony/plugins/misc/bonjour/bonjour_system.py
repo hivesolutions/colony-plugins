@@ -59,6 +59,9 @@ UNIX_OS = "unix"
 OTHER_OS = "other"
 """ The other os value """
 
+BROWSING_TIMEOUT = 0.5
+""" The browsing timeout, used in the selection of the browse service """
+
 class Bonjour:
     """
     The bonjour class.
@@ -66,6 +69,9 @@ class Bonjour:
 
     bonjour_plugin = None
     """ The bonjour plugin """
+
+    browsing_flag = True
+    """ The browsing flag """
 
     browsing_services = []
     """ The browsing services list """
@@ -91,13 +97,57 @@ class Bonjour:
         self.values_map = {}
 
     def start_browsing_loop(self):
-        #registration_type = "_colony._tcp"
-        #domain = "local."
+        # sets the browsing flag as true
+        self.browsing_flag = True
 
-        pass
+        for browsing_service in self.browsing_services:
+            self.browse_service(browsing_service)
 
     def stop_browsing_loop(self):
-        pass
+        # sets the browsing flag as true
+        self.browsing_flag = False
+
+    def browse_service(self, browsing_service):
+        # retrieves the registration type and the domain from the browsing service
+        registration_type, domain = browsing_service
+
+        # the service flags for zeroconf discovery
+        flags = 0
+
+        # the network interface index for zeroconf discovery
+        interface_index = 0
+
+        # the user data for zeroconf discovery
+        user_data = None
+
+        # creates a service reference
+        service_reference = bonjour.AllocateDNSServiceRef()
+
+        # browsers for services of the defined registration type in the defined domain
+        return_value = bonjour.pyDNSServiceBrowse(service_reference, flags, interface_index, registration_type, domain, self.browse_service_bonjour_callback, user_data) 
+
+        # in case the search was not successful
+        if not return_value == bonjour.kDNSServiceErr_NoError:
+            raise bonjour_exceptions.BonjourBrowsingFailed("service browsing not successful")
+
+        # retrieves the socket and loops
+        file_descriptor = bonjour.DNSServiceRefSockFD(service_reference)
+
+        while self.browsing_flag:
+            # retrieves the current return value
+            return_value = select.select([file_descriptor], [], [], BROWSING_TIMEOUT)
+
+            # in case the return value is null
+            if not return_value == ([], [], []):
+                # continues processing the result
+                bonjour.DNSServiceProcessResult(service_reference)
+
+    def browse_service_bonjour_callback(self, service_reference, flags, interface_index, error_code, service_name, registration_type, domain, user_data):
+        # in case it's a notification of type service removed
+        if not flags & bonjour.kDNSServiceFlagsAdd:
+            print "service removed"
+        else:
+            print "service added"
 
     def add_service_for_browsing(self, registration_type, domain):
         """
@@ -115,7 +165,7 @@ class Bonjour:
         # in case the service does not exists in the list of browsing services
         if not service in self.browsing_services:
             # adds the service tuple to the list of browsing services
-            self.browsing_services.add(service)
+            self.browsing_services.append(service)
 
     def remove_service_for_browsing(self, registration_type, domain):
         """

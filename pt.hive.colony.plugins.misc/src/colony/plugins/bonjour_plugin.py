@@ -53,7 +53,7 @@ class BonjourPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["bonjour"]
+    capabilities = ["thread", "bonjour"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.guid", "1.0.0"),
@@ -72,14 +72,25 @@ class BonjourPlugin(colony.plugins.plugin_system.Plugin):
         import misc.bonjour.bonjour_system
         self.bonjour = misc.bonjour.bonjour_system.Bonjour(self)
 
+        # notifies the ready semaphore
+        self.release_ready_semaphore()
+
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+
+        # notifies the ready semaphore
+        self.release_ready_semaphore()
+
+        self.bonjour.add_service_for_browsing("_colony._tcp", "local.")
+        self.bonjour.start_browsing_loop()
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
 
+        self.bonjour.stop_browsing_loop()
+
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
