@@ -76,6 +76,9 @@ class Bonjour:
     browsing_services = []
     """ The browsing services list """
 
+    browsing_services_map = {}
+    """ The map relating the browsing services and the browsing state """
+
     events_map = {}
     """ The events map """
 
@@ -93,6 +96,7 @@ class Bonjour:
         self.bonjour_plugin = bonjour_plugin
 
         self.browsing_services = []
+        self.browsing_services_map = {}
         self.events_map = {}
         self.values_map = {}
 
@@ -133,7 +137,9 @@ class Bonjour:
         # retrieves the socket and loops
         file_descriptor = bonjour.DNSServiceRefSockFD(service_reference)
 
-        while self.browsing_flag:
+        # iterates while the browsing flag is active and the browsing service
+        # browsing state is active
+        while self.browsing_flag and self.browsing_services_map[browsing_service]:
             # retrieves the current return value
             return_value = select.select([file_descriptor], [], [], BROWSING_TIMEOUT)
 
@@ -159,13 +165,16 @@ class Bonjour:
         @param domain: The domain type of browsing.
         """
 
-        # creates the service tuple
-        service = (registration_type, domain)
+        # creates the browsing service tuple
+        browsing_service = (registration_type, domain)
 
-        # in case the service does not exists in the list of browsing services
-        if not service in self.browsing_services:
-            # adds the service tuple to the list of browsing services
-            self.browsing_services.append(service)
+        # in case the browsing service does not exists in the list of browsing services
+        if not browsing_service in self.browsing_services:
+            # adds the browsing service tuple to the list of browsing services
+            self.browsing_services.append(browsing_service)
+
+            # sets the browsing service as active in the browsing services map
+            self.browsing_services_map[browsing_service] = True
 
     def remove_service_for_browsing(self, registration_type, domain):
         """
@@ -177,13 +186,16 @@ class Bonjour:
         @param domain: The domain type of browsing.
         """
 
-        # creates the service tuple
-        service = (registration_type, domain)
+        # creates the browsing service tuple
+        browsing_service = (registration_type, domain)
 
-        # in case the service exists in the list of browsing services
-        if service in self.browsing_services:
-            # removes the service tuple to the list of browsing services
-            self.browsing_services.remove(service)
+        # in case the browsing service exists in the list of browsing services
+        if browsing_service in self.browsing_services:
+            # removes the browsing service tuple to the list of browsing services
+            self.browsing_services.remove(browsing_service)
+
+            # sets the browsing service as inactive in the browsing services map
+            self.browsing_services_map[browsing_service] = False
 
     def register_bonjour_service(self, service_name, registration_type, domain, host, port):
         """
