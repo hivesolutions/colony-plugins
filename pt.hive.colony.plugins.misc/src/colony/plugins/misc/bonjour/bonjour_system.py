@@ -378,14 +378,22 @@ class Bonjour:
         @param user_data: The user data.
         """
 
+        # in case the operative system is mac
+        if self.get_operative_system() == MAC_OS:
+            # converts port from to the target code
+            port = self.big_endian_to_little_endian(port)
+
         # retrieves the guid value from the user data
         guid_value = user_data
 
         # retrieves the list of values
         values_list = self.values_map[user_data]
 
+        # strips the host from dots
+        host_striped = host.strip(".")
+
         # creates the value
-        value = (service_full_name, host, port)
+        value = (service_full_name, host_striped, port)
 
         # in case the value is not in values list
         if not value in values_list:
