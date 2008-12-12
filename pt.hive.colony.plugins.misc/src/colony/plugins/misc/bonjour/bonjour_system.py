@@ -340,8 +340,6 @@ class Bonjour:
             if not value in browsing_service_services:
                 browsing_service_services.append(value)
 
-        print "adicionou"
-
     def remove_service_value(self, service_value, registration_type, domain):
         """
         Removes a service value to map of services.
