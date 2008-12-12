@@ -75,14 +75,13 @@ class BonjourPlugin(colony.plugins.plugin_system.Plugin):
         # notifies the ready semaphore
         self.release_ready_semaphore()
 
+        self.bonjour.start_browsing_loop()
+
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
         # notifies the ready semaphore
         self.release_ready_semaphore()
-
-        self.bonjour.add_service_for_browsing("_colony._tcp", "local.")
-        self.bonjour.start_browsing_loop()
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
@@ -101,6 +100,12 @@ class BonjourPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.misc.bonjour", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    def add_service_for_browsing(self, registration_type, domain):
+        self.bonjour.add_service_for_browsing(registration_type, domain)
+
+    def remove_service_for_browsing(self, registration_type, domain):
+        self.bonjour.remove_service_for_browsing(registration_type, domain)
 
     def register_bonjour_service(self, service_name, registration_type, domain, host, port):
         return self.bonjour.register_bonjour_service(service_name, registration_type, domain, host, port)

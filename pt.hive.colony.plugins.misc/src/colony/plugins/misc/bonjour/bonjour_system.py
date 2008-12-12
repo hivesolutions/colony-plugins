@@ -70,14 +70,17 @@ class Bonjour:
     bonjour_plugin = None
     """ The bonjour plugin """
 
-    browsing_flag = True
+    browsing_flag = False
     """ The browsing flag """
 
     browsing_services = []
     """ The browsing services list """
 
-    browsing_services_map = {}
-    """ The map relating the browsing services and the browsing state """
+    browsing_service_file_descriptor_map = {}
+    """ The map relating the browsing service and the file descriptor """
+
+    file_descriptor_browsing_service_reference_map = {}
+    """ The map relating the file descriptor and the browsing service reference """
 
     events_map = {}
     """ The events map """
@@ -96,7 +99,8 @@ class Bonjour:
         self.bonjour_plugin = bonjour_plugin
 
         self.browsing_services = []
-        self.browsing_services_map = {}
+        self.browsing_service_file_descriptor_map = {}
+        self.file_descriptor_browsing_service_reference_map = {}
         self.events_map = {}
         self.values_map = {}
 
@@ -104,14 +108,28 @@ class Bonjour:
         # sets the browsing flag as true
         self.browsing_flag = True
 
-        for browsing_service in self.browsing_services:
-            self.browse_service(browsing_service)
+        # iterates while the browsing flag is active
+        while self.browsing_flag :
+            file_descriptors = self.browsing_service_file_descriptor_map.values()
+
+            if file_descriptors:
+                # retrieves the current return value
+                return_value = select.select(file_descriptors, [], [], BROWSING_TIMEOUT)
+
+                available_file_descriptors = return_value[0]
+
+                for available_file_descriptor in available_file_descriptors:
+                    service_reference = self.file_descriptor_browsing_service_reference_map[available_file_descriptor]
+
+                    bonjour.DNSServiceProcessResult(service_reference)
+            else:
+                time.sleep(BROWSING_TIMEOUT)
 
     def stop_browsing_loop(self):
         # sets the browsing flag as true
         self.browsing_flag = False
 
-    def browse_service(self, browsing_service):
+    def create_browsing_service_file_descriptor(self, browsing_service):
         # retrieves the registration type and the domain from the browsing service
         registration_type, domain = browsing_service
 
@@ -137,16 +155,7 @@ class Bonjour:
         # retrieves the socket and loops
         file_descriptor = bonjour.DNSServiceRefSockFD(service_reference)
 
-        # iterates while the browsing flag is active and the browsing service
-        # browsing state is active
-        while self.browsing_flag and self.browsing_services_map[browsing_service]:
-            # retrieves the current return value
-            return_value = select.select([file_descriptor], [], [], BROWSING_TIMEOUT)
-
-            # in case the return value is null
-            if not return_value == ([], [], []):
-                # continues processing the result
-                bonjour.DNSServiceProcessResult(service_reference)
+        return (file_descriptor, service_reference)
 
     def browse_service_bonjour_callback(self, service_reference, flags, interface_index, error_code, service_name, registration_type, domain, user_data):
         # in case it's a notification of type service removed
@@ -170,11 +179,17 @@ class Bonjour:
 
         # in case the browsing service does not exists in the list of browsing services
         if not browsing_service in self.browsing_services:
+            # creates the browsing service file descriptor and the browsing service reference for the given browsing service
+            browsing_service_file_descriptor, browsing_service_reference = self.create_browsing_service_file_descriptor(browsing_service)
+
             # adds the browsing service tuple to the list of browsing services
             self.browsing_services.append(browsing_service)
 
-            # sets the browsing service as active in the browsing services map
-            self.browsing_services_map[browsing_service] = True
+            # sets the browsing service file descriptor for the browsing service
+            self.browsing_service_file_descriptor_map[browsing_service] = browsing_service_file_descriptor
+
+            # sets the browsing service reference for the browsing service file descriptor
+            self.file_descriptor_browsing_service_reference_map[browsing_service_file_descriptor] = browsing_service_reference
 
     def remove_service_for_browsing(self, registration_type, domain):
         """
@@ -194,8 +209,14 @@ class Bonjour:
             # removes the browsing service tuple to the list of browsing services
             self.browsing_services.remove(browsing_service)
 
-            # sets the browsing service as inactive in the browsing services map
-            self.browsing_services_map[browsing_service] = False
+            # retrieves the browsing service file descriptor for the given browsing service
+            browsing_service_file_descriptor = self.browsing_service_file_descriptor_map[browsing_service]
+
+            # deletes the browsing service file descriptor for the browsing service
+            del self.browsing_service_file_descriptor_map[browsing_service]
+
+            # deletes the browsing service reference for the browsing service file descriptor
+            del self.file_descriptor_browsing_service_reference_map[browsing_service_file_descriptor]
 
     def register_bonjour_service(self, service_name, registration_type, domain, host, port):
         """
