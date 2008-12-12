@@ -64,6 +64,32 @@ class DistributionBonjourClient:
 
         self.distribution_bonjour_client_plugin = distribution_bonjour_client_plugin
 
+    def start_distribution_bonjour_client(self):
+        # retrieves the bonjour plugin
+        bonjour_plugin = self.distribution_bonjour_client_plugin.bonjour_plugin
+
+        # creates the complete protocol name
+        complete_protocol_name = PROTOCOL_SUFIX + "." + BASE_PROTOCOL_SUFIX
+
+        # creates the domain
+        domain = LOCAL_DOMAIN + "."
+
+        # adds the service for browsing
+        bonjour_plugin.add_service_for_browsing(complete_protocol_name, domain)
+
+    def stop_distribution_bonjour_client(self):
+        # retrieves the bonjour plugin
+        bonjour_plugin = self.distribution_bonjour_client_plugin.bonjour_plugin
+
+        # creates the complete protocol name
+        complete_protocol_name = PROTOCOL_SUFIX + "." + BASE_PROTOCOL_SUFIX
+
+        # creates the domain
+        domain = LOCAL_DOMAIN + "."
+
+        # adds the service for browsing
+        bonjour_plugin.remove_service_for_browsing(complete_protocol_name, domain)
+
     def get_remote_instance_references(self, properties):
         # retrieves the bonjour plugin
         bonjour_plugin = self.distribution_bonjour_client_plugin.bonjour_plugin
