@@ -113,6 +113,9 @@ class BonjourPlugin(colony.plugins.plugin_system.Plugin):
     def browse_bonjour_services(self, registration_type, domain, timeout):
         return self.bonjour.browse_bonjour_services(registration_type, domain, timeout)
 
+    def browse_bonjour_services_fast(self, registration_type, domain):
+        return self.bonjour.browse_bonjour_services_fast(registration_type, domain)
+
     def get_guid_plugin(self):
         return self.guid_plugin
 

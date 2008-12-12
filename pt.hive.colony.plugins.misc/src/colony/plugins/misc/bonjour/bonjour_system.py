@@ -39,9 +39,11 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 import sys
+import copy
+import time
+import string
 import select
 import threading
-import time
 
 import bonjour
 
@@ -62,6 +64,12 @@ OTHER_OS = "other"
 BROWSING_TIMEOUT = 0.5
 """ The browsing timeout, used in the selection of the browse service """
 
+ADDED_VALUE = "added"
+""" The added value """
+
+REMOVED_VALUE = "removed"
+""" The removed value """
+
 class Bonjour:
     """
     The bonjour class.
@@ -72,6 +80,12 @@ class Bonjour:
 
     browsing_flag = False
     """ The browsing flag """
+
+    registration_type_domain_service_map = {}
+    """ The map relating the registration type and the domain with the service """
+
+    browsing_service_registration_type_map = {}
+    """ The map relating the browsing service with the registration type """
 
     browsing_services = []
     """ The browsing services list """
@@ -98,6 +112,8 @@ class Bonjour:
 
         self.bonjour_plugin = bonjour_plugin
 
+        self.registration_type_domain_service_map = {}
+        self.browsing_service_registration_type_map = {}
         self.browsing_services = []
         self.browsing_service_file_descriptor_map = {}
         self.file_descriptor_browsing_service_reference_map = {}
@@ -105,11 +121,22 @@ class Bonjour:
         self.values_map = {}
 
     def start_browsing_loop(self):
+        """
+        Starts the browsing loop, enabling browsing.
+        """
+
         # sets the browsing flag as true
         self.browsing_flag = True
 
+        # creates the empty registration type domain service map
+        self.registration_type_domain_service_map = {}
+
+        # creates the empty browsing service registration type map
+        self.browsing_service_registration_type_map = {}
+
         # iterates while the browsing flag is active
         while self.browsing_flag :
+            # retrieves the file descriptors
             file_descriptors = self.browsing_service_file_descriptor_map.values()
 
             if file_descriptors:
@@ -126,10 +153,23 @@ class Bonjour:
                 time.sleep(BROWSING_TIMEOUT)
 
     def stop_browsing_loop(self):
+        """
+        Stops the browsing loop, disabling the current browsing.
+        """
+
         # sets the browsing flag as true
         self.browsing_flag = False
 
     def create_browsing_service_file_descriptor(self, browsing_service):
+        """
+        Creates a file descriptor for the given browsing service.
+        
+        @type browsing_service: Tuple
+        @param browsing_service: The browsing service tuple to create the file descriptor.
+        @rtype: Tuple
+        @return: The file descriptor tuple, containing both the file descriptor and the service reference.
+        """
+
         # retrieves the registration type and the domain from the browsing service
         registration_type, domain = browsing_service
 
@@ -158,11 +198,196 @@ class Bonjour:
         return (file_descriptor, service_reference)
 
     def browse_service_bonjour_callback(self, service_reference, flags, interface_index, error_code, service_name, registration_type, domain, user_data):
+        """
+        The callback method for the bonjour service browsing, called upon service retrieval.
+        
+        @type service_reference: Tuple
+        @param service_reference: The service reference.
+        @type flags: int
+        @param flags: The callback flags.
+        @type interface_index: int
+        @param interface_index: The callback interface index.
+        @type error_code: int
+        @param error_code: The callback error code.
+        @type service_name: String
+        @param service_name: The service name.
+        @type registration_type: String
+        @param registration_type: The registration type.
+        @type domain: String
+        @param domain: The domain.
+        @type user_data: String
+        @param usar_data: The user data.
+        """
+
         # in case it's a notification of type service removed
-        if not flags & bonjour.kDNSServiceFlagsAdd:
-            print "service removed"
+        if flags & bonjour.kDNSServiceFlagsAdd:
+            # the user data for zeroconf resolution
+            user_data = (ADDED_VALUE, registration_type, domain)
         else:
-            print "service added"
+            # the user data for zeroconf resolution
+            user_data = (REMOVED_VALUE, registration_type, domain)
+
+        # the service flags for zeroconf resolution
+        flags = 0
+
+        # the network interface index for zeroconf resolution
+        interface_index = 0
+
+        # creates a service reference
+        service_reference = bonjour.AllocateDNSServiceRef()
+
+        # resolves the service in zeroconf (bonjour)
+        return_value = bonjour.pyDNSServiceResolve(service_reference, flags, interface_index, service_name, registration_type, domain, self.resolve_service_bonjour_callback, user_data);
+
+        # processes the zeroconf resolution
+        bonjour.DNSServiceProcessResult(service_reference)
+
+    def resolve_service_bonjour_callback(self, service_reference, flags, interface_index, error_code, service_full_name, host, port, txt_record_length, txt_record, user_data):
+        """
+        The callback method for the bonjour service resolution, called upon service resolution.
+        
+        @type service_reference: String
+        @param service_reference: The service reference.
+        @type flags: int
+        @param flags: The callback flags.
+        @type interface_index: int
+        @param interface_index: The callback interface index.
+        @type error_code: int
+        @param error_code: The callback error code.
+        @type service_full_name: String
+        @param service_full_name: The service full name.
+        @type host: String
+        @param host: The host.
+        @type port: int
+        @param The port.
+        @type txt_record_length: int
+        @param txt_record_length: The text record length.
+        @type txt_record: String
+        @param txt_record: The text record.
+        @type user_data: String
+        @param user_data: The user data.
+        """
+
+        # in case the operative system is mac
+        if self.get_operative_system() == MAC_OS:
+            # converts port from to the target code
+            port = self.big_endian_to_little_endian(port)
+
+        # retrieves the operation type, registration type and domain from the user data
+        operation_type, registration_type, domain = user_data
+
+        # strips the host from dots
+        host_striped = host.strip(".")
+
+        # creates the service value
+        service_value = (service_full_name, host_striped, port)
+
+        if operation_type == ADDED_VALUE:
+            # adds the service value
+            self.add_service_value(service_value, registration_type, domain)
+        elif operation_type == REMOVED_VALUE:
+            # removes the service value
+            self.remove_service_value(service_value, registration_type, domain)
+
+    def add_service_value(self, service_value, registration_type, domain):
+        """
+        Adds a service value to map of services for the give registration type and domain.
+        
+        @type service_value: Tuple
+        @param service_value: The tuple containing the service values to be added.
+        @type registration_type: String
+        @param registration_type: The registration type.
+        @type domain: String
+        @param domain: The domain.
+        """
+
+        # creates the browsing service
+        browsing_service = (registration_type, domain)
+
+        # retrieves the service full name, the host and the port
+        service_full_name, host, port = service_value
+
+        # retrieves the service full name length
+        service_full_name_length = len(service_full_name)
+
+        # creates the service full name list splitting the string using the dot character
+        service_full_name_list = service_full_name.split(".")
+
+        # iterates in the range of the service full name length
+        for index in range(service_full_name_length):
+            # retrieves the sub list for the service full name
+            service_full_name_sub_list = service_full_name_list[index:]
+
+            # joins the sublist using the dot character as separator, creating the substring
+            value = string.join(service_full_name_sub_list, ".")
+
+            # in case the value is not contained in the registration type domain service map
+            if not value in self.registration_type_domain_service_map:
+                # creates an empty list for the value in the registration type domain service map
+                self.registration_type_domain_service_map[value] = []
+
+            # retrieves the registration type domain service map reference
+            registration_type_domain_service_map_reference = self.registration_type_domain_service_map[value]
+
+            if not service_value in registration_type_domain_service_map_reference:
+                registration_type_domain_service_map_reference.append(service_value)
+
+            if not browsing_service in self.browsing_service_registration_type_map:
+                self.browsing_service_registration_type_map[browsing_service] = []
+
+            browsing_service_services = self.browsing_service_registration_type_map[browsing_service]
+
+            if not value in browsing_service_services:
+                browsing_service_services.append(value)
+
+        print "adicionou"
+
+    def remove_service_value(self, service_value, registration_type, domain):
+        """
+        Removes a service value to map of services.
+        
+        @type service_value: Tuple
+        @param service_value: The tuple containing the service values to be removed.
+        @type registration_type: String
+        @param registration_type: The registration type.
+        @type domain: String
+        @param domain: The domain.
+        """
+
+        # creates the browsing service
+        browsing_service = (registration_type, domain)
+
+        # retrieves the service full name, the host and the port
+        service_full_name, host, port = service_value
+
+        # retrieves the service full name length
+        service_full_name_length = len(service_full_name)
+
+        # creates the service full name list splitting the string using the dot character
+        service_full_name_list = service_full_name.split(".")
+
+        # iterates in the range of the service full name length
+        for index in range(service_full_name_length):
+            # retrieves the sub list for the service full name
+            service_full_name_sub_list = service_full_name_list[index:]
+
+            # joins the sublist using the dot character as separator, creating the substring
+            value = string.join(service_full_name_sub_list, ".")
+
+            # in case the value is contained in the registration type domain service map
+            if value in self.registration_type_domain_service_map:
+
+                # retrieves the registration type domain service map reference
+                registration_type_domain_service_map_reference = self.registration_type_domain_service_map[value]
+
+                if service_value in registration_type_domain_service_map_reference:
+                    registration_type_domain_service_map_reference.remove(service_value)
+
+            if browsing_service in self.browsing_service_registration_type_map:
+                browsing_service_services = self.browsing_service_registration_type_map[browsing_service]
+
+                if value in browsing_service_services:
+                    self.browsing_service_registration_type_map[browsing_service].remove(value)
 
     def add_service_for_browsing(self, registration_type, domain):
         """
@@ -173,6 +398,9 @@ class Bonjour:
         @type domain: String
         @param domain: The domain type of browsing.
         """
+
+        # converts the registration type
+        registration_type = self.convert_type(registration_type)
 
         # creates the browsing service tuple
         browsing_service = (registration_type, domain)
@@ -201,6 +429,9 @@ class Bonjour:
         @param domain: The domain type of browsing.
         """
 
+        # converts the registration type
+        registration_type = self.convert_type(registration_type)
+
         # creates the browsing service tuple
         browsing_service = (registration_type, domain)
 
@@ -217,6 +448,14 @@ class Bonjour:
 
             # deletes the browsing service reference for the browsing service file descriptor
             del self.file_descriptor_browsing_service_reference_map[browsing_service_file_descriptor]
+
+        if browsing_service in self.browsing_service_registration_type_map:
+            browsing_service_services = self.browsing_service_registration_type_map[browsing_service]
+
+            for service_value in browsing_service_services:
+                del self.registration_type_domain_service_map[service_value]
+
+            del self.browsing_service_registration_type_map[browsing_service]
 
     def register_bonjour_service(self, service_name, registration_type, domain, host, port):
         """
@@ -355,6 +594,26 @@ class Bonjour:
             if not return_value == ([], [], []):
                 # continues processing the result
                 bonjour.DNSServiceProcessResult(service_reference)
+
+    def browse_bonjour_services_fast(self, registration_type, domain):
+        """
+        Browses bonjour services (the fast way).
+        
+        @type registration_type: String
+        @param registration_type: The registration type to search.
+        @type domain: String
+        @param domain: The domain to search.
+        @rtype: List
+        @return: The list of browsed bonjour services.
+        """
+
+        # creates the key value using the registration type and the domain
+        key_value = registration_type + "." + domain
+
+        if key_value in self.registration_type_domain_service_map:
+            return self.registration_type_domain_service_map[key_value]
+        else:
+            return []
 
     def register_bonjour_callback(self, service_reference, flags, error_code, service_name, registration_type, domain, user_data):
         """
@@ -549,3 +808,24 @@ class Bonjour:
             return UNIX_OS
 
         return OTHER_OS
+
+    def convert_type(self, type):
+        """
+        Converts the given type.
+        
+        @type type: String
+        @param type: The type to be converted.
+        @rtype: String
+        @return: The converted type.
+        """
+
+        # creates a copy of type
+        value = copy.copy(type)
+
+        # in case the last character in the string is no a dot
+        if not type[-1] == ".":
+            # adds the dot to the end of the string
+            value += "."
+
+        # returns the value
+        return value
