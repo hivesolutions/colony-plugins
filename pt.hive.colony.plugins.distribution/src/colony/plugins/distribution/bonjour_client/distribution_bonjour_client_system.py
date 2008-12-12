@@ -104,7 +104,7 @@ class DistributionBonjourClient:
         domain = LOCAL_DOMAIN + "."
 
         # retrieves the available bonjour services
-        bonjour_services = bonjour_plugin.browse_bonjour_services(complete_protocol_name, domain, 1)
+        bonjour_services = bonjour_plugin.browse_bonjour_services_fast(complete_protocol_name, domain)
 
         # iterates over all the bonjour services
         for bonjour_service in bonjour_services:
