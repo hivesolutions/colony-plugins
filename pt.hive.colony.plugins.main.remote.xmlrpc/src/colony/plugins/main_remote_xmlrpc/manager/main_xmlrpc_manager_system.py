@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import types
 import xmlrpclib
 
 import main_xmlrpc_manager_exceptions
@@ -300,6 +301,20 @@ class MainXmlrpcManager:
             # otherwise it must be converted to a valid xml-rpc data type (bool)
             else:
                 return_tuple = tuple([True])
+
+            # in case the result is an instance
+            if type(result) == types.InstanceType:
+                # retrieves the class name
+                class_name = result.__class__.__name__
+
+                # retrieves the module name
+                module_name = result.__module__
+
+                # retrieves the full class name
+                full_class_name = module_name + "." + class_name
+
+                result.class_name = class_name
+                result.full_class_name = full_class_name
 
             data = xmlrpclib.dumps(return_tuple, method_name, True)
         except main_xmlrpc_manager_exceptions.XmlEncodeException, e:
