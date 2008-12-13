@@ -41,6 +41,8 @@ import socket
 import select
 import StringIO
 
+import os.path
+
 import main_service_http_exceptions
 
 HOST_VALUE = ""
@@ -57,6 +59,10 @@ STATUS_CODE_VALUES = {200 : "OK", 207 : "Multi-Status",
                       403 : "Forbidden", 404 : "Not Found",
                       500 : "Internal Server Error"}
 """ The status code values map """
+
+FILE_MIME_TYPE_MAPPING = {"html" : "text/html", "txt" : "text/plain",
+                          "jpg" : "image/jpg", "png" : "image/png"}
+""" The map that relates the file extension and the associated mime type """
 
 class MainServiceHttp:
     """
@@ -151,16 +157,47 @@ class HttpClientServiceTask:
                 return
 
             if request.operation_type == "GET":
-                file = open("c:/test.html", "r")
-                file_contents = file.read()
+                try:
+                    # sets the base directory
+                    base_directory = "c:/tobias_web"
 
-                request.content_type = "text/html"
-                request.status_code = 200
-                request.write(file_contents)
+                    path = request.path
 
-                result_value = request.get_result()
+                    if path == "/":
+                        path = "/index.html"
 
-                self.http_connection.send(result_value)
+                    extension = path.split(".")[-1]
+
+                    if extension in FILE_MIME_TYPE_MAPPING:
+                        mime_type = FILE_MIME_TYPE_MAPPING[extension]
+                    else:
+                        mime_type = None
+
+                    complete_path = base_directory + "/" + path
+
+                    if not os.path.exists(complete_path):
+                        raise main_service_http_exceptions.HttpRuntimeException("file not found")
+
+                    # opens the requested file
+                    file = open(complete_path, "rb")
+
+                    # reads the file contents
+                    file_contents = file.read()
+
+                    request.content_type = mime_type
+                    request.status_code = 200
+                    request.write(file_contents)
+
+                    result_value = request.get_result()
+
+                    self.http_connection.send(result_value)
+                except main_service_http_exceptions.HttpRuntimeException, exception:
+                    request.content_type = "text/plain"
+                    request.status_code = 404
+                    request.write("colony web server - 404 file not found\n")
+                    request.write("error: '" + str(exception) + "'")
+                    result_value = request.get_result()
+                    self.http_connection.send(result_value)
 
         self.http_connection.close()
 
@@ -292,7 +329,8 @@ class HttpRequest:
         status_code_value = STATUS_CODE_VALUES[self.status_code]
 
         result.write(self.protocol_version + " " + str(self.status_code) + " " + status_code_value + "\r\n")
-        result.write("Content-Type: " + self.content_type + "\r\n")
+        if self.content_type:
+            result.write("Content-Type: " + self.content_type + "\r\n")
         result.write("Content-Length: " + str(message_length) + "\r\n")
         result.write("Connection: Keep-Alive" + "\r\n")
         result.write("\r\n")
