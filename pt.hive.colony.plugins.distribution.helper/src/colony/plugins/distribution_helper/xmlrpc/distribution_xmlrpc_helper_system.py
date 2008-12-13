@@ -37,11 +37,17 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import types
+import string
+
 HELPER_NAME = "xmlrpc"
 """ The helper name """
 
 HTTP_PROTOCOL_PREFIX = "HTTP://"
 """ The httpd protocol prefix """
+
+FULL_CLASS_NAME_VALUE = "full_class_name"
+""" The full class name value """
 
 class DistributionXmlrpcHelper:
     """
@@ -165,6 +171,117 @@ class XmlrpcClientProxy:
 
     def __getattr__(self, name):
         if hasattr(self.xmlrpc_client, name):
-            return getattr(self.xmlrpc_client, name)
+            attribute = getattr(self.xmlrpc_client, name)
+
+            # retrieves the attribute class
+            attribute_class = attribute.__class__
+
+            # in case the attribute class getattr method has not been replaced
+            if not hasattr(attribute_class, "__replaced_getattr__"):
+                new_getattr_method = self.create_getter_attr(attribute.__getattr__)                
+                attribute_class.__getattr__ = new_getattr_method
+                attribute_class.__replaced_getattr__ = True
+
+            # sets the attribute as class xmlrcp, in order to encapsulate the result into a class
+            attribute.__class_xmlrpc__ = True
+
+            # returns the attribute
+            return attribute
 
         raise AttributeError()
+
+    def create_getter_attr(self, method):
+        """
+        Creates a getattr method, that redirects the call method.
+        
+        @type method: Method
+        @param method: The method to be modified.
+        @rtype: Method
+        @return: The modified mehtod.
+        """
+
+        def getter_attr(self, name):
+            # in case the name that is being retrieves id class xmlrpc
+            # ignores it, otherwise a loop would be created
+            if name == "__class_xmlrpc__":
+                raise AttributeError()
+
+            # calls the method retrieving the value
+            return_value = method(name)
+
+            # in case the returns is to be replaced to a class, and not a map
+            if hasattr(self, "__class_xmlrpc__"):
+                # updates the call method to allow creation of return classes
+                return_value.__call__ = create_caller(return_value.__call__)
+
+            # returns the return value
+            return return_value
+
+        # returns the getter attr method
+        return getter_attr
+
+def create_caller(method):
+    """
+    Creates the caller method for the colony xmlrpc specification.
+    
+    @type method: Method
+    @param method: The method to be converted to the xmlrpc specification.
+    @rtype: Method
+    @return: The method converted to the xmlrpc specification.
+    """
+
+    def caller(*args, **kwargs):
+        # calls the method retrieving the value
+        return_value = method(*args, **kwargs)
+
+        # in case the type of the return value is dictionary
+        if type(return_value) == types.DictionaryType:
+            # if the full class name value is defined in return value,
+            # this is required by the colony specification of xmlrpc
+            if FULL_CLASS_NAME_VALUE in return_value:
+                # retrieves the full class name
+                full_class_name = return_value[FULL_CLASS_NAME_VALUE]
+
+                # splits the full class name
+                full_class_name_splitted = full_class_name.split(".")
+
+                # retrieves the module name
+                module_name = string.join(full_class_name_splitted[:-1], ".")
+
+                # the intermediate modules
+                intermediate_modules = full_class_name_splitted[1:-1]
+
+                # retrieves the class name
+                class_name = full_class_name_splitted[-1]
+
+                # import the class module
+                module = __import__(module_name)
+
+                # iterates over the intermediate module
+                for intermediate_module in intermediate_modules:
+                    # sets the module as the new intermediate module
+                    module = getattr(module, intermediate_module)
+
+                # retrieves the class reference
+                class_reference = getattr(module, class_name)
+
+                # creates a new class instance
+                class_instance = class_reference()
+
+                # sets the original (dictionary) value in the __original__ attribute,
+                # this should be viewed as a backup of the original data
+                class_instance.__original__ = return_value
+
+                # iterates over all the key values in the map 
+                for key in return_value:
+                    # sets the instance attributes as the map values
+                    setattr(class_instance, key, return_value[key])
+
+                # returns the class instance
+                return class_instance
+        else:
+            # returns the return value
+            return return_value
+
+    # returns the caller method
+    return caller
