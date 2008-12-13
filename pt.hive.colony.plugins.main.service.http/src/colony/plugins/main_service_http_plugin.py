@@ -52,13 +52,16 @@ class MainServicesHttpPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["http_service"]
+    capabilities = ["thread", "http_service"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
 
     main_service_http = None
+
+    thread_pool_manager_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -66,8 +69,16 @@ class MainServicesHttpPlugin(colony.plugins.plugin_system.Plugin):
         import main_service_http.http.main_service_http_system
         self.main_service_http = main_service_http.http.main_service_http_system.MainServiceHttp(self)
 
+        # notifies the ready semaphore
+        self.release_ready_semaphore()
+
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+
+        # notifies the ready semaphore
+        self.release_ready_semaphore()
+
+        self.main_service_http.start_service({"port" : 8080})
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
@@ -81,5 +92,13 @@ class MainServicesHttpPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.main.service.http", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    def get_thread_pool_manager_plugin(self):
+        return self.thread_pool_manager_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.threads.thread_pool_manager")
+    def set_thread_pool_manager_plugin(self, thread_pool_manager_plugin):
+        self.thread_pool_manager_plugin = thread_pool_manager_plugin
