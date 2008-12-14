@@ -46,7 +46,7 @@ import main_service_http_exceptions
 HOST_VALUE = ""
 """ The host value """
 
-REQUEST_TIMEOUT = 5
+REQUEST_TIMEOUT = 3
 """ The request timeout """
 
 CHUNK_SIZE = 2
@@ -225,22 +225,10 @@ class HttpClientServiceTask:
                 # handles the request
                 http_service_handler_plugins[0].handle_request(request)
 
-                # retrieves the result value
-                result_value = request.get_result()
-
-                # sends the result value to the client
-                self.http_connection.send(result_value)
+                # sends the request to the client (response)
+                self.send_request(request)
             except Exception, exception:
-                request.content_type = "text/plain"
-                if hasattr(exception, "status_code"):
-                    request.status_code = exception.status_code
-                else:
-                    request.status_code = 500
-                status_code_value = STATUS_CODE_VALUES[request.status_code]
-                request.write("colony web server - " + str(request.status_code) + " " + status_code_value + "\n")
-                request.write("error: '" + str(exception) + "'")
-                result_value = request.get_result()
-                self.http_connection.send(result_value)
+                self.send_exception(request, exception)
 
         # closes the http connection
         self.http_connection.close()
@@ -313,8 +301,11 @@ class HttpClientServiceTask:
                     return request
 
     def retrieve_data(self):
-        # runs the select in the http connection, with timeout
-        selected_values = select.select([self.http_connection], [], [], REQUEST_TIMEOUT)
+        try:
+            # runs the select in the http connection, with timeout
+            selected_values = select.select([self.http_connection], [], [], REQUEST_TIMEOUT)
+        except:
+            raise main_service_http_exceptions.RequestClosed("invalid socket")
 
         if selected_values == ([], [], []):
              self.http_connection.close()
@@ -326,6 +317,30 @@ class HttpClientServiceTask:
             raise main_service_http_exceptions.ClientRequestTimeout("timeout")
 
         return data
+
+    def send_exception(self, request, exception):
+        request.content_type = "text/plain"
+        if hasattr(exception, "status_code"):
+            request.status_code = exception.status_code
+        else:
+            request.status_code = 500
+        status_code_value = STATUS_CODE_VALUES[request.status_code]
+        request.write("colony web server - " + str(request.status_code) + " " + status_code_value + "\n")
+        request.write("error: '" + str(exception) + "'")
+
+        # sends the request to the client (response)
+        self.send_request(request)
+
+    def send_request(self, request):
+        # retrieves the result value
+        result_value = request.get_result()
+
+        try:
+            # sends the result value to the client
+            self.http_connection.send(result_value)
+        except:
+            # error in the client side
+            pass
 
 class HttpRequest:
     """
