@@ -41,8 +41,6 @@ import socket
 import select
 import StringIO
 
-import os.path
-
 import main_service_http_exceptions
 
 HOST_VALUE = ""
@@ -59,10 +57,6 @@ STATUS_CODE_VALUES = {200 : "OK", 207 : "Multi-Status",
                       403 : "Forbidden", 404 : "Not Found",
                       500 : "Internal Server Error"}
 """ The status code values map """
-
-FILE_MIME_TYPE_MAPPING = {"html" : "text/html", "txt" : "text/plain",
-                          "jpg" : "image/jpg", "png" : "image/png"}
-""" The map that relates the file extension and the associated mime type """
 
 class MainServiceHttp:
     """
@@ -124,7 +118,7 @@ class MainServiceHttp:
             http_connection, http_address = http_socket.accept()
 
             # creates a new http client service task, with the given http connection and address
-            http_client_service_task = HttpClientServiceTask(http_connection, http_address)
+            http_client_service_task = HttpClientServiceTask(self.main_service_http_plugin, http_connection, http_address)
 
             # creates a new task descriptor
             task_descriptor = task_descriptor_class(start_method = http_client_service_task.start,
@@ -136,18 +130,28 @@ class MainServiceHttp:
             self.http_client_thread_pool.insert_task(task_descriptor)
 
 class HttpClientServiceTask:
+    """
+    The http client service task class.
+    """
+
+    main_service_http_plugin = None
+    """ The main service http plugin """
 
     http_connection = None
-    http_address = None
+    """ The http connection """
 
-    def __init__(self, http_connection, http_address):
+    http_address = None
+    """ The http address """
+
+    def __init__(self, main_service_http_plugin, http_connection, http_address):
+        self.main_service_http_plugin = main_service_http_plugin
         self.http_connection = http_connection
         self.http_address = http_address
 
     def start(self):
-        print "'Connected to: ", self.http_address
-
-        is_first = True
+        http_service_handler_plugins = self.main_service_http_plugin.http_service_handler_plugins
+        
+        print "Connected to: ", self.http_address
 
         while 1:
             try:
@@ -156,48 +160,21 @@ class HttpClientServiceTask:
                 print "connection closed"
                 return
 
-            if request.operation_type == "GET":
-                try:
-                    # sets the base directory
-                    base_directory = "c:/tobias_web"
+            try:
+                http_service_handler_plugins[0].handle_request(request)
 
-                    path = request.path
+                # retrieves the result value
+                result_value = request.get_result()
 
-                    if path == "/":
-                        path = "/index.html"
-
-                    extension = path.split(".")[-1]
-
-                    if extension in FILE_MIME_TYPE_MAPPING:
-                        mime_type = FILE_MIME_TYPE_MAPPING[extension]
-                    else:
-                        mime_type = None
-
-                    complete_path = base_directory + "/" + path
-
-                    if not os.path.exists(complete_path):
-                        raise main_service_http_exceptions.HttpRuntimeException("file not found")
-
-                    # opens the requested file
-                    file = open(complete_path, "rb")
-
-                    # reads the file contents
-                    file_contents = file.read()
-
-                    request.content_type = mime_type
-                    request.status_code = 200
-                    request.write(file_contents)
-
-                    result_value = request.get_result()
-
-                    self.http_connection.send(result_value)
-                except main_service_http_exceptions.HttpRuntimeException, exception:
-                    request.content_type = "text/plain"
-                    request.status_code = 404
-                    request.write("colony web server - 404 file not found\n")
-                    request.write("error: '" + str(exception) + "'")
-                    result_value = request.get_result()
-                    self.http_connection.send(result_value)
+                # sends the result value to the client
+                self.http_connection.send(result_value)
+            except main_service_http_exceptions.HttpRuntimeException, exception:
+                request.content_type = "text/plain"
+                request.status_code = 404
+                request.write("colony web server - 404 file not found\n")
+                request.write("error: '" + str(exception) + "'")
+                result_value = request.get_result()
+                self.http_connection.send(result_value)
 
         self.http_connection.close()
 

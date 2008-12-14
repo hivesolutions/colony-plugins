@@ -37,6 +37,17 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os.path
+
+import main_service_http_file_handler_exceptions
+
+HANDLER_NAME = "file"
+""" The handler name """
+
+FILE_MIME_TYPE_MAPPING = {"html" : "text/html", "txt" : "text/plain",
+                          "jpg" : "image/jpg", "png" : "image/png"}
+""" The map that relates the file extension and the associated mime type """
+
 class MainServiceHttpFileHandler:
     """
     The main service http file handler class.
@@ -54,3 +65,37 @@ class MainServiceHttpFileHandler:
         """
 
         self.main_service_http_file_handler_plugin = main_service_http_file_handler_plugin
+
+    def get_handler_name(self):
+        return HANDLER_NAME
+
+    def handle_request(self, request):
+        # sets the base directory
+        base_directory = "c:/tobias_web"
+
+        path = request.path
+
+        if path == "/":
+            path = "/index.html"
+
+        extension = path.split(".")[-1]
+
+        if extension in FILE_MIME_TYPE_MAPPING:
+            mime_type = FILE_MIME_TYPE_MAPPING[extension]
+        else:
+            mime_type = None
+
+        complete_path = base_directory + "/" + path
+
+        if not os.path.exists(complete_path):
+            raise main_service_http_file_handler_exceptions.FileNotFoundException(path)
+
+        # opens the requested file
+        file = open(complete_path, "rb")
+
+        # reads the file contents
+        file_contents = file.read()
+
+        request.content_type = mime_type
+        request.status_code = 200
+        request.write(file_contents)

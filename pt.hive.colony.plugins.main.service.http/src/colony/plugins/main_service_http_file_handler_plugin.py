@@ -83,3 +83,9 @@ class MainServiceHttpFileHandlerPlugin(colony.plugins.plugin_system.Plugin):
 
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    def get_handler_name(self):
+        return self.main_service_http_file_handler.get_handler_name()
+
+    def handle_request(self, request):
+        return self.main_service_http_file_handler.handle_request(request)
