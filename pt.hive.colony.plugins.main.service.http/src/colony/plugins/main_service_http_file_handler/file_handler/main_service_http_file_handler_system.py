@@ -44,6 +44,12 @@ import main_service_http_file_handler_exceptions
 HANDLER_NAME = "file"
 """ The handler name """
 
+CHUNK_FILE_SIZE_LIMIT = 3072
+""" The chunk file size limit """
+
+CHUNK_SIZE = 1024
+""" The chunk size """
+
 FILE_MIME_TYPE_MAPPING = {"html" : "text/html", "txt" : "text/plain",
                           "jpg" : "image/jpg", "png" : "image/png"}
 """ The map that relates the file extension and the associated mime type """
@@ -96,17 +102,76 @@ class MainServiceHttpFileHandler:
             # raises file not found exception with 404 http error code
             raise main_service_http_file_handler_exceptions.FileNotFoundException(path, 404)
 
-        # opens the requested file
-        file = open(complete_path, "rb")
-
-        # reads the file contents
-        file_contents = file.read()
-
         # sets the request mime type
         request.content_type = mime_type
 
         # sets the request status code
         request.status_code = 200
 
-        # writes the file contents
-        request.write(file_contents)
+        # opens the requested file
+        file = open(complete_path, "rb")
+
+        # retrieves the file size
+        file_size = os.path.getsize(complete_path)
+
+        if file_size > CHUNK_FILE_SIZE_LIMIT:
+            # creates the chunk handler instance
+            chunk_handler = ChunkHandler(file, file_size)
+
+            # sets the request as mediated
+            request.mediated = True
+
+            # sets the mediated handler in the request
+            request.mediated_handler = chunk_handler
+        else:
+            # reads the file contents
+            file_contents = file.read()
+
+            # writes the file contents
+            request.write(file_contents)
+
+class ChunkHandler:
+    """
+    The chunk handler class.
+    """
+
+    file = None
+    """ The file """
+
+    file_size = None
+    """ The file size """
+
+    def __init__(self, file, file_size):
+        """
+        Constructor of the class.
+        
+        @type file: File
+        @param file: The file.
+        @type file_size: int
+        @param file_size: The file size.
+        """
+
+        self.file = file
+        self.file_size = file_size
+
+    def get_size(self):
+        """
+        Retrieves the size of the file being chunked.
+        
+        @rtype: int
+        @return: The size of the file being chunked.
+        """
+
+        return self.file_size
+
+    def get_chunk(self, chunk_size = CHUNK_SIZE):
+        """
+        Retrieves the a chunk with the given size.
+        
+        @rtype: chunk_size
+        @return: The size of the chunk to be retrieved.
+        @rtype: String
+        @return: A chunk with the given size.
+        """
+
+        return self.file.read(chunk_size)

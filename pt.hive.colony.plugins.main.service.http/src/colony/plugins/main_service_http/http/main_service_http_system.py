@@ -52,7 +52,7 @@ CLIENT_CONNECTION_TIMEOUT = 1
 REQUEST_TIMEOUT = 3
 """ The request timeout """
 
-CHUNK_SIZE = 2
+CHUNK_SIZE = 1024
 """ The chunk size """
 
 SERVER_NAME = "Hive-Colony-Web"
@@ -335,6 +335,14 @@ class HttpClientServiceTask:
         self.send_request(request)
 
     def send_request(self, request):
+        if request.is_mediated():
+            self.send_request_mediated(request)
+        elif request.is_chunked_encoded():
+            self.send_request_chunked(request)
+        else:
+            self.send_request_simple(request)
+
+    def send_request_simple(self, request):
         # retrieves the result value
         result_value = request.get_result()
 
@@ -343,7 +351,61 @@ class HttpClientServiceTask:
             self.http_connection.send(result_value)
         except:
             # error in the client side
-            pass
+            return
+
+    def send_request_mediated(self, request):
+        # retrieves the result value
+        result_value = request.get_result()
+
+        try:
+            # sends the result value to the client
+            self.http_connection.send(result_value)
+        except:
+            # error in the client side
+            return
+
+        # continuous loop
+        while 1:
+            # retrieves the mediated value
+            mediated_value = request.mediated_handler.get_chunk(CHUNK_SIZE)
+
+            # in case the read is complete
+            if not mediated_value:
+                return
+
+            try:
+                # sends the mediated value to the client
+                self.http_connection.send(mediated_value)
+            except:
+                # error in the client side
+                return
+
+    def send_request_chunked(self, request):
+        # retrieves the result value
+        result_value = request.get_result()
+
+        try:
+            # sends the result value to the client
+            self.http_connection.send(result_value)
+        except:
+            # error in the client side
+            return
+
+        # continuous loop
+        while 1:
+            # retrieves the chunk value
+            chunk_value = request.chunk_handler.get_chunk(CHUNK_SIZE)
+
+            # in case the read is complete
+            if not chunk_value:
+                return
+
+            try:
+                # sends the chunk value to the client
+                self.http_connection.send(chunk_value)
+            except:
+                # error in the client side
+                return
 
 class HttpRequest:
     """
@@ -371,6 +433,18 @@ class HttpRequest:
     status_code = None
     """ The status code """
 
+    mediated = False
+    """ The mediated flag """
+
+    mediated_handler = None
+    """ The mediated handler """
+
+    chunked_encoding = False
+    """ The chunked encoding """
+
+    chunk_handler = None
+    """ The chunk handler """
+
     def __init__(self):
         self.headers_map = {}
         self.message_stream = StringIO.StringIO()
@@ -378,17 +452,30 @@ class HttpRequest:
     def write(self, message):
         self.message_stream.write(message)
 
+    def is_mediated(self):
+        return self.mediated
+
+    def is_chunked_encoded(self):
+        return self.chunked_encoding
+
     def get_result(self):
         result = StringIO.StringIO()
         message = self.message_stream.getvalue()
-        message_length = len(message)
+
+        if self.mediated:
+            content_length = self.mediated_handler.get_size()
+        else:
+            content_length = len(message)
 
         status_code_value = STATUS_CODE_VALUES[self.status_code]
 
         result.write(self.protocol_version + " " + str(self.status_code) + " " + status_code_value + "\r\n")
         if self.content_type:
             result.write("Content-Type: " + self.content_type + "\r\n")
-        result.write("Content-Length: " + str(message_length) + "\r\n")
+        if self.chunked_encoding:
+            result.write("Transfer-Encoding: chunked\r\n")
+        if not self.chunked_encoding:
+            result.write("Content-Length: " + str(content_length) + "\r\n")
         result.write("Server: " + SERVER_NAME + "/" + SERVER_VERSION + "\r\n")
         result.write("Connection: Keep-Alive" + "\r\n")
         result.write("\r\n")
