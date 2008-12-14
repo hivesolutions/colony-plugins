@@ -39,46 +39,35 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.plugins.plugin_system
 
-class MainServiceHttpPlugin(colony.plugins.plugin_system.Plugin):
+class MainServiceHttpFileHandlerPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Http Service Main plugin.
+    The main class for the Http Service Main File Handler plugin.
     """
 
-    id = "pt.hive.colony.plugins.main.service.http"
-    name = "Http Service Main Plugin"
-    short_name = "Http Service Main"
-    description = "The plugin that offers the http service"
+    id = "pt.hive.colony.plugins.main.service.http.file_handler"
+    name = "Http Service Main File Handler Plugin"
+    short_name = "Http Service Main File Handler "
+    description = "The plugin that offers the http service file handler"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["main", "http_service"]
-    capabilities_allowed = ["http_service_handler"]
-    dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
+    capabilities = ["http_service_handler"]
+    capabilities_allowed = []
+    dependencies = []
     events_handled = []
     events_registrable = []
 
-    main_service_http = None
-
-    thread_pool_manager_plugin = None
+    main_service_http_file_handler = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
-        global main_service_http
-        import main_service_http.http.main_service_http_system
-        self.main_service_http = main_service_http.http.main_service_http_system.MainServiceHttp(self)
-
-        # notifies the ready semaphore
-        self.release_ready_semaphore()
+        global main_service_http_file_handler
+        import main_service_http_file_handler.file_handler.main_service_http_file_handler_system
+        self.main_service_http_file_handler = main_service_http_file_handler.file_handler.main_service_http_file_handler_system.MainServiceHttpFileHandler(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
-
-        # notifies the ready semaphore
-        self.release_ready_semaphore()
-
-        self.main_service_http.start_service({"port" : 8080})
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
@@ -92,13 +81,5 @@ class MainServiceHttpPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.main.service.http", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
-
-    def get_thread_pool_manager_plugin(self):
-        return self.thread_pool_manager_plugin
-
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.threads.thread_pool_manager")
-    def set_thread_pool_manager_plugin(self, thread_pool_manager_plugin):
-        self.thread_pool_manager_plugin = thread_pool_manager_plugin

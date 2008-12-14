@@ -70,7 +70,7 @@ class MainServiceHttp:
     """
 
     main_service_http_plugin = None
-    """ The main serice http plugin """
+    """ The main service http plugin """
 
     def __init__(self, main_service_http_plugin):
         """
