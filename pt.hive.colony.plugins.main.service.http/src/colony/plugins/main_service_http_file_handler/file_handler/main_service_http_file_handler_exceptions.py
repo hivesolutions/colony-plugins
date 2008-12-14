@@ -49,16 +49,19 @@ class FileNotFoundException(MainServiceHttpFileHandlerException):
     The file not found exception class.
     """
 
-    def __init__(self, message):
+    def __init__(self, message, status_code):
         """
         Constructor of the class.
         
         @type message: String
         @param message: The message to be printed.
+        @type status_code: int
+        @param status_code: The http status code.
         """
 
         MainServiceHttpFileHandlerException.__init__(self)
         self.message = message
+        self.status_code = status_code
 
     def __str__(self):
         """

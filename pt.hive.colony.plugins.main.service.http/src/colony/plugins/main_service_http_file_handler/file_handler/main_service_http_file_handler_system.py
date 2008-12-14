@@ -88,7 +88,7 @@ class MainServiceHttpFileHandler:
         complete_path = base_directory + "/" + path
 
         if not os.path.exists(complete_path):
-            raise main_service_http_file_handler_exceptions.FileNotFoundException(path)
+            raise main_service_http_file_handler_exceptions.FileNotFoundException(path, 404)
 
         # opens the requested file
         file = open(complete_path, "rb")

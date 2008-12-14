@@ -52,6 +52,12 @@ REQUEST_TIMEOUT = 10
 CHUNK_SIZE = 2
 """ The chunk size """
 
+SERVER_NAME = "Hive-Colony-Web"
+""" The server name """
+
+SERVER_VERSION = "1.0.0"
+""" The server version """
+
 STATUS_CODE_VALUES = {200 : "OK", 207 : "Multi-Status",
                       301 : "Moved permanently", 302 : "Found", 303 : "See Other",
                       403 : "Forbidden", 404 : "Not Found",
@@ -168,10 +174,14 @@ class HttpClientServiceTask:
 
                 # sends the result value to the client
                 self.http_connection.send(result_value)
-            except main_service_http_exceptions.HttpRuntimeException, exception:
+            except Exception, exception:
                 request.content_type = "text/plain"
-                request.status_code = 404
-                request.write("colony web server - 404 file not found\n")
+                if hasattr(exception, "status_code"):
+                    request.status_code = exception.status_code
+                else:
+                    request.status_code = 500
+                status_code_value = STATUS_CODE_VALUES[request.status_code]
+                request.write("colony web server - " + str(request.status_code) + " " + status_code_value + "\n")
                 request.write("error: '" + str(exception) + "'")
                 result_value = request.get_result()
                 self.http_connection.send(result_value)
@@ -309,6 +319,7 @@ class HttpRequest:
         if self.content_type:
             result.write("Content-Type: " + self.content_type + "\r\n")
         result.write("Content-Length: " + str(message_length) + "\r\n")
+        result.write("Server: " + SERVER_NAME + "/" + SERVER_VERSION + "\r\n")
         result.write("Connection: Keep-Alive" + "\r\n")
         result.write("\r\n")
         result.write(message)
