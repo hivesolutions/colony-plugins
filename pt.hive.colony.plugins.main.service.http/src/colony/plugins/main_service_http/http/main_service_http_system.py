@@ -46,6 +46,9 @@ import main_service_http_exceptions
 HOST_VALUE = ""
 """ The host value """
 
+CLIENT_CONNECTION_TIMEOUT = 1
+""" The client connection timeout """
+
 REQUEST_TIMEOUT = 3
 """ The request timeout """
 
@@ -152,7 +155,7 @@ class MainServiceHttp:
                 if not self.http_connection_active:
                     return
                 # selects the values
-                selected_values = select.select([self.http_socket], [], [], 1)
+                selected_values = select.select([self.http_socket], [], [], CLIENT_CONNECTION_TIMEOUT)
 
             # in case the connection is disabled
             if not self.http_connection_active:
