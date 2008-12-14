@@ -167,6 +167,9 @@ class ThreadPoolImplementation:
     task_queue = []
     """ The thread pool task queue """
 
+    task_descriptor_running_queue = []
+    """ The thread pool running task descriptor queue """
+
     task_condition = None
     """ The thread pool task condition """
 
@@ -203,6 +206,7 @@ class ThreadPoolImplementation:
 
         self.worker_threads_list = []
         self.task_queue = []
+        self.task_descriptor_running_queue = []
 
         self.task_condition = threading.Condition()
 
@@ -235,6 +239,21 @@ class ThreadPoolImplementation:
         # iterates over all the threads to join them
         for thread in self.worker_threads_list:
             thread.join()
+
+    def stop_pool_tasks(self):
+        """
+        Stops the thread tasks pool removing all the tasks.
+        """
+
+        # iterates over all the tasks in the task queue
+        for task in self.task_queue:
+            # removes the task from the task queue
+            self.remove_worker_thread_task(task)
+
+        # iterates over all the task descriptors running in the task descriptor running queue
+        for task_descriptor_running in self.task_descriptor_running_queue:
+            # stops the running task descriptor
+            task_descriptor_running.stop_task([])
 
     def create_worker_thread(self):
         """
@@ -444,6 +463,22 @@ class ThreadPoolImplementation:
             self.task_condition.notify()
             self.task_condition.release()
 
+    def remove_worker_thread_task(self, worker_thread_task):
+        """
+        Removes a worker thread task from the task queue
+        
+        @type worker_thread_task: WorkerThreadTask
+        @param worker_thread_task: The worker thread task to removed from the task queue
+        """
+
+        # refreshes the thread pool size
+        self.refresh_thread_pool_size()
+
+        self.task_condition.acquire()
+        self.task_queue.remove(worker_thread_task)
+        self.task_condition.notify()
+        self.task_condition.release()
+
 class WorkerThread(threading.Thread):
     """
     The worker thread class
@@ -471,6 +506,7 @@ class WorkerThread(threading.Thread):
 
         thread_pool = self.thread_pool
         task_queue = thread_pool.task_queue
+        task_descriptor_running_queue = thread_pool.task_descriptor_running_queue
         task_condition = thread_pool.task_condition
 
         while True:
@@ -511,8 +547,14 @@ class WorkerThread(threading.Thread):
                 # sets the worker thread for the task descriptor
                 task_descriptor.set_worker_thread(self)
 
+                # adds the task descriptor to the queue of running tasks descriptors
+                task_descriptor_running_queue.append(task_descriptor)
+
                 # starts the task represented by the task descriptor
                 task_descriptor.start_task(start_method_args)
+
+                # removes the task descriptor from the queue of running tasks descriptors
+                task_descriptor_running_queue.remove(task_descriptor)
             elif worker_thread_task_type == STOP_TASK_TASK_TYPE:
                 # retrieves the task descriptor and the stop method arguments
                 task_descriptor, stop_method_args = worker_thread_task_arguments

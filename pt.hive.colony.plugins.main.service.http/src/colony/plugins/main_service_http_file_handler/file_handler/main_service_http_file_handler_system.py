@@ -73,21 +73,27 @@ class MainServiceHttpFileHandler:
         # sets the base directory
         base_directory = "c:/tobias_web"
 
+        # retrieves the requested path
         path = request.path
 
         if path == "/":
             path = "/index.html"
 
+        # retrieves the extension of the file
         extension = path.split(".")[-1]
 
+        # retrieves the associated mime type
         if extension in FILE_MIME_TYPE_MAPPING:
             mime_type = FILE_MIME_TYPE_MAPPING[extension]
         else:
             mime_type = None
 
+        # creates the complete path
         complete_path = base_directory + "/" + path
 
+        # in case the paths does not exist
         if not os.path.exists(complete_path):
+            # raises file not found exception with 404 http error code
             raise main_service_http_file_handler_exceptions.FileNotFoundException(path, 404)
 
         # opens the requested file
@@ -96,6 +102,11 @@ class MainServiceHttpFileHandler:
         # reads the file contents
         file_contents = file.read()
 
+        # sets the request mime type
         request.content_type = mime_type
+
+        # sets the request status code
         request.status_code = 200
+
+        # writes the file contents
         request.write(file_contents)

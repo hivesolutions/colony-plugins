@@ -46,7 +46,7 @@ import main_service_http_exceptions
 HOST_VALUE = ""
 """ The host value """
 
-REQUEST_TIMEOUT = 10
+REQUEST_TIMEOUT = 5
 """ The request timeout """
 
 CHUNK_SIZE = 2
@@ -72,6 +72,12 @@ class MainServiceHttp:
     main_service_http_plugin = None
     """ The main service http plugin """
 
+    http_socket = None
+    """ The http socket """
+
+    http_connection_active = False
+    """ The http connection active flag """
+
     def __init__(self, main_service_http_plugin):
         """
         Constructor of the class.
@@ -84,7 +90,7 @@ class MainServiceHttp:
 
     def start_service(self, parameters):
         """
-        Start the service with the given parameters.
+        Starts the service with the given parameters.
         
         @type parameters: Dictionary
         @param parameters: The parameters to start the service.
@@ -96,7 +102,21 @@ class MainServiceHttp:
         # start the server for the given port
         self.start_server(port)
 
+    def stop_service(self):
+        """
+        Stops the service.
+        """
+
+        self.stop_server()
+
     def start_server(self, port):
+        """
+        Starts the server in the given port.
+        
+        @type port: int
+        @param port: The port to start the server.
+        """
+
         # retrieves the thread pool manager plugin
         thread_pool_manager_plugin = self.main_service_http_plugin.thread_pool_manager_plugin
 
@@ -105,23 +125,41 @@ class MainServiceHttp:
 
         # creates the http client thread pool
         self.http_client_thread_pool = thread_pool_manager_plugin.create_new_thread_pool("http pool",
-                                                                                  "pool to support http client connections", 5, 1, 5)
+                                                                                         "pool to support http client connections", 5, 1, 5)
 
         # starts the http client thread pool
         self.http_client_thread_pool.start_pool()
 
+        # sets the http connection active flag as true
+        self.http_connection_active = True
+
         # creates the http socket
-        http_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.http_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         # binds the http socket
-        http_socket.bind((HOST_VALUE, port))
+        self.http_socket.bind((HOST_VALUE, port))
 
-        while 1:
-            # start listening
-            http_socket.listen(1)
+        while self.http_connection_active:
+            # start listening in the http socket
+            self.http_socket.listen(1)
+
+            # starts the select values
+            selected_values = ([], [], [])
+
+            # iterates while there is no selected values
+            while selected_values == ([], [], []):
+                # in case the connection is disabled
+                if not self.http_connection_active:
+                    return
+                # selects the values
+                selected_values = select.select([self.http_socket], [], [], 1)
+
+            # in case the connection is disabled
+            if not self.http_connection_active:
+                return
 
             # accepts the connection retrieving the http connection object and the address
-            http_connection, http_address = http_socket.accept()
+            http_connection, http_address = self.http_socket.accept()
 
             # creates a new http client service task, with the given http connection and address
             http_client_service_task = HttpClientServiceTask(self.main_service_http_plugin, http_connection, http_address)
@@ -134,6 +172,23 @@ class MainServiceHttp:
 
             # inserts the new task descriptor into the http client thread pool
             self.http_client_thread_pool.insert_task(task_descriptor)
+
+    def stop_server(self):
+        """
+        Stops the server.
+        """
+
+        # sets the http connection active flag as false
+        self.http_connection_active = False
+
+        # closes the http socket
+        self.http_socket.close()
+
+        # stops all the pool tasks
+        self.http_client_thread_pool.stop_pool_tasks()
+
+        # stops the pool
+        self.http_client_thread_pool.stop_pool()
 
 class HttpClientServiceTask:
     """
@@ -156,7 +211,7 @@ class HttpClientServiceTask:
 
     def start(self):
         http_service_handler_plugins = self.main_service_http_plugin.http_service_handler_plugins
-        
+
         print "Connected to: ", self.http_address
 
         while 1:
@@ -167,6 +222,7 @@ class HttpClientServiceTask:
                 return
 
             try:
+                # handles the request
                 http_service_handler_plugins[0].handle_request(request)
 
                 # retrieves the result value
@@ -186,7 +242,18 @@ class HttpClientServiceTask:
                 result_value = request.get_result()
                 self.http_connection.send(result_value)
 
+        # closes the http connection
         self.http_connection.close()
+
+    def stop(self):
+        # closes the http connection
+        self.http_connection.close()
+
+    def pause(self):
+        pass
+
+    def resume(self):
+        pass
 
     def retrieve_request(self):
         # creates the string io for the message
@@ -259,21 +326,6 @@ class HttpClientServiceTask:
             raise main_service_http_exceptions.ClientRequestTimeout("timeout")
 
         return data
-
-    def handle_get(self, request):
-        pass
-
-    def handler_post(self, request):
-        pass
-
-    def stop(self):
-        pass
-
-    def pause(self):
-        pass
-
-    def resume(self):
-        pass
 
 class HttpRequest:
     """
