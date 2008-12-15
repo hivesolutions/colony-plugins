@@ -97,5 +97,4 @@ class MainModPythonPlugin(colony.plugins.plugin_system.Plugin):
 
     @colony.plugins.decorators.unload_allowed_capability("http_python_handler")
     def http_python_handler_capability_unload_allowed(self, plugin, capability):
-        if plugin in self.http_python_handler_plugins:
-            self.http_python_handler_plugins.remove(plugin)
+        self.http_python_handler_plugins.remove(plugin)
