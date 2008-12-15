@@ -226,7 +226,7 @@ class HttpClientServiceTask:
 
             try:
                 # handles the request
-                http_service_handler_plugins[0].handle_request(request)
+                http_service_handler_plugins[1].handle_request(request)
 
                 # sends the request to the client (response)
                 self.send_request(request)
