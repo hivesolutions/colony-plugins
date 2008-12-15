@@ -53,14 +53,14 @@ class MainModPythonPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["mod_python"]
-    capabilities_allowed = ["mod_python_handler"]
+    capabilities_allowed = ["http_python_handler"]
     dependencies = []
     events_handled = []
     events_registrable = []
 
     main_mod_python = None
 
-    mod_python_handler_plugins = []
+    http_python_handler_plugins = []
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -91,11 +91,11 @@ class MainModPythonPlugin(colony.plugins.plugin_system.Plugin):
     def handle_request(self, request, plugin_handler_id):
         self.main_mod_python.handle_request(request, plugin_handler_id)
 
-    @colony.plugins.decorators.load_allowed_capability("mod_python_handler")
-    def mod_python_handler_capability_load_allowed(self, plugin, capability):
-        self.mod_python_handler_plugins.append(plugin)
+    @colony.plugins.decorators.load_allowed_capability("http_python_handler")
+    def http_python_handler_capability_load_allowed(self, plugin, capability):
+        self.http_python_handler_plugins.append(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("mod_python_handler")
-    def mod_python_handler_capability_unload_allowed(self, plugin, capability):
-        if plugin in self.mod_python_handler_plugins:
-            self.mod_python_handler_plugins.remove(plugin)
+    @colony.plugins.decorators.unload_allowed_capability("http_python_handler")
+    def http_python_handler_capability_unload_allowed(self, plugin, capability):
+        if plugin in self.http_python_handler_plugins:
+            self.http_python_handler_plugins.remove(plugin)

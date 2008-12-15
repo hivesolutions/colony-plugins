@@ -67,14 +67,14 @@ class MainModPython:
 
         # in case the plugin handler id is already defined
         if plugin_handler_id:
-            # iterates over all the mod_python handler plugins
-            for mod_python_handler_plugin in self.main_mod_python_plugin.mod_python_handler_plugins:
-                if plugin_handler_id == mod_python_handler_plugin.id:
-                    mod_python_handler_plugin.handle_request(request)
+            # iterates over all the http python handler plugins
+            for http_python_handler_plugin in self.main_mod_python_plugin.http_python_handler_plugins:
+                if plugin_handler_id == http_python_handler_plugin.id:
+                    http_python_handler_plugin.handle_request(request)
                     return
         else:
-            # iterates over all the mod_python handler plugins
-            for mod_python_handler_plugin in self.main_mod_python_plugin.mod_python_handler_plugins:
-                if mod_python_handler_plugin.is_request_handler(request):
-                    mod_python_handler_plugin.handle_request(request)
+            # iterates over all the http python handler plugins
+            for http_python_handler_plugin in self.main_mod_python_plugin.http_python_handler_plugins:
+                if http_python_handler_plugin.is_request_handler(request):
+                    http_python_handler_plugin.handle_request(request)
                     return

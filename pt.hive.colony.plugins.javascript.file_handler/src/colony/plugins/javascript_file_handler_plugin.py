@@ -53,7 +53,7 @@ class JavascriptFileHandlerPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["javascript_file_handler", "mod_python_handler"]
+    capabilities = ["javascript_file_handler", "http_python_handler"]
     capabilities_allowed = ["javascript_handler"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.javascript.manager", "1.0.0")]
