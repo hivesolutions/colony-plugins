@@ -60,6 +60,8 @@ class MainServiceHttpColonyHandlerPlugin(colony.plugins.plugin_system.Plugin):
 
     main_service_http_colony_handler = None
 
+    http_python_handler_plugins = []
+
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global main_service_http_colony_handler
@@ -75,9 +77,11 @@ class MainServiceHttpColonyHandlerPlugin(colony.plugins.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
 
+    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.main.service.http.colony_handler", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.main.service.http.colony_handler", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
@@ -89,3 +93,11 @@ class MainServiceHttpColonyHandlerPlugin(colony.plugins.plugin_system.Plugin):
 
     def handle_request(self, request):
         return self.main_service_http_colony_handler.handle_request(request)
+
+    @colony.plugins.decorators.load_allowed_capability("http_python_handler")
+    def http_python_handler_capability_load_allowed(self, plugin, capability):
+        self.http_python_handler_plugins.append(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("http_python_handler")
+    def http_python_handler_capability_unload_allowed(self, plugin, capability):
+        self.http_python_handler_plugins.remove(plugin)

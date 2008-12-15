@@ -226,10 +226,16 @@ class HttpClientServiceTask:
 
             try:
                 # handles the request
-                http_service_handler_plugins[1].handle_request(request)
+                http_service_handler_plugins[0].handle_request(request)
 
                 # sends the request to the client (response)
                 self.send_request(request)
+
+                # in case the connection is not meant to be kept alive
+                if not self.keep_alive(request):
+                    print "connection closed"
+                    break
+
             except Exception, exception:
                 self.send_exception(request, exception)
 
@@ -259,6 +265,12 @@ class HttpClientServiceTask:
         # creates the header loaded flag
         header_loaded = False
 
+        # creates the message loaded flag
+        message_loaded = False
+
+        # creates the message size value
+        message_size = 0
+
         while 1:
             # retrieves the data
             data = self.retrieve_data()
@@ -275,9 +287,9 @@ class HttpClientServiceTask:
                     start_line = message_value[:start_line_index]
                     operation_type, path, protocol_version = start_line.split(" ")
 
-                    request.operation_type = operation_type
-                    request.path = path
-                    request.protocol_version = protocol_version
+                    request.set_operation_type(operation_type)
+                    request.set_path(path)
+                    request.set_protocol_version(protocol_version)
 
                     start_line_loaded = True
 
@@ -297,13 +309,35 @@ class HttpClientServiceTask:
 
                         header_name = header_splitted[:division_index].strip()
 
-                        header_value = header_splitted[division_index:].strip()
+                        header_value = header_splitted[division_index + 1:].strip()
 
                         request.headers_map[header_name] = header_value
 
+                    if request.operation_type == "GET":
+                        return request
+                    elif request.operation_type == "POST":
+                        if "Content-Length" in request.headers_map:
+                            message_size = int(request.headers_map["Content-Length"])
+                        else:
+                            return request 
+
+            if not message_loaded and header_loaded:
+                start_message_index = end_header_index + 4
+
+                # retrieves the message part of the message value
+                message = message_value[start_message_index:]
+
+                if len(message) == message_size:
+                    # sets the message loaded flag
+                    message_loaded = True
+
+                    # sets the received message
+                    request.received_message = message
+
+                    # returns the request
                     return request
 
-    def retrieve_data(self):
+    def retrieve_data(self, chunk_size = CHUNK_SIZE):
         try:
             # runs the select in the http connection, with timeout
             selected_values = select.select([self.http_connection], [], [], REQUEST_TIMEOUT)
@@ -315,7 +349,7 @@ class HttpClientServiceTask:
              raise main_service_http_exceptions.ServerRequestTimeout("%is timeout" % REQUEST_TIMEOUT)
         try:
             # receives the data in chunks
-            data = self.http_connection.recv(CHUNK_SIZE)
+            data = self.http_connection.recv(chunk_size)
         except:
             raise main_service_http_exceptions.ClientRequestTimeout("timeout")
 
@@ -407,6 +441,17 @@ class HttpClientServiceTask:
                 # error in the client side
                 return
 
+    def keep_alive(self, request):
+        if "Connection" in request.headers_map:
+            connection_type = request.headers_map["Connection"]
+
+            if connection_type == "Keep-Alive":
+                return True
+            else:
+                return False
+        else:
+            return False
+
 class HttpRequest:
     """
     The http request class.
@@ -423,6 +468,9 @@ class HttpRequest:
 
     headers_map = {}
     """ The headers map """
+
+    received_message = "none"
+    """ The received message """
 
     content_type = "none"
     """ The content type """
@@ -449,8 +497,14 @@ class HttpRequest:
         self.headers_map = {}
         self.message_stream = StringIO.StringIO()
 
+    def read(self):
+        return self.received_message
+
     def write(self, message):
         self.message_stream.write(message)
+
+    def flush(self):
+        pass
 
     def is_mediated(self):
         return self.mediated
@@ -484,3 +538,13 @@ class HttpRequest:
         result_value = result.getvalue()
 
         return result_value
+
+    def set_operation_type(self, operation_type):
+        self.operation_type = operation_type
+
+    def set_path(self, path):
+        self.path = path
+        self.filename = path
+
+    def set_protocol_version(self, protocol_version):
+        self.protocol_version = protocol_version
