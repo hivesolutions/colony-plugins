@@ -53,8 +53,8 @@ class SearchCrawlerFileSystem:
         """
         Constructor of the class.
         
-        @type search_provider_text_plugin: SearchProviderTextPlugin
-        @param search_provider_text_plugin: The search provider text plugin.
+        @type search_provider_text_plugin: SearchCrawlerFileSystemPlugin
+        @param search_provider_text_plugin: The search crawler file system plugin.
         """
 
         self.search_crawler_file_system_plugin = search_crawler_file_system_plugin
