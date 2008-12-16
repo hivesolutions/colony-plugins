@@ -106,6 +106,6 @@ class SearchProviderText:
         words_metadata_list = [{"position" : value} for value in range(words_list_length)]
 
         # creates the document information map
-        document_information_map = {"file_path" : file_path, "file_size" : file_size}
+        document_information_map = {"document_id": file_path, "file_path" : file_path, "file_size" : file_size}
 
         return [words_list, words_metadata_list, document_information_map]
