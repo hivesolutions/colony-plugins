@@ -224,7 +224,7 @@ def interactive_console(debug = False, verbose = True, code_generation = False):
             else:
                 process_command(string_value + "\n", processing_structure, global_interpretation_map, debug, verbose, code_generation)
 
-def interpret_file(file_path, debug = False, verbose = False, code_generation = True):
+def interpret_file(file_path, debug = False, verbose = True, code_generation = True):
     # opens the given file
     file = open(file_path, "r")
 
