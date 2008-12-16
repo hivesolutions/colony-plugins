@@ -154,8 +154,11 @@ class MainServiceHttp:
                 # in case the connection is disabled
                 if not self.http_connection_active:
                     return
-                # selects the values
-                selected_values = select.select([self.http_socket], [], [], CLIENT_CONNECTION_TIMEOUT)
+                try:
+                    # selects the values
+                    selected_values = select.select([self.http_socket], [], [], CLIENT_CONNECTION_TIMEOUT)
+                except:
+                    pass
 
             # in case the connection is disabled
             if not self.http_connection_active:
