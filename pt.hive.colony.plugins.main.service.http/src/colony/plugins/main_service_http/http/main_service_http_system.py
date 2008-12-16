@@ -229,7 +229,7 @@ class HttpClientServiceTask:
 
             try:
                 # handles the request
-                http_service_handler_plugins[0].handle_request(request)
+                http_service_handler_plugins[1].handle_request(request)
 
                 # sends the request to the client (response)
                 self.send_request(request)
@@ -408,6 +408,8 @@ class HttpClientServiceTask:
 
             # in case the read is complete
             if not mediated_value:
+                # closes the mediated file
+                request.mediated_handler.close_file()
                 return
 
             try:

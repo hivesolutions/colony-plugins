@@ -127,6 +127,9 @@ class MainServiceHttpFileHandler:
             # reads the file contents
             file_contents = file.read()
 
+            # closes the file
+            file.close()
+
             # writes the file contents
             request.write(file_contents)
 
@@ -175,3 +178,11 @@ class ChunkHandler:
         """
 
         return self.file.read(chunk_size)
+
+    def close_file(self):
+        """
+        Closes the file being chunked.
+        """
+
+        # closes the file
+        self.file.close()
