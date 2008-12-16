@@ -56,14 +56,48 @@ class SearchIndexer:
         self.search_indexer_plugin = search_indexer_plugin
 
     def create_index(self, token_list, properties):
-        """ Abstract factory method for index products """
-        forward_index_map = self.create_forward_index(token_list, properties)
-        inverted_index_map = self.create_inverted_index(forward_index_map, properties)
+        """
+        Abstract factory method for index products.
         
-        # an index is a tuple composed of forward and inverted index
-        return (forward_index_map, inverted_index_map)
+        @type token_list: List
+        @param token_list: The list of tokens for the index creation.
+        @type properties: Dictionary
+        @param properties: The map of properties for the index creation.
+        @rtype: SearchIndex
+        @return: The created index.
+        """
+
+        # creates the forward index map
+        forward_index_map = self.create_forward_index(token_list, properties)
+
+        # creates the inverted index map
+        inverted_index_map = self.create_inverted_index(forward_index_map, properties)
+
+        # creates the search index object
+        search_index = SearchIndex()
+
+        # sets the forward index map
+        search_index.forward_index_map = forward_index_map
+
+        # sets the inverted index map
+        search_index.inverted_index_map = inverted_index_map
+
+        # returns the search index object
+        return search_index
 
     def create_forward_index(self, token_list, properties):
+        """
+        Creates the forward index map, using the tokens list
+        and the given properties.
+        
+        @type token_list: List
+        @param token_list: The list of tokens.
+        @type properties: Dictionary
+        @param properties: The properties.
+        @rtype: Dictionary
+        @return: The forward index map.
+        """
+
         # initialize the forward index data structure
         forward_index_map = {}
 
@@ -101,6 +135,17 @@ class SearchIndexer:
         return forward_index_map
 
     def create_inverted_index(self, forward_index_map, properties):
+        """
+        Creates the inverted index map, using the forward index map
+        and the given properties.
+        
+        @type forward_index_map: Dictionary
+        @param forward_index_map: The forward index map.
+        @type properties: Dictionary
+        @param properties: The properties.
+        @rtype: Dictionary
+        @return: The inverted index map.
+        """
 
         inverted_index_map = {}
  
@@ -115,3 +160,22 @@ class SearchIndexer:
                 document_map[document_id] = word_hit_list
 
         return inverted_index_map
+
+class SearchIndex:
+    """
+    The search index class.
+    """
+
+    forward_index_map = {}
+    """ The forward index map """
+
+    inverted_index_map = {}
+    """ The inverted index map """
+
+    properties = {}
+    """ The properties """
+
+    def __init__(self):
+        self.forward_index_map = {}
+        self.inverted_index_map = {}
+        self.properties = {}

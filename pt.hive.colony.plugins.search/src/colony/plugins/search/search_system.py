@@ -61,14 +61,19 @@ class Search:
         if not "type" in properties:
             raise search_exceptions.MissingProperty("type")
 
+        # retrieves the search crawler plugins
         search_crawler_plugins = self.search_plugin.search_crawler_plugins
 
+        # retrieves the search interpreter plugin
         search_interpreter_plugin = self.search_plugin.search_interpreter_plugin
 
+        # retrieves the search indexer plugin
         search_indexer_plugin = self.search_plugin.search_indexer_plugin
 
+        # retrieves the type of index
         index_type = properties["type"]
 
+        # sets the 
         crawling_plugin = None
 
         for search_crawler_plugin in search_crawler_plugins:
@@ -85,4 +90,6 @@ class Search:
 
         used_interpreter_adapter_list = search_interpreter_plugin.process_tokens_list(tokens_list, properties)
 
-        return search_indexer_plugin.create_index(tokens_list, properties)
+        search_index = search_indexer_plugin.create_index(tokens_list, properties)
+
+        return search_index
