@@ -100,7 +100,7 @@ class SearchProviderText:
         # retrieves the list of words in the file
         words_list = compiled_regex.findall(file_contents)
 
-        # creates the file information map
-        file_information_map = {"file_path" : file_path, "file_size" : file_size}
+        # creates the document information map
+        document_information_map = {"file_path" : file_path, "file_size" : file_size}
 
-        return (words_list, [], file_information_map)
+        return (words_list, [], document_information_map)
