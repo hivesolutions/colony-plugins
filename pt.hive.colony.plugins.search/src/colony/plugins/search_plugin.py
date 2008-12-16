@@ -56,7 +56,9 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
     capabilities = ["search"]
     capabilities_allowed = ["search_crawler"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.search.interpreter", "1.0.0")]
+                    "pt.hive.colony.plugins.search.interpreter", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.search.indexer", "1.0.0")]
     events_handled = []
     events_registrable = []
 
@@ -65,6 +67,7 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
     search_crawler_plugins = []
 
     search_interpreter_plugin = None
+    search_indexer_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -113,3 +116,10 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.search.interpreter")
     def set_search_interpreter_plugin(self, search_interpreter_plugin):
         self.search_interpreter_plugin = search_interpreter_plugin
+
+    def get_search_indexer_plugin(self):
+        return self.search_indexer_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.search.indexer")
+    def set_search_indexer_plugin(self, search_indexer_plugin):
+        self.search_indexer_plugin = search_indexer_plugin

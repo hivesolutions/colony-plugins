@@ -65,6 +65,8 @@ class Search:
 
         search_interpreter_plugin = self.search_plugin.search_interpreter_plugin
 
+        search_indexer_plugin = self.search_plugin.search_indexer_plugin
+
         index_type = properties["type"]
 
         crawling_plugin = None
@@ -83,4 +85,4 @@ class Search:
 
         used_interpreter_adapter_list = search_interpreter_plugin.process_tokens_list(tokens_list, properties)
 
-        return tokens_list
+        return search_indexer_plugin.create_index(tokens_list, properties)
