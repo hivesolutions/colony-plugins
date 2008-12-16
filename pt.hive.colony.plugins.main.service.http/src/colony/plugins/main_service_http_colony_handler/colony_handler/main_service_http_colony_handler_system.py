@@ -44,6 +44,9 @@ import main_service_http_colony_handler_exceptions
 HANDLER_NAME = "colony"
 """ The handler name """
 
+PLUGIN_HANDLER_VALUE = "plugin_handler"
+""" The plugin handler value """
+
 class MainServiceHttpColonyHandler:
     """
     The main service http colony handler class.
@@ -66,8 +69,8 @@ class MainServiceHttpColonyHandler:
         return HANDLER_NAME
 
     def handle_request(self, request):
-        if "plugin_handler" in request.properties:
-            plugin_handler_id = request.properties["plugin_handler"]
+        if PLUGIN_HANDLER_VALUE in request.properties:
+            plugin_handler_id = request.properties[PLUGIN_HANDLER_VALUE]
 
             # iterates over all the http python handler plugins
             for http_python_handler_plugin in self.main_service_http_colony_handler_plugin.http_python_handler_plugins:
