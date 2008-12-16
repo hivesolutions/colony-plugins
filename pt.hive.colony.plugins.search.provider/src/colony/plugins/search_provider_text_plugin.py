@@ -64,8 +64,8 @@ class SearchProviderTextPlugin(colony.plugins.plugin_system.Plugin):
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global search_provider
-        import search_provider.provider.search_provider_text_system
-        self.search_provider_text = search_provider.provider.search_provider_text_system.SearchProviderText(self)
+        import search_provider.text.search_provider_text_system
+        self.search_provider_text = search_provider.text.search_provider_text_system.SearchProviderText(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
