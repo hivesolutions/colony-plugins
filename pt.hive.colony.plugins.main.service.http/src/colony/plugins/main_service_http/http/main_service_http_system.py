@@ -61,6 +61,15 @@ SERVER_NAME = "Hive-Colony-Web"
 SERVER_VERSION = "1.0.0"
 """ The server version """
 
+NUMBER_THREADS = 5
+""" The number of threads """
+
+MAX_NUMBER_THREADS = 15
+""" The maximum number of threads """
+
+SCHEDULING_ALGORITHM = 2
+""" The scheduling algorithm """ 
+
 STATUS_CODE_VALUES = {200 : "OK", 207 : "Multi-Status",
                       301 : "Moved permanently", 302 : "Found", 303 : "See Other",
                       403 : "Forbidden", 404 : "Not Found",
@@ -128,7 +137,8 @@ class MainServiceHttp:
 
         # creates the http client thread pool
         self.http_client_thread_pool = thread_pool_manager_plugin.create_new_thread_pool("http pool",
-                                                                                         "pool to support http client connections", 5, 1, 5)
+                                                                                         "pool to support http client connections",
+                                                                                         NUMBER_THREADS, SCHEDULING_ALGORITHM, MAX_NUMBER_THREADS)
 
         # starts the http client thread pool
         self.http_client_thread_pool.start_pool()
@@ -228,8 +238,17 @@ class HttpClientServiceTask:
                 return
 
             try:
-                # handles the request
-                http_service_handler_plugins[1].handle_request(request)
+                if request.path.find("/hive/plugins") == 0:
+                    request.properties["plugin_handler"] = "pt.hive.colony.plugins.javascript.file_handler"
+
+                    # handles the request
+                    http_service_handler_plugins[0].handle_request(request)
+                elif request.path.find("/colony_mod_python") == 0:
+                    # handles the request
+                    http_service_handler_plugins[0].handle_request(request)
+                else:
+                    # handles the request
+                    http_service_handler_plugins[1].handle_request(request)
 
                 # sends the request to the client (response)
                 self.send_request(request)
@@ -328,14 +347,14 @@ class HttpClientServiceTask:
                 start_message_index = end_header_index + 4
 
                 # retrieves the message part of the message value
-                message = message_value[start_message_index:]
+                message_value_message = message_value[start_message_index:]
 
-                if len(message) == message_size:
+                if len(message_value_message) == message_size:
                     # sets the message loaded flag
                     message_loaded = True
 
                     # sets the received message
-                    request.received_message = message
+                    request.received_message = message_value_message
 
                     # returns the request
                     return request
@@ -498,9 +517,13 @@ class HttpRequest:
     chunk_handler = None
     """ The chunk handler """
 
+    properties = {}
+    """ The properties """
+
     def __init__(self):
         self.headers_map = {}
         self.message_stream = StringIO.StringIO()
+        self.properties = {}
 
     def read(self):
         return self.received_message
@@ -550,6 +573,7 @@ class HttpRequest:
     def set_path(self, path):
         self.path = path
         self.filename = path
+        self.uri = path
 
     def set_protocol_version(self, protocol_version):
         self.protocol_version = protocol_version

@@ -77,7 +77,7 @@ class MainServiceHttpFileHandler:
 
     def handle_request(self, request):
         # sets the base directory
-        base_directory = "c:/tobias_web"
+        base_directory = "C:/Program Files/Apache Software Foundation/Apache2.2/htdocs"
 
         # retrieves the requested path
         path = request.path
