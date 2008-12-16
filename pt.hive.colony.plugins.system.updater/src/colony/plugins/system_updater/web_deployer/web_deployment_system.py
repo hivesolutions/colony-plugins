@@ -54,14 +54,14 @@ class WebDeployer:
         self.web_deployer_plugin.logger.info("Loading web deployer")
 
         # adds the new resource to the resource manager
-        self.web_deployer_plugin.resource_manager.register_resource(self.web_deployer_plugin.id, "web_configuration", "xml", "resources/web_deployer_configuration.xml")
+        self.web_deployer_plugin.resource_manager_plugin.register_resource(self.web_deployer_plugin.id, "web_configuration", "xml", "resources/web_deployer_configuration.xml")
 
     def deploy_package(self, zip_file, plugin_id, plugin_version):
         zip_file_name = zip_file.name
         self.web_deployer_plugin.logger.info("Deploying zip file: " + zip_file_name + " using web deployer")
 
         # retrieves the resource (web configuration resource)
-        web_configuration_resource = self.web_deployer_plugin.resource_manager.get_resource(self.web_deployer_plugin.id)
+        web_configuration_resource = self.web_deployer_plugin.resource_manager_plugin.get_resource(self.web_deployer_plugin.id)
 
         # retrieves the resource value (web configuration path)
         web_configuration_path = web_configuration_resource.get_resource_value()

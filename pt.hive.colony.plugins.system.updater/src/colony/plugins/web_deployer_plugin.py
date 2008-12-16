@@ -110,8 +110,8 @@ class WebDeployerPlugin(colony.plugins.plugin_system.Plugin):
         self.zip_plugin = zip_plugin
 
     def get_resource_manager_plugin(self):
-        return self.resource_manager
+        return self.resource_manager_plugin
 
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.resource_manager")
-    def set_resource_manager(self, resource_manager):
-        self.resource_manager = resource_manager
+    def set_resource_manager_plugin(self, resource_manager_plugin):
+        self.resource_manager_plugin = resource_manager_plugin
