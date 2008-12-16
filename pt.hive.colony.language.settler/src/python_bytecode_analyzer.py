@@ -76,6 +76,9 @@ def show_file(file_name):
     # show the code object information
     show_code(code)
 
+    # closes the file
+    file.close()
+
 def show_code(code, indentation = ""):
     """
     Shows some code information about the given code object.

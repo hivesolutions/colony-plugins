@@ -231,6 +231,9 @@ def interpret_file(file_path, debug = False, verbose = False, code_generation = 
     # reads the file contents
     file_contents = file.read()
 
+    # closes the file
+    file.close()
+
     # creates a new processing structure
     processing_structure = settler_processing.ProcessingStructure()
 
