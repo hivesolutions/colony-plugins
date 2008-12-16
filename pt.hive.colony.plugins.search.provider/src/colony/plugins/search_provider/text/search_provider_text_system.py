@@ -94,6 +94,9 @@ class SearchProviderText:
         # reads the file contents
         file_contents = file.read()
 
+        # closes the file
+        file.close()
+
         # compiles the word regular expression
         compiled_regex = re.compile(WORD_REGEX)
 
