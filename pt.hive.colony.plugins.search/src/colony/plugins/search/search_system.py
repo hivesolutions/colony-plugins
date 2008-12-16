@@ -39,6 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import search_exceptions
 
+TYPE_VALUE = "type"
+""" The type value """
+
 class Search:
     """
     The search class.
@@ -58,8 +61,18 @@ class Search:
         self.search_plugin = search_plugin
 
     def create_index(self, properties):
-        if not "type" in properties:
-            raise search_exceptions.MissingProperty("type")
+        """
+        Creates the search index for the given properties.
+        
+        @type properties: Dictionary
+        @param properties: The properties to create the search index.
+        @rtype: SearchIndex
+        @return: The search index for the given properties.
+        """
+
+        # in case type value is not defined in properties
+        if not TYPE_VALUE in properties:
+            raise search_exceptions.MissingProperty(TYPE_VALUE)
 
         # retrieves the search crawler plugins
         search_crawler_plugins = self.search_plugin.search_crawler_plugins
@@ -71,25 +84,36 @@ class Search:
         search_indexer_plugin = self.search_plugin.search_indexer_plugin
 
         # retrieves the type of index
-        index_type = properties["type"]
+        index_type = properties[TYPE_VALUE]
 
-        # sets the 
+        # creates the crawling plugin temporary variable
         crawling_plugin = None
 
+        # iterates over all the available search crawler plugins
         for search_crawler_plugin in search_crawler_plugins:
+            # retrieves 
             search_crawler_plugin_type = search_crawler_plugin.get_type()
 
+            # in case the index type is the same as the search crawler plugin type
             if index_type == search_crawler_plugin_type:
+                # sets the crawling plugin
                 crawling_plugin = search_crawler_plugin
+
+                # breaks the for cycle
                 break
 
+        # in case there was no crawling plugin selected
         if not crawling_plugin:
             raise search_exceptions.MissingCrawlingPluginProperty(index_type)
 
+        # retrieves the tokens list 
         tokens_list = crawling_plugin.get_tokens(properties)
 
+        # processes the tokens list (modifying it) and retrieves the used interpreter adapters list
         used_interpreter_adapter_list = search_interpreter_plugin.process_tokens_list(tokens_list, properties)
 
+        # creates the search index with the given tokens list and properties
         search_index = search_indexer_plugin.create_index(tokens_list, properties)
 
+        # returns the search index
         return search_index
