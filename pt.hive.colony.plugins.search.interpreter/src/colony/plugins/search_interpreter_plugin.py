@@ -90,7 +90,7 @@ class SearchInterpreterPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def process_tokens_list(self, tokens_list, properties):
-        return self.search_intepreter.process_tokens_list(self, tokens_list, properties)
+        return self.search_intepreter.process_tokens_list(tokens_list, properties)
 
     @colony.plugins.decorators.load_allowed_capability("search_interpreter_adapter")
     def search_interpreter_adapter_load_allowed(self, plugin, capability):

@@ -41,6 +41,8 @@ import os.path
 
 import search_crawler_file_system_exceptions
 
+SEARCH_CRAWLER_TYPE = "file_system"
+
 class SearchCrawlerFileSystem:
     """
     The search crawler file system class.
@@ -58,6 +60,9 @@ class SearchCrawlerFileSystem:
         """
 
         self.search_crawler_file_system_plugin = search_crawler_file_system_plugin
+
+    def get_type(self):
+        return SEARCH_CRAWLER_TYPE
 
     def get_tokens(self, properties):
         if not "start_path" in properties:

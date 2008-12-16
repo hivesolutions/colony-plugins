@@ -40,6 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import copy
 import string
 
+SEARCH_INTERPRETER_ADAPTER_TYPE = "capitals"
+
 class SearchInterpreterCapitalsAdapter:
     """
     The search interpreter capitals adapter class.
@@ -58,6 +60,9 @@ class SearchInterpreterCapitalsAdapter:
 
         self.search_interpreter_capitals_adapter_plugin = search_interpreter_capitals_adapter_plugin
 
+    def get_type(self):
+        return SEARCH_INTERPRETER_ADAPTER_TYPE
+
     def process_tokens_list(self, tokens_list, properties):
         
         for tokens_list_item in tokens_list:
@@ -68,8 +73,8 @@ class SearchInterpreterCapitalsAdapter:
             final_words_list = copy.copy(words_list)
 
             for word in words_list:
-                lower_case_word = string.ascii_lowercase(word)
-                
+                lower_case_word = word.lower()
+
                 if not word == lower_case_word:
                     original_metadata = words_metadata_list[index]
                     new_metadata = copy.copy(original_metadata)

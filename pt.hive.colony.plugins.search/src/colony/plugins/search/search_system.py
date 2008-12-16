@@ -72,13 +72,15 @@ class Search:
         for search_crawler_plugin in search_crawler_plugins:
             search_crawler_plugin_type = search_crawler_plugin.get_type()
 
-            if type == search_crawler_plugin_type:
+            if index_type == search_crawler_plugin_type:
                 crawling_plugin = search_crawler_plugin
                 break
 
         if not crawling_plugin:
-            raise MissingCrawlingPluginProperty(index_type)
+            raise search_exceptions.MissingCrawlingPluginProperty(index_type)
 
         tokens_list = crawling_plugin.get_tokens(properties)
 
-        processed_tokens_list = search_interpreter_plugin.process_tokens_list(tokens_list, properties)
+        used_interpreter_adapter_list = search_interpreter_plugin.process_tokens_list(tokens_list, properties)
+
+        return tokens_list

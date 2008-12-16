@@ -62,9 +62,9 @@ class SearchInterpreterCapitalsAdapterPlugin(colony.plugins.plugin_system.Plugin
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
-        global search_intepreter
-        import search_intepreter.capitals_adapter.search_interpreter_capitals_adapter_system
-        self.search_interpreter_capitals_adapter = search_intepreter.capitals_adapter.search_interpreter_capitals_adapter_system.SearchInterpreterCapitalsAdapter(self)
+        global search_interpreter
+        import search_interpreter.capitals_adapter.search_interpreter_capitals_adapter_system
+        self.search_interpreter_capitals_adapter = search_interpreter.capitals_adapter.search_interpreter_capitals_adapter_system.SearchInterpreterCapitalsAdapter(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
@@ -84,5 +84,8 @@ class SearchInterpreterCapitalsAdapterPlugin(colony.plugins.plugin_system.Plugin
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    def get_type(self):
+        return self.search_interpreter_capitals_adapter.get_type()
+
     def process_tokens_list(self, tokens_list, properties):
-        return self.search_interpreter_capitals_adapter.process_tokens_list(self, tokens_list, properties)
+        return self.search_interpreter_capitals_adapter.process_tokens_list(tokens_list, properties)

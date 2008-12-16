@@ -45,7 +45,7 @@ class SearchInterpreter:
     search_interpreter_plugin = None
     """ The search interpreter plugin """
 
-    def __init__(self, search_crawler_file_system_plugin):
+    def __init__(self, search_interpreter_plugin):
         """
         Constructor of the class.
         
@@ -61,7 +61,7 @@ class SearchInterpreter:
         adapter_type_list = []
 
         for search_interpreter_adapter_plugin in search_interpreter_adapter_plugins:
-            search_interpreter_adapter_plugin.process_tokens_list(tokens_list)
+            search_interpreter_adapter_plugin.process_tokens_list(tokens_list, properties)
 
             search_interpreter_adapter_plugin_type = search_interpreter_adapter_plugin.get_type()
 

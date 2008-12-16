@@ -89,6 +89,9 @@ class SearchCrawlerFileSystemPlugin(colony.plugins.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    def get_type(self):
+        return self.search_crawler_file_system.get_type()
+
     def get_tokens(self, properties):
         return self.search_crawler_file_system.get_tokens(properties)
 

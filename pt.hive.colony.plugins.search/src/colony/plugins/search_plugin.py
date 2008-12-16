@@ -70,7 +70,7 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global search
         import search.search_system
-        self.search_system = search.search_system.SearchSystem(self)
+        self.search_system = search.search_system.Search(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
