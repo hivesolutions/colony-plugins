@@ -53,7 +53,7 @@ class SearchProviderTextPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["search_provider"]
+    capabilities = ["search_provider.file_system"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
@@ -84,6 +84,9 @@ class SearchProviderTextPlugin(colony.plugins.plugin_system.Plugin):
 
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    def is_file_provider(self, properties):
+        return self.search_provider_text.is_file_provider(properties)
 
     def get_tokens(self, properties):
         return self.search_provider_text.get_tokens(properties)

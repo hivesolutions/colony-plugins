@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt>"
+__author__ = "João Magalhães <joamag@hive.pt> & Luís Martinho <lmartinho@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
@@ -39,7 +39,11 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import re
 
+import os.path
+
 import search_provider_text_exceptions
+
+FILE_EXTENSIONS = ["txt", "text", "TXT", "TEXT"]
 
 WORD_REGEX = "\w+"
 
@@ -61,11 +65,28 @@ class SearchProviderText:
 
         self.search_provider_text_plugin = search_provider_text_plugin
 
+    def is_file_provider(self, properties):
+        if not "file_path" in properties:
+            return False
+
+        file_path = properties["file_path"]
+
+        # retrieves the file extension
+        file_extension = file_path.split(".")[-1]
+
+        if file_extension in FILE_EXTENSIONS:
+            return True
+
+        return False
+
     def get_tokens(self, properties):
         if not "file_path" in properties:
             raise search_provider_text_exceptions.MissingProperty("file_path")
 
         file_path = properties["file_path"]
+
+        # retrieves the file size (in bytes)
+        file_size = os.path.getsize(file_path)
 
         # opens the file
         file = open(file_path, "r")
@@ -79,4 +100,7 @@ class SearchProviderText:
         # retrieves the list of words in the file
         words_list = compiled_regex.findall(file_contents)
 
-        return (words_list, [])
+        # creates the file information map
+        file_information_map = {"file_path" : file_path, "file_size" : file_size}
+
+        return (words_list, [], file_information_map)
