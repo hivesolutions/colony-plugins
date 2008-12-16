@@ -76,7 +76,7 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
         self.search_system = search.search_system.Search(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
