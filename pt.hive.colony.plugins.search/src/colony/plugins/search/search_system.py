@@ -204,3 +204,5 @@ class Search:
         # returns the retrieved search index
         return search_index
 
+    def query_index(self, search_index, search_query, properties):
+        pass
