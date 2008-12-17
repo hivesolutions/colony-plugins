@@ -469,7 +469,7 @@ class HttpClientServiceTask:
         if "Connection" in request.headers_map:
             connection_type = request.headers_map["Connection"]
 
-            if connection_type == "Keep-Alive":
+            if connection_type.lower() == "keep-alive":
                 return True
             else:
                 return False
