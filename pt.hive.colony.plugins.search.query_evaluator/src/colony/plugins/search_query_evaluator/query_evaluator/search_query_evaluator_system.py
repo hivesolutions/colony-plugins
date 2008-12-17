@@ -1,0 +1,82 @@
+#!/usr/bin/python
+# -*- coding: Cp1252 -*-
+
+# Hive Colony Framework
+# Copyright (C) 2008 Hive Solutions Lda.
+#
+# This file is part of Hive Colony Framework.
+#
+# Hive Colony Framework is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Hive Colony Framework is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
+
+__author__ = "João Magalhães <joamag@hive.pt> & Luís Martinho <lmartinho@hive.pt>"
+""" The author(s) of the module """
+
+__version__ = "1.0.0"
+""" The version of the module """
+
+__revision__ = "$LastChangedRevision: 72 $"
+""" The revision number of the module """
+
+__date__ = "$LastChangedDate: 2008-10-21 23:29:54 +0100 (Tue, 21 Oct 2008) $"
+""" The last change date of the module """
+
+__copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
+""" The copyright for the module """
+
+__license__ = "GNU General Public License (GPL), Version 3"
+""" The license for the module """
+
+class SearchQueryEvaluator:
+    """
+    The search query evaluator class.
+    """
+
+    search_query_evaluator_plugin = None
+    """ The search query evaluator plugin """
+
+    def __init__(self, search_query_evaluator_plugin):
+        """
+        Constructor of the class.
+        
+        @type search_query_evaluator_plugin: SearchQueryEvaluatorPlugin
+        @param search_query_evaluator_plugin: The search query evaluator plugin.
+        """
+
+        self.search_query_evaluator_plugin = search_query_evaluator_plugin
+
+    def evaluate_query(self, query, properties):
+        """
+        The method to start the search query evaluator.
+        
+        @type query: String
+        @param query: The query string with the search terms.
+        @type properties: Dictionary
+        @param properties: The map of properties for the query evaluation.
+        @rtype: SortedResultSet
+        @return: The set of results sorted according to the selected and available scorer types.
+        """
+
+        # check for an index in the properties dictionary
+        if not "index" in properties:
+            raise search_provider_text_exceptions.MissingProperty("index")
+        
+        # parse the query using the selected interpreters
+        
+        # using the provided seek to the start of the doclist in the short barrel for every word.
+        # Scan through the doclists until there is a document that matches all the search terms.
+        # Compute the rank of that document for the query.
+        # If we are in the short barrels and at the end of any doclist, seek to the start of the doclist in the full barrel for every word and go to step 4.
+        #7. If we are not at the end of any doclist go to step 4.
+
+        #Sort the documents that have matched by rank and return the top k.
