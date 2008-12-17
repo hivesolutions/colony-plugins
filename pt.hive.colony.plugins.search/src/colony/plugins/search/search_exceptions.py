@@ -70,7 +70,7 @@ class MissingProperty(SearchException):
 
         return "Missing property: %s" % self.message
 
-class MissingCrawlingPluginProperty(SearchException):
+class MissingCrawlingPlugin(SearchException):
     """
     The missing crawling plugin class.
     """
@@ -95,3 +95,29 @@ class MissingCrawlingPluginProperty(SearchException):
         """
 
         return "Missing crawling plugin: %s" % self.message
+
+class MissingIndexPersistencePlugin(SearchException):
+    """
+    The missing index persistence plugin class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+        
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        SearchException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+        
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Missing index persistence plugin: %s" % self.message

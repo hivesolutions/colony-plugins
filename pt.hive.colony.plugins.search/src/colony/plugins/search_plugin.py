@@ -54,7 +54,7 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["search"]
-    capabilities_allowed = ["search_crawler"]
+    capabilities_allowed = ["search_crawler", "search_index_persistence"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.search.interpreter", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
@@ -65,6 +65,7 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
     search_system = None
 
     search_crawler_plugins = []
+    search_index_persistence_plugins = []
 
     search_interpreter_plugin = None
     search_indexer_plugin = None
@@ -99,16 +100,27 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
     def create_index(self, properties):
         return self.search_system.create_index(properties)
 
+    def persist_index(self, search_index, properties):
+        return self.search_system.persist_index(search_index, properties)
+
     def load_index(self, properties):
         return self.search_system.load_index(properties)
 
     @colony.plugins.decorators.load_allowed_capability("search_crawler")
-    def search_provider_file_system_load_allowed(self, plugin, capability):
+    def search_crawler_load_allowed(self, plugin, capability):
         self.search_crawler_plugins.append(plugin)
 
+    @colony.plugins.decorators.load_allowed_capability("search_index_persistence")
+    def search_persistence_load_allowed(self, plugin, capability):
+        self.search_index_persistence_plugins.append(plugin)
+
     @colony.plugins.decorators.unload_allowed_capability("search_crawler")
-    def search_provider_file_system_unload_allowed(self, plugin, capability):
+    def search_crawler_unload_allowed(self, plugin, capability):
         self.search_crawler_plugins.remove(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("search_index_persistence")
+    def search_persistence_unload_allowed(self, plugin, capability):
+        self.search_index_persistence_plugins.remove(plugin)
 
     def get_search_interpreter_plugin(self):
         return self.search_interpreter_plugin

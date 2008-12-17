@@ -42,6 +42,9 @@ import search_exceptions
 TYPE_VALUE = "type"
 """ The type value """
 
+PERSISTENCE_TYPE_VALUE = "persistence_type"
+""" The persistence type value """
+
 class Search:
     """
     The search class.
@@ -91,11 +94,11 @@ class Search:
 
         # iterates over all the available search crawler plugins
         for search_crawler_plugin in search_crawler_plugins:
-            # retrieves 
+            # retrieves the type for the current search crawler plugin
             search_crawler_plugin_type = search_crawler_plugin.get_type()
 
-            # in case the index type is the same as the search crawler plugin type
-            if index_type == search_crawler_plugin_type:
+            # in case the search crawler plugin type is the same as the index type
+            if search_crawler_plugin_type == index_type:
                 # sets the crawling plugin
                 crawling_plugin = search_crawler_plugin
 
@@ -104,7 +107,7 @@ class Search:
 
         # in case there was no crawling plugin selected
         if not crawling_plugin:
-            raise search_exceptions.MissingCrawlingPluginProperty(index_type)
+            raise search_exceptions.MissingCrawlingPlugin(index_type)
 
         # retrieves the tokens list 
         tokens_list = crawling_plugin.get_tokens(properties)
@@ -117,3 +120,87 @@ class Search:
 
         # returns the search index
         return search_index
+
+    def persist_index(self, search_index, properties):
+        """ 
+        Persists the specified search index using the selected available persistence type.
+
+        @type search_index: SearchIndex
+        @param search_index: The search index to be persisted.
+        @type properties: Dictionary
+        @param properties: The properties to create the search index.
+        @rtype: boolean 
+        @return: The success of the persistence operation.
+        """
+
+        # in case the persistence type value is not defined in the properties
+        if not PERSISTENCE_TYPE_VALUE in properties:
+            raise search_exceptions.MissingProperty(PERSISTENCE_TYPE_VALUE)
+
+        # retrieves the search index persistence plugins
+        search_index_persistence_plugins = self.search_plugin.search_index_persistence_plugins
+
+        # retrieves the type of index persistence requested in the properties parameter
+        index_persistence_type = properties[PERSISTENCE_TYPE_VALUE]
+
+        # creates the index persistence plugin temporary variable
+        index_persistence_plugin = None
+
+        for search_index_persistence_plugin in search_index_persistence_plugins:
+            # retrieves the persistence type of the current plugin
+            search_index_persistence_plugin_type = search_index_persistence_plugin.get_type()
+            
+            # in case the index type is the same as the index persistence plugin type
+            if search_index_persistence_plugin_type == index_persistence_type:
+                # sets the index persistence plugin to be used
+                index_persistence_plugin = search_index_persistence_plugin
+
+                # breaks the for cycle
+                break
+
+        # if there was no index persistence plugin selected
+        if not index_persistence_plugin:
+            raise search_exceptions.MissingIndexPersistencePlugin(index_persistence_type)
+
+        # persists the index
+        persistence_success = index_persistence_plugin.persist_index(search_index, properties)
+
+        # returns with the success status signaled by the persist operation
+        return persistence_success
+
+    def load_index(self, properties):
+        # in case the persistence type value is not defined in the properties
+        if not PERSISTENCE_TYPE_VALUE in properties:
+            raise search_exceptions.MissingProperty(PERSISTENCE_TYPE_VALUE)
+
+        # retrieves the search index persistence plugins
+        search_index_persistence_plugins = self.search_plugin.search_index_persistence_plugins
+
+        # retrieves the type of index persistence requested in the properties parameter
+        index_persistence_type = properties[PERSISTENCE_TYPE_VALUE]
+
+        # creates the index persistence plugin temporary variable
+        index_persistence_plugin = None
+
+        for search_index_persistence_plugin in search_index_persistence_plugins:
+            # retrieves the persistence type of the current plugin
+            search_index_persistence_plugin_type = search_index_persistence_plugin.get_type()
+            
+            # in case the index type is the same as the index persistence plugin type
+            if search_index_persistence_plugin_type == index_persistence_type:
+                # sets the index persistence plugin to be used
+                index_persistence_plugin = search_index_persistence_plugin
+
+                # breaks the for cycle
+                break
+
+        # if there was no index persistence plugin selected
+        if not index_persistence_plugin:
+            raise search_exceptions.MissingIndexPersistencePlugin(index_persistence_type)
+
+        # loads the index
+        search_index = index_persistence_plugin.load_index(properties)
+
+        # returns the retrieved search index
+        return search_index
+
