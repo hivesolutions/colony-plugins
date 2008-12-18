@@ -70,7 +70,7 @@ class MissingProperty(SearchException):
 
         return "Missing property: %s" % self.message
 
-class MissingIndexProperty(SearchException):
+class MissingIndex(SearchException):
     """
     The missing index class.
     """

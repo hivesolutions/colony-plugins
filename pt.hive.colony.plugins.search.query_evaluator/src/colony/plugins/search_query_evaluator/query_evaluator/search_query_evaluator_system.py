@@ -84,17 +84,3 @@ class SearchQueryEvaluator:
         root_search_query_node.accept_post_order(index_search_visitor)
 
         return index_search_visitor.context_stack[0]
-
-        # check for an index in the properties dictionary
-#        if not "index" in properties:
-#            raise search_provider_text_exceptions.MissingProperty("index")
-
-        # parse the query using the selected interpreters
-        
-        # using the provided seek to the start of the doclist in the short barrel for every word.
-        # Scan through the doclists until there is a document that matches all the search terms.
-        # Compute the rank of that document for the query.
-        # If we are in the short barrels and at the end of any doclist, seek to the start of the doclist in the full barrel for every word and go to step 4.
-        #7. If we are not at the end of any doclist go to step 4.
-
-        #Sort the documents that have matched by rank and return the top k.
