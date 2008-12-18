@@ -42,6 +42,7 @@ import os.path
 import search_crawler_file_system_exceptions
 
 SEARCH_CRAWLER_TYPE = "file_system"
+""" The search crawler type """
 
 class SearchCrawlerFileSystem:
     """
@@ -68,26 +69,40 @@ class SearchCrawlerFileSystem:
         if not "start_path" in properties:
             raise search_crawler_file_system_exceptions.MissingProperty("start_path")
 
+        # retrieves the start path
         start_path = properties["start_path"]
 
+        # creates the token list
         token_list = []
 
+        # start the path walking in the start path
         os.path.walk(start_path, self.walker, token_list)
 
+        # returns the token list
         return token_list
 
     def walker(self, args, directory_name, names):
-        # open the directory
+        """
+        The walker method, that iterates through all the 
+        search provider text file plugins.
         
-        # iterate through all the search provider text file plugins
-        # have the search provider text file plugin process the file name
+        @type args: Object
+        @param args: The walker arguments.
+        @type directory_name: String
+        @param directory_name: The directory name.
+        @type names: List
+        @param names: The name of the files of the current directory.
+        """
 
+        # retrieves the token list
         token_list = args
 
         # creates the file paths list
         file_paths_list = [directory_name + "/" + value for value in names]
 
+        # iterates over all the file paths
         for file_path in file_paths_list:
+            # sets the properties for the handler plugin
             properties = {"file_path" : file_path}
 
             search_provider_file_system_plugin = self.get_handler_plugin(properties)
@@ -95,7 +110,7 @@ class SearchCrawlerFileSystem:
             if search_provider_file_system_plugin:
                 tokens = search_provider_file_system_plugin.get_tokens(properties)
                 token_list.append(tokens)
-    
+
     def get_handler_plugin(self, properties):
         search_provider_file_system_plugins = self.search_crawler_file_system_plugin.search_provider_file_system_plugins
 

@@ -66,14 +66,17 @@ class SearchProviderText:
         self.search_provider_text_plugin = search_provider_text_plugin
 
     def is_file_provider(self, properties):
+
         if not "file_path" in properties:
             return False
 
+        # retrieves the file path
         file_path = properties["file_path"]
 
         # retrieves the file extension
         file_extension = file_path.split(".")[-1]
 
+        # in case the file extension is compatible
         if file_extension in FILE_EXTENSIONS:
             return True
 
@@ -83,6 +86,7 @@ class SearchProviderText:
         if not "file_path" in properties:
             raise search_provider_text_exceptions.MissingProperty("file_path")
 
+        # retrieves the file path
         file_path = properties["file_path"]
 
         # retrieves the file size (in bytes)
