@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import search_query_evaluator_visitor
+
 class SearchQueryEvaluator:
     """
     The search query evaluator class.
@@ -55,10 +57,12 @@ class SearchQueryEvaluator:
 
         self.search_query_evaluator_plugin = search_query_evaluator_plugin
 
-    def evaluate_query(self, query, properties):
+    def evaluate_query(self, search_index, query, properties):
         """
         The method to start the search query evaluator.
         
+        @type search_index: SearchIndex
+        @param search_index: The search index to be used.
         @type query: String
         @param query: The query string with the search terms.
         @type properties: Dictionary
@@ -67,10 +71,24 @@ class SearchQueryEvaluator:
         @return: The set of results sorted according to the selected and available scorer types.
         """
 
+        search_query_interpreter_plugin = self.search_query_evaluator_plugin.search_query_interpreter_plugin
+
+        search_query = search_query_interpreter_plugin.parse_query(query, properties)
+
+        root_search_query_node = search_query.root_search_query_node
+
+        search_visitor = search_query_evaluator_visitor.Visitor()
+        root_search_query_node.accept_post_order(search_visitor)
+
+        index_search_visitor = search_query_evaluator_visitor.IndexSearchVisitor(search_index)
+        root_search_query_node.accept_post_order(index_search_visitor)
+
+        return index_search_visitor.context_stack[0]
+
         # check for an index in the properties dictionary
-        if not "index" in properties:
-            raise search_provider_text_exceptions.MissingProperty("index")
-        
+#        if not "index" in properties:
+#            raise search_provider_text_exceptions.MissingProperty("index")
+
         # parse the query using the selected interpreters
         
         # using the provided seek to the start of the doclist in the short barrel for every word.

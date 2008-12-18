@@ -55,13 +55,13 @@ class SearchQueryEvaluatorPlugin(colony.plugins.plugin_system.Plugin):
     capabilities = ["search_query_evaluator"]
     capabilities_allowed = ["search_query_interpreter"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.search.interpreter", "1.0.0"),
-                    colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.search.indexer", "1.0.0")]
+                    "pt.hive.colony.plugins.search.query_interpreter", "1.0.0")]
     events_handled = []
     events_registrable = []
 
     search_query_evaluator = None
+
+    search_query_interpreter_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -84,8 +84,16 @@ class SearchQueryEvaluatorPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.search.query_evaluator", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def evaluate_query(self, query, properties):
-        return self.search_query_evaluator.evaluate_query(query, properties)
+    def evaluate_query(self, search_index, query, properties):
+        return self.search_query_evaluator.evaluate_query(search_index, query, properties)
+
+    def get_search_query_interpreter_plugin(self):
+        return self.search_query_interpreter_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.search.query_interpreter")
+    def set_search_query_interpreter_plugin(self, search_query_interpreter_plugin):
+        self.search_query_interpreter_plugin = search_query_interpreter_plugin
