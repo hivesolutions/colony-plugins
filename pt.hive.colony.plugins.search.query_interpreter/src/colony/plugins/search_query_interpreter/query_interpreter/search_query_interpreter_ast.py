@@ -37,7 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class AstNode:
+class AstNode(object):
     """
     The ast node class.
     """
@@ -64,6 +64,34 @@ class AstNode:
         """
 
         return "<ast_node value:%s child_nodes:%s>" % (self.value, len(self.child_nodes))
+
+    def accept(self, visitor):
+        """
+        Accepts the visitor running the iteration logic.
+        
+        @type visitor: Visitor
+        @param visitor: The visitor object.
+        """
+
+        visitor.visit(self)
+
+        if visitor.visit_childs:
+            for child_node in self.child_nodes:
+                child_node.accept(visitor)
+
+    def accept_post_order(self, visitor):
+        """
+        Accepts the visitor running the iteration logic, in post order.
+        
+        @type visitor: Visitor
+        @param visitor: The visitor object.
+        """
+
+        if visitor.visit_childs:
+            for child_node in self.child_nodes:
+                child_node.accept_post_order(visitor)
+
+        visitor.visit(self)
 
     def set_value(self, value):
         """
@@ -100,6 +128,15 @@ class QueryNode(AstNode):
     The query node.
     """
 
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        AstNode.__init__(self)
+
+class SimpleQueryNode(QueryNode):
+
     term_node = None
     """ The term node """
 
@@ -123,8 +160,11 @@ class QueryNode(AstNode):
 
 class BooleanQueryNode(QueryNode):
 
-    query_node = None
-    """ The query node """
+    first_query_node = None
+    """ The first query node """
+
+    second_query_node = None
+    """ The second query node """
 
     def __init__(self):
         """
@@ -133,16 +173,27 @@ class BooleanQueryNode(QueryNode):
 
         QueryNode.__init__(self)
 
-    def set_query_node(self, term_node):
+    def set_first_query_node(self, first_query_node):
         """
-        Sets the query node.
+        Sets the first query node.
         
-        @type query_node: QueryNode
-        @param query_node: The query node.
+        @type first_query_node: QueryNode
+        @param first_query_node: The first query node.
         """
 
-        self.query_node = query_node
-        self.add_child_node(query_node)
+        self.first_query_node = first_query_node
+        self.add_child_node(first_query_node)
+
+    def set_second_query_node(self, second_query_node):
+        """
+        Sets the second query node.
+        
+        @type second_query_node: QueryNode
+        @param second_query_node: The second query node.
+        """
+
+        self.second_query_node = second_query_node
+        self.add_child_node(second_query_node)
 
 class AndBooleanQueryNode(BooleanQueryNode):
     """
@@ -156,6 +207,37 @@ class OrBooleanQueryNode(BooleanQueryNode):
 
     def __init__(self):
         BooleanQueryNode.__init__(self)
+
+class MultipleTermNode(AstNode):
+
+    first_term_node = None
+
+    second_term_node = None
+
+    def __init__(self):
+        AstNode.__init__(self)
+
+    def set_first_term_node(self, first_term_node):
+        """
+        Sets the first term node.
+        
+        @type first_term_node: TermNode
+        @param first_term_node: The first term node.
+        """
+
+        self.first_term_node = first_term_node
+        self.add_child_node(first_term_node)
+
+    def set_second_term_node(self, second_term_node):
+        """
+        Sets the first term node.
+        
+        @type second_term_node: TermNode
+        @param second_term_node: The second term node.
+        """
+
+        self.second_term_node = second_term_node
+        self.add_child_node(second_term_node)
 
 class TermNode(AstNode):
 

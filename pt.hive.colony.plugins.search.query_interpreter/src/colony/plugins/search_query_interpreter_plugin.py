@@ -88,5 +88,5 @@ class SearchQueryInterpreterPlugin(colony.plugins.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def interpret_query(self, query_string, properties):
-        return self.search_query_interpreter.interpret_query(query_string, properties)
+    def parse_query(self, query_string, properties):
+        return self.search_query_interpreter.parse_query(query_string, properties)

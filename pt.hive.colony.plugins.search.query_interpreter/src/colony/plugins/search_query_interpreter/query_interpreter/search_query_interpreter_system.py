@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import search_query_interpreter_parser
+
 class SearchQueryInterpreter:
     """
     The search query interpreter class.
@@ -55,82 +57,25 @@ class SearchQueryInterpreter:
 
         self.search_query_interpreter_plugin = search_query_interpreter_plugin
 
-    def interpret_query(self, query_string, properties):
+    def parse_query(self, query_string, properties):
         """
         The method to start the search query interpreter.
         
         @type query_string: String
         @param query_string: The query string with the search terms.
         @type properties: Dictionary
-        @param properties: The map of properties for the query interpretation.
+        @param properties: The map of properties for the query parsing.
         @rtype: SearchQuery
         @return: A search query object created according to the search interpreter adapters available.
         """
 
-        search_query_interpreter_adapter_plugins = self.search_query_interpreter_plugin.search_query_interpreter_adapter_plugins
-
-        sortable_search_query_interpreter_adapter_plugins = [SortableSearchQueryInterpreterAdapterPlugin(value) for value in search_query_interpreter_adapter_plugins]
-        sortable_search_query_interpreter_adapter_plugins.sort()
-        sortable_search_query_interpreter_adapter_plugins.reverse()
-        sorted_search_query_interpreter_adapter_plugins = [value.search_query_interpreter_adapter_plugin for value in sortable_search_query_interpreter_adapter_plugins]
-
-        root_search_query_node = self.reduce_query_string(query_string, sorted_search_query_interpreter_adapter_plugins)
+        root_query_node = search_query_interpreter_parser.query_parser.parse(query_string)
 
         search_query = SearchQuery()
 
-        search_query.root_search_query_node = root_search_query_node
+        search_query.root_search_query_node = root_query_node
 
         return search_query
-
-    def reduce_query_string(self, query_string, search_query_interpreter_adapter_plugins):
-
-        index = 0
-
-        for search_query_interpreter_adapter_plugin in search_query_interpreter_adapter_plugins:
-
-            intepretation_result = search_query_interpreter_adapter_plugin.interpret_query(query_string)
-
-            if intepretation_result:
-                intepretation_operator, interpretation_operands = intepretation_result
-
-                search_query_node = SearchQueryNode()
-
-                search_query_node.operator = intepretation_operator
-
-                for interpretation_operand in interpretation_operands:
-                    operand_node = self.reduce_query_string(interpretation_operand, search_query_interpreter_adapter_plugins[index:])
-                    search_query_node.operands.append(operand_node)
-
-                return search_query_node
-
-            index += 1
-
-        leaf_search_query_node = LeafSearchQueryNode()
-
-        leaf_search_query_node.operands.append(query_string)
-
-        return leaf_search_query_node
-
-class SortableSearchQueryInterpreterAdapterPlugin:
-
-    search_query_interpreter_adapter_plugin = None
-
-    def __init__(self, search_query_interpreter_adapter_plugin):    
-        self.search_query_interpreter_adapter_plugin = search_query_interpreter_adapter_plugin
-
-    def __cmp__(self, other):
-        priority = self.get_priority()
-        other_priority = other.get_priority()
-
-        if priority > other_priority:
-            return 1
-        elif priority < other_priority:
-            return -1
-        else:
-            return 0
-
-    def get_priority(self):
-        return search_query_interpreter_adapter_plugin.get_priority()
 
 class SearchQuery:
 
@@ -138,18 +83,3 @@ class SearchQuery:
 
     def __init__(self):
         pass
-
-class SearchQueryNode:
-
-    operator = "none"
-
-    operands = []
-
-    def __init__(self):
-        self.operands = []
-
-class LeafSearchQueryNode(SearchQueryNode):
-
-    def __init__(self):
-        SearchQueryNode.__init__(self)
-        self.operator = "none"

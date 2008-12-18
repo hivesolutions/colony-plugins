@@ -52,61 +52,84 @@ def p_query(t):
     # retrieves the term node
     term_node = t[1]
 
-    query_node = search_query_interpreter_ast.QueryNode()
+    simple_query_node = search_query_interpreter_ast.SimpleQueryNode()
 
-    query_node.set_term_node(term_node)
+    simple_query_node.set_term_node(term_node)
 
-    t[0] = query_node
+    t[0] = simple_query_node
 
 def p_query_and(t):
-    "query : query AND term"
+    "query : query AND query"
 
-    query_node = t[1]
+    first_query_node = t[1]
 
-    term_node = t[3]
+    second_query_node = t[3]
 
     and_boolean_query_node = search_query_interpreter_ast.AndBooleanQueryNode()
 
-    and_boolean_query_node.set_query_node(query_node)
+    and_boolean_query_node.set_first_query_node(first_query_node)
 
-    and_boolean_query_node.set_term_node(term_node)
+    and_boolean_query_node.set_second_query_node(second_query_node)
 
     t[0] = and_boolean_query_node
 
 def p_query_or(t):
-    "query : query OR term"
+    "query : query OR query"
 
-    query_node = t[1]
+    first_query_node = t[1]
 
-    term_node = t[3]
+    second_query_node = t[3]
 
     or_boolean_query_node = search_query_interpreter_ast.OrBooleanQueryNode()
 
-    or_boolean_query_node.set_query_node(query_node)
+    or_boolean_query_node.set_first_query_node(first_query_node)
 
-    or_boolean_query_node.set_term_node(term_node)
+    or_boolean_query_node.set_second_query_node(second_query_node)
 
     t[0] = or_boolean_query_node
 
-def p_query_space(t):
-    "query : query term"
+def p_term_multiple_NAME(t):
+    "term : NAME term"
 
-    query_node = t[1]
+    first_term_value = t[1]
 
-    term_node = t[2]
+    first_term_node = search_query_interpreter_ast.TermNode()
 
-    and_boolean_query_node = search_query_interpreter_ast.AndBooleanQueryNode()
+    first_term_node.set_term_value(first_term_value)
 
-    and_boolean_query_node.set_query_node(query_node)
+    second_term_node = t[2]
 
-    and_boolean_query_node.set_term_node(term_node)
+    multiple_term_node = search_query_interpreter_ast.MultipleTermNode()
 
-    t[0] = and_boolean_query_node
+    multiple_term_node.set_first_term_node(first_term_node)
+
+    multiple_term_node.set_second_term_node(second_term_node)
+
+    t[0] = multiple_term_node
+
+def p_term_multiple_QUOTED(t):
+    "term : QUOTED term"
+
+    first_term_value = t[1]
+
+    first_term_node = search_query_interpreter_ast.QuotedNode()
+
+    first_term_node.set_term_value(first_term_value)
+
+    second_term_node = t[2]
+
+    multiple_term_node = search_query_interpreter_ast.MultipleTermNode()
+
+    multiple_term_node.set_first_term_node(first_term_node)
+
+    multiple_term_node.set_second_term_node(second_term_node)
+
+    t[0] = multiple_term_node
 
 def p_term(t):
     "term : NAME"
 
-    term_value = t[0]
+    term_value = t[1]
 
     term_node = search_query_interpreter_ast.TermNode()
 
@@ -117,7 +140,7 @@ def p_term(t):
 def p_term_quoted(t):
     "term : QUOTED"
 
-    term_value = t[0]
+    term_value = t[1]
 
     quoted_node = search_query_interpreter_ast.QuotedNode()
 
