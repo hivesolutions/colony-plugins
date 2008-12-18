@@ -390,13 +390,11 @@ class IndexSearchVisitor:
             smallest_operand = second_operand
             bigest_operand = first_operand
 
-        intersection_map = {}
-
         for document_id in smallest_operand:
-            if document_id in bigest_operand:
-                intersection_map[document_id] = None
+            if not document_id in bigest_operand:
+                del smallest_operand[document_id]
 
-        self.context_stack.append(intersection_map)
+        self.context_stack.append(smallest_operand)
 
     @_visit(search_query_interpreter_ast.OrBooleanQueryNode)
     def visit_or_boolean_query_node(self, node):
@@ -427,13 +425,11 @@ class IndexSearchVisitor:
             smallest_operand = second_operand
             bigest_operand = first_operand
 
-        intersection_map = {}
-
         for document_id in smallest_operand:
-            if document_id in bigest_operand:
-                intersection_map[document_id] = None
+            if not document_id in bigest_operand:
+                del smallest_operand[document_id]
 
-        self.context_stack.append(intersection_map)
+        self.context_stack.append(smallest_operand)
 
     @_visit(search_query_interpreter_ast.TermNode)
     def visit_term_node(self, node):
@@ -450,7 +446,7 @@ class IndexSearchVisitor:
 
         # accumulator for the common documents for the quoted text
         current_document_intersection = None
-        
+
         # the hit list for the quoted text in sequence
         quoted_text_hit_list = []
 
