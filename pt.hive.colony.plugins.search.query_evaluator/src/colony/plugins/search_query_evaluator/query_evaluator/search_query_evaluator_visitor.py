@@ -383,34 +383,63 @@ class IndexSearchVisitor:
         second_operand = self.context_stack.pop()
         first_operand = self.context_stack.pop()
 
-        intersection = [value for value in first_operand if value in second_operand]
+        if len(first_operand) < len(second_operand):
+            smallest_operand = first_operand
+            bigest_operand = second_operand
+        else:
+            smallest_operand = second_operand
+            bigest_operand = first_operand
 
-        self.context_stack.append(intersection)
+        intersection_map = {}
+
+        for document_id in smallest_operand:
+            if document_id in bigest_operand:
+                intersection_map[document_id] = None
 
     @_visit(search_query_interpreter_ast.OrBooleanQueryNode)
     def visit_or_boolean_query_node(self, node):
         second_operand = self.context_stack.pop()
         first_operand = self.context_stack.pop()
 
-        merge = list(set(first_operand + second_operand))
+        if len(first_operand) < len(second_operand):
+            smallest_operand = first_operand
+            bigest_operand = second_operand
+        else:
+            smallest_operand = second_operand
+            bigest_operand = first_operand
 
-        self.context_stack.append(merge)
+        for document_id in smallest_operand:
+            bigest_operand[document_id] = None
+
+        self.context_stack.append(bigest_operand)
 
     @_visit(search_query_interpreter_ast.MultipleTermNode)
     def visit_multiple_term_node(self, node):
         second_operand = self.context_stack.pop()
         first_operand = self.context_stack.pop()
 
-        intersection = [value for value in first_operand if value in second_operand]
+        if len(first_operand) < len(second_operand):
+            smallest_operand = first_operand
+            bigest_operand = second_operand
+        else:
+            smallest_operand = second_operand
+            bigest_operand = first_operand
 
-        self.context_stack.append(intersection)
+        intersection_map = {}
+
+        for document_id in smallest_operand:
+            if document_id in bigest_operand:
+                intersection_map[document_id] = None
+
+        self.context_stack.append(intersection_map)
 
     @_visit(search_query_interpreter_ast.TermNode)
     def visit_term_node(self, node):
         term_value = node.term_value
 
-        term_value_hit_list = self.search_index.inverted_index_map.get(term_value, {}).keys()
-        self.context_stack.append(term_value_hit_list)
+        word_inverted_index_map = self.search_index.inverted_index_map.get(term_value, {})
+
+        self.context_stack.append(word_inverted_index_map)
 
     @_visit(search_query_interpreter_ast.QuotedNode)
     def visit_quoted_node(self, node):
