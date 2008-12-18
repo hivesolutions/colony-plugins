@@ -435,7 +435,7 @@ class IndexSearchVisitor:
 
                 for document_id in word_inverted_index_map:
                     if document_id in current_document_intersection:
-                        new_map[document_id] = []
+                        new_map[document_id] = None
 
                 current_document_intersection = new_map
 
@@ -455,9 +455,10 @@ class IndexSearchVisitor:
                     # encapsulate the hit item
                     sortable_hit_item = SortableHitItem(term_value, term_value_hit_item)
 
+                    # appends the sortable hit item to the list of sortable hit items
                     sortable_hit_items.append(sortable_hit_item)
 
-            # sort the list
+            # sort the list of sortable hit items
             sortable_hit_items.sort()
             sortable_hit_items_length = len(sortable_hit_items)
 
@@ -486,13 +487,15 @@ class IndexSearchVisitor:
                     break
 
         self.context_stack.append(quoted_text_hit_list)
-        
+
 class SortableHitItem:
-    
+
     word = "none"
+
     word_hit_item = {}
+
     position = 0
-    
+
     def __init__(self, word, word_hit_item):
         self.word = word
         self.word_hit_item = word_hit_item
