@@ -396,6 +396,8 @@ class IndexSearchVisitor:
             if document_id in bigest_operand:
                 intersection_map[document_id] = None
 
+        self.context_stack.append(intersection_map)
+
     @_visit(search_query_interpreter_ast.OrBooleanQueryNode)
     def visit_or_boolean_query_node(self, node):
         second_operand = self.context_stack.pop()
