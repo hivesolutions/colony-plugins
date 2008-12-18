@@ -489,12 +489,18 @@ class IndexSearchVisitor:
         self.context_stack.append(quoted_text_hit_list)
 
 class SortableHitItem:
+    """
+    The sortable hit item class.
+    """
 
     word = "none"
+    """ The word value """
 
     word_hit_item = {}
+    """ The word hit item map """
 
     position = 0
+    """ The position """
 
     def __init__(self, word, word_hit_item):
         self.word = word
@@ -504,7 +510,6 @@ class SortableHitItem:
     def __cmp__(self, other):
         # retrieves the other position
         other_position = other.position
-        
+
         # compares both positions
         return self.position - other_position    
-
