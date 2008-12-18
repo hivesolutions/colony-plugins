@@ -54,14 +54,13 @@ class SearchQueryInterpreterPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["search_query_interpreter"]
-    capabilities_allowed = ["search_query_interpreter_adapter"]
-    dependencies = []
+    capabilities_allowed = []
+    dependencies = [colony.plugins.plugin_system.PackageDependency(
+                    "PLY", "ply", "2.5.x", "http://www.dabeaz.com/ply")]
     events_handled = []
     events_registrable = []
 
     search_query_interpreter = None
-
-    search_query_interpreter_adapter_plugins = []
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -91,11 +90,3 @@ class SearchQueryInterpreterPlugin(colony.plugins.plugin_system.Plugin):
 
     def interpret_query(self, query_string, properties):
         return self.search_query_interpreter.interpret_query(query_string, properties)
-
-    @colony.plugins.decorators.load_allowed_capability("search_query_interpreter_adapter")
-    def search_query_interpreter_adapter_load_allowed(self, plugin, capability):
-        self.search_query_interpreter_adapter_plugins.append(plugin)
-
-    @colony.plugins.decorators.unload_allowed_capability("search_query_interpreter_adapter")
-    def search_query_interpreter_adapter_unload_allowed(self, plugin, capability):
-        self.search_query_interpreter_adapter_plugins.remove(plugin)
