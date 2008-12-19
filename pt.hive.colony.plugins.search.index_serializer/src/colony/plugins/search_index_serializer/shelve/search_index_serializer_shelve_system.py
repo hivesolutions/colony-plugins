@@ -127,13 +127,13 @@ class SearchIndexSerializerShelve:
         file_path = properties[FILE_PATH_VALUE]
 
         # creates the forward index map
-        forward_index_map = shelve.open("C:/tobias/forward_index_map.index", writeback = False)
+        forward_index_map = shelve.open("C:/tobias/forward_index_map.index", writeback = True)
 
         # creates the inverted index map
-        inverted_index_map = shelve.open("C:/tobias/inverted_index_map.index", writeback = False)
+        inverted_index_map = shelve.open("C:/tobias/inverted_index_map.index", writeback = True)
 
         # creates the properties
-        properties = shelve.open("C:/tobias/properties.index", writeback = False)
+        properties = shelve.open("C:/tobias/properties.index", writeback = True)
 
         # creates the search index object
         search_index = SearchIndex()
