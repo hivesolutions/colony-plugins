@@ -49,7 +49,7 @@ reserved = {
 }
 
 def t_NAME(t):
-    r"[a-zA-Z_0-9]+"
+    r"(?u)\w+"
     t.type = reserved.get(t.value, "NAME")
     return t
 
