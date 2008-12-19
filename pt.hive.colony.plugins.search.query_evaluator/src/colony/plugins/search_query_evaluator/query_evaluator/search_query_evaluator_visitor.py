@@ -392,7 +392,7 @@ class IndexSearchVisitor:
 
             word_inverted_index_map = self.search_index.inverted_index_map.get(term_value, {})
 
-            if not current_document_intersection:
+            if current_document_intersection == None:
                 current_document_intersection = word_inverted_index_map
             else:
                 new_map = {}
@@ -411,6 +411,7 @@ class IndexSearchVisitor:
             # iterates over all the quoted words to create the sortable hit items list,
             # which will be sorted and scanned for valid subsequences (where all the quoted words are adjacent)
             for term_value in term_value_list:
+                debug_info = self.search_index.inverted_index_map.get(term_value, {})
                 term_value_hit_list = self.search_index.inverted_index_map.get(term_value, {})[document]
 
                 # iterates over all the hit list for the current term value
