@@ -45,7 +45,7 @@ import search_provider_text_exceptions
 
 FILE_EXTENSIONS = ["txt", "text", "TXT", "TEXT"]
 
-WORD_REGEX = "\w+"
+WORD_REGEX = "(?u)\w+"
 
 class SearchProviderText:
     """
