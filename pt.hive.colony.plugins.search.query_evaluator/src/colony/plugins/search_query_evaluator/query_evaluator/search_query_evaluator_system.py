@@ -39,6 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import search_query_evaluator_visitor
 
+HIT_LIST_VALUE = "hit_list"
+""" The key for the search result dictionary that retrieves the search result hit list """
+
 class SearchQueryEvaluator:
     """
     The search query evaluator class.
@@ -50,7 +53,7 @@ class SearchQueryEvaluator:
     def __init__(self, search_query_evaluator_plugin):
         """
         Constructor of the class.
-        
+
         @type search_query_evaluator_plugin: SearchQueryEvaluatorPlugin
         @param search_query_evaluator_plugin: The search query evaluator plugin.
         """
@@ -60,27 +63,43 @@ class SearchQueryEvaluator:
     def evaluate_query(self, search_index, query, properties):
         """
         The method to start the search query evaluator.
-        
+
         @type search_index: SearchIndex
         @param search_index: The search index to be used.
         @type query: String
         @param query: The query string with the search terms.
         @type properties: Dictionary
         @param properties: The map of properties for the query evaluation.
-        @rtype: SortedResultSet
-        @return: The set of results sorted according to the selected and available scorer types.
+        @rtype: Dictionary
+        @return: The result set for the query in the search index, as a map with document id keys.
         """
 
+        # retrieve the query interpreter plugin
         search_query_interpreter_plugin = self.search_query_evaluator_plugin.search_query_interpreter_plugin
 
+        # parse the search query into a query object
         search_query = search_query_interpreter_plugin.parse_query(query, properties)
 
+        # retrieve the root node of the query abstract syntax tree
         root_search_query_node = search_query.root_search_query_node
 
+        # traverse the query AST in post order with the debug visitor
         search_visitor = search_query_evaluator_visitor.Visitor()
         root_search_query_node.accept_post_order(search_visitor)
 
+        # traverse the query AST in post order with the index search visitor
         index_search_visitor = search_query_evaluator_visitor.IndexSearchVisitor(search_index)
         root_search_query_node.accept_post_order(index_search_visitor)
 
-        return index_search_visitor.context_stack[0]
+        # retrieve the index search visitor results from its stack
+        index_search_visitor_results = index_search_visitor.context_stack[0]
+        search_results = {}
+
+        # wrap each search result hit list in a dictionary to hold further metadata (score information, etc.)
+        for index_search_visitor_result_key, index_search_visitor_result_value  in index_search_visitor_results.items():
+            # build a map wrapping the hit list    
+            search_result_map = {HIT_LIST_VALUE: index_search_visitor_result_value}
+            # add the map to the search results
+            search_results[index_search_visitor_result_key] = search_result_map  
+
+        return search_results

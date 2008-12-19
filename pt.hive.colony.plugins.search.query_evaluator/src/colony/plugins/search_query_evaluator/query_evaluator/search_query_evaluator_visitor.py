@@ -322,14 +322,19 @@ class IndexSearchVisitor:
 
         if len(first_operand) < len(second_operand):
             smallest_operand = first_operand
-            bigest_operand = second_operand
+            biggest_operand = second_operand
         else:
             smallest_operand = second_operand
-            bigest_operand = first_operand
+            biggest_operand = first_operand
+
+        document_id_removal_list = []
 
         for document_id in smallest_operand:
-            if not document_id in bigest_operand:
-                del smallest_operand[document_id]
+            if not document_id in biggest_operand:
+                document_id_removal_list.append(document_id)
+
+        for document_id_removal_list_item in document_id_removal_list:
+            del smallest_operand[document_id_removal_list_item]
 
         self.context_stack.append(smallest_operand)
 
@@ -340,15 +345,15 @@ class IndexSearchVisitor:
 
         if len(first_operand) < len(second_operand):
             smallest_operand = first_operand
-            bigest_operand = second_operand
+            biggest_operand = second_operand
         else:
             smallest_operand = second_operand
-            bigest_operand = first_operand
+            biggest_operand = first_operand
 
         for document_id in smallest_operand:
-            bigest_operand[document_id] = None
+            biggest_operand[document_id] = None
 
-        self.context_stack.append(bigest_operand)
+        self.context_stack.append(biggest_operand)
 
     @_visit(search_query_interpreter_ast.MultipleTermNode)
     def visit_multiple_term_node(self, node):
@@ -357,14 +362,19 @@ class IndexSearchVisitor:
 
         if len(first_operand) < len(second_operand):
             smallest_operand = first_operand
-            bigest_operand = second_operand
+            biggest_operand = second_operand
         else:
             smallest_operand = second_operand
-            bigest_operand = first_operand
+            biggest_operand = first_operand
+
+        document_id_removal_list = []
 
         for document_id in smallest_operand:
-            if not document_id in bigest_operand:
-                del smallest_operand[document_id]
+            if not document_id in biggest_operand:
+                document_id_removal_list.append(document_id)
+
+        for document_id_removal_list_item in document_id_removal_list:
+            del smallest_operand[document_id_removal_list_item]
 
         self.context_stack.append(smallest_operand)
 
@@ -392,7 +402,7 @@ class IndexSearchVisitor:
 
             word_inverted_index_map = self.search_index.inverted_index_map.get(term_value, {})
 
-            if current_document_intersection == None:
+            if not current_document_intersection:
                 current_document_intersection = word_inverted_index_map
             else:
                 new_map = {}
@@ -411,7 +421,6 @@ class IndexSearchVisitor:
             # iterates over all the quoted words to create the sortable hit items list,
             # which will be sorted and scanned for valid subsequences (where all the quoted words are adjacent)
             for term_value in term_value_list:
-                debug_info = self.search_index.inverted_index_map.get(term_value, {})
                 term_value_hit_list = self.search_index.inverted_index_map.get(term_value, {})[document]
 
                 # iterates over all the hit list for the current term value
