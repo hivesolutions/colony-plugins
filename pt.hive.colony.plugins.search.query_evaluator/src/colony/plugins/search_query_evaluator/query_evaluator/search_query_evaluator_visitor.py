@@ -167,12 +167,6 @@ class Visitor:
     node_method_map = {}
     """ The node method map """
 
-    current_context_stack = ["global"]
-    """ The current context stack """
-    
-    current_context_type_stack = ["function"]
-    """ The current context type stack """
-
     visit_childs = True
     """ The visit childs flag """
 
@@ -181,8 +175,6 @@ class Visitor:
 
     def __init__(self):
         self.node_method_map = {}
-        self.current_context_stack = ["global"]
-        self.current_context_type_stack = ["global"]
         self.visit_childs = True
         self.visit_next = True
 
@@ -206,30 +198,6 @@ class Visitor:
                 ast_node_class = getattr(self_class_real_element, "ast_node_class")
 
                 self.node_method_map[ast_node_class] = self_class_real_element
-
-    def get_current_context(self):
-        return self.current_context_stack[-1]
-
-    def pop_current_context(self):
-        self.current_context_stack.pop()
-
-    def push_current_context(self, context):
-        self.current_context_stack.append(context)
-
-    def get_current_context_type(self):
-        return self.current_context_type_stack[-1]
-
-    def get_current_context_type_stack(self):
-        return self.current_context_type_stack
-
-    def pop_current_context_type(self, node):
-        self.current_context_type_stack.pop()
-
-    def push_current_context_type(self, context_type, node):
-        self.current_context_type_stack.append(context_type)
-
-    def valid_context_type(self, context_type, node):
-        return True
 
     @dispatch_visit()
     def visit(self, node):
@@ -282,12 +250,6 @@ class IndexSearchVisitor:
     node_method_map = {}
     """ The node method map """
 
-    current_context_stack = ["global"]
-    """ The current context stack """
-    
-    current_context_type_stack = ["function"]
-    """ The current context type stack """
-
     visit_childs = True
     """ The visit childs flag """
 
@@ -296,15 +258,14 @@ class IndexSearchVisitor:
 
     search_index = None
     """ The search index """
-    
+
     context_stack = []
+    """ The context stack """
 
     def __init__(self, search_index):
         self.search_index = search_index
 
         self.node_method_map = {}
-        self.current_context_stack = ["global"]
-        self.current_context_type_stack = ["global"]
         self.visit_childs = True
         self.visit_next = True
 
@@ -330,30 +291,6 @@ class IndexSearchVisitor:
                 ast_node_class = getattr(self_class_real_element, "ast_node_class")
 
                 self.node_method_map[ast_node_class] = self_class_real_element
-
-    def get_current_context(self):
-        return self.current_context_stack[-1]
-
-    def pop_current_context(self):
-        self.current_context_stack.pop()
-
-    def push_current_context(self, context):
-        self.current_context_stack.append(context)
-
-    def get_current_context_type(self):
-        return self.current_context_type_stack[-1]
-
-    def get_current_context_type_stack(self):
-        return self.current_context_type_stack
-
-    def pop_current_context_type(self, node):
-        self.current_context_type_stack.pop()
-
-    def push_current_context_type(self, context_type, node):
-        self.current_context_type_stack.append(context_type)
-
-    def valid_context_type(self, context_type, node):
-        return True
 
     @dispatch_visit()
     def visit(self, node):
