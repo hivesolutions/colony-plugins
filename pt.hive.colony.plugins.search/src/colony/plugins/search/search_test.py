@@ -97,7 +97,7 @@ class SearchTestCase(unittest.TestCase):
     
     def test_method_create_index(self):
         """
-        This method targets the index creation using an available test path
+        This method targets the index creation using an available test path.
         """
 
         test_index = self.plugin.create_index({"start_path" : CRAWL_TARGET, "type" : INDEX_TYPE})
@@ -108,7 +108,7 @@ class SearchTestCase(unittest.TestCase):
 
     def test_method_persist_index(self):
         """
-        This method targets the index persistence façade method of the search plugin
+        This method targets the index persistence façade method of the search plugin.
         """
 
         # creates the test index
@@ -162,7 +162,8 @@ class SearchTestCase(unittest.TestCase):
 
     def test_method_query_index_sort_results_term_frequency_formula(self):
         """
-        This test exercises querying the index, scoring the results and sorting according to the term frequency score        
+        This test exercises querying the index, scoring the results and 
+        sorting according to the term frequency score.        
         """
 
         crawl_target = "/remote_home/lmartinho/workspace/pocketgoogle/scorer_test"
@@ -188,6 +189,27 @@ class SearchTestCase(unittest.TestCase):
         first_result_document_id = first_result.document_id
 
         self.assertEqual(first_result_document_id, term_frequency_scorer_first_result)        
+
+    def test_method_create_index_with_identifier(self):
+        """
+        This method targets the index creation using an available test path 
+        and saving to the search index repository with a specified identifier.
+        """
+        
+        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier", {"start_path" : CRAWL_TARGET, "type" : INDEX_TYPE})
+        # asserts that the index was sucessfully created
+        self.assertTrue(test_index)
+        self.assertTrue(test_index.forward_index_map)
+        self.assertTrue(test_index.inverted_index_map)
+
+        properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_formula_type": "term_frequency_formula_type", SEARCH_SCORER_FORMULA_TYPE_VALUE : "term_frequency_formula_type"}
+        test_results = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.test_index_identifier", "ford", properties)
+        # asserts that the index was sucessfully created
+        first_result = test_results[0]
+        first_result_document_id = first_result[0]
+
+        self.assertEqual(first_result_document_id, TEST_QUERY_FIRST_RESULT)
+
 
 class SearchPluginTestCase:
 

@@ -58,11 +58,13 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.search.interpreter", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.search.indexer", "1.0.0")]
+                    "pt.hive.colony.plugins.search.indexer", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.search.index_repository", "1.0.0")]
     events_handled = []
     events_registrable = []
 
-    search_system = None
+    search = None
 
     search_crawler_plugins = []
     search_index_persistence_plugins = []
@@ -71,6 +73,7 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
 
     search_interpreter_plugin = None
     search_indexer_plugin = None
+    search_index_repository_plugin = None
 
     search_test = None
 
@@ -79,7 +82,7 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
         global search
         import search.search_system
         import search.search_test
-        self.search_system = search.search_system.Search(self)
+        self.search = search.search_system.Search(self)
         self.search_test = search.search_test.SearchTest(self)
 
     def end_load_plugin(self):
@@ -104,19 +107,31 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def create_index(self, properties):
-        return self.search_system.create_index(properties)
+        return self.search.create_index(properties)
+
+    def create_index_with_identifier(self, search_index_identifier, properties):
+        return self.search.create_index_with_identifier(search_index_identifier, properties)
 
     def persist_index(self, search_index, properties):
-        return self.search_system.persist_index(search_index, properties)
+        return self.search.persist_index(search_index, properties)
 
     def load_index(self, properties):
-        return self.search_system.load_index(properties)
+        return self.search.load_index(properties)
+
+    def load_index_with_identifier(self, search_index_identifier, properties):
+        return self.search.load_index(search_index_identifier, properties)
 
     def query_index(self, search_index, search_query, properties):
-        return self.search_system.query_index(search_index, search_query, properties)
+        return self.search.query_index(search_index, search_query, properties)
 
     def query_index_sort_results(self, search_index, search_query, properties):
-        return self.search_system.query_index_sort_results(search_index, search_query, properties)
+        return self.search.query_index_sort_results(search_index, search_query, properties)
+
+    def search_index(self, search_index, search_query, properties):
+        return self.search.search_index(search_index, search_query, properties)
+
+    def search_index_by_identifier(self, search_index_identifier, search_query, properties):
+        return self.search.search_index_by_identifier(search_index_identifier, search_query, properties)
 
     def get_plugin_test_case_bundle(self):
         return self.search_test.get_plugin_test_case_bundle()
@@ -166,3 +181,10 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.search.indexer")
     def set_search_indexer_plugin(self, search_indexer_plugin):
         self.search_indexer_plugin = search_indexer_plugin
+
+    def get_search_index_repository_plugin(self):
+        return self.search_index_repository_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.search.index_repository")
+    def set_search_index_repository_plugin(self, search_index_repository_plugin):
+        self.search_index_repository_plugin = search_index_repository_plugin

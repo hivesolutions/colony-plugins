@@ -127,6 +127,15 @@ class Search:
         # returns the search index
         return search_index
 
+    def create_index_with_identifier(self, search_index_identifier, properties):
+        search_index_repository_plugin = self.search_plugin.search_index_repository_plugin
+
+        search_index = self.create_index(properties)
+
+        search_index_repository_plugin.add_index(search_index, search_index_identifier)
+
+        return search_index
+
     def persist_index(self, search_index, properties):
         """ 
         Persists the specified search index using the selected available persistence type.
@@ -208,6 +217,15 @@ class Search:
         search_index = index_persistence_plugin.load_index(properties)
 
         # returns the retrieved search index
+        return search_index
+
+    def load_index_with_identifier(self, search_index_identifier, properties):
+        search_index_repository_plugin = self.search_plugin.search_index_repository_plugin
+
+        search_index = self.load_index(properties)
+
+        search_index_repository_plugin.add_index(search_index, search_index_identifier)
+
         return search_index
 
     def query_index(self, search_index, search_query, properties):
@@ -311,3 +329,22 @@ class Search:
         sorted_search_results = search_scorer_plugin.sort_scored_results(scored_search_results, properties)
 
         return sorted_search_results
+
+    def search_index(self, search_index, search_query, properties):
+        sorted_sortable_search_results = self.query_index_sort_results(search_index, search_query, properties)
+
+        sorted_search_results = []
+
+        for sorted_sortable_search_result in sorted_sortable_search_results:
+            sorted_search_result = (sorted_sortable_search_result.document_id, sorted_sortable_search_result.search_result)
+
+            sorted_search_results.append(sorted_search_result)
+
+        return sorted_search_results
+
+    def search_index_by_identifier(self, search_index_identifier, search_query, properties):
+        search_index_repository_plugin = self.search_plugin.search_index_repository_plugin
+
+        search_index = search_index_repository_plugin.get_index(search_index_identifier)
+
+        return self.search_index(search_index, search_query, properties)
