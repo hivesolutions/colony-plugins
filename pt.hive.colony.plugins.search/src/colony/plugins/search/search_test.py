@@ -153,7 +153,7 @@ class SearchTestCase(unittest.TestCase):
         # creates in-memory index
         test_index = self.plugin.create_index({"start_path" : CRAWL_TARGET, "type" : INDEX_TYPE})
 
-        query_results = self.plugin.query_index(test_index, TEST_QUERY, {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_formula_type": "term_frequency_formula_type"})
+        query_results = self.plugin.query_index(test_index, TEST_QUERY, {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_formula_type" : "term_frequency_formula_type"})
 
         first_result = query_results[0]
         first_result_document_id = first_result[0]
