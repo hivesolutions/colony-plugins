@@ -59,25 +59,45 @@ class SearchScorer:
     def __init__(self, search_scorer_plugin):
         """
         Constructor of the class.
-
+        
         @type search_scorer_plugin: SearchScorerPlugin
         @param search_scorer_plugin: The search scorer plugin.
         """
 
         self.search_scorer_plugin = search_scorer_plugin
 
-    def calculate_score(self, search_results, search_index, properties):
+    def get_formula_types(self):
+        """
+        Returns the available search scorer formula types.
+        
+        @rtype: List
+        @return: Available search scorer formula types list.
+        """
+
+        # the return value
+        formula_types = []
+
+        # retrieves the available formula plugins
+        search_scorer_formula_bundle_plugins = self.search_scorer_plugin.search_scorer_formula_bundle_plugins
+
+        for search_scorer_formula_bundle_plugin in search_scorer_formula_bundle_plugins:
+            search_scorer_formula_bundle_plugin_formula_types = search_scorer_formula_bundle_plugin.get_formula_types()
+            formula_types.append(search_scorer_formula_bundle_plugin_formula_types)
+
+        return formula_types 
+
+    def score_search_results(self, search_index, search_results, properties):
         """
         The method to start the search scorer.
-
-        @type search_results: Dictionary
-        @param search_results: The map of search results determined by query evaluation.
+        
+        @type search_results: List
+        @param search_results: The list of (document id, search result) tuples determined by query evaluation.
         @type search_index: SearchIndex
         @param search_index: The search index used to perform the search.
         @type properties: Dictionary
         @param properties: The map of properties for the result scoring.
-        @rtype: Dictionary
-        @return: The scored result map, with the calculated score for each document id.
+        @rtype: List
+        @return: The scored result set as a list of (document id, scored search result) tuples.
         """
 
         # in case the score formula type value is not defined in the properties raises an exception
@@ -98,13 +118,14 @@ class SearchScorer:
             # retrieves the formula types provided by the current formula plugin
             search_scorer_formula_bundle_plugin_formula_types = search_scorer_formula_bundle_plugin.get_formula_types()
 
-            # if the current formula plugin provides the intended formula type, choose the current plugin as the score computation strategy
+            # if the current formula plugin provides the intended formula type, choose the current plugin
+            # as the score computation strategy
             if search_scorer_formula_type in search_scorer_formula_bundle_plugin_formula_types:
                 formula_bundle_plugin = search_scorer_formula_bundle_plugin
                 break
 
         # scores each of the search results
-        for search_result in search_results.values():
+        for document_id, search_result in search_results:
             # computes the formula output for the current search result 
             search_result_score_value = formula_bundle_plugin.calculate_value(search_result, search_index, search_scorer_formula_type, properties)
 
@@ -128,7 +149,7 @@ class SearchScorer:
         """
 
         # build a list of SortableSearchResult's from the original scored_search_results list
-        sortable_search_result_list = [SortableSearchResult(document_id, scored_search_result) for document_id, scored_search_result in scored_search_results.items()]
+        sortable_search_result_list = [SortableSearchResult(document_id, scored_search_result) for document_id, scored_search_result in scored_search_results]
 
         # the wrapping class is used to leverage list sorting
         sortable_search_result_list.sort()

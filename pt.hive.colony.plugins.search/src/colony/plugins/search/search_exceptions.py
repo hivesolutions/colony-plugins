@@ -121,3 +121,55 @@ class MissingIndexPersistencePlugin(SearchException):
         """
 
         return "Missing index persistence plugin: %s" % self.message
+
+class MissingQueryEvaluatorPlugin(SearchException):
+    """
+    The missing query evaluator plugin class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+        
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        SearchException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+        
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Missing query evaluator plugin: %s" % self.message
+
+class MissingSearchScorerPlugin(SearchException):
+    """
+    The missing search scorer plugin class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+        
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        SearchException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+        
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Missing search scorer plugin: %s" % self.message

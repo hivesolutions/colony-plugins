@@ -88,6 +88,9 @@ class SearchQueryEvaluatorPlugin(colony.plugins.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    def get_type(self):
+        return self.search_query_evaluator.get_type()
+
     def evaluate_query(self, search_index, query, properties):
         return self.search_query_evaluator.evaluate_query(search_index, query, properties)
 

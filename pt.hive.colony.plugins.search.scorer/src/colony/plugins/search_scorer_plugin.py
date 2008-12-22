@@ -53,7 +53,7 @@ class SearchScorerPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["search_scorer"]
-    capabilities_allowed = ["search_scorer_formula_bundle"]
+    capabilities_allowed = ["search_scorer_formula", "search_scorer_formula_bundle"]
     dependencies = []
     events_handled = []
     events_registrable = []
@@ -85,8 +85,11 @@ class SearchScorerPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    def calculate_score(self, search_results, search_index, properties):
-        return self.search_scorer.calculate_score(search_results, search_index, properties)
+    def get_formula_types(self):
+        return self.search_scorer.get_formula_types()
+
+    def score_search_results(self, search_index, search_results, properties):
+        return self.search_scorer.score_search_results(search_index, search_results, properties)
 
     def sort_scored_results(self, scored_search_results, properties):
         return self.search_scorer.sort_scored_results(scored_search_results, properties)

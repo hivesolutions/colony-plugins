@@ -42,6 +42,8 @@ import search_query_evaluator_visitor
 HIT_LIST_VALUE = "hit_list"
 """ The key for the search result dictionary that retrieves the search result hit list """
 
+QUERY_EVALUATOR_TYPE = "query_parser"
+
 class SearchQueryEvaluator:
     """
     The search query evaluator class.
@@ -53,17 +55,24 @@ class SearchQueryEvaluator:
     def __init__(self, search_query_evaluator_plugin):
         """
         Constructor of the class.
-
+        
         @type search_query_evaluator_plugin: SearchQueryEvaluatorPlugin
         @param search_query_evaluator_plugin: The search query evaluator plugin.
         """
 
         self.search_query_evaluator_plugin = search_query_evaluator_plugin
 
+    def get_type(self):
+        """
+        Returns the type of query evaluator of the class.
+        """
+
+        return QUERY_EVALUATOR_TYPE
+
     def evaluate_query(self, search_index, query, properties):
         """
         The method to start the search query evaluator.
-
+        
         @type search_index: SearchIndex
         @param search_index: The search index to be used.
         @type query: String
@@ -83,23 +92,20 @@ class SearchQueryEvaluator:
         # retrieve the root node of the query abstract syntax tree
         root_search_query_node = search_query.root_search_query_node
 
-        # traverse the query AST in post order with the debug visitor
-        search_visitor = search_query_evaluator_visitor.Visitor()
-        root_search_query_node.accept_post_order(search_visitor)
-
         # traverse the query AST in post order with the index search visitor
         index_search_visitor = search_query_evaluator_visitor.IndexSearchVisitor(search_index)
         root_search_query_node.accept_post_order(index_search_visitor)
 
         # retrieve the index search visitor results from its stack
         index_search_visitor_results = index_search_visitor.context_stack[0]
-        search_results = {}
+        search_results = []
 
         # wrap each search result hit list in a dictionary to hold further metadata (score information, etc.)
         for index_search_visitor_result_key, index_search_visitor_result_value  in index_search_visitor_results.items():
             # build a map wrapping the hit list    
             search_result_map = {HIT_LIST_VALUE: index_search_visitor_result_value}
             # add the map to the search results
-            search_results[index_search_visitor_result_key] = search_result_map  
+            search_result_tuple = (index_search_visitor_result_key, search_result_map)
+            search_results.append(search_result_tuple)
 
         return search_results

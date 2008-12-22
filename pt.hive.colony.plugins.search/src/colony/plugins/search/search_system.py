@@ -45,6 +45,12 @@ TYPE_VALUE = "type"
 PERSISTENCE_TYPE_VALUE = "persistence_type"
 """ The persistence type value """
 
+QUERY_EVALUATOR_TYPE_VALUE = "query_evaluator_type"
+""" The key for the properties map, to access the query evaluator type """
+
+SEARCH_SCORER_FORMULA_TYPE_VALUE = "search_scorer_formula_type"
+""" The key for the properties map, to access the search scorer formula type """
+
 class Search:
     """
     The search class.
@@ -124,7 +130,7 @@ class Search:
     def persist_index(self, search_index, properties):
         """ 
         Persists the specified search index using the selected available persistence type.
-
+        
         @type search_index: SearchIndex
         @param search_index: The search index to be persisted.
         @type properties: Dictionary
@@ -205,4 +211,103 @@ class Search:
         return search_index
 
     def query_index(self, search_index, search_query, properties):
-        pass
+        """
+        Queries the provided index, using an available search_query_evaluator plugin for the query type specified in the properties.
+        
+        @type search_index: SearchIndex
+        @param search_index: The index to use in the query.
+        @type search_query: String
+        @param search_query: The query to search against the index.
+        @type properties: Dictionary
+        @param properties: The properties to to query the search index.
+        @rtype: List
+        @return: The result set for the query in the search index, as a list of (document id, search result information) tuples.        
+        """
+        
+        # in case the persistence type value is not defined in the properties
+        if not QUERY_EVALUATOR_TYPE_VALUE in properties:
+            raise search_exceptions.MissingProperty(QUERY_EVALUATOR_TYPE_VALUE)
+        
+        # retrieves the query evaluator plugins
+        search_query_evaluator_plugins = self.search_plugin.search_query_evaluator_plugins
+        
+        # retrieves the query evaluator type specified in the properties parameter
+        query_evaluator_type = properties[QUERY_EVALUATOR_TYPE_VALUE]
+        
+        # gets the first plugin for the specified query evaluation type
+        for search_query_evaluator_plugin in search_query_evaluator_plugins:
+            # retrieves the query evaluator type of the current plugin
+            search_query_evaluator_plugin_type = search_query_evaluator_plugin.get_type()
+            
+            # in case the index type is the same as the index persistence plugin type
+            if search_query_evaluator_plugin_type == query_evaluator_type:
+                # sets the index persistence plugin to be used
+                query_evaluator_plugin = search_query_evaluator_plugin
+
+                # breaks the for cycle
+                break
+
+        # if there was no query evaluator plugin available
+        if not query_evaluator_plugin:
+            raise search_exceptions.MissingQueryEvaluatorPlugin(query_evaluator_type)
+
+        # evaluates the query and retrieves the results using the available query evaluator plugin
+        search_results = query_evaluator_plugin.evaluate_query(search_index, search_query, properties)
+        
+        return search_results
+
+    def query_index_sort_results(self, search_index, search_query, properties):
+        """
+        Queries the provided index, using an available search_query_evaluator plugin 
+        for the query type specified in the properties;
+        Scores the results, using an available search_scorer plugin for the scorer formula type 
+        specified in the properties;
+        Sorts the results by score.
+        
+        @type search_index: SearchIndex
+        @param search_index: The index to use in the query.
+        @type search_query: String
+        @param search_query: The query to search against the index.
+        @type properties: Dictionary
+        @param properties: The properties to to query the search index.
+        @rtype: List
+        @return: The result set for the query in the search index, as a list of (document id, search result information) tuples sorted by score.        
+        """
+
+        # in case the search scorer formula type not defined in the properties
+        if not SEARCH_SCORER_FORMULA_TYPE_VALUE in properties:
+            raise search_exceptions.MissingProperty(SEARCH_SCORER_FORMULA_TYPE_VALUE)
+
+        # retrieves the search scorer plugins
+        search_scorer_plugins = self.search_plugin.search_scorer_plugins
+
+        # retrieves the search scorer formula type specified in the properties parameter
+        search_scorer_formula_type = properties[SEARCH_SCORER_FORMULA_TYPE_VALUE]
+
+        # gets the first plugin for the specified search scorer formula type
+        for search_scorer_plugin in search_scorer_plugins:
+            # retrieves the search scorer formula type of the current plugin
+            search_scorer_plugin_formula_types = search_scorer_plugin.get_formula_types()
+
+            # in case the required scorer formula type is in the formula type list of the plugin
+            if search_scorer_formula_type == search_scorer_plugin_formula_types:
+                # sets the search scorer plugin to be used
+                search_scorer_plugin = search_scorer_plugin
+
+                # breaks the for cycle
+                break
+
+        # if there was no search scorer plugin available
+        if not search_scorer_plugin:
+            raise search_exceptions.MissingSearchScorerPlugin(search_scorer_formula_type)
+
+        # performs the search using own query_index method
+        search_results = self.query_index(search_index, search_query, properties)
+
+        # scores the results using the available search scorer plugin
+        scored_search_results = search_scorer_plugin.score_search_results(search_index, search_results, properties)
+        
+        # sorts the search results using the score
+        sorted_search_results = search_scorer_plugin.sort_scored_results(scored_search_results, properties)
+
+        return sorted_search_results

@@ -54,10 +54,20 @@ CRAWL_TARGET_INDEX_CREATION_BENCHMARK = 0.050
 TEST_QUERY = "ford"
 """ The test query for index querying """
 
+TEST_QUERY_FIRST_RESULT = "/remote_home/lmartinho/workspace/pocketgoogle/light-docs/cars.txt"
+""" The first result expected for the test query """
+
+QUERY_EVALUATOR_TYPE_VALUE = "query_evaluator_type"
+""" The key for the properties map, to access the query evaluator type """
+
+SEARCH_SCORER_FORMULA_TYPE_VALUE = "search_scorer_formula_type"
+""" The search scorer formula intended for testing """
+
 class SearchTest:
     """
     The Search plugin unit test class.
-    The search plugin represents the centralized interface to the search infrastructure, an is used as entry point for the search features.
+    The search plugin represents the centralized interface to the search infrastructure, 
+    and is used as entry point for the search features.
     This test suite exercises the plugin's façade, exercising any attached plugins in the process.
     """
 
@@ -92,9 +102,9 @@ class SearchTestCase(unittest.TestCase):
 
         test_index = self.plugin.create_index({"start_path" : CRAWL_TARGET, "type" : INDEX_TYPE})
         # asserts that the index was sucessfully created
-        assert test_index
-        assert test_index.forward_index_map
-        assert test_index.inverted_index_map
+        self.assertTrue(test_index)
+        self.assertTrue(test_index.forward_index_map)
+        self.assertTrue(test_index.inverted_index_map)
 
     def test_method_persist_index(self):
         """
@@ -105,8 +115,9 @@ class SearchTestCase(unittest.TestCase):
         test_index = self.plugin.create_index({"start_path" : CRAWL_TARGET, "type" : INDEX_TYPE})
         
         # persists the index to defined storage
-        persistence_sucess = self.plugin.persist_index(test_index, {"file_path" : INDEX_PERSISTENCE_TARGET_FILE_PATH, "persistence_type" : PERSISTENCE_TYPE, "serializer_type": SERIALIZER_TYPE})
-        assert persistence_sucess
+        properties = {"file_path" : INDEX_PERSISTENCE_TARGET_FILE_PATH, "persistence_type" : PERSISTENCE_TYPE, "serializer_type": SERIALIZER_TYPE}
+        persistence_sucess = self.plugin.persist_index(test_index, properties)
+        self.assertTrue(persistence_sucess)
 
     def test_method_performance_create_index(self):
         """
@@ -126,13 +137,13 @@ class SearchTestCase(unittest.TestCase):
         duration = end_time - start_time
 
         # asserts that the duration is inferior to the declared benchmark
-        assert duration <= CRAWL_TARGET_INDEX_CREATION_BENCHMARK
+        self.assertTrue(duration <= CRAWL_TARGET_INDEX_CREATION_BENCHMARK)
 
         # asserts that the index was successfully created
-        assert test_index
-        assert test_index.forward_index_map
-        assert test_index.inverted_index_map
-        
+        self.assertTrue(test_index)
+        self.assertTrue(test_index.forward_index_map)
+        self.assertTrue(test_index.inverted_index_map)
+
     def test_method_query_index(self):
         """
         This test exercises the query index of the search plugin's façade. 
@@ -142,8 +153,41 @@ class SearchTestCase(unittest.TestCase):
         # creates in-memory index
         test_index = self.plugin.create_index({"start_path" : CRAWL_TARGET, "type" : INDEX_TYPE})
 
-        self.plugin.query_index(test_index, TEST_QUERY, {"search_scorer_formula_type": "term_frequency_formula_type"})
+        query_results = self.plugin.query_index(test_index, TEST_QUERY, {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_formula_type": "term_frequency_formula_type"})
+
+        first_result = query_results[0]
+        first_result_document_id = first_result[0]
+
+        self.assertEqual(first_result_document_id, TEST_QUERY_FIRST_RESULT)
+
+    def test_method_query_index_sort_results_term_frequency_formula(self):
+        """
+        This test exercises querying the index, scoring the results and sorting according to the term frequency score        
+        """
+
+        crawl_target = "/remote_home/lmartinho/workspace/pocketgoogle/scorer_test"
+
+        query = "luis"
+        """ The query for the tf query test """
+
+        term_frequency_scorer_first_result = "/remote_home/lmartinho/workspace/pocketgoogle/scorer_test/ficheiro_10.txt"
+        """ The expected result for the tf query test """
+
+        # creates in-memory index
+        test_index = self.plugin.create_index({"start_path" : crawl_target, "type" : INDEX_TYPE})
+
+        # queries the index and retrieves scored and sorted results
+        properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_formula_type": "term_frequency_formula_type", SEARCH_SCORER_FORMULA_TYPE_VALUE : "term_frequency_formula_type"}
+        query_results = self.plugin.query_index_sort_results(test_index, query, properties)
         
+        self.assertTrue(query_results)
+
+        # asserts that the top result was the expected one
+        first_result = query_results[0]
+        # gets the document id from the sortable search result
+        first_result_document_id = first_result.document_id
+
+        self.assertEqual(first_result_document_id, term_frequency_scorer_first_result)        
 
 class SearchPluginTestCase:
 
