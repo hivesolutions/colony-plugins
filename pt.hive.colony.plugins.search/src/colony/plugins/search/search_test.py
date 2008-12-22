@@ -41,10 +41,10 @@ import time
 
 import unittest
 
-CRAWL_TARGET = "/remote_home/lmartinho/workspace/pocketgoogle/light-docs"
+CRAWL_TARGET = "/remote_home/search/light-docs"
 INDEX_TYPE = "file_system"
 
-INDEX_PERSISTENCE_TARGET_FILE_PATH = "/remote_home/lmartinho/workspace/pocketgoogle/light-docs/t.dmp"
+INDEX_PERSISTENCE_TARGET_FILE_PATH = "/remote_home/search/light-docs/t.dmp"
 PERSISTENCE_TYPE = "file_system"
 SERIALIZER_TYPE = "cpickle"
 
@@ -54,7 +54,7 @@ CRAWL_TARGET_INDEX_CREATION_BENCHMARK = 0.050
 TEST_QUERY = "ford"
 """ The test query for index querying """
 
-TEST_QUERY_FIRST_RESULT = "/remote_home/lmartinho/workspace/pocketgoogle/light-docs/cars.txt"
+TEST_QUERY_FIRST_RESULT = "/remote_home/search/light-docs/cars.txt"
 """ The first result expected for the test query """
 
 QUERY_EVALUATOR_TYPE_VALUE = "query_evaluator_type"
@@ -166,12 +166,12 @@ class SearchTestCase(unittest.TestCase):
         sorting according to the term frequency score.        
         """
 
-        crawl_target = "/remote_home/lmartinho/workspace/pocketgoogle/scorer_test"
+        crawl_target = "/remote_home/search/scorer_test"
 
         query = "luis"
         """ The query for the tf query test """
 
-        term_frequency_scorer_first_result = "/remote_home/lmartinho/workspace/pocketgoogle/scorer_test/ficheiro_10.txt"
+        term_frequency_scorer_first_result = "/remote_home/search/scorer_test/ficheiro_10.txt"
         """ The expected result for the tf query test """
 
         # creates in-memory index
