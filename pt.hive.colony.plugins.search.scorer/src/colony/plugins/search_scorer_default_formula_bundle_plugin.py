@@ -84,5 +84,5 @@ class SearchScorerDefaultFormulaBundlePlugin(colony.plugins.plugin_system.Plugin
     def get_formula_types(self):
         return self.default_scorer_formula_bundle.get_formula_types()
 
-    def calculate_value(self, search_result, search_index, search_scorer_formula_type, properties):
-        return self.default_scorer_formula_bundle.calculate_value(search_result, search_index, search_scorer_formula_type, properties)
+    def calculate_value(self, document_id, search_result, search_index, search_scorer_formula_type, properties):
+        return self.default_scorer_formula_bundle.calculate_value(document_id, search_result, search_index, search_scorer_formula_type, properties)

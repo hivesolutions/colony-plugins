@@ -124,10 +124,13 @@ class SearchScorer:
                 formula_bundle_plugin = search_scorer_formula_bundle_plugin
                 break
 
+        if not formula_bundle_plugin:
+            raise search_scorer_exceptions.MissingSearchScorerFormulaBundlePlugin(search_scorer_formula_type)
+
         # scores each of the search results
         for document_id, search_result in search_results:
             # computes the formula output for the current search result 
-            search_result_score_value = formula_bundle_plugin.calculate_value(search_result, search_index, search_scorer_formula_type, properties)
+            search_result_score_value = formula_bundle_plugin.calculate_value(document_id, search_result, search_index, search_scorer_formula_type, properties)
 
             # inserts a score information map, (containing scoring information: score, formula type, etc.)
             # in the search result map (containing information about the search result: hits, etc.)

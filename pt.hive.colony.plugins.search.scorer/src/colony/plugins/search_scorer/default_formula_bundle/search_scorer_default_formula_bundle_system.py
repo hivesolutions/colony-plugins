@@ -79,10 +79,12 @@ class SearchScorerDefaultFormulaBundle:
 
         return self.search_scorer_formula_types
 
-    def calculate_value(self, search_result, search_index, search_scorer_formula_type, properties):
+    def calculate_value(self, document_id, search_result, search_index, search_scorer_formula_type, properties):
         """
         Computes the value for the specified formula type.
         
+        @type document_id: String
+        @param document_id: The identifier of the retrieved document.
         @type search_results: Dictionary
         @param search_results: The search result dictionary containing a hit list.
         @type search_index: SearchIndex
@@ -99,22 +101,26 @@ class SearchScorerDefaultFormulaBundle:
             raise search_scorer_default_formula_bundle_exceptions.InvalidFormulaType(search_scorer_formula_type)
 
         if search_scorer_formula_type == TERM_FREQUENCY_FORMULA_TYPE:
-            calculated_value = self.calculate_term_frequency(search_result, search_index, properties)
+            calculated_value = self.calculate_term_frequency(document_id, search_result, search_index, properties)
         elif search_scorer_formula_type == TERM_FREQUENCY_INVERSE_DOCUMENT_FREQUENCY_FORMULA_TYPE:
-            calculated_value = self.calculate_term_frequency_inverse_document_frequency(search_result, search_index, properties)
+            calculated_value = self.calculate_term_frequency_inverse_document_frequency(document_id, search_result, search_index, properties)
 
         return calculated_value
 
-    def calculate_term_frequency(self, search_result, search_index, properties):
+    def calculate_term_frequency(self, document_id, search_result, search_index, properties):
         """
         Compute the value for the score using the term frequency (tf) approach.
         
+        @type document_id: String
+        @param document_id: The identifier of the retrieved document.
         @type search_results: Dictionary
         @param search_results: The search result dictionary containing a hit list.
         @type search_index: SearchIndex
         @param search_index: The search index used in the search.
         @type properties: Dictionary
         @param properties: The properties dictionary.
+        @rtype: float
+        @return: The computed value for the specified search result using the tf formula
         """
 
         # determines the size of the hit list
@@ -124,10 +130,12 @@ class SearchScorerDefaultFormulaBundle:
         # the score value is the number of hits for the query
         return search_result_hit_list_length
 
-    def calculate_term_frequency_inverse_document_frequency(self, search_result, search_index, properties):
+    def calculate_term_frequency_inverse_document_frequency(self, document_id, search_result, search_index, properties):
         """
         Compute the value for the score using the term frequency-inverse document frequency (tf-idf) approach.
         
+        @type document_id: String
+        @param document_id: The identifier of the retrieved document.
         @type search_results: Dictionary
         @param search_results: The search result dictionary containing a hit list.
         @type search_index: SearchIndex
@@ -136,6 +144,22 @@ class SearchScorerDefaultFormulaBundle:
         @param search_scorer_formula_type: The formula type to be used in the value calculation.
         @type properties: Dictionary
         @param properties: The properties dictionary.
+        @rtype: float
+        @return: The computed value for the specified search result using the tf-idf formula.        
         """
-
+        # determines the size of the hit list
+        search_result_hit_list = search_result[HIT_LIST_VALUE]
+        search_result_hit_list_length = len(search_result_hit_list)
+        term_frequency = search_result_hit_list_length
+        
+        # computes the document frequency of the word (how many documents does it appear in)
+        #query_term_list = search_result["query_term_list"]
+        
+#        for query_term in query_term_list:
+#            word_information_map = search_index.inverted_index_map.get(query_term)
+#            word_hit_list word_information_map["word_inverted_index_map"]
+ 
+#        word_document_frequency = 
+        
+        
         return 0

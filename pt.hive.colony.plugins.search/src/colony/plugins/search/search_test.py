@@ -210,6 +210,35 @@ class SearchTestCase(unittest.TestCase):
 
         self.assertEqual(first_result_document_id, TEST_QUERY_FIRST_RESULT)
 
+    def test_method_query_index_sort_results_tf_idf_formula(self):
+        """
+        This test exercises querying the index, scoring the results and 
+        sorting according to the term frequency-inverse_document_frequency score.        
+        """
+
+        crawl_target = "/remote_home/search/scorer_test"
+
+        query = "luis"
+        """ The query for the tf query test """
+
+        term_frequency_scorer_first_result = "/remote_home/search/scorer_test/ficheiro_10.txt"
+        """ The expected result for the tf query test """
+
+        # creates in-memory index
+        test_index = self.plugin.create_index({"start_path" : crawl_target, "type" : INDEX_TYPE})
+
+        # queries the index and retrieves scored and sorted results
+        properties = {"search_scorer_formula_type": "term_frequency_inverse_document_frequency_formula_type"}
+        query_results = self.plugin.query_index_sort_results(test_index, query, properties)
+        
+        self.assertTrue(query_results)
+
+        # asserts that the top result was the expected one
+        first_result = query_results[0]
+        # gets the document id from the sortable search result
+        first_result_document_id = first_result.document_id
+
+        self.assertEqual(first_result_document_id, term_frequency_scorer_first_result)        
 
 class SearchPluginTestCase:
 
