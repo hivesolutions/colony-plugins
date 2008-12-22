@@ -39,17 +39,23 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import search_exceptions
 
-TYPE_VALUE = "type"
+TYPE_KEY = "type"
 """ The type value """
 
-PERSISTENCE_TYPE_VALUE = "persistence_type"
+PERSISTENCE_TYPE_KEY = "persistence_type"
 """ The persistence type value """
 
-QUERY_EVALUATOR_TYPE_VALUE = "query_evaluator_type"
+QUERY_EVALUATOR_TYPE_KEY = "query_evaluator_type"
 """ The key for the properties map, to access the query evaluator type """
 
-SEARCH_SCORER_FORMULA_TYPE_VALUE = "search_scorer_formula_type"
+SEARCH_SCORER_FORMULA_TYPE_KEY = "search_scorer_formula_type"
 """ The key for the properties map, to access the search scorer formula type """
+
+DEFAULT_SEARCH_SCORER_FORMULA_TYPE = "term_frequency_formula_type"
+""" The default value for ther search scorer formula type """
+
+DEFAULT_QUERY_EVALUATOR_TYPE = "query_parser"
+""" The default value for ther search scorer formula type """
 
 class Search:
     """
@@ -80,8 +86,8 @@ class Search:
         """
 
         # in case type value is not defined in properties
-        if not TYPE_VALUE in properties:
-            raise search_exceptions.MissingProperty(TYPE_VALUE)
+        if not TYPE_KEY in properties:
+            raise search_exceptions.MissingProperty(TYPE_KEY)
 
         # retrieves the search crawler plugins
         search_crawler_plugins = self.search_plugin.search_crawler_plugins
@@ -93,7 +99,7 @@ class Search:
         search_indexer_plugin = self.search_plugin.search_indexer_plugin
 
         # retrieves the type of index
-        index_type = properties[TYPE_VALUE]
+        index_type = properties[TYPE_KEY]
 
         # creates the crawling plugin temporary variable
         crawling_plugin = None
@@ -149,14 +155,14 @@ class Search:
         """
 
         # in case the persistence type value is not defined in the properties
-        if not PERSISTENCE_TYPE_VALUE in properties:
-            raise search_exceptions.MissingProperty(PERSISTENCE_TYPE_VALUE)
+        if not PERSISTENCE_TYPE_KEY in properties:
+            raise search_exceptions.MissingProperty(PERSISTENCE_TYPE_KEY)
 
         # retrieves the search index persistence plugins
         search_index_persistence_plugins = self.search_plugin.search_index_persistence_plugins
 
         # retrieves the type of index persistence requested in the properties parameter
-        index_persistence_type = properties[PERSISTENCE_TYPE_VALUE]
+        index_persistence_type = properties[PERSISTENCE_TYPE_KEY]
 
         # creates the index persistence plugin temporary variable
         index_persistence_plugin = None
@@ -185,14 +191,14 @@ class Search:
 
     def load_index(self, properties):
         # in case the persistence type value is not defined in the properties
-        if not PERSISTENCE_TYPE_VALUE in properties:
-            raise search_exceptions.MissingProperty(PERSISTENCE_TYPE_VALUE)
+        if not PERSISTENCE_TYPE_KEY in properties:
+            raise search_exceptions.MissingProperty(PERSISTENCE_TYPE_KEY)
 
         # retrieves the search index persistence plugins
         search_index_persistence_plugins = self.search_plugin.search_index_persistence_plugins
 
         # retrieves the type of index persistence requested in the properties parameter
-        index_persistence_type = properties[PERSISTENCE_TYPE_VALUE]
+        index_persistence_type = properties[PERSISTENCE_TYPE_KEY]
 
         # creates the index persistence plugin temporary variable
         index_persistence_plugin = None
@@ -243,14 +249,14 @@ class Search:
         """
         
         # in case the persistence type value is not defined in the properties
-        if not QUERY_EVALUATOR_TYPE_VALUE in properties:
-            raise search_exceptions.MissingProperty(QUERY_EVALUATOR_TYPE_VALUE)
+        if not QUERY_EVALUATOR_TYPE_KEY in properties:
+            properties[QUERY_EVALUATOR_TYPE_KEY] = DEFAULT_QUERY_EVALUATOR_TYPE
         
         # retrieves the query evaluator plugins
         search_query_evaluator_plugins = self.search_plugin.search_query_evaluator_plugins
         
         # retrieves the query evaluator type specified in the properties parameter
-        query_evaluator_type = properties[QUERY_EVALUATOR_TYPE_VALUE]
+        query_evaluator_type = properties[QUERY_EVALUATOR_TYPE_KEY]
         
         # gets the first plugin for the specified query evaluation type
         for search_query_evaluator_plugin in search_query_evaluator_plugins:
@@ -293,14 +299,14 @@ class Search:
         """
 
         # in case the search scorer formula type not defined in the properties
-        if not SEARCH_SCORER_FORMULA_TYPE_VALUE in properties:
-            raise search_exceptions.MissingProperty(SEARCH_SCORER_FORMULA_TYPE_VALUE)
+        if not SEARCH_SCORER_FORMULA_TYPE_KEY in properties:
+            properties[SEARCH_SCORER_FORMULA_TYPE_KEY] = DEFAULT_SEARCH_SCORER_FORMULA_TYPE
 
         # retrieves the search scorer plugins
         search_scorer_plugins = self.search_plugin.search_scorer_plugins
 
         # retrieves the search scorer formula type specified in the properties parameter
-        search_scorer_formula_type = properties[SEARCH_SCORER_FORMULA_TYPE_VALUE]
+        search_scorer_formula_type = properties[SEARCH_SCORER_FORMULA_TYPE_KEY]
 
         # gets the first plugin for the specified search scorer formula type
         for search_scorer_plugin in search_scorer_plugins:
