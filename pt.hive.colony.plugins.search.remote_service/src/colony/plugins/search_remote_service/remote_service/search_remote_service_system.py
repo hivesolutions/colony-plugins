@@ -72,7 +72,6 @@ class SearchRemoteService:
         return {}
 
     def search_index(self, search_index_identifier, search_query, properties):
-        properties = {"query_evaluator_type" : "query_parser", "search_scorer_formula_type": "term_frequency_formula_type", "search_scorer_formula_type" : "term_frequency_formula_type"}
         search_plugin = self.search_remote_service_plugin.search_plugin
 
         return search_plugin.search_index_by_identifier(search_index_identifier, search_query, properties)
