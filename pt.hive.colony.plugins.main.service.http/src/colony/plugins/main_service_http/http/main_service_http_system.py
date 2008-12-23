@@ -37,8 +37,11 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import sys
 import socket
 import select
+import traceback
+
 import StringIO
 
 import main_service_http_exceptions
@@ -239,6 +242,7 @@ class HttpClientServiceTask:
 
             try:
                 if request.path.find("/hive/plugins") == 0:
+                    # sets the plugin handler that will handle the request
                     request.properties["plugin_handler"] = "pt.hive.colony.plugins.javascript.file_handler"
 
                     # handles the request
@@ -385,7 +389,14 @@ class HttpClientServiceTask:
             request.status_code = 500
         status_code_value = STATUS_CODE_VALUES[request.status_code]
         request.write("colony web server - " + str(request.status_code) + " " + status_code_value + "\n")
-        request.write("error: '" + str(exception) + "'")
+        request.write("error: '" + str(exception) + "'\n")
+        request.write("traceback:\n")
+
+        formated_traceback = traceback.format_tb(sys.exc_traceback)
+
+        # iterates over the traceback lines
+        for formated_traceback_line in formated_traceback:
+            request.write(formated_traceback_line)
 
         # sends the request to the client (response)
         self.send_request(request)
