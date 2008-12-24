@@ -106,6 +106,14 @@ class TemplateHandler:
         # reads the file contents
         file_contents = file.read()
 
+        import re
+
+        colony_start_regex = re.compile("<\?colony")
+
+        colony_end_regex = re.compile("\?>")
+
+        search_value = colony_regex.search(file_contents)
+
         start_index = file_contents.find(START_TAG_VALUE)
 
         end_index = file_contents.find(END_TAG_VALUE)
