@@ -256,4 +256,4 @@ class SearchPluginTestCase:
 
     @staticmethod
     def get_description():
-        return "Search Plugin test case covering the server side plug-in's facade"
+        return "Search Plugin test case covering the server side plugin's facade"
