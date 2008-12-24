@@ -53,6 +53,7 @@ if __name__ == "__main__":
             self.name = name
 
         def connect(self, username, password, current = None):
+            # @todo remove this dummy file and close this file with test_file.close()
             test_file = open("c:/testtest.txt", "w")
             test_file.write("o valor e " + username)
             return 0
