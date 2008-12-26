@@ -77,6 +77,7 @@ class DocumentManagerPlugin(colony.plugins.plugin_system.Plugin):
         self.document_test = document.document_test.DocumentTest(self)
 
     def unload_plugin(self):
+        colony.plugins.plugin_system.Plugin.unload_plugin(self) 
         self.format_plugins_map = {}
         self.document_manager = None
         self.document_test = None
