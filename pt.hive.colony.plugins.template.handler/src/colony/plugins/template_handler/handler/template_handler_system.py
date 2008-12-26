@@ -56,6 +56,12 @@ START_TAG_VALUE = "<\?colony"
 END_TAG_VALUE = "\?>"
 """ The end tag value """
 
+JAVASCRIPT_TAG_START = "<script type=\"text/javascript\">"
+""" The javascript start tag """
+
+JAVASCRIPT_TAG_END = "</script>"
+""" The javascript end tag """
+
 class TemplateHandler:
     """
     The template handler class.
@@ -220,6 +226,50 @@ class TemplateHandler:
 
         # closes the file
         file.close()
+
+    def import_js_library(self, library_name):
+        # retrieves the plugin manager
+        manager = self.template_handler_plugin.manager
+
+        # retrieves the plugin path
+        plugin_path = manager.get_plugin_path_by_id(self.template_handler_plugin.id)
+
+        # creates the library file name
+        library_file_name = library_name + ".js"
+
+        library_path = plugin_path + "/template_handler/handler/resources/js_libs/" + library_file_name
+
+        library_file = open(library_path, "r")
+
+        library_file_contents = library_file.read()
+
+        print JAVASCRIPT_TAG_START
+
+        print library_file_contents
+
+        print JAVASCRIPT_TAG_END
+
+        library_file.close()
+
+    def parse_request_attributes(self, request):
+        request_attributes_map = {}
+
+        received_message_pairs = request.received_message.split("&")
+
+        for received_message_pair in received_message_pairs:
+            received_message_pair_split = received_message_pair.split("=")
+            if len(received_message_pair_split) > 1:
+                key, value = received_message_pair_split
+            else:
+                break
+            request_attributes_map[key] = value
+
+        return request_attributes_map
+
+    def escape_dots(self, string_value):
+        escaped_string_value = string_value.replace(".", "-")
+
+        return escaped_string_value
 
 class MatchOrderer:
     """
