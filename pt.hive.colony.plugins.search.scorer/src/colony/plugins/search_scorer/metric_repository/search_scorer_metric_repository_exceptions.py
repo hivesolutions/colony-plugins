@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt> & Luís Martinho <lmartinho@hive.pt>"
+__author__ = "Luís Martinho <lmartinho@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
@@ -37,14 +37,14 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class SearchException(Exception):
+class SearchScorerMetricRepositoryException(Exception):
     """
-    The search exception class.
+    The search scorer metric repository exception class.
     """
 
     pass
 
-class MissingProperty(SearchException):
+class MissingProperty(SearchScorerMetricRepositoryException):
     """
     The missing property class.
     """
@@ -57,7 +57,7 @@ class MissingProperty(SearchException):
         @param message: The message to be printed.
         """
 
-        SearchException.__init__(self)
+        SearchScorerMetricRepositoryException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -70,111 +70,7 @@ class MissingProperty(SearchException):
 
         return "Missing property: %s" % self.message
 
-class MissingCrawlingPlugin(SearchException):
-    """
-    The missing crawling plugin class.
-    """
-
-    def __init__(self, message):
-        """
-        Constructor of the class.
-        
-        @type message: String
-        @param message: The message to be printed.
-        """
-
-        SearchException.__init__(self)
-        self.message = message
-
-    def __str__(self):
-        """
-        Returns the string representation of the class.
-        
-        @rtype: String
-        @return: The string representation of the class.
-        """
-
-        return "Missing crawling plugin: %s" % self.message
-
-class MissingIndexPersistencePlugin(SearchException):
-    """
-    The missing index persistence plugin class.
-    """
-
-    def __init__(self, message):
-        """
-        Constructor of the class.
-        
-        @type message: String
-        @param message: The message to be printed.
-        """
-
-        SearchException.__init__(self)
-        self.message = message
-
-    def __str__(self):
-        """
-        Returns the string representation of the class.
-        
-        @rtype: String
-        @return: The string representation of the class.
-        """
-
-        return "Missing index persistence plugin: %s" % self.message
-
-class MissingQueryEvaluatorPlugin(SearchException):
-    """
-    The missing query evaluator plugin class.
-    """
-
-    def __init__(self, message):
-        """
-        Constructor of the class.
-        
-        @type message: String
-        @param message: The message to be printed.
-        """
-
-        SearchException.__init__(self)
-        self.message = message
-
-    def __str__(self):
-        """
-        Returns the string representation of the class.
-        
-        @rtype: String
-        @return: The string representation of the class.
-        """
-
-        return "Missing query evaluator plugin: %s" % self.message
-
-class MissingSearchScorerPlugin(SearchException):
-    """
-    The missing search scorer plugin class.
-    """
-
-    def __init__(self, message):
-        """
-        Constructor of the class.
-        
-        @type message: String
-        @param message: The message to be printed.
-        """
-
-        SearchException.__init__(self)
-        self.message = message
-
-    def __str__(self):
-        """
-        Returns the string representation of the class.
-        
-        @rtype: String
-        @return: The string representation of the class.
-        """
-
-        return "Missing search scorer plugin: %s" % self.message
-
-class InvalidFunctionRequested(SearchException):
+class InvalidMetricRequested(SearchScorerMetricRepositoryException):
     """
     The missing property class.
     """
@@ -187,7 +83,7 @@ class InvalidFunctionRequested(SearchException):
         @param message: The message to be printed.
         """
 
-        SearchException.__init__(self)
+        SearchScorerMetricRepositoryException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -198,4 +94,30 @@ class InvalidFunctionRequested(SearchException):
         @return: The string representation of the class.
         """
 
-        return "Function not available: %s" % self.message
+        return "Metric not available: %s" % self.message
+
+class DuplicateMetricIdentifier(SearchScorerMetricRepositoryException):
+    """
+    The missing property class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+        
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        SearchScorerMetricRepositoryException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+        
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Trying to insert a metric using a taken identifier: %s" % self.message

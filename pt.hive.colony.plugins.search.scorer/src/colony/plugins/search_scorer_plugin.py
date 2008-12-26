@@ -105,8 +105,8 @@ class SearchScorerPlugin(colony.plugins.plugin_system.Plugin):
 
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.search.scorer.function_repository")
     def set_search_scorer_function_repository_plugin(self, search_scorer_function_repository_plugin):
-        self.search_index_repository_plugin = search_index_repository_plugin
+        self.search_scorer_function_repository_plugin = search_scorer_function_repository_plugin
 
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.search.scorer.metric_repository")
     def set_search_scorer_metric_repository_plugin(self, search_scorer_metric_repository_plugin):
-        self.search_index_repository_plugin = search_index_repository_plugin
+        self.search_scorer_metric_repository_plugin = search_scorer_metric_repository_plugin

@@ -153,10 +153,10 @@ class SearchTestCase(unittest.TestCase):
         # creates in-memory index
         test_index = self.plugin.create_index({"start_path" : CRAWL_TARGET, "type" : INDEX_TYPE})
 
-        query_results = self.plugin.query_index(test_index, TEST_QUERY, {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_formula_type" : "term_frequency_formula_type"})
+        search_results = self.plugin.query_index(test_index, TEST_QUERY, {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "term_frequency_function"})
 
-        first_result = query_results[0]
-        first_result_document_id = first_result[0]
+        first_result = search_results[0]
+        first_result_document_id = first_result["document_id"]
 
         self.assertEqual(first_result_document_id, TEST_QUERY_FIRST_RESULT)
 
@@ -178,7 +178,7 @@ class SearchTestCase(unittest.TestCase):
         test_index = self.plugin.create_index({"start_path" : crawl_target, "type" : INDEX_TYPE})
 
         # queries the index and retrieves scored and sorted results
-        properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_formula_type": "term_frequency_formula_type", SEARCH_SCORER_FORMULA_TYPE_VALUE : "term_frequency_formula_type"}
+        properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "term_frequency_function"}
         query_results = self.plugin.query_index_sort_results(test_index, query, properties)
         
         self.assertTrue(query_results)
@@ -186,7 +186,7 @@ class SearchTestCase(unittest.TestCase):
         # asserts that the top result was the expected one
         first_result = query_results[0]
         # gets the document id from the sortable search result
-        first_result_document_id = first_result.document_id
+        first_result_document_id = first_result["document_id"]
 
         self.assertEqual(first_result_document_id, term_frequency_scorer_first_result)        
 
@@ -202,43 +202,13 @@ class SearchTestCase(unittest.TestCase):
         self.assertTrue(test_index.forward_index_map)
         self.assertTrue(test_index.inverted_index_map)
 
-        properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_formula_type": "term_frequency_formula_type", SEARCH_SCORER_FORMULA_TYPE_VALUE : "term_frequency_formula_type"}
+        properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "term_frequency_function"}
         test_results = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.test_index_identifier", "ford", properties)
         # asserts that the index was sucessfully created
         first_result = test_results[0]
-        first_result_document_id = first_result[0]
+        first_result_document_id = first_result["document_id"]
 
-        self.assertEqual(first_result_document_id, TEST_QUERY_FIRST_RESULT)
-
-    def test_method_query_index_sort_results_tf_idf_formula(self):
-        """
-        This test exercises querying the index, scoring the results and 
-        sorting according to the term frequency-inverse_document_frequency score.        
-        """
-
-        crawl_target = "/remote_home/search/scorer_test"
-
-        query = "luis"
-        """ The query for the tf query test """
-
-        term_frequency_scorer_first_result = "/remote_home/search/scorer_test/ficheiro_10.txt"
-        """ The expected result for the tf query test """
-
-        # creates in-memory index
-        test_index = self.plugin.create_index({"start_path" : crawl_target, "type" : INDEX_TYPE})
-
-        # queries the index and retrieves scored and sorted results
-        properties = {"search_scorer_formula_type": "term_frequency_inverse_document_frequency_formula_type"}
-        query_results = self.plugin.query_index_sort_results(test_index, query, properties)
-        
-        self.assertTrue(query_results)
-
-        # asserts that the top result was the expected one
-        first_result = query_results[0]
-        # gets the document id from the sortable search result
-        first_result_document_id = first_result.document_id
-
-        self.assertEqual(first_result_document_id, term_frequency_scorer_first_result)        
+        self.assertEqual(first_result_document_id, TEST_QUERY_FIRST_RESULT)  
 
 class SearchPluginTestCase:
 

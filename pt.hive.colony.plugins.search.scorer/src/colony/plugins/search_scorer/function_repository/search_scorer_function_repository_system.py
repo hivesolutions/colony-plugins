@@ -58,9 +58,11 @@ class SearchScorerFunctionRepository:
         @param search_scorer_function_repository_plugin: The search scorer function repository plugin.
         """
 
+        self.functions_map = {}
+
         self.search_scorer_function_repository_plugin = search_scorer_function_repository_plugin
 
-    def add_search_scorer_functions_map(scorer_functions_map):
+    def add_search_scorer_functions_map(self, scorer_functions_map):
         """
         Adds a set of functions to the repository.
         
@@ -72,12 +74,12 @@ class SearchScorerFunctionRepository:
         for function_identifier, function in scorer_functions_map.items():
             
             # checks for duplicates insertion
-            if function_identifier in functions_map:
+            if function_identifier in self.functions_map:
                 raise search_scorer_function_repository_exceptions.SearchScorerFunctionRepositoryException(function_identifier)
 
-            functions_map[function_identifier] = function
+            self.functions_map[function_identifier] = function
 
-    def remove_search_scorer_functions_map(scorer_functions_map):
+    def remove_search_scorer_functions_map(self, scorer_functions_map):
         """
         Adds a set of functions from the repository.
         
@@ -88,7 +90,7 @@ class SearchScorerFunctionRepository:
         # removes all the functions made available by the plugin
         # (since no duplicates are allowed, the plugin is assumed to be the single provider of the function)
         for function_identifier, function in scorer_functions_map.items():
-            del functions_map[function_identifier]
+            del self.functions_map[function_identifier]
 
     def get_function_identifiers(self):
         """
@@ -98,7 +100,7 @@ class SearchScorerFunctionRepository:
         @return: The list of function identifiers in the repository.
         """
         
-        return functions_map.keys()
+        return self.functions_map.keys()
 
     def get_function(self, scorer_function_identifier):
         """
@@ -110,7 +112,7 @@ class SearchScorerFunctionRepository:
         @return: The function instance for the provided function identifier.
         """
 
-        return functions_map[scorer_function_identifier]
+        return self.functions_map[scorer_function_identifier]
 
 class SearchScorerFunction:
     """
@@ -141,7 +143,7 @@ class SearchScorerFunction:
         @return: the list of metrics identifiers required for the function computation.
         """
 
-        return self.required_metrics
+        return self.required_metrics_identifiers
 
     def compute(self, search_results, properties):
         """

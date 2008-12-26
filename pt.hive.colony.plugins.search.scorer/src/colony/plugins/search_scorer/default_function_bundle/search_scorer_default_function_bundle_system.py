@@ -38,24 +38,29 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import search_scorer_default_function_bundle_exceptions
-import colony.plugins.search_scorer.function_repository.search_scorer_function_repository_system
+import search_scorer.function_repository.search_scorer_function_repository_system
 
 TERM_FREQUENCY_METRIC_IDENTIFIER = "term_frequency_metric"
 """ The term frequency metric identifier """
 
-METRICS_MAP_VALUE = "metrics_map"
+METRICS_VALUE = "metrics"
 
 TERM_LIST_VALUE = "terms_list"
+
+TERM_FREQUENCY_SCORER_FUNCTION_IDENTIFIER = "term_frequency_function"
+""" The term frequency function identifier """
 
 class SearchScorerDefaultFunctionBundle:
     """
     The search scorer default function bundle class.
     """
 
-    search_scorer_default_formula_bundle_plugin = None
+    search_scorer_default_function_bundle_plugin = None
     """ The search scorer default function bundle plugin """
+    
+    functions_map = None
 
-    def __init__(self, search_scorer_default_formula_bundle_plugin):
+    def __init__(self, search_scorer_default_function_bundle_plugin):
         """
         Constructor of the class.
         
@@ -63,10 +68,18 @@ class SearchScorerDefaultFunctionBundle:
         @param search_scorer_default_formula_bundle_plugin: The search scorer default formula bundle plugin.
         """
 
-        self.search_scorer_default_formula_bundle_plugin = search_scorer_default_formula_bundle_plugin
+        # initializes the functions dictionary
+        self.functions_map = {}
+        
+        # retrieves the function bundle plugin
+        self.search_scorer_default_function_bundle_plugin = search_scorer_default_function_bundle_plugin
 
-        term_frequency_scorer_function = TermFrequencyScorerFunction()
-        functions_map[TERM_FREQUENCY_SCORER_FUNCTION_IDENTIFIER] = term_frequency_scorer_function 
+        # retrieves the scorer function repository
+        search_scorer_function_repository_plugin = search_scorer_default_function_bundle_plugin.search_scorer_function_repository_plugin
+
+        # creates a new TermFrequencyFunction instance, to insert in the default functions map
+        term_frequency_scorer_function = TermFrequencyFunction(search_scorer_function_repository_plugin)
+        self.functions_map[TERM_FREQUENCY_SCORER_FUNCTION_IDENTIFIER] = term_frequency_scorer_function 
 
     def get_functions_map(self):
         """
@@ -79,9 +92,9 @@ class SearchScorerDefaultFunctionBundle:
         return self.functions_map
 
 
-class TermFrequencyFunction(colony.plugins.search_scorer.function_repository.search_scorer_function_repository_system.SearchScorerFunction):
+class TermFrequencyFunction(search_scorer.function_repository.search_scorer_function_repository_system.SearchScorerFunction):
 
-    def __init__(self, search_scorer_function_repository):
+    def __init__(self, search_scorer_function_repository_plugin):
         """
         Constructor of the class.
         
@@ -90,8 +103,8 @@ class TermFrequencyFunction(colony.plugins.search_scorer.function_repository.sea
         """
 
         # call the parent class constructor
-        SearchScorerFunction = colony.plugins.search_scorer.function_repository.search_scorer_function_repository_system.SearchScorerFunction
-        SearchScorerFunction.__init__(search_scorer_function_repository)
+        SearchScorerFunction = search_scorer.function_repository.search_scorer_function_repository_system.SearchScorerFunction
+        SearchScorerFunction.__init__(self, search_scorer_function_repository_plugin)
         
         # initialize the required metrics list for the function object
         required_metrics_identifiers = [TERM_FREQUENCY_METRIC_IDENTIFIER]
@@ -102,27 +115,7 @@ class TermFrequencyFunction(colony.plugins.search_scorer.function_repository.sea
         computed_values = []
 
         for search_result in search_results:
-#            # get the term frequency data from the metrics map in the search result map
-#            term_frequency_map = search_result[METRICS_MAP_VALUE][TERM_FREQUENCY_METRIC_IDENTIFIER]
-#
-#            # get list of relevant terms for the search result
-#            terms_list = search_result[TERMS_LIST_VALUE]
-#
-#            # compute the overall times the terms appear in the document
-#            for i in range(len(terms_list)):
-#                term = terms_list[i]
-#                terms_frequency += term_frequency_map[term]
-#
-#            # compute the average number of time each term appears in the document
-#            average_term_frequency = terms_frequency / (i + 1)
-
-            # DEVELOPMENT
-            average_term_frequency = 5
-
-            # compute the function using the metrics
-            computed_value = average_term_frequency
-
-            # append the value to the list of values
-            computed_values.append(computed_value) 
+            term_frequency_metric = search_result[METRICS_VALUE][TERM_FREQUENCY_METRIC_IDENTIFIER]
+            computed_values.append(term_frequency_metric)
 
         return computed_values

@@ -54,7 +54,7 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["search", "plugin_test_case_bundle"]
-    capabilities_allowed = ["search_crawler", "search_index_persistence", "search_query_evaluator", "search_scorer"]
+    capabilities_allowed = ["search_crawler", "search_index_persistence", "search_query_evaluator"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.search.interpreter", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
@@ -62,7 +62,9 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
                     colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.search.index_repository", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.search.scorer", "1.0.0")]
+                    "pt.hive.colony.plugins.search.scorer", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.search.sorter", "1.0.0")]
     events_handled = []
     events_registrable = []
 
@@ -76,6 +78,7 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
     search_indexer_plugin = None
     search_index_repository_plugin = None
     search_scorer_plugin = None
+    search_sorter_plugin = None    
 
     search_test = None
 
@@ -150,10 +153,6 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
     def search_query_evaluator_load_allowed(self, plugin, capability):
         self.search_query_evaluator_plugins.append(plugin)
 
-    @colony.plugins.decorators.load_allowed_capability("search_scorer")
-    def search_scorer_load_allowed(self, plugin, capability):
-        self.search_scorer_plugins.append(plugin)
-
     @colony.plugins.decorators.unload_allowed_capability("search_crawler")
     def search_crawler_unload_allowed(self, plugin, capability):
         self.search_crawler_plugins.remove(plugin)
@@ -168,10 +167,6 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.unload_allowed_capability("search_query_evaluator")
     def search_query_evaluator_unload_allowed(self, plugin, capability):
         self.search_query_evaluator_plugins.remove(plugin)
-
-    @colony.plugins.decorators.unload_allowed_capability("search_scorer")
-    def search_scorer_unload_allowed(self, plugin, capability):
-        self.search_scorer_plugins.remove(plugin)
 
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.search.interpreter")
     def set_search_interpreter_plugin(self, search_interpreter_plugin):
@@ -197,3 +192,10 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.search.scorer")
     def set_search_scorer_plugin(self, search_scorer_plugin):
         self.search_scorer_plugin = search_scorer_plugin
+
+    def get_search_sorter_plugin(self):
+        return self.search_sorter_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.search.sorter")
+    def set_search_sorter_plugin(self, search_sorter_plugin):
+        self.search_sorter_plugin = search_sorter_plugin

@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import search_scorer_exceptions
 
-SCORER_FUNCTION_IDENTIFIER_VALUE = "scoring_function_identifier"
+SCORER_FUNCTION_IDENTIFIER_VALUE = "search_scorer_function_identifier"
 """ The identifier for the main scoring function in the scorer function repository """  
 
 INDEX_TIME_METRIC_TYPE = "index_time"
@@ -47,6 +47,12 @@ INDEX_TIME_METRIC_TYPE = "index_time"
 
 SEARCH_TIME_METRIC_TYPE = "search_time"
 """ The identifier for the search time metric type """ 
+
+SCORE_VALUE = "score"
+""" The score value key in the search result dictionary """
+
+METRICS_VALUE = "metrics"
+""" The metrics value key in the search result dictionary """ 
 
 class SearchScorer:
     """
@@ -94,6 +100,9 @@ class SearchScorer:
         # retrieves the current function repository
         search_scorer_function_repository_plugin = self.search_scorer_plugin.search_scorer_function_repository_plugin
 
+        # retrieves the current metric repository
+        search_scorer_metric_repository_plugin = self.search_scorer_plugin.search_scorer_metric_repository_plugin
+
         # determines top level scoring function according to properties
         if not SCORER_FUNCTION_IDENTIFIER_VALUE in properties:
             raise search_scorer_exceptions.MissingProperty(SCORER_FUNCTION_IDENTIFIER_VALUE)
@@ -107,18 +116,30 @@ class SearchScorer:
         required_metrics_identifiers_list = scorer_function.get_required_metrics_identifiers()
 
         # retrieves the required metrics from the metrics repository
-        scorer_metrics = search_scorer_metrics_repository_plugin.get_metrics(required_metrics_identifiers_list)
+        scorer_metrics = search_scorer_metric_repository_plugin.get_metrics(required_metrics_identifiers_list)
     
+        metrics_values = {}
+
         # computes all the required metrics, for all the search results 
         for scorer_metric in scorer_metrics:           
             # computes the search time metric required by the function
-            scorer_metric.calculate_metric_for_results(search_results, search_index, properties)
+            metrics_values[scorer_metric.identifier] = scorer_metric.compute_for_results(search_results, search_index, properties)
+
+        # updates the search results with the computed values of the metrics
+        for search_result in search_results:
+            search_result[METRICS_VALUE] = {}
+            for scorer_metric in scorer_metrics:
+                search_result[METRICS_VALUE][scorer_metric.identifier] = metrics_values[scorer_metric.identifier]
 
         # computes the top level function using the gathered metrics and the coefficients specified in the properties map
-        search_results_scores = scorer_function.calculate(search_results, properties)
+        search_results_scores = scorer_function.compute(search_results, properties)
         
         # sets the search result scores in the existing search results metadata
         # (decouples function computation from search result structure details)
+        i = 0
+        for search_result in search_results:
+            search_result[SCORE_VALUE] = search_results_scores[i]
+            i += 1
 
         # returns a list of scores for each search result
-        return scored_search_results
+        return search_results

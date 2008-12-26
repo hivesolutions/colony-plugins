@@ -44,6 +44,8 @@ HIT_LIST_VALUE = "hit_list"
 
 QUERY_EVALUATOR_TYPE = "query_parser"
 
+DOCUMENT_ID_VALUE = "document_id"
+
 class SearchQueryEvaluator:
     """
     The search query evaluator class.
@@ -103,9 +105,8 @@ class SearchQueryEvaluator:
         # wrap each search result hit list in a dictionary to hold further metadata (score information, etc.)
         for index_search_visitor_result_key, index_search_visitor_result_value  in index_search_visitor_results.items():
             # build a map wrapping the hit list    
-            search_result_map = {HIT_LIST_VALUE: index_search_visitor_result_value}
+            search_result_map = {DOCUMENT_ID_VALUE: index_search_visitor_result_key, HIT_LIST_VALUE: index_search_visitor_result_value}
             # add the map to the search results
-            search_result_tuple = (index_search_visitor_result_key, search_result_map)
-            search_results.append(search_result_tuple)
+            search_results.append(search_result_map)
 
         return search_results

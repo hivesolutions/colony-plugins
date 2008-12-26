@@ -54,7 +54,7 @@ SEARCH_SCORER_FUNCTION_IDENTIFIER_VALUE = "search_scorer_function_identifier"
 DEFAULT_INDEX_TYPE = "file_system"
 """ The default index type """
 
-DEFAULT_SEARCH_SCORER_FUNCTION_IDENTIFIER = "term_frequency"
+DEFAULT_SEARCH_SCORER_FUNCTION_IDENTIFIER = "term_frequency_function"
 """ The identifier of the default search scorer function """
 
 DEFAULT_QUERY_EVALUATOR_TYPE = "query_parser"
@@ -312,6 +312,9 @@ class Search:
         # retrieves the search scorer plugins
         search_scorer_plugin = self.search_plugin.search_scorer_plugin
 
+        # retrieves the search sorter plugins
+        search_sorter_plugin = self.search_plugin.search_sorter_plugin
+
         # retrieves the search scorer formula type specified in the properties parameter
         search_scorer_function_identifier = properties[SEARCH_SCORER_FUNCTION_IDENTIFIER_VALUE]
 
@@ -323,23 +326,15 @@ class Search:
         search_results = self.query_index(search_index, search_query, properties)
 
         # scores the results using the available search scorer plugin
-        scored_search_results = search_scorer_plugin.score_search_results(search_results, search_index, properties)
+        scored_search_results = search_scorer_plugin.score_results(search_results, search_index, properties)
         
         # sorts the search results using the score
-        sorted_search_results = search_scorer_plugin.sort_scored_results(scored_search_results, properties)
+        sorted_search_results = search_sorter_plugin.sort_results(scored_search_results, properties)
 
         return sorted_search_results
 
     def search_index(self, search_index, search_query, properties):
-        sorted_sortable_search_results = self.query_index_sort_results(search_index, search_query, properties)
-
-        sorted_search_results = []
-
-        for sorted_sortable_search_result in sorted_sortable_search_results:
-            sorted_search_result = (sorted_sortable_search_result.document_id, sorted_sortable_search_result.search_result)
-
-            sorted_search_results.append(sorted_search_result)
-
+        sorted_search_results = self.query_index_sort_results(search_index, search_query, properties)
         return sorted_search_results
 
     def search_index_by_identifier(self, search_index_identifier, search_query, properties):

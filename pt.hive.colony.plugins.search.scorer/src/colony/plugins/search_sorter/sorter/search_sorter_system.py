@@ -37,6 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+SCORE_VALUE = "score"
+""" The key to retrieve the score from the search result map """
+
 class SearchSorter:
     """
     The search sorter class.
@@ -66,10 +69,7 @@ class SearchSorter:
         """
 
         # build a list of SortableSearchResult's from the original scored_search_results list
-        pass
-        
-        result_score_tuple_list = zip(search_results, search_scores)
-        sortable_search_result_list = [SortableSearchResult(search_result, score) for search_result, score in result_score_tuple_list]
+        sortable_search_result_list = [SortableSearchResult(search_result, search_result[SCORE_VALUE]) for search_result in search_results]
 
         # the wrapping class is used to leverage list sorting
         sortable_search_result_list.sort()
