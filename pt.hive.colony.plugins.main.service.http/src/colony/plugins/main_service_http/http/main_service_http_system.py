@@ -64,7 +64,7 @@ SERVER_NAME = "Hive-Colony-Web"
 SERVER_VERSION = "1.0.0"
 """ The server version """
 
-NUMBER_THREADS = 5
+NUMBER_THREADS = 10
 """ The number of threads """
 
 MAX_NUMBER_THREADS = 15
