@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import re
 import sys
 
 import os.path
@@ -49,10 +50,10 @@ HANDLER_FILENAME = "template_handler.py"
 TEMPLATE_FILE_EXENSION = "ctp"
 """ The template file extension """
 
-START_TAG_VALUE = "<?colony"
+START_TAG_VALUE = "<\?colony"
 """ The start tag value """
 
-END_TAG_VALUE = "?>"
+END_TAG_VALUE = "\?>"
 """ The end tag value """
 
 class TemplateHandler:
@@ -106,34 +107,130 @@ class TemplateHandler:
         # reads the file contents
         file_contents = file.read()
 
-        import re
+        # retrieves the file contents length
+        file_contensts_length = len(file_contents)
 
-        colony_start_regex = re.compile("<\?colony")
+        # creates the colony start regex
+        colony_start_regex = re.compile(START_TAG_VALUE)
 
-        colony_end_regex = re.compile("\?>")
+        # creates the colony end regex
+        colony_end_regex = re.compile(END_TAG_VALUE)
 
-        search_value = colony_regex.search(file_contents)
+        # creates the match orderer list
+        match_orderer_list = []
 
-        start_index = file_contents.find(START_TAG_VALUE)
+        # retrieves the start matches iterator
+        start_matches_iterator = colony_start_regex.finditer(file_contents)
 
-        end_index = file_contents.find(END_TAG_VALUE)
+        # iterates over all the start matches
+        for start_match in start_matches_iterator:
+            start_math_orderer = MatchOrderer(start_match)
+            match_orderer_list.append(start_math_orderer)
 
-        start_code_index = start_index + 8
-        end_code_index = end_index
+        # retrieves the end matches iterator
+        end_matches_iterator = colony_end_regex.finditer(file_contents)
 
-        request.write(file_contents[:start_index])
+        # iterates over all the end matches
+        for end_match in end_matches_iterator:
+            end_match_orderer = MatchOrderer(end_match)
+            match_orderer_list.append(end_match_orderer)
 
-        process_text = file_contents[start_code_index:end_code_index]
+        # orders the match orderer list
+        match_orderer_list.sort()
 
-        process_text_striped = process_text.strip()
+        # reverses the list so that it's ordered in ascending form
+        match_orderer_list.reverse()
 
-        process_text_replaced = process_text_striped.replace("\r\n", "\n")
+        # start the index accumulator
+        index = 0
 
-        sys.stdout = request
+        # sets the current carret position
+        current_carret = 0
 
+        # retrieves the match orderer list length
+        match_orderer_list_length = len(match_orderer_list)
+
+        # sets the plugin manager value
         plugin_manager = self.template_handler_plugin.manager
 
-        exec(process_text_replaced) in globals(), locals()
+        # creates a backup for the stdout
+        backup_stdout = sys.stdout
+
+        # sets the stdout as request
+        sys.stdout = request
+
+        # iterates over the match orderer list in size two jumps
+        while index < match_orderer_list_length:
+            # retrieves the start match orderer
+            start_match_orderer = match_orderer_list[index]
+
+            # retrieves the end match orderer
+            end_macth_orderer = match_orderer_list[index + 1]
+
+            # retrieves the start match
+            start_match = start_match_orderer.match
+
+            # retrieves the end match
+            end_match = end_macth_orderer.match
+
+            # retrieves the start index of the start match
+            start_match_start = start_match.start()
+
+            # retrieves the end index of the start match
+            start_match_end = start_match.end()
+
+            # retrieves the start index of the end match
+            end_match_start = end_match.start()
+
+            # retrieves the end index of the end match
+            end_match_end = end_match.end()
+
+            # retrieves the middle words
+            middle_words = file_contents[current_carret:start_match_start]
+
+            # writes the middle words in the request
+            sys.stdout.write(middle_words)
+
+            # retrieves the python text to be processed
+            process_text = file_contents[start_match_end:end_match_start]
+
+            # strips the process text
+            process_text_striped = process_text.strip()
+
+            # substitutes the windows style of newlines to the unix one
+            process_text_replaced = process_text_striped.replace("\r\n", "\n")
+
+            # executes the python code
+            exec(process_text_replaced) in globals(), locals()
+
+            # sets the current carret
+            current_carret = end_match_end
+
+            # updates the index accumulator value
+            index += 2
+
+        # restores the original stdout
+        sys.stdout = backup_stdout
+
+        # retrieves the final words
+        final_words = file_contents[current_carret:file_contensts_length]
+
+        # writes the final words in the request
+        request.write(final_words)
 
         # closes the file
         file.close()
+
+class MatchOrderer:
+    """
+    The match orderer class.
+    """
+
+    match = None
+    """ The match object to be ordered """
+
+    def __init__(self, match):
+        self.match = match
+
+    def __cmp__(self, other):
+        return other.match.start() - self.match.start()
