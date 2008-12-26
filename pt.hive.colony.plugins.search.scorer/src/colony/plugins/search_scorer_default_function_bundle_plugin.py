@@ -39,32 +39,33 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.plugins.plugin_system
 
-class SearchScorerDefaultFormulaBundlePlugin(colony.plugins.plugin_system.Plugin):
+class SearchScorerDefaultFunctionBundlePlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Search Scorer Default Formula Bundle Plugin.
+    The main class for the Search Scorer Default Function Bundle Plugin.
     """
 
-    id = "pt.hive.colony.plugins.search.scorer.default_formula_bundle"
-    name = "Search Scorer Default Formula Bundle Plugin"
-    short_name = "Search Scorer Scorer Formula Bundle"
-    description = "Plugin that provides a default set of scorer formulas"
+    id = "pt.hive.colony.plugins.search.scorer.default_function_bundle"
+    name = "Search Scorer Default Function Bundle Plugin"
+    short_name = "Search Scorer Default Function Bundle"
+    description = "Plugin that provides a default set of scorer functions"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["search_scorer_formula_bundle"]
+    capabilities = ["search_scorer_function_bundle"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.search.scorer.function_repository", "1.0.0")]
     events_handled = []
     events_registrable = []
 
-    default_scorer_formula_bundle = None
+    search_scorer_default_function_bundle = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global search_scorer
-        import search_scorer.default_formula_bundle.search_scorer_default_formula_bundle_system
-        self.default_scorer_formula_bundle = search_scorer.default_formula_bundle.search_scorer_default_formula_bundle_system.SearchScorerDefaultFormulaBundle(self)
+        import search_scorer.default_function_bundle.search_scorer_default_function_bundle_system
+        self.search_scorer_default_function_bundle = search_scorer.default_function_bundle.search_scorer_default_function_bundle_system.SearchScorerDefaultFunctionBundle(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
@@ -81,8 +82,16 @@ class SearchScorerDefaultFormulaBundlePlugin(colony.plugins.plugin_system.Plugin
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    def get_formula_types(self):
-        return self.default_scorer_formula_bundle.get_formula_types()
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.search.scorer.default_function_bundle", "1.0.0")
+    def dependency_injected(self, plugin):
+        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def calculate_value(self, document_id, search_result, search_index, search_scorer_formula_type, properties):
-        return self.default_scorer_formula_bundle.calculate_value(document_id, search_result, search_index, search_scorer_formula_type, properties)
+    def get_functions_map(self):
+        return self.search_scorer_default_function_bundle.get_functions_map()
+
+    def get_search_scorer_function_repository_plugin(self):
+        return self.search_scorer_function_repository_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.search.scorer.function_repository")
+    def set_search_scorer_function_repository_plugin(self, search_scorer_function_repository_plugin):
+        self.search_index_repository_plugin = search_index_repository_plugin

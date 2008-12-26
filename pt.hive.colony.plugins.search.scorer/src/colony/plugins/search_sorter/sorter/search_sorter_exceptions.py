@@ -37,14 +37,14 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class SearchScorerDefaultFormulaBundleException(Exception):
+class SearchSorterException(Exception):
     """
-    The search scorer default formula bundle exception class.
+    The search sorter exception class.
     """
 
     pass
 
-class MissingProperty(SearchScorerDefaultFormulaBundleException):
+class MissingProperty(SearchSorterException):
     """
     The missing property class.
     """
@@ -57,7 +57,7 @@ class MissingProperty(SearchScorerDefaultFormulaBundleException):
         @param message: The message to be printed.
         """
 
-        SearchScorerDefaultFormulaBundleException.__init__(self)
+        SearchSorterException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -70,7 +70,7 @@ class MissingProperty(SearchScorerDefaultFormulaBundleException):
 
         return "Missing property: %s" % self.message
 
-class InvalidFormulaType(SearchScorerDefaultFormulaBundleException):
+class ParameterSizeMismatch(SearchSorterException):
     """
     The missing property class.
     """
@@ -83,7 +83,7 @@ class InvalidFormulaType(SearchScorerDefaultFormulaBundleException):
         @param message: The message to be printed.
         """
 
-        SearchScorerDefaultFormulaBundleException.__init__(self)
+        SearchSorterException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -94,4 +94,4 @@ class InvalidFormulaType(SearchScorerDefaultFormulaBundleException):
         @return: The string representation of the class.
         """
 
-        return "Formula type not provided: %s" % self.message
+        return "Parameter size mismatch: %s" % self.message

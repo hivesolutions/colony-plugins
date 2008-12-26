@@ -39,26 +39,26 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import search_exceptions
 
-TYPE_KEY = "type"
+TYPE_VALUE = "type"
 """ The type value """
 
-PERSISTENCE_TYPE_KEY = "persistence_type"
+PERSISTENCE_TYPE_VALUE = "persistence_type"
 """ The persistence type value """
 
-QUERY_EVALUATOR_TYPE_KEY = "query_evaluator_type"
+QUERY_EVALUATOR_TYPE_VALUE = "query_evaluator_type"
 """ The key for the properties map, to access the query evaluator type """
 
-SEARCH_SCORER_FORMULA_TYPE_KEY = "search_scorer_formula_type"
-""" The key for the properties map, to access the search scorer formula type """
+SEARCH_SCORER_FUNCTION_IDENTIFIER_VALUE = "search_scorer_function_identifier"
+""" The key for the properties map, to access the search scorer function identifier """
 
 DEFAULT_INDEX_TYPE = "file_system"
 """ The default index type """
 
-DEFAULT_SEARCH_SCORER_FORMULA_TYPE = "term_frequency_formula_type"
-""" The default value for ther search scorer formula type """
+DEFAULT_SEARCH_SCORER_FUNCTION_IDENTIFIER = "term_frequency"
+""" The identifier of the default search scorer function """
 
 DEFAULT_QUERY_EVALUATOR_TYPE = "query_parser"
-""" The default value for ther search scorer formula type """
+""" The default value for the query evaluator type """
 
 class Search:
     """
@@ -89,8 +89,8 @@ class Search:
         """
 
         # in case type value is not defined in properties
-        if not TYPE_KEY in properties:
-            properties[TYPE_KEY] = DEFAULT_INDEX_TYPE
+        if not TYPE_VALUE in properties:
+            properties[TYPE_VALUE] = DEFAULT_INDEX_TYPE
 
         # retrieves the search crawler plugins
         search_crawler_plugins = self.search_plugin.search_crawler_plugins
@@ -102,7 +102,7 @@ class Search:
         search_indexer_plugin = self.search_plugin.search_indexer_plugin
 
         # retrieves the type of index
-        index_type = properties[TYPE_KEY]
+        index_type = properties[TYPE_VALUE]
 
         # creates the crawling plugin temporary variable
         crawling_plugin = None
@@ -158,14 +158,14 @@ class Search:
         """
 
         # in case the persistence type value is not defined in the properties
-        if not PERSISTENCE_TYPE_KEY in properties:
-            raise search_exceptions.MissingProperty(PERSISTENCE_TYPE_KEY)
+        if not PERSISTENCE_TYPE_VALUE in properties:
+            raise search_exceptions.MissingProperty(PERSISTENCE_TYPE_VALUE)
 
         # retrieves the search index persistence plugins
         search_index_persistence_plugins = self.search_plugin.search_index_persistence_plugins
 
         # retrieves the type of index persistence requested in the properties parameter
-        index_persistence_type = properties[PERSISTENCE_TYPE_KEY]
+        index_persistence_type = properties[PERSISTENCE_TYPE_VALUE]
 
         # creates the index persistence plugin temporary variable
         index_persistence_plugin = None
@@ -194,14 +194,14 @@ class Search:
 
     def load_index(self, properties):
         # in case the persistence type value is not defined in the properties
-        if not PERSISTENCE_TYPE_KEY in properties:
-            raise search_exceptions.MissingProperty(PERSISTENCE_TYPE_KEY)
+        if not PERSISTENCE_TYPE_VALUE in properties:
+            raise search_exceptions.MissingProperty(PERSISTENCE_TYPE_VALUE)
 
         # retrieves the search index persistence plugins
         search_index_persistence_plugins = self.search_plugin.search_index_persistence_plugins
 
         # retrieves the type of index persistence requested in the properties parameter
-        index_persistence_type = properties[PERSISTENCE_TYPE_KEY]
+        index_persistence_type = properties[PERSISTENCE_TYPE_VALUE]
 
         # creates the index persistence plugin temporary variable
         index_persistence_plugin = None
@@ -252,14 +252,14 @@ class Search:
         """
         
         # in case the persistence type value is not defined in the properties
-        if not QUERY_EVALUATOR_TYPE_KEY in properties:
-            properties[QUERY_EVALUATOR_TYPE_KEY] = DEFAULT_QUERY_EVALUATOR_TYPE
+        if not QUERY_EVALUATOR_TYPE_VALUE in properties:
+            properties[QUERY_EVALUATOR_TYPE_VALUE] = DEFAULT_QUERY_EVALUATOR_TYPE
         
         # retrieves the query evaluator plugins
         search_query_evaluator_plugins = self.search_plugin.search_query_evaluator_plugins
         
         # retrieves the query evaluator type specified in the properties parameter
-        query_evaluator_type = properties[QUERY_EVALUATOR_TYPE_KEY]
+        query_evaluator_type = properties[QUERY_EVALUATOR_TYPE_VALUE]
         
         # the query evaluator plugin
         query_evaluator_plugin = None
@@ -290,7 +290,7 @@ class Search:
         """
         Queries the provided index, using an available search_query_evaluator plugin 
         for the query type specified in the properties;
-        Scores the results, using an available search_scorer plugin for the scorer formula type 
+        Scores the results, using the injected search scorer plugin with the function
         specified in the properties;
         Sorts the results by score.
         
@@ -301,44 +301,29 @@ class Search:
         @type properties: Dictionary
         @param properties: The properties to to query the search index.
         @rtype: List
-        @return: The result set for the query in the search index, as a list of (document id, search result information) tuples sorted by score.        
+        @return: The result set for the query in the search index, as a list of 
+        (document id, search result information) tuples sorted by score.
         """
 
-        # in case the search scorer formula type not defined in the properties
-        if not SEARCH_SCORER_FORMULA_TYPE_KEY in properties:
-            properties[SEARCH_SCORER_FORMULA_TYPE_KEY] = DEFAULT_SEARCH_SCORER_FORMULA_TYPE
+        # in case the search scorer function is not defined in the properties
+        if not SEARCH_SCORER_FUNCTION_IDENTIFIER_VALUE in properties:
+            properties[SEARCH_SCORER_FUNCTION_IDENTIFIER_VALUE] = DEFAULT_SEARCH_SCORER_FUNCTION_IDENTIFIER
 
         # retrieves the search scorer plugins
-        search_scorer_plugins = self.search_plugin.search_scorer_plugins
-        
-        # the search scorer plugin
-        search_scorer_plugin = None
+        search_scorer_plugin = self.search_plugin.search_scorer_plugin
 
         # retrieves the search scorer formula type specified in the properties parameter
-        search_scorer_formula_type = properties[SEARCH_SCORER_FORMULA_TYPE_KEY]
-
-        # gets the first plugin for the specified search scorer formula type
-        for search_scorer_plugin in search_scorer_plugins:
-            # retrieves the search scorer formula type of the current plugin
-            search_scorer_plugin_formula_types = search_scorer_plugin.get_formula_types()
-
-            # in case the required scorer formula type is in the formula type list of the plugin
-            if search_scorer_formula_type == search_scorer_plugin_formula_types:
-                # sets the search scorer plugin to be used
-                search_scorer_plugin = search_scorer_plugin
-
-                # breaks the for cycle
-                break
+        search_scorer_function_identifier = properties[SEARCH_SCORER_FUNCTION_IDENTIFIER_VALUE]
 
         # if there was no search scorer plugin available
-        if not search_scorer_plugin:
-            raise search_exceptions.MissingSearchScorerPlugin(search_scorer_formula_type)
+        if not search_scorer_function_identifier in search_scorer_plugin.get_function_identifiers():
+            raise search_exceptions.InvalidFunctionRequested(search_scorer_function_identifier)
 
         # performs the search using own query_index method
         search_results = self.query_index(search_index, search_query, properties)
 
         # scores the results using the available search scorer plugin
-        scored_search_results = search_scorer_plugin.score_search_results(search_index, search_results, properties)
+        scored_search_results = search_scorer_plugin.score_search_results(search_results, search_index, properties)
         
         # sorts the search results using the score
         sorted_search_results = search_scorer_plugin.sort_scored_results(scored_search_results, properties)

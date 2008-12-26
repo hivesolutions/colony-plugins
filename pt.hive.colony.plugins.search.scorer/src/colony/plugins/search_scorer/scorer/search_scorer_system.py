@@ -37,16 +37,16 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-SCORER_FORMULA_TYPE_VALUE = "search_scorer_formula_type"
-""" The score formula type value for the properties map """
-
-SCORE_INFORMATION_MAP_VALUE = "score_information_map"
-""" The key for the search result map, that retrieves the score information map,  """
-
-SCORE_VALUE = "score"
-""" The key for the score information map, that retrieves the score value """
-
 import search_scorer_exceptions
+
+SCORER_FUNCTION_IDENTIFIER_VALUE = "scoring_function_identifier"
+""" The identifier for the main scoring function in the scorer function repository """  
+
+INDEX_TIME_METRIC_TYPE = "index_time"
+""" The identifier for the index time metric type """ 
+
+SEARCH_TIME_METRIC_TYPE = "search_time"
+""" The identifier for the search time metric type """ 
 
 class SearchScorer:
     """
@@ -66,126 +66,59 @@ class SearchScorer:
 
         self.search_scorer_plugin = search_scorer_plugin
 
-    def get_formula_types(self):
-        """
-        Returns the available search scorer formula types.
+    def get_function_identifiers(self):
         
-        @rtype: List
-        @return: Available search scorer formula types list.
+        # retrieves the current function repository
+        search_scorer_function_repository_plugin = self.search_scorer_plugin.search_scorer_function_repository_plugin
+        
+        # gets the identifiers of the available functions from the repository
+        available_function_identifiers = search_scorer_function_repository_plugin.get_function_identifiers()
+        
+        return available_function_identifiers
+    
+
+    def score_results(self, search_results, search_index, properties):
         """
-
-        # the return value
-        formula_types = []
-
-        # retrieves the available formula plugins
-        search_scorer_formula_bundle_plugins = self.search_scorer_plugin.search_scorer_formula_bundle_plugins
-
-        for search_scorer_formula_bundle_plugin in search_scorer_formula_bundle_plugins:
-            search_scorer_formula_bundle_plugin_formula_types = search_scorer_formula_bundle_plugin.get_formula_types()
-            formula_types.append(search_scorer_formula_bundle_plugin_formula_types)
-
-        return formula_types 
-
-    def score_search_results(self, search_index, search_results, properties):
-        """
-        The method to start the search scorer.
+        The method to compute the score for a list of search results.
         
         @type search_results: List
-        @param search_results: The list of (document id, search result) tuples determined by query evaluation.
+        @param search_results: The list of search results.
         @type search_index: SearchIndex
         @param search_index: The search index used to perform the search.
         @type properties: Dictionary
-        @param properties: The map of properties for the result scoring.
+        @param properties: The properties to configure the scoring process.        
         @rtype: List
-        @return: The scored result set as a list of (document id, scored search result) tuples.
+        @return: The list of search results with the computed scores attached.
         """
 
-        # in case the score formula type value is not defined in the properties raises an exception
-        if not SCORER_FORMULA_TYPE_VALUE in properties:
-            raise search_scorer_exceptions.MissingProperty(SCORER_FORMULA_TYPE_VALUE)
+        # retrieves the current function repository
+        search_scorer_function_repository_plugin = self.search_scorer_plugin.search_scorer_function_repository_plugin
 
-        # retrieves the type of formula
-        search_scorer_formula_type = properties[SCORER_FORMULA_TYPE_VALUE]
-
-        # retrieves the available formula plugins
-        search_scorer_formula_bundle_plugins = self.search_scorer_plugin.search_scorer_formula_bundle_plugins
-
-        # the formula plugin used to compute the overall score
-        formula_bundle_plugin = None
-
-        # retrieves the first formula plugin which provides the intended formula type
-        for search_scorer_formula_bundle_plugin in search_scorer_formula_bundle_plugins:
-            # retrieves the formula types provided by the current formula plugin
-            search_scorer_formula_bundle_plugin_formula_types = search_scorer_formula_bundle_plugin.get_formula_types()
-
-            # if the current formula plugin provides the intended formula type, choose the current plugin
-            # as the score computation strategy
-            if search_scorer_formula_type in search_scorer_formula_bundle_plugin_formula_types:
-                formula_bundle_plugin = search_scorer_formula_bundle_plugin
-                break
-
-        if not formula_bundle_plugin:
-            raise search_scorer_exceptions.MissingSearchScorerFormulaBundlePlugin(search_scorer_formula_type)
-
-        # scores each of the search results
-        for document_id, search_result in search_results:
-            # computes the formula output for the current search result 
-            search_result_score_value = formula_bundle_plugin.calculate_value(document_id, search_result, search_index, search_scorer_formula_type, properties)
-
-            # inserts a score information map, (containing scoring information: score, formula type, etc.)
-            # in the search result map (containing information about the search result: hits, etc.)
-            search_result[SCORE_INFORMATION_MAP_VALUE] = {SCORE_VALUE: search_result_score_value, SCORER_FORMULA_TYPE_VALUE: search_scorer_formula_type}
-
-        # returns the sorted search results
-        return search_results
-
-    def sort_scored_results(self, scored_search_results, properties):
-        """
-        Sorts result sets according to previously computed scores in the data structure.
+        # determines top level scoring function according to properties
+        if not SCORER_FUNCTION_IDENTIFIER_VALUE in properties:
+            raise search_scorer_exceptions.MissingProperty(SCORER_FUNCTION_IDENTIFIER_VALUE)
         
-        @type scored_search_results: Dictionary
-        @param scored_search_results: The map of search results determined by query evaluation.
-        @type properties: Dictionary
-        @param properties: The map of properties for the result scoring.
-        @rtype: List
-        @return: A list made up of the search results sorted according to score.
-        """
-
-        # build a list of SortableSearchResult's from the original scored_search_results list
-        sortable_search_result_list = [SortableSearchResult(document_id, scored_search_result) for document_id, scored_search_result in scored_search_results]
-
-        # the wrapping class is used to leverage list sorting
-        sortable_search_result_list.sort()
+        scorer_function_identifier = properties[SCORER_FUNCTION_IDENTIFIER_VALUE]
         
-        # the list should be sorted in reverse order (the top ranking results first) 
-        sortable_search_result_list.reverse()
+        # retrieves the top level scorer function
+        scorer_function = search_scorer_function_repository_plugin.get_function(scorer_function_identifier)
 
-        return sortable_search_result_list
+        # gets the metrics required by the scorer function
+        required_metrics_identifiers_list = scorer_function.get_required_metrics_identifiers()
 
-class SortableSearchResult:
-    """
-    The sortable search result class.
-    """
+        # retrieves the required metrics from the metrics repository
+        scorer_metrics = search_scorer_metrics_repository_plugin.get_metrics(required_metrics_identifiers_list)
+    
+        # computes all the required metrics, for all the search results 
+        for scorer_metric in scorer_metrics:           
+            # computes the search time metric required by the function
+            scorer_metric.calculate_metric_for_results(search_results, search_index, properties)
 
-    document_id = "none"
-    """ The document id """
+        # computes the top level function using the gathered metrics and the coefficients specified in the properties map
+        search_results_scores = scorer_function.calculate(search_results, properties)
+        
+        # sets the search result scores in the existing search results metadata
+        # (decouples function computation from search result structure details)
 
-    search_result = {}
-    """ The scored search result map """
-
-    score = 0
-    """ The score """
-
-    def __init__(self, document_id, search_result):
-        self.document_id = document_id
-        self.search_result = search_result
-
-        score_information_map = search_result[SCORE_INFORMATION_MAP_VALUE]
-        self.score = score_information_map[SCORE_VALUE]
- 
-    def __cmp__(self, other):
-        # retrieves the other position
-        other_score = other.score
-
-        # compares both positions
-        return self.score - other_score
+        # returns a list of scores for each search result
+        return scored_search_results

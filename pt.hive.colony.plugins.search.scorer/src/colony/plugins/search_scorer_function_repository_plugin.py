@@ -39,38 +39,34 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.plugins.plugin_system
 
-class SearchScorerPlugin(colony.plugins.plugin_system.Plugin):
+class SearchScorerFunctionRepositoryPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Search Scorer Plugin.
+    The main class for the Search Scorer Function Repository Plugin.
     """
 
-    id = "pt.hive.colony.plugins.search.scorer"
-    name = "Search Scorer Plugin"
-    short_name = "Search Scorer"
-    description = "Plugin that provides scoring services, for result sets"
+    id = "pt.hive.colony.plugins.search.scorer.function_repository"
+    name = "Search Scorer Function Repository Plugin"
+    short_name = "Search Scorer Function Repository"
+    description = "Plugin that provides directory services to discover available function types for scoring purposes"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["search_scorer"]
-    capabilities_allowed = []
-    dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.search.scorer.function_repository", "1.0.0"),
-                    colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.search.scorer.metric_repository", "1.0.0")]
+    capabilities = ["search_scorer_function_repository"]
+    capabilities_allowed = ["search_scorer_function_bundle"]
+    dependencies = []
     events_handled = []
     events_registrable = []
 
-    search_scorer = None
+    search_scorer_function_repository = None
     
-    search_scorer_function_repository_plugin = None
-    search_scorer_metric_repository_plugin = None
+    search_scorer_function_bundle_plugins = []
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global search_scorer
-        import search_scorer.scorer.search_scorer_system
-        self.search_scorer = search_scorer.scorer.search_scorer_system.SearchScorer(self)
+        import search_scorer.function_repository.search_scorer_function_repository_system
+        self.search_scorer_function_repository = search_scorer.function_repository.search_scorer_function_repository_system.SearchScorerFunctionRepository(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
@@ -81,32 +77,33 @@ class SearchScorerPlugin(colony.plugins.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
+    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.search.scorer.function_repository", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.search.scorer.function_repository", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.search.scorer", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_function_identifiers(self):
-        return self.search_scorer.get_function_identifiers()
+        return self.search_scorer_function_repository.get_function_identifiers()
 
-    def score_results(self, search_results, search_index, properties):
-        return self.search_scorer.score_results(search_results, search_index, properties)
+    def get_function(self, scorer_function_identifier):
+        return self.search_scorer_function_repository.get_function(scorer_function_identifier)
 
-    def get_search_scorer_function_repository_plugin(self):
-        return self.search_scorer_function_repository_plugin
+    @colony.plugins.decorators.load_allowed_capability("search_scorer_function_bundle")
+    def search_scorer_function_bundle_load_allowed(self, plugin, capability):
+        self.search_scorer_function_bundle_plugins.append(plugin)
 
-    def get_search_scorer_metric_repository_plugin(self):
-        return self.search_scorer_metric_repository_plugin
+        plugin_functions_map = plugin.get_functions_map()
+        self.search_scorer_function_repository.add_search_scorer_functions_map(plugin_functions_map)
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.search.scorer.function_repository")
-    def set_search_scorer_function_repository_plugin(self, search_scorer_function_repository_plugin):
-        self.search_index_repository_plugin = search_index_repository_plugin
+    @colony.plugins.decorators.unload_allowed_capability("search_scorer_function_bundle")
+    def search_scorer_function_bundle_unload_allowed(self, plugin, capability):
+        self.search_scorer_function_bundle_plugins.remove(plugin)
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.search.scorer.metric_repository")
-    def set_search_scorer_metric_repository_plugin(self, search_scorer_metric_repository_plugin):
-        self.search_index_repository_plugin = search_index_repository_plugin
+        plugin_functions_map = plugin.get_functions_map()
+        self.search_scorer_function_repository.remove_search_scorer_functions_map(plugin_functions_map)

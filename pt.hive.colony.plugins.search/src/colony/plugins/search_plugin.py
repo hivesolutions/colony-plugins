@@ -60,7 +60,9 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
                     colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.search.indexer", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.search.index_repository", "1.0.0")]
+                    "pt.hive.colony.plugins.search.index_repository", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.search.scorer", "1.0.0")]
     events_handled = []
     events_registrable = []
 
@@ -69,11 +71,11 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
     search_crawler_plugins = []
     search_index_persistence_plugins = []
     search_query_evaluator_plugins = []
-    search_scorer_plugins = []
 
     search_interpreter_plugin = None
     search_indexer_plugin = None
     search_index_repository_plugin = None
+    search_scorer_plugin = None
 
     search_test = None
 
@@ -188,3 +190,10 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.search.index_repository")
     def set_search_index_repository_plugin(self, search_index_repository_plugin):
         self.search_index_repository_plugin = search_index_repository_plugin
+
+    def get_search_scorer_plugin(self):
+        return self.search_scorer_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.search.scorer")
+    def set_search_scorer_plugin(self, search_scorer_plugin):
+        self.search_scorer_plugin = search_scorer_plugin
