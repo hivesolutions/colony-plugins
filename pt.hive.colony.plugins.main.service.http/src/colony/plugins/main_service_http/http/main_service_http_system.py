@@ -46,6 +46,12 @@ import StringIO
 
 import main_service_http_exceptions
 
+GET_METHOD_VALUE = "GET"
+""" The get method value """
+
+POST_METHOD_VALUE = "POST"
+""" The post mehtod value """
+
 HOST_VALUE = ""
 """ The host value """
 
@@ -339,9 +345,9 @@ class HttpClientServiceTask:
 
                         request.headers_map[header_name] = header_value
 
-                    if request.operation_type == "GET":
+                    if request.operation_type == GET_METHOD_VALUE:
                         return request
-                    elif request.operation_type == "POST":
+                    elif request.operation_type == POST_METHOD_VALUE:
                         if "Content-Length" in request.headers_map:
                             message_size = int(request.headers_map["Content-Length"])
                         else:
