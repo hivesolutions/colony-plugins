@@ -388,16 +388,40 @@ class HttpClientServiceTask:
         return data
 
     def send_exception(self, request, exception):
+        """
+        Sends the exception to the given request for the given exception.
+        
+        @type request: HttpRequest
+        @param request: The request to send the exception.
+        @type exception: Exception
+        @param exception: The exception to be sent.
+        """
+
+        # sets the request content type
         request.content_type = "text/plain"
+
+        # checks if the exception contains a status code
         if hasattr(exception, "status_code"):
+            # sets the status code in the request
             request.status_code = exception.status_code
+        # in case there is no status code defined in the exception
         else:
+            # sets the internal server error status code
             request.status_code = 500
+
+        # retrieves the value for the status code
         status_code_value = STATUS_CODE_VALUES[request.status_code]
+
+        # writes the header message in the message
         request.write("colony web server - " + str(request.status_code) + " " + status_code_value + "\n")
+
+        # writes the exception message
         request.write("error: '" + str(exception) + "'\n")
+
+        # writes the traceback message in the request
         request.write("traceback:\n")
 
+        # writes the traceback in the request
         formated_traceback = traceback.format_tb(sys.exc_traceback)
 
         # iterates over the traceback lines
