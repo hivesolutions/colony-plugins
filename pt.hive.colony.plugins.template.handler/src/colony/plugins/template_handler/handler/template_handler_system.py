@@ -105,7 +105,7 @@ class TemplateHandler:
         # in case the paths does not exist
         if not os.path.exists(complete_path):
             # raises file not found exception with 404 http error code
-            raise main_service_http_file_handler_exceptions.FileNotFoundException(path, 404)
+            raise template_handler_exceptions.FileNotFoundException(path, 404)
 
         # opens the requested file
         file = open(complete_path, "rb")
