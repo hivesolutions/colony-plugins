@@ -309,9 +309,17 @@ class ThreadPoolImplementation:
 
         # in case the current scheduling algorithm is dynamic scheduling
         if self.scheduling_algorithm == DYNAMIC_SCHEDULING_ALGORITHM:
+            # in case increment size is active
             if increment_size:
-                # in case all the threads are busy
-                if self.busy_threads == self.current_number_threads:
+                # retrieves the length of the task queue
+                task_queue_length = len(self.task_queue)
+
+                # calculates the required number of threads
+                required_threads = self.busy_threads + task_queue_length
+
+                # in case the number of current threads is less or equal
+                # than the the number of required threads
+                if self.current_number_threads <= required_threads:
                     # in case the current number of threads is less
                     # than the maximum number of threads
                     if self.current_number_threads < self.maximum_number_threads:
