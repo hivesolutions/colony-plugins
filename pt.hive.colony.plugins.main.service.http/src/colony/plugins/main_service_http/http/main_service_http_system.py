@@ -285,6 +285,13 @@ class HttpClientServiceTask:
         pass
 
     def retrieve_request(self):
+        """
+        Retrieves the request from the received message.
+        
+        @rtype: HttpRequest
+        @return: The request from the received message.
+        """
+
         # creates the string io for the message
         message = StringIO.StringIO()
 
@@ -303,6 +310,7 @@ class HttpClientServiceTask:
         # creates the message size value
         message_size = 0
 
+        # continuous loop
         while 1:
             # retrieves the data
             data = self.retrieve_data()
@@ -313,52 +321,90 @@ class HttpClientServiceTask:
             # retrieves the message value from the string io
             message_value = message.getvalue()
 
+            # in case the start line is not loaded
             if not start_line_loaded:
+                # finds the first new line value
                 start_line_index = message_value.find("\r\n")
+
+                # in case there is a new line value found
                 if not start_line_index == -1:
+                    # retrieves the start line
                     start_line = message_value[:start_line_index]
+
+                    # splits the start line to retrieve the operation type the path
+                    # and the protocol version
                     operation_type, path, protocol_version = start_line.split(" ")
 
+                    # sets the request  operation type
                     request.set_operation_type(operation_type)
+
+                    # sets the request path
                     request.set_path(path)
+
+                    # sets the request protocol version
                     request.set_protocol_version(protocol_version)
 
+                    # sets the start line loaded flag
                     start_line_loaded = True
 
+            # in case the header is not loaded
             if not header_loaded:
+                # retrieves the end header index (two new lines)
                 end_header_index = message_value.find("\r\n\r\n")
 
+                # in case the end header index is found
                 if not end_header_index == -1:
+                    # sets the header loaded flag
                     header_loaded = True
 
+                    # retrieves the start header index
                     start_header_index = start_line_index + 2
 
+                    # retrieves the headers part of the message
                     headers = message_value[start_header_index:end_header_index]
+
+                    # splits the headers by line
                     headers_splitted = headers.split("\r\n")
 
+                    # iterates over the headers lines
                     for header_splitted in headers_splitted:
+                        # finds the header separator
                         division_index = header_splitted.find(":")
 
+                        # retrieves the header name
                         header_name = header_splitted[:division_index].strip()
 
+                        # retrieves the header value
                         header_value = header_splitted[division_index + 1:].strip()
 
+                        # sets the header in the headers map
                         request.headers_map[header_name] = header_value
 
+                    # in case the operation type is get
                     if request.operation_type == GET_METHOD_VALUE:
+                        # returns the request
                         return request
+                    # in case the operation type is post
                     elif request.operation_type == POST_METHOD_VALUE:
+                        # in case the content length is defined in the headers map
                         if "Content-Length" in request.headers_map:
+                            # retrieves the message size
                             message_size = int(request.headers_map["Content-Length"])
+                        # in case there is no content length defined in the headers map
                         else:
+                            # returns the request
                             return request 
 
+            # in case the message is not loaded and the header is loaded
             if not message_loaded and header_loaded:
+                # retrieves the start message size
                 start_message_index = end_header_index + 4
 
                 # retrieves the message part of the message value
                 message_value_message = message_value[start_message_index:]
 
+                # in case the length of the message value message is the same
+                # as the message size
                 if len(message_value_message) == message_size:
                     # sets the message loaded flag
                     message_loaded = True
