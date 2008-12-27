@@ -70,10 +70,10 @@ SERVER_NAME = "Hive-Colony-Web"
 SERVER_VERSION = "1.0.0"
 """ The server version """
 
-NUMBER_THREADS = 10
+NUMBER_THREADS = 15
 """ The number of threads """
 
-MAX_NUMBER_THREADS = 15
+MAX_NUMBER_THREADS = 30
 """ The maximum number of threads """
 
 SCHEDULING_ALGORITHM = 2
@@ -161,6 +161,7 @@ class MainServiceHttp:
         # binds the http socket
         self.http_socket.bind((HOST_VALUE, port))
 
+        # loops while the http connection is active
         while self.http_connection_active:
             # start listening in the http socket
             self.http_socket.listen(1)
@@ -197,6 +198,8 @@ class MainServiceHttp:
 
             # inserts the new task descriptor into the http client thread pool
             self.http_client_thread_pool.insert_task(task_descriptor)
+
+            print "Number of threads in pool: " + str(self.http_client_thread_pool.current_number_threads)
 
     def stop_server(self):
         """
@@ -235,15 +238,16 @@ class HttpClientServiceTask:
         self.http_address = http_address
 
     def start(self):
+        # retrieves the http service handler plugins
         http_service_handler_plugins = self.main_service_http_plugin.http_service_handler_plugins
 
-        print "Connected to: ", self.http_address
+        print "Connected to: " + str(self.http_address)
 
         while 1:
             try:
                 request = self.retrieve_request()
             except main_service_http_exceptions.MainServiceHttpException:
-                print "connection closed"
+                print "Connection closed"
                 return
 
             try:
@@ -265,7 +269,7 @@ class HttpClientServiceTask:
 
                 # in case the connection is not meant to be kept alive
                 if not self.keep_alive(request):
-                    print "connection closed"
+                    print "Connection closed"
                     break
 
             except Exception, exception:
