@@ -40,15 +40,28 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import re
 
 CONSOLE_EXTENSION_NAME = "test"
+""" The console extension name """
+
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
+""" The invalid number of arguments message """
+
 INVALID_TEST_ID_MESSAGE = "invalid test id"
+""" The invalid test id message """
+
 HELP_TEXT = "### UNIT TESTING HELP ###\n\
 starttest <unit-testid> - starts a unit test\n\
 startalltest            - starts all the unit tests\n\
 showalltest             - shows all the unit tests"
+""" The help text """
+
 TABLE_TOP_TEXT = "ID      TEST CASE NAME                PLUGIN ID"
+""" The table top text """
+
 FIRST_COLUMN_SPACING = 8
+""" The first column spacing """
+
 SECOND_COLUMN_SPACING = 30
+""" The second column spacing """
 
 ID_REGEX = "[0-9]+"
 """ The regular expression to retrieve the id of the test case """
