@@ -40,17 +40,33 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import datetime
 
 CONSOLE_EXTENSION_NAME = "automation_scheduler"
+""" The console extension name """
+
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
+""" The invalid number of arguments message """
+
 INVALID_DATE_TIME_MESSAGE = "invalid date time value"
+""" The invalid date time message """
+
 INVALID_RECURSION_MESSAGE = "invalid recursion value"
+""" The invalid recursion message """
+
 HELP_TEXT = "### BUILD AUTOMATION SCHEDULER HELP ###\n\
 schedule_automation <plugin-id> <date-time> <recursion> [plugin-version] - schedules the given automation\n\
 showall_automation_scheduler - shows all the scheduled build automations"
+""" The help text """
+
 TABLE_TOP_TEXT = "ID      DATE_TIME      RECURSION      BUILD AUTOMATION ID"
+""" The table top text """
+
 COLUMN_SPACING = 8
+""" The column spacing """
 
 DATE_FORMAT = "%d-%m-%Y"
+""" The date format """
+
 DATE_TIME_FORMAT = "%d-%m-%Y %H:%M:%S"
+""" The date time format """
 
 class ConsoleBuildAutomationScheduler:
     """

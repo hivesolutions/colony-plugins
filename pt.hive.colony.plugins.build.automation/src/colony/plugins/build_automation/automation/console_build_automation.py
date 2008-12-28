@@ -40,12 +40,21 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import re
 
 CONSOLE_EXTENSION_NAME = "automation"
+""" The console extension name """
+
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
+""" The invalid number of arguments message """
+
 HELP_TEXT = "### BUILD AUTOMATION HELP ###\n\
 run_automation <plugin-id> [plugin-version] - runs the build automation in the plugin with the given id and version\n\
 showall_automation                          - shows all the build automations"
+""" The help text """
+
 TABLE_TOP_TEXT = "ID      BUILD AUTOMATION ID"
+""" The table top text """
+
 COLUMN_SPACING = 8
+""" The column spacing """
 
 ID_REGEX = "[0-9]+"
 """ The regular expression to retrieve the id of the build automation """
