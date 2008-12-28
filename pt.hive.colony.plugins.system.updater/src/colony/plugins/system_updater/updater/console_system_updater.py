@@ -38,13 +38,18 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 CONSOLE_EXTENSION_NAME = "system_updater"
+""" The console extension name """
+
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
+""" The invalid number of arguments message """
+
 HELP_TEXT = "### SYSTEM UPDATER HELP ###\n\
 listrepositories                              - lists the current available repositories\n\
 listrepositorypackages <repository-name>      - lists the packages for the given repository\n\
 listrepositoryplugins <repository-name>       - lists the plugins for the given repository\n\
 installpackage <package-id> [package-version] - installs the package with the given id and version\n\
 installplugin <plugin-id> [plugin-version]    - installs the plugin with the given id and version"
+""" The help text """
 
 class ConsoleSystemUpdater:
 
