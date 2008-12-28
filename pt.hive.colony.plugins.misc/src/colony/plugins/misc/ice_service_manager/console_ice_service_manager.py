@@ -38,11 +38,16 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 CONSOLE_EXTENSION_NAME = "ice_service_manager"
+""" The console extension name """
+
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
+""" The invalid number of arguments message """
+
 HELP_TEXT = "### ICE SERVICE MANAGER HELP ###\n\
 listiceservices                - lists all the available ice services\n\
 starticeservice <service-name> - starts an ice service with the given service name\n\
 stopiceservice <service-name>  - stops an ice service with the given service name"
+""" The help text """
 
 class ConsoleIceServiceManager:
 

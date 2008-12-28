@@ -43,7 +43,11 @@ import getopt
 import colony.plugins.util
 
 CONSOLE_EXTENSION_NAME = "ice_helper"
+""" The console extension name """
+
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
+""" The invalid number of arguments message """
+
 HELP_TEXT = "### ICE HELPER HELP ###\n\
 loadice <file-path>                                                   - starts the loading of the file\n\
 createregistry <registry-name> [registry-replica-name] [properties..] - creates a new ice grid registry with the given name, replica name and properties\n\
@@ -58,6 +62,7 @@ createregistryaccess                                                  - creates 
 createadminaccess <username> <password>                               - creates an admin access object to administrate the ice grid\n\
 callaccess <method-name> [arguments..]                                - calls a method with the given name with the given arguments\n\
 showapplicationinfo <application-name>                                - shows information about the the application with the given name"
+""" The help text """
 
 ICE_REGISTRY_PARSING_VALUES = ["ice_grid_registry_path=", "ice_grid_instance_name=", "ice_grid_default_locator=",
                                "ice_grid_registry_client_endpoints=", "ice_grid_registry_server_endpoints=",
@@ -65,10 +70,12 @@ ICE_REGISTRY_PARSING_VALUES = ["ice_grid_registry_path=", "ice_grid_instance_nam
                                "ice_grid_registry_permissions_verifier=", "ice_grid_registry_admin_permissions_verifier=",
                                "ice_grid_registry_ssl_permissions_verifier=", "ice_grid_registry_admin_ssl_permissions_verifier=",
                                "ice_grid_admin_username=", "ice_grid_admin_password=", "ice_grid_registry_log_file=", "ice_grid_registry_log_file_mode="]
+""" The ice registry parsing values """
 
 ICE_NODE_PARSING_VALUES = ["ice_grid_node_path=", "ice_grid_instance_name=", "ice_default_locator=", "ice_grid_node_data=",
                            "ice_grid_node_endpoints=", "ice_grid_node_name=", "ice_grid_node_trace_activator=",
                            "ice_grid_node_trace_patch=", "ice_grid_node_log_file=", "ice_grid_node_log_file_mode="]
+""" The ice node parsing values """
 
 class ConsoleIceHelper:
 
@@ -77,6 +84,7 @@ class ConsoleIceHelper:
     ice_helper_plugin = None
 
     communicator = None
+
     locator_name = None
 
     def __init__(self, ice_helper_plugin = None):

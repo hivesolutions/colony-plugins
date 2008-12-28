@@ -38,11 +38,18 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 CONSOLE_EXTENSION_NAME = "google_data_client"
+""" The console extension name """
+
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
+""" The invalid number of arguments message """
+
 INVALID_OPERATION_MESSAGE = "invalid operation"
+""" The invalid operation message """
+
 HELP_TEXT = "### GOOGLE DATA CLIENT HELP ###\n\
 googleconnect <username> <password>     - connects to the google data services\n\
 googleyoutube <operation> [arguments..] - uses one of the google services"
+""" The help text """
 
 #@todo: review and comment this file
 class ConsoleGoogleDataClient:

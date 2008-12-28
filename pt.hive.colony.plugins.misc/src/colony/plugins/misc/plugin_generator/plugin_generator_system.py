@@ -41,9 +41,14 @@ import os
 import sys
 
 CONSOLE_EXTENSION_NAME = "plugin_generator"
+""" The console extension name """
+
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
+""" The invalid number of arguments message """
+
 HELP_TEXT = "### PLUGIN GENERATOR HELP ###\n\
-generate_web_mvc_plugin <author_name> <self.author_email> <self.plugin_namespace> <plugin_id> - generates all the stubs for an MVC plugin for the web framework"
+generate_web_mvc_plugin <author_name> <author_email> <plugin_namespace> <plugin_id> - generates all the stubs for an MVC plugin for the web framework"
+""" The help text """
 
 class PluginGenerator:
 

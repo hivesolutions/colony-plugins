@@ -40,9 +40,14 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import StockQuote_services
 
 CONSOLE_EXTENSION_NAME = "stock_quote"
+""" The console extension name """
+
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
+""" The invalid number of arguments message """
+
 HELP_TEXT = "### STOCK QUOTE CLIENT HELP ###\n\
 getstockquote <symbol> - restrives the stock quote of the company with the given symbol"
+""" The help text """
 
 #@todo: comment this class
 class StockQuoteWebServiceClient:

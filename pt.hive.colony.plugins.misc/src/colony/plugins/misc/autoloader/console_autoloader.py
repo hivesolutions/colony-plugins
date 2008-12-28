@@ -38,19 +38,35 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 CONSOLE_EXTENSION_NAME = "autoloader"
+""" The console extension name """
+
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
+""" The invalid number of arguments message """
+
 HELP_TEXT = "### AUTOLOADER HELP ###\n\
 configautoloader <config-option> - configures the autoloader"
+""" The help text """
 
 #@todo: review and comment this file
 class ConsoleAutoloader:
+    """
+    The console autoloader class.
+    """
 
     commands = ["configautoloader"]
 
     autoloader_plugin = None
+    """ The autoloader plugin """
 
-    def __init__(self, downloader_plugin = None):
-        self.downloader_plugin = downloader_plugin
+    def __init__(self, autoloader_plugin = None):
+        """
+        Constructor of the class.
+        
+        @type autoloader_plugin: AutoloaderPlugin
+        @param autoloader_plugin: The autoloader plugin.
+        """
+
+        self.autoloader_plugin = autoloader_plugin
 
     def get_console_extension_name(self):
         return CONSOLE_EXTENSION_NAME

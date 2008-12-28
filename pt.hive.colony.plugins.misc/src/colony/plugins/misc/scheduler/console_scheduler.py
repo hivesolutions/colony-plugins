@@ -38,11 +38,17 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 CONSOLE_EXTENSION_NAME = "scheduler"
+""" The console extension name """
+
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
+""" The invalid number of arguments message """
+
 HELP_TEXT = "### SCHEDULER HELP ###\n\
 showallscheduler - shows all the scheduled tasks"
+""" The help text """
 
 TABLE_TOP_TEXT = "ID      TASK            TIME      RECURSIVITY"
+""" The table top text """
 
 class ConsoleScheduler:
     """

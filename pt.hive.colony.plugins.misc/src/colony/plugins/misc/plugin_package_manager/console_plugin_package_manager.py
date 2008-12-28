@@ -38,7 +38,10 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 CONSOLE_EXTENSION_NAME = "plugin_package_manager"
+""" The console extension name """
+
 HELP_TEXT = "### PLUGIN PACKAGE MANAGER HELP ###\n"
+""" The help text """
 
 class ConsolePluginPackageManager:
 

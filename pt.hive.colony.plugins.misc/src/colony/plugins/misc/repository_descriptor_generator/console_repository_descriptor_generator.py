@@ -38,8 +38,11 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 CONSOLE_EXTENSION_NAME = "repository_descriptor"
+""" The console extension name """
+
 HELP_TEXT = "### REPOSITORY DESCRIPTOR GENERATOR HELP ###\n\
 generaterepositorydescriptor <file-path> [repository-name] [repository-description] - generates a repository descriptor with the available plugins"
+""" The help text """
 
 class ConsoleRepositoryDescriptorGenerator:
 

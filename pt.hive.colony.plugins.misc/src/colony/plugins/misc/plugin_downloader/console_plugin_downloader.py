@@ -38,11 +38,18 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 CONSOLE_EXTENSION_NAME = "plugin_downloader"
+""" The console extension name """
+
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
+""" The invalid number of arguments message """
+
 INVALID_ADDRESS_MESSAGE = "invalid address"
+""" The invalid address message """
+
 HELP_TEXT = "### PLUGIN DOWNLOADER HELP ###\n\
 plugindownload <plugin-id> [plugin-version]     - starts the download of the plugin\n\
 plugintestdownload <plugin-id> [plugin-version] - test the download of the plugin"
+""" The help text """
 
 #@todo: review and comment this file
 class ConsolePluginDownloader:

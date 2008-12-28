@@ -41,12 +41,17 @@ import xmpp
 import threading
 
 CONSOLE_EXTENSION_NAME = "jabber_client"
+""" The console extension name """
+
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
+""" The invalid number of arguments message """
+
 HELP_TEXT = "### JABBER CLIENT HELP ###\n\
 jabber_connect <jabber_id> <password>                         - connects to a XAMPP server\n\
 jabber_disconnect <jabber_id>                                 - disconnects from the XAMPP server\n\
 jabber_send <sender_jabber_id> <receiver_jabber_id> <message> - sends a message to a user in the server one is connected to\n\
 jabber_list_clients                                           - retrieves a list of the currently connected clients"
+""" The help text """
 
 #@todo: comment this class
 class JabberClient:

@@ -38,9 +38,14 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 CONSOLE_EXTENSION_NAME = "garbage_collector"
+""" The console extension name """
+
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
+""" The invalid number of arguments message """
+
 HELP_TEXT = "### GARBAGE COLLECTOR HELP ###\n\
 rungarbagecollector - runs the python garbage collector"
+""" The help text """
 
 class ConsoleGarbageCollector:
 

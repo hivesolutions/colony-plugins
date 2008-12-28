@@ -40,12 +40,17 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import aiml
 
 CONSOLE_EXTENSION_NAME = "bot_engine_aiml"
+""" The console extension name """
+
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
+""" The invalid number of arguments message """
+
 HELP_TEXT = "### AIML BOT ENGINE HELP ###\n\
 bot_engine_aiml_load_brain <path>  - loads a PyAIML brain into the AIML bot engine\n\
 bot_engine_aiml_teach_brain <path> - teaches an AIML file to the AIML bot engine\n\
 bot_engine_aiml_send <message>     - sends a message to the AIML bot engine"
-    
+""" The help text """
+
 #@todo: comment this file
 class BotEngineAIML:
 
