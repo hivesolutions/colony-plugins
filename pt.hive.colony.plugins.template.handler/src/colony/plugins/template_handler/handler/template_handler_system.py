@@ -70,6 +70,9 @@ class TemplateHandler:
     template_handler_plugin = None
     """ The template handler plugin """
 
+    default_stdout = None
+    """ The default stdout """
+
     def __init__(self, template_handler_plugin):
         """
         Constructor of the class.
@@ -79,6 +82,8 @@ class TemplateHandler:
         """
 
         self.template_handler_plugin = template_handler_plugin
+
+        self.default_stdout = sys.stdout
 
     def get_handler_filename(self):
         return HANDLER_FILENAME
@@ -159,73 +164,71 @@ class TemplateHandler:
         # sets the plugin manager value
         plugin_manager = self.template_handler_plugin.manager
 
-        # creates a backup for the stdout
-        backup_stdout = sys.stdout
-
         # sets the stdout as request
         sys.stdout = request
 
-        # iterates over the match orderer list in size two jumps
-        while index < match_orderer_list_length:
-            # retrieves the start match orderer
-            start_match_orderer = match_orderer_list[index]
+        try:
+            # iterates over the match orderer list in size two jumps
+            while index < match_orderer_list_length:
+                # retrieves the start match orderer
+                start_match_orderer = match_orderer_list[index]
 
-            # retrieves the end match orderer
-            end_macth_orderer = match_orderer_list[index + 1]
+                # retrieves the end match orderer
+                end_macth_orderer = match_orderer_list[index + 1]
 
-            # retrieves the start match
-            start_match = start_match_orderer.match
+                # retrieves the start match
+                start_match = start_match_orderer.match
 
-            # retrieves the end match
-            end_match = end_macth_orderer.match
+                # retrieves the end match
+                end_match = end_macth_orderer.match
 
-            # retrieves the start index of the start match
-            start_match_start = start_match.start()
+                # retrieves the start index of the start match
+                start_match_start = start_match.start()
 
-            # retrieves the end index of the start match
-            start_match_end = start_match.end()
+                # retrieves the end index of the start match
+                start_match_end = start_match.end()
 
-            # retrieves the start index of the end match
-            end_match_start = end_match.start()
+                # retrieves the start index of the end match
+                end_match_start = end_match.start()
 
-            # retrieves the end index of the end match
-            end_match_end = end_match.end()
+                # retrieves the end index of the end match
+                end_match_end = end_match.end()
 
-            # retrieves the middle words
-            middle_words = file_contents[current_carret:start_match_start]
+                # retrieves the middle words
+                middle_words = file_contents[current_carret:start_match_start]
 
-            # writes the middle words in the request
-            sys.stdout.write(middle_words)
+                # writes the middle words in the request
+                sys.stdout.write(middle_words)
 
-            # retrieves the python text to be processed
-            process_text = file_contents[start_match_end:end_match_start]
+                # retrieves the python text to be processed
+                process_text = file_contents[start_match_end:end_match_start]
 
-            # strips the process text
-            process_text_striped = process_text.strip()
+                # strips the process text
+                process_text_striped = process_text.strip()
 
-            # substitutes the windows style of newlines to the unix one
-            process_text_replaced = process_text_striped.replace("\r\n", "\n")
+                # substitutes the windows style of newlines to the unix one
+                process_text_replaced = process_text_striped.replace("\r\n", "\n")
 
-            # executes the python code
-            exec(process_text_replaced) in globals(), locals()
+                # executes the python code
+                exec(process_text_replaced) in globals(), locals()
 
-            # sets the current carret
-            current_carret = end_match_end
+                # sets the current carret
+                current_carret = end_match_end
 
-            # updates the index accumulator value
-            index += 2
+                # updates the index accumulator value
+                index += 2
 
-        # restores the original stdout
-        sys.stdout = backup_stdout
+            # retrieves the final words
+            final_words = file_contents[current_carret:file_contensts_length]
 
-        # retrieves the final words
-        final_words = file_contents[current_carret:file_contensts_length]
+            # writes the final words in the request
+            request.write(final_words)
+        finally:
+            # restores the default stdout
+            sys.stdout = self.default_stdout
 
-        # writes the final words in the request
-        request.write(final_words)
-
-        # closes the file
-        file.close()
+            # closes the file
+            file.close()
 
     def import_js_library(self, library_name):
         # retrieves the plugin manager
