@@ -62,7 +62,7 @@ class SearchScorerPlugin(colony.plugins.plugin_system.Plugin):
     events_registrable = []
 
     search_scorer = None
-    
+
     search_scorer_function_repository_plugin = None
     search_scorer_metric_repository_plugin = None
 

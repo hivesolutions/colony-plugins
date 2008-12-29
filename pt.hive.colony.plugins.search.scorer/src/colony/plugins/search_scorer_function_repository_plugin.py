@@ -59,7 +59,7 @@ class SearchScorerFunctionRepositoryPlugin(colony.plugins.plugin_system.Plugin):
     events_registrable = []
 
     search_scorer_function_repository = None
-    
+
     search_scorer_function_bundle_plugins = []
 
     def load_plugin(self):
