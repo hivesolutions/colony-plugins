@@ -62,6 +62,9 @@ JAVASCRIPT_TAG_START = "<script type=\"text/javascript\">"
 JAVASCRIPT_TAG_END = "</script>"
 """ The javascript end tag """
 
+DEFAULT_CONTENT_TYPE = "text/html"
+""" The default content type """
+
 class TemplateHandler:
     """
     The template handler class.
@@ -166,6 +169,9 @@ class TemplateHandler:
 
         # sets the stdout as request
         sys.stdout = request
+
+        # sets the default content type
+        request.content_type = DEFAULT_CONTENT_TYPE
 
         try:
             # iterates over the match orderer list in size two jumps
