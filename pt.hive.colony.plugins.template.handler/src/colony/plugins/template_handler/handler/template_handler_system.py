@@ -231,6 +231,13 @@ class TemplateHandler:
             file.close()
 
     def import_js_library(self, library_name):
+        """
+        Imports the javascript library with the given name.
+        
+        @type library_name: String
+        @param library_name: The name of the library to be imported.
+        """
+
         # retrieves the plugin manager
         manager = self.template_handler_plugin.manager
 
@@ -240,21 +247,37 @@ class TemplateHandler:
         # creates the library file name
         library_file_name = library_name + ".js"
 
+        # retrieves the full library path
         library_path = plugin_path + "/template_handler/handler/resources/js_libs/" + library_file_name
 
+        # opens the library file
         library_file = open(library_path, "r")
 
+        # reads the library file contents
         library_file_contents = library_file.read()
 
+        # prints the javascript start tag
         print JAVASCRIPT_TAG_START
 
+        # prints the library file contents
         print library_file_contents
 
+        # prints the javascript end tag
         print JAVASCRIPT_TAG_END
 
+        # closes the library file
         library_file.close()
 
     def parse_request_attributes(self, request):
+        """
+        Parses the request attributes in the default response format.
+        
+        @type request: HttpRequest
+        @param request: The http request to be parsed for attributes.
+        @rtype: Dictionary
+        @return: The dictionary with the parsed attributes.
+        """
+
         request_attributes_map = {}
 
         received_message_pairs = request.received_message.split("&")
@@ -270,6 +293,15 @@ class TemplateHandler:
         return request_attributes_map
 
     def escape_dots(self, string_value):
+        """
+        Escapes the "." changing it to "-".
+        
+        @type string_value: String
+        @param string_value: The string to be escaped.
+        @rtype: String
+        @return: The escaped string.
+        """
+
         escaped_string_value = string_value.replace(".", "-")
 
         return escaped_string_value
