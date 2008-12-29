@@ -127,8 +127,16 @@ class ThreadPoolManager:
         @return: The created thread pool
         """
 
-        thread_pool = ThreadPoolImplementation(name, description, number_threads, scheduling_algorithm, maximum_number_threads)
+        # retrieves the logger
+        logger = self.thread_pool_manager_plugin.logger
+
+        # creates a new thread pool
+        thread_pool = ThreadPoolImplementation(name, description, number_threads, scheduling_algorithm, maximum_number_threads, logger)
+
+        # adds the new thread pool to the list of thread pools
         self.thread_pools_list.append(thread_pool)
+
+        # returns the new thread pool
         return thread_pool
 
     def get_thread_task_descriptor_class(self):
@@ -161,6 +169,9 @@ class ThreadPoolImplementation:
     maximum_number_threads = DEFAULT_MAXIMUM_NUMBER_THREADS
     """ The thread pool maximum number of threads """
 
+    logger = None
+    """ The logger used """
+
     worker_threads_list = []
     """ The thread pool list of worker threads """
 
@@ -182,7 +193,7 @@ class ThreadPoolImplementation:
     thread_size_modification_semaphore = None
     """ The thread pool thread size modification semaphore """
 
-    def __init__(self, name = "none", description = "none", number_threads = DEFAULT_NUMBER_THREADS, scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM, maximum_number_threads = DEFAULT_MAXIMUM_NUMBER_THREADS):
+    def __init__(self, name = "none", description = "none", number_threads = DEFAULT_NUMBER_THREADS, scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM, maximum_number_threads = DEFAULT_MAXIMUM_NUMBER_THREADS, logger = None):
         """
         Constructor of the class
         
@@ -196,6 +207,8 @@ class ThreadPoolImplementation:
         @param scheduling_algorithm: The thread pool scheduling algorithm
         @type maximum_number_threads: int
         @param maximum_number_threads: The thread pool maximum number of threads
+        @type logger: Log
+        @param logger: The logger used.
         """
 
         self.name = name
@@ -203,6 +216,7 @@ class ThreadPoolImplementation:
         self.number_threads = number_threads
         self.scheduling_algorithm = scheduling_algorithm
         self.maximum_number_threads = maximum_number_threads
+        self.logger = logger
 
         self.worker_threads_list = []
         self.task_queue = []
@@ -323,13 +337,26 @@ class ThreadPoolImplementation:
                     # in case the current number of threads is less
                     # than the maximum number of threads
                     if self.current_number_threads < self.maximum_number_threads:
+                        # prints a debug message about the thread pool grow
+                        self.logger.debug("Thread pool (%s) grown" % self.name)
+
                         # creates a new worker thread
                         self.create_worker_thread()
             else:
                 # in case the current number of threads is greater that the default number
                 if self.current_number_threads > self.number_threads:
-                    # in case the current number of threads include non busy threads
-                    if self.current_number_threads > self.busy_threads:
+                    # retrieves the length of the task queue
+                    task_queue_length = len(self.task_queue)
+
+                    # calculates the required number of threads
+                    required_threads = self.busy_threads + task_queue_length
+
+                    # in case the current number of threads is greater than the number
+                    # of required threads
+                    if self.current_number_threads > required_threads:
+                        # prints a debug message about the thread pool shrink
+                        self.logger.debug("Thread pool (%s) shrinked" % self.name)
+
                         # retrieves the task queue size
                         task_queue_size = len(self.task_queue)
 
