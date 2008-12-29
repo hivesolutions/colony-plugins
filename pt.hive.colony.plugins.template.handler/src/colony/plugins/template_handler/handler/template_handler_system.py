@@ -275,21 +275,34 @@ class TemplateHandler:
         @type request: HttpRequest
         @param request: The http request to be parsed for attributes.
         @rtype: Dictionary
-        @return: The dictionary with the parsed attributes.
+        @return: The map with the parsed attributes.
         """
 
+        # creates the request attributes map
         request_attributes_map = {}
 
+        # splits the received message in the "&" character
+        # to retrieve the received message pairs
         received_message_pairs = request.received_message.split("&")
 
+        # iterates over all the received message pairs
         for received_message_pair in received_message_pairs:
+            # splits the received message in the "=" character to retrieve
+            # both the key and the value for the attribute
             received_message_pair_split = received_message_pair.split("=")
+
+            # in case the retrieval was successful
             if len(received_message_pair_split) > 1:
+                # retrieves the key and the value
                 key, value = received_message_pair_split
             else:
+                # breaks the iteration loop
                 break
+
+            # sets the attribute key and value
             request_attributes_map[key] = value
 
+        # returns the request attributes map
         return request_attributes_map
 
     def escape_dots(self, string_value):
@@ -302,8 +315,11 @@ class TemplateHandler:
         @return: The escaped string.
         """
 
+        # escapes the string value, replacing the "." character
+        # with the "-" character
         escaped_string_value = string_value.replace(".", "-")
 
+        # returns the escaped string value
         return escaped_string_value
 
 class MatchOrderer:
