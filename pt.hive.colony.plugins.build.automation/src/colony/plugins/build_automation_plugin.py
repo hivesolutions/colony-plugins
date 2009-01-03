@@ -109,6 +109,12 @@ class BuildAutomationPlugin(colony.plugins.plugin_system.Plugin):
     def get_help(self):
         return self.console_build_automation.get_help()
 
+    def get_all_automation_plugins(self):
+        return self.build_automation.get_all_automation_plugins()
+
+    def get_all_build_automation_item_plugins(self):
+        return self.build_automation.get_all_build_automation_item_plugins()
+
     def run_automation_plugin_id(self, plugin_id):
         self.build_automation.run_automation_plugin_id_version(plugin_id)
 

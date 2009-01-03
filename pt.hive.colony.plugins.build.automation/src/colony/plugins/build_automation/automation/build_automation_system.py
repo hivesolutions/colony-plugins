@@ -192,9 +192,34 @@ class BuildAutomation:
                 # return the build automation structure
                 return build_automation_structure
 
+    def get_all_automation_plugins(self):
+        """
+        Retrieves all the available automation extension plugins.
+        
+        @rtype: List
+        @return: The list of all the available automation extension plugins.
+        """
+
+        # retrieves the build automation extension plugins
+        build_automation_extension_plugins = self.build_automation_plugin.build_automation_extension_plugins
+
+        # returns the build automation extension plugins
+        return build_automation_extension_plugins
+
+    def get_all_build_automation_item_plugins(self):
+        """
+        Retrieves all the available build automation item plugins.
+        
+        @rtype: List
+        @return: The list of all the available build automation item plugins.
+        """
+
+        # returns the loaded build automation item plugins
+        return self.loaded_build_automation_item_plugins_list
+
     def run_automation_plugin_id_version(self, plugin_id, plugin_version = None):
         """
-        Runs all the automation plugins for the given plugin id and version
+        Runs all the automation plugins for the given plugin id and version.
         
         @type plugin_id: String
         @param plugin_id: The id of the plugin to run all the automation plugins.
@@ -578,9 +603,6 @@ class BuildAutomation:
         value = method(*method_arguments_parsed)
 
         return value
-
-    def get_all_build_automation_item_plugins(self):
-        return self.loaded_build_automation_item_plugins_list
 
 class BuildAutomationStructure:
     """
