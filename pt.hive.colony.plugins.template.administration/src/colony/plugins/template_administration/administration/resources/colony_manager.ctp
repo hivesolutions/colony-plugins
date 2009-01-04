@@ -17,11 +17,11 @@
     <?colony self.import_js_library("jquery.tablesorter") ?>
     <?colony self.import_js_library("jquery.contextmenu") ?>
     <?colony self.import_js_library("jquery.jgrowl") ?>
-    <script type="text/javascript" src="./js/colony_manager.js"></script>
-    <link rel="stylesheet" href="./css/jquery.contextmenu.css" type="text/css">
-    <link rel="stylesheet" href="./css/jquery.jgrowl.css" type="text/css">
+    <script type="text/javascript" src="js/colony_manager.js"></script>
+    <link rel="stylesheet" href="css/jquery.contextmenu.css" type="text/css">
+    <link rel="stylesheet" href="css/jquery.jgrowl.css" type="text/css">
     <link rel="stylesheet" href="jquery_themes/humanity/ui.theme.css" type="text/css" media="screen" title="Themeroller (Default)">
-    <link rel="stylesheet" href="./css/colony_manager.css" type="text/css">
+    <link rel="stylesheet" href="css/colony_manager.css" type="text/css">
 </head>
 
 <body>
@@ -155,8 +155,8 @@ Nova tab
                                     <div style="text-align: right;">
                                         <span class="mainTitle" style="text-align: right;">
                                             <img id="bugIcon" src="./pics/icons/bug.png"/>
-                                            <img src="./pics/icons/brick.png"/>
-                                            <img src="./pics/icons/building.png"/>
+                                            <img src="pics/icons/brick.png"/>
+                                            <img src="pics/icons/building.png"/>
                                             <img id="emailIcon" src="./pics/icons/email.png"/>
                                         </span>
                                     </div>
@@ -218,9 +218,9 @@ Nova tab
             <td class="mainPanelCell2">
                 <div id="mainTabPanel" class="flora">
                     <ul>
-                        <li><a href="#fragment-1"><span>Colony Plugin Administration <img src='./pics/icons/bullet_red.png' style='border:0px;'/></span></a></li>
-                        <li><a href="#fragment-2"><span>Automation Administration <img src='./pics/icons/bullet_red.png' style='border:0px;'/></span></a></li>
-                        <li><a href="#fragment-3"><span>Bonjour Administration <img src='./pics/icons/bullet_red.png' style='border:0px;'/></span></a></li>
+                        <li><a href="#fragment-1"><span>Colony Plugin Administration <img src='pics/icons/bullet_red.png' style='border:0px;'/></span></a></li>
+                        <li><a href="#fragment-2"><span>Automation Administration <img src='pics/icons/bullet_red.png' style='border:0px;'/></span></a></li>
+                        <li><a href="#fragment-3"><span>Bonjour Administration <img src='pics/icons/bullet_red.png' style='border:0px;'/></span></a></li>
                     </ul>
                     <div id="fragment-1">
                         <h2 class="mainTitle">The plugins list</h2>
