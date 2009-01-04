@@ -54,12 +54,14 @@ class TemplateHandlerPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["http_python_handler"]
-    capabilities_allowed = []
+    capabilities_allowed = ["template_handler_extension"]
     dependencies = []
     events_handled = []
     events_registrable = []
 
     template_handler = None
+
+    template_handler_extension_plugins = []
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -76,9 +78,11 @@ class TemplateHandlerPlugin(colony.plugins.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
 
+    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.template.handler", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.template.handler", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
@@ -93,3 +97,11 @@ class TemplateHandlerPlugin(colony.plugins.plugin_system.Plugin):
 
     def handle_request(self, request):
         self.template_handler.handle_request(request)
+
+    @colony.plugins.decorators.load_allowed_capability("template_handler_extension")
+    def template_handler_extension_load_allowed(self, plugin, capability):
+        self.template_handler_extension_plugins.append(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("template_handler_extension")
+    def template_handler_extension_unload_allowed(self, plugin, capability):
+        self.template_handler_extension_plugins.remove(plugin)

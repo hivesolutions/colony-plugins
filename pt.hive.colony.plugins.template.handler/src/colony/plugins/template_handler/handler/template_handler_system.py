@@ -92,23 +92,100 @@ class TemplateHandler:
         return HANDLER_FILENAME
 
     def is_request_handler(self, request):
+        # retrieves the template handler extension plugins
+        template_handler_extension_plugins = self.template_handler_plugin.template_handler_extension_plugins
+
         # retrieves the file extension from the filename
         file_name_extension = request.filename.split(".")[-1]
 
         if file_name_extension == TEMPLATE_FILE_EXENSION:
             return True
         else:
+            # iterates over all the template handler extension plugins
+            for template_handler_extension_plugin in template_handler_extension_plugins:
+                # retrieves the handler file name
+                handler_filename = template_handler_extension_plugin.get_handler_filename()
+
+                # retrieves the request file name
+                request_filename = request.filename
+
+                # strips the request real filename
+                request_filename_striped = request_filename.strip("/")
+
+                # in case the handler file name is found in the beginning of the request file name
+                if request_filename_striped.find(handler_filename) == 0:
+                    return True
+
             return False
 
     def handle_request(self, request):
-        # sets the base directory
+        # retrieves the template handler extension plugins
+        template_handler_extension_plugins = self.template_handler_plugin.template_handler_extension_plugins
+
+        # sets the default base directory
         base_directory = "C:/Program Files/Apache Software Foundation/Apache2.2/htdocs"
 
         # retrieves the requested path
         path = request.path
 
-        # creates the complete path
+        # creates the default complete path
         complete_path = base_directory + "/" + path
+
+        # iterates over all the template handler extension plugins
+        for template_handler_extension_plugin in template_handler_extension_plugins:
+            # retrieves the handler file name
+            handler_filename = template_handler_extension_plugin.get_handler_filename()
+
+            # retrieves the request file name
+            request_filename = request.filename
+
+            # strips the request real filename
+            request_filename_striped = request_filename.strip("/")
+
+            # in case the handler file name is the same as the request file name
+            if handler_filename == request_filename_striped:
+                # retrieves the complete path
+                complete_path = template_handler_extension_plugin.get_template_path()
+                break;
+            elif request_filename_striped.find(handler_filename) == 0:
+                # retrieves the handler file name length
+                handler_filename_length = len(handler_filename)
+
+                # retrieves the file path value
+                file_path_value = request_filename_striped[handler_filename_length:]
+
+                # retrieves the resource map
+                resources_map = template_handler_extension_plugin.get_resources_paths_map()
+
+                # @todo
+                # tenho de iterar por todos
+                # fazer append dos valores de path que tem la
+                # ver se o ficheiro existe
+
+                # retrieves the base path
+                base_path = resources_map["/"]
+
+                # sets the complete path
+                complete_path = base_path + file_path_value
+
+                # retrieves the file extension from the filename
+                file_name_extension = request.filename.split(".")[-1]
+
+                # in case the file extension is of type template
+                if file_name_extension == TEMPLATE_FILE_EXENSION:
+                    break
+                else:
+                    # opens the requested file
+                    file = open(complete_path, "rb")
+
+                    # reads the file contents
+                    file_contents = file.read()
+
+                    # writes the file contents
+                    request.write(file_contents)
+
+                    # returns the call (the file is readed)
+                    return
 
         # in case the paths does not exist
         if not os.path.exists(complete_path):
