@@ -1,0 +1,302 @@
+/* The general html element */
+html { /* forces the vertical scroll bar to exist */
+	overflow-y: scroll;
+}
+
+/* The body element */
+body {
+	background: #fdfdfd none repeat scroll 0 0;
+	margin-left: 80px;
+	margin-right: 80px;
+	text-align: center;
+	font-size: 11px
+}
+
+#jgrowlNotifier {
+	position: absolute;
+	bottom: 0px;
+	right: 0px;
+	text-align: left;
+}
+
+div.jGrowl div.colony {
+	width: 200px;
+	border: 1px solid #cdc3b7;
+	overflow: hidden;
+	padding: 0px;
+	-moz-border-radius: 0px;
+	-webkit-border-radius: 0px;
+	background: #f4f0ec;
+	color: #888897;
+	font-family: "Century Gothic", "Trebuchet MS", Arial, sans-serif;
+	font-size: 11px;
+	letter-spacing: 1px;
+	font-weight: normal;
+}
+
+div.jGrowl div.colony div.message {
+	padding: 5px;
+	background-color: #ffffff;
+	font-size: 10px;
+	letter-spacing: 1px;
+	color: #000000;
+}
+
+div.jGrowl div.colony div.header {
+	background: #f4f0ec;
+	padding: 5px;
+	text-transform: uppercase;
+	font-family: "Century Gothic", "Trebuchet MS", Arial, sans-serif;
+	font-size: 11px;
+	letter-spacing: 1px;
+	color: #888897;
+	font-weight: normal;
+}
+
+div.jGrowl div.colony div.close {
+	position: relative;
+	float: right;
+	right: 5px;
+	top: 4px;
+	color: transparent;
+}
+
+#tooltip {
+	background: #ffffff;
+	font-family: "Century Gothic", "Trebuchet MS", Arial, sans-serif;
+	border: 1px solid #cdc3b7;
+	width: 150px;
+	position: absolute;
+	top: 65px;
+	left: 1190px;
+	opacity: 0.85;
+	filter: alpha(opacity = 85);
+	text-align: left;
+}
+
+#tooltipTitle {
+	background: #f4f0ec;
+	color: #888897;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	text-indent: 10px;
+}
+
+#tooltipBody {
+	font-size: 10px;
+	margin-left: 10px;
+	margin-right: 10px;
+	margin-top: 3px;
+	margin-bottom: 3px;
+}
+
+#topMenuBar {
+	text-align: right;
+}
+
+.copyright {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	text-align: center;
+}
+
+.hidable {
+	
+}
+
+.itemsMenu {
+	margin-left: 10px;
+	font-size: 10px;
+}
+
+.lateralMenu {
+	margin-top: 40px;
+	margin-right: -10px;
+	background: #f4f0ec;
+	font-family: "Century Gothic", "Trebuchet MS", Arial, sans-serif;
+	border: 1px solid #cdc3b7;
+	width: 200px;
+}
+
+.menuItem {
+	padding: 5px;
+}
+
+.mainTitle {
+	font-family: "Century Gothic", "Trebuchet MS", Arial, sans-serif;
+	font-weight: normal;
+	letter-spacing: -0.05em;
+	margin: 0 0 5px;
+	text-align: left;
+	text-transform: uppercase;
+	color: #888897;
+	letter-spacing: 1px;
+}
+
+/* The search input box */
+#searchInput {
+	background: url("../pics/mag.png") transparent no-repeat scroll 175px
+		7px;
+	border: 1px solid #aaaaaa;
+	width: 195px;
+	height: 25px;
+	font-family: "Century Gothic", "Trebuchet MS", Trebuchet, Tahoma,
+		Verdana, Helvetica, Arial, sans-serif;
+	font-size: 16px;
+	text-align: left;
+	text-indent: 5px;
+	margin-top: 10px;
+	padding-top: 4px;
+	color: #888897;
+}
+
+.mainPanelCell {
+	vertical-align: top;
+	margin-left: 15px;
+}
+
+.mainPanelCell2 {
+	vertical-align: top;
+	width: 100%
+}
+
+.mainPanelCell3 {
+	text-align: left;
+	width: 100%
+}
+
+#mainTabPanel {
+	text-align: left;
+}
+
+#mainTable {
+	text-align: left;
+	width: 100%
+}
+
+#mainStatusBar {
+	text-align: right;
+	background: #f4f0ec;
+}
+
+.textType {
+	font-family: "Century Gothic", "Trebuchet MS", Trebuchet, Tahoma,
+		Verdana, Helvetica, Arial, sans-serif;
+	font-size: 12px;
+	text-align: left;
+}
+
+.loaded {
+	background: #a0df82;
+	text-align: center;
+	padding: 3px;
+}
+
+.unloaded {
+	background: #FF6600;
+	text-align: center;
+	padding: 3px;
+}
+
+.itemValue {
+	padding: 3px;
+}
+
+.hiddenItemValue {
+	padding: 0px;
+	border: 0px;
+}
+
+.hiddenPluginDetails {
+	border-style: dashed;
+	border-width: 1px;
+	border-color: #888897;
+	background: #f2eeea;
+	padding: 5px;
+}
+
+.tableHeader {
+	font-size: 14px;
+}
+
+.pluginsTable {
+	
+}
+
+.pluginDetailsIdColumn {
+	padding-left: 5px;
+	padding-right: 5px;
+	text-align: right;
+}
+
+#loginFormContainer {
+	text-align: left;
+	margin: 0 auto;
+	width: 351px;
+}
+
+#loginForm {
+	height: 295px;
+	width: 351px;
+	background-image: url("../pics/bkg.jpg");
+	display: none;
+}
+
+#loginForm fieldset {
+	padding: 30px;
+	border: none;
+}
+
+#loginForm label {
+	display: block;
+	color: #ffc400;
+}
+
+#loginForm input[type=text] {
+	display: block;
+	border: solid 1px #4d3a24;
+	width: 95%;
+	margin-bottom: 10px;
+	height: 28px;
+	font-size: 22px;
+	padding: 5px;
+}
+
+#loginForm input[type=password] {
+	display: block;
+	border: solid 1px #4d3a24;
+	width: 95%;
+	margin-bottom: 10px;
+	height: 28px;
+	font-size: 22px;
+	padding: 5px;
+}
+
+#loginForm textarea {
+	display: block;
+	border: solid 1px #4d3a24;
+	width: 100%;
+	margin-bottom: 10px;
+}
+
+#loginForm input[type=submit] {
+	background-color: #4d3a24;
+	border: solid 1px #23150c;
+	color: #fecd28;
+	padding: 5px;
+}
+
+#loginLink {
+	margin: 0 auto;
+	height: 40px;
+	width: 351px;
+	background-image: url("../pics/slidein_button.png");
+	display: block;
+	cursor: pointer;
+}
+
+#loginMessage {
+	color: #ff9933;
+	display: none;
+	padding-left: 15px;
+}
