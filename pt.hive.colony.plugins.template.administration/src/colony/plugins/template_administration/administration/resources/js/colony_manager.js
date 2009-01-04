@@ -2,13 +2,11 @@ function escapeDots(stringValue) {
 	var escapedStringValue = trim(stringValue).replace(/\./g, "-");
 	return escapedStringValue;
 }
-;
 
 function trim(stringValue) {
 	var trimedStringValue = stringValue.replace(/\n/g, "");
 	return trimedStringValue;
 }
-;
 
 function endPluginLoad(responseText, textStatus) {
 	var pluginIdsList = processAnswer(responseText);
@@ -21,7 +19,6 @@ function endPluginLoad(responseText, textStatus) {
 		}
 	}
 }
-;
 
 function endPluginUnLoad(responseText, textStatus) {
 	var pluginIdsList = processAnswer(responseText);
@@ -34,7 +31,6 @@ function endPluginUnLoad(responseText, textStatus) {
 		}
 	}
 }
-;
 
 function endPluginUnLoadFadeOut() {
 	var element = $(this)
@@ -74,7 +70,6 @@ function loadPlugin(pluginId) {
 				"type" : type
 			}, handler);
 }
-;
 
 function tryLogin(username, password) {
 	$("#loginMessage").html("Trying to login...");

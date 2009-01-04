@@ -17,7 +17,7 @@
     <?colony self.import_js_library("jquery.tablesorter") ?>
     <?colony self.import_js_library("jquery.contextmenu") ?>
     <?colony self.import_js_library("jquery.jgrowl") ?>
-    <script type="text/javascript" src="../resources/colony_manager.js"></script>
+    <script type="text/javascript" src="./js/colony_manager.js"></script>
     <link rel="stylesheet" href="./css/jquery.contextmenu.css" type="text/css">
     <link rel="stylesheet" href="./css/jquery.jgrowl.css" type="text/css">
     <link rel="stylesheet" href="jquery_themes/humanity/ui.theme.css" type="text/css" media="screen" title="Themeroller (Default)">
@@ -72,18 +72,18 @@ $(document).ready(function() {
         $("#tooltip").fadeOut("normal");
     });
 
-    $.jGrowl.defaults.closeTemplate = "<img src='../resources/pics/icons/cross.png'/>"
+    $.jGrowl.defaults.closeTemplate = "<img src='./pics/icons/cross.png'/>"
     $.jGrowl.defaults.closerTemplate = "<div>close all</div>'";
     $.jGrowl.defaults.theme = "colony";
 
     $("#clickNotification").click(function() {
-        $("#jgrowlNotifier").jGrowl("joamag@hive.pt<br>Welcome to hive.pt", { life: 5000, header: "<img src='../resources/pics/icons/email.png' style='float: left;'/><span style='margin-left: 5px;'>New Mail</span>"});
+        $("#jgrowlNotifier").jGrowl("joamag@hive.pt<br>Welcome to hive.pt", { life: 5000, header: "<img src='./pics/icons/email.png' style='float: left;'/><span style='margin-left: 5px;'>New Mail</span>"});
     });
     
     $("#addTab").click(function() {
         // retrieves the tabs length
         tabsLength = $("#mainTabPanel > ul").tabs("length");
-        $("#mainTabPanel > ul").tabs("add", "#newTab", "tobias <img onclick='$(\"#mainTabPanel > ul\").tabs(\"remove\"," + tabsLength + ")'  src='../resources/pics/icons/bullet_red.png' style='border:0px;'/>");
+        $("#mainTabPanel > ul").tabs("add", "#newTab", "tobias <img onclick='$(\"#mainTabPanel > ul\").tabs(\"remove\"," + tabsLength + ")'  src='./pics/icons/bullet_red.png' style='border:0px;'/>");
     });
 });
 </script>
@@ -143,7 +143,7 @@ Nova tab
         </tr>
         <tr>
             <td>
-                <img src="../resources/pics/hive_logo_development.png">
+                <img src="./pics/hive_logo_development.png">
             </td>
             <td class="mainPanelCell3">
                 <div id="mainStatusBar">
@@ -154,10 +154,10 @@ Nova tab
                                 <td>
                                     <div style="text-align: right;">
                                         <span class="mainTitle" style="text-align: right;">
-                                            <img id="bugIcon" src="../resources/pics/icons/bug.png"/>
-                                            <img src="../resources/pics/icons/brick.png"/>
-                                            <img src="../resources/pics/icons/building.png"/>
-                                            <img id="emailIcon" src="../resources/pics/icons/email.png"/>
+                                            <img id="bugIcon" src="./pics/icons/bug.png"/>
+                                            <img src="./pics/icons/brick.png"/>
+                                            <img src="./pics/icons/building.png"/>
+                                            <img id="emailIcon" src="./pics/icons/email.png"/>
                                         </span>
                                     </div>
                                 </td>
@@ -218,9 +218,9 @@ Nova tab
             <td class="mainPanelCell2">
                 <div id="mainTabPanel" class="flora">
                     <ul>
-                        <li><a href="#fragment-1"><span>Colony Plugin Administration <img src='../resources/pics/icons/bullet_red.png' style='border:0px;'/></span></a></li>
-                        <li><a href="#fragment-2"><span>Automation Administration <img src='../resources/pics/icons/bullet_red.png' style='border:0px;'/></span></a></li>
-                        <li><a href="#fragment-3"><span>Bonjour Administration <img src='../resources/pics/icons/bullet_red.png' style='border:0px;'/></span></a></li>
+                        <li><a href="#fragment-1"><span>Colony Plugin Administration <img src='./pics/icons/bullet_red.png' style='border:0px;'/></span></a></li>
+                        <li><a href="#fragment-2"><span>Automation Administration <img src='./pics/icons/bullet_red.png' style='border:0px;'/></span></a></li>
+                        <li><a href="#fragment-3"><span>Bonjour Administration <img src='./pics/icons/bullet_red.png' style='border:0px;'/></span></a></li>
                     </ul>
                     <div id="fragment-1">
                         <h2 class="mainTitle">The plugins list</h2>
