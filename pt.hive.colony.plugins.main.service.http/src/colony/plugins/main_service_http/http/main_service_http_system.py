@@ -257,6 +257,9 @@ class HttpClientServiceTask:
 
                     # handles the request
                     http_service_handler_plugins[0].handle_request(request)
+                elif request.path.find("/colony_manager") == 0:
+                    # handles the request
+                    http_service_handler_plugins[0].handle_request(request)
                 elif request.path.find("/colony_mod_python") == 0:
                     # handles the request
                     http_service_handler_plugins[0].handle_request(request)
