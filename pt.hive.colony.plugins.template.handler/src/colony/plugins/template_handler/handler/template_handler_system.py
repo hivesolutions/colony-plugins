@@ -101,16 +101,16 @@ class TemplateHandler:
         if file_name_extension == TEMPLATE_FILE_EXENSION:
             return True
         else:
+            # retrieves the request file name
+            request_filename = request.filename
+
+            # left strips the request file name
+            request_filename_striped = request_filename.lstrip("/")
+
             # iterates over all the template handler extension plugins
             for template_handler_extension_plugin in template_handler_extension_plugins:
                 # retrieves the handler file name
                 handler_filename = template_handler_extension_plugin.get_handler_filename()
-
-                # retrieves the request file name
-                request_filename = request.filename
-
-                # strips the request real filename
-                request_filename_striped = request_filename.strip("/")
 
                 # in case the handler file name is found in the beginning of the request file name
                 if request_filename_striped.find(handler_filename) == 0:
@@ -131,16 +131,16 @@ class TemplateHandler:
         # creates the default complete path
         complete_path = base_directory + "/" + path
 
+        # retrieves the request file name
+        request_filename = request.filename
+
+        # left strips the request file name
+        request_filename_striped = request_filename.lstrip("/")
+
         # iterates over all the template handler extension plugins
         for template_handler_extension_plugin in template_handler_extension_plugins:
             # retrieves the handler file name
             handler_filename = template_handler_extension_plugin.get_handler_filename()
-
-            # retrieves the request file name
-            request_filename = request.filename
-
-            # strips the request real filename
-            request_filename_striped = request_filename.strip("/")
 
             # in case the handler file name is the same as the request file name
             if handler_filename == request_filename_striped:
@@ -166,7 +166,7 @@ class TemplateHandler:
                 base_path = resources_map["/"]
 
                 # sets the complete path
-                complete_path = base_path + file_path_value
+                complete_path = base_path + "/" + file_path_value
 
                 # retrieves the file extension from the filename
                 file_name_extension = request.filename.split(".")[-1]
