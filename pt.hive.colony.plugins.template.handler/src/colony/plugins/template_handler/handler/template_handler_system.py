@@ -102,7 +102,7 @@ class TemplateHandler:
             return True
         else:
             # retrieves the request file name
-            request_filename = request.filename
+            request_filename = request.uri
 
             # left strips the request file name
             request_filename_striped = request_filename.lstrip("/")
@@ -125,14 +125,11 @@ class TemplateHandler:
         # sets the default base directory
         base_directory = "C:/Program Files/Apache Software Foundation/Apache2.2/htdocs"
 
-        # retrieves the requested path
-        path = request.path
+        # retrieves the request file name
+        request_filename = request.uri
 
         # creates the default complete path
-        complete_path = base_directory + "/" + path
-
-        # retrieves the request file name
-        request_filename = request.filename
+        complete_path = base_directory + "/" + request_filename
 
         # left strips the request file name
         request_filename_striped = request_filename.lstrip("/")
@@ -190,7 +187,7 @@ class TemplateHandler:
         # in case the paths does not exist
         if not os.path.exists(complete_path):
             # raises file not found exception with 404 http error code
-            raise template_handler_exceptions.FileNotFoundException(path, 404)
+            raise template_handler_exceptions.FileNotFoundException(request_filename, 404)
 
         # opens the requested file
         file = open(complete_path, "rb")
@@ -364,9 +361,12 @@ class TemplateHandler:
         # creates the request attributes map
         request_attributes_map = {}
 
+        # retrieves the received message
+        received_message = request.read()
+
         # splits the received message in the "&" character
         # to retrieve the received message pairs
-        received_message_pairs = request.received_message.split("&")
+        received_message_pairs = received_message.split("&")
 
         # iterates over all the received message pairs
         for received_message_pair in received_message_pairs:
