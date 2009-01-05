@@ -38,15 +38,3 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 ?>
-
-<td class="menuItem">
-    <div onclick="$('#colonyMenuItems').slideToggle('normal')">
-        <span class="mainTitle menuItem">Colony</span>
-    </div>
-    <div id="colonyMenuItems" class="itemsMenu hidable">
-        <table>
-            <tr><td>Colony Plugin Administration<td></tr>
-            <tr><td>Colony Information</td></tr>
-        </table>
-    </div>
-</td>
