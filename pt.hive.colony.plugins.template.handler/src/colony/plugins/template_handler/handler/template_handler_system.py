@@ -211,8 +211,25 @@ class TemplateHandler:
         # reads the file contents
         file_contents = file.read()
 
-        # retrieves the file contents length
-        file_contensts_length = len(file_contents)
+        try:
+            # interprets the file contents
+            self.interpret(file_contents, request)
+        finally:
+            # closes the file
+            file.close()
+
+    def interpret(self, contents, request):
+        """
+        Interprets the given contents in colony template.
+        
+        @type contents: String
+        @param contents: The contents to be interpreted in colony template.
+        @type request: HttpRequest
+        @param request: The http request to be used in the interpretation.
+        """
+
+        # retrieves the contents length
+        contents_length = len(contents)
 
         # creates the colony start regex
         colony_start_regex = re.compile(START_TAG_VALUE)
@@ -224,7 +241,7 @@ class TemplateHandler:
         match_orderer_list = []
 
         # retrieves the start matches iterator
-        start_matches_iterator = colony_start_regex.finditer(file_contents)
+        start_matches_iterator = colony_start_regex.finditer(contents)
 
         # iterates over all the start matches
         for start_match in start_matches_iterator:
@@ -232,7 +249,7 @@ class TemplateHandler:
             match_orderer_list.append(start_math_orderer)
 
         # retrieves the end matches iterator
-        end_matches_iterator = colony_end_regex.finditer(file_contents)
+        end_matches_iterator = colony_end_regex.finditer(contents)
 
         # iterates over all the end matches
         for end_match in end_matches_iterator:
@@ -291,13 +308,13 @@ class TemplateHandler:
                 end_match_end = end_match.end()
 
                 # retrieves the middle words
-                middle_words = file_contents[current_carret:start_match_start]
+                middle_words = contents[current_carret:start_match_start]
 
                 # writes the middle words in the request
                 sys.stdout.write(middle_words)
 
                 # retrieves the python text to be processed
-                process_text = file_contents[start_match_end:end_match_start]
+                process_text = contents[start_match_end:end_match_start]
 
                 # strips the process text
                 process_text_striped = process_text.strip()
@@ -315,16 +332,13 @@ class TemplateHandler:
                 index += 2
 
             # retrieves the final words
-            final_words = file_contents[current_carret:file_contensts_length]
+            final_words = contents[current_carret:contents_length]
 
             # writes the final words in the request
             request.write(final_words)
         finally:
             # restores the default stdout
             sys.stdout = self.default_stdout
-
-            # closes the file
-            file.close()
 
     def import_js_library(self, library_name):
         """
