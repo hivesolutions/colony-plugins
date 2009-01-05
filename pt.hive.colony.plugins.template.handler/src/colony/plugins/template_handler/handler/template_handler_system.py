@@ -212,13 +212,22 @@ class TemplateHandler:
         file_contents = file.read()
 
         try:
+            # sets the default content type
+            request.content_type = DEFAULT_CONTENT_TYPE
+
+            # sets the stdout as request
+            sys.stdout = request
+
             # interprets the file contents
             self.interpret(file_contents, request)
         finally:
+            # restores the default stdout
+            sys.stdout = self.default_stdout
+
             # closes the file
             file.close()
 
-    def interpret(self, contents, request):
+    def interpret(self, contents, request = None):
         """
         Interprets the given contents in colony template.
         
@@ -274,71 +283,61 @@ class TemplateHandler:
         # sets the plugin manager value
         plugin_manager = self.template_handler_plugin.manager
 
-        # sets the stdout as request
-        sys.stdout = request
+        # iterates over the match orderer list in size two jumps
+        while index < match_orderer_list_length:
+            # retrieves the start match orderer
+            start_match_orderer = match_orderer_list[index]
 
-        # sets the default content type
-        request.content_type = DEFAULT_CONTENT_TYPE
+            # retrieves the end match orderer
+            end_macth_orderer = match_orderer_list[index + 1]
 
-        try:
-            # iterates over the match orderer list in size two jumps
-            while index < match_orderer_list_length:
-                # retrieves the start match orderer
-                start_match_orderer = match_orderer_list[index]
+            # retrieves the start match
+            start_match = start_match_orderer.match
 
-                # retrieves the end match orderer
-                end_macth_orderer = match_orderer_list[index + 1]
+            # retrieves the end match
+            end_match = end_macth_orderer.match
 
-                # retrieves the start match
-                start_match = start_match_orderer.match
+            # retrieves the start index of the start match
+            start_match_start = start_match.start()
 
-                # retrieves the end match
-                end_match = end_macth_orderer.match
+            # retrieves the end index of the start match
+            start_match_end = start_match.end()
 
-                # retrieves the start index of the start match
-                start_match_start = start_match.start()
+            # retrieves the start index of the end match
+            end_match_start = end_match.start()
 
-                # retrieves the end index of the start match
-                start_match_end = start_match.end()
+            # retrieves the end index of the end match
+            end_match_end = end_match.end()
 
-                # retrieves the start index of the end match
-                end_match_start = end_match.start()
+            # retrieves the middle words
+            middle_words = contents[current_carret:start_match_start]
 
-                # retrieves the end index of the end match
-                end_match_end = end_match.end()
+            # writes the middle words in the stdout
+            sys.stdout.write(middle_words)
 
-                # retrieves the middle words
-                middle_words = contents[current_carret:start_match_start]
+            # retrieves the python text to be processed
+            process_text = contents[start_match_end:end_match_start]
 
-                # writes the middle words in the request
-                sys.stdout.write(middle_words)
+            # strips the process text
+            process_text_striped = process_text.strip()
 
-                # retrieves the python text to be processed
-                process_text = contents[start_match_end:end_match_start]
+            # substitutes the windows style of newlines to the unix one
+            process_text_replaced = process_text_striped.replace("\r\n", "\n")
 
-                # strips the process text
-                process_text_striped = process_text.strip()
+            # executes the python code
+            exec(process_text_replaced) in globals(), locals()
 
-                # substitutes the windows style of newlines to the unix one
-                process_text_replaced = process_text_striped.replace("\r\n", "\n")
+            # sets the current carret
+            current_carret = end_match_end
 
-                # executes the python code
-                exec(process_text_replaced) in globals(), locals()
+            # updates the index accumulator value
+            index += 2
 
-                # sets the current carret
-                current_carret = end_match_end
+        # retrieves the final words
+        final_words = contents[current_carret:contents_length]
 
-                # updates the index accumulator value
-                index += 2
-
-            # retrieves the final words
-            final_words = contents[current_carret:contents_length]
-
-            # writes the final words in the request
-            request.write(final_words)
-        finally:
-            # restores the default stdout
-            sys.stdout = self.default_stdout
+        # writes the final words in the stdout
+        sys.stdout.write(final_words)
 
     def import_js_library(self, library_name):
         """
