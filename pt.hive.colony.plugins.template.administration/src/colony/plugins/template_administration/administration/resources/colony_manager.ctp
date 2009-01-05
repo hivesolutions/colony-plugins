@@ -67,78 +67,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 <body>
 
-<script type="text/javascript">
-$(document).ready(function() {
-    $("#mainDiv").hide();
-    $("#loginLink").click(function(){
-        if ($("#loginForm").is(":hidden")){
-            $("#loginForm").slideDown("slow");
-        }
-        else{
-            $("#loginForm").slideUp("slow");
-        }
-    });
-    $("#loginFormContainer").contextMenu({
-        menu: "pluginContextMenu"
-	}, function(action, el, pos) {
-        alert(
-            'Action: ' + action + '\n\n' +
-            'Element ID: ' + $(el).attr('id') + '\n\n' + 
-            'X: ' + pos.x + '  Y: ' + pos.y + ' (relative to element)\n\n' + 
-            'X: ' + pos.docX + '  Y: ' + pos.docY+ ' (relative to document)'
-        );
-	});
-    $("#tooltip").hide();
-    $("#emailIcon").mouseover(function(event) {
-        $("#tooltipTitle").html("New Mails");
-        $("#tooltipBody").html("2 new joamag@hive.pt<br>1 new tsilva@hive.pt<br>");
-        emailIconPosition = $("#emailIcon").position()
-        $("#tooltip").css("top", (emailIconPosition.top + 20) + "px")
-        $("#tooltip").css("left", (emailIconPosition.left - 133) + "px")
-        $("#tooltip").fadeIn("normal");
-    });
-    $("#emailIcon").mouseout(function(event) {
-        $("#tooltip").fadeOut("normal");
-    });
-    $("#bugIcon").mouseover(function(event) {
-        $("#tooltipTitle").html("Bug Status");
-        $("#tooltipBody").html("2 high priority bugs<br>3 medium priority bugs<br>7 low priority bugs<br>");
-        bugIconPosition = $("#bugIcon").position()
-        emailIconPosition = $("#emailIcon").position()
-        $("#tooltip").css("top", (bugIconPosition.top + 20) + "px")
-        $("#tooltip").css("left", (emailIconPosition.left - 133) + "px")
-        $("#tooltip").fadeIn("normal");
-    });
-    $("#bugIcon").mouseout(function(event) {
-        $("#tooltip").fadeOut("normal");
-    });
-
-    $.jGrowl.defaults.closeTemplate = "<img src='./pics/icons/cross.png'/>"
-    $.jGrowl.defaults.closerTemplate = "<div>close all</div>'";
-    $.jGrowl.defaults.theme = "colony";
-
-    $("#clickNotification").click(function() {
-        $("#jgrowlNotifier").jGrowl("joamag@hive.pt<br>Welcome to hive.pt", { life: 5000, header: "<img src='./pics/icons/email.png' style='float: left;'/><span style='margin-left: 5px;'>New Mail</span>"});
-    });
-    
-    $("#addTab").click(function() {
-        // retrieves the tabs length
-        tabsLength = $("#mainTabPanel > ul").tabs("length");
-        $("#mainTabPanel > ul").tabs("add", "#newTab", "tobias <img onclick='$(\"#mainTabPanel > ul\").tabs(\"remove\"," + tabsLength + ")'  src='./pics/icons/bullet_red.png' style='border:0px;'/>");
-    });
-});
-</script>
-
 <div id="clickNotification">
 Clica para ver notificacao
-</div>
-
-<div id="addTab">
-Clica para adicionar tab
-</div>
-
-<div id="newTab">
-Nova tab
 </div>
 
 <div id="jgrowlNotifier"></div>
@@ -239,6 +169,19 @@ for menu_item in menu_items:
                     <div id="homeContentItem">
                    	home
                     </div>
+                    <div id="extraContentItems">
+               	        <?colony
+# retrieves the template administrator plugin
+template_administrator_plugin = plugin_manager.get_plugin_by_id("pt.hive.colony.plugins.template.administration")
+
+# retrieves the content items
+content_items = template_administrator_plugin.get_content_items()
+
+# iterates over all the content items
+for content_item in content_items:
+	self.interpret(content_item)
+					    ?>
+					<div>
                 </div>
             </td>
         </tr>
@@ -253,17 +196,5 @@ for menu_item in menu_items:
     <li><a class="textType" href="#load">Load</a></li>
     <li><a class="textType" href="#remove">Remove</a></li>
 </ul>
-
-<?colony
-# retrieves the template administrator plugin
-template_administrator_plugin = plugin_manager.get_plugin_by_id("pt.hive.colony.plugins.template.administration")
-
-# retrieves the content items
-content_items = template_administrator_plugin.get_content_items()
-
-# iterates over all the content items
-for content_item in content_items:
-	self.interpret(content_item)
-?>
 
 </body>

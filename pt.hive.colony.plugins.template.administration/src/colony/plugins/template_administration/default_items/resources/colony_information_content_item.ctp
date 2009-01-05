@@ -39,14 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 ?>
 
-<td class="colonyMenuItem">
-    <div onclick="$('#colonyMenuItems').slideToggle('normal')">
-        <span class="mainTitle menuItem">Colony</span>
-    </div>
-    <div id="colonyMenuItems" class="itemsMenu hidable">
-        <table>
-            <tr><td onclick="addTab('colonyPluginAdministrationContentItem', 'Plugin Administration');">Colony Plugin Administration<td></tr>
-            <tr><td onclick="addTab('colonyInformationContentItem', 'Information');">Colony Information</td></tr>
-        </table>
-    </div>
-</td>
+<div id="colonyInformationContentItem">
+    <h2 class="mainTitle">The information</h2>
+</div>

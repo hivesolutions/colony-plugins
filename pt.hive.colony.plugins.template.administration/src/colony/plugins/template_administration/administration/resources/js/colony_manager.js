@@ -23,6 +23,129 @@
 // __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
 // __license__   = GNU General Public License (GPL), Version 3
 
+$(document).ready(function() {
+	// hides the main div
+	$("#mainDiv").hide();
+
+	// hides the extra content items
+	$("#extraContentItems").hide();
+	$("#loginLink").click(function() {
+				if ($("#loginForm").is(":hidden")) {
+					$("#loginForm").slideDown("slow");
+				} else {
+					$("#loginForm").slideUp("slow");
+				}
+			});
+	$("#loginFormContainer").contextMenu({
+				menu : "pluginContextMenu"
+			}, function(action, el, pos) {
+				alert(	'Action: ' + action + '\n\n' + 'Element ID: '
+								+ $(el).attr('id') + '\n\n' + 'X: ' + pos.x
+								+ '  Y: ' + pos.y
+								+ ' (relative to element)\n\n' + 'X: '
+								+ pos.docX + '  Y: ' + pos.docY
+								+ ' (relative to document)');
+			});
+	$("#tooltip").hide();
+	$("#emailIcon").mouseover(function(event) {
+		$("#tooltipTitle").html("New Mails");
+		$("#tooltipBody").html("2 new joamag@hive.pt<br>1 new tsilva@hive.pt<br>");
+		emailIconPosition = $("#emailIcon").position()
+		$("#tooltip").css("top", (emailIconPosition.top + 20) + "px")
+		$("#tooltip").css("left", (emailIconPosition.left - 133) + "px")
+		$("#tooltip").fadeIn("normal");
+	});
+	$("#emailIcon").mouseout(function(event) {
+				$("#tooltip").fadeOut("normal");
+			});
+	$("#bugIcon").mouseover(function(event) {
+		$("#tooltipTitle").html("Bug Status");
+		$("#tooltipBody").html("2 high priority bugs<br>3 medium priority bugs<br>7 low priority bugs<br>");
+		bugIconPosition = $("#bugIcon").position()
+		emailIconPosition = $("#emailIcon").position()
+		$("#tooltip").css("top", (bugIconPosition.top + 20) + "px")
+		$("#tooltip").css("left", (emailIconPosition.left - 133) + "px")
+		$("#tooltip").fadeIn("normal");
+	});
+	$("#bugIcon").mouseout(function(event) {
+				$("#tooltip").fadeOut("normal");
+			});
+
+	$.jGrowl.defaults.closeTemplate = "<img src='./pics/icons/cross.png'/>"
+	$.jGrowl.defaults.closerTemplate = "<div>close all</div>'";
+	$.jGrowl.defaults.theme = "colony";
+
+	$("#clickNotification").click(function() {
+		$("#jgrowlNotifier").jGrowl("joamag@hive.pt<br>Welcome to hive.pt", {
+			life : 5000,
+			header : "<img src='./pics/icons/email.png' style='float: left;'/><span style='margin-left: 5px;'>New Mail</span>"
+		});
+	});
+});
+
+var tabsMap = {};
+
+function addTab(tabDivId, tabName) {
+	// in case the tab is already opened
+	if(!(tabsMap[tabDivId] == null))
+		return
+
+	// retrieves the tabs length
+	var tabsLength = $("#mainTabPanel > ul").tabs("length");
+
+	// sets the initial index of tab div
+	tabsMap[tabDivId] = tabsLength;
+
+	// adds the tab to the main tab panel
+	$("#mainTabPanel > ul").tabs(
+			"add",
+			"#" + tabDivId,
+			tabName
+					+ " <img onclick='removeTab(\""
+					+ tabDivId
+					+ "\")' src='./pics/icons/bullet_red.png' style='border:0px;'/>");
+
+	// selects the added tab
+	$("#mainTabPanel > ul").tabs("select", tabsLength);
+}
+
+function removeTab(tabDivId) {
+	// retrieves the tab index
+	var index = tabsMap[tabDivId];
+
+	// deletes the tabs map element
+	delete tabsMap[tabDivId];
+
+	// iterates over all the tab divs in the tabs map
+	for (tabDivIdKey in tabsMap) {
+		// retrieves the tab index
+		var tabIndex = tabsMap[tabDivIdKey];
+
+		// in case the tab index is greater than the current index
+		if (tabIndex > index)
+			// decrements the tab index
+			tabIndex--;
+
+		// sets the tabs map key new value
+		tabsMap[tabDivIdKey] = tabIndex;
+	}
+
+	// clones the tab div
+	var clonedTabDiv = $("#" + tabDivId).clone(true).prependTo("#extraContentItems");
+
+	// creates the cloned tab div id
+	var clonedTabDivId = tabDivId + "aux";
+
+	// sets the new cloned tab id
+	clonedTabDiv.attr("id", clonedTabDivId);
+
+	// removes the tab in the selected index
+	$("#mainTabPanel > ul").tabs("remove", index);
+
+	// sets the old cloned tab id
+	clonedTabDiv.attr("id", tabDivId);
+}
+
 function escapeDots(stringValue) {
 	var escapedStringValue = trim(stringValue).replace(/\./g, "-");
 	return escapedStringValue;
@@ -36,12 +159,12 @@ function trim(stringValue) {
 
 function rightTrim(stringValue) {
 	var trimedStringValue = stringValue.replace(/^\s+/, "");
-    return trimedStringValue;
+	return trimedStringValue;
 }
 
 function leftTrim(stringValue) {
 	var trimedStringValue = stringValue.replace(/\s+$/, "");
-    return trimedStringValue;
+	return trimedStringValue;
 }
 
 function endPluginLoad(responseText, textStatus) {

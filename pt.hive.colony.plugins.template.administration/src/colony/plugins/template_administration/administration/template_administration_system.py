@@ -40,6 +40,12 @@ __license__ = "GNU General Public License (GPL), Version 3"
 HANDLER_FILENAME = "colony_manager/"
 """ The handler filename """
 
+MENU_ITEMS_VALUE = "menu_items"
+""" The menu items value """
+
+CONTENT_ITEMS_VALUE = "content_items"
+""" The content items value """
+
 class TemplateAdministration:
     """
     The template administration class.
@@ -47,6 +53,9 @@ class TemplateAdministration:
 
     template_administration_plugin = None
     """ The template administration plugin """
+
+    resources_map = {}
+    """ The resources map """
 
     def __init__(self, template_administration_plugin):
         """
@@ -57,6 +66,8 @@ class TemplateAdministration:
         """
 
         self.template_administration_plugin = template_administration_plugin
+
+        self.resources_map = {}
 
     def get_handler_filename(self):
         return HANDLER_FILENAME
@@ -88,16 +99,30 @@ class TemplateAdministration:
 
         return {"/" : resources_path}
 
-    def get_menu_items(self):
-        # retrieves the template administration menu item plugins
-        template_administration_menu_item_plugins = self.template_administration_plugin.template_administration_menu_item_plugins
+    def update_resources(self):
+        menu_items = self.retrieve_menu_items()
+        content_items = self.retrieve_content_items()
+        bundle_items_tuple = self.retrieve_bundle_items()
+        
+        menu_items_bundle, content_items_bundle = bundle_items_tuple
+
+        menu_items.extend(menu_items_bundle)
+        content_items.extend(content_items_bundle)
+
+        self.resources_map[MENU_ITEMS_VALUE] = menu_items
+        self.resources_map[CONTENT_ITEMS_VALUE] = content_items
+
+    def retrieve_menu_items(self):
+        # retrieves the template administration extension menu item plugins
+        template_administration_extension_menu_item_plugins = self.template_administration_plugin.template_administration_extension_menu_item_plugins
 
         # creates the menu items empty list
         menu_items = []
 
-        for template_administration_menu_item_plugin in template_administration_menu_item_plugins:
-            # retrieves the menu item from the template administration menu item plugin
-            menu_item = template_administration_menu_item_plugin.get_menu_item()
+        # iterates over all the template administration extension menu item plugins
+        for template_administration_extension_menu_item_plugin in template_administration_extension_menu_item_plugins:
+            # retrieves the menu item from the template administration extension menu item plugin
+            menu_item = template_administration_extension_menu_item_plugin.get_menu_item()
 
             # adds the menu item to the list of menu items
             menu_items.append(menu_item)
@@ -105,19 +130,53 @@ class TemplateAdministration:
         # returns the list of menu items
         return menu_items
 
-    def get_content_items(self):
-        # retrieves the template administration content item plugins
-        template_administration_content_item_plugins = self.template_administration_plugin.template_administration_content_item_plugins
+    def retrieve_content_items(self):
+        # retrieves the template administration extension content item plugins
+        template_administration_extension_content_item_plugins = self.template_administration_plugin.template_administration_extension_content_item_plugins
 
         # creates the content items empty list
         content_items = []
 
-        for template_administration_content_item_plugin in template_administration_content_item_plugins:
-            # retrieves the content item from the template administration content item plugin
-            content_item = template_administration_content_item_plugin.get_content_item()
+        # iterates over all the template administration extension content item plugins
+        for template_administration_extension_content_item_plugin in template_administration_extension_content_item_plugins:
+            # retrieves the content item from the template administration extension content item plugin
+            content_item = template_administration_extension_content_item_plugin.get_content_item()
 
             # adds the content item to the list of content items
             content_items.append(content_item)
 
         # returns the list of content items
         return content_items
+
+    def retrieve_bundle_items(self):
+        # retrieves the template administration extension bundle plugins
+        template_administration_extension_bundle_plugins = self.template_administration_plugin.template_administration_extension_bundle_plugins
+
+        # creates the menu items empty list
+        menu_items = []
+
+        # creates the content items empty list
+        content_items = []
+
+        # iterates over all the template administration extension bundle plugins
+        for template_administration_extension_bundle_plugin in template_administration_extension_bundle_plugins:
+            # retrieves the menu items bundle from the template administration bundle plugin
+            menu_items_bundle = template_administration_extension_bundle_plugin.get_menu_items()
+
+            # adds the menu items bundle to the list of menu items
+            menu_items.extend(menu_items_bundle)
+
+            # retrieves the content items bundle from the template administration bundle plugin
+            content_items_bundle = template_administration_extension_bundle_plugin.get_content_items()
+
+            # adds the content items bundle to the list of content items
+            content_items.extend(content_items_bundle)
+
+        # returns the tuple with the all the items
+        return (menu_items, content_items)
+
+    def get_menu_items(self):
+        return self.resources_map.get(MENU_ITEMS_VALUE, [])
+
+    def get_content_items(self):
+        return self.resources_map.get(CONTENT_ITEMS_VALUE, [])

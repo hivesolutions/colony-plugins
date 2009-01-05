@@ -55,7 +55,7 @@ class TemplateAdministrationDefaultItems:
 
         self.template_administration_default_items_plugin = template_administration_default_items_plugin
 
-    def get_menu_item(self):
+    def get_menu_items(self):
         # retrieves the plugin manager
         manager = self.template_administration_default_items_plugin.manager
 
@@ -77,10 +77,10 @@ class TemplateAdministrationDefaultItems:
         # closes the colony menu item
         colony_menu_item_file.close()
 
-        # returns the colony menu item
-        return colony_menu_item
+        # returns the menu items
+        return [colony_menu_item]
 
-    def get_content_item(self):
+    def get_content_items(self):
         # retrieves the plugin manager
         manager = self.template_administration_default_items_plugin.manager
 
@@ -97,10 +97,22 @@ class TemplateAdministrationDefaultItems:
         colony_plugin_administration_content_item_file = open(colony_plugin_administration_content_item_file_path, "r")
 
         # reads the colony plugin administration content item
-        colony_plugin_administration_content_item = colony_plugin_administration_menu_item_file.read()
+        colony_plugin_administration_content_item = colony_plugin_administration_content_item_file.read()
 
         # closes the colony plugin administration content item
         colony_plugin_administration_content_item_file.close()
 
-        # returns the colony plugin administration content item
-        return colony_plugin_administration_content_item
+        # creates the colony information content item file path
+        colony_information_content_item_file_path = resources_path + "/colony_information_content_item.ctp" 
+
+        # opens the colony information content item file
+        colony_information_content_item_file = open(colony_information_content_item_file_path, "r")
+
+        # reads the colony information content item
+        colony_information_content_item = colony_information_content_item_file.read()
+
+        # closes the colony plugin administration content item
+        colony_information_content_item_file.close()
+
+        # returns the content items
+        return [colony_plugin_administration_content_item, colony_information_content_item]

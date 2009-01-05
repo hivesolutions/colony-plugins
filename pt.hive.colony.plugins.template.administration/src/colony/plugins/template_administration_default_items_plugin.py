@@ -53,7 +53,7 @@ class TemplateAdministrationDefaultItemsPlugin(colony.plugins.plugin_system.Plug
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["template_administration.menu_item", "template_administration.content_item"]
+    capabilities = ["template_administration_extension.bundle"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
@@ -87,5 +87,8 @@ class TemplateAdministrationDefaultItemsPlugin(colony.plugins.plugin_system.Plug
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def get_menu_item(self):
-        return self.template_administration_default_items.get_menu_item()
+    def get_menu_items(self):
+        return self.template_administration_default_items.get_menu_items()
+
+    def get_content_items(self):
+        return self.template_administration_default_items.get_content_items()
