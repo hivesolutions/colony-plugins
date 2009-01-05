@@ -133,6 +133,7 @@
 	float: left;
 	border: 1px solid #cdc3b7;
 	border-right: none;
+	letter-spacing: 1px;
 }
 
 .ui-tabs-nav li a { /*resets*/

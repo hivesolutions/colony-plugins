@@ -39,12 +39,11 @@ $(document).ready(function() {
 	$("#loginFormContainer").contextMenu({
 				menu : "pluginContextMenu"
 			}, function(action, el, pos) {
-				alert(	'Action: ' + action + '\n\n' + 'Element ID: '
-								+ $(el).attr('id') + '\n\n' + 'X: ' + pos.x
-								+ '  Y: ' + pos.y
-								+ ' (relative to element)\n\n' + 'X: '
-								+ pos.docX + '  Y: ' + pos.docY
-								+ ' (relative to document)');
+				alert('Action: ' + action + '\n\n' + 'Element ID: '
+						+ $(el).attr('id') + '\n\n' + 'X: ' + pos.x + '  Y: '
+						+ pos.y + ' (relative to element)\n\n' + 'X: '
+						+ pos.docX + '  Y: ' + pos.docY
+						+ ' (relative to document)');
 			});
 	$("#tooltip").hide();
 	$("#emailIcon").mouseover(function(event) {
@@ -87,7 +86,7 @@ var tabsMap = {};
 
 function addTab(tabDivId, tabName) {
 	// in case the tab is already opened
-	if(!(tabsMap[tabDivId] == null))
+	if (!(tabsMap[tabDivId] == null))
 		return
 
 	// retrieves the tabs length
