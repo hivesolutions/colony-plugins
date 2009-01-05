@@ -172,6 +172,9 @@ class TemplateHandler:
                 if file_name_extension == TEMPLATE_FILE_EXENSION:
                     break
                 else:
+                    # sets the empty content type
+                    request.content_type = ""
+
                     # opens the requested file
                     file = open(complete_path, "rb")
 
