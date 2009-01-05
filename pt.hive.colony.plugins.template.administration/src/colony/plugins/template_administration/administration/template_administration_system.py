@@ -104,3 +104,20 @@ class TemplateAdministration:
 
         # returns the list of menu items
         return menu_items
+
+    def get_content_items(self):
+        # retrieves the template administration content item plugins
+        template_administration_content_item_plugins = self.template_administration_plugin.template_administration_content_item_plugins
+
+        # creates the content items empty list
+        content_items = []
+
+        for template_administration_content_item_plugin in template_administration_content_item_plugins:
+            # retrieves the content item from the template administration content item plugin
+            content_item = template_administration_content_item_plugin.get_content_item()
+
+            # adds the content item to the list of content items
+            content_items.append(content_item)
+
+        # returns the list of content items
+        return content_items

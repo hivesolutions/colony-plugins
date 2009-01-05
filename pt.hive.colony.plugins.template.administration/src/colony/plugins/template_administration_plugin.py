@@ -65,7 +65,7 @@ class TemplateAdministrationPlugin(colony.plugins.plugin_system.Plugin):
     template_administration_menu_item_plugins = []
     template_administration_top_menu_item_plugins = []
     template_administration_status_item_plugins = []
-    template_administration_content_item = []
+    template_administration_content_item_plugins = []
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -105,10 +105,21 @@ class TemplateAdministrationPlugin(colony.plugins.plugin_system.Plugin):
     def get_menu_items(self):
         return self.template_administration.get_menu_items()
 
+    def get_content_items(self):
+        return self.template_administration.get_content_items()
+
     @colony.plugins.decorators.load_allowed_capability("template_administration.menu_item")
     def template_administration_menu_item_load_allowed(self, plugin, capability):
         self.template_administration_menu_item_plugins.append(plugin)
 
+    @colony.plugins.decorators.load_allowed_capability("template_administration.content_item")
+    def template_administration_content_item_load_allowed(self, plugin, capability):
+        self.template_administration_content_item_plugins.append(plugin)
+
     @colony.plugins.decorators.unload_allowed_capability("template_administration.menu_item")
     def template_administration_menu_item_unload_allowed(self, plugin, capability):
         self.template_administration_menu_item_plugins.remove(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("template_administration.content_item")
+    def template_administration_content_item_unload_allowed(self, plugin, capability):
+        self.template_administration_content_item_plugins.remove(plugin)

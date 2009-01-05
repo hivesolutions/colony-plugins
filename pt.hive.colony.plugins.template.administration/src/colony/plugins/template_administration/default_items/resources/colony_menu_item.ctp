@@ -45,7 +45,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
     </div>
     <div id="colonyMenuItems" class="itemsMenu hidable">
         <table>
-            <tr><td>Colony Plugin Administration<td></tr>
+            <tr><td onclick="$('#mainTabPanel > ul').tabs('add', '#colonyPluginAdministrationContentItem', 'Plugin Administration');">Colony Plugin Administration<td></tr>
             <tr><td>Colony Information</td></tr>
         </table>
     </div>

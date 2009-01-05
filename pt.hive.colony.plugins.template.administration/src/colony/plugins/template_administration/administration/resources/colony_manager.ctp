@@ -254,4 +254,16 @@ for menu_item in menu_items:
     <li><a class="textType" href="#remove">Remove</a></li>
 </ul>
 
+<?colony
+# retrieves the template administrator plugin
+template_administrator_plugin = plugin_manager.get_plugin_by_id("pt.hive.colony.plugins.template.administration")
+
+# retrieves the content items
+content_items = template_administrator_plugin.get_content_items()
+
+# iterates over all the content items
+for content_item in content_items:
+	self.interpret(content_item)
+?>
+
 </body>
