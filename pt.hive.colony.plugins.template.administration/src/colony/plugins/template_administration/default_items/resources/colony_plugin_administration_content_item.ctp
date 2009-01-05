@@ -43,6 +43,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
     <h2 class="mainTitle">The plugins list</h2>
     <p>Here you can do some plugin manager management: </p>
     <?colony
+# retrieves all the plugins
 all_plugins = plugin_manager.get_all_plugins()
 print "<table id=pluginManagement class=\"pluginsTable\">"
 print "<thead> <tr> <th class=\"mainTitle tableHeader\">PLUGIN ID</th> <th class=\"mainTitle tableHeader\">NAME</th> <th class=\"mainTitle tableHeader\">AUTHOR</th>  <th class=\"mainTitle tableHeader\">STATUS</th> </tr> </thead>"

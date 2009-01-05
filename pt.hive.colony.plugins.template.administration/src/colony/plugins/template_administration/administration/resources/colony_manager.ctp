@@ -164,7 +164,7 @@ for menu_item in menu_items:
             <td class="mainPanelCell2">
                 <div id="mainTabPanel">
                     <ul>
-                    	<li><a href="#homeContentItem"><span>Home <img src='pics/icons/bullet_red.png' style='border:0px;'/></span></a></li>
+                    	<li><a href="#homeContentItem"><span>Home <img src='pics/icons/bullet_green.png' style='border:0px;'/></span></a></li>
                     </ul>
                     <div id="homeContentItem">
                    	home
