@@ -192,8 +192,21 @@ class TemplateHandler:
             # raises file not found exception with 404 http error code
             raise template_handler_exceptions.FileNotFoundException(request_filename, 404)
 
+        # interprets the file
+        self.interpret_file(complete_path, request)
+
+    def interpret_file(self, file_path, request):
+        """
+        Interprets the file with the given path in colony template.
+        
+        @type file_path: String
+        @param file_path: The file to be interpreted in colony template.
+        @type request: HttpRequest
+        @param request: The http request to be used in the interpretation.
+        """
+
         # opens the requested file
-        file = open(complete_path, "rb")
+        file = open(file_path, "rb")
 
         # reads the file contents
         file_contents = file.read()
