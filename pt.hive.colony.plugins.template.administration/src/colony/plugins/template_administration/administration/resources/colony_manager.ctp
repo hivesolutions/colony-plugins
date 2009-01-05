@@ -174,44 +174,19 @@ Nova tab
             <td class="mainPanelCell">
                 <div class="lateralMenu">
                     <table id="menuTable">
-                        <tr>
-                            <td class="menuItem">
-                                <div onclick="$('#colonyMenuItems').slideToggle('normal')">
-                                    <span class="mainTitle menuItem">Colony</span>
-                                </div>
-                                <div id="colonyMenuItems" class="itemsMenu hidable">
-                                    <table>
-                                        <tr><td>Colony Plugin Administration<td></tr>
-                                        <tr><td>Colony Information</td></tr>
-                                    </table>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="menuItem">
-                                <div onclick="$('#buildAutomationMenuItems').slideToggle('normal')">
-                                    <span class="mainTitle menuItem">Build Automation</span>
-                                </div>
-                                 <div id="buildAutomationMenuItems" class="itemsMenu hidable">
-                                    <table>
-                                        <tr><td>Automation Administration<td></tr>
-                                        <tr><td>Scheduling Results</td></tr>
-                                    </table>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="menuItem">
-                                <div onclick="$('#bonjourMenuItems').slideToggle('normal')">
-                                    <span class="mainTitle menuItem">Bonjour</span>
-                                </div>
-                                <div id="bonjourMenuItems" class="itemsMenu hidable">
-                                    <table>
-                                        <tr><td>Bonjour Administration<td></tr>
-                                    </table>
-                                </div>
-                            </td>
-                        </tr>
+                        <?colony
+# retrieves the template administrator plugin
+template_administrator_plugin = plugin_manager.get_plugin_by_id("pt.hive.colony.plugins.template.administration")
+
+# retrieves the menu items
+menu_items = template_administrator_plugin.get_menu_items()
+
+# iterates over all the menu items
+for menu_item in menu_items:
+	print "<tr>"
+	self.interpret(menu_item)
+	print "</tr>"
+						?>
                     </table>
                 </div>
             </td>

@@ -56,4 +56,26 @@ class TemplateAdministrationDefaultItems:
         self.template_administration_default_items_plugin = template_administration_default_items_plugin
 
     def get_menu_item(self):
-        pass
+        # retrieves the plugin manager
+        manager = self.template_administration_default_items_plugin.manager
+
+        # retrieves the plugin path
+        plugin_path = manager.get_plugin_path_by_id(self.template_administration_default_items_plugin.id)
+
+        # creates the resources path
+        resources_path = plugin_path + "/template_administration/default_items/resources"
+
+        # creates the default menu item file path
+        default_menu_item_file_path = resources_path + "/default_menu_item.ctp" 
+
+        # opens the default menu item file
+        default_menu_item_file = open(default_menu_item_file_path, "r")
+
+        # reads the default menu item
+        default_menu_item = default_menu_item_file.read()
+
+        # closes the default menu item
+        default_menu_item_file.close()
+
+        # returns the default menu item
+        return default_menu_item
