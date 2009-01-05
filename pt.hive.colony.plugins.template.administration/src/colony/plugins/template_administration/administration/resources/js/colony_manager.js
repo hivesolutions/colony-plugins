@@ -129,20 +129,43 @@ function removeTab(tabDivId) {
 		tabsMap[tabDivIdKey] = tabIndex;
 	}
 
-	// clones the tab div
-	var clonedTabDiv = $("#" + tabDivId).clone(true).prependTo("#extraContentItems");
+	// selects the tab div
+	var tabDiv = $("#" + tabDivId);
 
-	// creates the cloned tab div id
-	var clonedTabDivId = tabDivId + "aux";
+	// removes the ui tabs panel class from the tab div
+	tabDiv.removeClass("ui-tabs-panel");
 
-	// sets the new cloned tab id
-	clonedTabDiv.attr("id", clonedTabDivId);
+	// appends the tab div to the extraContentItems div
+	tabDiv.prependTo("#extraContentItems");
 
-	// removes the tab in the selected index
-	$("#mainTabPanel > ul").tabs("remove", index);
+	// selects all the ui tab navs
+	var uiTabsNavs = $(".ui-tabs-nav");
 
-	// sets the old cloned tab id
-	clonedTabDiv.attr("id", tabDivId);
+	// retrieves the first ui tab nav
+	var firstUiTabNav = $(uiTabsNavs[0]);
+
+	// retrieves the tab indicator for the given tab index
+	var tabHeader = $(firstUiTabNav.children()[index]);
+
+	// removes the tab header
+	tabHeader.remove()
+
+	// retrieves the first ui tab nav data
+	var firstUiTabNavData = $.data(uiTabsNavs[0], "tabs");
+
+	// tabifies the tab container
+	firstUiTabNavData.tabify();
+
+	// retrieves the tabs length
+	var tabsLength = $("#mainTabPanel > ul").tabs("length");
+
+	// in case there is more tabs to the right
+	if (index < tabsLength)
+		// selects the tab to the right
+		$("#mainTabPanel > ul").tabs("select", index);
+	else
+		// selects the tab to the left
+		$("#mainTabPanel > ul").tabs("select", index - 1);
 }
 
 function escapeDots(stringValue) {
