@@ -232,78 +232,12 @@ for menu_item in menu_items:
                 </div>
             </td>
             <td class="mainPanelCell2">
-                <div id="mainTabPanel" class="flora">
+                <div id="mainTabPanel">
                     <ul>
-                        <li><a href="#fragment-1"><span>Colony Plugin Administration <img src='pics/icons/bullet_red.png' style='border:0px;'/></span></a></li>
-                        <li><a href="#fragment-2"><span>Automation Administration <img src='pics/icons/bullet_red.png' style='border:0px;'/></span></a></li>
-                        <li><a href="#fragment-3"><span>Bonjour Administration <img src='pics/icons/bullet_red.png' style='border:0px;'/></span></a></li>
+                    	<li><a href="#homeContentItem"><span>Home <img src='pics/icons/bullet_red.png' style='border:0px;'/></span></a></li>
                     </ul>
-                    <div id="fragment-1">
-                        <h2 class="mainTitle">The plugins list</h2>
-                        <p>Here you can do some plugin manager management: </p>
-                        <?colony
-all_plugins = plugin_manager.get_all_plugins()
-print "<table id=pluginManagement class=\"pluginsTable\">"
-print "<thead> <tr> <th class=\"mainTitle tableHeader\">PLUGIN ID</th> <th class=\"mainTitle tableHeader\">NAME</th> <th class=\"mainTitle tableHeader\">AUTHOR</th>  <th class=\"mainTitle tableHeader\">STATUS</th> </tr> </thead>"
-print "<tbody>"
-for plugin in all_plugins:
-    print "<tr>"
-    print "<td class=\"mainTitle\" onclick=\"$('#details-" + self.escape_dots(plugin.id) + "').slideToggle('normal')\" class=\"itemValue\">" + plugin.id + "</td>"
-    print "<td class=\"itemValue\">" + plugin.name + "</td>"
-    print "<td class=\"itemValue\">" + plugin.author + "</td>"
-    if plugin.is_loaded():
-        print "<td style=\"border: 1px dashed #888897;\" id=\"" + self.escape_dots(plugin.id) + "\" class=\"loaded\" onclick=\"loadPlugin('" + plugin.id + "')\">LOADED</td>"
-    else:
-        print "<td style=\"border: 1px dashed #888897;\" id=\"" + self.escape_dots(plugin.id) + "\" class=\"unloaded\" onclick=\"loadPlugin('" + plugin.id + "')\">UNLOADED</td>"
-    print "</tr>"
-    print "<tr class=\"hiddenItemValue\">"
-    print "<td colspan=4>"
-    print "<div id=\"details-" + self.escape_dots(plugin.id) + "\" class=\"hiddenPluginDetails hidable\">"
-    print "<table>"
-    print "<tr><td class=\"pluginDetailsIdColumn\"><b>ID</b></td><td>" + plugin.id + "</td></tr>"
-    print "<tr><td class=\"pluginDetailsIdColumn\"><b>SHORT NAME</b></td><td>" + plugin.short_name + "</td></tr>"
-    print "<tr><td class=\"pluginDetailsIdColumn\"><b>NAME</b></td><td>" + plugin.name + "</td></tr>"
-    print "<tr><td class=\"pluginDetailsIdColumn\"><b>DESCRIPTION</b></td><td>" + plugin.description + "</td></tr>"
-    print "<tr><td class=\"pluginDetailsIdColumn\"><b>VERSION</b></td><td>" + plugin.version + "</td></tr>"
-    print "<tr><td class=\"pluginDetailsIdColumn\"><b>AUTHOR</b></td><td>" + plugin.author + "</td></tr>"
-    print "<tr><td class=\"pluginDetailsIdColumn\"><b>LOADING TYPE</b></td><td>" + str(plugin.loading_type) + "</td></tr>"
-    print "<tr><td class=\"pluginDetailsIdColumn\"><b>PLATFORMS</b></td><td>" + str(plugin.platforms) + "</td></tr>"
-    print "<tr><td class=\"pluginDetailsIdColumn\"><b>CAPABILITIES</b></td><td>" + str(plugin.capabilities) + "</td></tr>"
-    print "<tr><td class=\"pluginDetailsIdColumn\"><b>CAPABILITIES ALLOWED</b></td><td>" + str(plugin.capabilities_allowed) + "</td></tr>"
-    print "<tr><td class=\"pluginDetailsIdColumn\"><b>DEPENDENCIES</b></td><td>" + str(plugin.dependencies) + "</td></tr>"
-    print "</table>"
-    print "</div>"
-    print "</td>"
-    print "</tr>"
-print "</tbody>"
-print "</table>"
-                        ?>
-                    </div>
-                    <div id="fragment-2">
-                        <h2 class="mainTitle">Automation Administration</h2>
-                        <p> The automation administration consists in a series of... </p>
-                        <h3 class="mainTitle">Automation Types</h3>
-                        <?colony
-# retrieves the build automation plugin
-build_automation_plugin = plugin_manager.get_plugin_by_id("pt.hive.colony.plugins.build.automation")
-
-automation_plugins = build_automation_plugin.get_all_automation_plugins()
-
-for automation_plugin in automation_plugins:
-    print automation_plugin.id
-                        ?>
-                        <h3 class="mainTitle">Automation Items</h3>
-                        <?colony
-# retrieves the build automation plugin
-build_automation_plugin = plugin_manager.get_plugin_by_id("pt.hive.colony.plugins.build.automation")
-
-build_automation_item_plugins = build_automation_plugin.get_all_build_automation_item_plugins()
-
-for build_automation_item_plugin in build_automation_item_plugins:
-    print "<p>" + build_automation_item_plugin.id + "</p>"
-                        ?>
-                    </div>
-                    <div id="fragment-3">
+                    <div id="homeContentItem">
+                   	home
                     </div>
                 </div>
             </td>

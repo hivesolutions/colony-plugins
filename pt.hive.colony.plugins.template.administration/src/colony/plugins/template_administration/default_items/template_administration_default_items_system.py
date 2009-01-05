@@ -65,17 +65,42 @@ class TemplateAdministrationDefaultItems:
         # creates the resources path
         resources_path = plugin_path + "/template_administration/default_items/resources"
 
-        # creates the default menu item file path
-        default_menu_item_file_path = resources_path + "/default_menu_item.ctp" 
+        # creates the colony menu item file path
+        colony_menu_item_file_path = resources_path + "/colony_menu_item.ctp" 
 
-        # opens the default menu item file
-        default_menu_item_file = open(default_menu_item_file_path, "r")
+        # opens the colony menu item file
+        colony_menu_item_file = open(colony_menu_item_file_path, "r")
 
-        # reads the default menu item
-        default_menu_item = default_menu_item_file.read()
+        # reads the colony menu item
+        colony_menu_item = colony_menu_item_file.read()
 
-        # closes the default menu item
-        default_menu_item_file.close()
+        # closes the colony menu item
+        colony_menu_item_file.close()
 
-        # returns the default menu item
-        return default_menu_item
+        # returns the colony menu item
+        return colony_menu_item
+
+    def get_content_item(self):
+        # retrieves the plugin manager
+        manager = self.template_administration_default_items_plugin.manager
+
+        # retrieves the plugin path
+        plugin_path = manager.get_plugin_path_by_id(self.template_administration_default_items_plugin.id)
+
+        # creates the resources path
+        resources_path = plugin_path + "/template_administration/default_items/resources"
+
+        # creates the colony plugin administration content item file path
+        colony_plugin_administration_content_item_file_path = resources_path + "/colony_plugin_administration_content_item.ctp" 
+
+        # opens the colony plugin administration content item file
+        colony_plugin_administration_content_item_file = open(colony_plugin_administration_content_item_file_path, "r")
+
+        # reads the colony plugin administration content item
+        colony_plugin_administration_content_item = colony_plugin_administration_menu_item_file.read()
+
+        # closes the colony plugin administration content item
+        colony_plugin_administration_content_item_file.close()
+
+        # returns the colony plugin administration content item
+        return colony_plugin_administration_content_item
