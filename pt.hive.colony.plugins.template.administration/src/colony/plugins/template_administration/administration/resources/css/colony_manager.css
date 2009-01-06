@@ -134,7 +134,7 @@ div.jGrowl div.colony div.close {
 }
 
 .itemsMenu {
-	margin-left: 10px;
+	margin-left: 15px;
 	font-size: 10px;
 	letter-spacing: 1px;
 }
@@ -149,7 +149,11 @@ div.jGrowl div.colony div.close {
 }
 
 .menuItem {
-	padding: 5px;
+	padding-left: 15px;
+}
+
+.menuItem:hover {
+	background: url("../pics/icons/bullet_toggle_plus.png") no-repeat scroll -1px 0px;
 }
 
 .mainTitle {
