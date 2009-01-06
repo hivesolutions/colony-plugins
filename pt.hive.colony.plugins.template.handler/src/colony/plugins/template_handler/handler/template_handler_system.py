@@ -154,16 +154,17 @@ class TemplateHandler:
                 # retrieves the resource map
                 resources_map = template_handler_extension_plugin.get_resources_paths_map()
 
-                # @todo
-                # tenho de iterar por todos
-                # fazer append dos valores de path que tem la
-                # ver se o ficheiro existe
+                # iterates over the resources map keys
+                for resources_map_key in resources_map:
+                    # retrieves the resources path
+                    resources_path = resources_map[resources_map_key]
 
-                # retrieves the base path
-                base_path = resources_map["/"]
+                    # sets the complete path
+                    complete_path = resources_path + "/" + file_path_value
 
-                # sets the complete path
-                complete_path = base_path + "/" + file_path_value
+                    # in case the path exists
+                    if os.path.exists(complete_path):
+                        break;
 
                 # retrieves the file extension from the filename
                 file_name_extension = request.filename.split(".")[-1]

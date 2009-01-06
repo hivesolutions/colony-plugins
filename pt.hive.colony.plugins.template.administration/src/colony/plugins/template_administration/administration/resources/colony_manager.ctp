@@ -59,17 +59,43 @@ __license__ = "GNU General Public License (GPL), Version 3"
     <?colony self.import_js_library("jquery.contextmenu") ?>
     <?colony self.import_js_library("jquery.jgrowl") ?>
     <script type="text/javascript" src="js/colony_manager.js"></script>
+
+    <?colony
+# retrieves the template administrator plugin
+template_administrator_plugin = plugin_manager.get_plugin_by_id("pt.hive.colony.plugins.template.administration")
+
+# retrieves the js files
+js_files = template_administrator_plugin.get_js_files()
+
+# iterates over all the js files
+for js_file in js_files:
+	print "<script type=\"text/javascript\" src=\""
+	print js_file
+	print "\"></script>"
+	?>
+
     <link rel="stylesheet" href="css/jquery.contextmenu.css" type="text/css">
     <link rel="stylesheet" href="css/jquery.jgrowl.css" type="text/css">
     <link rel="stylesheet" href="jquery_themes/humanity/ui.theme.css" type="text/css" media="screen" title="Themeroller (Default)">
     <link rel="stylesheet" href="css/colony_manager.css" type="text/css">
+
+    <?colony
+# retrieves the template administrator plugin
+template_administrator_plugin = plugin_manager.get_plugin_by_id("pt.hive.colony.plugins.template.administration")
+
+# retrieves the css files
+css_files = template_administrator_plugin.get_css_files()
+
+# iterates over all the css files
+for css_file in css_files:
+	print "<link rel=\"stylesheet\" href=\""
+	print css_file
+	print "\" type=\"text/css\""
+	?>
+
 </head>
 
 <body>
-
-<div id="clickNotification">
-Clica para ver notificacao
-</div>
 
 <div id="jgrowlNotifier"></div>
 
@@ -188,6 +214,7 @@ for content_item in content_items:
     </table>
     <div class="copyright">
         <span class="mainTitle">Copyright 08 Hive Solutions Lda.</span>
+        <div id="clickNotification">Notify</div>
     </div>
 </div>
 

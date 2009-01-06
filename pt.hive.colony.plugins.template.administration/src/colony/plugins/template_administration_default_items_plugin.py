@@ -76,16 +76,26 @@ class TemplateAdministrationDefaultItemsPlugin(colony.plugins.plugin_system.Plug
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.template.administration", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.template.administration", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    def get_extension_name(self):
+        return self.template_administration_default_items.get_extension_name()
+
+    def get_base_resources_path(self):
+        return self.template_administration_default_items.get_base_resources_path()
+
+    def get_css_files(self):
+        return self.template_administration_default_items.get_css_files()
+
+    def get_js_files(self):
+        return self.template_administration_default_items.get_js_files()
 
     def get_menu_items(self):
         return self.template_administration_default_items.get_menu_items()

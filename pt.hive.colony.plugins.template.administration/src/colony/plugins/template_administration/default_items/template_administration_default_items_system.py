@@ -37,6 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+EXTENSION_NAME = "default"
+""" The extension name """
+
 class TemplateAdministrationDefaultItems:
     """
     The template administration default items class.
@@ -54,6 +57,27 @@ class TemplateAdministrationDefaultItems:
         """
 
         self.template_administration_default_items_plugin = template_administration_default_items_plugin
+
+    def get_extension_name(self):
+        return EXTENSION_NAME
+
+    def get_base_resources_path(self):
+        # retrieves the plugin manager
+        manager = self.template_administration_default_items_plugin.manager
+
+        # retrieves the plugin path
+        plugin_path = manager.get_plugin_path_by_id(self.template_administration_default_items_plugin.id)
+
+        # creates the resources path
+        resources_path = plugin_path + "/template_administration/default_items/resources"
+
+        return resources_path
+
+    def get_css_files(self):
+        return []
+
+    def get_js_files(self):
+        return []
 
     def get_menu_items(self):
         # retrieves the plugin manager
@@ -74,7 +98,7 @@ class TemplateAdministrationDefaultItems:
         # reads the colony menu item
         colony_menu_item = colony_menu_item_file.read()
 
-        # closes the colony menu item
+        # closes the colony menu item file
         colony_menu_item_file.close()
 
         # returns the menu items
@@ -111,7 +135,7 @@ class TemplateAdministrationDefaultItems:
         # reads the colony information content item
         colony_information_content_item = colony_information_content_item_file.read()
 
-        # closes the colony plugin administration content item
+        # closes the colony plugin administration content item file
         colony_information_content_item_file.close()
 
         # returns the content items

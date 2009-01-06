@@ -97,13 +97,28 @@ class TemplateAdministration:
         # creates the resources path
         resources_path = plugin_path + "/template_administration/administration/resources"
 
-        return {"/" : resources_path}
+        resources_paths_map = {"/" : resources_path}
+
+        # retrieves the template administration extension plugins
+        template_administration_extension_plugins = self.template_administration_plugin.template_administration_extension_plugins
+
+        # iterates over all the template administration extension plugins
+        for template_administration_extension_plugin in template_administration_extension_plugins:
+            # retrieves the extension name for the template administration extension plugin
+            extension_name = template_administration_extension_plugin.get_extension_name()
+
+            # retrieves the base resources path for the template administration extension plugin
+            base_resources_path = template_administration_extension_plugin.get_base_resources_path()
+
+            resources_paths_map[extension_name] = base_resources_path
+
+        return resources_paths_map
 
     def update_resources(self):
         menu_items = self.retrieve_menu_items()
         content_items = self.retrieve_content_items()
         bundle_items_tuple = self.retrieve_bundle_items()
-        
+
         menu_items_bundle, content_items_bundle = bundle_items_tuple
 
         menu_items.extend(menu_items_bundle)
@@ -175,8 +190,38 @@ class TemplateAdministration:
         # returns the tuple with the all the items
         return (menu_items, content_items)
 
+    def get_css_files(self):
+        # retrieves the template administration extension plugins
+        template_administration_extension_plugins = self.template_administration_plugin.template_administration_extension_plugins
+
+        # creates the empty css files list
+        css_files = []
+
+        for template_administration_extension_plugin in template_administration_extension_plugins:
+            extension_plugin_css_files = template_administration_extension_plugin.get_css_files()
+
+            css_files.extend(extension_plugin_css_files)
+
+        return css_files
+
+    def get_js_files(self):
+        # retrieves the template administration extension plugins
+        template_administration_extension_plugins = self.template_administration_plugin.template_administration_extension_plugins
+
+        # creates the empty js files list
+        js_files = []
+
+        for template_administration_extension_plugin in template_administration_extension_plugins:
+            extension_plugin_js_files = template_administration_extension_plugin.get_js_files()
+
+            js_files.extend(extension_plugin_js_files)
+
+        return js_files
+
     def get_menu_items(self):
+        self.update_resources()
         return self.resources_map.get(MENU_ITEMS_VALUE, [])
 
     def get_content_items(self):
+        self.update_resources()
         return self.resources_map.get(CONTENT_ITEMS_VALUE, [])

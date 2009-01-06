@@ -63,6 +63,7 @@ class TemplateAdministrationPlugin(colony.plugins.plugin_system.Plugin):
 
     template_administration = None
 
+    template_administration_extension_plugins = []
     template_administration_extension_menu_item_plugins = []
     template_administration_extension_top_menu_item_plugins = []
     template_administration_extension_status_item_plugins = []
@@ -104,6 +105,12 @@ class TemplateAdministrationPlugin(colony.plugins.plugin_system.Plugin):
     def get_resources_paths_map(self):
         return self.template_administration.get_resources_paths_map()
 
+    def get_css_files(self):
+        return self.template_administration.get_css_files()
+
+    def get_js_files(self):
+        return self.template_administration.get_js_files()
+
     def get_menu_items(self):
         return self.template_administration.get_menu_items()
 
@@ -113,29 +120,35 @@ class TemplateAdministrationPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.load_allowed_capability("template_administration_extension.menu_item")
     def template_administration_extension_menu_item_load_allowed(self, plugin, capability):
         self.template_administration_extension_menu_item_plugins.append(plugin)
+        self.template_administration_extension_plugins.append(plugin)
         self.template_administration.update_resources()
 
     @colony.plugins.decorators.load_allowed_capability("template_administration_extension.content_item")
     def template_administration_extension_content_item_load_allowed(self, plugin, capability):
         self.template_administration_extension_content_item_plugins.append(plugin)
+        self.template_administration_extension_plugins.append(plugin)
         self.template_administration.update_resources()
 
     @colony.plugins.decorators.load_allowed_capability("template_administration_extension.bundle")
     def template_administration_extension_bundle_load_allowed(self, plugin, capability):
         self.template_administration_extension_bundle_plugins.append(plugin)
+        self.template_administration_extension_plugins.append(plugin)
         self.template_administration.update_resources()
 
     @colony.plugins.decorators.unload_allowed_capability("template_administration_extension.menu_item")
     def template_administration_extension_menu_item_unload_allowed(self, plugin, capability):
         self.template_administration_extension_menu_item_plugins.remove(plugin)
+        self.template_administration_extension_plugins.remove(plugin)
         self.template_administration.update_resources()
 
     @colony.plugins.decorators.unload_allowed_capability("template_administration_extension.content_item")
     def template_administration_extension_content_item_unload_allowed(self, plugin, capability):
         self.template_administration_extension_content_item_plugins.remove(plugin)
+        self.template_administration_extension_plugins.remove(plugin)
         self.template_administration.update_resources()
 
     @colony.plugins.decorators.unload_allowed_capability("template_administration_extension.bundle")
     def template_administration_extension_bundle_unload_allowed(self, plugin, capability):
         self.template_administration_extension_bundle_plugins.remove(plugin)
+        self.template_administration_extension_plugins.remove(plugin)
         self.template_administration.update_resources()
