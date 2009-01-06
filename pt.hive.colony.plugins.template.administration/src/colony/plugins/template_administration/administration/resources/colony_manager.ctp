@@ -169,7 +169,7 @@ for menu_item in menu_items:
                     <div id="homeContentItem">
                    	home
                     </div>
-                    <div id="extraContentItems">
+                    <div id="extraContentItems" class="hidable">
                	        <?colony
 # retrieves the template administrator plugin
 template_administrator_plugin = plugin_manager.get_plugin_by_id("pt.hive.colony.plugins.template.administration")
@@ -181,7 +181,7 @@ content_items = template_administrator_plugin.get_content_items()
 for content_item in content_items:
 	self.interpret(content_item)
 					    ?>
-					<div>
+					</div>
                 </div>
             </td>
         </tr>

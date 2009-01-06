@@ -27,8 +27,6 @@ $(document).ready(function() {
 	// hides the main div
 	$("#mainDiv").hide();
 
-	// hides the extra content items
-	$("#extraContentItems").hide();
 	$("#loginLink").click(function() {
 				if ($("#loginForm").is(":hidden")) {
 					$("#loginForm").slideDown("slow");
@@ -291,7 +289,9 @@ function endLogin() {
 }
 
 function loadMain() {
+	// shows the main div
 	$("#mainDiv").show();
+
 	$("#pluginManagement").tablesorter();
 	$("#mainTabPanel > ul").tabs();
 	$("#mainAccordionMenu").accordion();
@@ -299,9 +299,9 @@ function loadMain() {
 }
 
 function hideHidable() {
-	items = $(".hidable");
+	hidableItems = $(".hidable");
 
-	items.each(function() {
+	hidableItems.each(function() {
 				$(this).hide();
 			});
 }
