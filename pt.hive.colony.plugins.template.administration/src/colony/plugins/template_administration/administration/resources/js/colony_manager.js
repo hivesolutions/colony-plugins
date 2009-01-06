@@ -23,9 +23,13 @@
 // __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
 // __license__   = GNU General Public License (GPL), Version 3
 
+// called uppon document loading complete
 $(document).ready(function() {
 	// hides the main div
 	$("#mainDiv").hide();
+
+	// hides all the windows
+	hideWindows();
 
 	$("#loginLink").click(function() {
 				if ($("#loginForm").is(":hidden")) {
@@ -34,6 +38,7 @@ $(document).ready(function() {
 					$("#loginForm").slideUp("slow");
 				}
 			});
+
 	$("#loginFormContainer").contextMenu({
 				menu : "pluginContextMenu"
 			}, function(action, el, pos) {
@@ -52,9 +57,11 @@ $(document).ready(function() {
 		$("#tooltip").css("left", (emailIconPosition.left - 133) + "px")
 		$("#tooltip").fadeIn("normal");
 	});
+
 	$("#emailIcon").mouseout(function(event) {
 				$("#tooltip").fadeOut("normal");
 			});
+
 	$("#bugIcon").mouseover(function(event) {
 		$("#tooltipTitle").html("Bug Status");
 		$("#tooltipBody").html("2 high priority bugs<br>3 medium priority bugs<br>7 low priority bugs<br>");
@@ -77,6 +84,11 @@ $(document).ready(function() {
 			life : 5000,
 			header : "<img src='./pics/icons/email.png' style='float: left;'/><span style='margin-left: 5px;'>New Mail</span>"
 		});
+	});
+
+	$("#settingsButton").click(function() {
+		$("#settingsWindow").show();
+		$("#settingsWindow").dialog({"width" : 430, "height": 140, "show": "drop", "hide": "drop"});
 	});
 });
 
@@ -302,6 +314,14 @@ function hideHidable() {
 	hidableItems = $(".hidable");
 
 	hidableItems.each(function() {
+				$(this).hide();
+			});
+}
+
+function hideWindows() {
+	windowItems = $(".window");
+
+	windowItems.each(function() {
 				$(this).hide();
 			});
 }

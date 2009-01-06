@@ -48,13 +48,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 <head> 
     <title><?colony print "Hive Colony Manager" ?></title>
     <?colony self.import_js_library("jquery") ?>
-    <?colony self.import_js_library("jquery.ui.core") ?>
-    <?colony self.import_js_library("jquery.ui.tabs") ?>
-    <?colony self.import_js_library("jquery.ui.accordion") ?>
-    <?colony self.import_js_library("jquery.ui.effects.core") ?>
-    <?colony self.import_js_library("jquery.ui.effects.bounce") ?>
-    <?colony self.import_js_library("jquery.ui.effects.shake") ?>
-    <?colony self.import_js_library("jquery.ui.effects.pulsate") ?>
+    <?colony self.import_js_library("jquery.ui.all") ?>
     <?colony self.import_js_library("jquery.tablesorter") ?>
     <?colony self.import_js_library("jquery.contextmenu") ?>
     <?colony self.import_js_library("jquery.jgrowl") ?>
@@ -106,6 +100,39 @@ for css_file in css_files:
     </div>
 </div>
 
+<div id="settingsWindow" class="window" title="Settings">
+	<div class="window-body">
+		<table>
+			<tr>
+				<td>
+					<table class="settingsTableCell">
+						<tr><td><img src="pics/icons/48x48/computer.png"/></td></tr>
+						<tr><td>General</td></tr>
+					</table>
+				</td>
+				<td>
+					<table class="settingsTableCell">
+						<tr><td><img src="pics/icons/48x48/search.png"/></td></tr>
+						<tr><td>Search</td></tr>
+					</table>
+				</td>
+				<td>
+					<table class="settingsTableCell">
+						<tr><td><img src="pics/icons/48x48/mail.png"/></td></tr>
+						<tr><td>Email</td></tr>
+					</table>
+				</td>
+				<td>
+				<table class="settingsTableCell">
+						<tr><td><img src="pics/icons/48x48/personal_security.png"/></td></tr>
+						<tr><td>Personal Security</td></tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+
 <div id="loginFormContainer">
     <div id="loginFormShaker">
         <div id="loginForm">
@@ -132,7 +159,7 @@ for css_file in css_files:
     <table id="mainTable">
         <tr>
             <div style="float: right;">
-                <p id="topMenuBar" class="mainTitle">username: tobias | Settings | Help | About | Sign Out</p>
+                <p id="topMenuBar" class="mainTitle">username: tobias | <a id="settingsButton">Settings</a> | Help | About | Sign Out</p>
             </div>
             <div>
                 <p class="mainTitle">Manager | Forum | Development</p>

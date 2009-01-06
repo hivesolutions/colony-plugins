@@ -289,7 +289,7 @@
 		url(images/f4f0ec_40x100_textures_05_inset_soft_100.png) 0 bottom
 		repeat-x;
 	color: #1e1b1d;
-	border: 4px solid #e0cfc2;
+	border: 1px solid #e0cfc2;
 	position: relative;
 }
 
@@ -391,6 +391,9 @@ body .ui-resizable-autohide .ui-resizable-handle {
 	font-size: 1em;
 	font-weight: normal;
 	position: relative;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	color: #888897;
 }
 
 .ui-dialog-title {
@@ -406,7 +409,7 @@ body .ui-resizable-autohide .ui-resizable-handle {
 	text-decoration: none;
 	font-size: 100%;
 	list-style: none;
-	background: url(images/f08000_11x11_icon_close.gif) 0 0 no-repeat;
+	background: url(images/bullet_red.png) -2px -2px no-repeat;
 	position: absolute;
 	right: 8px;
 	top: .7em;
@@ -416,11 +419,11 @@ body .ui-resizable-autohide .ui-resizable-handle {
 }
 
 .ui-dialog-titlebar-close-hover,.ui-dialog-titlebar-close:hover {
-	background: url(images/f08000_11x11_icon_close.gif) 0 0 no-repeat;
+	background: url(images/bullet_red.png) -2px -2px no-repeat;
 }
 
 .ui-dialog-titlebar-close:active {
-	background: url(images/f35f07_11x11_icon_close.gif) 0 0 no-repeat;
+	background: url(images/bullet_red.png) -2px -2px no-repeat;
 }
 
 .ui-dialog-titlebar-close span {
@@ -437,7 +440,7 @@ body .ui-resizable-autohide .ui-resizable-handle {
 	font-size: 100%;
 	list-style: none;
 	color: #1e1b1d;
-	padding: 1.5em 1.7em;
+	padding: 0.6em 1.0em;
 }
 
 .ui-dialog-buttonpane {

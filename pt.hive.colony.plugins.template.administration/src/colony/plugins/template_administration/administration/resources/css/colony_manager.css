@@ -330,3 +330,22 @@ div.jGrowl div.colony div.close {
 	display: none;
 	padding-left: 15px;
 }
+
+.window {
+	font-family: "Century Gothic", "Trebuchet MS", Trebuchet, Tahoma,
+		Verdana, Helvetica, Arial, sans-serif;
+	font-size: 12px;
+	text-align: left;
+	background: #f4f0ec;
+}
+
+.window-body {
+	font-size: 11px;
+}
+
+.settingsTableCell {
+	margin-left: 10px;
+	width: 75px;
+	text-transform: uppercase;
+	text-align: center;
+}
