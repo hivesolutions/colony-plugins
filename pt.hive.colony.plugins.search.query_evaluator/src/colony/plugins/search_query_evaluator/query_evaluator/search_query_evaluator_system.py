@@ -39,8 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import search_query_evaluator_visitor
 
-HIT_LIST_VALUE = "hit_list"
-""" The key for the search result dictionary that retrieves the search result hit list """
+HITS_VALUE = "hits"
+""" The key for the search result dictionary that retrieves the search result hits """
 
 QUERY_EVALUATOR_TYPE = "query_parser"
 
@@ -100,13 +100,22 @@ class SearchQueryEvaluator:
 
         # retrieve the index search visitor results from its stack
         index_search_visitor_results = index_search_visitor.context_stack[0]
+
+        # the search results list will hold a search result information map for each search result
         search_results = []
 
-        # wrap each search result hit list in a dictionary to hold further metadata (score information, etc.)
-        for index_search_visitor_result_key, index_search_visitor_result_value  in index_search_visitor_results.items():
-            # build a map wrapping the hit list    
-            search_result_map = {DOCUMENT_ID_VALUE: index_search_visitor_result_key, HIT_LIST_VALUE: index_search_visitor_result_value}
-            # add the map to the search results
+        # convert the index search visitor results map 
+        # into a search result list of search result information maps containing the key
+        for index_search_visitor_result_key, index_search_visitor_result_value in index_search_visitor_results.items():
+
+            # create a new map from each search result map
+            search_result_map = index_search_visitor_result_value
+
+            # set the document id, using the key in the results map
+            # the map with all the search results is now going to be a list
+            search_result_map[DOCUMENT_ID_VALUE] = index_search_visitor_result_key
+
+            # add the map to the search results list
             search_results.append(search_result_map)
 
         return search_results

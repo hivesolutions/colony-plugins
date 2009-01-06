@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt>"
+__author__ = "João Magalhães <joamag@hive.pt> & Luís Martinho <lmartinho@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
@@ -37,7 +37,15 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import copy
+
 import search_query_interpreter.query_interpreter.search_query_interpreter_ast as search_query_interpreter_ast
+
+HITS_VALUE = "hits"
+""" The key that retrieves the set of results, contained in an arbitrary index level """
+
+WORDS_VALUE = "words"
+""" The key that retrieves the words list that generated each result """
 
 def _visit(ast_node_class):
     """
@@ -270,7 +278,7 @@ class IndexSearchVisitor:
         self.visit_next = True
 
         self.context_stack = []
-        
+
         self.update_node_method_map()
 
     def update_node_method_map(self):
@@ -330,7 +338,11 @@ class IndexSearchVisitor:
         document_id_removal_list = []
 
         for document_id in smallest_operand:
-            if not document_id in biggest_operand:
+            # join the word hits from both operands
+            if document_id in biggest_operand:
+                for word_id, word_information_map in biggest_operand[document_id][HITS_VALUE].items():
+                    smallest_operand[document_id][HITS_VALUE][word_id] = word_information_map
+            else:
                 document_id_removal_list.append(document_id)
 
         for document_id_removal_list_item in document_id_removal_list:
@@ -370,8 +382,11 @@ class IndexSearchVisitor:
         document_id_removal_list = []
 
         for document_id in smallest_operand:
-            if not document_id in biggest_operand:
-                document_id_removal_list.append(document_id)
+            if document_id in biggest_operand:
+                for word_id, word_information_map in biggest_operand[document_id][HITS_VALUE].items():
+                    smallest_operand[document_id][HITS_VALUE][word_id] = word_information_map
+            else:               
+               document_id_removal_list.append(document_id)
 
         for document_id_removal_list_item in document_id_removal_list:
             del smallest_operand[document_id_removal_list_item]
@@ -382,9 +397,29 @@ class IndexSearchVisitor:
     def visit_term_node(self, node):
         term_value = node.term_value
 
-        word_inverted_index_map = self.search_index.inverted_index_map.get(term_value, {})
+        word_information_map = self.search_index.inverted_index_map.get(term_value, {})
 
-        self.context_stack.append(word_inverted_index_map)
+        # get the hits for the current word from the index
+        index_word_hits = word_information_map[HITS_VALUE]
+
+        # create a copy of the hits map for the current word
+        word_hits = copy.deepcopy(index_word_hits) 
+
+        # the word hits map contains the information for each document containing the current word
+        # for each document containing the word 
+        for document_id, document_information_map in word_hits.items():
+            # retrieves the word document hits
+            word_document_hits = document_information_map[HITS_VALUE]
+
+            # stores the the hits under the current term value
+            document_hits = {}
+            document_hits[term_value] = {}
+            document_hits[term_value][HITS_VALUE] = word_document_hits
+
+            # stores the document hits in the document information maps, under the key HITS_VALUE
+            document_information_map[HITS_VALUE] = document_hits
+
+        self.context_stack.append(word_hits)
 
     @_visit(search_query_interpreter_ast.QuotedNode)
     def visit_quoted_node(self, node):
@@ -400,14 +435,15 @@ class IndexSearchVisitor:
         # determine the documents that contain all the words in the quoted text
         for term_value in term_value_list:
 
-            word_inverted_index_map = self.search_index.inverted_index_map.get(term_value, {})
+            word_information_map = self.search_index.inverted_index_map.get(term_value, {})
 
             if not current_document_intersection:
-                current_document_intersection = word_inverted_index_map
+                index_word_hits = word_information_map[HITS_VALUE]
+                current_document_intersection = copy.deepcopy(index_word_hits) 
             else:
                 new_map = {}
 
-                for document_id in word_inverted_index_map:
+                for document_id in word_information_map[HITS_VALUE]:
                     if document_id in current_document_intersection:
                         new_map[document_id] = None
 
@@ -421,7 +457,8 @@ class IndexSearchVisitor:
             # iterates over all the quoted words to create the sortable hit items list,
             # which will be sorted and scanned for valid subsequences (where all the quoted words are adjacent)
             for term_value in term_value_list:
-                term_value_hit_list = self.search_index.inverted_index_map.get(term_value, {})[document]
+                word_information_map = self.search_index.inverted_index_map.get(term_value, {})
+                term_value_hit_list = word_information_map[HITS_VALUE][document]
 
                 # iterates over all the hit list for the current term value
                 for term_value_hit_item in term_value_hit_list:

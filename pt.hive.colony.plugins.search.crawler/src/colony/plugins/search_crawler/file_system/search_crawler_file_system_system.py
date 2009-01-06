@@ -74,9 +74,10 @@ class SearchCrawlerFileSystem:
 
         # creates the token list
         token_list = []
+        properties["token_list"] = token_list
 
         # start the path walking in the start path
-        os.path.walk(start_path, self.walker, token_list)
+        os.path.walk(start_path, self.walker, properties)
 
         # returns the token list
         return token_list
@@ -95,7 +96,8 @@ class SearchCrawlerFileSystem:
         """
 
         # retrieves the token list
-        token_list = args
+        properties = args
+        token_list = properties["token_list"]
 
         # creates the file paths list
         file_paths_list = [directory_name + "/" + value for value in names]
@@ -103,7 +105,7 @@ class SearchCrawlerFileSystem:
         # iterates over all the file paths
         for file_path in file_paths_list:
             # sets the properties for the handler plugin
-            properties = {"file_path" : file_path}
+            properties["file_path"] = file_path
 
             search_provider_file_system_plugin = self.get_handler_plugin(properties)
 

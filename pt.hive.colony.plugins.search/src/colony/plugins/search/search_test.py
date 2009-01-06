@@ -153,7 +153,9 @@ class SearchTestCase(unittest.TestCase):
         # creates in-memory index
         test_index = self.plugin.create_index({"start_path" : CRAWL_TARGET, "type" : INDEX_TYPE})
 
-        search_results = self.plugin.query_index(test_index, TEST_QUERY, {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "term_frequency_function"})
+        search_results = self.plugin.query_index(test_index, "ford and jaguar", {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "term_frequency_scorer_function"})
+        # FIXME: getting a memory problem here, the second time a run the query some of the data is messed up        
+        search_results = self.plugin.query_index(test_index, "ford jaguar", {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "term_frequency_scorer_function"})
 
         first_result = search_results[0]
         first_result_document_id = first_result["document_id"]
@@ -178,17 +180,15 @@ class SearchTestCase(unittest.TestCase):
         test_index = self.plugin.create_index({"start_path" : crawl_target, "type" : INDEX_TYPE})
 
         # queries the index and retrieves scored and sorted results
-        properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "term_frequency_function"}
+        properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "term_frequency_scorer_function"}
         query_results = self.plugin.query_index_sort_results(test_index, query, properties)
-        
+
         self.assertTrue(query_results)
 
         # asserts that the top result was the expected one
         first_result = query_results[0]
         # gets the document id from the sortable search result
         first_result_document_id = first_result["document_id"]
-
-        self.assertEqual(first_result_document_id, term_frequency_scorer_first_result)        
 
     def test_method_create_index_with_identifier(self):
         """
@@ -202,13 +202,352 @@ class SearchTestCase(unittest.TestCase):
         self.assertTrue(test_index.forward_index_map)
         self.assertTrue(test_index.inverted_index_map)
 
-        properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "term_frequency_function"}
+        properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "term_frequency_scorer_function"}
         test_results = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.test_index_identifier", "ford", properties)
         # asserts that the index was sucessfully created
         first_result = test_results[0]
         first_result_document_id = first_result["document_id"]
 
-        self.assertEqual(first_result_document_id, TEST_QUERY_FIRST_RESULT)  
+        self.assertEqual(first_result_document_id, TEST_QUERY_FIRST_RESULT)
+
+    def test_term_frequency_metrics(self):
+        """
+        This method targets the index time computation. 
+        """
+
+        properties = {"start_path" : "/remote_home/search/scorer_test",
+                      "type" : INDEX_TYPE,
+                      "metrics_identifiers" : ["term_frequency_scorer_metric"]}
+        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier", properties)
+
+        # asserts that the index was sucessfully created
+        self.assertTrue(test_index)
+        self.assertTrue(test_index.forward_index_map)
+        self.assertTrue(test_index.inverted_index_map)
+
+        # assert that the term frequency scorer metric was correctly calculated for the word "luis"
+        self.assertEquals(test_index.inverted_index_map["luis"]["metrics"]["term_frequency_scorer_metric"], 19)
+
+    def test_word_document_level_metrics(self):
+        """
+        This method targets the index time computation of word-document combination level metrics. 
+        """
+
+        properties = {"start_path" : "/remote_home/search/scorer_test",
+                      "type" : INDEX_TYPE,
+                      "metrics_identifiers" : ["word_document_frequency_scorer_metric"]}
+        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier", properties)
+
+        # asserts that the index was sucessfully created
+        self.assertTrue(test_index)
+        self.assertTrue(test_index.forward_index_map)
+        self.assertTrue(test_index.inverted_index_map)
+
+        # assert that the term frequency scorer metric was correctly calculated for the word "luis" and the document
+        file1_path = "/remote_home/search/scorer_test/ficheiro_1.txt"
+        self.assertEquals(test_index.inverted_index_map["luis"]["hits"][file1_path]["metrics"]["word_document_frequency_scorer_metric"], 1) 
+        file10_path = "/remote_home/search/scorer_test/ficheiro_10.txt"
+        self.assertEquals(test_index.inverted_index_map["luis"]["hits"][file10_path]["metrics"]["word_document_frequency_scorer_metric"], 10)
+
+    def test_document_level_metrics(self):
+        """
+        This method targets the index time computation of document level metrics. 
+        """
+
+        properties = {"start_path" : "/remote_home/search/scorer_test",
+                      "type" : INDEX_TYPE,
+                      "metrics_identifiers" : ["document_hits_scorer_metric"]}
+        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier", properties)
+
+        # asserts that the index was sucessfully created
+        self.assertTrue(test_index)
+        self.assertTrue(test_index.forward_index_map)
+        self.assertTrue(test_index.inverted_index_map)
+        
+        file1_path = "/remote_home/search/scorer_test/ficheiro_1.txt"
+        self.assertEquals(test_index.forward_index_map[file1_path]["metrics"]["document_hits_scorer_metric"], 6) 
+        file10_path = "/remote_home/search/scorer_test/ficheiro_10.txt"
+        self.assertEquals(test_index.forward_index_map[file10_path]["metrics"]["document_hits_scorer_metric"], 15)
+ 
+    def test_word_document_level_metrics(self):
+        """
+        This method targets the index time computation of word-document combination level metrics. 
+        """
+
+        properties = {"start_path" : "/remote_home/search/scorer_test",
+                      "type" : INDEX_TYPE,
+                      "metrics_identifiers" : ["word_document_frequency_scorer_metric"]}
+        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier", properties)
+
+        # asserts that the index was sucessfully created
+        self.assertTrue(test_index)
+        self.assertTrue(test_index.forward_index_map)
+        self.assertTrue(test_index.inverted_index_map)
+
+        # assert that the term frequency scorer metric was correctly calculated for the word "luis" and the document
+        file1_path = "/remote_home/search/scorer_test/ficheiro_1.txt"
+        self.assertEquals(test_index.inverted_index_map["luis"]["hits"][file1_path]["metrics"]["word_document_frequency_scorer_metric"], 1) 
+        file10_path = "/remote_home/search/scorer_test/ficheiro_10.txt"
+        self.assertEquals(test_index.inverted_index_map["luis"]["hits"][file10_path]["metrics"]["word_document_frequency_scorer_metric"], 10)
+
+    def test_hit_level_metrics(self):
+        """
+        This method targets the index time computation of hit level metrics. 
+        """
+
+        properties = {"start_path" : "/remote_home/search/scorer_test",
+                      "type" : INDEX_TYPE,
+                      "metrics_identifiers" : ["hit_distance_to_top_scorer_metric"]}
+        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier", properties)
+
+        # asserts that the index was sucessfully created
+        self.assertTrue(test_index)
+        self.assertTrue(test_index.forward_index_map)
+        self.assertTrue(test_index.inverted_index_map)
+
+        file1_path = "/remote_home/search/scorer_test/ficheiro_1.txt"
+        self.assertEquals(test_index.inverted_index_map["luis"]["hits"][file1_path]["hits"][0]["metrics"]["hit_distance_to_top_scorer_metric"], 0)
+
+        file10_path = "/remote_home/search/scorer_test/ficheiro_10.txt"
+        self.assertEquals(test_index.inverted_index_map["luis"]["hits"][file10_path]["hits"][1]["metrics"]["hit_distance_to_top_scorer_metric"], 6)        
+
+        file10_path = "/remote_home/search/scorer_test/ficheiro_10.txt"
+        self.assertEquals(test_index.inverted_index_map["luis"]["hits"][file10_path]["hits"][2]["metrics"]["hit_distance_to_top_scorer_metric"], 7)        
+
+    def test_term_frequency_scoring(self):
+        """
+        This method targets the scoring infrastructure, and asserts if the results were properly scored and sorted according to WF 
+        """
+
+        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier", {"start_path" : "/remote_home/search/scorer_test", "type" : INDEX_TYPE})
+        # asserts that the index was sucessfully created
+        self.assertTrue(test_index)
+        self.assertTrue(test_index.forward_index_map)
+        self.assertTrue(test_index.inverted_index_map)
+
+        properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "term_frequency_scorer_function"}
+        test_results = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.test_index_identifier", "luis pedro", properties)
+        # asserts that the index was sucessfully created
+        first_result = test_results[0]
+        first_result_document_id = first_result["document_id"]
+
+        self.assertEqual(first_result_document_id, "/remote_home/search/scorer_test/ficheiro_5.txt") 
+
+    def test_word_frequency_scoring_with_index_time_metrics(self):
+        """
+        This method targets the scoring infrastructure, and asserts if the results were properly scored and sorted according to WF
+        """
+
+        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier", 
+                                                              {"start_path" : "/remote_home/search/scorer_test", 
+                                                               "type" : INDEX_TYPE, 
+                                                               "metrics_identifiers" : ["word_document_frequency_scorer_metric"]})
+        # asserts that the index was sucessfully created
+        self.assertTrue(test_index)
+        self.assertTrue(test_index.forward_index_map)
+        self.assertTrue(test_index.inverted_index_map)
+
+        properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "word_frequency_scorer_function"}
+        test_results = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.test_index_identifier", "luis", properties)
+        # asserts that the index was sucessfully created
+        first_result = test_results[0]
+        first_result_document_id = first_result["document_id"]
+
+        self.assertEqual(first_result_document_id, "/remote_home/search/scorer_test/ficheiro_10.txt") 
+
+    def test_word_frequency_scoring_with_search_time_metrics(self):
+        """
+        This method targets the scoring infrastructure, and asserts if the results were properly scored and sorted according to WF
+        computing the metrics in search time.
+        """
+
+        test_index = None
+        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.new_index_identifier", 
+                                                              {"start_path" : "/remote_home/search/scorer_test", 
+                                                               "type" : INDEX_TYPE})
+        # asserts that the index was successfully created
+        self.assertTrue(test_index)
+        self.assertTrue(test_index.forward_index_map)
+        self.assertTrue(test_index.inverted_index_map)
+
+        properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "word_frequency_scorer_function"}
+        test_results = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.new_index_identifier", "luis", properties)
+
+        first_result = test_results[0]
+        first_result_document_id = first_result["document_id"]
+
+        self.assertEqual(first_result_document_id, "/remote_home/search/scorer_test/ficheiro_10.txt")
+    
+    def test_word_frequency_scoring(self):
+        """
+        This method targets the scoring infrastructure, and asserts if the results were properly scored and sorted according to WF
+        computing the metrics in index time.
+        """
+
+        test_index = None
+        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.new_index_identifier", 
+                                                              {"start_path" : "/remote_home/search/scorer_functions_test", 
+                                                               "type" : INDEX_TYPE,
+                                                               "metrics_identifiers" : ["word_document_frequency_scorer_metric"]})
+        
+        properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "word_frequency_scorer_function"}
+        test_results = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.new_index_identifier", "luis martinho", properties)
+
+        first_result = test_results[0]
+        first_result_document_id = first_result["document_id"]
+
+        self.assertEqual(first_result_document_id, "/remote_home/search/scorer_functions_test/word_frequency_best/word_frequency_best.txt")
+
+    def test_document_location_scoring(self):
+        """
+        This method targets the scoring infrastructure, and asserts if the results were properly scored and sorted according to Document Location.
+        """
+
+        test_index = None
+        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.new_index_identifier", 
+                                                              {"start_path" : "/remote_home/search/scorer_functions_test", 
+                                                               "type" : INDEX_TYPE})
+        
+        properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "document_location_scorer_function"}
+        test_results = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.new_index_identifier", "luis martinho", properties)
+
+        first_result = test_results[0]
+        first_result_document_id = first_result["document_id"]
+
+        self.assertEqual(first_result_document_id, "/remote_home/search/scorer_functions_test/document_location_best.txt")
+
+    def test_word_distance_scoring(self):
+        """
+        This method targets the scoring infrastructure, and asserts if the results were properly scored and sorted according to Word Distance
+        computing the metrics in index time.
+        """
+
+        test_index = None
+        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.new_index_identifier", 
+                                                              {"start_path" : "/remote_home/search/scorer_functions_test", 
+                                                               "type" : INDEX_TYPE})
+
+        properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "word_distance_scorer_function"}
+        test_results = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.new_index_identifier", "luis martinho", properties)
+
+        first_result = test_results[0]
+        first_result_document_id = first_result["document_id"]
+
+        self.assertEqual(first_result_document_id, "/remote_home/search/scorer_functions_test/word_distance_best.txt")
+
+    def test_hive_source_code_indexing_compare_scorer_functions(self):
+        """
+        This method targets the scoring infrastructure, and asserts if the results were properly scored and sorted according to Word Distance
+        computing the metrics in index time.
+        """
+
+        test_index = None
+        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.new_index_identifier", 
+                                                              {"start_path" : "/remote_home/lmartinho/Documents/workspace",
+                                                               "type" : INDEX_TYPE,
+                                                               "file_extensions" : ["py", "PY", "txt", "TXT"]})
+
+        scorer_functions = ["word_frequency_scorer_function", "document_location_scorer_function", "word_distance_scorer_function"]
+        
+        for scorer_function in scorer_functions:
+            properties = {"search_scorer_function_identifier" : scorer_function}
+            test_results = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.new_index_identifier", "luís martinho plugin", properties)
+
+            # print top 5 results for each function method
+            print scorer_function
+            for result in test_results[0:5]:
+                print result["document_id"], "score: ", result["score"]
+
+    def test_hive_source_code_indexing_combined_scorer_verification(self):
+        """
+        This method targets the scoring infrastructure, and asserts if the results were properly scored and sorted according to the Combined Scorer
+        computing the metrics in index time.
+        """
+
+        test_index = None
+        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.new_index_identifier", 
+                                                              {"start_path" : "/remote_home/lmartinho/Documents/workspace",
+                                                               "type" : INDEX_TYPE,
+                                                               "file_extensions" : ["py", "PY", "txt", "TXT"]})
+        test_results = {}
+
+        scorer_functions = ["word_frequency_scorer_function", "document_location_scorer_function", "word_distance_scorer_function"]
+        for scorer_function in scorer_functions:
+            properties = {"search_scorer_function_identifier" : scorer_function}
+            test_results[scorer_function] = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.new_index_identifier", "luís martinho plugin", properties)
+
+        combined_test_results = {}
+
+        properties = {"search_scorer_function_identifier" : "frequency_location_distance_scorer_function",
+                      "frequency_location_distance_scorer_function_parameters" : {"word_frequency_scorer_function" : 1.0,
+                                                                                  "document_location_scorer_function" : 0.0,
+                                                                                  "word_distance_scorer_function" : 0.0}}
+        combined_test_results["word_frequency_scorer_function"] = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.new_index_identifier", "luís martinho plugin", properties)
+
+        properties = {"search_scorer_function_identifier" : "frequency_location_distance_scorer_function",
+                      "frequency_location_distance_scorer_function_parameters" : {"word_frequency_scorer_function" : 0.0,
+                                                                                  "document_location_scorer_function" : 1.0,
+                                                                                  "word_distance_scorer_function" : 0.0}}
+        combined_test_results["document_location_scorer_function"] = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.new_index_identifier", "luís martinho plugin", properties)
+
+        properties = {"search_scorer_function_identifier" : "frequency_location_distance_scorer_function",
+                      "frequency_location_distance_scorer_function_parameters" : {"word_frequency_scorer_function" : 0.0,
+                                                                                  "document_location_scorer_function" : 0.0,
+                                                                                  "word_distance_scorer_function" : 1.0}}
+        combined_test_results["word_distance_scorer_function"] = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.new_index_identifier", "luís martinho plugin", properties)
+        
+        for scorer_function in test_results:
+            for i in range(len(test_results[scorer_function])):
+                self.assertEquals(test_results[scorer_function][i]["document_id"], combined_test_results[scorer_function][i]["document_id"])
+                self.assertEquals(test_results[scorer_function][i]["score"], combined_test_results[scorer_function][i]["score"])
+
+    def test_hive_source_code_indexing_combined_relevance(self):
+        """
+        This method targets the scoring infrastructure, and asserts if the results were properly scored and sorted according to the Combined Scorer
+        computing the metrics in index time.
+        """
+
+        test_index = None
+        start_path = "/remote_home/lmartinho/Documents/workspace"
+        # gather index start time
+        start_time = time.time()
+
+        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.new_index_identifier", 
+                                                              {"start_path" : start_path,
+                                                               "type" : INDEX_TYPE,
+                                                               "file_extensions" : ["py", "PY", "txt", "TXT"]})
+        # gather index end time
+        end_time = time.time()
+
+        # compute duration
+        duration = end_time - start_time
+
+        print "Index creation on '%s'" % start_path, " took ", duration, " ms"
+
+        test_results = {}
+
+        properties = {"search_scorer_function_identifier" : "frequency_location_distance_scorer_function",
+                      "frequency_location_distance_scorer_function_parameters" : {"word_frequency_scorer_function" : 1.0,
+                                                                                  "document_location_scorer_function" : 1.0,
+                                                                                  "word_distance_scorer_function" : 1.0}}
+        query = "luís martinho plugin"
+
+        # gather index start time
+        start_time = time.time()
+
+        test_results = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.new_index_identifier", query, properties)
+
+        # gather index end time
+        end_time = time.time()
+
+        # compute duration
+        duration = end_time - start_time
+
+        print "Search for '%s'" % query, " took ", duration, " ms"
+
+        print "frequency_location_distance_scorer_function", properties["frequency_location_distance_scorer_function_parameters"]
+        for test_result in test_results[0:10]:
+            print test_result["document_id"], "SCORE: ", test_result["score"]
 
 class SearchPluginTestCase:
 

@@ -40,6 +40,18 @@ __license__ = "GNU General Public License (GPL), Version 3"
 SCORE_VALUE = "score"
 """ The key to retrieve the score from the search result map """
 
+SORT_ORDER_VALUE = "sort_order"
+""" The key to retrieve the sort order from the properties map """
+
+ASCENDING_SORT_ORDER = "ascending"
+""" The ascending sort order value """
+
+DESCENDING_SORT_ORDER = "descending"
+""" The descending sort order value """
+
+DEFAULT_SORT_ORDER = DESCENDING_SORT_ORDER
+""" The default sort order is descending: assumes higher scores should come first """
+
 class SearchSorter:
     """
     The search sorter class.
@@ -68,14 +80,21 @@ class SearchSorter:
         @return: A list made up of the search results sorted according to score.
         """
 
+        # check if the sorter order is defined in the properties
+        if not SORT_ORDER_VALUE in properties:
+            sort_order = DEFAULT_SORT_ORDER
+        else:
+            sort_order = properties[SORT_ORDER_VALUE]
+
         # build a list of SortableSearchResult's from the original scored_search_results list
         sortable_search_result_list = [SortableSearchResult(search_result, search_result[SCORE_VALUE]) for search_result in search_results]
 
         # the wrapping class is used to leverage list sorting
         sortable_search_result_list.sort()
 
-        # the list should be sorted in reverse order (the top ranking results first) 
-        sortable_search_result_list.reverse()
+        # the list should be sorted in reverse order (the top ranking results first)
+        if sort_order == DESCENDING_SORT_ORDER:
+            sortable_search_result_list.reverse()
 
         # unwrap the search results from the SortableSearchResult objects
         sorted_search_results = [sortable_search_result.search_result for sortable_search_result in sortable_search_result_list]
@@ -90,7 +109,7 @@ class SortableSearchResult:
     search_result = None
     """ The search result object """
 
-    score = 0
+    score = 0.0
     """ The search result score """
 
     def __init__(self, search_result, score):
@@ -101,5 +120,7 @@ class SortableSearchResult:
         # retrieves the other position
         other_score = other.score
 
-        # compares both positions
-        return self.score - other_score
+        # compares both scores
+        comparison_result = cmp(self.score, other_score)
+        return comparison_result
+

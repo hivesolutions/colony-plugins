@@ -54,11 +54,14 @@ SEARCH_SCORER_FUNCTION_IDENTIFIER_VALUE = "search_scorer_function_identifier"
 DEFAULT_INDEX_TYPE = "file_system"
 """ The default index type """
 
-DEFAULT_SEARCH_SCORER_FUNCTION_IDENTIFIER = "term_frequency_function"
+DEFAULT_SEARCH_SCORER_FUNCTION_IDENTIFIER = "term_frequency_scorer_function"
 """ The identifier of the default search scorer function """
 
 DEFAULT_QUERY_EVALUATOR_TYPE = "query_parser"
 """ The default value for the query evaluator type """
+
+SORT_ORDER_VALUE = "sort_order"
+""" The key to retrieve the sort order from the properties map """
 
 class Search:
     """
@@ -327,7 +330,13 @@ class Search:
 
         # scores the results using the available search scorer plugin
         scored_search_results = search_scorer_plugin.score_results(search_results, search_index, properties)
-        
+
+        # gets the search scorer function repository plugin
+        search_scorer_function_repository_plugin = self.search_plugin.search_scorer_function_repository_plugin
+
+        # retrieves the top level scorer function
+        search_scorer_function = search_scorer_function_repository_plugin.get_function(search_scorer_function_identifier)
+
         # sorts the search results using the score
         sorted_search_results = search_sorter_plugin.sort_results(scored_search_results, properties)
 
@@ -338,8 +347,15 @@ class Search:
         return sorted_search_results
 
     def search_index_by_identifier(self, search_index_identifier, search_query, properties):
+        # retrieves the reference for the index repository
         search_index_repository_plugin = self.search_plugin.search_index_repository_plugin
 
+        # retrieves the search index from the repository
         search_index = search_index_repository_plugin.get_index(search_index_identifier)
 
-        return self.search_index(search_index, search_query, properties)
+        # queries the index with the search query
+        # requesting scoring and sorting services
+        sorted_search_results = self.query_index_sort_results(search_index, search_query, properties)
+
+        # return the final scored and sorted results
+        return sorted_search_results

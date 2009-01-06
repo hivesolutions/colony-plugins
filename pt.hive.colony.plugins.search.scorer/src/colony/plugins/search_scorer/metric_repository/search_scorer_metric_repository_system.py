@@ -60,7 +60,7 @@ class SearchScorerMetricRepository:
 
         self.search_scorer_metric_repository_plugin = search_scorer_metric_repository_plugin
 
-    def add_search_scorer_metrics_map(scorer_metrics_map):
+    def add_search_scorer_metrics_map(self, scorer_metrics_map):
         """
         Adds a set of metrics to the repository.
         
@@ -72,12 +72,12 @@ class SearchScorerMetricRepository:
         for metric_identifier, metric in scorer_metrics_map.items():
             
             # checks for duplicates insertion
-            if metric_identifier in metrics_map:
+            if metric_identifier in self.metrics_map:
                 raise search_scorer_metric_repository_exceptions.SearchScorerMetricRepositoryException(metric_identifier)
 
-            metrics_map[metric_identifier] = metric
+            self.metrics_map[metric_identifier] = metric
 
-    def remove_search_scorer_metrics_map(scorer_metrics_map):
+    def remove_search_scorer_metrics_map(self, scorer_metrics_map):
         """
         Adds a set of metrics from the repository.
         
@@ -88,7 +88,7 @@ class SearchScorerMetricRepository:
         # removes all the metrics made available by the plugin
         # (since no duplicates are allowed, the plugin is assumed to be the single provider of the metric)
         for metric_identifier, metric in scorer_metrics_map.items():
-            del metrics_map[metric_identifier]
+            del self.metrics_map[metric_identifier]
 
     def get_metric_identifiers(self):
         """
@@ -98,7 +98,7 @@ class SearchScorerMetricRepository:
         @return: The list of metric identifiers in the repository.
         """
         
-        return metrics_map.keys()
+        return self.metrics_map.keys()
 
     def get_metric(self, scorer_metric_identifier):
         """
@@ -109,57 +109,24 @@ class SearchScorerMetricRepository:
         @rtype: SearchScorerMetric
         @return: The metric instance for the provided metric identifier.
         """
+        if not scorer_metric_identifier in self.metrics_map:
+            raise search_scorer_metric_repository_exceptions.InvalidMetricRequested(scorer_metric_identifier)
 
-        return metrics_map[scorer_metric_identifier]
+        return self.metrics_map[scorer_metric_identifier]
     
     def get_metrics(self, scorer_metric_identifier_list):
         """
         Retrieves the metric instance for the provided metric identifier
-        
+
         @type scorer_metric_identifier: String
         @param scorer_metric_identifier: The identifier for the intended metric.
         @rtype: SearchScorerMetric
         @return: The metric instance for the provided metric identifier.
         """
 
-        metrics = [metrics_map[scorer_metric_identifier] for scorer_metric_identifier in scorer_metric_identifier_list]
+        metrics = []
+
+        for scorer_metric_identifier in scorer_metric_identifier_list:
+            metrics.append(self.get_metric(scorer_metric_identifier))
+
         return metrics
-
-class SearchScorerMetric:
-    """
-    The search scorer metric class.
-    """
-
-    def compute_for_results(self, search_results, search_index, properties):
-        """
-        The main entry point for the metric object. Method that implements the metric computation for a set of search results.
-        This method is reserved for query time execution.
-        
-        @type search_results: List
-        @param search_results: The list of search results to score using the metric.
-        @type search_index: SearchIndex
-        @param search_index: The index where the results were obtained.
-        @type properties: Dictionary
-        @param properties: The properties to configure the scoring metric behavior.
-        @rtype: List
-        @return: A list of metric tuples, one for each search result containing (metric_identifier, metric_value) tuples    
-        """
-
-        pass
-    
-    def compute_for_index(self, search_index, properties):
-        """
-        The main entry point for the metric object. Method that implements the metric computation for a set of search results.
-        This method is reserved for query time execution.
-        
-        @type search_results: List
-        @param search_results: The list of search results to score using the metric.
-        @type search_index: SearchIndex
-        @param search_index: The index where the results were obtained.
-        @type properties: Dictionary
-        @param properties: The properties to configure the scoring metric behavior.
-        @rtype: List
-        @return: A list of metric tuples, one for each search result containing (metric_identifier, metric_value) tuples
-        """
-
-        pass

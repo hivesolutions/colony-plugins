@@ -53,12 +53,14 @@ class SearchIndexerPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["search_indexer"]
-    capabilities_allowed = []
+    capabilities_allowed = ["search_scorer_metric_repository"]
     dependencies = []
     events_handled = []
     events_registrable = []
 
     search_indexer = None
+
+    search_scorer_metric_repository_plugins = []
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -75,9 +77,11 @@ class SearchIndexerPlugin(colony.plugins.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
+    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.search.indexer", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.search.indexer", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
@@ -86,3 +90,7 @@ class SearchIndexerPlugin(colony.plugins.plugin_system.Plugin):
 
     def create_index(self, tokens_list, properties):
         return self.search_indexer.create_index(tokens_list, properties)
+
+    @colony.plugins.decorators.load_allowed_capability("search_scorer_metric_repository")
+    def search_scorer_metric_repository_load_allowed(self, plugin, capability):
+        self.search_scorer_metric_repository_plugins.append(plugin)

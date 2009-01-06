@@ -43,7 +43,11 @@ import os.path
 
 import search_provider_text_exceptions
 
-FILE_EXTENSIONS = ["txt", "text", "TXT", "TEXT"]
+DEFAULT_FILE_EXTENSIONS = ["txt", "text", "TXT", "TEXT"]
+""" Default file extensions for the plugin to crawl for """
+
+FILE_EXTENSIONS_VALUE = "file_extensions"
+""" Key to retrieve the file extensions to consider from the properties map """
 
 WORD_REGEX = "(?u)\w+"
 
@@ -73,11 +77,16 @@ class SearchProviderText:
         # retrieves the file path
         file_path = properties["file_path"]
 
+        if FILE_EXTENSIONS_VALUE in properties:
+           file_extensions = properties[FILE_EXTENSIONS_VALUE]
+        else:
+            file_extensions = DEFAULT_FILE_EXTENSIONS 
+
         # retrieves the file extension
         file_extension = file_path.split(".")[-1]
 
         # in case the file extension is compatible
-        if file_extension in FILE_EXTENSIONS:
+        if file_extension in file_extensions:
             return True
 
         return False
