@@ -77,6 +77,10 @@ class SearchProviderText:
         # retrieves the file path
         file_path = properties["file_path"]
 
+        # check if the path corresponds to a file
+        if not os.path.isfile(file_path):
+            return False
+
         if FILE_EXTENSIONS_VALUE in properties:
            file_extensions = properties[FILE_EXTENSIONS_VALUE]
         else:
