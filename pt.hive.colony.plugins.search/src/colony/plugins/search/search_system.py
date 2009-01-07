@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import time
+
 import search_exceptions
 
 TYPE_VALUE = "type"
@@ -325,20 +327,33 @@ class Search:
         if not search_scorer_function_identifier in search_scorer_plugin.get_function_identifiers():
             raise search_exceptions.InvalidFunctionRequested(search_scorer_function_identifier)
 
+        # get a reference to the logger
+        logger = self.search_plugin.logger
+
         # performs the search using own query_index method
+        logger.debug("%s: SearchSystem query_index_sort_results querying index" % time.time())
         search_results = self.query_index(search_index, search_query, properties)
+        logger.debug("%s: SearchSystem query_index_sort_results finished querying index" % time.time())
 
-        # scores the results using the available search scorer plugin
-        scored_search_results = search_scorer_plugin.score_results(search_results, search_index, properties)
+        if search_results:
+            # scores the results using the available search scorer plugin
+            logger.debug("%s: SearchSystem query_index_sort_results scoring results" % time.time())        
+            scored_search_results = search_scorer_plugin.score_results(search_results, search_index, properties)
+            logger.debug("%s: SearchSystem query_index_sort_results finished scoring results" % time.time())
 
-        # gets the search scorer function repository plugin
-        search_scorer_function_repository_plugin = self.search_plugin.search_scorer_function_repository_plugin
+            # gets the search scorer function repository plugin
+            search_scorer_function_repository_plugin = self.search_plugin.search_scorer_function_repository_plugin
 
-        # retrieves the top level scorer function
-        search_scorer_function = search_scorer_function_repository_plugin.get_function(search_scorer_function_identifier)
+            # retrieves the top level scorer function
+            search_scorer_function = search_scorer_function_repository_plugin.get_function(search_scorer_function_identifier)
 
-        # sorts the search results using the score
-        sorted_search_results = search_sorter_plugin.sort_results(scored_search_results, properties)
+            # sorts the search results using the score
+            logger.debug("%s: SearchSystem query_index_sort_results sorting results" % time.time())        
+            sorted_search_results = search_sorter_plugin.sort_results(scored_search_results, properties)
+            logger.debug("%s: SearchSystem query_index_sort_results finished sorting results" % time.time())
+        else:
+            # an empty result set is sorted by nature
+            sorted_search_results = search_results
 
         return sorted_search_results
 

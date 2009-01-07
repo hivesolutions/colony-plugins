@@ -368,7 +368,7 @@ class IndexSearchVisitor:
         self.context_stack.append(biggest_operand)
 
     @_visit(search_query_interpreter_ast.MultipleTermNode)
-    def visit_multiple_term_node(self, node):
+    def visit_multiple_term_node(self, node):        
         second_operand = self.context_stack.pop()
         first_operand = self.context_stack.pop()
 
@@ -399,25 +399,28 @@ class IndexSearchVisitor:
 
         word_information_map = self.search_index.inverted_index_map.get(term_value, {})
 
-        # get the hits for the current word from the index
-        index_word_hits = word_information_map[HITS_VALUE]
-
-        # create a copy of the hits map for the current word
-        word_hits = copy.deepcopy(index_word_hits) 
-
-        # the word hits map contains the information for each document containing the current word
-        # for each document containing the word 
-        for document_id, document_information_map in word_hits.items():
-            # retrieves the word document hits
-            word_document_hits = document_information_map[HITS_VALUE]
-
-            # stores the the hits under the current term value
-            document_hits = {}
-            document_hits[term_value] = {}
-            document_hits[term_value][HITS_VALUE] = word_document_hits
-
-            # stores the document hits in the document information maps, under the key HITS_VALUE
-            document_information_map[HITS_VALUE] = document_hits
+        # if the word was found in the index
+        if word_information_map:
+            # get the hits for the current word from the index
+            index_word_hits = word_information_map[HITS_VALUE]
+            # create a copy of the hits map for the current word
+            word_hits = copy.deepcopy(index_word_hits) 
+    
+            # the word hits map contains the information for each document containing the current word
+            # for each document containing the word 
+            for document_id, document_information_map in word_hits.items():
+                # retrieves the word document hits
+                word_document_hits = document_information_map[HITS_VALUE]
+    
+                # stores the the hits under the current term value
+                document_hits = {}
+                document_hits[term_value] = {}
+                document_hits[term_value][HITS_VALUE] = word_document_hits
+    
+                # stores the document hits in the document information maps, under the key HITS_VALUE
+                document_information_map[HITS_VALUE] = document_hits
+        else:
+            word_hits = {}
 
         self.context_stack.append(word_hits)
 
@@ -432,22 +435,27 @@ class IndexSearchVisitor:
         # the hit list for the quoted text in sequence
         quoted_text_hit_list = []
 
-        # determine the documents that contain all the words in the quoted text
+        # determines the documents that contain all the words in the quoted text
         for term_value in term_value_list:
 
             word_information_map = self.search_index.inverted_index_map.get(term_value, {})
-
-            if not current_document_intersection:
-                index_word_hits = word_information_map[HITS_VALUE]
-                current_document_intersection = copy.deepcopy(index_word_hits) 
+            # if the term was found in the search index
+            if word_information_map:
+                if not current_document_intersection:
+                    index_word_hits = word_information_map[HITS_VALUE]
+                    current_document_intersection = copy.deepcopy(index_word_hits) 
+                else:
+                    new_map = {}
+    
+                    for document_id in word_information_map[HITS_VALUE]:
+                        if document_id in current_document_intersection:
+                            new_map[document_id] = None
+    
+                    current_document_intersection = new_map
+            # in case the word is not found, break the loop with an empty document intersection
             else:
-                new_map = {}
-
-                for document_id in word_information_map[HITS_VALUE]:
-                    if document_id in current_document_intersection:
-                        new_map[document_id] = None
-
-                current_document_intersection = new_map
+                current_document_intersection = {}
+                break
 
         # iterates over all the common documents, to determine the ones that contain the quoted words in sequence
         for document in current_document_intersection:

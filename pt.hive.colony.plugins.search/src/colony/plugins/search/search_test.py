@@ -63,6 +63,8 @@ QUERY_EVALUATOR_TYPE_VALUE = "query_evaluator_type"
 SEARCH_SCORER_FORMULA_TYPE_VALUE = "search_scorer_formula_type"
 """ The search scorer formula intended for testing """
 
+import cProfile
+
 class SearchTest:
     """
     The Search plugin unit test class.
@@ -443,7 +445,7 @@ class SearchTestCase(unittest.TestCase):
 
         test_index = None
         test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.new_index_identifier", 
-                                                              {"start_path" : "/remote_home/lmartinho/Documents/workspace",
+                                                              {"start_path" : "/remote_home/search/scorer_functions_test",
                                                                "type" : INDEX_TYPE,
                                                                "file_extensions" : ["py", "PY", "txt", "TXT"]})
 
@@ -451,7 +453,7 @@ class SearchTestCase(unittest.TestCase):
         
         for scorer_function in scorer_functions:
             properties = {"search_scorer_function_identifier" : scorer_function}
-            test_results = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.new_index_identifier", "luís martinho plugin", properties)
+            test_results = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.new_index_identifier", "luis martinho plugin", properties)
 
             # print top 5 results for each function method
             print scorer_function
@@ -466,7 +468,7 @@ class SearchTestCase(unittest.TestCase):
 
         test_index = None
         test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.new_index_identifier", 
-                                                              {"start_path" : "/remote_home/lmartinho/Documents/workspace",
+                                                              {"start_path" : "/remote_home/search/scorer_functions_test",
                                                                "type" : INDEX_TYPE,
                                                                "file_extensions" : ["py", "PY", "txt", "TXT"]})
         test_results = {}
@@ -474,7 +476,7 @@ class SearchTestCase(unittest.TestCase):
         scorer_functions = ["word_frequency_scorer_function", "document_location_scorer_function", "word_distance_scorer_function"]
         for scorer_function in scorer_functions:
             properties = {"search_scorer_function_identifier" : scorer_function}
-            test_results[scorer_function] = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.new_index_identifier", "luís martinho plugin", properties)
+            test_results[scorer_function] = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.new_index_identifier", "luis martinho", properties)
 
         combined_test_results = {}
 
@@ -482,19 +484,19 @@ class SearchTestCase(unittest.TestCase):
                       "frequency_location_distance_scorer_function_parameters" : {"word_frequency_scorer_function" : 1.0,
                                                                                   "document_location_scorer_function" : 0.0,
                                                                                   "word_distance_scorer_function" : 0.0}}
-        combined_test_results["word_frequency_scorer_function"] = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.new_index_identifier", "luís martinho plugin", properties)
+        combined_test_results["word_frequency_scorer_function"] = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.new_index_identifier", "luis martinho", properties)
 
         properties = {"search_scorer_function_identifier" : "frequency_location_distance_scorer_function",
                       "frequency_location_distance_scorer_function_parameters" : {"word_frequency_scorer_function" : 0.0,
                                                                                   "document_location_scorer_function" : 1.0,
                                                                                   "word_distance_scorer_function" : 0.0}}
-        combined_test_results["document_location_scorer_function"] = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.new_index_identifier", "luís martinho plugin", properties)
+        combined_test_results["document_location_scorer_function"] = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.new_index_identifier", "luis martinho", properties)
 
         properties = {"search_scorer_function_identifier" : "frequency_location_distance_scorer_function",
                       "frequency_location_distance_scorer_function_parameters" : {"word_frequency_scorer_function" : 0.0,
                                                                                   "document_location_scorer_function" : 0.0,
                                                                                   "word_distance_scorer_function" : 1.0}}
-        combined_test_results["word_distance_scorer_function"] = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.new_index_identifier", "luís martinho plugin", properties)
+        combined_test_results["word_distance_scorer_function"] = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.new_index_identifier", "luis martinho", properties)
         
         for scorer_function in test_results:
             for i in range(len(test_results[scorer_function])):
@@ -508,7 +510,7 @@ class SearchTestCase(unittest.TestCase):
         """
 
         test_index = None
-        start_path = "/remote_home/lmartinho/Documents/workspace"
+        start_path = "/remote_home/search/scorer_functions_test"
         # gather index start time
         start_time = time.time()
 
@@ -522,7 +524,9 @@ class SearchTestCase(unittest.TestCase):
         # compute duration
         duration = end_time - start_time
 
-        print "Index creation on '%s'" % start_path, " took ", duration, " ms"
+        print "Index creation on '%s'" % start_path, " took ", duration, " s"
+        index_statistics = test_index.get_statistics()
+        print index_statistics
 
         test_results = {}
 
@@ -530,7 +534,7 @@ class SearchTestCase(unittest.TestCase):
                       "frequency_location_distance_scorer_function_parameters" : {"word_frequency_scorer_function" : 1.0,
                                                                                   "document_location_scorer_function" : 1.0,
                                                                                   "word_distance_scorer_function" : 1.0}}
-        query = "luís martinho plugin"
+        query = "luis martinho"
 
         # gather index start time
         start_time = time.time()
@@ -543,11 +547,26 @@ class SearchTestCase(unittest.TestCase):
         # compute duration
         duration = end_time - start_time
 
-        print "Search for '%s'" % query, " took ", duration, " ms"
+        print "Search for '%s'" % query, " took ", duration, " s"
 
         print "frequency_location_distance_scorer_function", properties["frequency_location_distance_scorer_function_parameters"]
         for test_result in test_results[0:10]:
             print test_result["document_id"], "SCORE: ", test_result["score"]
+
+    def test_no_hits_found(self):
+        index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier", {"start_path" : "/remote_home/search/scorer_functions_test", "type" : "file_system"})
+
+        properties = {"query_evaluator_type" : "query_parser", "search_scorer_function_identifier" : "term_frequency_scorer_function"}
+        test_results = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.test_index_identifier", "luis query", properties)
+        self.assertEquals(len(test_results), 0)
+        test_results = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.test_index_identifier", "query", properties)
+        self.assertEquals(len(test_results), 0)
+
+    def test_no_documents_for_indexing(self):
+        pass
+    
+    def test_non_regional_characters_find_regional_characters(self):
+        pass
 
 class SearchPluginTestCase:
 

@@ -60,6 +60,12 @@ HIT_LEVEL_VALUE = "hit_level"
 METRICS_VALUE = "metrics"
 """ The key that retrieves the computed metrics at an arbitrary index level """
 
+INDEX_SIZE_VALUE = "index_size"
+""" The key that retrieves the index size from the statistics map """
+
+DOCUMENT_COUNT_VALUE = "document_count"
+""" The key that retrieves the document count from the statistics map """
+
 class SearchIndexer:
     """
     The search indexer class.
@@ -378,10 +384,28 @@ class SearchIndex:
 
     metrics = {}
     """ The map of available metrics by identifier """
+    
+    statistics = {}
+    """ The map with index statistics """
 
     def __init__(self):
         self.forward_index_map = {}
         self.inverted_index_map = {}
         self.properties = {}
         self.metrics = {}
+        self.statistics = {}
 
+    def get_statistics(self):
+        """
+        Returns a map with several index statistics.
+        """
+
+        # count the number of words indexed
+        word_count = len(self.inverted_index_map.keys())
+        self.statistics[INDEX_SIZE_VALUE] = word_count
+
+        # count the number of documents indexed
+        document_count = len(self.forward_index_map.keys())
+        self.statistics[DOCUMENT_COUNT_VALUE] = document_count
+
+        return self.statistics
