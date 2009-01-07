@@ -40,7 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 ?>
 
 <td class="searchMenuItem">
-    <div onclick="$('#searchMenuItems').slideToggle('normal')">
+    <div class="menuItemContainer" onclick="$('#searchMenuItems').slideToggle('normal')">
         <span class="mainTitle menuItem">Search</span>
     </div>
     <div id="searchMenuItems" class="itemsMenu hidable">

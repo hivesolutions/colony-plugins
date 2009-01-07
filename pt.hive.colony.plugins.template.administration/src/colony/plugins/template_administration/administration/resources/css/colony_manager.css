@@ -134,7 +134,7 @@ div.jGrowl div.colony div.close {
 }
 
 .itemsMenu {
-	margin-left: 15px;
+	margin-left: 20px;
 	font-size: 10px;
 	letter-spacing: 1px;
 }
@@ -142,6 +142,7 @@ div.jGrowl div.colony div.close {
 .lateralMenu {
 	margin-top: 32px;
 	margin-right: -10px;
+	padding-top: 3px;
 	background: #f4f0ec;
 	font-family: "Century Gothic", "Trebuchet MS", Arial, sans-serif;
 	border: 1px solid #cdc3b7;
@@ -152,7 +153,11 @@ div.jGrowl div.colony div.close {
 	padding-left: 15px;
 }
 
-.menuItem:hover {
+.menuItemContainer {
+	margin-bottom: 3px;
+}
+
+.menuItemContainer:hover {
 	background: url("../pics/icons/bullet_toggle_plus.png") no-repeat scroll -1px 0px;
 }
 
