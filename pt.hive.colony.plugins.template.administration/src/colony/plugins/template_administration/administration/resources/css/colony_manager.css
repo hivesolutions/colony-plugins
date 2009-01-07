@@ -99,7 +99,7 @@ div.jGrowl div.colony div.close {
 	top: 65px;
 	left: 1190px;
 	opacity: 0.85;
-	filter: alpha(opacity = 85);
+	filter: alpha(opacity =   85);
 	text-align: left;
 }
 
@@ -158,7 +158,8 @@ div.jGrowl div.colony div.close {
 }
 
 .menuItemContainer:hover {
-	background: url("../pics/icons/bullet_toggle_plus.png") no-repeat scroll -1px 0px;
+	background: url("../pics/icons/bullet_toggle_plus.png") no-repeat scroll
+		-1px 0px;
 	cursor: pointer;
 }
 
@@ -347,6 +348,30 @@ div.jGrowl div.colony div.close {
 
 .window-body {
 	font-size: 11px;
+}
+
+.button {
+	font-family: "Century Gothic", "Trebuchet MS", Trebuchet, Tahoma,
+		Verdana, Helvetica, Arial, sans-serif;
+	font-size: 12px;
+	text-align: left;
+	background: #ede4d4 url("../pics/button.png") repeat-x scroll 0 50%;
+	color: #888897;
+	padding: 5px;
+	border: 1px solid #e0cfc2;
+}
+
+.button:hover {
+	background: #ede4d4 url("../pics/button_hover.png") repeat-x scroll 0
+		50%;
+	cursor: pointer;
+}
+
+.button #buttonIcon {
+	margin-right: 10px;
+}
+
+.button #buttonText {
 }
 
 .settingsTableCell {

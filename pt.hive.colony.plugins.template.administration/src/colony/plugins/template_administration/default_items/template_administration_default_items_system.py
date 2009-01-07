@@ -74,7 +74,7 @@ class TemplateAdministrationDefaultItems:
         return resources_path
 
     def get_css_files(self):
-        return ["css/colony_plugin_administration_content_item.js"]
+        return ["css/colony_plugin_administration_content_item.css"]
 
     def get_js_files(self):
         return ["js/colony_plugin_administration_content_item.js"]

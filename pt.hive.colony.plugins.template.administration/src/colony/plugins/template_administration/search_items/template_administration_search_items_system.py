@@ -74,10 +74,10 @@ class TemplateAdministrationSearchItems:
         return resources_path
 
     def get_css_files(self):
-        return ["css/search_tester_content_item.css"]
+        return ["css/search_tester_content_item.css", "css/search_index_management_content_item.css"]
 
     def get_js_files(self):
-        return ["js/search_tester_content_item.js"]
+        return ["js/search_tester_content_item.js", "js/search_index_management_content_item.js"]
 
     def get_menu_items(self):
         # the menu items path list

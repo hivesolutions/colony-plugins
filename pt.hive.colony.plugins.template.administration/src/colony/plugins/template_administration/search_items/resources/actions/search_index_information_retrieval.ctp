@@ -51,6 +51,13 @@ if query_value == "getIndexIdentifiers":
 
 	index_identifiers = search_index_repository_plugin.get_index_identifiers()
 
+	print <table>
+
+	# iterates over all the index identifiers
 	for index_identifier in index_identifiers:
+		print <tr>
 		print index_identifier
+		print </tr>
+
+	print </table>
 ?>
