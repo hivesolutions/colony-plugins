@@ -42,5 +42,16 @@ __license__ = "GNU General Public License (GPL), Version 3"
 <div id="searchIndexManagementContentItem">
     <h2 class="mainTitle">Search Index Management</h2>
 
-    <div id="searchIndexListRefresh" class="button" style="width: 70px;"><img id="buttonIcon" src="pics/arrow_refresh.png"/><span id="buttonText">refresh</span></div>
+	<span id="searchIndexListNew" class="button smallIconButton" style="width: 50px;"><img id="buttonIcon" src="pics/add.png"/><span id="buttonText">new</span></span>
+    <span id="searchIndexListRefresh" class="button smallIconButton" style="width: 70px;"><img id="buttonIcon" src="pics/arrow_refresh.png"/><span id="buttonText">refresh</span></span>
 </div>
+
+<div id="newSearchIndexWindow" class="window" title="New Search Index">
+	<div class="window-body">
+		<table>
+			<tr>
+			</tr>
+		</table>
+	</div>
+</div>
+

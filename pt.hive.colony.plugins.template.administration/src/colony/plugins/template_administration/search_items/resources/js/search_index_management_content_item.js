@@ -23,9 +23,29 @@
 // __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
 // __license__   = GNU General Public License (GPL), Version 3
 
+// called uppon search index management content item loading complete
+$("#searchIndexManagementContentItem").ready(function() {
+			$("#newSearchIndexWindow").hide();
+
+			$("#searchIndexListRefresh").click(function() {
+						// refreshes the index manager table
+						refreshIndexManagerTable();
+					});
+			$("#searchIndexListNew").click(function() {
+						$("#newSearchIndexWindow").show();
+						$("#newSearchIndexWindow").dialog({
+									"width" : 430,
+									"height" : 140,
+									"show" : "drop",
+									"hide" : "drop"
+								});
+					});
+		});
+
 function refreshIndexManagerTable() {
-	$.post("actions/search_index_information_retrieval.ctp", "queryValue",
-			refreshIndexManagerTableHandler);
+	$.post("actions/search_index_information_retrieval.ctp", {
+				"queryValue" : "getIndexIdentifiers"
+			}, refreshIndexManagerTableHandler);
 }
 
 function refreshIndexManagerTableHandler(responseText, textStatus) {

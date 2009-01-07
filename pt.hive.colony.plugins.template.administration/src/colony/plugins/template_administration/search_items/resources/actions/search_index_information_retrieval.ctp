@@ -46,18 +46,18 @@ if "queryValue" in values_map:
     query_value = values_map["queryValue"]
 
 if query_value == "getIndexIdentifiers":
-	# retrieves the search index repository plugin
-	search_index_repository_plugin = plugin_manager.get_plugin_by_id("pt.hive.colony.plugins.search.index_repository")
+    # retrieves the search index repository plugin
+    search_index_repository_plugin = plugin_manager.get_plugin_by_id("pt.hive.colony.plugins.search.index_repository")
 
-	index_identifiers = search_index_repository_plugin.get_index_identifiers()
+    index_identifiers = search_index_repository_plugin.get_index_identifiers()
 
-	print <table>
+    print "<table>"
 
-	# iterates over all the index identifiers
-	for index_identifier in index_identifiers:
-		print <tr>
-		print index_identifier
-		print </tr>
+    # iterates over all the index identifiers
+    for index_identifier in index_identifiers:
+        print "<tr>"
+        print index_identifier
+        print "</tr>"
 
-	print </table>
+    print "</table>"
 ?>

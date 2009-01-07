@@ -27,16 +27,14 @@
  __license__   = GNU General Public License (GPL), Version 3
 */
 
-#searchIndexListRefresh {
+.smallIconButton {
 	padding-left: 5px;
 	padding-right: 5px;
 	padding-top: 5px;
 	padding-bottom: 2px;
 }
 
-#searchIndexListRefresh #buttonText {
-	position: relative;
-	float: right;
+.smallIconButton #buttonText {
 	right: 5px;
 	top: -18px;
 }

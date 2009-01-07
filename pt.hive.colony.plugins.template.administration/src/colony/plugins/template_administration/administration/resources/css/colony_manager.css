@@ -359,6 +359,7 @@ div.jGrowl div.colony div.close {
 	color: #888897;
 	padding: 5px;
 	border: 1px solid #e0cfc2;
+	padding-top: 5px;
 }
 
 .button:hover {
@@ -368,10 +369,12 @@ div.jGrowl div.colony div.close {
 }
 
 .button #buttonIcon {
-	margin-right: 10px;
+	margin-right: 5px;
+	vertical-align: sub;
 }
 
 .button #buttonText {
+	vertical-align: text-top;
 }
 
 .settingsTableCell {
