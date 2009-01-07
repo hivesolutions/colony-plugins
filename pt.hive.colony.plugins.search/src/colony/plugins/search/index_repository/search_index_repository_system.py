@@ -76,3 +76,15 @@ class SearchIndexRepository:
             raise search_index_repository_exceptions.InvalidSearchIndexIdentifier(search_index_identifier)
 
         return self.search_index_repository_map[search_index_identifier]
+
+    def get_index_identifiers(self):
+        """
+        Returns a list of index identifiers, available in the repository.
+        """
+        return self.search_index_repository_map.keys()
+
+    def get_indexes(self):
+        """
+        Returns a list of search indexes, available in the repository.
+        """        
+        return self.search_index_repository_map.values()
