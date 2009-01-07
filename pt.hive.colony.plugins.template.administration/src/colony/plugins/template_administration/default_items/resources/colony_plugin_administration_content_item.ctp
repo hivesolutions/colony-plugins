@@ -45,7 +45,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
     <?colony
 # retrieves all the plugins
 all_plugins = plugin_manager.get_all_plugins()
-print "<table id=pluginManagement class=\"pluginsTable\">"
+print "<table id=pluginManagement>"
 print "<thead> <tr> <th class=\"mainTitle tableHeader\">PLUGIN ID</th> <th class=\"mainTitle tableHeader\">NAME</th> <th class=\"mainTitle tableHeader\">AUTHOR</th>  <th class=\"mainTitle tableHeader\">STATUS</th> </tr> </thead>"
 print "<tbody>"
 for plugin in all_plugins:

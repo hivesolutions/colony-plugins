@@ -80,29 +80,22 @@ class TemplateAdministrationSearchItems:
         return ["js/search_tester_content_item.js"]
 
     def get_menu_items(self):
-        # retrieves the plugin manager
-        manager = self.template_administration_search_items_plugin.manager
+        # the menu items path list
+        menu_items_paths = ["search_menu_item.ctp"]
 
-        # retrieves the plugin path
-        plugin_path = manager.get_plugin_path_by_id(self.template_administration_search_items_plugin.id)
+        # creates the empty menu items list
+        menu_items = []
 
-        # creates the resources path
-        resources_path = plugin_path + "/template_administration/search_items/resources"
+        # iterates over all the menu items paths
+        for menu_item_path in menu_items_paths:
+            # reads the menu item
+            menu_item = self.get_file_contents(menu_item_path)
 
-        # creates the search menu item file path
-        search_menu_item_file_path = resources_path + "/search_menu_item.ctp" 
-
-        # opens the search menu item file
-        search_menu_item_file = open(search_menu_item_file_path, "r")
-
-        # reads the search menu item
-        search_menu_item = search_menu_item_file.read()
-
-        # closes the search menu item file
-        search_menu_item_file.close()
+            # adds the menu item to the list of menu items
+            menu_items.append(menu_item)
 
         # returns the menu items
-        return [search_menu_item]
+        return menu_items
 
     def get_content_items(self):
         # the content items path list
@@ -111,6 +104,18 @@ class TemplateAdministrationSearchItems:
         # creates the empty content items list
         content_items = []
 
+        # iterates over all the content items paths
+        for content_item_path in content_items_paths:
+            # reads the content item
+            content_item = self.get_file_contents(content_item_path)
+
+            # adds the content item to the list of content items
+            content_items.append(content_item)
+
+        # returns the content items
+        return content_items
+
+    def get_file_contents(self, relative_file_path):
         # retrieves the plugin manager
         manager = self.template_administration_search_items_plugin.manager
 
@@ -120,22 +125,17 @@ class TemplateAdministrationSearchItems:
         # creates the resources path
         resources_path = plugin_path + "/template_administration/search_items/resources"
 
-        # iterates over all the content items paths
-        for content_item_path in content_items_paths:
-            # creates the content item file path
-            content_item_file_path = resources_path + "/" + content_item_path
+        # creates the file path
+        file_path = resources_path + "/" + relative_file_path
+    
+        # opens the file
+        file = open(file_path, "r")
+    
+        # reads the file contents
+        file_contents = file.read()
+    
+        # closes the file
+        file.close()
 
-            # opens the content item file
-            content_item_file = open(content_item_file_path, "r")
-
-            # reads the content item
-            content_item = content_item_file.read()
-
-            # closes the content item file
-            content_item_file.close()
-
-            # adds the content item to the list of content items
-            content_items.append(content_item)
-
-        # returns the content items
-        return content_items
+        # returns the file contents
+        return file_contents

@@ -74,37 +74,48 @@ class TemplateAdministrationDefaultItems:
         return resources_path
 
     def get_css_files(self):
-        return []
+        return ["css/colony_plugin_administration_content_item.js"]
 
     def get_js_files(self):
-        return []
+        return ["js/colony_plugin_administration_content_item.js"]
 
     def get_menu_items(self):
-        # retrieves the plugin manager
-        manager = self.template_administration_default_items_plugin.manager
+        # the menu items path list
+        menu_items_paths = ["colony_menu_item.ctp"]
 
-        # retrieves the plugin path
-        plugin_path = manager.get_plugin_path_by_id(self.template_administration_default_items_plugin.id)
+        # creates the empty menu items list
+        menu_items = []
 
-        # creates the resources path
-        resources_path = plugin_path + "/template_administration/default_items/resources"
+        # iterates over all the menu items paths
+        for menu_item_path in menu_items_paths:
+            # reads the menu item
+            menu_item = self.get_file_contents(menu_item_path)
 
-        # creates the colony menu item file path
-        colony_menu_item_file_path = resources_path + "/colony_menu_item.ctp" 
-
-        # opens the colony menu item file
-        colony_menu_item_file = open(colony_menu_item_file_path, "r")
-
-        # reads the colony menu item
-        colony_menu_item = colony_menu_item_file.read()
-
-        # closes the colony menu item file
-        colony_menu_item_file.close()
+            # adds the menu item to the list of menu items
+            menu_items.append(menu_item)
 
         # returns the menu items
-        return [colony_menu_item]
+        return menu_items
 
     def get_content_items(self):
+        # the content items path list
+        content_items_paths = ["colony_information_content_item.ctp", "colony_plugin_administration_content_item.ctp"]
+
+        # creates the empty content items list
+        content_items = []
+
+        # iterates over all the content items paths
+        for content_item_path in content_items_paths:
+            # reads the content item
+            content_item = self.get_file_contents(content_item_path)
+
+            # adds the content item to the list of content items
+            content_items.append(content_item)
+
+        # returns the content items
+        return content_items
+
+    def get_file_contents(self, relative_file_path):
         # retrieves the plugin manager
         manager = self.template_administration_default_items_plugin.manager
 
@@ -114,29 +125,17 @@ class TemplateAdministrationDefaultItems:
         # creates the resources path
         resources_path = plugin_path + "/template_administration/default_items/resources"
 
-        # creates the colony plugin administration content item file path
-        colony_plugin_administration_content_item_file_path = resources_path + "/colony_plugin_administration_content_item.ctp" 
+        # creates the file path
+        file_path = resources_path + "/" + relative_file_path
+    
+        # opens the file
+        file = open(file_path, "r")
+    
+        # reads the file contents
+        file_contents = file.read()
+    
+        # closes the file
+        file.close()
 
-        # opens the colony plugin administration content item file
-        colony_plugin_administration_content_item_file = open(colony_plugin_administration_content_item_file_path, "r")
-
-        # reads the colony plugin administration content item
-        colony_plugin_administration_content_item = colony_plugin_administration_content_item_file.read()
-
-        # closes the colony plugin administration content item
-        colony_plugin_administration_content_item_file.close()
-
-        # creates the colony information content item file path
-        colony_information_content_item_file_path = resources_path + "/colony_information_content_item.ctp" 
-
-        # opens the colony information content item file
-        colony_information_content_item_file = open(colony_information_content_item_file_path, "r")
-
-        # reads the colony information content item
-        colony_information_content_item = colony_information_content_item_file.read()
-
-        # closes the colony plugin administration content item file
-        colony_information_content_item_file.close()
-
-        # returns the content items
-        return [colony_plugin_administration_content_item, colony_information_content_item]
+        # returns the file contents
+        return file_contents
