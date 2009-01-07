@@ -50,8 +50,11 @@ __license__ = "GNU General Public License (GPL), Version 3"
 	<div class="window-body">
 		<table>
 			<tr>
+				<td><span class="mainTitle" style="text-indent: 4px;">Name:</span></td>
+			</tr>
+			<tr>
+				<td><input type="text" class="box" style="width: 250px;"/></td>
 			</tr>
 		</table>
 	</div>
 </div>
-

@@ -377,6 +377,19 @@ div.jGrowl div.colony div.close {
 	vertical-align: text-top;
 }
 
+.box {
+	border: 1px solid #aaaaaa;
+	height: 22px;
+	font-family: "Century Gothic", "Trebuchet MS", Trebuchet, Tahoma,
+		Verdana, Helvetica, Arial, sans-serif;
+	font-size: 14px;
+	text-align: left;
+	text-indent: 5px;
+	margin-top: 5px;
+	padding-top: 4px;
+	color: #878787;
+}
+
 .settingsTableCell {
 	margin-left: 10px;
 	width: 75px;
