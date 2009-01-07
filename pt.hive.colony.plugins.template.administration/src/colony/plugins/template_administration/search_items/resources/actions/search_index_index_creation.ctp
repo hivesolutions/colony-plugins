@@ -39,6 +39,12 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 ?>
 
-<div id="searchIndexContentItem">
-    <h2 class="mainTitle">Search Index</h2>
-</div>
+<?colony
+# retrieves the search plugin
+search_plugin = plugin_manager.get_plugin_by_id("pt.hive.colony.plugins.search")
+
+index_creation_options = {"start_path" : "C:/Users/joamag/workspace", "type" : "file_system", "file_extensions" : ["py", "js", "ctp", "xml"]}
+
+# creates the index
+index = search_plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier", index_creation_options)
+?>

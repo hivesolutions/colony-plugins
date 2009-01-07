@@ -106,7 +106,7 @@ class TemplateAdministrationSearchItems:
 
     def get_content_items(self):
         # the content items path list
-        content_items_paths = ["search_tester_content_item.ctp", "search_index_content_item.ctp"]
+        content_items_paths = ["search_tester_content_item.ctp", "search_index_management_content_item.ctp"]
 
         # creates the empty content items list
         content_items = []

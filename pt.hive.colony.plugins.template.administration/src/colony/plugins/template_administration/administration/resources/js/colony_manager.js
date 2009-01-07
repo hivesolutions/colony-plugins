@@ -257,7 +257,7 @@ function loadPlugin(pluginId) {
 		var handler = endPluginLoad;
 	}
 
-	$.post("plugin_loader.ctp", {
+	$.post("actions/plugin_loader.ctp", {
 				"pluginId" : pluginId,
 				"type" : type
 			}, handler);

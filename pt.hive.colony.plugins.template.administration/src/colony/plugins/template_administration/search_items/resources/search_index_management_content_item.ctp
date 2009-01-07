@@ -39,19 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 ?>
 
-<?colony
-values_map = self.parse_request_attributes(request)
-
-if "searchValue" in values_map:
-    search_value = values_map["searchValue"]
-
-# retrieves the search plugin
-search_plugin = plugin_manager.get_plugin_by_id("pt.hive.colony.plugins.search")
-
-properties = {"query_evaluator_type" : "query_parser", "search_scorer_function_identifier" : "frequency_location_distance_scorer_function"}
-test_results = search_plugin.search_index_by_identifier("pt.hive.colony.plugins.search.test_index_identifier", search_value, properties)
-
-for test_result in test_results:
-	print test_result["score"]
-	print test_result["document_id"]
-?>
+<div id="searchIndexManagementContentItem">
+    <h2 class="mainTitle">Search Index Management</h2>
+</div>

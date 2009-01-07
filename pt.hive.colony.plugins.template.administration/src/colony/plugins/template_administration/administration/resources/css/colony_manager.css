@@ -159,6 +159,7 @@ div.jGrowl div.colony div.close {
 
 .menuItemContainer:hover {
 	background: url("../pics/icons/bullet_toggle_plus.png") no-repeat scroll -1px 0px;
+	cursor: pointer;
 }
 
 .mainTitle {

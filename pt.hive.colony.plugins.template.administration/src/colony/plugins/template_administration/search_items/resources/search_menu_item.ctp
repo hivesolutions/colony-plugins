@@ -46,7 +46,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
     <div id="searchMenuItems" class="itemsMenu hidable">
         <table>
             <tr><td onclick="addTab('searchTesterContentItem', 'Search Tester');">Tester<td></tr>
-            <tr><td onclick="addTab('searchIndexContentItem', 'Search Index');">Index</td></tr>
+            <tr><td onclick="addTab('searchIndexManagementContentItem', 'Search Index Management');">Index Management</td></tr>
             <tr><td onclick="addTab('searchAdministrationContentItem', 'Search Administration');">Administration</td></tr>
         </table>
     </div>
