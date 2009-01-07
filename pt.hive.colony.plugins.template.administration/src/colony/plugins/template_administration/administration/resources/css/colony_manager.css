@@ -370,7 +370,7 @@ div.jGrowl div.colony div.close {
 
 .button #buttonIcon {
 	margin-right: 5px;
-	vertical-align: sub;
+	vertical-align: text-bottom;
 }
 
 .button #buttonText {
