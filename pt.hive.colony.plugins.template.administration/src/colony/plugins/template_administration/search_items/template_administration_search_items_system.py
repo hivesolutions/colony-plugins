@@ -105,6 +105,12 @@ class TemplateAdministrationSearchItems:
         return [search_menu_item]
 
     def get_content_items(self):
+        # the content items path list
+        content_items_paths = ["search_tester_content_item.ctp", "search_index_content_item.ctp"]
+
+        # creates the empty content items list
+        content_items = []
+
         # retrieves the plugin manager
         manager = self.template_administration_search_items_plugin.manager
 
@@ -114,17 +120,22 @@ class TemplateAdministrationSearchItems:
         # creates the resources path
         resources_path = plugin_path + "/template_administration/search_items/resources"
 
-        # creates the search tester content item file path
-        search_tester_content_item_file_path = resources_path + "/search_tester_content_item.ctp" 
+        # iterates over all the content items paths
+        for content_item_path in content_items_paths:
+            # creates the content item file path
+            content_item_file_path = resources_path + "/" + content_item_path
 
-        # opens the search tester content item file
-        search_tester_content_item_file = open(search_tester_content_item_file_path, "r")
+            # opens the content item file
+            content_item_file = open(content_item_file_path, "r")
 
-        # reads the search tester content item
-        search_tester_content_item = search_tester_content_item_file.read()
+            # reads the content item
+            content_item = content_item_file.read()
 
-        # closes the search tester content item file
-        search_tester_content_item_file.close()
+            # closes the content item file
+            content_item_file.close()
+
+            # adds the content item to the list of content items
+            content_items.append(content_item)
 
         # returns the content items
-        return [search_tester_content_item]
+        return content_items

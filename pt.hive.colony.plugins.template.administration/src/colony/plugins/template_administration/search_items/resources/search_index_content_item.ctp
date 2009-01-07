@@ -39,15 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 ?>
 
-<td class="searchMenuItem">
-    <div class="menuItemContainer" onclick="$('#searchMenuItems').slideToggle('normal')">
-        <span class="mainTitle menuItem">Search</span>
-    </div>
-    <div id="searchMenuItems" class="itemsMenu hidable">
-        <table>
-            <tr><td onclick="addTab('searchTesterContentItem', 'Search Tester');">Tester<td></tr>
-            <tr><td onclick="addTab('searchIndexContentItem', 'Search Index');">Index</td></tr>
-            <tr><td onclick="addTab('searchAdministrationContentItem', 'Search Administration');">Administration</td></tr>
-        </table>
-    </div>
-</td>
+<div id="searchIndexContentItem">
+    <h2 class="mainTitle">Search Index</h2>
+</div>

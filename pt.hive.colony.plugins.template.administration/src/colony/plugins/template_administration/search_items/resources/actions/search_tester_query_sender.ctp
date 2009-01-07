@@ -48,9 +48,9 @@ if "searchValue" in values_map:
 # retrieves the search plugin
 search_plugin = plugin_manager.get_plugin_by_id("pt.hive.colony.plugins.search")
 
-index = search_plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier", {"start_path" : "C:/Users/joamag/workspace", "type" : "file_system"})
+index = search_plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier", {"start_path" : "C:/Users/joamag/workspace", "type" : "file_system", "file_extensions" : ["py", "js", "ctp", "xml"]})
 
-properties = {"query_evaluator_type" : "query_parser", "search_scorer_function_identifier" : "term_frequency_function"}
+properties = {"query_evaluator_type" : "query_parser", "search_scorer_function_identifier" : "frequency_location_distance_scorer_function"}
 test_results = search_plugin.search_index_by_identifier("pt.hive.colony.plugins.search.test_index_identifier", search_value, properties)
 
 for test_result in test_results:
