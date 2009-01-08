@@ -57,7 +57,7 @@ div.jGrowl div.colony {
 	-webkit-border-radius: 0px;
 	background: #f4f0ec;
 	color: #888897;
-	font-family: "Century Gothic", "Trebuchet MS", Arial, sans-serif;
+	font-family: "Century Gothic", "Gill Sans Light", "Gill Sans", "Trebuchet MS", Arial, sans-serif;
 	font-size: 11px;
 	letter-spacing: 1px;
 	font-weight: normal;
@@ -75,7 +75,7 @@ div.jGrowl div.colony div.header {
 	background: #f4f0ec;
 	padding: 5px;
 	text-transform: uppercase;
-	font-family: "Century Gothic", "Trebuchet MS", Arial, sans-serif;
+	font-family: "Century Gothic", "Gill Sans Light", "Gill Sans", "Trebuchet MS", Arial, sans-serif;
 	font-size: 11px;
 	letter-spacing: 1px;
 	color: #888897;
@@ -92,7 +92,7 @@ div.jGrowl div.colony div.close {
 
 #tooltip {
 	background: #ffffff;
-	font-family: "Century Gothic", "Trebuchet MS", Arial, sans-serif;
+	font-family: "Century Gothic", "Gill Sans Light", "Gill Sans", "Trebuchet MS", Arial, sans-serif;
 	border: 1px solid #cdc3b7;
 	width: 150px;
 	position: absolute;
@@ -154,7 +154,7 @@ div.jGrowl div.colony div.close {
 	margin-right: -10px;
 	padding-top: 3px;
 	background: #f4f0ec;
-	font-family: "Century Gothic", "Trebuchet MS", Arial, sans-serif;
+	font-family: "Century Gothic", "Gill Sans Light", "Gill Sans", "Trebuchet MS", Arial, sans-serif;
 	border: 1px solid #cdc3b7;
 	width: 200px;
 }
@@ -174,7 +174,7 @@ div.jGrowl div.colony div.close {
 }
 
 .mainTitle {
-	font-family: "Century Gothic", "Trebuchet MS", Arial, sans-serif;
+	font-family: "Century Gothic", "Gill Sans Light", "Gill Sans", "Trebuchet MS", Arial, sans-serif;
 	font-weight: normal;
 	letter-spacing: -0.05em;
 	margin: 0 0 5px;
@@ -191,7 +191,7 @@ div.jGrowl div.colony div.close {
 	border: 1px solid #aaaaaa;
 	width: 195px;
 	height: 25px;
-	font-family: "Century Gothic", "Trebuchet MS", Trebuchet, Tahoma,
+	font-family: "Century Gothic", "Gill Sans Light", "Gill Sans", "Trebuchet MS", Trebuchet, Tahoma,
 		Verdana, Helvetica, Arial, sans-serif;
 	font-size: 16px;
 	text-align: left;
@@ -231,7 +231,7 @@ div.jGrowl div.colony div.close {
 }
 
 .textType {
-	font-family: "Century Gothic", "Trebuchet MS", Trebuchet, Tahoma,
+	font-family: "Century Gothic", "Gill Sans Light", "Gill Sans", "Trebuchet MS", Trebuchet, Tahoma,
 		Verdana, Helvetica, Arial, sans-serif;
 	font-size: 12px;
 	text-align: left;
@@ -349,7 +349,7 @@ div.jGrowl div.colony div.close {
 }
 
 .window {
-	font-family: "Century Gothic", "Trebuchet MS", Trebuchet, Tahoma,
+	font-family: "Century Gothic", "Gill Sans Light", "Gill Sans", "Trebuchet MS", Trebuchet, Tahoma,
 		Verdana, Helvetica, Arial, sans-serif;
 	font-size: 12px;
 	text-align: left;
@@ -367,7 +367,7 @@ div.jGrowl div.colony div.close {
 }
 
 .button {
-	font-family: "Century Gothic", "Trebuchet MS", Trebuchet, Tahoma,
+	font-family: "Century Gothic", "Gill Sans Light", "Gill Sans", "Trebuchet MS", Trebuchet, Tahoma,
 		Verdana, Helvetica, Arial, sans-serif;
 	font-size: 12px;
 	text-align: left;
@@ -398,9 +398,9 @@ div.jGrowl div.colony div.close {
 }
 
 .simple-button {
-	font-family: "Century Gothic", "Trebuchet MS", Trebuchet, Tahoma,
+	font-family: "Century Gothic", "Gill Sans Light", "Gill Sans", "Trebuchet MS", Trebuchet, Tahoma,
 		Verdana, Helvetica, Arial, sans-serif;
-	font-size: 12px;
+	font-size: 10px;
 	text-align: left;
 	color: #888897;
 	padding: 2px;
@@ -428,7 +428,7 @@ div.jGrowl div.colony div.close {
 .box {
 	border: 1px solid #aaaaaa;
 	height: 22px;
-	font-family: "Century Gothic", "Trebuchet MS", Trebuchet, Tahoma,
+	font-family: "Century Gothic", "Gill Sans Light", "Gill Sans", "Trebuchet MS", Trebuchet, Tahoma,
 		Verdana, Helvetica, Arial, sans-serif;
 	font-size: 14px;
 	text-align: left;
@@ -442,7 +442,7 @@ div.jGrowl div.colony div.close {
 	border: 1px solid #aaaaaa;
 	height: 200px;
 	width: 130px;
-	font-family: "Century Gothic", "Trebuchet MS", Trebuchet, Tahoma,
+	font-family: "Century Gothic", "Gill Sans Light", "Gill Sans", "Trebuchet MS", Trebuchet, Tahoma,
 		Verdana, Helvetica, Arial, sans-serif;
 	font-size: 12px;
 	text-align: left;
