@@ -48,32 +48,44 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 <div id="newSearchIndexWindow" class="window" title="New Search Index">
 	<div class="window-body">
-		<table>
-			<tr>
-				<td><span class="mainTitle" style="text-indent: 4px;">Name:</span></td>
-			</tr>
-			<tr>
-				<td><input type="text" class="box" style="width: 250px;"/></td>
-			</tr>
-			<tr>
-				<td><span class="mainTitle" style="text-indent: 4px;"></span></td>
-			</tr>
-			<tr>
-				<td><span class="mainTitle" style="text-indent: 4px;">Options:</span></td>
-			</tr>
-			<tr>
-				<td>
-					<div class="listBox">
-						<div class="listBoxElement">option1</div>
-						<div class="listBoxElement">option2</div>
-						<div class="listBoxElement">option3</div>
-					</div>
-				</td>
-			</tr>
-		</table>
+		<div style="margin-right: 30px">
+			<div class="optionBlock">
+				<div class="optionTitle">
+					<span class="mainTitle" style="text-indent: 4px;">Name:</span>
+				</div>
+				<div>
+					<input type="text" class="box" style="width: 100%;"/>
+				</div>
+			</div>
+			<div class="optionBlock">
+				<div class="optionTitle">
+					<span class="mainTitle" style="text-indent: 4px;">Options:</span>
+				</div>
+				<table>
+					<tr style="vertical-align: top;">
+						<td>
+							<div id="propertiesSelector" class="listBox">
+								<div class="listBoxElement">Type</div>
+								<div class="listBoxElement">Metrics</div>
+								<div class="listBoxElement">File Extensions</div>
+							</div>
+						</td>
+						<td style="width: 100%;">
+							<div id="propertiresEditor">
+								tobias
+							</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
 	</div>
 	<div class="window-buttons">
 		<span id="searchIndexListRefresh" class="button smallIconButton" style="width: 70px;"><img id="buttonIcon" src="pics/accept.png"/><span id="buttonTextImage">Confirm</span></span>
 		<span id="searchIndexListRefresh" class="button smallIconButton" style="width: 70px;"><img id="buttonIcon" src="pics/cancel.png"/><span id="buttonTextImage">Cancel</span></span>
 	</div>
+</div>
+
+<div>
+	
 </div>

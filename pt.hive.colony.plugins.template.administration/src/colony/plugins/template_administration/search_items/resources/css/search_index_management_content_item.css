@@ -33,3 +33,26 @@
 	padding-top: 5px;
 	padding-bottom: 5px;
 }
+
+.optionTitle {
+	padding-bottom: 2px;
+}
+
+.optionBlock {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+#propertiesSelector {
+	width: 125px;
+	height: 200px;
+	margin-right: 10px;
+}
+
+#propertiresEditor {
+	width: 100%;
+	height: 200px;
+	background: #ffffff;
+	float: right;
+	border: 1px solid #aaaaaa;
+}

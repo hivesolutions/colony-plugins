@@ -134,9 +134,19 @@ div.jGrowl div.colony div.close {
 }
 
 .itemsMenu {
-	margin-left: 20px;
+	margin-left: 10px;
 	font-size: 10px;
 	letter-spacing: 1px;
+}
+
+.itemsMenu tr {
+	text-indent: 15px;
+}
+
+.itemsMenu tr:hover {
+	text-indent: 15px;
+	cursor: pointer;
+	background: url("../pics/icons/bullet_arrow_right.png") no-repeat scroll 0px 0px;
 }
 
 .lateralMenu {
@@ -351,10 +361,9 @@ div.jGrowl div.colony div.close {
 }
 
 .window-buttons {
-	position: absolute;
+	position: relative;
 	width: 100%;
-	bottom: 15px;
-	text-align: center
+	text-align: center;
 }
 
 .button {
@@ -410,7 +419,6 @@ div.jGrowl div.colony div.close {
 	font-size: 12px;
 	text-align: left;
 	text-indent: 5px;
-	margin-top: 5px;
 	color: #878787;
 	background: #ffffff;
 }

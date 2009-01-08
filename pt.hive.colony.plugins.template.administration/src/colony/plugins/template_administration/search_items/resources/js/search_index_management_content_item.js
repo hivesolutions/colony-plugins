@@ -36,21 +36,17 @@ $("#searchIndexManagementContentItem").ready(function() {
 			$("#searchIndexListNew").click(function() {
 						$("#newSearchIndexWindow").show();
 						$("#newSearchIndexWindow").dialog({
-									"width" : 420,
+									"width" : 520,
 									"height" : 380,
 									"show" : "drop",
-									"hide" : "drop"
+									"hide" : "drop",
+									"resizeStop" : function() { alert("tobias"); }
 								});
 					});
 
-			$(".listBox > div").click(function() {
-						var divParent = $(this).parent();
-						var selectedElements = divParent.children(".listBoxElementSelected");
-						selectedElements.each(function() {
-							$(this).removeClass("listBoxElementSelected");
-						});
-						$(this).addClass("listBoxElementSelected");
-					});
+			$("#newSearchIndexWindow #propertiesSelector > .listBoxElement").click(function() {
+				alert("clickado");
+			});
 		});
 
 function refreshIndexManagerTable() {

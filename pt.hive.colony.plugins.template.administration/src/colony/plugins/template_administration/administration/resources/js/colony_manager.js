@@ -31,6 +31,15 @@ $(document).ready(function() {
 	// hides all the windows
 	hideWindows();
 
+	$(".listBox > div").click(function() {
+				var divParent = $(this).parent();
+				var selectedElements = divParent.children(".listBoxElementSelected");
+				selectedElements.each(function() {
+					$(this).removeClass("listBoxElementSelected");
+				});
+				$(this).addClass("listBoxElementSelected");
+			});
+
 	// called uppon clicking in the login link
 	$("#loginLink").click(function() {
 				if ($("#loginForm").is(":hidden")) {
@@ -49,6 +58,7 @@ $(document).ready(function() {
 						+ pos.docX + '  Y: ' + pos.docY
 						+ ' (relative to document)');
 			});
+
 	$("#tooltip").hide();
 	$("#emailIcon").mouseover(function(event) {
 		$("#tooltipTitle").html("New Mails");
