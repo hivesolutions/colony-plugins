@@ -350,6 +350,13 @@ div.jGrowl div.colony div.close {
 	font-size: 11px;
 }
 
+.window-buttons {
+	position: absolute;
+	width: 100%;
+	bottom: 15px;
+	text-align: center
+}
+
 .button {
 	font-family: "Century Gothic", "Trebuchet MS", Trebuchet, Tahoma,
 		Verdana, Helvetica, Arial, sans-serif;
@@ -369,12 +376,16 @@ div.jGrowl div.colony div.close {
 }
 
 .button #buttonIcon {
-	margin-right: 5px;
-	vertical-align: text-bottom;
+	vertical-align: top;
 }
 
 .button #buttonText {
-	vertical-align: text-top;
+	vertical-align: top;
+}
+
+.button #buttonTextImage {
+	margin-left: 5px;
+	vertical-align: top;
 }
 
 .box {
@@ -390,6 +401,43 @@ div.jGrowl div.colony div.close {
 	color: #878787;
 }
 
+.listBox {
+	border: 1px solid #aaaaaa;
+	height: 200px;
+	width: 130px;
+	font-family: "Century Gothic", "Trebuchet MS", Trebuchet, Tahoma,
+		Verdana, Helvetica, Arial, sans-serif;
+	font-size: 12px;
+	text-align: left;
+	text-indent: 5px;
+	margin-top: 5px;
+	color: #878787;
+	background: #ffffff;
+}
+
+.listBox div {
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+
+.listBoxElement:hover {
+	cursor: pointer;
+}
+.listBoxElementSelected {
+	background: #f4f0ec;
+}
+
+.listBoxElementSelected:hover {
+	background: #f4f0ec;
+	cursor: pointer;
+}
+
+.simpleButton:hover {
+	cursor: pointer;
+}
+	
 .settingsTableCell {
 	margin-left: 10px;
 	width: 75px;

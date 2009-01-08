@@ -42,8 +42,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 <div id="searchIndexManagementContentItem">
     <h2 class="mainTitle">Search Index Management</h2>
 
-	<span id="searchIndexListNew" class="button smallIconButton" style="width: 50px;"><img id="buttonIcon" src="pics/add.png"/><span id="buttonText">new</span></span>
-    <span id="searchIndexListRefresh" class="button smallIconButton" style="width: 70px;"><img id="buttonIcon" src="pics/arrow_refresh.png"/><span id="buttonText">refresh</span></span>
+	<span id="searchIndexListNew" class="button smallIconButton" style="width: 50px;"><img id="buttonIcon" src="pics/add.png"/><span id="buttonTextImage">new</span></span>
+    <span id="searchIndexListRefresh" class="button smallIconButton" style="width: 70px;"><img id="buttonIcon" src="pics/arrow_refresh.png"/><span id="buttonTextImage">refresh</span></span>
 </div>
 
 <div id="newSearchIndexWindow" class="window" title="New Search Index">
@@ -55,6 +55,25 @@ __license__ = "GNU General Public License (GPL), Version 3"
 			<tr>
 				<td><input type="text" class="box" style="width: 250px;"/></td>
 			</tr>
+			<tr>
+				<td><span class="mainTitle" style="text-indent: 4px;"></span></td>
+			</tr>
+			<tr>
+				<td><span class="mainTitle" style="text-indent: 4px;">Options:</span></td>
+			</tr>
+			<tr>
+				<td>
+					<div class="listBox">
+						<div class="listBoxElement">option1</div>
+						<div class="listBoxElement">option2</div>
+						<div class="listBoxElement">option3</div>
+					</div>
+				</td>
+			</tr>
 		</table>
+	</div>
+	<div class="window-buttons">
+		<span id="searchIndexListRefresh" class="button smallIconButton" style="width: 70px;"><img id="buttonIcon" src="pics/accept.png"/><span id="buttonTextImage">Confirm</span></span>
+		<span id="searchIndexListRefresh" class="button smallIconButton" style="width: 70px;"><img id="buttonIcon" src="pics/cancel.png"/><span id="buttonTextImage">Cancel</span></span>
 	</div>
 </div>

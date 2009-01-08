@@ -159,7 +159,7 @@ for css_file in css_files:
     <table id="mainTable">
         <tr>
             <div style="float: right;">
-                <p id="topMenuBar" class="mainTitle">username: tobias | <a id="settingsButton">Settings</a> | Help | About | Sign Out</p>
+                <p id="topMenuBar" class="mainTitle">username: tobias | <a id="settingsButton" class="simpleButton">Settings</a> | Help | About | Sign Out</p>
             </div>
             <div>
                 <p class="mainTitle">Manager | Forum | Development</p>

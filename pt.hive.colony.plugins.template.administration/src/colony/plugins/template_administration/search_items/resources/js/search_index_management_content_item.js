@@ -25,20 +25,31 @@
 
 // called uppon search index management content item loading complete
 $("#searchIndexManagementContentItem").ready(function() {
+			// hides the new search index window
 			$("#newSearchIndexWindow").hide();
 
 			$("#searchIndexListRefresh").click(function() {
 						// refreshes the index manager table
 						refreshIndexManagerTable();
 					});
+
 			$("#searchIndexListNew").click(function() {
 						$("#newSearchIndexWindow").show();
 						$("#newSearchIndexWindow").dialog({
-									"width" : 430,
-									"height" : 140,
+									"width" : 420,
+									"height" : 380,
 									"show" : "drop",
 									"hide" : "drop"
 								});
+					});
+
+			$(".listBox > div").click(function() {
+						var divParent = $(this).parent();
+						var selectedElements = divParent.children(".listBoxElementSelected");
+						selectedElements.each(function() {
+							$(this).removeClass("listBoxElementSelected");
+						});
+						$(this).addClass("listBoxElementSelected");
 					});
 		});
 
