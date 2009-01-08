@@ -49,10 +49,12 @@
 	margin-right: 10px;
 }
 
-#propertiresEditor {
+#propertiesEditor {
 	width: 100%;
 	height: 200px;
-	background: #ffffff;
-	float: right;
-	border: 1px solid #aaaaaa;
+	margin-right: 10px;
+}
+
+.newSearchIndexWindowPropertiesListBox {
+	width: 200px;
 }

@@ -70,9 +70,43 @@ __license__ = "GNU General Public License (GPL), Version 3"
 								<div class="listBoxElement">File Extensions</div>
 							</div>
 						</td>
-						<td style="width: 100%;">
-							<div id="propertiresEditor">
-								tobias
+						<td>
+							<div id="propertiesEditor">
+								<div id="newSearchIndexWindowPropertiesType">
+									<div id="propertiesTypeSelector" class="listBox newSearchIndexWindowPropertiesListBox">
+										<div class="listBoxElement">File System</div>
+										<div class="listBoxElement">Database</div>
+									</div>
+								</div>
+								<div id="newSearchIndexWindowPropertiesMetrics">
+									<div id="propertiesTypeSelector" class="listBox newSearchIndexWindowPropertiesListBox">
+										<div class="listBoxElement">Term Frequency</div>
+										<div class="listBoxElement">Document Hits</div>
+										<div class="listBoxElement">Word Document Frequency</div>
+										<div class="listBoxElement">Hit Distance to Top</div>
+									</div>
+								</div>
+								<div id="newSearchIndexWindowPropertiesFileExtensions">
+									<div id="propertiesTypeSelector" class="listBox newSearchIndexWindowPropertiesListBox">
+										<div class="listBoxElement">Text (*.txt)</div>
+										<div class="listBoxElement">Python Source (*.py)</div>
+										<div class="listBoxElement">JavaScript Source (*.js)</div>
+										<div class="listBoxElement">Java Source (*.java)</div>
+										<div class="listBoxElement">XML (*.xml)</div>
+									</div>
+								</div>
+							</div>
+						</td>
+						<td>
+							<div id="propertiesVisualizer">
+								<div id="newSearchIndexWindowPropertiesTypeFileSystem">
+									<span class="mainTitle">File System</span>
+									<p>The File system based profiles...</p>
+								</div>
+								<div id="newSearchIndexWindowPropertiesTypeDatabase">
+									<span class="mainTitle">Database</span>
+									<p>The database based file system...</p>
+								</div>
 							</div>
 						</td>
 					</tr>
@@ -86,6 +120,3 @@ __license__ = "GNU General Public License (GPL), Version 3"
 	</div>
 </div>
 
-<div>
-	
-</div>

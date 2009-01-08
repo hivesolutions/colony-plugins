@@ -25,29 +25,87 @@
 
 // called uppon search index management content item loading complete
 $("#searchIndexManagementContentItem").ready(function() {
-			// hides the new search index window
-			$("#newSearchIndexWindow").hide();
+	// hides the new search index window
+	$("#newSearchIndexWindow").hide();
 
-			$("#searchIndexListRefresh").click(function() {
-						// refreshes the index manager table
-						refreshIndexManagerTable();
-					});
-
-			$("#searchIndexListNew").click(function() {
-						$("#newSearchIndexWindow").show();
-						$("#newSearchIndexWindow").dialog({
-									"width" : 520,
-									"height" : 380,
-									"show" : "drop",
-									"hide" : "drop",
-									"resizeStop" : function() { alert("tobias"); }
-								});
-					});
-
-			$("#newSearchIndexWindow #propertiesSelector > .listBoxElement").click(function() {
-				alert("clickado");
+	$("#searchIndexListRefresh").click(function() {
+				// refreshes the index manager table
+				refreshIndexManagerTable();
 			});
-		});
+
+	$("#searchIndexListNew").click(function() {
+		$("#newSearchIndexWindow").show();
+		$("#newSearchIndexWindow").dialog({
+					"width" : 620,
+					"height" : 380,
+					"show" : "drop",
+					"hide" : "drop",
+					"resizeStop" : function() {
+						alert("tobias");
+					}
+				});
+		$("#newSearchIndexWindow #propertiesEditor").children().each(
+				function() {
+					$(this).hide();
+				});
+		$("#newSearchIndexWindow #propertiesVisualizer").children().each(
+				function() {
+					$(this).hide();
+				});
+	});
+
+	$("#newSearchIndexWindow #propertiesSelector > .listBoxElement").click(
+			function() {
+				// retirves the selected html value
+				var selectedValue = $(this).html();
+
+				// retrieves the properties editor
+				var propertiesEditor = $("#newSearchIndexWindow #propertiesEditor")
+
+				// retrieves the properties editor children
+				var propertiesEditorChildren = propertiesEditor.children();
+
+				propertiesEditorChildren.each(function() {
+							$(this).slideUp("normal");
+						});
+
+				// in case the selected value is type
+				if (selectedValue == "Type") {
+					// retrieves the properties type div
+					var propertiesDiv = $("#newSearchIndexWindowPropertiesType");
+				} else if (selectedValue == "Metrics") {
+					// retrieves the properties metrics div
+					var propertiesDiv = $("#newSearchIndexWindowPropertiesMetrics");
+				} else if (selectedValue == "File Extensions") {
+					// retrieves the properties metrics div
+					var propertiesDiv = $("#newSearchIndexWindowPropertiesFileExtensions");
+				}
+
+				propertiesDiv.slideDown("normal");
+			});
+
+	$("#newSearchIndexWindow #propertiesEditor .listBoxElement").click(
+			function() {
+				// retrieves the properties visualizer
+				var propertiesVisualizer = $("#newSearchIndexWindow #propertiesVisualizer");
+
+				// retrieves the properties visualizer children
+				var propertiesVisualizerChildren = propertiesVisualizer.children();
+
+				propertiesVisualizerChildren.each(function() {
+							$(this).slideUp("normal");
+						});
+
+				var parentValue = $("#newSearchIndexWindow #propertiesSelector .listBoxElementSelected").html();
+				var value = $(this).html();
+				var noSpacesParentValue = parentValue.replace(" ", "");
+				var noSpacesValue = value.replace(" ", "");
+				var realId = "newSearchIndexWindowProperties"
+						+ noSpacesParentValue + noSpacesValue;
+				var realValue = $("#" + realId);
+				realValue.slideDown("normal");
+			});
+});
 
 function refreshIndexManagerTable() {
 	$.post("actions/search_index_information_retrieval.ctp", {
