@@ -69,6 +69,10 @@ __license__ = "GNU General Public License (GPL), Version 3"
 								<div class="listBoxElement">Metrics</div>
 								<div class="listBoxElement">File Extensions</div>
 							</div>
+							<div class="listBoxButtons">
+								<span id="searchIndexListRefresh" class="simple-button smallIconButton" style="width: 70px"><img id="buttonIcon" src="pics/icons/add.png"/><span id="buttonTextImage">Add</span></span>
+								<span id="searchIndexListRefresh" class="simple-button smallIconButton" style="width: 70px;"><img id="buttonIcon" src="pics/icons/delete.png"/><span id="buttonTextImage">Remove</span></span>
+							</div>
 						</td>
 						<td>
 							<div id="propertiesEditor">

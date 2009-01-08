@@ -397,6 +397,34 @@ div.jGrowl div.colony div.close {
 	vertical-align: top;
 }
 
+.simple-button {
+	font-family: "Century Gothic", "Trebuchet MS", Trebuchet, Tahoma,
+		Verdana, Helvetica, Arial, sans-serif;
+	font-size: 12px;
+	text-align: left;
+	color: #888897;
+	padding: 2px;
+}
+
+.simple-button:hover {
+	background: #ede4d4 url("../pics/button_hover.png") repeat-x scroll 0
+		50%;
+	cursor: pointer;
+}
+
+.simple-button #buttonIcon {
+	vertical-align: top;
+}
+
+.simple-button #buttonText {
+	vertical-align: top;
+}
+
+.simple-button #buttonTextImage {
+	margin-left: 5px;
+	vertical-align: top;
+}
+
 .box {
 	border: 1px solid #aaaaaa;
 	height: 22px;
@@ -440,6 +468,10 @@ div.jGrowl div.colony div.close {
 .listBoxElementSelected:hover {
 	background: #f4f0ec;
 	cursor: pointer;
+}
+
+.listBoxButtons {
+	margin-top: 8px;
 }
 
 .simpleButton:hover {

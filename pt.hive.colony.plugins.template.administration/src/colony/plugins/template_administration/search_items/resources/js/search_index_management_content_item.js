@@ -37,7 +37,7 @@ $("#searchIndexManagementContentItem").ready(function() {
 		$("#newSearchIndexWindow").show();
 		$("#newSearchIndexWindow").dialog({
 					"width" : 620,
-					"height" : 380,
+					"height" : 410,
 					"show" : "drop",
 					"hide" : "drop",
 					"resizeStop" : function() {
