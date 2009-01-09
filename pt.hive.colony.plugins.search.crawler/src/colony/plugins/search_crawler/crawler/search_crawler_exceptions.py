@@ -37,14 +37,14 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class SearchQueryEvaluatorException(Exception):
+class SearchCrawlerException(Exception):
     """
-    The search exception class.
+    The search crawler exception class.
     """
 
     pass
 
-class MissingProperty(SearchQueryEvaluatorException):
+class MissingProperty(SearchCrawlerException):
     """
     The missing property class.
     """
@@ -57,7 +57,7 @@ class MissingProperty(SearchQueryEvaluatorException):
         @param message: The message to be printed.
         """
 
-        SearchQueryEvaluatorException.__init__(self)
+        SearchCrawlerFileSystemException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -70,33 +70,7 @@ class MissingProperty(SearchQueryEvaluatorException):
 
         return "Missing property: %s" % self.message
 
-class MissingIndex(SearchQueryEvaluatorException):
-    """
-    The missing index class.
-    """
-
-    def __init__(self, message):
-        """
-        Constructor of the class.
-        
-        @type message: String
-        @param message: The message to be printed.
-        """
-
-        SearchQueryEvaluatorException.__init__(self)
-        self.message = message
-
-    def __str__(self):
-        """
-        Returns the string representation of the class.
-        
-        @rtype: String
-        @return: The string representation of the class.
-        """
-
-        return "Missing index: %s" % self.message
-
-class MissingSearchQueryEvaluatorAdapterPlugin(SearchQueryEvaluatorException):
+class MissingSearchCrawlerAdapterPlugin(SearchCrawlerException):
     """
     The missing property class.
     """
@@ -109,7 +83,7 @@ class MissingSearchQueryEvaluatorAdapterPlugin(SearchQueryEvaluatorException):
         @param message: The message to be printed.
         """
 
-        SearchQueryEvaluatorException.__init__(self)
+        SearchCrawlerException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -120,4 +94,4 @@ class MissingSearchQueryEvaluatorAdapterPlugin(SearchQueryEvaluatorException):
         @return: The string representation of the class.
         """
 
-        return "Invalid search query evaluator adapter type: %s" % self.message
+        return "Invalid search crawler adapter type: %s" % self.message

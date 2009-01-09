@@ -37,14 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import search_query_evaluator_visitor
-
-HITS_VALUE = "hits"
-""" The key for the search result dictionary that retrieves the search result hits """
-
-QUERY_EVALUATOR_TYPE = "query_parser"
-
-DOCUMENT_ID_VALUE = "document_id"
+QUERY_EVALUATOR_TYPE_VALUE = "query_evaluator_type"
+""" The key for the properties map, to access the query evaluator type """
 
 class SearchQueryEvaluator:
     """
@@ -53,6 +47,9 @@ class SearchQueryEvaluator:
 
     search_query_evaluator_plugin = None
     """ The search query evaluator plugin """
+    
+    search_query_evaluator_adapter_plugins_map = {}
+    """ The search query evaluator adapter plugins map """
 
     def __init__(self, search_query_evaluator_plugin):
         """
@@ -62,18 +59,15 @@ class SearchQueryEvaluator:
         @param search_query_evaluator_plugin: The search query evaluator plugin.
         """
 
+        # gets the plugin
         self.search_query_evaluator_plugin = search_query_evaluator_plugin
 
-    def get_type(self):
-        """
-        Returns the type of query evaluator of the class.
-        """
-
-        return QUERY_EVALUATOR_TYPE
+        # initializes the evaluator adapter map
+        self.search_query_evaluator_adapter_plugins_map = {}
 
     def evaluate_query(self, search_index, query, properties):
         """
-        The method to start the search query evaluator.
+        The method to start the search query evaluation using a specified query evaluator type.
         
         @type search_index: SearchIndex
         @param search_index: The search index to be used.
@@ -85,37 +79,74 @@ class SearchQueryEvaluator:
         @return: The result set for the query in the search index, as a map with document id keys.
         """
 
-        # retrieve the query interpreter plugin
-        search_query_interpreter_plugin = self.search_query_evaluator_plugin.search_query_interpreter_plugin
+        if QUERY_EVALUATOR_TYPE_VALUE not in properties:
+                search_query_evaluator_exceptions.MissingProperty(QUERY_EVALUATOR_TYPE_VALUE)
 
-        # parse the search query into a query object
-        search_query = search_query_interpreter_plugin.parse_query(query, properties)
+        search_query_evaluator_type = properties[QUERY_EVALUATOR_TYPE_VALUE]
 
-        # retrieve the root node of the query abstract syntax tree
-        root_search_query_node = search_query.root_search_query_node
+        # retrieves the index persistence adapter plugin to use in the load operation
+        search_query_evaluator_plugin = self.get_search_query_evaluator_adapter_plugin(search_query_evaluator_type)
 
-        # traverse the query AST in post order with the index search visitor
-        index_search_visitor = search_query_evaluator_visitor.IndexSearchVisitor(search_index)
-        root_search_query_node.accept_post_order(index_search_visitor)
+        # uses the selected adapter to load the index
+        return search_query_evaluator_plugin.evaluate_query(search_index, query, properties)
 
-        # retrieve the index search visitor results from its stack
-        index_search_visitor_results = index_search_visitor.context_stack[0]
+    def get_search_query_evaluator_adapter_types(self):
+        """
+        Returns a list with the types of all the loaded search query evaluator adapter plugins. 
+        
+        @rtype: list
+        @return: List of search query evaluator adapter types.
+        """
 
-        # the search results list will hold a search result information map for each search result
-        search_results = []
+        # gets the type of each search index persistence adapter plugin loaded into the Search Query Evaluator
+        search_query_evaluator_adapter_types = self.search_query_evaluator_adapter_plugins_map.keys()
 
-        # convert the index search visitor results map 
-        # into a search result list of search result information maps containing the key
-        for index_search_visitor_result_key, index_search_visitor_result_value in index_search_visitor_results.items():
+        return search_query_evaluator_adapter_types
 
-            # create a new map from each search result map
-            search_result_map = index_search_visitor_result_value
+    def get_search_query_evaluator_adapter_plugin(self, search_query_evaluator_adapter_type):
+        """
+        Retrieves the loaded search query evaluator adapter plugin for the specified adapter type.
+        
+        @type search_query_evaluator_adapter_type: String
+        @param search_query_evaluator_adapter_type: The search query evaluator adapter type of the plugin to retrieve.
+        @rtype: SearchQueryEvaluatorAdapterPlugin
+        @return: The loaded plugin for the adapter type 
+        """
 
-            # set the document id, using the key in the results map
-            # the map with all the search results is now going to be a list
-            search_result_map[DOCUMENT_ID_VALUE] = index_search_visitor_result_key
+        # checks for invalid plugin type
+        if not search_query_evaluator_adapter_type in self.search_query_evaluator_adapter_plugins_map:
+            raise search_query_evaluator_exceptions.MissingSearchQueryEvaluatorAdapterPlugin(search_query_evaluator_adapter_type)
 
-            # add the map to the search results list
-            search_results.append(search_result_map)
+        return self.search_query_evaluator_adapter_plugins_map[search_query_evaluator_adapter_type]
 
-        return search_results
+    def add_search_query_evaluator_adapter_plugin(self, plugin):
+        """
+        Inserts the search query evaluator adapter plugin in the Search Query Evaluator's internal structures.
+        
+        @type plugin: SearchQueryEvaluatorAdapterPlugin
+        @param plugin: The search query evaluator adapter plugin to remove.
+        """
+
+        # retrieve the search query evaluator adapter plugin type 
+        plugin_type = plugin.get_type()
+
+        # update the search query evaluator adapter plugins map with the new plugin
+        self.search_query_evaluator_adapter_plugins_map[plugin_type] = plugin
+
+    def remove_search_query_evaluator_adapter_plugin(self, plugin):
+        """
+        Removes the search query evaluator adapter plugin, with the type of the provided plugin, from the Search Query Evaluator's internal structures.
+        
+        @type plugin: SearchQueryEvaluatorAdapterPlugin
+        @param plugin: The search index_persistence adapter plugin to remove.
+        """ 
+
+        # retrieves the search index persistence adapter plugin type 
+        plugin_type = plugin.get_type()
+
+        # checks for invalid plugin type
+        if not plugin_type in self.search_query_evaluator_adapter_plugins_map:
+            raise search_query_evaluator_exceptions.MissingSearchQueryEvaluatorAdapterPlugin(plugin_type)
+
+        # removes the plugin from the search index persistence adapter plugins map
+        del self.search_query_evaluator_adapter_plugins_map[plugin_type]

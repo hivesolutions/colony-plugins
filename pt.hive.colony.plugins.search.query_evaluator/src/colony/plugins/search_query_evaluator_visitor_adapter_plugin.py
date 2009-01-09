@@ -38,36 +38,36 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.plugins.plugin_system
-import colony.plugins.decorators
 
-class SearchCrawlerFileSystemPlugin(colony.plugins.plugin_system.Plugin):
+class SearchQueryEvaluatorVisitorAdapterPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Search Crawler File System plugin.
+    The main class for the Search Query Evaluator Visitor Adapter plugin.
     """
 
-    id = "pt.hive.colony.plugins.search.crawler.file_system"
-    name = "Search Crawler File System Plugin"
-    short_name = "Search Crawler File System"
-    description = "Search Crawler File System Plugin"
+    id = "pt.hive.colony.plugins.search.query_evaluator_visitor_adapter"
+    name = "Search Query Evaluator Interpreter Adapter Plugin"
+    short_name = "Search Query Evaluator Interpreter Adapter"
+    description = "Plugin that provides query evaluation services, using the query interpreter component"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["search_crawler"]
-    capabilities_allowed = ["search_provider.file_system"]
-    dependencies = []
+    capabilities = ["search_query_evaluator_adapter.visitor"]
+    capabilities_allowed = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.search.query_interpreter", "1.0.0")]
     events_handled = []
     events_registrable = []
 
-    search_crawler_file_system = None
+    search_query_evaluator_visitor_adapter = None
 
-    search_provider_file_system_plugins = []
+    search_query_interpreter_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
-        global search_crawler
-        import search_crawler.file_system.search_crawler_file_system_system
-        self.search_crawler_file_system = search_crawler.file_system.search_crawler_file_system_system.SearchCrawlerFileSystem(self)
+        global search_query_evaluator
+        import search_query_evaluator.visitor_adapter.search_query_evaluator_visitor_adapter_system
+        self.search_query_evaluator_visitor_adapter = search_query_evaluator.visitor_adapter.search_query_evaluator_visitor_adapter_system.SearchQueryEvaluatorVisitorAdapter(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
@@ -78,27 +78,25 @@ class SearchCrawlerFileSystemPlugin(colony.plugins.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.search.crawler.file_system", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.search.crawler.file_system", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.search.query_evaluator_visitor_adapter", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_type(self):
-        return self.search_crawler_file_system.get_type()
+        return self.search_query_evaluator_visitor_adapter.get_type()
 
-    def get_tokens(self, properties):
-        return self.search_crawler_file_system.get_tokens(properties)
+    def evaluate_query(self, search_index, query, properties):
+        return self.search_query_evaluator_visitor_adapter.evaluate_query(search_index, query, properties)
 
-    @colony.plugins.decorators.load_allowed_capability("search_provider.file_system")
-    def search_provider_file_system_load_allowed(self, plugin, capability):
-        self.search_provider_file_system_plugins.append(plugin)
+    def get_search_query_interpreter_plugin(self):
+        return self.search_query_interpreter_plugin
 
-    @colony.plugins.decorators.unload_allowed_capability("search_provider.file_system")
-    def search_provider_file_system_unload_allowed(self, plugin, capability):
-        self.search_provider_file_system_plugins.remove(plugin)
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.search.query_interpreter")
+    def set_search_query_interpreter_plugin(self, search_query_interpreter_plugin):
+        self.search_query_interpreter_plugin = search_query_interpreter_plugin

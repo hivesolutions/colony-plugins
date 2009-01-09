@@ -1,23 +1,23 @@
 #!/usr/bin/python
 # -*- coding: Cp1252 -*-
 
-# Hive Omni ERP
+# Hive Colony Framework
 # Copyright (C) 2008 Hive Solutions Lda.
 #
-# This file is part of Hive Omni ERP.
+# This file is part of Hive Colony Framework.
 #
-# Hive Omni ERP is free software: you can redistribute it and/or modify
+# Hive Colony Framework is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Hive Omni ERP is distributed in the hope that it will be useful,
+# Hive Colony Framework is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Hive Omni ERP. If not, see <http://www.gnu.org/licenses/>.
+# along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Luís Martinho <lmartinho@hive.pt>"
 """ The author(s) of the module """
@@ -36,6 +36,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
+
+import gc
 
 import time
 
@@ -114,7 +116,7 @@ class SearchTestCase(unittest.TestCase):
         """
 
         # creates the test index
-        test_index = self.plugin.create_index({"start_path" : CRAWL_TARGET, "type" : INDEX_TYPE})
+        test_index = self.plugin.create_index({"start_path" : "/remote_home/search/light-docs", "type" : "file_system"})
         
         # persists the index to defined storage
         properties = {"file_path" : INDEX_PERSISTENCE_TARGET_FILE_PATH, "persistence_type" : PERSISTENCE_TYPE, "serializer_type": SERIALIZER_TYPE}
@@ -164,7 +166,7 @@ class SearchTestCase(unittest.TestCase):
 
         self.assertEqual(first_result_document_id, TEST_QUERY_FIRST_RESULT)
 
-    def test_method_query_index_sort_results_term_frequency_formula(self):
+    def test_method_search_index_term_frequency_formula(self):
         """
         This test exercises querying the index, scoring the results and 
         sorting according to the term frequency score.        
@@ -183,7 +185,7 @@ class SearchTestCase(unittest.TestCase):
 
         # queries the index and retrieves scored and sorted results
         properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "term_frequency_scorer_function"}
-        query_results = self.plugin.query_index_sort_results(test_index, query, properties)
+        query_results = self.plugin.search_index(test_index, query, properties)
 
         self.assertTrue(query_results)
 
@@ -197,7 +199,7 @@ class SearchTestCase(unittest.TestCase):
         This method targets the index creation using an available test path 
         and saving to the search index repository with a specified identifier.
         """
-        
+
         test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier", {"start_path" : CRAWL_TARGET, "type" : INDEX_TYPE})
         # asserts that the index was sucessfully created
         self.assertTrue(test_index)
@@ -379,7 +381,7 @@ class SearchTestCase(unittest.TestCase):
         first_result_document_id = first_result["document_id"]
 
         self.assertEqual(first_result_document_id, "/remote_home/search/scorer_test/ficheiro_10.txt")
-    
+
     def test_word_frequency_scoring(self):
         """
         This method targets the scoring infrastructure, and asserts if the results were properly scored and sorted according to WF
@@ -391,7 +393,7 @@ class SearchTestCase(unittest.TestCase):
                                                               {"start_path" : "/remote_home/search/scorer_functions_test", 
                                                                "type" : INDEX_TYPE,
                                                                "metrics_identifiers" : ["word_document_frequency_scorer_metric"]})
-        
+
         properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "word_frequency_scorer_function"}
         test_results = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.new_index_identifier", "luis martinho", properties)
 
@@ -409,7 +411,7 @@ class SearchTestCase(unittest.TestCase):
         test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.new_index_identifier", 
                                                               {"start_path" : "/remote_home/search/scorer_functions_test", 
                                                                "type" : INDEX_TYPE})
-        
+
         properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "document_location_scorer_function"}
         test_results = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.new_index_identifier", "luis martinho", properties)
 
@@ -450,7 +452,7 @@ class SearchTestCase(unittest.TestCase):
                                                                "file_extensions" : ["py", "PY", "txt", "TXT"]})
 
         scorer_functions = ["word_frequency_scorer_function", "document_location_scorer_function", "word_distance_scorer_function"]
-        
+
         for scorer_function in scorer_functions:
             properties = {"search_scorer_function_identifier" : scorer_function}
             test_results = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.new_index_identifier", "luis martinho plugin", properties)
@@ -497,61 +499,11 @@ class SearchTestCase(unittest.TestCase):
                                                                                   "document_location_scorer_function" : 0.0,
                                                                                   "word_distance_scorer_function" : 1.0}}
         combined_test_results["word_distance_scorer_function"] = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.new_index_identifier", "luis martinho", properties)
-        
+
         for scorer_function in test_results:
             for i in range(len(test_results[scorer_function])):
                 self.assertEquals(test_results[scorer_function][i]["document_id"], combined_test_results[scorer_function][i]["document_id"])
                 self.assertEquals(test_results[scorer_function][i]["score"], combined_test_results[scorer_function][i]["score"])
-
-    def test_hive_source_code_indexing_combined_relevance(self):
-        """
-        This method targets the scoring infrastructure, and asserts if the results were properly scored and sorted according to the Combined Scorer
-        computing the metrics in index time.
-        """
-
-        test_index = None
-        start_path = "/remote_home/search/scorer_functions_test"
-        # gather index start time
-        start_time = time.time()
-
-        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.new_index_identifier", 
-                                                              {"start_path" : start_path,
-                                                               "type" : INDEX_TYPE,
-                                                               "file_extensions" : ["py", "PY", "txt", "TXT"]})
-        # gather index end time
-        end_time = time.time()
-
-        # compute duration
-        duration = end_time - start_time
-
-        print "Index creation on '%s'" % start_path, " took ", duration, " s"
-        index_statistics = test_index.get_statistics()
-        print index_statistics
-
-        test_results = {}
-
-        properties = {"search_scorer_function_identifier" : "frequency_location_distance_scorer_function",
-                      "frequency_location_distance_scorer_function_parameters" : {"word_frequency_scorer_function" : 1.0,
-                                                                                  "document_location_scorer_function" : 1.0,
-                                                                                  "word_distance_scorer_function" : 1.0}}
-        query = "luis martinho"
-
-        # gather index start time
-        start_time = time.time()
-
-        test_results = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.new_index_identifier", query, properties)
-
-        # gather index end time
-        end_time = time.time()
-
-        # compute duration
-        duration = end_time - start_time
-
-        print "Search for '%s'" % query, " took ", duration, " s"
-
-        print "frequency_location_distance_scorer_function", properties["frequency_location_distance_scorer_function_parameters"]
-        for test_result in test_results[0:10]:
-            print test_result["document_id"], "SCORE: ", test_result["score"]
 
     def test_no_hits_found(self):
         index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier", {"start_path" : "/remote_home/search/scorer_functions_test", "type" : "file_system"})
@@ -563,11 +515,270 @@ class SearchTestCase(unittest.TestCase):
         self.assertEquals(len(test_results), 0)
 
     def test_no_documents_for_indexing(self):
-        pass
-    
-    def test_non_regional_characters_find_regional_characters(self):
-        pass
+        index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier_nodocs", {"start_path" : "/remote_home/search/empty_directory", "type" : "file_system"})
+        properties = {"query_evaluator_type" : "query_parser", "search_scorer_function_identifier" : "term_frequency_scorer_function"}
+        test_results = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.test_index_identifier_nodocs", "luis query", properties)
+        print test_results
 
+    def test_method_persist_index_performance(self):
+        """
+        This method targets the index persistence façade method of the search plugin.
+        """
+
+        # get the logger
+        logger = self.plugin.logger
+
+        serializer_types = ["cpickle"]
+
+        # switch to larger directory for more visible timing differences 
+        start_path = "/search/pt.hive.colony.plugins.search"
+        index_file_path = "/search/indexes/pt.hive.colony.idx"
+        query = "martinho"
+
+        test_index = None
+
+        for serializer_type in serializer_types:    
+            for i in range(2):
+                del test_index
+                start_time = time.time()
+                # creates the test index
+                test_index = self.plugin.create_index({"start_path" : start_path, "type" : "file_system", "file_extensions" : ["py", "PY", "txt", "TXT", "xml", "XML", "js", "JS"]})
+                end_time = time.time()
+
+                duration = end_time - start_time
+                logger.debug("Index creation on '%s' took %f s" % (start_path, duration))
+
+                start_time = time.time()
+                # persists the index to defined storage
+                properties = {"file_path" : index_file_path, "persistence_type" : "file_system", "serializer_type": serializer_type}
+                persistence_sucess = self.plugin.persist_index(test_index, properties)
+                end_time = time.time()
+
+                duration = end_time - start_time
+                logger.debug("Persisting index on '%s' to index file '%s' took %f s using %s" % (start_path, index_file_path, duration, serializer_type))
+
+                self.assertTrue(persistence_sucess)
+
+        for serializer_type in serializer_types:    
+            for i in range(2):
+                del test_index
+                start_time = time.time()
+                # loads the test index from the file
+                properties = {"file_path" : index_file_path, "persistence_type" : "file_system", "serializer_type": serializer_type}
+                test_index = self.plugin.load_index(properties)
+                end_time = time.time()
+
+                duration = end_time - start_time
+                logger.debug("Index loading from '%s' took %f s" % (index_file_path, duration))
+
+                properties = {"search_scorer_function_identifier" : "frequency_location_distance_scorer_function",
+                              "frequency_location_distance_scorer_function_parameters" : {"word_frequency_scorer_function" : 1.0,
+                                                                                          "document_location_scorer_function" : 1.0,
+                                                                                          "word_distance_scorer_function" : 1.0}}
+
+                # gather query start time
+                start_time = time.time()
+                test_results = self.plugin.search_index(test_index, query, properties)
+                # gather index end time
+                end_time = time.time()
+
+                duration = end_time - start_time
+                logger.debug("Query on index from file '%s' took %f" % (index_file_path, duration))
+                
+                self.assertTrue(test_results)
+
+    def test_hive_source_code_indexing_searching_performance_index_metrics(self):
+        """
+        This method targets the scoring infrastructure, and asserts if the results were properly scored and sorted according to the Combined Scorer
+        computing the metrics in index time.
+        """
+
+        # get the logger
+        logger = self.plugin.logger
+
+        test_index = None
+        test_results = None
+        # index the hive source
+        start_path = "/search"
+        index_identifier = "pt.hive.colony.plugins.search.test_index_identifier"
+        query = "tiago silva hive ext"
+        index_file_path = "/search/indexes/pt.hive.idx"
+
+        # run the index creation and search repeatedly
+        # index time metrics
+
+        # gather index start time
+        start_time = time.time()
+
+        # clearing references
+        test_index = None
+        test_results = None
+
+        properties = {"file_path" : index_file_path, "persistence_type" : "file_system", "serializer_type" : "cpickle"}
+
+        # try to load a previously created index
+        try:
+            test_index = self.plugin.load_index_with_identifier(index_identifier, properties)
+        except IOError:
+            start_time = time.time()
+            # if unable to load, create and store
+            test_index = self.plugin.create_index_with_identifier(index_identifier,
+                                                                  {"start_path" : start_path, 
+                                                                   "type" : "file_system", 
+                                                                   "file_extensions" : ["py", "PY", "txt", "TXT", "xml", "XML", "js", "JS"],
+                                                                   "metrics_identifiers" : ["word_document_frequency_scorer_metric"]})
+
+            end_time = time.time()
+            duration = end_time - start_time
+            logger.debug("Index creation on '%s' took %f s" % (start_path, duration))
+
+            properties = {"file_path" : index_file_path, "persistence_type" : "file_system", "serializer_type" : "cpickle"}
+            self.plugin.persist_index(test_index, properties)
+
+        # setup the search properties
+        properties = {"search_scorer_function_identifier" : "frequency_location_distance_scorer_function",
+                      "frequency_location_distance_scorer_function_parameters" : {"word_frequency_scorer_function" : 1.0,
+                                                                                  "document_location_scorer_function" : 1.0,
+                                                                                  "word_distance_scorer_function" : 1.0}}
+
+        durations = []
+        logger.debug("START PERFORMANCE WATCH SEARCH BLOCK")
+        for i in range(10):
+            # gather query start time
+            start_time = time.time()
+
+            test_results = self.plugin.search_index_by_identifier(index_identifier, query, properties)
+
+            # gather index end time
+            end_time = time.time()
+
+            # compute duration
+            duration = end_time - start_time
+
+            logger.debug("Search for '%s' with pre-computed metrics took %f s" % (query, duration))
+            durations.append(duration)
+
+        # compute average run time
+        average = sum(durations) / len(durations)
+        logger.debug(">>> Search for '%s' with pre-computed metrics took on AVERAGE %f s" % (query, average))
+        logger.debug("END PERFORMANCE WATCH SEARCH BLOCK")
+
+        durations = []
+        query = "tiago silva"
+        logger.debug("START PERFORMANCE WATCH SEARCH BLOCK")
+        for i in range(10):
+            # gather query start time
+            start_time = time.time()
+
+            test_results = self.plugin.search_index_by_identifier(index_identifier, query, properties)
+
+            # gather index end time
+            end_time = time.time()
+
+            # compute duration
+            duration = end_time - start_time
+
+            logger.debug("Search for '%s' with pre-computed metrics took %f s" % (query, duration))
+            durations.append(duration)
+
+        # compute average run time
+        average = sum(durations) / len(durations)
+        logger.debug(">>> Search for '%s' with pre-computed metrics took on AVERAGE %f s" % (query, average))
+        logger.debug("END PERFORMANCE WATCH SEARCH BLOCK")
+
+        durations = []
+        query = "tiago silva hive"
+        logger.debug("START PERFORMANCE WATCH SEARCH BLOCK")
+        for i in range(10):
+            # gather query start time
+            start_time = time.time()
+
+            test_results = self.plugin.search_index_by_identifier(index_identifier, query, properties)
+
+            # gather index end time
+            end_time = time.time()
+
+            # compute duration
+            duration = end_time - start_time
+
+            logger.debug("Search for '%s' with pre-computed metrics took %f s" % (query, duration))
+            durations.append(duration)
+
+        # compute average run time
+        average = sum(durations) / len(durations)
+        logger.debug(">>> Search for '%s' with pre-computed metrics took on AVERAGE %f s" % (query, average))
+        logger.debug("END PERFORMANCE WATCH SEARCH BLOCK")
+
+    def test_hive_source_code_indexing_searching_performance_search_metrics(self):
+        """
+        This method targets the scoring infrastructure, and asserts if the results were properly scored and sorted according to the Combined Scorer
+        computing the metrics in index time.
+        """
+
+        # get the logger
+        logger = self.plugin.logger
+
+        test_index = None
+        # index the hive source
+        start_path = "/search/pt.hive.colony.search"
+        query = "tiago silva hive ext"
+
+        # run the index creation and search repeatedly
+        for i in range(3):
+            # index time metrics
+
+            # gather index start time
+            start_time = time.time()
+
+            # clearing references
+            test_index = None
+            test_results = None
+
+            logger.debug("Performance Test garbage collection started")
+            garbage_collection_return = gc.collect()
+            logger.debug("Performance Test garbage collection finished in %f s returning %s" % (time.time() - start_time, garbage_collection_return))
+
+            start_time = time.time()
+            test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier",
+                                                                  {"start_path" : start_path, 
+                                                                   "type" : "file_system", 
+                                                                   "file_extensions" : ["py", "PY", "txt", "TXT", "xml", "XML", "js", "JS"]})
+
+            # gather index end time
+            end_time = time.time()
+
+            # compute duration
+            duration = end_time - start_time
+
+            logger.debug("Index creation WITHOUT metrics on '%s' took %f s" % (start_path, duration))
+            index_statistics = test_index.get_statistics()
+            logger.debug(index_statistics)
+
+            properties = {"search_scorer_function_identifier" : "frequency_location_distance_scorer_function",
+                          "frequency_location_distance_scorer_function_parameters" : {"word_frequency_scorer_function" : 1.0,
+                                                                                      "document_location_scorer_function" : 1.0,
+                                                                                      "word_distance_scorer_function" : 1.0}}
+
+            # gather query start time
+            start_time = time.time()
+
+            test_results = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.test_index_identifier", query, properties)
+
+            # gather index end time
+            end_time = time.time()
+
+            # compute duration
+            duration = end_time - start_time
+
+            logger.debug("Search for '%s' with search time metrics took %f s" % (query, duration))
+
+            logger.debug("frequency_location_distance_scorer_function %s" % properties["frequency_location_distance_scorer_function_parameters"])
+            for test_result in test_results[0:10]:
+                logger.debug(" %s SCORE: %f" % (test_result["document_id"], test_result["score"]))
+
+        def test_index_vs_search_time_metrics_performance(self):
+            pass
+        
 class SearchPluginTestCase:
 
     @staticmethod

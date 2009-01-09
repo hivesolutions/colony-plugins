@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import gc
 import time
 
 import search_exceptions
@@ -93,12 +94,15 @@ class Search:
         @return: The search index for the given properties.
         """
 
+        # retrieves a reference to the logger
+        logger = self.search_plugin.logger
+
         # in case type value is not defined in properties
         if not TYPE_VALUE in properties:
             properties[TYPE_VALUE] = DEFAULT_INDEX_TYPE
 
         # retrieves the search crawler plugins
-        search_crawler_plugins = self.search_plugin.search_crawler_plugins
+        search_crawler_plugin = self.search_plugin.search_crawler_plugin
 
         # retrieves the search interpreter plugin
         search_interpreter_plugin = self.search_plugin.search_interpreter_plugin
@@ -109,34 +113,32 @@ class Search:
         # retrieves the type of index
         index_type = properties[TYPE_VALUE]
 
-        # creates the crawling plugin temporary variable
-        crawling_plugin = None
+        start_time = time.time()
 
-        # iterates over all the available search crawler plugins
-        for search_crawler_plugin in search_crawler_plugins:
-            # retrieves the type for the current search crawler plugin
-            search_crawler_plugin_type = search_crawler_plugin.get_type()
+        # retrieves the tokens list
+        tokens_list = search_crawler_plugin.get_tokens(properties)
 
-            # in case the search crawler plugin type is the same as the index type
-            if search_crawler_plugin_type == index_type:
-                # sets the crawling plugin
-                crawling_plugin = search_crawler_plugin
+        end_time = time.time()
+        duration = end_time - start_time
+        logger.debug("Crawling finished in %f s" % duration)
 
-                # breaks the for cycle
-                break
-
-        # in case there was no crawling plugin selected
-        if not crawling_plugin:
-            raise search_exceptions.MissingCrawlingPlugin(index_type)
-
-        # retrieves the tokens list 
-        tokens_list = crawling_plugin.get_tokens(properties)
+        start_time = time.time()
 
         # processes the tokens list (modifying it) and retrieves the used interpreter adapters list
         used_interpreter_adapter_list = search_interpreter_plugin.process_tokens_list(tokens_list, properties)
 
+        end_time = time.time()
+        duration = end_time - start_time
+        logger.debug("Processing tokens finished in %f s" % duration)
+
+        start_time = time.time()
+
         # creates the search index with the given tokens list and properties
         search_index = search_indexer_plugin.create_index(tokens_list, properties)
+
+        end_time = time.time()
+        duration = end_time - start_time
+        logger.debug("Build index finished in %f s" % duration)
 
         # returns the search index
         return search_index
@@ -149,6 +151,20 @@ class Search:
         search_index_repository_plugin.add_index(search_index, search_index_identifier)
 
         return search_index
+
+    def remove_index_with_identifier(self, search_index_identifier, properties):
+        """
+        Remove an index from the repository.
+        
+        @type search_index_identifier: String
+        @param search_index_identifier: The index identifier in the repository.
+        @type properties: Dictionary
+        @param properties: The properties to configure the removal operation.
+        """
+
+        search_index_repository_plugin = self.search_plugin.search_index_repository_plugin
+
+        search_index_repository_plugin.remove_index(search_index_identifier)
 
     def persist_index(self, search_index, properties):
         """ 
@@ -166,78 +182,56 @@ class Search:
         if not PERSISTENCE_TYPE_VALUE in properties:
             raise search_exceptions.MissingProperty(PERSISTENCE_TYPE_VALUE)
 
-        # retrieves the search index persistence plugins
-        search_index_persistence_plugins = self.search_plugin.search_index_persistence_plugins
-
-        # retrieves the type of index persistence requested in the properties parameter
-        index_persistence_type = properties[PERSISTENCE_TYPE_VALUE]
-
-        # creates the index persistence plugin temporary variable
-        index_persistence_plugin = None
-
-        for search_index_persistence_plugin in search_index_persistence_plugins:
-            # retrieves the persistence type of the current plugin
-            search_index_persistence_plugin_type = search_index_persistence_plugin.get_type()
-            
-            # in case the index type is the same as the index persistence plugin type
-            if search_index_persistence_plugin_type == index_persistence_type:
-                # sets the index persistence plugin to be used
-                index_persistence_plugin = search_index_persistence_plugin
-
-                # breaks the for cycle
-                break
-
-        # if there was no index persistence plugin selected
-        if not index_persistence_plugin:
-            raise search_exceptions.MissingIndexPersistencePlugin(index_persistence_type)
+        # retrieves the search index persistence plugin
+        search_index_persistence_plugin = self.search_plugin.search_index_persistence_plugin
 
         # persists the index
-        persistence_success = index_persistence_plugin.persist_index(search_index, properties)
+        persistence_success = search_index_persistence_plugin.persist_index(search_index, properties)
 
         # returns with the success status signaled by the persist operation
         return persistence_success
 
     def load_index(self, properties):
+        """ 
+        Loads an index from a given location using the specified persistence type.
+        
+        @type properties: Dictionary
+        @param properties: The properties to load the search index.
+        @rtype: SearchIndex
+        @return: The loaded search index
+        """
+
         # in case the persistence type value is not defined in the properties
         if not PERSISTENCE_TYPE_VALUE in properties:
             raise search_exceptions.MissingProperty(PERSISTENCE_TYPE_VALUE)
 
         # retrieves the search index persistence plugins
-        search_index_persistence_plugins = self.search_plugin.search_index_persistence_plugins
-
-        # retrieves the type of index persistence requested in the properties parameter
-        index_persistence_type = properties[PERSISTENCE_TYPE_VALUE]
-
-        # creates the index persistence plugin temporary variable
-        index_persistence_plugin = None
-
-        for search_index_persistence_plugin in search_index_persistence_plugins:
-            # retrieves the persistence type of the current plugin
-            search_index_persistence_plugin_type = search_index_persistence_plugin.get_type()
-            
-            # in case the index type is the same as the index persistence plugin type
-            if search_index_persistence_plugin_type == index_persistence_type:
-                # sets the index persistence plugin to be used
-                index_persistence_plugin = search_index_persistence_plugin
-
-                # breaks the for cycle
-                break
-
-        # if there was no index persistence plugin selected
-        if not index_persistence_plugin:
-            raise search_exceptions.MissingIndexPersistencePlugin(index_persistence_type)
+        search_index_persistence_plugin = self.search_plugin.search_index_persistence_plugin
 
         # loads the index
-        search_index = index_persistence_plugin.load_index(properties)
+        search_index = search_index_persistence_plugin.load_index(properties)
 
         # returns the retrieved search index
         return search_index
 
     def load_index_with_identifier(self, search_index_identifier, properties):
+        """ 
+        Loads an index from a given location using the specified persistence type, and 
+        stores it in the index repository under the specified index identifier.
+        
+        @type properties: Dictionary
+        @param properties: The properties to load the search index.
+        @rtype: SearchIndex
+        @return: The loaded search index
+        """
+
+        # retrieves the search index repository plugin
         search_index_repository_plugin = self.search_plugin.search_index_repository_plugin
 
+        # loads the index using the persistence type specified in the properties 
         search_index = self.load_index(properties)
 
+        # inserts the index in the repository
         search_index_repository_plugin.add_index(search_index, search_index_identifier)
 
         return search_index
@@ -255,43 +249,37 @@ class Search:
         @rtype: List
         @return: The result set for the query in the search index, as a list of (document id, search result information) tuples.        
         """
-        
+
         # in case the persistence type value is not defined in the properties
         if not QUERY_EVALUATOR_TYPE_VALUE in properties:
             properties[QUERY_EVALUATOR_TYPE_VALUE] = DEFAULT_QUERY_EVALUATOR_TYPE
-        
-        # retrieves the query evaluator plugins
-        search_query_evaluator_plugins = self.search_plugin.search_query_evaluator_plugins
-        
-        # retrieves the query evaluator type specified in the properties parameter
-        query_evaluator_type = properties[QUERY_EVALUATOR_TYPE_VALUE]
-        
-        # the query evaluator plugin
-        query_evaluator_plugin = None
-        
-        # gets the first plugin for the specified query evaluation type
-        for search_query_evaluator_plugin in search_query_evaluator_plugins:
-            # retrieves the query evaluator type of the current plugin
-            search_query_evaluator_plugin_type = search_query_evaluator_plugin.get_type()
-            
-            # in case the index type is the same as the index persistence plugin type
-            if search_query_evaluator_plugin_type == query_evaluator_type:
-                # sets the index persistence plugin to be used
-                query_evaluator_plugin = search_query_evaluator_plugin
 
-                # breaks the for cycle
-                break
-
-        # if there was no query evaluator plugin available
-        if not query_evaluator_plugin:
-            raise search_exceptions.MissingQueryEvaluatorPlugin(query_evaluator_type)
+        # retrieves the query evaluator plugin
+        search_query_evaluator_plugin = self.search_plugin.search_query_evaluator_plugin
 
         # evaluates the query and retrieves the results using the available query evaluator plugin
-        search_results = query_evaluator_plugin.evaluate_query(search_index, search_query, properties)
-        
+        search_results = search_query_evaluator_plugin.evaluate_query(search_index, search_query, properties)
+
         return search_results
 
-    def query_index_sort_results(self, search_index, search_query, properties):
+    def query_index_by_identifier(self, search_index_identifier, search_query, properties):
+        """
+        Call the query_index method for the index identified (in the index repository) by the provided search index identifier.
+        """
+
+        # retrieves the reference for the index repository
+        search_index_repository_plugin = self.search_plugin.search_index_repository_plugin
+
+        # retrieves the search index from the repository
+        search_index = search_index_repository_plugin.get_index(search_index_identifier)
+
+        # queries the index with the search query
+        search_results = self.query_index(search_index, search_query, properties)
+
+        # return the final scored and sorted results
+        return search_results        
+
+    def search_index(self, search_index, search_query, properties):
         """
         Queries the provided index, using an available search_query_evaluator plugin 
         for the query type specified in the properties;
@@ -327,19 +315,35 @@ class Search:
         if not search_scorer_function_identifier in search_scorer_plugin.get_function_identifiers():
             raise search_exceptions.InvalidFunctionRequested(search_scorer_function_identifier)
 
-        # get a reference to the logger
+        # retrieves a reference to the logger
         logger = self.search_plugin.logger
 
         # performs the search using own query_index method
-        logger.debug("%s: SearchSystem query_index_sort_results querying index" % time.time())
-        search_results = self.query_index(search_index, search_query, properties)
-        logger.debug("%s: SearchSystem query_index_sort_results finished querying index" % time.time())
+        start_time = time.time()
+
+        # disable the garbage collector during parsing, to improve performance
+        gc.disable()
+
+        # wrapping the query operation in a try-finally block to force the garbage collector to become enabled
+        try:
+            search_results = self.query_index(search_index, search_query, properties)
+        finally:
+            # re-enable the garbage collector
+            gc.enable()
+
+        end_time = time.time()
+        duration = end_time - start_time
+        logger.debug("Querying index finished in %f s" % duration)
 
         if search_results:
             # scores the results using the available search scorer plugin
-            logger.debug("%s: SearchSystem query_index_sort_results scoring results" % time.time())        
+            start_time = time.time()
+
             scored_search_results = search_scorer_plugin.score_results(search_results, search_index, properties)
-            logger.debug("%s: SearchSystem query_index_sort_results finished scoring results" % time.time())
+
+            end_time = time.time()
+            duration = end_time - start_time
+            logger.debug("Scoring results finished in %f s" % duration)
 
             # gets the search scorer function repository plugin
             search_scorer_function_repository_plugin = self.search_plugin.search_scorer_function_repository_plugin
@@ -348,20 +352,24 @@ class Search:
             search_scorer_function = search_scorer_function_repository_plugin.get_function(search_scorer_function_identifier)
 
             # sorts the search results using the score
-            logger.debug("%s: SearchSystem query_index_sort_results sorting results" % time.time())        
+            start_time = time.time()
+
             sorted_search_results = search_sorter_plugin.sort_results(scored_search_results, properties)
-            logger.debug("%s: SearchSystem query_index_sort_results finished sorting results" % time.time())
+
+            end_time = time.time()
+            duration = end_time - start_time
+            logger.debug("Sorting results finished in %f s" % duration)
         else:
             # an empty result set is sorted by nature
             sorted_search_results = search_results
 
         return sorted_search_results
 
-    def search_index(self, search_index, search_query, properties):
-        sorted_search_results = self.query_index_sort_results(search_index, search_query, properties)
-        return sorted_search_results
-
     def search_index_by_identifier(self, search_index_identifier, search_query, properties):
+        """
+        Call the query_index method for the index identified (in the index repository) by the provided search index identifier.
+        """
+
         # retrieves the reference for the index repository
         search_index_repository_plugin = self.search_plugin.search_index_repository_plugin
 
@@ -370,7 +378,7 @@ class Search:
 
         # queries the index with the search query
         # requesting scoring and sorting services
-        sorted_search_results = self.query_index_sort_results(search_index, search_query, properties)
+        sorted_search_results = self.search_index(search_index, search_query, properties)
 
         # return the final scored and sorted results
         return sorted_search_results

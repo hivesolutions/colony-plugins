@@ -39,37 +39,37 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.plugins.plugin_system
 
-class SearchQueryEvaluatorPlugin(colony.plugins.plugin_system.Plugin):
+class SearchIndexPersistenceFileSystemAdapterPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Search Query Evaluator plugin.
+    The main class for the Search Index Persistence File System Adapter plugin.
     """
 
-    id = "pt.hive.colony.plugins.search.query_evaluator"
-    name = "Search Query Evaluator Plugin"
-    short_name = "Search Query Evaluator"
-    description = "Plugin that provides query evaluation services, using an available index"
+    id = "pt.hive.colony.plugins.search.index_persistence.file_system_adapter"
+    name = "Search Index Persistence File System Adapter plugin"
+    short_name = "Search Index Persistence File System Adapter"
+    description = "Search Index Persistence File System Adapter Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["search_query_evaluator"]
-    capabilities_allowed = ["search_query_evaluator_adapter"]
+    capabilities = ["search_index_persistence_adapter.file_system"]
+    capabilities_allowed = ["search_index_serializer"]
     dependencies = []
     events_handled = []
     events_registrable = []
 
-    search_query_evaluator = None
-    
-    search_query_evaluator_adapter_plugins = []
+    search_index_persistence_file_system_adapter = None
+
+    search_index_serializer_plugins = []
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
-        global search_query_evaluator
-        import search_query_evaluator.query_evaluator.search_query_evaluator_system
-        self.search_query_evaluator = search_query_evaluator.query_evaluator.search_query_evaluator_system.SearchQueryEvaluator(self)
+        global search_index_persistence
+        import search_index_persistence.file_system_adapter.search_index_persistence_file_system_adapter_system
+        self.search_index_persistence_file_system_adapter = search_index_persistence.file_system_adapter.search_index_persistence_file_system_adapter_system.SearchIndexPersistenceFileSystemAdapter(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
@@ -77,29 +77,30 @@ class SearchQueryEvaluatorPlugin(colony.plugins.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.search.query_evaluator", "1.0.0")
+    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.search.index_persistence.file_system_adapter", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.search.query_evaluator", "1.0.0")
+    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.search.index_persistence.file_system_adapter", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def evaluate_query(self, search_index, query, properties):
-        return self.search_query_evaluator.evaluate_query(search_index, query, properties)
+    def get_type(self):
+        return self.search_index_persistence_file_system_adapter.get_type()
 
-    def get_search_query_evaluator_adapter_types(self):
-        return self.search_query_evaluator.get_search_query_evaluator_adapter_types()
+    def persist_index(self, search_index, properties):
+        return self.search_index_persistence_file_system_adapter.persist_index(search_index, properties)
 
-    @colony.plugins.decorators.load_allowed_capability("search_query_evaluator_adapter")
-    def search_query_evaluator_adapter_load_allowed(self, plugin, capability):
-        self.search_query_evaluator_adapter_plugins.append(plugin)
-        self.search_query_evaluator.add_search_query_evaluator_adapter_plugin(plugin)
+    def load_index(self, properties):
+        return self.search_index_persistence_file_system_adapter.load_index(properties)
 
-    @colony.plugins.decorators.unload_allowed_capability("search_query_evaluator_adapter")
-    def search_query_evaluator_adapter_unload_allowed(self, plugin, capability):
-        self.search_query_evaluator_adapter_adapter_plugins.remove(plugin)
-        self.search_query_evaluator.remove_search_query_evaluator_adapter_plugin(plugin)
+    @colony.plugins.decorators.load_allowed_capability("search_index_serializer")
+    def search_provider_file_system_load_allowed(self, plugin, capability):
+        self.search_index_serializer_plugins.append(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("search_index_serializer")
+    def search_provider_file_system_unload_allowed(self, plugin, capability):
+        self.search_index_serializer_plugins.remove(plugin)

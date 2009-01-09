@@ -39,34 +39,34 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.plugins.plugin_system
 
-class SearchIndexPersistenceFileSystemPlugin(colony.plugins.plugin_system.Plugin):
+class SearchIndexPersistencePlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Search Index Persistence File System plugin.
+    The main class for the Search Index Persistence plugin.
     """
 
-    id = "pt.hive.colony.plugins.search.index_persistence.file_system"
-    name = "Search Index Persistence File System plugin"
-    short_name = "Search Index Persistence File System"
-    description = "Search Index Persistence File System Plugin"
+    id = "pt.hive.colony.plugins.search.index_persistence"
+    name = "Search Index Persistence plugin"
+    short_name = "Search Index Persistence"
+    description = "Search Index Persistence Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["search_index_persistence"]
-    capabilities_allowed = ["search_index_serializer"]
+    capabilities_allowed = ["search_index_persistence_adapter"]
     dependencies = []
     events_handled = []
     events_registrable = []
 
-    search_index_persistence_file_system = None
+    search_index_persistence = None
 
-    search_index_serializer_plugins = []
+    search_index_persistence_adapter_plugins = []
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global search_index_persistence
-        import search_index_persistence.file_system.search_index_persistence_file_system_system
-        self.search_index_persistence_file_system = search_index_persistence.file_system.search_index_persistence_file_system_system.SearchIndexPersistenceFileSystem(self)
+        import search_index_persistence.index_persistence.search_index_persistence_system
+        self.search_index_persistence = search_index_persistence.index_persistence.search_index_persistence_system.SearchIndexPersistence(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -77,30 +77,32 @@ class SearchIndexPersistenceFileSystemPlugin(colony.plugins.plugin_system.Plugin
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.search.index_persistence.file_system", "1.0.0")
+    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.search.index_persistence", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.search.index_persistence.file_system", "1.0.0")
+    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.search.index_persistence", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def get_type(self):
-        return self.search_index_persistence_file_system.get_type()
-
     def persist_index(self, search_index, properties):
-        return self.search_index_persistence_file_system.persist_index(search_index, properties)
+        return self.search_index_persistence.persist_index(search_index, properties)
 
     def load_index(self, properties):
-        return self.search_index_persistence_file_system.load_index(properties)
+        return self.search_index_persistence.load_index(properties)
 
-    @colony.plugins.decorators.load_allowed_capability("search_index_serializer")
-    def search_provider_file_system_load_allowed(self, plugin, capability):
-        self.search_index_serializer_plugins.append(plugin)
+    def get_search_index_persistence_adapter_types(self):
+        return self.search_index_persistence.get_search_index_persistence_adapter_types()
 
-    @colony.plugins.decorators.unload_allowed_capability("search_index_serializer")
-    def search_provider_file_system_unload_allowed(self, plugin, capability):
-        self.search_index_serializer_plugins.remove(plugin)
+    @colony.plugins.decorators.load_allowed_capability("search_index_persistence_adapter")
+    def search_index_persistence_adapter_load_allowed(self, plugin, capability):
+        self.search_index_persistence_adapter_plugins.append(plugin)
+        self.search_index_persistence.add_search_index_persistence_adapter_plugin(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("search_index_persistence_adapter")
+    def search_index_persistence_adapter_unload_allowed(self, plugin, capability):
+        self.search_index_persistence_adapter_plugins.remove(plugin)
+        self.search_index_persistence.remove_search_index_persistence_adapter_plugin(plugin)

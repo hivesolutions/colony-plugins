@@ -1,7 +1,3 @@
-#Tue Dec 16 13:16:25 WET 2008
+#Thu Jan 08 13:09:56 WET 2009
 eclipse.preferences.version=1
-encoding//src/colony/plugins/search_crawler/file_system/__init__.py=Cp1252
-encoding//src/colony/plugins/search_crawler/file_system/search_crawler_file_system_exceptions.py=Cp1252
-encoding//src/colony/plugins/search_crawler/file_system/search_crawler_file_system_system.py=Cp1252
-encoding//src/colony/plugins/search_crawler_file_system_plugin.py=Cp1252
 encoding/<project>=Cp1252

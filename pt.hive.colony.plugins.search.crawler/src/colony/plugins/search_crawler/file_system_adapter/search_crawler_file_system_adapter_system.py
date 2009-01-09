@@ -37,37 +37,39 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import time
+
 import os.path
 
-import search_crawler_file_system_exceptions
+import search_crawler_file_system_adapter_exceptions
 
-SEARCH_CRAWLER_TYPE = "file_system"
-""" The search crawler type """
+SEARCH_CRAWLER_ADAPTER_TYPE = "file_system"
+""" The search crawler adapter type """
 
-class SearchCrawlerFileSystem:
+class SearchCrawlerFileSystemAdapter:
     """
-    The search crawler file system class.
+    The search crawler file system adapter class.
     """
 
-    search_crawler_file_system_plugin = None
-    """ The search crawler file system plugin """
+    search_crawler_file_system_adapter_plugin = None
+    """ The search crawler file system adapter plugin """
 
-    def __init__(self, search_crawler_file_system_plugin):
+    def __init__(self, search_crawler_file_system_adapter_plugin):
         """
         Constructor of the class.
         
-        @type search_provider_text_plugin: SearchCrawlerFileSystemPlugin
-        @param search_provider_text_plugin: The search crawler file system plugin.
+        @type search_crawler_file_system_adapter_plugin: SearchCrawlerFileSystemAdapterPlugin
+        @param search_crawler_file_system_adapter_plugin: The search crawler file system adapter plugin.
         """
 
-        self.search_crawler_file_system_plugin = search_crawler_file_system_plugin
+        self.search_crawler_file_system_adapter_plugin = search_crawler_file_system_adapter_plugin
 
     def get_type(self):
-        return SEARCH_CRAWLER_TYPE
+        return SEARCH_CRAWLER_ADAPTER_TYPE
 
     def get_tokens(self, properties):
         if not "start_path" in properties:
-            raise search_crawler_file_system_exceptions.MissingProperty("start_path")
+            raise search_crawler_file_system_adapter_exceptions.MissingProperty("start_path")
 
         # retrieves the start path
         start_path = properties["start_path"]
@@ -95,6 +97,9 @@ class SearchCrawlerFileSystem:
         @param names: The name of the files of the current directory.
         """
 
+        # retrieve the plugin logger
+        logger = self.search_crawler_file_system_adapter_plugin.logger
+
         # retrieves the token list
         properties = args
         token_list = properties["token_list"]
@@ -112,9 +117,9 @@ class SearchCrawlerFileSystem:
             if search_provider_file_system_plugin:
                 tokens = search_provider_file_system_plugin.get_tokens(properties)
                 token_list.append(tokens)
-
+        
     def get_handler_plugin(self, properties):
-        search_provider_file_system_plugins = self.search_crawler_file_system_plugin.search_provider_file_system_plugins
+        search_provider_file_system_plugins = self.search_crawler_file_system_adapter_plugin.search_provider_file_system_plugins
 
         for search_provider_file_system_plugin in search_provider_file_system_plugins:
             if search_provider_file_system_plugin.is_file_provider(properties):

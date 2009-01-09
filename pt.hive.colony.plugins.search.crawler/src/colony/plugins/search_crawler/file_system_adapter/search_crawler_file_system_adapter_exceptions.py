@@ -37,14 +37,14 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class SearchIndexPersistenceFileSystemException(Exception):
+class SearchCrawlerFileSystemAdapterException(Exception):
     """
-    The search index persistence file system exception class.
+    The search crawler file system adapter exception class.
     """
 
     pass
 
-class MissingProperty(SearchIndexPersistenceFileSystemException):
+class MissingProperty(SearchCrawlerFileSystemAdapterException):
     """
     The missing property class.
     """
@@ -57,7 +57,7 @@ class MissingProperty(SearchIndexPersistenceFileSystemException):
         @param message: The message to be printed.
         """
 
-        SearchIndexPersistenceFileSystemException.__init__(self)
+        SearchCrawlerFileSystemAdapterException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -70,9 +70,9 @@ class MissingProperty(SearchIndexPersistenceFileSystemException):
 
         return "Missing property: %s" % self.message
 
-class MissingIndexSerializerPlugin(SearchIndexPersistenceFileSystemException):
+class FileSystemNotFound(SearchCrawlerFileSystemAdapterException):
     """
-    The missing index serializer plugin class.
+    The text file not found class.
     """
 
     def __init__(self, message):
@@ -83,7 +83,7 @@ class MissingIndexSerializerPlugin(SearchIndexPersistenceFileSystemException):
         @param message: The message to be printed.
         """
 
-        SearchIndexPersistenceFileSystemException.__init__(self)
+        SearchCrawlerFileSystemAdapterException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -94,4 +94,4 @@ class MissingIndexSerializerPlugin(SearchIndexPersistenceFileSystemException):
         @return: The string representation of the class.
         """
 
-        return "Missing index serializer plugin: %s" % self.message
+        return "Text file not found: %s" % self.message

@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import gc
+import time
 import cPickle
 
 import search_index_serializer_cpickle_exceptions
@@ -72,6 +74,9 @@ class SearchIndexSerializerCpickle:
         if not FILE_PATH_VALUE in properties:
             raise search_index_serializer_cpickle_exceptions.MissingProperty(FILE_PATH_VALUE)
 
+        # retrieves the logger from the plugin 
+        logger = self.search_index_serializer_cpickle_plugin.logger
+
         # retrieves the file path
         file_path = properties[FILE_PATH_VALUE]
 
@@ -79,8 +84,25 @@ class SearchIndexSerializerCpickle:
         # and if the file does not exists, it creates a new one
         file = open(file_path, "wb")
 
-        # dumps the search index object into the file using the cpickle serializer
-        cPickle.dump(search_index, file, cPickle.HIGHEST_PROTOCOL)
+        # gets the start time for the cPickle dump operation
+        start_time = time.time()
+
+        # disabling the garbage collector to improve cPickle.dump performance
+        gc.disable()
+
+        # wrapping the dump operation in a try-finally block to keep the garbage collector to staying disable after an exception
+        try:            
+            # dumps the search index object into the file using the cpickle serializer
+            cPickle.dump(search_index, file, cPickle.HIGHEST_PROTOCOL)
+        finally:
+            # re-enabling the garbage collector
+            gc.enable()
+
+        # gets the end time for the cPickle dump operation
+        end_time = time.time()
+
+        duration = end_time - start_time
+        logger.debug("SearchIndexSerializerCpickle persist index cPickle.dump finished in %s" % duration)
 
         # closes the file
         file.close()
@@ -91,14 +113,34 @@ class SearchIndexSerializerCpickle:
         if not FILE_PATH_VALUE in properties:
             raise search_index_serializer_cpickle_exceptions.MissingProperty(FILE_PATH_VALUE)
 
+        # retrieves the logger from the plugin 
+        logger = self.search_index_serializer_cpickle_plugin.logger
+
         # retrieves the file path
         file_path = properties[FILE_PATH_VALUE]
 
         # opens the file for reading in binary 
         file = open(file_path, "rb")
 
-        # loads the search index object from the file using the cpickle serializer
-        search_index = cPickle.load(file)
+        # gets the start time for the cPickle dump operation
+        start_time = time.time()
+
+        # disabling the garbage collector to improve cPickle.load performance
+        gc.disable()
+
+        # wrapping the load operation in a try-finally block to keep the garbage collector to staying disable after an exception
+        try:
+            # loads the search index object from the file using the cpickle serializer
+            search_index = cPickle.load(file)
+        finally:
+            # re-enabling the garbage collector
+            gc.enable()
+
+        # gets the end time for the cPickle dump operation
+        end_time = time.time()
+
+        duration = end_time - start_time
+        logger.debug("SearchIndexSerializerCpickle load index cPickle.load finished in %s" % duration)
 
         # closes the file
         file.close()

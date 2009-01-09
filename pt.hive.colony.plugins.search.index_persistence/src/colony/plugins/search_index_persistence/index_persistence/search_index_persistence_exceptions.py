@@ -37,14 +37,14 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class SearchCrawlerFileSystemException(Exception):
+class SearchIndexPersistenceException(Exception):
     """
-    The search crawler file system exception class.
+    The search index persistence exception class.
     """
 
     pass
 
-class MissingProperty(SearchCrawlerFileSystemException):
+class MissingProperty(SearchIndexPersistenceException):
     """
     The missing property class.
     """
@@ -57,7 +57,7 @@ class MissingProperty(SearchCrawlerFileSystemException):
         @param message: The message to be printed.
         """
 
-        SearchCrawlerFileSystemException.__init__(self)
+        SearchIndexPersistenceException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -70,9 +70,9 @@ class MissingProperty(SearchCrawlerFileSystemException):
 
         return "Missing property: %s" % self.message
 
-class FileSystemNotFound(SearchCrawlerFileSystemException):
+class MissingSearchIndexPersistenceAdapterPlugin(SearchIndexPersistenceException):
     """
-    The text file not found class.
+    The missing property class.
     """
 
     def __init__(self, message):
@@ -83,7 +83,7 @@ class FileSystemNotFound(SearchCrawlerFileSystemException):
         @param message: The message to be printed.
         """
 
-        SearchCrawlerFileSystemException.__init__(self)
+        SearchIndexPersistenceException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -94,4 +94,4 @@ class FileSystemNotFound(SearchCrawlerFileSystemException):
         @return: The string representation of the class.
         """
 
-        return "Text file not found: %s" % self.message
+        return "Invalid search index persistence adapter type: %s" % self.message

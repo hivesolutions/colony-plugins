@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import time
+
 import search_indexer_exceptions
 
 HITS_VALUE = "hits"
@@ -96,6 +98,9 @@ class SearchIndexer:
         @return: The created index.
         """
 
+        # retrieves a reference to the logger
+        logger = self.search_indexer_plugin.logger
+
         metrics_identifiers = []
         # checks for metrics specified in the properties map
         if METRICS_IDENTIFIERS_VALUE in properties:
@@ -116,11 +121,23 @@ class SearchIndexer:
         # retrieves the required metrics from the metrics repository
         scorer_metrics = search_scorer_metric_repository_plugin.get_metrics(metrics_identifiers)
 
+        start_time = time.time()
+
         # creates the forward index map
         forward_index_map = self.create_forward_index(token_list, properties)
 
+        end_time = time.time()
+        duration = end_time - start_time
+        logger.debug("Build forward index finished in %f s" % duration)
+
+        start_time = time.time()
+
         # creates the inverted index map
         inverted_index_map = self.create_inverted_index(forward_index_map, properties)
+
+        end_time = time.time()
+        duration = end_time - start_time
+        logger.debug("Build inverted index finished in %f s" % duration)
 
         # creates the search index object
         search_index = SearchIndex()
@@ -131,10 +148,16 @@ class SearchIndexer:
         # sets the inverted index map
         search_index.inverted_index_map = inverted_index_map
 
+        start_time = time.time()
+
         # computes the specified metrics for the index
         if scorer_metrics:
             # the metrics for the search index are calculated in place, adding to the index metadata
             self.compute_metrics(scorer_metrics, search_index, properties)
+
+        end_time = time.time()
+        duration = end_time - start_time
+        logger.debug("Metrics computation finished in %f s" % duration)
 
         # returns the search index object
         return search_index

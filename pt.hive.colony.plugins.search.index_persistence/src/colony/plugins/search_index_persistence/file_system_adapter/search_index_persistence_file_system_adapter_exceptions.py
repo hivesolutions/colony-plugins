@@ -37,14 +37,14 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class SearchQueryEvaluatorException(Exception):
+class SearchIndexPersistenceFileSystemAdapterException(Exception):
     """
-    The search exception class.
+    The search index persistence file system adapter exception class.
     """
 
     pass
 
-class MissingProperty(SearchQueryEvaluatorException):
+class MissingProperty(SearchIndexPersistenceFileSystemAdapterException):
     """
     The missing property class.
     """
@@ -57,7 +57,7 @@ class MissingProperty(SearchQueryEvaluatorException):
         @param message: The message to be printed.
         """
 
-        SearchQueryEvaluatorException.__init__(self)
+        SearchIndexPersistenceFileSystemAdapterException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -70,35 +70,9 @@ class MissingProperty(SearchQueryEvaluatorException):
 
         return "Missing property: %s" % self.message
 
-class MissingIndex(SearchQueryEvaluatorException):
+class MissingIndexSerializerPlugin(SearchIndexPersistenceFileSystemAdapterException):
     """
-    The missing index class.
-    """
-
-    def __init__(self, message):
-        """
-        Constructor of the class.
-        
-        @type message: String
-        @param message: The message to be printed.
-        """
-
-        SearchQueryEvaluatorException.__init__(self)
-        self.message = message
-
-    def __str__(self):
-        """
-        Returns the string representation of the class.
-        
-        @rtype: String
-        @return: The string representation of the class.
-        """
-
-        return "Missing index: %s" % self.message
-
-class MissingSearchQueryEvaluatorAdapterPlugin(SearchQueryEvaluatorException):
-    """
-    The missing property class.
+    The missing index serializer plugin class.
     """
 
     def __init__(self, message):
@@ -109,7 +83,7 @@ class MissingSearchQueryEvaluatorAdapterPlugin(SearchQueryEvaluatorException):
         @param message: The message to be printed.
         """
 
-        SearchQueryEvaluatorException.__init__(self)
+        SearchIndexPersistenceFileSystemAdapterException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -120,4 +94,4 @@ class MissingSearchQueryEvaluatorAdapterPlugin(SearchQueryEvaluatorException):
         @return: The string representation of the class.
         """
 
-        return "Invalid search query evaluator adapter type: %s" % self.message
+        return "Missing index serializer plugin: %s" % self.message

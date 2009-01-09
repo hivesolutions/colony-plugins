@@ -37,41 +37,43 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import search_index_persistence_file_system_exceptions
+import search_index_persistence_file_system_adapter_exceptions
 
-PERSISTENCE_TYPE = "file_system"
-""" The persistence type """
+PERSISTENCE_ADAPTER_TYPE = "file_system"
+""" The persistence adapter type """
 
 SERIALIZER_TYPE_VALUE = "serializer_type"
 """ The serializer type value """
 
-class SearchIndexPersistenceFileSystem:
+class SearchIndexPersistenceFileSystemAdapter:
     """
-    The search index persistence file system class.
+    The search index persistence file system adapter class.
     """
 
-    search_index_persistence_file_system_plugin = None
-    """ The search index persistence file system plugin """
+    search_index_persistence_file_system_adapter_plugin = None
+    """ The search index persistence file system adapter plugin """
 
-    def __init__(self, search_index_persistence_file_system_plugin):
+    def __init__(self, search_index_persistence_file_system_adapter_plugin):
         """
         Constructor of the class.
         
-        @type search_index_persistence_file_system_plugin: SearchIndexPersistenceFileSystemPlugin
-        @param search_index_persistence_file_system_plugin: The search index persistence file system plugin.
+        @type search_index_persistence_file_system_adapter_plugin: SearchIndexPersistenceFileSystemAdapterPlugin
+        @param search_index_persistence_file_system_adapter_plugin: The search index persistence file system adapter plugin.
         """
 
-        self.search_index_persistence_file_system_plugin = search_index_persistence_file_system_plugin
+        self.search_index_persistence_file_system_adapter_plugin = search_index_persistence_file_system_adapter_plugin
 
     def get_type(self):
-        return PERSISTENCE_TYPE
+        return PERSISTENCE_ADAPTER_TYPE
 
     def persist_index(self, search_index, properties):
+        
+        # checks for the serializer type in the properties map
         if not SERIALIZER_TYPE_VALUE in properties:
-            raise search_index_persistence_file_system_exceptions.MissingProperty(SERIALIZER_TYPE_VALUE)
+            raise search_index_persistence_file_system_adapter_exceptions.MissingProperty(SERIALIZER_TYPE_VALUE)
 
         # retrieves the search index serializer plugins
-        search_index_serializer_plugins = self.search_index_persistence_file_system_plugin.search_index_serializer_plugins
+        search_index_serializer_plugins = self.search_index_persistence_file_system_adapter_plugin.search_index_serializer_plugins
 
         serializer_type = properties[SERIALIZER_TYPE_VALUE]
 
@@ -84,18 +86,18 @@ class SearchIndexPersistenceFileSystem:
                 serializer_plugin = search_index_serializer_plugin
 
         if not serializer_plugin:
-            raise search_index_persistence_file_system_exceptions.MissingIndexSerializerPlugin(serializer_type)
-    
+            raise search_index_persistence_file_system_adapter_exceptions.MissingIndexSerializerPlugin(serializer_type)
+
         persistence_success = serializer_plugin.persist_index(search_index, properties)
 
         return persistence_success
 
     def load_index(self, properties):
         if not SERIALIZER_TYPE_VALUE in properties:
-            raise search_index_persistence_file_system_exceptions.MissingProperty(SERIALIZER_TYPE_VALUE)
+            raise search_index_persistence_file_system_adapter_exceptions.MissingProperty(SERIALIZER_TYPE_VALUE)
 
         # retrieves the search index serializer plugins
-        search_index_serializer_plugins = self.search_index_persistence_file_system_plugin.search_index_serializer_plugins
+        search_index_serializer_plugins = self.search_index_persistence_file_system_adapter_plugin.search_index_serializer_plugins
 
         serializer_type = properties[SERIALIZER_TYPE_VALUE]
 
@@ -108,7 +110,7 @@ class SearchIndexPersistenceFileSystem:
                 serializer_plugin = search_index_serializer_plugin
 
         if not serializer_plugin:
-            raise search_index_persistence_file_system_exceptions.MissingIndexSerializerPlugin(serializer_type)
+            raise search_index_persistence_file_system_adapter_exceptions.MissingIndexSerializerPlugin(serializer_type)
 
         search_index = serializer_plugin.load_index(properties)
 
