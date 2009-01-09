@@ -35,8 +35,8 @@ $(document).ready(function() {
 				var divParent = $(this).parent();
 				var selectedElements = divParent.children(".listBoxElementSelected");
 				selectedElements.each(function() {
-					$(this).removeClass("listBoxElementSelected");
-				});
+							$(this).removeClass("listBoxElementSelected");
+						});
 				$(this).addClass("listBoxElementSelected");
 			});
 
@@ -98,9 +98,38 @@ $(document).ready(function() {
 	});
 
 	$("#settingsButton").click(function() {
-		$("#settingsWindow").show();
-		$("#settingsWindow").dialog({"width" : 430, "height": 140, "show": "drop", "hide": "drop"});
-	});
+				$("#settingsWindow").show();
+				$("#settingsWindow").dialog({
+							"width" : 430,
+							"height" : 140,
+							"show" : "drop",
+							"hide" : "drop"
+						});
+			});
+
+	$("#testBox").colonyButton("tobias", {
+				"size" : "large",
+				"click" : function() {
+					alert("tobias")
+				},
+				"image" : "pics/add.png"
+			});
+
+	// creates a new data store
+	var dataStore = $("#testBox").colonyDataStore({
+				"dataProxyName" : "tobias",
+				"elementAdded" : function() {
+					alert("adicionado");
+				}
+			});
+
+	var dataStoreAux = $("#testBox").data("DataStore");
+
+	$("#testBox").colonyDataStoreAddElement("rabeton", "matias");
+
+	console.debug(dataStore);
+
+	console.debug(dataStoreAux);
 });
 
 var tabsMap = {};

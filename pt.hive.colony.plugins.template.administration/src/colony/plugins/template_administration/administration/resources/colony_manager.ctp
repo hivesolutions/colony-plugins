@@ -52,6 +52,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
     <?colony self.import_js_library("jquery.tablesorter") ?>
     <?colony self.import_js_library("jquery.contextmenu") ?>
     <?colony self.import_js_library("jquery.jgrowl") ?>
+	<script type="text/javascript" src="jquery_plugins/js/colony_base_components.js"></script>
+	<script type="text/javascript" src="jquery_plugins/js/colony_base_logic.js"></script>
     <script type="text/javascript" src="js/colony_manager.js"></script>
 
     <?colony
@@ -71,6 +73,7 @@ for js_file in js_files:
     <link rel="stylesheet" href="css/jquery.contextmenu.css" type="text/css">
     <link rel="stylesheet" href="css/jquery.jgrowl.css" type="text/css">
     <link rel="stylesheet" href="jquery_themes/humanity/ui.theme.css" type="text/css" media="screen" title="Themeroller (Default)">
+    <link rel="stylesheet" href="jquery_plugins/css/colony_base_components.css" type="text/css">
     <link rel="stylesheet" href="css/colony_manager.css" type="text/css">
 
     <?colony
@@ -90,6 +93,8 @@ for css_file in css_files:
 </head>
 
 <body>
+
+<span id="testBox"></span>
 
 <div id="jgrowlNotifier"></div>
 
