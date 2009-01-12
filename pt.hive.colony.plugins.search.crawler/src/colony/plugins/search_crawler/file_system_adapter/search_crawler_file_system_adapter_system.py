@@ -46,6 +46,18 @@ import search_crawler_file_system_adapter_exceptions
 SEARCH_CRAWLER_ADAPTER_TYPE = "file_system"
 """ The search crawler adapter type """
 
+START_PATH_VALUE = "start_path"
+""" The key for the start path parameter in the properties map """
+
+TOKEN_LIST_VALUE = "token_list"
+""" The key for the token list in the properties map """
+
+FILE_PATH_VALUE = "file_path"
+""" The key for the file path to crawl, in the properties map """
+
+FILE_PATH_SLASH = "/"
+""" The standard file path hierarchy indicator """
+
 class SearchCrawlerFileSystemAdapter:
     """
     The search crawler file system adapter class.
@@ -68,15 +80,15 @@ class SearchCrawlerFileSystemAdapter:
         return SEARCH_CRAWLER_ADAPTER_TYPE
 
     def get_tokens(self, properties):
-        if not "start_path" in properties:
-            raise search_crawler_file_system_adapter_exceptions.MissingProperty("start_path")
+        if not START_PATH_VALUE in properties:
+            raise search_crawler_file_system_adapter_exceptions.MissingProperty(START_PATH_VALUE)
 
         # retrieves the start path
-        start_path = properties["start_path"]
+        start_path = properties[START_PATH_VALUE]
 
         # creates the token list
         token_list = []
-        properties["token_list"] = token_list
+        properties[TOKEN_LIST_VALUE] = token_list
 
         # start the path walking in the start path
         os.path.walk(start_path, self.walker, properties)
@@ -102,15 +114,15 @@ class SearchCrawlerFileSystemAdapter:
 
         # retrieves the token list
         properties = args
-        token_list = properties["token_list"]
+        token_list = properties[TOKEN_LIST_VALUE]
 
         # creates the file paths list
-        file_paths_list = [directory_name + "/" + value for value in names]
+        file_paths_list = [directory_name + FILE_PATH_SLASH + value for value in names]
 
         # iterates over all the file paths
         for file_path in file_paths_list:
             # sets the properties for the handler plugin
-            properties["file_path"] = file_path
+            properties[FILE_PATH_VALUE] = file_path
 
             search_provider_file_system_plugin = self.get_handler_plugin(properties)
 
