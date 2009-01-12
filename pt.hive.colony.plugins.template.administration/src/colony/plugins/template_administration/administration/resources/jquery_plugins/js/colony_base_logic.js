@@ -111,16 +111,22 @@
 		var dataStoreInformation = getDataStoreInformation($this, options);
 
 		// retrieves the data proxy name
-		var dataProxyName = getDataProxyName($this, options);
+		var dataProxyName = dataStoreInformation["dataProxyName"];
 
+		// adds the element to the data proxy
 		$this.colonyMemoryDataProxyAddElement(elementName, elementValue, {
 					"name" : dataProxyName
 				});
 
+		// retrieves the element added handlers
 		var elementAddedHandlers = dataStoreInformation["elementAddedHandlers"];
 
+		// iterates over all the element added handlers
 		for (var i = 0; i < elementAddedHandlers.length; i++) {
+			// retrieves the element added handler
 			elementAddedHandler = elementAddedHandlers[i];
+
+			// calls the element added handler
 			elementAddedHandler();
 		}
 	}
@@ -145,16 +151,6 @@
 
 		// returns the data store information map (data store)
 		return dataStoreInformation;
-	}
-
-	function getDataProxyName($object, options) {
-		// gets the data store information from the parent element
-		var dataStoreInformation = getDataStoreInformation($object, options);
-
-		// retrieves the data proxy name value
-		var dataProxyName = dataStoreInformation["dataProxyName"];
-
-		return dataProxyName;
 	}
 
 	/**
