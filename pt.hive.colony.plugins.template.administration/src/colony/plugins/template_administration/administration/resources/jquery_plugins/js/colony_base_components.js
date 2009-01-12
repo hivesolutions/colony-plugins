@@ -66,7 +66,7 @@
 	/**
 	 * The default options for the colony text box.
 	 * 
-	 * @type Dictionary
+	 * @type Map
 	 */
 	$.fn.colonyTextBox.defaults = {
 		size : "normal"
@@ -154,7 +154,7 @@
 	/**
 	 * The default options for the colony button.
 	 * 
-	 * @type Dictionary
+	 * @type Map
 	 */
 	$.fn.colonyButton.defaults = {
 		size : "normal"
@@ -178,7 +178,7 @@
 	/**
 	 * The default options for the colony list box.
 	 * 
-	 * @type Dictionary
+	 * @type Map
 	 */
 	$.fn.colonyButton.defaults = {
 		size : "normal"

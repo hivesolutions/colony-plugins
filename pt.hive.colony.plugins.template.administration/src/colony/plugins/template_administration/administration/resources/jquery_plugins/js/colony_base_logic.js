@@ -156,7 +156,7 @@
 	/**
 	 * The default options for the colony data store.
 	 * 
-	 * @type Dictionary
+	 * @type Map
 	 */
 	$.fn.colonyDataStore.defaults = {
 		"dataProxy" : "memory"
@@ -241,7 +241,7 @@
 	/**
 	 * The default options for the colony memory data proxy.
 	 * 
-	 * @type Dictionary
+	 * @type Map
 	 */
 	$.fn.colonyMemoryDataProxy.defaults = {};
 
