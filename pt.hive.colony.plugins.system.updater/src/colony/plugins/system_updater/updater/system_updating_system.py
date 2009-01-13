@@ -183,7 +183,7 @@ class SystemUpdater:
 
         # iterates over all the repositories
         for repository_address in repository_addresses:
-            self.system_updater_plugin.logger.info("Trying address %s (%s)" % (repository_address.name, repository_address.value))
+            self.system_updater_plugin.info("Trying address %s (%s)" % (repository_address.name, repository_address.value))
             repository_address_value = repository_address.value
             file_address = repository_address_value + "/" + REPOSITORY_DESCRIPTOR_FILE
             file_buffer = downloader_plugin.get_download_package_stream(file_address)
@@ -422,7 +422,7 @@ class SystemUpdater:
 
         # iterates over all the repository addresses
         for repository_address in repository_addresses:
-            self.system_updater_plugin.logger.info("Trying address %s (%s)" % (repository_address.name, repository_address.value))
+            self.system_updater_plugin.info("Trying address %s (%s)" % (repository_address.name, repository_address.value))
             repository_address_value = repository_address.value
             file_address = repository_address_value + "/" + plugin_name + "/" + plugin_version + "/" + zip_file
             result = downloader_plugin.download_package(file_address, target_directory)
