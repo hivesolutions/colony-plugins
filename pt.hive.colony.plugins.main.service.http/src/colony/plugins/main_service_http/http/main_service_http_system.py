@@ -241,13 +241,13 @@ class HttpClientServiceTask:
         # retrieves the http service handler plugins
         http_service_handler_plugins = self.main_service_http_plugin.http_service_handler_plugins
 
-        print "Connected to: " + str(self.http_address)
+        self.main_service_http_plugin.debug("Connected to: %s" % str(self.http_address))
 
         while 1:
             try:
                 request = self.retrieve_request()
             except main_service_http_exceptions.MainServiceHttpException:
-                print "Connection closed"
+                self.main_service_http_plugin.debug("Connection: %s closed" % str(self.http_address))
                 return
 
             try:
@@ -272,7 +272,7 @@ class HttpClientServiceTask:
 
                 # in case the connection is not meant to be kept alive
                 if not self.keep_alive(request):
-                    print "Connection closed"
+                    self.main_service_http_plugin.debug("Connection: %s closed" % str(self.http_address))
                     break
 
             except Exception, exception:
