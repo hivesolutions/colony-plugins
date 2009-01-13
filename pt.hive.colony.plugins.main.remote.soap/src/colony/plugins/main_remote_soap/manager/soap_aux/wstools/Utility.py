@@ -110,7 +110,6 @@ class Base:
     def __init__(self, module=__name__):
         self.logger = logging.getLogger('%s-%s(%x)' %(module, self.__class__, id(self)))
 
-
 class HTTPResponse:
     """
     Captures the information in an HTTP response message.
