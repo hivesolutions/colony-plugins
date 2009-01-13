@@ -53,7 +53,7 @@ class DocumentTest:
 class DocumentTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.plugin.logger.info("Setting up Document Manager Test Case...")
+        self.plugin.info("Setting up Document Manager Test Case...")
 
     def test_odt_to_txt(self):
         """
