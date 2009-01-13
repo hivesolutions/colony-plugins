@@ -127,7 +127,7 @@ class DistributionRegistryServer:
         # loads the registry with the given properties
         distribution_registry_plugin.load_registry({})
 
-        self.distribution_registry_server_plugin.logger.info("Loading the distributed registry")
+        self.distribution_registry_server_plugin.info("Loading the distributed registry")
 
         # retrieves the main remote plugin
         main_remote_manager_plugin = self.distribution_registry_server_plugin.main_remote_manager_plugin
@@ -150,7 +150,7 @@ class DistributionRegistryServer:
         # registers the entry
         distribution_registry_plugin.register_entry(ip_address, manager_uid, "default", endpoints, {})
 
-        self.distribution_registry_server_plugin.logger.info("Local entry registered")
+        self.distribution_registry_server_plugin.info("Local entry registered")
 
     def activate_server_slave(self, properties):
         # retrieves the registry client
