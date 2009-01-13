@@ -121,10 +121,10 @@ class PluginDownloader:
 
         # in case the plugin is available
         if plugin_descriptor:
-            self.plugin_downloader_plugin.logger.info("Plugin '%s' v%s found" % (plugin_identifier, plugin_version))
+            self.plugin_downloader_plugin.info("Plugin '%s' v%s found" % (plugin_identifier, plugin_version))
             return self.process_plugin_descriptor(plugin_descriptor)
         else:
-            self.plugin_downloader_plugin.logger.info("Plugin '%s' v%s not found" % (plugin_identifier, plugin_version))
+            self.plugin_downloader_plugin.info("Plugin '%s' v%s not found" % (plugin_identifier, plugin_version))
             return False
 
     def process_plugin_descriptor(self, plugin_descriptor):
@@ -167,7 +167,7 @@ class PluginDownloader:
 
         # in case the dependencies for the plugin were not found
         if not availability:
-            self.plugin_downloader_plugin.logger.info("Dependencies for plugin '%s' v%s not found" % (plugin_descriptor.name, plugin_descriptor.version))
+            self.plugin_downloader_plugin.info("Dependencies for plugin '%s' v%s not found" % (plugin_descriptor.name, plugin_descriptor.version))
             return False
 
         # deletes the main_class definition
@@ -327,7 +327,7 @@ class PluginDownloader:
 
         # iterates over all the repositories
         for repository_address in repository_addresses:
-            self.plugin_downloader_plugin.logger.info("Trying address %s (%s)" % (repository_address.name, repository_address.value))
+            self.plugin_downloader_plugin.info("Trying address %s (%s)" % (repository_address.name, repository_address.value))
             repository_address_value = repository_address.value
             file_address = repository_address_value + "/" + REPOSITORY_DESCRIPTOR_FILE
             file_buffer = downloader_plugin.get_download_package_stream(file_address)
@@ -355,7 +355,7 @@ class PluginDownloader:
 
         # iterates over all the repositories
         for repository_address in repository_addresses:
-            self.plugin_downloader_plugin.logger.info("Trying address %s (%s)" % (repository_address.name, repository_address.value))
+            self.plugin_downloader_plugin.info("Trying address %s (%s)" % (repository_address.name, repository_address.value))
             repository_address_value = repository_address.value
             file_address = repository_address_value + "/" + plugin_name + "/" + plugin_version + "/" + plugin_file_name
             file_buffer = downloader_plugin.get_download_package_stream(file_address)
@@ -383,7 +383,7 @@ class PluginDownloader:
 
         # iterates over all the repositories
         for repository_address in repository_addresses:
-            self.plugin_downloader_plugin.logger.info("Trying address %s (%s)" % (repository_address.name, repository_address.value))
+            self.plugin_downloader_plugin.info("Trying address %s (%s)" % (repository_address.name, repository_address.value))
             repository_address_value = repository_address.value
             file_address = repository_address_value + "/" + plugin_name + "/" + plugin_version + "/" + plugin_file_name
             result = downloader_plugin.download_package(file_address, PLUGINS_DIRECTORY)
@@ -412,7 +412,7 @@ class PluginDownloader:
 
         # iterates over all the repositories
         for repository_address in repository_addresses:
-            self.plugin_downloader_plugin.logger.info("Trying address %s (%s)" % (repository_address.name, repository_address.value))
+            self.plugin_downloader_plugin.info("Trying address %s (%s)" % (repository_address.name, repository_address.value))
             repository_address_value = repository_address.value
             file_address = repository_address_value + "/" + plugin_name + "/" + plugin_version + "/" + plugin_zip_file
             result = downloader_plugin.download_package(file_address, PLUGINS_DIRECTORY)

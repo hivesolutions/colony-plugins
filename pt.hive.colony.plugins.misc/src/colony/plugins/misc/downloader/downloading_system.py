@@ -87,10 +87,10 @@ class Downloader:
             file.close()
             return True
         except urllib2.HTTPError, error:
-            self.downloader_plugin.logger.error("Error downloading file: " + address + ", server error: " + str(error.code))
+            self.downloader_plugin.error("Error downloading file: " + address + ", server error: " + str(error.code))
             return False
         except urllib2.URLError, error:
-            self.downloader_plugin.logger.error("Error downloading file: " + address + ", server not available")
+            self.downloader_plugin.error("Error downloading file: " + address + ", server not available")
             return False
 
     def test_package(self, address):
@@ -103,9 +103,9 @@ class Downloader:
             file_contents = url.read()
             return file_contents
         except urllib2.HTTPError, error:
-            self.downloader_plugin.logger.error("Error downloading file: " + address + ", server error: " + str(error.code))
+            self.downloader_plugin.error("Error downloading file: " + address + ", server error: " + str(error.code))
         except urllib2.URLError, error:
-            self.downloader_plugin.logger.error("Error downloading file: " + address + ", server not available")
+            self.downloader_plugin.error("Error downloading file: " + address + ", server not available")
 
 def get_file_name_url(url):
     url_split = url.split("/")

@@ -125,18 +125,18 @@ class Autoloader:
             time.sleep(SLEEP_TIME)
 
     def load_module(self, search_directory, module_name):
-        self.autoloader_plugin.logger.info("Loading module " + module_name)
+        self.autoloader_plugin.info("Loading module " + module_name)
         if not search_directory in sys.path:
             sys.path.insert(0, search_directory)
         self.manager.load_plugins([module_name])
         self.manager.start_plugins()
 
     def unload_module(self, module_name):
-        self.autoloader_plugin.logger.info("Removing module " + module_name)
+        self.autoloader_plugin.info("Removing module " + module_name)
         self.manager.stop_module(module_name)
 
     def reload_module(self, module_name):
-        self.autoloader_plugin.logger.info("Reloading module " + module_name)
+        self.autoloader_plugin.info("Reloading module " + module_name)
         self.manager.stop_module(module_name)
         self.manager.load_plugins([module_name])
         self.manager.start_plugins()
