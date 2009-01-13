@@ -199,7 +199,7 @@ class MainServiceHttp:
             # inserts the new task descriptor into the http client thread pool
             self.http_client_thread_pool.insert_task(task_descriptor)
 
-            print "Number of threads in pool: " + str(self.http_client_thread_pool.current_number_threads)
+            self.main_service_http_plugin.debug("Number of threads in pool: %d" % self.http_client_thread_pool.current_number_threads)
 
     def stop_server(self):
         """
