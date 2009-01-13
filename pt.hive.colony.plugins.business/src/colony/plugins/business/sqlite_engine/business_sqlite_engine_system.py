@@ -959,4 +959,4 @@ class BusinessSqliteEngine:
         @param query_string_value: The query string value to be logged.
         """
 
-        self.business_sqlite_engine_plugin.manager.logger.debug("sql: " + query_string_value)
+        self.business_sqlite_engine_plugin.debug("sql: " + query_string_value)
