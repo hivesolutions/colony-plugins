@@ -92,7 +92,7 @@ class ResourceManagerPlugin(colony.plugins.plugin_system.Plugin):
 
     def is_resource_registered(self, resource_id):
         return self.resource_manager.is_resource_registered(resource_id)
-    
+
     def unregister_resource(self, resource_id):
         self.resource_manager.unregister_resource(resource_id)
 
