@@ -521,6 +521,9 @@ class Bonjour:
             select.select([file_descriptor], [], [])
             bonjour.DNSServiceProcessResult(service_reference)
 
+        # prints a log message about the service registration
+        self.bonjour_plugin.info("Service '%s' registered in domain: '%s', host: '%s', port: '%s' for bonjour" % (service_name, domain, host, port))
+
     def browse_bonjour_services(self, registration_type, domain, timeout):
         """
         Browses bonjour services during the given timeout time.
