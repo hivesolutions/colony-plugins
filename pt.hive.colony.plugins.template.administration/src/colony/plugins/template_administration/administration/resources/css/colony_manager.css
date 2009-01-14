@@ -460,6 +460,7 @@ div.jGrowl div.colony div.close {
 .listBoxElement:hover {
 	cursor: pointer;
 }
+
 .listBoxElementSelected {
 	background: #f4f0ec;
 }

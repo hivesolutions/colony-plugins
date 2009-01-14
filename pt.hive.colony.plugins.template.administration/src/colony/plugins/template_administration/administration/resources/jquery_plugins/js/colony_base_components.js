@@ -175,6 +175,23 @@
 
 		// selects the element
 		var $this = $(this);
+
+		// adds the colony list box class
+		$this.addClass("colony-list-box");
+
+		// must iterate throught all the elements in the data store
+		// and add them to the list box
+
+		// elements should be like this
+		// <div class="listBoxElement">Type</div>
+
+		$this.append("<div class='colony-list-box-element'>Type</div>");
+
+		// must install a new element handler
+
+		// must install an element removed handler
+
+		// must install an element modified handler
 	}
 
 	/**
