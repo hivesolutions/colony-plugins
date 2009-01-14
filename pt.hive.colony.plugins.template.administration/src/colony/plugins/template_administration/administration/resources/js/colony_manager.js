@@ -129,6 +129,8 @@ $(document).ready(function() {
 
 	$("#testBox").colonyDataStoreAddElement("rabetoasdn", "maadadtias");
 
+	alert($("#testBox").colonyDataStoreGetElement("rabetoasdn"));
+	
 	console.debug(dataStore);
 
 	console.debug(dataStoreAux);

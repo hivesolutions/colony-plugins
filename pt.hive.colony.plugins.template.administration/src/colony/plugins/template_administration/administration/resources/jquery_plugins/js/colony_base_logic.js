@@ -132,9 +132,49 @@
 	}
 
 	$.fn.colonyDataStoreRemoveElement = function(elementName, options) {
+		// selects the element
+		var $this = $(this);
+
+		// gets the data store information from the parent element
+		var dataStoreInformation = getDataStoreInformation($this, options);
+
+		// retrieves the data proxy name
+		var dataProxyName = dataStoreInformation["dataProxyName"];
+
+		// removes the element from the data proxy
+		$this.colonyMemoryDataProxyRemoveElement(elementName, {
+					"name" : dataProxyName
+				});
+
+		// retrieves the element removed handlers
+		var elementRemovedHandlers = dataStoreInformation["elementRemovedHandlers"];
+
+		// iterates over all the element removed handlers
+		for (var i = 0; i < elementRemovedHandlers.length; i++) {
+			// retrieves the element removed handler
+			elementRemovedHandler = elementRemovedHandlers[i];
+
+			// calls the element removed handler
+			elementRemovedHandler();
+		}
 	}
 
 	$.fn.colonyDataStoreGetElement = function(elementName, options) {
+		// selects the element
+		var $this = $(this);
+
+		// gets the data store information from the parent element
+		var dataStoreInformation = getDataStoreInformation($this, options);
+
+		// retrieves the data proxy name
+		var dataProxyName = dataStoreInformation["dataProxyName"];
+
+		// retrieves the element from the data proxy
+		var elementValue = $this.colonyMemoryDataProxyGetElement(elementName, {
+					"name" : dataProxyName
+				});
+
+		return elementValue;
 	}
 
 	function getDataStoreInformation($object, options) {
@@ -216,10 +256,43 @@
 				options);
 
 		// retrieves the elements map
-		memoryDataProxyInformationElements = memoryDataProxyInformation["elements"];
+		var memoryDataProxyInformationElements = memoryDataProxyInformation["elements"];
 
 		// sets the element value in the elements map
 		memoryDataProxyInformationElements[elementName] = elementValue
+	}
+
+	$.fn.colonyMemoryDataProxyRemoveElement = function(elementName, options) {
+		// selects the element
+		var $this = $(this);
+
+		// gets the memory data proxy information from the parent element
+		var memoryDataProxyInformation = getMemoryDataProxyInformation($this,
+				options);
+
+		// retrieves the elements map
+		var memoryDataProxyInformationElements = memoryDataProxyInformation["elements"];
+
+		// deletes the element value in the elements map
+		delete memoryDataProxyInformationElements[elementName]
+	}
+
+	$.fn.colonyMemoryDataProxyGetElement = function(elementName, options) {
+		// selects the element
+		var $this = $(this);
+
+		// gets the memory data proxy information from the parent element
+		var memoryDataProxyInformation = getMemoryDataProxyInformation($this,
+				options);
+
+		// retrieves the elements map
+		var memoryDataProxyInformationElements = memoryDataProxyInformation["elements"];
+
+		// retrieves the element value in the elements map
+		var elementValue = memoryDataProxyInformationElements[elementName];
+
+		// returns the element value
+		return elementValue;
 	}
 
 	function getMemoryDataProxyInformation($object, options) {

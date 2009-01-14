@@ -173,6 +173,8 @@
 		// completes the options appending the defaults and the argument options
 		var completeOptions = $.extend({}, $.fn.colonyListBox.defaults, options);
 
+		// selects the element
+		var $this = $(this);
 	}
 
 	/**
