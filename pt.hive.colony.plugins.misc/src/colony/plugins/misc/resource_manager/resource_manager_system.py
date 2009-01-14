@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import resource_manager_parser
 
 DESCRIPTION_FILE_PATH = "/misc/resource_manager/resources/base_resources.xml"
+""" The description file path """
 
 class ResourceManager:
     """
@@ -47,19 +48,19 @@ class ResourceManager:
     """
 
     parent_plugin = None
-    """ Reference to the plugin that owns this object instance. """
+    """ Reference to the plugin that owns this object instance """
 
     resource_id_resource_map = {}
-    """ Map associating resource ids with resources. """
+    """ Map associating resource ids with resources """
 
     resource_name_resources_list_map = {}
-    """ Map associating resource name with the correspondent resources. """ 
+    """ Map associating resource name with the correspondent resources """ 
 
     resource_type_resources_list_map = {}
-    """ Map associating resource type with the correspondent resources. """
+    """ Map associating resource type with the correspondent resources """
 
     resource_namespace_resources_list_map = {}
-    """ Map associating namespace with the correspondent resources. """
+    """ Map associating namespace with the correspondent resources """
 
     def __init__(self, parent_plugin):
         """
@@ -199,9 +200,20 @@ class ResourceManager:
 
         if resource_id in self.resource_id_resource_map:
             return self.resource_id_resource_map[resource_id]
-    
-    #@todo: comment this
+
     def get_resources(self, resource_namespace = None, resource_name = None, resource_type = None):
+        """
+        Retrieves the resources for the given resource namespace, resource name and resource type.
+        The given values are not mandatory and work as a filter.
+        
+        @type resource_namespace: String
+        @param resource_namespace: The namespace of the resource to be retrieved.
+        @type resource_name: String
+        @param resource_name: The name of the resource to be retrieved.
+        @type resource_type: String
+        @param resource_type: The type of the resource to be retrieved.
+        """
+
         # none
         if resource_namespace == None and resource_name == None and resource_type == None:
             return self.resource_id_resource_map.values()
@@ -247,9 +259,9 @@ class ResourceManager:
 
 class Resource:
     """
-    Describes a miscellaneous resource.
+    Class to describe a miscellaneous resource.
     """
-    
+
     #@todo: comment this
     def __init__(self, namespace, name, type, data):
         self.namespace = Namespace(namespace)
@@ -261,30 +273,30 @@ class Resource:
     #@todo: comment this
     def get_namespace(self):
         return self.namespace
-    
+
     #@todo: comment this
     def get_name(self):
         return self.name
-    
+
     #@todo: comment this
     def get_type(self):
         return self.type
-    
+
     #@todo: comment this
     def get_id(self):
         return self.id
-    
+
     #@todo: comment this
     def get_data(self):
         return self.data
-    
+
     #@todo: comment this
     def set_data(self, data):
         self.data = data
-    
+
 class Namespace:
     """
-    Describes a neutral structure for a namespace.
+    Class to describe a neutral structure for a namespace.
     """
 
     list_value = []
