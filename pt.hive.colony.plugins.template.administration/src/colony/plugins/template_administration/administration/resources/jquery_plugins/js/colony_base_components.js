@@ -285,15 +285,28 @@
 		// creates a colony list box in the main list element
 		mainList.colonyListBox(dataStore);
 
+		mainList.bind("selectedElementChanged", function(event, value) {
+					console.debug(value);
+				});
+
 		// retrieves the rest of the list children
 		var childrenList = $this.find("div[id^=list]");
 
-		childrenList.each(function() {
+		// retrieves the number of available levels
+		var numberLevels = childrenList.size;
+
+		// sets the number of levels of the element
+		$this.data("numberLevels", numberLevels)
+
+		// sets the number of levels of the element
+		$this.data("currentLevel", 0)
+
+		/*childrenList.each(function() {
 					var elementId = $(this).attr("id");
 					var newElementId = elementId + thisId;
 					$(this).attr("id", newElementId);
 					$(this).colonyListBox(dataStore);
-				});
+				});*/
 	}
 
 	/**
