@@ -123,9 +123,12 @@ $(document).ready(function() {
 
 	// adds two elments into the data store
 	$("#testBox").colonyDataStoreAddElement("joao", "CEO");
-	$("#testBox").colonyDataStoreAddElement("tiago", "vice-CEO");
+	$("#testBox").colonyDataStoreAddElement("tiago", "Vice-CEO");
+	$("#testBox").colonyDataStoreAddElement("tobias", "Arrumador");
 
-	$("#testBox").colonyDataStoreRemoveElement("tiago");
+	$("#testDiv").bind("selectedElementChanged", function(event, value) {
+		console.debug(value);
+	});
 });
 
 var tabsMap = {};

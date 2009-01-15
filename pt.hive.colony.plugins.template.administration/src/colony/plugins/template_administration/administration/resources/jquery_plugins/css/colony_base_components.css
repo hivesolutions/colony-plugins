@@ -111,3 +111,12 @@
 .colony-list-box-element:hover {
 	cursor: pointer;
 }
+
+.colony-list-box-element-selected {
+	background: #f4f0ec;
+}
+
+.colony-list-box-element-selected:hover {
+	background: #f4f0ec;
+	cursor: pointer;
+}

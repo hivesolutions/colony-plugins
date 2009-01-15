@@ -96,7 +96,7 @@ for css_file in css_files:
 
 <span id="testBox"></span>
 
-<div id="testDiv"></div>
+<div id="testDiv" style="width:200px;"></div>
 
 <div id="jgrowlNotifier"></div>
 

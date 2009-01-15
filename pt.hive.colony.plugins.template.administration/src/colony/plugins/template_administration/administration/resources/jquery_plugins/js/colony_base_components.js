@@ -198,6 +198,24 @@
 			$this.append(divElement);
 		}
 
+		$("#" + $this.attr("id") + " > .colony-list-box-element").live("click",
+				function() {
+					// retrieves all the list box elements
+					var listBoxElements = $this.children(".colony-list-box-element");
+
+					// iterates over all the list box elements
+					listBoxElements.each(function() {
+						// unselects the box element by removing the colony-list-box-element-selected class
+						$(this).removeClass("colony-list-box-element-selected");
+					});
+
+					// selects the box element by adding the colony-list-box-element-selected class
+					$(this).addClass("colony-list-box-element-selected");
+
+					// triggers the selected element changed event
+					$this.trigger("selectedElementChanged", [$(this)]);
+				});
+
 		$dataStoreThis.colonyDataStoreAddElementAddedHandler(
 				function(elementName, elementValue) {
 					// creates a new div element using the element value
