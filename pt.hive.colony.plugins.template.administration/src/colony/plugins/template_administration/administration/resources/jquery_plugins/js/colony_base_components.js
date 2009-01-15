@@ -27,7 +27,7 @@
 	/**
 	 * Creates a new colony text box in the given input element.
 	 * 
-	 * @param {Dicitonary}
+	 * @param {Map}
 	 *            options The options for the colony text box creation.
 	 */
 	$.fn.colonyTextBox = function(options) {
@@ -77,7 +77,7 @@
 	 * 
 	 * @param {String}
 	 *            text The text for the colony button.
-	 * @param {Dicitonary}
+	 * @param {Map}
 	 *            options The options for the colony button creation.
 	 */
 	$.fn.colonyButton = function(text, options) {
@@ -166,7 +166,7 @@
 	 * @param {ColonyDataStore}
 	 *            dataStore The colony data store for the colony list box
 	 *            creation.
-	 * @param {Dicitonary}
+	 * @param {Map}
 	 *            options The options for the colony list box creation.
 	 */
 	$.fn.colonyListBox = function(dataStore, options) {
@@ -244,7 +244,69 @@
 	 * 
 	 * @type Map
 	 */
-	$.fn.colonyButton.defaults = {
+	$.fn.colonyListBox.defaults = {
+		size : "normal"
+	};
+
+	/**
+	 * Creates a new colony multi level list box in the given div element.
+	 * 
+	 * @param {ColonyDataStore}
+	 *            dataStore The colony data store for the colony multi level
+	 *            list box creation.
+	 * @param {Map}
+	 *            options The options for the colony multi level list box
+	 *            creation.
+	 */
+	$.fn.colonyMultiLevelListBox = function(dataStore, options) {
+		// completes the options appending the defaults and the argument options
+		var completeOptions = $.extend({},
+				$.fn.colonyMultiLevelListBox.defaults, options);
+
+		// selects the element
+		var $this = $(this);
+
+		// retrieves the identifier of the current selected element
+		var thisId = $this.attr("id");
+
+		// adds the colony list box class
+		$this.addClass("colony-multi-level-list-box");
+
+		// creates the header element
+		var headerElement = "<div class='colony-multi-level-list-box-header'>header</div>";
+
+		// preprends the header element
+		$this.prepend(headerElement);
+
+		// creates the new main list id
+		var newMainListId = "mainList" + thisId;
+
+		// retrieves the main list element
+		var mainList = $this.find("#mainList");
+
+		// changes the main list id
+		mainList.attr("id", newMainListId);
+
+		// creates a colony list box in the main list element
+		mainList.colonyListBox(dataStore);
+
+		// retrieves the rest of the list children
+		var childrenList = $this.find("div[id^=list]");
+
+		childrenList.each(function() {
+					var elementId = $(this).attr("id");
+					var newElementId = elementId + thisId;
+					$(this).attr("id", newElementId);
+					$(this).colonyListBox(dataStore);
+				});
+	}
+
+	/**
+	 * The default options for the colony multi level list box.
+	 * 
+	 * @type Map
+	 */
+	$.fn.colonyMultiLevelListBox.defaults = {
 		size : "normal"
 	};
 })(jQuery);

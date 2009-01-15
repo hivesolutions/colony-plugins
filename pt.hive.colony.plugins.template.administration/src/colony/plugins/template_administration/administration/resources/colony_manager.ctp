@@ -96,7 +96,23 @@ for css_file in css_files:
 
 <span id="testBox"></span>
 
-<div id="testDiv" style="width:200px;"></div>
+<div id="testListBox" style="width:200px;"></div>
+
+<div id="testMultiLevelListBox">
+	<div id="mainList"></div>
+	<div id="list1"></div>
+	<div id="list2"></div>
+</div>
+
+<div id="testMultiLevelListBox2">
+	<table>
+		<tr>
+			<td><div id="mainList"></div></td>
+			<td><div id="list1"></div></td>
+			<td><div id="list2"></div></td>
+		</tr>
+	</table>
+</div>
 
 <div id="jgrowlNotifier"></div>
 
