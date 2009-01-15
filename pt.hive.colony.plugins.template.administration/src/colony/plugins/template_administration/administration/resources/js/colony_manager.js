@@ -116,26 +116,16 @@ $(document).ready(function() {
 			});
 
 	// creates a new data store
-	var dataStore = $("#testBox").colonyDataStore({
-				"dataProxyName" : "tobias",
-				"elementAdded" : function() {
-					alert("adicionado");
-				}
-			});
+	var dataStore = $("#testBox").colonyDataStore({});
 
-	var dataStoreAux = $("#testBox").data("DataStore");
-
-	$("#testBox").colonyDataStoreAddElement("rabeton", "matias");
-
-	$("#testBox").colonyDataStoreAddElement("rabetoasdn", "maadadtias");
-
-	alert($("#testBox").colonyDataStoreGetElement("rabetoasdn"));
-
-	console.debug(dataStore);
-
-	console.debug(dataStoreAux);
-
+	// creates the test list box
 	$("#testDiv").colonyListBox(dataStore);
+
+	// adds two elments into the data store
+	$("#testBox").colonyDataStoreAddElement("joao", "CEO");
+	$("#testBox").colonyDataStoreAddElement("tiago", "vice-CEO");
+
+	$("#testBox").colonyDataStoreRemoveElement("tiago");
 });
 
 var tabsMap = {};

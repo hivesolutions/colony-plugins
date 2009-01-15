@@ -176,20 +176,47 @@
 		// selects the element
 		var $this = $(this);
 
+		// retrieves the data store element
+		var $dataStoreThis = dataStore["element"];
+
 		// adds the colony list box class
 		$this.addClass("colony-list-box");
 
-		// must iterate throught all the elements in the data store
-		// and add them to the list box
+		// retrieves all the data store elements
+		var dataStoreAllElements = $dataStoreThis.colonyDataStoreGetAllElements();
 
-		// elements should be like this
-		// <div class="listBoxElement">Type</div>
+		// iterates throught all the data store elements
+		for (elementKey in dataStoreAllElements) {
+			// retrieves the data store element
+			var dataStoreElement = dataStoreAllElements[elementKey];
 
-		$this.append("<div class='colony-list-box-element'>Type</div>");
+			// creates a new div element using the datastore element
+			var divElement = "<div class='colony-list-box-element'>"
+					+ dataStoreElement + "</div>";
 
-		// must install a new element handler
+			// appends the div element to the colony list box
+			$this.append(divElement);
+		}
 
-		// must install an element removed handler
+		$dataStoreThis.colonyDataStoreAddElementAddedHandler(
+				function(elementName, elementValue) {
+					// creates a new div element using the element value
+					var divElement = "<div id='" + elementName
+							+ "' class='colony-list-box-element'>"
+							+ elementValue + "</div>";
+
+					// appends the div element to the colony list box
+					$this.append(divElement);
+				});
+
+		$dataStoreThis.colonyDataStoreAddElementRemovedHandler(
+				function(elementName) {
+					// retrieves the child of the parent for the element name
+					elementChild = $this.children("#" + elementName);
+
+					// removes the element from the the colony list box
+					elementChild.remove();
+				});
 
 		// must install an element modified handler
 	}
