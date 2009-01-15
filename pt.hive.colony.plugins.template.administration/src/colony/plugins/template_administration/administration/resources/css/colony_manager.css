@@ -34,6 +34,7 @@ html { /* forces the vertical scroll bar to exist */
 
 /* The body element */
 body {
+	font-family: "Century Gothic", "Gill Sans Light", "Gill Sans", "Trebuchet MS", Arial, sans-serif;
 	background: #fdfdfd none repeat scroll 0 0;
 	margin-left: 80px;
 	margin-right: 80px;

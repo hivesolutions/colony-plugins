@@ -131,7 +131,6 @@ $(document).ready(function() {
 	});
 
 	$("#testMultiLevelListBox").colonyMultiLevelListBox(dataStore);
-	$("#testMultiLevelListBox2").colonyMultiLevelListBox(dataStore);
 });
 
 var tabsMap = {};

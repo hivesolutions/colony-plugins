@@ -99,12 +99,6 @@ for css_file in css_files:
 <div id="testListBox" style="width:200px;"></div>
 
 <div id="testMultiLevelListBox">
-	<div id="mainList"></div>
-	<div id="list1"></div>
-	<div id="list2"></div>
-</div>
-
-<div id="testMultiLevelListBox2">
 	<table>
 		<tr>
 			<td><div id="mainList"></div></td>
