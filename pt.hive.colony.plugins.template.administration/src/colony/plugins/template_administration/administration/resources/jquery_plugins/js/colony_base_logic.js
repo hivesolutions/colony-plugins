@@ -42,13 +42,7 @@ DATA_PROXY_NAME_VALUE = "dataProxyName";
 		var $this = $(this);
 
 		// creates the data store information map
-		var dataStoreInformation = {};
-
-		// starts the list of element added handlers
-		dataStoreInformation["elementAddedHandlers"] = [];
-
-		// starts the list of element removed handlers
-		dataStoreInformation["elementRemovedHandlers"] = [];
+		var dataStoreInformation = new ColonyDataStore($this);
 
 		// in case the dataProxy property is defined
 		if (completeOptions["dataProxy"]) {
@@ -70,8 +64,8 @@ DATA_PROXY_NAME_VALUE = "dataProxyName";
 					// creates a new memory data proxy
 					var memoryDataProxy = $this.colonyMemoryDataProxy(colonyMemoryDataProxyOptions);
 
-					dataStoreInformation["dataProxy"] = memoryDataProxy;
-					dataStoreInformation[DATA_PROXY_NAME_VALUE] = memoryDataProxy["name"];
+					dataStoreInformation.dataProxy = memoryDataProxy;
+					dataStoreInformation.dataProxyName = memoryDataProxy["name"];
 					break;
 			}
 		}
@@ -94,10 +88,7 @@ DATA_PROXY_NAME_VALUE = "dataProxyName";
 			var dataStoreName = $.fn.colonyDataStore.DEFAULT_NAME;
 
 		// sets the data store name in the data store
-		dataStoreInformation["name"] = dataStoreName;
-
-		// sets the data store element in the data store
-		dataStoreInformation["element"] = $this;
+		dataStoreInformation.name = dataStoreName;
 
 		// sets the data in the parent element
 		$this.data(dataStoreName, dataStoreInformation);
@@ -106,58 +97,51 @@ DATA_PROXY_NAME_VALUE = "dataProxyName";
 		return dataStoreInformation;
 	}
 
-	$.fn.colonyDataStoreSetDataProxy = function(elementName, elementValue, options) {
+	ColonyDataStore = function(element) {
+		// sets the data store element in the data store
+		this.element = element;
+
+		// starts the list of element added handlers
+		this.elementAddedHandlers = [];
+
+		// starts the list of element removed handlers
+		this.elementRemovedHandlers = [];
 	}
 
-	$.fn.colonyDataStoreAddElementAddedHandler = function(handler, options) {
-		// selects the element
-		var $this = $(this);
+	ColonyDataStore.prototype.setDataProxy = function(dataProxy) {
+	}
 
-		// gets the data store information from the parent element
-		var dataStoreInformation = getDataStoreInformation($this, options);
-
+	ColonyDataStore.prototype.addElementAddedHandler = function(handler) {
 		// retrieves the element added handlers
-		var elementAddedHandlers = dataStoreInformation["elementAddedHandlers"];
+		var elementAddedHandlers = this.elementAddedHandlers;
 
+		// adds the new handler to the list of element added handlers
 		elementAddedHandlers.push(handler);
 	}
 
-	$.fn.colonyDataStoreRemoveElementAddedHandler = function(handler, options) {
+	ColonyDataStore.prototype.removeElementAddedHandler = function(handler) {
 	}
 
-	$.fn.colonyDataStoreAddElementRemovedHandler = function(handler, options) {
-		// selects the element
-		var $this = $(this);
-
-		// gets the data store information from the parent element
-		var dataStoreInformation = getDataStoreInformation($this, options);
-
+	ColonyDataStore.prototype.addElementRemovedHandler = function(handler) {
 		// retrieves the element removed handlers
-		var elementRemovedHandlers = dataStoreInformation["elementRemovedHandlers"];
+		var elementRemovedHandlers = this.elementRemovedHandlers;
 
+		// adds the new handler to the list of element removed handlers
 		elementRemovedHandlers.push(handler);
 	}
 
-	$.fn.colonyDataStoreRemoveElementRemovedHandler = function(handler, options) {
+	ColonyDataStore.prototype.removeElementRemovedHandler = function(handler) {
 	}
 
-	$.fn.colonyDataStoreAddElement = function(elementName, elementValue, options) {
-		// selects the element
-		var $this = $(this);
-
-		// gets the data store information from the parent element
-		var dataStoreInformation = getDataStoreInformation($this, options);
-
-		// retrieves the data proxy name
-		var dataProxyName = dataStoreInformation[DATA_PROXY_NAME_VALUE];
+	ColonyDataStore.prototype.addElement = function(elementName, elementValue) {
+		// retrieves the data proxy
+		var dataProxy = this.dataProxy;
 
 		// adds the element to the data proxy
-		$this.colonyMemoryDataProxyAddElement(elementName, elementValue, {
-					"name" : dataProxyName
-				});
+		dataProxy.addElement(elementName, elementValue);
 
 		// retrieves the element added handlers
-		var elementAddedHandlers = dataStoreInformation["elementAddedHandlers"];
+		var elementAddedHandlers = this.elementAddedHandlers;
 
 		// iterates over all the element added handlers
 		for (var i = 0; i < elementAddedHandlers.length; i++) {
@@ -169,23 +153,15 @@ DATA_PROXY_NAME_VALUE = "dataProxyName";
 		}
 	}
 
-	$.fn.colonyDataStoreRemoveElement = function(elementName, options) {
-		// selects the element
-		var $this = $(this);
-
-		// gets the data store information from the parent element
-		var dataStoreInformation = getDataStoreInformation($this, options);
-
-		// retrieves the data proxy name
-		var dataProxyName = dataStoreInformation[DATA_PROXY_NAME_VALUE];
+	ColonyDataStore.prototype.removeElement = function(elementName) {
+		// retrieves the data proxy
+		var dataProxy = this.dataProxy;
 
 		// removes the element from the data proxy
-		$this.colonyMemoryDataProxyRemoveElement(elementName, {
-					"name" : dataProxyName
-				});
+		dataProxy.removeElement(elementName);
 
 		// retrieves the element removed handlers
-		var elementRemovedHandlers = dataStoreInformation["elementRemovedHandlers"];
+		var elementRemovedHandlers = this.elementRemovedHandlers;
 
 		// iterates over all the element removed handlers
 		for (var i = 0; i < elementRemovedHandlers.length; i++) {
@@ -197,56 +173,24 @@ DATA_PROXY_NAME_VALUE = "dataProxyName";
 		}
 	}
 
-	$.fn.colonyDataStoreGetElement = function(elementName, options) {
-		// selects the element
-		var $this = $(this);
-
-		// gets the data store information from the parent element
-		var dataStoreInformation = getDataStoreInformation($this, options);
-
-		// retrieves the data proxy name
-		var dataProxyName = dataStoreInformation[DATA_PROXY_NAME_VALUE];
+	ColonyDataStore.prototype.getElement = function(elementName) {
+		// retrieves the data proxy
+		var dataProxy = this.dataProxy;
 
 		// retrieves the element from the data proxy
-		var elementValue = $this.colonyMemoryDataProxyGetElement(elementName, {
-					"name" : dataProxyName
-				});
+		var elementValue = dataProxy.getElement(elementName);
 
 		return elementValue;
 	}
 
-	$.fn.colonyDataStoreGetAllElements = function(options) {
-		// selects the element
-		var $this = $(this);
-
-		// gets the data store information from the parent element
-		var dataStoreInformation = getDataStoreInformation($this, options);
-
-		// retrieves the data proxy name
-		var dataProxyName = dataStoreInformation[DATA_PROXY_NAME_VALUE];
+	ColonyDataStore.prototype.getAllElements = function() {
+		// retrieves the data proxy
+		var dataProxy = this.dataProxy;
 
 		// retrieves all the elements from the data proxy
-		var allElements = $this.colonyMemoryDataProxyGetAllElements({
-					"name" : dataProxyName
-				});
+		var allElements = dataProxy.getAllElements();
 
 		return allElements;
-	}
-
-	function getDataStoreInformation($object, options) {
-		// in case the name property is defined
-		if (options != undefined && options["name"])
-			// retrieves the name property
-			var dataStoreName = options["name"];
-		else
-			// sets the default name in the name property
-			var dataStoreName = $.fn.colonyDataStore.DEFAULT_NAME;
-
-		// retrieves the data store information map (data store)
-		var dataStoreInformation = $object.data("DataStore");
-
-		// returns the data store information map (data store)
-		return dataStoreInformation;
 	}
 
 	/**
@@ -280,7 +224,7 @@ DATA_PROXY_NAME_VALUE = "dataProxyName";
 		var $this = $(this);
 
 		// creates the memory data proxy information map
-		var memoryDataProxyInformation = {};
+		var memoryDataProxyInformation = new ColonyMemoryDataProxy($this);
 
 		// in case the name property is defined
 		if (completeOptions["name"])
@@ -290,11 +234,8 @@ DATA_PROXY_NAME_VALUE = "dataProxyName";
 			// sets the default name in the name property
 			var memoryDataProxyName = $.fn.colonyMemoryDataProxy.DEFAULT_NAME;
 
-		// sets the memory data proxy elements map as empty
-		memoryDataProxyInformation["elements"] = {};
-
 		// sets the memory data proxy name in the memory data proxy
-		memoryDataProxyInformation["name"] = memoryDataProxyName;
+		memoryDataProxyInformation.name = memoryDataProxyName;
 
 		// sets the data in the parent element
 		$this.data(memoryDataProxyName, memoryDataProxyInformation);
@@ -303,46 +244,33 @@ DATA_PROXY_NAME_VALUE = "dataProxyName";
 		return memoryDataProxyInformation;
 	}
 
-	$.fn.colonyMemoryDataProxyAddElement = function(elementName, elementValue, options) {
-		// selects the element
-		var $this = $(this);
+	ColonyMemoryDataProxy = function(element) {
+		// sets the memory data proxy element in the memory data proxy
+		this.element = element;
 
-		// gets the memory data proxy information from the parent element
-		var memoryDataProxyInformation = getMemoryDataProxyInformation($this,
-				options);
+		// sets the memory data proxy elements map as empty
+		this.elements = {};
+	}
 
+	ColonyMemoryDataProxy.prototype.addElement = function(elementName, elementValue) {
 		// retrieves the elements map
-		var memoryDataProxyInformationElements = memoryDataProxyInformation["elements"];
+		var memoryDataProxyInformationElements = this.elements;
 
 		// sets the element value in the elements map
 		memoryDataProxyInformationElements[elementName] = elementValue
 	}
 
-	$.fn.colonyMemoryDataProxyRemoveElement = function(elementName, options) {
-		// selects the element
-		var $this = $(this);
-
-		// gets the memory data proxy information from the parent element
-		var memoryDataProxyInformation = getMemoryDataProxyInformation($this,
-				options);
-
+	ColonyMemoryDataProxy.prototype.removeElement = function(elementName) {
 		// retrieves the elements map
-		var memoryDataProxyInformationElements = memoryDataProxyInformation["elements"];
+		var memoryDataProxyInformationElements = this.elements;
 
 		// deletes the element value in the elements map
 		delete memoryDataProxyInformationElements[elementName]
 	}
 
-	$.fn.colonyMemoryDataProxyGetElement = function(elementName, options) {
-		// selects the element
-		var $this = $(this);
-
-		// gets the memory data proxy information from the parent element
-		var memoryDataProxyInformation = getMemoryDataProxyInformation($this,
-				options);
-
+	ColonyMemoryDataProxy.prototype.getElement = function(elementName) {
 		// retrieves the elements map
-		var memoryDataProxyInformationElements = memoryDataProxyInformation["elements"];
+		var memoryDataProxyInformationElements = this.elements;
 
 		// retrieves the element value in the elements map
 		var elementValue = memoryDataProxyInformationElements[elementName];
@@ -351,35 +279,12 @@ DATA_PROXY_NAME_VALUE = "dataProxyName";
 		return elementValue;
 	}
 
-	$.fn.colonyMemoryDataProxyGetAllElements = function(options) {
-		// selects the element
-		var $this = $(this);
-
-		// gets the memory data proxy information from the parent element
-		var memoryDataProxyInformation = getMemoryDataProxyInformation($this,
-				options);
-
+	ColonyMemoryDataProxy.prototype.getAllElements = function() {
 		// retrieves the elements map
-		var memoryDataProxyInformationElements = memoryDataProxyInformation["elements"];
+		var memoryDataProxyInformationElements = this.elements;
 
 		// returns the elements map
 		return memoryDataProxyInformationElements;
-	}
-
-	function getMemoryDataProxyInformation($object, options) {
-		// in case the name property is defined
-		if (options != undefined && options["name"])
-			// retrieves the name property
-			var memoryDataProxyName = options["name"];
-		else
-			// sets the default name in the name property
-			var memoryDataProxyName = $.fn.colonyMemoryDataProxy.DEFAULT_NAME;
-
-		// retrieves the memory data proxy information map (memory data proxy)
-		var memoryDataProxyInformation = $object.data(memoryDataProxyName);
-
-		// returns the memory data proxy information map (memory data proxy)
-		return memoryDataProxyInformation;
 	}
 
 	/**

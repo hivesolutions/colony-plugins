@@ -122,9 +122,9 @@ $(document).ready(function() {
 	$("#testListBox").colonyListBox(dataStore);
 
 	// adds two elments into the data store
-	$("#testListBox").colonyDataStoreAddElement("joao", "CEO");
-	$("#testListBox").colonyDataStoreAddElement("tiago", "Vice-CEO");
-	$("#testListBox").colonyDataStoreAddElement("tobias", "Arrumador");
+	dataStore.addElement("joao", "CEO");
+	dataStore.addElement("tiago", "Vice-CEO");
+	dataStore.addElement("tobias", "Arrumador");
 
 	$("#testListBox").bind("selectedElementChanged", function(event, value) {
 		console.debug(value);

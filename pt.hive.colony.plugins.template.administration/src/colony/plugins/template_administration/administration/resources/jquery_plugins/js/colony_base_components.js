@@ -176,14 +176,11 @@
 		// selects the element
 		var $this = $(this);
 
-		// retrieves the data store element
-		var $dataStoreThis = dataStore["element"];
-
 		// adds the colony list box class
 		$this.addClass("colony-list-box");
 
 		// retrieves all the data store elements
-		var dataStoreAllElements = $dataStoreThis.colonyDataStoreGetAllElements();
+		var dataStoreAllElements = dataStore.getAllElements();
 
 		// iterates throught all the data store elements
 		for (elementKey in dataStoreAllElements) {
@@ -216,8 +213,7 @@
 					$this.trigger("selectedElementChanged", [$(this)]);
 				});
 
-		$dataStoreThis.colonyDataStoreAddElementAddedHandler(
-				function(elementName, elementValue) {
+		dataStore.addElementAddedHandler(function(elementName, elementValue) {
 					// creates a new div element using the element value
 					var divElement = "<div id='" + elementName
 							+ "' class='colony-list-box-element'>"
@@ -227,8 +223,7 @@
 					$this.append(divElement);
 				});
 
-		$dataStoreThis.colonyDataStoreAddElementRemovedHandler(
-				function(elementName) {
+		dataStore.addElementRemovedHandler(function(elementName) {
 					// retrieves the child of the parent for the element name
 					elementChild = $this.children("#" + elementName);
 
