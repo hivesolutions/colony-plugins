@@ -322,6 +322,53 @@ DATA_PROXY_NAME_VALUE = "dataProxyName";
 		return memoryDataProxyInformationElements;
 	}
 
+	ColonyMemoryDataProxyElement = function(elementName, elementValue) {
+		this.name = elementName;
+		this.value = elementValue;
+		this.parents = [];
+		this.childs = [];
+	}
+
+	ColonyMemoryDataProxyElement.prototype.getName = function() {
+		// returns the element name
+		return this.name;
+	}
+
+	ColonyMemoryDataProxyElement.prototype.getValue = function() {
+		// returns the element value
+		return this.value;
+	}
+
+	ColonyMemoryDataProxyElement.prototype.addParent = function(parentElement) {
+		// adds the parent element to the list of parents
+		this.parents.push(parentElement);
+	}
+
+	ColonyMemoryDataProxyElement.prototype.removeParent = function(parentElement) {
+		// retrieves the parent element index from the list of parent elements
+		var parentIndex = this.parents.indexOf(parentElement);
+
+		// in case the parent element exists
+		if(parentIndex != -1)
+			// removes the parent element from the list of parent elements
+			this.parents.splice(parentIndex, parentIndex);
+	}
+
+	ColonyMemoryDataProxyElement.prototype.addChild = function(childElement) {
+		// adds the child element to the list of childs
+		this.childs.push(childElement);
+	}
+
+	ColonyMemoryDataProxyElement.prototype.removeChild = function(childElement) {
+		// retrieves the child element index from the list of child elements
+		var childIndex = this.childs.indexOf(childElement);
+
+		// in case the child element exists
+		if(childIndex != -1)
+			// removes the child element from the list of child elements
+			this.childs.splice(childIndex, childIndex);
+	}
+
 	/**
 	 * The default options for the colony memory data proxy.
 	 * 
