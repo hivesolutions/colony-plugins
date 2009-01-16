@@ -201,7 +201,7 @@ function removeTab(tabDivId) {
 	var tabHeader = $(firstUiTabNav.children()[index]);
 
 	// removes the tab header
-	tabHeader.remove()
+	tabHeader.remove();
 
 	// retrieves the first ui tab nav data
 	var firstUiTabNavData = $.data(uiTabsNavs[0], "tabs");
