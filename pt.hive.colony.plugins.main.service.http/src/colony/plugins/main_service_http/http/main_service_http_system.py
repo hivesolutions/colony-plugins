@@ -241,6 +241,7 @@ class HttpClientServiceTask:
         # retrieves the http service handler plugins
         http_service_handler_plugins = self.main_service_http_plugin.http_service_handler_plugins
 
+        # prints debug message about connection
         self.main_service_http_plugin.debug("Connected to: %s" % str(self.http_address))
 
         while 1:
@@ -251,6 +252,9 @@ class HttpClientServiceTask:
                 return
 
             try:
+                # prints debug message about request
+                self.main_service_http_plugin.debug("Handling request: %s" % str(request))
+
                 if request.path.find("/hive/plugins") == 0:
                     # sets the plugin handler that will handle the request
                     request.properties["plugin_handler"] = "pt.hive.colony.plugins.javascript.file_handler"
@@ -618,6 +622,9 @@ class HttpRequest:
         self.headers_map = {}
         self.message_stream = StringIO.StringIO()
         self.properties = {}
+
+    def __repr__(self):
+        return "(%s, %s)" % (self.operation_type, self.path)
 
     def read(self):
         return self.received_message
