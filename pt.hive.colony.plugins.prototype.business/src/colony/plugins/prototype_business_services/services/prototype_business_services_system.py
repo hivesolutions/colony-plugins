@@ -41,6 +41,8 @@ import thread
 import base64
 import sqlite3
 
+import os.path
+
 SERVICE_ID = "prototype_business_services"
 """ The service id """
 
@@ -149,7 +151,7 @@ class PrototypeBusinessServices:
             self.prototype_business_services_plugin.info("Creating sqlite database in: %s" % database_file_path)
 
             # establishes connection with the database file
-            connection = sqlite3.connect(database_path)
+            connection = sqlite3.connect(database_file_path)
 
             # adds the created connection to the map that associates the thread id with the connection
             self.connection_thread_id_map[current_thread_id] = connection
