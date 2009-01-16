@@ -146,7 +146,7 @@ class PrototypeBusinessServices:
             database_file_path = user_home_path + "/" + DATABASE_FILE
 
             # prints an info message
-            prototype_business_services_plugin.info("Creating sqlite database in: %s" % database_file_path)
+            self.prototype_business_services_plugin.info("Creating sqlite database in: %s" % database_file_path)
 
             # establishes connection with the database file
             connection = sqlite3.connect(database_path)
