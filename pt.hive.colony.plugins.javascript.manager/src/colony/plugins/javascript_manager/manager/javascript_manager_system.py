@@ -103,7 +103,9 @@ class JavascriptManager:
             self.index_plugin_search_directory(plugin_search_directory, current_plugin_search_directories_map)
 
     def index_plugin_search_directory(self, plugin_search_directory, current_plugin_search_directories_map):
+        # in case the plugin search directory does not exist
         if not os.path.exists(plugin_search_directory):
+            # prints a warning message
             self.javascript_manager_plugin.warning("Path '%s' does not exist in the current filesystem" % plugin_search_directory)
             return
 
@@ -130,6 +132,12 @@ class JavascriptManager:
     def load_plugin_files(self):
         # iterates over all the search directories
         for plugin_search_directory in self.plugin_search_directories_list:
+            # in case the plugin search directory does not exist
+            if not os.path.exists(plugin_search_directory):
+                # prints a warning message
+                self.javascript_manager_plugin.warning("Path '%s' does not exist in the current filesystem" % plugin_search_directory)
+                return
+
             # the list of files in the javascript plugins directory
             dir_list = os.listdir(plugin_search_directory)
 
