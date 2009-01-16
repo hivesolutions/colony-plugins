@@ -41,6 +41,7 @@ import os
 import time
 import stat
 import string
+
 import os.path
 
 import javascript_manager_parser
@@ -102,6 +103,10 @@ class JavascriptManager:
             self.index_plugin_search_directory(plugin_search_directory, current_plugin_search_directories_map)
 
     def index_plugin_search_directory(self, plugin_search_directory, current_plugin_search_directories_map):
+        if not os.path.exists(plugin_search_directory):
+            self.javascript_manager_plugin.warning("Path '%s' does not exist in the current filesystem" % plugin_search_directory)
+            return
+
         # the list of files in the javascript plugins directory
         dir_list = os.listdir(plugin_search_directory)
 
