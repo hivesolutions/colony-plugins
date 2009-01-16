@@ -207,7 +207,7 @@ function removeTab(tabDivId) {
 	var firstUiTabNavData = $.data(uiTabsNavs[0], "tabs");
 
 	// tabifies the tab container
-	firstUiTabNavData.tabify();
+	firstUiTabNavData._tabify();
 
 	// retrieves the tabs length
 	var tabsLength = $("#mainTabPanel > ul").tabs("length");
