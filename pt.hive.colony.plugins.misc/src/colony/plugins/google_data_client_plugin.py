@@ -55,7 +55,7 @@ class GoogleDataClientPlugin(colony.plugins.plugin_system.Plugin):
     capabilities = ["google_data_client", "console_command_extension"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PackageDependency(
-                    "Google Data API Python Client Library", "gdata", "1.1.x", "http://code.google.com/p/gdata-python-client")]
+                    "Google Data API Python Client Library", ["gdata", "gdata.docs", "gdata.youtube"], "1.1.x", "http://code.google.com/p/gdata-python-client")]
     events_handled = []
     events_registrable = []
 
