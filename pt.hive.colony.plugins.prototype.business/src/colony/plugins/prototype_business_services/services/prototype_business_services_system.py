@@ -142,8 +142,14 @@ class PrototypeBusinessServices:
             # retrieves the available database connection
             connection = self.connection_thread_id_map[current_thread_id]
         else:
+            # creates the database file path
+            database_file_path = user_home_path + "/" + DATABASE_FILE
+
+            # prints an info message
+            prototype_business_services_plugin.info("Creating sqlite database in: %s" % database_file_path)
+
             # establishes connection with the database file
-            connection = sqlite3.connect(user_home_path + "/" + DATABASE_FILE)
+            connection = sqlite3.connect(database_path)
 
             # adds the created connection to the map that associates the thread id with the connection
             self.connection_thread_id_map[current_thread_id] = connection
