@@ -98,13 +98,13 @@ $(document).ready(function() {
 	});
 
 	$("#settingsButton").click(function() {
-				$("#settingsWindow").show();
 				$("#settingsWindow").dialog({
 							"width" : 430,
 							"height" : 140,
 							"show" : "drop",
 							"hide" : "drop"
 						});
+				$("#settingsWindow").dialog("open");
 			});
 
 	$("#testBox").colonyButton("tobias", {
@@ -131,8 +131,6 @@ $(document).ready(function() {
 	});
 
 	$("#testMultiLevelListBox").colonyMultiLevelListBox(dataStore);
-
-	console.debug(dataStore);
 });
 
 var tabsMap = {};

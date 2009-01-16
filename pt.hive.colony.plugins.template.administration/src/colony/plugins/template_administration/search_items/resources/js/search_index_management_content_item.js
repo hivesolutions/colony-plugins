@@ -25,33 +25,35 @@
 
 // called uppon search index management content item loading complete
 $("#searchIndexManagementContentItem").ready(function() {
-	// hides the new search index window
-	$("#newSearchIndexWindow").hide();
-
 	$("#searchIndexListRefresh").click(function() {
 				// refreshes the index manager table
 				refreshIndexManagerTable();
 			});
 
-	$("#searchIndexListNew").click(function() {
-		$("#newSearchIndexWindow").show();
-		$("#newSearchIndexWindow").dialog({
-					"width" : 620,
-					"height" : 410,
-					"show" : "drop",
-					"hide" : "drop",
-					"resizeStop" : function() {
-						alert("tobias");
-					}
-				});
-		$("#newSearchIndexWindow #propertiesEditor").children().each(
-				function() {
-					$(this).hide();
-				});
-		$("#newSearchIndexWindow #propertiesVisualizer").children().each(
-				function() {
-					$(this).hide();
-				});
+	$("#searchIndexListNew").colonyButton("new", {
+		"size" : "normal",
+		"click" : function() {
+			$("#newSearchIndexWindow").dialog({
+				"width" : 620,
+				"height" : 410,
+				"autoOpen" : false,
+				"show" : "drop",
+				"hide" : "drop",
+				"resizeStop" : function() {
+					alert("tobias");
+				}
+			});
+			$("#newSearchIndexWindow").dialog("open");
+			$("#newSearchIndexWindow #propertiesEditor").children().each(
+					function() {
+						$(this).hide();
+					});
+			$("#newSearchIndexWindow #propertiesVisualizer").children().each(
+					function() {
+						$(this).hide();
+					});
+		},
+		"image" : "pics/add.png"
 	});
 
 	$("#newSearchIndexWindow #propertiesSelector > .listBoxElement").click(
