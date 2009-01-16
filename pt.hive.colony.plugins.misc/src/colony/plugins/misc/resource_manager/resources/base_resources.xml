@@ -38,13 +38,13 @@
 		<namespace>system.path</namespace>
 		<name>workspace_home</name>
 		<type>string</type>
-		<data>c:/Users/joamag/workspace</data>
+		<data>C:/Users/joamag/workspace</data>
 	</resource>
 	<resource>
 		<namespace>system.path</namespace>
 		<name>user_home</name>
 		<type>string</type>
-		<data>c:/Users/joamag</data>
+		<data>C:/Users/joamag</data>
 	</resource>
 	<resource>
 		<namespace>system.path</namespace>
@@ -94,7 +94,7 @@
 	</resource>
 
 	<!-- Distribution registry client management -->
-	<resource>
+	<!-- <resource>
 		<namespace>pt.hive.colony.plugins.distribution.registry_client</namespace>
 		<name>registry_hostname</name>
 		<type>string</type>
@@ -111,9 +111,9 @@
 		<name>endpoint_type</name>
 		<type>string</type>
 		<data>xmlrpc</data>
-	</resource>
+	</resource>-->
 	<!-- Extra configuration options -->
-	<resource>
+	<!-- <resource>
 		<namespace>pt.hive.colony.plugins.distribution.registry_client</namespace>
 		<name>handler_base_filename</name>
 		<type>string</type>
@@ -124,5 +124,5 @@
 		<name>handler_extension</name>
 		<type>string</type>
 		<data>py</data>
-	</resource>
+	</resource>-->
 </resources>
