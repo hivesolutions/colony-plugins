@@ -250,41 +250,28 @@ DATA_PROXY_NAME_VALUE = "dataProxyName";
 
 		// sets the memory data proxy elements map as empty
 		this.elements = {};
-
-		// sets the memory data proxy elements index map as empty
-		this.elementsLevelIndexMap = {}
-
-		// sets the memory data proxy element levels as a new list of lists
-		this.elementLevels = [[]];
-
-		// sets the memory data proxy current level index
-		this.currentLevelIndex = 0;
-
-		// sets the memory data proxy current level
-		this.currentLevel = this.elementLevels[this.currentLevelIndex];
 	}
 
 	ColonyMemoryDataProxy.prototype.addElement = function(elementName, elementValue) {
 		// retrieves the elements map
 		var memoryDataProxyInformationElements = this.elements;
 
-		// retrieves the current level list
-		var memoryDataProxyInformationCurrentLevel = this.currentLevel;
+		// creates a new colony memory data proxy element
+		var colonyMemoryDataProxyElement = ColonyMemoryDataProxyElement(elementName, elementValue);
 
-		// retrieves the elements index map
-		var memoryDataProxyInformationElementsLevelIndexMap = this.elementsLevelIndexMap;
-		
-		// retrieves the current level list
-		var memoryDataProxyInformationCurrentLevelIndex = this.currentLevelIndex;
+		// sets the colony memory data proxy element in the elements map
+		memoryDataProxyInformationElements[elementName] = colonyMemoryDataProxyElement;
+	}
 
-		// sets the element value in the elements map
-		memoryDataProxyInformationElements[elementName] = elementValue;
+	ColonyMemoryDataProxy.prototype.addElementValue = function(element) {
+		// retrieves the elements map
+		var memoryDataProxyInformationElements = this.elements;
 
-		// adds the element name to the current level list
-		memoryDataProxyInformationCurrentLevel.push(elementName);
+		// retrieves the element name
+		var elementName = element.name;
 
-		// sets the elements level index map value
-		memoryDataProxyInformationElementsLevelIndexMap[elementName] = memoryDataProxyInformationCurrentLevelIndex;
+		// sets the element in the elements map
+		memoryDataProxyInformationElements[elementName] = element;
 	}
 
 	ColonyMemoryDataProxy.prototype.removeElement = function(elementName) {
