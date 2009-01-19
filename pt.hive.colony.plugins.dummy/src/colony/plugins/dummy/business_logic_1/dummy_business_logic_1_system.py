@@ -92,3 +92,6 @@ class DummyBusinessLogic1:
 
         # calls the remove entity method in the dummy business logic entity
         session_manager.DummyBusinessLogic.remove_entity()
+
+        # calls the save remove entity method in the dummy business logic entity
+        session_manager.DummyBusinessLogic.save_remove_entity()
