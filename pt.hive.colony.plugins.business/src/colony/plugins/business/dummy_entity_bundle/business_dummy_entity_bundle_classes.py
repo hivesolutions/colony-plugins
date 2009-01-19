@@ -85,7 +85,8 @@ class DummyEntityBundleAssociation(DummyEntityBundleParent):
 
     @staticmethod
     def get_relation_attributes_entity_to_many_relation():
-        return {"relation_type" : "many-to-many", "maped_by_entity_attribute" : "entity_to_many_relation"}
+        return {"relation_type" : "many-to-many",
+                "maped_by_entity_attribute" : "entity_to_many_relation"}
 
 class DummyEntityBundle(DummyEntityBundleParent):
 

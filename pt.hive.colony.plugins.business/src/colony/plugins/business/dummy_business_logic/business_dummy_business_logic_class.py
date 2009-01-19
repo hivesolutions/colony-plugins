@@ -84,3 +84,8 @@ class DummyBusinessLogic:
 
         # removes the entity instance
         self.remove_entity()
+
+    @transaction_decorator("requires")
+    def save_complex_entity(self):
+        # retrieves the DummyEntityBundle class from the entity manager
+        dummy_entity_bundle_class = self.entity_manager.get_entity_class("DummyEntityBundle")

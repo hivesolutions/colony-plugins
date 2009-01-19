@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os.path
+
 class BusinessDummyEntityBundle:
     """
     The business dummy entity bundle class
@@ -95,6 +97,4 @@ class BusinessDummyEntityBundle:
         return self.entity_bundle_map
 
     def get_path_directory_name(self):
-        import os
         return os.path.dirname(__file__)
-

@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os.path
+
 import colony.plugins.decorators
 
 class BusinessDummyBusinessLogic:
@@ -86,5 +88,4 @@ class BusinessDummyBusinessLogic:
         return self.business_logic_class
 
     def get_path_directory_name(self):
-        import os
         return os.path.dirname(__file__)
