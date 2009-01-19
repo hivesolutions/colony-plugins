@@ -244,6 +244,12 @@ DATA_PROXY_NAME_VALUE = "dataProxyName";
 		return memoryDataProxyInformation;
 	}
 
+	/**
+	 * The constructor for the colony memory data proxy object.
+	 * 
+	 * @param {Object}
+	 *            element The element for the colony memory data proxy storage.
+	 */
 	ColonyMemoryDataProxy = function(element) {
 		// sets the memory data proxy element in the memory data proxy
 		this.element = element;
@@ -257,7 +263,8 @@ DATA_PROXY_NAME_VALUE = "dataProxyName";
 		var memoryDataProxyInformationElements = this.elements;
 
 		// creates a new colony memory data proxy element
-		var colonyMemoryDataProxyElement = ColonyMemoryDataProxyElement(elementName, elementValue);
+		var colonyMemoryDataProxyElement = ColonyMemoryDataProxyElement(
+				elementName, elementValue);
 
 		// sets the colony memory data proxy element in the elements map
 		memoryDataProxyInformationElements[elementName] = colonyMemoryDataProxyElement;
@@ -309,6 +316,14 @@ DATA_PROXY_NAME_VALUE = "dataProxyName";
 		return memoryDataProxyInformationElements;
 	}
 
+	/**
+	 * The constructor for the colony memory data proxy element object.
+	 * 
+	 * @param {String}
+	 *            elementName The element name.
+	 * @param {Object}
+	 *            elementValue The element value.
+	 */
 	ColonyMemoryDataProxyElement = function(elementName, elementValue) {
 		this.name = elementName;
 		this.value = elementValue;
@@ -336,7 +351,7 @@ DATA_PROXY_NAME_VALUE = "dataProxyName";
 		var parentIndex = this.parents.indexOf(parentElement);
 
 		// in case the parent element exists
-		if(parentIndex != -1)
+		if (parentIndex != -1)
 			// removes the parent element from the list of parent elements
 			this.parents.splice(parentIndex, parentIndex);
 	}
@@ -351,7 +366,7 @@ DATA_PROXY_NAME_VALUE = "dataProxyName";
 		var childIndex = this.childs.indexOf(childElement);
 
 		// in case the child element exists
-		if(childIndex != -1)
+		if (childIndex != -1)
 			// removes the child element from the list of child elements
 			this.childs.splice(childIndex, childIndex);
 	}
