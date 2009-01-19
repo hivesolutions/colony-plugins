@@ -87,5 +87,8 @@ class DummyBusinessLogic1:
         # calls the print dummy method in the dummy business logic entity
         session_manager.DummyBusinessLogic.print_dummy()
 
-        # calls the save entity method in the dummy business logi entity
+        # calls the save entity method in the dummy business logic entity
         session_manager.DummyBusinessLogic.save_entity()
+
+        # calls the remove entity method in the dummy business logic entity
+        session_manager.DummyBusinessLogic.remove_entity()
