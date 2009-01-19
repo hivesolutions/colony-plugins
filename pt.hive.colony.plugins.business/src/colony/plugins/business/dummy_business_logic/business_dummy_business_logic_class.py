@@ -59,3 +59,20 @@ class DummyBusinessLogic:
 
         # saves the entity instance
         self.entity_manager.save(dummy_entity_instance)
+
+        # sets the entity name
+        self.name = dummy_entity_instance.name 
+
+    @transaction_decorator("requires")
+    def remove_entity(self):
+        # retrieves the DummyEntity class from the entity manager
+        dummy_entity_class = self.entity_manager.get_entity_class("DummyEntity")
+
+        # creates a new dummy entity instance
+        dummy_entity_instance = dummy_entity_class()
+
+        # sets the entity attribute values
+        dummy_entity_instance.name = self.name
+
+        # removes the entity instance
+        self.entity_manager.remove(dummy_entity_instance)
