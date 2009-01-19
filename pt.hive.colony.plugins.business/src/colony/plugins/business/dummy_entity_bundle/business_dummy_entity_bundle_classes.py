@@ -112,8 +112,18 @@ class DummyEntityBundle(DummyEntityBundleParent):
 
     @staticmethod
     def get_relation_attributes_entity_relation():
-        return {"relation_type" : "to-one", "target_entity" : DummyEntityBundleAssociation, "target_entity_name" : "DummyEntityBundleAssociation", "join_attribute" : DummyEntityBundleAssociation.name, "join_attribute_name" : "name", "optional" : True}
+        return {"relation_type" : "to-one",
+                "target_entity" : DummyEntityBundleAssociation,
+                "target_entity_name" : "DummyEntityBundleAssociation",
+                "join_attribute" : DummyEntityBundleAssociation.name,
+                "join_attribute_name" : "name",
+                "optional" : True}
 
     @staticmethod
     def get_relation_attributes_entity_to_many_relation():
-        return {"relation_type" : "many-to-many", "target_entity" : DummyEntityBundleAssociation, "target_entity_name" : "DummyEntityBundleAssociation", "join_attribute" : DummyEntityBundleAssociation.name, "join_attribute_name" : "name", "join_table" : "test_join"}
+        return {"relation_type" : "many-to-many",
+                "target_entity" : DummyEntityBundleAssociation,
+                "target_entity_name" : "DummyEntityBundleAssociation",
+                "join_attribute" : DummyEntityBundleAssociation.name,
+                "join_attribute_name" : "name",
+                "join_table" : "test_join"}
