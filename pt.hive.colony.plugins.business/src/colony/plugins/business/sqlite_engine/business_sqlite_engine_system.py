@@ -192,6 +192,17 @@ class BusinessSqliteEngine:
             return False
 
     def synced_entity_definition(self, connection, entity_class):
+        """
+        Checks if an entity definition is synchronized with the correspondent database information.
+        
+        @type connection: Connection
+        @param connection: The database connection to use.
+        @type entity_class: Class
+        @param entity_class: The entity class to be checked.
+        @rtype: bool
+        @return: The result of the check.
+        """
+
         # retrieves the database connection from the connection object
         database_connection = connection.database_connection
 
@@ -225,7 +236,10 @@ class BusinessSqliteEngine:
         # retrieves the table information list size
         table_information_list_size = len(table_information_list)
 
+        # in case the table information list size is different from the entity class
+        # valid attributes size, invalid number of attributes situation
         if not table_information_list_size == entity_class_valid_attributes_size:
+            # returns false
             return False
 
         # iterates over all the table information
@@ -236,17 +250,25 @@ class BusinessSqliteEngine:
             # retrieves the attribute data type
             attribute_data_type = table_information_item[2]
 
+            # retrieves the entity class valid attribute name
             entity_class_valid_attribute_name = entity_class_valid_attribute_names[index]
 
+            # retrieves the entity class valid attribute value
             entity_class_valid_attribute_value = entity_class_valid_attribute_values[index]
 
+            # retrieves the entity class valid attribute data type
             entity_class_valid_attribute_data_type = entity_class_valid_attribute_value[DATA_TYPE_FIELD]
 
+            # retrieves the entity class valid attribute target data type
             entity_class_valid_attribute_target_data_type = DATA_TYPE_MAP[entity_class_valid_attribute_data_type]
 
+            # in case the attribute name is not the same as the entity class valid attribute name,
+            # invalid attribute name situation
             if not attribute_name == entity_class_valid_attribute_name:
                 return False
 
+            # in case the attribute data type is not the same as the entity class valid attribute target data type,
+            # invalid attribute data type situation
             if not attribute_data_type == entity_class_valid_attribute_target_data_type:
                 return False
 
@@ -259,6 +281,15 @@ class BusinessSqliteEngine:
         return True
 
     def create_entity_definition(self, connection, entity_class):
+        """
+        Creates the entity definition in the database from the entity class.
+        
+        @type connection: Connection
+        @param connection: The database connection to use.
+        @type entity_class: Class
+        @param entity_class: The entity class to be used in the creation.
+        """
+
         # retrieves the database connection from the connection object
         database_connection = connection.database_connection
 
@@ -283,9 +314,12 @@ class BusinessSqliteEngine:
         # the first flag to control the first field to be processed
         is_first = True
 
+        # iterates over all the entity class valid attribute names
         for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
+            # retrieves the entity class valid attribute value
             entity_class_valid_attribute_value = entity_class_valid_attribute_values[index]
 
+            # retrieves the entity class valid attribute data type
             entity_class_valid_attribute_data_type = self.get_attribute_data_type(entity_class_valid_attribute_value, entity_class, entity_class_valid_attribute_name)
 
             # retrieves the valid sqlite data type from the formal entity data type
@@ -315,6 +349,15 @@ class BusinessSqliteEngine:
         cursor.close()
 
     def update_entity_definition(self, connection, entity_class):
+        """
+        Updates the entity definition in the database from the entity class.
+        
+        @type connection: Connection
+        @param connection: The database connection to use.
+        @type entity_class: Class
+        @param entity_class: The entity class to be used in the update.
+        """
+
         pass
 
     def save_entity(self, connection, entity):
@@ -841,7 +884,7 @@ class BusinessSqliteEngine:
         @type relation_attribute_name: String
         @param relation_attribute_name: The name of the relation attribute.
         @rtype: Object
-        @return: The value of the relation attribute .
+        @return: The value of the relation attribute.
         """
 
         # in case the value of the attribute is None returns immediately
