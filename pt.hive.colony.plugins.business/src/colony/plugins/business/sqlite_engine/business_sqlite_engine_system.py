@@ -585,6 +585,18 @@ class BusinessSqliteEngine:
         # closes the cursor
         cursor.close()
 
+        # saves the entity indirect relations
+        self.save_entity_indirect_relations(connection, entity)
+
+    def save_entity_indirect_relations(self, connection, entity):
+        # retrieves the database connection from the connection object
+        database_connection = connection.database_connection
+
+        # retrieves the entity class for the entity
+        entity_class = entity.__class__
+
+        
+
     def remove_entity(self, connection, entity):
         """
         Removes the given entity instance from the database, using the given connection.
