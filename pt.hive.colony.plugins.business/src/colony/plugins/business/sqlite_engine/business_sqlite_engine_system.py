@@ -95,6 +95,9 @@ ONE_TO_ONE_RELATION = "one-to-one"
 ONE_TO_MANY_RELATION = "one-to-many"
 """ The one to many relation """
 
+MANY_TO_ONE_RELATION = "many-to-one"
+""" The many to one relation """
+
 MANY_TO_MANY_RELATION = "many-to-many"
 """ The many to many relation """
 
@@ -1175,13 +1178,13 @@ class BusinessSqliteEngine:
             relation_attribute_relation_type = relation_attributes[RELATION_TYPE_FIELD]
 
             # in case the relation type if of type one-to-one
-            if relation_attribute_relation_type == ONE_TO_ONE_RELATION:
+            if relation_attribute_relation_type == ONE_TO_ONE_RELATION or relation_attribute_relation_type == ONE_TO_MANY_RELATION:
                 # retrieves the relation attribute relation type
                 relation_attribute_relation_type = relation_attributes[RELATION_TYPE_FIELD]
 
                 # retrieves the entity class join attribute
                 entity_class_join_attribute = relation_attributes[JOIN_ATTRIBUTE_FIELD]
-                
+
                 # retrieves the data type for the entity class join attribute
                 entity_class_join_attribute_data_type = entity_class_join_attribute[DATA_TYPE_FIELD]
             elif relation_attribute_relation_type == MANY_TO_MANY_RELATION:
@@ -1225,6 +1228,17 @@ class BusinessSqliteEngine:
                     join_attribute_name_field = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
 
                     return self.find_entity(connection, target_entity_class, id_value, join_attribute_name_field, retrieved_entities_list = retrieved_entities_list)
+            elif relation_attribute_relation_type == ONE_TO_MANY_RELATION:
+                # retrieves the target entity class
+                target_entity_class = relation_attributes[TARGET_ENTITY_FIELD]
+
+                # retrieves the mapped by field
+                mapped_by_field = relation_attributes[MAPPED_BY_FIELD]
+
+                # retrieves the join attribute name field
+                join_attribute_name_field = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
+
+                return self.find_all_entities(connection, target_entity_class, id_value, join_attribute_name_field, retrieved_entities_list = retrieved_entities_list)
 
     def get_relation_attributes(self, entity_class, relation_attribute_name):
         # creates the method name with the relation attributes prefix and the relation attribute name

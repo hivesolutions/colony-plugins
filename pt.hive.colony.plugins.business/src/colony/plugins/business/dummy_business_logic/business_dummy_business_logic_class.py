@@ -111,6 +111,7 @@ class DummyBusinessLogic:
         dummy_entity_bundle_association_instance.name = "test_association"
 
         dummy_entity_bundle_instance.entity_relation = dummy_entity_bundle_association_instance
+        dummy_entity_bundle_instance2.entity_relation = dummy_entity_bundle_association_instance
 
         # saves the entity instance
         self.entity_manager.save(dummy_entity_bundle_association_instance)
