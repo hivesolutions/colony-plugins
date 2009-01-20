@@ -641,7 +641,7 @@ class BusinessSqliteEngine:
                 # retrieves the join attribute name field
                 join_attribute_name_field = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
 
-                # retrieves the target attribute name
+                # creates the target attribute name
                 target_attribute_name = target_entity_name_field + "_" + join_attribute_name_field
 
                 # retrieves the target attribute value data type
@@ -656,6 +656,7 @@ class BusinessSqliteEngine:
                 # retrieves the id attribute value
                 id_attribute_value = self.get_entity_id_attribute_value(entity)
 
+                # creates the attribute name
                 attribute_name = entity_class_name + "_" + id_attribute_name
 
                 # retrieves the class id attribute value
@@ -664,9 +665,10 @@ class BusinessSqliteEngine:
                 # retrieves the id attribute value data type
                 id_attribute_value_data_type = self.get_attribute_data_type(class_id_attribute_value, entity_class, id_attribute_name)
 
-                for value in entity_valid_indirect_attribute_value:
+                # iterates over all the objects in the entity valid indirect attribute value (list)
+                for object_value in entity_valid_indirect_attribute_value:
                     # retrieves the target attribute value
-                    target_attribute_value = getattr(value, join_attribute_name_field)
+                    target_attribute_value = getattr(object_value, join_attribute_name_field)
 
                     # creates the initial query string value
                     query_string_value = "insert into " + join_table_field + "(" + attribute_name + ", " +\
