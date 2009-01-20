@@ -43,30 +43,60 @@ import sqlite3
 import business_sqlite_engine_exceptions
 
 ENGINE_NAME = "sqlite"
+""" The engine name """
 
 DATA_TYPE_MAP = {"text" : "text",
                  "numeric" : "numeric",
                  "relation" : "relation"}
+""" The data type map """
 
 ATTRIBUTE_EXCLUSION_LIST = ["__doc__", "__init__", "__module__", "mapping_options"]
+""" The attribute exclusion list """
 
 TYPE_EXCLUSION_LIST = [types.MethodType, types.FunctionType, types.ClassType]
+""" The type exclusion list """
 
 RELATION_DATA_TYPE = "relation"
+""" The relation data type """
 
 DATA_TYPE_FIELD = "data_type"
+""" The data type field """
 
 RELATION_ATTRIBUTES_METHOD_FIELD = "relation_attributes_method"
+""" The relation attributes method field """
 
 RELATION_TYPE_FIELD = "relation_type"
+""" The relation type field """
 
-TARGET_ENTITY_FILED = "target_entity"
+TARGET_ENTITY_FIELD = "target_entity"
+""" The target entity field """
 
 JOIN_ATTRIBUTE_FIELD = "join_attribute"
+""" The join attribute field """
 
 JOIN_ATTRIBUTE_NAME_FIELD = "join_attribute_name"
+""" The join attribute name field """
+
+MAPPED_BY_FIELD = "mapped_by"
+""" The mapped by field """
+
+OPTIONAL_FIELD = "optional"
+""" The optional field """
+
+DEFAULT_OPTIONAL_FIELD_VALUE = True
+""" The default optional field value """
 
 RELATION_ATTRIBUTES_METHOD_PREFIX = "get_relation_attributes_"
+""" The relation attributes method prefix """
+
+ONE_TO_ONE_RELATION = "one-to-one"
+""" The one to one relation """
+
+ONE_TO_MANY_RELATION = "one-to-many"
+""" The one to many relation """
+
+MANY_TO_MANY_RELATION = "many-to-many"
+""" The many to many relation """
 
 class BusinessSqliteEngine:
     """
@@ -518,9 +548,10 @@ class BusinessSqliteEngine:
         # closes the cursor
         cursor.close()
 
-    def find_entity(self, connection, entity_class, id_value):
+    def find_entity(self, connection, entity_class, id_value, search_field_name = None, retrieved_entities_list = None):
         """
         Retrieves an entity instance of the declared class type with the given id, using the given connection.
+        The search field name is used to find an entity with a value different than the id field.
         
         @type connection: Connection
         @param connection: The database connection to use.
@@ -528,6 +559,10 @@ class BusinessSqliteEngine:
         @param entity_class: The entity class of the entity to retrieve.
         @type id_value: Object
         @param id_value: The id of the entity to retrieve.
+        @type search_field_name: String
+        @param search_field_name: The name of the field to be used in the search.
+        @type retrieved_entities_list: BufferedEntities
+        @param retrieved_entities_list: The already retrieved entities.
         @rtype: Object
         @return: The retrieved entity instance.
         """
@@ -535,8 +570,6 @@ class BusinessSqliteEngine:
         # retrieves the database connection from the connection object
         database_connection = connection.database_connection
 
-        # creates the cursor for the given connection
-        cursor = database_connection.cursor()
 
         # retrieves the entity class name
         entity_class_name = entity_class.__name__
@@ -546,6 +579,27 @@ class BusinessSqliteEngine:
 
         # retrieves the entity class id attribute name
         entity_class_id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
+
+        # in case the retrieved entities object is not started
+        if not retrieved_entities_list:
+            # creates a retrieved entities object
+            retrieved_entities_list = BufferedEntities()
+
+        # in case the search field is valid
+        if search_field_name:
+            # the id attribute name is changed to the search field name
+            entity_class_id_attribute_name = search_field_name
+        else:
+            # retrieves the already buffered entity
+            buffered_entity = retrieved_entities_list.get_entity(entity_class, id_value)
+
+            # in case the entity is already buffered
+            if buffered_entity:
+                # returns the buffered entity
+                return buffered_entity
+
+        # creates the cursor for the given connection
+        cursor = database_connection.cursor()
 
         # creates the initial query string value
         query_string_value = "select "
@@ -563,7 +617,7 @@ class BusinessSqliteEngine:
                 query_string_value += ", "
 
             query_string_value += entity_class_valid_attribute_name
- 
+
         query_string_value += " from " + entity_class_name + " where " + entity_class_id_attribute_name + " = "
 
         if type(id_value) in types.StringTypes:
@@ -583,6 +637,9 @@ class BusinessSqliteEngine:
             # creates a new entity instance
             entity = entity_class()
 
+            # adds the entity to the list of retrieved entities
+            retrieved_entities_list.add_entity(entity_class, id_value, entity)
+
             # retrieves the first value from the values list
             first_value = values_list[0]
 
@@ -597,7 +654,7 @@ class BusinessSqliteEngine:
                 # in case the attribute is a relation
                 if self.is_attribute_name_relation(entity_class_valid_attribute_name, entity_class):
                     # retrieves the relation attribute value
-                    relation_attribute_value = self.get_relation_value(connection, entity_class_valid_attribute_name, entity_class, attribute_value)      
+                    relation_attribute_value = self.get_relation_value(connection, entity_class_valid_attribute_name, entity_class, attribute_value, id_value, retrieved_entities_list)
 
                     # sets the relation attribute in the instance
                     setattr(entity, entity_class_valid_attribute_name, relation_attribute_value)
@@ -799,7 +856,7 @@ class BusinessSqliteEngine:
         """
 
         if attribute_value == None:
-            print "ola"
+            return False
 
         attribute_value_data_type = attribute_value[DATA_TYPE_FIELD]
 
@@ -848,7 +905,7 @@ class BusinessSqliteEngine:
             # retrieves the relation type
             relation_type = relation_attributes[RELATION_TYPE_FIELD]
 
-            if relation_type == "many-to-many":
+            if relation_type == MANY_TO_MANY_RELATION:
                 return True
         else:
             return False
@@ -891,16 +948,39 @@ class BusinessSqliteEngine:
         if attribute_value == None:
             return None
 
+        # retrieves the class attribute value data type
         class_attribute_value_data_type = class_attribute_value[DATA_TYPE_FIELD]
 
+        # in case the class attribute value data type is of type relation
         if class_attribute_value_data_type == RELATION_DATA_TYPE:
             # retrieves the relation attributes
             relation_attributes = self.get_relation_attributes(entity_class, relation_attribute_name)
 
-            join_attribute_field_name = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
+            # retrieves the join attribute name field
+            join_attribute_name_field = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
 
-            relation_attribute_value = getattr(attribute_value, join_attribute_field_name)
+            # retrieves the mapped by field
+            mapped_by_field = relation_attributes.get(MAPPED_BY_FIELD, entity_class)
 
+            # retrieves the optional field
+            optional_field = relation_attributes.get(OPTIONAL_FIELD, DEFAULT_OPTIONAL_FIELD_VALUE)
+
+            # retrieves the attribute value type
+            attribute_value_type = type(attribute_value)
+
+            # in case the relation attribute value type is not of type instance
+            if not attribute_value_type == types.InstanceType:
+                # in case the value is optional
+                if optional_field:
+                    # returns None
+                    return None
+                else:
+                    raise business_sqlite_engine_exceptions.SqliteEngineMissingMandatoryValue("the relational value: " + relation_attribute_name + " was not found in entity: " + entity_class.__name__)
+
+            # retrieves the relation attribute value
+            relation_attribute_value = getattr(attribute_value, join_attribute_name_field)
+
+            # returns the relation attribute value
             return relation_attribute_value
 
     def get_attribute_data_type(self, attribute_value, entity_class, relation_attribute_name):
@@ -917,8 +997,10 @@ class BusinessSqliteEngine:
         @return: The attribute data type.
         """
 
+        # retrieves the attribute value data type
         attribute_value_data_type = attribute_value[DATA_TYPE_FIELD]
 
+        # in case the attribute value data type is of type relation
         if attribute_value_data_type == RELATION_DATA_TYPE:
             # retrieves the relation attributes
             relation_attributes = self.get_relation_attributes(entity_class, relation_attribute_name)
@@ -926,8 +1008,8 @@ class BusinessSqliteEngine:
             # retrieves the relation attribute relation type
             relation_attribute_relation_type = relation_attributes[RELATION_TYPE_FIELD]
 
-            # in case the relation type if of type to-one
-            if relation_attribute_relation_type == "to-one":
+            # in case the relation type if of type one-to-one
+            if relation_attribute_relation_type == ONE_TO_ONE_RELATION:
                 # retrieves the relation attribute relation type
                 relation_attribute_relation_type = relation_attributes[RELATION_TYPE_FIELD]
 
@@ -936,15 +1018,14 @@ class BusinessSqliteEngine:
                 
                 # retrieves the data type for the entity class join attribute
                 entity_class_join_attribute_data_type = entity_class_join_attribute[DATA_TYPE_FIELD]
-            elif relation_attribute_relation_type == "many-to-many":
+            elif relation_attribute_relation_type == MANY_TO_MANY_RELATION:
                 entity_class_join_attribute_data_type = "relation"
 
             return entity_class_join_attribute_data_type
         else:
             return attribute_value_data_type
 
-    def get_relation_value(self, connection, relation_attribute_name, entity_class, relation_attribute_value):
-
+    def get_relation_value(self, connection, relation_attribute_name, entity_class, relation_attribute_value, id_value, retrieved_entities_list):
         # retrieves the attribute value
         attribute_value = getattr(entity_class, relation_attribute_name)
 
@@ -959,11 +1040,25 @@ class BusinessSqliteEngine:
             # retrieves the relation attribute relation type
             relation_attribute_relation_type = relation_attributes[RELATION_TYPE_FIELD]
 
-            # in case the relation type if of type to-one
-            if relation_attribute_relation_type == "to-one":
-                target_entity_class = relation_attributes[TARGET_ENTITY_FILED]
+            # in case the relation type if of type one-to-one
+            if relation_attribute_relation_type == ONE_TO_ONE_RELATION:
+                # retrieves the target entity class
+                target_entity_class = relation_attributes[TARGET_ENTITY_FIELD]
 
-                return self.find_entity(connection, target_entity_class, relation_attribute_value)
+                # retrieves the mapped by field
+                mapped_by_field = relation_attributes.get(MAPPED_BY_FIELD, entity_class)
+
+                if mapped_by_field == entity_class:
+                    # in case the relation attribute value is null
+                    if relation_attribute_value == None:
+                        return None
+
+                    return self.find_entity(connection, target_entity_class, relation_attribute_value, retrieved_entities_list = retrieved_entities_list)
+                else:
+                    # retrieves the join attribute name field
+                    join_attribute_name_field = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
+
+                    return self.find_entity(connection, target_entity_class, id_value, join_attribute_name_field, retrieved_entities_list = retrieved_entities_list)
 
     def get_relation_attributes(self, entity_class, relation_attribute_name):
         # creates the method name with the relation attributes prefix and the relation attribute name
@@ -1003,3 +1098,59 @@ class BusinessSqliteEngine:
         """
 
         self.business_sqlite_engine_plugin.debug("sql: " + query_string_value)
+
+class BufferedEntities:
+    """
+    The buffered entities class.
+    """
+
+    buffered_entities_map = {}
+    """ The buffered entities map """
+
+    def __init__(self):
+        """
+        Constructor of the class
+        """
+
+        self.buffered_entities_map = {}
+
+    def add_entity(self, entity_class, id_value, entity):
+        """
+        Adds an entity to the buffer.
+        
+        @type entity_class: Class
+        @param entity_class: The entity class of the entity to add.
+        @type id_value: Object
+        @param id_value: The id of the entity to add.
+        @type entity: Object
+        @param entity: The entity to add.
+        """
+
+        if not entity_class in self.buffered_entities_map:
+            self.buffered_entities_map[entity_class] = {}
+
+        buffered_entities_map_entity_class_map = self.buffered_entities_map[entity_class]
+
+        buffered_entities_map_entity_class_map[id_value] = entity
+
+    def get_entity(self, entity_class, id_value):
+        """
+        Retrieves an entity from the buffer.
+        
+        @type entity_class: Class
+        @param entity_class: The entity class of the entity to retrieve.
+        @type id_value: Object
+        @param id_value: The id of the entity to retrieve.
+        """
+
+        if not entity_class in self.buffered_entities_map:
+            return None
+
+        buffered_entities_map_entity_class_map = self.buffered_entities_map[entity_class]
+
+        if not id_value in buffered_entities_map_entity_class_map:
+            return None
+
+        entity = buffered_entities_map_entity_class_map[id_value]
+
+        return entity

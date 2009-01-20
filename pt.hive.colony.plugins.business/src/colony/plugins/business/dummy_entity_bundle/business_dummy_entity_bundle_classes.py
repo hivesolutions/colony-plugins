@@ -70,6 +70,9 @@ class DummyEntityBundleAssociation(DummyEntityBundleParent):
     hair_type = {"data_type" : "text"}
     """ The hair type of the entity """
 
+    entity_relation = {"data_type" : "relation"}
+    """ The dummy entity relation """
+
     entity_to_many_relation = {"data_type" : "relation"}
     """  The dummy to many relation """
 
@@ -82,6 +85,16 @@ class DummyEntityBundleAssociation(DummyEntityBundleParent):
 
     def set_hair_type(self, hair_type):
         self.hair_type = hair_type
+
+    @staticmethod
+    def get_relation_attributes_entity_relation():
+        return {"relation_type" : "one-to-one",
+                "target_entity" : DummyEntityBundle,
+                "target_entity_name" : "DummyEntityBundle",
+                "join_attribute" : DummyEntityBundle.entity_relation,
+                "join_attribute_name" : "entity_relation",
+                "mapped_by" : DummyEntityBundle,
+                "optional" : True}
 
     @staticmethod
     def get_relation_attributes_entity_to_many_relation():
@@ -113,7 +126,7 @@ class DummyEntityBundle(DummyEntityBundleParent):
 
     @staticmethod
     def get_relation_attributes_entity_relation():
-        return {"relation_type" : "to-one",
+        return {"relation_type" : "one-to-one",
                 "target_entity" : DummyEntityBundleAssociation,
                 "target_entity_name" : "DummyEntityBundleAssociation",
                 "join_attribute" : DummyEntityBundleAssociation.name,

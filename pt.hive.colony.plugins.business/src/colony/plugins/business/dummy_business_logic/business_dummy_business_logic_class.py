@@ -89,3 +89,34 @@ class DummyBusinessLogic:
     def save_complex_entity(self):
         # retrieves the DummyEntityBundle class from the entity manager
         dummy_entity_bundle_class = self.entity_manager.get_entity_class("DummyEntityBundle")
+
+        # retrieves the DummyEntityBundleAssociation class from the entity manager
+        dummy_entity_bundle_association_class = self.entity_manager.get_entity_class("DummyEntityBundleAssociation")
+
+        # creates a new dummy entity bundle instance
+        dummy_entity_bundle_instance = dummy_entity_bundle_class()
+
+        # creates a new dummy entity bundle association instance
+        dummy_entity_bundle_association_instance = dummy_entity_bundle_association_class()
+
+        dummy_entity_bundle_instance.name = "test"
+
+        dummy_entity_bundle_association_instance.name = "test_association"
+
+        dummy_entity_bundle_instance.entity_relation = dummy_entity_bundle_association_instance
+
+        # saves the entity instance
+        self.entity_manager.save(dummy_entity_bundle_association_instance)
+
+        # saves the entity instance
+        self.entity_manager.save(dummy_entity_bundle_instance)
+
+        value = self.entity_manager.find(dummy_entity_bundle_class, "test")
+
+        # removes the entity instance
+        self.entity_manager.remove(dummy_entity_bundle_association_instance)
+
+        # removes the entity instance
+        self.entity_manager.remove(dummy_entity_bundle_instance)
+
+        print str(value)

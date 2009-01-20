@@ -95,3 +95,29 @@ class SqliteEngineEntryNotFound(SqliteEngineException):
         """
 
         return "Entry not found: %s" % self.message
+
+class SqliteEngineMissingMandatoryValue(SqliteEngineException):
+    """
+    The sqlite engine missing mandatory value class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+        
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        SqliteEngineException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+        
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Missing mandatory value: %s" % self.message
