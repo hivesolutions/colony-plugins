@@ -126,3 +126,6 @@ class BusinessSqliteEnginePlugin(colony.plugins.plugin_system.Plugin):
 
     def find_entity(self, connection, entity_class, id_value):
         return self.business_sqlite_engine.find_entity(connection, entity_class, id_value)
+
+    def find_all_entities(self, connection, entity_class, value, search_field_name):
+        return self.business_sqlite_engine.find_all_entities(connection, entity_class, value, search_field_name)

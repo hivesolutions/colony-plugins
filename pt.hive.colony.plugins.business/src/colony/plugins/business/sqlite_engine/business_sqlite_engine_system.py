@@ -570,7 +570,6 @@ class BusinessSqliteEngine:
         # retrieves the database connection from the connection object
         database_connection = connection.database_connection
 
-
         # retrieves the entity class name
         entity_class_name = entity_class.__name__
 
@@ -633,18 +632,18 @@ class BusinessSqliteEngine:
 
         # in case there is at least one selection
         if len(values_list):
-
             # creates a new entity instance
             entity = entity_class()
-
-            # adds the entity to the list of retrieved entities
-            retrieved_entities_list.add_entity(entity_class, id_value, entity)
 
             # retrieves the first value from the values list
             first_value = values_list[0]
 
             # creates the initial index value
             index = 0
+
+            # creates the relation attributes list
+            # this list is used for relation attributes post-processing
+            relation_attributes_list = []
 
             # iterates over all the attribute values of the first value
             for attribute_value in first_value:
@@ -653,11 +652,11 @@ class BusinessSqliteEngine:
 
                 # in case the attribute is a relation
                 if self.is_attribute_name_relation(entity_class_valid_attribute_name, entity_class):
-                    # retrieves the relation attribute value
-                    relation_attribute_value = self.get_relation_value(connection, entity_class_valid_attribute_name, entity_class, attribute_value, id_value, retrieved_entities_list)
+                    # creates the relation attribute tuple
+                    relation_attribute_tuple = (entity_class_valid_attribute_name, attribute_value)
 
-                    # sets the relation attribute in the instance
-                    setattr(entity, entity_class_valid_attribute_name, relation_attribute_value)
+                    # adds the relation attribute tuple to the list of relation attributes
+                    relation_attributes_list.append(relation_attribute_tuple)
                 else:
                     # sets the attribute in the instance
                     setattr(entity, entity_class_valid_attribute_name, attribute_value)
@@ -665,14 +664,181 @@ class BusinessSqliteEngine:
                 # increments the index value
                 index += 1
 
-            # closes the cursor
-            cursor.close()
+            # retrieves the id attribute value
+            id_attribute_value = self.get_entity_id_attribute_value(entity)
+
+            # retrieves the already buffered entity
+            buffered_entity = retrieved_entities_list.get_entity(entity_class, id_attribute_value)
+
+            # in case the entity is already buffered
+            if buffered_entity:
+                # closes the cursor
+                cursor.close()
+
+                # returns the buffered entity
+                return buffered_entity
+            else:
+                # adds the entity to the list of retrieved entities
+                retrieved_entities_list.add_entity(id_attribute_value, entity)
+
+                # iterates over all the relation attributes list
+                for entity_class_valid_attribute_name, attribute_value in relation_attributes_list:
+                    # retrieves the relation attribute value
+                    relation_attribute_value = self.get_relation_value(connection, entity_class_valid_attribute_name, entity_class, attribute_value, id_value, retrieved_entities_list)
+
+                    # sets the relation attribute in the instance
+                    setattr(entity, entity_class_valid_attribute_name, relation_attribute_value)
+
+                # closes the cursor
+                cursor.close()
 
             # returns the created entity
             return entity
 
         # closes the cursor
         cursor.close()
+
+    def find_all_entities(self, connection, entity_class, field_value, search_field_name, retrieved_entities_list = None):
+        """
+        Retrieves all entity instances of the declared class type with the given value, using the given connection.
+        The search field name is used to find an entity with a value of the given field.
+        
+        @type connection: Connection
+        @param connection: The database connection to use.
+        @type entity_class: Class
+        @param entity_class: The entity class of the entity to retrieve.
+        @type field_value: Object
+        @param field_value: The field value of the entity to retrieve.
+        @type search_field_name: String
+        @param search_field_name: The name of the field to be used in the search.
+        @type retrieved_entities_list: BufferedEntities
+        @param retrieved_entities_list: The already retrieved entities.
+        @rtype: Object
+        @return: The retrieved entity instances.
+        """
+
+        # retrieves the database connection from the connection object
+        database_connection = connection.database_connection
+
+        # retrieves the entity class name
+        entity_class_name = entity_class.__name__
+
+        # retrieves all the valid class attribute names, removes method values and the name exceptions
+        entity_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_class)
+
+        # retrieves the entity class id attribute name
+        entity_class_id_attribute_name = search_field_name
+
+        # in case the retrieved entities object is not started
+        if not retrieved_entities_list:
+            # creates a retrieved entities object
+            retrieved_entities_list = BufferedEntities()
+
+        # creates the cursor for the given connection
+        cursor = database_connection.cursor()
+
+        # creates the initial query string value
+        query_string_value = "select "
+
+        # the first flag to control the first field to be processed
+        is_first = True
+
+        for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
+            # in case is the first field to be processed
+            if is_first:
+                # sets the is flag to false to start adding commas
+                is_first = False
+            else:
+                # adds a comma to the query string value
+                query_string_value += ", "
+
+            query_string_value += entity_class_valid_attribute_name
+
+        query_string_value += " from " + entity_class_name + " where " + entity_class_id_attribute_name + " = "
+
+        if type(field_value) in types.StringTypes:
+            query_string_value += "'" + field_value + "'"
+        else:
+            query_string_value += str(field_value)
+
+        # executes the query retrieving the values
+        self.execute_query(cursor, query_string_value)
+
+        # selects the values from the cursor
+        values_list = [value for value in cursor]
+
+        # creates the list of entities
+        entities_list = []
+
+        # iterates over all the values in the values list
+        for value in values_list:
+            # creates a new entity instance
+            entity = entity_class()
+
+            # retrieves the id attribute value
+            id_attribute_value = self.get_entity_id_attribute_value(entity)
+
+            # adds the entity to the list of retrieved entities
+            retrieved_entities_list.add_entity(id_attribute_value, entity)
+
+            # creates the initial index value
+            index = 0
+
+            # creates the relation attributes list
+            # this list is used for relation attributes post-processing
+            relation_attributes_list = []
+
+            # iterates over all the attribute values of the value
+            for attribute_value in value:
+                # retrieves the entity class attribute name
+                entity_class_valid_attribute_name = entity_class_valid_attribute_names[index]
+
+                # in case the attribute is a relation
+                if self.is_attribute_name_relation(entity_class_valid_attribute_name, entity_class):
+                    # creates the relation attribute tuple
+                    relation_attribute_tuple = (entity_class_valid_attribute_name, attribute_value)
+
+                    # adds the relation attribute tuple to the list of relation attributes
+                    relation_attributes_list.append(relation_attribute_tuple)
+                else:
+                    # sets the attribute in the instance
+                    setattr(entity, entity_class_valid_attribute_name, attribute_value)
+
+                # increments the index value
+                index += 1
+
+            # retrieves the id attribute value
+            id_attribute_value = self.get_entity_id_attribute_value(entity)
+
+            # retrieves the already buffered entity
+            buffered_entity = retrieved_entities_list.get_entity(entity_class, id_attribute_value)
+
+            # in case the entity is already buffered
+            if buffered_entity:
+                # closes the cursor
+                cursor.close()
+
+                # sets the entity as the buffered entity
+                entity = buffered_entity
+            else:
+                # adds the entity to the list of retrieved entities
+                retrieved_entities_list.add_entity(id_attribute_value, entity)
+
+                # iterates over all the relation attributes list
+                for entity_class_valid_attribute_name, attribute_value in relation_attributes_list:
+                    # retrieves the relation attribute value
+                    relation_attribute_value = self.get_relation_value(connection, entity_class_valid_attribute_name, entity_class, attribute_value, id_attribute_value, retrieved_entities_list)
+
+                    # sets the relation attribute in the instance
+                    setattr(entity, entity_class_valid_attribute_name, relation_attribute_value)
+
+            # adds the entity to the list of entities
+            entities_list.append(entity)
+
+        # closes the cursor
+        cursor.close()
+
+        return entities_list
 
     def get_entity_class_attribute_names(self, entity_class):
         """
@@ -1114,17 +1280,18 @@ class BufferedEntities:
 
         self.buffered_entities_map = {}
 
-    def add_entity(self, entity_class, id_value, entity):
+    def add_entity(self, id_value, entity):
         """
         Adds an entity to the buffer.
         
-        @type entity_class: Class
-        @param entity_class: The entity class of the entity to add.
         @type id_value: Object
         @param id_value: The id of the entity to add.
         @type entity: Object
         @param entity: The entity to add.
         """
+
+        # retrieves the entity class
+        entity_class = entity.__class__
 
         if not entity_class in self.buffered_entities_map:
             self.buffered_entities_map[entity_class] = {}

@@ -96,10 +96,17 @@ class DummyBusinessLogic:
         # creates a new dummy entity bundle instance
         dummy_entity_bundle_instance = dummy_entity_bundle_class()
 
+        # creates a new dummy entity bundle instance
+        dummy_entity_bundle_instance2 = dummy_entity_bundle_class()
+
         # creates a new dummy entity bundle association instance
         dummy_entity_bundle_association_instance = dummy_entity_bundle_association_class()
 
         dummy_entity_bundle_instance.name = "test"
+        dummy_entity_bundle_instance.age = 21
+        
+        dummy_entity_bundle_instance2.name = "test2"
+        dummy_entity_bundle_instance2.age = 21
 
         dummy_entity_bundle_association_instance.name = "test_association"
 
@@ -111,7 +118,12 @@ class DummyBusinessLogic:
         # saves the entity instance
         self.entity_manager.save(dummy_entity_bundle_instance)
 
+        # saves the entity instance
+        self.entity_manager.save(dummy_entity_bundle_instance2)
+
         value = self.entity_manager.find(dummy_entity_bundle_class, "test")
+
+        all_age_values = self.entity_manager.find_all(dummy_entity_bundle_class, 21, "age")
 
         # removes the entity instance
         self.entity_manager.remove(dummy_entity_bundle_association_instance)
@@ -119,4 +131,5 @@ class DummyBusinessLogic:
         # removes the entity instance
         self.entity_manager.remove(dummy_entity_bundle_instance)
 
-        print str(value)
+        # removes the entity instance
+        self.entity_manager.remove(dummy_entity_bundle_instance2)
