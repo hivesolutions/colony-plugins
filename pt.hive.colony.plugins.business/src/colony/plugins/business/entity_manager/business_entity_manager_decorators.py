@@ -49,20 +49,20 @@ def transaction(transaction_type = "required"):
 
     def create_decorator_interceptor(func):
         """
-        Creates a decorator interceptor, that intercepts the normal function call
+        Creates a decorator interceptor, that intercepts the normal function call.
         
         @type func: function
-        @param func: The callback function
+        @param func: The callback function.
         """
 
         def decorator_interceptor(*args, **kwargs):
             """
-            The interceptor function for the load_allowed decorator
+            The interceptor function for the load_allowed decorator.
             
             @type args: pointer
-            @param args: The function arguments list
+            @param args: The function arguments list.
             @type kwargs: pointer pointer
-            @param kwargs: The function arguments map
+            @param kwargs: The function arguments map.
             """
 
             # retrieves the instance self
@@ -86,16 +86,16 @@ def transaction(transaction_type = "required"):
 
     def decorator(func, *args, **kwargs):
         """
-        The decorator function for the transaction decorator
+        The decorator function for the transaction decorator.
         
         @type func: function
-        @param func: The function to be decorated
+        @param func: The function to be decorated.
         @type args: pointer
-        @param args: The function arguments list
+        @param args: The function arguments list.
         @type kwargs: pointer pointer
-        @param kwargs: The function arguments map
+        @param kwargs: The function arguments map.
         @rtype: function
-        @param: The decorator interceptor function
+        @param: The decorator interceptor function.
         """
 
         # creates the decorator interceptor with the given function
