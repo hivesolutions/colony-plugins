@@ -99,7 +99,11 @@ class DummyEntityBundleAssociation(DummyEntityBundleParent):
     @staticmethod
     def get_relation_attributes_entity_to_many_relation():
         return {"relation_type" : "many-to-many",
-                "maped_by_entity_attribute" : "entity_to_many_relation"}
+                "target_entity" : DummyEntityBundle,
+                "target_entity_name" : "DummyEntityBundle",
+                "join_attribute" : DummyEntityBundle.name,
+                "join_attribute_name" : "name",
+                "join_table" : "test_join"}
 
 class DummyEntityBundle(DummyEntityBundleParent):
 

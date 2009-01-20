@@ -80,6 +80,9 @@ JOIN_ATTRIBUTE_NAME_FIELD = "join_attribute_name"
 MAPPED_BY_FIELD = "mapped_by"
 """ The mapped by field """
 
+JOIN_TABLE_FIELD = "join_table"
+""" The join table field """
+
 OPTIONAL_FIELD = "optional"
 """ The optional field """
 
@@ -220,6 +223,28 @@ class BusinessSqliteEngine:
 
         # in case the entity class name exists in the tables names list
         if entity_class_name in table_names_list:
+            return True
+        else:
+            return False
+
+    def exists_table_definition(self, connection, table_name):
+        # retrieves the database connection from the connection object
+        database_connection = connection.database_connection
+
+        # creates the cursor for the given connection
+        cursor = database_connection.cursor()
+
+        # selects all the names of existing tables
+        self.execute_query(cursor, "select name from SQLite_Master")
+
+        # selects the table names from the cursor
+        table_names_list = [value[0] for value in cursor]
+
+        # closes the cursor
+        cursor.close()
+
+        # in case the table name exists in the tables names list
+        if table_name in table_names_list:
             return True
         else:
             return False
@@ -377,6 +402,61 @@ class BusinessSqliteEngine:
 
         # executes the query inserting the values
         self.execute_query(cursor, query_string_value)
+
+        # closes the cursor
+        cursor.close()
+
+        # creates the entity relations definition
+        self.create_entity_relations_definition(connection, entity_class)
+
+    def create_entity_relations_definition(self, connection, entity_class):
+        # retrieves the database connection from the connection object
+        database_connection = connection.database_connection
+
+        # creates the cursor for the given connection
+        cursor = database_connection.cursor()
+
+        # retrieves the entity class name
+        entity_class_name = entity_class.__name__
+
+        # retrieves the entity class valid indirect attribute names
+        entity_class_valid_indirect_attribute_names = self.get_entity_class_indirect_attribute_names(entity_class)
+
+        # retrieves the entity class valid indirect attribute values
+        entity_class_valid_indirect_attribute_values = self.get_entity_class_indirect_attribute_values(entity_class)
+
+        # iterates over all the entity class valid indirect attribute names
+        for entity_class_valid_indirect_attribute_name in entity_class_valid_indirect_attribute_names:
+            # retrieves the relation attributes for the given attribute name in the given entity class
+            relation_attributes = self.get_relation_attributes(entity_class, entity_class_valid_indirect_attribute_name)
+
+            # retrieves the join table field
+            join_table_field = relation_attributes[JOIN_TABLE_FIELD]
+
+            # retrieves the id attribute name
+            id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
+
+            # retrieves the id attribute value
+            id_attribute_value = self.get_entity_class_id_attribute_value(entity_class)
+
+            # retrieves the id attribute data type
+            id_attribute_data_type = self.get_attribute_data_type(id_attribute_value, entity_class, id_attribute_name)
+
+            # retrieves the valid sqlite data type from the formal id attribute data type
+            id_attribute_target_data_type = DATA_TYPE_MAP[id_attribute_data_type]
+
+            # creates the relation attribute name
+            relation_attribute_name = entity_class_name + "_" + id_attribute_name
+
+            if self.exists_table_definition(connection, join_table_field):
+                # creates the query string value
+                query_string_value = "alter table " + join_table_field + " add column " + relation_attribute_name + " " + id_attribute_target_data_type
+            else:
+                # creates the query string value
+                query_string_value = "create table " + join_table_field + "(" + relation_attribute_name + " " + id_attribute_target_data_type + ")"
+
+            # executes the query inserting the values
+            self.execute_query(cursor, query_string_value)
 
         # closes the cursor
         cursor.close()
@@ -856,10 +936,28 @@ class BusinessSqliteEngine:
         # retrieves all the class attribute names
         entity_class_attribute_names = dir(entity_class)
 
-        # retrieves all the valid class attribute names, removes method values and the name exceptions
+        # retrieves all the valid class attribute names, removes method values, the name exceptions and the indirect attributes
         entity_class_valid_attribute_names = [attribute_name for attribute_name in entity_class_attribute_names if not attribute_name in ATTRIBUTE_EXCLUSION_LIST and not type(getattr(entity_class, attribute_name)) in TYPE_EXCLUSION_LIST and not self.is_attribute_name_indirect_relation(attribute_name, entity_class)]
 
         return entity_class_valid_attribute_names
+
+    def get_entity_class_indirect_attribute_names(self, entity_class):
+        """
+        Retrieves a list with the names of all indirect attributes from the given entity class.
+        
+        @type entity_class: Class
+        @param entity_class: The entity class.
+        @rtype: List
+        @return: The list with the names of all the indirect attributes from the given entity class.
+        """
+
+        # retrieves all the class attribute names
+        entity_class_attribute_names = dir(entity_class)
+
+        # retrieves all the valid class indirect attribute names, removes method values and the name exceptions and the non indirect attributes
+        entity_class_valid_indirect_attribute_names = [attribute_name for attribute_name in entity_class_attribute_names if not attribute_name in ATTRIBUTE_EXCLUSION_LIST and not type(getattr(entity_class, attribute_name)) in TYPE_EXCLUSION_LIST and self.is_attribute_name_indirect_relation(attribute_name, entity_class)]
+
+        return entity_class_valid_indirect_attribute_names
 
     def get_entity_attribute_names(self, entity):
         """
@@ -926,6 +1024,24 @@ class BusinessSqliteEngine:
         entity_class_valid_attribute_values = [getattr(entity_class, attribute_name) for attribute_name in entity_class_valid_attribute_names]
 
         return entity_class_valid_attribute_values
+
+    def get_entity_class_indirect_attribute_values(self, entity_class):
+        """
+        Retrieves a list with the values of all indirect attributes from the given entity class.
+        
+        @type entity_class: Class
+        @param entity_class: The entity class.
+        @rtype: List
+        @return: The list with the values of all indirect attributes from the given entity class.
+        """
+
+        # retrieves all the valid class indirect attribute names
+        entity_class_valid_indirect_attribute_names = self.get_entity_class_indirect_attribute_names(entity_class)
+
+        # retrieves all the valid class indirect attribute values
+        entity_class_valid_indirect_attribute_values = [getattr(entity_class, attribute_name) for attribute_name in entity_class_valid_indirect_attribute_names]
+
+        return entity_class_valid_indirect_attribute_values
 
     def get_entity_attribute_values(self, entity):
         """
