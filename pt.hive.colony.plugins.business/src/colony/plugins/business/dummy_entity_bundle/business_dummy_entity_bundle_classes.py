@@ -103,7 +103,7 @@ class DummyEntityBundleAssociation(DummyEntityBundleParent):
                 "target_entity_name" : "DummyEntityBundle",
                 "join_attribute" : DummyEntityBundle.name,
                 "join_attribute_name" : "name",
-                "join_table" : "test_join"}
+                "join_table" : "TestJoin"}
 
 class DummyEntityBundle(DummyEntityBundleParent):
 
@@ -144,4 +144,4 @@ class DummyEntityBundle(DummyEntityBundleParent):
                 "target_entity_name" : "DummyEntityBundleAssociation",
                 "join_attribute" : DummyEntityBundleAssociation.name,
                 "join_attribute_name" : "name",
-                "join_table" : "test_join"}
+                "join_table" : "TestJoin"}
