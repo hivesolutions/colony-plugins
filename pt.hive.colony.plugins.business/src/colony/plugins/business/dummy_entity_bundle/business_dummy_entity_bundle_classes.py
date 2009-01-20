@@ -79,6 +79,8 @@ class DummyEntityBundleAssociation(DummyEntityBundleParent):
     def __init__(self):
         DummyEntityBundleParent.__init__(self)
         self.hair_type = None
+        self.entity_relation = None
+        self.entity_to_many_relation = []
 
     def get_hair_type(self):
         return self.hair_type
@@ -120,7 +122,7 @@ class DummyEntityBundle(DummyEntityBundleParent):
         DummyEntityBundleParent.__init__(self)
         self.age = None
         self.entity_relation = None
-        self.entity_to_many_relation = None
+        self.entity_to_many_relation = []
 
     def get_age(self):
         return self.age

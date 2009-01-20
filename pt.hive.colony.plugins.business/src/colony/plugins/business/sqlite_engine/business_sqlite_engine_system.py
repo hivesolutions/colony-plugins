@@ -71,6 +71,9 @@ RELATION_TYPE_FIELD = "relation_type"
 TARGET_ENTITY_FIELD = "target_entity"
 """ The target entity field """
 
+TARGET_ENTITY_NAME_FIELD = "target_entity_name"
+""" The target entity name field """
+
 JOIN_ATTRIBUTE_FIELD = "join_attribute"
 """ The join attribute field """
 
@@ -592,10 +595,105 @@ class BusinessSqliteEngine:
         # retrieves the database connection from the connection object
         database_connection = connection.database_connection
 
+        # creates the cursor for the given connection
+        cursor = database_connection.cursor()
+
         # retrieves the entity class for the entity
         entity_class = entity.__class__
 
-        
+        # retrieves all the valid indirect attribute names, removes method values and the name exceptions
+        entity_valid_indirect_attribute_names = self.get_entity_indirect_attribute_names(entity)
+
+        # retrieves all the valid attribute values
+        entity_valid_indirect_attribute_values = self.get_entity_indirect_attribute_values(entity)
+
+        # retrieves all the class valid attribute values
+        entity_class_valid_indirect_attribute_values = self.get_entity_class_indirect_attribute_values(entity_class)
+
+        # creates the initial index value
+        index = 0
+
+        # iterates over all the entity valid indirect attribute names
+        for entity_valid_indirect_attribute_name in entity_valid_indirect_attribute_names:
+            # retrieves the entity valid indirect attribute value
+            entity_valid_indirect_attribute_value = entity_valid_indirect_attribute_values[index]
+
+            # retrieves the entity class valid indirect attribute value
+            entity_class_valid_indirect_attribute_value = entity_class_valid_indirect_attribute_values[index]
+
+            # retrieves the relation attributes for the given attribute name in the given entity class
+            relation_attributes = self.get_relation_attributes(entity_class, entity_valid_indirect_attribute_name)
+
+            # retrieves the relation type field
+            relation_type_field = relation_attributes[RELATION_TYPE_FIELD]
+
+            # in case the relation is of type many-to-many
+            if relation_type_field == MANY_TO_MANY_RELATION:
+                # retrieves the join table field
+                join_table_field = relation_attributes[JOIN_TABLE_FIELD]
+
+                # retrieves the target entity field
+                target_entity_field = relation_attributes[TARGET_ENTITY_FIELD]
+
+                # retrieves the target entity name field
+                target_entity_name_field = relation_attributes[TARGET_ENTITY_NAME_FIELD]
+
+                # retrieves the join attribute name field
+                join_attribute_name_field = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
+
+                # retrieves the target attribute name
+                target_attribute_name = target_entity_name_field + "_" + join_attribute_name_field
+
+                # retrieves the target attribute value data type
+                target_attribute_value_data_type = self.get_attribute_data_type(entity_class_valid_indirect_attribute_value, target_entity_field, entity_valid_indirect_attribute_name)
+
+                # retrieves the entity class name
+                entity_class_name = entity_class.__name__
+
+                # retrieves the id attribute name
+                id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
+
+                # retrieves the id attribute value
+                id_attribute_value = self.get_entity_id_attribute_value(entity)
+
+                attribute_name = entity_class_name + "_" + id_attribute_name
+
+                # retrieves the class id attribute value
+                class_id_attribute_value = self.get_entity_class_id_attribute_value(entity_class)
+
+                # retrieves the id attribute value data type
+                id_attribute_value_data_type = self.get_attribute_data_type(class_id_attribute_value, entity_class, id_attribute_name)
+
+                for value in entity_valid_indirect_attribute_value:
+                    # retrieves the target attribute value
+                    target_attribute_value = getattr(value, join_attribute_name_field)
+
+                    # creates the initial query string value
+                    query_string_value = "insert into " + join_table_field + "(" + attribute_name + ", " +\
+                                         target_attribute_name + ") values("
+
+                    if id_attribute_value_data_type == "text":
+                        # extends the query string value
+                        query_string_value += "'" + id_attribute_value + "', "
+                    else:
+                        # extends the query string value
+                        query_string_value += str(id_attribute_value) + ", "
+
+                    if target_attribute_value_data_type == "text":
+                        # extends the query string value
+                        query_string_value += "'" + target_attribute_value + "')"
+                    else:
+                        # extends the query string value
+                        query_string_value += str(target_attribute_value) + ")"
+
+                    # executes the query inserting the values
+                    self.execute_query(cursor, query_string_value)
+
+            # increments the index value
+            index += 1
+
+        # closes the cursor
+        cursor.close()
 
     def remove_entity(self, connection, entity):
         """
@@ -986,6 +1084,21 @@ class BusinessSqliteEngine:
 
         return self.get_entity_class_attribute_names(entity_class)
 
+    def get_entity_indirect_attribute_names(self, entity):
+        """
+        Retrieves a list with the names of all indirect attributes from the given entity instance.
+        
+        @type entity: Object
+        @param entity: The entity instance.
+        @rtype: List
+        @return: The list with the names of all indirect attributes from the given entity instance.
+        """
+
+        # retrieves the entity class
+        entity_class = entity.__class__
+
+        return self.get_entity_class_indirect_attribute_names(entity_class)
+
     def get_entity_class_non_relation_attribute_names(self, entity_class):
         """
         Retrieves a list with the names of all the non relational attributes from the given entity class.
@@ -1075,6 +1188,27 @@ class BusinessSqliteEngine:
         entity_valid_attribute_values = [getattr(entity, attribute_name) for attribute_name in entity_class_valid_attribute_names]
 
         return entity_valid_attribute_values
+
+    def get_entity_indirect_attribute_values(self, entity):
+        """
+        Retrieves a list with the values of all indirect attributes from the given entity instance.
+        
+        @type entity: Object
+        @param entity: The entity instance.
+        @rtype: List
+        @return: The list with the values of all indirect attributes from the given entity instance.
+        """
+
+        # retrieves the entity class
+        entity_class = entity.__class__
+
+        # retrieves all the valid class indirect attribute names
+        entity_class_valid_indirect_attribute_names = self.get_entity_class_indirect_attribute_names(entity_class)
+
+        # retrieves all the valid attribute values
+        entity_valid_indirect_attribute_values = [getattr(entity, attribute_name) for attribute_name in entity_class_valid_indirect_attribute_names]
+
+        return entity_valid_indirect_attribute_values
 
     def get_entity_id_attribute_value(self, entity):
         """
@@ -1305,18 +1439,14 @@ class BusinessSqliteEngine:
             # retrieves the relation attribute relation type
             relation_attribute_relation_type = relation_attributes[RELATION_TYPE_FIELD]
 
-            # in case the relation type if of type one-to-one
-            if relation_attribute_relation_type == ONE_TO_ONE_RELATION or relation_attribute_relation_type == ONE_TO_MANY_RELATION:
-                # retrieves the relation attribute relation type
-                relation_attribute_relation_type = relation_attributes[RELATION_TYPE_FIELD]
+            # retrieves the relation attribute relation type
+            relation_attribute_relation_type = relation_attributes[RELATION_TYPE_FIELD]
 
-                # retrieves the entity class join attribute
-                entity_class_join_attribute = relation_attributes[JOIN_ATTRIBUTE_FIELD]
+            # retrieves the entity class join attribute
+            entity_class_join_attribute = relation_attributes[JOIN_ATTRIBUTE_FIELD]
 
-                # retrieves the data type for the entity class join attribute
-                entity_class_join_attribute_data_type = entity_class_join_attribute[DATA_TYPE_FIELD]
-            elif relation_attribute_relation_type == MANY_TO_MANY_RELATION:
-                entity_class_join_attribute_data_type = "relation"
+            # retrieves the data type for the entity class join attribute
+            entity_class_join_attribute_data_type = entity_class_join_attribute[DATA_TYPE_FIELD]
 
             return entity_class_join_attribute_data_type
         else:

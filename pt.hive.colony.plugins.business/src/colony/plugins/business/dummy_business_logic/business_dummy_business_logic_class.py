@@ -104,7 +104,7 @@ class DummyBusinessLogic:
 
         dummy_entity_bundle_instance.name = "test"
         dummy_entity_bundle_instance.age = 21
-        
+
         dummy_entity_bundle_instance2.name = "test2"
         dummy_entity_bundle_instance2.age = 21
 
@@ -112,6 +112,7 @@ class DummyBusinessLogic:
 
         dummy_entity_bundle_instance.entity_relation = dummy_entity_bundle_association_instance
         dummy_entity_bundle_instance2.entity_relation = dummy_entity_bundle_association_instance
+        dummy_entity_bundle_instance.entity_to_many_relation = [dummy_entity_bundle_association_instance]
 
         # saves the entity instance
         self.entity_manager.save(dummy_entity_bundle_association_instance)
