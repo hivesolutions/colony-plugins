@@ -97,21 +97,25 @@ class DummyBusinessLogic:
         dummy_entity_bundle_instance = dummy_entity_bundle_class()
 
         # creates a new dummy entity bundle instance
-        dummy_entity_bundle_instance2 = dummy_entity_bundle_class()
+        dummy_entity_bundle_instance_1 = dummy_entity_bundle_class()
 
         # creates a new dummy entity bundle association instance
         dummy_entity_bundle_association_instance = dummy_entity_bundle_association_class()
 
+        # sets the dummy entity bundle instance attributes
         dummy_entity_bundle_instance.name = "test"
         dummy_entity_bundle_instance.age = 21
 
-        dummy_entity_bundle_instance2.name = "test2"
-        dummy_entity_bundle_instance2.age = 21
+        # sets the dummy entity bundle instance attributes
+        dummy_entity_bundle_instance_1.name = "test_1"
+        dummy_entity_bundle_instance_1.age = 21
 
+        # sets the dummy entity bundle association instance attributes
         dummy_entity_bundle_association_instance.name = "test_association"
 
+        # sets the entity instances relation attributes
         dummy_entity_bundle_instance.entity_relation = dummy_entity_bundle_association_instance
-        dummy_entity_bundle_instance2.entity_relation = dummy_entity_bundle_association_instance
+        dummy_entity_bundle_instance_1.entity_relation = dummy_entity_bundle_association_instance
         dummy_entity_bundle_instance.entity_to_many_relation = [dummy_entity_bundle_association_instance]
 
         # saves the entity instance
@@ -121,13 +125,10 @@ class DummyBusinessLogic:
         self.entity_manager.save(dummy_entity_bundle_instance)
 
         # saves the entity instance
-        self.entity_manager.save(dummy_entity_bundle_instance2)
+        self.entity_manager.save(dummy_entity_bundle_instance_1)
 
-        value = self.entity_manager.find(dummy_entity_bundle_class, "test")
-
-        all_age_values = self.entity_manager.find_all(dummy_entity_bundle_class, 21, "age")
-
-        print value.entity_to_many_relation
+        # fins the entity bundle instance
+        self.entity_manager.find(dummy_entity_bundle_class, "test")
 
         # removes the entity instance
         self.entity_manager.remove(dummy_entity_bundle_association_instance)
@@ -136,4 +137,4 @@ class DummyBusinessLogic:
         self.entity_manager.remove(dummy_entity_bundle_instance)
 
         # removes the entity instance
-        self.entity_manager.remove(dummy_entity_bundle_instance2)
+        self.entity_manager.remove(dummy_entity_bundle_instance_1)
