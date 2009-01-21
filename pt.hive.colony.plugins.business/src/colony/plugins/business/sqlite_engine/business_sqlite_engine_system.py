@@ -638,6 +638,9 @@ class BusinessSqliteEngine:
                 # retrieves the target entity name field
                 target_entity_name_field = relation_attributes[TARGET_ENTITY_NAME_FIELD]
 
+                # retrieves the join attribute field
+                join_attribute_field = relation_attributes[JOIN_ATTRIBUTE_FIELD]
+
                 # retrieves the join attribute name field
                 join_attribute_name_field = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
 
@@ -645,7 +648,7 @@ class BusinessSqliteEngine:
                 target_attribute_name = target_entity_name_field + "_" + join_attribute_name_field
 
                 # retrieves the target attribute value data type
-                target_attribute_value_data_type = self.get_attribute_data_type(entity_class_valid_indirect_attribute_value, target_entity_field, entity_valid_indirect_attribute_name)
+                target_attribute_value_data_type = self.get_attribute_data_type(join_attribute_field, target_entity_field, join_attribute_name_field)
 
                 # retrieves the entity class name
                 entity_class_name = entity_class.__name__
