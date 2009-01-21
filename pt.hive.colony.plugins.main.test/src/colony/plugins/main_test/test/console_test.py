@@ -106,7 +106,7 @@ class ConsoleTest:
         test_cases = self.get_test_cases(test_case_id)
 
         if test_cases:
-            output_method("starting test case" + test_case_id)
+            output_method("starting test case " + test_case_id)
             self.main_test_plugin.main_test.start_test(test_cases)
         else:
             output_method("invalid test case id")
