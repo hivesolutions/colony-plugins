@@ -71,7 +71,7 @@ class BusinessDummyEntityBundle:
 
         # creates the list of global values
         global_values = []
-        
+
         # retrieves the base directory name
         base_directory_name = self.get_path_directory_name()
 
@@ -81,13 +81,18 @@ class BusinessDummyEntityBundle:
         # sets the entity bundle
         self.entity_bundle = [DummyEntityBundleParent, DummyEntityBundleAssociation, DummyEntityBundle]
 
+        # creates the entity bundle map
         entity_bundle_map = {}
 
+        # iterates over all the classes in the entity bundle
         for entity_class in self.entity_bundle:
+            # retrieves the entity class name
             entity_class_name = entity_class.__name__
 
+            # sets the class in the entity bundle map
             entity_bundle_map[entity_class_name] = entity_class
 
+        # sets the entity bundle map
         self.entity_bundle_map = entity_bundle_map
 
     def get_entity_bundle(self):
