@@ -743,6 +743,61 @@ class BusinessSqliteEngine:
         # closes the cursor
         cursor.close()
 
+        # removes entity indirect relations
+        self.remove_entity_indirect_relations(connection, entity)
+
+    def remove_entity_indirect_relations(self, connection, entity):
+        # retrieves the database connection from the connection object
+        database_connection = connection.database_connection
+
+        # creates the cursor for the given connection
+        cursor = database_connection.cursor()
+
+        # retrieves the entity class for the entity
+        entity_class = entity.__class__
+
+        # retrieves all the valid indirect attribute names, removes method values and the name exceptions
+        entity_valid_indirect_attribute_names = self.get_entity_indirect_attribute_names(entity)
+
+        # iterates over all the entity valid indirect attribute names
+        for entity_valid_indirect_attribute_name in entity_valid_indirect_attribute_names:
+            # retrieves the relation attributes for the given attribute name in the given entity class
+            relation_attributes = self.get_relation_attributes(entity_class, entity_valid_indirect_attribute_name)
+
+            # retrieves the relation type field
+            relation_type_field = relation_attributes[RELATION_TYPE_FIELD]
+
+            # in case the relation is of type many-to-many
+            if relation_type_field == MANY_TO_MANY_RELATION:
+                # retrieves the join table field
+                join_table_field = relation_attributes[JOIN_TABLE_FIELD]
+
+                # retrieves the entity class name
+                entity_class_name = entity_class.__name__
+
+                # retrieves the id attribute name
+                id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
+
+                # retrieves the id attribute value
+                id_attribute_value = self.get_entity_id_attribute_value(entity)
+
+                # creates the attribute name
+                attribute_name = entity_class_name + "_" + id_attribute_name
+
+                # creates the initial query string value
+                query_string_value = "delete from " + join_table_field + " where " + attribute_name + " = "
+
+                if type(id_attribute_value) in types.StringTypes:
+                    query_string_value += "'" + id_attribute_value + "'"
+                else:
+                    query_string_value += str(id_attribute_value)
+
+                # executes the query removing the values
+                self.execute_query(cursor, query_string_value)
+
+        # closes the cursor
+        cursor.close()
+
     def find_entity(self, connection, entity_class, id_value, search_field_name = None, retrieved_entities_list = None):
         """
         Retrieves an entity instance of the declared class type with the given id, using the given connection.

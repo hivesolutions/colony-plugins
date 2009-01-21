@@ -127,6 +127,8 @@ class DummyBusinessLogic:
 
         all_age_values = self.entity_manager.find_all(dummy_entity_bundle_class, 21, "age")
 
+        print value.entity_to_many_relation
+
         # removes the entity instance
         self.entity_manager.remove(dummy_entity_bundle_association_instance)
 
