@@ -887,6 +887,74 @@ class BusinessSqliteEngine:
                 # closes the cursor
                 cursor.close()
 
+            # retrieves all the valid indirect attribute names, removes method values and the name exceptions
+            entity_valid_indirect_attribute_names = self.get_entity_indirect_attribute_names(entity)
+
+            # iterates over all the entity valid indirect attribute names
+            for entity_valid_indirect_attribute_name in entity_valid_indirect_attribute_names:
+                # retrieves the relation attributes for the given attribute name in the given entity class
+                relation_attributes = self.get_relation_attributes(entity_class, entity_valid_indirect_attribute_name)
+
+                # retrieves the relation type field
+                relation_type_field = relation_attributes[RELATION_TYPE_FIELD]
+
+                # in case the relation is of type many-to-many
+                if relation_type_field == MANY_TO_MANY_RELATION:
+                    # retrieves the join table field
+                    join_table_field = relation_attributes[JOIN_TABLE_FIELD]
+
+                    # retrieves the target entity field
+                    target_entity_field = relation_attributes[TARGET_ENTITY_FIELD]
+
+                    # retrieves the target entity name field
+                    target_entity_name_field = relation_attributes[TARGET_ENTITY_NAME_FIELD]
+
+                    # retrieves the join attribute name field
+                    join_attribute_name_field = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
+
+                    # creates the target attribute name
+                    target_attribute_name = target_entity_name_field + "_" + join_attribute_name_field
+
+                    # retrieves the id attribute name
+                    id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
+
+                    # retrieves the id attribute value
+                    id_attribute_value = self.get_entity_id_attribute_value(entity)
+
+                    # creates the attribute name
+                    attribute_name = entity_class_name + "_" + id_attribute_name
+
+                    # creates the initial query string value
+                    query_string_value = "select " + target_attribute_name + " from " + join_table_field + " where " + attribute_name + " = "
+
+                    if type(id_attribute_value) in types.StringTypes:
+                        query_string_value += "'" + id_attribute_value + "'"
+                    else:
+                        query_string_value += str(id_attribute_value)
+
+                    # executes the query removing the values
+                    self.execute_query(cursor, query_string_value)
+
+                    # selects the values from the cursor
+                    values_list = [value for value in cursor]
+
+                    # creates the target entities list
+                    target_entities_list = []
+
+                    # iterates over the values list
+                    for value in values_list:
+                        # retrieves the target attribute value
+                        target_attribute_value = value[0]
+
+                        # retrieves the target entity
+                        target_entity = self.find_entity(connection, target_entity_field, target_attribute_value, retrieved_entities_list = retrieved_entities_list)
+
+                        # appends the target entity to the list of target entities
+                        target_entities_list.append(target_entity)
+
+                    # sets the relation attribute in the instance
+                    setattr(entity, entity_valid_indirect_attribute_name, target_entities_list)
+
             # returns the created entity
             return entity
 
