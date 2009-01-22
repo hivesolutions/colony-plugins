@@ -37,8 +37,24 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import MySQLdb
+
+import business_mysql_engine_exceptions
+
 ENGINE_NAME = "mysql"
 """ The engine name """
+
+HOSTNAME_VALUE = "hostname"
+""" The hostname value """
+
+USERNAME_VALUE = "username"
+""" The username value """
+
+PASSWORD_VALUE = "password"
+""" The password value """
+
+DATABASE_VALUE = "database"
+""" The database value """
 
 class BusinessMysqlEngine:
     """
@@ -60,3 +76,46 @@ class BusinessMysqlEngine:
 
     def get_engine_name(self):
         return ENGINE_NAME
+
+    def create_connection(self, connection_parameters):
+        """
+        Creates the connection using the given connection parameters.
+        
+        @type connection_parameters: List
+        @param connection_parameters: The connection parameters.
+        @rtype: Connection
+        @return: The created connection.
+        """
+
+        # in case the hostname is not defined
+        if not HOSTNAME_VALUE in connection_parameters:
+            raise business_mysql_engine_exceptions.MissingProperty(HOSTNAME_VALUE)
+
+        # in case the username is not defined
+        if not USERNAME_VALUE in connection_parameters:
+            raise business_mysql_engine_exceptions.MissingProperty(USERNAME_VALUE)
+
+        # in case the password is not defined
+        if not PASSWORD_VALUE in connection_parameters:
+            raise business_mysql_engine_exceptions.MissingProperty(PASSWORD_VALUE)
+
+        # in case the database is not defined
+        if not DATABASE_VALUE in connection_parameters:
+            raise business_mysql_engine_exceptions.MissingProperty(DATABASE_VALUE)
+
+        # retrieves the hostname parameter value
+        hostname = connection_parameters[HOSTNAME_VALUE]
+
+        # retrieves the username parameter value
+        username = connection_parameters[USERNAME_VALUE]
+
+        # retrieves the password parameter value
+        password = connection_parameters[PASSWORD_VALUE]
+
+        # retrieves the database parameter value
+        database = connection_parameters[DATABASE_VALUE]
+
+        # creates the mysql database connection
+        connection = MySQLdb.connect(host = hostname, user = username, passwd = password, db = database)
+
+        return connection

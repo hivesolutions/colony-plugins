@@ -50,6 +50,15 @@ DATA_TYPE_MAP = {"text" : "text",
                  "relation" : "relation"}
 """ The data type map """
 
+FILE_PATH_VALUE = "file_path"
+""" The file path value """
+
+AUTOCOMMIT_VALUE = "autocommit"
+""" The autocommit value """
+
+ISOLATION_LEVEL_VALUE = "isolation_level"
+""" The isolation level value """
+
 ATTRIBUTE_EXCLUSION_LIST = ["__class__", "__delattr__", "__dict__", "__doc__", "__getattribute__", "__hash__", "__module__", "__new__", "__reduce__", "__reduce_ex__", "__repr__", "__setattr__", "__str__", "__weakref__", "mapping_options"]
 """ The attribute exclusion list """
 
@@ -152,25 +161,24 @@ class BusinessSqliteEngine:
         """
 
         # in case the file path is not defined
-        if not "file_path" in connection_parameters:
-            # return immediately
-            return None
+        if not FILE_PATH_VALUE in connection_parameters:
+            raise business_sqlite_engine_exceptions.MissingProperty(FILE_PATH_VALUE)
 
         # retrieves the file path parameter value
-        file_path = connection_parameters["file_path"]
+        file_path = connection_parameters[FILE_PATH_VALUE]
 
         # sets the isolation level value as deferred
         isolation_level_value = "DEFERRED"
 
-        if "autocommit" in connection_parameters:
+        if AUTOCOMMIT_VALUE in connection_parameters:
             # retrieves the autocommit parameter value
-            autocommit_value = connection_parameters["autocommit"]
+            autocommit_value = connection_parameters[AUTOCOMMIT_VALUE]
 
             if autocommit_value:
                 isolation_level_value = None
 
-        if "isolation_level" in connection_parameters:
-            isolation_level_value = connection_parameters["isolation_level"]
+        if ISOLATION_LEVEL_VALUE in connection_parameters:
+            isolation_level_value = connection_parameters[ISOLATION_LEVEL_VALUE]
 
         # creates the sqlite database connection
         connection = sqlite3.connect(file_path, isolation_level = isolation_level_value)
