@@ -689,8 +689,11 @@ class BusinessSqliteEngine:
             # retrieves the relation type field
             relation_type_field = relation_attributes[RELATION_TYPE_FIELD]
 
-            # in case the relation is of type one-to-many
-            if relation_type_field == ONE_TO_MANY_RELATION:
+            # in case the relation is of type one-to-many or one-to-one with an entity valid indirect attribute value
+            if relation_type_field == ONE_TO_MANY_RELATION or (relation_type_field == ONE_TO_ONE_RELATION and entity_valid_indirect_attribute_value):
+                if relation_type_field == ONE_TO_ONE_RELATION:
+                    entity_valid_indirect_attribute_value = [entity_valid_indirect_attribute_value]
+
                 # retrieves the target entity field
                 target_entity_field = relation_attributes[TARGET_ENTITY_FIELD]
 
@@ -1555,6 +1558,12 @@ class BusinessSqliteEngine:
                 return True
             elif relation_type == MANY_TO_MANY_RELATION:
                 return True
+            elif relation_type == ONE_TO_ONE_RELATION:
+                # in case the mapped by field is defined in the relation attributes
+                if MAPPED_BY_FIELD in relation_attributes:
+                    return True
+                else:
+                    return False
         else:
             return False
 
