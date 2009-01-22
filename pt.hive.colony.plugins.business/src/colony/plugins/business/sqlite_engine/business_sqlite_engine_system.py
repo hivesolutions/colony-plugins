@@ -1596,7 +1596,7 @@ class BusinessSqliteEngine:
             relation_attribute_relation_type = relation_attributes[RELATION_TYPE_FIELD]
 
             # in case the relation type if of type one-to-one
-            if relation_attribute_relation_type == ONE_TO_ONE_RELATION:
+            if relation_attribute_relation_type == ONE_TO_ONE_RELATION or relation_attribute_relation_type == MANY_TO_ONE_RELATION:
                 # retrieves the target entity class
                 target_entity_class = relation_attributes[TARGET_ENTITY_FIELD]
 
