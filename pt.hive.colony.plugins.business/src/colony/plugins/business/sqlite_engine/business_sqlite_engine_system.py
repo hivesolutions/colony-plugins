@@ -159,6 +159,7 @@ class BusinessSqliteEngine:
         # retrieves the file path parameter value
         file_path = connection_parameters["file_path"]
 
+        # sets the isolation level value as deferred
         isolation_level_value = "DEFERRED"
 
         if "autocommit" in connection_parameters:
@@ -485,37 +486,42 @@ class BusinessSqliteEngine:
             # retrieves the relation attributes for the given attribute name in the given entity class
             relation_attributes = self.get_relation_attributes(entity_class, entity_class_valid_indirect_attribute_name)
 
-            # retrieves the join table field
-            join_table_field = relation_attributes[JOIN_TABLE_FIELD]
+            # retrieves the relation type field
+            relation_type_field = relation_attributes[RELATION_TYPE_FIELD]
 
-            # retrieves the attribute column name field
-            attribute_column_name_field = relation_attributes[ATTRIBUTE_COLUMN_NAME_FIELD]
+            # in case the relation is of type many-to-many
+            if relation_type_field == MANY_TO_MANY_RELATION:
+                # retrieves the join table field
+                join_table_field = relation_attributes[JOIN_TABLE_FIELD]
 
-            # retrieves the id attribute name
-            id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
+                # retrieves the attribute column name field
+                attribute_column_name_field = relation_attributes[ATTRIBUTE_COLUMN_NAME_FIELD]
 
-            # retrieves the id attribute value
-            id_attribute_value = self.get_entity_class_id_attribute_value(entity_class)
+                # retrieves the id attribute name
+                id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
 
-            # retrieves the id attribute data type
-            id_attribute_data_type = self.get_attribute_data_type(id_attribute_value, entity_class, id_attribute_name)
+                # retrieves the id attribute value
+                id_attribute_value = self.get_entity_class_id_attribute_value(entity_class)
 
-            # retrieves the valid sqlite data type from the formal id attribute data type
-            id_attribute_target_data_type = DATA_TYPE_MAP[id_attribute_data_type]
+                # retrieves the id attribute data type
+                id_attribute_data_type = self.get_attribute_data_type(id_attribute_value, entity_class, id_attribute_name)
 
-            if self.exists_table_definition(connection, join_table_field):
-                if not self.exists_table_column_definition(connection, join_table_field, attribute_column_name_field):
+                # retrieves the valid sqlite data type from the formal id attribute data type
+                id_attribute_target_data_type = DATA_TYPE_MAP[id_attribute_data_type]
+
+                if self.exists_table_definition(connection, join_table_field):
+                    if not self.exists_table_column_definition(connection, join_table_field, attribute_column_name_field):
+                        # creates the query string value
+                        query_string_value = "alter table " + join_table_field + " add column " + attribute_column_name_field + " " + id_attribute_target_data_type
+
+                        # executes the query altering the table
+                        self.execute_query(cursor, query_string_value)
+                else:
                     # creates the query string value
-                    query_string_value = "alter table " + join_table_field + " add column " + attribute_column_name_field + " " + id_attribute_target_data_type
+                    query_string_value = "create table " + join_table_field + "(" + attribute_column_name_field + " " + id_attribute_target_data_type + ")"
 
-                    # executes the query altering the table
+                    # executes the query creating the table
                     self.execute_query(cursor, query_string_value)
-            else:
-                # creates the query string value
-                query_string_value = "create table " + join_table_field + "(" + attribute_column_name_field + " " + id_attribute_target_data_type + ")"
-
-                # executes the query creating the table
-                self.execute_query(cursor, query_string_value)
 
         # closes the cursor
         cursor.close()
@@ -1216,7 +1222,7 @@ class BusinessSqliteEngine:
         entity_class_attribute_names = dir(entity_class)
 
         # retrieves all the valid class attribute names, removes method values, the name exceptions and the indirect attributes
-        entity_class_valid_attribute_names = [attribute_name for attribute_name in entity_class_attribute_names if not attribute_name in ATTRIBUTE_EXCLUSION_LIST and not type(getattr(entity_class, attribute_name)) in TYPE_EXCLUSION_LIST and not self.is_attribute_name_indirect_relation(attribute_name, entity_class)]
+        entity_class_valid_attribute_names = [attribute_name for attribute_name in entity_class_attribute_names if not attribute_name in ATTRIBUTE_EXCLUSION_LIST and not type(getattr(entity_class, attribute_name)) in TYPE_EXCLUSION_LIST and not self.is_attribute_name_table_joined_relation(attribute_name, entity_class)]
 
         return entity_class_valid_attribute_names
 
@@ -1505,7 +1511,9 @@ class BusinessSqliteEngine:
             # retrieves the relation type
             relation_type = relation_attributes[RELATION_TYPE_FIELD]
 
-            if relation_type == MANY_TO_MANY_RELATION:
+            if relation_type == ONE_TO_MANY_RELATION:
+                return True
+            elif relation_type == MANY_TO_MANY_RELATION:
                 return True
         else:
             return False
@@ -1525,8 +1533,53 @@ class BusinessSqliteEngine:
         # retrieves the attribute value
         attribute_value = getattr(entity_class, attribute_name)
 
-        # tests the attribute value for relation
+        # tests the attribute value for indirect relation
         return self.is_attribute_indirect_relation(attribute_value, attribute_name, entity_class)
+
+    def is_attribute_table_joined_relation(self, attribute_value, attribute_name, entity_class):
+        """
+        Retrieves the result of the attribute table joined relation test.
+        
+        @type attribute_value: Object
+        @param attribute_value: The value of the attribute to test for table joined relation.
+        @type attribute_name: String
+        @param attribute_name: The value of the attribute name to test for table joined relation.
+        @type entity_class: Class
+        @param entity_class: The entity class for the attribute name to test for table joined relation.
+        @rtype: bool
+        @return: The result of the attribute table joined relation test.
+        """
+
+        # is case the attribute is of type relation
+        if self.is_attribute_relation(attribute_value):
+            # retrieves the relation attributes
+            relation_attributes = self.get_relation_attributes(entity_class, attribute_name)
+
+            # retrieves the relation type
+            relation_type = relation_attributes[RELATION_TYPE_FIELD]
+
+            if relation_type == MANY_TO_MANY_RELATION:
+                return True
+        else:
+            return False
+
+    def is_attribute_name_table_joined_relation(self, attribute_name, entity_class):
+        """
+        Retrieves the result of the attribute name table joined relation test.
+        
+        @type attribute_name: Object
+        @param attribute_name: The value of the attribute name to test for table joined relation.
+        @type entity_class: Class
+        @param entity_class: The entity class for the attribute name to test for table joined relation.
+        @rtype: bool
+        @return: The result of the attribute name table joined relation test.
+        """
+
+        # retrieves the attribute value
+        attribute_value = getattr(entity_class, attribute_name)
+
+        # tests the attribute value for table joined relation
+        return self.is_attribute_table_joined_relation(attribute_value, attribute_name, entity_class)
 
     def get_relation_attribute_value(self, attribute_value, class_attribute_value, entity_class, relation_attribute_name):
         """
