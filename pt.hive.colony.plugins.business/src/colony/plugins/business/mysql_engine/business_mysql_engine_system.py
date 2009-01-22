@@ -119,3 +119,38 @@ class BusinessMysqlEngine:
         connection = MySQLdb.connect(host = hostname, user = username, passwd = password, db = database)
 
         return connection
+
+    def commit_connection(self, connection):
+        # retrieves the database connection from the connection object
+        database_connection = connection.database_connection
+
+        # commits the changes to the connection
+        database_connection.commit()
+
+        return True
+
+    def rollback_connection(self, connection):
+        # retrieves the database connection from the connection object
+        database_connection = connection.database_connection
+
+        # "rollsback" the changes to the connection
+        database_connection.rollback()
+
+        return True
+
+    def create_transaction(self, connection, transaction_name):
+        return True
+
+    def commit_transaction(self, connection, transaction_name):
+        # retrieves the transaction stack from the connection object
+        transaction_stack = connection.transaction_stack
+
+        # in case there is only one element in the transaction stack
+        if len(transaction_stack) == 1:
+            return self.commit_connection(connection)
+
+        return True
+
+    def rollback_transaction(self, connection, transaction_name):
+        # "rollsback" the transaction        
+        return self.rollback_connection(connection)

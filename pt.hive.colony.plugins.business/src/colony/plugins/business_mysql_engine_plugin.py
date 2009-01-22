@@ -55,7 +55,8 @@ class BusinessMysqlEnginePlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["entity_manager_engine"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PackageDependency(
+                    "MySQL-Python", "MySQLdb", "1.2.2.x", "http://mysql-python.sourceforge.net/")]
     events_handled = []
     events_registrable = []
 
@@ -87,6 +88,24 @@ class BusinessMysqlEnginePlugin(colony.plugins.plugin_system.Plugin):
 
     def get_engine_name(self):
         return self.business_mysql_engine.get_engine_name()
+
+    def create_connection(self, connection_parameters):
+        return self.business_mysql_engine.create_connection(connection_parameters)
+
+    def commit_connection(self, connection):
+        return self.business_mysql_engine.commit_connection(connection)
+
+    def rollback_connection(self, connection):
+        return self.business_mysql_engine.rollback_connection(connection)
+
+    def create_transaction(self, connection, transaction_name):
+        return self.business_mysql_engine.create_transaction(connection, transaction_name)
+
+    def commit_transaction(self, connection, transaction_name):
+        return self.business_mysql_engine.commit_transaction(connection, transaction_name)
+
+    def rollback_transaction(self, connection, transaction_name):
+        return self.business_mysql_engine.rollback_transaction(connection, transaction_name)
 
     def save_entity(self, entity):
         pass
