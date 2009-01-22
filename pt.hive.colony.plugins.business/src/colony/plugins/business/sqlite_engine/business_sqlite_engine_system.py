@@ -689,8 +689,48 @@ class BusinessSqliteEngine:
             # retrieves the relation type field
             relation_type_field = relation_attributes[RELATION_TYPE_FIELD]
 
+            # in case the relation is of type one-to-many
+            if relation_type_field == ONE_TO_MANY_RELATION:
+                # retrieves the target entity field
+                target_entity_field = relation_attributes[TARGET_ENTITY_FIELD]
+
+                # retrieves the target entity name field
+                target_entity_name_field = relation_attributes[TARGET_ENTITY_NAME_FIELD]
+
+                # retrieves the join attribute name field
+                join_attribute_name_field = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
+
+                # retrieves the id attribute value
+                id_attribute_value = self.get_entity_id_attribute_value(entity)
+
+                # retrieves the target entity id attribute name
+                target_entity_id_attribute_name = self.get_entity_class_id_attribute_name(target_entity_field)
+
+                # iterates over all the objects in the entity valid indirect attribute value (list)
+                for object_value in entity_valid_indirect_attribute_value:
+                    # retrieves the target entity id attribute value
+                    target_entity_id_attribute_value = self.get_entity_id_attribute_value(object_value)
+
+                    # creates the initial query string value
+                    query_string_value = "update " + target_entity_name_field + " set " + join_attribute_name_field + " = "
+
+                    if type(id_attribute_value) in types.StringTypes:
+                        query_string_value += "'" + id_attribute_value + "'"
+                    else:
+                        query_string_value += str(id_attribute_value)
+
+                    query_string_value += " where " + target_entity_id_attribute_name + " = "
+
+                    if type(target_entity_id_attribute_value) in types.StringTypes:
+                        query_string_value += "'" + target_entity_id_attribute_value + "'"
+                    else:
+                        query_string_value += str(target_entity_id_attribute_value)
+
+                    # executes the query updating the values
+                    self.execute_query(cursor, query_string_value)
+
             # in case the relation is of type many-to-many
-            if relation_type_field == MANY_TO_MANY_RELATION:
+            elif relation_type_field == MANY_TO_MANY_RELATION:
                 # retrieves the join table field
                 join_table_field = relation_attributes[JOIN_TABLE_FIELD]
 
@@ -797,7 +837,7 @@ class BusinessSqliteEngine:
         if type(entity_id_attribute_value) in types.StringTypes:
             query_string_value += "'" + entity_id_attribute_value + "'"
         else:
-            query_string_value += str(id_value)
+            query_string_value += str(entity_id_attribute_value)
 
         # executes the query removing the values
         self.execute_query(cursor, query_string_value)
