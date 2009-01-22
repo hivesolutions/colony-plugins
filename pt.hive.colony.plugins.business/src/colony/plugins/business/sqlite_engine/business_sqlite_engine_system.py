@@ -80,6 +80,12 @@ JOIN_ATTRIBUTE_FIELD = "join_attribute"
 JOIN_ATTRIBUTE_NAME_FIELD = "join_attribute_name"
 """ The join attribute name field """
 
+ATTRIBUTE_COLUMN_NAME_FIELD = "attribute_column_name"
+""" The attribute column name field """
+
+JOIN_ATTRIBUTE_COLUMN_NAME_FIELD = "join_attribute_column_name"
+""" The join attribute column name field """
+
 MAPPED_BY_FIELD = "mapped_by"
 """ The mapped by field """
 
@@ -252,6 +258,43 @@ class BusinessSqliteEngine:
         else:
             return False
 
+    def exists_table_column_definition(self, connection, table_name, column_name):
+        if not self.exists_table_definition(connection, table_name):
+            return False
+
+        # retrieves the database connection from the connection object
+        database_connection = connection.database_connection
+
+        # creates the cursor for the given connection
+        cursor = database_connection.cursor()
+
+        # creates the initial query string value
+        query_string_value = "pragma table_info(" + table_name + ")"
+
+        # executes the query retrieving the values
+        self.execute_query(cursor, query_string_value)
+
+        # selects the table information from the cursor
+        table_information_list = [value for value in cursor]
+
+        # iterates over all the table information
+        for table_information_item in table_information_list:
+            # retrieves the attribute name
+            attribute_name = table_information_item[1]
+
+            # in case the attribute name is the same
+            # as the column name
+            if attribute_name == column_name:
+                # closes the cursor
+                cursor.close()
+
+                return True
+
+        # closes the cursor
+        cursor.close()
+
+        return False
+
     def synced_entity_definition(self, connection, entity_class):
         """
         Checks if an entity definition is synchronized with the correspondent database information.
@@ -300,6 +343,9 @@ class BusinessSqliteEngine:
         # in case the table information list size is different from the entity class
         # valid attributes size, invalid number of attributes situation
         if not table_information_list_size == entity_class_valid_attributes_size:
+            # closes the cursor
+            cursor.close()
+
             # returns false
             return False
 
@@ -326,11 +372,17 @@ class BusinessSqliteEngine:
             # in case the attribute name is not the same as the entity class valid attribute name,
             # invalid attribute name situation
             if not attribute_name == entity_class_valid_attribute_name:
+                # closes the cursor
+                cursor.close()
+
                 return False
 
             # in case the attribute data type is not the same as the entity class valid attribute target data type,
             # invalid attribute data type situation
             if not attribute_data_type == entity_class_valid_attribute_target_data_type:
+                # closes the cursor
+                cursor.close()
+
                 return False
 
             # increments the index value
@@ -403,7 +455,7 @@ class BusinessSqliteEngine:
         # closes the query string value
         query_string_value += ")"
 
-        # executes the query inserting the values
+        # executes the query creating the table
         self.execute_query(cursor, query_string_value)
 
         # closes the cursor
@@ -436,6 +488,9 @@ class BusinessSqliteEngine:
             # retrieves the join table field
             join_table_field = relation_attributes[JOIN_TABLE_FIELD]
 
+            # retrieves the attribute column name field
+            attribute_column_name_field = relation_attributes[ATTRIBUTE_COLUMN_NAME_FIELD]
+
             # retrieves the id attribute name
             id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
 
@@ -448,18 +503,19 @@ class BusinessSqliteEngine:
             # retrieves the valid sqlite data type from the formal id attribute data type
             id_attribute_target_data_type = DATA_TYPE_MAP[id_attribute_data_type]
 
-            # creates the relation attribute name
-            relation_attribute_name = entity_class_name + "_" + id_attribute_name
-
             if self.exists_table_definition(connection, join_table_field):
-                # creates the query string value
-                query_string_value = "alter table " + join_table_field + " add column " + relation_attribute_name + " " + id_attribute_target_data_type
+                if not self.exists_table_column_definition(connection, join_table_field, attribute_column_name_field):
+                    # creates the query string value
+                    query_string_value = "alter table " + join_table_field + " add column " + attribute_column_name_field + " " + id_attribute_target_data_type
+
+                    # executes the query altering the table
+                    self.execute_query(cursor, query_string_value)
             else:
                 # creates the query string value
-                query_string_value = "create table " + join_table_field + "(" + relation_attribute_name + " " + id_attribute_target_data_type + ")"
+                query_string_value = "create table " + join_table_field + "(" + attribute_column_name_field + " " + id_attribute_target_data_type + ")"
 
-            # executes the query inserting the values
-            self.execute_query(cursor, query_string_value)
+                # executes the query creating the table
+                self.execute_query(cursor, query_string_value)
 
         # closes the cursor
         cursor.close()
@@ -644,23 +700,20 @@ class BusinessSqliteEngine:
                 # retrieves the join attribute name field
                 join_attribute_name_field = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
 
-                # creates the target attribute name
-                target_attribute_name = target_entity_name_field + "_" + join_attribute_name_field
+                # retrieves the join attribute column name field
+                join_attribute_column_name_field = relation_attributes[JOIN_ATTRIBUTE_COLUMN_NAME_FIELD]
+
+                # retrieves the attribute column name field
+                attribute_column_name_field = relation_attributes[ATTRIBUTE_COLUMN_NAME_FIELD]
 
                 # retrieves the target attribute value data type
                 target_attribute_value_data_type = self.get_attribute_data_type(join_attribute_field, target_entity_field, join_attribute_name_field)
-
-                # retrieves the entity class name
-                entity_class_name = entity_class.__name__
 
                 # retrieves the id attribute name
                 id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
 
                 # retrieves the id attribute value
                 id_attribute_value = self.get_entity_id_attribute_value(entity)
-
-                # creates the attribute name
-                attribute_name = entity_class_name + "_" + id_attribute_name
 
                 # retrieves the class id attribute value
                 class_id_attribute_value = self.get_entity_class_id_attribute_value(entity_class)
@@ -674,8 +727,8 @@ class BusinessSqliteEngine:
                     target_attribute_value = getattr(object_value, join_attribute_name_field)
 
                     # creates the initial query string value
-                    query_string_value = "insert into " + join_table_field + "(" + attribute_name + ", " +\
-                                         target_attribute_name + ") values("
+                    query_string_value = "insert into " + join_table_field + "(" + attribute_column_name_field + ", " +\
+                                         join_attribute_column_name_field + ") values("
 
                     if id_attribute_value_data_type == "text":
                         # extends the query string value
@@ -775,20 +828,14 @@ class BusinessSqliteEngine:
                 # retrieves the join table field
                 join_table_field = relation_attributes[JOIN_TABLE_FIELD]
 
-                # retrieves the entity class name
-                entity_class_name = entity_class.__name__
-
-                # retrieves the id attribute name
-                id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
+                # retrieves the attribute column name field
+                attribute_column_name_field = relation_attributes[ATTRIBUTE_COLUMN_NAME_FIELD]
 
                 # retrieves the id attribute value
                 id_attribute_value = self.get_entity_id_attribute_value(entity)
 
-                # creates the attribute name
-                attribute_name = entity_class_name + "_" + id_attribute_name
-
                 # creates the initial query string value
-                query_string_value = "delete from " + join_table_field + " where " + attribute_name + " = "
+                query_string_value = "delete from " + join_table_field + " where " + attribute_column_name_field + " = "
 
                 if type(id_attribute_value) in types.StringTypes:
                     query_string_value += "'" + id_attribute_value + "'"
@@ -967,23 +1014,17 @@ class BusinessSqliteEngine:
                     # retrieves the target entity name field
                     target_entity_name_field = relation_attributes[TARGET_ENTITY_NAME_FIELD]
 
-                    # retrieves the join attribute name field
-                    join_attribute_name_field = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
+                    # retrieves the join attribute column name field
+                    join_attribute_column_name_field = relation_attributes[JOIN_ATTRIBUTE_COLUMN_NAME_FIELD]
 
-                    # creates the target attribute name
-                    target_attribute_name = target_entity_name_field + "_" + join_attribute_name_field
-
-                    # retrieves the id attribute name
-                    id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
+                    # retrieves the attribute column name field
+                    attribute_column_name_field = relation_attributes[ATTRIBUTE_COLUMN_NAME_FIELD]
 
                     # retrieves the id attribute value
                     id_attribute_value = self.get_entity_id_attribute_value(entity)
 
-                    # creates the attribute name
-                    attribute_name = entity_class_name + "_" + id_attribute_name
-
                     # creates the initial query string value
-                    query_string_value = "select " + target_attribute_name + " from " + join_table_field + " where " + attribute_name + " = "
+                    query_string_value = "select " + join_attribute_column_name_field + " from " + join_table_field + " where " + attribute_column_name_field + " = "
 
                     if type(id_attribute_value) in types.StringTypes:
                         query_string_value += "'" + id_attribute_value + "'"
