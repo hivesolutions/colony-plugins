@@ -41,7 +41,6 @@ import os
 import time
 import stat
 import string
-
 import os.path
 
 import javascript_manager_parser
@@ -79,19 +78,19 @@ class JavascriptManager:
         # sets the plugin search directories list
         self.plugin_search_directories_list = [self.workspace_base_path + "/pt.hive.colony.web/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.data_structure/plugins",
+                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.gui.components/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.gui.perspective_manager/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.main.console/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.main.gui/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.main.logic/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.misc/plugins",
-                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.development_tools/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.functional_unit/plugins",
-                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.navigator/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.default_perspective/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.eureka/plugins",
+                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.hierarchy_editor/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.login_window/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.misc/plugins",
-                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.main.gui.components/plugins"]
+                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.pos/plugins"]
 
     def index_plugin_search_directories(self):
         # iterates over all the search directories
@@ -103,12 +102,6 @@ class JavascriptManager:
             self.index_plugin_search_directory(plugin_search_directory, current_plugin_search_directories_map)
 
     def index_plugin_search_directory(self, plugin_search_directory, current_plugin_search_directories_map):
-        # in case the plugin search directory does not exist
-        if not os.path.exists(plugin_search_directory):
-            # prints a warning message
-            self.javascript_manager_plugin.warning("Path '%s' does not exist in the current filesystem" % plugin_search_directory)
-            return
-
         # the list of files in the javascript plugins directory
         dir_list = os.listdir(plugin_search_directory)
 
@@ -132,12 +125,6 @@ class JavascriptManager:
     def load_plugin_files(self):
         # iterates over all the search directories
         for plugin_search_directory in self.plugin_search_directories_list:
-            # in case the plugin search directory does not exist
-            if not os.path.exists(plugin_search_directory):
-                # prints a warning message
-                self.javascript_manager_plugin.warning("Path '%s' does not exist in the current filesystem" % plugin_search_directory)
-                return
-
             # the list of files in the javascript plugins directory
             dir_list = os.listdir(plugin_search_directory)
 
