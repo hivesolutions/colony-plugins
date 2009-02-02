@@ -83,14 +83,14 @@ class JavascriptManager:
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.main.console/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.main.gui/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.main.logic/plugins",
-                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.misc/plugins",
-                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.functional_unit/plugins",
+                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.misc/plugins",  
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.default_perspective/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.eureka/plugins",
-                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.hierarchy_editor/plugins",
+                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.functional_unit/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.login_window/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.misc/plugins",
-                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.pos/plugins"]
+                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.pos/plugins",
+                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.toolbar/plugins"]
 
     def index_plugin_search_directories(self):
         # iterates over all the search directories
