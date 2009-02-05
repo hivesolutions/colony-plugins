@@ -244,9 +244,12 @@ class HttpClientServiceTask:
         # prints debug message about connection
         self.main_service_http_plugin.debug("Connected to: %s" % str(self.http_address))
 
+        # sets the request timeout
+        request_timeout = REQUEST_TIMEOUT
+
         while 1:
             try:
-                request = self.retrieve_request()
+                request = self.retrieve_request(request_timeout)
             except main_service_http_exceptions.MainServiceHttpException:
                 self.main_service_http_plugin.debug("Connection: %s closed" % str(self.http_address))
                 return
@@ -274,8 +277,11 @@ class HttpClientServiceTask:
                 # sends the request to the client (response)
                 self.send_request(request)
 
+                # in case the connection is meant to be kept alive
+                if self.keep_alive(request):
+                    self.main_service_http_plugin.debug("Connection: %s kept alive for %ss" % (str(self.http_address), str(request_timeout)))
                 # in case the connection is not meant to be kept alive
-                if not self.keep_alive(request):
+                else:
                     self.main_service_http_plugin.debug("Connection: %s closed" % str(self.http_address))
                     break
 
@@ -295,10 +301,12 @@ class HttpClientServiceTask:
     def resume(self):
         pass
 
-    def retrieve_request(self):
+    def retrieve_request(self, request_timeout = REQUEST_TIMEOUT):
         """
         Retrieves the request from the received message.
         
+        @type request_timeout: int
+        @param request_timeout: The timeout for the request retrieval.
         @rtype: HttpRequest
         @return: The request from the received message.
         """
@@ -324,7 +332,7 @@ class HttpClientServiceTask:
         # continuous loop
         while 1:
             # retrieves the data
-            data = self.retrieve_data()
+            data = self.retrieve_data(request_timeout)
 
             # writes the data to the string io
             message.write(data)
@@ -426,16 +434,16 @@ class HttpClientServiceTask:
                     # returns the request
                     return request
 
-    def retrieve_data(self, chunk_size = CHUNK_SIZE):
+    def retrieve_data(self, request_timeout = REQUEST_TIMEOUT, chunk_size = CHUNK_SIZE):
         try:
             # runs the select in the http connection, with timeout
-            selected_values = select.select([self.http_connection], [], [], REQUEST_TIMEOUT)
+            selected_values = select.select([self.http_connection], [], [], request_timeout)
         except:
             raise main_service_http_exceptions.RequestClosed("invalid socket")
 
         if selected_values == ([], [], []):
              self.http_connection.close()
-             raise main_service_http_exceptions.ServerRequestTimeout("%is timeout" % REQUEST_TIMEOUT)
+             raise main_service_http_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
         try:
             # receives the data in chunks
             data = self.http_connection.recv(chunk_size)
@@ -564,6 +572,15 @@ class HttpClientServiceTask:
                 return
 
     def keep_alive(self, request):
+        """
+        Retrieves the value of the keep alive for the given request.
+        
+        @type request: HttpRequest
+        @param request: The request to retrieve the keep alive value.
+        @rtype: bool
+        @return: The value of the keep alive for the given request.
+        """
+    
         if "Connection" in request.headers_map:
             connection_type = request.headers_map["Connection"]
 
