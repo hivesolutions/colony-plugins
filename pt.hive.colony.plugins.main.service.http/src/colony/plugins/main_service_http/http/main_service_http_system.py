@@ -194,7 +194,7 @@ class MainServiceHttp:
             task_descriptor = task_descriptor_class(start_method = http_client_service_task.start,
                                                     stop_method = http_client_service_task.stop,
                                                     pause_method = http_client_service_task.pause,
-                                                    resume_method = http_client_service_task.resume) 
+                                                    resume_method = http_client_service_task.resume)
 
             # inserts the new task descriptor into the http client thread pool
             self.http_client_thread_pool.insert_task(task_descriptor)
