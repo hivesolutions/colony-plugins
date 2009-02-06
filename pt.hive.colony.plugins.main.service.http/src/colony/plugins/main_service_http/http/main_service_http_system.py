@@ -164,7 +164,7 @@ class MainServiceHttp:
         # loops while the http connection is active
         while self.http_connection_active:
             # start listening in the http socket
-            self.http_socket.listen(1)
+            self.http_socket.listen(5)
 
             # starts the select values
             selected_values = ([], [], [])
