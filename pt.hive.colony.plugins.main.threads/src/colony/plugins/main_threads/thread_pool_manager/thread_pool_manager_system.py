@@ -184,6 +184,9 @@ class ThreadPoolImplementation:
     task_condition = None
     """ The thread pool task condition """
 
+    refresh_thread_pool_size_lock = None
+    """ The refresh thread pool size lock """
+
     current_number_threads = 0
     """ The thread pool current number of threads """
 
@@ -223,6 +226,7 @@ class ThreadPoolImplementation:
         self.task_descriptor_running_queue = []
 
         self.task_condition = threading.Condition()
+        self.refresh_thread_pool_size_lock = threading.Lock()
 
         self.current_number_threads = 0
         self.busy_threads = 0
@@ -467,8 +471,14 @@ class ThreadPoolImplementation:
         @param insert_at_end: If the worker thread task is to be inserted at the end of the queue or not
         """
 
+        # acquires the refresh thread pool size lock
+        self.refresh_thread_pool_size_lock.acquire()
+
         # refreshes the thread pool size
         self.refresh_thread_pool_size()
+
+        # releases the refresh thread pool size lock
+        self.refresh_thread_pool_size_lock.release()
 
         self.task_condition.acquire()
         if insert_at_end:
@@ -506,8 +516,14 @@ class ThreadPoolImplementation:
         @param worker_thread_task: The worker thread task to removed from the task queue
         """
 
+        # acquires the refresh thread pool size lock
+        self.refresh_thread_pool_size_lock.acquire()
+
         # refreshes the thread pool size
         self.refresh_thread_pool_size()
+
+        # releases the refresh thread pool size lock
+        self.refresh_thread_pool_size_lock.release()
 
         self.task_condition.acquire()
         self.task_queue.remove(worker_thread_task)
@@ -612,8 +628,14 @@ class WorkerThread(threading.Thread):
             # decrements the number of busy threads
             thread_pool.busy_threads -= 1
 
+            # acquires the refresh thread pool size lock
+            thread_pool.refresh_thread_pool_size_lock.acquire()
+
             # refreshes the thread pool size shrinking it if necessary
             thread_pool.refresh_thread_pool_size(False)
+
+            # releases the refresh thread pool size lock
+            thread_pool.refresh_thread_pool_size_lock.release()
 
 class WorkerThreadTask:
     """
