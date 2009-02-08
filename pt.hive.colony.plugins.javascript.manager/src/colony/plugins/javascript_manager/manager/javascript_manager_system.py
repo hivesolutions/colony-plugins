@@ -79,6 +79,7 @@ class JavascriptManager:
         self.plugin_search_directories_list = [self.workspace_base_path + "/pt.hive.colony.web/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.data_structure/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.development/plugins",
+                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.dummy/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.gui.component.data_editor/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.gui.component.eureka/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.gui.component.wizard/plugins",
