@@ -91,6 +91,7 @@ class JavascriptManager:
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.gui.perspective_manager/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.misc/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.mvc/plugins",
+                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.context_view/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.functional_unit/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.main/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.misc/plugins",
