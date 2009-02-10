@@ -43,5 +43,11 @@
 			<version>1.0.0</version>
 			<load>true</load>
 		</plugin>
+		<plugin>
+			<name>Console Main Plugin</name>
+			<id>pt.hive.colony.plugins.main.console</id>
+			<version>1.0.0</version>
+			<load>true</load>
+		</plugin>
 	</plugins>
 </startup_configuration>
