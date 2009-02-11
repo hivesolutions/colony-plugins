@@ -78,7 +78,6 @@ class JavascriptManager:
         # sets the plugin search directories list
         self.plugin_search_directories_list = [self.workspace_base_path + "/pt.hive.colony.web/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.data_structure/plugins",
-                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.development/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.dummy/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.gui.component.data_editor/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.gui.component.eureka/plugins",
@@ -86,6 +85,7 @@ class JavascriptManager:
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.gui.component.toolbar/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.gui.component.window/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.gui.component.wizard/plugins",
+                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.gui.development/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.gui.main/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.gui.main.extjs/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.gui.perspective_manager/plugins",
@@ -94,6 +94,7 @@ class JavascriptManager:
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.context_view/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.functional_unit/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.main/plugins",
+                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.main.perspective/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.misc/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.navigation_tree/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.pos/plugins",
