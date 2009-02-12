@@ -49,5 +49,17 @@
 			<version>1.0.0</version>
 			<load>true</load>
 		</plugin>
+		<plugin>
+			<name>Autoloader Plugin</name>
+			<id>pt.hive.colony.plugins.misc.autoloader</id>
+			<version>1.0.0</version>
+			<load>true</load>
+		</plugin>
+		<plugin>
+			<name>Http Service Main Plugin</name>
+			<id>pt.hive.colony.plugins.main.service.http</id>
+			<version>1.0.0</version>
+			<load>true</load>
+		</plugin>
 	</plugins>
 </startup_configuration>
