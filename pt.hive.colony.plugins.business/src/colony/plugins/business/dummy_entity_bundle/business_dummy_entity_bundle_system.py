@@ -64,6 +64,7 @@ class BusinessDummyEntityBundle:
         self.business_dummy_entity_bundle_plugin = business_dummy_entity_bundle_plugin
 
         self.entity_bundle = []
+        self.entity_bundle_map = {}
 
     def generate_classes(self):
         # retrieves the business helper plugin
