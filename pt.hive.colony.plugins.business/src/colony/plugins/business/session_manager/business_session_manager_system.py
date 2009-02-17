@@ -90,7 +90,7 @@ class BusinessSessionManager:
             self.load_business_logic_class(business_logic_class)
 
     def unload_business_logic_bundle(self, business_logic_bundle):
-        for business_logic_class in entity_bundle:
+        for business_logic_class in business_logic_bundle:
             self.unload_business_logic_class(business_logic_class)
 
     def load_session_manager(self, session_name, entity_manager = None):
