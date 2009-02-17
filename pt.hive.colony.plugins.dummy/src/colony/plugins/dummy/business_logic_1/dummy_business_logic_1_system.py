@@ -60,6 +60,9 @@ class DummyBusinessLogic1:
         Creates a dummy session to test it.
         """
 
+        # retrieves the business session manager plugin
+        business_session_manager_plugin = self.dummy_business_logic_1_plugin.business_session_manager_plugin
+
         # retrieves the resource manager plugin
         resource_manager_plugin = self.dummy_business_logic_1_plugin.resource_manager_plugin
 
@@ -69,11 +72,11 @@ class DummyBusinessLogic1:
         # retrieves the user home path value
         user_home_path = user_home_path_resource.data
 
-        # creates the session manager
-        session_manager = self.dummy_business_logic_1_plugin.business_session_manager_plugin.load_session_manager_entity_manager("dummy_session", "sqlite")
+        # creates the dummy session
+        dummy_session = business_session_manager_plugin.load_session_manager_entity_manager("dummy_session", "sqlite")
 
         # retrieves the entity manager
-        entity_manager = session_manager.entity_manager
+        entity_manager = dummy_session.entity_manager
 
         # sets the connection parameters for the entity manager
         entity_manager.set_connection_parameters({"file_path" : user_home_path + "/test_database.db", "autocommit" : False})
@@ -81,19 +84,20 @@ class DummyBusinessLogic1:
         # loads the entity manager
         entity_manager.load_entity_manager()
 
-        # start the session in the session manager
-        session_manager.start_session()
+        # start the session in the dummy session
+        dummy_session.start_session()
 
         # calls the print dummy method in the dummy business logic entity
-        session_manager.DummyBusinessLogic.print_dummy()
+        dummy_session.DummyBusinessLogic.print_dummy()
 
         # calls the save entity method in the dummy business logic entity
-        session_manager.DummyBusinessLogic.save_entity()
+        dummy_session.DummyBusinessLogic.save_entity()
 
         # calls the remove entity method in the dummy business logic entity
-        session_manager.DummyBusinessLogic.remove_entity()
+        dummy_session.DummyBusinessLogic.remove_entity()
 
         # calls the save remove entity method in the dummy business logic entity
-        session_manager.DummyBusinessLogic.save_remove_entity()
+        dummy_session.DummyBusinessLogic.save_remove_entity()
 
-        session_manager.DummyBusinessLogic.save_complex_entity()
+        # calls the save complex entity method in the dummy business logic entity
+        dummy_session.DummyBusinessLogic.save_complex_entity()
