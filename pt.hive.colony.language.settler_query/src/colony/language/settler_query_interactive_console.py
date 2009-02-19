@@ -43,12 +43,12 @@ import sys
 import settler_query_parser
 import settler_query_processing
 
-BRANDING_TEXT = "Query 0.1 (Hive Solutions Lda. r1:Sep 19 2006)"
+BRANDING_TEXT = "Settler Query 0.1 (Hive Solutions Lda. r1:Sep 19 2006)"
 VERSION_PRE_TEXT = "Python "
 HELP_TEXT = "Type \"help\", \"copyright\", \"credits\" or \"license\" for more information."
 
-CARRET = "[query] >> "
-BLOCK_CARRET = "[query] .. "
+CARRET = "[settler_query] >> "
+BLOCK_CARRET = "[settler_query] .. "
 
 NEW_BLOCK_CHARACTER = ":"
 
