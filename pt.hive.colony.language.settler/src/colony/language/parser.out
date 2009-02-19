@@ -1,0 +1,4533 @@
+
+
+Unused terminals:
+
+
+Grammar
+
+Rule 1     program -> statements
+Rule 2     statements -> statement NEWLINE statements
+Rule 3     statements -> statement NEWLINE
+Rule 4     statement -> PASS
+Rule 5     statement -> name_reference EQUALS expression
+Rule 6     statement -> IF expression COLON NEWLINE statements else_condition END
+Rule 7     else_condition -> ELSE COLON NEWLINE statements else_condition
+Rule 8     else_condition -> ELIF expression COLON NEWLINE statements else_condition
+Rule 9     else_condition -> <empty>
+Rule 10    statement -> WHILE expression COLON NEWLINE statements END
+Rule 11    statement -> FOR NAME IN expression COLON NEWLINE statements END
+Rule 12    statement -> RETURN expression
+Rule 13    statement -> GLOBAL NAME
+Rule 14    statement -> expression
+Rule 15    statement -> import
+Rule 16    statement -> function
+Rule 17    statement -> class
+Rule 18    statement -> interface
+Rule 19    statement -> plugin
+Rule 20    statement -> capability
+Rule 21    expression -> expression PLUS expression
+Rule 22    expression -> expression MINUS expression
+Rule 23    expression -> expression TIMES expression
+Rule 24    expression -> expression DIVIDE expression
+Rule 25    expression -> expression POWER expression
+Rule 26    expression -> expression EQUALEQUAL expression
+Rule 27    expression -> expression GREATER expression
+Rule 28    expression -> expression GREATEREQUAL expression
+Rule 29    expression -> expression LESS expression
+Rule 30    expression -> expression LESSEQUAL expression
+Rule 31    expression -> expression AND expression
+Rule 32    expression -> expression OR expression
+Rule 33    expression -> NOT expression
+Rule 34    expression -> MINUS expression
+Rule 35    expression -> LPAREN expression RPAREN
+Rule 36    expression -> NUMBER
+Rule 37    expression -> STRING
+Rule 38    expression -> BOOL
+Rule 39    expression -> name_reference
+Rule 40    expression -> LBRACK list_contents RBRACK
+Rule 41    list_contents -> expression COMA list_contents
+Rule 42    list_contents -> expression
+Rule 43    list_contents -> <empty>
+Rule 44    name_reference -> NAME DOT name_reference
+Rule 45    name_reference -> NAME
+Rule 46    import -> IMPORT name_reference COMA import
+Rule 47    import -> IMPORT name_reference
+Rule 48    function -> function_operators FUNCTION NAME LPAREN arguments RPAREN COLON NEWLINE statements END
+Rule 49    function_operators -> function_operator COMA function_operators
+Rule 50    function_operators -> function_operator
+Rule 51    function_operators -> <empty>
+Rule 52    function_operator -> STATIC
+Rule 53    arguments -> argument COMA arguments
+Rule 54    arguments -> argument
+Rule 55    arguments -> <empty>
+Rule 56    argument -> NAME
+Rule 57    argument -> NAME EQUALS expression
+Rule 58    expression -> name_reference LPAREN argument_values RPAREN
+Rule 59    argument_values -> argument_value COMA argument_values
+Rule 60    argument_values -> argument_value
+Rule 61    argument_values -> <empty>
+Rule 62    argument_value -> expression
+Rule 63    class -> CLASS NAME extends implements COLON NEWLINE statements END
+Rule 64    extends -> EXTENDS extends_values
+Rule 65    extends -> <empty>
+Rule 66    extends_values -> NAME COMA extends_values
+Rule 67    extends_values -> NAME
+Rule 68    implements -> IMPLEMENTS implements_values
+Rule 69    implements -> <empty>
+Rule 70    implements_values -> NAME COMA implements_values
+Rule 71    implements_values -> NAME
+Rule 72    interface -> INTERFACE NAME extends COLON NEWLINE statements END
+Rule 73    plugin -> PLUGIN NAME extends implements allows COLON NEWLINE statements END
+Rule 74    allows -> ALLOWS allows_values
+Rule 75    allows -> <empty>
+Rule 76    allows_values -> NAME COMA allows_values
+Rule 77    allows_values -> NAME
+Rule 78    capability -> CAPABILITY NAME extends COLON NEWLINE statements END
+
+Terminals, with rules where they appear
+
+ALLOWS               : 74
+AND                  : 31
+BOOL                 : 38
+CAPABILITY           : 78
+CLASS                : 63
+COLON                : 6 7 8 10 11 48 63 72 73 78
+COMA                 : 41 46 49 53 59 66 70 76
+DIVIDE               : 24
+DOT                  : 44
+ELIF                 : 8
+ELSE                 : 7
+END                  : 6 10 11 48 63 72 73 78
+EQUALEQUAL           : 26
+EQUALS               : 5 57
+EXTENDS              : 64
+FOR                  : 11
+FUNCTION             : 48
+GLOBAL               : 13
+GREATER              : 27
+GREATEREQUAL         : 28
+IF                   : 6
+IMPLEMENTS           : 68
+IMPORT               : 46 47
+IN                   : 11
+INTERFACE            : 72
+LBRACK               : 40
+LESS                 : 29
+LESSEQUAL            : 30
+LPAREN               : 35 48 58
+MINUS                : 22 34
+NAME                 : 11 13 44 45 48 56 57 63 66 67 70 71 72 73 76 77 78
+NEWLINE              : 2 3 6 7 8 10 11 48 63 72 73 78
+NOT                  : 33
+NUMBER               : 36
+OR                   : 32
+PASS                 : 4
+PLUGIN               : 73
+PLUS                 : 21
+POWER                : 25
+RBRACK               : 40
+RETURN               : 12
+RPAREN               : 35 48 58
+STATIC               : 52
+STRING               : 37
+TIMES                : 23
+WHILE                : 10
+error                : 
+
+Nonterminals, with rules where they appear
+
+allows               : 73
+allows_values        : 74 76
+argument             : 53 54
+argument_value       : 59 60
+argument_values      : 58 59
+arguments            : 48 53
+capability           : 20
+class                : 17
+else_condition       : 6 7 8
+expression           : 5 6 8 10 11 12 14 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 29 29 30 30 31 31 32 32 33 34 35 41 42 57 62
+extends              : 63 72 73 78
+extends_values       : 64 66
+function             : 16
+function_operator    : 49 50
+function_operators   : 48 49
+implements           : 63 73
+implements_values    : 68 70
+import               : 15 46
+interface            : 18
+list_contents        : 40 41
+name_reference       : 5 39 44 46 47 58
+plugin               : 19
+program              : 0
+statement            : 2 3
+statements           : 1 2 6 7 8 10 11 48 63 72 73 78
+
+
+Parsing method: LALR
+
+
+state 0
+
+    (0) S' -> . program
+    (1) program -> . statements
+    (2) statements -> . statement NEWLINE statements
+    (3) statements -> . statement NEWLINE
+    (4) statement -> . PASS
+    (5) statement -> . name_reference EQUALS expression
+    (6) statement -> . IF expression COLON NEWLINE statements else_condition END
+    (10) statement -> . WHILE expression COLON NEWLINE statements END
+    (11) statement -> . FOR NAME IN expression COLON NEWLINE statements END
+    (12) statement -> . RETURN expression
+    (13) statement -> . GLOBAL NAME
+    (14) statement -> . expression
+    (15) statement -> . import
+    (16) statement -> . function
+    (17) statement -> . class
+    (18) statement -> . interface
+    (19) statement -> . plugin
+    (20) statement -> . capability
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (46) import -> . IMPORT name_reference COMA import
+    (47) import -> . IMPORT name_reference
+    (48) function -> . function_operators FUNCTION NAME LPAREN arguments RPAREN COLON NEWLINE statements END
+    (63) class -> . CLASS NAME extends implements COLON NEWLINE statements END
+    (72) interface -> . INTERFACE NAME extends COLON NEWLINE statements END
+    (73) plugin -> . PLUGIN NAME extends implements allows COLON NEWLINE statements END
+    (78) capability -> . CAPABILITY NAME extends COLON NEWLINE statements END
+    (49) function_operators -> . function_operator COMA function_operators
+    (50) function_operators -> . function_operator
+    (51) function_operators -> .
+    (52) function_operator -> . STATIC
+
+    PASS            shift and go to state 22
+    IF              shift and go to state 25
+    WHILE           shift and go to state 4
+    FOR             shift and go to state 19
+    RETURN          shift and go to state 1
+    GLOBAL          shift and go to state 2
+    NAME            shift and go to state 26
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    IMPORT          shift and go to state 6
+    CLASS           shift and go to state 16
+    INTERFACE       shift and go to state 20
+    PLUGIN          shift and go to state 28
+    CAPABILITY      shift and go to state 12
+    FUNCTION        reduce using rule 51 (function_operators -> .)
+    STATIC          shift and go to state 5
+
+
+    function                       shift and go to state 18
+    statements                     shift and go to state 7
+    plugin                         shift and go to state 27
+    function_operators             shift and go to state 10
+    class                          shift and go to state 24
+    capability                     shift and go to state 30
+    program                        shift and go to state 13
+    statement                      shift and go to state 14
+    interface                      shift and go to state 23
+    import                         shift and go to state 15
+    expression                     shift and go to state 33
+    name_reference                 shift and go to state 11
+    function_operator              shift and go to state 17
+
+state 1
+
+    (12) statement -> RETURN . expression
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    NAME            shift and go to state 26
+
+
+    expression                     shift and go to state 35
+    name_reference                 shift and go to state 34
+
+state 2
+
+    (13) statement -> GLOBAL . NAME
+
+    NAME            shift and go to state 36
+
+
+
+state 3
+
+    (36) expression -> NUMBER .
+
+    PLUS            reduce using rule 36 (expression -> NUMBER .)
+    MINUS           reduce using rule 36 (expression -> NUMBER .)
+    TIMES           reduce using rule 36 (expression -> NUMBER .)
+    DIVIDE          reduce using rule 36 (expression -> NUMBER .)
+    POWER           reduce using rule 36 (expression -> NUMBER .)
+    EQUALEQUAL      reduce using rule 36 (expression -> NUMBER .)
+    GREATER         reduce using rule 36 (expression -> NUMBER .)
+    GREATEREQUAL    reduce using rule 36 (expression -> NUMBER .)
+    LESS            reduce using rule 36 (expression -> NUMBER .)
+    LESSEQUAL       reduce using rule 36 (expression -> NUMBER .)
+    AND             reduce using rule 36 (expression -> NUMBER .)
+    OR              reduce using rule 36 (expression -> NUMBER .)
+    NEWLINE         reduce using rule 36 (expression -> NUMBER .)
+    COLON           reduce using rule 36 (expression -> NUMBER .)
+    RPAREN          reduce using rule 36 (expression -> NUMBER .)
+    COMA            reduce using rule 36 (expression -> NUMBER .)
+    RBRACK          reduce using rule 36 (expression -> NUMBER .)
+
+
+
+state 4
+
+    (10) statement -> WHILE . expression COLON NEWLINE statements END
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    NAME            shift and go to state 26
+
+
+    expression                     shift and go to state 37
+    name_reference                 shift and go to state 34
+
+state 5
+
+    (52) function_operator -> STATIC .
+
+    COMA            reduce using rule 52 (function_operator -> STATIC .)
+    FUNCTION        reduce using rule 52 (function_operator -> STATIC .)
+
+
+
+state 6
+
+    (46) import -> IMPORT . name_reference COMA import
+    (47) import -> IMPORT . name_reference
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+
+    NAME            shift and go to state 26
+
+
+    name_reference                 shift and go to state 38
+
+state 7
+
+    (1) program -> statements .
+
+    $end            reduce using rule 1 (program -> statements .)
+
+
+
+state 8
+
+    (34) expression -> MINUS . expression
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    NAME            shift and go to state 26
+
+
+    expression                     shift and go to state 39
+    name_reference                 shift and go to state 34
+
+state 9
+
+    (37) expression -> STRING .
+
+    PLUS            reduce using rule 37 (expression -> STRING .)
+    MINUS           reduce using rule 37 (expression -> STRING .)
+    TIMES           reduce using rule 37 (expression -> STRING .)
+    DIVIDE          reduce using rule 37 (expression -> STRING .)
+    POWER           reduce using rule 37 (expression -> STRING .)
+    EQUALEQUAL      reduce using rule 37 (expression -> STRING .)
+    GREATER         reduce using rule 37 (expression -> STRING .)
+    GREATEREQUAL    reduce using rule 37 (expression -> STRING .)
+    LESS            reduce using rule 37 (expression -> STRING .)
+    LESSEQUAL       reduce using rule 37 (expression -> STRING .)
+    AND             reduce using rule 37 (expression -> STRING .)
+    OR              reduce using rule 37 (expression -> STRING .)
+    NEWLINE         reduce using rule 37 (expression -> STRING .)
+    COLON           reduce using rule 37 (expression -> STRING .)
+    RPAREN          reduce using rule 37 (expression -> STRING .)
+    COMA            reduce using rule 37 (expression -> STRING .)
+    RBRACK          reduce using rule 37 (expression -> STRING .)
+
+
+
+state 10
+
+    (48) function -> function_operators . FUNCTION NAME LPAREN arguments RPAREN COLON NEWLINE statements END
+
+    FUNCTION        shift and go to state 40
+
+
+
+state 11
+
+    (5) statement -> name_reference . EQUALS expression
+    (39) expression -> name_reference .
+    (58) expression -> name_reference . LPAREN argument_values RPAREN
+
+    EQUALS          shift and go to state 41
+    PLUS            reduce using rule 39 (expression -> name_reference .)
+    MINUS           reduce using rule 39 (expression -> name_reference .)
+    TIMES           reduce using rule 39 (expression -> name_reference .)
+    DIVIDE          reduce using rule 39 (expression -> name_reference .)
+    POWER           reduce using rule 39 (expression -> name_reference .)
+    EQUALEQUAL      reduce using rule 39 (expression -> name_reference .)
+    GREATER         reduce using rule 39 (expression -> name_reference .)
+    GREATEREQUAL    reduce using rule 39 (expression -> name_reference .)
+    LESS            reduce using rule 39 (expression -> name_reference .)
+    LESSEQUAL       reduce using rule 39 (expression -> name_reference .)
+    AND             reduce using rule 39 (expression -> name_reference .)
+    OR              reduce using rule 39 (expression -> name_reference .)
+    NEWLINE         reduce using rule 39 (expression -> name_reference .)
+    LPAREN          shift and go to state 42
+
+
+
+state 12
+
+    (78) capability -> CAPABILITY . NAME extends COLON NEWLINE statements END
+
+    NAME            shift and go to state 43
+
+
+
+state 13
+
+    (0) S' -> program .
+
+
+
+
+state 14
+
+    (2) statements -> statement . NEWLINE statements
+    (3) statements -> statement . NEWLINE
+
+    NEWLINE         shift and go to state 44
+
+
+
+state 15
+
+    (15) statement -> import .
+
+    NEWLINE         reduce using rule 15 (statement -> import .)
+
+
+
+state 16
+
+    (63) class -> CLASS . NAME extends implements COLON NEWLINE statements END
+
+    NAME            shift and go to state 45
+
+
+
+state 17
+
+    (49) function_operators -> function_operator . COMA function_operators
+    (50) function_operators -> function_operator .
+
+    COMA            shift and go to state 46
+    FUNCTION        reduce using rule 50 (function_operators -> function_operator .)
+
+
+
+state 18
+
+    (16) statement -> function .
+
+    NEWLINE         reduce using rule 16 (statement -> function .)
+
+
+
+state 19
+
+    (11) statement -> FOR . NAME IN expression COLON NEWLINE statements END
+
+    NAME            shift and go to state 47
+
+
+
+state 20
+
+    (72) interface -> INTERFACE . NAME extends COLON NEWLINE statements END
+
+    NAME            shift and go to state 48
+
+
+
+state 21
+
+    (35) expression -> LPAREN . expression RPAREN
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    NAME            shift and go to state 26
+
+
+    expression                     shift and go to state 49
+    name_reference                 shift and go to state 34
+
+state 22
+
+    (4) statement -> PASS .
+
+    NEWLINE         reduce using rule 4 (statement -> PASS .)
+
+
+
+state 23
+
+    (18) statement -> interface .
+
+    NEWLINE         reduce using rule 18 (statement -> interface .)
+
+
+
+state 24
+
+    (17) statement -> class .
+
+    NEWLINE         reduce using rule 17 (statement -> class .)
+
+
+
+state 25
+
+    (6) statement -> IF . expression COLON NEWLINE statements else_condition END
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    NAME            shift and go to state 26
+
+
+    expression                     shift and go to state 50
+    name_reference                 shift and go to state 34
+
+state 26
+
+    (44) name_reference -> NAME . DOT name_reference
+    (45) name_reference -> NAME .
+
+    DOT             shift and go to state 51
+    LPAREN          reduce using rule 45 (name_reference -> NAME .)
+    COLON           reduce using rule 45 (name_reference -> NAME .)
+    PLUS            reduce using rule 45 (name_reference -> NAME .)
+    MINUS           reduce using rule 45 (name_reference -> NAME .)
+    TIMES           reduce using rule 45 (name_reference -> NAME .)
+    DIVIDE          reduce using rule 45 (name_reference -> NAME .)
+    POWER           reduce using rule 45 (name_reference -> NAME .)
+    EQUALEQUAL      reduce using rule 45 (name_reference -> NAME .)
+    GREATER         reduce using rule 45 (name_reference -> NAME .)
+    GREATEREQUAL    reduce using rule 45 (name_reference -> NAME .)
+    LESS            reduce using rule 45 (name_reference -> NAME .)
+    LESSEQUAL       reduce using rule 45 (name_reference -> NAME .)
+    AND             reduce using rule 45 (name_reference -> NAME .)
+    OR              reduce using rule 45 (name_reference -> NAME .)
+    NEWLINE         reduce using rule 45 (name_reference -> NAME .)
+    RPAREN          reduce using rule 45 (name_reference -> NAME .)
+    COMA            reduce using rule 45 (name_reference -> NAME .)
+    RBRACK          reduce using rule 45 (name_reference -> NAME .)
+    EQUALS          reduce using rule 45 (name_reference -> NAME .)
+
+
+
+state 27
+
+    (19) statement -> plugin .
+
+    NEWLINE         reduce using rule 19 (statement -> plugin .)
+
+
+
+state 28
+
+    (73) plugin -> PLUGIN . NAME extends implements allows COLON NEWLINE statements END
+
+    NAME            shift and go to state 52
+
+
+
+state 29
+
+    (40) expression -> LBRACK . list_contents RBRACK
+    (41) list_contents -> . expression COMA list_contents
+    (42) list_contents -> . expression
+    (43) list_contents -> .
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+
+    RBRACK          reduce using rule 43 (list_contents -> .)
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    NAME            shift and go to state 26
+
+
+    expression                     shift and go to state 53
+    list_contents                  shift and go to state 54
+    name_reference                 shift and go to state 34
+
+state 30
+
+    (20) statement -> capability .
+
+    NEWLINE         reduce using rule 20 (statement -> capability .)
+
+
+
+state 31
+
+    (38) expression -> BOOL .
+
+    PLUS            reduce using rule 38 (expression -> BOOL .)
+    MINUS           reduce using rule 38 (expression -> BOOL .)
+    TIMES           reduce using rule 38 (expression -> BOOL .)
+    DIVIDE          reduce using rule 38 (expression -> BOOL .)
+    POWER           reduce using rule 38 (expression -> BOOL .)
+    EQUALEQUAL      reduce using rule 38 (expression -> BOOL .)
+    GREATER         reduce using rule 38 (expression -> BOOL .)
+    GREATEREQUAL    reduce using rule 38 (expression -> BOOL .)
+    LESS            reduce using rule 38 (expression -> BOOL .)
+    LESSEQUAL       reduce using rule 38 (expression -> BOOL .)
+    AND             reduce using rule 38 (expression -> BOOL .)
+    OR              reduce using rule 38 (expression -> BOOL .)
+    NEWLINE         reduce using rule 38 (expression -> BOOL .)
+    COLON           reduce using rule 38 (expression -> BOOL .)
+    RPAREN          reduce using rule 38 (expression -> BOOL .)
+    COMA            reduce using rule 38 (expression -> BOOL .)
+    RBRACK          reduce using rule 38 (expression -> BOOL .)
+
+
+
+state 32
+
+    (33) expression -> NOT . expression
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    NAME            shift and go to state 26
+
+
+    expression                     shift and go to state 55
+    name_reference                 shift and go to state 34
+
+state 33
+
+    (14) statement -> expression .
+    (21) expression -> expression . PLUS expression
+    (22) expression -> expression . MINUS expression
+    (23) expression -> expression . TIMES expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . POWER expression
+    (26) expression -> expression . EQUALEQUAL expression
+    (27) expression -> expression . GREATER expression
+    (28) expression -> expression . GREATEREQUAL expression
+    (29) expression -> expression . LESS expression
+    (30) expression -> expression . LESSEQUAL expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+    NEWLINE         reduce using rule 14 (statement -> expression .)
+    PLUS            shift and go to state 63
+    MINUS           shift and go to state 66
+    TIMES           shift and go to state 62
+    DIVIDE          shift and go to state 59
+    POWER           shift and go to state 60
+    EQUALEQUAL      shift and go to state 65
+    GREATER         shift and go to state 67
+    GREATEREQUAL    shift and go to state 58
+    LESS            shift and go to state 61
+    LESSEQUAL       shift and go to state 64
+    AND             shift and go to state 56
+    OR              shift and go to state 57
+
+
+
+state 34
+
+    (39) expression -> name_reference .
+    (58) expression -> name_reference . LPAREN argument_values RPAREN
+
+    PLUS            reduce using rule 39 (expression -> name_reference .)
+    MINUS           reduce using rule 39 (expression -> name_reference .)
+    TIMES           reduce using rule 39 (expression -> name_reference .)
+    DIVIDE          reduce using rule 39 (expression -> name_reference .)
+    POWER           reduce using rule 39 (expression -> name_reference .)
+    EQUALEQUAL      reduce using rule 39 (expression -> name_reference .)
+    GREATER         reduce using rule 39 (expression -> name_reference .)
+    GREATEREQUAL    reduce using rule 39 (expression -> name_reference .)
+    LESS            reduce using rule 39 (expression -> name_reference .)
+    LESSEQUAL       reduce using rule 39 (expression -> name_reference .)
+    AND             reduce using rule 39 (expression -> name_reference .)
+    OR              reduce using rule 39 (expression -> name_reference .)
+    NEWLINE         reduce using rule 39 (expression -> name_reference .)
+    COLON           reduce using rule 39 (expression -> name_reference .)
+    RPAREN          reduce using rule 39 (expression -> name_reference .)
+    COMA            reduce using rule 39 (expression -> name_reference .)
+    RBRACK          reduce using rule 39 (expression -> name_reference .)
+    LPAREN          shift and go to state 42
+
+
+
+state 35
+
+    (12) statement -> RETURN expression .
+    (21) expression -> expression . PLUS expression
+    (22) expression -> expression . MINUS expression
+    (23) expression -> expression . TIMES expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . POWER expression
+    (26) expression -> expression . EQUALEQUAL expression
+    (27) expression -> expression . GREATER expression
+    (28) expression -> expression . GREATEREQUAL expression
+    (29) expression -> expression . LESS expression
+    (30) expression -> expression . LESSEQUAL expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+    NEWLINE         reduce using rule 12 (statement -> RETURN expression .)
+    PLUS            shift and go to state 63
+    MINUS           shift and go to state 66
+    TIMES           shift and go to state 62
+    DIVIDE          shift and go to state 59
+    POWER           shift and go to state 60
+    EQUALEQUAL      shift and go to state 65
+    GREATER         shift and go to state 67
+    GREATEREQUAL    shift and go to state 58
+    LESS            shift and go to state 61
+    LESSEQUAL       shift and go to state 64
+    AND             shift and go to state 56
+    OR              shift and go to state 57
+
+
+
+state 36
+
+    (13) statement -> GLOBAL NAME .
+
+    NEWLINE         reduce using rule 13 (statement -> GLOBAL NAME .)
+
+
+
+state 37
+
+    (10) statement -> WHILE expression . COLON NEWLINE statements END
+    (21) expression -> expression . PLUS expression
+    (22) expression -> expression . MINUS expression
+    (23) expression -> expression . TIMES expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . POWER expression
+    (26) expression -> expression . EQUALEQUAL expression
+    (27) expression -> expression . GREATER expression
+    (28) expression -> expression . GREATEREQUAL expression
+    (29) expression -> expression . LESS expression
+    (30) expression -> expression . LESSEQUAL expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+    COLON           shift and go to state 68
+    PLUS            shift and go to state 63
+    MINUS           shift and go to state 66
+    TIMES           shift and go to state 62
+    DIVIDE          shift and go to state 59
+    POWER           shift and go to state 60
+    EQUALEQUAL      shift and go to state 65
+    GREATER         shift and go to state 67
+    GREATEREQUAL    shift and go to state 58
+    LESS            shift and go to state 61
+    LESSEQUAL       shift and go to state 64
+    AND             shift and go to state 56
+    OR              shift and go to state 57
+
+
+
+state 38
+
+    (46) import -> IMPORT name_reference . COMA import
+    (47) import -> IMPORT name_reference .
+
+    COMA            shift and go to state 69
+    NEWLINE         reduce using rule 47 (import -> IMPORT name_reference .)
+
+
+
+state 39
+
+    (34) expression -> MINUS expression .
+    (21) expression -> expression . PLUS expression
+    (22) expression -> expression . MINUS expression
+    (23) expression -> expression . TIMES expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . POWER expression
+    (26) expression -> expression . EQUALEQUAL expression
+    (27) expression -> expression . GREATER expression
+    (28) expression -> expression . GREATEREQUAL expression
+    (29) expression -> expression . LESS expression
+    (30) expression -> expression . LESSEQUAL expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+    PLUS            reduce using rule 34 (expression -> MINUS expression .)
+    MINUS           reduce using rule 34 (expression -> MINUS expression .)
+    TIMES           reduce using rule 34 (expression -> MINUS expression .)
+    DIVIDE          reduce using rule 34 (expression -> MINUS expression .)
+    POWER           reduce using rule 34 (expression -> MINUS expression .)
+    EQUALEQUAL      reduce using rule 34 (expression -> MINUS expression .)
+    GREATER         reduce using rule 34 (expression -> MINUS expression .)
+    GREATEREQUAL    reduce using rule 34 (expression -> MINUS expression .)
+    LESS            reduce using rule 34 (expression -> MINUS expression .)
+    LESSEQUAL       reduce using rule 34 (expression -> MINUS expression .)
+    AND             reduce using rule 34 (expression -> MINUS expression .)
+    OR              reduce using rule 34 (expression -> MINUS expression .)
+    NEWLINE         reduce using rule 34 (expression -> MINUS expression .)
+    COLON           reduce using rule 34 (expression -> MINUS expression .)
+    RPAREN          reduce using rule 34 (expression -> MINUS expression .)
+    COMA            reduce using rule 34 (expression -> MINUS expression .)
+    RBRACK          reduce using rule 34 (expression -> MINUS expression .)
+
+  ! PLUS            [ shift and go to state 63 ]
+  ! MINUS           [ shift and go to state 66 ]
+  ! TIMES           [ shift and go to state 62 ]
+  ! DIVIDE          [ shift and go to state 59 ]
+  ! POWER           [ shift and go to state 60 ]
+  ! EQUALEQUAL      [ shift and go to state 65 ]
+  ! GREATER         [ shift and go to state 67 ]
+  ! GREATEREQUAL    [ shift and go to state 58 ]
+  ! LESS            [ shift and go to state 61 ]
+  ! LESSEQUAL       [ shift and go to state 64 ]
+  ! AND             [ shift and go to state 56 ]
+  ! OR              [ shift and go to state 57 ]
+
+
+state 40
+
+    (48) function -> function_operators FUNCTION . NAME LPAREN arguments RPAREN COLON NEWLINE statements END
+
+    NAME            shift and go to state 70
+
+
+
+state 41
+
+    (5) statement -> name_reference EQUALS . expression
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    NAME            shift and go to state 26
+
+
+    expression                     shift and go to state 71
+    name_reference                 shift and go to state 34
+
+state 42
+
+    (58) expression -> name_reference LPAREN . argument_values RPAREN
+    (59) argument_values -> . argument_value COMA argument_values
+    (60) argument_values -> . argument_value
+    (61) argument_values -> .
+    (62) argument_value -> . expression
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+
+    RPAREN          reduce using rule 61 (argument_values -> .)
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    NAME            shift and go to state 26
+
+
+    argument_value                 shift and go to state 72
+    expression                     shift and go to state 74
+    name_reference                 shift and go to state 34
+    argument_values                shift and go to state 73
+
+state 43
+
+    (78) capability -> CAPABILITY NAME . extends COLON NEWLINE statements END
+    (64) extends -> . EXTENDS extends_values
+    (65) extends -> .
+
+    EXTENDS         shift and go to state 75
+    COLON           reduce using rule 65 (extends -> .)
+
+
+    extends                        shift and go to state 76
+
+state 44
+
+    (2) statements -> statement NEWLINE . statements
+    (3) statements -> statement NEWLINE .
+    (2) statements -> . statement NEWLINE statements
+    (3) statements -> . statement NEWLINE
+    (4) statement -> . PASS
+    (5) statement -> . name_reference EQUALS expression
+    (6) statement -> . IF expression COLON NEWLINE statements else_condition END
+    (10) statement -> . WHILE expression COLON NEWLINE statements END
+    (11) statement -> . FOR NAME IN expression COLON NEWLINE statements END
+    (12) statement -> . RETURN expression
+    (13) statement -> . GLOBAL NAME
+    (14) statement -> . expression
+    (15) statement -> . import
+    (16) statement -> . function
+    (17) statement -> . class
+    (18) statement -> . interface
+    (19) statement -> . plugin
+    (20) statement -> . capability
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (46) import -> . IMPORT name_reference COMA import
+    (47) import -> . IMPORT name_reference
+    (48) function -> . function_operators FUNCTION NAME LPAREN arguments RPAREN COLON NEWLINE statements END
+    (63) class -> . CLASS NAME extends implements COLON NEWLINE statements END
+    (72) interface -> . INTERFACE NAME extends COLON NEWLINE statements END
+    (73) plugin -> . PLUGIN NAME extends implements allows COLON NEWLINE statements END
+    (78) capability -> . CAPABILITY NAME extends COLON NEWLINE statements END
+    (49) function_operators -> . function_operator COMA function_operators
+    (50) function_operators -> . function_operator
+    (51) function_operators -> .
+    (52) function_operator -> . STATIC
+
+    END             reduce using rule 3 (statements -> statement NEWLINE .)
+    ELSE            reduce using rule 3 (statements -> statement NEWLINE .)
+    ELIF            reduce using rule 3 (statements -> statement NEWLINE .)
+    $end            reduce using rule 3 (statements -> statement NEWLINE .)
+    PASS            shift and go to state 22
+    IF              shift and go to state 25
+    WHILE           shift and go to state 4
+    FOR             shift and go to state 19
+    RETURN          shift and go to state 1
+    GLOBAL          shift and go to state 2
+    NAME            shift and go to state 26
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    IMPORT          shift and go to state 6
+    CLASS           shift and go to state 16
+    INTERFACE       shift and go to state 20
+    PLUGIN          shift and go to state 28
+    CAPABILITY      shift and go to state 12
+    FUNCTION        reduce using rule 51 (function_operators -> .)
+    STATIC          shift and go to state 5
+
+
+    function                       shift and go to state 18
+    statements                     shift and go to state 77
+    plugin                         shift and go to state 27
+    function_operators             shift and go to state 10
+    class                          shift and go to state 24
+    capability                     shift and go to state 30
+    statement                      shift and go to state 14
+    interface                      shift and go to state 23
+    import                         shift and go to state 15
+    expression                     shift and go to state 33
+    name_reference                 shift and go to state 11
+    function_operator              shift and go to state 17
+
+state 45
+
+    (63) class -> CLASS NAME . extends implements COLON NEWLINE statements END
+    (64) extends -> . EXTENDS extends_values
+    (65) extends -> .
+
+    EXTENDS         shift and go to state 75
+    IMPLEMENTS      reduce using rule 65 (extends -> .)
+    COLON           reduce using rule 65 (extends -> .)
+
+
+    extends                        shift and go to state 78
+
+state 46
+
+    (49) function_operators -> function_operator COMA . function_operators
+    (49) function_operators -> . function_operator COMA function_operators
+    (50) function_operators -> . function_operator
+    (51) function_operators -> .
+    (52) function_operator -> . STATIC
+
+    FUNCTION        reduce using rule 51 (function_operators -> .)
+    STATIC          shift and go to state 5
+
+
+    function_operators             shift and go to state 79
+    function_operator              shift and go to state 17
+
+state 47
+
+    (11) statement -> FOR NAME . IN expression COLON NEWLINE statements END
+
+    IN              shift and go to state 80
+
+
+
+state 48
+
+    (72) interface -> INTERFACE NAME . extends COLON NEWLINE statements END
+    (64) extends -> . EXTENDS extends_values
+    (65) extends -> .
+
+    EXTENDS         shift and go to state 75
+    COLON           reduce using rule 65 (extends -> .)
+
+
+    extends                        shift and go to state 81
+
+state 49
+
+    (35) expression -> LPAREN expression . RPAREN
+    (21) expression -> expression . PLUS expression
+    (22) expression -> expression . MINUS expression
+    (23) expression -> expression . TIMES expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . POWER expression
+    (26) expression -> expression . EQUALEQUAL expression
+    (27) expression -> expression . GREATER expression
+    (28) expression -> expression . GREATEREQUAL expression
+    (29) expression -> expression . LESS expression
+    (30) expression -> expression . LESSEQUAL expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+    RPAREN          shift and go to state 82
+    PLUS            shift and go to state 63
+    MINUS           shift and go to state 66
+    TIMES           shift and go to state 62
+    DIVIDE          shift and go to state 59
+    POWER           shift and go to state 60
+    EQUALEQUAL      shift and go to state 65
+    GREATER         shift and go to state 67
+    GREATEREQUAL    shift and go to state 58
+    LESS            shift and go to state 61
+    LESSEQUAL       shift and go to state 64
+    AND             shift and go to state 56
+    OR              shift and go to state 57
+
+
+
+state 50
+
+    (6) statement -> IF expression . COLON NEWLINE statements else_condition END
+    (21) expression -> expression . PLUS expression
+    (22) expression -> expression . MINUS expression
+    (23) expression -> expression . TIMES expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . POWER expression
+    (26) expression -> expression . EQUALEQUAL expression
+    (27) expression -> expression . GREATER expression
+    (28) expression -> expression . GREATEREQUAL expression
+    (29) expression -> expression . LESS expression
+    (30) expression -> expression . LESSEQUAL expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+    COLON           shift and go to state 83
+    PLUS            shift and go to state 63
+    MINUS           shift and go to state 66
+    TIMES           shift and go to state 62
+    DIVIDE          shift and go to state 59
+    POWER           shift and go to state 60
+    EQUALEQUAL      shift and go to state 65
+    GREATER         shift and go to state 67
+    GREATEREQUAL    shift and go to state 58
+    LESS            shift and go to state 61
+    LESSEQUAL       shift and go to state 64
+    AND             shift and go to state 56
+    OR              shift and go to state 57
+
+
+
+state 51
+
+    (44) name_reference -> NAME DOT . name_reference
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+
+    NAME            shift and go to state 26
+
+
+    name_reference                 shift and go to state 84
+
+state 52
+
+    (73) plugin -> PLUGIN NAME . extends implements allows COLON NEWLINE statements END
+    (64) extends -> . EXTENDS extends_values
+    (65) extends -> .
+
+    EXTENDS         shift and go to state 75
+    IMPLEMENTS      reduce using rule 65 (extends -> .)
+    ALLOWS          reduce using rule 65 (extends -> .)
+    COLON           reduce using rule 65 (extends -> .)
+
+
+    extends                        shift and go to state 85
+
+state 53
+
+    (41) list_contents -> expression . COMA list_contents
+    (42) list_contents -> expression .
+    (21) expression -> expression . PLUS expression
+    (22) expression -> expression . MINUS expression
+    (23) expression -> expression . TIMES expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . POWER expression
+    (26) expression -> expression . EQUALEQUAL expression
+    (27) expression -> expression . GREATER expression
+    (28) expression -> expression . GREATEREQUAL expression
+    (29) expression -> expression . LESS expression
+    (30) expression -> expression . LESSEQUAL expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+    COMA            shift and go to state 86
+    RBRACK          reduce using rule 42 (list_contents -> expression .)
+    PLUS            shift and go to state 63
+    MINUS           shift and go to state 66
+    TIMES           shift and go to state 62
+    DIVIDE          shift and go to state 59
+    POWER           shift and go to state 60
+    EQUALEQUAL      shift and go to state 65
+    GREATER         shift and go to state 67
+    GREATEREQUAL    shift and go to state 58
+    LESS            shift and go to state 61
+    LESSEQUAL       shift and go to state 64
+    AND             shift and go to state 56
+    OR              shift and go to state 57
+
+
+
+state 54
+
+    (40) expression -> LBRACK list_contents . RBRACK
+
+    RBRACK          shift and go to state 87
+
+
+
+state 55
+
+    (33) expression -> NOT expression .
+    (21) expression -> expression . PLUS expression
+    (22) expression -> expression . MINUS expression
+    (23) expression -> expression . TIMES expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . POWER expression
+    (26) expression -> expression . EQUALEQUAL expression
+    (27) expression -> expression . GREATER expression
+    (28) expression -> expression . GREATEREQUAL expression
+    (29) expression -> expression . LESS expression
+    (30) expression -> expression . LESSEQUAL expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+    PLUS            reduce using rule 33 (expression -> NOT expression .)
+    MINUS           reduce using rule 33 (expression -> NOT expression .)
+    TIMES           reduce using rule 33 (expression -> NOT expression .)
+    DIVIDE          reduce using rule 33 (expression -> NOT expression .)
+    POWER           reduce using rule 33 (expression -> NOT expression .)
+    EQUALEQUAL      reduce using rule 33 (expression -> NOT expression .)
+    GREATER         reduce using rule 33 (expression -> NOT expression .)
+    GREATEREQUAL    reduce using rule 33 (expression -> NOT expression .)
+    LESS            reduce using rule 33 (expression -> NOT expression .)
+    LESSEQUAL       reduce using rule 33 (expression -> NOT expression .)
+    AND             reduce using rule 33 (expression -> NOT expression .)
+    OR              reduce using rule 33 (expression -> NOT expression .)
+    NEWLINE         reduce using rule 33 (expression -> NOT expression .)
+    COLON           reduce using rule 33 (expression -> NOT expression .)
+    RPAREN          reduce using rule 33 (expression -> NOT expression .)
+    COMA            reduce using rule 33 (expression -> NOT expression .)
+    RBRACK          reduce using rule 33 (expression -> NOT expression .)
+
+  ! PLUS            [ shift and go to state 63 ]
+  ! MINUS           [ shift and go to state 66 ]
+  ! TIMES           [ shift and go to state 62 ]
+  ! DIVIDE          [ shift and go to state 59 ]
+  ! POWER           [ shift and go to state 60 ]
+  ! EQUALEQUAL      [ shift and go to state 65 ]
+  ! GREATER         [ shift and go to state 67 ]
+  ! GREATEREQUAL    [ shift and go to state 58 ]
+  ! LESS            [ shift and go to state 61 ]
+  ! LESSEQUAL       [ shift and go to state 64 ]
+  ! AND             [ shift and go to state 56 ]
+  ! OR              [ shift and go to state 57 ]
+
+
+state 56
+
+    (31) expression -> expression AND . expression
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    NAME            shift and go to state 26
+
+
+    expression                     shift and go to state 88
+    name_reference                 shift and go to state 34
+
+state 57
+
+    (32) expression -> expression OR . expression
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    NAME            shift and go to state 26
+
+
+    expression                     shift and go to state 89
+    name_reference                 shift and go to state 34
+
+state 58
+
+    (28) expression -> expression GREATEREQUAL . expression
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    NAME            shift and go to state 26
+
+
+    expression                     shift and go to state 90
+    name_reference                 shift and go to state 34
+
+state 59
+
+    (24) expression -> expression DIVIDE . expression
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    NAME            shift and go to state 26
+
+
+    expression                     shift and go to state 91
+    name_reference                 shift and go to state 34
+
+state 60
+
+    (25) expression -> expression POWER . expression
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    NAME            shift and go to state 26
+
+
+    expression                     shift and go to state 92
+    name_reference                 shift and go to state 34
+
+state 61
+
+    (29) expression -> expression LESS . expression
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    NAME            shift and go to state 26
+
+
+    expression                     shift and go to state 93
+    name_reference                 shift and go to state 34
+
+state 62
+
+    (23) expression -> expression TIMES . expression
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    NAME            shift and go to state 26
+
+
+    expression                     shift and go to state 94
+    name_reference                 shift and go to state 34
+
+state 63
+
+    (21) expression -> expression PLUS . expression
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    NAME            shift and go to state 26
+
+
+    expression                     shift and go to state 95
+    name_reference                 shift and go to state 34
+
+state 64
+
+    (30) expression -> expression LESSEQUAL . expression
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    NAME            shift and go to state 26
+
+
+    expression                     shift and go to state 96
+    name_reference                 shift and go to state 34
+
+state 65
+
+    (26) expression -> expression EQUALEQUAL . expression
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    NAME            shift and go to state 26
+
+
+    expression                     shift and go to state 97
+    name_reference                 shift and go to state 34
+
+state 66
+
+    (22) expression -> expression MINUS . expression
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    NAME            shift and go to state 26
+
+
+    expression                     shift and go to state 98
+    name_reference                 shift and go to state 34
+
+state 67
+
+    (27) expression -> expression GREATER . expression
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    NAME            shift and go to state 26
+
+
+    expression                     shift and go to state 99
+    name_reference                 shift and go to state 34
+
+state 68
+
+    (10) statement -> WHILE expression COLON . NEWLINE statements END
+
+    NEWLINE         shift and go to state 100
+
+
+
+state 69
+
+    (46) import -> IMPORT name_reference COMA . import
+    (46) import -> . IMPORT name_reference COMA import
+    (47) import -> . IMPORT name_reference
+
+    IMPORT          shift and go to state 6
+
+
+    import                         shift and go to state 101
+
+state 70
+
+    (48) function -> function_operators FUNCTION NAME . LPAREN arguments RPAREN COLON NEWLINE statements END
+
+    LPAREN          shift and go to state 102
+
+
+
+state 71
+
+    (5) statement -> name_reference EQUALS expression .
+    (21) expression -> expression . PLUS expression
+    (22) expression -> expression . MINUS expression
+    (23) expression -> expression . TIMES expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . POWER expression
+    (26) expression -> expression . EQUALEQUAL expression
+    (27) expression -> expression . GREATER expression
+    (28) expression -> expression . GREATEREQUAL expression
+    (29) expression -> expression . LESS expression
+    (30) expression -> expression . LESSEQUAL expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+    NEWLINE         reduce using rule 5 (statement -> name_reference EQUALS expression .)
+    PLUS            shift and go to state 63
+    MINUS           shift and go to state 66
+    TIMES           shift and go to state 62
+    DIVIDE          shift and go to state 59
+    POWER           shift and go to state 60
+    EQUALEQUAL      shift and go to state 65
+    GREATER         shift and go to state 67
+    GREATEREQUAL    shift and go to state 58
+    LESS            shift and go to state 61
+    LESSEQUAL       shift and go to state 64
+    AND             shift and go to state 56
+    OR              shift and go to state 57
+
+
+
+state 72
+
+    (59) argument_values -> argument_value . COMA argument_values
+    (60) argument_values -> argument_value .
+
+    COMA            shift and go to state 103
+    RPAREN          reduce using rule 60 (argument_values -> argument_value .)
+
+
+
+state 73
+
+    (58) expression -> name_reference LPAREN argument_values . RPAREN
+
+    RPAREN          shift and go to state 104
+
+
+
+state 74
+
+    (62) argument_value -> expression .
+    (21) expression -> expression . PLUS expression
+    (22) expression -> expression . MINUS expression
+    (23) expression -> expression . TIMES expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . POWER expression
+    (26) expression -> expression . EQUALEQUAL expression
+    (27) expression -> expression . GREATER expression
+    (28) expression -> expression . GREATEREQUAL expression
+    (29) expression -> expression . LESS expression
+    (30) expression -> expression . LESSEQUAL expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+    COMA            reduce using rule 62 (argument_value -> expression .)
+    RPAREN          reduce using rule 62 (argument_value -> expression .)
+    PLUS            shift and go to state 63
+    MINUS           shift and go to state 66
+    TIMES           shift and go to state 62
+    DIVIDE          shift and go to state 59
+    POWER           shift and go to state 60
+    EQUALEQUAL      shift and go to state 65
+    GREATER         shift and go to state 67
+    GREATEREQUAL    shift and go to state 58
+    LESS            shift and go to state 61
+    LESSEQUAL       shift and go to state 64
+    AND             shift and go to state 56
+    OR              shift and go to state 57
+
+
+
+state 75
+
+    (64) extends -> EXTENDS . extends_values
+    (66) extends_values -> . NAME COMA extends_values
+    (67) extends_values -> . NAME
+
+    NAME            shift and go to state 105
+
+
+    extends_values                 shift and go to state 106
+
+state 76
+
+    (78) capability -> CAPABILITY NAME extends . COLON NEWLINE statements END
+
+    COLON           shift and go to state 107
+
+
+
+state 77
+
+    (2) statements -> statement NEWLINE statements .
+
+    END             reduce using rule 2 (statements -> statement NEWLINE statements .)
+    ELSE            reduce using rule 2 (statements -> statement NEWLINE statements .)
+    ELIF            reduce using rule 2 (statements -> statement NEWLINE statements .)
+    $end            reduce using rule 2 (statements -> statement NEWLINE statements .)
+
+
+
+state 78
+
+    (63) class -> CLASS NAME extends . implements COLON NEWLINE statements END
+    (68) implements -> . IMPLEMENTS implements_values
+    (69) implements -> .
+
+    IMPLEMENTS      shift and go to state 109
+    COLON           reduce using rule 69 (implements -> .)
+
+
+    implements                     shift and go to state 108
+
+state 79
+
+    (49) function_operators -> function_operator COMA function_operators .
+
+    FUNCTION        reduce using rule 49 (function_operators -> function_operator COMA function_operators .)
+
+
+
+state 80
+
+    (11) statement -> FOR NAME IN . expression COLON NEWLINE statements END
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    NAME            shift and go to state 26
+
+
+    expression                     shift and go to state 110
+    name_reference                 shift and go to state 34
+
+state 81
+
+    (72) interface -> INTERFACE NAME extends . COLON NEWLINE statements END
+
+    COLON           shift and go to state 111
+
+
+
+state 82
+
+    (35) expression -> LPAREN expression RPAREN .
+
+    PLUS            reduce using rule 35 (expression -> LPAREN expression RPAREN .)
+    MINUS           reduce using rule 35 (expression -> LPAREN expression RPAREN .)
+    TIMES           reduce using rule 35 (expression -> LPAREN expression RPAREN .)
+    DIVIDE          reduce using rule 35 (expression -> LPAREN expression RPAREN .)
+    POWER           reduce using rule 35 (expression -> LPAREN expression RPAREN .)
+    EQUALEQUAL      reduce using rule 35 (expression -> LPAREN expression RPAREN .)
+    GREATER         reduce using rule 35 (expression -> LPAREN expression RPAREN .)
+    GREATEREQUAL    reduce using rule 35 (expression -> LPAREN expression RPAREN .)
+    LESS            reduce using rule 35 (expression -> LPAREN expression RPAREN .)
+    LESSEQUAL       reduce using rule 35 (expression -> LPAREN expression RPAREN .)
+    AND             reduce using rule 35 (expression -> LPAREN expression RPAREN .)
+    OR              reduce using rule 35 (expression -> LPAREN expression RPAREN .)
+    NEWLINE         reduce using rule 35 (expression -> LPAREN expression RPAREN .)
+    COLON           reduce using rule 35 (expression -> LPAREN expression RPAREN .)
+    RPAREN          reduce using rule 35 (expression -> LPAREN expression RPAREN .)
+    COMA            reduce using rule 35 (expression -> LPAREN expression RPAREN .)
+    RBRACK          reduce using rule 35 (expression -> LPAREN expression RPAREN .)
+
+
+
+state 83
+
+    (6) statement -> IF expression COLON . NEWLINE statements else_condition END
+
+    NEWLINE         shift and go to state 112
+
+
+
+state 84
+
+    (44) name_reference -> NAME DOT name_reference .
+
+    LPAREN          reduce using rule 44 (name_reference -> NAME DOT name_reference .)
+    COLON           reduce using rule 44 (name_reference -> NAME DOT name_reference .)
+    PLUS            reduce using rule 44 (name_reference -> NAME DOT name_reference .)
+    MINUS           reduce using rule 44 (name_reference -> NAME DOT name_reference .)
+    TIMES           reduce using rule 44 (name_reference -> NAME DOT name_reference .)
+    DIVIDE          reduce using rule 44 (name_reference -> NAME DOT name_reference .)
+    POWER           reduce using rule 44 (name_reference -> NAME DOT name_reference .)
+    EQUALEQUAL      reduce using rule 44 (name_reference -> NAME DOT name_reference .)
+    GREATER         reduce using rule 44 (name_reference -> NAME DOT name_reference .)
+    GREATEREQUAL    reduce using rule 44 (name_reference -> NAME DOT name_reference .)
+    LESS            reduce using rule 44 (name_reference -> NAME DOT name_reference .)
+    LESSEQUAL       reduce using rule 44 (name_reference -> NAME DOT name_reference .)
+    AND             reduce using rule 44 (name_reference -> NAME DOT name_reference .)
+    OR              reduce using rule 44 (name_reference -> NAME DOT name_reference .)
+    NEWLINE         reduce using rule 44 (name_reference -> NAME DOT name_reference .)
+    RPAREN          reduce using rule 44 (name_reference -> NAME DOT name_reference .)
+    COMA            reduce using rule 44 (name_reference -> NAME DOT name_reference .)
+    RBRACK          reduce using rule 44 (name_reference -> NAME DOT name_reference .)
+    EQUALS          reduce using rule 44 (name_reference -> NAME DOT name_reference .)
+
+
+
+state 85
+
+    (73) plugin -> PLUGIN NAME extends . implements allows COLON NEWLINE statements END
+    (68) implements -> . IMPLEMENTS implements_values
+    (69) implements -> .
+
+    IMPLEMENTS      shift and go to state 109
+    ALLOWS          reduce using rule 69 (implements -> .)
+    COLON           reduce using rule 69 (implements -> .)
+
+
+    implements                     shift and go to state 113
+
+state 86
+
+    (41) list_contents -> expression COMA . list_contents
+    (41) list_contents -> . expression COMA list_contents
+    (42) list_contents -> . expression
+    (43) list_contents -> .
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+
+    RBRACK          reduce using rule 43 (list_contents -> .)
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    NAME            shift and go to state 26
+
+
+    list_contents                  shift and go to state 114
+    expression                     shift and go to state 53
+    name_reference                 shift and go to state 34
+
+state 87
+
+    (40) expression -> LBRACK list_contents RBRACK .
+
+    PLUS            reduce using rule 40 (expression -> LBRACK list_contents RBRACK .)
+    MINUS           reduce using rule 40 (expression -> LBRACK list_contents RBRACK .)
+    TIMES           reduce using rule 40 (expression -> LBRACK list_contents RBRACK .)
+    DIVIDE          reduce using rule 40 (expression -> LBRACK list_contents RBRACK .)
+    POWER           reduce using rule 40 (expression -> LBRACK list_contents RBRACK .)
+    EQUALEQUAL      reduce using rule 40 (expression -> LBRACK list_contents RBRACK .)
+    GREATER         reduce using rule 40 (expression -> LBRACK list_contents RBRACK .)
+    GREATEREQUAL    reduce using rule 40 (expression -> LBRACK list_contents RBRACK .)
+    LESS            reduce using rule 40 (expression -> LBRACK list_contents RBRACK .)
+    LESSEQUAL       reduce using rule 40 (expression -> LBRACK list_contents RBRACK .)
+    AND             reduce using rule 40 (expression -> LBRACK list_contents RBRACK .)
+    OR              reduce using rule 40 (expression -> LBRACK list_contents RBRACK .)
+    NEWLINE         reduce using rule 40 (expression -> LBRACK list_contents RBRACK .)
+    COLON           reduce using rule 40 (expression -> LBRACK list_contents RBRACK .)
+    RPAREN          reduce using rule 40 (expression -> LBRACK list_contents RBRACK .)
+    COMA            reduce using rule 40 (expression -> LBRACK list_contents RBRACK .)
+    RBRACK          reduce using rule 40 (expression -> LBRACK list_contents RBRACK .)
+
+
+
+state 88
+
+    (31) expression -> expression AND expression .
+    (21) expression -> expression . PLUS expression
+    (22) expression -> expression . MINUS expression
+    (23) expression -> expression . TIMES expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . POWER expression
+    (26) expression -> expression . EQUALEQUAL expression
+    (27) expression -> expression . GREATER expression
+    (28) expression -> expression . GREATEREQUAL expression
+    (29) expression -> expression . LESS expression
+    (30) expression -> expression . LESSEQUAL expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+    AND             reduce using rule 31 (expression -> expression AND expression .)
+    OR              reduce using rule 31 (expression -> expression AND expression .)
+    NEWLINE         reduce using rule 31 (expression -> expression AND expression .)
+    COLON           reduce using rule 31 (expression -> expression AND expression .)
+    RPAREN          reduce using rule 31 (expression -> expression AND expression .)
+    COMA            reduce using rule 31 (expression -> expression AND expression .)
+    RBRACK          reduce using rule 31 (expression -> expression AND expression .)
+    PLUS            shift and go to state 63
+    MINUS           shift and go to state 66
+    TIMES           shift and go to state 62
+    DIVIDE          shift and go to state 59
+    POWER           shift and go to state 60
+    EQUALEQUAL      shift and go to state 65
+    GREATER         shift and go to state 67
+    GREATEREQUAL    shift and go to state 58
+    LESS            shift and go to state 61
+    LESSEQUAL       shift and go to state 64
+
+  ! PLUS            [ reduce using rule 31 (expression -> expression AND expression .) ]
+  ! MINUS           [ reduce using rule 31 (expression -> expression AND expression .) ]
+  ! TIMES           [ reduce using rule 31 (expression -> expression AND expression .) ]
+  ! DIVIDE          [ reduce using rule 31 (expression -> expression AND expression .) ]
+  ! POWER           [ reduce using rule 31 (expression -> expression AND expression .) ]
+  ! EQUALEQUAL      [ reduce using rule 31 (expression -> expression AND expression .) ]
+  ! GREATER         [ reduce using rule 31 (expression -> expression AND expression .) ]
+  ! GREATEREQUAL    [ reduce using rule 31 (expression -> expression AND expression .) ]
+  ! LESS            [ reduce using rule 31 (expression -> expression AND expression .) ]
+  ! LESSEQUAL       [ reduce using rule 31 (expression -> expression AND expression .) ]
+  ! AND             [ shift and go to state 56 ]
+  ! OR              [ shift and go to state 57 ]
+
+
+state 89
+
+    (32) expression -> expression OR expression .
+    (21) expression -> expression . PLUS expression
+    (22) expression -> expression . MINUS expression
+    (23) expression -> expression . TIMES expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . POWER expression
+    (26) expression -> expression . EQUALEQUAL expression
+    (27) expression -> expression . GREATER expression
+    (28) expression -> expression . GREATEREQUAL expression
+    (29) expression -> expression . LESS expression
+    (30) expression -> expression . LESSEQUAL expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+    OR              reduce using rule 32 (expression -> expression OR expression .)
+    NEWLINE         reduce using rule 32 (expression -> expression OR expression .)
+    COLON           reduce using rule 32 (expression -> expression OR expression .)
+    RPAREN          reduce using rule 32 (expression -> expression OR expression .)
+    COMA            reduce using rule 32 (expression -> expression OR expression .)
+    RBRACK          reduce using rule 32 (expression -> expression OR expression .)
+    PLUS            shift and go to state 63
+    MINUS           shift and go to state 66
+    TIMES           shift and go to state 62
+    DIVIDE          shift and go to state 59
+    POWER           shift and go to state 60
+    EQUALEQUAL      shift and go to state 65
+    GREATER         shift and go to state 67
+    GREATEREQUAL    shift and go to state 58
+    LESS            shift and go to state 61
+    LESSEQUAL       shift and go to state 64
+    AND             shift and go to state 56
+
+  ! PLUS            [ reduce using rule 32 (expression -> expression OR expression .) ]
+  ! MINUS           [ reduce using rule 32 (expression -> expression OR expression .) ]
+  ! TIMES           [ reduce using rule 32 (expression -> expression OR expression .) ]
+  ! DIVIDE          [ reduce using rule 32 (expression -> expression OR expression .) ]
+  ! POWER           [ reduce using rule 32 (expression -> expression OR expression .) ]
+  ! EQUALEQUAL      [ reduce using rule 32 (expression -> expression OR expression .) ]
+  ! GREATER         [ reduce using rule 32 (expression -> expression OR expression .) ]
+  ! GREATEREQUAL    [ reduce using rule 32 (expression -> expression OR expression .) ]
+  ! LESS            [ reduce using rule 32 (expression -> expression OR expression .) ]
+  ! LESSEQUAL       [ reduce using rule 32 (expression -> expression OR expression .) ]
+  ! AND             [ reduce using rule 32 (expression -> expression OR expression .) ]
+  ! OR              [ shift and go to state 57 ]
+
+
+state 90
+
+    (28) expression -> expression GREATEREQUAL expression .
+    (21) expression -> expression . PLUS expression
+    (22) expression -> expression . MINUS expression
+    (23) expression -> expression . TIMES expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . POWER expression
+    (26) expression -> expression . EQUALEQUAL expression
+    (27) expression -> expression . GREATER expression
+    (28) expression -> expression . GREATEREQUAL expression
+    (29) expression -> expression . LESS expression
+    (30) expression -> expression . LESSEQUAL expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+    EQUALEQUAL      reduce using rule 28 (expression -> expression GREATEREQUAL expression .)
+    GREATER         reduce using rule 28 (expression -> expression GREATEREQUAL expression .)
+    GREATEREQUAL    reduce using rule 28 (expression -> expression GREATEREQUAL expression .)
+    LESS            reduce using rule 28 (expression -> expression GREATEREQUAL expression .)
+    LESSEQUAL       reduce using rule 28 (expression -> expression GREATEREQUAL expression .)
+    AND             reduce using rule 28 (expression -> expression GREATEREQUAL expression .)
+    OR              reduce using rule 28 (expression -> expression GREATEREQUAL expression .)
+    NEWLINE         reduce using rule 28 (expression -> expression GREATEREQUAL expression .)
+    COLON           reduce using rule 28 (expression -> expression GREATEREQUAL expression .)
+    RPAREN          reduce using rule 28 (expression -> expression GREATEREQUAL expression .)
+    COMA            reduce using rule 28 (expression -> expression GREATEREQUAL expression .)
+    RBRACK          reduce using rule 28 (expression -> expression GREATEREQUAL expression .)
+    PLUS            shift and go to state 63
+    MINUS           shift and go to state 66
+    TIMES           shift and go to state 62
+    DIVIDE          shift and go to state 59
+    POWER           shift and go to state 60
+
+  ! PLUS            [ reduce using rule 28 (expression -> expression GREATEREQUAL expression .) ]
+  ! MINUS           [ reduce using rule 28 (expression -> expression GREATEREQUAL expression .) ]
+  ! TIMES           [ reduce using rule 28 (expression -> expression GREATEREQUAL expression .) ]
+  ! DIVIDE          [ reduce using rule 28 (expression -> expression GREATEREQUAL expression .) ]
+  ! POWER           [ reduce using rule 28 (expression -> expression GREATEREQUAL expression .) ]
+  ! EQUALEQUAL      [ shift and go to state 65 ]
+  ! GREATER         [ shift and go to state 67 ]
+  ! GREATEREQUAL    [ shift and go to state 58 ]
+  ! LESS            [ shift and go to state 61 ]
+  ! LESSEQUAL       [ shift and go to state 64 ]
+  ! AND             [ shift and go to state 56 ]
+  ! OR              [ shift and go to state 57 ]
+
+
+state 91
+
+    (24) expression -> expression DIVIDE expression .
+    (21) expression -> expression . PLUS expression
+    (22) expression -> expression . MINUS expression
+    (23) expression -> expression . TIMES expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . POWER expression
+    (26) expression -> expression . EQUALEQUAL expression
+    (27) expression -> expression . GREATER expression
+    (28) expression -> expression . GREATEREQUAL expression
+    (29) expression -> expression . LESS expression
+    (30) expression -> expression . LESSEQUAL expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+    PLUS            reduce using rule 24 (expression -> expression DIVIDE expression .)
+    MINUS           reduce using rule 24 (expression -> expression DIVIDE expression .)
+    TIMES           reduce using rule 24 (expression -> expression DIVIDE expression .)
+    DIVIDE          reduce using rule 24 (expression -> expression DIVIDE expression .)
+    POWER           reduce using rule 24 (expression -> expression DIVIDE expression .)
+    EQUALEQUAL      reduce using rule 24 (expression -> expression DIVIDE expression .)
+    GREATER         reduce using rule 24 (expression -> expression DIVIDE expression .)
+    GREATEREQUAL    reduce using rule 24 (expression -> expression DIVIDE expression .)
+    LESS            reduce using rule 24 (expression -> expression DIVIDE expression .)
+    LESSEQUAL       reduce using rule 24 (expression -> expression DIVIDE expression .)
+    AND             reduce using rule 24 (expression -> expression DIVIDE expression .)
+    OR              reduce using rule 24 (expression -> expression DIVIDE expression .)
+    NEWLINE         reduce using rule 24 (expression -> expression DIVIDE expression .)
+    COLON           reduce using rule 24 (expression -> expression DIVIDE expression .)
+    RPAREN          reduce using rule 24 (expression -> expression DIVIDE expression .)
+    COMA            reduce using rule 24 (expression -> expression DIVIDE expression .)
+    RBRACK          reduce using rule 24 (expression -> expression DIVIDE expression .)
+
+  ! PLUS            [ shift and go to state 63 ]
+  ! MINUS           [ shift and go to state 66 ]
+  ! TIMES           [ shift and go to state 62 ]
+  ! DIVIDE          [ shift and go to state 59 ]
+  ! POWER           [ shift and go to state 60 ]
+  ! EQUALEQUAL      [ shift and go to state 65 ]
+  ! GREATER         [ shift and go to state 67 ]
+  ! GREATEREQUAL    [ shift and go to state 58 ]
+  ! LESS            [ shift and go to state 61 ]
+  ! LESSEQUAL       [ shift and go to state 64 ]
+  ! AND             [ shift and go to state 56 ]
+  ! OR              [ shift and go to state 57 ]
+
+
+state 92
+
+    (25) expression -> expression POWER expression .
+    (21) expression -> expression . PLUS expression
+    (22) expression -> expression . MINUS expression
+    (23) expression -> expression . TIMES expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . POWER expression
+    (26) expression -> expression . EQUALEQUAL expression
+    (27) expression -> expression . GREATER expression
+    (28) expression -> expression . GREATEREQUAL expression
+    (29) expression -> expression . LESS expression
+    (30) expression -> expression . LESSEQUAL expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+    PLUS            reduce using rule 25 (expression -> expression POWER expression .)
+    MINUS           reduce using rule 25 (expression -> expression POWER expression .)
+    TIMES           reduce using rule 25 (expression -> expression POWER expression .)
+    DIVIDE          reduce using rule 25 (expression -> expression POWER expression .)
+    POWER           reduce using rule 25 (expression -> expression POWER expression .)
+    EQUALEQUAL      reduce using rule 25 (expression -> expression POWER expression .)
+    GREATER         reduce using rule 25 (expression -> expression POWER expression .)
+    GREATEREQUAL    reduce using rule 25 (expression -> expression POWER expression .)
+    LESS            reduce using rule 25 (expression -> expression POWER expression .)
+    LESSEQUAL       reduce using rule 25 (expression -> expression POWER expression .)
+    AND             reduce using rule 25 (expression -> expression POWER expression .)
+    OR              reduce using rule 25 (expression -> expression POWER expression .)
+    NEWLINE         reduce using rule 25 (expression -> expression POWER expression .)
+    COLON           reduce using rule 25 (expression -> expression POWER expression .)
+    RPAREN          reduce using rule 25 (expression -> expression POWER expression .)
+    COMA            reduce using rule 25 (expression -> expression POWER expression .)
+    RBRACK          reduce using rule 25 (expression -> expression POWER expression .)
+
+  ! PLUS            [ shift and go to state 63 ]
+  ! MINUS           [ shift and go to state 66 ]
+  ! TIMES           [ shift and go to state 62 ]
+  ! DIVIDE          [ shift and go to state 59 ]
+  ! POWER           [ shift and go to state 60 ]
+  ! EQUALEQUAL      [ shift and go to state 65 ]
+  ! GREATER         [ shift and go to state 67 ]
+  ! GREATEREQUAL    [ shift and go to state 58 ]
+  ! LESS            [ shift and go to state 61 ]
+  ! LESSEQUAL       [ shift and go to state 64 ]
+  ! AND             [ shift and go to state 56 ]
+  ! OR              [ shift and go to state 57 ]
+
+
+state 93
+
+    (29) expression -> expression LESS expression .
+    (21) expression -> expression . PLUS expression
+    (22) expression -> expression . MINUS expression
+    (23) expression -> expression . TIMES expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . POWER expression
+    (26) expression -> expression . EQUALEQUAL expression
+    (27) expression -> expression . GREATER expression
+    (28) expression -> expression . GREATEREQUAL expression
+    (29) expression -> expression . LESS expression
+    (30) expression -> expression . LESSEQUAL expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+    EQUALEQUAL      reduce using rule 29 (expression -> expression LESS expression .)
+    GREATER         reduce using rule 29 (expression -> expression LESS expression .)
+    GREATEREQUAL    reduce using rule 29 (expression -> expression LESS expression .)
+    LESS            reduce using rule 29 (expression -> expression LESS expression .)
+    LESSEQUAL       reduce using rule 29 (expression -> expression LESS expression .)
+    AND             reduce using rule 29 (expression -> expression LESS expression .)
+    OR              reduce using rule 29 (expression -> expression LESS expression .)
+    NEWLINE         reduce using rule 29 (expression -> expression LESS expression .)
+    COLON           reduce using rule 29 (expression -> expression LESS expression .)
+    RPAREN          reduce using rule 29 (expression -> expression LESS expression .)
+    COMA            reduce using rule 29 (expression -> expression LESS expression .)
+    RBRACK          reduce using rule 29 (expression -> expression LESS expression .)
+    PLUS            shift and go to state 63
+    MINUS           shift and go to state 66
+    TIMES           shift and go to state 62
+    DIVIDE          shift and go to state 59
+    POWER           shift and go to state 60
+
+  ! PLUS            [ reduce using rule 29 (expression -> expression LESS expression .) ]
+  ! MINUS           [ reduce using rule 29 (expression -> expression LESS expression .) ]
+  ! TIMES           [ reduce using rule 29 (expression -> expression LESS expression .) ]
+  ! DIVIDE          [ reduce using rule 29 (expression -> expression LESS expression .) ]
+  ! POWER           [ reduce using rule 29 (expression -> expression LESS expression .) ]
+  ! EQUALEQUAL      [ shift and go to state 65 ]
+  ! GREATER         [ shift and go to state 67 ]
+  ! GREATEREQUAL    [ shift and go to state 58 ]
+  ! LESS            [ shift and go to state 61 ]
+  ! LESSEQUAL       [ shift and go to state 64 ]
+  ! AND             [ shift and go to state 56 ]
+  ! OR              [ shift and go to state 57 ]
+
+
+state 94
+
+    (23) expression -> expression TIMES expression .
+    (21) expression -> expression . PLUS expression
+    (22) expression -> expression . MINUS expression
+    (23) expression -> expression . TIMES expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . POWER expression
+    (26) expression -> expression . EQUALEQUAL expression
+    (27) expression -> expression . GREATER expression
+    (28) expression -> expression . GREATEREQUAL expression
+    (29) expression -> expression . LESS expression
+    (30) expression -> expression . LESSEQUAL expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+    PLUS            reduce using rule 23 (expression -> expression TIMES expression .)
+    MINUS           reduce using rule 23 (expression -> expression TIMES expression .)
+    TIMES           reduce using rule 23 (expression -> expression TIMES expression .)
+    DIVIDE          reduce using rule 23 (expression -> expression TIMES expression .)
+    POWER           reduce using rule 23 (expression -> expression TIMES expression .)
+    EQUALEQUAL      reduce using rule 23 (expression -> expression TIMES expression .)
+    GREATER         reduce using rule 23 (expression -> expression TIMES expression .)
+    GREATEREQUAL    reduce using rule 23 (expression -> expression TIMES expression .)
+    LESS            reduce using rule 23 (expression -> expression TIMES expression .)
+    LESSEQUAL       reduce using rule 23 (expression -> expression TIMES expression .)
+    AND             reduce using rule 23 (expression -> expression TIMES expression .)
+    OR              reduce using rule 23 (expression -> expression TIMES expression .)
+    NEWLINE         reduce using rule 23 (expression -> expression TIMES expression .)
+    COLON           reduce using rule 23 (expression -> expression TIMES expression .)
+    RPAREN          reduce using rule 23 (expression -> expression TIMES expression .)
+    COMA            reduce using rule 23 (expression -> expression TIMES expression .)
+    RBRACK          reduce using rule 23 (expression -> expression TIMES expression .)
+
+  ! PLUS            [ shift and go to state 63 ]
+  ! MINUS           [ shift and go to state 66 ]
+  ! TIMES           [ shift and go to state 62 ]
+  ! DIVIDE          [ shift and go to state 59 ]
+  ! POWER           [ shift and go to state 60 ]
+  ! EQUALEQUAL      [ shift and go to state 65 ]
+  ! GREATER         [ shift and go to state 67 ]
+  ! GREATEREQUAL    [ shift and go to state 58 ]
+  ! LESS            [ shift and go to state 61 ]
+  ! LESSEQUAL       [ shift and go to state 64 ]
+  ! AND             [ shift and go to state 56 ]
+  ! OR              [ shift and go to state 57 ]
+
+
+state 95
+
+    (21) expression -> expression PLUS expression .
+    (21) expression -> expression . PLUS expression
+    (22) expression -> expression . MINUS expression
+    (23) expression -> expression . TIMES expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . POWER expression
+    (26) expression -> expression . EQUALEQUAL expression
+    (27) expression -> expression . GREATER expression
+    (28) expression -> expression . GREATEREQUAL expression
+    (29) expression -> expression . LESS expression
+    (30) expression -> expression . LESSEQUAL expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+    PLUS            reduce using rule 21 (expression -> expression PLUS expression .)
+    MINUS           reduce using rule 21 (expression -> expression PLUS expression .)
+    EQUALEQUAL      reduce using rule 21 (expression -> expression PLUS expression .)
+    GREATER         reduce using rule 21 (expression -> expression PLUS expression .)
+    GREATEREQUAL    reduce using rule 21 (expression -> expression PLUS expression .)
+    LESS            reduce using rule 21 (expression -> expression PLUS expression .)
+    LESSEQUAL       reduce using rule 21 (expression -> expression PLUS expression .)
+    AND             reduce using rule 21 (expression -> expression PLUS expression .)
+    OR              reduce using rule 21 (expression -> expression PLUS expression .)
+    NEWLINE         reduce using rule 21 (expression -> expression PLUS expression .)
+    COLON           reduce using rule 21 (expression -> expression PLUS expression .)
+    RPAREN          reduce using rule 21 (expression -> expression PLUS expression .)
+    COMA            reduce using rule 21 (expression -> expression PLUS expression .)
+    RBRACK          reduce using rule 21 (expression -> expression PLUS expression .)
+    TIMES           shift and go to state 62
+    DIVIDE          shift and go to state 59
+    POWER           shift and go to state 60
+
+  ! TIMES           [ reduce using rule 21 (expression -> expression PLUS expression .) ]
+  ! DIVIDE          [ reduce using rule 21 (expression -> expression PLUS expression .) ]
+  ! POWER           [ reduce using rule 21 (expression -> expression PLUS expression .) ]
+  ! PLUS            [ shift and go to state 63 ]
+  ! MINUS           [ shift and go to state 66 ]
+  ! EQUALEQUAL      [ shift and go to state 65 ]
+  ! GREATER         [ shift and go to state 67 ]
+  ! GREATEREQUAL    [ shift and go to state 58 ]
+  ! LESS            [ shift and go to state 61 ]
+  ! LESSEQUAL       [ shift and go to state 64 ]
+  ! AND             [ shift and go to state 56 ]
+  ! OR              [ shift and go to state 57 ]
+
+
+state 96
+
+    (30) expression -> expression LESSEQUAL expression .
+    (21) expression -> expression . PLUS expression
+    (22) expression -> expression . MINUS expression
+    (23) expression -> expression . TIMES expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . POWER expression
+    (26) expression -> expression . EQUALEQUAL expression
+    (27) expression -> expression . GREATER expression
+    (28) expression -> expression . GREATEREQUAL expression
+    (29) expression -> expression . LESS expression
+    (30) expression -> expression . LESSEQUAL expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+    EQUALEQUAL      reduce using rule 30 (expression -> expression LESSEQUAL expression .)
+    GREATER         reduce using rule 30 (expression -> expression LESSEQUAL expression .)
+    GREATEREQUAL    reduce using rule 30 (expression -> expression LESSEQUAL expression .)
+    LESS            reduce using rule 30 (expression -> expression LESSEQUAL expression .)
+    LESSEQUAL       reduce using rule 30 (expression -> expression LESSEQUAL expression .)
+    AND             reduce using rule 30 (expression -> expression LESSEQUAL expression .)
+    OR              reduce using rule 30 (expression -> expression LESSEQUAL expression .)
+    NEWLINE         reduce using rule 30 (expression -> expression LESSEQUAL expression .)
+    COLON           reduce using rule 30 (expression -> expression LESSEQUAL expression .)
+    RPAREN          reduce using rule 30 (expression -> expression LESSEQUAL expression .)
+    COMA            reduce using rule 30 (expression -> expression LESSEQUAL expression .)
+    RBRACK          reduce using rule 30 (expression -> expression LESSEQUAL expression .)
+    PLUS            shift and go to state 63
+    MINUS           shift and go to state 66
+    TIMES           shift and go to state 62
+    DIVIDE          shift and go to state 59
+    POWER           shift and go to state 60
+
+  ! PLUS            [ reduce using rule 30 (expression -> expression LESSEQUAL expression .) ]
+  ! MINUS           [ reduce using rule 30 (expression -> expression LESSEQUAL expression .) ]
+  ! TIMES           [ reduce using rule 30 (expression -> expression LESSEQUAL expression .) ]
+  ! DIVIDE          [ reduce using rule 30 (expression -> expression LESSEQUAL expression .) ]
+  ! POWER           [ reduce using rule 30 (expression -> expression LESSEQUAL expression .) ]
+  ! EQUALEQUAL      [ shift and go to state 65 ]
+  ! GREATER         [ shift and go to state 67 ]
+  ! GREATEREQUAL    [ shift and go to state 58 ]
+  ! LESS            [ shift and go to state 61 ]
+  ! LESSEQUAL       [ shift and go to state 64 ]
+  ! AND             [ shift and go to state 56 ]
+  ! OR              [ shift and go to state 57 ]
+
+
+state 97
+
+    (26) expression -> expression EQUALEQUAL expression .
+    (21) expression -> expression . PLUS expression
+    (22) expression -> expression . MINUS expression
+    (23) expression -> expression . TIMES expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . POWER expression
+    (26) expression -> expression . EQUALEQUAL expression
+    (27) expression -> expression . GREATER expression
+    (28) expression -> expression . GREATEREQUAL expression
+    (29) expression -> expression . LESS expression
+    (30) expression -> expression . LESSEQUAL expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+    EQUALEQUAL      reduce using rule 26 (expression -> expression EQUALEQUAL expression .)
+    GREATER         reduce using rule 26 (expression -> expression EQUALEQUAL expression .)
+    GREATEREQUAL    reduce using rule 26 (expression -> expression EQUALEQUAL expression .)
+    LESS            reduce using rule 26 (expression -> expression EQUALEQUAL expression .)
+    LESSEQUAL       reduce using rule 26 (expression -> expression EQUALEQUAL expression .)
+    AND             reduce using rule 26 (expression -> expression EQUALEQUAL expression .)
+    OR              reduce using rule 26 (expression -> expression EQUALEQUAL expression .)
+    NEWLINE         reduce using rule 26 (expression -> expression EQUALEQUAL expression .)
+    COLON           reduce using rule 26 (expression -> expression EQUALEQUAL expression .)
+    RPAREN          reduce using rule 26 (expression -> expression EQUALEQUAL expression .)
+    COMA            reduce using rule 26 (expression -> expression EQUALEQUAL expression .)
+    RBRACK          reduce using rule 26 (expression -> expression EQUALEQUAL expression .)
+    PLUS            shift and go to state 63
+    MINUS           shift and go to state 66
+    TIMES           shift and go to state 62
+    DIVIDE          shift and go to state 59
+    POWER           shift and go to state 60
+
+  ! PLUS            [ reduce using rule 26 (expression -> expression EQUALEQUAL expression .) ]
+  ! MINUS           [ reduce using rule 26 (expression -> expression EQUALEQUAL expression .) ]
+  ! TIMES           [ reduce using rule 26 (expression -> expression EQUALEQUAL expression .) ]
+  ! DIVIDE          [ reduce using rule 26 (expression -> expression EQUALEQUAL expression .) ]
+  ! POWER           [ reduce using rule 26 (expression -> expression EQUALEQUAL expression .) ]
+  ! EQUALEQUAL      [ shift and go to state 65 ]
+  ! GREATER         [ shift and go to state 67 ]
+  ! GREATEREQUAL    [ shift and go to state 58 ]
+  ! LESS            [ shift and go to state 61 ]
+  ! LESSEQUAL       [ shift and go to state 64 ]
+  ! AND             [ shift and go to state 56 ]
+  ! OR              [ shift and go to state 57 ]
+
+
+state 98
+
+    (22) expression -> expression MINUS expression .
+    (21) expression -> expression . PLUS expression
+    (22) expression -> expression . MINUS expression
+    (23) expression -> expression . TIMES expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . POWER expression
+    (26) expression -> expression . EQUALEQUAL expression
+    (27) expression -> expression . GREATER expression
+    (28) expression -> expression . GREATEREQUAL expression
+    (29) expression -> expression . LESS expression
+    (30) expression -> expression . LESSEQUAL expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+    PLUS            reduce using rule 22 (expression -> expression MINUS expression .)
+    MINUS           reduce using rule 22 (expression -> expression MINUS expression .)
+    EQUALEQUAL      reduce using rule 22 (expression -> expression MINUS expression .)
+    GREATER         reduce using rule 22 (expression -> expression MINUS expression .)
+    GREATEREQUAL    reduce using rule 22 (expression -> expression MINUS expression .)
+    LESS            reduce using rule 22 (expression -> expression MINUS expression .)
+    LESSEQUAL       reduce using rule 22 (expression -> expression MINUS expression .)
+    AND             reduce using rule 22 (expression -> expression MINUS expression .)
+    OR              reduce using rule 22 (expression -> expression MINUS expression .)
+    NEWLINE         reduce using rule 22 (expression -> expression MINUS expression .)
+    COLON           reduce using rule 22 (expression -> expression MINUS expression .)
+    RPAREN          reduce using rule 22 (expression -> expression MINUS expression .)
+    COMA            reduce using rule 22 (expression -> expression MINUS expression .)
+    RBRACK          reduce using rule 22 (expression -> expression MINUS expression .)
+    TIMES           shift and go to state 62
+    DIVIDE          shift and go to state 59
+    POWER           shift and go to state 60
+
+  ! TIMES           [ reduce using rule 22 (expression -> expression MINUS expression .) ]
+  ! DIVIDE          [ reduce using rule 22 (expression -> expression MINUS expression .) ]
+  ! POWER           [ reduce using rule 22 (expression -> expression MINUS expression .) ]
+  ! PLUS            [ shift and go to state 63 ]
+  ! MINUS           [ shift and go to state 66 ]
+  ! EQUALEQUAL      [ shift and go to state 65 ]
+  ! GREATER         [ shift and go to state 67 ]
+  ! GREATEREQUAL    [ shift and go to state 58 ]
+  ! LESS            [ shift and go to state 61 ]
+  ! LESSEQUAL       [ shift and go to state 64 ]
+  ! AND             [ shift and go to state 56 ]
+  ! OR              [ shift and go to state 57 ]
+
+
+state 99
+
+    (27) expression -> expression GREATER expression .
+    (21) expression -> expression . PLUS expression
+    (22) expression -> expression . MINUS expression
+    (23) expression -> expression . TIMES expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . POWER expression
+    (26) expression -> expression . EQUALEQUAL expression
+    (27) expression -> expression . GREATER expression
+    (28) expression -> expression . GREATEREQUAL expression
+    (29) expression -> expression . LESS expression
+    (30) expression -> expression . LESSEQUAL expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+    EQUALEQUAL      reduce using rule 27 (expression -> expression GREATER expression .)
+    GREATER         reduce using rule 27 (expression -> expression GREATER expression .)
+    GREATEREQUAL    reduce using rule 27 (expression -> expression GREATER expression .)
+    LESS            reduce using rule 27 (expression -> expression GREATER expression .)
+    LESSEQUAL       reduce using rule 27 (expression -> expression GREATER expression .)
+    AND             reduce using rule 27 (expression -> expression GREATER expression .)
+    OR              reduce using rule 27 (expression -> expression GREATER expression .)
+    NEWLINE         reduce using rule 27 (expression -> expression GREATER expression .)
+    COLON           reduce using rule 27 (expression -> expression GREATER expression .)
+    RPAREN          reduce using rule 27 (expression -> expression GREATER expression .)
+    COMA            reduce using rule 27 (expression -> expression GREATER expression .)
+    RBRACK          reduce using rule 27 (expression -> expression GREATER expression .)
+    PLUS            shift and go to state 63
+    MINUS           shift and go to state 66
+    TIMES           shift and go to state 62
+    DIVIDE          shift and go to state 59
+    POWER           shift and go to state 60
+
+  ! PLUS            [ reduce using rule 27 (expression -> expression GREATER expression .) ]
+  ! MINUS           [ reduce using rule 27 (expression -> expression GREATER expression .) ]
+  ! TIMES           [ reduce using rule 27 (expression -> expression GREATER expression .) ]
+  ! DIVIDE          [ reduce using rule 27 (expression -> expression GREATER expression .) ]
+  ! POWER           [ reduce using rule 27 (expression -> expression GREATER expression .) ]
+  ! EQUALEQUAL      [ shift and go to state 65 ]
+  ! GREATER         [ shift and go to state 67 ]
+  ! GREATEREQUAL    [ shift and go to state 58 ]
+  ! LESS            [ shift and go to state 61 ]
+  ! LESSEQUAL       [ shift and go to state 64 ]
+  ! AND             [ shift and go to state 56 ]
+  ! OR              [ shift and go to state 57 ]
+
+
+state 100
+
+    (10) statement -> WHILE expression COLON NEWLINE . statements END
+    (2) statements -> . statement NEWLINE statements
+    (3) statements -> . statement NEWLINE
+    (4) statement -> . PASS
+    (5) statement -> . name_reference EQUALS expression
+    (6) statement -> . IF expression COLON NEWLINE statements else_condition END
+    (10) statement -> . WHILE expression COLON NEWLINE statements END
+    (11) statement -> . FOR NAME IN expression COLON NEWLINE statements END
+    (12) statement -> . RETURN expression
+    (13) statement -> . GLOBAL NAME
+    (14) statement -> . expression
+    (15) statement -> . import
+    (16) statement -> . function
+    (17) statement -> . class
+    (18) statement -> . interface
+    (19) statement -> . plugin
+    (20) statement -> . capability
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (46) import -> . IMPORT name_reference COMA import
+    (47) import -> . IMPORT name_reference
+    (48) function -> . function_operators FUNCTION NAME LPAREN arguments RPAREN COLON NEWLINE statements END
+    (63) class -> . CLASS NAME extends implements COLON NEWLINE statements END
+    (72) interface -> . INTERFACE NAME extends COLON NEWLINE statements END
+    (73) plugin -> . PLUGIN NAME extends implements allows COLON NEWLINE statements END
+    (78) capability -> . CAPABILITY NAME extends COLON NEWLINE statements END
+    (49) function_operators -> . function_operator COMA function_operators
+    (50) function_operators -> . function_operator
+    (51) function_operators -> .
+    (52) function_operator -> . STATIC
+
+    PASS            shift and go to state 22
+    IF              shift and go to state 25
+    WHILE           shift and go to state 4
+    FOR             shift and go to state 19
+    RETURN          shift and go to state 1
+    GLOBAL          shift and go to state 2
+    NAME            shift and go to state 26
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    IMPORT          shift and go to state 6
+    CLASS           shift and go to state 16
+    INTERFACE       shift and go to state 20
+    PLUGIN          shift and go to state 28
+    CAPABILITY      shift and go to state 12
+    FUNCTION        reduce using rule 51 (function_operators -> .)
+    STATIC          shift and go to state 5
+
+
+    function                       shift and go to state 18
+    statements                     shift and go to state 115
+    plugin                         shift and go to state 27
+    function_operators             shift and go to state 10
+    class                          shift and go to state 24
+    capability                     shift and go to state 30
+    statement                      shift and go to state 14
+    interface                      shift and go to state 23
+    import                         shift and go to state 15
+    expression                     shift and go to state 33
+    name_reference                 shift and go to state 11
+    function_operator              shift and go to state 17
+
+state 101
+
+    (46) import -> IMPORT name_reference COMA import .
+
+    NEWLINE         reduce using rule 46 (import -> IMPORT name_reference COMA import .)
+
+
+
+state 102
+
+    (48) function -> function_operators FUNCTION NAME LPAREN . arguments RPAREN COLON NEWLINE statements END
+    (53) arguments -> . argument COMA arguments
+    (54) arguments -> . argument
+    (55) arguments -> .
+    (56) argument -> . NAME
+    (57) argument -> . NAME EQUALS expression
+
+    RPAREN          reduce using rule 55 (arguments -> .)
+    NAME            shift and go to state 116
+
+
+    arguments                      shift and go to state 118
+    argument                       shift and go to state 117
+
+state 103
+
+    (59) argument_values -> argument_value COMA . argument_values
+    (59) argument_values -> . argument_value COMA argument_values
+    (60) argument_values -> . argument_value
+    (61) argument_values -> .
+    (62) argument_value -> . expression
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+
+    RPAREN          reduce using rule 61 (argument_values -> .)
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    NAME            shift and go to state 26
+
+
+    expression                     shift and go to state 74
+    argument_value                 shift and go to state 72
+    name_reference                 shift and go to state 34
+    argument_values                shift and go to state 119
+
+state 104
+
+    (58) expression -> name_reference LPAREN argument_values RPAREN .
+
+    PLUS            reduce using rule 58 (expression -> name_reference LPAREN argument_values RPAREN .)
+    MINUS           reduce using rule 58 (expression -> name_reference LPAREN argument_values RPAREN .)
+    TIMES           reduce using rule 58 (expression -> name_reference LPAREN argument_values RPAREN .)
+    DIVIDE          reduce using rule 58 (expression -> name_reference LPAREN argument_values RPAREN .)
+    POWER           reduce using rule 58 (expression -> name_reference LPAREN argument_values RPAREN .)
+    EQUALEQUAL      reduce using rule 58 (expression -> name_reference LPAREN argument_values RPAREN .)
+    GREATER         reduce using rule 58 (expression -> name_reference LPAREN argument_values RPAREN .)
+    GREATEREQUAL    reduce using rule 58 (expression -> name_reference LPAREN argument_values RPAREN .)
+    LESS            reduce using rule 58 (expression -> name_reference LPAREN argument_values RPAREN .)
+    LESSEQUAL       reduce using rule 58 (expression -> name_reference LPAREN argument_values RPAREN .)
+    AND             reduce using rule 58 (expression -> name_reference LPAREN argument_values RPAREN .)
+    OR              reduce using rule 58 (expression -> name_reference LPAREN argument_values RPAREN .)
+    NEWLINE         reduce using rule 58 (expression -> name_reference LPAREN argument_values RPAREN .)
+    COLON           reduce using rule 58 (expression -> name_reference LPAREN argument_values RPAREN .)
+    RPAREN          reduce using rule 58 (expression -> name_reference LPAREN argument_values RPAREN .)
+    COMA            reduce using rule 58 (expression -> name_reference LPAREN argument_values RPAREN .)
+    RBRACK          reduce using rule 58 (expression -> name_reference LPAREN argument_values RPAREN .)
+
+
+
+state 105
+
+    (66) extends_values -> NAME . COMA extends_values
+    (67) extends_values -> NAME .
+
+    COMA            shift and go to state 120
+    COLON           reduce using rule 67 (extends_values -> NAME .)
+    IMPLEMENTS      reduce using rule 67 (extends_values -> NAME .)
+    ALLOWS          reduce using rule 67 (extends_values -> NAME .)
+
+
+
+state 106
+
+    (64) extends -> EXTENDS extends_values .
+
+    COLON           reduce using rule 64 (extends -> EXTENDS extends_values .)
+    IMPLEMENTS      reduce using rule 64 (extends -> EXTENDS extends_values .)
+    ALLOWS          reduce using rule 64 (extends -> EXTENDS extends_values .)
+
+
+
+state 107
+
+    (78) capability -> CAPABILITY NAME extends COLON . NEWLINE statements END
+
+    NEWLINE         shift and go to state 121
+
+
+
+state 108
+
+    (63) class -> CLASS NAME extends implements . COLON NEWLINE statements END
+
+    COLON           shift and go to state 122
+
+
+
+state 109
+
+    (68) implements -> IMPLEMENTS . implements_values
+    (70) implements_values -> . NAME COMA implements_values
+    (71) implements_values -> . NAME
+
+    NAME            shift and go to state 124
+
+
+    implements_values              shift and go to state 123
+
+state 110
+
+    (11) statement -> FOR NAME IN expression . COLON NEWLINE statements END
+    (21) expression -> expression . PLUS expression
+    (22) expression -> expression . MINUS expression
+    (23) expression -> expression . TIMES expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . POWER expression
+    (26) expression -> expression . EQUALEQUAL expression
+    (27) expression -> expression . GREATER expression
+    (28) expression -> expression . GREATEREQUAL expression
+    (29) expression -> expression . LESS expression
+    (30) expression -> expression . LESSEQUAL expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+    COLON           shift and go to state 125
+    PLUS            shift and go to state 63
+    MINUS           shift and go to state 66
+    TIMES           shift and go to state 62
+    DIVIDE          shift and go to state 59
+    POWER           shift and go to state 60
+    EQUALEQUAL      shift and go to state 65
+    GREATER         shift and go to state 67
+    GREATEREQUAL    shift and go to state 58
+    LESS            shift and go to state 61
+    LESSEQUAL       shift and go to state 64
+    AND             shift and go to state 56
+    OR              shift and go to state 57
+
+
+
+state 111
+
+    (72) interface -> INTERFACE NAME extends COLON . NEWLINE statements END
+
+    NEWLINE         shift and go to state 126
+
+
+
+state 112
+
+    (6) statement -> IF expression COLON NEWLINE . statements else_condition END
+    (2) statements -> . statement NEWLINE statements
+    (3) statements -> . statement NEWLINE
+    (4) statement -> . PASS
+    (5) statement -> . name_reference EQUALS expression
+    (6) statement -> . IF expression COLON NEWLINE statements else_condition END
+    (10) statement -> . WHILE expression COLON NEWLINE statements END
+    (11) statement -> . FOR NAME IN expression COLON NEWLINE statements END
+    (12) statement -> . RETURN expression
+    (13) statement -> . GLOBAL NAME
+    (14) statement -> . expression
+    (15) statement -> . import
+    (16) statement -> . function
+    (17) statement -> . class
+    (18) statement -> . interface
+    (19) statement -> . plugin
+    (20) statement -> . capability
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (46) import -> . IMPORT name_reference COMA import
+    (47) import -> . IMPORT name_reference
+    (48) function -> . function_operators FUNCTION NAME LPAREN arguments RPAREN COLON NEWLINE statements END
+    (63) class -> . CLASS NAME extends implements COLON NEWLINE statements END
+    (72) interface -> . INTERFACE NAME extends COLON NEWLINE statements END
+    (73) plugin -> . PLUGIN NAME extends implements allows COLON NEWLINE statements END
+    (78) capability -> . CAPABILITY NAME extends COLON NEWLINE statements END
+    (49) function_operators -> . function_operator COMA function_operators
+    (50) function_operators -> . function_operator
+    (51) function_operators -> .
+    (52) function_operator -> . STATIC
+
+    PASS            shift and go to state 22
+    IF              shift and go to state 25
+    WHILE           shift and go to state 4
+    FOR             shift and go to state 19
+    RETURN          shift and go to state 1
+    GLOBAL          shift and go to state 2
+    NAME            shift and go to state 26
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    IMPORT          shift and go to state 6
+    CLASS           shift and go to state 16
+    INTERFACE       shift and go to state 20
+    PLUGIN          shift and go to state 28
+    CAPABILITY      shift and go to state 12
+    FUNCTION        reduce using rule 51 (function_operators -> .)
+    STATIC          shift and go to state 5
+
+
+    function                       shift and go to state 18
+    statements                     shift and go to state 127
+    plugin                         shift and go to state 27
+    function_operators             shift and go to state 10
+    class                          shift and go to state 24
+    capability                     shift and go to state 30
+    statement                      shift and go to state 14
+    interface                      shift and go to state 23
+    import                         shift and go to state 15
+    expression                     shift and go to state 33
+    name_reference                 shift and go to state 11
+    function_operator              shift and go to state 17
+
+state 113
+
+    (73) plugin -> PLUGIN NAME extends implements . allows COLON NEWLINE statements END
+    (74) allows -> . ALLOWS allows_values
+    (75) allows -> .
+
+    ALLOWS          shift and go to state 128
+    COLON           reduce using rule 75 (allows -> .)
+
+
+    allows                         shift and go to state 129
+
+state 114
+
+    (41) list_contents -> expression COMA list_contents .
+
+    RBRACK          reduce using rule 41 (list_contents -> expression COMA list_contents .)
+
+
+
+state 115
+
+    (10) statement -> WHILE expression COLON NEWLINE statements . END
+
+    END             shift and go to state 130
+
+
+
+state 116
+
+    (56) argument -> NAME .
+    (57) argument -> NAME . EQUALS expression
+
+    COMA            reduce using rule 56 (argument -> NAME .)
+    RPAREN          reduce using rule 56 (argument -> NAME .)
+    EQUALS          shift and go to state 131
+
+
+
+state 117
+
+    (53) arguments -> argument . COMA arguments
+    (54) arguments -> argument .
+
+    COMA            shift and go to state 132
+    RPAREN          reduce using rule 54 (arguments -> argument .)
+
+
+
+state 118
+
+    (48) function -> function_operators FUNCTION NAME LPAREN arguments . RPAREN COLON NEWLINE statements END
+
+    RPAREN          shift and go to state 133
+
+
+
+state 119
+
+    (59) argument_values -> argument_value COMA argument_values .
+
+    RPAREN          reduce using rule 59 (argument_values -> argument_value COMA argument_values .)
+
+
+
+state 120
+
+    (66) extends_values -> NAME COMA . extends_values
+    (66) extends_values -> . NAME COMA extends_values
+    (67) extends_values -> . NAME
+
+    NAME            shift and go to state 105
+
+
+    extends_values                 shift and go to state 134
+
+state 121
+
+    (78) capability -> CAPABILITY NAME extends COLON NEWLINE . statements END
+    (2) statements -> . statement NEWLINE statements
+    (3) statements -> . statement NEWLINE
+    (4) statement -> . PASS
+    (5) statement -> . name_reference EQUALS expression
+    (6) statement -> . IF expression COLON NEWLINE statements else_condition END
+    (10) statement -> . WHILE expression COLON NEWLINE statements END
+    (11) statement -> . FOR NAME IN expression COLON NEWLINE statements END
+    (12) statement -> . RETURN expression
+    (13) statement -> . GLOBAL NAME
+    (14) statement -> . expression
+    (15) statement -> . import
+    (16) statement -> . function
+    (17) statement -> . class
+    (18) statement -> . interface
+    (19) statement -> . plugin
+    (20) statement -> . capability
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (46) import -> . IMPORT name_reference COMA import
+    (47) import -> . IMPORT name_reference
+    (48) function -> . function_operators FUNCTION NAME LPAREN arguments RPAREN COLON NEWLINE statements END
+    (63) class -> . CLASS NAME extends implements COLON NEWLINE statements END
+    (72) interface -> . INTERFACE NAME extends COLON NEWLINE statements END
+    (73) plugin -> . PLUGIN NAME extends implements allows COLON NEWLINE statements END
+    (78) capability -> . CAPABILITY NAME extends COLON NEWLINE statements END
+    (49) function_operators -> . function_operator COMA function_operators
+    (50) function_operators -> . function_operator
+    (51) function_operators -> .
+    (52) function_operator -> . STATIC
+
+    PASS            shift and go to state 22
+    IF              shift and go to state 25
+    WHILE           shift and go to state 4
+    FOR             shift and go to state 19
+    RETURN          shift and go to state 1
+    GLOBAL          shift and go to state 2
+    NAME            shift and go to state 26
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    IMPORT          shift and go to state 6
+    CLASS           shift and go to state 16
+    INTERFACE       shift and go to state 20
+    PLUGIN          shift and go to state 28
+    CAPABILITY      shift and go to state 12
+    FUNCTION        reduce using rule 51 (function_operators -> .)
+    STATIC          shift and go to state 5
+
+
+    function                       shift and go to state 18
+    statements                     shift and go to state 135
+    plugin                         shift and go to state 27
+    function_operators             shift and go to state 10
+    class                          shift and go to state 24
+    capability                     shift and go to state 30
+    statement                      shift and go to state 14
+    interface                      shift and go to state 23
+    import                         shift and go to state 15
+    expression                     shift and go to state 33
+    name_reference                 shift and go to state 11
+    function_operator              shift and go to state 17
+
+state 122
+
+    (63) class -> CLASS NAME extends implements COLON . NEWLINE statements END
+
+    NEWLINE         shift and go to state 136
+
+
+
+state 123
+
+    (68) implements -> IMPLEMENTS implements_values .
+
+    ALLOWS          reduce using rule 68 (implements -> IMPLEMENTS implements_values .)
+    COLON           reduce using rule 68 (implements -> IMPLEMENTS implements_values .)
+
+
+
+state 124
+
+    (70) implements_values -> NAME . COMA implements_values
+    (71) implements_values -> NAME .
+
+    COMA            shift and go to state 137
+    COLON           reduce using rule 71 (implements_values -> NAME .)
+    ALLOWS          reduce using rule 71 (implements_values -> NAME .)
+
+
+
+state 125
+
+    (11) statement -> FOR NAME IN expression COLON . NEWLINE statements END
+
+    NEWLINE         shift and go to state 138
+
+
+
+state 126
+
+    (72) interface -> INTERFACE NAME extends COLON NEWLINE . statements END
+    (2) statements -> . statement NEWLINE statements
+    (3) statements -> . statement NEWLINE
+    (4) statement -> . PASS
+    (5) statement -> . name_reference EQUALS expression
+    (6) statement -> . IF expression COLON NEWLINE statements else_condition END
+    (10) statement -> . WHILE expression COLON NEWLINE statements END
+    (11) statement -> . FOR NAME IN expression COLON NEWLINE statements END
+    (12) statement -> . RETURN expression
+    (13) statement -> . GLOBAL NAME
+    (14) statement -> . expression
+    (15) statement -> . import
+    (16) statement -> . function
+    (17) statement -> . class
+    (18) statement -> . interface
+    (19) statement -> . plugin
+    (20) statement -> . capability
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (46) import -> . IMPORT name_reference COMA import
+    (47) import -> . IMPORT name_reference
+    (48) function -> . function_operators FUNCTION NAME LPAREN arguments RPAREN COLON NEWLINE statements END
+    (63) class -> . CLASS NAME extends implements COLON NEWLINE statements END
+    (72) interface -> . INTERFACE NAME extends COLON NEWLINE statements END
+    (73) plugin -> . PLUGIN NAME extends implements allows COLON NEWLINE statements END
+    (78) capability -> . CAPABILITY NAME extends COLON NEWLINE statements END
+    (49) function_operators -> . function_operator COMA function_operators
+    (50) function_operators -> . function_operator
+    (51) function_operators -> .
+    (52) function_operator -> . STATIC
+
+    PASS            shift and go to state 22
+    IF              shift and go to state 25
+    WHILE           shift and go to state 4
+    FOR             shift and go to state 19
+    RETURN          shift and go to state 1
+    GLOBAL          shift and go to state 2
+    NAME            shift and go to state 26
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    IMPORT          shift and go to state 6
+    CLASS           shift and go to state 16
+    INTERFACE       shift and go to state 20
+    PLUGIN          shift and go to state 28
+    CAPABILITY      shift and go to state 12
+    FUNCTION        reduce using rule 51 (function_operators -> .)
+    STATIC          shift and go to state 5
+
+
+    function                       shift and go to state 18
+    statements                     shift and go to state 139
+    plugin                         shift and go to state 27
+    function_operators             shift and go to state 10
+    class                          shift and go to state 24
+    capability                     shift and go to state 30
+    statement                      shift and go to state 14
+    interface                      shift and go to state 23
+    import                         shift and go to state 15
+    expression                     shift and go to state 33
+    name_reference                 shift and go to state 11
+    function_operator              shift and go to state 17
+
+state 127
+
+    (6) statement -> IF expression COLON NEWLINE statements . else_condition END
+    (7) else_condition -> . ELSE COLON NEWLINE statements else_condition
+    (8) else_condition -> . ELIF expression COLON NEWLINE statements else_condition
+    (9) else_condition -> .
+
+    ELSE            shift and go to state 141
+    ELIF            shift and go to state 140
+    END             reduce using rule 9 (else_condition -> .)
+
+
+    else_condition                 shift and go to state 142
+
+state 128
+
+    (74) allows -> ALLOWS . allows_values
+    (76) allows_values -> . NAME COMA allows_values
+    (77) allows_values -> . NAME
+
+    NAME            shift and go to state 143
+
+
+    allows_values                  shift and go to state 144
+
+state 129
+
+    (73) plugin -> PLUGIN NAME extends implements allows . COLON NEWLINE statements END
+
+    COLON           shift and go to state 145
+
+
+
+state 130
+
+    (10) statement -> WHILE expression COLON NEWLINE statements END .
+
+    NEWLINE         reduce using rule 10 (statement -> WHILE expression COLON NEWLINE statements END .)
+
+
+
+state 131
+
+    (57) argument -> NAME EQUALS . expression
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    NAME            shift and go to state 26
+
+
+    expression                     shift and go to state 146
+    name_reference                 shift and go to state 34
+
+state 132
+
+    (53) arguments -> argument COMA . arguments
+    (53) arguments -> . argument COMA arguments
+    (54) arguments -> . argument
+    (55) arguments -> .
+    (56) argument -> . NAME
+    (57) argument -> . NAME EQUALS expression
+
+    RPAREN          reduce using rule 55 (arguments -> .)
+    NAME            shift and go to state 116
+
+
+    argument                       shift and go to state 117
+    arguments                      shift and go to state 147
+
+state 133
+
+    (48) function -> function_operators FUNCTION NAME LPAREN arguments RPAREN . COLON NEWLINE statements END
+
+    COLON           shift and go to state 148
+
+
+
+state 134
+
+    (66) extends_values -> NAME COMA extends_values .
+
+    COLON           reduce using rule 66 (extends_values -> NAME COMA extends_values .)
+    IMPLEMENTS      reduce using rule 66 (extends_values -> NAME COMA extends_values .)
+    ALLOWS          reduce using rule 66 (extends_values -> NAME COMA extends_values .)
+
+
+
+state 135
+
+    (78) capability -> CAPABILITY NAME extends COLON NEWLINE statements . END
+
+    END             shift and go to state 149
+
+
+
+state 136
+
+    (63) class -> CLASS NAME extends implements COLON NEWLINE . statements END
+    (2) statements -> . statement NEWLINE statements
+    (3) statements -> . statement NEWLINE
+    (4) statement -> . PASS
+    (5) statement -> . name_reference EQUALS expression
+    (6) statement -> . IF expression COLON NEWLINE statements else_condition END
+    (10) statement -> . WHILE expression COLON NEWLINE statements END
+    (11) statement -> . FOR NAME IN expression COLON NEWLINE statements END
+    (12) statement -> . RETURN expression
+    (13) statement -> . GLOBAL NAME
+    (14) statement -> . expression
+    (15) statement -> . import
+    (16) statement -> . function
+    (17) statement -> . class
+    (18) statement -> . interface
+    (19) statement -> . plugin
+    (20) statement -> . capability
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (46) import -> . IMPORT name_reference COMA import
+    (47) import -> . IMPORT name_reference
+    (48) function -> . function_operators FUNCTION NAME LPAREN arguments RPAREN COLON NEWLINE statements END
+    (63) class -> . CLASS NAME extends implements COLON NEWLINE statements END
+    (72) interface -> . INTERFACE NAME extends COLON NEWLINE statements END
+    (73) plugin -> . PLUGIN NAME extends implements allows COLON NEWLINE statements END
+    (78) capability -> . CAPABILITY NAME extends COLON NEWLINE statements END
+    (49) function_operators -> . function_operator COMA function_operators
+    (50) function_operators -> . function_operator
+    (51) function_operators -> .
+    (52) function_operator -> . STATIC
+
+    PASS            shift and go to state 22
+    IF              shift and go to state 25
+    WHILE           shift and go to state 4
+    FOR             shift and go to state 19
+    RETURN          shift and go to state 1
+    GLOBAL          shift and go to state 2
+    NAME            shift and go to state 26
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    IMPORT          shift and go to state 6
+    CLASS           shift and go to state 16
+    INTERFACE       shift and go to state 20
+    PLUGIN          shift and go to state 28
+    CAPABILITY      shift and go to state 12
+    FUNCTION        reduce using rule 51 (function_operators -> .)
+    STATIC          shift and go to state 5
+
+
+    function                       shift and go to state 18
+    statements                     shift and go to state 150
+    plugin                         shift and go to state 27
+    function_operators             shift and go to state 10
+    class                          shift and go to state 24
+    capability                     shift and go to state 30
+    statement                      shift and go to state 14
+    interface                      shift and go to state 23
+    import                         shift and go to state 15
+    expression                     shift and go to state 33
+    name_reference                 shift and go to state 11
+    function_operator              shift and go to state 17
+
+state 137
+
+    (70) implements_values -> NAME COMA . implements_values
+    (70) implements_values -> . NAME COMA implements_values
+    (71) implements_values -> . NAME
+
+    NAME            shift and go to state 124
+
+
+    implements_values              shift and go to state 151
+
+state 138
+
+    (11) statement -> FOR NAME IN expression COLON NEWLINE . statements END
+    (2) statements -> . statement NEWLINE statements
+    (3) statements -> . statement NEWLINE
+    (4) statement -> . PASS
+    (5) statement -> . name_reference EQUALS expression
+    (6) statement -> . IF expression COLON NEWLINE statements else_condition END
+    (10) statement -> . WHILE expression COLON NEWLINE statements END
+    (11) statement -> . FOR NAME IN expression COLON NEWLINE statements END
+    (12) statement -> . RETURN expression
+    (13) statement -> . GLOBAL NAME
+    (14) statement -> . expression
+    (15) statement -> . import
+    (16) statement -> . function
+    (17) statement -> . class
+    (18) statement -> . interface
+    (19) statement -> . plugin
+    (20) statement -> . capability
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (46) import -> . IMPORT name_reference COMA import
+    (47) import -> . IMPORT name_reference
+    (48) function -> . function_operators FUNCTION NAME LPAREN arguments RPAREN COLON NEWLINE statements END
+    (63) class -> . CLASS NAME extends implements COLON NEWLINE statements END
+    (72) interface -> . INTERFACE NAME extends COLON NEWLINE statements END
+    (73) plugin -> . PLUGIN NAME extends implements allows COLON NEWLINE statements END
+    (78) capability -> . CAPABILITY NAME extends COLON NEWLINE statements END
+    (49) function_operators -> . function_operator COMA function_operators
+    (50) function_operators -> . function_operator
+    (51) function_operators -> .
+    (52) function_operator -> . STATIC
+
+    PASS            shift and go to state 22
+    IF              shift and go to state 25
+    WHILE           shift and go to state 4
+    FOR             shift and go to state 19
+    RETURN          shift and go to state 1
+    GLOBAL          shift and go to state 2
+    NAME            shift and go to state 26
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    IMPORT          shift and go to state 6
+    CLASS           shift and go to state 16
+    INTERFACE       shift and go to state 20
+    PLUGIN          shift and go to state 28
+    CAPABILITY      shift and go to state 12
+    FUNCTION        reduce using rule 51 (function_operators -> .)
+    STATIC          shift and go to state 5
+
+
+    function                       shift and go to state 18
+    statements                     shift and go to state 152
+    plugin                         shift and go to state 27
+    function_operators             shift and go to state 10
+    class                          shift and go to state 24
+    capability                     shift and go to state 30
+    statement                      shift and go to state 14
+    interface                      shift and go to state 23
+    import                         shift and go to state 15
+    expression                     shift and go to state 33
+    name_reference                 shift and go to state 11
+    function_operator              shift and go to state 17
+
+state 139
+
+    (72) interface -> INTERFACE NAME extends COLON NEWLINE statements . END
+
+    END             shift and go to state 153
+
+
+
+state 140
+
+    (8) else_condition -> ELIF . expression COLON NEWLINE statements else_condition
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    NAME            shift and go to state 26
+
+
+    expression                     shift and go to state 154
+    name_reference                 shift and go to state 34
+
+state 141
+
+    (7) else_condition -> ELSE . COLON NEWLINE statements else_condition
+
+    COLON           shift and go to state 155
+
+
+
+state 142
+
+    (6) statement -> IF expression COLON NEWLINE statements else_condition . END
+
+    END             shift and go to state 156
+
+
+
+state 143
+
+    (76) allows_values -> NAME . COMA allows_values
+    (77) allows_values -> NAME .
+
+    COMA            shift and go to state 157
+    COLON           reduce using rule 77 (allows_values -> NAME .)
+
+
+
+state 144
+
+    (74) allows -> ALLOWS allows_values .
+
+    COLON           reduce using rule 74 (allows -> ALLOWS allows_values .)
+
+
+
+state 145
+
+    (73) plugin -> PLUGIN NAME extends implements allows COLON . NEWLINE statements END
+
+    NEWLINE         shift and go to state 158
+
+
+
+state 146
+
+    (57) argument -> NAME EQUALS expression .
+    (21) expression -> expression . PLUS expression
+    (22) expression -> expression . MINUS expression
+    (23) expression -> expression . TIMES expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . POWER expression
+    (26) expression -> expression . EQUALEQUAL expression
+    (27) expression -> expression . GREATER expression
+    (28) expression -> expression . GREATEREQUAL expression
+    (29) expression -> expression . LESS expression
+    (30) expression -> expression . LESSEQUAL expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+    COMA            reduce using rule 57 (argument -> NAME EQUALS expression .)
+    RPAREN          reduce using rule 57 (argument -> NAME EQUALS expression .)
+    PLUS            shift and go to state 63
+    MINUS           shift and go to state 66
+    TIMES           shift and go to state 62
+    DIVIDE          shift and go to state 59
+    POWER           shift and go to state 60
+    EQUALEQUAL      shift and go to state 65
+    GREATER         shift and go to state 67
+    GREATEREQUAL    shift and go to state 58
+    LESS            shift and go to state 61
+    LESSEQUAL       shift and go to state 64
+    AND             shift and go to state 56
+    OR              shift and go to state 57
+
+
+
+state 147
+
+    (53) arguments -> argument COMA arguments .
+
+    RPAREN          reduce using rule 53 (arguments -> argument COMA arguments .)
+
+
+
+state 148
+
+    (48) function -> function_operators FUNCTION NAME LPAREN arguments RPAREN COLON . NEWLINE statements END
+
+    NEWLINE         shift and go to state 159
+
+
+
+state 149
+
+    (78) capability -> CAPABILITY NAME extends COLON NEWLINE statements END .
+
+    NEWLINE         reduce using rule 78 (capability -> CAPABILITY NAME extends COLON NEWLINE statements END .)
+
+
+
+state 150
+
+    (63) class -> CLASS NAME extends implements COLON NEWLINE statements . END
+
+    END             shift and go to state 160
+
+
+
+state 151
+
+    (70) implements_values -> NAME COMA implements_values .
+
+    COLON           reduce using rule 70 (implements_values -> NAME COMA implements_values .)
+    ALLOWS          reduce using rule 70 (implements_values -> NAME COMA implements_values .)
+
+
+
+state 152
+
+    (11) statement -> FOR NAME IN expression COLON NEWLINE statements . END
+
+    END             shift and go to state 161
+
+
+
+state 153
+
+    (72) interface -> INTERFACE NAME extends COLON NEWLINE statements END .
+
+    NEWLINE         reduce using rule 72 (interface -> INTERFACE NAME extends COLON NEWLINE statements END .)
+
+
+
+state 154
+
+    (8) else_condition -> ELIF expression . COLON NEWLINE statements else_condition
+    (21) expression -> expression . PLUS expression
+    (22) expression -> expression . MINUS expression
+    (23) expression -> expression . TIMES expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . POWER expression
+    (26) expression -> expression . EQUALEQUAL expression
+    (27) expression -> expression . GREATER expression
+    (28) expression -> expression . GREATEREQUAL expression
+    (29) expression -> expression . LESS expression
+    (30) expression -> expression . LESSEQUAL expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+    COLON           shift and go to state 162
+    PLUS            shift and go to state 63
+    MINUS           shift and go to state 66
+    TIMES           shift and go to state 62
+    DIVIDE          shift and go to state 59
+    POWER           shift and go to state 60
+    EQUALEQUAL      shift and go to state 65
+    GREATER         shift and go to state 67
+    GREATEREQUAL    shift and go to state 58
+    LESS            shift and go to state 61
+    LESSEQUAL       shift and go to state 64
+    AND             shift and go to state 56
+    OR              shift and go to state 57
+
+
+
+state 155
+
+    (7) else_condition -> ELSE COLON . NEWLINE statements else_condition
+
+    NEWLINE         shift and go to state 163
+
+
+
+state 156
+
+    (6) statement -> IF expression COLON NEWLINE statements else_condition END .
+
+    NEWLINE         reduce using rule 6 (statement -> IF expression COLON NEWLINE statements else_condition END .)
+
+
+
+state 157
+
+    (76) allows_values -> NAME COMA . allows_values
+    (76) allows_values -> . NAME COMA allows_values
+    (77) allows_values -> . NAME
+
+    NAME            shift and go to state 143
+
+
+    allows_values                  shift and go to state 164
+
+state 158
+
+    (73) plugin -> PLUGIN NAME extends implements allows COLON NEWLINE . statements END
+    (2) statements -> . statement NEWLINE statements
+    (3) statements -> . statement NEWLINE
+    (4) statement -> . PASS
+    (5) statement -> . name_reference EQUALS expression
+    (6) statement -> . IF expression COLON NEWLINE statements else_condition END
+    (10) statement -> . WHILE expression COLON NEWLINE statements END
+    (11) statement -> . FOR NAME IN expression COLON NEWLINE statements END
+    (12) statement -> . RETURN expression
+    (13) statement -> . GLOBAL NAME
+    (14) statement -> . expression
+    (15) statement -> . import
+    (16) statement -> . function
+    (17) statement -> . class
+    (18) statement -> . interface
+    (19) statement -> . plugin
+    (20) statement -> . capability
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (46) import -> . IMPORT name_reference COMA import
+    (47) import -> . IMPORT name_reference
+    (48) function -> . function_operators FUNCTION NAME LPAREN arguments RPAREN COLON NEWLINE statements END
+    (63) class -> . CLASS NAME extends implements COLON NEWLINE statements END
+    (72) interface -> . INTERFACE NAME extends COLON NEWLINE statements END
+    (73) plugin -> . PLUGIN NAME extends implements allows COLON NEWLINE statements END
+    (78) capability -> . CAPABILITY NAME extends COLON NEWLINE statements END
+    (49) function_operators -> . function_operator COMA function_operators
+    (50) function_operators -> . function_operator
+    (51) function_operators -> .
+    (52) function_operator -> . STATIC
+
+    PASS            shift and go to state 22
+    IF              shift and go to state 25
+    WHILE           shift and go to state 4
+    FOR             shift and go to state 19
+    RETURN          shift and go to state 1
+    GLOBAL          shift and go to state 2
+    NAME            shift and go to state 26
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    IMPORT          shift and go to state 6
+    CLASS           shift and go to state 16
+    INTERFACE       shift and go to state 20
+    PLUGIN          shift and go to state 28
+    CAPABILITY      shift and go to state 12
+    FUNCTION        reduce using rule 51 (function_operators -> .)
+    STATIC          shift and go to state 5
+
+
+    function                       shift and go to state 18
+    statements                     shift and go to state 165
+    plugin                         shift and go to state 27
+    function_operators             shift and go to state 10
+    class                          shift and go to state 24
+    capability                     shift and go to state 30
+    statement                      shift and go to state 14
+    interface                      shift and go to state 23
+    import                         shift and go to state 15
+    expression                     shift and go to state 33
+    name_reference                 shift and go to state 11
+    function_operator              shift and go to state 17
+
+state 159
+
+    (48) function -> function_operators FUNCTION NAME LPAREN arguments RPAREN COLON NEWLINE . statements END
+    (2) statements -> . statement NEWLINE statements
+    (3) statements -> . statement NEWLINE
+    (4) statement -> . PASS
+    (5) statement -> . name_reference EQUALS expression
+    (6) statement -> . IF expression COLON NEWLINE statements else_condition END
+    (10) statement -> . WHILE expression COLON NEWLINE statements END
+    (11) statement -> . FOR NAME IN expression COLON NEWLINE statements END
+    (12) statement -> . RETURN expression
+    (13) statement -> . GLOBAL NAME
+    (14) statement -> . expression
+    (15) statement -> . import
+    (16) statement -> . function
+    (17) statement -> . class
+    (18) statement -> . interface
+    (19) statement -> . plugin
+    (20) statement -> . capability
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (46) import -> . IMPORT name_reference COMA import
+    (47) import -> . IMPORT name_reference
+    (48) function -> . function_operators FUNCTION NAME LPAREN arguments RPAREN COLON NEWLINE statements END
+    (63) class -> . CLASS NAME extends implements COLON NEWLINE statements END
+    (72) interface -> . INTERFACE NAME extends COLON NEWLINE statements END
+    (73) plugin -> . PLUGIN NAME extends implements allows COLON NEWLINE statements END
+    (78) capability -> . CAPABILITY NAME extends COLON NEWLINE statements END
+    (49) function_operators -> . function_operator COMA function_operators
+    (50) function_operators -> . function_operator
+    (51) function_operators -> .
+    (52) function_operator -> . STATIC
+
+    PASS            shift and go to state 22
+    IF              shift and go to state 25
+    WHILE           shift and go to state 4
+    FOR             shift and go to state 19
+    RETURN          shift and go to state 1
+    GLOBAL          shift and go to state 2
+    NAME            shift and go to state 26
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    IMPORT          shift and go to state 6
+    CLASS           shift and go to state 16
+    INTERFACE       shift and go to state 20
+    PLUGIN          shift and go to state 28
+    CAPABILITY      shift and go to state 12
+    FUNCTION        reduce using rule 51 (function_operators -> .)
+    STATIC          shift and go to state 5
+
+
+    function                       shift and go to state 18
+    statements                     shift and go to state 166
+    plugin                         shift and go to state 27
+    function_operators             shift and go to state 10
+    class                          shift and go to state 24
+    capability                     shift and go to state 30
+    statement                      shift and go to state 14
+    interface                      shift and go to state 23
+    import                         shift and go to state 15
+    expression                     shift and go to state 33
+    name_reference                 shift and go to state 11
+    function_operator              shift and go to state 17
+
+state 160
+
+    (63) class -> CLASS NAME extends implements COLON NEWLINE statements END .
+
+    NEWLINE         reduce using rule 63 (class -> CLASS NAME extends implements COLON NEWLINE statements END .)
+
+
+
+state 161
+
+    (11) statement -> FOR NAME IN expression COLON NEWLINE statements END .
+
+    NEWLINE         reduce using rule 11 (statement -> FOR NAME IN expression COLON NEWLINE statements END .)
+
+
+
+state 162
+
+    (8) else_condition -> ELIF expression COLON . NEWLINE statements else_condition
+
+    NEWLINE         shift and go to state 167
+
+
+
+state 163
+
+    (7) else_condition -> ELSE COLON NEWLINE . statements else_condition
+    (2) statements -> . statement NEWLINE statements
+    (3) statements -> . statement NEWLINE
+    (4) statement -> . PASS
+    (5) statement -> . name_reference EQUALS expression
+    (6) statement -> . IF expression COLON NEWLINE statements else_condition END
+    (10) statement -> . WHILE expression COLON NEWLINE statements END
+    (11) statement -> . FOR NAME IN expression COLON NEWLINE statements END
+    (12) statement -> . RETURN expression
+    (13) statement -> . GLOBAL NAME
+    (14) statement -> . expression
+    (15) statement -> . import
+    (16) statement -> . function
+    (17) statement -> . class
+    (18) statement -> . interface
+    (19) statement -> . plugin
+    (20) statement -> . capability
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (46) import -> . IMPORT name_reference COMA import
+    (47) import -> . IMPORT name_reference
+    (48) function -> . function_operators FUNCTION NAME LPAREN arguments RPAREN COLON NEWLINE statements END
+    (63) class -> . CLASS NAME extends implements COLON NEWLINE statements END
+    (72) interface -> . INTERFACE NAME extends COLON NEWLINE statements END
+    (73) plugin -> . PLUGIN NAME extends implements allows COLON NEWLINE statements END
+    (78) capability -> . CAPABILITY NAME extends COLON NEWLINE statements END
+    (49) function_operators -> . function_operator COMA function_operators
+    (50) function_operators -> . function_operator
+    (51) function_operators -> .
+    (52) function_operator -> . STATIC
+
+    PASS            shift and go to state 22
+    IF              shift and go to state 25
+    WHILE           shift and go to state 4
+    FOR             shift and go to state 19
+    RETURN          shift and go to state 1
+    GLOBAL          shift and go to state 2
+    NAME            shift and go to state 26
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    IMPORT          shift and go to state 6
+    CLASS           shift and go to state 16
+    INTERFACE       shift and go to state 20
+    PLUGIN          shift and go to state 28
+    CAPABILITY      shift and go to state 12
+    FUNCTION        reduce using rule 51 (function_operators -> .)
+    STATIC          shift and go to state 5
+
+
+    function                       shift and go to state 18
+    statements                     shift and go to state 168
+    plugin                         shift and go to state 27
+    function_operators             shift and go to state 10
+    class                          shift and go to state 24
+    capability                     shift and go to state 30
+    statement                      shift and go to state 14
+    interface                      shift and go to state 23
+    import                         shift and go to state 15
+    expression                     shift and go to state 33
+    name_reference                 shift and go to state 11
+    function_operator              shift and go to state 17
+
+state 164
+
+    (76) allows_values -> NAME COMA allows_values .
+
+    COLON           reduce using rule 76 (allows_values -> NAME COMA allows_values .)
+
+
+
+state 165
+
+    (73) plugin -> PLUGIN NAME extends implements allows COLON NEWLINE statements . END
+
+    END             shift and go to state 169
+
+
+
+state 166
+
+    (48) function -> function_operators FUNCTION NAME LPAREN arguments RPAREN COLON NEWLINE statements . END
+
+    END             shift and go to state 170
+
+
+
+state 167
+
+    (8) else_condition -> ELIF expression COLON NEWLINE . statements else_condition
+    (2) statements -> . statement NEWLINE statements
+    (3) statements -> . statement NEWLINE
+    (4) statement -> . PASS
+    (5) statement -> . name_reference EQUALS expression
+    (6) statement -> . IF expression COLON NEWLINE statements else_condition END
+    (10) statement -> . WHILE expression COLON NEWLINE statements END
+    (11) statement -> . FOR NAME IN expression COLON NEWLINE statements END
+    (12) statement -> . RETURN expression
+    (13) statement -> . GLOBAL NAME
+    (14) statement -> . expression
+    (15) statement -> . import
+    (16) statement -> . function
+    (17) statement -> . class
+    (18) statement -> . interface
+    (19) statement -> . plugin
+    (20) statement -> . capability
+    (44) name_reference -> . NAME DOT name_reference
+    (45) name_reference -> . NAME
+    (21) expression -> . expression PLUS expression
+    (22) expression -> . expression MINUS expression
+    (23) expression -> . expression TIMES expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression POWER expression
+    (26) expression -> . expression EQUALEQUAL expression
+    (27) expression -> . expression GREATER expression
+    (28) expression -> . expression GREATEREQUAL expression
+    (29) expression -> . expression LESS expression
+    (30) expression -> . expression LESSEQUAL expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (33) expression -> . NOT expression
+    (34) expression -> . MINUS expression
+    (35) expression -> . LPAREN expression RPAREN
+    (36) expression -> . NUMBER
+    (37) expression -> . STRING
+    (38) expression -> . BOOL
+    (39) expression -> . name_reference
+    (40) expression -> . LBRACK list_contents RBRACK
+    (58) expression -> . name_reference LPAREN argument_values RPAREN
+    (46) import -> . IMPORT name_reference COMA import
+    (47) import -> . IMPORT name_reference
+    (48) function -> . function_operators FUNCTION NAME LPAREN arguments RPAREN COLON NEWLINE statements END
+    (63) class -> . CLASS NAME extends implements COLON NEWLINE statements END
+    (72) interface -> . INTERFACE NAME extends COLON NEWLINE statements END
+    (73) plugin -> . PLUGIN NAME extends implements allows COLON NEWLINE statements END
+    (78) capability -> . CAPABILITY NAME extends COLON NEWLINE statements END
+    (49) function_operators -> . function_operator COMA function_operators
+    (50) function_operators -> . function_operator
+    (51) function_operators -> .
+    (52) function_operator -> . STATIC
+
+    PASS            shift and go to state 22
+    IF              shift and go to state 25
+    WHILE           shift and go to state 4
+    FOR             shift and go to state 19
+    RETURN          shift and go to state 1
+    GLOBAL          shift and go to state 2
+    NAME            shift and go to state 26
+    NOT             shift and go to state 32
+    MINUS           shift and go to state 8
+    LPAREN          shift and go to state 21
+    NUMBER          shift and go to state 3
+    STRING          shift and go to state 9
+    BOOL            shift and go to state 31
+    LBRACK          shift and go to state 29
+    IMPORT          shift and go to state 6
+    CLASS           shift and go to state 16
+    INTERFACE       shift and go to state 20
+    PLUGIN          shift and go to state 28
+    CAPABILITY      shift and go to state 12
+    FUNCTION        reduce using rule 51 (function_operators -> .)
+    STATIC          shift and go to state 5
+
+
+    function                       shift and go to state 18
+    statements                     shift and go to state 171
+    plugin                         shift and go to state 27
+    function_operators             shift and go to state 10
+    class                          shift and go to state 24
+    capability                     shift and go to state 30
+    statement                      shift and go to state 14
+    interface                      shift and go to state 23
+    import                         shift and go to state 15
+    expression                     shift and go to state 33
+    name_reference                 shift and go to state 11
+    function_operator              shift and go to state 17
+
+state 168
+
+    (7) else_condition -> ELSE COLON NEWLINE statements . else_condition
+    (7) else_condition -> . ELSE COLON NEWLINE statements else_condition
+    (8) else_condition -> . ELIF expression COLON NEWLINE statements else_condition
+    (9) else_condition -> .
+
+    ELSE            shift and go to state 141
+    ELIF            shift and go to state 140
+    END             reduce using rule 9 (else_condition -> .)
+
+
+    else_condition                 shift and go to state 172
+
+state 169
+
+    (73) plugin -> PLUGIN NAME extends implements allows COLON NEWLINE statements END .
+
+    NEWLINE         reduce using rule 73 (plugin -> PLUGIN NAME extends implements allows COLON NEWLINE statements END .)
+
+
+
+state 170
+
+    (48) function -> function_operators FUNCTION NAME LPAREN arguments RPAREN COLON NEWLINE statements END .
+
+    NEWLINE         reduce using rule 48 (function -> function_operators FUNCTION NAME LPAREN arguments RPAREN COLON NEWLINE statements END .)
+
+
+
+state 171
+
+    (8) else_condition -> ELIF expression COLON NEWLINE statements . else_condition
+    (7) else_condition -> . ELSE COLON NEWLINE statements else_condition
+    (8) else_condition -> . ELIF expression COLON NEWLINE statements else_condition
+    (9) else_condition -> .
+
+    ELSE            shift and go to state 141
+    ELIF            shift and go to state 140
+    END             reduce using rule 9 (else_condition -> .)
+
+
+    else_condition                 shift and go to state 173
+
+state 172
+
+    (7) else_condition -> ELSE COLON NEWLINE statements else_condition .
+
+    END             reduce using rule 7 (else_condition -> ELSE COLON NEWLINE statements else_condition .)
+
+
+
+state 173
+
+    (8) else_condition -> ELIF expression COLON NEWLINE statements else_condition .
+
+    END             reduce using rule 8 (else_condition -> ELIF expression COLON NEWLINE statements else_condition .)
+
+
