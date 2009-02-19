@@ -75,22 +75,22 @@ def print_information():
     # prints some help information
     print HELP_TEXT
 
-def process_command(command, processing_structure, global_interpretation_map, debug = False, verbose = False, code_generation = False,):
+def process_command(command, processing_structure, global_interpretation_map, interpretation = False, debug = False, verbose = False, code_generation = False,):
     if debug:
-        process_command_debug(command, processing_structure, global_interpretation_map, verbose, code_generation)
+        process_command_debug(command, processing_structure, global_interpretation_map, interpretation, verbose, code_generation)
     else:
-        process_command_normal(command, processing_structure, global_interpretation_map, verbose, code_generation)
+        process_command_normal(command, processing_structure, global_interpretation_map, interpretation, verbose, code_generation)
 
-def process_command_normal(command, processing_structure, global_interpretation_map, verbose, code_generation):
+def process_command_normal(command, processing_structure, global_interpretation_map, interpretation, verbose, code_generation):
     try:
-        interpret_command(command, processing_structure, global_interpretation_map, False, verbose, code_generation)
+        interpret_command(command, processing_structure, global_interpretation_map, interpretation, False, verbose, code_generation)
     except Exception, ex:
         print ex
 
-def process_command_debug(command, processing_structure, global_interpretation_map, verbose, code_generation):
-    interpret_command(command, processing_structure, global_interpretation_map, True, verbose, code_generation)
+def process_command_debug(command, processing_structure, global_interpretation_map, interpretation, verbose, code_generation):
+    interpret_command(command, processing_structure, global_interpretation_map, interpretation, True, verbose, code_generation)
 
-def interpret_command(command, processing_structure, global_interpretation_map, debug, verbose, code_generation):
+def interpret_command(command, processing_structure, global_interpretation_map, interpretation, debug, verbose, code_generation):
     # retrieves the parse result
     parse_result = settler_parser.parser.parse(command)
 
@@ -144,22 +144,23 @@ def interpret_command(command, processing_structure, global_interpretation_map, 
                 # prints the result of the evaluation
                 print eval_result_value
 
-        # creates a interpretation visitor
-#        interpretation_visitor = settler_interpretation.InterpretationVisitor()
-#
-#        # sets the default processing structure in the interpretation visitor
-#        interpretation_visitor.set_processing_structure(processing_structure)
-#
-#        # accepts the visitor in post order
-#        parse_result.accept_post_order(interpretation_visitor)
-#
-#        if verbose:
-#            # retrieves the parse result value
-#            parse_result_value = parse_result.value
-#            if not parse_result_value == None:
-#                print parse_result_value
+        if interpretation:
+            # creates a interpretation visitor
+            interpretation_visitor = settler_interpretation.InterpretationVisitor()
 
-def interactive_console(debug = False, verbose = True, code_generation = False):
+            # sets the default processing structure in the interpretation visitor
+            interpretation_visitor.set_processing_structure(processing_structure)
+
+            # accepts the visitor in post order
+            parse_result.accept_post_order(interpretation_visitor)
+
+            if verbose:
+                # retrieves the parse result value
+                parse_result_value = parse_result.value
+                if not parse_result_value == None:
+                    print parse_result_value
+
+def interactive_console(interpretation = False, debug = False, verbose = True, code_generation = False):
     # creates the exit flag
     exit_flag = False
     
@@ -200,7 +201,7 @@ def interactive_console(debug = False, verbose = True, code_generation = False):
                 command = get_command_from_command_list(command_accumulation_list)
 
                 # processes the command
-                process_command(command, processing_structure, global_interpretation_map, debug, verbose, code_generation)
+                process_command(command, processing_structure, global_interpretation_map, interpretation, debug, verbose, code_generation)
 
                 # resets the block accumulation structures
                 block_accumulation = False
@@ -222,9 +223,9 @@ def interactive_console(debug = False, verbose = True, code_generation = False):
             elif block_accumulation:
                 command_accumulation_list.append(string_value)
             else:
-                process_command(string_value + "\n", processing_structure, global_interpretation_map, debug, verbose, code_generation)
+                process_command(string_value + "\n", processing_structure, global_interpretation_map, interpretation, debug, verbose, code_generation)
 
-def interpret_file(file_path, debug = False, verbose = True, code_generation = True):
+def interpret_file(file_path, interpretation = False, debug = False, verbose = True, code_generation = True):
     # opens the given file
     file = open(file_path, "r")
 
@@ -244,7 +245,7 @@ def interpret_file(file_path, debug = False, verbose = True, code_generation = T
     global_interpretation_map["global_context_code_information"] = None
 
     # processes the command
-    process_command(file_contents, processing_structure, global_interpretation_map, debug, verbose, code_generation)
+    process_command(file_contents, processing_structure, global_interpretation_map, interpretation, debug, verbose, code_generation)
 
 if __name__ == "__main__":
     # starts the verbose flag as false
@@ -253,15 +254,20 @@ if __name__ == "__main__":
     # starts the debug flag as false
     debug = False
 
+    # start the interpretation flag as false
+    interpretation = False
+
     # start the file path value as None
     file_path = None
 
     # retrieves the argument options
-    opts, args = getopt.getopt(sys.argv[1:], "vdf:", ["verbose", "debug", "file="])
+    opts, args = getopt.getopt(sys.argv[1:], "ivdf:", ["interpretation", "verbose", "debug", "file="])
 
     # iterates over all the given options
     for option, value in opts:
-        if option in ("-v", "--verbose"):
+        if option in ("-i", "--interpretation"):
+            interpretation = True
+        elif option in ("-v", "--verbose"):
             verbose = True
         elif option in ("-d", "--debug"):
             debug = True
@@ -270,7 +276,7 @@ if __name__ == "__main__":
 
     if file_path:
         # interprets the file
-        interpret_file(file_path, debug)
+        interpret_file(file_path, interpretation, debug)
     else:
         # starts the interactive console
-        interactive_console(debug)
+        interactive_console(debug, interpretation)
