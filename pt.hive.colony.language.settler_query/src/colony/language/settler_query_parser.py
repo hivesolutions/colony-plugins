@@ -111,12 +111,77 @@ def p_statement_pass(t):
     t[0] = pass_node
 
 def p_statement_select(t):
-    "statement : SELECT"
+    "statement : SELECT optional_all_distinct selection entity_expression"
 
     # creates the select node
     select_node = settler_query_ast.SelectNode()
 
     t[0] = select_node
+
+def p_optional_all_distinct(t):
+    """optional_all_distinct :
+                             | ALL
+                             | DISTINCT"""
+
+    t[0] = "nada"
+
+def p_selection(t):
+    "selection : scalar_expression_commalist"
+
+    t[0] = "nada"
+
+def p_scalar_expression_commalist(t):
+    """scalar_expression_commalist : scalar_expression
+                                   | scalar_expression_commalist COMA scalar_expression"""
+
+    t[0] = "nada"
+
+def p_scalar_expression(t):
+    """scalar_expression : scalar_expression PLUS scalar_expression
+                         | scalar_expression MINUS scalar_expression
+                         | atom"""
+
+def p_atom(t):
+    "atom : literal"
+
+    t[0] = "nada"
+
+def p_literal(t):
+    "literal : NAME"
+
+    t[0] = "nada"
+
+def p_table_expression(t):
+    "entity_expression : from_clause"
+
+    t[0] = "nada"
+
+def p_from_clause(t):
+    "from_clause : FROM entity_reference_commalist"
+
+    t[0] = "nada"
+
+def p_entity_reference_commalist(t):
+    """entity_reference_commalist : entity_reference
+                                  | entity_reference_commalist COMA entity_reference"""
+
+    t[0] = "nada"
+
+def p_entity_reference(t):
+    "entity_reference : entity"
+
+    t[0] = "nada"
+
+def p_entity(t):
+    """entity : qualified_entity_name
+              | qualified_entity_name AS NAME"""
+
+    t[0] = "nada"
+
+def p_qualified_entity_name(t):
+    "qualified_entity_name : NAME"
+
+    t[0] = "nada"
 
 # creates the parser
 ply.yacc.yacc()

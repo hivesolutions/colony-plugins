@@ -50,7 +50,7 @@ tokens = ("NAME", "NUMBER", "STRING", "BOOL", "PLUS",
           "END", "NEWLINE", "WHILE", "FOR", "IN", "IMPORT",
           "CLASS", "EXTENDS", "IMPLEMENTS", "INTERFACE",
           "PLUGIN", "CAPABILITY", "ALLOWS", "PASS", "STATIC",
-          "GLOBAL", "SELECT")
+          "GLOBAL", "SELECT", "ALL", "DISTINCT", "AS", "FROM")
 
 # the reserved keywords
 reserved = {
@@ -79,7 +79,11 @@ reserved = {
     "pass" : "PASS",
     "static" : "STATIC",
     "global" : "GLOBAL",
-    "select" : "SELECT"
+    "select" : "SELECT",
+    "all" : "ALL",
+    "distinct" : "DISTINCT",
+    "as" : "AS",
+    "from" : "FROM"
 }
 
 reserved_values = {
