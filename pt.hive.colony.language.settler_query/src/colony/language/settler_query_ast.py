@@ -481,3 +481,40 @@ class SelectionNode(AstNode):
         """
 
         AstNode.__init__(self)
+
+    def set_scalar_expression_commalist_node(self, scalar_expression_commalist_node):
+        """
+        Sets the scalar expression commalist node.
+        
+        @type scalar_expression_commalist_node: ScalarExpressionCommalistNode
+        @param scalar_expression_commalist_node: The scalar expression commalist node.
+        """
+
+        self.scalar_expression_commalist_node = scalar_expression_commalist_node
+        self.add_child_node(scalar_expression_commalist_node)
+
+class ScalarExpressionCommalistNode(AstSequenceNode):
+    """
+    The scalar expression commalist node class.
+    """
+
+    scalar_expression_node = None
+    """ The scalar expression node """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        AstSequenceNode.__init__(self)
+
+    def set_scalar_expression_node(self, scalar_expression_node):
+        """
+        Sets the scalar expression node.
+        
+        @type scalar_expression_node: ScalarExpressionNode
+        @param scalar_expression_node: The scalar expression node.
+        """
+
+        self.scalar_expression_node = scalar_expression_node
+        self.add_child_node(scalar_expression_node)

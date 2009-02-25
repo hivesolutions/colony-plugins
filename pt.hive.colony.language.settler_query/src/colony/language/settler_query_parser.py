@@ -160,13 +160,44 @@ def p_optional_all_distinct(t):
 def p_selection(t):
     "selection : scalar_expression_commalist"
 
-    t[0] = "none"
+    # retrieves the scalar expression commalist node
+    scalar_expression_commalist_node = t[1]
+
+    # creates the selection node
+    selection_node = settler_query_ast.SelectionNode()
+
+    # sets the scalar expression commalist node in the selection node
+    selection_node.set_scalar_expression_commalist_node(scalar_expression_commalist_node)
+
+    t[0] = selection_node
 
 def p_scalar_expression_commalist(t):
     """scalar_expression_commalist : scalar_expression
                                    | scalar_expression_commalist COMA scalar_expression"""
 
-    t[0] = "none"
+    if len(t) > 3:
+        # retrieves the scalar expression node
+        scalar_expression_node = t[3]
+
+        # retrieves the next scalar expression commalist node
+        next_scalar_expression_commalist_node = t[1]
+    else:
+        # retrieves the scalar expression node
+        scalar_expression_node = t[1]
+
+        # sets the next scalar expression commalist as none
+        next_scalar_expression_commalist_node = None
+
+    # creates the scalar expression commalist node
+    scalar_expression_commalist_node = settler_query_ast.ScalarExpressionCommalistNode()
+
+    # sets the scalar expression node in the scalar expression commalist node
+    scalar_expression_commalist_node.set_scalar_expression_node(scalar_expression_node)
+
+    # sets the next node in the scalar expression commalist node
+    scalar_expression_commalist_node.set_next_node(next_scalar_expression_commalist_node)
+
+    t[0] = scalar_expression_commalist_node
 
 def p_scalar_expression(t):
     """scalar_expression : scalar_expression PLUS scalar_expression
