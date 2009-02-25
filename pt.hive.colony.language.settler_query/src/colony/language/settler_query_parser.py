@@ -204,6 +204,8 @@ def p_scalar_expression(t):
                          | scalar_expression MINUS scalar_expression
                          | atom"""
 
+    t[0] = "none"
+
 def p_atom(t):
     "atom : literal"
 

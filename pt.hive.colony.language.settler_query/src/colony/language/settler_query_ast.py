@@ -518,3 +518,15 @@ class ScalarExpressionCommalistNode(AstSequenceNode):
 
         self.scalar_expression_node = scalar_expression_node
         self.add_child_node(scalar_expression_node)
+
+class ScalarExpressionNode(AstNode):
+    """
+    The scalar expression node class.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        AstNode.__init__(self)
