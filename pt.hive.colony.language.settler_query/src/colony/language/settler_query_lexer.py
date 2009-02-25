@@ -50,7 +50,9 @@ tokens = ("NAME", "NUMBER", "STRING", "BOOL", "PLUS",
           "END", "NEWLINE", "WHILE", "FOR", "IN", "IMPORT",
           "CLASS", "EXTENDS", "IMPLEMENTS", "INTERFACE",
           "PLUGIN", "CAPABILITY", "ALLOWS", "PASS", "STATIC",
-          "GLOBAL", "SELECT", "ALL", "DISTINCT", "AS", "FROM")
+          "GLOBAL", "SELECT", "ALL", "DISTINCT", "AS", "FROM",
+          "WHERE", "BETWEEN", "LIKE", "IS", "NULL", "ANY",
+          "SOME", "EXISTS")
 
 # the reserved keywords
 reserved = {
@@ -83,7 +85,15 @@ reserved = {
     "all" : "ALL",
     "distinct" : "DISTINCT",
     "as" : "AS",
-    "from" : "FROM"
+    "from" : "FROM",
+    "where" : "WHERE",
+    "between" : "BETWEEN",
+    "like" : "LIKE",
+    "is" : "IS",
+    "null" : "NULL",
+    "any" : "ANY",
+    "some" : "SOME",
+    "exists" : "EXISTS"
 }
 
 reserved_values = {

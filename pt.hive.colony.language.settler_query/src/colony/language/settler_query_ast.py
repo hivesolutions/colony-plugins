@@ -288,6 +288,31 @@ class AstSequenceEndNode(AstSequenceNode):
         AstSequenceNode.__init__(self)
         self.valid = False
 
+class EnumerationNode(AstNode):
+    """
+    The enumeration node class.
+    """
+
+    enumeration_value = "none"
+    """ The enumeration value """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        AstNode.__init__(self)
+
+    def set_enumeration_value(self, enumeration_value):
+        """
+        Sets the enumeration value.
+        
+        @type enumeration_value: String
+        @param enumeration_value: The enumeration value.
+        """
+
+        self.enumeration_value = enumeration_value
+
 class RootNode(AstNode):
     """
     The root node class.
@@ -377,6 +402,18 @@ class PassNode(StatementNode):
         StatementNode.__init__(self)
 
 class SelectNode(StatementNode):
+    """
+    The select node class.
+    """
+    
+    optional_all_distinct_node = None
+    """ The optional all distinct node """
+
+    selection_node = None
+    """ The selection node """
+
+    entity_expression = None
+    """ The entity expression node """
 
     def __init__(self):
         """
@@ -384,3 +421,63 @@ class SelectNode(StatementNode):
         """
 
         StatementNode.__init__(self)
+
+    def set_optional_all_distinct_node(self, optional_all_distinct_node):
+        """
+        Sets the optional all distinct node.
+        
+        @type optional_all_distinct_node: OptionalAllDistinctNode
+        @param optional_all_distinct_node: The optional all distinct node.
+        """
+
+        self.optional_all_distinct_node = optional_all_distinct_node
+        self.add_child_node(optional_all_distinct_node)
+
+    def set_selection_node(self, selection_node):
+        """
+        Sets the selection node.
+        
+        @type selection_node: SelectionNode
+        @param selection_node: The selection node.
+        """
+
+        self.selection_node = selection_node
+        self.add_child_node(selection_node)
+
+    def set_entity_expression_node(self, entity_expression_node):
+        """
+        Sets the entity expression node.
+        
+        @type entity_expression_node: EntityExpressionNode
+        @param entity_expression_node: The entity expression node.
+        """
+
+        self.entity_expression_node = entity_expression_node
+        self.add_child_node(entity_expression_node)
+
+class OptionalAllDistinctNode(EnumerationNode):
+    """
+    The optional all distinct node class.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        EnumerationNode.__init__(self)
+
+class SelectionNode(AstNode):
+    """
+    The selection node class.
+    """
+
+    scalar_expression_commalist_node = None
+    """ The scalar expression commalist node """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        AstNode.__init__(self)
