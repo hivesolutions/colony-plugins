@@ -169,7 +169,7 @@ class Visitor:
 
     current_context_stack = ["global"]
     """ The current context stack """
-    
+
     current_context_type_stack = ["function"]
     """ The current context type stack """
 
