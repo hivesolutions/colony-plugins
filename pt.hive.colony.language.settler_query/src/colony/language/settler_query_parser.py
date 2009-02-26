@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import types
+
 import ply.yacc
 
 import settler_query_ast
@@ -115,13 +117,13 @@ def p_statement_select(t):
     "statement : SELECT optional_all_distinct selection entity_expression"
 
     # retrieves the optional all distinct node
-    optional_all_distinct_node = t[1]
+    optional_all_distinct_node = t[2]
 
     # retrieves the selection node
-    selection_node = t[2]
+    selection_node = t[3]
 
     # retrieves the entity expression node
-    entity_expression_node = t[3]
+    entity_expression_node = t[4]
 
     # creates the select node
     select_node = settler_query_ast.SelectNode()
@@ -202,7 +204,8 @@ def p_scalar_expression_commalist(t):
 def p_scalar_expression(t):
     """scalar_expression : scalar_expression PLUS scalar_expression
                          | scalar_expression MINUS scalar_expression
-                         | atom"""
+                         | atom
+                         | field_reference"""
 
     t[0] = "none"
 
@@ -212,9 +215,32 @@ def p_atom(t):
     t[0] = "none"
 
 def p_literal(t):
-    "literal : NAME"
+    """literal : STRING
+               | NUMBER"""
 
-    t[0] = "none"
+    # retrieves the literal value
+    literal_value = t[1]
+
+    if type(literal_value) == types.StringType:
+        # creates the string literal node
+        literal_node = settler_query_ast.StringLiteralNode()
+
+        # sets the string value in the string literal node
+        literal_node.set_string_value(literal_value)
+    elif type(literal_value) == types.IntType:
+        # creates the integer literal node
+        literal_node = settler_query_ast.IntegerLiteralNode()
+
+        # sets the integer value in the integer literal node
+        literal_node.set_integer_value(literal_value)
+
+    t[0] = literal_node
+
+def p_field_reference(t):
+    """field_reference : NAME
+                       | NAME DOT field_reference"""
+
+    pass
 
 def p_table_expression(t):
     "entity_expression : from_clause optional_where_clause"
@@ -250,7 +276,7 @@ def p_qualified_entity_name(t):
 
 def p_optional_where_clause(t):
     """optional_where_clause : 
-                           | where_clause"""
+                             | where_clause"""
 
     t[0] = "none"
 
@@ -319,8 +345,8 @@ def p_all_or_any_predicate(t):
 
 def p_any_all_some(t):
     """any_all_some : ANY
-                     | ALL
-                     | SOME"""
+                    | ALL
+                    | SOME"""
 
     t[0] = "none"
 
@@ -338,6 +364,9 @@ def p_subquery(t):
     "subquery : LPAREN SELECT optional_all_distinct selection entity_expression RPAREN"
 
     t[0] = "none"
+
+def p_error(t):
+    print "Syntax error at '%s'" % t
 
 # creates the parser
 ply.yacc.yacc()

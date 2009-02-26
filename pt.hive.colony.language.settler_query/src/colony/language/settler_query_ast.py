@@ -288,9 +288,9 @@ class AstSequenceEndNode(AstSequenceNode):
         AstSequenceNode.__init__(self)
         self.valid = False
 
-class EnumerationNode(AstNode):
+class AstEnumerationNode(AstNode):
     """
-    The enumeration node class.
+    The ast enumeration node class.
     """
 
     enumeration_value = "none"
@@ -455,7 +455,7 @@ class SelectNode(StatementNode):
         self.entity_expression_node = entity_expression_node
         self.add_child_node(entity_expression_node)
 
-class OptionalAllDistinctNode(EnumerationNode):
+class OptionalAllDistinctNode(AstEnumerationNode):
     """
     The optional all distinct node class.
     """
@@ -465,7 +465,7 @@ class OptionalAllDistinctNode(EnumerationNode):
         Constructor of the class.
         """
 
-        EnumerationNode.__init__(self)
+        AstEnumerationNode.__init__(self)
 
 class SelectionNode(AstNode):
     """
@@ -530,3 +530,103 @@ class ScalarExpressionNode(AstNode):
         """
 
         AstNode.__init__(self)
+
+class AtomNode(AstNode):
+    """
+    The atom node class.
+    """
+
+    literal_node = None
+    """ The literal node """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        AstNode.__init__(self)
+
+    def set_literal_node(self, literal_node):
+        """
+        Sets the literal node.
+        
+        @type literal_node: LiteralNode
+        @param literal_node: The literal node.
+        """
+
+        self.literal_node = literal_node
+        self.add_child_node(literal_node)
+
+class LiteralNode(AstNode):
+    """
+    The literal node class.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        AstNode.__init__(self)
+
+class StringLiteralNode(LiteralNode):
+    """
+    The string literal node class.
+    """
+
+    string_value = None
+    """ The string value """
+
+    def __init_(self):
+        """
+        Constructor of the class.
+        """
+
+        LiteralNode.__init__(self)
+
+    def set_string_value(self, string_value):
+        """
+        Sets the string value.
+        
+        @type string_value: String
+        @param string_value: The string value.
+        """
+
+        self.string_value = string_value
+
+class NumberLiteralNode(LiteralNode):
+    """
+    The number literal node class.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        LiteralNode.__init__(self)
+
+class IntegerLiteralNode(NumberLiteralNode):
+    """
+    The integer literal node class.
+    """
+
+    integer_value = None
+    """ The integer value """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        NumberLiteralNode.__init__(self)
+
+    def set_integer_value(self, integer_value):
+        """
+        Sets the integer value.
+        
+        @type integer_value: int
+        @param integer_value: The integer value.
+        """
+
+        self.integer_value = integer_value
