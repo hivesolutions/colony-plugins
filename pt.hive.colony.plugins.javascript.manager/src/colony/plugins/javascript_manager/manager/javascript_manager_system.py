@@ -90,13 +90,22 @@ class JavascriptManager:
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.gui.main.extjs/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.misc/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.mvc/plugins",
+                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.budgets/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.context_view/plugins",
+                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.customers_suppliers/plugins",
+                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.finances/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.functional_unit/plugins",
+                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.human_resources/plugins",
+                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.inventory/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.main/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.main.perspective/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.misc/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.navigation_tree/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.pos/plugins",
+                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.purchases/plugins",          
+                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.sales/plugins",
+                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.settings/plugins",
+                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.system/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.toolbar/plugins"]
 
     def index_plugin_search_directories(self):
