@@ -32,12 +32,6 @@
 	xsi:schemaLocation="http://www.hive.pt xsd/startup_configuration.xsd">
 	<plugins>
 		<plugin>
-			<name>Diamante 2003 Input Adapter Configuration Plugin</name>
-			<id>pt.hive.colony.plugins.adapters.input.configuration.diamante_2003</id>
-			<version>1.0.0</version>
-			<load>true</load>
-		</plugin>
-		<plugin>
 			<name>Main Gui Plugin</name>
 			<id>pt.hive.colony.plugins.main.gui</id>
 			<version>1.0.0</version>
@@ -58,6 +52,12 @@
 		<plugin>
 			<name>Http Service Main Plugin</name>
 			<id>pt.hive.colony.plugins.main.service.http</id>
+			<version>1.0.0</version>
+			<load>true</load>
+		</plugin>
+		<plugin>
+			<name>Javascript Manager plugin</name>
+			<id>pt.hive.colony.plugins.javascript.manager</id>
 			<version>1.0.0</version>
 			<load>true</load>
 		</plugin>
