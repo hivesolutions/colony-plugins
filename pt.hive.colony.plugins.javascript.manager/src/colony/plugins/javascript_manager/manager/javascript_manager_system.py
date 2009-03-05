@@ -119,6 +119,11 @@ class JavascriptManager:
             self.index_plugin_search_directory(plugin_search_directory, current_plugin_search_directories_map)
 
     def index_plugin_search_directory(self, plugin_search_directory, current_plugin_search_directories_map):
+        # in case the javascript plugins directory does not exists
+        if not os.path.exists(plugin_search_directory):
+            self.javascript_manager_plugin.logger.warning("Path '%s' does not exist in the current filesystem" % (plugin_search_directory))
+            return
+
         # the list of files in the javascript plugins directory
         dir_list = os.listdir(plugin_search_directory)
 
@@ -142,42 +147,44 @@ class JavascriptManager:
     def load_plugin_files(self):
         # iterates over all the search directories
         for plugin_search_directory in self.plugin_search_directories_list:
-            # the list of files in the javascript plugins directory
-            dir_list = os.listdir(plugin_search_directory)
+            # in case the javascript plugins directory exists
+            if os.path.exists(plugin_search_directory):
+                # the list of files in the javascript plugins directory
+                dir_list = os.listdir(plugin_search_directory)
 
-            # for all the files in the directory 
-            for file_name in dir_list:
-                # retrieves the file full path
-                full_path = plugin_search_directory + "/" + file_name
+                # for all the files in the directory 
+                for file_name in dir_list:
+                    # retrieves the file full path
+                    full_path = plugin_search_directory + "/" + file_name
 
-                # retrieves the file stat value
-                file_stat = os.stat(full_path)
+                    # retrieves the file stat value
+                    file_stat = os.stat(full_path)
 
-                # retrieves the file last modification time
-                modified_date = time.localtime(file_stat[stat.ST_MTIME])
+                    # retrieves the file last modification time
+                    modified_date = time.localtime(file_stat[stat.ST_MTIME])
 
-                # retrieves the file mode
-                mode = file_stat[stat.ST_MODE]
+                    # retrieves the file mode
+                    mode = file_stat[stat.ST_MODE]
 
-                # splits the file name
-                split = os.path.splitext(file_name)
+                    # splits the file name
+                    split = os.path.splitext(file_name)
 
-                # retrieves the extension name
-                extension_name = split[-1]
+                    # retrieves the extension name
+                    extension_name = split[-1]
 
-                # in case it's not a directory and the extension of the file is .xml (xml file)
-                if not stat.S_ISDIR(mode) and extension_name == ".xml":
-                    # creates the plugin descriptor parser for the xml file
-                    plugin_descriptor_parser = javascript_manager_parser.PluginDescriptorParser(full_path)
+                    # in case it's not a directory and the extension of the file is .xml (xml file)
+                    if not stat.S_ISDIR(mode) and extension_name == ".xml":
+                        # creates the plugin descriptor parser for the xml file
+                        plugin_descriptor_parser = javascript_manager_parser.PluginDescriptorParser(full_path)
 
-                    # parses the xml files
-                    plugin_descriptor_parser.parse()
+                        # parses the xml files
+                        plugin_descriptor_parser.parse()
 
-                    # retrieves the plugin descriptor resultant of the parsing
-                    plugin_descriptor = plugin_descriptor_parser.get_value()
+                        # retrieves the plugin descriptor resultant of the parsing
+                        plugin_descriptor = plugin_descriptor_parser.get_value()
 
-                    # adds the plugin descriptor to the list of plugin descriptors
-                    self.plugin_descriptors_list.append(plugin_descriptor)
+                        # adds the plugin descriptor to the list of plugin descriptors
+                        self.plugin_descriptors_list.append(plugin_descriptor)
 
     def update_plugin_files(self):
         pass
