@@ -1269,9 +1269,9 @@ class IsNullPredicateNode(UnaryPredicateNode):
 
         UnaryPredicateNode.__init__(self)
 
-class NotIsNullPredicateNode(UnaryPredicateNode):
+class IsNotNullPredicateNode(UnaryPredicateNode):
     """
-    The not is null predicate node class.
+    The is not null predicate node class.
     """
 
     def __init__(self):
@@ -1280,3 +1280,43 @@ class NotIsNullPredicateNode(UnaryPredicateNode):
         """
 
         UnaryPredicateNode.__init__(self)
+
+class InPredicateNode(PredicateNode):
+    """
+    The in predicate node class.
+    """
+
+    scalar_expression_node = None
+    """ The scalar expression node """
+
+    scalar_expression_commalist_node = None
+    """ The scalar expression commalist node """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        PredicateNode.__init__(self)
+
+    def set_scalar_expression_node(self, scalar_expression_node):
+        """
+        Sets the scalar expression node.
+        
+        @type scalar_expression_node: ScalarExpressionNode
+        @param scalar_expression_node: The scalar expression node.
+        """
+
+        self.scalar_expression_node = scalar_expression_node
+        self.add_child_node(scalar_expression_node)
+
+    def set_scalar_expression_commalist_node(self, scalar_expression_commalist_node):
+        """
+        Sets the scalar expression commalist node.
+        
+        @type scalar_expression_commalist_node: ScalarExpressionNode
+        @param scalar_expression_commalist_node: The scalar expression commalist node.
+        """
+
+        self.scalar_expression_commalist_node = scalar_expression_commalist_node
+        self.add_child_node(scalar_expression_commalist_node)
