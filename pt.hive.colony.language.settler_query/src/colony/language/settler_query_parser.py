@@ -445,7 +445,7 @@ def p_optional_where_clause(t):
     optional_where_clause_node = settler_query_ast.OptionalWhereClauseNode()
 
     # sets the where clause node in the optional where clause node
-    optional_where_clause_node.set_qualified_entity_name_value(where_clause_node)
+    optional_where_clause_node.set_where_clause_node(where_clause_node)
 
     t[0] = optional_where_clause_node
 
@@ -453,7 +453,7 @@ def p_where_clause(t):
     "where_clause : WHERE search_condition"
 
     # retrieves the search condition node
-    search_condition_node = t[1]
+    search_condition_node = t[2]
 
     # creates the where clause node
     where_clause_node = settler_query_ast.WhereClauseNode()
@@ -540,64 +540,243 @@ def p_predicate(t):
 def p_comparison_predicate(t):
     "comparison_predicate : scalar_expression EQUALS scalar_expression"
 
-    t[0] = "none"
+    # retrieves the first scalar expression node
+    first_scalar_expression_node = t[1]
+
+    # retrieves the second scalar expression node
+    second_scalar_expression_node = t[3]
+
+    # creates the comparison predicate node
+    comparison_predicate_node = settler_query_ast.ComparisonPredicateNode()
+
+    # sets the first scalar expression node in the comparison predicate node
+    comparison_predicate_node.set_first_scalar_expression_node(first_scalar_expression_node)
+
+    # sets the second scalar expression node in the comparison predicate node
+    comparison_predicate_node.set_second_scalar_expression_node(second_scalar_expression_node)
+
+    t[0] = comparison_predicate_node
 
 def p_between_predicate(t):
     """between_predicate : scalar_expression BETWEEN scalar_expression
                          | scalar_expression NOT BETWEEN scalar_expression """
 
-    t[0] = "none"
+    # retrieves the first scalar expression node
+    first_scalar_expression_node = t[1]
+
+    if t[2] == "between":
+        # retrieves the second scalar expression node
+        second_scalar_expression_node = t[3]
+
+        # creates the between predicate node
+        between_predicate_node = settler_query_ast.BetweenPredicateNode()
+    elif t[2] == "not":
+        # retrieves the second scalar expression node
+        second_scalar_expression_node = t[4]
+
+        # creates the not between predicate node
+        between_predicate_node = settler_query_ast.NotBetweenPredicateNode()
+
+    # sets the first scalar expression node in the between predicate node
+    between_predicate_node.set_first_scalar_expression_node(first_scalar_expression_node)
+
+    # sets the second scalar expression node in the between predicate node
+    between_predicate_node.set_second_scalar_expression_node(second_scalar_expression_node)
+
+    t[0] = between_predicate_node
 
 def p_like_predicate(t):
     """like_predicate : scalar_expression LIKE scalar_expression
                       | scalar_expression NOT LIKE scalar_expression"""
 
-    t[0] = "none"
+    # retrieves the first scalar expression node
+    first_scalar_expression_node = t[1]
+
+    if t[2] == "like":
+        # retrieves the second scalar expression node
+        second_scalar_expression_node = t[3]
+
+        # creates the like predicate node
+        like_predicate_node = settler_query_ast.LikePredicateNode()
+    elif t[2] == "not":
+        # retrieves the second scalar expression node
+        second_scalar_expression_node = t[4]
+
+        # creates the not like predicate node
+        like_predicate_node = settler_query_ast.NotLikePredicateNode()
+
+    # sets the first scalar expression node in the like predicate node
+    like_predicate_node.set_first_scalar_expression_node(first_scalar_expression_node)
+
+    # sets the second scalar expression node in the like predicate node
+    like_predicate_node.set_second_scalar_expression_node(second_scalar_expression_node)
+
+    t[0] = like_predicate_node
 
 def p_test_for_null(t):
     """test_for_null : scalar_expression IS NULL
                      | scalar_expression IS NOT NULL"""
 
-    t[0] = "none"
+    # retrieves the scalar expression node
+    scalar_expression_node = t[1]
+
+    if t[3] == "null":
+        # creates the is null predicate node
+        test_for_null_node = settler_query_ast.IsNullPredicateNode()
+    elif t[3] == "not":
+        # creates the is not null predicate node
+        test_for_null_node = settler_query_ast.IsNotNullPredicateNode()
+
+    # sets the scalar expression node in the test for null node
+    test_for_null_node.set_scalar_expression_node(scalar_expression_node)
+
+    t[0] = test_for_null_node
 
 def p_in_predicate(t):
     """in_predicate : scalar_expression IN LPAREN scalar_expression_commalist RPAREN
                     | scalar_expression NOT IN LPAREN scalar_expression_commalist RPAREN"""
 
-    t[0] = "none"
+    # retrieves the scalar expression node
+    scalar_expression_node = t[1]
+
+    if t[2] == "in":
+        # retrieves the scalar expression commalist node
+        scalar_expression_commalist_node = t[4]
+
+        # creates the in predicate node
+        in_predicate_node = settler_query_ast.InPredicateNode()
+    elif t[2] == "not":
+        # retrieves the scalar expression commalist node
+        scalar_expression_commalist_node = t[5]
+
+        # creates the not in predicate node
+        in_predicate_node = settler_query_ast.NotInPredicateNode()
+
+    # sets the scalar expression node in the in predicate node
+    in_predicate_node.set_scalar_expression_node(scalar_expression_node)
+
+    t[0] = in_predicate_node
 
 def p_in_subquery_predicate(t):
     """in_subquery_predicate : scalar_expression IN subquery
                              | scalar_expression NOT IN subquery"""
 
-    t[0] = "none"
+    # retrieves the scalar expression node
+    scalar_expression_node = t[1]
+
+    if t[2] == "in":
+        # retrieves the subquery node
+        scalar_expression_commalist_node = t[3]
+
+        # creates the in subquery predicate node
+        in_subquery_predicate_node = settler_query_ast.InSubqueryPredicateNode()
+    elif t[2] == "not":
+        # retrieves the subquery node
+        scalar_expression_commalist_node = t[4]
+
+        # creates the not in subquery predicate node
+        in_subquery_predicate_node = settler_query_ast.NotInSubqueryPredicateNode()
+
+    # sets the scalar expression node in the in predicate node
+    in_subquery_predicate_node.set_scalar_expression_node(scalar_expression_node)
+
+    t[0] = in_subquery_predicate_node
 
 def p_all_or_any_predicate(t):
     "all_or_any_predicate : scalar_expression EQUALS any_all_some subquery"
 
-    t[0] = "none"
+    # retrieves the scalar expression node
+    scalar_expression_node = t[1]
+
+    # retrieves the any all some node
+    any_all_some_node = t[3]
+
+    # retrieves the subquery node
+    subquery_node = t[4]
+
+    # creates the all or any predicate node
+    all_or_any_predicate_node = settler_query_ast.AllOrAnyPredicateNode()
+
+    # sets the scalar expression node in the all or any predicate node
+    all_or_any_predicate_node.set_scalar_expression_node(scalar_expression_node)
+
+    # sets the any all some node in the all or any predicate node
+    all_or_any_predicate_node.set_any_all_some_node(any_all_some_node)
+
+    # sets the subquery node in the all or any predicate node
+    all_or_any_predicate_node.set_subquery_node(subquery_node)
+
+    t[0] = all_or_any_predicate_node
 
 def p_any_all_some(t):
     """any_all_some : ANY
                     | ALL
                     | SOME"""
 
-    t[0] = "none"
+    # retrieves the any all some value
+    any_all_some_value = t[1]
+
+    # creates the any all some node
+    any_all_some_node = settler_query_ast.AnyAllSomeNode()
+
+    # sets the any all some value in the any all some node
+    any_all_some_node.set_any_all_some_value(any_all_some_value)
+
+    t[0] = any_all_some_node
 
 def p_existence_test(t):
     "existence_test : EXISTS subquery"
 
-    t[0] = "none"
+    # retrieves the subquery node
+    subquery_node = t[2]
+
+    # creates the existence test node
+    existence_test_node = settler_query_ast.ExistenceTestNode()
+
+    # sets the subquery node in the existence test node
+    existence_test_node.set_subquery_node(subquery_node)
+
+    t[0] = existence_test_node
 
 def p_scalar_expression_predicate(t):
     "scalar_expression_predicate : scalar_expression"
 
-    t[0] = "none"
+    # retrieves the scalar expression node
+    scalar_expression_node = t[1]
+
+    # creates the scalar expression predicate node
+    scalar_expression_predicate_node = settler_query_ast.ScalarExpressionPredicateNode()
+
+    # sets the scalar expression node in the scalar expression predicate node
+    scalar_expression_predicate_node.set_scalar_expression_node(scalar_expression_node)
+
+    t[0] = scalar_expression_predicate_node
 
 def p_subquery(t):
     "subquery : LPAREN SELECT optional_all_distinct selection entity_expression RPAREN"
 
-    t[0] = "none"
+    # retrieves the optional all distinct node
+    optional_all_distinct_node = t[3]
+
+    # retrieves the selection node
+    selection_node = t[4]
+
+    # retrieves the entity expression node
+    entity_expression_node = t[5]
+
+    # creates the subquery node
+    subquery_node = settler_query_ast.SubqueryNode()
+
+    # sets the optional all distinct node in the subquery node
+    subquery_node.set_optional_all_distinct_node(optional_all_distinct_node)
+
+    # sets the selection node in the subquery node
+    subquery_node.set_selection_node(selection_node)
+
+    # sets the entity expression node in the subquery node
+    subquery_node.set_entity_expression_node(entity_expression_node)
+
+    t[0] = subquery_node
 
 def p_error(t):
     print "Syntax error at '%s'" % t

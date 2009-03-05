@@ -1320,3 +1320,252 @@ class InPredicateNode(PredicateNode):
 
         self.scalar_expression_commalist_node = scalar_expression_commalist_node
         self.add_child_node(scalar_expression_commalist_node)
+
+class NotInPredicateNode(InPredicateNode):
+    """
+    The not in predicate node class.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        InPredicateNode.__init__(self)
+
+class InSubqueryPredicateNode(PredicateNode):
+    """
+    The in subquery predicate node class.
+    """
+
+    scalar_expression_node = None
+    """ The scalar expression node """
+
+    subquery_node = None
+    """ The subquery node """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        PredicateNode.__init__(self)
+
+    def set_scalar_expression_node(self, scalar_expression_node):
+        """
+        Sets the scalar expression node.
+        
+        @type scalar_expression_node: ScalarExpressionNode
+        @param scalar_expression_node: The scalar expression node.
+        """
+
+        self.scalar_expression_node = scalar_expression_node
+        self.add_child_node(scalar_expression_node)
+
+    def set_subquery_node(self, subquery_node):
+        """
+        Sets the subquery node.
+        
+        @type subquery_node: SubqueryNode
+        @param subquery_node: The subquery node.
+        """
+
+        self.subquery_node = subquery_node
+        self.add_child_node(subquery_node)
+
+class NotInSubqueryPredicateNode(InSubqueryPredicateNode):
+    """
+    The not in subquery predicate node class.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        InSubqueryPredicateNode.__init__(self)
+
+class AllOrAnyPredicateNode(PredicateNode):
+    """
+    The all or any predicate node class.
+    """
+
+    scalar_expression_node = None
+    """ The scalar expression node """
+
+    any_all_some_node = None
+    """ The any all some node """
+
+    subquery_node = None
+    """ The subquery node """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        PredicateNode.__init__(self)
+
+    def set_scalar_expression_node(self, scalar_expression_node):
+        """
+        Sets the scalar expression node.
+        
+        @type scalar_expression_node: ScalarExpressionNode
+        @param scalar_expression_node: The scalar expression node.
+        """
+
+        self.scalar_expression_node = scalar_expression_node
+        self.add_child_node(scalar_expression_node)
+
+    def set_any_all_some_node(self, any_all_some_node):
+        """
+        Sets the any all some node.
+        
+        @type any_all_some_node: AnyAllSomeNode
+        @param any_all_some_node: The any all some node.
+        """
+
+        self.any_all_some_node = any_all_some_node
+        self.add_child_node(any_all_some_node)
+
+    def set_subquery_node(self, subquery_node):
+        """
+        Sets the subquery node.
+        
+        @type subquery_node: SubqueryNode
+        @param subquery_node: The subquery node.
+        """
+
+        self.subquery_node = subquery_node
+        self.add_child_node(subquery_node)
+
+class AnyAllSomeNode(AstNode):
+    """
+    The any all some predicate node class.
+    """
+
+    any_all_some_value = "none"
+    """ The any all some value """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        AstNode.__init__(self)
+
+    def set_any_all_some_value(self, any_all_some_value):
+        """
+        Sets the any all some value.
+        
+        @type any_all_some_value: String
+        @param any_all_some_value: The any all some value.
+        """
+
+        self.any_all_some_value = any_all_some_value
+
+class ExistenceTestNode(AstNode):
+    """
+    The existence node class.
+    """
+
+    subquery_node = None
+    """ The subquery node """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        AstNode.__init__(self)
+
+    def set_subquery_node(self, subquery_node):
+        """
+        Sets the subquery node.
+        
+        @type subquery_node: SubqueryNode
+        @param subquery_node: The subquery node.
+        """
+
+        self.subquery_node = subquery_node
+        self.add_child_node(subquery_node)
+
+class ScalarExpressionPredicateNode(PredicateNode):
+    """
+    The scalar expression predicate node class.
+    """
+
+    scalar_expression_node = None
+    """ The scalar expression node """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        PredicateNode.__init__(self)
+
+    def set_scalar_expression_node(self, scalar_expression_node):
+        """
+        Sets the scalar expression node.
+        
+        @type scalar_expression_node: ScalarExpressionNode
+        @param scalar_expression_node: The scalar expression node.
+        """
+
+        self.scalar_expression_node = scalar_expression_node
+        self.add_child_node(scalar_expression_node)
+
+class SubqueryNode(AstNode):
+    """
+    The subquery node class.
+    """
+
+    optional_all_distinct_node = None
+    """ The optional all distinct node """
+
+    selection_node = None
+    """ The selection node """
+
+    entity_expression_node = None
+    """ The entity expression node """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        AstNode.__init__(self)
+
+    def set_optional_all_distinct_node(self, optional_all_distinct_node):
+        """
+        Sets the optional all distinct node.
+        
+        @type optional_all_distinct_node: OptionalAllDistinctNode
+        @param optional_all_distinct_node: The optional all distinct node.
+        """
+
+        self.optional_all_distinct_node = optional_all_distinct_node
+        self.add_child_node(optional_all_distinct_node)
+
+    def set_selection_node(self, selection_node):
+        """
+        Sets the selection node.
+        
+        @type selection_node: SelectionNode
+        @param selection_node: The selection node.
+        """
+
+        self.selection_node = selection_node
+        self.add_child_node(selection_node)
+
+    def set_entity_expression_node(self, entity_expression_node):
+        """
+        Sets the entity expression node.
+        
+        @type entity_expression_node: EntityExpressionNode
+        @param entity_expression_node: The entity expression node.
+        """
+
+        self.entity_expression_node = entity_expression_node
+        self.add_child_node(entity_expression_node)
