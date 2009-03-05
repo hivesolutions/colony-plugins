@@ -531,6 +531,59 @@ class ScalarExpressionNode(AstNode):
 
         AstNode.__init__(self)
 
+class AtomScalarExpressionNode(ScalarExpressionNode):
+    """
+    The atom scalar expression node class.
+    """
+
+    atom_node = None
+    """ The atom node """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        ScalarExpressionNode.__init__(self)
+
+    def set_atom_node(self, atom_node):
+        """
+        Sets the atom node.
+        
+        @type atom_node: AtomNode
+        @param atom_node: The atom node.
+        """
+
+        self.atom_node = atom_node
+        self.add_child_node(atom_node)
+
+
+class FieldReferenceScalarExpressionNode(ScalarExpressionNode):
+    """
+    The field reference scalar expression node class.
+    """
+
+    field_reference_node = None
+    """ The field reference node """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        ScalarExpressionNode.__init__(self)
+
+    def set_field_reference_node(self, field_reference_node):
+        """
+        Sets the field reference node.
+        
+        @type field_reference_node: FieldReferenceNode
+        @param field_reference_node: The field reference node.
+        """
+
+        self.field_reference_node = field_reference_node
+        self.add_child_node(field_reference_node)
+
 class AtomNode(AstNode):
     """
     The atom node class.
@@ -630,3 +683,600 @@ class IntegerLiteralNode(NumberLiteralNode):
         """
 
         self.integer_value = integer_value
+
+class FieldRefereceNode(AstSequenceNode):
+    """
+    The field reference node class.
+    """
+
+    field_reference_name = "none"
+    """ The filed reference name """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        AstSequenceNode.__init__(self)
+
+    def set_field_reference_name(self, field_reference_name):
+        """
+        Sets the field reference name.
+        
+        @type field_reference_name: String
+        @param field_reference_name: The field reference name.
+        """
+
+        self.field_reference_name = field_reference_name
+
+class EntityExpressionNode(AstNode):
+    """
+    The entity expression node class.
+    """
+
+    from_clause_node = None
+    """ The from clause node """
+
+    optional_where_clause_node = None
+    """ The optional where clause node """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        AstNode.__init__(self)
+
+    def set_from_clause_node(self, from_clause_node):
+        """
+        Sets the from clause node.
+        
+        @type from_clause_node: FromClauseNode
+        @param from_clause_node: The from clause node.
+        """
+
+        self.from_clause_node = from_clause_node
+        self.add_child_node(from_clause_node)
+
+    def set_optional_where_clause_node(self, optional_where_clause_node):
+        """
+        Sets the optional where clause node.
+        
+        @type optional_where_clause_node: OptionalWhereClauseNode
+        @param optional_where_clause_node: The optional where clause node.
+        """
+
+        self.optional_where_clause_node = optional_where_clause_node
+        self.add_child_node(optional_where_clause_node)
+
+class FromClauseNode(AstNode):
+    """
+    The from clause node class.
+    """
+
+    entity_reference_commalist_node = None
+    """ The entity reference commalist node """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        AstNode.__init__(self)
+
+    def set_entity_reference_commalist_node(self, entity_reference_commalist_node):
+        """
+        Sets the entity reference commalist node.
+        
+        @type entity_reference_commalist_node: EntityReferenceCommalistNode
+        @param entity_reference_commalist_node: The entity reference commalist node.
+        """
+
+        self.entity_reference_commalist_node = entity_reference_commalist_node
+        self.add_child_node(entity_reference_commalist_node)
+
+class EntityReferenceCommalistNode(AstSequenceNode):
+    """
+    The entity reference commalist node class.
+    """
+
+    entity_reference_node = None
+    """ The filed reference name """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        AstSequenceNode.__init__(self)
+
+    def set_entity_reference_node(self, entity_reference_node):
+        """
+        Sets the entity reference node.
+        
+        @type entity_reference_node: EntityReferenceNode
+        @param entity_reference_node: The entity reference node.
+        """
+
+        self.entity_reference_node = entity_reference_node
+        self.add_child_node(entity_reference_node)
+
+class EntityReferenceNode(AstNode):
+    """
+    The entity reference node class.
+    """
+
+    entity_node = None
+    """ The entity node """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        AstNode.__init__(self)
+
+    def set_entity_node(self, entity_node):
+        """
+        Sets the entity node.
+        
+        @type entity_node: EntityNode
+        @param entity_node: The entity node.
+        """
+
+        self.entity_node = entity_node
+        self.add_child_node(entity_node)
+
+class EntityNode(AstNode):
+    """
+    The entity node class.
+    """
+
+    qualified_entity_name_node = None
+    """ The qualified entity name node """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        AstNode.__init__(self)
+
+    def set_qualified_entity_name_node(self, qualified_entity_name_node):
+        """
+        Sets the qualified entity name node.
+        
+        @type qualified_entity_name_node: QualifiedEntityNameNode
+        @param qualified_entity_name_node: The qualified entity name node.
+        """
+
+        self.qualified_entity_name_node = qualified_entity_name_node
+        self.add_child_node(qualified_entity_name_node)
+
+class EntityAsNameNode(EntityNode):
+    """
+    The entity as name node class.
+    """
+
+    entity_as_name_value = "none"
+    """ The entity as name value """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        EntityNode.__init__(self)
+
+    def set_entity_as_name_value(self, entity_as_name_value):
+        """
+        Sets the entity as name value.
+        
+        @type entity_as_name_value: String
+        @param entity_as_name_value: The entity as name value.
+        """
+
+        self.entity_as_name_value = entity_as_name_value
+
+class QualifiedEntityNameNode(AstNode):
+    """
+    The qualified entity name node class.
+    """
+
+    qualified_entity_name_value = "none"
+    """ The qualified entity name value """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        AstNode.__init__(self)
+
+    def set_qualified_entity_name_value(self, qualified_entity_name_value):
+        """
+        Sets the qualified entity name value.
+        
+        @type qualified_entity_name_value: String
+        @param qualified_entity_name_value: The qualified entity name value.
+        """
+
+        self.qualified_entity_name_value = qualified_entity_name_value
+
+class OptionalWhereClauseNode(AstNode):
+    """
+    The optional where clause node class.
+    """
+
+    where_clause_node = None
+    """ The where clause node """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        AstNode.__init__(self)
+
+    def set_where_clause_node(self, where_clause_node):
+        """
+        Sets the where clause node.
+        
+        @type where_clause_node: WhereClauseNode
+        @param where_clause_node: The where clause node.
+        """
+
+        self.where_clause_node = where_clause_node
+        self.add_child_node(where_clause_node)
+
+class WhereClauseNode(AstNode):
+    """
+    The where clause node class.
+    """
+
+    search_condition_node = None
+    """ The search condition node """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        AstNode.__init__(self)
+
+    def set_search_condition_node(self, search_condition_node):
+        """
+        Sets the search condition node.
+        
+        @type search_condition_node: SearchConditionNode
+        @param search_condition_node: The search condition node.
+        """
+
+        self.search_condition_node = search_condition_node
+        self.add_child_node(search_condition_node)
+
+class SearchConditionNode(AstNode):
+    """
+    The search condition node class.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        AstNode.__init__(self)
+
+class PredicateSearchConditionNode(SearchConditionNode):
+    """
+    The predicate search condition node class.
+    """
+
+    predicate_node = None
+    """ The predicate node """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        SearchConditionNode.__init__(self)
+
+    def set_predicate_node(self, predicate_node):
+        """
+        Sets the predicate node.
+        
+        @type predicate_node: PredicateNode
+        @param predicate_node: The predicate node.
+        """
+
+        self.predicate_node = predicate_node
+        self.add_child_node(predicate_node)
+
+class ExpressionSearchConditionNode(SearchConditionNode):
+    """
+    The expression search condition node class.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        SearchConditionNode.__init__(self)
+
+class BinaryExpressionSearchConditionNode(ExpressionSearchConditionNode):
+    """
+    The binary expression search condition node class.
+    """
+
+    first_expression_search_condition_node = None
+    """ The first expression search condition node """
+
+    second_expression_search_condition_node = None
+    """ The second expression search condition node """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        ExpressionSearchConditionNode.__init__(self)
+
+    def set_first_expression_search_condition_node(self, first_expression_search_condition_node):
+        """
+        Sets the first expression search condition node.
+        
+        @type first_expression_search_condition_node: SearchConditionNode
+        @param first_expression_search_condition_node: The first expression search condition node.
+        """
+
+        self.first_expression_search_condition_node = first_expression_search_condition_node
+        self.add_child_node(first_expression_search_condition_node)
+
+    def set_second_expression_search_condition_node(self, second_expression_search_condition_node):
+        """
+        Sets the second expression search condition node.
+        
+        @type second_expression_search_condition_node: SearchConditionNode
+        @param second_expression_search_condition_node: The second expression search condition node.
+        """
+
+        self.second_expression_search_condition_node = second_expression_search_condition_node
+        self.add_child_node(second_expression_search_condition_node)
+
+class AndExpressionSearchConditionNode(BinaryExpressionSearchConditionNode):
+    """
+    The and expression search condition node class.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        BinaryExpressionSearchConditionNode.__init__(self)
+
+class OrExpressionSearchConditionNode(BinaryExpressionSearchConditionNode):
+    """
+    The or expression search condition node class.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        BinaryExpressionSearchConditionNode.__init__(self)
+
+class UnaryExpressionSearchConditionNode(ExpressionSearchConditionNode):
+    """
+    The unary expression search condition node class.
+    """
+
+    expression_search_condition_node = None
+    """ The expression search condition node """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        ExpressionSearchConditionNode.__init__(self)
+
+    def set_expression_search_condition_node(self, expression_search_condition_node):
+        """
+        Sets the expression search condition node.
+        
+        @type expression_search_condition_node: SearchConditionNode
+        @param expression_search_condition_node: The expression search condition node.
+        """
+
+        self.expression_search_condition_node = expression_search_condition_node
+        self.add_child_node(expression_search_condition_node)
+
+class NotExpressionSearchConditionNode(UnaryExpressionSearchConditionNode):
+    """
+    The not expression search condition node class.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        UnaryExpressionSearchConditionNode.__init__(self)
+
+class ParenthesisExpressionSearchConditionNode(UnaryExpressionSearchConditionNode):
+    """
+    The parenthesis expression search condition node class.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        UnaryExpressionSearchConditionNode.__init__(self)
+
+class PredicateNode(AstNode):
+    """
+    The predicate node class.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        AstNode.__init__(self)
+
+class BinaryPredicateNode(PredicateNode):
+    """
+    The binary predicate node class.
+    """
+
+    first_scalar_expression_node = None
+    """ The first scalar expression node """
+
+    second_scalar_expression_node = None
+    """ The second scalar expression node """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        AstNode.__init__(self)
+
+    def set_first_scalar_expression_node(self, first_scalar_expression_node):
+        """
+        Sets the first scalar expression node.
+        
+        @type first_scalar_expression_node: ScalarExpressionNode
+        @param first_scalar_expression_node: The first scalar expression node.
+        """
+
+        self.first_scalar_expression_node = first_scalar_expression_node
+        self.add_child_node(first_scalar_expression_node)
+
+    def set_second_scalar_expression_node(self, second_scalar_expression_node):
+        """
+        Sets the second scalar expression node.
+        
+        @type second_scalar_expression_node: ScalarExpressionNode
+        @param second_scalar_expression_node: The second scalar expression node.
+        """
+
+        self.second_scalar_expression_node = second_scalar_expression_node
+        self.add_child_node(second_scalar_expression_node)
+
+class ComparisonPredicateNode(BinaryPredicateNode):
+    """
+    The comparison predicate node class.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        BinaryPredicateNode.__init__(self)
+
+class BetweenPredicateNode(BinaryPredicateNode):
+    """
+    The between predicate node class.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        BinaryPredicateNode.__init__(self)
+
+class NotBetweenPredicateNode(BinaryPredicateNode):
+    """
+    The between predicate node class.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        BinaryPredicateNode.__init__(self)
+
+class LikePredicateNode(BinaryPredicateNode):
+    """
+    The like predicate node class.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        BinaryPredicateNode.__init__(self)
+
+class NotLikePredicateNode(BinaryPredicateNode):
+    """
+    The like predicate node class.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        BinaryPredicateNode.__init__(self)
+
+class UnaryPredicateNode(PredicateNode):
+    """
+    The unary predicate node class.
+    """
+
+    scalar_expression_node = None
+    """ The scalar expression node """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        AstNode.__init__(self)
+
+    def set_scalar_expression_node(self, scalar_expression_node):
+        """
+        Sets the scalar expression node.
+        
+        @type scalar_expression_node: ScalarExpressionNode
+        @param scalar_expression_node: The scalar expression node.
+        """
+
+        self.scalar_expression_node = scalar_expression_node
+        self.add_child_node(scalar_expression_node)
+
+class IsNullPredicateNode(UnaryPredicateNode):
+    """
+    The is null predicate node class.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        UnaryPredicateNode.__init__(self)
+
+class NotIsNullPredicateNode(UnaryPredicateNode):
+    """
+    The not is null predicate node class.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        UnaryPredicateNode.__init__(self)

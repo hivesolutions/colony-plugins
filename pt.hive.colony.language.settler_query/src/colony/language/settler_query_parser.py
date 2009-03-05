@@ -144,12 +144,15 @@ def p_optional_all_distinct(t):
                              | ALL
                              | DISTINCT"""
 
-    if len(t) > 1:
-        # retrieves the enumeration value
-        enumeration_value = t[1]
-    else:
+    # retrieves the arguments length
+    arguments_length = len(t)
+
+    if arguments_length == 1:
         # sets the enumeration value as none
         enumeration_value = None
+    elif arguments_length == 2:
+        # retrieves the enumeration value
+        enumeration_value = t[1]
 
     # creates the optional all distinct node
     optional_all_distinct_node = settler_query_ast.OptionalAllDistinctNode()
@@ -177,18 +180,21 @@ def p_scalar_expression_commalist(t):
     """scalar_expression_commalist : scalar_expression
                                    | scalar_expression_commalist COMA scalar_expression"""
 
-    if len(t) > 3:
+    # retrieves the arguments length
+    arguments_length = len(t)
+
+    if arguments_length == 2:
+        # retrieves the scalar expression node
+        scalar_expression_node = t[1]
+
+        # sets the next scalar expression commalist node as none
+        next_scalar_expression_commalist_node = None
+    elif arguments_length == 4:
         # retrieves the scalar expression node
         scalar_expression_node = t[3]
 
         # retrieves the next scalar expression commalist node
         next_scalar_expression_commalist_node = t[1]
-    else:
-        # retrieves the scalar expression node
-        scalar_expression_node = t[1]
-
-        # sets the next scalar expression commalist as none
-        next_scalar_expression_commalist_node = None
 
     # creates the scalar expression commalist node
     scalar_expression_commalist_node = settler_query_ast.ScalarExpressionCommalistNode()
@@ -207,12 +213,45 @@ def p_scalar_expression(t):
                          | atom
                          | field_reference"""
 
-    t[0] = "none"
+    # retrieves the arguments length
+    arguments_length = len(t)
+
+    if arguments_length == 2:
+        # retrieves the first node
+        first_node = t[1]
+
+        if first_node.__class__ == settler_query_ast.AtomNode:
+            # creates the atom scalar expression node
+            scalar_expression_node = settler_query_ast.AtomScalarExpressionNode()
+
+            # sets the atom node in the atom scalar expression node
+            scalar_expression_node.set_atom_node(first_node)
+
+        elif first_node.__class__ == settler_query_ast.FieldRefereceNode:
+            # creates the field reference scalar expression node
+            scalar_expression_node = settler_query_ast.FieldReferenceScalarExpressionNode()
+
+            # sets the field reference node in the field reference scalar expression node
+            scalar_expression_node.set_field_reference_node(first_node)
+
+    elif arguments_length == 4:
+        pass
+
+    t[0] = scalar_expression_node
 
 def p_atom(t):
     "atom : literal"
 
-    t[0] = "none"
+    # retrieves the literal node
+    literal_node = t[1]
+
+    # creates the atom node
+    atom_node = settler_query_ast.AtomNode()
+
+    # sets the literal node in the atom node
+    atom_node.set_literal_node(literal_node)
+
+    t[0] = atom_node
 
 def p_literal(t):
     """literal : STRING
@@ -240,60 +279,250 @@ def p_field_reference(t):
     """field_reference : NAME
                        | NAME DOT field_reference"""
 
-    pass
+    # retrieves the arguments length
+    arguments_length = len(t)
 
-def p_table_expression(t):
+    if arguments_length == 2:
+        # retrieves the field reference name
+        field_reference_name = t[1]
+
+        # sets the next filed reference node as none
+        next_field_reference_node = None
+    elif arguments_length == 4:
+        # retrieves the field reference name
+        field_reference_name = t[3]
+
+        # retrieves the next field reference node
+        next_field_reference_node = t[1]
+
+    # creates the field reference node
+    field_reference_node = settler_query_ast.FieldRefereceNode()
+
+    # sets the field reference name in the field reference node
+    field_reference_node.set_field_reference_name(field_reference_name)
+
+    # sets the next node in the field reference node
+    field_reference_node.set_next_node(next_field_reference_node)
+
+    t[0] = field_reference_node
+
+def p_entity_expression(t):
     "entity_expression : from_clause optional_where_clause"
 
-    t[0] = "none"
+    # retrieves the from clause node
+    from_clause_node = t[1]
+
+    # retrieves the optional where clause node
+    optional_where_clause_node = t[2]
+
+    # creates the entity expression node
+    entity_expression_node = settler_query_ast.EntityExpressionNode()
+
+    # sets the from clause node in the entity expression node
+    entity_expression_node.set_from_clause_node(from_clause_node)
+
+    # sets the optional where clause node in the entity expression node
+    entity_expression_node.set_optional_where_clause_node(optional_where_clause_node)
+
+    t[0] = entity_expression_node
 
 def p_from_clause(t):
     "from_clause : FROM entity_reference_commalist"
 
-    t[0] = "none"
+    # retrieves the entity reference commalist node
+    entity_reference_commalist_node = t[2]
+
+    # creates the from clause node
+    from_clause_node = settler_query_ast.FromClauseNode()
+
+    # sets the entity reference commalist node in the from clause node
+    from_clause_node.set_entity_reference_commalist_node(entity_reference_commalist_node)
+
+    t[0] = from_clause_node
 
 def p_entity_reference_commalist(t):
     """entity_reference_commalist : entity_reference
                                   | entity_reference_commalist COMA entity_reference"""
 
-    t[0] = "none"
+    # retrieves the arguments length
+    arguments_length = len(t)
+
+    if arguments_length == 2:
+        # retrieves the entity reference node
+        entity_reference_node = t[1]
+
+        # sets the next entity reference commalist node as none
+        next_entity_reference_commalist_node = None
+    elif arguments_length == 4:
+        # retrieves the entity reference node
+        entity_reference_node = t[3]
+
+        # retrieves the next entity reference commalist node
+        next_entity_reference_commalist_node = t[1]
+
+    # creates the entity reference commalist node
+    entity_reference_commalist_node = settler_query_ast.EntityReferenceCommalistNode()
+
+    # sets the entity reference node in the entity reference commalist node
+    entity_reference_commalist_node.set_entity_reference_node(entity_reference_node)
+
+    # sets the next node in the entity reference commalist node
+    entity_reference_commalist_node.set_next_node(next_entity_reference_commalist_node)
+
+    t[0] = entity_reference_commalist_node
 
 def p_entity_reference(t):
     "entity_reference : entity"
 
-    t[0] = "none"
+    # retrieves the entity node
+    entity_node = t[1]
+
+    # creates the entity reference node
+    entity_reference_node = settler_query_ast.EntityReferenceNode()
+
+    # sets the entity node in the entity reference node
+    entity_reference_node.set_entity_node(entity_node)
+
+    t[0] = entity_reference_node
 
 def p_entity(t):
     """entity : qualified_entity_name
               | qualified_entity_name AS NAME"""
 
-    t[0] = "none"
+    # retrieves the qualified entity name node
+    qualified_entity_name_node = t[1]
+
+    # retrieves the arguments length
+    arguments_length = len(t)
+
+    if arguments_length == 2:
+        # creates the entity node
+        entity_node = settler_query_ast.EntityNode()
+    elif arguments_length == 4:
+        # retrieves the entity as name value
+        entity_as_name_value = t[3]
+
+        # creates the entity node
+        entity_node = settler_query_ast.EntityAsNameNode()
+
+        # sets the entity as name value in the entity as name node
+        entity_node.set_entity_as_name_value(entity_as_name_value)
+
+    # sets the qualified entity name node in the entity node
+    entity_node.set_qualified_entity_name_node(qualified_entity_name_node)
+
+    t[0] = entity_node
 
 def p_qualified_entity_name(t):
     "qualified_entity_name : NAME"
 
-    t[0] = "none"
+    # retrieves the qualified entity name value
+    qualified_entity_name_value = t[1]
+
+    # creates the qualified entity name node
+    qualified_entity_name_node = settler_query_ast.QualifiedEntityNameNode()
+
+    # sets the qualified entity name value in the qualified entity name node
+    qualified_entity_name_node.set_qualified_entity_name_value(qualified_entity_name_value)
+
+    t[0] = qualified_entity_name_node
 
 def p_optional_where_clause(t):
     """optional_where_clause : 
                              | where_clause"""
 
-    t[0] = "none"
+    # retrieves the arguments length
+    arguments_length = len(t)
+
+    if arguments_length == 1:
+        # sets the where clause node as none
+        where_clause_node = None
+    elif arguments_length == 2:
+        # retrieves the where clause node
+        where_clause_node = t[1]
+
+    # creates the optional where clause node
+    optional_where_clause_node = settler_query_ast.OptionalWhereClauseNode()
+
+    # sets the where clause node in the optional where clause node
+    optional_where_clause_node.set_qualified_entity_name_value(where_clause_node)
+
+    t[0] = optional_where_clause_node
 
 def p_where_clause(t):
     "where_clause : WHERE search_condition"
 
-    t[0] = "none"
+    # retrieves the search condition node
+    search_condition_node = t[1]
+
+    # creates the where clause node
+    where_clause_node = settler_query_ast.WhereClauseNode()
+
+    # sets the search condition node in the where clause node
+    where_clause_node.set_search_condition_node(search_condition_node)
+
+    t[0] = where_clause_node
 
 def p_search_condition(t):
     """search_condition :
-                        | search_condition OR search_condition
-                        | search_condition AND search_condition
+                        | predicate
                         | NOT search_condition
-                        | LPAREN search_condition RPAREN
-                        | predicate"""
+                        | search_condition AND search_condition
+                        | search_condition OR search_condition
+                        | LPAREN search_condition RPAREN"""
 
-    t[0] = "none"
+    # retrieves the arguments length
+    arguments_length = len(t)
+
+    if arguments_length == 1:
+        # creates the search condition node
+        search_condition_node = settler_query_ast.SearchConditionNode()
+    elif arguments_length == 2:
+        # retrieves the predicate node
+        predicate_node = t[1]
+
+        # creates the predicate search condition node
+        search_condition_node = settler_query_ast.PredicateSearchConditionNode()
+    elif arguments_length == 3:
+        # retrieves the not expression search condition node
+        not_expression_search_condition_node = t[2]
+
+        # creates the not expression search condition node
+        search_condition_node = settler_query_ast.NotExpressionSearchConditionNode()
+
+        # sets the expression search condition node in the not expression search condition node
+        search_condition_node.set_expression_search_condition_node(not_expression_search_condition_node)
+    elif arguments_length == 4:
+        if t[2] == "and" or t[2] == "or":
+            # retrieves the first expression search condition node
+            first_expression_search_condition_node = t[1]
+
+            # retrieves the second expression search condition node
+            second_expression_search_condition_node = t[3]
+
+            if t[2] == "and":
+                # creates the and expression search condition node
+                search_condition_node = settler_query_ast.AndExpressionSearchConditionNode()
+            elif t[2] == "or":
+                # creates the or expression search condition node
+                search_condition_node = settler_query_ast.OrExpressionSearchConditionNode()
+
+            # sets the first expression search condition node in the search condition node
+            search_condition_node.set_first_expression_search_condition_node(first_expression_search_condition_node)
+
+            # sets the second expression search condition node in the search condition node
+            search_condition_node.set_second_expression_search_condition_node(second_expression_search_condition_node)
+        elif t[1] == "(" and t[3] == ")":
+            # retrieves the parenthesis expression search condition node
+            parenthesis_expression_search_condition_node = t[2]
+
+            # creates the parenthesis expression search condition node
+            search_condition_node = settler_query_ast.ParenthesisExpressionSearchConditionNode()
+
+            # sets the expression search condition node in the parenthesis expression search condition node
+            search_condition_node.set_expression_search_condition_node(parenthesis_expression_search_condition_node)
+
+    t[0] = search_condition_node
 
 def p_predicate(t):
     """predicate : comparison_predicate
@@ -301,11 +530,12 @@ def p_predicate(t):
                  | like_predicate
                  | test_for_null
                  | in_predicate
+                 | in_subquery_predicate
                  | all_or_any_predicate
                  | existence_test
                  | scalar_expression_predicate"""
 
-    t[0] = "none"
+    t[0] = t[1]
 
 def p_comparison_predicate(t):
     "comparison_predicate : scalar_expression EQUALS scalar_expression"
@@ -331,10 +561,14 @@ def p_test_for_null(t):
     t[0] = "none"
 
 def p_in_predicate(t):
-    """in_predicate : scalar_expression IN subquery
-                    | scalar_expression NOT IN subquery
-                    | scalar_expression IN LPAREN scalar_expression_commalist RPAREN
+    """in_predicate : scalar_expression IN LPAREN scalar_expression_commalist RPAREN
                     | scalar_expression NOT IN LPAREN scalar_expression_commalist RPAREN"""
+
+    t[0] = "none"
+
+def p_in_subquery_predicate(t):
+    """in_subquery_predicate : scalar_expression IN subquery
+                             | scalar_expression NOT IN subquery"""
 
     t[0] = "none"
 
