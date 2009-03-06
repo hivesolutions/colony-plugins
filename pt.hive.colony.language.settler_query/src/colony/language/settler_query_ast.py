@@ -1183,6 +1183,42 @@ class ComparisonPredicateNode(BinaryPredicateNode):
 
         BinaryPredicateNode.__init__(self)
 
+class EqualComparisonPredicateNode(ComparisonPredicateNode):
+    """
+    The equal comparison predicate node class.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        ComparisonPredicateNode.__init__(self)
+
+class GreaterComparisonPredicateNode(ComparisonPredicateNode):
+    """
+    The greater comparison predicate node class.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        ComparisonPredicateNode.__init__(self)
+
+class GreaterEqualComparisonPredicateNode(ComparisonPredicateNode):
+    """
+    The greater equal comparison predicate node class.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        ComparisonPredicateNode.__init__(self)
+
 class BetweenPredicateNode(BinaryPredicateNode):
     """
     The between predicate node class.

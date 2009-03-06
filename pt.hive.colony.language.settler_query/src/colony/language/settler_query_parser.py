@@ -483,6 +483,9 @@ def p_search_condition(t):
 
         # creates the predicate search condition node
         search_condition_node = settler_query_ast.PredicateSearchConditionNode()
+
+        # sets the predicate node in the predicate search condition node
+        search_condition_node.set_predicate_node(predicate_node)
     elif arguments_length == 3:
         # retrieves the not expression search condition node
         not_expression_search_condition_node = t[2]
@@ -538,16 +541,34 @@ def p_predicate(t):
     t[0] = t[1]
 
 def p_comparison_predicate(t):
-    "comparison_predicate : scalar_expression EQUALS scalar_expression"
+    """comparison_predicate : scalar_expression EQUALS scalar_expression
+                            | scalar_expression GREATER scalar_expression
+                            | scalar_expression GREATEREQUAL scalar_expression
+                            | scalar_expression LESS scalar_expression
+                            | scalar_expression LESSEQUAL scalar_expression"""
 
-    # retrieves the first scalar expression node
-    first_scalar_expression_node = t[1]
+    if t[2] == "<" or t[2] == "<=":
+        # retrieves the first scalar expression node
+        first_scalar_expression_node = t[3]
 
-    # retrieves the second scalar expression node
-    second_scalar_expression_node = t[3]
+        # retrieves the second scalar expression node
+        second_scalar_expression_node = t[1]
+    else:
+        # retrieves the first scalar expression node
+        first_scalar_expression_node = t[1]
 
-    # creates the comparison predicate node
-    comparison_predicate_node = settler_query_ast.ComparisonPredicateNode()
+        # retrieves the second scalar expression node
+        second_scalar_expression_node = t[3]
+
+    if t[2] == "=":
+        # creates the equals comparison predicate node
+        comparison_predicate_node = settler_query_ast.EqualComparisonPredicateNode()
+    elif t[2] == ">" or t[2] == "<":
+        # creates the greater comparison predicate node
+        comparison_predicate_node = settler_query_ast.GreaterComparisonPredicateNode()
+    elif t[2] == ">=" or t[2] == "<=":
+        # creates the greater equals comparison predicate node
+        comparison_predicate_node = settler_query_ast.GreaterEqualComparisonPredicateNode();
 
     # sets the first scalar expression node in the comparison predicate node
     comparison_predicate_node.set_first_scalar_expression_node(first_scalar_expression_node)

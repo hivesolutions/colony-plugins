@@ -266,3 +266,195 @@ class Visitor:
     @_visit(settler_query_ast.ScalarExpressionNode)
     def visit_scalar_expression_node(self, node):
         print "ScalarExpressionNode: " + str(node)
+
+    @_visit(settler_query_ast.AtomScalarExpressionNode)
+    def visit_atom_scalar_expression_node(self, node):
+        print "AtomScalarExpressionNode: " + str(node)
+
+    @_visit(settler_query_ast.FieldReferenceScalarExpressionNode)
+    def visit_field_reference_scalar_expression_node(self, node):
+        print "FieldReferenceScalarExpressionNode: " + str(node)
+
+    @_visit(settler_query_ast.AtomNode)
+    def visit_atom_node(self, node):
+        print "AtomNode: " + str(node)
+
+    @_visit(settler_query_ast.LiteralNode)
+    def visit_literal_node(self, node):
+        print "LiteralNode: " + str(node)
+
+    @_visit(settler_query_ast.StringLiteralNode)
+    def visit_string_literal_node(self, node):
+        print "StringLiteralNode: " + str(node)
+
+    @_visit(settler_query_ast.NumberLiteralNode)
+    def visit_number_literal_node(self, node):
+        print "NumberLiteralNode: " + str(node)
+
+    @_visit(settler_query_ast.IntegerLiteralNode)
+    def visit_integer_literal_node(self, node):
+        print "IntegerLiteralNode: " + str(node)
+
+    @_visit(settler_query_ast.FieldRefereceNode)
+    def visit_field_reference_node(self, node):
+        print "FieldRefereceNode: " + str(node)
+
+    @_visit(settler_query_ast.EntityExpressionNode)
+    def visit_entity_expression_node(self, node):
+        print "EntityExpressionNode: " + str(node)
+
+    @_visit(settler_query_ast.FromClauseNode)
+    def visit_from_clause_node(self, node):
+        print "FromClauseNode: " + str(node)
+
+    @_visit(settler_query_ast.EntityReferenceCommalistNode)
+    def visit_entity_reference_commalist_node(self, node):
+        print "EntityReferenceCommalistNode: " + str(node)
+
+    @_visit(settler_query_ast.EntityReferenceNode)
+    def visit_entity_reference_node(self, node):
+        print "EntityReferenceNode: " + str(node)
+
+    @_visit(settler_query_ast.EntityNode)
+    def visit_entity_node(self, node):
+        print "EntityNode: " + str(node)
+
+    @_visit(settler_query_ast.EntityAsNameNode)
+    def visit_entity_as_name_node(self, node):
+        print "EntityAsNameNode: " + str(node)
+
+    @_visit(settler_query_ast.QualifiedEntityNameNode)
+    def visit_qualified_entity_name_node(self, node):
+        print "QualifiedEntityNameNode: " + str(node)
+
+    @_visit(settler_query_ast.OptionalWhereClauseNode)
+    def visit_optional_where_clause_node(self, node):
+        print "OptionalWhereClauseNode: " + str(node)
+
+    @_visit(settler_query_ast.WhereClauseNode)
+    def visit_where_clause_node(self, node):
+        print "WhereClauseNode: " + str(node)
+
+    @_visit(settler_query_ast.SearchConditionNode)
+    def visit_search_condition_node(self, node):
+        print "SearchConditionNode: " + str(node)
+
+    @_visit(settler_query_ast.PredicateSearchConditionNode)
+    def visit_predicate_search_condition_node(self, node):
+        print "PredicateSearchConditionNode: " + str(node)
+
+    @_visit(settler_query_ast.ExpressionSearchConditionNode)
+    def visit_expression_search_condition_node(self, node):
+        print "ExpressionSearchConditionNode: " + str(node)
+
+    @_visit(settler_query_ast.BinaryExpressionSearchConditionNode)
+    def visit_binary_wxpression_search_condition_node(self, node):
+        print "BinaryExpressionSearchConditionNode: " + str(node)
+
+    @_visit(settler_query_ast.AndExpressionSearchConditionNode)
+    def visit_and_expression_search_condition_node(self, node):
+        print "AndExpressionSearchConditionNode: " + str(node)
+
+    @_visit(settler_query_ast.OrExpressionSearchConditionNode)
+    def visit_or_expression_search_condition_node(self, node):
+        print "OrExpressionSearchConditionNode: " + str(node)
+
+    @_visit(settler_query_ast.UnaryExpressionSearchConditionNode)
+    def visit_unary_expression_search_condition_node(self, node):
+        print "UnaryExpressionSearchConditionNode: " + str(node)
+
+    @_visit(settler_query_ast.NotExpressionSearchConditionNode)
+    def visit_not_expression_search_condition_node(self, node):
+        print "NotExpressionSearchConditionNode: " + str(node)
+
+    @_visit(settler_query_ast.ParenthesisExpressionSearchConditionNode)
+    def visit_parenthesis_expression_search_condition_node(self, node):
+        print "ParenthesisExpressionSearchConditionNode: " + str(node)
+
+    @_visit(settler_query_ast.PredicateNode)
+    def visit_predicate_node(self, node):
+        print "PredicateNode: " + str(node)
+
+    @_visit(settler_query_ast.BinaryPredicateNode)
+    def visit_binary_predicate_node(self, node):
+        print "BinaryPredicateNode: " + str(node)
+
+    @_visit(settler_query_ast.ComparisonPredicateNode)
+    def visit_comparison_predicate_node(self, node):
+        print "ComparisonPredicateNode: " + str(node)
+
+    @_visit(settler_query_ast.EqualComparisonPredicateNode)
+    def visit_equal_comparison_predicate_node(self, node):
+        print "EqualComparisonPredicateNode: " + str(node)
+
+    @_visit(settler_query_ast.GreaterComparisonPredicateNode)
+    def visit_greater_comparison_predicate_node(self, node):
+        print "GreaterComparisonPredicateNode: " + str(node)
+
+    @_visit(settler_query_ast.GreaterEqualComparisonPredicateNode)
+    def visit_greater_equal_comparison_predicate_node(self, node):
+        print "GreaterEqualComparisonPredicateNode: " + str(node)
+
+    @_visit(settler_query_ast.BetweenPredicateNode)
+    def visit_between_predicate_node(self, node):
+        print "BetweenPredicateNode: " + str(node)
+
+    @_visit(settler_query_ast.NotBetweenPredicateNode)
+    def visit_not_between_predicate_node(self, node):
+        print "NotBetweenPredicateNode: " + str(node)
+
+    @_visit(settler_query_ast.LikePredicateNode)
+    def visit_like_predicate_node(self, node):
+        print "LikePredicateNode: " + str(node)
+
+    @_visit(settler_query_ast.NotLikePredicateNode)
+    def visit_not_like_predicate_node(self, node):
+        print "NotLikePredicateNode: " + str(node)
+
+    @_visit(settler_query_ast.UnaryPredicateNode)
+    def visit_unary_predicate_node(self, node):
+        print "UnaryPredicateNode: " + str(node)
+
+    @_visit(settler_query_ast.IsNullPredicateNode)
+    def visit_is_null_predicate_node(self, node):
+        print "IsNullPredicateNode: " + str(node)
+
+    @_visit(settler_query_ast.IsNotNullPredicateNode)
+    def visit_is_not_null_predicate_node(self, node):
+        print "IsNotNullPredicateNode: " + str(node)
+
+    @_visit(settler_query_ast.InPredicateNode)
+    def visit_in_predicate_node(self, node):
+        print "InPredicateNode: " + str(node)
+
+    @_visit(settler_query_ast.NotInPredicateNode)
+    def visit_not_in_predicate_node(self, node):
+        print "NotInPredicateNode: " + str(node)
+
+    @_visit(settler_query_ast.InSubqueryPredicateNode)
+    def visit_in_subquery_predicate_node(self, node):
+        print "InSubqueryPredicateNode: " + str(node)
+
+    @_visit(settler_query_ast.NotInSubqueryPredicateNode)
+    def visit_not_in_subquery_predicate_node(self, node):
+        print "NotInSubqueryPredicateNode: " + str(node)
+
+    @_visit(settler_query_ast.AllOrAnyPredicateNode)
+    def visit_all_or_any_predicate_node(self, node):
+        print "AllOrAnyPredicateNode: " + str(node)
+
+    @_visit(settler_query_ast.AnyAllSomeNode)
+    def visit_any_all_some_node(self, node):
+        print "AnyAllSomeNode: " + str(node)
+
+    @_visit(settler_query_ast.ExistenceTestNode)
+    def visit_existence_test_node(self, node):
+        print "ExistenceTestNode: " + str(node)
+
+    @_visit(settler_query_ast.ScalarExpressionPredicateNode)
+    def visit_scalar_expression_predicate_node(self, node):
+        print "ScalarExpressionPredicateNode: " + str(node)
+
+    @_visit(settler_query_ast.SubqueryNode)
+    def visit_subquery_node(self, node):
+        print "SubqueryNode: " + str(node)

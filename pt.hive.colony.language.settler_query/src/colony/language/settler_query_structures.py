@@ -299,20 +299,6 @@ class UnaryTermFilter(Filter):
 
         Filter.__init__(self)
 
-class UnaryTermFilter(Filter):
-    """
-    The unary term filter class.
-    """
-
-    operand = None
-
-    def __init__(self):
-        """
-        Constructor of the class.
-        """
-
-        Filter.__init__(self)
-
 class NotTermFilter(UnaryTermFilter):
     """
     The not term filter class.
