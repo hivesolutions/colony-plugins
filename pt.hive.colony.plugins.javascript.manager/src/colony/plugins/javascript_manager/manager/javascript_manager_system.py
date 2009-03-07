@@ -95,7 +95,6 @@ class JavascriptManager:
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.context_view/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.customers_suppliers/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.finances/plugins",
-                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.functional_unit/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.human_resources/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.inventory/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.main/plugins",
