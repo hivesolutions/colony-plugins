@@ -103,6 +103,19 @@ class BusinessSessionManager:
         # returns the created session manager
         return session_manager
 
+    def load_session_manager_master(self, session_name, entity_manager = None):
+        # retrieves the business session serializer plugins
+        business_session_serializer_plugins = self.business_session_manager_plugin.business_session_serializer_plugins
+
+        # creates the session manager master
+        session_manager_master = SessionManagerMaster(session_name, self.loaded_business_logic_classes_list, self.loaded_business_logic_classes_map, entity_manager, business_session_serializer_plugins)
+
+        # adds the created session manager master to the list of active session managers
+        self.active_session_manager_list.append(session_manager_master)
+
+        # returns the created session manager master
+        return session_manager_master
+
     def load_session_manager_entity_manager(self, session_name, engine_name):
         # retrieves the business entity manager plugin
         business_entity_manager_plugin = self.business_session_manager_plugin.business_entity_manager_plugin
@@ -151,7 +164,7 @@ class SessionManager:
         """
 
         self.instantiate_business_logic()
-        self.inject_session_manager()
+        self.inject_entity_manager()
         self.inject_business_logic()
 
     def stop_session(self):
@@ -176,10 +189,10 @@ class SessionManager:
             # associates the business logic class name with the business logic instance
             self.business_logic_instances_map[business_logic_class_name] = business_logic_instance
 
-    def inject_session_manager(self):
+    def inject_entity_manager(self):
         # iterates over all the business logic classes
         for business_logic_class in self.business_logic_classes_list:
-            setattr(business_logic_class, "entity_manager", self.entity_manager)
+            business_logic_class.entity_manager = self.entity_manager
 
     def inject_business_logic(self):
         # iterates over the business logic instance map
@@ -188,3 +201,73 @@ class SessionManager:
             business_logic_instance = self.business_logic_instances_map[business_logic_instance_name]
 
             setattr(self, business_logic_instance_name, business_logic_instance)
+
+class SessionManagerMaster(SessionManager):
+    """
+    The session manager master class.
+    """
+
+    business_session_serializer_plugins = []
+    """ The business session serializer plugins """
+
+    session_proxy = None
+    """ The session proxy """
+
+    entity_manager_pool = []
+    """ The entity manager pool """
+
+    session_manager_pool = []
+    """ The session manager pool """
+
+    def __init__(self, session_name, business_logic_classes_list, business_logic_classes_map, entity_manager = None, business_session_serializer_plugins = []):
+        SessionManager.__init__(self, session_name, business_logic_classes_list, business_logic_classes_map, entity_manager)
+
+        self.business_session_serializer_plugins = business_session_serializer_plugins
+
+    def create_session_proxy(self):
+        self.session_proxy = SessionManagerProxy(self)
+
+    def register_session_proxy(self):
+        for business_session_serializer_plugin in self.business_session_serializer_plugins:
+            business_session_serializer_plugin.add_session_proxy(self.session_proxy)
+
+    def unregister_session_proxy(self):
+        for business_session_serializer_plugin in self.business_session_serializer_plugins:
+            business_session_serializer_plugin.remove_session_proxy(self.session_proxy)
+
+    def start_entity_manager_pool(self, number_threads, scheduling_algorithm, maximum_number_threads):
+        pass
+
+    def start_session_manager_pool(self, number_threads, scheduling_algorithm, maximum_number_threads):
+        pass
+
+    def stop_entity_manager_pool(self):
+        pass
+
+    def stop_session_manager_pool(self):
+        pass
+
+    def handle_request(self, session_information, session_request):
+        entity_attribute = self.getattr(self, session_request.session_entity)
+        entity_method_attribute = self.getattr(entity_attribute, session_request.session_methof)
+        entity_method_attribute(*(session_request.session_method_arguments.values()))
+
+class SessionManagerProxy:
+    """
+    The session proxy class.
+    """
+
+    session_manager = None
+    """ The session manager """
+
+    def __init__(self, session_manager):
+        self.session_manager = session_manager
+
+    def get_session_name(self):
+        # retrieves the session name
+        session_name = self.session_manager.session_name
+
+        return session_name
+
+    def handle_request(self, session_information, session_request):
+        self.session_manager.handle_request(session_information, session_request)

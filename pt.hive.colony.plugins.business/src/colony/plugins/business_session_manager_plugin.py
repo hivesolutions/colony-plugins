@@ -54,13 +54,15 @@ class BusinessSessionManagerPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["business_session_manager"]
-    capabilities_allowed = ["business_logic", "business_logic_bundle"]
+    capabilities_allowed = ["business_session_serializer", "business_logic", "business_logic_bundle"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.business.entity_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
 
     business_session_manager = None
+
+    business_session_serializer_plugins = []
 
     business_entity_manager_plugin = None
 
@@ -94,11 +96,18 @@ class BusinessSessionManagerPlugin(colony.plugins.plugin_system.Plugin):
     def load_session_manager(self, session_name, entity_manager):
         return self.business_session_manager.load_session_manager(session_name, entity_manager)
 
+    def load_session_manager_master(self, session_name, entity_manager):
+        return self.business_session_manager.load_session_manager_master(session_name, entity_manager)
+
     def load_session_manager_entity_manager(self, session_name, engine_name):
         return self.business_session_manager.load_session_manager_entity_manager(session_name, engine_name)
 
     def get_transaction_decorator(self):
         return self.business_entity_manager_plugin.get_transaction_decorator()
+
+    @colony.plugins.decorators.load_allowed_capability("business_session_serializer")
+    def business_session_serializer_load_allowed(self, plugin, capability):
+        self.business_session_serializer_plugins.append(plugin)
 
     @colony.plugins.decorators.load_allowed_capability("business_logic")
     def business_logic_load_allowed(self, plugin, capability):
@@ -109,6 +118,11 @@ class BusinessSessionManagerPlugin(colony.plugins.plugin_system.Plugin):
     def business_logic_bundle_load_allowed(self, plugin, capability):
         business_logic_bundle = plugin.get_business_logic_bundle()
         self.business_session_manager.load_business_logic_bundle(business_logic_bundle)
+
+    @colony.plugins.decorators.unload_allowed_capability("business_session_serializer")
+    def business_session_serializer_unload_allowed(self, plugin, capability):
+        if plugin in self.business_session_serializer_plugins:
+            self.business_session_serializer_plugins.remove(plugin)
 
     @colony.plugins.decorators.unload_allowed_capability("business_logic")
     def business_logic_unload_allowed(self, plugin, capability):
