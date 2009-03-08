@@ -111,7 +111,7 @@ class MainJsonrpcManager:
             # retrieves the number of parameters sent
             number_parameters = len(parameters)
 
-            # in case the number of sent arguments is the expected
+            # in case the number of sent arguments is not the expected
             if not number_parameters == rpc_method_number_arguments:
                 result = None
                 error = main_jsonrpc_manager_exceptions.InvalidNumberArguments("The number of sent arguments is " + str(number_parameters) + ", expected " + str(rpc_method_number_arguments))
