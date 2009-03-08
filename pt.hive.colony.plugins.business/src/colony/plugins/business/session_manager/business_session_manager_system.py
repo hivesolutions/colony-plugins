@@ -248,8 +248,8 @@ class SessionManagerMaster(SessionManager):
         pass
 
     def handle_request(self, session_information, session_request):
-        entity_attribute = self.getattr(self, session_request.session_entity)
-        entity_method_attribute = self.getattr(entity_attribute, session_request.session_methof)
+        entity_attribute = getattr(self, session_request.session_entity)
+        entity_method_attribute = getattr(entity_attribute, session_request.session_method)
         entity_method_attribute(*(session_request.session_method_arguments.values()))
 
 class SessionManagerProxy:
