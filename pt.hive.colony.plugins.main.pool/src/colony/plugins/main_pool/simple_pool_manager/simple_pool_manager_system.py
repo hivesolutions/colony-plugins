@@ -37,6 +37,20 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import simple_pool_manager_exceptions
+
+DEFAULT_POOL_SIZE = 5
+""" The default pool size """
+
+DEFAULT_MAX_POOL_SIZE = 10
+""" The default maximum pool size """
+
+CONSTANT_SCHEDULING_ALGORITHM = 1
+""" The constant size scheduling algorithm value """
+
+DYNAMIC_SCHEDULING_ALGORITHM = 2
+""" The dynamic size scheduling algorithm value """
+
 class SimplePoolManager:
     """
     The simple pool manager class.
@@ -59,3 +73,133 @@ class SimplePoolManager:
         self.simple_pool_manager_plugin = simple_pool_manager_plugin
 
         self.simple_pools_list = []
+
+    def create_new_simple_pool(self, name, description, pool_size = DEFAULT_POOL_SIZE, scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM, maximum_pool_size = DEFAULT_MAX_POOL_SIZE):
+        """
+        Creates a new simple pool with the given name, description and pool size.
+        
+        @type name: String
+        @param name: The simple pool name.
+        @type description: String
+        @param description: The simple pool description.
+        @type pool_size: int
+        @param pool_size: The simple pool size.
+        @type scheduling_algorithm: int
+        @param scheduling_algorithm: The simple pool scheduling algorithm.
+        @type maximum_pool_size: int
+        @param maximum_pool_size: The maximum pool size.
+        @rtype: SimplePoolImplementation
+        @return: The created simple pool.
+        """
+
+        # retrieves the logger
+        logger = self.simple_pool_manager_plugin.logger
+
+        # creates a new simple pool
+        simple_pool = SimplePoolImplementation(name, description, pool_size, scheduling_algorithm, maximum_pool_size, logger)
+
+        # adds the new simple pool to the list of simple pools
+        self.simple_pools_list.append(simple_pool)
+
+        # returns the new simple pool
+        return simple_pool
+
+class SimplePoolImplementation:
+    """
+    The simple pool implementation class.
+    """
+
+    name = "none"
+    """ The simple pool name """
+
+    description = "none"
+    """ The simple pool description """
+
+    pool_size = DEFAULT_NUMBER_THREADS
+    """ The simple pool size """
+
+    scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM
+    """ The simple pool scheduling algorithm """
+
+    maximum_pool_size = DEFAULT_MAXIMUM_NUMBER_THREADS
+    """ The simple pool maximum pool size """
+
+    logger = None
+    """ The logger used """
+
+    pool_items_list = []
+    """ The list of all the items in the pool """
+
+    free_pool_items_list = []
+    """ The list of all the free items in the pool """
+
+    busy_pool_items_list = []
+    """ The list of all the busy items in the pool """
+
+    def __init__(self, name = "none", description = "none", pool_size = DEFAULT_POOL_SIZE, scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM, maximum_pool_size = DEFAULT_MAX_POOL_SIZE, logger = None):
+        """
+        Constructor of the class
+        
+        @type name: String
+        @param name: The simple pool name
+        @type description: String
+        @param description: The simple pool description
+        @type pool_size: int
+        @param pool_size: The simple pool size.
+        @type scheduling_algorithm: int
+        @param scheduling_algorithm: The simple pool scheduling algorithm.
+        @type maximum_pool_size: int
+        @param maximum_pool_size: The maximum pool size.
+        @type logger: Log
+        @param logger: The logger used.
+        """
+
+        self.name = name
+        self.description = description
+        self.pool_size = pool_size
+        self.scheduling_algorithm = scheduling_algorithm
+        self.maximum_pool_size = maximum_pool_size
+        self.logger = logger
+
+    def pool_growable(self):
+        """
+        Retrieves if the simple pool can grow or not.
+        
+        @rtype: bool
+        @return: The result of the is growable test.
+        """
+
+        # retrieves the current pool size
+        current_pool_size = len(self.pool_items_list)
+
+        if self.scheduling_algorithm == CONSTANT_SCHEDULING_ALGORITHM:
+            if current_pool_size < self.pool_size:
+                return True
+            else:
+                return False
+        elif self.scheduling_algorithm == DYNAMIC_SCHEDULING_ALGORITHM:
+            if current_pool_size < self.maximum_pool_size:
+                return True
+            else:
+                return False
+
+    def add_pool_item(self, pool_item):
+        if self.growable():
+            self.pool_items_list.append(pool_item)
+        else:
+            raise simple_pool_manager_exceptions.SimplePoolManagerPoolFull("can't grow the pool")
+
+    def add_or_get_pool_item(self, pool_item):
+        pass
+
+    def set_item_constructor_method(self, item_constructor_method):
+        pass
+
+    def get_pool_item(self):
+        pass
+
+    def release_pool_item(self, pool_item):
+        pass
+
+    def set_auto_release(self, pool_item, timeout):
+        pass

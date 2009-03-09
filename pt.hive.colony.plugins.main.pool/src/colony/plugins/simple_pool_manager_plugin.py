@@ -64,7 +64,7 @@ class SimplePoolManagerPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global main_pool
         import main_pool.simple_pool_manager.simple_pool_manager_system
-        self.thread_pool_manager = main_pool.simple_pool_manager.simple_pool_manager_system.SimplePoolManager(self)
+        self.simple_pool_manager = main_pool.simple_pool_manager.simple_pool_manager_system.SimplePoolManager(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
@@ -83,3 +83,6 @@ class SimplePoolManagerPlugin(colony.plugins.plugin_system.Plugin):
 
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    def create_new_simple_pool(self, name, description, pool_size, scheduling_algorithm, maximum_pool_size):
+        return self.simple_pool_manager.create_new_simple_pool(name, description, pool_size, scheduling_algorithm, maximum_pool_size)
