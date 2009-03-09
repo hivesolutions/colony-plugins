@@ -37,6 +37,15 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+POOL_SIZE = 15
+""" The pool size """
+
+MAX_POOL_SIZE = 30
+""" The maximum pool size """
+
+SCHEDULING_ALGORITHM = 2
+""" The scheduling algorithm """ 
+
 class BusinessSessionManager:
     """
     The business session manager class
@@ -107,8 +116,11 @@ class BusinessSessionManager:
         # retrieves the business session serializer plugins
         business_session_serializer_plugins = self.business_session_manager_plugin.business_session_serializer_plugins
 
+        # retrieves the simple pool manager plugin
+        simple_pool_manager_plugin = self.business_session_manager_plugin.simple_pool_manager_plugin
+
         # creates the session manager master
-        session_manager_master = SessionManagerMaster(session_name, self.loaded_business_logic_classes_list, self.loaded_business_logic_classes_map, entity_manager, business_session_serializer_plugins)
+        session_manager_master = SessionManagerMaster(session_name, self.loaded_business_logic_classes_list, self.loaded_business_logic_classes_map, entity_manager, business_session_serializer_plugins, simple_pool_manager_plugin)
 
         # adds the created session manager master to the list of active session managers
         self.active_session_manager_list.append(session_manager_master)
@@ -210,19 +222,44 @@ class SessionManagerMaster(SessionManager):
     business_session_serializer_plugins = []
     """ The business session serializer plugins """
 
+    simple_pool_manager_plugin = None
+    """ The simple pool manager plugin """
+
     session_proxy = None
     """ The session proxy """
+
+    engine_name = "none"
+    """ The name of the used engine """
+
+    entity_manager_pool_size = None
+    """ The entity manager pool size """
+
+    entity_manager_scheduling_algorithm = None
+    """ The entity manager scheduling algorithm """
+
+    entity_manager_maximum_pool_size = None
+    """ The entity manager maximum pool size """
 
     entity_manager_pool = []
     """ The entity manager pool """
 
+    session_manager_pool_size = None
+    """ The session manager pool size """
+
+    session_manager_scheduling_algorithm = None
+    """ The session manager scheduling algorithm """
+
+    session_manager_maximum_pool_size = None
+    """ The session manager maximum pool size """
+
     session_manager_pool = []
     """ The session manager pool """
 
-    def __init__(self, session_name, business_logic_classes_list, business_logic_classes_map, entity_manager = None, business_session_serializer_plugins = []):
+    def __init__(self, session_name, business_logic_classes_list, business_logic_classes_map, entity_manager = None, business_session_serializer_plugins = [], simple_pool_manager_plugin = None):
         SessionManager.__init__(self, session_name, business_logic_classes_list, business_logic_classes_map, entity_manager)
 
         self.business_session_serializer_plugins = business_session_serializer_plugins
+        self.simple_pool_manager_plugin = simple_pool_manager_plugin
 
     def create_session_proxy(self):
         self.session_proxy = SessionManagerProxy(self)
@@ -235,11 +272,12 @@ class SessionManagerMaster(SessionManager):
         for business_session_serializer_plugin in self.business_session_serializer_plugins:
             business_session_serializer_plugin.remove_session_proxy(self.session_proxy)
 
-    def start_entity_manager_pool(self, number_threads, scheduling_algorithm, maximum_number_threads):
+    def start_entity_manager_pool(self, engine_name, pool_size = POOL_SIZE, scheduling_algorithm = SCHEDULING_ALGORITHM, maximum_pool_size = MAX_POOL_SIZE):
         pass
 
-    def start_session_manager_pool(self, number_threads, scheduling_algorithm, maximum_number_threads):
-        pass
+    def start_session_manager_pool(self, session_name, pool_size = POOL_SIZE, scheduling_algorithm = SCHEDULING_ALGORITHM, maximum_number_threads = MAX_POOL_SIZE):
+        # sets the session name
+        self.session_name = session_name
 
     def stop_entity_manager_pool(self):
         pass
@@ -248,9 +286,17 @@ class SessionManagerMaster(SessionManager):
         pass
 
     def handle_request(self, session_information, session_request):
+        # retrieves the entity attribute from the instance
         entity_attribute = getattr(self, session_request.session_entity)
+
+        # retrieves the entity method attribute from the entity attribute
         entity_method_attribute = getattr(entity_attribute, session_request.session_method)
-        entity_method_attribute(*(session_request.session_method_arguments.values()))
+
+        # retrieves the session method arguments list
+        session_method_arguments_list = session_request.session_method_arguments.values()
+
+        # calls the entity method with the method arguments list
+        entity_method_attribute(*session_method_arguments_list)
 
 class SessionManagerProxy:
     """
@@ -267,6 +313,7 @@ class SessionManagerProxy:
         # retrieves the session name
         session_name = self.session_manager.session_name
 
+        # returns the session name
         return session_name
 
     def handle_request(self, session_information, session_request):

@@ -56,7 +56,9 @@ class BusinessSessionManagerPlugin(colony.plugins.plugin_system.Plugin):
     capabilities = ["business_session_manager"]
     capabilities_allowed = ["business_session_serializer", "business_logic", "business_logic_bundle"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.business.entity_manager", "1.0.0")]
+                    "pt.hive.colony.plugins.business.entity_manager", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.main.pool.simple_pool_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
 
@@ -65,6 +67,7 @@ class BusinessSessionManagerPlugin(colony.plugins.plugin_system.Plugin):
     business_session_serializer_plugins = []
 
     business_entity_manager_plugin = None
+    simple_pool_manager_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -140,3 +143,10 @@ class BusinessSessionManagerPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.business.entity_manager")
     def set_business_entity_manager_plugin(self, business_entity_manager_plugin):
         self.business_entity_manager_plugin = business_entity_manager_plugin
+
+    def get_simple_pool_manager_plugin(self):
+        return self.simple_pool_manager_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.pool.simple_pool_manager")
+    def set_simple_pool_manager_plugin(self, simple_pool_manager_plugin):
+        self.simple_pool_manager_plugin = simple_pool_manager_plugin
