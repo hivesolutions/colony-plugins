@@ -201,7 +201,7 @@ class ThreadPoolImplementation:
         @param name: The thread pool name
         @type description: String
         @param description: The thread pool description
-        @type number_threads: String
+        @type number_threads: int
         @param number_threads: The thread pool number of threads
         @type scheduling_algorithm: int
         @param scheduling_algorithm: The thread pool scheduling algorithm
