@@ -75,6 +75,8 @@ class DummyBusinessLogic2:
         # creates the dummy session master
         dummy_session_master = business_session_manager_plugin.load_session_manager_master("dummy_session_2", None)
 
+        dummy_session_master.start_session_manager_pool("dummy_session_2")
+
         dummy_session_master.start_session()
 
         dummy_session_master.create_session_proxy()

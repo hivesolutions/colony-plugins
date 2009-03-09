@@ -163,7 +163,7 @@ class SimplePoolImplementation:
 
     def pool_growable(self):
         """
-        Retrieves if the simple pool can grow or not.
+        Returns if the simple pool can grow or not.
         
         @rtype: bool
         @return: The result of the is growable test.

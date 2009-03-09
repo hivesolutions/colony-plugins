@@ -43,7 +43,7 @@ POOL_SIZE = 15
 MAX_POOL_SIZE = 30
 """ The maximum pool size """
 
-SCHEDULING_ALGORITHM = 2
+SCHEDULING_ALGORITHM = 1
 """ The scheduling algorithm """ 
 
 class BusinessSessionManager:
@@ -275,9 +275,30 @@ class SessionManagerMaster(SessionManager):
     def start_entity_manager_pool(self, engine_name, pool_size = POOL_SIZE, scheduling_algorithm = SCHEDULING_ALGORITHM, maximum_pool_size = MAX_POOL_SIZE):
         pass
 
-    def start_session_manager_pool(self, session_name, pool_size = POOL_SIZE, scheduling_algorithm = SCHEDULING_ALGORITHM, maximum_number_threads = MAX_POOL_SIZE):
+    def start_session_manager_pool(self, session_name, pool_size = POOL_SIZE, scheduling_algorithm = SCHEDULING_ALGORITHM, maximum_pool_size = MAX_POOL_SIZE):
         # sets the session name
         self.session_name = session_name
+
+        # creates the session manager pool name
+        session_manager_pool_name = session_name + "/session_manager"
+
+        # creates the session manager pool description
+        session_manager_pool_description = session_manager_pool_name + "/description"
+
+        # creates the session manager pool
+        self.session_manager_pool = self.simple_pool_manager_plugin.create_new_simple_pool(session_manager_pool_name, session_manager_pool_description, pool_size, scheduling_algorithm, maximum_pool_size)
+
+        # sets the item constructor for the session manager pool
+        self.session_manager_pool.set_item_constructor_method(self.item_constructor_method)
+
+    def item_constructor_method(self):
+        # tenho de criar um object do tipo session manager
+        # e dar um nome ao mesmo, ou nao !!!
+        # posso usar um contador local para manter o track do nome de cada uma dessas sessoes
+        # tenho de fazer get de um elemento do session manager para meter neste elemento
+        # dependendo do algoritmo pode ser 1-1 ou *-1 (sendo o ultimo para mim melhor)
+
+        return object()
 
     def stop_entity_manager_pool(self):
         pass
