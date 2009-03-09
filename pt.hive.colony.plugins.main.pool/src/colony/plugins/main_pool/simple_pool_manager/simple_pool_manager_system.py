@@ -42,7 +42,7 @@ import simple_pool_manager_exceptions
 DEFAULT_POOL_SIZE = 5
 """ The default pool size """
 
-DEFAULT_MAX_POOL_SIZE = 10
+DEFAULT_MAXIMUM_POOL_SIZE = 10
 """ The default maximum pool size """
 
 CONSTANT_SCHEDULING_ALGORITHM = 1
@@ -74,7 +74,7 @@ class SimplePoolManager:
 
         self.simple_pools_list = []
 
-    def create_new_simple_pool(self, name, description, pool_size = DEFAULT_POOL_SIZE, scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM, maximum_pool_size = DEFAULT_MAX_POOL_SIZE):
+    def create_new_simple_pool(self, name, description, pool_size = DEFAULT_POOL_SIZE, scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM, maximum_pool_size = DEFAULT_MAXIMUM_POOL_SIZE):
         """
         Creates a new simple pool with the given name, description and pool size.
         
@@ -115,13 +115,13 @@ class SimplePoolImplementation:
     description = "none"
     """ The simple pool description """
 
-    pool_size = DEFAULT_NUMBER_THREADS
+    pool_size = DEFAULT_POOL_SIZE
     """ The simple pool size """
 
     scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM
     """ The simple pool scheduling algorithm """
 
-    maximum_pool_size = DEFAULT_MAXIMUM_NUMBER_THREADS
+    maximum_pool_size = DEFAULT_MAXIMUM_POOL_SIZE
     """ The simple pool maximum pool size """
 
     logger = None
@@ -136,7 +136,7 @@ class SimplePoolImplementation:
     busy_pool_items_list = []
     """ The list of all the busy items in the pool """
 
-    def __init__(self, name = "none", description = "none", pool_size = DEFAULT_POOL_SIZE, scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM, maximum_pool_size = DEFAULT_MAX_POOL_SIZE, logger = None):
+    def __init__(self, name = "none", description = "none", pool_size = DEFAULT_POOL_SIZE, scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM, maximum_pool_size = DEFAULT_MAXIMUM_POOL_SIZE, logger = None):
         """
         Constructor of the class
         
