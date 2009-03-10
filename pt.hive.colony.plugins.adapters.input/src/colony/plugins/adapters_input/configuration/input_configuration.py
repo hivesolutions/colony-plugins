@@ -107,7 +107,6 @@ class InputConfiguration:
         """
         return self.table_map[table_name].get_internal_attribute_entity_id(column_name)
 
-    #@todo: comment this function
     def get_internal_attribute_entity_name(self, table_name, column_name):
         """
         @param table_name: Name of the table to which the column name argument belongs.
