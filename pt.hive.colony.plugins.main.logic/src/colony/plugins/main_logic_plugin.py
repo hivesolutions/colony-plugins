@@ -52,7 +52,7 @@ class MainLogicPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["main_logic"]
+    capabilities = ["console_command_extension", "main_logic"]
     capabilities_allowed = ["adapter.input", "adapter.output"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.tasks.task_manager", "1.0.0")]
@@ -75,7 +75,9 @@ class MainLogicPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global main_logic
         import main_logic.main_logic
+        import main_logic.console_main_logic
         self.logic = main_logic.main_logic.MainLogic(self)
+        self.console_main_logic = main_logic.console_main_logic.ConsoleMainLogic(self)
         
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -114,3 +116,15 @@ class MainLogicPlugin(colony.plugins.plugin_system.Plugin):
             
     def process_query(self, args):
         self.logic.process_query(args)
+        
+    def get_console_extension_name(self):
+        return self.console_main_logic.get_console_extension_name()
+
+    def get_all_commands(self):
+        return self.console_main_logic.get_all_commands()
+
+    def get_handler_command(self, command):
+        return self.console_main_logic.get_handler_command(command)
+
+    def get_help(self):
+        return self.console_main_logic.get_help()
