@@ -42,6 +42,15 @@ import business_session_serializer_exceptions
 SERVICE_ID = "business_session_serializer"
 """ The service id """
 
+SESSION_NAME_VALUE = "session_name"
+""" The session name value """
+
+GET_SESSION_METHODS_TYPE_VALUE = "get_session_methods"
+""" The get session methods type value """
+
+CALL_SESSION_METHOD_TYPE_VALUE = "call_session_method"
+""" The call session method type value """
+
 class BusinessSessionSerializer:
     """
     The business session serializer class.
@@ -95,15 +104,15 @@ class BusinessSessionSerializer:
     def get_rpc_methods_alias(self):
         return {}
 
-    def call_session_method(self, session_information, session_entity, session_method, session_method_arguments):
+    def get_session_methods(self, session_information):
         # retrieves the logger
         logger = self.business_session_serializer_plugin.logger
 
         # prints the debug message
-        logger.debug("Received session method call request, session: %s, entity: %s, method: %s" % (str(session_information), session_entity, session_method))
+        logger.debug("Received session methods retrieval request")
 
         # retrieves the session name
-        session_name = session_information["session_name"]
+        session_name = session_information[SESSION_NAME_VALUE]
 
         if session_name in self.session_proxy_map:
             session_proxy = self.session_proxy_map[session_name]
@@ -117,7 +126,35 @@ class BusinessSessionSerializer:
         session_information_structure.convert_from_map(session_information)
 
         # creates the session request entity
-        session_request_structure = SessionRequest(session_entity, session_method, session_method_arguments)
+        session_request_structure = GetSessionMethodsSessionRequest()
+
+        # send the session information and session request to the session proxy
+        # for handling
+        return session_proxy.handle_request(session_information_structure, session_request_structure)
+
+    def call_session_method(self, session_information, session_entity, session_method, session_method_arguments):
+        # retrieves the logger
+        logger = self.business_session_serializer_plugin.logger
+
+        # prints the debug message
+        logger.debug("Received session method call request, session: %s, entity: %s, method: %s" % (str(session_information), session_entity, session_method))
+
+        # retrieves the session name
+        session_name = session_information[SESSION_NAME_VALUE]
+
+        if session_name in self.session_proxy_map:
+            session_proxy = self.session_proxy_map[session_name]
+        else:
+            raise business_session_serializer_exceptions.SessionSerializerProxyNotFound("proxy " + session_name + " does not exists")
+
+        # creates the session information entity
+        session_information_structure = SessionInformation()
+
+        # populates the session information entity from the session information map
+        session_information_structure.convert_from_map(session_information)
+
+        # creates the session request entity
+        session_request_structure = CallSessionMethodSessionRequest(session_entity, session_method, session_method_arguments)
 
         # send the session information and session request to the session proxy
         # for handling
@@ -152,6 +189,25 @@ class SessionRequest:
     The session request class.
     """
 
+    session_request_type = "none"
+    """ The session request type """
+
+    def __init__(self, session_request_type):
+        self.session_request_type = session_request_type
+
+class GetSessionMethodsSessionRequest(SessionRequest):
+    """
+    The get session methods session request class.
+    """
+
+    def __init__(self):
+        SessionRequest.__init__(self, GET_SESSION_METHODS_TYPE_VALUE)
+
+class CallSessionMethodSessionRequest(SessionRequest):
+    """
+    The call session method session request class.
+    """
+
     session_entity = "none"
     """ The session entity """
 
@@ -162,6 +218,8 @@ class SessionRequest:
     """ The session arguments """
 
     def __init__(self, session_entity = "none", session_method = "none", session_method_arguments = {}):
+        SessionRequest.__init__(self, CALL_SESSION_METHOD_TYPE_VALUE)
+
         self.session_entity = session_entity
         self.session_method = session_method
         self.session_method_arguments = session_method_arguments

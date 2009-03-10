@@ -46,6 +46,12 @@ MAX_POOL_SIZE = 30
 SCHEDULING_ALGORITHM = 1
 """ The scheduling algorithm """ 
 
+GET_SESSION_METHODS_TYPE_VALUE = "get_session_methods"
+""" The get session methods type value """
+
+CALL_SESSION_METHOD_TYPE_VALUE = "call_session_method"
+""" The call session method type value """
+
 class BusinessSessionManager:
     """
     The business session manager class
@@ -306,7 +312,7 @@ class SessionManagerMaster(SessionManager):
     def stop_session_manager_pool(self):
         pass
 
-    def handle_request(self, session_information, session_request):
+    def handle_call_method_request(self, session_information, session_request):
         # retrieves the entity attribute from the instance
         entity_attribute = getattr(self, session_request.session_entity)
 
@@ -317,7 +323,10 @@ class SessionManagerMaster(SessionManager):
         session_method_arguments_list = session_request.session_method_arguments.values()
 
         # calls the entity method with the method arguments list
-        entity_method_attribute(*session_method_arguments_list)
+        return_value = entity_method_attribute(*session_method_arguments_list)
+
+        # returns the method return value
+        return return_value
 
 class SessionManagerProxy:
     """
@@ -338,4 +347,7 @@ class SessionManagerProxy:
         return session_name
 
     def handle_request(self, session_information, session_request):
-        self.session_manager.handle_request(session_information, session_request)
+        if session_request.session_request_type == GET_SESSION_METHODS_TYPE_VALUE:
+            pass
+        elif session_request.session_request_type == CALL_SESSION_METHOD_TYPE_VALUE:
+            return self.session_manager.handle_call_method_request(session_information, session_request)
