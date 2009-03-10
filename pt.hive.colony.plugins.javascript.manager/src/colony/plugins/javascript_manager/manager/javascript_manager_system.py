@@ -80,7 +80,7 @@ class JavascriptManager:
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.data_structure/plugins", 
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.business/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.gui.development/plugins",
-                                               #self.workspace_base_path + "/pt.hive.colony.web.plugins.dummy/plugins",
+                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.dummy/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.gui.component.data_editor/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.gui.component.eureka/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.gui.component.login/plugins",
