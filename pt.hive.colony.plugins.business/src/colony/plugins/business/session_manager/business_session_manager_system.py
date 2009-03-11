@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import types
+
 POOL_SIZE = 15
 """ The pool size """
 
@@ -167,6 +169,9 @@ class SessionManager:
     business_logic_instances_map = {}
     """ The map associating the business logic instances with their names """
 
+    business_logic_class_methods_map = {}
+    """ The map associating the business logic classes with their methods """
+
     def __init__(self, session_name, business_logic_classes_list, business_logic_classes_map, entity_manager = None):
         self.session_name = session_name
         self.business_logic_classes_list = business_logic_classes_list
@@ -175,6 +180,7 @@ class SessionManager:
 
         self.business_logic_instances_list = []
         self.business_logic_instances_map = {}
+        self.business_logic_class_methods_map = {}
 
     def start_session(self):
         """
@@ -206,6 +212,17 @@ class SessionManager:
 
             # associates the business logic class name with the business logic instance
             self.business_logic_instances_map[business_logic_class_name] = business_logic_instance
+
+            # retrieves the business logic class methods from the business logic class
+            business_logic_class_methods = [value for value in dir(business_logic_class) if type(getattr(business_logic_class, value)) == types.MethodType]
+
+            # starts the list for the current business logic class
+            self.business_logic_class_methods_map[business_logic_class_name] = []
+
+            # iterates over all the business logic class methods
+            for business_logic_class_method in business_logic_class_methods:
+                business_logic_class_methods_list = self.business_logic_class_methods_map[business_logic_class_name]
+                business_logic_class_methods_list.append(business_logic_class_method)
 
     def inject_entity_manager(self):
         # iterates over all the business logic classes
@@ -312,6 +329,9 @@ class SessionManagerMaster(SessionManager):
     def stop_session_manager_pool(self):
         pass
 
+    def handle_get_session_methods_request(self, session_information, session_request):
+        return self.business_logic_class_methods_map
+
     def handle_call_method_request(self, session_information, session_request):
         # retrieves the entity attribute from the instance
         entity_attribute = getattr(self, session_request.session_entity)
@@ -348,6 +368,6 @@ class SessionManagerProxy:
 
     def handle_request(self, session_information, session_request):
         if session_request.session_request_type == GET_SESSION_METHODS_TYPE_VALUE:
-            pass
+            return self.session_manager.handle_get_session_methods_request(session_information, session_request)
         elif session_request.session_request_type == CALL_SESSION_METHOD_TYPE_VALUE:
             return self.session_manager.handle_call_method_request(session_information, session_request)
