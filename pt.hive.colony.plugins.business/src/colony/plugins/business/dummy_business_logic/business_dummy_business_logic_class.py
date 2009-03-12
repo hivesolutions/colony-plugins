@@ -42,6 +42,15 @@ class DummyBusinessLogic:
     def print_dummy(self):
         print "dummy echo"
 
+    def echo_dummy(self):
+        return "dummy echo"
+
+    def hello_world(self, name):
+        return "hello world " + name
+
+    def hello_world_both(self, name1, name2):
+        return "hello world " + name1 + " and " + name2
+
     def print_entity_manager(self):
         print str(self.entity_manager)
 
