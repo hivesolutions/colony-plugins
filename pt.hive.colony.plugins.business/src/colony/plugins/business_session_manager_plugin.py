@@ -105,6 +105,9 @@ class BusinessSessionManagerPlugin(colony.plugins.plugin_system.Plugin):
     def load_session_manager_entity_manager(self, session_name, engine_name):
         return self.business_session_manager.load_session_manager_entity_manager(session_name, engine_name)
 
+    def load_session_manager_master_entity_manager(self, session_name, engine_name):
+        return self.business_session_manager.load_session_manager_master_entity_manager(session_name, engine_name)
+
     def get_transaction_decorator(self):
         return self.business_entity_manager_plugin.get_transaction_decorator()
 
