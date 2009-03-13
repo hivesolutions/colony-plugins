@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ Hive Colony Framework
+ Copyright (C) 2008 Hive Solutions Lda.
+
+ This file is part of Hive Colony Framework.
+
+ Hive Colony Framework is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ Hive Colony Framework is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!-- 
+ __author__    = Tiago Silva <tsilva@hive.pt>
+ __version__   = 1.0.0
+ __revision__  = $LastChangedRevision: 72 $
+ __date__      = $LastChangedDate: 2008-10-21 23:29:54 +0100 (Tue, 21 Oct 2008) $
+ __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
+ __license__   = GNU General Public License (GPL), Version 3
+-->
+
+<xsd:schema targetNamespace="http://www.hive.pt" elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://www.hive.pt">
+	<xsd:complexType name="output_configuration">
+		<xsd:sequence>
+			<xsd:element name="domain_entities" type="domain_entities" maxOccurs="1" minOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="domain_entities">
+		<xsd:sequence>
+			<xsd:element name="domain_entity" type="domain_entity" maxOccurs="unbounded" minOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="domain_entity">
+		<xsd:sequence>
+			<xsd:element name="name" type="xsd:string" maxOccurs="1" minOccurs="1" />
+			<xsd:element name="parent" type="xsd:string" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="table" type="xsd:string" maxOccurs="1" minOccurs="1" />
+			<xsd:element name="internal_entity" type="xsd:string" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="attributes" type="attributes" maxOccurs="1" minOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="attributes">
+		<xsd:sequence>
+			<xsd:element name="attribute" type="attribute" maxOccurs="unbounded" minOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="attribute">
+		<xsd:sequence>
+			<xsd:element name="name" type="xsd:string" maxOccurs="1" minOccurs="1" />
+			<xsd:element name="internal_attribute" type="xsd:string" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="type" maxOccurs="1" minOccurs="1" type="variable_type" />
+            <xsd:element name="primary_key" type="xsd:boolean" maxOccurs="1" minOccurs="0"></xsd:element>
+            <xsd:element name="handlers" type="handlers" maxOccurs="unbounded" minOccurs="0" />
+			<xsd:element name="referenced_domain_entity" type="referenced_domain_entity" maxOccurs="unbounded" minOccurs="0" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="handlers">
+		<xsd:sequence>
+			<xsd:element name="handler" type="handler" maxOccurs="unbounded" minOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="handler">
+		<xsd:sequence>
+			<xsd:element name="name" type="xsd:string" maxOccurs="1" minOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="referenced_domain_entity">
+		<xsd:sequence>
+			<xsd:element name="name" type="xsd:string" maxOccurs="1" minOccurs="1" />
+			<xsd:element name="multiplicity" type="multiplicity" maxOccurs="1" minOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="multiplicity">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="one-to-one" />
+			<xsd:enumeration value="one-to-many" />
+			<xsd:enumeration value="many-to-many" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:element name="output_configuration" type="output_configuration" />
+	<xsd:simpleType name="variable_type">
+		<xsd:restriction base="xsd:string">
+			<xsd:whiteSpace value="collapse" />
+			<xsd:pattern value="String\(\d+\)" />
+			<xsd:pattern value="Integer" />
+			<xsd:pattern value="Date" />
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

@@ -1,0 +1,18 @@
+#Fri Mar 13 13:30:37 WET 2009
+eclipse.preferences.version=1
+encoding//src/colony/plugins/data_converter/adapter/__init__.py=Cp1252
+encoding//src/colony/plugins/data_converter/adapter/input/__init__.py=Cp1252
+encoding//src/colony/plugins/data_converter/adapter/input/configuration/input_configuration.py=Cp1252
+encoding//src/colony/plugins/data_converter/adapter/input/configuration/input_configuration_parser.py=Cp1252
+encoding//src/colony/plugins/data_converter/adapter/input/input_adapter.py=Cp1252
+encoding//src/colony/plugins/data_converter/adapter/output/configuration/output_configuration.py=Cp1252
+encoding//src/colony/plugins/data_converter/adapter/output/configuration/output_configuration_parser.py=Cp1252
+encoding//src/colony/plugins/data_converter/adapter/output/output_adapter.py=Cp1252
+encoding//src/colony/plugins/data_converter/adapter/output/sqlalchemy_io.py=Cp1252
+encoding//src/colony/plugins/data_converter/console_data_converter.py=Cp1252
+encoding//src/colony/plugins/data_converter/data_converter_system.py=Cp1252
+encoding//src/colony/plugins/data_converter/tools/__init__.py=Cp1252
+encoding//src/colony/plugins/data_converter/tools/internal_structure_visualizer/internal_structure_visualizer_system.py=Cp1252
+encoding//src/colony/plugins/data_converter_plugin.py=Cp1252
+encoding//src/colony/plugins/internal_structure_visualizer_plugin.py=Cp1252
+encoding/<project>=Cp1252

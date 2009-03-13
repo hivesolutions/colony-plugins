@@ -1,0 +1,345 @@
+﻿<?xml version="1.0"?>
+
+<!--
+ Hive Colony Framework
+ Copyright (C) 2008 Hive Solutions Lda.
+
+ This file is part of Hive Colony Framework.
+
+ Hive Colony Framework is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ Hive Colony Framework is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!-- 
+ __author__    = Tiago Silva <tsilva@hive.pt>
+ __version__   = 1.0.0
+ __revision__  = $LastChangedRevision: 72 $
+ __date__      = $LastChangedDate: 2008-10-21 23:29:54 +0100 (Tue, 21 Oct 2008) $
+ __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
+ __license__   = GNU General Public License (GPL), Version 3
+-->
+
+<input_configuration xsi:schemaLocation="http://www.hive.pt ../input_configuration.xsd" xmlns="http://www.hive.pt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<tables>
+		<table> <!-- clientes -->
+			<name>clientes</name>
+			<internal_entity>customer</internal_entity>
+			<primary_key>
+				<primary_key_column>Codigo</primary_key_column>
+			</primary_key>
+			<foreign_keys>
+				<foreign_key>
+					<foreign_key_columns>
+						<foreign_key_column>Observ</foreign_key_column>
+					</foreign_key_columns>
+					<foreign_table>observa</foreign_table>
+				</foreign_key>
+				<foreign_key>
+					<foreign_key_columns>
+						<foreign_key_column>Profissa</foreign_key_column>
+					</foreign_key_columns>
+					<foreign_table>profissa</foreign_table>
+				</foreign_key>
+				<foreign_key>
+					<foreign_key_columns>
+						<foreign_key_column>Pais1</foreign_key_column>
+					</foreign_key_columns>
+					<foreign_table>paises</foreign_table>
+				</foreign_key>
+				<foreign_key>
+					<foreign_key_columns>
+						<foreign_key_column>Pais2</foreign_key_column>
+					</foreign_key_columns>
+					<foreign_table>paises</foreign_table>
+				</foreign_key>
+				<foreign_key>
+					<foreign_key_columns>
+						<foreign_key_column>Zona1</foreign_key_column>
+					</foreign_key_columns>
+					<foreign_table>zonas</foreign_table>
+				</foreign_key>
+				<foreign_key>
+					<foreign_key_columns>
+						<foreign_key_column>Zona2</foreign_key_column>
+					</foreign_key_columns>
+					<foreign_table>zonas</foreign_table>
+				</foreign_key>
+			</foreign_keys>
+			<columns>
+				<column> <!-- Codigo -->
+					<name>Codigo</name>
+					<internal_attribute>code</internal_attribute>
+				</column>
+				<column> <!-- Nome -->
+					<name>Nome</name>
+					<internal_attribute>name</internal_attribute>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- Sobrenome -->
+					<name>Sobrenome</name>
+					<internal_attribute>surname</internal_attribute>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- Profissa -->
+					<name>Profissa</name>
+					<internal_attribute>profession</internal_attribute>
+				</column>
+				<column> <!-- Biprop -->
+					<name>Biprop</name>
+					<internal_attribute>idCardNumber</internal_attribute>
+				</column>
+				<column> <!-- Contri -->
+					<name>Contri</name>
+					<internal_attribute>taxNumber</internal_attribute>
+				</column>
+				<column> <!-- Nib -->
+					<name>Nib</name>
+					<internal_attribute>bankAccountNumber</internal_attribute>
+				</column>
+				<column> <!-- Denomina -->
+					<name>Denomina</name>
+					<internal_attribute>title</internal_attribute>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- Anos -->
+					<name>Anos</name>
+					<internal_attribute>birthDate</internal_attribute>
+					<handlers>
+						<handler>
+							<name>column_handler_timestamp_to_datetime</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- Sexo -->
+					<name>Sexo</name>
+					<internal_attribute>gender</internal_attribute>
+					<handlers>
+						<handler>
+							<name>column_handler_diamante_gender_id_to_hive_gender_id</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- Ext1 -->
+					<name>Ext1</name>
+					<internal_attribute>telephoneExtension</internal_attribute>
+					<internal_entity>
+						<id>1</id>
+						<name>contact_information</name>
+					</internal_entity>
+				</column>
+				<column> <!-- Tel1 -->
+					<name>Tel1</name>
+					<internal_attribute>telephone</internal_attribute>
+					<internal_entity>
+						<id>1</id>
+						<name>contact_information</name>
+					</internal_entity>
+				</column>
+				<column> <!-- Ext2 -->
+					<name>Ext2</name>
+					<internal_attribute>telephoneExtension</internal_attribute>
+					<internal_entity>
+						<id>2</id>
+						<name>contact_information</name>
+					</internal_entity>
+				</column>
+				<column> <!-- Tel2 -->
+					<name>Tel2</name>
+					<internal_attribute>telephone</internal_attribute>
+					<internal_entity>
+						<id>2</id>
+						<name>contact_information</name>
+					</internal_entity>
+				</column>
+				<column> <!-- Ext3 -->
+					<name>Ext3</name>
+					<internal_attribute>telephoneExtension</internal_attribute>
+					<internal_entity>
+						<id>3</id>
+						<name>contact_information</name>
+					</internal_entity>
+				</column>
+				<column> <!-- Tel3 -->
+					<name>Tel3</name>
+					<internal_attribute>telephone</internal_attribute>
+					<internal_entity>
+						<id>3</id>
+						<name>contact_information</name>
+					</internal_entity>
+				</column>
+				<column> <!-- Movel -->
+					<name>Movel</name>
+					<internal_attribute>mobilePhone</internal_attribute>
+					<internal_entity>
+						<id>1</id>
+						<name>contact_information</name>
+					</internal_entity>
+				</column>
+				<column> <!-- Fax -->
+					<name>Fax</name>
+					<internal_attribute>fax</internal_attribute>
+					<internal_entity>
+						<id>1</id>
+						<name>contact_information</name>
+					</internal_entity>
+				</column>
+				<column> <!-- Email -->
+					<name>Email</name>
+					<internal_attribute>email</internal_attribute>
+					<internal_entity>
+						<id>1</id>
+						<name>contact_information</name>
+					</internal_entity>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- Url -->
+					<name>Url</name>
+					<internal_attribute>webPageUrl</internal_attribute>
+					<internal_entity>
+						<id>1</id>
+						<name>contact_information</name>
+					</internal_entity>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- Pais1 -->
+					<name>Pais1</name>
+					<internal_attribute>country</internal_attribute>
+					<internal_entity>
+						<id>1</id>
+						<name>address</name>
+					</internal_entity>
+				</column>
+				<column> <!-- Pais2 -->
+					<name>Pais2</name>
+					<internal_attribute>country</internal_attribute>
+					<internal_entity>
+						<id>2</id>
+						<name>address</name>
+					</internal_entity>
+				</column>
+				<column> <!-- Zona1 -->
+					<name>Zona1</name>
+					<internal_attribute>zone</internal_attribute>
+					<internal_entity>
+						<id>1</id>
+						<name>address</name>
+					</internal_entity>
+				</column>
+				<column> <!-- Zona2 -->
+					<name>Zona2</name>
+					<internal_attribute>zone</internal_attribute>
+					<internal_entity>
+						<id>2</id>
+						<name>address</name>
+					</internal_entity>
+				</column>
+				<column> <!-- Localidad1 -->
+					<name>Localidad1</name>
+					<internal_attribute>location</internal_attribute>
+					<internal_entity>
+						<id>1</id>
+						<name>address</name>
+					</internal_entity>					
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- Localidad2 -->
+					<name>Localidad2</name>
+					<internal_attribute>location</internal_attribute>
+					<internal_entity>
+						<id>2</id>
+						<name>address</name>
+					</internal_entity>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- Morada1 -->
+					<name>Morada1</name>
+					<internal_attribute>address</internal_attribute>
+					<internal_entity>
+						<id>1</id>
+						<name>address</name>
+					</internal_entity>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- Morada2 -->
+					<name>Morada2</name>
+					<internal_attribute>address</internal_attribute>
+					<internal_entity>
+						<id>2</id>
+						<name>address</name>
+					</internal_entity>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- Codpos1 -->
+					<name>Codpos1</name>
+					<internal_attribute>zipCode</internal_attribute>
+					<internal_entity>
+						<id>1</id>
+						<name>address</name>
+					</internal_entity>
+				</column>
+				<column> <!-- Codpos2 -->
+					<name>Codpos2</name>
+					<internal_attribute>zipCode</internal_attribute>
+					<internal_entity>
+						<id>2</id>
+						<name>address</name>
+					</internal_entity>
+				</column>
+				<column> <!--Observ -->
+					<name>Observ</name>
+					<internal_attribute>observation</internal_attribute>
+				</column>
+				<column> <!-- Apontament -->
+					<name>Apontament</name>
+					<internal_attribute>notes</internal_attribute>
+				</column>
+			</columns>
+		</table>
+	</tables>
+</input_configuration>
