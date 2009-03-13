@@ -170,7 +170,7 @@ class InputAdapter:
                     task.confirm_resume()
 
                 counter += counter_inc
-                #task.set_percentage_complete(counter)
+                task.set_percentage_complete(counter)
 
     def process_handler(self, handler_name, arguments):
         """
@@ -201,9 +201,6 @@ class InputAdapter:
         column_names = [column_configuration.name for column_configuration in table_configuration.get_columns()]
         rows = self.connection.query(table_name, column_names)
 
-        # run the handlers configured for this table
-        self.process_table_handlers(TableConversionInfo(table_configuration, rows))
-        
         # for every row in the table
         for row in rows:     
             # create the entity related with the table and a table conversion information object
@@ -215,18 +212,9 @@ class InputAdapter:
             self.process_foreign_key_queue(row_conversion_info)
             # process the table columns
             self.process_columns(row_conversion_info)
-
-    def process_table_handlers(self, row_conversion_info):
-        """
-        Invokes the functions associated with the specified table.
-        
-        @param row_conversion_info: Object containing information about the table conversion process.
-        """
-
-        self.logger.debug("Input adapter: Processing table handlers for table '%s'.\n" % row_conversion_info.configuration.name)
-
-        for handler in row_conversion_info.configuration.handlers:
-            self.process_handler(handler.name, [row_conversion_info])
+            # run the handlers configured for this row
+            for handler in row_conversion_info.configuration.handlers:
+                self.process_handler(handler.name, [row_conversion_info])
 
     def process_columns(self, row_conversion_info):
         """
@@ -395,28 +383,6 @@ class ForeignKeyQueue:
         if table_name in self.table_name_primary_key_foreign_key_queue_map and primary_key in self.table_name_primary_key_foreign_key_queue_map[table_name]:
             foreign_key_queue = self.table_name_primary_key_foreign_key_queue_map[table_name][primary_key]
         return foreign_key_queue
-
-class TableConversionInfo:
-    """
-    Holds information about the conversion of a certain database table.
-    """
-
-    configuration = None
-    """ Table configuration object. """
-    
-    rows = []
-    """ The rows this table has in the source medium. """
-
-    def __init__(self, configuration, rows):
-        """
-        Class constructor.
-        
-        @param configuration: Object representing the conversion configuration for this table.
-        @param rows: The rows this table has in the source medium.
-        """
-        
-        self.configuration = configuration
-        self.rows = rows
 
 class RowConversionInfo:
     """
