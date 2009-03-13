@@ -37,9 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import copy
-import time
-
 import data_converter.adapter.input.configuration.input_configuration_parser
 
 class InputAdapter:
@@ -208,7 +205,7 @@ class InputAdapter:
         for row in rows:     
             # create the entity related with the table and a table conversion information object
             row_internal_entity = self.internal_structure.add_entity(table_configuration.internal_entity)
-            row_conversion_info = RowConversionInfo(table_configuration, row_internal_entity, row)
+            row_conversion_info = RowConversionInfo(table_configuration, self.internal_structure, row_internal_entity, row)
             # bind the entity's id to the table's primary key
             self.process_primary_key(row_conversion_info)
             # process the table columns
@@ -297,11 +294,24 @@ class InputAdapter:
         """
         Process the foreign key queue.
         """
+        
+        # inicializes variable for deadlock protection
+        last_foreign_key_queue_size = 0
+        
         # try to connect all entities which have pending foreign keys until the foreign key queue is empty
         # @todo: this process can be made faster by using a graph
         while len(self.foreign_key_queue):
             processed_foreign_keys = []
             
+            # calculates the size of the queue after a iteration
+            new_foreign_key_queue_size = len(self.foreign_key_queue)
+            
+            # if the queue size has not been updated since the last execution, then a deadlock is found
+            if last_foreign_key_queue_size == new_foreign_key_queue_size:
+                break
+            else:
+                last_foreign_key_queue_size = new_foreign_key_queue_size
+                
             # try to process each key and store the processed keys
             for foreign_key_information in self.foreign_key_queue:
                 foreign_key_internal_entity_name = foreign_key_information["foreign_key_internal_entity_name"]
@@ -354,21 +364,26 @@ class RowConversionInfo:
     configuration = None
     """ Table configuration object describing the table this row belongs to. """
 
+    internal_structure = None
+    """ Intermediate structure where the data converter input adapter's results are stored. """
+    
     internal_entity = None
     """ The internal entity created for this row. """
 
     row = None
     """ Source medium table row. """
 
-    def __init__(self, configuration, internal_entity, row):
+    def __init__(self, configuration, internal_structure, internal_entity, row):
         """
         Class constructor.
         
         @param configuration: Object representing the conversion configuration for this table.
+        @param internal_structure: Intermediate structure where the data converter input adapter's results are stored.
         @param internal_entity: The internal entity created for this row.
         @param row: The row being converted.
         """
         
         self.configuration = configuration
         self.internal_entity = internal_entity
+        self.internal_structure = internal_structure
         self.row = row
