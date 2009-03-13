@@ -173,15 +173,15 @@ class ForeignKey:
     """
     Represents a foreign key that can be added to a Table object.
     """
+
+    foreign_table = None
+    """ Table this foreign key points to. """
     
     columns = []
     """ List of columns that make this foreign key. """
     
     def __init__(self):
         self.columns = []
-
-    referenced_table = None
-    """ Table this foreign key points to. """
     
 class Handler:
     """

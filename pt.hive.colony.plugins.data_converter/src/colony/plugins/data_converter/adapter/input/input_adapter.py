@@ -54,7 +54,7 @@ class InputAdapter:
     """ Dictionary relating internal entity name, with primary key value, with internal entity id. """
 
     foreign_key_queue = None
-    """ Queue of foreign keys that are waiting of the entity they point to, to be processed. """
+    """ Queue of foreign keys that are waiting of the entity are referencing to be processed. """
 
     input_description = None
     """ Reference to the input configuration properties (extracted from the configuration file). """
@@ -208,14 +208,13 @@ class InputAdapter:
             row_conversion_info = RowConversionInfo(table_configuration, row_internal_entity, row)
             # bind the entity's id to the table's primary key
             self.process_primary_key(row_conversion_info)
+            # process every foreign key that was waiting for this entity to be created
+            self.process_foreign_key_queue(row_conversion_info)
             # process the table columns
             self.process_columns(row_conversion_info)
             # run the handlers configured for this row
             for handler in row_conversion_info.configuration.handlers:
                 self.process_handler(handler.name, [row_conversion_info])
-                
-        # process every foreign key that was waiting for this table's entities to be created
-        self.process_foreign_key_queue(row_conversion_info)
 
     def process_columns(self, row_conversion_info):
         """
@@ -268,7 +267,10 @@ class InputAdapter:
                foreign_internal_entity_instance = self.internal_structure.get_entity(foreign_table.internal_entity, foreign_internal_entity_id)
                self.internal_structure.set_field_value(row_internal_entity._name, row_internal_entity._id, foreign_table.internal_entity, foreign_internal_entity_instance)
             else: # otherwise add the foreign key to the queue
-               self.foreign_key_queue.enqueue_foreign_key(foreign_key_string, foreign_key, row_internal_entity._name, row_internal_entity._id)
+               self.foreign_key_queue.append({"foreign_key_string" : foreign_key_string,
+                                              "foreign_key_internal_entity_name" : row_internal_entity._name,
+                                              "foreign_key_internal_entity_id" : row_internal_entity._id,
+                                              "foreign_internal_entity_name" : foreign_table.internal_entity})
                 
     def process_primary_key(self, row_conversion_info):
         """
@@ -290,11 +292,9 @@ class InputAdapter:
         key = (row_internal_entity._name, primary_key_string)
         self.internal_entity_name_primary_key_entity_id_map[key] = row_internal_entity._id
 
-    def process_foreign_key_queue(self, row_conversion_info):
+    def process_foreign_key_queue(self):
         """
         Process the foreign key queue.
-        
-        @param row_conversion_info: Object containing information about the row conversion process.
         """
         
         table_configuration = row_conversion_info.configuration
@@ -305,16 +305,25 @@ class InputAdapter:
         primary_key_column_names = [column.name for column in table_configuration.primary_key_columns]
         primary_key_string = str([row[primary_key_column_name] for primary_key_column_name in primary_key_column_names])
 
-        # retrieve the foreign keys that were waiting for this primary key to have an entity associated with it
-        foreign_key_informations = self.foreign_key_queue.get_pending_foreign_keys(table_configuration.name, primary_key_string)
-        while foreign_key_informations:
-                # for every foreign key create a connection from its entity to the entity that was processed
-                for foreign_key_information in foreign_key_informations:
-                    foreign_key_internal_entity_name = foreign_key_information["foreign_key_internal_entity_name"]
-                    foreign_key_internal_entity_id = foreign_key_information["foreign_key_internal_entity_id"]
-                    self.internal_structure.set_field_value(foreign_key_internal_entity_name, foreign_key_internal_entity_id, row_internal_entity_name, row_internal_entity)
-                foreign_key_informations = self.foreign_key_queue.get_pending_foreign_keys(table_configuration.name, primary_key_string) 
-
+        # try to connect all entities which have pending foreign keys until the foreign key queue is empty
+        # @todo: this process can be made faster by using a graph
+        while len(self.foreign_key_queue):
+            processed_foreign_keys = []
+            
+            # try to process each key and store the processed keys
+            for foreign_key_informations in self.foreign_key_queue:
+                foreign_key_internal_entity_name = foreign_key_information["foreing_key_internal_entity_name"]
+                foreign_key_internal_entity_id = foreign_key_information["foreign_key_internal_entity_id"]
+                foreign_internal_entity_name = foreign_key_information["foreign_internal_entity_name"]
+                foreign_table_internal_entity_id = self.get_primary_key_entity_id(foreign_internal_entity_name, foreign_key_information["foreign_key_string"])
+                if foreign_table_internal_entity_id:
+                    self.internal_structure.set_field_value(foreign_key_internal_entity_name, foreign_key_internal_entity_id, foreign_table.internal_entity, row_internal_entity) 
+                    processed_foreign_keys.append(foreign_key_informations)
+            
+            # remove the processed foreign keys from the foreign key queue
+            for processed_foreign_key in processed_foreign_keys:
+                self.foreign_key_queue.remove(processed_foreign_key)
+     
     def get_primary_key_entity_id(self, entity_name, primary_key_string):
         """
         Retrieves the internal entity unique identifier that corresponds to the provided primary key value.
@@ -343,47 +352,6 @@ class InputAdapter:
             internal_entity = self.internal_structure.add_entity(internal_entity_name)
             self.table_name_configuration_internal_entity_id_internal_id_map[key] = internal_entity._id
         return self.table_name_configuration_internal_entity_id_internal_id_map[key]
-
-class ForeignKeyQueue:
-    """
-    Holds information about the conversion of a certain database table. Useful for passing around different functions
-    that share a requirement for these informations.
-    """
-    
-    table_name_primary_key_foreign_key_queue_map = {}
-    """ Multi-level map used to store pending foreign keys """
-    
-    def __init__(self):
-        """
-        Class constructor.
-        """
-        table_name_primary_key_foreign_key_queue_map = {}
-
-    def enqueue_foreign_key(self, foreign_key_string, foreign_key_configuration, foreign_key_internal_entity_name, foreign_key_internal_entity_id):
-        """
-        Adds a foreign key to the queue.
-        
-        @param foreign_key: Foreign key that is waiting for its associated entity to be created.
-        @param foreign_key_internal_entity_name: Name of the internal entity the pending foreign key belongs to.
-        @param foreign_key_internal_entity_id: Unique identifier for the internal entity instance this foreign key belongs to.
-        """
-        key = (foreign_key_configuration.foreign_table, foreign_key_string)
-        if not key in self.table_name_primary_key_foreign_key_queue_map:
-            self.table_name_primary_key_foreign_key_queue_map[key] = []
-        foreign_key_queue = self.table_name_primary_key_foreign_key_queue_map[key]
-        foreign_key_queue.append({"foreign_key_internal_entity_name" : foreign_key_internal_entity_name, 
-                                  "foreign_key_internal_entity_id" : foreign_key_internal_entity_id})
-    
-    def get_pending_foreign_keys(self, table_name, primary_key_string):
-        """
-        Retrieves a list with informations about the foreign keys that are waiting for the specified primary key to be processed.
-        
-        @param table_name: Name of the table the primary key belongs to.
-        @param primary_key_string: String representation of the primary key whose associated pending foreign keys one wants to retrieve.
-        @return: List with informations about the foreign keys that are waiting to be processed.
-        """
-        if table_name in self.table_name_primary_key_foreign_key_queue_map and primary_key in self.table_name_primary_key_foreign_key_queue_map[table_name]:
-            return self.table_name_primary_key_foreign_key_queue_map[table_name][primary_key]
 
 class RowConversionInfo:
     """
