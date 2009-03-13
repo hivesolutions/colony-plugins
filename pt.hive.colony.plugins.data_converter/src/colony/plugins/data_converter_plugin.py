@@ -54,9 +54,13 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["console_command_extension"]
     capabilities_allowed = ["io", "data_converter_configuration", "data_converter_observer"]
-    dependencies = [colony.plugins.plugin_system.PluginDependency(
+    dependencies = [colony.plugins.plugin_system.PackageDependency(
+                    "SQL Alchemy O/R mapper", "sqlalchemy", "0.4.x", "http://www.sqlalchemy.org"),
+                    colony.plugins.plugin_system.PackageDependency(
+                    "MySQL-Python", "MySQLdb", "1.2.x", "http://mysql-python.sourceforge.net"), 
+                    colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.tasks.task_manager", "1.0.0"),
-                   colony.plugins.plugin_system.PluginDependency(
+                    colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.log", "1.0.0")]
     events_handled = []
     events_registrable = []
@@ -96,11 +100,7 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
         self.console_data_converter = None
         self.input_adapter = None
         self.output_adapter = None
-        self.task_manager_plugin = None
-        self.io_plugins = None
-        self.data_converter_configuration_plugins = None
-        self.data_converter_observer_plugins = None
-    
+
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
 
@@ -148,8 +148,13 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
     def set_logger_plugin(self, logger_plugin):
         self.logger_plugin = logger_plugin
         
-    def convert(self, args):
-        self.data_converter.convert(args)
+    def convert(self, data_converter_configuration_plugin_id):
+        """
+        Converts data from one source medium and schema to another.
+        
+        @param data_converter_configuration_plugin_id: Unique identifier for the plugin that provides the necessary configurations for the conversion.
+        """
+        self.data_converter.convert(data_converter_configuration_plugin_id)
         
     def get_console_extension_name(self):
         return self.console_data_converter.get_console_extension_name()

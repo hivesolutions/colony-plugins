@@ -87,10 +87,18 @@ class DataConverterDiamante2003OmniConfigurationPlugin(colony.plugins.plugin_sys
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
     
-    # @todo: comment this
     def get_input_adapter_configuration(self):
+        """
+        Returns the configuration for the data converter's input adapter.
+        
+        @return: Data converter input adapter configuration object.
+        """
         return self.data_converter_diamante_2003_input_adapter_configuration
 
-    # @todo: comment this
     def get_output_adapter_configuration(self):
+        """
+        Returns the configuration for the data converter's output adapter.
+        
+        @return: Data converter output adapter configuration object.
+        """
         return self.data_converter_omni_output_adapter_configuration

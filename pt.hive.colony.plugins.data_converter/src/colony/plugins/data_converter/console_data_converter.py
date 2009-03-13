@@ -47,10 +47,9 @@ INVALID_ADDRESS_MESSAGE = "invalid address"
 """ The invalid address message """
 
 HELP_TEXT = "### DATA CONVERTER HELP ###\n\
-convert_data <input_io_plugin_id> <output_io_plugin_id> <data_converter_configuration_plugin_id> - migrates data from one medium and schema to another"
+convert_data <configuration_plugin_id> - migrates data from one medium and schema to another"
 """ The help text """
 
-#@todo: review and comment this file
 class ConsoleDataConverter:
 
     commands = ["convert_data"]
@@ -76,10 +75,9 @@ class ConsoleDataConverter:
         return HELP_TEXT
 
     def process_convert_data(self, args, output_method):
-        self.data_converter_plugin.convert({"work_units" : ["customer"], 
-                                                  "input_connection_options" : {"database_path" : "c:/DIA2002"},
-                                                  "input_io_plugin_id" : "pt.hive.colony.plugins.io.foxpro",
-                                                  "output_io_plugin_id" : "pt.hive.colony.plugins.io.foxpro",
-                                                  "configuration_plugin_id" : "pt.hive.colony.plugins.data_converter.configuration.diamante_2003_omni"})
-        return
+        if len(args) < 1:
+            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
+            return
+        
+        self.data_converter_plugin.convert(args[0])
         

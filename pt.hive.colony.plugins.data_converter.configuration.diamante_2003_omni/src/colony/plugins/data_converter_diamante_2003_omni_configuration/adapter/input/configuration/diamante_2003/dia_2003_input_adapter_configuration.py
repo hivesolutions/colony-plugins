@@ -44,21 +44,29 @@ import stat
 
 class Diamante2003InputAdapterConfiguration:
     """
-    Provides a the necessary configuration parameters and functions to convert
-    data from the Diamante 2003 version to the intermediate internal structure
+    Provides the necessary configuration parameters and functions to convert
+    data from the Diamante 2003 version to the intermediate internal structure.
     """
 
-    parent_plugin = None
-    """ Reference to the plugin that owns this code """
+    diamante_2003_input_adapter_configuration_plugin = None
+    """ Reference to the plugin that owns this code."""
 
     #@todo: move this to xml file
     work_unit_tables_map = {"customer" : ["empresas", "lojas", "funciona", "vendedor", "password", "zonas", "bancos", "estilo", "pureza", "qualidad", "tipopeca", "coleccao", "tiposerv", "talhe", "tipoprod", "tipopaga", "forneced", "produtos", "imagens", "profissa", "clientes"]}
 
     """ Dictionary relating work unit name with a list of the database table names that need to be processed for the work unit to be complete """
 
-    def __init__(self, parent_plugin):
-        self.parent_plugin = parent_plugin
+    def __init__(self, diamante_2003_input_adapter_configuration_plugin):
+        self.diamante_2003_input_adapter_configuration_plugin = diamante_2003_input_adapter_configuration_plugin
 
+    # @todo: comment this
+    def get_io_plugin_id(self):
+         return "pt.hive.colony.io.foxpro"
+    
+    # @todo: comment this
+    def get_io_connection_options(self):
+         return {"database_path" : "C:/DIA2002"}
+     
     def get_work_units(self):
         """
         Gets a list of the work units provided by this configuration plugin

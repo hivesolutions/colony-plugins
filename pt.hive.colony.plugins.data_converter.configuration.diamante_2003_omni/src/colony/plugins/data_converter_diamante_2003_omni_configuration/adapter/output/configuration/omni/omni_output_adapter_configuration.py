@@ -62,6 +62,14 @@ class OmniOutputAdapterConfiguration:
         @param parent_plugin: Reference to the plugin that owns this code
         """
         self.parent_plugin = parent_plugin
+
+    # @todo: comment this
+    def get_io_plugin_id(self):
+         return "pt.hive.colony.io.foxpro"
+    
+    # @todo: comment this
+    def get_io_connection_options(self):
+         return {"database_path" : "C:/DIA2002"}
     
     def get_configuration_file_paths(self):
         """

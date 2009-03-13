@@ -219,17 +219,24 @@ class DataConverter:
         """
         self.data_converter_plugin = data_converter_plugin
         
-    def convert(self, options):
+    def convert(self, data_converter_configuration_plugin_id):
         """
         Starts the conversion process.
         
-        @param options: Map with the conversion process options.
+        @param data_converter_configuration_plugin_id Unique identifier for the plugin that provides the necessary configurations for the conversion.
         """
-        self.task = self.data_converter_plugin.task_manager_plugin.create_new_task("Data converter", "Converting data", self.start_handler)
-        self.task.set_task_pause_handler(self.pause_handler)
-        self.task.set_task_resume_handler(self.resume_handler)
-        self.task.set_task_stop_handler(self.stop_handler)
-        self.task.start(options)
+
+        # if the configuration plugin exists then extract its configurations and start the conversion process
+        for data_converter_configuration_plugin in self.data_converter_plugin.data_converter_configuration_plugins:
+            if data_converter_configuration_plugin.id == data_converter_configuration_plugin_id:
+                options = { "input_adapter_configuration" : data_converter_configuration_plugin.get_input_adapter_configuration(), 
+                           "output_adapter_configuration" : data_converter_configuration_plugin.get_output_adapter_configuration()}
+                self.task = self.data_converter_plugin.task_manager_plugin.create_new_task("Data converter", "Converting data", self.start_handler)
+                self.task.set_task_pause_handler(self.pause_handler)
+                self.task.set_task_resume_handler(self.resume_handler)
+                self.task.set_task_stop_handler(self.stop_handler)
+                self.task.start(options)
+                break
 
     def start_handler(self, task, options):
         """
@@ -238,40 +245,29 @@ class DataConverter:
         @param task: Data conversion task object.
         @param options: Data conversion options.
         """
-        
+
         # figure out which io plugin to use in the input adapter
-        input_io_plugin_id = options["input_io_plugin_id"]
+        input_adapter_configuration = options["input_adapter_configuration"]
+        input_io_plugin_id = input_adapter_configuration.get_io_plugin_id()
         input_io_plugin = None
         for input_io_plugin in self.data_converter_plugin.io_plugins:
             if input_io_plugin.id == input_io_plugin_id:
                 break
     
         # figure out which io plugin to use in the output adapter
-        output_io_plugin_id = options["output_io_plugin_id"]
+        output_adapter_configuration = options["output_adapter_configuration"]
+        output_io_plugin_id = output_adapter_configuration.get_io_plugin_id()
         output_io_plugin = None
         for output_io_plugin in self.data_converter_plugin.io_plugins:
             if output_io_plugin.id == output_io_plugin_id:
                 break
-            
-        # figure out which configuration plugin to use
-        data_converter_configuration_plugin_id = options["configuration_plugin_id"]
-        for data_converter_configuration_plugin in self.data_converter_plugin.data_converter_configuration_plugins:
-            if data_converter_configuration_plugin.id == data_converter_configuration_plugin_id:
-                break
 
         # if the selected combination of input/output/configuration exists then perform the conversion
-        if input_io_plugin and output_io_plugin and data_converter_configuration_plugin:              
+        if input_io_plugin and output_io_plugin:              
             # map data into the internal structure
-            input_adapter_configuration = data_converter_configuration_plugin.get_input_adapter_configuration()
-            connection = input_io_plugin.connect(options["input_connection_options"])
-            internal_structure = self.data_converter_plugin.input_adapter.convert(task, InternalStructure(), connection, input_adapter_configuration)
-            
-            # map data out of the internal structure and into the target
-            #connection = None
-            # connection = output_io_plugin.connect(args["output_connection_options"])
-            #output_adapter_configuration = data_converter_configuration_plugin.get_output_adapter_configuration()
-            #self.data_converter_plugin.output_adapter.convert(task, options, connection, output_adapter_configuration)
-            
+            connection = input_io_plugin.connect(input_adapter_configuration.get_io_connection_options())
+            internal_structure = self.data_converter_plugin.input_adapter.convert(task, InternalStructure(), connection, options["input_adapter_configuration"])
+        
         task.confirm_stop(True)   
 
     def pause_handler(self, options):
