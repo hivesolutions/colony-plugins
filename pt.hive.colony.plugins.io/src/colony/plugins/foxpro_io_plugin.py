@@ -52,7 +52,7 @@ class FoxProInputOuputPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["io.foxpro"]
+    capabilities = ["io"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PackageDependency(
                     "Win32 Extensions for Python", "dbi", "b202", "http://starship.python.net/crew/mhammond/win32"),
@@ -61,7 +61,7 @@ class FoxProInputOuputPlugin(colony.plugins.plugin_system.Plugin):
     events_handled = []
     events_registrable = []
 
-    codebase = None
+    foxpro_io = None
     """ Base code supplied by this plugin, meant to be accessible only with the methods supplied by the plugin class"""
 
     def __init__(self, manager):
@@ -71,11 +71,11 @@ class FoxProInputOuputPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global io
         import io.foxpro.foxpro_io
-        self.codebase = io.foxpro.foxpro_io.FoxProInputOutput()
+        self.foxpro_io = io.foxpro.foxpro_io.FoxProInputOutput(self)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
-        self.codebase = None
+        self.foxpro_io = None
 
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
@@ -86,32 +86,8 @@ class FoxProInputOuputPlugin(colony.plugins.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def flush(self):
+    def connect(self, options):
         """
-        @see: colony.plugins.io_text.text.text_io.flush()
+        @see: colony.plugins.io.foxpro.foxpro_io.connect()
         """
-        return self.codebase.flush()
-
-    def delete(self, object):
-        """
-        @see: colony.plugins.io_text.text.text_io.delete()
-        """
-        return self.codebase.delete(object)
-
-    def save(self, object):
-        """
-        @see: colony.plugins.io_text.text.text_io.save()
-        """
-        return self.codebase.save(object)
-
-    def query(self, table_name, column_list):
-        """
-        @see: colony.plugins.io_text.text.text_io.query()
-        """
-        return self.codebase.query(table_name, column_list)
-
-    def initialize(self, database_path):
-        """
-        @see: colony.plugins.io_text.text.text_io.bind()
-        """
-        self.codebase.initialize(database_path)
+        return self.foxpro_io.connect(options)
