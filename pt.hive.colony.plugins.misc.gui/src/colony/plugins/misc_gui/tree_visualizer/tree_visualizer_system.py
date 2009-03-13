@@ -73,6 +73,7 @@ class TreeVisualizerPanel(wx.Panel):
 
         wx.Panel.__init__(self, parent, -1, style = wx.WANTS_CHARS)
         self.Bind(wx.EVT_SIZE, self.on_size)
+        self.Bind(wx.lib.customtreectrl.EVT_TREE_ITEM_EXPANDING, self.on_node_expanding)
 
         # build tree panel
         self.tree = wx.lib.customtreectrl.CustomTreeCtrl(self, wx.ID_ANY, style = wx.BORDER_DEFAULT| wx.lib.customtreectrl.TR_HAS_BUTTONS | wx.lib.customtreectrl.TR_HAS_VARIABLE_ROW_HEIGHT)
@@ -127,6 +128,9 @@ class TreeVisualizerPanel(wx.Panel):
         grid_sizer.Add(self.tree, 0, wx.GROW|wx.ALIGN_CENTER|wx.ALL, 5)
         self.SetSizer(grid_sizer)
         self.Layout()
+
+    def on_node_expanding(self, evt):
+        pass
 
     def on_expand_all_click(self, evt):
         self.Freeze()
