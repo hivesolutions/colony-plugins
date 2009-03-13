@@ -662,6 +662,16 @@ class BusinessSqliteEngine:
         self.save_entity_indirect_relations(connection, entity)
 
     def save_entity_indirect_relations(self, connection, entity):
+        """
+        Saves the indirect relations for the given entity instance in the database,
+        using the given connection.
+        
+        @type connection: Connection
+        @param connection: The database connection to use.
+        @type entity: Object
+        @param entity: The entity instance with the indirect relations to be saved.
+        """
+
         # retrieves the database connection from the connection object
         database_connection = connection.database_connection
 
