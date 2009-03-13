@@ -58,6 +58,12 @@ class DataConverterDiamante2003OmniConfigurationPlugin(colony.plugins.plugin_sys
     events_handled = []
     events_registrable = []
 
+    data_converter_diamante_2003_input_adapter_configuration = None
+    """ Input adapter configuration """
+    
+    data_converter_omni_output_adapter_configuration = None
+    """ Output adapter configuration """
+    
     def __init__(self, manager):
         colony.plugins.plugin_system.Plugin.__init__(self, manager)
 
@@ -74,6 +80,8 @@ class DataConverterDiamante2003OmniConfigurationPlugin(colony.plugins.plugin_sys
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
+        self.data_converter_diamante_2003_input_adapter_configuration = None
+        self.data_converter_omni_output_adapter_configuration = None
 
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    

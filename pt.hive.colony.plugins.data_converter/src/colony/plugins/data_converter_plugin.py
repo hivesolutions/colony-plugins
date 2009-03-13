@@ -67,12 +67,16 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
 
     io_plugins = []
     """ Input/output adapter plugins """
+    
     logger_plugin = None
     """ Logger plugin """
+    
     task_manager_plugin = None
     """ Task manager plugin """
+    
     data_converter_configuration_plugins = []
     """ Plugins providing data conversion configurations """
+    
     data_converter_observer_plugins = []
     """ Plugins that want to observe the conversion process """
 
@@ -114,7 +118,27 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
         
     @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.data_converter", "1.0.0")
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)   
+            
+    def convert(self, data_converter_configuration_plugin_id):
+        """
+        Converts data from one source medium and schema to another.
+        
+        @param data_converter_configuration_plugin_id: Unique identifier for the plugin that provides the necessary configurations for the conversion.
+        """
+        self.data_converter.convert(data_converter_configuration_plugin_id)
+        
+    def get_console_extension_name(self):
+        return self.console_data_converter.get_console_extension_name()
+
+    def get_all_commands(self):
+        return self.console_data_converter.get_all_commands()
+
+    def get_handler_command(self, command):
+        return self.console_data_converter.get_handler_command(command)
+
+    def get_help(self):
+        return self.console_data_converter.get_help()
                         
     @colony.plugins.decorators.load_allowed_capability("io")
     def io_load_allowed(self, plugin, capability):
@@ -147,23 +171,3 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.log")
     def set_logger_plugin(self, logger_plugin):
         self.logger_plugin = logger_plugin
-        
-    def convert(self, data_converter_configuration_plugin_id):
-        """
-        Converts data from one source medium and schema to another.
-        
-        @param data_converter_configuration_plugin_id: Unique identifier for the plugin that provides the necessary configurations for the conversion.
-        """
-        self.data_converter.convert(data_converter_configuration_plugin_id)
-        
-    def get_console_extension_name(self):
-        return self.console_data_converter.get_console_extension_name()
-
-    def get_all_commands(self):
-        return self.console_data_converter.get_all_commands()
-
-    def get_handler_command(self, command):
-        return self.console_data_converter.get_handler_command(command)
-
-    def get_help(self):
-        return self.console_data_converter.get_help()
