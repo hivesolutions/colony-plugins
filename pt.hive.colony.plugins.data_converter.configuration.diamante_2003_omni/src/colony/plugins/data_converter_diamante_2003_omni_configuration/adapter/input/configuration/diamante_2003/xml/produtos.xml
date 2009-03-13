@@ -1,0 +1,163 @@
+<?xml version="1.0"?>
+
+<!--
+ Hive Colony Framework
+ Copyright (C) 2008 Hive Solutions Lda.
+
+ This file is part of Hive Colony Framework.
+
+ Hive Colony Framework is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ Hive Colony Framework is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!-- 
+ __author__    = Simao Rio <srio@hive.pt>
+ __version__   = 1.0.0
+ __revision__  = $LastChangedRevision: 72 $
+ __date__      = $LastChangedDate: 2008-10-21 23:29:54 +0100 (ter, 21 Out 2008) $
+ __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
+ __license__   = GNU General Public License (GPL), Version 3
+-->
+
+<input_configuration xsi:schemaLocation="http://www.hive.pt ../input_configuration.xsd" xmlns="http://www.hive.pt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<tables>
+		<table> <!-- produtos -->
+			<name>produtos</name>
+			<internal_entity>product</internal_entity>
+			<primary_key>
+				<primary_key_column>codigo</primary_key_column>
+			</primary_key>
+			
+			<foreign_keys>
+				<foreign_key>
+					<foreign_key_columns>
+						<foreign_key_column>tipopro</foreign_key_column>
+					</foreign_key_columns>
+					<foreign_table>tipoprod</foreign_table>
+				</foreign_key>
+				<foreign_key>
+					<foreign_key_columns>
+						<foreign_key_column>tipopeca</foreign_key_column>
+					</foreign_key_columns>
+					<foreign_table>tipopeca</foreign_table>
+				</foreign_key>
+				<foreign_key>
+					<foreign_key_columns>
+						<foreign_key_column>estilo</foreign_key_column>
+					</foreign_key_columns>
+					<foreign_table>estilo</foreign_table>
+				</foreign_key>
+				<foreign_key>
+					<foreign_key_columns>
+						<foreign_key_column>forneced</foreign_key_column>
+					</foreign_key_columns>
+					<foreign_table>forneced</foreign_table>
+				</foreign_key>
+			</foreign_keys>
+			
+			<handlers>
+				<handler>
+					<name>row_handler_feitio_to_design_cost</name>
+				</handler>
+				<handler>
+					<name>row_handler_margin_calculation_type</name>
+				</handler>
+				<handler>
+					<name>row_handler_margin_calculation</name>
+				</handler>
+			</handlers>
+			
+			<columns>
+				<column> <!-- codigo -->
+					<name>codigo</name>
+					<internal_attribute>company_product_code</internal_attribute>
+				</column>
+				
+				<column> <!-- descricao -->
+					<name>descricao</name>
+					<internal_attribute>name</internal_attribute>
+				</column>
+				
+				<column> <!-- tipopro -->
+					<name>tipopro</name>
+					<internal_attribute>parent_nodes[?].parent_nodes[?]</internal_attribute>
+				</column>
+				
+				<column> <!-- tipopeca -->
+					<name>tipopeca</name>
+					<internal_attribute>parent_nodes[?]</internal_attribute>
+				</column>
+				
+				<column> <!-- estilo -->
+					<name>estilo</name>
+					<internal_attribute>parent_nodes[?]</internal_attribute>
+				</column>
+				
+				<column> <!-- forneced -->
+					<name>forneced</name>
+					<internal_attribute>commercialization_suppliers[0]</internal_attribute>
+				</column>
+				
+				<column> <!-- consigna-->
+					<name>consigna</name>
+					<internal_attribute>consignable[0]</internal_attribute>
+				</column>
+				
+				<column> <!-- stockmin -->
+					<name>stockmin</name>
+					<internal_attribute>min_stock</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>merchandise_contactable_organizational_hierarchy_tree_node</name>
+					</internal_entity>
+				</column>
+				
+				<column> <!-- stock -->
+					<name>stock</name>
+					<internal_attribute>stock_on_hand</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>merchandise_contactable_organizational_hierarchy_tree_node</name>
+					</internal_entity>
+				</column>
+				
+				<column> <!-- pesounit -->
+					<name>pesounit</name>
+					<internal_attribute>weight</internal_attribute>
+				</column>
+				
+				<column> <!-- feitio -->
+					<name>feitio</name>
+					<internal_attribute>design_cost</internal_attribute>
+				</column>
+				
+				<column> <!-- tiplgp -->
+					<name>tiplgp</name>
+					<internal_attribute>lixo_1</internal_attribute>
+				</column>
+				
+	
+				
+				<column> <!-- anulado -->
+					<name>anulado</name>
+					<internal_attribute>status</internal_attribute>
+					<handlers>
+						<handler>
+							<name>column_handler_diamante_anulado_to_hive_status</name>
+						</handler>
+					</handlers>
+				</column>
+			</columns>
+		</table>
+	</tables>
+</input_configuration>

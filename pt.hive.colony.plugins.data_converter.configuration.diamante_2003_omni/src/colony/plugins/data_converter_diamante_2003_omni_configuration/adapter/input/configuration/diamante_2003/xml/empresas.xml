@@ -1,0 +1,191 @@
+<?xml version="1.0"?>
+
+<!--
+ Hive Colony Framework
+ Copyright (C) 2008 Hive Solutions Lda.
+
+ This file is part of Hive Colony Framework.
+
+ Hive Colony Framework is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ Hive Colony Framework is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!-- 
+ __author__    = Simao Rio <srio@hive.pt>
+ __version__   = 1.0.0
+ __revision__  = $LastChangedRevision: 72 $
+ __date__      = $LastChangedDate: 2008-10-21 23:29:54 +0100 (ter, 21 Out 2008) $
+ __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
+ __license__   = GNU General Public License (GPL), Version 3
+-->
+
+<input_configuration xsi:schemaLocation="http://www.hive.pt ../input_configuration.xsd" xmlns="http://www.hive.pt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<tables>
+		<table> <!-- empresas -->
+			<name>empresas</name>
+			<internal_entity>system_company</internal_entity>
+			<primary_key>
+				<primary_key_column>empresa</primary_key_column>
+			</primary_key>
+			
+			<foreign_keys>
+				<foreign_key>
+					<foreign_key_columns>
+						<foreign_key_column>loja</foreign_key_column>
+					</foreign_key_columns>
+					<foreign_table>lojas</foreign_table>
+				</foreign_key>
+			</foreign_keys>
+			
+			<columns>
+				<column> <!-- empresa -->
+					<name>empresa</name>
+					<internal_attribute>name</internal_attribute>
+				</column>
+				<column> <!-- loja -->
+					<name>loja</name>
+					<internal_attribute>child_node[0]</internal_attribute>
+				</column>
+				
+				<column> <!-- morada -->
+					<name>morada</name>
+					<internal_attribute>name</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>address</name>
+					</internal_entity>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- localidade -->
+					<name>localidade</name>
+					<internal_attribute>zip_code_name</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>address</name>
+					</internal_entity>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- codigopos -->
+					<name>codipos</name>
+					<internal_attribute>zip_code</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>address</name>
+					</internal_entity>
+				</column>
+				<column> <!-- distrito -->
+					<name>distrito</name>
+					<internal_attribute>province</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>address</name>
+					</internal_entity>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				
+				<column> <!-- contrib-->
+					<name>contrib</name>
+					<internal_attribute>corporate_tax_number</internal_attribute>
+				</column>
+				<column> <!-- natureza-->
+					<name>natureza</name>
+					<internal_attribute>natureza_juridica</internal_attribute>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- capsocial-->
+					<name>capsocial</name>
+					<internal_attribute>ownership_equity</internal_attribute>
+				</column>
+				<column> <!-- CAE-->
+					<name>cae</name>
+					<internal_attribute>cae</internal_attribute>
+				</column>
+				<column> <!-- iniciact-->
+					<name>iniciact</name>
+					<internal_attribute>open_date</internal_attribute>
+					<handlers>
+						<handler>
+							<name>column_handler_timestamp_to_datetime</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- conserv-->
+					<name>conserv</name>
+					<internal_attribute>corporate_registration_entity</internal_attribute>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- registo-->
+					<name>registo</name>
+					<internal_attribute>corporate_registration_code</internal_attribute>
+				</column>
+				
+				<column> <!-- logopvd-->
+					<name>logopdv</name>
+					<internal_attribute>media[0]</internal_attribute>
+					<!-- carregar imagem -->
+				</column>
+				<column> <!-- fundo-->
+					<name>fundo</name>
+					<internal_attribute>media[1]</internal_attribute>
+					<!-- carregar imagem -->
+				</column>
+				
+				<column> <!-- telefone -->
+					<name>telefone</name>
+					<internal_attribute>phone_number</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>contact_information</name>
+					</internal_entity>
+				</column>
+				<column> <!-- fax -->
+					<name>fax</name>
+					<internal_attribute>fax_number</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>contact_information</name>
+					</internal_entity>
+				</column>
+				<column> <!-- denomina-->
+					<name>denomina</name>
+					<internal_attribute>prefered_name</internal_attribute>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+			</columns>
+		</table>
+	</tables>
+</input_configuration>

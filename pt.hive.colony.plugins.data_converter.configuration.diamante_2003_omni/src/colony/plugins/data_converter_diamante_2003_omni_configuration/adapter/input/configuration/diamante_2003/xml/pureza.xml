@@ -21,30 +21,34 @@
 -->
 
 <!-- 
- __author__    = Tiago Silva <tsilva@hive.pt>
+ __author__    = Simao Rio <srio@hive.pt>
  __version__   = 1.0.0
  __revision__  = $LastChangedRevision: 72 $
- __date__      = $LastChangedDate: 2008-10-21 23:29:54 +0100 (Tue, 21 Oct 2008) $
+ __date__      = $LastChangedDate: 2008-10-21 23:29:54 +0100 (ter, 21 Out 2008) $
  __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
  __license__   = GNU General Public License (GPL), Version 3
 -->
 
 <input_configuration xsi:schemaLocation="http://www.hive.pt ../input_configuration.xsd" xmlns="http://www.hive.pt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<tables>
-		<table> <!-- paises -->
-			<name>paises</name>
-			<internal_entity>country</internal_entity>
+		<table> <!-- pureza -->
+			<name>pureza</name>
+			
+			<internal_entity>category</internal_entity>
+			
 			<primary_key>
-				<primary_key_column>Codigo</primary_key_column>
+				<primary_key_column>codigo</primary_key_column>
 			</primary_key>
+			
 			<columns>
-				<column> <!-- Codigo -->
-					<name>Codigo</name>
-					<internal_attribute>code</internal_attribute>
+				<column> <!-- codigo -->
+					<name>codigo</name>
+					<internal_attribute>id</internal_attribute>
 				</column>
-				<column> <!-- Descricao -->
-					<name>Descricao</name>
-					<internal_attribute>countryName</internal_attribute>
+				
+				<column> <!-- descricao -->
+					<name>descricao</name>
+					<internal_attribute>name</internal_attribute>
 					<handlers>
 						<handler>
 							<name>column_handler_string_to_lowercase</name>

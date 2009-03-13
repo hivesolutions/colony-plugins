@@ -31,54 +31,84 @@
 
 <input_configuration xsi:schemaLocation="http://www.hive.pt ../input_configuration.xsd" xmlns="http://www.hive.pt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<tables>
-		<table> <!-- passwords -->
-			<name>password</name>
-			<internal_entity>user</internal_entity>
+		<table> <!-- lojas -->
+			<name>lojas</name>
+			<internal_entity>store</internal_entity>
 			<primary_key>
-				<primary_key_column>id</primary_key_column>
-			</primary_key>
-			<foreign_keys>
-				<foreign_key>
-					<foreign_key_columns>
-						<foreign_key_column>vendedor</foreign_key_column>
-					</foreign_key_columns>
-					<foreign_table>vendedor</foreign_table>
-				</foreign_key>
-			</foreign_keys>
+				<primary_key_column>codigo</primary_key_column>
+			</primary_key>			
+			
 			<columns>
-				<column> <!-- id -->
-					<name>id</name>
-					<internal_attribute>username</internal_attribute>
+				<column> <!-- codigo -->
+					<name>codigo</name>
+					<internal_attribute>id</internal_attribute>
+				</column>
+				
+				<column> <!-- descricao -->
+					<name>descricao</name>
+					<internal_attribute>name</internal_attribute>
 					<handlers>
 						<handler>
 							<name>column_handler_string_to_lowercase</name>
 						</handler>
 					</handlers>
 				</column>
-				<column> <!-- chave -->
-					<name>chave</name>
-					<internal_attribute>password_hash</internal_attribute>
+				
+				<column> <!-- email -->
+					<name>email</name>
+					<internal_attribute>email</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>contact_information</name>
+					</internal_entity>
 					<handlers>
 						<handler>
-							<name>column_handler_diamante_encryption_to_plaintext</name>
+							<name>column_handler_string_to_lowercase</name>
 						</handler>
 					</handlers>
 				</column>
-				<column> <!-- actualizou -->
-					<name>actualizou</name>
-					<internal_attribute>updated_at</internal_attribute>
-				</column>
-				<column> <!-- grupo -->
-					<name>grupo</name>
-					<internal_attribute>id</internal_attribute>
+				<column> <!-- telefone -->
+					<name>telefone</name>
+					<internal_attribute>phone_number</internal_attribute>
 					<internal_entity>
 						<id>0</id>
-						<name>user_group</name>
+						<name>contact_information</name>
 					</internal_entity>
 				</column>
-				<column> <!-- vendedor -->
-					<name>vendedor</name>
-					<internal_attribute>employee</internal_attribute>
+				<column> <!-- fax -->
+					<name>fax</name>
+					<internal_attribute>fax_number</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>contact_information</name>
+					</internal_entity>
+				</column>
+				
+				<column> <!-- morada -->
+					<name>morada</name>
+					<internal_attribute>name</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>address</name>
+					</internal_entity>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- local -->
+					<name>local</name>
+					<internal_attribute>zip_code_name</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>address</name>
+					</internal_entity>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
 				</column>
 			</columns>
 		</table>

@@ -21,10 +21,10 @@
 -->
 
 <!-- 
- __author__    = Tiago Silva <tsilva@hive.pt>
+ __author__    = Simao Rio <srio@hive.pt>
  __version__   = 1.0.0
  __revision__  = $LastChangedRevision: 72 $
- __date__      = $LastChangedDate: 2008-10-21 23:29:54 +0100 (Tue, 21 Oct 2008) $
+ __date__      = $LastChangedDate: 2008-10-21 23:29:54 +0100 (ter, 21 Out 2008) $
  __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
  __license__   = GNU General Public License (GPL), Version 3
 -->
@@ -33,107 +33,89 @@
 	<tables>
 		<table> <!-- clientes -->
 			<name>clientes</name>
+			<!-- na segunda fase identificar a customercompany e a customerperson -->
 			<internal_entity>customer</internal_entity>
+			
 			<primary_key>
-				<primary_key_column>Codigo</primary_key_column>
+				<primary_key_column>codigo</primary_key_column>
 			</primary_key>
+			
 			<foreign_keys>
 				<foreign_key>
 					<foreign_key_columns>
-						<foreign_key_column>Observ</foreign_key_column>
+						<foreign_key_column>vendedor</foreign_key_column>
 					</foreign_key_columns>
-					<foreign_table>observa</foreign_table>
+					<foreign_table>vendedor</foreign_table>
 				</foreign_key>
 				<foreign_key>
 					<foreign_key_columns>
-						<foreign_key_column>Profissa</foreign_key_column>
+						<foreign_key_column>tpag</foreign_key_column>
+					</foreign_key_columns>
+					<foreign_table>tipopaga</foreign_table>
+				</foreign_key>
+				<foreign_key>
+					<foreign_key_columns>
+						<foreign_key_column>zona1</foreign_key_column>
+					</foreign_key_columns>
+					<foreign_table>zonas</foreign_table>
+				</foreign_key>
+				<foreign_key>
+					<foreign_key_columns>
+						<foreign_key_column>zona2</foreign_key_column>
+					</foreign_key_columns>
+					<foreign_table>zonas</foreign_table>
+				</foreign_key>
+				<foreign_key>
+					<foreign_key_columns>
+						<foreign_key_column>profissa</foreign_key_column>
 					</foreign_key_columns>
 					<foreign_table>profissa</foreign_table>
 				</foreign_key>
-				<foreign_key>
-					<foreign_key_columns>
-						<foreign_key_column>Pais1</foreign_key_column>
-					</foreign_key_columns>
-					<foreign_table>paises</foreign_table>
-				</foreign_key>
-				<foreign_key>
-					<foreign_key_columns>
-						<foreign_key_column>Pais2</foreign_key_column>
-					</foreign_key_columns>
-					<foreign_table>paises</foreign_table>
-				</foreign_key>
-				<foreign_key>
-					<foreign_key_columns>
-						<foreign_key_column>Zona1</foreign_key_column>
-					</foreign_key_columns>
-					<foreign_table>zonas</foreign_table>
-				</foreign_key>
-				<foreign_key>
-					<foreign_key_columns>
-						<foreign_key_column>Zona2</foreign_key_column>
-					</foreign_key_columns>
-					<foreign_table>zonas</foreign_table>
-				</foreign_key>
 			</foreign_keys>
+			
 			<columns>
-				<column> <!-- Codigo -->
-					<name>Codigo</name>
-					<internal_attribute>code</internal_attribute>
+				<column> <!-- codigo -->
+					<name>codigo</name>
+					<internal_attribute>id</internal_attribute>
 				</column>
-				<column> <!-- Nome -->
-					<name>Nome</name>
-					<internal_attribute>name</internal_attribute>
+				
+				<!-- @TODO: concatenar os dois nomes -->
+				<column> <!-- nome -->
+					<name>nome</name>
+					<internal_attribute>name1</internal_attribute>
 					<handlers>
 						<handler>
 							<name>column_handler_string_to_lowercase</name>
 						</handler>
 					</handlers>
 				</column>
-				<column> <!-- Sobrenome -->
-					<name>Sobrenome</name>
-					<internal_attribute>surname</internal_attribute>
+				<column> <!-- sobrenome -->
+					<name>sobrenome</name>
+					<internal_attribute>name2</internal_attribute>
 					<handlers>
 						<handler>
 							<name>column_handler_string_to_lowercase</name>
 						</handler>
 					</handlers>
 				</column>
-				<column> <!-- Profissa -->
-					<name>Profissa</name>
-					<internal_attribute>profession</internal_attribute>
+				
+				<column> <!-- contri -->
+					<name>contri</name>
+					<internal_attribute>tax_number</internal_attribute>
 				</column>
-				<column> <!-- Biprop -->
-					<name>Biprop</name>
-					<internal_attribute>idCardNumber</internal_attribute>
-				</column>
-				<column> <!-- Contri -->
-					<name>Contri</name>
-					<internal_attribute>taxNumber</internal_attribute>
-				</column>
-				<column> <!-- Nib -->
-					<name>Nib</name>
-					<internal_attribute>bankAccountNumber</internal_attribute>
-				</column>
-				<column> <!-- Denomina -->
-					<name>Denomina</name>
-					<internal_attribute>title</internal_attribute>
-					<handlers>
-						<handler>
-							<name>column_handler_string_to_lowercase</name>
-						</handler>
-					</handlers>
-				</column>
-				<column> <!-- Anos -->
-					<name>Anos</name>
-					<internal_attribute>birthDate</internal_attribute>
+				
+				<column> <!-- anos -->
+					<name>anos</name>
+					<internal_attribute>birth_date</internal_attribute>
 					<handlers>
 						<handler>
 							<name>column_handler_timestamp_to_datetime</name>
 						</handler>
 					</handlers>
 				</column>
-				<column> <!-- Sexo -->
-					<name>Sexo</name>
+				
+				<column> <!-- sexo -->
+					<name>sexo</name>
 					<internal_attribute>gender</internal_attribute>
 					<handlers>
 						<handler>
@@ -141,75 +123,259 @@
 						</handler>
 					</handlers>
 				</column>
-				<column> <!-- Ext1 -->
-					<name>Ext1</name>
-					<internal_attribute>telephoneExtension</internal_attribute>
+				
+				<column> <!-- contacto - funcionário do cliente-->
+					<name>contacto</name>
+					<internal_attribute>name</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>customer_employee</name>
+					</internal_entity>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				
+				<column> <!-- situacao -->
+					<name>situacao</name>
+					<internal_attribute>commercial_status</internal_attribute>
+				</column>
+				
+				<column> <!-- vendedor - funcionário da companhia-->
+					<name>vendedor</name>
+					<internal_attribute>employee</internal_attribute>					
+				</column>
+				
+				<column> <!-- tpag-->
+					<name>tpag</name>
+					<internal_attribute>paymeny_terms</internal_attribute>
+				</column>
+				
+				<column> <!-- morada1 -->
+					<name>morada1</name>
+					<internal_attribute>name</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>address</name>
+					</internal_entity>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- localidad1 -->
+					<name>localidad1</name>
+					<internal_attribute>zip_code_name</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>address</name>
+					</internal_entity>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- codpos1 -->
+					<name>codpos1</name>
+					<internal_attribute>zip_code</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>address</name>
+					</internal_entity>
+				</column>
+				
+				<column> <!-- tel1 -->
+					<name>tel1</name>
+					<internal_attribute>phone_number</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>contact_information</name>
+					</internal_entity>
+				</column>
+				<column> <!-- tel2 -->
+					<name>tel2</name>
+					<internal_attribute>phone_number</internal_attribute>
 					<internal_entity>
 						<id>1</id>
 						<name>contact_information</name>
 					</internal_entity>
 				</column>
-				<column> <!-- Tel1 -->
-					<name>Tel1</name>
-					<internal_attribute>telephone</internal_attribute>
+				<column> <!-- movel -->
+					<name>movel</name>
+					<internal_attribute>mobile_phone_number</internal_attribute>
 					<internal_entity>
-						<id>1</id>
+						<id>0</id>
 						<name>contact_information</name>
 					</internal_entity>
 				</column>
-				<column> <!-- Ext2 -->
-					<name>Ext2</name>
-					<internal_attribute>telephoneExtension</internal_attribute>
-					<internal_entity>
-						<id>2</id>
-						<name>contact_information</name>
-					</internal_entity>
-				</column>
-				<column> <!-- Tel2 -->
-					<name>Tel2</name>
-					<internal_attribute>telephone</internal_attribute>
-					<internal_entity>
-						<id>2</id>
-						<name>contact_information</name>
-					</internal_entity>
-				</column>
-				<column> <!-- Ext3 -->
-					<name>Ext3</name>
-					<internal_attribute>telephoneExtension</internal_attribute>
-					<internal_entity>
-						<id>3</id>
-						<name>contact_information</name>
-					</internal_entity>
-				</column>
-				<column> <!-- Tel3 -->
-					<name>Tel3</name>
-					<internal_attribute>telephone</internal_attribute>
-					<internal_entity>
-						<id>3</id>
-						<name>contact_information</name>
-					</internal_entity>
-				</column>
-				<column> <!-- Movel -->
-					<name>Movel</name>
-					<internal_attribute>mobilePhone</internal_attribute>
-					<internal_entity>
-						<id>1</id>
-						<name>contact_information</name>
-					</internal_entity>
-				</column>
-				<column> <!-- Fax -->
-					<name>Fax</name>
+				<column> <!-- fax -->
+					<name>fax</name>
 					<internal_attribute>fax</internal_attribute>
 					<internal_entity>
-						<id>1</id>
+						<id>0</id>
 						<name>contact_information</name>
 					</internal_entity>
 				</column>
-				<column> <!-- Email -->
-					<name>Email</name>
+				
+				<column> <!-- pais1 -->
+					<name>pais1</name>
+					<internal_attribute>country</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>address</name>
+					</internal_entity>
+					<handlers>
+						<handler>
+							<name>column_handler_diamante_paises_to_hive_country</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- zona1-->
+					<name>zona1</name>
+					<internal_attribute>parent_node[0]</internal_attribute>
+				</column>
+				
+				<column> <!-- morada2 -->
+					<name>morada2</name>
+					<internal_attribute>name</internal_attribute>
+					<internal_entity>
+						<id>1</id>
+						<name>address</name>
+					</internal_entity>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- localidad2 -->
+					<name>localidad2</name>
+					<internal_attribute>zip_code_name</internal_attribute>
+					<internal_entity>
+						<id>1</id>
+						<name>address</name>
+					</internal_entity>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- codpos2 -->
+					<name>codpos2</name>
+					<internal_attribute>zip_code</internal_attribute>
+					<internal_entity>
+						<id>1</id>
+						<name>address</name>
+					</internal_entity>
+				</column>
+								
+				<column> <!-- pais2 -->
+					<name>pais2</name>
+					<internal_attribute>country</internal_attribute>
+					<internal_entity>
+						<id>1</id>
+						<name>address</name>
+					</internal_entity>
+					<handlers>
+						<handler>
+							<name>column_handler_diamante_paises_to_hive_country</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- zona2-->
+					<name>zona2</name>
+					<internal_attribute>parent_node[1]</internal_attribute>
+				</column>
+				
+				<column> <!-- conjugue -->
+					<name>conjugue</name>
+					<internal_attribute>name</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>person_married</name>
+					</internal_entity>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- aniconj -->
+					<name>aniconj</name>
+					<internal_attribute>birth_date</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>person_married</name>
+					</internal_entity>
+				</column>
+				
+				<column> <!-- casamento -->
+					<name>casamento</name>
+					<internal_attribute>marriage_date</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>person_married</name>
+					</internal_entity>
+				</column>
+				
+				<column> <!-- nib -->
+					<name>nib</name>
+					<internal_attribute>national_account_number</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>financial_account</name>
+					</internal_entity>
+				</column>
+				
+				<column> <!-- biprop-->
+					<name>biprop</name>
+					<internal_attribute>national_id_number</internal_attribute>
+				</column>
+				
+				<column> <!-- biconj -->
+					<name>biconj</name>
+					<internal_attribute>national_id_number</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>person_married</name>
+					</internal_entity>
+				</column>
+				
+				<column> <!-- denomina-->
+					<name>denomina</name>
+					<internal_attribute>denominacao</internal_attribute>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				
+				<column> <!-- imagem -->
+					<name>imagem</name>
+					<internal_attribute>media[1]</internal_attribute>
+					<!-- carregar imagem -->
+				</column>
+				
+				<column> <!-- tel3 -->
+					<name>tel3</name>
+					<internal_attribute>phone_number</internal_attribute>
+					<internal_entity>
+						<id>2</id>
+						<name>contact_information</name>
+					</internal_entity>
+				</column>
+				
+				<column> <!-- email -->
+					<name>email</name>
 					<internal_attribute>email</internal_attribute>
 					<internal_entity>
-						<id>1</id>
+						<id>0</id>
 						<name>contact_information</name>
 					</internal_entity>
 					<handlers>
@@ -218,11 +384,11 @@
 						</handler>
 					</handlers>
 				</column>
-				<column> <!-- Url -->
-					<name>Url</name>
-					<internal_attribute>webPageUrl</internal_attribute>
+				<column> <!-- url -->
+					<name>url</name>
+					<internal_attribute>web_page</internal_attribute>
 					<internal_entity>
-						<id>1</id>
+						<id>0</id>
 						<name>contact_information</name>
 					</internal_entity>
 					<handlers>
@@ -231,115 +397,27 @@
 						</handler>
 					</handlers>
 				</column>
-				<column> <!-- Pais1 -->
-					<name>Pais1</name>
-					<internal_attribute>country</internal_attribute>
-					<internal_entity>
-						<id>1</id>
-						<name>address</name>
-					</internal_entity>
-				</column>
-				<column> <!-- Pais2 -->
-					<name>Pais2</name>
-					<internal_attribute>country</internal_attribute>
-					<internal_entity>
-						<id>2</id>
-						<name>address</name>
-					</internal_entity>
-				</column>
-				<column> <!-- Zona1 -->
-					<name>Zona1</name>
-					<internal_attribute>zone</internal_attribute>
-					<internal_entity>
-						<id>1</id>
-						<name>address</name>
-					</internal_entity>
-				</column>
-				<column> <!-- Zona2 -->
-					<name>Zona2</name>
-					<internal_attribute>zone</internal_attribute>
-					<internal_entity>
-						<id>2</id>
-						<name>address</name>
-					</internal_entity>
-				</column>
-				<column> <!-- Localidad1 -->
-					<name>Localidad1</name>
-					<internal_attribute>location</internal_attribute>
-					<internal_entity>
-						<id>1</id>
-						<name>address</name>
-					</internal_entity>					
+				
+				<column> <!-- anulado -->
+					<name>anulado</name>
+					<internal_attribute>status</internal_attribute>
 					<handlers>
 						<handler>
-							<name>column_handler_string_to_lowercase</name>
+							<name>column_handler_diamante_anulado_to_hive_status</name>
 						</handler>
 					</handlers>
 				</column>
-				<column> <!-- Localidad2 -->
-					<name>Localidad2</name>
-					<internal_attribute>location</internal_attribute>
-					<internal_entity>
-						<id>2</id>
-						<name>address</name>
-					</internal_entity>
-					<handlers>
-						<handler>
-							<name>column_handler_string_to_lowercase</name>
-						</handler>
-					</handlers>
+				<column> <!-- criacao -->
+					<name>criacao</name>
+					<internal_attribute>created_at</internal_attribute>
 				</column>
-				<column> <!-- Morada1 -->
-					<name>Morada1</name>
-					<internal_attribute>address</internal_attribute>
-					<internal_entity>
-						<id>1</id>
-						<name>address</name>
-					</internal_entity>
-					<handlers>
-						<handler>
-							<name>column_handler_string_to_lowercase</name>
-						</handler>
-					</handlers>
-				</column>
-				<column> <!-- Morada2 -->
-					<name>Morada2</name>
-					<internal_attribute>address</internal_attribute>
-					<internal_entity>
-						<id>2</id>
-						<name>address</name>
-					</internal_entity>
-					<handlers>
-						<handler>
-							<name>column_handler_string_to_lowercase</name>
-						</handler>
-					</handlers>
-				</column>
-				<column> <!-- Codpos1 -->
-					<name>Codpos1</name>
-					<internal_attribute>zipCode</internal_attribute>
-					<internal_entity>
-						<id>1</id>
-						<name>address</name>
-					</internal_entity>
-				</column>
-				<column> <!-- Codpos2 -->
-					<name>Codpos2</name>
-					<internal_attribute>zipCode</internal_attribute>
-					<internal_entity>
-						<id>2</id>
-						<name>address</name>
-					</internal_entity>
-				</column>
-				<column> <!--Observ -->
-					<name>Observ</name>
-					<internal_attribute>observation</internal_attribute>
-				</column>
-				<column> <!-- Apontament -->
-					<name>Apontament</name>
-					<internal_attribute>notes</internal_attribute>
+				
+				<column> <!-- profissa-->
+					<name>profissa</name>
+					<internal_attribute>occupation</internal_attribute>	
 				</column>
 			</columns>
 		</table>
+
 	</tables>
 </input_configuration>

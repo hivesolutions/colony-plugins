@@ -21,58 +21,76 @@
 -->
 
 <!-- 
- __author__    = Tiago Silva <tsilva@hive.pt>
+ __author__    = Simao Rio <srio@hive.pt>
  __version__   = 1.0.0
  __revision__  = $LastChangedRevision: 72 $
- __date__      = $LastChangedDate: 2008-10-21 23:29:54 +0100 (Tue, 21 Oct 2008) $
+ __date__      = $LastChangedDate: 2008-10-21 23:29:54 +0100 (ter, 21 Out 2008) $
  __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
  __license__   = GNU General Public License (GPL), Version 3
 -->
 
 <input_configuration xsi:schemaLocation="http://www.hive.pt ../input_configuration.xsd" xmlns="http://www.hive.pt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<tables>
-		<table> <!-- forneced -->
+		<table> <!-- fornced -->
 			<name>forneced</name>
+			<!-- na segunda fase identificar a supplier companies e a supplierperson -->
 			<internal_entity>supplier</internal_entity>
+			
 			<primary_key>
-				<primary_key_column>Codigo</primary_key_column>
+				<primary_key_column>codigo</primary_key_column>
 			</primary_key>
+			
 			<foreign_keys>
 				<foreign_key>
 					<foreign_key_columns>
-						<foreign_key_column>Pais</foreign_key_column>
+						<foreign_key_column>tpag</foreign_key_column>
 					</foreign_key_columns>
-					<foreign_table>paises</foreign_table>
+					<foreign_table>tipopaga</foreign_table>
+				</foreign_key>
+				<foreign_key>
+					<foreign_key_columns>
+						<foreign_key_column>zona</foreign_key_column>
+					</foreign_key_columns>
+					<foreign_table>zonas</foreign_table>
 				</foreign_key>
 			</foreign_keys>
+			
 			<columns>
-				<column> <!-- Codigo -->
-					<name>Codigo</name>
-					<internal_attribute>code</internal_attribute>
+				<column> <!-- codigo -->
+					<name>codigo</name>
+					<internal_attribute>id</internal_attribute>
+					<primary_key>true</primary_key>
 				</column>
-				<column> <!-- Sobrenome -->
-					<name>Sobrenome</name>
-					<internal_attribute>surname</internal_attribute>
+				
+				<!-- @TODO: concatenar os dois nomes -->
+				<column> <!-- nome -->
+					<name>nome</name>
+					<internal_attribute>name1</internal_attribute>
 					<handlers>
 						<handler>
 							<name>column_handler_string_to_lowercase</name>
 						</handler>
 					</handlers>
 				</column>
-				<column> <!-- Nome -->
-					<name>Nome</name>
+				<column> <!-- sobrenome -->
+					<name>sobrenome</name>
+					<internal_attribute>name2</internal_attribute>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- contri -->
+					<name>contri</name>
+					<internal_attribute>tax_number</internal_attribute>
+				</column>
+				
+				<column> <!-- morada -->
+					<name>morada</name>
 					<internal_attribute>name</internal_attribute>
-					<handlers>
-						<handler>
-							<name>column_handler_string_to_lowercase</name>
-						</handler>
-					</handlers>
-				</column>
-				<column> <!-- Morada -->
-					<name>Morada</name>
-					<internal_attribute>address</internal_attribute>
 					<internal_entity>
-						<id>1</id>
+						<id>0</id>
 						<name>address</name>
 					</internal_entity>
 					<handlers>
@@ -81,104 +99,176 @@
 						</handler>
 					</handlers>
 				</column>
-				<column> <!-- Tel1 -->
-					<name>Tel1</name>
-					<internal_attribute>telephone</internal_attribute>
+				<column> <!-- localidad -->
+					<name>localidad</name>
+					<internal_attribute>zip_code_name</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>address</name>
+					</internal_entity>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- codpos -->
+					<name>codpos</name>
+					<internal_attribute>zip_code</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>address</name>
+					</internal_entity>
+				</column>
+				
+				<column> <!-- tpag-->
+					<name>tpag</name>
+					<internal_attribute>paymeny_terms</internal_attribute>
+				</column>
+				
+				<column> <!-- tel1 -->
+					<name>tel1</name>
+					<internal_attribute>phone_number</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>contact_information</name>
+					</internal_entity>
+				</column>
+				<column> <!-- tel2 -->
+					<name>tel2</name>
+					<internal_attribute>phone_number</internal_attribute>
 					<internal_entity>
 						<id>1</id>
 						<name>contact_information</name>
 					</internal_entity>
 				</column>
-				<column> <!-- Tel2 -->
-					<name>Tel2</name>
-					<internal_attribute>telephone</internal_attribute>
+				
+				<column> <!-- apontament -->
+					<name>apontament</name>
+					<internal_attribute>description</internal_attribute>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				
+				<column> <!-- movel -->
+					<name>movel</name>
+					<internal_attribute>mobile_phone_number</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>contact_information</name>
+					</internal_entity>
+				</column>
+				<column> <!-- fax -->
+					<name>fax</name>
+					<internal_attribute>fax</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>contact_information</name>
+					</internal_entity>
+				</column>
+								
+				<column> <!-- pais -->
+					<name>pais</name>
+					<internal_attribute>country</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>address</name>
+					</internal_entity>
+					<handlers>
+						<handler>
+							<name>column_handler_diamante_paises_to_hive_country</name>
+						</handler>
+					</handlers>					
+				</column>
+				<column> <!-- zona-->
+					<name>zona</name>
+					<internal_attribute>parent_node[0]</internal_attribute>
+				</column>
+				
+				<column> <!-- nib -->
+					<name>nib</name>
+					<internal_attribute>national_account_number</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>financial_account</name>
+					</internal_entity>
+				</column>
+				
+				<column> <!-- denomina -->
+					<name>denomina</name>
+					<internal_attribute>denominacao</internal_attribute>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				
+				<column> <!-- sexo -->
+					<name>sexo</name>
+					<internal_attribute>gender</internal_attribute>
+					<handlers>
+						<handler>
+							<name>column_handler_diamante_gender_id_to_hive_gender_id</name>
+						</handler>
+					</handlers>
+				</column>
+				
+				<column> <!-- email -->
+					<name>email</name>
+					<internal_attribute>email</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>contact_information</name>
+					</internal_entity>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- url -->
+					<name>url</name>
+					<internal_attribute>web_page</internal_attribute>
+					<internal_entity>
+						<id>0</id>
+						<name>contact_information</name>
+					</internal_entity>
+					<handlers>
+						<handler>
+							<name>column_handler_string_to_lowercase</name>
+						</handler>
+					</handlers>
+				</column>
+				<column> <!-- tel3 -->
+					<name>tel3</name>
+					<internal_attribute>phone_number</internal_attribute>
 					<internal_entity>
 						<id>2</id>
 						<name>contact_information</name>
 					</internal_entity>
 				</column>
-				<column> <!-- Tel3 -->
-					<name>Tel3</name>
-					<internal_attribute>telephone</internal_attribute>
-					<internal_entity>
-						<id>3</id>
-						<name>contact_information</name>
-					</internal_entity>
-				</column>
-				<column> <!-- Movel -->
-					<name>Movel</name>
-					<internal_attribute>mobilePhone</internal_attribute>
-					<internal_entity>
-						<id>1</id>
-						<name>contact_information</name>
-					</internal_entity>
-				</column>
-				<column> <!-- Fax -->
-					<name>Fax</name>
-					<internal_attribute>fax</internal_attribute>
-					<internal_entity>
-						<id>1</id>
-						<name>contact_information</name>
-					</internal_entity>
-				</column>
-				<column> <!-- Email -->
-					<name>Email</name>
-					<internal_attribute>email</internal_attribute>
-					<internal_entity>
-						<id>1</id>
-						<name>contact_information</name>
-					</internal_entity>
+				
+				<column> <!-- anulado -->
+					<name>anulado</name>
+					<internal_attribute>status</internal_attribute>
 					<handlers>
 						<handler>
-							<name>column_handler_string_to_lowercase</name>
+							<name>column_handler_diamante_anulado_to_hive_status</name>
 						</handler>
 					</handlers>
 				</column>
-				<column> <!-- Url -->
-					<name>Url</name>
-					<internal_attribute>webPageUrl</internal_attribute>
-					<internal_entity>
-						<id>1</id>
-						<name>contact_information</name>
-					</internal_entity>
+				<column> <!-- criacao -->
+					<name>criacao</name>
+					<internal_attribute>created_at</internal_attribute>
 					<handlers>
 						<handler>
-							<name>column_handler_string_to_lowercase</name>
+							<name>column_handler_timestamp_to_datetime</name>
 						</handler>
 					</handlers>
-				</column>
-				<column> <!-- Localidad -->
-					<name>Localidad</name>
-					<internal_attribute>location</internal_attribute>
-					<internal_entity>
-						<id>1</id>
-						<name>address</name>
-					</internal_entity>					
-					<handlers>
-						<handler>
-							<name>column_handler_string_to_lowercase</name>
-						</handler>
-					</handlers>
-				</column>
-				<column> <!-- Codpos -->
-					<name>Codpos</name>
-					<internal_attribute>zipCode</internal_attribute>
-					<internal_entity>
-						<id>1</id>
-						<name>address</name>
-					</internal_entity>
-				</column>
-				<column> <!-- Pais -->
-					<name>Pais</name>
-					<internal_attribute>country</internal_attribute>
-					<internal_entity>
-						<id>1</id>
-						<name>address</name>
-					</internal_entity>
-				</column>
-				<column> <!-- Apontament -->
-					<name>Apontament</name>
-					<internal_attribute>notes</internal_attribute>
 				</column>
 			</columns>
 		</table>
