@@ -127,17 +127,12 @@ class Table:
     def get_plain_columns(self):
         """
         Retrieves a list with all the columns belonging to this table
-        that are not part of the primary key or any foreign key.
+        that are not part of any foreign key.
         
         @return: List of table columns.
         """
         columns = self.get_columns()
-        
-        # remove primary key columns
-        for primary_key_column in self.primary_key_columns:
-            if primary_key_column in columns:
-                columns.remove(primary_key_column)
-                
+                       
         # remove foreign key columns
         for foreign_key in self.foreign_keys:
             for foreign_key_column in foreign_key.columns:
