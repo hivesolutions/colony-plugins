@@ -53,7 +53,7 @@ class InputAdapter:
     internal_entity_name_primary_key_entity_id_map = {}
     """ Dictionary relating internal entity name, with primary key value, with internal entity id. """
 
-    foreign_key_queue = None
+    foreign_key_queue = []
     """ Queue of foreign keys that are waiting of the entity are referencing to be processed. """
 
     input_description = None
@@ -102,7 +102,7 @@ class InputAdapter:
         # reset the input adapter's data
         self.table_name_configuration_internal_entity_id_internal_id_map = {}
         self.internal_entity_name_primary_key_entity_id_map = {}
-        self.foreign_key_queue = ForeignKeyQueue()
+        self.foreign_key_queue = []
         self.internal_structure = internal_structure
         self.connection = connection
         self.configuration = configuration
@@ -171,6 +171,9 @@ class InputAdapter:
 
                 counter += counter_inc
                 task.set_percentage_complete(counter)
+                
+        # process every foreign key that was placed in the queue
+        self.process_foreign_key_queue()
 
     def process_handler(self, handler_name, arguments):
         """
@@ -208,8 +211,6 @@ class InputAdapter:
             row_conversion_info = RowConversionInfo(table_configuration, row_internal_entity, row)
             # bind the entity's id to the table's primary key
             self.process_primary_key(row_conversion_info)
-            # process every foreign key that was waiting for this entity to be created
-            self.process_foreign_key_queue(row_conversion_info)
             # process the table columns
             self.process_columns(row_conversion_info)
             # run the handlers configured for this row
@@ -296,29 +297,21 @@ class InputAdapter:
         """
         Process the foreign key queue.
         """
-        
-        table_configuration = row_conversion_info.configuration
-        row_internal_entity = row_conversion_info.internal_entity
-        row = row_conversion_info.row
-        
-        # compute this row's primary key string representation
-        primary_key_column_names = [column.name for column in table_configuration.primary_key_columns]
-        primary_key_string = str([row[primary_key_column_name] for primary_key_column_name in primary_key_column_names])
-
         # try to connect all entities which have pending foreign keys until the foreign key queue is empty
         # @todo: this process can be made faster by using a graph
         while len(self.foreign_key_queue):
             processed_foreign_keys = []
             
             # try to process each key and store the processed keys
-            for foreign_key_informations in self.foreign_key_queue:
-                foreign_key_internal_entity_name = foreign_key_information["foreing_key_internal_entity_name"]
+            for foreign_key_information in self.foreign_key_queue:
+                foreign_key_internal_entity_name = foreign_key_information["foreign_key_internal_entity_name"]
                 foreign_key_internal_entity_id = foreign_key_information["foreign_key_internal_entity_id"]
                 foreign_internal_entity_name = foreign_key_information["foreign_internal_entity_name"]
-                foreign_table_internal_entity_id = self.get_primary_key_entity_id(foreign_internal_entity_name, foreign_key_information["foreign_key_string"])
-                if foreign_table_internal_entity_id:
-                    self.internal_structure.set_field_value(foreign_key_internal_entity_name, foreign_key_internal_entity_id, foreign_table.internal_entity, row_internal_entity) 
-                    processed_foreign_keys.append(foreign_key_informations)
+                foreign_internal_entity_id = self.get_primary_key_entity_id(foreign_internal_entity_name, foreign_key_information["foreign_key_string"])
+                if not foreign_internal_entity_id is None:
+                    foreign_internal_entity = self.internal_structure.get_entity(foreign_internal_entity_name, foreign_internal_entity_id)
+                    self.internal_structure.set_field_value(foreign_key_internal_entity_name, foreign_key_internal_entity_id, foreign_internal_entity_name, foreign_internal_entity) 
+                    processed_foreign_keys.append(foreign_key_information)
             
             # remove the processed foreign keys from the foreign key queue
             for processed_foreign_key in processed_foreign_keys:
