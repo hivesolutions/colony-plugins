@@ -68,8 +68,17 @@ TYPE_EXCLUSION_LIST = [types.MethodType, types.FunctionType, types.ClassType]
 RELATION_DATA_TYPE = "relation"
 """ The relation data type """
 
+ID_FIELD = "id"
+""" The id field """
+
 DATA_TYPE_FIELD = "data_type"
 """ The data type field """
+
+GENERATED_FIELD = "generated"
+""" The generated field """
+
+GENERATOR_TYPE_FIELD = "generator_type"
+""" The generator type field """
 
 RELATION_ATTRIBUTES_METHOD_FIELD = "relation_attributes_method"
 """ The relation attributes method field """
@@ -563,6 +572,16 @@ class BusinessSqliteEngine:
         entity_class = entity.__class__
 
         # retrieves the entity class id attribute value
+        entity_class_id_attribute_value = self.get_entity_class_id_attribute_value(entity_class)
+
+        # in case the id field is to be generated
+        if GENERATED_FIELD in entity_class_id_attribute_value:
+            # retrieves the entity class id attribute name
+            entity_class_id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
+            import time
+            setattr(entity, entity_class_id_attribute_name, int(time.time() * 100))
+
+        # retrieves the entity id attribute value
         entity_id_attribute_value = self.get_entity_id_attribute_value(entity)
 
         # in case there is already an entry with the same key value
@@ -1505,8 +1524,8 @@ class BusinessSqliteEngine:
         index = 0
 
         for entity_class_valid_attribute_value in entity_class_valid_attribute_values:
-            if "id" in entity_class_valid_attribute_value:
-                if entity_class_valid_attribute_value["id"]:
+            if ID_FIELD in entity_class_valid_attribute_value:
+                if entity_class_valid_attribute_value[ID_FIELD]:
                     return entity_class_valid_attribute_names[index]
 
             # increments the index value
