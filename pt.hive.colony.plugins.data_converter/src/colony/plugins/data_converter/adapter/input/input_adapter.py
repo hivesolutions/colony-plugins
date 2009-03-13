@@ -264,8 +264,8 @@ class InputAdapter:
             foreign_table = self.input_description.get_table(foreign_key.foreign_table)
             foreign_internal_entity_id = self.get_primary_key_entity_id(foreign_table.internal_entity, foreign_key_string)
             if foreign_internal_entity_id:
-               foreign_internal_entity_instance = self.internal_structure.get_entity(foreign_internal_entity_name, foreign_internal_entity_id)
-               self.internal_structure.set_field_value(row_internal_entity_name, row_internal_entity_id, foreign_internal_entity_name, foreign_internal_entity_instance)
+               foreign_internal_entity_instance = self.internal_structure.get_entity(foreign_table.internal_entity, foreign_internal_entity_id)
+               self.internal_structure.set_field_value(row_internal_entity._name, row_internal_entity._id, foreign_table.internal_entity, foreign_internal_entity_instance)
             else: # otherwise add the foreign key to the queue
                self.foreign_key_queue.enqueue_foreign_key(foreign_key_string, foreign_key, row_internal_entity._name, row_internal_entity._id)
                 
@@ -322,7 +322,8 @@ class InputAdapter:
         @return: Identification number of a internal entity instance.
         """
         key = (entity_name, primary_key_string)
-        return self.internal_entity_name_primary_key_entity_id_map[key]
+        if key in self.internal_entity_name_primary_key_entity_id_map:
+            return self.internal_entity_name_primary_key_entity_id_map[key]
         
     def get_real_internal_entity_id(self, table_name, internal_entity_name, table_configuration_internal_entity_id):
         """
@@ -355,7 +356,7 @@ class ForeignKeyQueue:
         Class constructor.
         """
         table_name_primary_key_foreign_key_queue_map = {}
-    
+
     def enqueue_foreign_key(self, foreign_key_string, foreign_key_configuration, foreign_key_internal_entity_name, foreign_key_internal_entity_id):
         """
         Adds a foreign key to the queue.
