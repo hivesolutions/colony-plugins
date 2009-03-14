@@ -45,6 +45,7 @@ class Sale:
     """
     The dummy sales class.
     """
+
     id = None
     sellers = None
     sellers_stockholding = None

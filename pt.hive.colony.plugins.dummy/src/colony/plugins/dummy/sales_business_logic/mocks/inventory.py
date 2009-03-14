@@ -41,6 +41,7 @@ class Inventory:
     """
     The dummy inventory class.
     """
+
     id = None
     merchandise_id = None
     contactable_id = None
@@ -52,7 +53,7 @@ class Inventory:
     stock_in_transit = None
     stock_reserved = None
     margin = None
-    
+
     def __init__(self):
         self.id = 22
         self.merchandise_id = 11

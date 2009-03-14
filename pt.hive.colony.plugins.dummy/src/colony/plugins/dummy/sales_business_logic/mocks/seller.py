@@ -44,6 +44,7 @@ class Seller:
     """
     The dummy seller class.
     """
+
     id = None
     preferred_name = None
     organizational_hierarchy_merchandise_supplier = None
@@ -53,7 +54,7 @@ class Seller:
 
     def __init__(self):
         self.id = 55
-        self.preferred_name = 'Simao e seus amigos os vendedores'
+        self.preferred_name = 'Simão e seus amigos os vendedores'
         self.organizational_hierarchy_merchandise_supplier = []
         inventory = dummy.sales_business_logic.mocks.inventory.Inventory()
         self.inventory = [inventory]
@@ -65,4 +66,3 @@ class Seller:
 
     def set_id(self, id):
         self.id = id
-

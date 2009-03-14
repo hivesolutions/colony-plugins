@@ -45,6 +45,7 @@ class Merchandise:
     """
     The dummy merchandise class.
     """
+
     id = None
     warranty = None
 
