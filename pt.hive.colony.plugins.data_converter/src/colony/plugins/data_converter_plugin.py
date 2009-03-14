@@ -67,16 +67,16 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
 
     io_plugins = []
     """ Input/output adapter plugins """
-    
+
     logger_plugin = None
     """ Logger plugin """
-    
+
     task_manager_plugin = None
     """ Task manager plugin """
-    
+
     data_converter_configuration_plugins = []
     """ Plugins providing data conversion configurations """
-    
+
     data_converter_observer_plugins = []
     """ Plugins that want to observe the conversion process """
 
@@ -90,7 +90,7 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
         import data_converter.adapter.output.output_adapter
         import data_converter.data_converter_system
         import data_converter.console_data_converter
-      
+
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
         self.data_converter = data_converter.data_converter_system.DataConverter(self)
@@ -115,19 +115,20 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.data_converter", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
-        
+
     @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.data_converter", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)   
-            
+
     def convert(self, data_converter_configuration_plugin_id):
         """
         Converts data from one source medium and schema to another.
         
         @param data_converter_configuration_plugin_id: Unique identifier for the plugin that provides the necessary configurations for the conversion.
         """
+
         self.data_converter.convert(data_converter_configuration_plugin_id)
-        
+
     def get_console_extension_name(self):
         return self.console_data_converter.get_console_extension_name()
 
@@ -139,35 +140,41 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
 
     def get_help(self):
         return self.console_data_converter.get_help()
-                        
+
     @colony.plugins.decorators.load_allowed_capability("io")
     def io_load_allowed(self, plugin, capability):
         self.io_plugins.append(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("io")
-    def io_unload_allowed(self, plugin, capability):
-        self.io_plugins.remove(plugin)
-        
     @colony.plugins.decorators.load_allowed_capability("data_converter_configuration")
     def data_converter_configuration_load_allowed(self, plugin, capability):
         self.data_converter_configuration_plugins.append(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("data_converter_configuration")
-    def data_converter_configuration_unload_allowed(self, plugin, capability):
-        self.data_converter_configuration_plugins.remove(plugin)
-        
     @colony.plugins.decorators.load_allowed_capability("data_converter_observer")
     def data_converter_observer_load_allowed(self, plugin, capability):
         self.data_converter_observer_plugins.append(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("io")
+    def io_unload_allowed(self, plugin, capability):
+        self.io_plugins.remove(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("data_converter_configuration")
+    def data_converter_configuration_unload_allowed(self, plugin, capability):
+        self.data_converter_configuration_plugins.remove(plugin)
 
     @colony.plugins.decorators.unload_allowed_capability("data_converter_observer")
     def data_converter_observer_unload_allowed(self, plugin, capability):
         self.data_converter_observer_plugins.remove(plugin)
 
+    def get_task_manager_plugin(self):
+        return self.task_manager_plugin
+
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.tasks.task_manager")
     def set_task_manager_plugin(self, task_manager_plugin):
         self.task_manager_plugin = task_manager_plugin
-        
+
+    def get_logger_plugin(self):
+        return self.logger_plugin
+
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.log")
     def set_logger_plugin(self, logger_plugin):
         self.logger_plugin = logger_plugin

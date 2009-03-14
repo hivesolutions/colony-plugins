@@ -294,24 +294,24 @@ class InputAdapter:
         """
         Process the foreign key queue.
         """
-        
+
         # inicializes variable for deadlock protection
         last_foreign_key_queue_size = 0
-        
+
         # try to connect all entities which have pending foreign keys until the foreign key queue is empty
         # @todo: this process can be made faster by using a graph
         while len(self.foreign_key_queue):
             processed_foreign_keys = []
-            
+
             # calculates the size of the queue after a iteration
             new_foreign_key_queue_size = len(self.foreign_key_queue)
-            
+
             # if the queue size has not been updated since the last execution, then a deadlock is found
             if last_foreign_key_queue_size == new_foreign_key_queue_size:
                 break
             else:
                 last_foreign_key_queue_size = new_foreign_key_queue_size
-                
+
             # try to process each key and store the processed keys
             for foreign_key_information in self.foreign_key_queue:
                 foreign_key_internal_entity_name = foreign_key_information["foreign_key_internal_entity_name"]
@@ -322,11 +322,11 @@ class InputAdapter:
                     foreign_internal_entity = self.internal_structure.get_entity(foreign_internal_entity_name, foreign_internal_entity_id)
                     self.internal_structure.set_field_value(foreign_key_internal_entity_name, foreign_key_internal_entity_id, foreign_internal_entity_name, foreign_internal_entity) 
                     processed_foreign_keys.append(foreign_key_information)
-            
+
             # remove the processed foreign keys from the foreign key queue
             for processed_foreign_key in processed_foreign_keys:
                 self.foreign_key_queue.remove(processed_foreign_key)
-     
+
     def get_primary_key_entity_id(self, entity_name, primary_key_string):
         """
         Retrieves the internal entity unique identifier that corresponds to the provided primary key value.
@@ -335,10 +335,11 @@ class InputAdapter:
         @param primary_key_string: String representation of associated primary key.
         @return: Identification number of a internal entity instance.
         """
+
         key = (entity_name, primary_key_string)
         if key in self.internal_entity_name_primary_key_entity_id_map:
             return self.internal_entity_name_primary_key_entity_id_map[key]
-        
+
     def get_real_internal_entity_id(self, table_name, internal_entity_name, table_configuration_internal_entity_id):
         """
         Retrieves the equivalent internal entity id in the internal structure for the provided
@@ -366,7 +367,7 @@ class RowConversionInfo:
 
     internal_structure = None
     """ Intermediate structure where the data converter input adapter's results are stored. """
-    
+
     internal_entity = None
     """ The internal entity created for this row. """
 
@@ -382,7 +383,7 @@ class RowConversionInfo:
         @param internal_entity: The internal entity created for this row.
         @param row: The row being converted.
         """
-        
+
         self.configuration = configuration
         self.internal_entity = internal_entity
         self.internal_structure = internal_structure

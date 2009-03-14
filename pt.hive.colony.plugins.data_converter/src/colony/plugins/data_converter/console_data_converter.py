@@ -78,6 +78,5 @@ class ConsoleDataConverter:
         if len(args) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
-        
+
         self.data_converter_plugin.convert(args[0])
-        

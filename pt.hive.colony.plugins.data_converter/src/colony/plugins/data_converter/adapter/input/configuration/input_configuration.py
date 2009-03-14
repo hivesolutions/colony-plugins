@@ -49,7 +49,7 @@ class InputConfiguration:
         """
         Constructor of the class.
         """
-    
+
         self.table_map = {}
 
     def add_table(self, table):
@@ -58,6 +58,7 @@ class InputConfiguration:
         
         @param table: Table object to add to this configuration.
         """
+
         self.table_map[table.name] = table
 
     def get_table(self, table_name):
@@ -66,6 +67,7 @@ class InputConfiguration:
         
         @param table_name: Name of the table one wants to retrieve.
         """
+
         return self.table_map[table_name]
 
 class Table:
@@ -78,13 +80,13 @@ class Table:
 
     internal_entity = None
     """ Name of the internal entity this database table will be copied into. """
-    
+
     primary_key_columns = []
     """ Columns that make up this table's primary key. """
-    
+
     foreign_keys = []
     """ This table's foreign keys. """
-    
+
     column_map = {}
     """ Dictionary relating database column names with Column objects. """ 
 
@@ -95,6 +97,7 @@ class Table:
         """
         Constructor of the class
         """
+
         self.column_map = {}
         self.handlers = []
         self.primary_key_columns = []
@@ -106,24 +109,27 @@ class Table:
         
         @param column: Column object to add to this table. 
         """
+
         self.column_map[column.name] = column
-        
+
     def get_column(self, column_name):
         """
         Returns a table column.
         
         @return: Column object belonging to this table.
         """
+
         return self.column_map[column_name]
-    
+
     def get_columns(self):
         """
         Retrieves a list of this table's columns.
         
         @return: List of table columns.
         """
+
         return self.column_map.values()
-    
+
     def get_plain_columns(self):
         """
         Retrieves a list with all the columns belonging to this table
@@ -131,6 +137,7 @@ class Table:
         
         @return: List of table columns.
         """
+
         columns = self.get_columns()
                        
         # remove foreign key columns
@@ -138,7 +145,7 @@ class Table:
             for foreign_key_column in foreign_key.columns:
                 if foreign_key_column in columns:
                     columns.remove(foreign_key_column)
-                    
+
         return columns
 
 class Column:
@@ -171,13 +178,13 @@ class ForeignKey:
 
     foreign_table = None
     """ Table this foreign key points to. """
-    
+
     columns = []
     """ List of columns that make this foreign key. """
-    
+
     def __init__(self):
         self.columns = []
-    
+
 class Handler:
     """
     Represents an handler function, which can be added to either a Table or a Column object.

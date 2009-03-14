@@ -59,7 +59,7 @@ class InputConfigurationParser(Parser):
 
     file_path = None
     """ File path where the xml configuration file is located """
-    
+
     input_configuration = None
     """ Input configuration extracted from the specified xml file """
 
@@ -133,7 +133,7 @@ class InputConfigurationParser(Parser):
         for child_node in child_nodes:
             if valid_node(child_node):
                 table.primary_key_columns.append(child_node.firstChild.data.strip())
-                
+
     def parse_table_handlers(self, handlers, table):
         child_nodes = handlers.childNodes
 
@@ -160,12 +160,12 @@ class InputConfigurationParser(Parser):
 
     def parse_table_foreign_keys(self, foreign_keys, table):
         child_nodes = foreign_keys.childNodes
-        
+
         for child_node in child_nodes:
             if valid_node(child_node):
                 foreign_key = self.parse_table_foreign_key(child_node)
                 table.foreign_keys.append(foreign_key)
-    
+
     def parse_table_foreign_key(self, foreign_key):
         foreign_key_structure = input_configuration.ForeignKey()
         child_nodes = foreign_key.childNodes
@@ -175,7 +175,7 @@ class InputConfigurationParser(Parser):
                 self.parse_table_foreign_key_element(child_node, foreign_key_structure)
 
         return foreign_key_structure
-    
+
     def parse_table_foreign_key_element(self, foreign_key_element, foreign_key):
         node_name = foreign_key_element.nodeName
 
@@ -183,22 +183,22 @@ class InputConfigurationParser(Parser):
             self.parse_table_foreign_key_columns(foreign_key_element, foreign_key)
         elif node_name == "foreign_table":
             foreign_key.foreign_table = foreign_key_element.firstChild.data.strip()
-            
+
     def parse_table_foreign_key_columns(self, foreign_key_columns, foreign_key):
         child_nodes = foreign_key_columns.childNodes
-        
+
         for child_node in child_nodes:
             if valid_node(child_node):
                 foreign_key.columns.append(child_node.firstChild.data.strip())
 
     def parse_table_columns(self, columns, table):
         child_nodes = columns.childNodes
-        
+
         for child_node in child_nodes:
             if valid_node(child_node):
                 column = self.parse_table_column(child_node)
                 table.add_column(column)
-                
+
                 # replace previously parse primary key and foreign key column names 
                 # with their respective column instances
                 if column.name in table.primary_key_columns:
@@ -272,7 +272,7 @@ class InputConfigurationParser(Parser):
 
 def valid_node(node):
     """
-    Gets if a node is valid or not for parsing
+    Gets if a node is valid or not for parsing.
     """
 
     if node.nodeType == xml.dom.minidom.Node.ELEMENT_NODE:
