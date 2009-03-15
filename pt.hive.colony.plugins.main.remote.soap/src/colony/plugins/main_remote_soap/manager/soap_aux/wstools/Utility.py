@@ -672,9 +672,9 @@ class DOM:
 
         try:     
             result = self.loadDocument(file)
-        except Exception, ex:
+        except Exception, exception:
             file.close()
-            raise ParseError(('Failed to load document %s' %url,) + ex.args)
+            raise ParseError(('Failed to load document %s' %url,) + exception.args)
         else:
             file.close()
         return result
@@ -864,7 +864,7 @@ class ElementProxy(Base, MessageInterface):
             prefix = 'ns%d' %self._indx
             try:
                 self._dom.findNamespaceURI(prefix, self._getNode())
-            except DOMException, ex:
+            except DOMException, exception:
                 break
         return prefix
 
@@ -878,7 +878,7 @@ class ElementProxy(Base, MessageInterface):
             if node and (node.nodeType == node.ELEMENT_NODE) and \
                 (nsuri == self._dom.findDefaultNS(node)):
                 return None
-        except DOMException, ex:
+        except DOMException, exception:
             pass
         if nsuri == XMLNS.XML:
             return self._xml_prefix

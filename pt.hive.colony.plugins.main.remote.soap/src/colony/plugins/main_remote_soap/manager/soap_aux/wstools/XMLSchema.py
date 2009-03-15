@@ -273,7 +273,7 @@ class DOMAdapter(DOMAdapterInterface):
         else:
             try:
                 namespace = DOM.findNamespaceURI(prefix, self.__node)
-            except DOMException, ex:
+            except DOMException, exception:
                 if prefix != 'xml':
                     raise SchemaError, '%s namespace not declared for %s'\
                         %(prefix, self.__node._get_tagName())

@@ -784,8 +784,8 @@ class SOAPParser(xml.sax.handler.ContentHandler):
             if len(s) == 1:
                 return s[0]
             return tuple(s)
-        except Exception, e:
-            raise Error, "invalid %s value `%s' - %s" % (kind, value, e)
+        except Exception, exception:
+            raise Error, "invalid %s value `%s' - %s" % (kind, value, exception)
 
     intlimits = \
     {
@@ -1040,9 +1040,9 @@ def _parseSOAP(xml_str, rules = None):
 
     try:
         parser.parse(inpsrc)
-    except xml.sax.SAXParseException, e:
+    except xml.sax.SAXParseException, exception:
         parser._parser = None
-        raise e
+        raise exception
 
     return t
 

@@ -297,10 +297,10 @@ class MainSoapManager:
 
         try:
             data = soap_aux.SOAPBuilder.buildSOAP(kw = {"%sResponse" % method_name: result})
-        except main_soap_manager_exceptions.SoapEncodeException, e:
+        except main_soap_manager_exceptions.SoapEncodeException, exception:
             error_fault = soap_aux.Types.faultType("SOAP-ENV:Client", "SoapEncodeException", "Result Object Not Serializable")
             data = soap_aux.SOAPBuilder.buildSOAP(error_fault)
-        except Exception, e:
+        except Exception, exception:
             error_fault = soap_aux.Types.faultType("SOAP-ENV:Client", "SoapEncodeException", "Result Object Not Serializable")
             data = soap_aux.SOAPBuilder.buildSOAP(error_fault)
 

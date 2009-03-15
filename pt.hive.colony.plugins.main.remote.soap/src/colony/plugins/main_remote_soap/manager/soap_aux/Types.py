@@ -384,8 +384,8 @@ class durationType(anyType):
             self.__firstnonzero = f
             self.__decimal = d
 
-        except Exception, e:
-            raise ValueError, "invalid %s value - %s" % (self._type, e)
+        except Exception, exception:
+            raise ValueError, "invalid %s value - %s" % (self._type, exception)
 
         return tuple(data)
 
@@ -444,8 +444,8 @@ class dateTimeType(anyType):
                 cleanDate(data)
             else:
                 raise Exception, "invalid type"
-        except Exception, e:
-            raise ValueError, "invalid %s value - %s" % (self._type, e)
+        except Exception, exception:
+            raise ValueError, "invalid %s value - %s" % (self._type, exception)
 
         return tuple(data)
 
@@ -502,8 +502,8 @@ class recurringInstantType(anyType):
                 cleanDate(data, f)
             else:
                 raise Exception, "invalid type"
-        except Exception, e:
-            raise ValueError, "invalid %s value - %s" % (self._type, e)
+        except Exception, exception:
+            raise ValueError, "invalid %s value - %s" % (self._type, exception)
 
         return tuple(data)
 
@@ -579,8 +579,8 @@ class timeType(anyType):
                 data = data[3:]
             else:
                 raise Exception, "invalid type"
-        except Exception, e:
-            raise ValueError, "invalid %s value - %s" % (self._type, e)
+        except Exception, exception:
+            raise ValueError, "invalid %s value - %s" % (self._type, exception)
 
         return tuple(data)
 
@@ -624,8 +624,8 @@ class dateType(anyType):
                 data = data[:3]
             else:
                 raise Exception, "invalid type"
-        except Exception, e:
-            raise ValueError, "invalid %s value - %s" % (self._type, e)
+        except Exception, exception:
+            raise ValueError, "invalid %s value - %s" % (self._type, exception)
 
         return tuple(data)
 
@@ -667,8 +667,8 @@ class gYearMonthType(anyType):
                 data = data[:2]
             else:
                 raise Exception, "invalid type"
-        except Exception, e:
-            raise ValueError, "invalid %s value - %s" % (self._type, e)
+        except Exception, exception:
+            raise ValueError, "invalid %s value - %s" % (self._type, exception)
 
         return tuple(data)
 
@@ -713,8 +713,8 @@ class gYearType(anyType):
                     raise Exception, "bad type"
             else:
                 raise Exception, "invalid type"
-        except Exception, e:
-            raise ValueError, "invalid %s value - %s" % (self._type, e)
+        except Exception, exception:
+            raise ValueError, "invalid %s value - %s" % (self._type, exception)
 
         return data[0]
 
@@ -759,8 +759,8 @@ class centuryType(anyType):
                     raise Exception, "bad type"
             else:
                 raise Exception, "invalid type"
-        except Exception, e:
-            raise ValueError, "invalid %s value - %s" % (self._type, e)
+        except Exception, exception:
+            raise ValueError, "invalid %s value - %s" % (self._type, exception)
 
         return data[0]
 
@@ -805,8 +805,8 @@ class gMonthDayType(anyType):
                 data = data[1:3]
             else:
                 raise Exception, "invalid type"
-        except Exception, e:
-            raise ValueError, "invalid %s value - %s" % (self._type, e)
+        except Exception, exception:
+            raise ValueError, "invalid %s value - %s" % (self._type, exception)
 
         return tuple(data)
 
@@ -852,8 +852,8 @@ class gMonthType(anyType):
                     raise Exception, "bad value"
             else:
                 raise Exception, "invalid type"
-        except Exception, e:
-            raise ValueError, "invalid %s value - %s" % (self._type, e)
+        except Exception, exception:
+            raise ValueError, "invalid %s value - %s" % (self._type, exception)
 
         return data[0]
 
@@ -899,8 +899,8 @@ class gDayType(anyType):
                     raise Exception, "bad value"
             else:
                 raise Exception, "invalid type"
-        except Exception, e:
-            raise ValueError, "invalid %s value - %s" % (self._type, e)
+        except Exception, exception:
+            raise ValueError, "invalid %s value - %s" % (self._type, exception)
 
         return data[0]
 
