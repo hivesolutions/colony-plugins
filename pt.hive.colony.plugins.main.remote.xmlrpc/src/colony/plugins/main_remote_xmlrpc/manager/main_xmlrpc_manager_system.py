@@ -316,12 +316,12 @@ class MainXmlrpcManager:
                 result.class_name = class_name
                 result.full_class_name = full_class_name
 
-            data = xmlrpclib.dumps(return_tuple, method_name, True)
-        except main_xmlrpc_manager_exceptions.XmlEncodeException, e:
+            data = xmlrpclib.dumps(return_tuple, method_name, True, allow_none = True)
+        except main_xmlrpc_manager_exceptions.XmlEncodeException, exception:
             error_fault = xmlrpclib.Fault("XmlEncodeException", "Result Object Not Serializable")
             data = xmlrpclib.dumps(error_fault, method_name, True)
-        except:
-            error_fault = xmlrpclib.Fault("XmlEncodeException", "Result Object Not Serializable")
+        except Exception, exception:
+            error_fault = xmlrpclib.Fault("XmlEncodeException", "Result Object Not Serializable: " + exception.message)
             data = xmlrpclib.dumps(error_fault, method_name, True)
 
         # returns the xml data
