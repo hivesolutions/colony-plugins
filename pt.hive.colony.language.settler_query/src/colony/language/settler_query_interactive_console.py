@@ -81,8 +81,8 @@ def process_command(command, processing_structure, global_interpretation_map, in
 def process_command_normal(command, processing_structure, global_interpretation_map, interpretation, verbose, code_generation):
     try:
         interpret_command(command, processing_structure, global_interpretation_map, interpretation, False, verbose, code_generation)
-    except Exception, ex:
-        print ex
+    except Exception, exception:
+        print exception
 
 def process_command_debug(command, processing_structure, global_interpretation_map, interpretation, verbose, code_generation):
     interpret_command(command, processing_structure, global_interpretation_map, interpretation, True, verbose, code_generation)
