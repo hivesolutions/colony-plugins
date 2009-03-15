@@ -353,9 +353,11 @@ class EntityManager:
         # retrieves the entity class id attribute value
         entity_id_attribute_value = self.get_entity_id_attribute_value(entity)
 
-        # in case there is already an entry with the same key value
-        if self.entity_manager_engine_plugin.find_entity(connection, entity_class, entity_id_attribute_value):
-            raise business_entity_manager_exceptions.EntityManagerEngineDuplicateEntry("the key value " + str(entity_id_attribute_value) + " already exists in the database")
+        # in case the entity id attribute is defined
+        if not entity_id_attribute_value == None:
+            # in case there is already an entry with the same key value
+            if self.entity_manager_engine_plugin.find_entity(connection, entity_class, entity_id_attribute_value):
+                raise business_entity_manager_exceptions.EntityManagerEngineDuplicateEntry("the key value " + str(entity_id_attribute_value) + " already exists in the database")
 
         # persists the entity
         return self.entity_manager_engine_plugin.save_entity(connection, entity)
@@ -399,6 +401,15 @@ class EntityManager:
 
         # finds all the entities
         return self.entity_manager_engine_plugin.find_all_entities(connection, entity_class, value, search_field_name)
+
+    def _find_all(self, entity_class):
+        # retrieves the connection object
+        connection = self.get_connection()
+
+        # finds all the entities
+        tobias = self.entity_manager_engine_plugin.find_all_entities(connection, entity_class, None, None)
+        
+        return tobias
 
     def get_entity_class_attribute_names(self, entity_class):
         """

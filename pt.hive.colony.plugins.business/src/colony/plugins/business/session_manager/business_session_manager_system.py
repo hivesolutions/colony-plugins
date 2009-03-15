@@ -350,10 +350,13 @@ class SessionManagerMaster(SessionManager):
         entity_method_attribute = getattr(entity_attribute, session_request.session_method)
 
         # retrieves the session method arguments list
-        session_method_arguments_list = session_request.session_method_arguments.values()
+        session_method_arguments = session_request.session_method_arguments
+
+        # retrieves the session method arguments map
+        session_method_arguments_map = session_request.session_method_arguments_map
 
         # calls the entity method with the method arguments list
-        return_value = entity_method_attribute(*session_method_arguments_list)
+        return_value = entity_method_attribute(*session_method_arguments, **session_method_arguments_map)
 
         # returns the method return value
         return return_value

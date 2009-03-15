@@ -132,7 +132,7 @@ class BusinessSessionSerializer:
         # for handling
         return session_proxy.handle_request(session_information_structure, session_request_structure)
 
-    def call_session_method(self, session_information, session_entity, session_method, session_method_arguments):
+    def call_session_method(self, session_information, session_entity, session_method, session_method_arguments, session_method_arguments_map):
         # retrieves the logger
         logger = self.business_session_serializer_plugin.logger
 
@@ -154,7 +154,7 @@ class BusinessSessionSerializer:
         session_information_structure.convert_from_map(session_information)
 
         # creates the session request entity
-        session_request_structure = CallSessionMethodSessionRequest(session_entity, session_method, session_method_arguments)
+        session_request_structure = CallSessionMethodSessionRequest(session_entity, session_method, session_method_arguments, session_method_arguments_map)
 
         # send the session information and session request to the session proxy
         # for handling
@@ -214,12 +214,16 @@ class CallSessionMethodSessionRequest(SessionRequest):
     session_method = "none"
     """ The session method """
 
-    session_method_arguments = {}
+    session_method_arguments = []
     """ The session arguments """
 
-    def __init__(self, session_entity = "none", session_method = "none", session_method_arguments = {}):
+    session_method_arguments_map = []
+    """ The session arguments map """
+
+    def __init__(self, session_entity = "none", session_method = "none", session_method_arguments = [], session_method_arguments_map = {}):
         SessionRequest.__init__(self, CALL_SESSION_METHOD_TYPE_VALUE)
 
         self.session_entity = session_entity
         self.session_method = session_method
         self.session_method_arguments = session_method_arguments
+        self.session_method_arguments_map = session_method_arguments_map

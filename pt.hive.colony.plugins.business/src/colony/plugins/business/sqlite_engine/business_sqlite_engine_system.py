@@ -1202,12 +1202,15 @@ class BusinessSqliteEngine:
 
             query_string_value += entity_class_valid_attribute_name
 
-        query_string_value += " from " + entity_class_name + " where " + entity_class_id_attribute_name + " = "
-
-        if type(field_value) in types.StringTypes:
-            query_string_value += "'" + field_value + "'"
+        if field_value == None:
+            query_string_value += " from " + entity_class_name
         else:
-            query_string_value += str(field_value)
+            query_string_value += " from " + entity_class_name + " where " + entity_class_id_attribute_name + " = "
+
+            if type(field_value) in types.StringTypes:
+                query_string_value += "'" + field_value + "'"
+            else:
+                query_string_value += str(field_value)
 
         # executes the query retrieving the values
         self.execute_query(cursor, query_string_value)
