@@ -44,9 +44,9 @@ class InputAdapter:
     Adapter used to convert data from the source medium and schema to the internal structure.
     """
 
-    internal_entity_name_primary_key_entity_id_map = {}
-    """ Dictionary relating internal entity name, with primary key value, with internal entity id """
-
+    internal_entity_name_primary_key_row_conversion_info_map = {}
+    """ Dictionary relating internal entity name, with primary key value, with a information on how the conversion was performed """
+    
     foreign_key_queue = []
     """ Queue of foreign keys that are waiting of the entity are referencing to be processed """
 
@@ -101,7 +101,7 @@ class InputAdapter:
         self.logger.warn("The input adapter has started the conversion process.\n")
                 
         # reset the input adapter's data
-        self.internal_entity_name_primary_key_entity_id_map = {}
+        self.internal_entity_name_primary_key_row_conversion_info_map = {}
         self.foreign_key_queue = []
         self.internal_structure = internal_structure
         self.connection = connection
@@ -225,7 +225,7 @@ class InputAdapter:
             self.process_columns(row_conversion_info)
             # run the handlers configured for this row
             for handler in row_conversion_info.configuration.handlers:
-                self.process_handler(handler.name, [row_conversion_info])
+                self.process_handler(handler.name, [row_conversion_info, self])
 
     def process_columns(self, row_conversion_info):
         """
@@ -274,8 +274,9 @@ class InputAdapter:
 
             # if the foreign row the foreign key points to was already converted to an entity then create a relation to it
             foreign_table = self.input_description.get_table(foreign_key.foreign_table)
-            foreign_internal_entity_id = self.get_primary_key_entity_id(foreign_table.internal_entity, foreign_key_string)
-            if foreign_internal_entity_id:
+            foreign_row_conversion_info = self.get_row_conversion_info(foreign_table.internal_entity, foreign_key_string)
+            if foreign_row_conversion_info:
+               foreign_internal_entity_id = foreign_row_conversion_info.internal_entity._id
                foreign_internal_entity_instance = self.internal_structure.get_entity(foreign_table.internal_entity, foreign_internal_entity_id)
                self.internal_structure.set_field_value(row_internal_entity._name, row_internal_entity._id, foreign_table.internal_entity, foreign_internal_entity_instance)
             else: # otherwise add the foreign key to the queue
@@ -294,16 +295,15 @@ class InputAdapter:
         """
         
         table_configuration = row_conversion_info.configuration
-        row_internal_entity = row_conversion_info.internal_entity
         row = row_conversion_info.row
         
         # compute this row's primary key string representation
         primary_key_column_names = [column.name for column in table_configuration.primary_key_columns]
         primary_key_string = str([row[primary_key_column_name] for primary_key_column_name in primary_key_column_names])
          
-        # associate the created internal entity with the row's primary key
-        key = (row_internal_entity._name, primary_key_string)
-        self.internal_entity_name_primary_key_entity_id_map[key] = row_internal_entity._id
+        # associate the row conversion information with the primary key
+        key = (row_conversion_info.internal_entity._name, primary_key_string)
+        self.internal_entity_name_primary_key_row_conversion_info_map[key] = row_conversion_info
 
     def process_foreign_key_queue(self):
         """
@@ -332,8 +332,9 @@ class InputAdapter:
                 foreign_key_internal_entity_name = foreign_key_information["foreign_key_internal_entity_name"]
                 foreign_key_internal_entity_id = foreign_key_information["foreign_key_internal_entity_id"]
                 foreign_internal_entity_name = foreign_key_information["foreign_internal_entity_name"]
-                foreign_internal_entity_id = self.get_primary_key_entity_id(foreign_internal_entity_name, foreign_key_information["foreign_key_string"])
-                if not foreign_internal_entity_id is None:
+                row_conversion_info = self.get_row_conversion_info(foreign_internal_entity_name, foreign_key_information["foreign_key_string"])  
+                if row_conversion_info:
+                    foreign_internal_entity_id = row_conversion_info.internal_entity._id
                     foreign_internal_entity = self.internal_structure.get_entity(foreign_internal_entity_name, foreign_internal_entity_id)
                     self.internal_structure.set_field_value(foreign_key_internal_entity_name, foreign_key_internal_entity_id, foreign_internal_entity_name, foreign_internal_entity) 
                     processed_foreign_keys.append(foreign_key_information)
@@ -342,21 +343,21 @@ class InputAdapter:
             for processed_foreign_key in processed_foreign_keys:
                 self.foreign_key_queue.remove(processed_foreign_key)
 
-    def get_primary_key_entity_id(self, entity_name, primary_key_string):
+    def get_row_conversion_info(self, entity_name, primary_key_string):
         """
-        Retrieves the internal entity unique identifier that corresponds to the provided primary key value.
+        Retrieves the conversion information used 
         
         @type entity_name: String
         @param entity_name: Name of the internal entity from which one wants to get an identifier.
         @type primary_key_string: String
         @param primary_key_string: String representation of associated primary key.
-        @rtype: int
-        @return: Identification number of a internal entity instance.
+        @rtype: RowConversionInfo
+        @return: Object with information on how the row was converted to an entity.
         """
 
         key = (entity_name, primary_key_string)
-        if key in self.internal_entity_name_primary_key_entity_id_map:
-            return self.internal_entity_name_primary_key_entity_id_map[key]
+        if key in self.internal_entity_name_primary_key_row_conversion_info_map:
+            return self.internal_entity_name_primary_key_row_conversion_info_map[key]
 
 class RowConversionInfo:
     """
