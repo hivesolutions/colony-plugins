@@ -96,6 +96,7 @@ class InternalStructureVisualizerPlugin(colony.plugins.plugin_system.Plugin):
         @type status: Dictionary
         @param status: Dictionary with informations related to the data conversion status.
         """
+        
         internal_structure = status["internal_structure"]
         if self.panel:
             self.panel.set_internal_structure(internal_structure)

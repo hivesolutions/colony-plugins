@@ -44,9 +44,6 @@ class InputAdapter:
     Adapter used to convert data from the source medium and schema to the internal structure.
     """
 
-    table_name_configuration_internal_entity_id_internal_id_map = {}
-    """ Dictionary relating the unique identifier of an internal entity instance in a table's configuration file with the internal entity instance's real id """
-    
     internal_entity_name_primary_key_entity_id_map = {}
     """ Dictionary relating internal entity name, with primary key value, with internal entity id """
 
@@ -103,7 +100,6 @@ class InputAdapter:
         self.logger.warn("The input adapter has started the conversion process.\n")
                 
         # reset the input adapter's data
-        self.table_name_configuration_internal_entity_id_internal_id_map = {}
         self.internal_entity_name_primary_key_entity_id_map = {}
         self.foreign_key_queue = []
         self.internal_structure = internal_structure
@@ -253,7 +249,7 @@ class InputAdapter:
                 # if the column is pointing to a different internal entity than the table then use that one instead and create a link to the table entity
                 if plain_column.internal_entity and plain_column.internal_entity_id:
                     destination_internal_entity_name = plain_column.internal_entity
-                    destination_internal_entity_id = self.get_real_internal_entity_id(table_configuration.name, plain_column.internal_entity, plain_column.internal_entity_id)
+                    destination_internal_entity_id = row_conversion_info.get_real_internal_entity_id(plain_column.internal_entity, plain_column.internal_entity_id)
                     self.internal_structure.set_field_value(destination_internal_entity_name, destination_internal_entity_id, row_internal_entity._name, row_internal_entity)
                 # grab the row and process it through its handlers
                 for handler in plain_column.handlers:
@@ -361,27 +357,6 @@ class InputAdapter:
         if key in self.internal_entity_name_primary_key_entity_id_map:
             return self.internal_entity_name_primary_key_entity_id_map[key]
 
-    def get_real_internal_entity_id(self, table_name, internal_entity_name, table_configuration_internal_entity_id):
-        """
-        Retrieves the equivalent internal entity id in the internal structure for the provided
-        internal entity id in the configuration file.
-        
-        @type table_name: String
-        @param table_name: Name of the table where the internal entity reference is configured.
-        @type internal_entity_name: String
-        @param internal_entity_name: Name of the internal entity.
-        @type table_configuration_internal_entity_id: int
-        @param table_configuration_internal_entity_id: Identification number of the internal entity in the configuration file.
-        @rtype: int
-        @return: Returns the internal entity's unique identifier in the internal structure.
-        """
-
-        key = (table_name, internal_entity_name, table_configuration_internal_entity_id)
-        if not key in self.table_name_configuration_internal_entity_id_internal_id_map:
-            internal_entity = self.internal_structure.add_entity(internal_entity_name)
-            self.table_name_configuration_internal_entity_id_internal_id_map[key] = internal_entity._id
-        return self.table_name_configuration_internal_entity_id_internal_id_map[key]
-
 class RowConversionInfo:
     """
     Holds information about the conversion of a certain database table row.
@@ -398,6 +373,9 @@ class RowConversionInfo:
 
     row = None
     """ Source medium table row """
+    
+    internal_entity_configuration_id_internal_id_map = {}
+    """ Dictionary relating the unique identifier of an internal entity instance in a table's configuration file with the internal entity instance's real id """
 
     def __init__(self, configuration, internal_structure, internal_entity, row):
         """
@@ -417,3 +395,23 @@ class RowConversionInfo:
         self.internal_entity = internal_entity
         self.internal_structure = internal_structure
         self.row = row
+        self.internal_entity_configuration_id_internal_id_map = {}
+
+    def get_real_internal_entity_id(self, internal_entity_name, table_configuration_internal_entity_id):
+        """
+        Retrieves the equivalent internal entity id in the internal structure for the provided
+        internal entity id in the configuration file.
+
+        @type internal_entity_name: String
+        @param internal_entity_name: Name of the internal entity.
+        @type table_configuration_internal_entity_id: int
+        @param table_configuration_internal_entity_id: Identification number of the internal entity in the configuration file.
+        @rtype: int
+        @return: Returns the internal entity's unique identifier in the internal structure.
+        """
+
+        key = (internal_entity_name, table_configuration_internal_entity_id)
+        if not key in self.internal_entity_configuration_id_internal_id_map:
+            internal_entity = self.internal_structure.add_entity(internal_entity_name)
+            self.internal_entity_configuration_id_internal_id_map[key] = internal_entity._id
+        return self.internal_entity_configuration_id_internal_id_map[key]
