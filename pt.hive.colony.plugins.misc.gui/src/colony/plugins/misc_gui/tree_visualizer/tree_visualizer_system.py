@@ -74,6 +74,7 @@ class TreeVisualizerPanel(wx.Panel):
         wx.Panel.__init__(self, parent, -1, style = wx.WANTS_CHARS)
         self.Bind(wx.EVT_SIZE, self.on_size)
         self.Bind(wx.lib.customtreectrl.EVT_TREE_ITEM_EXPANDING, self.on_node_expanding)
+        self.Bind(wx.lib.customtreectrl.EVT_TREE_ITEM_HYPERLINK, self.on_hyperlink)
 
         # build tree panel
         self.tree = wx.lib.customtreectrl.CustomTreeCtrl(self, wx.ID_ANY, style = wx.BORDER_DEFAULT| wx.lib.customtreectrl.TR_HAS_BUTTONS | wx.lib.customtreectrl.TR_HAS_VARIABLE_ROW_HEIGHT)
@@ -85,7 +86,7 @@ class TreeVisualizerPanel(wx.Panel):
         self.fileidx = il.Add(wx.ArtProvider_GetBitmap(wx.ART_NORMAL_FILE, wx.ART_OTHER, isz))
         self.tree.SetImageList(il)
         self.il = il
-        self.set_root("No structure to display, waiting for events...")       
+        self.set_root("Nothing to display...")       
 
         # build search box
         self.search = wx.SearchCtrl(self, wx.ID_ANY, style = wx.TE_PROCESS_ENTER, size = (250, -1))
@@ -129,6 +130,9 @@ class TreeVisualizerPanel(wx.Panel):
         self.SetSizer(grid_sizer)
         self.Layout()
 
+    def on_hyperlink(self, evt):
+        pass
+    
     def on_node_expanding(self, evt):
         pass
 

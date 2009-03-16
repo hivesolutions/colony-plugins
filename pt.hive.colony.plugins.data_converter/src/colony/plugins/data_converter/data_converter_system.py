@@ -55,6 +55,7 @@ class InternalStructure:
         @param entity_name: Name of the internal entity.
         @return: List of entity instances.
         """
+        
         return getattr(self, internal_entity_name)
     
     def has_entities(self, entity_name):
@@ -67,6 +68,7 @@ class InternalStructure:
         @rtype: bool
         @return: Boolean indicating if the entity list exists.
         """
+        
         return hasattr(self, entity_name)
 
     def has_entity(self, entity_name, entity_id):
@@ -81,6 +83,7 @@ class InternalStructure:
         @rtype: bool
         @return: Boolean indicating if the internal entity exists.
         """
+        
         if self.has_entities(entity_name):
             entities = getattr(self, entity_name)
             if entity_id < len(entities):
@@ -100,6 +103,7 @@ class InternalStructure:
         @rtype: bool
         @return: Boolean indicating if the internal entity instance has the specified field.
         """
+        
         if self.has_entity(entity_name, entity_id):
             entity = self.get_entity(entity_name, entity_id)
             return entity.has_field(field_name)
@@ -115,6 +119,7 @@ class InternalStructure:
         @rtype: EntityStructure
         @return: The created entity instance.
         """
+        
         if not self.has_entities(entity_name):
             setattr(self, entity_name, [])
         entities = getattr(self, entity_name)
@@ -135,6 +140,7 @@ class InternalStructure:
         @type field_name: String
         @param field_name: Name of the internal entity field.
         """
+        
         if self.has_entity(entity_name, entity_id):
             entity = self.get_entity(entity_name, entity_id)
             entity.add_field(field_name)
@@ -152,6 +158,7 @@ class InternalStructure:
         @type Object: String
         @param value: Value to set in the internal entity field.
         """
+        
         if not self.has_field(entity_name, entity_id, field_name):
             self.add_field(entity_name, entity_id, field_name)
         entity = self.get_entity(entity_name, entity_id)
@@ -168,6 +175,7 @@ class InternalStructure:
         @rtype: EntityStructure
         @return: The specified internal entity instance.
         """
+        
         if self.has_entity(entity_name, entity_id):
             entities = getattr(self, entity_name)
             entity = entities[entity_id]
@@ -188,6 +196,7 @@ class EntityStructure:
         @param field_name: Name of the field one wants to know if it exists.
         @return: Boolean indicating if the field exists.
         """
+        
         return hasattr(self, field_name)
     
     def add_field(self, field_name):
@@ -197,6 +206,7 @@ class EntityStructure:
         @type field_name: String
         @param field_name: Name of the field whose value one wants to create.
         """
+        
         if not self.has_field(field_name):
             setattr(self, field_name, None)
         
@@ -209,6 +219,7 @@ class EntityStructure:
         @type value: Object
         @param value: New value one wants to set in the field.
         """
+        
         if not self.has_field(field_name):
             self.add_field(field_name)
         setattr(self, field_name, value)
@@ -222,6 +233,7 @@ class EntityStructure:
         @rtype: Object
         @return: The specified field's value.
         """
+        
         if self.has_field(field_name):
             return getattr(self, field_name)
 
@@ -246,6 +258,7 @@ class DataConverter:
         @type data_converter_plugin: DataConverterPlugin
         @param data_converter_plugin: Data converter plugin.
         """
+        
         self.data_converter_plugin = data_converter_plugin
         
     def convert(self, data_converter_input_configuration_plugin_id, data_converter_output_configuration_plugin_id):
@@ -319,6 +332,7 @@ class DataConverter:
         @type options: Dictionary
         @param options: Data conversion options.
         """
+        
         pass
 
     def resume_handler(self, options):
@@ -328,6 +342,7 @@ class DataConverter:
         @type options: Dictionary
         @param options: Data conversion options.
         """
+        
         pass
 
     def stop_handler(self, options):
@@ -337,4 +352,5 @@ class DataConverter:
         @type options: Dictionary
         @param options: Data conversion options.
         """
+        
         pass

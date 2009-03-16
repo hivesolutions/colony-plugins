@@ -53,7 +53,7 @@ class InternalStructureVisualizerPanel(misc_gui.tree_visualizer.tree_visualizer_
     """ Data converter internal structure """
     
     entity_nodes_map = {}
-    """ Dictionary relating an entity with the tree nodes """
+    """ Dictionary relating an entity with its tree node """
 
     def __init__(self, parent, parent_plugin):
         """
@@ -61,8 +61,8 @@ class InternalStructureVisualizerPanel(misc_gui.tree_visualizer.tree_visualizer_
         """
         
         misc_gui.tree_visualizer.tree_visualizer_system.TreeVisualizerPanel.__init__(self, parent, parent_plugin)
-        self.entity_nodes_map = {}
-        self.tree.Bind(wx.lib.customtreectrl.EVT_TREE_ITEM_HYPERLINK, self.on_hyperlink)
+        self.entity_node_map = {}
+        self.entity_name_node_map = {}
 
     def set_internal_structure(self, internal_structure):
         """
@@ -71,9 +71,34 @@ class InternalStructureVisualizerPanel(misc_gui.tree_visualizer.tree_visualizer_
         @type internal_structure: InternalStructure
         @param internal_structure: Data converter internal structure object.
         """
-        
+
         self.internal_structure = internal_structure
         self.reset_interface()
+
+    def on_node_expanding(self, evt):
+        """
+        Event handler for when a node is expanded in the visualizer.
+        
+        @type evt: Event
+        @param evt: Event object.
+        """
+        
+        node = evt._item
+        
+        # if the expanded node is not the root node
+        node_data = self.tree.GetItemPyData(evt._item)
+        if node_data:
+            
+            # delete the node's children
+            self.tree.DeleteChildren(node)
+            
+            # if it is a category node then fill it with the entity instances belonging to that category
+            if node_data["category_node"]:
+                entity_name = node_data["entity_name"]
+                self.expand_entity_category_node(node, entity_name)
+            else: # otherwise add nodes for the entity's properties
+                entity = node_data["entity"]
+                self.expand_entity_node(node, entity)
 
     def on_hyperlink(self, evt):
         """
@@ -83,59 +108,52 @@ class InternalStructureVisualizerPanel(misc_gui.tree_visualizer.tree_visualizer_
         @param evt: Event object.
         """
         
-        tree_item = evt._item
-        entity = self.tree.GetItemPyData(evt._item)
-        self.select_entity(entity)
+        node = evt._item
+        node_data = self.tree.GetItemPyData(node)
+        entity = node_data["entity"]
+        entity_category_node = self.entity_name_node_map[entity._name]
+        self.tree.Expand(entity_category_node)
+        self.expand_entity_category_node(entity_category_node, entity._name)
+        entity_node = self.entity_node_map[entity]
+        self.tree.Expand(entity_node)
+        self.tree.ToggleItemSelection(entity_node)
 
-    def select_entity(self, entity):
+    def expand_entity_category_node(self, entity_category_node, entity_name):
         """
-        Selects an entity in the visualizer.
+        Expands an entity category node.
         
+        @param entity_category_node: Tree node where the entity instances will be displayed.
+        @type entity_name: String
+        @param entity_name: Name of the entity whose category one is expanding.
+        """
+        
+        if self.tree.GetChildrenCount(entity_category_node) == 0:
+            entities = getattr(self.internal_structure, entity_name)
+            for entity in entities:
+                entity_node = self.add_item(entity_category_node, entity_name + "[" + str(entity._id) + "]", 0)
+                self.add_item(entity_node, "Loading..." , 0)
+                self.tree.SetItemPyData(entity_node, {"category_node" : False, "entity_name" : entity._name, "entity" : entity})
+                self.entity_node_map[entity] = entity_node
+    
+    def expand_entity_node(self, entity_node, entity):
+        """
+        Expands an entity node.
+        
+        @param entity_node: Tree node where the entity node's informations will be displayed.
         @type entity: EntityStructure
-        @param entity: Data converter internal entiy one wants to select.
+        @param entity: Entity used to fill the entity tree node with.
         """
         
-        self.tree.ToggleItemSelection(self.entity_nodes_map[entity])
-        self.tree.Expand(self.entity_nodes_map[entity])
-
-    def add_entity(self, node, entity):
-        """
-        Adds and entity and its attributes to the visualizer.
-        
-        @type node: TreeItem
-        @param node: Tree node under which to add the entity's nodes.
-        @type entity: EntityStructure
-        @param entity: Data converter internal entity one wants to add to the visualizer.
-        """
-        
-        field_names = self.get_valid_attributes(entity)
-        for field_name in field_names:
-            value = getattr(entity, field_name)
-            if not str(type(value)) == "<type 'instance'>":
-                field_node = self.add_item(node, field_name + " = \"" + str(value) + "\"", 0)
-            else:
-                field_node = self.add_item(node, field_name, 0)
-                self.tree.SetItemHyperText(field_node, True)
-            self.tree.SetItemPyData(field_node, value)
-
-    def add_entities(self, node, entity_names):
-        """
-        Adds an entity category to the internal structure visualizer.
-        
-        @type node: TreeItem
-        @param node: Tree node under which to add an entity category.
-        @type entity_names: String
-        @param entity_names: Name of the entity category one wants to create.
-        """
-        
-        list_node = self.add_item(node, entity_names, 0)
-        entitys = getattr(self.internal_structure, entity_names)
-        x = 0
-        for entity in entitys:
-            entity_node = self.add_item(list_node, entity_names + "[" + str(x) + "]", 0)
-            self.entity_nodes_map[entity] = entity_node
-            self.add_entity(entity_node, entity)
-            x += 1
+        if self.tree.GetChildrenCount(entity_node) == 0:
+            field_names = self.get_valid_attributes(entity)
+            for field_name in field_names:
+                field_value = getattr(entity, field_name)
+                if not str(type(field_value)) == "<type 'instance'>":
+                   field_node = self.add_item(entity_node, field_name + " = \"" + str(field_value) + "\"", 0)
+                else:
+                   field_node = self.add_item(entity_node, field_value._name + " [" + str(field_value._id) + "]", 0)
+                   self.tree.SetItemHyperText(field_node, True)
+                   self.tree.SetItemPyData(field_node, {"category_node" : False, "entity_name" : field_value._name, "entity" : field_value})
 
     def get_valid_attributes(self, object):
         """
@@ -159,8 +177,11 @@ class InternalStructureVisualizerPanel(misc_gui.tree_visualizer.tree_visualizer_
         """
         
         self.set_root("Internal structure")
-        self.nodes = [self.tree.GetRootItem()]
+        root_node = self.tree.GetRootItem()
         valid_attributes = self.get_valid_attributes(self.internal_structure)
-        for entity_names in valid_attributes:
-            self.add_entities(self.tree.GetRootItem(), entity_names)
-        self.tree.Expand(self.tree.GetRootItem())       
+        for entity_name in valid_attributes:
+            category_node = self.add_item(root_node, entity_name, 0)
+            self.entity_name_node_map[entity_name] = category_node
+            self.add_item(category_node, "Loading..." , 0)
+            self.tree.SetItemPyData(category_node, {"category_node" : True, "entity_name" : entity_name, "entity" : None})
+        self.tree.Expand(root_node)       

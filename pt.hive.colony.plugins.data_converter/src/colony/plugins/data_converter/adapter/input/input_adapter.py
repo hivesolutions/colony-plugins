@@ -97,6 +97,7 @@ class InputAdapter:
         @rtype: InternalStructure
         @return: The internal structure with the data migrated from the source medium and schema.
         """
+        
         self.logger.warn("The input adapter has started the conversion process.\n")
                 
         # reset the input adapter's data
