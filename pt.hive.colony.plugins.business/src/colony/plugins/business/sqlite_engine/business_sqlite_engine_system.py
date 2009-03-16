@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import time
 import types
 import sqlite3
 
@@ -578,8 +579,7 @@ class BusinessSqliteEngine:
         if GENERATED_FIELD in entity_class_id_attribute_value:
             # retrieves the entity class id attribute name
             entity_class_id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
-            import time
-            setattr(entity, entity_class_id_attribute_name, int(time.time() * 100))
+            setattr(entity, entity_class_id_attribute_name, int(time.time() % 10 * 100000000))
 
         # retrieves the entity id attribute value
         entity_id_attribute_value = self.get_entity_id_attribute_value(entity)
