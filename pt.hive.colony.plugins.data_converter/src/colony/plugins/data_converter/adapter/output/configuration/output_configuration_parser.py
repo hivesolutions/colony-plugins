@@ -42,7 +42,6 @@ import xml.dom.minidom
 
 import output_configuration
 
-#@todo: review and comment this file
 class Parser:
     
     def __init__(self):
@@ -55,10 +54,15 @@ class Parser:
         pass
 
 class OutputConfigurationParser(Parser):
+    """
+    XML parser for the data converter output configuration.
+    """
     
     file_path = None
+    """ File path where the xml configuration file is located """
 
     output_configuration = None
+    """ Output configuration extracted from the specified xml file """
     
     def __init__(self, file_path = None):
         Parser.__init__(self)
@@ -233,10 +237,7 @@ class OutputConfigurationParser(Parser):
 
 def valid_node(node):
     """
-    Gets if a node is valid or not for parsing
+    Indicates if a node is valid or not for parsing.
     """
 
-    if node.nodeType == xml.dom.minidom.Node.ELEMENT_NODE:
-        return True
-    else:
-        return False
+    return node.nodeType == xml.dom.minidom.Node.ELEMENT_NODE

@@ -47,7 +47,7 @@ INVALID_ADDRESS_MESSAGE = "invalid address"
 """ The invalid address message """
 
 HELP_TEXT = "### DATA CONVERTER HELP ###\n\
-convert_data <configuration_plugin_id> - migrates data from one medium and schema to another"
+convert_data <input_configuration_plugin_id> <output_configuration_plugin_id> - migrates data from one medium and schema to another"
 """ The help text """
 
 class ConsoleDataConverter:
@@ -75,8 +75,8 @@ class ConsoleDataConverter:
         return HELP_TEXT
 
     def process_convert_data(self, args, output_method):
-        if len(args) < 1:
+        if len(args) < 2:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
 
-        self.data_converter_plugin.convert(args[0])
+        self.data_converter_plugin.convert(args[0], args[1])

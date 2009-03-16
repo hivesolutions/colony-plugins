@@ -41,7 +41,7 @@ import colony.plugins.plugin_system
 
 class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
     """
-    Provides a means to convert data from one medium and schema to another
+    Provides a means to convert data from one medium and schema to another.
     """
     
     id = "pt.hive.colony.plugins.data_converter"
@@ -53,7 +53,7 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["console_command_extension"]
-    capabilities_allowed = ["io", "data_converter_configuration", "data_converter_observer"]
+    capabilities_allowed = ["io", "data_converter_input_configuration", "data_converter_output_configuration", "data_converter_observer"]
     dependencies = [colony.plugins.plugin_system.PackageDependency(
                     "SQL Alchemy O/R mapper", "sqlalchemy", "0.4.x", "http://www.sqlalchemy.org"),
                     colony.plugins.plugin_system.PackageDependency(
@@ -74,8 +74,11 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
     task_manager_plugin = None
     """ Task manager plugin """
 
-    data_converter_configuration_plugins = []
-    """ Plugins providing data conversion configurations """
+    data_converter_input_configuration_plugins = []
+    """ Plugins providing data conversion input configurations """
+    
+    data_converter_output_configuration_plugins = []
+    """ Plugins providing data conversion output configurations """
 
     data_converter_observer_plugins = []
     """ Plugins that want to observe the conversion process """
@@ -120,14 +123,17 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)   
 
-    def convert(self, data_converter_configuration_plugin_id):
+    def convert(self, data_converter_input_configuration_plugin_id, data_converter_output_configuration_plugin_id):
         """
         Converts data from one source medium and schema to another.
         
-        @param data_converter_configuration_plugin_id: Unique identifier for the plugin that provides the necessary configurations for the conversion.
+        @type data_converter_input_configuration_plugin_id: String
+        @param data_converter_input_configuration_plugin_id: Unique identifier for the plugin that provides the input configuration for the data converter.
+        @type data_converter_output_configuration_plugin_id: String
+        @param data_converter_output_configuration_plugin_id: Unique identifier for the plugin that provides the output configuration for the data converter.
         """
 
-        self.data_converter.convert(data_converter_configuration_plugin_id)
+        self.data_converter.convert(data_converter_input_configuration_plugin_id, data_converter_output_configuration_plugin_id)
 
     def get_console_extension_name(self):
         return self.console_data_converter.get_console_extension_name()
@@ -145,9 +151,13 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
     def io_load_allowed(self, plugin, capability):
         self.io_plugins.append(plugin)
 
-    @colony.plugins.decorators.load_allowed_capability("data_converter_configuration")
-    def data_converter_configuration_load_allowed(self, plugin, capability):
-        self.data_converter_configuration_plugins.append(plugin)
+    @colony.plugins.decorators.load_allowed_capability("data_converter_input_configuration")
+    def data_converter_input_configuration_load_allowed(self, plugin, capability):
+        self.data_converter_input_configuration_plugins.append(plugin)
+        
+    @colony.plugins.decorators.load_allowed_capability("data_converter_output_configuration")
+    def data_converter_output_configuration_load_allowed(self, plugin, capability):
+        self.data_converter_output_configuration_plugins.append(plugin)
 
     @colony.plugins.decorators.load_allowed_capability("data_converter_observer")
     def data_converter_observer_load_allowed(self, plugin, capability):
@@ -157,9 +167,13 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
     def io_unload_allowed(self, plugin, capability):
         self.io_plugins.remove(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("data_converter_configuration")
-    def data_converter_configuration_unload_allowed(self, plugin, capability):
-        self.data_converter_configuration_plugins.remove(plugin)
+    @colony.plugins.decorators.unload_allowed_capability("data_converter_input_configuration")
+    def data_converter_input_configuration_unload_allowed(self, plugin, capability):
+        self.data_converter_input_configuration_plugins.remove(plugin)
+    
+    @colony.plugins.decorators.unload_allowed_capability("data_converter_output_configuration")
+    def data_converter_output_configuration_unload_allowed(self, plugin, capability):
+        self.data_converter_output_configuration_plugins.remove(plugin)
 
     @colony.plugins.decorators.unload_allowed_capability("data_converter_observer")
     def data_converter_observer_unload_allowed(self, plugin, capability):

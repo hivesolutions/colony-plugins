@@ -60,6 +60,7 @@ class InternalStructureVisualizerPlugin(colony.plugins.plugin_system.Plugin):
     events_registrable = []
     
     panel = None
+    """ Internal structure visualizer panel """
     
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -89,6 +90,12 @@ class InternalStructureVisualizerPlugin(colony.plugins.plugin_system.Plugin):
         return self.panel
 
     def notify_data_conversion_status(self, status):
+        """
+        Notifies this plugin of the current data conversion status.
+        
+        @type status: Dictionary
+        @param status: Dictionary with informations related to the data conversion status.
+        """
         internal_structure = status["internal_structure"]
         if self.panel:
             self.panel.set_internal_structure(internal_structure)

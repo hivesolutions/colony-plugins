@@ -47,11 +47,14 @@ import sqlalchemy_io
 
 def extend_dictionary(first_map, second_map):
     """
-    Returns a dictionary that contains data from both of the provided ones
+    Returns a dictionary that contains data from both of the provided ones.
 
-    @param first_map Dictionary where to retrieve data from 
-    @param second_map Dictionary where to retrieve data from
-    @return New dictionary with the entries from the provided dictionaries
+    @type first_map: Dictionary
+    @param first_map: Dictionary where to retrieve data from.
+    @type second_map: Dictionary
+    @param second_map: Dictionary where to retrieve data from.
+    @rtype: Dictionary
+    @return: New dictionary with the entries from the provided dictionaries.
     """
     new_map = {}
     for key in first_map:
@@ -83,17 +86,20 @@ class OutputAdapter:
 
     def __init__(self, data_converter_plugin):
         """
-        Class constructor
+        Class constructor.
         
-        @param data_converter_plugin: Reference to the plugin that owns this code
+        @type data_converter_plugin: DataConverterPlugin
+        @param data_converter_plugin: Reference to the plugin that owns this code.
         """
+        
         self.data_converter_plugin = data_converter_plugin
         self.logger = self.data_converter_plugin.logger_plugin.get_logger("main").get_logger()
 
     def load_configuration(self):
         """
-        Loads from the XML configuration file into the correspondent data structures
+        Loads from the XML configuration file into the correspondent data structures.
         """
+        
         parser = data_converter.adapter.output.configuration.output_configuration_parser.OutputConfigurationParser()
         file_paths = self.configuration.get_configuration_file_paths()
         for file_path in file_paths:
@@ -104,24 +110,32 @@ class OutputAdapter:
         
     def process_handler(self, handler_name, arguments):
         """
-        Invokes a given handler function with the provided name and supplying the provided arguments
+        Invokes a given handler function with the provided name and supplying the provided arguments.
         
-        @param handler_name:Name of the handler function to invoke
-        @param arguments: List of arguments that will be supplied to the handler function
-        @return: The value returned by the handler
+        @type handler_name: String
+        @param handler_name: Name of the handler function to invoke.
+        @type arguments: List
+        @param arguments: List of arguments that will be supplied to the handler function.
+        @type: Object
+        @return: The value returned by the handler.
         """
+        
         if self.configuration.has_handler(handler_name):
             handler = self.configuration.get_handler(handler_name)
             return handler(arguments)
     
     def convert(self, task, args, connection, configuration):
         """
-        Executes the entire conversion algorithm
+        Executes the entire conversion algorithm.
         
-        @param task: Task monitoring object used to inform the status of the query
-        @param args: Dictionary with configuration keys provided by the caller
-        @param connection: Connection object for the input adapter to extract data from
-        @param configuration: Configuration object that indicates how to migrate data from the internal structure to the target
+        @type task: Task
+        @param task: Task monitoring object used to inform the status of the query.
+        @type args: Dictionary
+        @param args: Dictionary with configuration keys provided by the caller.
+        @type connection: Object
+        @param connection: Connection object for the input adapter to extract data from.
+        @rtype: Object
+        @param configuration: Configuration object that indicates how to migrate data from the internal structure to the target.
         """
         
         # reset the output adapter's data
@@ -135,7 +149,7 @@ class OutputAdapter:
         self.domain.define_classes(self.output_configuration.get_domain_entity_list())
         
         # convert the data out of the internal structure and into the target
-        # self.logger.warn("Generic output adapter has started the conversion process.\n")
+        self.logger.warn("Generic output adapter has started the conversion process.\n")
         internal_structure = args["internal_structure"]
         work_units = args["work_units"]
         self.process_work_units(task, 50, 30, work_units, internal_structure)
@@ -145,14 +159,20 @@ class OutputAdapter:
 
     def process_work_units(self, task, counter_offset, counter_range, list_work_units, internal_structure):
         """
-        Processes the given work units using the provided internal structure
+        Processes the given work units using the provided internal structure.
         
-        @param task: Task monitoring object used to inform the status of the query
-        @param counter_offset: Where the progress counter should start at for this operation
-        @param counter_range: What range of the progress counter does this operation affect (ex: 50 would mean this total operation counts for 50% of the progress bar)        
-        @param list_work_units List with the names of the work units that must be processed
-        @param internal_structure InternalStructure object for the work units to act from
+        @type task: Task
+        @param task: Task monitoring object used to inform the status of the query.
+        @type counter_offset: int
+        @param counter_offset: Where the progress counter should start at for this operation.
+        @type counter_range: int
+        @param counter_range: What range of the progress counter does this operation affect (ex: 50 would mean this total operation counts for 50% of the progress bar).       
+        @type list_work_units: List
+        @param list_work_units: List with the names of the work units that must be processed.
+        @type internal_structure: InternalStructure
+        @param internal_structure: InternalStructure object for the work units to act from.
         """
+        
         counter = counter_offset
         counter_inc = counter_range / len(list_work_units)
         for work_unit in list_work_units:
@@ -167,23 +187,29 @@ class OutputAdapter:
                     task.confirm_resume()
                     
                 counter += counter_inc
-                #task.set_percentage_complete(counter)
+                task.set_percentage_complete(counter)
             else:
                 break
         
     def process_work_unit(self, task, counter_offset, counter_range, work_unit, internal_structure):
         """
-        Processes a given work unit using the provided internal structure
+        Processes a given work unit using the provided internal structure.
         
-        @param task: Task monitoring object used to inform the status of the query
-        @param counter_offset: Where the progress counter should start at for this operation
-        @param counter_range: What range of the progress counter does this operation affect (ex: 50 would mean this total operation counts for 50% of the progress bar)        
-        @param work_unit Name of the work unit that must be processed
-        @param internal_structure InternalStructure object for the work unit to act from
+        @type task: Task
+        @param task: Task monitoring object used to inform the status of the query.
+        @type counter_offset: int
+        @param counter_offset: Where the progress counter should start at for this operation.
+        @type counter_range: int
+        @param counter_range: What range of the progress counter does this operation affect (ex: 50 would mean this total operation counts for 50% of the progress bar).       
+        @type work_unit: String
+        @param work_unit: Name of the work unit that must be processed.
+        @type internal_structure: InternalStructure
+        @param internal_structure: InternalStructure object for the work unit to act from.
         """
+        
         list_entity_names = self.configuration.get_entity_name_list(work_unit) 
         
-        #self.logger.warn("Output adapter: Processing work unit '%s'.\n" % work_unit)
+        self.logger.warn("Output adapter: Processing work unit '%s'.\n" % work_unit)
         
         counter = counter_offset
         counter_inc = counter_range / len(list_entity_names)
@@ -199,23 +225,26 @@ class OutputAdapter:
                     task.confirm_resume()
                 
                 counter += counter_inc
-                #task.set_percentage_complete(counter)
+                task.set_percentage_complete(counter)
             else:
                 break
 
     def process_entity(self, domain_entity_name, internal_structure):
         """
-        Fills a given domain entity with data from the provided internal structure
+        Fills a given domain entity with data from the provided internal structure.
         
-        @param domain_entity_name Name of the domain entity to be processed
-        @param internal_structure InternalStructure object where to draw data from
+        @type domain_entity_name: String
+        @param domain_entity_name: Name of the domain entity to be processed.
+        @type internal_structure: InternalStructure
+        @param internal_structure: InternalStructure object where to draw data from.
         """        
+        
         configuration = self.output_configuration
         internal_entity_name = configuration.get_internal_entity_name(domain_entity_name)
         internal_entity_instance_list = internal_structure.get_entity_instance_list(internal_entity_name)
         domain_entity_class = self.domain.get_class(domain_entity_name)
         
-        #self.logger.warn("Output adapter: Processing internal entity '%s'.\n" % internal_entity_name)
+        self.logger.warn("Output adapter: Processing internal entity '%s'.\n" % internal_entity_name)
         
         # process each internal entity instance
         for internal_entity_instance in internal_entity_instance_list:
@@ -224,11 +253,14 @@ class OutputAdapter:
             
     def process_domain_entity_handlers(self, domain_entity_name, internal_entity_instance):
         """
-        Processes the handlers assigned to this domain entity
+        Processes the handlers assigned to this domain entity.
         
-        @param domain_entity_name: Name of the domain entity to process
-        @param internal_entity_instance: Correspondent internal entity instance
+        @type domain_entity_name: String
+        @param domain_entity_name: Name of the domain entity to process.
+        @type internal_entity_instance: EntityStructure
+        @param internal_entity_instance: Correspondent internal entity instance.
         """
+        
         configuration = self.output_configuration
         
         if not internal_entity_instance in self.internal_domain_instance_map:
@@ -244,11 +276,14 @@ class OutputAdapter:
 
     def process_domain_entity_instance(self, domain_entity_name, internal_entity_instance):
         """
-        Processes a specific domain entity instance, taking into account only non-relation fields
+        Processes a specific domain entity instance, taking into account only non-relation fields.
         
-        @param domain_entity_name: Name of the domain entity to process
-        @param internal_entity_instance: Correspondent internal entity instance
+        @type domain_entity_name: String
+        @param domain_entity_name: Name of the domain entity to process.
+        @type internal_entity_instance: EntityStructure
+        @param internal_entity_instance: Correspondent internal entity instance.
         """
+        
         configuration = self.output_configuration
 
         if not internal_entity_instance in self.internal_domain_instance_map:
@@ -274,14 +309,20 @@ class OutputAdapter:
             
     def process_relations(self, task, counter_offset, counter_range, list_work_units, internal_structure):
         """
-        Processes all the relations for the all the work units
+        Processes all the relations for the all the work units.
         
-        @param task: Task monitoring object used to inform the status of the query
-        @param counter_offset: Where the progress counter should start at for this operation
-        @param counter_range: What range of the progress counter does this operation affect (ex: 50 would mean this total operation counts for 50% of the progress bar)        
-        @param list_work_units: List with the names of the work units to be processed
-        @param internal_structure: Internal structure where to take data from
+        @type task: Task
+        @param task: Task monitoring object used to inform the status of the query.
+        @type counter_offset: int
+        @param counter_offset: Where the progress counter should start at for this operation.
+        @type counter_range: int
+        @param counter_range: What range of the progress counter does this operation affect (ex: 50 would mean this total operation counts for 50% of the progress bar).      
+        @type list_work_units: List
+        @param list_work_units: List with the names of the work units to be processed.
+        @type internal_structure: InternalStructure
+        @param internal_structure: Internal structure where to take data from.
         """
+        
         counter = counter_offset
         counter_inc = counter_range / len(list_work_units)
         for work_unit in list_work_units:
@@ -296,20 +337,26 @@ class OutputAdapter:
                     task.confirm_resume()
                 
                 counter += counter_inc
-                #task.set_percentage_complete(counter)
+                task.set_percentage_complete(counter)
             else:
                 break
 
     def process_relations_work_unit(self, task, counter_offset, counter_range, work_unit, internal_structure):
         """
-        Processes all the relations for a given work unit
+        Processes all the relations for a given work unit.
         
-        @param task: Task monitoring object used to inform the status of the query
-        @param counter_offset: Where the progress counter should start at for this operation
-        @param counter_range: What range of the progress counter does this operation affect (ex: 50 would mean this total operation counts for 50% of the progress bar)                
-        @param work_unit: Name of the specific work unit to be processed
-        @param internal_structure: Internal structure where to take data from
+        @type task: Task
+        @param task: Task monitoring object used to inform the status of the query.
+        @type counter_offset: int
+        @param counter_offset: Where the progress counter should start at for this operation.
+        @type counter_range: int
+        @param counter_range: What range of the progress counter does this operation affect (ex: 50 would mean this total operation counts for 50% of the progress bar).               
+        @type work_unit: String
+        @param work_unit: Name of the specific work unit to be processed.
+        @type internal_structure: InternalStructure
+        @param internal_structure: Internal structure where to take data from.
         """
+        
         list_entity_names = self.configuration.get_entity_name_list(work_unit)
         
         counter = counter_offset
@@ -326,17 +373,20 @@ class OutputAdapter:
                     task.confirm_resume()
                 
                 counter += counter_inc
-                #task.set_percentage_complete(counter)
+                task.set_percentage_complete(counter)
             else:
                 break 
 
     def process_relations_entity(self, domain_entity_name, internal_structure):
         """
-        Processes all the relations for a given domain entity
+        Processes all the relations for a given domain entity.
         
-        @param domain_entity_name: Name of the domain entity whose relation attributes will be processed
-        @param internal_structure: Internal structure where to take the data from
-        """      
+        @type domain_entity_name: String
+        @param domain_entity_name: Name of the domain entity whose relation attributes will be processed.
+        @type internal_structure: InternalStructure
+        @param internal_structure: Internal structure where to take the data from.
+        """   
+           
         configuration = self.output_configuration
         domain_relation_attribute_name_list = configuration.get_domain_relation_attribute_name_list(domain_entity_name)
         internal_entity_name = configuration.get_internal_entity_name(domain_entity_name)
@@ -364,11 +414,14 @@ class OutputAdapter:
 
     def persist_domain(self, task, counter_offset, counter_range):
         """
-        Saves all the changes to the domain entity objects in the database
+        Saves all the changes to the domain entity objects in the database.
         
-        @param task: Task monitoring object used to inform the status of the query
-        @param counter_offset: Where the progress counter should start at for this operation
-        @param counter_range: What range of the progress counter does this operation affect (ex: 50 would mean this total operation counts for 50% of the progress bar)         
+        @type task: Task
+        @param task: Task monitoring object used to inform the status of the query.
+        @type counter_offset: int
+        @param counter_offset: Where the progress counter should start at for this operation.
+        @type counter_range: int
+        @param counter_range: What range of the progress counter does this operation affect (ex: 50 would mean this total operation counts for 50% of the progress bar). 
         """
         
         # @todo: confirm that this is working
@@ -376,5 +429,4 @@ class OutputAdapter:
             for entity in list:
                 self.sqlalchemy_io.save_or_update(entity)
         self.sqlalchemy_io.flush()
-        
-        #task.set_percentage_complete(counter_offset + counter_range)
+        task.set_percentage_complete(counter_offset + counter_range)

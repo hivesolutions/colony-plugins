@@ -46,12 +46,13 @@ class InternalStructure:
     exclusions = ["exclusions", "__doc__", "__module__", "has_entities", "has_entity", "has_field", "add_entity", "add_field", 
                   "set_field_value", "get_entity", "display_structure", "print_structure", "get_entity_instances"]
 
-    def get_entity_instances(self, internal_entity_name):
+    def get_entity_instances(self, entity_name):
         """
         Returns a list with the entity instances with the specified name that are
         currently present in the internal structure.
         
-        @param internal_entity_name: Name of the internal entity.
+        @type entity_name: String
+        @param entity_name: Name of the internal entity.
         @return: List of entity instances.
         """
         return getattr(self, internal_entity_name)
@@ -61,8 +62,10 @@ class InternalStructure:
         Indicates if the specified entity list already exists in the internal
         structure.
         
+        @type entity_name: String
         @param entity_name: Name of the internal entity.
-        @return: Boolean indicating if the entity list exists.
+        @rtype: bool
+        @return: bool indicating if the entity list exists.
         """
         return hasattr(self, entity_name)
 
@@ -71,9 +74,12 @@ class InternalStructure:
         Indicates if the specified entity instance exists in the internal 
         structure.
         
+        @type entity_name: String
         @param entity_name: Name of the internal entity.
+        @type entity_id: String
         @param entity_id: Unique identifier for the internal entity instance.
-        @return: Boolean indicating if the internal entity exists.
+        @rtype: bool
+        @return: bool indicating if the internal entity exists.
         """
         if self.has_entities(entity_name):
             entities = getattr(self, entity_name)
@@ -85,10 +91,14 @@ class InternalStructure:
         """
         Indicates if the internal entity has the specified field.
         
+        @type entity_name: String
         @param entity_name: Name of the internal entity.
+        @type entity_id: String
         @param entity_id: Unique identifier for the internal entity instance.
+        @type field_name: String
         @param field_name: Name of the internal entity field.
-        @return: Boolean indicating if the internal entity instance has the specified field.
+        @rtype: bool
+        @return: bool indicating if the internal entity instance has the specified field.
         """
         if self.has_entity(entity_name, entity_id):
             entity = self.get_entity(entity_name, entity_id)
@@ -100,8 +110,10 @@ class InternalStructure:
         Creates a new entity instance in the internal structure and returns it position
         in the entity list.
         
+        @type entity_name: String
         @param entity_name: Name of the internal entity.
-        @return: Position the new entity instance takes in its entity list.
+        @rtype: EntityStructure
+        @return: The created entity instance.
         """
         if not self.has_entities(entity_name):
             setattr(self, entity_name, [])
@@ -116,8 +128,11 @@ class InternalStructure:
         """
         Adds a new field to an internal entity instance.
         
+        @type entity_name: String
         @param entity_name: Name of the internal entity.
+        @type entity_id: String
         @param entity_id: Unique identifier for the internal entity instance.
+        @type field_name: String
         @param field_name: Name of the internal entity field.
         """
         if self.has_entity(entity_name, entity_id):
@@ -128,9 +143,13 @@ class InternalStructure:
         """
         Changes an internal entity instance's field value.
         
+        @type entity_name: String
         @param entity_name: Name of the internal entity.
+        @type entity_id: String
         @param entity_id: Unique identifier for the internal entity instance.
+        @type field_name: String
         @param field_name: Name of the internal entity field.
+        @type Object: String
         @param value: Value to set in the internal entity field.
         """
         if not self.has_field(entity_name, entity_id, field_name):
@@ -142,8 +161,11 @@ class InternalStructure:
         """
         Returns an internal entity instance.
         
+        @param entity_name: String
         @param entity_name: Name of the internal entity.
+        @param entity_id: String
         @param entity_id: Unique identifier for the internal entity instance.
+        @rtype: EntityStructure
         @return: The specified internal entity instance.
         """
         if self.has_entity(entity_name, entity_id):
@@ -162,8 +184,9 @@ class EntityStructure:
         """
         Indicates if the entity has the specified field.
         
+        @type field_name: String
         @param field_name: Name of the field one wants to know if it exists.
-        @return: Boolean indicating if the field exists.
+        @return: bool indicating if the field exists.
         """
         return hasattr(self, field_name)
     
@@ -171,6 +194,7 @@ class EntityStructure:
         """
         Creates a new field.
         
+        @type field_name: String
         @param field_name: Name of the field whose value one wants to create.
         """
         if not self.has_field(field_name):
@@ -180,7 +204,9 @@ class EntityStructure:
         """
         Changes the a field's value.
         
+        @type field_name: String
         @param field_name: Name of the field whose value one wants to change.
+        @type value: Object
         @param value: New value one wants to set in the field.
         """
         if not self.has_field(field_name):
@@ -191,7 +217,9 @@ class EntityStructure:
         """
         Returns a field's value.
         
+        @type field_name: String
         @param field_name: Name of the field whose value one wants to return.
+        @rtype: Object
         @return: The specified field's value.
         """
         if self.has_field(field_name):
@@ -203,46 +231,60 @@ class DataConverter:
     """
     
     data_converter_plugin = None
-    """ Plugin that owns this code. """
+    """ Plugin that owns this code """
     
     internal_structure = None
-    """ Internal structure used to hold the results of the input adapter (which is the source for the output adapter). """
+    """ Internal structure used to hold the results of the input adapter (which is the source for the output adapter) """
     
     task = None
-    """ Task used by the data converter to signal the progress of its workflow and to control it. """
+    """ Task used by the data converter to signal the progress of its workflow and to control it """
     
     def __init__(self, data_converter_plugin):
         """
         Class constructor.
         
+        @type data_converter_plugin: DataConverterPlugin
         @param data_converter_plugin: Data converter plugin.
         """
         self.data_converter_plugin = data_converter_plugin
         
-    def convert(self, data_converter_configuration_plugin_id):
+    def convert(self, data_converter_input_configuration_plugin_id, data_converter_output_configuration_plugin_id):
         """
-        Starts the conversion process.
+        Converts data from one source medium and schema to another.
         
-        @param data_converter_configuration_plugin_id Unique identifier for the plugin that provides the necessary configurations for the conversion.
+        @type data_converter_input_configuration_plugin_id: String
+        @param data_converter_input_configuration_plugin_id: Unique identifier for the plugin that provides the input configuration for the data converter.
+        @type data_converter_output_configuration_plugin_id: String
+        @param data_converter_output_configuration_plugin_id: Unique identifier for the plugin that provides the output configuration for the data converter.
         """
 
-        # if the configuration plugin exists then extract its configurations and start the conversion process
-        for data_converter_configuration_plugin in self.data_converter_plugin.data_converter_configuration_plugins:
-            if data_converter_configuration_plugin.id == data_converter_configuration_plugin_id:
-                options = { "input_adapter_configuration" : data_converter_configuration_plugin.get_input_adapter_configuration(), 
-                           "output_adapter_configuration" : data_converter_configuration_plugin.get_output_adapter_configuration()}
-                self.task = self.data_converter_plugin.task_manager_plugin.create_new_task("Data converter", "Converting data", self.start_handler)
-                self.task.set_task_pause_handler(self.pause_handler)
-                self.task.set_task_resume_handler(self.resume_handler)
-                self.task.set_task_stop_handler(self.stop_handler)
-                self.task.start(options)
+        data_converter_input_configuration_plugin = None
+        for data_converter_input_configuration_plugin in self.data_converter_plugin.data_converter_input_configuration_plugins:
+            if data_converter_input_configuration_plugin.id == data_converter_input_configuration_plugin_id:
                 break
+            
+        data_converter_output_configuration_plugin = None
+        for data_converter_output_configuration_plugin in self.data_converter_plugin.data_converter_output_configuration_plugins:
+            if data_converter_output_configuration_plugin.id == data_converter_output_configuration_plugin_id:
+                break
+            
+        # if the specified data converter configuration plugins exist then perform the conversion
+        if data_converter_input_configuration_plugin and data_converter_output_configuration_plugin:
+            options = {"input_adapter_configuration" : data_converter_input_configuration_plugin.get_configuration(), 
+                       "output_adapter_configuration" : data_converter_output_configuration_plugin.get_configuration()}
+            self.task = self.data_converter_plugin.task_manager_plugin.create_new_task("Data converter", "Converting data", self.start_handler)
+            self.task.set_task_pause_handler(self.pause_handler)
+            self.task.set_task_resume_handler(self.resume_handler)
+            self.task.set_task_stop_handler(self.stop_handler)
+            self.task.start(options)
 
     def start_handler(self, task, options):
         """
         Handler invoked when the data conversion task starts.
         
+        @type task: Task
         @param task: Data conversion task object.
+        @type options: Dictionary
         @param options: Data conversion options.
         """
 
@@ -274,6 +316,7 @@ class DataConverter:
         """
         Handler invoked when the data conversion task pauses.
         
+        @type options: Dictionary
         @param options: Data conversion options.
         """
         pass
@@ -282,6 +325,7 @@ class DataConverter:
         """
         Handler invoked when the data conversion task resumes.
         
+        @type options: Dictionary
         @param options: Data conversion options.
         """
         pass
@@ -290,6 +334,7 @@ class DataConverter:
         """
         Handler invoked when the data conversion task stops.
         
+        @type options: Dictionary
         @param options: Data conversion options.
         """
         pass

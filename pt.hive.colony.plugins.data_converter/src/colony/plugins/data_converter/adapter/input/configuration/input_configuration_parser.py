@@ -272,9 +272,7 @@ class InputConfigurationParser(Parser):
 
 def valid_node(node):
     """
-    Gets if a node is valid or not for parsing.
+    Indicates if a node is valid or not for parsing.
     """
 
-    if node.nodeType == xml.dom.minidom.Node.ELEMENT_NODE:
-        return True
-    return False
+    return node.nodeType == xml.dom.minidom.Node.ELEMENT_NODE

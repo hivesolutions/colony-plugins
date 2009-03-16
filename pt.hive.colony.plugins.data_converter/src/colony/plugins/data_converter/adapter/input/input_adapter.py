@@ -45,27 +45,28 @@ class InputAdapter:
     """
 
     table_name_configuration_internal_entity_id_internal_id_map = {}
-    """ Dictionary relating the unique identifier of an internal entity instance in a table's configuration file with the internal entity instance's real id. """
+    """ Dictionary relating the unique identifier of an internal entity instance in a table's configuration file with the internal entity instance's real id """
     
     internal_entity_name_primary_key_entity_id_map = {}
-    """ Dictionary relating internal entity name, with primary key value, with internal entity id. """
+    """ Dictionary relating internal entity name, with primary key value, with internal entity id """
 
     foreign_key_queue = []
-    """ Queue of foreign keys that are waiting of the entity are referencing to be processed. """
+    """ Queue of foreign keys that are waiting of the entity are referencing to be processed """
 
     input_description = None
-    """ Reference to the input configuration properties (extracted from the configuration file). """
+    """ Reference to the input configuration properties (extracted from the configuration file) """
 
     data_converter_plugin = None
-    """ Reference to the plugin that owns this code. """
+    """ Reference to the plugin that owns this code """
 
     logger = None
-    """ Reference to the logging instance. """
+    """ Reference to the logging instance """
 
     def __init__(self, data_converter_plugin):
         """
         Class constructor.
         
+        @type data_converter_plugin: DataConverterPlugin
         @param data_converter_plugin: Reference to the plugin that owns this code.
         """
 
@@ -88,10 +89,15 @@ class InputAdapter:
         """
         Processes an operation on the input database.
         
+        @type task: Task
         @param task: Task monitoring object used to inform the status of the query.
+        @type internal_structure: InternalStructure
         @param internal_structure: Internal structure where the data will be converted to.
+        @type connection: Object
         @param connection: Connection object for the input adapter to extract data from.
+        @type configuration: Object
         @param configuration: Configuration object that indicates how to migrate data from the source to the internal structure.
+        @rtype: InternalStructure
         @return: The internal structure with the data migrated from the source medium and schema.
         """
         self.logger.warn("The input adapter has started the conversion process.\n")
@@ -117,7 +123,9 @@ class InputAdapter:
         """
         Performs the operations necessary to complete each of the specified work units.
         
+        @type task: Task
         @param task: Task monitoring object used to inform the status of the query.
+        @type work_units: List
         @param work_units: List of work units to complete.
         """
 
@@ -144,9 +152,13 @@ class InputAdapter:
         """
         Processes the tables indicated by the specified work unit.
         
+        @type task: Task
         @param task: Task monitoring object used to inform the status of the query.
+        @type counter_offset: int
         @param counter_offset: Where the progress counter should start at for this operation.
+        @type counter_range: int
         @param counter_range: What range of the progress counter does this operation affect (ex: 50 would mean this total operation counts for 50% of the progress bar)
+        @type work_unit_name: String
         @param work_unit_name: Name of the work unit whose work will be performed.
         """
 
@@ -176,8 +188,11 @@ class InputAdapter:
         """
         Invokes a given handler function with the provided name and supplying the provided arguments.
         
+        @type handler_name: String
         @param handler_name: Name of the handler function to invoke.
+        @type arguments: List
         @param arguments: List of arguments that will be supplied to the handler function.
+        @rtype: Object
         @return: The value returned by the handler.
         """
 
@@ -191,6 +206,7 @@ class InputAdapter:
         """
         Converts the table's contents to the internal structure.
         
+        @type table_name: String
         @param table_name: Name of the table one wants to process.
         """
 
@@ -218,6 +234,7 @@ class InputAdapter:
         """
         Copies data from the database columns to the internal structure entity attributes.
         
+        @type row_conversion_info: RowConversionInfo
         @param row_conversion_info: Object containing information about this row conversion process.
         """
         
@@ -275,6 +292,7 @@ class InputAdapter:
         Extracts the primary key value from the query row set and into the the internal structure. After this
         operation the row set will not contain the primary key column anymore.
         
+        @type row_conversion_info: RowConversionInfo
         @param row_conversion_info: Object containing information about the row conversion process.
         """
         
@@ -331,8 +349,11 @@ class InputAdapter:
         """
         Retrieves the internal entity unique identifier that corresponds to the provided primary key value.
         
+        @type entity_name: String
         @param entity_name: Name of the internal entity from which one wants to get an identifier.
+        @type primary_key_string: String
         @param primary_key_string: String representation of associated primary key.
+        @rtype: int
         @return: Identification number of a internal entity instance.
         """
 
@@ -345,9 +366,13 @@ class InputAdapter:
         Retrieves the equivalent internal entity id in the internal structure for the provided
         internal entity id in the configuration file.
         
+        @type table_name: String
         @param table_name: Name of the table where the internal entity reference is configured.
+        @type internal_entity_name: String
         @param internal_entity_name: Name of the internal entity.
+        @type table_configuration_internal_entity_id: int
         @param table_configuration_internal_entity_id: Identification number of the internal entity in the configuration file.
+        @rtype: int
         @return: Returns the internal entity's unique identifier in the internal structure.
         """
 
@@ -363,24 +388,28 @@ class RowConversionInfo:
     """
 
     configuration = None
-    """ Table configuration object describing the table this row belongs to. """
+    """ Table configuration object describing the table this row belongs to """
 
     internal_structure = None
-    """ Intermediate structure where the data converter input adapter's results are stored. """
+    """ Intermediate structure where the data converter input adapter's results are stored """
 
     internal_entity = None
-    """ The internal entity created for this row. """
+    """ The internal entity created for this row """
 
     row = None
-    """ Source medium table row. """
+    """ Source medium table row """
 
     def __init__(self, configuration, internal_structure, internal_entity, row):
         """
         Class constructor.
         
+        @type configuration: Object
         @param configuration: Object representing the conversion configuration for this table.
+        @type internal_structure: InternalStructure
         @param internal_structure: Intermediate structure where the data converter input adapter's results are stored.
+        @type internal_entity: String
         @param internal_entity: The internal entity created for this row.
+        @type row: Dictionary
         @param row: The row being converted.
         """
 

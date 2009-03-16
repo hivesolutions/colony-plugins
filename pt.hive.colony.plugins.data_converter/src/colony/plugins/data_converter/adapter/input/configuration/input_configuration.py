@@ -43,7 +43,7 @@ class InputConfiguration:
     """
 
     table_map = {}
-    """ Dictionary relating table name with Table object instances. """
+    """ Dictionary relating table name with Table object instances """
 
     def __init__(self):
         """
@@ -56,6 +56,7 @@ class InputConfiguration:
         """
         Adds a table to the input configuration.
         
+        @type table: Table
         @param table: Table object to add to this configuration.
         """
 
@@ -65,7 +66,10 @@ class InputConfiguration:
         """
         Returns the specified table.
         
+        @type table_name: String
         @param table_name: Name of the table one wants to retrieve.
+        @rtype: Table
+        @return: The requested table configuration.
         """
 
         return self.table_map[table_name]
@@ -76,26 +80,26 @@ class Table:
     """
 
     name = None
-    """ Name of the database table. """
+    """ Name of the database table """
 
     internal_entity = None
-    """ Name of the internal entity this database table will be copied into. """
+    """ Name of the internal entity this database table will be copied into """
 
     primary_key_columns = []
-    """ Columns that make up this table's primary key. """
+    """ Columns that make up this table's primary key """
 
     foreign_keys = []
-    """ This table's foreign keys. """
+    """ This table's foreign keys """
 
     column_map = {}
-    """ Dictionary relating database column names with Column objects. """ 
+    """ Dictionary relating database column names with Column objects """ 
 
     handlers = []
-    """ List of handlers to process when this table is processed. """
+    """ List of handlers to process when this table is processed """
 
     def __init__(self):
         """
-        Constructor of the class
+        Constructor of the class.
         """
 
         self.column_map = {}
@@ -107,6 +111,7 @@ class Table:
         """
         Adds a table column to this table.
         
+        @type column: Column
         @param column: Column object to add to this table. 
         """
 
@@ -116,6 +121,7 @@ class Table:
         """
         Returns a table column.
         
+        @type column_name: String
         @return: Column object belonging to this table.
         """
 
@@ -125,6 +131,7 @@ class Table:
         """
         Retrieves a list of this table's columns.
         
+        @rtype: List
         @return: List of table columns.
         """
 
@@ -135,6 +142,7 @@ class Table:
         Retrieves a list with all the columns belonging to this table
         that are not part of any foreign key.
         
+        @rtype: List
         @return: List of table columns.
         """
 
@@ -154,19 +162,19 @@ class Column:
     """
 
     name = None
-    """ Name of the database table column. """
+    """ Name of the database table column """
 
     internal_entity = None
-    """ Internal entity this column belongs to, in case it is not the same as the parent table. """
+    """ Internal entity this column belongs to, in case it is not the same as the parent table """
 
     internal_entity_id = None
-    """ Internal entity instance this column belongs to, in case it is not the same as the parent table. """
+    """ Internal entity instance this column belongs to, in case it is not the same as the parent table """
 
     internal_attribute = None
-    """ Name of the internal entity attribute to which this column's contents will be copied to. """
+    """ Name of the internal entity attribute to which this column's contents will be copied to """
 
     handlers = []
-    """ List of handler functions. """
+    """ List of handler functions """
 
     def __init__(self):
         self.handlers = []
@@ -177,10 +185,10 @@ class ForeignKey:
     """
 
     foreign_table = None
-    """ Table this foreign key points to. """
+    """ Table this foreign key points to """
 
     columns = []
-    """ List of columns that make this foreign key. """
+    """ List of columns that make this foreign key """
 
     def __init__(self):
         self.columns = []
@@ -191,4 +199,4 @@ class Handler:
     """
 
     name = None
-    """ Name of the handler function. """
+    """ Name of the handler function """
