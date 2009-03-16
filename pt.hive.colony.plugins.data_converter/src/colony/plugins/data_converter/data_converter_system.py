@@ -65,7 +65,7 @@ class InternalStructure:
         @type entity_name: String
         @param entity_name: Name of the internal entity.
         @rtype: bool
-        @return: bool indicating if the entity list exists.
+        @return: Boolean indicating if the entity list exists.
         """
         return hasattr(self, entity_name)
 
@@ -79,7 +79,7 @@ class InternalStructure:
         @type entity_id: String
         @param entity_id: Unique identifier for the internal entity instance.
         @rtype: bool
-        @return: bool indicating if the internal entity exists.
+        @return: Boolean indicating if the internal entity exists.
         """
         if self.has_entities(entity_name):
             entities = getattr(self, entity_name)
@@ -98,7 +98,7 @@ class InternalStructure:
         @type field_name: String
         @param field_name: Name of the internal entity field.
         @rtype: bool
-        @return: bool indicating if the internal entity instance has the specified field.
+        @return: Boolean indicating if the internal entity instance has the specified field.
         """
         if self.has_entity(entity_name, entity_id):
             entity = self.get_entity(entity_name, entity_id)
@@ -186,7 +186,7 @@ class EntityStructure:
         
         @type field_name: String
         @param field_name: Name of the field one wants to know if it exists.
-        @return: bool indicating if the field exists.
+        @return: Boolean indicating if the field exists.
         """
         return hasattr(self, field_name)
     

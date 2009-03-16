@@ -290,7 +290,7 @@ class OutputConfiguration:
         @type domain_attribute_name: String
         @param domain_attribute_name: Name of the domain entity attribute one wants to figure out if it holds a reference. 
         @rtype: bool
-        @return: bool indicating if this is a relation attribute.
+        @return: Boolean indicating if this is a relation attribute.
         """
         
         domain_attribute_map = self.get_parent_domain_attribute_map(domain_entity_name)
@@ -490,7 +490,7 @@ class DomainEntity:
         @type domain_attribute_name: String
         @param domain_attribute_name: Name of the domain entity attribute one wants to know if it holds a relation.
         @rtype: bool
-        @return: bool indicating if it is a relation attribute or not.
+        @return: Boolean indicating if it is a relation attribute or not.
         """
         
         domain_relation_attribute_list = self.get_domain_relation_attribute_name_list()
@@ -501,7 +501,7 @@ class DomainEntity:
         Indicates if this domain entity has others that inherit its properties.
         
         @rtype: bool
-        @return: bool indicating if this domain entity is parent to other domain entities.
+        @return: Boolean indicating if this domain entity is parent to other domain entities.
         """
         
         return self.children
@@ -603,7 +603,7 @@ class DomainEntityAttribute:
         Indicates if this domain entity attribute holds a reference to another domain entity.
         
         @rtype: bool
-        @return: bool indicating if it is a relation attribute or not.
+        @return: Boolean indicating if it is a relation attribute or not.
         """
         
         return not self.referenced_domain_entity == None
