@@ -127,7 +127,6 @@ $(document).ready(function() {
 	dataStore.addElement("tobias", "Arrumador");
 
 	$("#testListBox").bind("selectedElementChanged", function(event, value) {
-		console.debug(value);
 	});
 
 	$("#testMultiLevelListBox").colonyMultiLevelListBox(dataStore);
