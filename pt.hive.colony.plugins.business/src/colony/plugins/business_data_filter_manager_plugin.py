@@ -40,34 +40,34 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.plugins.plugin_system
 import colony.plugins.decorators
 
-class BusinessDataProviderManagerPlugin(colony.plugins.plugin_system.Plugin):
+class BusinessDataFilterManagerPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Business Data Provider Manager plugin.
+    The main class for the Business Data Filter Manager plugin.
     """
 
-    id = "pt.hive.colony.plugins.business.data_provider_manager"
-    name = "Business Data Provider Manager Plugin"
-    short_name = "Business Data Provider Manager"
-    description = "Business Data Provider Manager Plugin"
+    id = "pt.hive.colony.plugins.business.data_filter_manager"
+    name = "Business Data Filter Manager Plugin"
+    short_name = "Business Data Filter Manager"
+    description = "Business Data Filter Manager Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["data_provider_manager"]
-    capabilities_allowed = ["data_provider"]
+    capabilities = ["data_filter_manager"]
+    capabilities_allowed = ["data_filter"]
     dependencies = []
     events_handled = []
     events_registrable = []
 
     business_data_provider_manager = None
 
-    data_provider_plugins = []
+    data_filter_plugins = []
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global business
-        import business.data_provider_manager.business_data_provider_manager_system
-        self.business_data_provider_manager = business.data_provider_manager.business_data_provider_manager_system.BusinessDataProviderManager(self)
+        import business.data_filter_manager.business_data_filter_manager_system
+        self.business_data_filter_manager = business.data_filter_manager.business_data_filter_manager_system.BusinessDataFilterManager(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
@@ -89,10 +89,10 @@ class BusinessDataProviderManagerPlugin(colony.plugins.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    @colony.plugins.decorators.load_allowed_capability("data_provider")
-    def data_provider_load_allowed(self, plugin, capability):
-        self.data_provider_plugins.append(plugin)
+    @colony.plugins.decorators.load_allowed_capability("data_filter")
+    def data_filter_load_allowed(self, plugin, capability):
+        self.data_filter_plugins.append(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("data_provider")
-    def data_provider_unload_allowed(self, plugin, capability):
-        self.data_provider_plugins.remove(plugin)
+    @colony.plugins.decorators.unload_allowed_capability("data_filter")
+    def data_filter_unload_allowed(self, plugin, capability):
+        self.data_filter_plugins.remove(plugin)
