@@ -227,6 +227,10 @@ class InputAdapter:
             for handler in row_conversion_info.configuration.handlers:
                 self.process_handler(handler.name, [row_conversion_info, self])
 
+        # @todo: remove these handlers and move them to the xml
+        if table_name == "compras":
+            self.process_handler("table_handler_process_purchases_and_consignments", [self])
+
     def process_columns(self, row_conversion_info):
         """
         Copies data from the database columns to the internal structure entity attributes.
