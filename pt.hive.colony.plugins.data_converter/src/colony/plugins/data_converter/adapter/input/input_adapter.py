@@ -310,7 +310,7 @@ class InputAdapter:
         Process the foreign key queue.
         """
 
-        # inicializes variable for deadlock protection
+        # initializes variable for deadlock protection
         last_foreign_key_queue_size = 0
 
         # try to connect all entities which have pending foreign keys until the foreign key queue is empty
