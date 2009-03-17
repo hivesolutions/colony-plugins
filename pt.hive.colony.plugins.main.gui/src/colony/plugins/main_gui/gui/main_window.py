@@ -81,7 +81,7 @@ ICONS_10X10_PATH = ICONS_PATH + "/" + "10x10"
 ICONS_16X16_PATH = ICONS_PATH + "/" + "16x16"
 ICONS_32X32_PATH = ICONS_PATH + "/" + "32x32"
 
-SPLASH_IMAGE_FILE_NAME = "logo_hive_splash.jpg"
+SPLASH_IMAGE_FILE_NAME = "logo_omni_animation.gif"
 
 MENU_TITLE = "The Hive Colony Administrator"
 TREE_PANEL_TITLE = "Tree Pane"
@@ -91,12 +91,21 @@ V_SIZE = 768
 
 #@todo: review and comment this file
 class MainFrame(wx.Frame):
+    """
+    The main frame used in the gui.
+    """
 
-    # main components
     plugin_tree = None
+    """ The main plugin tree used """
+
     tab_container_panel = None
+    """ The tab container panel """
+
     text_control = None
+    """ The text control """
+
     progress_information_frame = None
+    """ The progress information frame """
 
     bitmaps_10x10_map = {}
     """ The bitmaps map for 10x10 bitmaps """
