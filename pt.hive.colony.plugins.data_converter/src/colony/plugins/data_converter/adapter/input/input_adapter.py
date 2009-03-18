@@ -231,6 +231,16 @@ class InputAdapter:
         if table_name == "compras":
             self.process_handler("table_handler_process_purchases_and_consignments", [self])
 
+        if table_name == "anacompr":
+            self.process_handler("table_handler_process_purchases_and_consignments_merchandise", [self])
+
+        if table_name == "sbcompra":
+            self.process_handler("table_handler_process_purchases_and_consignments_merchandise_subproduct", [self])
+
+        if table_name == "extrdocc":
+            self.process_handler("table_handler_process_purchase_document_association", [self])
+            
+
     def process_columns(self, row_conversion_info):
         """
         Copies data from the database columns to the internal structure entity attributes.
@@ -306,8 +316,10 @@ class InputAdapter:
         primary_key_string = str([row[primary_key_column_name] for primary_key_column_name in primary_key_column_names])
          
         # associate the row conversion information with the primary key
-        key = (row_conversion_info.internal_entity._name, primary_key_string)
-        self.internal_entity_name_primary_key_row_conversion_info_map[key] = row_conversion_info
+        if not row_conversion_info.internal_entity._name in self.internal_entity_name_primary_key_row_conversion_info_map:
+             self.internal_entity_name_primary_key_row_conversion_info_map[row_conversion_info.internal_entity._name] = {}
+        primary_key_row_conversion_info_map = self.internal_entity_name_primary_key_row_conversion_info_map[row_conversion_info.internal_entity._name]
+        primary_key_row_conversion_info_map[primary_key_string] = row_conversion_info
 
     def process_foreign_key_queue(self):
         """
@@ -358,10 +370,11 @@ class InputAdapter:
         @rtype: RowConversionInfo
         @return: Object with information on how the row was converted to an entity.
         """
-
-        key = (entity_name, primary_key_string)
-        if key in self.internal_entity_name_primary_key_row_conversion_info_map:
-            return self.internal_entity_name_primary_key_row_conversion_info_map[key]
+        
+        if entity_name in self.internal_entity_name_primary_key_row_conversion_info_map:
+            primary_key_row_conversion_info_map = self.internal_entity_name_primary_key_row_conversion_info_map[entity_name]
+            if primary_key_string in primary_key_row_conversion_info_map:
+                return primary_key_row_conversion_info_map[primary_key_string]
 
 class RowConversionInfo:
     """
