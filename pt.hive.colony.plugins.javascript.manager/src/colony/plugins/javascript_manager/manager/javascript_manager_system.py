@@ -80,6 +80,7 @@ class JavascriptManager:
                                                self.workspace_base_path + "/pt.hive.colony.demo.web.plugins.pacman.input/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.demo.web.plugins.pacman.logic/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.demo.web.plugins.pacman.main/plugins",
+                                               self.workspace_base_path + "/pt.hive.colony.demo.web.plugins.pacman.output/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.data_structure/plugins", 
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.business/plugins",
