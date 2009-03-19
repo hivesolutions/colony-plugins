@@ -231,16 +231,28 @@ class InputAdapter:
         if table_name == "compras":
             self.process_handler("table_handler_process_purchases_and_consignments", [self])
 
-        if table_name == "anacompr":
+        elif table_name == "anacompr":
             self.process_handler("table_handler_process_purchases_and_consignments_merchandise", [self])
 
-        if table_name == "sbcompra":
+        elif table_name == "sbcompra":
             self.process_handler("table_handler_process_purchases_and_consignments_merchandise_subproduct", [self])
 
-        if table_name == "extrdocc":
+        elif table_name == "extrdocc":
             self.process_handler("table_handler_process_purchase_document_association", [self])
             
+        elif table_name == "vendas":
+            self.process_handler("table_handler_process_sale_transactions_customer_returns", [self])
+            
+        elif table_name == "anavenda":
+            self.process_handler("table_handler_sale_customer_return_merchandise", [self])
+        
+        elif table_name == "formapag":
+            self.process_handler("table_handler_payment_method", [self])
 
+        elif table_name == "devolver":
+            self.process_handler("table_handler_consignment_supplier_return", [self])
+
+            
     def process_columns(self, row_conversion_info):
         """
         Copies data from the database columns to the internal structure entity attributes.
