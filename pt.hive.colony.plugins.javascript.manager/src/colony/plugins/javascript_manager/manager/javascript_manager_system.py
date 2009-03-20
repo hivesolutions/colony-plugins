@@ -79,6 +79,7 @@ class JavascriptManager:
         self.plugin_search_directories_list = [self.workspace_base_path + "/pt.hive.colony.demo.web.plugins.pacman.gui/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.demo.web.plugins.pacman.input/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.demo.web.plugins.pacman.logic/plugins",
+                                               self.workspace_base_path + "/pt.hive.colony.demo.web.plugins.pacman.logic.board/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.demo.web.plugins.pacman.main/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.demo.web.plugins.pacman.output/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web/plugins",
