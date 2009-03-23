@@ -252,6 +252,15 @@ class InputAdapter:
         elif table_name == "devolver":
             self.process_handler("table_handler_consignment_supplier_return", [self])
 
+        elif table_name == "clientes":
+            self.process_handler("table_handler_customer_company_person", [self])
+
+        elif table_name == "forneced":
+            self.process_handler("table_handler_supplier_company_person", [self])
+        
+        elif table_name == "password":
+            self.process_handler("table_handler_associate_user_with_system_company_employee", [self])
+
             
     def process_columns(self, row_conversion_info):
         """
