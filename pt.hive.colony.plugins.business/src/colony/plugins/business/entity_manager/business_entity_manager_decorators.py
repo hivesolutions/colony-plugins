@@ -72,8 +72,8 @@ def transaction(transaction_type = "required"):
             self_value.entity_manager.create_transaction()
 
             try:
-                # calls the callback function
-                func(*args, **kwargs)
+                # calls the callback function and gets the return value
+                return_value = func(*args, **kwargs)
             except Exception, exception:
                 # "rollsback" the transaction
                 self_value.entity_manager.rollback_transaction()
@@ -81,6 +81,9 @@ def transaction(transaction_type = "required"):
 
             # closes the transaction
             self_value.entity_manager.commit_transaction()
+
+            # returns the return value
+            return return_value
 
         return decorator_interceptor
 
