@@ -54,11 +54,7 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["console_command_extension"]
     capabilities_allowed = ["io", "data_converter_input_configuration", "data_converter_output_configuration", "data_converter_observer"]
-    dependencies = [colony.plugins.plugin_system.PackageDependency(
-                    "SQL Alchemy O/R mapper", "sqlalchemy", "0.4.x", "http://www.sqlalchemy.org"),
-                    colony.plugins.plugin_system.PackageDependency(
-                    "MySQL-Python", "MySQLdb", "1.2.x", "http://mysql-python.sourceforge.net"), 
-                    colony.plugins.plugin_system.PluginDependency(
+    dependencies = [ colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.tasks.task_manager", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.log", "1.0.0")]
