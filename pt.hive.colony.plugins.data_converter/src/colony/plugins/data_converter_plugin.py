@@ -89,24 +89,21 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global data_converter
-        import data_converter.adapter.input.input_adapter
-        import data_converter.adapter.output.output_adapter
         import data_converter.data_converter_system
+        import data_converter.data_converter_adapter
         import data_converter.console_data_converter
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
         self.data_converter = data_converter.data_converter_system.DataConverter(self)
+        self.data_converter_adapter = data_converter.data_converter_adapter.DataConverterAdapter(self)
         self.console_data_converter = data_converter.console_data_converter.ConsoleDataConverter(self)
-        self.input_adapter = data_converter.adapter.input.input_adapter.InputAdapter(self)
-        self.output_adapter = data_converter.adapter.output.output_adapter.OutputAdapter(self)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
         self.data_converter = None
+        self.data_converter_adapter = None
         self.console_data_converter = None
-        self.input_adapter = None
-        self.output_adapter = None
 
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    

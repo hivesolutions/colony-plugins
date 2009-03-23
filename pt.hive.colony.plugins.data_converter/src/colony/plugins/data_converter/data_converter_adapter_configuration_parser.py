@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import xml.dom.minidom
 
-import input_configuration
+import data_converter_adapter_configuration
 
 class Parser:
 
@@ -52,7 +52,7 @@ class Parser:
     def get_value(self):
         pass
 
-class InputConfigurationParser(Parser):
+class DataConverterAdapterConfigurationParser(Parser):
     """
     XML parser for the data converter input configuration.
     """
@@ -60,17 +60,17 @@ class InputConfigurationParser(Parser):
     file_path = None
     """ File path where the xml configuration file is located """
 
-    input_configuration = None
+    adapter_configuration = None
     """ Input configuration extracted from the specified xml file """
 
     def __init__(self, file_path = None):
         Parser.__init__(self)
         self.file_path = file_path
-        self.input_configuration = input_configuration.InputConfiguration()
+        self.adapter_configuration = data_converter_adapter_configuration.DataConverterAdapterConfiguration()
 
     def parse(self):
         self.load_config_file(self.file_path)
-        return self.input_configuration
+        return self.adapter_configuration
 
     def load_config_file(self, file_path):
         # creates the xml document DOM object
@@ -79,30 +79,30 @@ class InputConfigurationParser(Parser):
 
         for child_node in child_nodes:
             if valid_node(child_node):
-                self.parse_input_configuration(child_node)
+                self.parse_adapter_configuration(child_node)
 
-    def parse_input_configuration(self, input_configuration_element):
-        child_nodes = input_configuration_element.childNodes
+    def parse_adapter_configuration(self, adapter_configuration_element):
+        child_nodes = adapter_configuration_element.childNodes
 
         for child_node in child_nodes:
             if valid_node(child_node):
-                self.parse_input_configuration_element(child_node, self.input_configuration)
+                self.parse_adapter_configuration_element(child_node, self.adapter_configuration)
 
-    def parse_input_configuration_element(self, input_configuration_element, input_configuration):
-        node_name = input_configuration_element.nodeName
+    def parse_adapter_configuration_element(self, adapter_configuration_element, adapter_configuration):
+        node_name = adapter_configuration_element.nodeName
 
         if node_name == "tables":
-            self.parse_tables(input_configuration_element, input_configuration)
+            self.parse_tables(adapter_configuration_element, adapter_configuration)
 
-    def parse_tables(self, tables, input_configuration):
+    def parse_tables(self, tables, adapter_configuration):
         child_nodes = tables.childNodes
 
         for child_node in child_nodes:
             if valid_node(child_node):
-                input_configuration.add_table(self.parse_table(child_node))
+                adapter_configuration.add_table(self.parse_table(child_node))
 
     def parse_table(self, table):
-        table_structure = input_configuration.Table()
+        table_structure = data_converter_adapter_configuration.Table()
         child_nodes = table.childNodes
 
         for child_node in child_nodes:
@@ -143,7 +143,7 @@ class InputConfigurationParser(Parser):
                 table.handlers.append(handler)
 
     def parse_table_handler(self, handler):
-        handler_structure = input_configuration.Handler()
+        handler_structure = data_converter_adapter_configuration.Handler()
         child_nodes = handler.childNodes
 
         for child_node in child_nodes:
@@ -167,7 +167,7 @@ class InputConfigurationParser(Parser):
                 table.foreign_keys.append(foreign_key)
 
     def parse_table_foreign_key(self, foreign_key):
-        foreign_key_structure = input_configuration.ForeignKey()
+        foreign_key_structure = data_converter_adapter_configuration.ForeignKey()
         child_nodes = foreign_key.childNodes
 
         for child_node in child_nodes:
@@ -210,7 +210,7 @@ class InputConfigurationParser(Parser):
                         foreign_key.columns.append(column)
 
     def parse_table_column(self, column):
-        column_structure = input_configuration.Column()
+        column_structure = data_converter_adapter_configuration.Column()
         child_nodes = column.childNodes
 
         for child_node in child_nodes:
@@ -255,7 +255,7 @@ class InputConfigurationParser(Parser):
                 column.handlers.append(handler)
 
     def parse_table_column_handler(self, handler):
-        handler_structure = input_configuration.Handler()
+        handler_structure = data_converter_adapter_configuration.Handler()
         child_nodes = handler.childNodes
 
         for child_node in child_nodes:

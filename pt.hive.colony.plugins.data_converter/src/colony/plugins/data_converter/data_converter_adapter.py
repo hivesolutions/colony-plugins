@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import data_converter.adapter.input.configuration.input_configuration_parser
+import data_converter.data_converter_adapter_configuration_parser
 
-class InputAdapter:
+class DataConverterAdapter:
     """
     Adapter used to convert data from the source medium and schema to the internal structure.
     """
@@ -75,12 +75,12 @@ class InputAdapter:
         Loads from the XML configuration file into the correspondent conversion configuration data structures.
         """
         
-        parser = data_converter.adapter.input.configuration.input_configuration_parser.InputConfigurationParser()
+        parser = data_converter.data_converter_adapter_configuration_parser.DataConverterAdapterConfigurationParser()
         file_paths = self.configuration.get_configuration_file_paths()
         for file_path in file_paths:
             parser.file_path = file_path
             parser.parse()
-        self.input_description = parser.input_configuration
+        self.input_description = parser.adapter_configuration
 
     def convert(self, task, internal_structure, connection, configuration):
         """

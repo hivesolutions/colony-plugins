@@ -321,7 +321,7 @@ class DataConverter:
         if input_io_plugin and output_io_plugin:              
             # map data into the internal structure
             connection = input_io_plugin.connect(input_adapter_configuration.get_io_connection_options())
-            internal_structure = self.data_converter_plugin.input_adapter.convert(task, InternalStructure(), connection, options["input_adapter_configuration"])
+            internal_structure = self.data_converter_plugin.data_converter_adapter.convert(task, InternalStructure(), connection, options["input_adapter_configuration"])
         
         task.confirm_stop(True)   
 
