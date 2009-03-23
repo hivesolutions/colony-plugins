@@ -44,7 +44,7 @@ class DataConverterAdapter:
     Adapter used to convert data from the source medium and schema to the internal structure.
     """
 
-    internal_entity_name_primary_key_row_conversion_info_map = {}
+    internal_entity_name_primary_key_domain_entity_conversion_info_map = {}
     """ Dictionary relating internal entity name, with primary key value, with a information on how the conversion was performed """
     
     foreign_key_queue = []
@@ -101,7 +101,7 @@ class DataConverterAdapter:
         self.logger.warn("The input adapter has started the conversion process.\n")
                 
         # reset the input adapter's data
-        self.internal_entity_name_primary_key_row_conversion_info_map = {}
+        self.internal_entity_name_primary_key_domain_entity_conversion_info_map = {}
         self.foreign_key_queue = []
         self.internal_structure = internal_structure
         self.connection = connection
@@ -147,7 +147,7 @@ class DataConverterAdapter:
 
     def process_work_unit(self, task, counter_offset, counter_range, work_unit_name):
         """
-        Processes the tables indicated by the specified work unit.
+        Processes the domain_entitys indicated by the specified work unit.
         
         @type task: Task
         @param task: Task monitoring object used to inform the status of the query.
@@ -159,14 +159,14 @@ class DataConverterAdapter:
         @param work_unit_name: Name of the work unit whose work will be performed.
         """
 
-        self.logger.warn("Input adapter: Processing work unit '%s'.\n" % work_unit_name)
+        self.logger.warn("Data converter adapter: Processing work unit '%s'.\n" % work_unit_name)
 
         counter = counter_offset
-        table_names = self.configuration.get_tables(work_unit_name)
-        counter_inc = counter_range / len(table_names)
-        for table_name in table_names:
+        domain_entity_names = self.configuration.get_domain_entities(work_unit_name)
+        counter_inc = counter_range / len(domain_entity_names)
+        for domain_entity_name in domain_entity_names:
             if not task.status == task.STATUS_TASK_STOPPED:
-                self.process_table(table_name)
+                self.process_domain_entity(domain_entity_name)
                 if task.status == task.STATUS_TASK_PAUSED:
                     # confirms the pause
                     task.confirm_pause()
@@ -193,111 +193,109 @@ class DataConverterAdapter:
         @return: The value returned by the handler.
         """
 
-        self.logger.debug("Input adapter: Processing handler function '%s'.\n" % handler_name)
+        self.logger.debug("Data converter adapter: Processing handler function '%s'.\n" % handler_name)
         
         if self.configuration.has_handler(handler_name):
             handler = self.configuration.get_handler(handler_name)
             return handler(arguments)        
         
-    def process_table(self, table_name):
+    def process_domain_entity(self, domain_entity_name):
         """
-        Converts the table's contents to the internal structure.
+        Converts the domain entity's contents to the internal structure.
         
-        @type table_name: String
-        @param table_name: Name of the table one wants to process.
+        @type domain_entity_name: String
+        @param domain_entity_name: Name of the domain entity one wants to process.
         """
 
-        self.logger.warn("Input adapter: Processing table '%s'.\n" % table_name)
+        self.logger.warn("Data converter adapter: Processing domain entity '%s'.\n" % domain_entity_name)
 
-        # retrieve the table's rows
-        table_configuration = self.input_description.get_table(table_name)
-        column_names = [column_configuration.name for column_configuration in table_configuration.get_columns()]
-        rows = self.connection.query(table_name, column_names)
+        domain_entity_configuration = self.input_description.get_domain_entity(domain_entity_name)
+        domain_attribute_names = [domain_attribute_configuration.name for domain_attribute_configuration in domain_entity_configuration.get_domain_attributes()]
+        domain_entities = self.connection.query(domain_entity_name, domain_attribute_names)
 
-        # for every row in the table
-        for row in rows:     
-            # create the entity related with the table and a table conversion information object
-            row_internal_entity = self.internal_structure.add_entity(table_configuration.internal_entity)
-            row_conversion_info = RowConversionInfo(table_configuration, self.internal_structure, row_internal_entity, row)
-            # bind the entity's id to the table's primary key
-            self.process_primary_key(row_conversion_info)
-            # process the table columns
-            self.process_columns(row_conversion_info)
-            # run the handlers configured for this row
-            for handler in row_conversion_info.configuration.handlers:
-                self.process_handler(handler.name, [row_conversion_info, self])
+        for domain_entity in domain_entities:     
+            # create the entity related with the domain entity and a domain entity conversion information object
+            domain_entity_internal_entity = self.internal_structure.add_entity(domain_entity_configuration.internal_entity)
+            domain_entity_conversion_info = DomainEntityConversionInfo(domain_entity_configuration, self.internal_structure, domain_entity_internal_entity, domain_entity)
+            # bind the entity's id to the domain entity's primary key
+            self.process_primary_key(domain_entity_conversion_info)
+            # process the domain entity's attributes
+            self.process_domain_attributes(domain_entity_conversion_info)
+            # run the handlers configured for this domain entity
+            for handler in domain_entity_conversion_info.configuration.handlers:
+                self.process_handler(handler.name, [domain_entity_conversion_info, self])
 
         # @todo: remove these handlers and move them to the xml
-        if table_name == "compras":
+        if domain_entity_name == "compras":
             self.process_handler("table_handler_process_purchases_and_consignments", [self])
 
-        elif table_name == "anacompr":
+        elif domain_entity_name == "anacompr":
             self.process_handler("table_handler_process_purchases_and_consignments_merchandise", [self])
 
-        elif table_name == "sbcompra":
+        elif domain_entity_name == "sbcompra":
             self.process_handler("table_handler_process_purchases_and_consignments_merchandise_subproduct", [self])
 
-        elif table_name == "extrdocc":
+        elif domain_entity_name == "extrdocc":
             self.process_handler("table_handler_process_purchase_document_association", [self])
             
-        elif table_name == "vendas":
+        elif domain_entity_name == "vendas":
             self.process_handler("table_handler_process_sale_transactions_customer_returns", [self])
             
-        elif table_name == "anavenda":
+        elif domain_entity_name == "anavenda":
             self.process_handler("table_handler_sale_customer_return_merchandise", [self])
         
-        elif table_name == "formapag":
+        elif domain_entity_name == "formapag":
             self.process_handler("table_handler_payment_method", [self])
 
-        elif table_name == "devolver":
+        elif domain_entity_name == "devolver":
             self.process_handler("table_handler_consignment_supplier_return", [self])
 
-        elif table_name == "clientes":
+        elif domain_entity_name == "clientes":
             self.process_handler("table_handler_customer_company_person", [self])
 
-        elif table_name == "forneced":
+        elif domain_entity_name == "forneced":
             self.process_handler("table_handler_supplier_company_person", [self])
         
-        elif table_name == "password":
+        elif domain_entity_name == "password":
             self.process_handler("table_handler_associate_user_with_system_company_employee", [self])
 
             
-    def process_columns(self, row_conversion_info):
+    def process_domain_attributes(self, domain_entity_conversion_info):
         """
-        Copies data from the database columns to the internal structure entity attributes.
+        Copies data from the database domain attributes to the internal structure entity attributes.
         
-        @type row_conversion_info: RowConversionInfo
-        @param row_conversion_info: Object containing information about this row conversion process.
+        @type domain_entity_conversion_info: DomainEntityConversionInfo
+        @param domain_entity_conversion_info: Object containing information about this domain entity conversion process.
         """
         
-        table_configuration = row_conversion_info.configuration
-        row_internal_entity = row_conversion_info.internal_entity
-        row = row_conversion_info.row
+        domain_entity_configuration = domain_entity_conversion_info.configuration
+        domain_entity_internal_entity = domain_entity_conversion_info.internal_entity
+        domain_entity = domain_entity_conversion_info.domain_entity
        
-        # for every plain column, convert the value and send it to the associated entity instances
-        for plain_column in table_configuration.get_plain_columns():
-            # if the plain column as an internal attribute target and it exists in the row set
-            if not plain_column.internal_attribute is None and plain_column.name in row:
-                self.logger.debug("Input adapter: Processing column '%s'.\n" % plain_column.name)
-                field_value = row[plain_column.name]
-                destination_internal_entity_name = row_internal_entity._name
-                destination_internal_entity_id = row_internal_entity._id
-                # if the column is pointing to a different internal entity than the table then use that one instead and create a link to the table entity
-                if plain_column.internal_entity and plain_column.internal_entity_id:
-                    destination_internal_entity_name = plain_column.internal_entity
-                    destination_internal_entity_id = row_conversion_info.get_real_internal_entity_id(plain_column.internal_entity, plain_column.internal_entity_id)
-                    self.internal_structure.set_field_value(destination_internal_entity_name, destination_internal_entity_id, row_internal_entity._name, row_internal_entity)
-                # grab the row and process it through its handlers
-                for handler in plain_column.handlers:
+        # for every plain domain attribute, convert the value and send it to the associated entity instances
+        for plain_domain_attribute in domain_entity_configuration.get_plain_domain_attributes():
+            # if the plain domain attribute has an internal attribute target and it exists in the domain entity set
+            if not plain_domain_attribute.internal_attribute is None and plain_domain_attribute.name in domain_entity:
+                self.logger.debug("Data converter adapter: Processing domain_attribute '%s'.\n" % plain_domain_attribute.name)
+                field_value = domain_entity[plain_domain_attribute.name]
+                destination_internal_entity_name = domain_entity_internal_entity._name
+                destination_internal_entity_id = domain_entity_internal_entity._id
+                # if the domain attribute is pointing to a different internal entity than the domain entity then use that one instead and create a link to the domain entity' internal entity
+                if plain_domain_attribute.internal_entity and plain_domain_attribute.internal_entity_id:
+                    destination_internal_entity_name = plain_domain_attribute.internal_entity
+                    destination_internal_entity_id = domain_entity_conversion_info.get_real_internal_entity_id(plain_domain_attribute.internal_entity, plain_domain_attribute.internal_entity_id)
+                    self.internal_structure.set_field_value(destination_internal_entity_name, destination_internal_entity_id, domain_entity_internal_entity._name, domain_entity_internal_entity)
+                # grab the domain entity and process it through its handlers
+                for handler in plain_domain_attribute.handlers:
                     field_value = self.process_handler(handler.name, [field_value])
-                # store the row in the associated entity
-                self.internal_structure.set_field_value(destination_internal_entity_name, destination_internal_entity_id, plain_column.internal_attribute, field_value)
+                # store the domain entity in the associated entity
+                self.internal_structure.set_field_value(destination_internal_entity_name, destination_internal_entity_id, plain_domain_attribute.internal_attribute, field_value)
                            
         # for every foreign key
-        for foreign_key in table_configuration.foreign_keys:
+        for foreign_key in domain_entity_configuration.foreign_keys:
             # compute the string representation of the foreign key
-            foreign_key_column_names = [foreign_key_column.name for foreign_key_column in foreign_key.columns]
-            foreign_key_values = [row[foreign_key_column.name] for foreign_key_column in foreign_key.columns]
+            foreign_key_domain_attribute_names = [foreign_key_domain_attribute.name for foreign_key_domain_attribute in foreign_key.domain_attributes]
+            foreign_key_values = [domain_entity[foreign_key_domain_attribute.name] for foreign_key_domain_attribute in foreign_key.domain_attributes]
             
             # if one of the foreign key values is null then cancel the foreign key binding operation
             if None in foreign_key_values:
@@ -305,42 +303,42 @@ class DataConverterAdapter:
             
             foreign_key_string = str(foreign_key_values)
 
-            self.logger.debug("Input adapter: Processing foreign key '%s'.\n" % foreign_key_string)
+            self.logger.debug("Data converter adapter: Processing foreign key '%s'.\n" % foreign_key_string)
 
-            # if the foreign row the foreign key points to was already converted to an entity then create a relation to it
-            foreign_table = self.input_description.get_table(foreign_key.foreign_table)
-            foreign_row_conversion_info = self.get_row_conversion_info(foreign_table.internal_entity, foreign_key_string)
-            if foreign_row_conversion_info:
-               foreign_internal_entity_id = foreign_row_conversion_info.internal_entity._id
-               foreign_internal_entity_instance = self.internal_structure.get_entity(foreign_table.internal_entity, foreign_internal_entity_id)
-               self.internal_structure.set_field_value(row_internal_entity._name, row_internal_entity._id, foreign_table.internal_entity, foreign_internal_entity_instance)
+            # if the foreign domain_entity the foreign key points to was already converted to an entity then create a relation to it
+            foreign_domain_entity = self.input_description.get_domain_entity(foreign_key.foreign_domain_entity)
+            foreign_domain_entity_conversion_info = self.get_domain_entity_conversion_info(foreign_domain_entity.internal_entity, foreign_key_string)
+            if foreign_domain_entity_conversion_info:
+               foreign_internal_entity_id = foreign_domain_entity_conversion_info.internal_entity._id
+               foreign_internal_entity_instance = self.internal_structure.get_entity(foreign_domain_entity.internal_entity, foreign_internal_entity_id)
+               self.internal_structure.set_field_value(domain_entity_internal_entity._name, domain_entity_internal_entity._id, foreign_domain_entity.internal_entity, foreign_internal_entity_instance)
             else: # otherwise add the foreign key to the queue
                self.foreign_key_queue.append({"foreign_key_string" : foreign_key_string,
-                                              "foreign_key_internal_entity_name" : row_internal_entity._name,
-                                              "foreign_key_internal_entity_id" : row_internal_entity._id,
-                                              "foreign_internal_entity_name" : foreign_table.internal_entity})
+                                              "foreign_key_internal_entity_name" : domain_entity_internal_entity._name,
+                                              "foreign_key_internal_entity_id" : domain_entity_internal_entity._id,
+                                              "foreign_internal_entity_name" : foreign_domain_entity.internal_entity})
                 
-    def process_primary_key(self, row_conversion_info):
+    def process_primary_key(self, domain_entity_conversion_info):
         """
-        Extracts the primary key value from the query row set and into the the internal structure. After this
-        operation the row set will not contain the primary key column anymore.
+        Extracts the primary key value from the query domain_entity set and into the the internal structure. After this
+        operation the domain entity set will not contain the primary key domain_attribute anymore.
         
-        @type row_conversion_info: RowConversionInfo
-        @param row_conversion_info: Object containing information about the row conversion process.
+        @type domain_entity_conversion_info: DomainEntityConversionInfo
+        @param domain_entity_conversion_info: Object containing information about the domain entity conversion process.
         """
         
-        table_configuration = row_conversion_info.configuration
-        row = row_conversion_info.row
+        domain_entity_configuration = domain_entity_conversion_info.configuration
+        domain_entity = domain_entity_conversion_info.domain_entity
         
-        # compute this row's primary key string representation
-        primary_key_column_names = [column.name for column in table_configuration.primary_key_columns]
-        primary_key_string = str([row[primary_key_column_name] for primary_key_column_name in primary_key_column_names])
+        # compute this domain_entity's primary key string representation
+        primary_key_domain_attribute_names = [domain_attribute.name for domain_attribute in domain_entity_configuration.primary_key_domain_attributes]
+        primary_key_string = str([domain_entity[primary_key_domain_attribute_name] for primary_key_domain_attribute_name in primary_key_domain_attribute_names])
          
-        # associate the row conversion information with the primary key
-        if not row_conversion_info.internal_entity._name in self.internal_entity_name_primary_key_row_conversion_info_map:
-             self.internal_entity_name_primary_key_row_conversion_info_map[row_conversion_info.internal_entity._name] = {}
-        primary_key_row_conversion_info_map = self.internal_entity_name_primary_key_row_conversion_info_map[row_conversion_info.internal_entity._name]
-        primary_key_row_conversion_info_map[primary_key_string] = row_conversion_info
+        # associate the domain_entity conversion information with the primary key
+        if not domain_entity_conversion_info.internal_entity._name in self.internal_entity_name_primary_key_domain_entity_conversion_info_map:
+             self.internal_entity_name_primary_key_domain_entity_conversion_info_map[domain_entity_conversion_info.internal_entity._name] = {}
+        primary_key_domain_entity_conversion_info_map = self.internal_entity_name_primary_key_domain_entity_conversion_info_map[domain_entity_conversion_info.internal_entity._name]
+        primary_key_domain_entity_conversion_info_map[primary_key_string] = domain_entity_conversion_info
 
     def process_foreign_key_queue(self):
         """
@@ -369,9 +367,9 @@ class DataConverterAdapter:
                 foreign_key_internal_entity_name = foreign_key_information["foreign_key_internal_entity_name"]
                 foreign_key_internal_entity_id = foreign_key_information["foreign_key_internal_entity_id"]
                 foreign_internal_entity_name = foreign_key_information["foreign_internal_entity_name"]
-                row_conversion_info = self.get_row_conversion_info(foreign_internal_entity_name, foreign_key_information["foreign_key_string"])  
-                if row_conversion_info:
-                    foreign_internal_entity_id = row_conversion_info.internal_entity._id
+                domain_entity_conversion_info = self.get_domain_entity_conversion_info(foreign_internal_entity_name, foreign_key_information["foreign_key_string"])  
+                if domain_entity_conversion_info:
+                    foreign_internal_entity_id = domain_entity_conversion_info.internal_entity._id
                     foreign_internal_entity = self.internal_structure.get_entity(foreign_internal_entity_name, foreign_internal_entity_id)
                     self.internal_structure.set_field_value(foreign_key_internal_entity_name, foreign_key_internal_entity_id, foreign_internal_entity_name, foreign_internal_entity) 
                     processed_foreign_keys.append(foreign_key_information)
@@ -380,7 +378,7 @@ class DataConverterAdapter:
             for processed_foreign_key in processed_foreign_keys:
                 self.foreign_key_queue.remove(processed_foreign_key)
 
-    def get_row_conversion_info(self, entity_name, primary_key_string):
+    def get_domain_entity_conversion_info(self, entity_name, primary_key_string):
         """
         Retrieves the conversion information used 
         
@@ -388,69 +386,69 @@ class DataConverterAdapter:
         @param entity_name: Name of the internal entity from which one wants to get an identifier.
         @type primary_key_string: String
         @param primary_key_string: String representation of associated primary key.
-        @rtype: RowConversionInfo
-        @return: Object with information on how the row was converted to an entity.
+        @rtype: DomainEntityConversionInfo
+        @return: Object with information on how the domain entity was converted to an entity.
         """
         
-        if entity_name in self.internal_entity_name_primary_key_row_conversion_info_map:
-            primary_key_row_conversion_info_map = self.internal_entity_name_primary_key_row_conversion_info_map[entity_name]
-            if primary_key_string in primary_key_row_conversion_info_map:
-                return primary_key_row_conversion_info_map[primary_key_string]
+        if entity_name in self.internal_entity_name_primary_key_domain_entity_conversion_info_map:
+            primary_key_domain_entity_conversion_info_map = self.internal_entity_name_primary_key_domain_entity_conversion_info_map[entity_name]
+            if primary_key_string in primary_key_domain_entity_conversion_info_map:
+                return primary_key_domain_entity_conversion_info_map[primary_key_string]
 
-class RowConversionInfo:
+class DomainEntityConversionInfo:
     """
-    Holds information about the conversion of a certain database table row.
+    Holds information about the conversion of a certain database domain_entity domain_entity.
     """
 
     configuration = None
-    """ Table configuration object describing the table this row belongs to """
+    """ Domain entity configuration object describing the domain entity this domain_entity belongs to """
 
     internal_structure = None
     """ Intermediate structure where the data converter input adapter's results are stored """
 
     internal_entity = None
-    """ The internal entity created for this row """
+    """ The internal entity created for this domain entity """
 
-    row = None
-    """ Source medium table row """
+    domain_entity = None
+    """ Source medium domain_entity domain entity """
     
     internal_entity_configuration_id_internal_id_map = {}
-    """ Dictionary relating the unique identifier of an internal entity instance in a table's configuration file with the internal entity instance's real id """
+    """ Dictionary relating the unique identifier of an internal entity instance in a domain entity's configuration file with the internal entity instance's real id """
 
-    def __init__(self, configuration, internal_structure, internal_entity, row):
+    def __init__(self, configuration, internal_structure, internal_entity, domain_entity):
         """
         Class constructor.
         
         @type configuration: Object
-        @param configuration: Object representing the conversion configuration for this table.
+        @param configuration: Object representing the conversion configuration for this domain entity.
         @type internal_structure: InternalStructure
         @param internal_structure: Intermediate structure where the data converter input adapter's results are stored.
         @type internal_entity: String
-        @param internal_entity: The internal entity created for this row.
-        @type row: Dictionary
-        @param row: The row being converted.
+        @param internal_entity: The internal entity created for this domain entity.
+        @type domain_entity: Dictionary
+        @param domain_entity: The domain entity being converted.
         """
 
         self.configuration = configuration
         self.internal_entity = internal_entity
         self.internal_structure = internal_structure
-        self.row = row
+        self.domain_entity = domain_entity
         self.internal_entity_configuration_id_internal_id_map = {}
 
-    def get_real_internal_entity_id(self, internal_entity_name, table_configuration_internal_entity_id):
+    def get_real_internal_entity_id(self, internal_entity_name, domain_entity_configuration_internal_entity_id):
         """
         Retrieves the equivalent internal entity id in the internal structure for the provided
         internal entity id in the configuration file.
 
         @type internal_entity_name: String
         @param internal_entity_name: Name of the internal entity.
-        @type table_configuration_internal_entity_id: int
-        @param table_configuration_internal_entity_id: Identification number of the internal entity in the configuration file.
+        @type domain_entity_configuration_internal_entity_id: int
+        @param domain_entity_configuration_internal_entity_id: Identification number of the internal entity in the configuration file.
         @rtype: int
         @return: Returns the internal entity's unique identifier in the internal structure.
         """
 
-        key = (internal_entity_name, table_configuration_internal_entity_id)
+        key = (internal_entity_name, domain_entity_configuration_internal_entity_id)
         if not key in self.internal_entity_configuration_id_internal_id_map:
             internal_entity = self.internal_structure.add_entity(internal_entity_name)
             self.internal_entity_configuration_id_internal_id_map[key] = internal_entity._id

@@ -116,14 +116,14 @@ class InternalStructure:
         
         @type entity_name: String
         @param entity_name: Name of the internal entity.
-        @rtype: EntityStructure
+        @rtype: InternalEntity
         @return: The created entity instance.
         """
         
         if not self.has_entities(entity_name):
             setattr(self, entity_name, [])
         entities = getattr(self, entity_name)
-        entity_structure = EntityStructure()
+        entity_structure = InternalEntity()
         entities.append(entity_structure)
         entity_structure._id = len(entities) - 1
         entity_structure._name = entity_name
@@ -172,7 +172,7 @@ class InternalStructure:
         @param entity_name: Name of the internal entity.
         @param entity_id: String
         @param entity_id: Unique identifier for the internal entity instance.
-        @rtype: EntityStructure
+        @rtype: InternalEntity
         @return: The specified internal entity instance.
         """
         
@@ -181,7 +181,7 @@ class InternalStructure:
             entity = entities[entity_id]
             return entity
 
-class EntityStructure:
+class InternalEntity:
     """
     Represents an entity in the internal structure.
     """

@@ -92,179 +92,179 @@ class DataConverterAdapterConfigurationParser(Parser):
         node_name = adapter_configuration_element.nodeName
 
         if node_name == "tables":
-            self.parse_tables(adapter_configuration_element, adapter_configuration)
+            self.parse_domain_entities(adapter_configuration_element, adapter_configuration)
 
-    def parse_tables(self, tables, adapter_configuration):
-        child_nodes = tables.childNodes
-
-        for child_node in child_nodes:
-            if valid_node(child_node):
-                adapter_configuration.add_table(self.parse_table(child_node))
-
-    def parse_table(self, table):
-        table_structure = data_converter_adapter_configuration.Table()
-        child_nodes = table.childNodes
+    def parse_domain_entities(self, domain_entities, adapter_configuration):
+        child_nodes = domain_entities.childNodes
 
         for child_node in child_nodes:
             if valid_node(child_node):
-                self.parse_table_element(child_node, table_structure)
+                adapter_configuration.add_domain_entity(self.parse_domain_entity(child_node))
 
-        return table_structure
+    def parse_domain_entity(self, domain_entity):
+        domain_entity_structure = data_converter_adapter_configuration.DomainEntity()
+        child_nodes = domain_entity.childNodes
 
-    def parse_table_element(self, table_element, table):
-        node_name = table_element.nodeName
+        for child_node in child_nodes:
+            if valid_node(child_node):
+                self.parse_domain_entity_element(child_node, domain_entity_structure)
+
+        return domain_entity_structure
+
+    def parse_domain_entity_element(self, domain_entity_element, domain_entity):
+        node_name = domain_entity_element.nodeName
 
         if node_name == "primary_key":
-            self.parse_table_primary_key_columns(table_element, table)
+            self.parse_domain_entity_primary_key_domain_attributes(domain_entity_element, domain_entity)
         elif node_name == "foreign_keys":
-            self.parse_table_foreign_keys(table_element, table)
+            self.parse_domain_entity_foreign_keys(domain_entity_element, domain_entity)
         elif node_name == "name":
-            table.name = table_element.firstChild.data.strip()
+            domain_entity.name = domain_entity_element.firstChild.data.strip()
         elif node_name == "internal_entity":
-            table.internal_entity = table_element.firstChild.data.strip()
+            domain_entity.internal_entity = domain_entity_element.firstChild.data.strip()
         elif node_name == "handlers":
-            self.parse_table_handlers(table_element, table)
+            self.parse_domain_entity_handlers(domain_entity_element, domain_entity)
         elif node_name == "columns":
-            self.parse_table_columns(table_element, table)
+            self.parse_domain_attributes(domain_entity_element, domain_entity)
 
-    def parse_table_primary_key_columns(self, primary_key, table):
+    def parse_domain_entity_primary_key_domain_attributes(self, primary_key, domain_entity):
         child_nodes = primary_key.childNodes
 
         for child_node in child_nodes:
             if valid_node(child_node):
-                table.primary_key_columns.append(child_node.firstChild.data.strip())
+                domain_entity.primary_key_domain_attributes.append(child_node.firstChild.data.strip())
 
-    def parse_table_handlers(self, handlers, table):
+    def parse_domain_entity_handlers(self, handlers, domain_entity):
         child_nodes = handlers.childNodes
 
         for child_node in child_nodes:
             if valid_node(child_node):
-                handler = self.parse_table_handler(child_node)
-                table.handlers.append(handler)
+                handler = self.parse_domain_entity_handler(child_node)
+                domain_entity.handlers.append(handler)
 
-    def parse_table_handler(self, handler):
+    def parse_domain_entity_handler(self, handler):
         handler_structure = data_converter_adapter_configuration.Handler()
         child_nodes = handler.childNodes
 
         for child_node in child_nodes:
             if valid_node(child_node):
-                self.parse_table_handler_element(child_node, handler_structure)
+                self.parse_domain_entity_handler_element(child_node, handler_structure)
 
         return handler_structure
 
-    def parse_table_handler_element(self, handler_element, handler):
+    def parse_domain_entity_handler_element(self, handler_element, handler):
         node_name = handler_element.nodeName
 
         if node_name == "name":
             handler.name = handler_element.firstChild.data.strip()
 
-    def parse_table_foreign_keys(self, foreign_keys, table):
+    def parse_domain_entity_foreign_keys(self, foreign_keys, domain_entity):
         child_nodes = foreign_keys.childNodes
 
         for child_node in child_nodes:
             if valid_node(child_node):
-                foreign_key = self.parse_table_foreign_key(child_node)
-                table.foreign_keys.append(foreign_key)
+                foreign_key = self.parse_domain_entity_foreign_key(child_node)
+                domain_entity.foreign_keys.append(foreign_key)
 
-    def parse_table_foreign_key(self, foreign_key):
+    def parse_domain_entity_foreign_key(self, foreign_key):
         foreign_key_structure = data_converter_adapter_configuration.ForeignKey()
         child_nodes = foreign_key.childNodes
 
         for child_node in child_nodes:
             if valid_node(child_node):
-                self.parse_table_foreign_key_element(child_node, foreign_key_structure)
+                self.parse_domain_entity_foreign_key_element(child_node, foreign_key_structure)
 
         return foreign_key_structure
 
-    def parse_table_foreign_key_element(self, foreign_key_element, foreign_key):
+    def parse_domain_entity_foreign_key_element(self, foreign_key_element, foreign_key):
         node_name = foreign_key_element.nodeName
 
         if node_name == "foreign_key_columns":
-            self.parse_table_foreign_key_columns(foreign_key_element, foreign_key)
+            self.parse_domain_entity_foreign_key_domain_attributes(foreign_key_element, foreign_key)
         elif node_name == "foreign_table":
-            foreign_key.foreign_table = foreign_key_element.firstChild.data.strip()
+            foreign_key.foreign_domain_entity = foreign_key_element.firstChild.data.strip()
 
-    def parse_table_foreign_key_columns(self, foreign_key_columns, foreign_key):
-        child_nodes = foreign_key_columns.childNodes
-
-        for child_node in child_nodes:
-            if valid_node(child_node):
-                foreign_key.columns.append(child_node.firstChild.data.strip())
-
-    def parse_table_columns(self, columns, table):
-        child_nodes = columns.childNodes
+    def parse_domain_entity_foreign_key_domain_attributes(self, foreign_key_domain_attributes, foreign_key):
+        child_nodes = foreign_key_domain_attributes.childNodes
 
         for child_node in child_nodes:
             if valid_node(child_node):
-                column = self.parse_table_column(child_node)
-                table.add_column(column)
+                foreign_key.domain_attributes.append(child_node.firstChild.data.strip())
 
-                # replace previously parse primary key and foreign key column names 
-                # with their respective column instances
-                if column.name in table.primary_key_columns:
-                    table.primary_key_columns.remove(column.name)
-                    table.primary_key_columns.append(column)
-                for foreign_key in table.foreign_keys:
-                    if column.name in foreign_key.columns:
-                        foreign_key.columns.remove(column.name)
-                        foreign_key.columns.append(column)
-
-    def parse_table_column(self, column):
-        column_structure = data_converter_adapter_configuration.Column()
-        child_nodes = column.childNodes
+    def parse_domain_attributes(self, domain_attributes, domain_entity):
+        child_nodes = domain_attributes.childNodes
 
         for child_node in child_nodes:
             if valid_node(child_node):
-                self.parse_table_column_element(child_node, column_structure)
+                domain_attribute = self.parse_domain_attribute(child_node)
+                domain_entity.add_domain_attribute(domain_attribute)
 
-        return column_structure
+                # replace previously parse primary key and foreign key domain attribute names 
+                # with their respective domain attribute instances
+                if domain_attribute.name in domain_entity.primary_key_domain_attributes:
+                    domain_entity.primary_key_domain_attributes.remove(domain_attribute.name)
+                    domain_entity.primary_key_domain_attributes.append(domain_attribute)
+                for foreign_key in domain_entity.foreign_keys:
+                    if domain_attribute.name in foreign_key.domain_attributes:
+                        foreign_key.domain_attributes.remove(domain_attribute.name)
+                        foreign_key.domain_attributes.append(domain_attribute)
 
-    def parse_table_column_element(self, column_element, column):
-        node_name = column_element.nodeName
+    def parse_domain_attribute(self, domain_attribute):
+        domain_attribute_structure = data_converter_adapter_configuration.DomainAttribute()
+        child_nodes = domain_attribute.childNodes
+
+        for child_node in child_nodes:
+            if valid_node(child_node):
+                self.parse_domain_attribute_element(child_node, domain_attribute_structure)
+
+        return domain_attribute_structure
+
+    def parse_domain_attribute_element(self, domain_attribute_element, domain_attribute):
+        node_name = domain_attribute_element.nodeName
 
         if node_name == "name":
-            column.name = column_element.firstChild.data.strip()
+            domain_attribute.name = domain_attribute_element.firstChild.data.strip()
         elif node_name == "internal_entity":
-            self.parse_table_column_internal_entity(column_element, column)
+            self.parse_domain_attribute_internal_entity(domain_attribute_element, domain_attribute)
         elif node_name == "internal_attribute":
-            column.internal_attribute = column_element.firstChild.data.strip()
+            domain_attribute.internal_attribute = domain_attribute_element.firstChild.data.strip()
         elif node_name == "handlers":
-            self.parse_table_column_handlers(column_element, column)
+            self.parse_domain_attribute_handlers(domain_attribute_element, domain_attribute)
 
-    def parse_table_column_internal_entity(self, internal_entity, column):
+    def parse_domain_attribute_internal_entity(self, internal_entity, domain_attribute):
         child_nodes = internal_entity.childNodes
 
         for child_node in child_nodes:
             if valid_node(child_node):
-                self.parse_table_column_internal_entity_element(child_node, column)
+                self.parse_domain_attribute_internal_entity_element(child_node, domain_attribute)
 
-    def parse_table_column_internal_entity_element(self, internal_entity, column):
+    def parse_domain_attribute_internal_entity_element(self, internal_entity, domain_attribute):
         node_name = internal_entity.nodeName
 
         if node_name == "name":
-            column.internal_entity = internal_entity.firstChild.data.strip()
+            domain_attribute.internal_entity = internal_entity.firstChild.data.strip()
         elif node_name == "id":
-            column.internal_entity_id = internal_entity.firstChild.data.strip()
+            domain_attribute.internal_entity_id = internal_entity.firstChild.data.strip()
 
-    def parse_table_column_handlers(self, handlers, column):
+    def parse_domain_attribute_handlers(self, handlers, domain_attribute):
         child_nodes = handlers.childNodes
 
         for child_node in child_nodes:
             if valid_node(child_node):
-                handler = self.parse_table_column_handler(child_node)
-                column.handlers.append(handler)
+                handler = self.parse_domain_attribute_handler(child_node)
+                domain_attribute.handlers.append(handler)
 
-    def parse_table_column_handler(self, handler):
+    def parse_domain_attribute_handler(self, handler):
         handler_structure = data_converter_adapter_configuration.Handler()
         child_nodes = handler.childNodes
 
         for child_node in child_nodes:
             if valid_node(child_node):
-                self.parse_table_column_handler_element(child_node, handler_structure)
+                self.parse_domain_attribute_handler_element(child_node, handler_structure)
 
         return handler_structure
 
-    def parse_table_column_handler_element(self, handler_element, handler):
+    def parse_domain_attribute_handler_element(self, handler_element, handler):
         node_name = handler_element.nodeName
 
         if node_name == "name":

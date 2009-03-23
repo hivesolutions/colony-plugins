@@ -42,136 +42,136 @@ class DataConverterAdapterConfiguration:
     Stores the information defined by the input configuration file and provides an easy way to retrieve it. 
     """
 
-    table_map = {}
-    """ Dictionary relating table name with Table object instances """
+    domain_entity_name_domain_entity_map = {}
+    """ Dictionary relating domain entity name with domain entity object instances """
 
     def __init__(self):
         """
         Constructor of the class.
         """
 
-        self.table_map = {}
+        self.domain_entity_name_domain_entity_map = {}
 
-    def add_table(self, table):
+    def add_domain_entity(self, domain_entity):
         """
-        Adds a table to the input configuration.
+        Adds a domain entity to the adapter configuration.
         
-        @type table: Table
-        @param table: Table object to add to this configuration.
+        @type domain_entity: DomainEntity
+        @param domain_entity: DomainEntity object to add to this configuration.
         """
 
-        self.table_map[table.name] = table
+        self.domain_entity_name_domain_entity_map[domain_entity.name] = domain_entity
 
-    def get_table(self, table_name):
+    def get_domain_entity(self, domain_entity_name):
         """
-        Returns the specified table.
+        Returns the specified domain entity.
         
-        @type table_name: String
-        @param table_name: Name of the table one wants to retrieve.
-        @rtype: Table
-        @return: The requested table configuration.
+        @type domain_entity_name: String
+        @param domain_entity_name: Name of the domain entity one wants to retrieve.
+        @rtype: DomainEntity
+        @return: The requested domain entity configuration.
         """
 
-        return self.table_map[table_name]
+        return self.domain_entity_name_domain_entity_map[domain_entity_name]
 
-class Table:
+class DomainEntity:
     """
-    Stores information about a database table and how it should be treated.
+    Stores information about a domain entity and how it should be treated.
     """
 
     name = None
-    """ Name of the database table """
+    """ Name of the domain entity """
 
     internal_entity = None
-    """ Name of the internal entity this database table will be copied into """
+    """ Name of the internal entity this domain entity will be copied into """
 
-    primary_key_columns = []
-    """ Columns that make up this table's primary key """
+    primary_key_domain_attributes = []
+    """ Domain attributes that make up this domain entity's primary key """
 
     foreign_keys = []
-    """ This table's foreign keys """
+    """ This domain entity's foreign keys """
 
-    column_map = {}
-    """ Dictionary relating database column names with Column objects """ 
+    domain_attribute_name_domain_attribute_map = {}
+    """ Dictionary relating domain attribute names with DomainAttribute objects """ 
 
     handlers = []
-    """ List of handlers to process when this table is processed """
+    """ List of handlers to process when this domain entity is processed """
 
     def __init__(self):
         """
         Constructor of the class.
         """
 
-        self.column_map = {}
+        self.domain_attribute_name_domain_attribute_map = {}
         self.handlers = []
-        self.primary_key_columns = []
+        self.primary_key_domain_attributes = []
         self.foreign_keys = []
 
-    def add_column(self, column):
+    def add_domain_attribute(self, domain_attribute):
         """
-        Adds a table column to this table.
+        Adds a domain attribute to this domain entity.
         
-        @type column: Column
-        @param column: Column object to add to this table. 
+        @type domain_attribute: DomainAttribute
+        @param domain_attribute: DomainAttribute object to add to this domain entity. 
         """
 
-        self.column_map[column.name] = column
+        self.domain_attribute_name_domain_attribute_map[domain_attribute.name] = domain_attribute
 
-    def get_column(self, column_name):
+    def get_domain_attribute(self, domain_attribute_name):
         """
-        Returns a table column.
+        Returns a domain attribute.
         
-        @type column_name: String
-        @return: Column object belonging to this table.
+        @type domain_attribute_name: String
+        @return: Domain attribute object belonging to this domain entity.
         """
 
-        return self.column_map[column_name]
+        return self.domain_attribute_name_domain_attribute_map[domain_attribute_name]
 
-    def get_columns(self):
+    def get_domain_attributes(self):
         """
-        Retrieves a list of this table's columns.
+        Retrieves a list of this domain entity's attributes.
         
         @rtype: List
-        @return: List of table columns.
+        @return: List of domain attributes.
         """
 
-        return self.column_map.values()
+        return self.domain_attribute_name_domain_attribute_map.values()
 
-    def get_plain_columns(self):
+    def get_plain_domain_attributes(self):
         """
-        Retrieves a list with all the columns belonging to this table
+        Retrieves a list with all the domain attributes belonging to this domain entity
         that are not part of any foreign key.
         
         @rtype: List
-        @return: List of table columns.
+        @return: List of domain attributes.
         """
 
-        columns = self.get_columns()
+        domain_attributes = self.get_domain_attributes()
                        
-        # remove foreign key columns
+        # remove foreign key domain attributes
         for foreign_key in self.foreign_keys:
-            for foreign_key_column in foreign_key.columns:
-                if foreign_key_column in columns:
-                    columns.remove(foreign_key_column)
+            for foreign_key_domain_attribute in foreign_key.domain_attributes:
+                if foreign_key_domain_attribute in domain_attributes:
+                    domain_attributes.remove(foreign_key_domain_attribute)
 
-        return columns
+        return domain_attributes
 
-class Column:
+class DomainAttribute:
     """
-    Represents a database table column and how it should be treated.
+    Represents a domain entity attribute and how it should be treated.
     """
 
     name = None
-    """ Name of the database table column """
+    """ Name of the domain entity attribute """
 
     internal_entity = None
-    """ Internal entity this column belongs to, in case it is not the same as the parent table """
+    """ Internal entity this DomainAttribute belongs to, in case it is not the same as the parent domain entity """
 
     internal_entity_id = None
-    """ Internal entity instance this column belongs to, in case it is not the same as the parent table """
+    """ Internal entity instance this DomainAttribute belongs to, in case it is not the same as the parent domain entity """
 
     internal_attribute = None
-    """ Name of the internal entity attribute to which this column's contents will be copied to """
+    """ Name of the internal entity attribute to which this DomainAttribute's contents will be copied to """
 
     handlers = []
     """ List of handler functions """
@@ -181,21 +181,21 @@ class Column:
     
 class ForeignKey:
     """
-    Represents a foreign key that can be added to a Table object.
+    Represents a foreign key that can be added to a domain entity object.
     """
 
-    foreign_table = None
-    """ Table this foreign key points to """
+    foreign_domain_entity = None
+    """ Domain entity this foreign key points to """
 
-    columns = []
-    """ List of columns that make this foreign key """
+    domain_attributes = []
+    """ List of domain attributes that make this foreign key """
 
     def __init__(self):
-        self.columns = []
+        self.domain_attributes = []
 
 class Handler:
     """
-    Represents an handler function, which can be added to either a Table or a Column object.
+    Represents an handler function, which can be added to either a DomainEntity or a DomainAttribute object.
     """
 
     name = None
