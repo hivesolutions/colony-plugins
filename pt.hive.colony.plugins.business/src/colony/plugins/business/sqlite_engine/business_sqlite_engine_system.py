@@ -584,7 +584,12 @@ class BusinessSqliteEngine:
             if GENERATED_FIELD in entity_class_id_attribute_value:
                 # retrieves the entity class id attribute name
                 entity_class_id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
+
+                # sets the new entity id attribute value
                 setattr(entity, entity_class_id_attribute_name, int(time.time() % 10 * 100000000))
+
+                # retrieves the entity id attribute value
+                entity_id_attribute_value = self.get_entity_id_attribute_value(entity)
 
         # in case there is already an entry with the same key value
         if self.find_entity(connection, entity_class, entity_id_attribute_value):
