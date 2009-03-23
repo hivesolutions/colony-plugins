@@ -178,7 +178,9 @@ class MainServiceHttp:
                     # selects the values
                     selected_values = select.select([self.http_socket], [], [], CLIENT_CONNECTION_TIMEOUT)
                 except:
-                    pass
+                    # prints debug message about connection
+                    self.main_service_http_plugin.error("An error has occurred in the selection of the pool")
+                    return
 
             # in case the connection is disabled
             if not self.http_connection_active:
@@ -248,6 +250,7 @@ class HttpClientServiceTask:
         request_timeout = REQUEST_TIMEOUT
 
         while 1:
+            print " tou no loop 2"
             try:
                 request = self.retrieve_request(request_timeout)
             except main_service_http_exceptions.MainServiceHttpException:
@@ -331,6 +334,7 @@ class HttpClientServiceTask:
 
         # continuous loop
         while 1:
+            print " tou no loop 1"
             # retrieves the data
             data = self.retrieve_data(request_timeout)
 
