@@ -91,7 +91,7 @@ class DataConverterAdapterConfigurationParser(Parser):
     def parse_adapter_configuration_element(self, adapter_configuration_element, adapter_configuration):
         node_name = adapter_configuration_element.nodeName
 
-        if node_name == "tables":
+        if node_name == "domain_entities":
             self.parse_domain_entities(adapter_configuration_element, adapter_configuration)
 
     def parse_domain_entities(self, domain_entities, adapter_configuration):
@@ -124,7 +124,7 @@ class DataConverterAdapterConfigurationParser(Parser):
             domain_entity.internal_entity = domain_entity_element.firstChild.data.strip()
         elif node_name == "handlers":
             self.parse_domain_entity_handlers(domain_entity_element, domain_entity)
-        elif node_name == "columns":
+        elif node_name == "domain_attributes":
             self.parse_domain_attributes(domain_entity_element, domain_entity)
 
     def parse_domain_entity_primary_key_domain_attributes(self, primary_key, domain_entity):
@@ -179,9 +179,9 @@ class DataConverterAdapterConfigurationParser(Parser):
     def parse_domain_entity_foreign_key_element(self, foreign_key_element, foreign_key):
         node_name = foreign_key_element.nodeName
 
-        if node_name == "foreign_key_columns":
+        if node_name == "foreign_key_domain_attributes":
             self.parse_domain_entity_foreign_key_domain_attributes(foreign_key_element, foreign_key)
-        elif node_name == "foreign_table":
+        elif node_name == "foreign_domain_entity":
             foreign_key.foreign_domain_entity = foreign_key_element.firstChild.data.strip()
 
     def parse_domain_entity_foreign_key_domain_attributes(self, foreign_key_domain_attributes, foreign_key):
