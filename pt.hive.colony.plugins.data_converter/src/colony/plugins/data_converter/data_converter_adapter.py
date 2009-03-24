@@ -221,8 +221,8 @@ class DataConverterAdapter:
             self.process_primary_key(domain_entity_conversion_info)
             # process the domain entity's attributes
             self.process_domain_attributes(domain_entity_conversion_info)
-            # run the handlers configured for this domain entity
-            for handler in domain_entity_conversion_info.configuration.handlers:
+            # run the handlers configured for this domain entity instance
+            for handler in domain_entity_conversion_info.configuration.instance_handlers:
                 self.process_handler(handler.name, [domain_entity_conversion_info, self])
 
         # @todo: remove these handlers and move them to the xml

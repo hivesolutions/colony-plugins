@@ -94,8 +94,11 @@ class DomainEntity:
     domain_attribute_name_domain_attribute_map = {}
     """ Dictionary relating domain attribute names with DomainAttribute objects """ 
 
-    handlers = []
-    """ List of handlers to process when this domain entity is processed """
+    instance_handlers = []
+    """ List of handlers to process when an instance of this domain entity is processed """
+
+    global_handlers = []
+    """ List of handlers to process when an all instances of this domain entity are processed """
 
     def __init__(self):
         """
@@ -103,7 +106,8 @@ class DomainEntity:
         """
 
         self.domain_attribute_name_domain_attribute_map = {}
-        self.handlers = []
+        self.global_handlers = []
+        self.instance_handlers = []
         self.primary_key_domain_attributes = []
         self.foreign_keys = []
 

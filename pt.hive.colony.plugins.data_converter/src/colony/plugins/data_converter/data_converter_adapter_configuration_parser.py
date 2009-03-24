@@ -113,7 +113,7 @@ class DataConverterAdapterConfigurationParser(Parser):
 
     def parse_domain_entity_element(self, domain_entity_element, domain_entity):
         node_name = domain_entity_element.nodeName
-
+        
         if node_name == "primary_key":
             self.parse_domain_entity_primary_key_domain_attributes(domain_entity_element, domain_entity)
         elif node_name == "foreign_keys":
@@ -122,8 +122,10 @@ class DataConverterAdapterConfigurationParser(Parser):
             domain_entity.name = domain_entity_element.firstChild.data.strip()
         elif node_name == "internal_entity":
             domain_entity.internal_entity = domain_entity_element.firstChild.data.strip()
-        elif node_name == "handlers":
-            self.parse_domain_entity_handlers(domain_entity_element, domain_entity)
+        elif node_name == "instance_handlers":
+            self.parse_domain_entity_instance_handlers(domain_entity_element, domain_entity)
+        elif node_name == "global_handlers":
+            self.parse_domain_entity_global_handlers(domain_entity_element, domain_entity)
         elif node_name == "domain_attributes":
             self.parse_domain_attributes(domain_entity_element, domain_entity)
 
@@ -134,13 +136,21 @@ class DataConverterAdapterConfigurationParser(Parser):
             if valid_node(child_node):
                 domain_entity.primary_key_domain_attributes.append(child_node.firstChild.data.strip())
 
-    def parse_domain_entity_handlers(self, handlers, domain_entity):
+    def parse_domain_entity_global_handlers(self, handlers, domain_entity):
         child_nodes = handlers.childNodes
 
         for child_node in child_nodes:
             if valid_node(child_node):
                 handler = self.parse_domain_entity_handler(child_node)
-                domain_entity.handlers.append(handler)
+                domain_entity.global_handlers.append(handler)
+           
+    def parse_domain_entity_instance_handlers(self, handlers, domain_entity):
+        child_nodes = handlers.childNodes
+
+        for child_node in child_nodes:
+            if valid_node(child_node):
+                handler = self.parse_domain_entity_handler(child_node)
+                domain_entity.instance_handlers.append(handler)
 
     def parse_domain_entity_handler(self, handler):
         handler_structure = data_converter_adapter_configuration.Handler()
