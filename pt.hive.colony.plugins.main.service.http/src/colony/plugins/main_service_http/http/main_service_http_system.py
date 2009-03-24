@@ -257,6 +257,9 @@ class HttpClientServiceTask:
                 self.main_service_http_plugin.debug("Connection: %s closed" % str(self.http_address))
                 return
 
+            if request == None:
+                return
+
             try:
                 # prints debug message about request
                 self.main_service_http_plugin.debug("Handling request: %s" % str(request))
@@ -337,6 +340,9 @@ class HttpClientServiceTask:
             self.main_service_http_plugin.debug(" tou no loop 1")
             # retrieves the data
             data = self.retrieve_data(request_timeout)
+
+            if data == "":
+                return None
 
             self.main_service_http_plugin.debug("a data e:" + data + "end")
 
