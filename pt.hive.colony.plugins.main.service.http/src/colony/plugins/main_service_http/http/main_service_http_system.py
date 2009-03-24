@@ -346,6 +346,8 @@ class HttpClientServiceTask:
 
             # in case the start line is not loaded
             if not start_line_loaded:
+                print " the start line is not loaded"
+                
                 # finds the first new line value
                 start_line_index = message_value.find("\r\n")
 
@@ -372,6 +374,8 @@ class HttpClientServiceTask:
 
             # in case the header is not loaded
             if not header_loaded:
+                print " the header is not loaded"
+                
                 # retrieves the end header index (two new lines)
                 end_header_index = message_value.find("\r\n\r\n")
 
@@ -420,6 +424,8 @@ class HttpClientServiceTask:
 
             # in case the message is not loaded and the header is loaded
             if not message_loaded and header_loaded:
+                print " header loaded and message not loaded"
+                
                 # retrieves the start message size
                 start_message_index = end_header_index + 4
 
