@@ -224,6 +224,10 @@ class DataConverterAdapter:
             # run the handlers configured for this domain entity instance
             for handler in domain_entity_conversion_info.configuration.instance_handlers:
                 self.process_handler(handler.name, [domain_entity_conversion_info, self])
+                
+        # run the global handlers configured for this domain entity
+        for handler in domain_entity_conversion_info.configuration.global_handlers:
+            self.process_handler(handler.name, [domain_entity_conversion_info, self])
 
         # @todo: remove these handlers and move them to the xml
         if domain_entity_name == "compras":
