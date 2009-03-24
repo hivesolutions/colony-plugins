@@ -129,20 +129,29 @@ class JavascriptManagerAutoloader:
 
                             # in case the mofied date is greater that the current modified date 
                             if modified_date > current_modified_date:
-                                print "o plugin:" +  plugin_id + " foi modificado"
+                                # prints a log message
+                                self.javascript_manager_autoloader_plugin.debug("Javascript plugin %s updated" % plugin_id)
+
+                                # sets the mofied date in the plugin id modified date map
                                 self.plugin_id_modified_date_map[plugin_id] = modified_date
                         elif plugin_id in javascript_manager.plugin_id_plugin_descriptor_map:
-                            # e apenas a primeira vez ke pediu e tem de por a data
-                            # neste momento nao conseguimos saber se foi updatada ou nao
-                            print "primeira vez para o" + plugin_id
+                            # prints a log message
+                            self.javascript_manager_autoloader_plugin.debug("Javascript plugin %s inserted in autoloading structures" % plugin_id)
+
+                            # sets the mofied date in the plugin id modified date map
                             self.plugin_id_modified_date_map[plugin_id] = modified_date
                         else:
+                            # prints a log message
+                            self.javascript_manager_autoloader_plugin.debug("Javascript plugin %s added" % plugin_id)
+
                             # adds the plugin descriptor to the list of plugin descriptors
                             # in the javascript manager
                             javascript_manager.plugin_descriptors_list.append(plugin_descriptor)
 
+                            # sets the plugin descriptor in the plugin id plugin descriptor map
                             javascript_manager.plugin_id_plugin_descriptor_map[plugin_id] = plugin_descriptor
 
+                            # sets the mofied date in the plugin id modified date map
                             self.plugin_id_modified_date_map[plugin_id] = modified_date
 
         # creates a new timestamp for the update
@@ -150,6 +159,48 @@ class JavascriptManagerAutoloader:
 
     def update_plugin_manager(self):
         self.update_plugin_files()
+
+    def get_status_plugins(self, timestamp):
+        # converts the timestamp to local time
+        local_timestamp = time.localtime(timestamp)
+
+        # in case it's the first call (timestamp is 0), ignore the request
+        if timestamp == 0:
+            updated_plugins = []
+        else:
+            # retrieves the list of updated plugins since the timestamp
+            updated_plugins = self.get_updated_plugins_from_local_timestamp(local_timestamp)
+
+        # retrieves the current timestamp
+        current_timestamp = time.time()
+
+        # creates the status map for the response
+        status_map = {"timestamp" : time.time(),
+                      "updated_plugins" : updated_plugins}
+
+        # returns the status map
+        return status_map
+
+    def get_updated_plugins_from_local_timestamp(self, local_timestamp):
+        """
+        Retrieves the list of all the updated plugins since the time in
+        the given local timestamp.
+        
+        @type local_timestamp: TimestampTuple
+        @param local_timestamp: The local timestamp to retrieve the updated plugins.
+        @rtype: List
+        @return: The list of all the updated plugins since the time in
+        the given local timestamp.
+        """
+
+        # the list of updated plugins
+        updated_plugins = []
+
+        for plugin_id, modified_date in self.plugin_id_modified_date_map.items():
+            if modified_date > local_timestamp:
+                updated_plugins.append(plugin_id)
+
+        return updated_plugins
 
     def get_new_plugins(self):
         # tenho de mandar timestamp
