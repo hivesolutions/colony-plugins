@@ -338,6 +338,8 @@ class HttpClientServiceTask:
             # retrieves the data
             data = self.retrieve_data(request_timeout)
 
+            print "a data e:" + data + "end"
+
             # writes the data to the string io
             message.write(data)
 
