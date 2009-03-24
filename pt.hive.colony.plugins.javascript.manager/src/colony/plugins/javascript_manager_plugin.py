@@ -102,21 +102,12 @@ class JavascriptManagerPlugin(colony.plugins.plugin_system.Plugin):
 
     @colony.plugins.decorators.plugin_call(True)
     def get_available_rpc_methods(self):
-        return [self.get_available_plugins, self.get_available_plugin_descriptors, self.update_plugin_manager,
-                self.get_new_plugins, self.get_new_plugin_descriptors, self.get_updated_plugins,
-                self.get_updated_plugin_descriptors, self.get_removed_plugins, self.get_removed_plugin_descriptors]
+        return [self.get_available_plugins, self.get_available_plugin_descriptors]
 
     @colony.plugins.decorators.plugin_call(True)
     def get_rpc_methods_alias(self):
         return {self.get_available_plugins : ["getAvailablePlugins"],
-                self.get_available_plugin_descriptors : ["getAvailablePluginDescriptors"],
-                self.update_plugin_manager : ["updatePluginManager"],
-                self.get_new_plugins : ["getNewPlugins"],
-                self.get_new_plugin_descriptors : ["getNewPluginDescriptors"],
-                self.get_updated_plugins : ["getUpdatedPlugins"],
-                self.get_updated_plugin_descriptors : ["getUpdatedPluginDescriptors"],
-                self.get_removed_plugins : ["getRemovedPlugins"],
-                self.get_removed_plugin_descriptors : ["getRemovedPluginDescriptors"]}
+                self.get_available_plugin_descriptors : ["getAvailablePluginDescriptors"]}
 
     def get_available_plugins(self):
         return self.javascript_manager.get_available_plugins()
@@ -124,32 +115,14 @@ class JavascriptManagerPlugin(colony.plugins.plugin_system.Plugin):
     def get_available_plugin_descriptors(self):
         return self.javascript_manager.get_available_plugin_descriptors()
 
-    def update_plugin_manager(self):
-        self.javascript_manager.update_plugin_manager()
-
-    def get_new_plugins(self):
-        return self.javascript_manager.get_new_plugins()
-
-    def get_new_plugin_descriptors(self):
-        return self.javascript_manager.get_new_plugin_descriptors()
-
-    def get_updated_plugins(self):
-        return self.javascript_manager.get_updated_plugins()
-
-    def get_updated_plugin_descriptors(self):
-        return self.javascript_manager.get_updated_plugin_descriptors()
-
-    def get_removed_plugins(self):
-        return self.javascript_manager.get_removed_plugins()
-
-    def get_removed_plugin_descriptors(self):
-        return self.javascript_manager.get_removed_plugin_descriptors()
-
     def get_plugin_search_directories_list(self):
         return self.javascript_manager.get_plugin_search_directories_list()
 
     def get_file_full_path(self, relative_file_path):
         return self.javascript_manager.get_file_full_path(relative_file_path)
+
+    def get_plugin_descriptor_parser(self):
+        return self.javascript_manager.get_plugin_descriptor_parser()
 
     def get_resource_manager_plugin(self):
         return self.resource_manager_plugin

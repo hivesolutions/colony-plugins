@@ -38,28 +38,40 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
-import time
 import stat
-import string
 import os.path
 
 import javascript_manager_parser
 import javascript_manager_exceptions
 
 class JavascriptManager:
+    """
+    The javascript manager class.
+    """
 
     javascript_manager_plugin = None
+    """ The javascript manager plugin """
+    
     workspace_base_path = None
 
     plugin_search_directories_list = []
     plugin_descriptors_list = []
+    plugin_id_plugin_descriptor_map = {}
     plugin_search_directories_map = {}
 
     def __init__(self, javascript_manager_plugin):
+        """
+        Constructor of the class.
+        
+        @type javascript_manager_plugin: JavascriptManagerPlugin
+        @param javascript_manager_plugin: The javascript manager plugin.
+        """
+
         self.javascript_manager_plugin = javascript_manager_plugin
 
         self.plugin_search_directories_list = []
         self.plugin_descriptors_list = []
+        self.plugin_id_plugin_descriptor_map = {}
         self.plugin_search_directories_map = {}
 
     def set_plugin_search_directories(self):
@@ -166,9 +178,6 @@ class JavascriptManager:
                     # retrieves the file stat value
                     file_stat = os.stat(full_path)
 
-                    # retrieves the file last modification time
-                    modified_date = time.localtime(file_stat[stat.ST_MTIME])
-
                     # retrieves the file mode
                     mode = file_stat[stat.ST_MODE]
 
@@ -189,14 +198,17 @@ class JavascriptManager:
                         # retrieves the plugin descriptor resultant of the parsing
                         plugin_descriptor = plugin_descriptor_parser.get_value()
 
+                        # retrieves the plugin id from the plugin descriptor
+                        plugin_id = plugin_descriptor.id;
+
                         # adds the plugin descriptor to the list of plugin descriptors
                         self.plugin_descriptors_list.append(plugin_descriptor)
 
-    def update_plugin_files(self):
-        pass
+                        # sets the plugin descriptor in the plugin id plugin descriptors map
+                        self.plugin_id_plugin_descriptor_map[plugin_id] = plugin_descriptor
 
     def get_plugin_descriptor(self, plugin_id):
-        pass
+        return plugin_id_plugin_descriptor_map.get(plugin_id, None)
 
     def get_available_plugins(self):
         # the available plugins list
@@ -226,27 +238,6 @@ class JavascriptManager:
         # returns the created list object
         return plugin_descriptors_list_list
 
-    def update_plugin_manager(self):
-        pass
-
-    def get_new_plugins(self):
-        return List()
-
-    def get_new_plugin_descriptors(self):
-        return List()
-
-    def get_updated_plugins(self):
-        return List()
-
-    def get_updated_plugin_descriptors(self):
-        return List()
-
-    def get_removed_plugins(self):
-        return List()
-
-    def get_removed_plugin_descriptors(self):
-        return List()
-
     def get_plugin_search_directories_list(self):
         return self.plugin_search_directories_list
 
@@ -271,6 +262,9 @@ class JavascriptManager:
         # returns the full file path
         return current_plugin_search_directories_map
 
+    def get_plugin_descriptor_parser(self):
+        return javascript_manager_parser.PluginDescriptorParser
+
 class List:
     """
     The generic List class.
@@ -281,7 +275,7 @@ class List:
 
     def __init__(self):
         """
-        Constructor of the class
+        Constructor of the class.
         """
 
         self.list = []

@@ -241,4 +241,3 @@ def valid_node(node):
         return True
     else:
         return False
-
