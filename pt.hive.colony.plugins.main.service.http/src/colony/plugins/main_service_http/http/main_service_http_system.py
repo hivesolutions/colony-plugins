@@ -61,7 +61,7 @@ CLIENT_CONNECTION_TIMEOUT = 1
 REQUEST_TIMEOUT = 3
 """ The request timeout """
 
-CHUNK_SIZE = 1024
+CHUNK_SIZE = 4096
 """ The chunk size """
 
 SERVER_NAME = "Hive-Colony-Web"
@@ -250,14 +250,10 @@ class HttpClientServiceTask:
         request_timeout = REQUEST_TIMEOUT
 
         while 1:
-            self.main_service_http_plugin.debug(" tou no loop 2")
             try:
                 request = self.retrieve_request(request_timeout)
             except main_service_http_exceptions.MainServiceHttpException:
                 self.main_service_http_plugin.debug("Connection: %s closed" % str(self.http_address))
-                return
-
-            if request == None:
                 return
 
             try:
@@ -337,14 +333,12 @@ class HttpClientServiceTask:
 
         # continuous loop
         while 1:
-            self.main_service_http_plugin.debug(" tou no loop 1")
             # retrieves the data
             data = self.retrieve_data(request_timeout)
 
+            # in case no valid data was received
             if data == "":
-                return None
-
-            self.main_service_http_plugin.debug("a data e:" + data + "end")
+                raise main_service_http_exceptions.HttpInvalidDataException("empty data received")
 
             # writes the data to the string io
             message.write(data)
@@ -353,9 +347,7 @@ class HttpClientServiceTask:
             message_value = message.getvalue()
 
             # in case the start line is not loaded
-            if not start_line_loaded:
-                self.main_service_http_plugin.debug(" the start line is not loaded")
-                
+            if not start_line_loaded:                
                 # finds the first new line value
                 start_line_index = message_value.find("\r\n")
 
@@ -379,13 +371,9 @@ class HttpClientServiceTask:
 
                     # sets the start line loaded flag
                     start_line_loaded = True
-                    
-                    self.main_service_http_plugin.debug("setting start line as loaded")
 
             # in case the header is not loaded
             if not header_loaded:
-                self.main_service_http_plugin.debug(" the header is not loaded")
-                
                 # retrieves the end header index (two new lines)
                 end_header_index = message_value.find("\r\n\r\n")
 
@@ -434,8 +422,6 @@ class HttpClientServiceTask:
 
             # in case the message is not loaded and the header is loaded
             if not message_loaded and header_loaded:
-                self.main_service_http_plugin.debug(" header loaded and message not loaded")
-                
                 # retrieves the start message size
                 start_message_index = end_header_index + 4
 
