@@ -105,11 +105,8 @@ class BusinessSessionSerializer:
         return {}
 
     def get_session_methods(self, session_information):
-        # retrieves the logger
-        logger = self.business_session_serializer_plugin.logger
-
         # prints the debug message
-        logger.debug("Received session methods retrieval request")
+        self.business_session_serializer_plugin.debug("Received session methods retrieval request")
 
         # retrieves the session name
         session_name = session_information[SESSION_NAME_VALUE]
@@ -133,11 +130,8 @@ class BusinessSessionSerializer:
         return session_proxy.handle_request(session_information_structure, session_request_structure)
 
     def call_session_method(self, session_information, session_entity, session_method, session_method_arguments, session_method_arguments_map):
-        # retrieves the logger
-        logger = self.business_session_serializer_plugin.logger
-
         # prints the debug message
-        logger.debug("Received session method call request, session: %s, entity: %s, method: %s" % (str(session_information), session_entity, session_method))
+        self.business_session_serializer_plugin.debug("Received session method call request, session: %s, entity: %s, method: %s" % (str(session_information), session_entity, session_method))
 
         # retrieves the session name
         session_name = session_information[SESSION_NAME_VALUE]
