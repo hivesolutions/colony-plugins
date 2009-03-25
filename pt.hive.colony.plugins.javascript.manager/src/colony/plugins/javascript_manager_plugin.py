@@ -102,12 +102,16 @@ class JavascriptManagerPlugin(colony.plugins.plugin_system.Plugin):
 
     @colony.plugins.decorators.plugin_call(True)
     def get_available_rpc_methods(self):
-        return [self.get_available_plugins, self.get_available_plugin_descriptors]
+        return [self.get_plugin_descriptor, self.get_available_plugins, self.get_available_plugin_descriptors]
 
     @colony.plugins.decorators.plugin_call(True)
     def get_rpc_methods_alias(self):
-        return {self.get_available_plugins : ["getAvailablePlugins"],
+        return {self.get_plugin_descriptor : ["getPluginDescriptor"],
+                self.get_available_plugins : ["getAvailablePlugins"],
                 self.get_available_plugin_descriptors : ["getAvailablePluginDescriptors"]}
+
+    def get_plugin_descriptor(self, plugin_id):
+        return self.javascript_manager.get_plugin_descriptor(plugin_id)
 
     def get_available_plugins(self):
         return self.javascript_manager.get_available_plugins()

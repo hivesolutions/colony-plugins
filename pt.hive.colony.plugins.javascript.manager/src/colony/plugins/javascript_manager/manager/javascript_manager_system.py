@@ -208,7 +208,7 @@ class JavascriptManager:
                         self.plugin_id_plugin_descriptor_map[plugin_id] = plugin_descriptor
 
     def get_plugin_descriptor(self, plugin_id):
-        return plugin_id_plugin_descriptor_map.get(plugin_id, None)
+        return self.plugin_id_plugin_descriptor_map.get(plugin_id, None)
 
     def get_available_plugins(self):
         # the available plugins list

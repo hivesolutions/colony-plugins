@@ -154,6 +154,9 @@ class JavascriptManagerAutoloader:
                             # sets the mofied date in the plugin id modified date map
                             self.plugin_id_modified_date_map[plugin_id] = modified_date
 
+                            # @todo change this into a more soft way (too expensive now)
+                            javascript_manager.index_plugin_search_directories()
+
         # creates a new timestamp for the update
         self.javascript_manager_last_update_timestamp = time.time();
 
