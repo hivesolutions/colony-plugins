@@ -167,6 +167,9 @@ class JavascriptManagerAutoloader:
         # converts the timestamp to local time
         local_timestamp = time.localtime(timestamp)
 
+        # retrieves the current timestamp
+        current_timestamp = time.time()
+
         # in case it's the first call (timestamp is 0), ignore the request
         if timestamp == 0:
             updated_plugins = []
@@ -174,11 +177,8 @@ class JavascriptManagerAutoloader:
             # retrieves the list of updated plugins since the timestamp
             updated_plugins = self.get_updated_plugins_from_local_timestamp(local_timestamp)
 
-        # retrieves the current timestamp
-        current_timestamp = time.time()
-
         # creates the status map for the response
-        status_map = {"timestamp" : time.time(),
+        status_map = {"timestamp" : current_timestamp,
                       "updated_plugins" : updated_plugins}
 
         # returns the status map
@@ -200,34 +200,10 @@ class JavascriptManagerAutoloader:
         updated_plugins = []
 
         for plugin_id, modified_date in self.plugin_id_modified_date_map.items():
-            if modified_date > local_timestamp:
+            if modified_date >= local_timestamp:
                 updated_plugins.append(plugin_id)
 
         return updated_plugins
-
-    def get_new_plugins(self):
-        # tenho de mandar timestamp
-        return List()
-
-    def get_new_plugin_descriptors(self):
-        # tenho de mandar timestamp
-        return List()
-
-    def get_updated_plugins(self):
-        # tenho de mandar timestamp
-        return List()
-
-    def get_updated_plugin_descriptors(self):
-        # tennho de mandar timestamp
-        return List()
-
-    def get_removed_plugins(self):
-        # tenho de mandar timestamp
-        return List()
-
-    def get_removed_plugin_descriptors(self):
-        # tenho de mandar timestamp
-        return List()
 
 class List:
     """

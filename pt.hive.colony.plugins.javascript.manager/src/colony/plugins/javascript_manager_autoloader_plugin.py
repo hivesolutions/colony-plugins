@@ -99,44 +99,18 @@ class JavascriptManagerAutoloaderPlugin(colony.plugins.plugin_system.Plugin):
 
     @colony.plugins.decorators.plugin_call(True)
     def get_available_rpc_methods(self):
-        return [self.update_plugin_manager, self.get_status_plugins, self.get_new_plugins, self.get_new_plugin_descriptors,
-                self.get_updated_plugins, self.get_updated_plugin_descriptors, self.get_removed_plugins,
-                self.get_removed_plugin_descriptors]
+        return [self.update_plugin_manager, self.get_status_plugins]
 
     @colony.plugins.decorators.plugin_call(True)
     def get_rpc_methods_alias(self):
         return {self.update_plugin_manager : ["updatePluginManager"],
-                self.get_status_plugins : ["getStatusPlugins"],
-                self.get_new_plugins : ["getNewPlugins"],
-                self.get_new_plugin_descriptors : ["getNewPluginDescriptors"],
-                self.get_updated_plugins : ["getUpdatedPlugins"],
-                self.get_updated_plugin_descriptors : ["getUpdatedPluginDescriptors"],
-                self.get_removed_plugins : ["getRemovedPlugins"],
-                self.get_removed_plugin_descriptors : ["getRemovedPluginDescriptors"]}
+                self.get_status_plugins : ["getStatusPlugins"]}
 
     def update_plugin_manager(self):
         self.javascript_manager_autoloader.update_plugin_manager()
 
     def get_status_plugins(self, timestamp):
         return self.javascript_manager_autoloader.get_status_plugins(timestamp)
-
-    def get_new_plugins(self):
-        return self.javascript_manager_autoloader.get_new_plugins()
-
-    def get_new_plugin_descriptors(self):
-        return self.javascript_manager_autoloader.get_new_plugin_descriptors()
-
-    def get_updated_plugins(self):
-        return self.javascript_manager_autoloader.get_updated_plugins()
-
-    def get_updated_plugin_descriptors(self):
-        return self.javascript_manager_autoloader.get_updated_plugin_descriptors()
-
-    def get_removed_plugins(self):
-        return self.javascript_manager_autoloader.get_removed_plugins()
-
-    def get_removed_plugin_descriptors(self):
-        return self.javascript_manager_autoloader.get_removed_plugin_descriptors()
 
     def get_javascript_manager_plugin(self):
         return self.javascript_manager_plugin
