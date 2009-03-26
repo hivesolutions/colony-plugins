@@ -407,6 +407,9 @@ class HttpClientServiceTask:
 
                     # in case the operation type is get
                     if request.operation_type == GET_METHOD_VALUE:
+                        # parses the get attributes
+                        request.__parse_get_attributes__()
+
                         # returns the request
                         return request
                     # in case the operation type is post
@@ -418,7 +421,7 @@ class HttpClientServiceTask:
                         # in case there is no content length defined in the headers map
                         else:
                             # returns the request
-                            return request 
+                            return request
 
             # in case the message is not loaded and the header is loaded
             if not message_loaded and header_loaded:
@@ -611,6 +614,9 @@ class HttpRequest:
     protocol_version = "none"
     """ The protocol version """
 
+    attributes_map = {}
+    """ The attributes map """
+
     headers_map = {}
     """ The headers map """
 
@@ -642,12 +648,42 @@ class HttpRequest:
     """ The properties """
 
     def __init__(self):
+        self.attributes_map = {}
         self.headers_map = {}
         self.message_stream = StringIO.StringIO()
         self.properties = {}
 
     def __repr__(self):
         return "(%s, %s)" % (self.operation_type, self.path)
+
+    def __getattribute__(self, attribute_name):
+        return self.attributes_map.get(attribute_name, None)
+
+    def __setattribute__(self, attribute_name, attribute_value):
+        self.attributes_map[attribute_name] = attribute_value
+
+    def __parse_get_attributes__(self):
+        # splits the path to get the attributes path of the request
+        path_splitted = self.path.split("?")
+
+        # retrieves the size of the split
+        path_splitted_length = len(path_splitted)
+
+        # in case there are arguments to be parsed
+        if path_splitted_length < 2:
+            return
+
+        # retrieves the attribute fields list
+        attribute_fields_list = path_splitted[1].split("&")
+
+        # iterates over all the attribute fields
+        for attribute_field in attribute_fields_list:
+            # retrieves the attribute name and the attribute value,
+            # splitting the string in the equals operator
+            attribute_name, attribute_value = attribute_field.split("=")
+
+            # sets the attribute value
+            self.__setattribute__(attribute_name, attribute_value)
 
     def read(self):
         return self.received_message
@@ -691,6 +727,12 @@ class HttpRequest:
 
         return result_value
 
+    def get_attribute(self, attribute_name):
+        return self.__getattribute__(attribute_name)
+
+    def set_attribute(self, attribute_name, attribute_value):
+        self.__setattribute__(attribute_name, attribute_value)
+
     def set_operation_type(self, operation_type):
         self.operation_type = operation_type
 
@@ -701,3 +743,6 @@ class HttpRequest:
 
     def set_protocol_version(self, protocol_version):
         self.protocol_version = protocol_version
+
+    def get_real_path(self):
+        return self.path.split("?")[0]

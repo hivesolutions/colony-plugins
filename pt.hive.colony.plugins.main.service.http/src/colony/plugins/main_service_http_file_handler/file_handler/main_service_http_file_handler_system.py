@@ -80,7 +80,7 @@ class MainServiceHttpFileHandler:
         base_directory = "C:/Program Files/Apache Software Foundation/Apache2.2/htdocs"
 
         # retrieves the requested path
-        path = request.path
+        path = request.get_real_path()
 
         if path == "/":
             path = "/index.html"
