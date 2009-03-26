@@ -101,7 +101,7 @@ class JavascriptFileHandler:
         file_extension = full_path.split(".")[-1]
 
         # opens the file for reading
-        file = open(full_path, "r")
+        file = open(full_path, "rb")
 
         # reads the file contents
         file_contents = file.read()
