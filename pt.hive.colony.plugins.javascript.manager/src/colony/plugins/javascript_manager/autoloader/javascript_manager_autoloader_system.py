@@ -75,6 +75,9 @@ class JavascriptManagerAutoloader:
         # retrieves the javascript manager
         javascript_manager = javascript_manager_plugin.javascript_manager
 
+        # reindexes all of the search directories
+        javascript_manager.index_plugin_search_directories()
+
         # retrieves the plugin search directories list
         plugin_search_directories_list = javascript_manager_plugin.get_plugin_search_directories_list()
 

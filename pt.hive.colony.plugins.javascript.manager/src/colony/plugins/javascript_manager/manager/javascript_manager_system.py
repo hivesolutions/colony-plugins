@@ -155,11 +155,18 @@ class JavascriptManager:
 
             # in case it's a directory
             if is_directory:
+                # in case there is no directory map created
                 if not file_name in current_plugin_search_directories_map:
                     current_plugin_search_directories_map[file_name] = {}
+
+                # retrieves the directory map
                 current_plugin_search_directories_map_aux = current_plugin_search_directories_map[file_name]
+
+                # indexes the directory map
                 self.index_plugin_search_directory(full_path, current_plugin_search_directories_map_aux)
+            # in case it's a regular file
             else:
+                # indexes the regular file
                 current_plugin_search_directories_map[file_name] = full_path
 
     def load_plugin_files(self):
