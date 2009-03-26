@@ -99,7 +99,7 @@ class DataConverterAdapter:
         """
         
         self.logger.warn("The input adapter has started the conversion process.\n")
-                
+        
         # reset the input adapter's data
         self.internal_entity_name_primary_key_domain_entity_conversion_info_map = {}
         self.foreign_key_queue = []
@@ -177,10 +177,13 @@ class DataConverterAdapter:
 
                 counter += counter_inc
                 task.set_percentage_complete(counter)
-                
+        
         # process every foreign key that was placed in the queue
         self.process_foreign_key_queue()
-
+        
+        # processes handler that cleans all temporary structures
+        self.process_handler("process_handler_clean", [self])
+        
     def process_handler(self, handler_name, arguments):
         """
         Invokes a given handler function with the provided name and supplying the provided arguments.
@@ -226,44 +229,9 @@ class DataConverterAdapter:
                 self.process_handler(handler.name, [domain_entity_conversion_info, self])
                 
         # run the global handlers configured for this domain entity
-        for handler in domain_entity_conversion_info.configuration.global_handlers:
-            self.process_handler(handler.name, [domain_entity_conversion_info, self])
+        for handler in domain_entity_configuration.global_handlers:
+            self.process_handler(handler.name, [self])
 
-        # @todo: remove these handlers and move them to the xml
-        if domain_entity_name == "compras":
-            self.process_handler("table_handler_process_purchases_and_consignments", [self])
-
-        elif domain_entity_name == "anacompr":
-            self.process_handler("table_handler_process_purchases_and_consignments_merchandise", [self])
-
-        elif domain_entity_name == "sbcompra":
-            self.process_handler("table_handler_process_purchases_and_consignments_merchandise_subproduct", [self])
-
-        elif domain_entity_name == "extrdocc":
-            self.process_handler("table_handler_process_purchase_document_association", [self])
-            
-        elif domain_entity_name == "vendas":
-            self.process_handler("table_handler_process_sale_transactions_customer_returns", [self])
-            
-        elif domain_entity_name == "anavenda":
-            self.process_handler("table_handler_sale_customer_return_merchandise", [self])
-        
-        elif domain_entity_name == "formapag":
-            self.process_handler("table_handler_payment_method", [self])
-
-        elif domain_entity_name == "devolver":
-            self.process_handler("table_handler_consignment_supplier_return", [self])
-
-        elif domain_entity_name == "clientes":
-            self.process_handler("table_handler_customer_company_person", [self])
-
-        elif domain_entity_name == "forneced":
-            self.process_handler("table_handler_supplier_company_person", [self])
-        
-        elif domain_entity_name == "password":
-            self.process_handler("table_handler_associate_user_with_system_company_employee", [self])
-
-            
     def process_domain_attributes(self, domain_entity_conversion_info):
         """
         Copies data from the database domain attributes to the internal structure entity attributes.
