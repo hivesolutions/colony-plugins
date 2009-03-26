@@ -97,6 +97,9 @@ class JavascriptFileHandler:
         # retrieves the full path for the file
         full_path = javascript_manager_plugin.get_file_full_path(relative_path)
 
+        # retrieves the file extension
+        file_extension = full_path.split(".")[-1]
+
         # opens the file for reading
         file = open(full_path, "r")
 
@@ -114,8 +117,10 @@ class JavascriptFileHandler:
         # writes the file contents to the request
         request.write(file_contents)
 
-        # writes the file footer
-        request.write("loaded(\"plugins/" + relative_path.strip("/") + "\");")
+        # in case the file is of type js
+        if file_extension == "js":
+            # writes the file footer
+            request.write("loaded(\"plugins/" + relative_path.strip("/") + "\");")
 
         # flushes the request, sending the output to the client
         request.flush()
