@@ -611,6 +611,9 @@ class HttpRequest:
     path = "none"
     """ The path """
 
+    resource_path = "none"
+    """ The resource path """
+
     protocol_version = "none"
     """ The protocol version """
 
@@ -737,12 +740,16 @@ class HttpRequest:
         self.operation_type = operation_type
 
     def set_path(self, path):
+    	# retrieves the resource path of the path
+    	resource_path = path.split("?")[0]
+
         self.path = path
-        self.filename = path
-        self.uri = path
+        self.resource_path = resource_path
+        self.filename = resource_path
+        self.uri = resource_path
 
     def set_protocol_version(self, protocol_version):
         self.protocol_version = protocol_version
 
-    def get_real_path(self):
-        return self.path.split("?")[0]
+    def get_resource_path(self):
+        return self.resource_path
