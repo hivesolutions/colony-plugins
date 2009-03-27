@@ -40,7 +40,11 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import stat
 import time
+import threading
 import os.path
+
+DEFAULT_UPDATING_TIME = 5
+""" The default updating time """
 
 class JavascriptManagerAutoloader:
     """
@@ -68,7 +72,21 @@ class JavascriptManagerAutoloader:
 
         self.plugin_id_modified_date_map = {}
 
+    def auto_update_plugin_files(self):
+        # launches the auto update plugin files system
+        threading.Timer(DEFAULT_UPDATING_TIME, self.auto_update_plugin_files_handler, ()).start()
+
+    def auto_update_plugin_files_handler(self):
+        # updates the plugin files
+        self.update_plugin_files()
+
+        # re-launches the auto update plugin files system
+        self.auto_update_plugin_files()
+
     def update_plugin_files(self):
+        # prints debug message
+        self.javascript_manager_autoloader_plugin.debug("Starting update of plugin files")
+        
         # retrieves the javascript manager plugin
         javascript_manager_plugin = self.javascript_manager_autoloader_plugin.javascript_manager_plugin
 
@@ -159,6 +177,9 @@ class JavascriptManagerAutoloader:
 
         # creates a new timestamp for the update
         self.javascript_manager_last_update_timestamp = time.time();
+
+        # prints debug message
+        self.javascript_manager_autoloader_plugin.debug("Ending update of plugin files")
 
     def update_plugin_manager(self):
         self.update_plugin_files()

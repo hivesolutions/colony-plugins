@@ -72,6 +72,7 @@ class JavascriptManagerAutoloaderPlugin(colony.plugins.plugin_system.Plugin):
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        self.javascript_manager_autoloader.auto_update_plugin_files()
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
