@@ -59,15 +59,6 @@ class JavascriptManager:
     workspace_base_path = None
     """ The workspace base path """
 
-    plugin_search_directories_access_counter = None
-    """ The plugin search directories access counter """
-
-    plugin_search_directories_lock = None
-    """ The plugin search directories lock """
-
-    plugin_search_directories_access_counter_lock = None
-    """ The plugin search directories access counter lock """
-
     plugin_search_directories_list = []
     plugin_descriptors_list = []
     plugin_id_plugin_descriptor_map = {}
@@ -82,11 +73,6 @@ class JavascriptManager:
         """
 
         self.javascript_manager_plugin = javascript_manager_plugin
-
-        self.plugin_search_directories_access_counter = 0
-
-        self.plugin_search_directories_lock = threading.Lock()
-        self.plugin_search_directories_access_counter_lock = threading.Lock()
 
         self.plugin_search_directories_list = []
         self.plugin_descriptors_list = []
@@ -161,25 +147,6 @@ class JavascriptManager:
         # prints debug message
         self.javascript_manager_plugin.debug("Starting index of plugin search directories")
 
-        # loops indefinitely
-        while True:
-            # acquires the plugin search directories access counter lock
-            self.plugin_search_directories_access_counter_lock.acquire()
-
-            # in case the plugin search directories access counter is empty (equals zero)
-            if self.plugin_search_directories_access_counter == 0:
-                # acquires the plugin search directories lock
-                self.plugin_search_directories_lock.acquire()
-
-                # releases the plugin search directories access counter lock
-                self.plugin_search_directories_access_counter_lock.release()
-
-                # breaks the cycle
-                break
-
-            # releases the plugin search directories access counter lock
-            self.plugin_search_directories_access_counter_lock.release()
-
         # creates the current plugin search directories map
         current_plugin_search_directories_map = {}
 
@@ -197,9 +164,6 @@ class JavascriptManager:
 
         # deletes the old plugin search directories map
         del old_plugin_search_directories_map
-
-        # releases the plugin search directories lock
-        self.plugin_search_directories_lock.release()
 
         # prints debug message
         self.javascript_manager_plugin.debug("Ending index of plugin search directories")
