@@ -39,10 +39,14 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 import stat
+import threading
 import os.path
 
 import javascript_manager_parser
 import javascript_manager_exceptions
+
+DEFAULT_INDEX_TIME = 10
+""" The default index time """
 
 class JavascriptManager:
     """
@@ -53,6 +57,16 @@ class JavascriptManager:
     """ The javascript manager plugin """
     
     workspace_base_path = None
+    """ The workspace base path """
+
+    plugin_search_directories_access_counter = None
+    """ The plugin search directories access counter """
+
+    plugin_search_directories_lock = None
+    """ The plugin search directories lock """
+
+    plugin_search_directories_access_counter_lock = None
+    """ The plugin search directories access counter lock """
 
     plugin_search_directories_list = []
     plugin_descriptors_list = []
@@ -68,6 +82,11 @@ class JavascriptManager:
         """
 
         self.javascript_manager_plugin = javascript_manager_plugin
+
+        self.plugin_search_directories_access_counter = 0
+
+        self.plugin_search_directories_lock = threading.Lock()
+        self.plugin_search_directories_access_counter_lock = threading.Lock()
 
         self.plugin_search_directories_list = []
         self.plugin_descriptors_list = []
@@ -127,14 +146,63 @@ class JavascriptManager:
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.system/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.toolbar/plugins"]
 
+    def auto_index_plugin_search_directories(self):
+        # launches the auto index plugin search directories system
+        threading.Timer(DEFAULT_INDEX_TIME, self.auto_index_plugin_search_directories_handler, ()).start()
+
+    def auto_index_plugin_search_directories_handler(self):
+        # indexes the plugin search directories
+        self.index_plugin_search_directories()
+
+        # re-launches the auto index plugin search directories
+        self.auto_index_plugin_search_directories()
+
     def index_plugin_search_directories(self):
+        # prints debug message
+        self.javascript_manager_plugin.debug("Starting index of plugin search directories")
+
+        # loops indefinitely
+        while True:
+            # acquires the plugin search directories access counter lock
+            self.plugin_search_directories_access_counter_lock.acquire()
+
+            # in case the plugin search directories access counter is empty (equals zero)
+            if self.plugin_search_directories_access_counter == 0:
+                # acquires the plugin search directories lock
+                self.plugin_search_directories_lock.acquire()
+
+                # releases the plugin search directories access counter lock
+                self.plugin_search_directories_access_counter_lock.release()
+
+                # breaks the cycle
+                break
+
+            # releases the plugin search directories access counter lock
+            self.plugin_search_directories_access_counter_lock.release()
+
+        # creates the current plugin search directories map
+        current_plugin_search_directories_map = {}
+
         # iterates over all the search directories
         for plugin_search_directory in self.plugin_search_directories_list:
-            # sets the current plugin search directories map
-            current_plugin_search_directories_map = self.plugin_search_directories_map
-
             # indexes the current search directory
             self.index_plugin_search_directory(plugin_search_directory, current_plugin_search_directories_map)
+
+        # retrieves the old plugin search directories map (for latter removal)
+        old_plugin_search_directories_map = self.plugin_search_directories_map 
+
+        # sets the current plugin search directories map as the
+        # plugin search directories map
+        self.plugin_search_directories_map = current_plugin_search_directories_map
+
+        # deletes the old plugin search directories map
+        del old_plugin_search_directories_map
+
+        # releases the plugin search directories lock
+        self.plugin_search_directories_lock.release()
+
+        # prints debug message
+        self.javascript_manager_plugin.debug("Ending index of plugin search directories")
 
     def index_plugin_search_directory(self, plugin_search_directory, current_plugin_search_directories_map):
         # in case the javascript plugins directory does not exists

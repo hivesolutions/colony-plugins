@@ -75,6 +75,7 @@ class JavascriptManagerPlugin(colony.plugins.plugin_system.Plugin):
         self.javascript_manager.set_plugin_search_directories()
         self.javascript_manager.index_plugin_search_directories()
         self.javascript_manager.load_plugin_files()
+        self.javascript_manager.auto_index_plugin_search_directories();
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)

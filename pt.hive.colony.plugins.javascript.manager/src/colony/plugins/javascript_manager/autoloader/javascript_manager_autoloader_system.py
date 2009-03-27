@@ -75,8 +75,24 @@ class JavascriptManagerAutoloader:
         # retrieves the javascript manager
         javascript_manager = javascript_manager_plugin.javascript_manager
 
-        # reindexes all of the search directories
-        javascript_manager.index_plugin_search_directories()
+        # loops indefinitely
+        while True:
+            # acquires the plugin search directories access counter lock
+            javascript_manager.plugin_search_directories_access_counter_lock.acquire()
+
+            # in case the plugin search directories lock is not locked
+            if not javascript_manager.plugin_search_directories_lock.locked():
+                # increments the plugin search directories access counter
+                javascript_manager.plugin_search_directories_access_counter += 1
+
+                # releases the plugin search directories access counter lock
+                javascript_manager.plugin_search_directories_access_counter_lock.release()
+
+                # breaks the cycle
+                break
+
+            # releases the plugin search directories access counter lock
+            javascript_manager.plugin_search_directories_access_counter_lock.release()
 
         # retrieves the plugin search directories list
         plugin_search_directories_list = javascript_manager_plugin.get_plugin_search_directories_list()
@@ -162,6 +178,15 @@ class JavascriptManagerAutoloader:
 
         # creates a new timestamp for the update
         self.javascript_manager_last_update_timestamp = time.time();
+
+        # acquires the plugin search directories access counter lock
+        javascript_manager.plugin_search_directories_access_counter_lock.acquire()
+
+        # decrements the plugin search directories access counter
+        javascript_manager.plugin_search_directories_access_counter -= 1
+
+        # releases the plugin search directories access counter lock
+        javascript_manager.plugin_search_directories_access_counter_lock.release()
 
     def update_plugin_manager(self):
         self.update_plugin_files()
