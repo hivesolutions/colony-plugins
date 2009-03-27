@@ -249,7 +249,7 @@ class HttpClientServiceTask:
         # sets the request timeout
         request_timeout = REQUEST_TIMEOUT
 
-        while 1:
+        while True:
             try:
                 request = self.retrieve_request(request_timeout)
             except main_service_http_exceptions.MainServiceHttpException:
@@ -332,7 +332,7 @@ class HttpClientServiceTask:
         message_size = 0
 
         # continuous loop
-        while 1:
+        while True:
             # retrieves the data
             data = self.retrieve_data(request_timeout)
 
@@ -536,7 +536,7 @@ class HttpClientServiceTask:
             return
 
         # continuous loop
-        while 1:
+        while True:
             # retrieves the mediated value
             mediated_value = request.mediated_handler.get_chunk(CHUNK_SIZE)
 
@@ -565,7 +565,7 @@ class HttpClientServiceTask:
             return
 
         # continuous loop
-        while 1:
+        while True:
             # retrieves the chunk value
             chunk_value = request.chunk_handler.get_chunk(CHUNK_SIZE)
 

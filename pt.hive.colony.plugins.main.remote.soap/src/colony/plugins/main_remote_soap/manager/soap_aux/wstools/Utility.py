@@ -189,7 +189,7 @@ def urlopen(url, timeout=20, redirects=None):
     conn.putheader('Connection', 'close')
     conn.endheaders()
     response = None
-    while 1:
+    while True:
         response = conn.getresponse()
         if response.status != 100:
             break
@@ -561,7 +561,7 @@ class DOM:
         attrkey = (self.NS_XMLNS, prefix)
         DOCUMENT_NODE = node.DOCUMENT_NODE
         ELEMENT_NODE = node.ELEMENT_NODE
-        while 1:
+        while True:
             if node is None:
                 raise DOMException('Value for prefix %s not found.' % prefix)
             if node.nodeType != ELEMENT_NODE:
@@ -581,7 +581,7 @@ class DOM:
         attrkey = (self.NS_XMLNS, 'xmlns')
         DOCUMENT_NODE = node.DOCUMENT_NODE
         ELEMENT_NODE = node.ELEMENT_NODE
-        while 1:
+        while True:
             if node.nodeType != ELEMENT_NODE:
                 node = node.parentNode
                 continue
@@ -600,7 +600,7 @@ class DOM:
         attrkey = (self.NS_XMLNS, 'xmlns')
         DOCUMENT_NODE = node.DOCUMENT_NODE
         ELEMENT_NODE = node.ELEMENT_NODE
-        while 1:
+        while True:
             if node.nodeType != ELEMENT_NODE:
                 node = node.parentNode
                 continue
@@ -859,7 +859,7 @@ class ElementProxy(Base, MessageInterface):
         because when the current node is attached it copies the 
         namespaces into the parent node.
         '''
-        while 1:
+        while True:
             self._indx += 1
             prefix = 'ns%d' %self._indx
             try:

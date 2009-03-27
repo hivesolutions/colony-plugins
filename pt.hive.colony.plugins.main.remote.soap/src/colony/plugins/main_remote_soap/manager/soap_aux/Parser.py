@@ -230,7 +230,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
 
                 del attrs[(NS.ENC, 'root')]
 
-        while 1:
+        while True:
             href = attrs.get((None, 'href'))
             if href:
                 if href[0] != '#':
@@ -619,7 +619,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
                                         # day will never be less than -3
                 return date
 
-            while 1:
+            while True:
                 # The date[1] == 3 (instead of == 2) is because we're
                 # going back a month, so we need to know if the previous
                 # month is February, so we test if this month is March.
