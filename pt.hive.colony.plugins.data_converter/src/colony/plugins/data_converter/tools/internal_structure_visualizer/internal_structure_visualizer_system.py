@@ -159,7 +159,7 @@ class InternalStructureVisualizerPanel(misc_gui.tree_visualizer.tree_visualizer_
                    else:
                        field_node = self.add_item(entity_node, field_name + " = \"" + str(field_value) + "\"", 0)
                 else:
-                   field_node = self.add_item(entity_node, field_value._name + " [" + str(field_value._id) + "]", 0)
+                   field_node = self.add_item(entity_node, field_name + " = " + field_value._name + " [" + str(field_value._id) + "]", 0)
                    self.tree.SetItemHyperText(field_node, True)
                    self.tree.SetItemPyData(field_node, {"category_node" : False, "entity_name" : field_value._name, "entity" : field_value})
 
