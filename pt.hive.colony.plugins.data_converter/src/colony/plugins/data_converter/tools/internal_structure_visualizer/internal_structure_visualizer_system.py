@@ -150,7 +150,12 @@ class InternalStructureVisualizerPanel(misc_gui.tree_visualizer.tree_visualizer_
                 field_value = getattr(entity, field_name)
                 if not str(type(field_value)) == "<type 'instance'>":
                    if type(field_value) == list:
-                       field_node = self.add_item(entity_node, field_name + " = relation with \"" + str(len(field_value)) + "\" entities", 0)
+                       #field_node = self.add_item(entity_node, field_name + " = relation with \"" + str(len(field_value)) + "\" entities", 0)
+                       field_node = self.add_item(entity_node, field_name, 0)
+                       for child_fild_value in field_value:
+                           child_field_node = self.add_item(field_node, child_fild_value._name + " [" + str(child_fild_value._id) + "]", 0)
+                           self.tree.SetItemHyperText(child_field_node, True)
+                           self.tree.SetItemPyData(child_field_node, {"category_node" : False, "entity_name" : child_fild_value._name, "entity" : child_fild_value})
                    else:
                        field_node = self.add_item(entity_node, field_name + " = \"" + str(field_value) + "\"", 0)
                 else:
