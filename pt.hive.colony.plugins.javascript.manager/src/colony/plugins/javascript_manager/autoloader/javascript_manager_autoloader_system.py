@@ -145,18 +145,18 @@ class JavascriptManagerAutoloader:
                             # retrieves the current modified date
                             current_modified_date = self.plugin_id_modified_date_map[plugin_id]
 
-                            # in case the mofied date is greater that the current modified date 
+                            # in case the modified date is greater that the current modified date 
                             if modified_date > current_modified_date:
                                 # prints a log message
                                 self.javascript_manager_autoloader_plugin.debug("Javascript plugin %s updated" % plugin_id)
 
-                                # sets the mofied date in the plugin id modified date map
+                                # sets the modified date in the plugin id modified date map
                                 self.plugin_id_modified_date_map[plugin_id] = modified_date
                         elif plugin_id in javascript_manager.plugin_id_plugin_descriptor_map:
                             # prints a log message
                             self.javascript_manager_autoloader_plugin.debug("Javascript plugin %s inserted in autoloading structures" % plugin_id)
 
-                            # sets the mofied date in the plugin id modified date map
+                            # sets the modified date in the plugin id modified date map
                             self.plugin_id_modified_date_map[plugin_id] = modified_date
                         else:
                             # prints a log message
@@ -169,11 +169,11 @@ class JavascriptManagerAutoloader:
                             # sets the plugin descriptor in the plugin id plugin descriptor map
                             javascript_manager.plugin_id_plugin_descriptor_map[plugin_id] = plugin_descriptor
 
-                            # sets the mofied date in the plugin id modified date map
+                            # sets the modified date in the plugin id modified date map
                             self.plugin_id_modified_date_map[plugin_id] = modified_date
 
-                            # @todo change this into a more soft way (too expensive now)
-                            javascript_manager.index_plugin_search_directories()
+                        # creates a new timestamp for the update
+                        self.javascript_manager_last_update_timestamp = time.time();
 
         # creates a new timestamp for the update
         self.javascript_manager_last_update_timestamp = time.time();
