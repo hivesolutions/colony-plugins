@@ -189,7 +189,7 @@ class JavascriptManagerAutoloader:
         local_timestamp = time.localtime(timestamp)
 
         # retrieves the current timestamp
-        current_timestamp = time.time()
+        current_timestamp = self.get_current_timestamp()
 
         # in case it's the first call (timestamp is 0), ignore the request
         if timestamp == 0:
@@ -225,6 +225,31 @@ class JavascriptManagerAutoloader:
                 updated_plugins.append(plugin_id)
 
         return updated_plugins
+
+    def get_current_timestamp(self):
+        """
+        Retrieves the timestamp for the last accurate plugin update.
+        
+        @rtype: int
+        @return The timestamp for the last accurate plugin update.
+        """
+    
+        # retrieves the javascript manager plugin
+        javascript_manager_plugin = self.javascript_manager_autoloader_plugin.javascript_manager_plugin
+
+        # retrieves the javascript manager
+        javascript_manager = javascript_manager_plugin.javascript_manager
+
+        # compares both timestamps to get the oldest
+        if javascript_manager.javascript_manager_last_update_timestamp < self.javascript_manager_last_update_timestamp:
+            # sets the current timestamp as the timestamp of the last javascript manager update
+            current_timestamp = javascript_manager.javascript_manager_last_update_timestamp
+        else:
+            # sets the current timestamp as the timestamp of the last javascript manager autoloader update
+            current_timestamp = self.javascript_manager_last_update_timestamp
+
+        # returns the current timestamp
+        return current_timestamp
 
 class List:
     """

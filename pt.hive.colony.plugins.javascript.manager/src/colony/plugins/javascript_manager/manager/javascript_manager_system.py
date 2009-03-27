@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
+import time
 import stat
 import threading
 import os.path
@@ -55,9 +56,12 @@ class JavascriptManager:
 
     javascript_manager_plugin = None
     """ The javascript manager plugin """
-    
+
     workspace_base_path = None
     """ The workspace base path """
+
+    javascript_manager_last_update_timestamp = None
+    """ The javascript manager last update timestamp """
 
     plugin_search_directories_list = []
     plugin_descriptors_list = []
@@ -164,6 +168,9 @@ class JavascriptManager:
 
         # deletes the old plugin search directories map
         del old_plugin_search_directories_map
+
+        # creates a new timestamp for the update
+        self.javascript_manager_last_update_timestamp = time.time();
 
         # prints debug message
         self.javascript_manager_plugin.debug("Ending index of plugin search directories")
