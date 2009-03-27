@@ -60,13 +60,23 @@ class JavascriptManager:
     workspace_base_path = None
     """ The workspace base path """
 
+    plugin_search_directories_lock = None
+    """ The plugin search directories lock """
+
     javascript_manager_last_update_timestamp = None
     """ The javascript manager last update timestamp """
 
     plugin_search_directories_list = []
+    """ The plugin search directories list """
+
     plugin_descriptors_list = []
+    """ The plugin descriptors list """
+
     plugin_id_plugin_descriptor_map = {}
+    """ The map relating the plugin id with the plugin descriptor """
+
     plugin_search_directories_map = {}
+    """ The plugin search directories map """
 
     def __init__(self, javascript_manager_plugin):
         """
@@ -77,6 +87,8 @@ class JavascriptManager:
         """
 
         self.javascript_manager_plugin = javascript_manager_plugin
+
+        self.plugin_search_directories_lock = threading.Lock()
 
         self.plugin_search_directories_list = []
         self.plugin_descriptors_list = []
@@ -151,6 +163,9 @@ class JavascriptManager:
         # prints debug message
         self.javascript_manager_plugin.debug("Starting index of plugin search directories")
 
+        # acquires the plugin search directories lock
+        self.plugin_search_directories_lock.acquire()
+
         # creates the current plugin search directories map
         current_plugin_search_directories_map = {}
 
@@ -171,6 +186,9 @@ class JavascriptManager:
 
         # creates a new timestamp for the update
         self.javascript_manager_last_update_timestamp = time.time();
+
+        # releases the plugin search directories lock
+        self.plugin_search_directories_lock.release()
 
         # prints debug message
         self.javascript_manager_plugin.debug("Ending index of plugin search directories")
@@ -284,9 +302,6 @@ class JavascriptManager:
         # returns the created list object
         return plugin_descriptors_list_list
 
-    def get_plugin_search_directories_list(self):
-        return self.plugin_search_directories_list
-
     def get_file_full_path(self, relative_file_path):
         # strip the file path from "/" chararcter
         relative_file_path_striped = relative_file_path.strip("/")
@@ -307,6 +322,18 @@ class JavascriptManager:
 
         # returns the full file path
         return current_plugin_search_directories_map
+
+    def get_plugin_search_directories_list(self):
+        return self.plugin_search_directories_list
+
+    def set_plugin_search_directories_list(self, plugin_search_directories_list):
+        self.plugin_search_directories_list = plugin_search_directories_list
+
+    def get_plugin_search_directories_map(self):
+        return self.plugin_search_directories_map
+
+    def set_plugin_search_directories_map(self, plugin_search_directories_map):
+        self.plugin_search_directories_map = plugin_search_directories_map
 
     def get_plugin_descriptor_parser(self):
         return javascript_manager_parser.PluginDescriptorParser

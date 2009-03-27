@@ -120,11 +120,14 @@ class JavascriptManagerPlugin(colony.plugins.plugin_system.Plugin):
     def get_available_plugin_descriptors(self):
         return self.javascript_manager.get_available_plugin_descriptors()
 
+    def get_file_full_path(self, relative_file_path):
+        return self.javascript_manager.get_file_full_path(relative_file_path)
+
     def get_plugin_search_directories_list(self):
         return self.javascript_manager.get_plugin_search_directories_list()
 
-    def get_file_full_path(self, relative_file_path):
-        return self.javascript_manager.get_file_full_path(relative_file_path)
+    def get_plugin_search_directories_map(self):
+        return self.javascript_manager.get_plugin_search_directories_map()
 
     def get_plugin_descriptor_parser(self):
         return self.javascript_manager.get_plugin_descriptor_parser()
