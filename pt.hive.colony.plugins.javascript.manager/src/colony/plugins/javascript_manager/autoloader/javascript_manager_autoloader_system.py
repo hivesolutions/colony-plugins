@@ -169,7 +169,7 @@ class JavascriptManagerAutoloader:
                             self.javascript_manager_autoloader_plugin.debug("Javascript plugin %s updated" % plugin_id)
 
                             # sets the modified date in the plugin id modified date map
-                            self.plugin_id_modified_date_map[plugin_id] = time.localtime(javascript_manager.javascript_manager_last_update_timestamp)
+                            self.plugin_id_modified_date_map[plugin_id] = time.localtime()
 
                             # sets the modified date in the plugin id file emodified date map
                             self.plugin_id_file_modified_date_map[plugin_id] = modified_date
