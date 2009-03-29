@@ -55,7 +55,9 @@ class InternalStructureVisualizerPlugin(colony.plugins.plugin_system.Plugin):
     capabilities = ["gui_panel", "data_converter_observer"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.gui.tree_visualizer", "1.0.0")]
+                    "pt.hive.colony.plugins.misc.gui.tree_visualizer", "1.0.0"),
+                    colony.plugins.plugin_system.PackageDependency(
+                    "Wx Python", "wx", "2.8.7.x", "http://wxpython.org")]
     events_handled = []
     events_registrable = []
     
