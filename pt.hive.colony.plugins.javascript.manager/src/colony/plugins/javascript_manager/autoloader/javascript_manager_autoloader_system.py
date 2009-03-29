@@ -233,7 +233,7 @@ class JavascriptManagerAutoloader:
             del self.plugin_id_file_modified_date_map[not_available_plugin_id]
 
             # sets the removal date in the plugin id removal date map
-            self.plugin_id_removal_date_map[not_available_plugin_id] = time.localtime(javascript_manager.javascript_manager_last_update_timestamp)
+            self.plugin_id_removal_date_map[not_available_plugin_id] = time.localtime()
 
         # updates the timestamp with the javascript manager timestamp
         self.javascript_manager_last_update_timestamp = javascript_manager.javascript_manager_last_update_timestamp
@@ -310,7 +310,7 @@ class JavascriptManagerAutoloader:
         for plugin_id, modified_date in self.plugin_id_modified_date_map.items():
             # in case the modified date is located between the given local timestamp
             # and the current (last update) timestamp
-            if modified_date >= local_timestamp and modified_date < local_current_timestamp:
+            if modified_date > local_timestamp and modified_date <= local_current_timestamp:
                 # appends the plugin id to the list of updated plugins
                 updated_plugins.append(plugin_id)
 
