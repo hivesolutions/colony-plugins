@@ -111,9 +111,6 @@ class JavascriptManagerAutoloader:
         # acquires the plugin search directories lock
         plugin_search_directories_lock.acquire()
 
-        # updates the timestamp with the javascript manager timestamp
-        self.javascript_manager_last_update_timestamp = javascript_manager.javascript_manager_last_update_timestamp
-
         # retrieves the plugin search directories map
         plugin_search_directories_map = javascript_manager_plugin.get_plugin_search_directories_map()
 
@@ -188,6 +185,11 @@ class JavascriptManagerAutoloader:
                         # sets the modified date in the plugin id modified date map
                         self.plugin_id_modified_date_map[plugin_id] = modified_date
 
+                        # in case the plugin id exists in the plugin id removal date map
+                        if plugin_id in self.plugin_id_removal_date_map:
+                            # unsets the plugin id in the plugin id removal date map
+                            del self.plugin_id_removal_date_map[plugin_id]
+
                     # adds the plugin id to the list of available plugins
                     available_plugin_id_list.append(plugin_id)
 
@@ -195,9 +197,29 @@ class JavascriptManagerAutoloader:
         not_available_plugin_id_list = [plugin_id for plugin_id in self.plugin_id_modified_date_map if not plugin_id in available_plugin_id_list]
 
         # iterates over all the not available plugin id
+        # to remove the plugins from the javascript manager
         for not_available_plugin_id in not_available_plugin_id_list:
+            # prints a log message
+            self.javascript_manager_autoloader_plugin.debug("Javascript plugin %s removed" % not_available_plugin_id)
+
+            # retrieves the not available plugin descriptor
+            not_available_plugin_descritor = javascript_manager.plugin_id_plugin_descriptor_map[not_available_plugin_id]
+
+            # removes the plugin descriptor to the list of plugin descriptors
+            # in the javascript manager
+            javascript_manager.plugin_descriptors_list.remove(not_available_plugin_descritor)
+
+            # unsets the plugin descriptor in the plugin id plugin descriptor map
+            del javascript_manager.plugin_id_plugin_descriptor_map[not_available_plugin_id]
+
+            # unsets the modified date in the plugin id modified date map
             del self.plugin_id_modified_date_map[not_available_plugin_id]
-            self.plugin_id_removal_date_map[not_available_plugin_id] = time.localtime(self.javascript_manager_last_update_timestamp)
+
+            # sets the removal date in the plugin id removal date map
+            self.plugin_id_removal_date_map[not_available_plugin_id] = time.localtime(javascript_manager.javascript_manager_last_update_timestamp)
+
+        # updates the timestamp with the javascript manager timestamp
+        self.javascript_manager_last_update_timestamp = javascript_manager.javascript_manager_last_update_timestamp
 
         # releases the plugin search directories lock
         plugin_search_directories_lock.release()
@@ -303,7 +325,7 @@ class JavascriptManagerAutoloader:
         for plugin_id, removal_date in self.plugin_id_removal_date_map.items():
             # in case the removal date is located between the given local timestamp
             # and the current (last update) timestamp
-            if removal_date > local_timestamp and removal_date <= local_current_timestamp:
+            if removal_date >= local_timestamp and removal_date < local_current_timestamp:
                 # appends the plugin id to the list of removed plugins
                 removed_plugins.append(plugin_id)
 
