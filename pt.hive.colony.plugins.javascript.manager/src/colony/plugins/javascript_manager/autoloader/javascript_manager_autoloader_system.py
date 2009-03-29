@@ -64,6 +64,9 @@ class JavascriptManagerAutoloader:
     plugin_id_modified_date_map = {}
     """ The map that relates the plugin id with it's modification date """
 
+    plugin_id_removal_date_map = {}
+    """ The map that relates the plugin id with it's removal date """
+
     def __init__(self, javascript_manager_autoloader_plugin):
         """
         Constructor of the class.
@@ -116,6 +119,9 @@ class JavascriptManagerAutoloader:
 
         # retrieves the plugin descriptor parser
         plugin_descriptor_parser_class = javascript_manager_plugin.get_plugin_descriptor_parser()
+
+        # the list of available plugin ids list
+        available_plugin_id_list = []
 
         # iterates over all the items in the plugin search directories map
         for plugin_search_directory_item_file_name, plugin_search_directory_item_full_path in plugin_search_directories_map.items():
@@ -182,6 +188,17 @@ class JavascriptManagerAutoloader:
                         # sets the modified date in the plugin id modified date map
                         self.plugin_id_modified_date_map[plugin_id] = modified_date
 
+                    # adds the plugin id to the list of available plugins
+                    available_plugin_id_list.append(plugin_id)
+
+        # retrieves the list of not available plugin id
+        not_available_plugin_id_list = [plugin_id for plugin_id in self.plugin_id_modified_date_map if not plugin_id in available_plugin_id_list]
+
+        # iterates over all the not available plugin id
+        for not_available_plugin_id in not_available_plugin_id_list:
+            del self.plugin_id_modified_date_map[not_available_plugin_id]
+            self.plugin_id_removal_date_map[not_available_plugin_id] = time.localtime(self.javascript_manager_last_update_timestamp)
+
         # releases the plugin search directories lock
         plugin_search_directories_lock.release()
 
@@ -208,16 +225,23 @@ class JavascriptManagerAutoloader:
         if timestamp == 0:
             # sets the updated plugins list as empty (initialization)
             updated_plugins = []
+
+            # sets the removed plugins list as empty (initialization)
+            removed_plugins = []
         else:
             # retrieves the list of updated plugins since the timestamp
             updated_plugins = self.get_updated_plugins_from_local_timestamp(local_timestamp)
+
+            # retrieves the list of removed plugins since the timestamp
+            removed_plugins = self.get_removed_plugins_from_local_timestamp(local_timestamp)
 
         # releases the update plugin lock
         self.update_plugin_lock.release()
 
         # creates the status map for the response
         status_map = {"timestamp" : current_timestamp,
-                      "updated_plugins" : updated_plugins}
+                      "updated_plugins" : updated_plugins,
+                      "removed_plugins" : removed_plugins}
 
         # returns the status map
         return status_map
@@ -245,7 +269,7 @@ class JavascriptManagerAutoloader:
 
         # iterates over all the items in the plugin id modified date map
         for plugin_id, modified_date in self.plugin_id_modified_date_map.items():
-            # in case the modified date is locate between the given local timestamp
+            # in case the modified date is located between the given local timestamp
             # and the current (last update) timestamp
             if modified_date >= local_timestamp and modified_date < local_current_timestamp:
                 # appends the plugin id to the list of updated plugins
@@ -253,6 +277,38 @@ class JavascriptManagerAutoloader:
 
         # returns the updated plugins
         return updated_plugins
+
+    def get_removed_plugins_from_local_timestamp(self, local_timestamp):
+        """
+        Retrieves the list of all the removed plugins since the time in
+        the given local timestamp.
+        
+        @type local_timestamp: TimestampTuple
+        @param local_timestamp: The local timestamp to retrieve the removed plugins.
+        @rtype: List
+        @return: The list of all the removed plugins since the time in
+        the given local timestamp.
+        """
+
+        # retrieves the current timestamp
+        current_timestamp = self.javascript_manager_last_update_timestamp
+
+        # converts the current timestamp to local time
+        local_current_timestamp = time.localtime(current_timestamp)
+
+        # the list of removed plugins
+        removed_plugins = []
+
+        # iterates over all the items in the plugin id removal date map
+        for plugin_id, removal_date in self.plugin_id_removal_date_map.items():
+            # in case the removal date is located between the given local timestamp
+            # and the current (last update) timestamp
+            if removal_date > local_timestamp and removal_date <= local_current_timestamp:
+                # appends the plugin id to the list of removed plugins
+                removed_plugins.append(plugin_id)
+
+        # returns the removed plugins
+        return removed_plugins
 
 class List:
     """
