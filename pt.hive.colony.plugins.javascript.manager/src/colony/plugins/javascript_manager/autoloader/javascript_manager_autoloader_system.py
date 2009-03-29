@@ -310,7 +310,7 @@ class JavascriptManagerAutoloader:
         for plugin_id, modified_date in self.plugin_id_modified_date_map.items():
             # in case the modified date is located between the given local timestamp
             # and the current (last update) timestamp
-            if modified_date > local_timestamp and modified_date <= local_current_timestamp:
+            if modified_date >= local_timestamp and modified_date < local_current_timestamp:
                 # appends the plugin id to the list of updated plugins
                 updated_plugins.append(plugin_id)
 
