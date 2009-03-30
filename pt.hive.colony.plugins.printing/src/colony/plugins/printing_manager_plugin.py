@@ -53,7 +53,7 @@ class PrintingManagerPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["printing_manager"]
+    capabilities = ["printing_manager", "console_command_extension"]
     capabilities_allowed = ["printing"]
     dependencies = [colony.plugins.plugin_system.PackageDependency(
                     "Python Imaging Library (PIL)", "PIL", "1.1.x", "http://www.pythonware.com/products/pil")]
@@ -61,6 +61,7 @@ class PrintingManagerPlugin(colony.plugins.plugin_system.Plugin):
     events_registrable = []
 
     printing_manager = None
+    console_printing_manager = None
 
     printing_plugins = []
 
@@ -68,7 +69,9 @@ class PrintingManagerPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global printing
         import printing.manager.printing_manager_system
+        import printing.manager.console_printing_manager
         self.printing_manager = printing.manager.printing_manager_system.PrintingManager(self)
+        self.console_printing_manager = printing.manager.console_printing_manager.ConsolePrintingManager(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
@@ -89,6 +92,18 @@ class PrintingManagerPlugin(colony.plugins.plugin_system.Plugin):
 
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    def get_console_extension_name(self):
+        return self.console_printing_manager.get_console_extension_name()
+
+    def get_all_commands(self):
+        return self.console_printing_manager.get_all_commands()
+
+    def get_handler_command(self, command):
+        return self.console_printing_manager.get_handler_command(command)
+
+    def get_help(self):
+        return self.console_printing_manager.get_help()
 
     def print_test(self):
         self.printing_manager.print_test()
