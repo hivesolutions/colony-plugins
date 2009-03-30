@@ -59,7 +59,7 @@ class PrintingManager:
         self.printing_manager_plugin = printing_manager_plugin
 
     def print_test(self):
-        pass
+        self.printing_manager_plugin.printing_plugins[0].print_test()
 
     def print_test_image(self):
         # retrieves the plugin manager

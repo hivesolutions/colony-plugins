@@ -49,6 +49,12 @@ import printing_win32_constants
 PRINTING_SCALE = 4
 """ The printing scale """
 
+TEST_TITLE = "colony_test_document"
+""" The test title """
+
+TEST_TEXT = "Hello world from Hive Colony"
+""" The test text """
+
 class PrintingWin32:
     """
     The printing win32 class.
@@ -68,14 +74,91 @@ class PrintingWin32:
         self.printing_win32_plugin = printing_win32_plugin
 
     def print_test(self):
-        pass
+        # retrieves the printer handler
+        handler_device_context, printable_area, printer_size, printer_margins = self.get_printer_handler()
+
+        # starts the document
+        handler_device_context.StartDoc(TEST_TITLE)
+
+        # starts the first page
+        handler_device_context.StartPage()
+
+        handler_device_context.SetMapMode(win32con.MM_TWIPS)
+
+        handler_device_context.DrawText(TEST_TEXT, (0, printing_win32_constants.INCH * -1, printing_win32_constants.INCH * 8, printing_win32_constants.INCH * -2), win32con.DT_CENTER)
+
+        # ends the current page
+        handler_device_context.EndPage()
+
+        # ends the document
+        handler_device_context.EndDoc()
+
+        # closes the printer handler
+        self.close_printer_handler(handler_device_context)
 
     def print_test_configuration(self, configuration):
         pass
 
     def print_test_image(self, image_path):
-        # retrieves the default printer name
-        printer_name = win32print.GetDefaultPrinter()
+        # retrieves the printer handler
+        handler_device_context, printable_area, printer_size, printer_margins = self.get_printer_handler()
+
+        # opens the bitmap image
+        bitmap_image = PIL.Image.open(image_path)
+
+        # retrieves the bitmap image width and height
+        bitmap_image_width, bitmap_image_height = bitmap_image.size
+
+        # starts the document
+        handler_device_context.StartDoc(TEST_TITLE)
+
+        # starts the first page
+        handler_device_context.StartPage()
+
+        # creates the dib image from the original
+        # bitmap image, created with PIL
+        dib_image = PIL.ImageWin.Dib(bitmap_image)
+
+        real_bitmap_image_width = bitmap_image_width * PRINTING_SCALE
+        real_bitmap_image_height = bitmap_image_height * PRINTING_SCALE
+
+        real_bitmap_x1 = int((printer_size[0] - printer_margins[0] - real_bitmap_image_width) / 2)
+        real_bitmap_y1 = int((printer_size[1] - printer_margins[1] - real_bitmap_image_height) / 2)
+        real_bitmap_x2 = real_bitmap_x1 + real_bitmap_image_width
+        real_bitmap_y2 = real_bitmap_y1 + real_bitmap_image_height
+
+        # retrieves the output for the handler device context
+        handler_device_context_output = handler_device_context.GetHandleOutput()
+
+        # draws the image in the output for the handler device context
+        dib_image.draw(handler_device_context_output, (real_bitmap_x1, real_bitmap_y1, real_bitmap_x2, real_bitmap_y2))
+
+        # ends the current page
+        handler_device_context.EndPage()
+
+        # ends the document
+        handler_device_context.EndDoc()
+
+        # closes the printer handler
+        self.close_printer_handler(handler_device_context)
+
+    def print_test_image_configuration(self, image_path, configuration):
+        pass
+
+    def print_text(self, text):
+        pass
+
+    def print_test_configuration(self, text, configuration):
+        pass
+
+    def load_printer(self, configuration):
+        pass
+
+    def get_printer_handler(self, printer_name = None):
+        # in case the printer name is not defined
+        if not printer_name:
+            # retrieves the default printer name
+            printer_name = win32print.GetDefaultPrinter()
 
         # creates a new win32 device context and retrieves the handler
         handler_device_context = win32ui.CreateDC()
@@ -92,47 +175,8 @@ class PrintingWin32:
         # retrieves the printer margins
         printer_margins = handler_device_context.GetDeviceCaps(printing_win32_constants.PHYSICAL_OFFSET_X), handler_device_context.GetDeviceCaps(printing_win32_constants.PHYSICAL_OFFSET_Y)
 
-        # opens the bitmap image
-        bitmap_image = PIL.Image.open(image_path)
+        return (handler_device_context, printable_area, printer_size, printer_margins)
 
-        bitmap_image_width, bitmap_image_height = bitmap_image.size
-
-        # starts the document
-        handler_device_context.StartDoc("test_page")
-
-        # start the first page
-        handler_device_context.StartPage()
-
-        # creates the dib image from the original
-        # bitmap image, created with PIL
-        dib_image = PIL.ImageWin.Dib(bitmap_image)
-
-        real_bitmap_image_width = bitmap_image_width * PRINTING_SCALE
-        real_bitmap_image_height = bitmap_image_height * PRINTING_SCALE
-
-        real_bitmap_x1 = int((printer_size[0] - real_bitmap_image_width) / 2)
-        real_bitmap_y1 = int((printer_size[1] - real_bitmap_image_height) / 2)
-        real_bitmap_x2 = real_bitmap_x1 + real_bitmap_image_width
-        real_bitmap_y2 = real_bitmap_y1 + real_bitmap_image_height
-
-        handler_device_context_output = handler_device_context.GetHandleOutput()
-
-        dib_image.draw(handler_device_context_output, (real_bitmap_x1, real_bitmap_y1, real_bitmap_x2, real_bitmap_y2))
-
-        handler_device_context.EndPage()
-        handler_device_context.EndDoc()
-
+    def close_printer_handler(self, printer_handler_context):
         # releases the resource
-        handler_device_context.DeleteDC()
-
-    def print_test_image_configuration(self, image_path, configuration):
-        pass
-
-    def print_text(self, text):
-        pass
-
-    def print_test_configuration(self, text, configuration):
-        pass
-
-    def load_printer(self, configuration):
-        pass
+        printer_handler_context.DeleteDC()
