@@ -62,8 +62,12 @@ class InternalStructure:
         @param entity_name: Name of the internal entity.
         @return: List of internal entities.
         """
+        entities = []
         
-        return getattr(self, entity_name)
+        if hasattr(self, entity_name):
+            entities = getattr(self, entity_name)
+            
+        return entities
     
     def has_entities(self, entity_name):
         """
