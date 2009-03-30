@@ -83,8 +83,10 @@ class PrintingWin32:
         # starts the first page
         handler_device_context.StartPage()
 
+        # sets the map mode
         handler_device_context.SetMapMode(win32con.MM_TWIPS)
 
+        # draws the test text in the handler device context
         handler_device_context.DrawText(TEST_TEXT, (0, printing_win32_constants.INCH * -1, printing_win32_constants.INCH * 8, printing_win32_constants.INCH * -2), win32con.DT_CENTER)
 
         # ends the current page
