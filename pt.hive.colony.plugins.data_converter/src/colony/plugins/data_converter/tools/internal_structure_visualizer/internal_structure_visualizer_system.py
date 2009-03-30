@@ -145,7 +145,7 @@ class InternalStructureVisualizerPanel(misc_gui.tree_visualizer.tree_visualizer_
         """
         
         if self.tree.GetChildrenCount(entity_node) == 0:
-            field_names = self.get_valid_attributes(entity)
+            field_names = entity.get_field_names()
             for field_name in field_names:
                 field_value = getattr(entity, field_name)
                 if not str(type(field_value)) == "<type 'instance'>":
@@ -163,22 +163,6 @@ class InternalStructureVisualizerPanel(misc_gui.tree_visualizer.tree_visualizer_
                    self.tree.SetItemHyperText(field_node, True)
                    self.tree.SetItemPyData(field_node, {"category_node" : False, "entity_name" : field_value._name, "entity" : field_value})
 
-    def get_valid_attributes(self, object):
-        """
-        Returns the object attributes that can be displayed in the visualizer.
-        
-        @type object: Object
-        @param object: Object one wants to display in the internal structure visualizer.
-        @rtype: List
-        @return: List of valid object attributes.
-        """
-        
-        attributes = dir(object)
-        for exclusion_element in object.exclusions:
-            if exclusion_element in attributes:
-                attributes.remove(exclusion_element)
-        return attributes
-
     def refresh_tree(self):
         """
         Refreshes the internal structure visualizer.
@@ -186,7 +170,7 @@ class InternalStructureVisualizerPanel(misc_gui.tree_visualizer.tree_visualizer_
         
         self.set_root("Internal structure")
         root_node = self.tree.GetRootItem()
-        valid_attributes = self.get_valid_attributes(self.internal_structure)
+        valid_attributes = self.internal_structure.get_entity_names()
         for entity_name in valid_attributes:
             category_node = self.add_item(root_node, entity_name, 0)
             self.entity_name_node_map[entity_name] = category_node

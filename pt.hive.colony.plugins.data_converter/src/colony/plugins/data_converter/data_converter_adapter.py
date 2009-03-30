@@ -37,6 +37,11 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import types
+import md5
+import base64
+import copy
+
 import data_converter.data_converter_adapter_configuration_parser
 
 class DataConverterAdapter:
@@ -107,15 +112,517 @@ class DataConverterAdapter:
         self.connection = connection
         self.configuration = configuration
         self.load_configuration()
-        
+
         # convert the data to the internal structure
         self.process_work_units(task)
         
         # notify all data converter observers that the internal structure changed
         for data_converter_observer_plugin in self.data_converter_plugin.data_converter_observer_plugins:
             data_converter_observer_plugin.notify_data_conversion_status({"internal_structure" : internal_structure})
-        return internal_structure       
+            
+        self.convert_omni(internal_structure)
+        
+        return internal_structure
+    
+    # @todo: refactor the code below
+    def convert_omni(self, internal_structure):
+        # retrieves the entity manager plugin
+        entity_manager_plugin = self.data_converter_plugin.entity_manager_plugin
 
+        # retrieves the resource manager plugin
+        resource_manager_plugin = self.data_converter_plugin.resource_manager_plugin
+
+        # retrieves the user home path resource
+        user_home_path_resource = resource_manager_plugin.get_resource("system.path.user_home")
+
+        # retrieves the user home path value
+        user_home_path = user_home_path_resource.data
+
+        # creates a new entity manager
+        entity_manager = entity_manager_plugin.load_entity_manager("sqlite")
+
+        # sets the connection parameters for the entity manager
+        entity_manager.set_connection_parameters({"file_path" : user_home_path + "/conversion_database.db", "autocommit" : False})
+
+        # loads the entity manager
+        entity_manager.load_entity_manager()
+
+        # creates a new transaction
+    
+        self.object_id = 1
+      
+        self.convert_users(internal_structure, entity_manager)
+        self.convert_customer_person(internal_structure, entity_manager)
+        self.convert_customer_company(internal_structure, entity_manager)
+        self.convert_address(internal_structure, entity_manager)
+        self.convert_card_payment(internal_structure, entity_manager)
+        self.convert_cash_payment(internal_structure, entity_manager)
+        self.convert_category(internal_structure, entity_manager)
+        self.convert_check_payment(internal_structure, entity_manager)
+        self.convert_collection(internal_structure, entity_manager)
+        # self.convert_consignation_slip(internal_structure, entity_manager)
+        self.convert_consignment(internal_structure, entity_manager)
+        self.convert_consignment_merchandise_hierarchy_tree_node(internal_structure, entity_manager)
+        self.convert_contact_information(internal_structure, entity_manager)
+        self.convert_credit_contract(internal_structure, entity_manager)
+        self.convert_credit_note(internal_structure, entity_manager)
+        self.convert_credit_contract(internal_structure, entity_manager)
+        self.convert_credit_note_payment(internal_structure, entity_manager)
+        self.convert_credit_payment(internal_structure, entity_manager)
+        self.convert_currency(internal_structure, entity_manager)
+        self.convert_customer_return(internal_structure, entity_manager)
+        self.convert_financial_account(internal_structure, entity_manager)
+        self.convert_gift_certificate(internal_structure, entity_manager)
+        self.convert_invoice(internal_structure, entity_manager)
+        self.convert_language(internal_structure, entity_manager)
+        self.convert_location(internal_structure, entity_manager)
+        self.convert_media(internal_structure, entity_manager)
+        self.convert_merchandise_contactable_organizational_hierarchy_tree_node(internal_structure, entity_manager)
+        self.convert_merchandise_hierarchy_tree_node_return(internal_structure, entity_manager)
+        # self.convert_money_sale(internal_structure, entity_manager)
+        self.convert_organizational_merchandise_hierarchy_tree_node_vat_class(internal_structure, entity_manager)
+        self.convert_payment(internal_structure, entity_manager)
+        self.convert_payment_line(internal_structure, entity_manager)
+        self.convert_payment_terms(internal_structure, entity_manager)
+        self.convert_person_relation(internal_structure, entity_manager)
+        # self.convert_postdated_check_payment(internal_structure, entity_manager)
+        self.convert_product(internal_structure, entity_manager)
+        self.convert_purchase(internal_structure, entity_manager)
+        self.convert_product(internal_structure, entity_manager)
+        self.convert_purchase_merchandise_hierarchy_tree_node(internal_structure, entity_manager)
+        self.convert_reason(internal_structure, entity_manager)
+        self.convert_receipt(internal_structure, entity_manager)
+        self.convert_repair(internal_structure, entity_manager)
+        self.convert_sale_merchandise_hierarchy_tree_node_contactable_organizational_hierarchy_tree_node(internal_structure, entity_manager)
+        self.convert_sale_transaction(internal_structure, entity_manager)
+        self.convert_shipment(internal_structure, entity_manager)
+        self.convert_stock_adjustment(internal_structure, entity_manager)
+        self.convert_stock_adjustment_merchandise_hierarchy_tree_node(internal_structure, entity_manager)
+        self.convert_store(internal_structure, entity_manager)
+        self.convert_sub_product(internal_structure, entity_manager)
+        self.convert_store(internal_structure, entity_manager)
+        self.convert_sub_product(internal_structure, entity_manager)
+        self.convert_supplier_company(internal_structure, entity_manager)
+        self.convert_supplier_employee(internal_structure, entity_manager)
+        self.convert_supplier_person(internal_structure, entity_manager)
+        self.convert_supplier_return(internal_structure, entity_manager)
+        self.convert_system_company(internal_structure, entity_manager)
+        self.convert_system_settings(internal_structure, entity_manager)
+        self.convert_transfer(internal_structure, entity_manager)
+        self.convert_transfer_merchandise_hierarchy_tree_node(internal_structure, entity_manager)
+        self.convert_vat_class(internal_structure, entity_manager) 
+
+    # @todo: refactor this code
+    def convert_users(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("users_transaction")
+        
+        # create the users group
+        user_group_class = entity_manager.get_entity_class("UserGroup")
+        user_group_users_entity = user_group_class()
+        user_group_users_entity.description = "The users user group"
+        self.object_id += 1
+        user_group_users_entity.object_id = self.object_id
+        entity_manager.save(user_group_users_entity)
+        
+        # handler used to associate the user with its profile
+        def user_handler(adapter, internal_structure, entity_manager, internal_structure_entity_name, entity_name, internal_entity, entity):
+            profile_class = entity_manager.get_entity_class("Profile")
+            user_group_class = entity_manager.get_entity_class("UserGroup")
+            user_group_users_entity = entity_manager.find_all(user_group_class, "The users user group", "description")[0]
+            user_profile_entity = profile_class()
+            user_profile_entity.user_groups = [user_group_users_entity]
+            user_profile_entity.user = entity
+            adapter.object_id += 1
+            user_profile_entity.object_id = adapter.object_id
+            entity_manager.save(user_profile_entity)
+            entity.profiles = [user_profile_entity]
+
+        self.convert_entity(internal_structure, entity_manager, "user", "User", {"password_hash" : lambda value: base64.b64encode(md5.new(value).digest()),
+                                             "password_hash_type" : "md5",
+                                             "secret_answer_hash" : lambda value: base64.b64encode(md5.new(value).digest()),
+                                             "secret_answer_hash_type" : "md5",
+                                             "status" : 0}, [user_handler])
+        
+        entity_manager.commit_transaction("users_transaction")
+        
+    # @todo: refactor this code
+    def convert_customer_person(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("customer_person_transaction")
+        self.convert_entity(internal_structure, entity_manager, "customer_person", "CustomerPerson")
+        entity_manager.commit_transaction("customer_person_transaction")
+    
+    # @todo: refactor this code
+    def convert_customer_company(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("customer_company_transaction")
+        self.convert_entity(internal_structure, entity_manager, "customer_company", "CustomerCompany")
+        entity_manager.commit_transaction("customer_company_transaction")
+    
+    # @todo: refactor this code
+    def convert_address(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("address_transaction")
+        self.convert_entity(internal_structure, entity_manager, "address", "Address")
+        entity_manager.commit_transaction("address_transaction")
+    
+    # @todo: refactor this code
+    def convert_card_payment(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("card_payment_transaction")
+        self.convert_entity(internal_structure, entity_manager, "card_payment", "CardPayment")
+        entity_manager.commit_transaction("card_payment_transaction")
+    
+    # @todo: refactor this code
+    def convert_cash_payment(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("cash_payment_transaction")
+        self.convert_entity(internal_structure, entity_manager, "cash_payment", "CashPayment")
+        entity_manager.commit_transaction("cash_payment_transaction")
+    
+    # @todo: refactor this code
+    def convert_category(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("category_transaction")
+        self.convert_entity(internal_structure, entity_manager, "category", "Category")
+        entity_manager.commit_transaction("category_transaction")
+    
+    # @todo: refactor this code
+    def convert_check_payment(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("check_payment_transaction")
+        self.convert_entity(internal_structure, entity_manager, "check_payment", "CheckPayment")
+        entity_manager.commit_transaction("check_payment_transaction")
+    
+    # @todo: refactor this code
+    def convert_collection(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("collection_transaction")
+        self.convert_entity(internal_structure, entity_manager, "collection", "Collection")
+        entity_manager.commit_transaction("collection_transaction")
+    
+    # @todo: refactor this code
+    def convert_consignation_slip(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("consignation_slip_transaction")
+        self.convert_entity(internal_structure, entity_manager, "consignation_slip", "ConsignationSlip")
+        entity_manager.commit_transaction("consignation_slip_transaction")
+    
+    # @todo: refactor this code
+    def convert_consignment(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("consignment_transaction")
+        self.convert_entity(internal_structure, entity_manager, "consignment", "Consignment")
+        entity_manager.commit_transaction("consignment_transaction")
+    
+    # @todo: refactor this code
+    def convert_consignment_merchandise_hierarchy_tree_node(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("consignment_merchandise_hierarchy_tree_node")
+        self.convert_entity(internal_structure, entity_manager, "consignment_merchandise_hierarchy_tree_node", "ConsignmentMerchandiseHierarchyTreeNode")
+        entity_manager.commit_transaction("consignment_merchandise_hierarchy_tree_node")
+    
+    # @todo: refactor this code
+    def convert_contact_information(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("contact_information_transaction")
+        self.convert_entity(internal_structure, entity_manager, "contact_information", "ContactInformation")
+        entity_manager.commit_transaction("contact_information_transaction")        
+    
+    # @todo: refactor this code
+    def convert_credit_contract(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("credit_contract_transaction")
+        self.convert_entity(internal_structure, entity_manager, "credit_contract", "CreditContract")
+        entity_manager.commit_transaction("credit_contract_transaction")    
+    
+    # @todo: refactor this code
+    def convert_credit_note(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("credit_note_transaction")
+        self.convert_entity(internal_structure, entity_manager, "credit_note", "CreditNote")
+        entity_manager.commit_transaction("credit_note_transaction")  
+    
+    # @todo: refactor this code
+    def convert_credit_contract(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("credit_contract_transaction")
+        self.convert_entity(internal_structure, entity_manager, "credit_contract", "CreditContract")
+        entity_manager.commit_transaction("credit_contract_transaction")
+
+    # @todo: refactor this code
+    def convert_credit_note_payment(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("credit_note_transaction")
+        self.convert_entity(internal_structure, entity_manager, "credit_note", "CreditNote")
+        entity_manager.commit_transaction("credit_note_transaction")
+        
+    # @todo: refactor this code
+    def convert_credit_payment(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("credit_payment_transaction")
+        self.convert_entity(internal_structure, entity_manager, "credit_payment", "CreditPayment")
+        entity_manager.commit_transaction("credit_payment_transaction")
+        
+    # @todo: refactor this code    
+    def convert_currency(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("currency_transaction")
+        self.convert_entity(internal_structure, entity_manager, "currency", "Currency")
+        entity_manager.commit_transaction("currency_transaction")
+        
+    # @todo: refactor this code    
+    def convert_customer_return(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("customer_return_transaction")
+        self.convert_entity(internal_structure, entity_manager, "customer_return", "CustomerReturn")
+        entity_manager.commit_transaction("customer_return_transaction")
+        
+    # @todo: refactor this code    
+    def convert_financial_account(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("financial_account_transaction")
+        self.convert_entity(internal_structure, entity_manager, "financial_account", "FinancialAccount")
+        entity_manager.commit_transaction("financial_account_transaction")
+        
+    # @todo: refactor this code    
+    def convert_gift_certificate(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("gift_certificate_transaction")
+        self.convert_entity(internal_structure, entity_manager, "gift_certificate", "GiftCertificate")
+        entity_manager.commit_transaction("gift_certificate_transaction")
+    
+    # @todo: refactor this code
+    def convert_invoice(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("invoice_transaction")
+        self.convert_entity(internal_structure, entity_manager, "invoice", "Invoice")
+        entity_manager.commit_transaction("invoice_transaction")
+    
+    # @todo: refactor this code
+    def convert_language(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("language_transaction")
+        self.convert_entity(internal_structure, entity_manager, "language", "Language")
+        entity_manager.commit_transaction("language_transaction")
+    
+    # @todo: refactor this code
+    def convert_location(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("location_transaction")
+        self.convert_entity(internal_structure, entity_manager, "location", "Location")
+        entity_manager.commit_transaction("location_transaction")
+    
+    # @todo: refactor this code
+    def convert_media(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("media_transaction")
+        self.convert_entity(internal_structure, entity_manager, "media", "Media")
+        entity_manager.commit_transaction("media_transaction")
+        
+    # @todo: refactor this code
+    def convert_merchandise_contactable_organizational_hierarchy_tree_node(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("merchandise_contactable_organizational_hierarchy_tree_node_transaction")
+        self.convert_entity(internal_structure, entity_manager, "merchandise_contactable_organizational_hierarchy_tree_node", "MerchandiseContactableOrganizationalHierarchyTreeNode")
+        entity_manager.commit_transaction("merchandise_contactable_organizational_hierarchy_tree_node_transaction")
+        
+    # @todo: refactor this code
+    def convert_merchandise_hierarchy_tree_node_return(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("merchandise_hierarchy_tree_node_return_transaction")
+        self.convert_entity(internal_structure, entity_manager, "merchandise_hierarchy_tree_node_return", "MerchandiseHierarchyTreeNodeReturn")
+        entity_manager.commit_transaction("merchandise_hierarchy_tree_node_return_transaction")
+   
+    # @todo: refactor this code
+    def convert_money_sale(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("money_sale_transaction")
+        self.convert_entity(internal_structure, entity_manager, "money_sale", "MoneySale")
+        entity_manager.commit_transaction("money_sale_transaction")
+        
+    # @todo: refactor this code
+    def convert_organizational_merchandise_hierarchy_tree_node_vat_class(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("organizational_merchandise_hierarchy_tree_node_vat_class_transaction")
+        self.convert_entity(internal_structure, entity_manager, "organizational_merchandise_hierarchy_tree_node_vat_class", "OrganizationalMerchandiseHierarchyTreeNodeVatClass")
+        entity_manager.commit_transaction("organizational_merchandise_hierarchy_tree_node_vat_class_transaction")
+        
+    # @todo: refactor this code
+    def convert_payment(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("payment_transaction")
+        self.convert_entity(internal_structure, entity_manager, "payment", "Payment")
+        entity_manager.commit_transaction("payment_transaction")
+
+    # @todo: refactor this code
+    def convert_payment_line(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("payment_line_transaction")
+        self.convert_entity(internal_structure, entity_manager, "payment_line", "PaymentLine")
+        entity_manager.commit_transaction("payment_line_transaction")
+
+    # @todo: refactor this code
+    def convert_payment_terms(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("payment_terms_transaction")
+        self.convert_entity(internal_structure, entity_manager, "payment_terms", "PaymentTerms")
+        entity_manager.commit_transaction("payment_terms_transaction")
+
+    # @todo: refactor this code
+    def convert_person_relation(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("person_relation_transaction")
+        self.convert_entity(internal_structure, entity_manager, "person_relation", "PersonRelation")
+        entity_manager.commit_transaction("person_relation_transaction")
+
+    # @todo: refactor this code
+    def convert_postdated_check_payment(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("postdated_check_payment_transaction")
+        self.convert_entity(internal_structure, entity_manager, "postdated_check_payment", "PostdatedCheckPayment")
+        entity_manager.commit_transaction("postdated_check_payment_transaction")
+
+    # @todo: refactor this code
+    def convert_product(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("product_transaction")
+        self.convert_entity(internal_structure, entity_manager, "product", "Product")
+        entity_manager.commit_transaction("product_transaction")
+    
+    # @todo: refactor this code
+    def convert_purchase(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("purchase_transaction")
+        self.convert_entity(internal_structure, entity_manager, "purchase", "Purchase")
+        entity_manager.commit_transaction("purchase_transaction")
+    
+    # @todo: refactor this code
+    def convert_product(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("product_transaction")
+        self.convert_entity(internal_structure, entity_manager, "product", "Product")
+        entity_manager.commit_transaction("product_transaction")
+    
+    # @todo: refactor this code
+    def convert_purchase_merchandise_hierarchy_tree_node(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("purchase_merchandise_hierarchy_tree_node_transaction")
+        self.convert_entity(internal_structure, entity_manager, "purchase_merchandise_hierarchy_tree_node", "PurchaseMerchandiseHierarchyTreeNode")
+        entity_manager.commit_transaction("purchase_merchandise_hierarchy_tree_node_transaction")
+    
+    # @todo: refactor this code
+    def convert_reason(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("reason_transaction")
+        self.convert_entity(internal_structure, entity_manager, "reason", "Reason")
+        entity_manager.commit_transaction("reason_transaction")
+    
+    # @todo: refactor this code
+    def convert_receipt(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("receipt_transaction")
+        self.convert_entity(internal_structure, entity_manager, "receipt", "Receipt")
+        entity_manager.commit_transaction("receipt_transaction")
+    
+    # @todo: refactor this code
+    def convert_repair(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("repair_transaction")
+        self.convert_entity(internal_structure, entity_manager, "repair", "Repair")
+        entity_manager.commit_transaction("repair_transaction")
+    
+    # @todo: refactor this code
+    def convert_sale_merchandise_hierarchy_tree_node_contactable_organizational_hierarchy_tree_node(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("sale_merchandise_hierarchy_tree_node_contactable_organizational_hierarchy_tree_node_transaction")
+        entity_manager.commit_transaction("sale_merchandise_hierarchy_tree_node_contactable_organizational_hierarchy_tree_node_transaction")
+    
+    # @todo: refactor this code
+    def convert_sale_transaction(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("sale_transaction_transaction")
+        self.convert_entity(internal_structure, entity_manager, "sale_transaction", "SaleTransaction")
+        entity_manager.commit_transaction("sale_transaction_transaction")
+    
+    # @todo: refactor this code
+    def convert_shipment(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("shipment_transaction")
+        self.convert_entity(internal_structure, entity_manager, "shipment", "Shipment")
+        entity_manager.commit_transaction("shipment_transaction")
+    
+    # @todo: refactor this code
+    def convert_stock_adjustment(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("stock_adjustment_transaction")
+        self.convert_entity(internal_structure, entity_manager, "stock_adjustment", "StockAdjustment")
+        entity_manager.commit_transaction("stock_adjustment_transaction")
+    
+    # @todo: refactor this code
+    def convert_stock_adjustment_merchandise_hierarchy_tree_node(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("stock_adjustment_merchandise_hierarchy_tree_node_transaction")
+        self.convert_entity(internal_structure, entity_manager, "stock_adjustment_merchandise_hierarchy_tree_node", "StockAdjustmentMerchandiseHierarchyTreeNode")
+        entity_manager.commit_transaction("stock_adjustment_merchandise_hierarchy_tree_node_transaction")
+    
+    # @todo: refactor this code
+    def convert_store(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("store_transaction")
+        self.convert_entity(internal_structure, entity_manager, "store", "Store")
+        entity_manager.commit_transaction("store_transaction")
+    
+    # @todo: refactor this code
+    def convert_sub_product(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("sub_product_transaction")
+        self.convert_entity(internal_structure, entity_manager, "sub_product", "SubProduct")
+        entity_manager.commit_transaction("sub_product_transaction")
+    
+    # @todo: refactor this code
+    def convert_supplier_company(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("supplier_company_transaction")
+        self.convert_entity(internal_structure, entity_manager, "supplier_company", "SupplierCompany")
+        entity_manager.commit_transaction("supplier_company_transaction")
+    
+    # @todo: refactor this code
+    def convert_supplier_employee(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("supplier_employee_transaction")
+        self.convert_entity(internal_structure, entity_manager, "supplier_employee", "SupplierEmployee")
+        entity_manager.commit_transaction("supplier_employee_transaction")
+    
+    # @todo: refactor this code
+    def convert_supplier_person(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("supplier_person_transaction")
+        self.convert_entity(internal_structure, entity_manager, "supplier_person", "SupplierPerson")
+        entity_manager.commit_transaction("supplier_person_transaction")
+    
+    # @todo: refactor this code
+    def convert_supplier_return(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("supplier_return_transaction")
+        self.convert_entity(internal_structure, entity_manager, "supplier_return", "SupplierReturn")
+        entity_manager.commit_transaction("supplier_return_transaction")
+    
+    # @todo: refactor this code
+    def convert_system_company(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("system_company_transaction")
+        self.convert_entity(internal_structure, entity_manager, "system_company", "SystemCompany")
+        entity_manager.commit_transaction("system_company_transaction")
+
+    # @todo: refactor this code
+    def convert_system_settings(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("system_settings_transaction")
+        self.convert_entity(internal_structure, entity_manager, "system_settings", "SystemSettings")
+        entity_manager.commit_transaction("system_settings_transaction")
+    
+    # @todo: refactor this code
+    def convert_transfer(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("transfer_transaction")
+        self.convert_entity(internal_structure, entity_manager, "transfer", "Transfer")
+        entity_manager.commit_transaction("transfer_transaction")
+    
+    # @todo: refactor this code
+    def convert_transfer_merchandise_hierarchy_tree_node(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("transfer_merchandise_hierarchy_tree_node_transaction")
+        self.convert_entity(internal_structure, entity_manager, "transfer_merchandise_hierarchy_tree_node", "TransferMerchandiseHierarchyTreeNode")
+        entity_manager.commit_transaction("transfer_merchandise_hierarchy_tree_node_transaction")
+    
+    # @todo: refactor this code
+    def convert_vat_class(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("vat_class_transaction")
+        self.convert_entity(internal_structure, entity_manager, "vat_class", "VatClass")
+        entity_manager.commit_transaction("vat_class_transaction")
+    
+    def convert_entity(self, internal_structure, entity_manager, internal_structure_entity_name, entity_name, default_values_map = {}, handlers = []):
+        entity_class = entity_manager.get_entity_class(entity_name)
+        
+        # convert the internal entities
+        internal_entities = internal_structure.get_entities(internal_structure_entity_name)
+        for internal_entity in internal_entities:
+            
+            # create and commit the customer person entity
+            entity = entity_class()
+            entity.object_id = 0
+            fields = internal_entity.get_fields()
+            valid_fields = [(field_name, field_value) for field_name, field_value in fields.items() if not type(field_value) in (types.InstanceType, types.ListType)]
+            
+            # copy the values of the internal entity to the entity
+            for field_name, field_value in valid_fields:
+                # if there's an handler defined for this field name then
+                # execute it
+                if field_name in default_values_map:
+                    default_value = default_values_map[field_name]
+                    if type(default_value) == types.FunctionType:
+                        field_value = default_value(field_value)
+                if field_name in default_values_map:
+                    del default_values_map[field_name]
+                setattr(entity, field_name, field_value)
+                
+            # apply all remaining values default values
+            for field_name, field_value in default_values_map.items():
+                if not type(field_value) == types.FunctionType:
+                    setattr(internal_entity, field_name, field_value)
+                    
+            for handler in handlers:
+                handler(self, internal_structure, entity_manager, internal_structure_entity_name, entity_name, internal_entity, entity)
+                    
+            self.object_id += 1
+            entity.object_id = self.object_id
+            entity_manager.save(entity)
+    
     def process_work_units(self, task):
         """
         Performs the operations necessary to complete each of the specified work units.
@@ -216,7 +723,7 @@ class DataConverterAdapter:
         domain_attribute_names = [domain_attribute_configuration.name for domain_attribute_configuration in domain_entity_configuration.get_domain_attributes()]
         domain_entities = self.connection.query(domain_entity_name, domain_attribute_names)
 
-        for domain_entity in domain_entities:     
+        for domain_entity in domain_entities:
             # create the entity related with the domain entity and a domain entity conversion information object
             domain_entity_internal_entity = self.internal_structure.add_entity(domain_entity_configuration.internal_entity)
             domain_entity_conversion_info = DomainEntityConversionInfo(domain_entity_configuration, self.internal_structure, domain_entity_internal_entity, domain_entity)

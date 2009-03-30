@@ -37,26 +37,33 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import types
+
 class InternalStructure:
     """
     Internal structure to store an intermediate data representation of the converted data, created by the input adapter,
     over which the output adapter later acts to convert the data to the target medium.
     """
     
-    exclusions = ["exclusions", "__doc__", "__module__", "has_entities", "has_entity", "has_field", "add_entity", "add_field", 
-                  "set_field_value", "get_entity", "display_structure", "print_structure", "get_entity_instances"]
+    exclusions = ["exclusions", "__doc__", "__module__"]
 
-    def get_entity_instances(self, entity_name):
+    # @todo: comment this
+    def get_entity_names(self):
+        entity_names = [value for value in dir(self) if not value in self.exclusions and not type(getattr(self, value)) == types.MethodType]
+
+        return entity_names
+    
+    def get_entities(self, entity_name):
         """
-        Returns a list with the entity instances with the specified name that are
+        Returns a list with the entities with the specified name that are
         currently present in the internal structure.
         
         @type entity_name: String
         @param entity_name: Name of the internal entity.
-        @return: List of entity instances.
+        @return: List of internal entities.
         """
         
-        return getattr(self, internal_entity_name)
+        return getattr(self, entity_name)
     
     def has_entities(self, entity_name):
         """
@@ -186,7 +193,7 @@ class InternalEntity:
     Represents an entity in the internal structure.
     """
     
-    exclusions = ["exclusions", "_id", "_name", "__doc__", "__module__", "has_field", "add_field", "set_field_value", "get_field_value", "print_structure"]
+    exclusions = ["exclusions", "_id", "_name", "__doc__", "__module__"]
     
     def has_field(self, field_name):
         """
@@ -236,6 +243,22 @@ class InternalEntity:
         
         if self.has_field(field_name):
             return getattr(self, field_name)
+
+    # @todo: comment this
+    def get_field_names(self):
+        field_names = [value for value in dir(self) if not value in self.exclusions and not type(getattr(self, value)) == types.MethodType]
+
+        return field_names
+    
+    # @todo: comment this
+    def get_fields(self):
+        fields = {}
+        field_names = self.get_field_names()
+        
+        for field_name in field_names:
+            fields[field_name] = self.get_field_value(field_name)
+            
+        return fields
 
 class DataConverter:
     """

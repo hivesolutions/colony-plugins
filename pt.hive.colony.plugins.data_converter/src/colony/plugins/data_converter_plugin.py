@@ -57,7 +57,11 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = [ colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.tasks.task_manager", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.log", "1.0.0")]
+                    "pt.hive.colony.plugins.main.log", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.business.entity_manager", "1.0.0"),                    
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.resource_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
 
@@ -185,3 +189,17 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.log")
     def set_logger_plugin(self, logger_plugin):
         self.logger_plugin = logger_plugin
+        
+    def get_entity_manager_plugin(self):
+        return self.entity_manager_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.business.entity_manager")
+    def set_entity_manager_plugin(self, entity_manager_plugin):
+        self.entity_manager_plugin = entity_manager_plugin
+        
+    def get_resource_manager_plugin(self):
+        return self.resource_manager_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.resource_manager")
+    def set_resource_manager_plugin(self, resource_manager_plugin):
+        self.resource_manager_plugin = resource_manager_plugin
