@@ -55,7 +55,8 @@ class PrintingWin32Plugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["printing"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PackageDependency(
+                    "Win32 Extensions for Python", "win32print", "b202", "http://starship.python.net/crew/mhammond/win32")]
     events_handled = []
     events_registrable = []
 
@@ -84,3 +85,9 @@ class PrintingWin32Plugin(colony.plugins.plugin_system.Plugin):
 
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    def print_test(self):
+        self.printing_win32.print_test()
+
+    def print_test_image(self, image_path):
+        self.printing_win32.print_test_image(image_path)

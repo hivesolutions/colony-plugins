@@ -37,36 +37,29 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-TEST_IMAGE_PATH = "printing/manager/resources/test_logo.png"
-""" The test image relative path """
+HORIZONTAL_RESOLUTION = 8
+""" The horizontal resolution """
 
-class PrintingManager:
-    """
-    The printing manager class.
-    """
+VERTICAL_RESOLUTION = 10
+""" The vertical resolution """
 
-    printing_manager_plugin = None
-    """ The printing manager plugin """
+LOG_PIXELS_X = 88
+""" The number of dots per inch in the x axis """
 
-    def __init__(self, printing_manager_plugin):
-        """
-        Constructor of the class.
-        
-        @type printing_manager_plugin: PrintingManagerPlugin
-        @param printing_manager_plugin: The printing manager plugin.
-        """
+LOG_PIXELS_Y = 90
+""" The number of dots per inch in the y axis """
 
-        self.printing_manager_plugin = printing_manager_plugin
+PHYSICAL_WIDTH = 110
+""" The physical width area """
 
-    def print_test(self):
-        pass
+PHYSICAL_HEIGHT = 111
+""" The physical height area """
 
-    def print_test_image(self):
-        # retrieves the plugin manager
-        plugin_manager = self.printing_manager_plugin.manager
+PHYSICAL_OFFSET_X = 112
+""" The physical offset x, the left margin """
 
-        plugin_path = plugin_manager.get_plugin_path_by_id(self.printing_manager_plugin.id)
+PHYSICAL_OFFSET_Y = 113
+""" The physical offset y, the top margin """
 
-        image_path = plugin_path + "/" + TEST_IMAGE_PATH
-
-        self.printing_manager_plugin.printing_plugins[0].print_test_image(image_path)
+INCH = 1440
+""" The number of inches """

@@ -55,11 +55,14 @@ class PrintingManagerPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["printing_manager"]
     capabilities_allowed = ["printing"]
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PackageDependency(
+                    "Python Imaging Library (PIL)", "PIL", "1.1.x", "http://www.pythonware.com/products/pil")]
     events_handled = []
     events_registrable = []
 
     printing_manager = None
+
+    printing_plugins = []
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -76,11 +79,27 @@ class PrintingManagerPlugin(colony.plugins.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
 
+    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.printing.manager", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.printing.manager", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    def print_test(self):
+        self.printing_manager.print_test()
+
+    def print_test_image(self):
+        self.printing_manager.print_test_image()
+
+    @colony.plugins.decorators.load_allowed_capability("printing")
+    def printing_load_allowed(self, plugin, capability):
+        self.printing_plugins.append(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("printing")
+    def printing_unload_allowed(self, plugin, capability):
+        self.printing_plugins.remove(plugin)
