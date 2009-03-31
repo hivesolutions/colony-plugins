@@ -69,11 +69,20 @@ TYPE_EXCLUSION_LIST = [types.MethodType, types.FunctionType, types.ClassType]
 RELATION_DATA_TYPE = "relation"
 """ The relation data type """
 
+EAGER_FETCH_TYPE = "eager"
+""" The eager fetch type """
+
+LAZY_FETCH_TYPE = "lazy"
+""" The lazy fetch type """
+
 ID_FIELD = "id"
 """ The id field """
 
 DATA_TYPE_FIELD = "data_type"
 """ The data type field """
+
+FETCH_TYPE_FIELD = "fetch_type"
+""" The fetch type field """
 
 GENERATED_FIELD = "generated"
 """ The generated field """
@@ -1044,7 +1053,7 @@ class BusinessSqliteEngine:
                 entity_class_valid_attribute_name = entity_class_valid_attribute_names[index]
 
                 # in case the attribute is a relation
-                if self.is_attribute_name_relation(entity_class_valid_attribute_name, entity_class):
+                if self.is_attribute_name_relation(entity_class_valid_attribute_name, entity_class) and not self.is_attribute_name_lazy_relation(entity_class_valid_attribute_name, entity_class):
                     # creates the relation attribute tuple
                     relation_attribute_tuple = (entity_class_valid_attribute_name, attribute_value)
 
@@ -1097,7 +1106,7 @@ class BusinessSqliteEngine:
                 relation_type_field = relation_attributes[RELATION_TYPE_FIELD]
 
                 # in case the relation is of type many-to-many
-                if relation_type_field == MANY_TO_MANY_RELATION:
+                if relation_type_field == MANY_TO_MANY_RELATION and not self.is_attribute_name_lazy_relation(entity_valid_indirect_attribute_name, entity_class):
                     # retrieves the join table field
                     join_table_field = relation_attributes[JOIN_TABLE_FIELD]
 
@@ -1252,7 +1261,7 @@ class BusinessSqliteEngine:
                 entity_class_valid_attribute_name = entity_class_valid_attribute_names[index]
 
                 # in case the attribute is a relation
-                if self.is_attribute_name_relation(entity_class_valid_attribute_name, entity_class):
+                if self.is_attribute_name_relation(entity_class_valid_attribute_name, entity_class) and not self.is_attribute_name_lazy_relation(entity_class_valid_attribute_name, entity_class):
                     # creates the relation attribute tuple
                     relation_attribute_tuple = (entity_class_valid_attribute_name, attribute_value)
 
@@ -1578,6 +1587,50 @@ class BusinessSqliteEngine:
 
         # tests the attribute value for relation
         return self.is_attribute_relation(attribute_value)
+
+    def is_attribute_lazy_relation(self, attribute_value):
+        """
+        Retrieves the result of the attribute lazy relation test.
+        
+        @type attribute_value: Object
+        @param attribute_value: The value of the attribute to test for lazy relation.
+        @rtype: bool
+        @return: The result of the attribute lazy relation test.
+        """
+
+        if attribute_value == None:
+            return False
+
+        if not self.is_attribute_relation(attribute_value):
+            return False
+
+        if not FETCH_TYPE_FIELD in attribute_value:
+            return False
+
+        attribute_value_fetch_type = attribute_value[FETCH_TYPE_FIELD]
+
+        if attribute_value_fetch_type == LAZY_FETCH_TYPE:
+            return True
+        else:
+            return False
+
+    def is_attribute_name_lazy_relation(self, attribute_name, entity_class):
+        """
+        Retrieves the result of the attribute name lazy relation test.
+        
+        @type attribute_name: Object
+        @param attribute_name: The value of the attribute name to test for lazy relation.
+        @type entity_class: Class
+        @param entity_class: The entity class for the attribute name to test for lazy relation.
+        @rtype: bool
+        @return: The result of the attribute name lazy relation test.
+        """
+
+        # retrieves the attribute value
+        attribute_value = getattr(entity_class, attribute_name)
+
+        # tests the attribute value for lazy relation
+        return self.is_attribute_lazy_relation(attribute_value)
 
     def is_attribute_indirect_relation(self, attribute_value, attribute_name, entity_class):
         """
