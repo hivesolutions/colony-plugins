@@ -65,7 +65,7 @@ class MainServiceHttpFileHandler:
     def __init__(self, main_service_http_file_handler_plugin):
         """
         Constructor of the class.
-        
+
         @type main_service_http_file_handler_plugin: MainServiceHttpFileHandlerPlugin
         @param main_service_http_file_handler_plugin: The main service http file handler plugin.
         """
@@ -147,7 +147,7 @@ class ChunkHandler:
     def __init__(self, file, file_size):
         """
         Constructor of the class.
-        
+
         @type file: File
         @param file: The file.
         @type file_size: int
@@ -160,7 +160,7 @@ class ChunkHandler:
     def get_size(self):
         """
         Retrieves the size of the file being chunked.
-        
+
         @rtype: int
         @return: The size of the file being chunked.
         """
@@ -170,7 +170,7 @@ class ChunkHandler:
     def get_chunk(self, chunk_size = CHUNK_SIZE):
         """
         Retrieves the a chunk with the given size.
-        
+
         @rtype: chunk_size
         @return: The size of the chunk to be retrieved.
         @rtype: String

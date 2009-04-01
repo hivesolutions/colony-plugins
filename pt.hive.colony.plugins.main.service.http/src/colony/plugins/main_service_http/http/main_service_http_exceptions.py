@@ -52,7 +52,7 @@ class ServerRequestTimeout(MainServiceHttpException):
     def __init__(self, message):
         """
         Constructor of the class.
-        
+
         @type message: String
         @param message: The message to be printed.
         """
@@ -63,7 +63,7 @@ class ServerRequestTimeout(MainServiceHttpException):
     def __str__(self):
         """
         Returns the string representation of the class.
-        
+
         @rtype: String
         @return: The string representation of the class.
         """
@@ -78,7 +78,7 @@ class ClientRequestTimeout(MainServiceHttpException):
     def __init__(self, message):
         """
         Constructor of the class.
-        
+
         @type message: String
         @param message: The message to be printed.
         """
@@ -89,7 +89,7 @@ class ClientRequestTimeout(MainServiceHttpException):
     def __str__(self):
         """
         Returns the string representation of the class.
-        
+
         @rtype: String
         @return: The string representation of the class.
         """
@@ -104,7 +104,7 @@ class RequestClosed(MainServiceHttpException):
     def __init__(self, message):
         """
         Constructor of the class.
-        
+
         @type message: String
         @param message: The message to be printed.
         """
@@ -115,7 +115,7 @@ class RequestClosed(MainServiceHttpException):
     def __str__(self):
         """
         Returns the string representation of the class.
-        
+
         @rtype: String
         @return: The string representation of the class.
         """
@@ -130,7 +130,7 @@ class HttpRuntimeException(MainServiceHttpException):
     def __init__(self, message):
         """
         Constructor of the class.
-        
+
         @type message: String
         @param message: The message to be printed.
         """
@@ -141,7 +141,7 @@ class HttpRuntimeException(MainServiceHttpException):
     def __str__(self):
         """
         Returns the string representation of the class.
-        
+
         @rtype: String
         @return: The string representation of the class.
         """
@@ -156,7 +156,7 @@ class HttpInvalidDataException(HttpRuntimeException):
     def __init__(self, message):
         """
         Constructor of the class.
-        
+
         @type message: String
         @param message: The message to be printed.
         """
@@ -167,7 +167,7 @@ class HttpInvalidDataException(HttpRuntimeException):
     def __str__(self):
         """
         Returns the string representation of the class.
-        
+
         @rtype: String
         @return: The string representation of the class.
         """

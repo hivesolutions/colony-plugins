@@ -58,7 +58,7 @@ class MainServiceHttpColonyHandler:
     def __init__(self, main_service_http_colony_handler_plugin):
         """
         Constructor of the class.
-        
+
         @type main_service_http_colony_handler_plugin: MainServiceHttpColonyHandlerPlugin
         @param main_service_http_colony_handler_plugin: The main service http colony handler plugin.
         """

@@ -77,7 +77,7 @@ MAX_NUMBER_THREADS = 30
 """ The maximum number of threads """
 
 SCHEDULING_ALGORITHM = 2
-""" The scheduling algorithm """ 
+""" The scheduling algorithm """
 
 STATUS_CODE_VALUES = {200 : "OK", 207 : "Multi-Status",
                       301 : "Moved permanently", 302 : "Found", 303 : "See Other",
@@ -102,7 +102,7 @@ class MainServiceHttp:
     def __init__(self, main_service_http_plugin):
         """
         Constructor of the class.
-        
+
         @type main_service_http_plugin: MainServiceHttpPlugin
         @param main_service_http_plugin: The main service http plugin.
         """
@@ -112,7 +112,7 @@ class MainServiceHttp:
     def start_service(self, parameters):
         """
         Starts the service with the given parameters.
-        
+
         @type parameters: Dictionary
         @param parameters: The parameters to start the service.
         """
@@ -133,7 +133,7 @@ class MainServiceHttp:
     def start_server(self, port):
         """
         Starts the server in the given port.
-        
+
         @type port: int
         @param port: The port to start the server.
         """
@@ -306,7 +306,7 @@ class HttpClientServiceTask:
     def retrieve_request(self, request_timeout = REQUEST_TIMEOUT):
         """
         Retrieves the request from the received message.
-        
+
         @type request_timeout: int
         @param request_timeout: The timeout for the request retrieval.
         @rtype: HttpRequest
@@ -347,7 +347,7 @@ class HttpClientServiceTask:
             message_value = message.getvalue()
 
             # in case the start line is not loaded
-            if not start_line_loaded:                
+            if not start_line_loaded:
                 # finds the first new line value
                 start_line_index = message_value.find("\r\n")
 
@@ -464,7 +464,7 @@ class HttpClientServiceTask:
     def send_exception(self, request, exception):
         """
         Sends the exception to the given request for the given exception.
-        
+
         @type request: HttpRequest
         @param request: The request to send the exception.
         @type exception: Exception
@@ -583,13 +583,13 @@ class HttpClientServiceTask:
     def keep_alive(self, request):
         """
         Retrieves the value of the keep alive for the given request.
-        
+
         @type request: HttpRequest
         @param request: The request to retrieve the keep alive value.
         @rtype: bool
         @return: The value of the keep alive for the given request.
         """
-    
+
         if "Connection" in request.headers_map:
             connection_type = request.headers_map["Connection"]
 
@@ -740,8 +740,8 @@ class HttpRequest:
         self.operation_type = operation_type
 
     def set_path(self, path):
-    	# retrieves the resource path of the path
-    	resource_path = path.split("?")[0]
+        # retrieves the resource path of the path
+        resource_path = path.split("?")[0]
 
         self.path = path
         self.resource_path = resource_path
