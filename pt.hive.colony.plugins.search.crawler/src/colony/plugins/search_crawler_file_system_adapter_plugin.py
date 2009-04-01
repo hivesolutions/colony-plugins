@@ -70,7 +70,7 @@ class SearchCrawlerFileSystemAdapterPlugin(colony.plugins.plugin_system.Plugin):
         self.search_crawler_file_system_adapter = search_crawler.file_system_adapter.search_crawler_file_system_adapter_system.SearchCrawlerFileSystemAdapter(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)

@@ -69,7 +69,7 @@ class SearchCrawlerFileSystemAdapter:
     def __init__(self, search_crawler_file_system_adapter_plugin):
         """
         Constructor of the class.
-        
+
         @type search_crawler_file_system_adapter_plugin: SearchCrawlerFileSystemAdapterPlugin
         @param search_crawler_file_system_adapter_plugin: The search crawler file system adapter plugin.
         """
@@ -98,9 +98,9 @@ class SearchCrawlerFileSystemAdapter:
 
     def walker(self, args, directory_name, names):
         """
-        The walker method, that iterates through all the 
+        The walker method, that iterates through all the
         search provider text file plugins.
-        
+
         @type args: Object
         @param args: The walker arguments.
         @type directory_name: String
@@ -129,7 +129,7 @@ class SearchCrawlerFileSystemAdapter:
             if search_provider_file_system_plugin:
                 tokens = search_provider_file_system_plugin.get_tokens(properties)
                 token_list.append(tokens)
-        
+
     def get_handler_plugin(self, properties):
         search_provider_file_system_plugins = self.search_crawler_file_system_adapter_plugin.search_provider_file_system_plugins
 

@@ -56,7 +56,7 @@ class SearchCrawler:
     def __init__(self, search_crawler_plugin):
         """
         Constructor of the class.
-        
+
         @type search_crawler_plugin: SearchCrawlerPlugin
         @param search_crawler_plugin: The search crawler plugin.
         """
@@ -68,7 +68,7 @@ class SearchCrawler:
     def get_tokens(self, properties):
         """
         Retrieves the list of tokens resulting from crawling the specified location, using the required crawler adapter.
-        
+
         @rtype: List
         @return: The list of tokens crawler.
         """
@@ -87,8 +87,8 @@ class SearchCrawler:
 
     def get_search_crawler_adapter_types(self):
         """
-        Returns a list with the types of all the loaded search crawler adapter plugins. 
-        
+        Returns a list with the types of all the loaded search crawler adapter plugins.
+
         @rtype List
         @return List of search crawler adapter types.
         """
@@ -101,11 +101,11 @@ class SearchCrawler:
     def get_search_crawler_adapter_plugin(self, search_crawler_adapter_type):
         """
         Retrieves the loaded search crawler adapter plugin for the specified adapter type.
-        
+
         @type search_crawler_adapter_type: String
         @param search_crawler_adapter_type: The crawler adapter type of the plugin to retrieve.
         @rtype: SearchCrawlerAdapterPlugin
-        @return: The loaded plugin for the adapter type 
+        @return: The loaded plugin for the adapter type
         """
 
         # checks for invalid plugin_type
@@ -117,12 +117,12 @@ class SearchCrawler:
     def add_search_crawler_adapter_plugin(self, plugin):
         """
         Inserts the search crawler adapter plugin in the Search Crawler's internal structures.
-        
+
         @type plugin: SearchCrawlerAdapterPlugin
         @param plugin: The search crawler adapter plugin to remove.
-        """ 
+        """
 
-        # retrieve the search crawler adapter plugin type 
+        # retrieve the search crawler adapter plugin type
         plugin_type = plugin.get_type()
 
         # update the search crawler adapter plugins map with the new plugin
@@ -131,12 +131,12 @@ class SearchCrawler:
     def remove_search_crawler_adapter_plugin(self, plugin):
         """
         Removes the search crawler adapter plugin from the Search Crawler's internal structures.
-        
+
         @type plugin: SearchCrawlerAdapterPlugin
         @param plugin: The search crawler adapter plugin to remove.
-        """ 
+        """
 
-        # retrieves the search crawler adapter plugin type 
+        # retrieves the search crawler adapter plugin type
         plugin_type = plugin.get_type()
 
         # checks for invalid plugin_type
