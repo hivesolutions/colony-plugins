@@ -52,7 +52,7 @@ class MainXmlrpcClient:
     def __init__(self, main_xmlrpc_client_plugin):
         """
         Constructor of the class.
-        
+
         @type main_xmlrpc_client_plugin: MainXmlrpcClientPlugin
         @param main_xmlrpc_client_plugin: The main xmlrpc client plugin.
         """
@@ -88,7 +88,7 @@ class XmlrpcClient:
     def __init__(self, xmlrpc_server_address = "none", xmlrpc_server_proxy = None):
         """
         Constructor of the class.
-        
+
         @type xmlrpc_server_address: String
         @param xmlrpc_server_address: The xmlrpc server address.
         @type xmlrpc_server_proxy: ServerProxy
@@ -101,7 +101,7 @@ class XmlrpcClient:
     def get_xmlrpc_server_proxy(self):
         """
         Retrieves the server proxy.
-        
+
         @rtype: ServerProxy
         @return: The xmlrpc server proxy.
         """
