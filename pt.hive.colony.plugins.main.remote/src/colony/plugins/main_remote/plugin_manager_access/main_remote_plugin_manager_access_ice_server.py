@@ -75,7 +75,7 @@ class MainRemotePluginManagerAccessIceServer:
     def get_server_path(self):
         """
         Retrieves the path to the ice server file
-        
+
         @rtype: String
         @return: The path to the ice server file
         """
@@ -83,7 +83,7 @@ class MainRemotePluginManagerAccessIceServer:
         return os.path.abspath(__file__)
 
 class MainRemotePluginManagerAccessIceServerImplementation:
-    
+
     communicator = None
     started = False
 

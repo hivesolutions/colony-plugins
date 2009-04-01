@@ -53,7 +53,7 @@ class MainRemotePluginManagerAccess:
     def __init__(self, main_remote_plugin_manager_access_plugin):
         """
         Constructor of the class
-        
+
         @type main_remote_plugin_manager_access_plugin: Plugin
         @param main_remote_plugin_manager_access_plugin: The remote plugin manager access plugin
         """

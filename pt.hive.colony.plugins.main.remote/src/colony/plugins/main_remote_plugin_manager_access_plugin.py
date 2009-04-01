@@ -60,7 +60,7 @@ class MainRemotePluginManagerAccessPlugin(colony.plugins.plugin_system.Plugin):
     events_handled = []
     events_registrable = []
 
-    main_remote_plugin_manager_access = None    
+    main_remote_plugin_manager_access = None
 
     ice_helper_plugin = None
 
@@ -86,7 +86,7 @@ class MainRemotePluginManagerAccessPlugin(colony.plugins.plugin_system.Plugin):
         self.main_remote_plugin_manager_access.stop_registry()
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)

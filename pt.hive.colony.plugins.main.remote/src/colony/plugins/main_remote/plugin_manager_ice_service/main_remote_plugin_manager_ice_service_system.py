@@ -46,7 +46,7 @@ class MainRemotePluginManagerIceService:
     def __init__(self, main_remote_plugin_manager_ice_service_plugin):
         """
         Constructor of the class
-        
+
         @type main_remote_plugin_manager_ice_service_plugin: Plugin
         @param main_remote_plugin_manager_ice_service_plugin: The remote plugin manager ice service plugin
         """

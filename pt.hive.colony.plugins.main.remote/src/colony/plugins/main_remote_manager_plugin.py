@@ -75,7 +75,7 @@ class MainRemoteManagerPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
     @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.main.remote.manager", "1.0.0")
     def load_allowed(self, plugin, capability):

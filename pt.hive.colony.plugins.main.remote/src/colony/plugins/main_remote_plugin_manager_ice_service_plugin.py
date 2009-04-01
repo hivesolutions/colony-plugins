@@ -65,13 +65,13 @@ class RemotePluginManagerIceServicePlugin(colony.plugins.plugin_system.Plugin):
         self.main_remote_plugin_manager_ice_service = main_remote.plugin_manager_ice_service.main_remote_plugin_manager_ice_service_system.MainRemotePluginManagerIceService(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)

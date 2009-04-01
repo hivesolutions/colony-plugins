@@ -48,7 +48,7 @@ class MainRemoteManager:
     def __init__(self, main_remote_manager_plugin):
         """
         Constructor of the class.
-        
+
         @type main_remote_manager_plugin: MainRemoteManagerPlugin
         @param main_remote_manager_plugin: The main remote manager plugin.
         """
@@ -58,7 +58,7 @@ class MainRemoteManager:
     def get_available_rpc_handlers(self):
         """
         Retrieves the available rpc handler.
-        
+
         @rtype: List
         @return: The list of available rpc handlers.
         """
