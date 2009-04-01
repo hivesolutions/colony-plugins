@@ -56,7 +56,7 @@ class SearchIndexPersistence:
     def __init__(self, search_index_persistence_plugin):
         """
         Constructor of the class.
-        
+
         @type search_index_persistence_plugin: SearchIndexPersistencePlugin
         @param search_index_persistence_plugin: The search index persistence plugin.
         """
@@ -68,11 +68,11 @@ class SearchIndexPersistence:
     def persist_index(self, search_index, properties):
         """
         Stores a specified index to a storage location using a persistence adapter.
-        
+
         @type search_index: SearchIndex
         @param search_index: The search index to persist.
         @type properties: Dictionary
-        @param properties: The map to guide the persistence operation. 
+        @param properties: The map to guide the persistence operation.
         """
 
         if PERSISTENCE_TYPE_VALUE not in properties:
@@ -89,9 +89,9 @@ class SearchIndexPersistence:
     def load_index(self, properties):
         """
         Loads an index using a persistence adapter from a storage location.
-        
+
         @type properties: Dictionary
-        @param properties: The map to guide the load operation. 
+        @param properties: The map to guide the load operation.
         """
 
         if PERSISTENCE_TYPE_VALUE not in properties:
@@ -107,8 +107,8 @@ class SearchIndexPersistence:
 
     def get_search_index_persistence_adapter_types(self):
         """
-        Returns a list with the types of all the loaded search index persistence adapter plugins. 
-        
+        Returns a list with the types of all the loaded search index persistence adapter plugins.
+
         @rtype: list
         @return: List of search index persistence adapter types.
         """
@@ -121,11 +121,11 @@ class SearchIndexPersistence:
     def get_search_index_persistence_adapter_plugin(self, search_index_persistence_adapter_type):
         """
         Retrieves the loaded search index persistence adapter plugin for the specified adapter type.
-        
+
         @type search_index_persistence_adapter_type: String
         @param search_index_persistence_adapter_type: The index persistence adapter type of the plugin to retrieve.
         @rtype: SearchIndexPersistenceAdapterPlugin
-        @return: The loaded plugin for the adapter type 
+        @return: The loaded plugin for the adapter type
         """
 
         # checks for invalid plugin type
@@ -137,12 +137,12 @@ class SearchIndexPersistence:
     def add_search_index_persistence_adapter_plugin(self, plugin):
         """
         Inserts the search index_persistence adapter plugin in the Search Index Persistence's internal structures.
-        
+
         @type plugin: SearchIndexPersistenceAdapterPlugin
         @param plugin: The search index persistence adapter plugin to remove.
         """
 
-        # retrieve the search index persistence adapter plugin type 
+        # retrieve the search index persistence adapter plugin type
         plugin_type = plugin.get_type()
 
         # update the search index persistence adapter plugins map with the new plugin
@@ -151,12 +151,12 @@ class SearchIndexPersistence:
     def remove_search_index_persistence_adapter_plugin(self, plugin):
         """
         Removes the search index persistence adapter plugin from the Search Index Persistence's internal structures.
-        
+
         @type plugin: SearchIndexPersistenceAdapterPlugin
         @param plugin: The search index_persistence adapter plugin to remove.
-        """ 
+        """
 
-        # retrieves the search index persistence adapter plugin type 
+        # retrieves the search index persistence adapter plugin type
         plugin_type = plugin.get_type()
 
         # checks for invalid plugin type

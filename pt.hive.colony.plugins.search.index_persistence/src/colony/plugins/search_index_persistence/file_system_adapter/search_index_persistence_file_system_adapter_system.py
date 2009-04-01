@@ -56,7 +56,7 @@ class SearchIndexPersistenceFileSystemAdapter:
     def __init__(self, search_index_persistence_file_system_adapter_plugin):
         """
         Constructor of the class.
-        
+
         @type search_index_persistence_file_system_adapter_plugin: SearchIndexPersistenceFileSystemAdapterPlugin
         @param search_index_persistence_file_system_adapter_plugin: The search index persistence file system adapter plugin.
         """
@@ -67,7 +67,7 @@ class SearchIndexPersistenceFileSystemAdapter:
         return PERSISTENCE_ADAPTER_TYPE
 
     def persist_index(self, search_index, properties):
-        
+
         # checks for the serializer type in the properties map
         if not SERIALIZER_TYPE_VALUE in properties:
             raise search_index_persistence_file_system_adapter_exceptions.MissingProperty(SERIALIZER_TYPE_VALUE)
