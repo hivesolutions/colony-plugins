@@ -79,13 +79,13 @@ class MainTestPlugin(colony.plugins.plugin_system.Plugin):
         self.console_test = main_test.test.console_test.ConsoleTest(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
     @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.main.test", "1.0.0")
     def load_allowed(self, plugin, capability):

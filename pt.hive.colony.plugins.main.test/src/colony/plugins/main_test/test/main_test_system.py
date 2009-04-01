@@ -86,7 +86,7 @@ class MainTest:
     def __init__(self, main_test_plugin):
         """
         Constructor of the class
-        
+
         @type main_test_plugin: MainTestPlugin
         @param main_test_plugin: The main test plugin
         """
@@ -238,7 +238,7 @@ class MainTest:
         if plugin_test_case_plugin in self.plugin_test_case_plugin_plugin_test_case_map:
             if plugin_test_case in self.plugin_test_case_plugin_plugin_test_case_map[plugin_test_case_plugin]:
                 self.plugin_test_case_plugin_plugin_test_case_map[plugin_test_case_plugin].remove(plugin_test_case)
-        
+
         # unloads the test case
         self.unload_test_case(test_case, plugin_test_case_plugin)
 
@@ -298,7 +298,7 @@ class MainTest:
         return plugin_test_cases
 
     def start_all_test(self, code_coverage = False):
-        self.start_test(self.loaded_test_cases_list, code_coverage)        
+        self.start_test(self.loaded_test_cases_list, code_coverage)
 
     def start_test(self, test_cases_list, code_coverage = False):
         # retrieves the code coverage plugin
