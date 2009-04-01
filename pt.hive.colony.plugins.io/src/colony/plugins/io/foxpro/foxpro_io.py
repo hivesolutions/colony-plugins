@@ -42,18 +42,18 @@ import dbi, odbc, os, stat, string
 DBF_EXTENSION = ".dbf"
 SLASH = "/"
 CONNECTION_STRING = 'Driver={Microsoft Visual FoxPro Driver};SourceType=DBF;SourceDB=%s;Exclusive=No;Collate=Machine;NULL=NO;DELETED=NO;BACKGROUNDFETCH=NO;'
-    
+
 class FoxProInputOutput:
-    
+
     def __init__(self, foxpro_io_plugin):
         self.foxpro_io_plugin = foxpro_io_plugin
-    
+
     def get_subdirectories(self, path, returned_path_list):
         """
         Returns a list with paths of directories that are deeper than the one provided
-        
+
         @param path: The root path from which all subdirectories will be retrieved
-        @param returned_path_list: The list where all the paths will be stored. Useful for recursive calls. 
+        @param returned_path_list: The list where all the paths will be stored. Useful for recursive calls.
         @return: A list with all the subdirectories of the provided path (to deepest node)
         """
         dir_list = os.listdir(path)
@@ -69,7 +69,7 @@ class FoxProInputOutput:
         """
         Connects to a database in the given path, by discovering all the database files in it and in all it's subdirectories,
         in order to then provide a transparent access to them
-        
+
         @param options: Map with the connection options
         """
         database_path = options["database_path"]
@@ -84,39 +84,39 @@ class FoxProInputOutput:
                 if not stat.S_ISDIR(mode) and fname[-4:] == DBF_EXTENSION:
                     table_list.append(fname[:-4])
                     table_path_map[fname[:-4]] = path + SLASH
-        
+
         return FoxProInputOutputConnection(table_path_map)
 
 # @todo: comment this
-class FoxProInputOutputConnection : 
-    
-    def __init__(self, table_path_map):        
+class FoxProInputOutputConnection :
+
+    def __init__(self, table_path_map):
         # dictionary that relates table names with the path they are stored in
         self.table_path_map = table_path_map
-        
+
     def query(self, table_name, column_list = []):
         """
         Returns a set of results from the database.
-        
+
         @param table_name: Name of the table where one wants to get data from.
         @param column_list: List of columns where one wants to get data from.
         @return: Results of the database query in a dictionary indexed by column name.
         """
         returned_results = []
-        
-        if len(column_list): 
+
+        if len(column_list):
             table_path = self.table_path_map[table_name]
             connection_string = CONNECTION_STRING % (table_path)
             odbc_connection = odbc.odbc(connection_string)
             cursor = odbc_connection.cursor()
-            
+
             column_list_string = ""
             for column in column_list[:-1]:
                 column_list_string += column + ","
             column_list_string += column_list[-1]
             cursor.execute("SELECT " + column_list_string + " FROM " + table_name)
             results = cursor.fetchall()
-           
+
             for result in results:
                 result_map = {}
                 for x in range(len(result)):
@@ -131,13 +131,13 @@ class FoxProInputOutputConnection :
                     else:
                         result_map[column_list[x]] = result[x]
                 returned_results.append(result_map)
-                
+
         return returned_results
-    
+
     def close(self):
         """
         Closes the connection
         """
         pass
 
-    
+
