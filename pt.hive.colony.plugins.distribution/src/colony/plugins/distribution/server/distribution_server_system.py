@@ -48,7 +48,7 @@ class DistributionServer:
     def __init__(self, distribution_server_plugin):
         """
         Constructor of the class.
-        
+
         @type distribution_server_plugin: DistributionServerPlugin
         @param distribution_server_plugin: The distribution server plugin.
         """
@@ -58,7 +58,7 @@ class DistributionServer:
     def activate_server(self, plugin = None, properties = {}):
         """
         Activates the distribution server.
-        
+
         @type plugin: Plugin
         @param plugin: The plugin containing the distribution server to be activated.
         @type properties: Dictionary
@@ -72,7 +72,7 @@ class DistributionServer:
             # retrieves the distribution server adapter plugins
             distribution_server_adapter_plugins = self.distribution_server_plugin.distribution_server_adapter_plugins
 
-        # retrieves the resource manager plugin 
+        # retrieves the resource manager plugin
         resource_manager_plugin = self.distribution_server_plugin.resource_manager_plugin
 
         # iterates over all the distribution server adapter plugins
@@ -89,7 +89,7 @@ class DistributionServer:
     def deactivate_server(self, plugin = None, properties = {}):
         """
         Deactivates the distribution server.
-        
+
         @type plugin: Plugin
         @param plugin: The plugin containing the distribution server to be deactivated.
         @type properties: Dictionary
@@ -103,7 +103,7 @@ class DistributionServer:
             # retrieves the distribution server adapter plugins
             distribution_server_adapter_plugins = self.distribution_server_plugin.distribution_server_adapter_plugins
 
-        # retrieves the resource manager plugin 
+        # retrieves the resource manager plugin
         resource_manager_plugin = self.distribution_server_plugin.resource_manager_plugin
 
         # iterates over all the distribution server adapter plugins
@@ -120,7 +120,7 @@ class DistributionServer:
     def merge_properties_resources(self, properties, resources):
         """
         Merges the map containing properties and the given list of resources.
-        
+
         @type properties: Dictionary
         @param properties: The properties map to be merged with the given resources.
         @type resources: List

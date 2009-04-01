@@ -68,7 +68,7 @@ class DistributionBonjourServer:
     def __init__(self, distribution_bonjour_server_plugin):
         """
         Constructor of the class.
-        
+
         @type distribution_bonjour_server_plugin: DistributionBonjourServerPlugin
         @param distribution_bonjour_server_plugin: The distribution bonjour server plugin.
         """
@@ -78,7 +78,7 @@ class DistributionBonjourServer:
     def get_distribution_server_type(self):
         """
         Retrieves the distribution server type.
-        
+
         @rtype: String
         @return: The distribution server type.
         """
@@ -88,7 +88,7 @@ class DistributionBonjourServer:
     def activate_server(self, properties):
         """
         Activates the distribution bonjour server.
-        
+
         @type properties: Dictionary
         @param properties: The properties for the bonjour server activation.
         """
@@ -163,7 +163,7 @@ class DistributionBonjourServer:
     def deactivate_server(self, properties):
         """
         Deactivates the distribution bonjour server.
-        
+
         @type properties: Dictionary
         @param properties: The properties for the bonjour server deactivation.
         """

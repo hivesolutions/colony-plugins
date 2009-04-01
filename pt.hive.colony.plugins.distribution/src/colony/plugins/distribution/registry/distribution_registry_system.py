@@ -54,7 +54,7 @@ class DistributionRegistry:
     def __init__(self, distribution_registry_plugin):
         """
         Constructor of the class.
-        
+
         @type distribution_registry_plugin: DistributionRegistryPlugin
         @param distribution_registry_plugin: The distribution registry plugin.
         """
@@ -67,7 +67,7 @@ class DistributionRegistry:
     def load_registry(self, properties):
         """
         Loads the registry with the given properties.
-        
+
         @type properties: List
         @param properties: The list of properties for the load of the registry.
         """
@@ -77,7 +77,7 @@ class DistributionRegistry:
     def register_entry(self, hostname, name, type, endpoints, metadata):
         """
         Registers an entry in the registry.
-        
+
         @type hostname: String
         @param hostname: The hostname.
         @type name: String
@@ -114,7 +114,7 @@ class DistributionRegistry:
     def unregister_entry(self, hostname, name):
         """
         Unregisters an entry from the registry.
-        
+
         @type hostname: String
         @param hostname: The hostname.
         @type name: String
@@ -138,7 +138,7 @@ class DistributionRegistry:
     def get_all_registry_entries(self):
         """
         Retrieves all the available registry entries.
-        
+
         @rtype: List
         @return: All the available registry entries.
         """

@@ -56,7 +56,7 @@ class DistributionRegistryServer:
     def __init__(self, distribution_registry_server_plugin):
         """
         Constructor of the class.
-        
+
         @type distribution_registry_server_plugin: DistributionRegistryServerPlugin
         @param distribution_registry_server_plugin: The distribution registry server plugin.
         """
@@ -66,7 +66,7 @@ class DistributionRegistryServer:
     def get_distribution_server_type(self):
         """
         Retrieves the distribution server type.
-        
+
         @rtype: String
         @return: The distribution server type.
         """
@@ -76,7 +76,7 @@ class DistributionRegistryServer:
     def activate_server(self, properties):
         """
         Activates the distribution registry server.
-        
+
         @type properties: Dictionary
         @param properties: The properties for the registry server activation.
         """
@@ -98,7 +98,7 @@ class DistributionRegistryServer:
     def deactivate_server(self, properties):
         """
         Deactivates the distribution registry server.
-        
+
         @type properties: Dictionary
         @param properties: The properties for the registry server deactivation.
         """
@@ -213,12 +213,12 @@ class DistributionRegistryServer:
     def get_registry_client(self, properties):
         """
         Retrieves the registry client for the given properties.
-        
+
         @type properties: Dictionary
         @param properties: The properties to retrieve the registry client.
-        @rtype: 
+        @rtype:
         """
-        
+
         # retrieves the distribution helper plugins list
         distribution_helper_plugins = self.distribution_registry_server_plugin.distribution_helper_plugins
 
@@ -257,7 +257,7 @@ class DistributionRegistryServer:
     def get_available_endpoints(self):
         """
         Retrieves the list of available endpoints.
-        
+
         @rtype: List
         @return: The list of available endpoints.
         """

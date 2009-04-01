@@ -51,7 +51,7 @@ class DistributionRegistryClient:
     def __init__(self, distribution_registry_client_plugin):
         """
         Constructor of the class.
-        
+
         @type distribution_registry_client_plugin: DistributionRegistryClientPlugin
         @param distribution_registry_client_plugin: The distribution registry client plugin.
         """
@@ -121,10 +121,10 @@ class DistributionRegistryClient:
     def get_registry_client(self, properties):
         """
         Retrieves the registry client for the given properties.
-        
+
         @type properties: Dictionary
         @param properties: The properties to retrieve the registry client.
-        @rtype: 
+        @rtype:
         """
 
         # retrieves the distribution helper plugins list
@@ -188,7 +188,7 @@ class RegistryRemoteReference:
     def __init__(self, plugin_manager_uid = "none", service_type = "none", hostname = "none", port = None, registry_entry = None):
         """
         Constructor of the class.
-        
+
         @type plugin_manager_uid: String
         @param plugin_manager_uid: The plugin manager unique id.
         @type service_type: String

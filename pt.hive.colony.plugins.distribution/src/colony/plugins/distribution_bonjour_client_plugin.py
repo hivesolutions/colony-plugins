@@ -78,7 +78,7 @@ class DistributionBonjourClientPlugin(colony.plugins.plugin_system.Plugin):
 
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
-        self.distribution_bonjour_client.stop_distribution_bonjour_client()    
+        self.distribution_bonjour_client.stop_distribution_bonjour_client()
 
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)

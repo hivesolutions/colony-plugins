@@ -48,7 +48,7 @@ class DistributionClient:
     def __init__(self, distribution_client_plugin):
         """
         Constructor of the class.
-        
+
         @type distribution_client_plugin: DistributionClientPlugin
         @param distribution_client_plugin: The distribution client plugin.
         """
@@ -58,7 +58,7 @@ class DistributionClient:
     def get_remote_instance_references(self, properties = {}):
         """
         Retrieves all the available remote instance references.
-        
+
         @type properties: Dictionary
         @param properties: The properties for the retrieval of all the available remote instance references.
         @rtype: List
@@ -71,7 +71,7 @@ class DistributionClient:
         # retrieves the distribution client adapter plugins
         distribution_client_adapter_plugins = self.distribution_client_plugin.distribution_client_adapter_plugins
 
-        # retrieves the resource manager plugin 
+        # retrieves the resource manager plugin
         resource_manager_plugin = self.distribution_client_plugin.resource_manager_plugin
 
         # iterates over all the distribution client adapter plugins
@@ -96,7 +96,7 @@ class DistributionClient:
     def get_remote_client_references(self):
         """
         Retrieves all the available remote client references.
-        
+
         @rtype: List
         @return: All the available remote client references.
         """
@@ -120,7 +120,7 @@ class DistributionClient:
     def get_remote_client_references_by_host(self):
         """
         Retrieves all the available remote client references by host.
-        
+
         @rtype: Dictionary
         @return: All the available remote client references by host.
         """
@@ -150,7 +150,7 @@ class DistributionClient:
     def get_remote_plugin_reference(self):
         """
         Retrieves the first available plugin reference.
-        
+
         @rtype: PluginReference
         @return: The first available plugin referecence.
         """
@@ -160,7 +160,7 @@ class DistributionClient:
     def create_client(self, remote_reference):
         """
         Creates a remote client from a remote reference.
-        
+
         @type remote_reference: RemoteReference
         @param remote_reference: The remote reference to retrieve the remote client.
         @rtype: RemoteClient
@@ -186,7 +186,7 @@ class DistributionClient:
     def merge_properties_resources(self, properties, resources):
         """
         Merges the map containing properties and the given list of resources.
-        
+
         @type properties: Dictionary
         @param properties: The properties map to be merged with the given resources.
         @type resources: List

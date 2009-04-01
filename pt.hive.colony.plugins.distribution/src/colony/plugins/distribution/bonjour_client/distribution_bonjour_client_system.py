@@ -57,7 +57,7 @@ class DistributionBonjourClient:
     def __init__(self, distribution_bonjour_client_plugin):
         """
         Constructor of the class.
-        
+
         @type distribution_bonjour_client_plugin: DistributionBonjourClientPlugin
         @param distribution_bonjour_client_plugin: The distribution bonjour client plugin.
         """
@@ -149,7 +149,7 @@ class DistributionBonjourClient:
         """
         Parses the bonjour service reference, retrieving a tuple with the
         plugin manager unique id and the service type.
-        
+
         @type bonjour_service_reference_string: String
         @param bonjour_service_reference_string: The service reference string.
         @rtype: tuple
@@ -178,7 +178,7 @@ class DistributionBonjourClient:
         # in case there are bonjour service properties defined
         if bonjour_service_properties:
             # splits the bonjour service properties
-            bonjour_service_properties_splitted = bonjour_service_properties.split(":")   
+            bonjour_service_properties_splitted = bonjour_service_properties.split(":")
 
             # iterates over all the splitted bonjour service properties
             for bonjour_service_property_splitted in bonjour_service_properties_splitted:
@@ -219,7 +219,7 @@ class BonjourRemoteReference:
     def __init__(self, plugin_manager_uid = "none", service_type = "none", hostname = "none", port = None, bonjour_service = None):
         """
         Constructor of the class.
-        
+
         @type plugin_manager_uid: String
         @param plugin_manager_uid: The plugin manager unique id.
         @type service_type: String
