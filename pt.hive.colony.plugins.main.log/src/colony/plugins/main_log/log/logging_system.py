@@ -41,7 +41,7 @@ import logging
 
 #@todo: review and comment this file
 class Logger:
-    
+
     name = "none"
     handler = None
 
@@ -65,13 +65,13 @@ class Handler:
 class DefaultLogger(Logger):
 
     logger = None
-    
+
     handlers_list = []
 
     def __init__(self, name):
         Logger.__init__(self, name)
         self.logger = logging.getLogger(name)
-        
+
         self.handlers_list = []
 
     def set_handler(self, handler):
