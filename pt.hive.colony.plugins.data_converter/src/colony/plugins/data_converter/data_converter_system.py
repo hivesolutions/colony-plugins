@@ -45,8 +45,9 @@ class InternalStructure:
     over which the output adapter later acts to convert the data to the target medium.
     """
     
-    exclusions = ["exclusions", "__doc__", "__module__"]
-
+    exclusions = ["exclusions", "__doc__", "__module__", "object_id"]
+    object_id = 0
+    
     # @todo: comment this
     def get_entity_names(self):
         entity_names = [value for value in dir(self) if not value in self.exclusions and not type(getattr(self, value)) == types.MethodType]
@@ -134,7 +135,8 @@ class InternalStructure:
         if not self.has_entities(entity_name):
             setattr(self, entity_name, [])
         entities = getattr(self, entity_name)
-        entity_structure = InternalEntity()
+        self.object_id += 1
+        entity_structure = InternalEntity(self.object_id)
         entities.append(entity_structure)
         entity_structure._id = len(entities) - 1
         entity_structure._name = entity_name
@@ -197,7 +199,14 @@ class InternalEntity:
     Represents an entity in the internal structure.
     """
     
-    exclusions = ["exclusions", "_id", "_name", "__doc__", "__module__"]
+    exclusions = ["exclusions", "_id", "_name", "__doc__", "__module__", "object_id"]
+    
+    # @todo: comment this
+    object_id = None
+    
+    # @todo: comment this
+    def __init__(self, object_id):
+        self.object_id = object_id
     
     def has_field(self, field_name):
         """

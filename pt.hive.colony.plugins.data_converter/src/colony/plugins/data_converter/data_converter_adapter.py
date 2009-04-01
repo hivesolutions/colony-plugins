@@ -119,12 +119,46 @@ class DataConverterAdapter:
         # notify all data converter observers that the internal structure changed
         for data_converter_observer_plugin in self.data_converter_plugin.data_converter_observer_plugins:
             data_converter_observer_plugin.notify_data_conversion_status({"internal_structure" : internal_structure})
-            
+
         self.convert_omni(internal_structure)
+
+    def convert_internal_entity_name_to_omni_name(self, internal_entity_name):
+        map = {"supplier_person" : "SupplierCompany"}
+        if internal_entity_name in map:
+            return map[internal_entity_name]
+        else:
+            new_name = ""
+            internal_entity_name_tokens = internal_entity_name.split("_")
+            for token in internal_entity_name_tokens:
+                new_name += token.capitalize()
+            return new_name
+
+    def associate_entities(self, entity_manager, internal_entities, entity, entity_attribute_name):
+        entity_attribute = getattr(entity, entity_attribute_name)
+        entity_name = entity.__class__.__name__
         
-        return internal_structure
+        # @todo: this is a hack for dealing with garbage data
+        if internal_entities:
+            for internal_entity in internal_entities:
+               # @todo: this is a hack for dealing with garbage data
+                if internal_entity:
+                    internal_entity_name = internal_entity._name
+                    internal_entity_class_name = self.convert_internal_entity_name_to_omni_name(internal_entity_name)
+                    internal_entity_class = entity_manager.get_entity_class(internal_entity_class_name)
+                    internal_entity_entities = entity_manager.find_all(internal_entity_class, internal_entity.object_id, "object_id")
+                    if len(internal_entity_entities) == 1:
+                        internal_entity_entity = internal_entity_entities[0]
+                        print "Associating " + entity_name + " with object id = " + str(entity.object_id) + " to " + internal_entity_class_name + " with object id = " + str(internal_entity.object_id)
+                        if type(entity_attribute) == types.ListType:
+                            entity_attribute.append(internal_entity_entity)
+                        else:
+                            entity_attribute = internal_entity_entity
+                            break
+                    else:
+                        print "[WARNING] Failed to associate " + entity_name + " with object id = " + str(entity.object_id) + " to " + internal_entity_class_name + " with object id = " + str(internal_entity.object_id)
+
+        setattr(entity, entity_attribute_name, entity_attribute)
     
-    # @todo: refactor the code below
     def convert_omni(self, internal_structure):
         # retrieves the entity manager plugin
         entity_manager_plugin = self.data_converter_plugin.entity_manager_plugin
@@ -147,27 +181,20 @@ class DataConverterAdapter:
         # loads the entity manager
         entity_manager.load_entity_manager()
 
-        # creates a new transaction
-    
-        self.object_id = 1
-      
-        # users and access
-        self.convert_users(internal_structure, entity_manager)
-        
         # organizational hierarchy
         self.convert_system_company(internal_structure, entity_manager)
-        self.convert_system_settings(internal_structure, entity_manager)
-        self.convert_currency(internal_structure, entity_manager)
-        self.convert_language(internal_structure, entity_manager)
         self.convert_store(internal_structure, entity_manager)
         self.convert_system_company_employee(internal_structure, entity_manager)
+        
+        # users and access
+        self.convert_users(internal_structure, entity_manager)
         
         # misc
         self.convert_reason(internal_structure, entity_manager)
         self.convert_location(internal_structure, entity_manager)
         
-        # @todo: float bug
-        #self.convert_vat_class(internal_structure, entity_manager) 
+#       # @todo: float bug
+#       #self.convert_vat_class(internal_structure, entity_manager) 
         
         # customer
         self.convert_customer_company(internal_structure, entity_manager)
@@ -198,66 +225,228 @@ class DataConverterAdapter:
         
         # catalog
         self.convert_organizational_merchandise_hierarchy_tree_node_vat_class(internal_structure, entity_manager)
-        # @todo: create this entity: self.convert_organizational_hierarchy_merchandise_supplier(internal_structure, entity_manager)
-        self.convert_merchandise_contactable_organizational_hierarchy_tree_node(internal_structure, entity_manager)
-        
-        # stock adjustments
-        self.convert_stock_adjustment(internal_structure, entity_manager)
-        self.convert_stock_adjustment_merchandise_hierarchy_tree_node(internal_structure, entity_manager)
-        
-        # consignments
-        self.convert_consignment(internal_structure, entity_manager)
-        # @todo: create this entity and associate it with the consignment: self.convert_consignation_slip(internal_structure, entity_manager)
-        self.convert_consignment_merchandise_hierarchy_tree_node(internal_structure, entity_manager)
-        
-        # purchases
-        self.convert_purchase(internal_structure, entity_manager)
-        self.convert_purchase_merchandise_hierarchy_tree_node(internal_structure, entity_manager)
-        
+
+#        # @todo: create this entity: self.convert_organizational_hierarchy_merchandise_supplier(internal_structure, entity_manager)
+#        self.convert_merchandise_contactable_organizational_hierarchy_tree_node(internal_structure, entity_manager)
+#        
+#        # stock adjustments
+#        self.convert_stock_adjustment(internal_structure, entity_manager)
+#        self.convert_stock_adjustment_merchandise_hierarchy_tree_node(internal_structure, entity_manager)
+#        
+#        # consignments
+#        self.convert_consignment(internal_structure, entity_manager)
+#        # @todo: create this entity and associate it with the consignment: self.convert_consignation_slip(internal_structure, entity_manager)
+#        self.convert_consignment_merchandise_hierarchy_tree_node(internal_structure, entity_manager)
+#        
+#        # purchases
+#        self.convert_purchase(internal_structure, entity_manager)
+#        self.convert_purchase_merchandise_hierarchy_tree_node(internal_structure, entity_manager)
+#        
         # sales
         self.convert_payment_terms(internal_structure, entity_manager)
-        self.convert_sale_transaction(internal_structure, entity_manager)
-        self.convert_sale_merchandise_hierarchy_tree_node_contactable_organizational_hierarchy_tree_node(internal_structure, entity_manager)
-        self.convert_shipment(internal_structure, entity_manager)
-        
-        # sales and purchases documents
-        self.convert_invoice(internal_structure, entity_manager)
-        # @todo: create this entity and associate it with the sale: self.convert_money_sale(internal_structure, entity_manager)
-        self.convert_receipt(internal_structure, entity_manager)
-        
-        self.convert_supplier_return(internal_structure, entity_manager)
-        self.convert_customer_return(internal_structure, entity_manager)
-        # @todo: create this entity and associate it with the consignment, return_requester, supplier and return_lines: self.convert_consignment_return(internal_structure, entity_manager)
-        self.convert_merchandise_hierarchy_tree_node_return(internal_structure, entity_manager)
-        self.convert_credit_note(internal_structure, entity_manager)
-        
+#        self.convert_sale_transaction(internal_structure, entity_manager)
+#        self.convert_sale_merchandise_hierarchy_tree_node_contactable_organizational_hierarchy_tree_node(internal_structure, entity_manager)
+#        self.convert_shipment(internal_structure, entity_manager)
+#        
+#        # sales and purchases documents
+#        self.convert_invoice(internal_structure, entity_manager)
+#        # @todo: create this entity and associate it with the sale: self.convert_money_sale(internal_structure, entity_manager)
+#        self.convert_receipt(internal_structure, entity_manager)
+#        
+#        self.convert_supplier_return(internal_structure, entity_manager)
+#        self.convert_customer_return(internal_structure, entity_manager)
+#        # @todo: create this entity and associate it with the consignment, return_requester, supplier and return_lines: self.convert_consignment_return(internal_structure, entity_manager)
+#        self.convert_merchandise_hierarchy_tree_node_return(internal_structure, entity_manager)
+#        self.convert_credit_note(internal_structure, entity_manager)
+     
         # payment
         self.convert_card_payment(internal_structure, entity_manager)
         self.convert_cash_payment(internal_structure, entity_manager)
         self.convert_check_payment(internal_structure, entity_manager)
         self.convert_credit_note_payment(internal_structure, entity_manager)
-        # @todo: create this entity: self.convert_postdated_check_payment(internal_structure, entity_manager)
-        # @todo: create this entity: self.convert_gift_certificate_payment(internal_structure, entity_manager)
-        self.convert_gift_certificate(internal_structure, entity_manager)
-        self.convert_credit_contract(internal_structure, entity_manager)
-        self.convert_credit_payment(internal_structure, entity_manager)
-        self.convert_payment(internal_structure, entity_manager)
-        self.convert_payment_line(internal_structure, entity_manager)
+
+#        # @todo: create this entity: self.convert_postdated_check_payment(internal_structure, entity_manager)
+#        # @todo: create this entity: self.convert_gift_certificate_payment(internal_structure, entity_manager)
+#        self.convert_gift_certificate(internal_structure, entity_manager)
+#        self.convert_credit_contract(internal_structure, entity_manager)
+#        self.convert_credit_payment(internal_structure, entity_manager)
+#        self.convert_payment(internal_structure, entity_manager)
+#        self.convert_payment_line(internal_structure, entity_manager)
+#        
+#        # transfers
+#        self.convert_transfer(internal_structure, entity_manager)
+#        self.convert_transfer_merchandise_hierarchy_tree_node(internal_structure, entity_manager)
+#        
         
-        # transfers
-        self.convert_transfer(internal_structure, entity_manager)
-        self.convert_transfer_merchandise_hierarchy_tree_node(internal_structure, entity_manager)
+    def convert_system_company(self, internal_structure, entity_manager):
+        print "###### CONVERTING SYSTEM COMPANIES ######"
         
-    # @todo: refactor this code
+        # @todo: set system company as root node
+        entity_manager.create_transaction("system_company_transaction")
+                
+        # create merchandise hierarchy tree root node
+        merchandise_hierarchy_tree_node_class = entity_manager.get_entity_class("MerchandiseHierarchyTreeNode")
+        merchandise_hierarchy_tree_node_entity = merchandise_hierarchy_tree_node_class()
+        internal_structure.object_id += 1
+        merchandise_hierarchy_tree_node_entity.object_id = internal_structure.object_id
+        print "Saving MerchandiseHierarchyTree root node with object id = " + str(merchandise_hierarchy_tree_node_entity.object_id)
+        entity_manager.save(merchandise_hierarchy_tree_node_entity)
+        
+        # create organizational hierarchy tree root node
+        organizational_hierarchy_tree_node_class = entity_manager.get_entity_class("OrganizationalHierarchyTreeNode")
+        organizational_hierarchy_tree_root_node_entity = organizational_hierarchy_tree_node_class()
+        internal_structure.object_id += 1
+        organizational_hierarchy_tree_root_node_entity.object_id = internal_structure.object_id
+        print "Saving OrganizationalHierarchyTree root node with object id = " + str(organizational_hierarchy_tree_root_node_entity.object_id)
+        entity_manager.save(organizational_hierarchy_tree_root_node_entity)
+        
+        # create supplier hierarchy tree root node
+        organizational_hierarchy_tree_node_class = entity_manager.get_entity_class("OrganizationalHierarchyTreeNode")
+        supplier_hierarchy_tree_node_entity = organizational_hierarchy_tree_node_class()
+        internal_structure.object_id += 1
+        supplier_hierarchy_tree_node_entity.object_id = internal_structure.object_id
+        print "Saving SupplierHierarchyTree root node with object id = " + str(organizational_hierarchy_tree_root_node_entity.object_id)
+        entity_manager.save(supplier_hierarchy_tree_node_entity)
+        
+        # create customer hierarchy tree root node
+        organizational_hierarchy_tree_node_class = entity_manager.get_entity_class("OrganizationalHierarchyTreeNode")
+        customer_hierarchy_tree_node_entity = organizational_hierarchy_tree_node_class()
+        internal_structure.object_id += 1
+        customer_hierarchy_tree_node_entity.object_id = internal_structure.object_id
+        print "Saving CustomerHierarchyTree root node with object id = " + str(customer_hierarchy_tree_node_entity.object_id)
+        entity_manager.save(customer_hierarchy_tree_node_entity)
+        
+        # create organizational hierarchy tree
+        organizational_hierarchy_tree_class = entity_manager.get_entity_class("OrganizationalHierarchyTree")
+        organizational_hierarchy_tree_entity = organizational_hierarchy_tree_class()
+        internal_structure.object_id += 1
+        organizational_hierarchy_tree_entity.object_id = internal_structure.object_id
+        organizational_hierarchy_tree_entity.root_node = organizational_hierarchy_tree_root_node_entity
+        print "Saving OrganizationalHierarchyTree with object id = " + str(organizational_hierarchy_tree_entity.object_id)
+        entity_manager.save(organizational_hierarchy_tree_entity)
+        
+        # create merchandise hierarchy tree
+        merchandise_hierarchy_tree_class = entity_manager.get_entity_class("MerchandiseHierarchyTree")
+        merchandise_hierarchy_tree_entity = merchandise_hierarchy_tree_class()
+        internal_structure.object_id += 1
+        merchandise_hierarchy_tree_entity.object_id = internal_structure.object_id
+        merchandise_hierarchy_tree_entity.root_node = merchandise_hierarchy_tree_node_entity
+        print "Saving MerchandiseHierarchyTree with object id = " + str(merchandise_hierarchy_tree_entity.object_id)
+        entity_manager.save(merchandise_hierarchy_tree_entity)
+        
+        # create supplier hierarchy tree
+        supplier_hierarchy_tree_class = entity_manager.get_entity_class("SupplierHierarchyTree")
+        supplier_hierarchy_tree_entity = supplier_hierarchy_tree_class()
+        internal_structure.object_id += 1
+        supplier_hierarchy_tree_entity.object_id = internal_structure.object_id
+        supplier_hierarchy_tree_entity.root_node = supplier_hierarchy_tree_node_entity
+        print "Saving SupplierHierarchyTree with object id = " + str(supplier_hierarchy_tree_entity.object_id)
+        entity_manager.save(supplier_hierarchy_tree_entity)
+        
+        # create customer hierarchy tree
+        customer_hierarchy_tree_class = entity_manager.get_entity_class("CustomerHierarchyTree")
+        customer_hierarchy_tree_entity = customer_hierarchy_tree_class()
+        internal_structure.object_id += 1
+        customer_hierarchy_tree_entity.object_id = internal_structure.object_id
+        customer_hierarchy_tree_entity.root_node = customer_hierarchy_tree_node_entity
+        print "Saving CustomerHierarchyTree with object id = " + str(customer_hierarchy_tree_entity.object_id)
+        entity_manager.save(customer_hierarchy_tree_entity)
+
+        # create the euro currency
+        currency_class = entity_manager.get_entity_class("Currency")
+        currency_entity = currency_class()
+        currency_entity.name = "euro"
+        internal_structure.object_id += 1
+        currency_entity.object_id = internal_structure.object_id
+        print "Saving Currency with object id = " + str(currency_entity.object_id)
+        entity_manager.save(currency_entity)
+        
+        # create the portuguese language
+        language_class = entity_manager.get_entity_class("Language")
+        language_entity = language_class()
+        language_entity.name = "portugues"
+        internal_structure.object_id += 1
+        language_entity.object_id = internal_structure.object_id
+        print "Saving Language with object id = " + str(language_entity.object_id)
+        entity_manager.save(language_entity)
+
+        # handler used to associate the system company with the organizational hierarchy tree as root node
+        def system_company_handler(adapter, internal_structure, entity_manager, internal_structure_entity_name, entity_name, internal_entity, entity):
+           # retrieve the portuguese language entity
+           language_class = entity_manager.get_entity_class("Language")
+           portuguese_language_entity = entity_manager.find_all(language_class, "portugues", "name")[0]
+            
+           # retrieve the euro currency entity
+           currency_class = entity_manager.get_entity_class("Currency")
+           euro_currency_entity = entity_manager.find_all(currency_class, "euro", "name")[0]
+            
+#          # create the system settings entity
+#          system_settings_class = entity_manager.get_entity_class("SystemSettings")
+#          system_settings_entity = system_settings_class()
+#          internal_structure.object_id += 1
+#          system_settings_entity.object_id = internal_structure.object_id
+#          system_settings_entity.preferred_currency = euro_currency_entity
+#          system_settings_entity.preferred_language = portuguese_language_entity
+#          system_settings_entity.system_company = entity
+#          entity_manager.save(system_settings_entity)
+          
+           # add the system company to the organizational hierarchy tree's root node
+           organizational_hierarchy_tree_class = entity_manager.get_entity_class("OrganizationalHierarchyTree")
+           organizational_hierarchy_tree_entity = entity_manager._find_all(organizational_hierarchy_tree_class)[0]
+           entity.parent_nodes = [organizational_hierarchy_tree_entity.root_node]
+           print "Associating SystemCompany with object id = " + str(entity.object_id) + " to OrganizationalHierarchyTree root node with object id = " + str(organizational_hierarchy_tree_entity.root_node.object_id)
+
+        self.convert_entity(internal_structure, entity_manager, "system_company", "SystemCompany", {"status" : 0}, [system_company_handler])
+        entity_manager.commit_transaction("system_company_transaction")
+
+    def convert_store(self, internal_structure, entity_manager):
+        print "###### CONVERTING STORES ######"
+        
+        entity_manager.create_transaction("store_transaction")
+        
+        # handler used to associate the store with the system company
+        def store_handler(adapter, internal_structure, entity_manager, internal_structure_entity_name, entity_name, internal_entity, entity):
+            system_companies = internal_structure.get_entities("system_company")
+            
+            # @todo: remove this once bidirectional relations exist in the internal structure
+            for system_company in system_companies:
+                for child_node in system_company.child_nodes:
+                    if child_node.object_id == entity.object_id:
+                        adapter.associate_entities(entity_manager, [child_node], entity, "parent_nodes")
+                        break
+
+        self.convert_entity(internal_structure, entity_manager, "store", "Store", {"status" : 0}, [store_handler])
+        entity_manager.commit_transaction("store_transaction")
+
+    def convert_system_company_employee(self, internal_structure, entity_manager):
+        print "###### CONVERTING SYSTEM COMPANY EMPLOYEES ######"
+        
+        entity_manager.create_transaction("system_company_employee_transaction")
+
+        def system_company_employee_handler(adapter, internal_structure, entity_manager, internal_structure_entity_name, entity_name, internal_entity, entity):
+            if hasattr(internal_entity, "parent_nodes"):
+                adapter.associate_entities(entity_manager, internal_entity.parent_nodes, entity, "parent_nodes")
+            else:
+                organizational_hierarchy_tree_class = entity_manager.get_entity_class("OrganizationalHierarchyTree")
+                organizational_hierarchy_tree_entity = entity_manager._find_all(organizational_hierarchy_tree_class)[0]
+                entity.parent_nodes = [organizational_hierarchy_tree_entity.root_node]
+                print "Associating Employee with object id = " + str(entity.object_id) + " to OrganizationalHierarchyTree root node with object id = " + str(organizational_hierarchy_tree_entity.root_node.object_id)
+
+        self.convert_entity(internal_structure, entity_manager, "system_company_employee", "Employee", {}, [system_company_employee_handler])
+        entity_manager.commit_transaction("system_company_employee_transaction")
+
     def convert_users(self, internal_structure, entity_manager):
+        print "###### CONVERTING USERS ######"
+        
         entity_manager.create_transaction("users_transaction")
         
         # create the users group
         user_group_class = entity_manager.get_entity_class("UserGroup")
         user_group_users_entity = user_group_class()
         user_group_users_entity.description = "The users user group"
-        self.object_id += 1
-        user_group_users_entity.object_id = self.object_id
+        internal_structure.object_id += 1
+        user_group_users_entity.object_id = internal_structure.object_id
+        print "Saving UserGroup with object id = " + str(internal_structure.object_id)
         entity_manager.save(user_group_users_entity)
         
         # handler used to associate the user with its profile
@@ -268,88 +457,345 @@ class DataConverterAdapter:
             user_profile_entity = profile_class()
             user_profile_entity.user_groups = [user_group_users_entity]
             user_profile_entity.user = entity
-            adapter.object_id += 1
-            user_profile_entity.object_id = adapter.object_id
+            internal_structure.object_id += 1
+            user_profile_entity.object_id = internal_structure.object_id
+            print "Associating user group with object id = " + str(user_group_users_entity.object_id) + " to user profile with object id = " + str(user_profile_entity.object_id)
+            print "Saving user profile with object id = " + str(user_profile_entity.object_id)
             entity_manager.save(user_profile_entity)
             entity.profiles = [user_profile_entity]
+            if hasattr(internal_entity, "system_company_employee"):
+                employee_class = entity_manager.get_entity_class("Employee")
+                system_company_employee_entities = entity_manager.find_all(employee_class, internal_entity.system_company_employee.object_id, "object_id")
+                if len(system_company_employee_entities) == 1:
+                    entity.person = system_company_employee_entities[0]
+                    print "Associating Employee with object id = " + str(entity.person.object_id) + " to User with object id = " + str(entity.object_id)
             
         self.convert_entity(internal_structure, entity_manager, "user", "User", {"password_hash" : lambda value: base64.b64encode(md5.new(value).digest()),
-                                             "password_hash_type" : "md5",
-                                             "secret_answer_hash" : lambda value: base64.b64encode(md5.new(value).digest()),
-                                             "secret_answer_hash_type" : "md5",
-                                             "status" : 0}, [user_handler])
-        
+                                                                                 "password_hash_type" : "md5",
+                                                                                 "secret_answer_hash" : lambda value: base64.b64encode(md5.new(value).digest()),
+                                                                                 "secret_answer_hash_type" : "md5",
+                                                                                 "status" : 0}, [user_handler])
+
         entity_manager.commit_transaction("users_transaction")
+
+    def convert_reason(self, internal_structure, entity_manager):
+        print "###### CONVERTING REASONS ######"
         
-    # @todo: refactor this code
+        entity_manager.create_transaction("reason_transaction")
+        self.convert_entity(internal_structure, entity_manager, "reason", "Reason")
+        entity_manager.commit_transaction("reason_transaction")
+
+    def convert_location(self, internal_structure, entity_manager):
+        print "###### CONVERTING LOCATIONS ######"
+        
+        entity_manager.create_transaction("location_transaction")
+
+        def location_handler(adapter, internal_structure, entity_manager, internal_structure_entity_name, entity_name, internal_entity, entity):
+            customer_hierarchy_tree_class = entity_manager.get_entity_class("CustomerHierarchyTree")
+            customer_hierarchy_tree_entity = entity_manager._find_all(customer_hierarchy_tree_class)[0]
+            supplier_hierarchy_tree_class = entity_manager.get_entity_class("SupplierHierarchyTree")
+            supplier_hierarchy_tree_entity = entity_manager._find_all(customer_hierarchy_tree_class)[0]
+            entity.parent_nodes = [customer_hierarchy_tree_entity.root_node, supplier_hierarchy_tree_entity.root_node]
+            print "Associating Location with object id = " + str(entity.object_id) + " to CustomerHierarchyTree root node with object id = " + str(customer_hierarchy_tree_entity.root_node.object_id) + " and to supplier hierarchy tree root node with object id = " + str(supplier_hierarchy_tree_entity.root_node.object_id)
+            
+        self.convert_entity(internal_structure, entity_manager, "location", "Location", {}, [location_handler])
+        entity_manager.commit_transaction("location_transaction")
+
+    def convert_vat_class(self, internal_structure, entity_manager):
+        # @todo: associate with system_company as contactable_organizational_hierarchy_tree_node
+        entity_manager.create_transaction("vat_class_transaction")
+        self.convert_entity(internal_structure, entity_manager, "vat_class", "VatClass")
+        entity_manager.commit_transaction("vat_class_transaction")
+
     def convert_customer_person(self, internal_structure, entity_manager):
-        # associate with customer hierarchy tree root node as child/parent
+        print "###### CONVERTING CUSTOMER PERSONS ######"
+        
         entity_manager.create_transaction("customer_person_transaction")
-        self.convert_entity(internal_structure, entity_manager, "customer_person", "CustomerPerson")
+                
+        # handler used to associate the customer person with the customer hierarchy tree's root node
+        def customer_person_handler(adapter, internal_structure, entity_manager, internal_structure_entity_name, entity_name, internal_entity, entity):
+            customer_hierarchy_tree_class = entity_manager.get_entity_class("CustomerHierarchyTree")
+            customer_hierarchy_tree_entity = entity_manager._find_all(customer_hierarchy_tree_class)[0]
+            entity.parent_nodes = [customer_hierarchy_tree_entity.root_node]
+            print "Associating CustomerPerson with object id = " + str(entity.object_id) + " to CustomerHierarchyTree root node with object id = " + str(customer_hierarchy_tree_entity.root_node.object_id)
+        
+        # @todo: remove garbage parent nodes and child nodes from the internal structure
+        self.convert_entity(internal_structure, entity_manager, "customer_person", "CustomerPerson", {}, [customer_person_handler])
         entity_manager.commit_transaction("customer_person_transaction")
     
-    # @todo: refactor this code
     def convert_customer_company(self, internal_structure, entity_manager):
-        # @todo: associate with customer hierarchy tree root node as child/parent
+        print "###### CONVERTING CUSTOMER COMPANIES ######"
+        
         entity_manager.create_transaction("customer_company_transaction")
-        self.convert_entity(internal_structure, entity_manager, "customer_company", "CustomerCompany")
+        
+        # handler used to associate the customer company with the customer hierarchy tree's root node
+        def customer_company_handler(adapter, internal_structure, entity_manager, internal_structure_entity_name, entity_name, internal_entity, entity):
+            customer_hierarchy_tree_class = entity_manager.get_entity_class("CustomerHierarchyTree")
+            customer_hierarchy_tree_entity = entity_manager._find_all(customer_hierarchy_tree_class)[0]
+            entity.parent_nodes = [customer_hierarchy_tree_entity.root_node]
+            print "Associating CustomerCompany with object id = " + str(entity.object_id) + " to CustomerHierarchyTree with object id = " + str(customer_hierarchy_tree_entity.root_node.object_id)
+
+        # @todo: remove garbage parent nodes and child nodes from the internal structure
+        self.convert_entity(internal_structure, entity_manager, "customer_company", "CustomerCompany", {}, [customer_company_handler])
         entity_manager.commit_transaction("customer_company_transaction")
+
+    def convert_supplier_company(self, internal_structure, entity_manager):
+        print "###### CONVERTING SUPPLIER COMPANIES ######"
+        
+        entity_manager.create_transaction("supplier_company_transaction")
+        
+        # handler used to associate the supplier company with the supplier hierarchy tree's root node
+        def supplier_company_handler(adapter, internal_structure, entity_manager, internal_structure_entity_name, entity_name, internal_entity, entity):
+            supplier_hierarchy_tree_class = entity_manager.get_entity_class("SupplierHierarchyTree")
+            supplier_hierarchy_tree_entity = entity_manager._find_all(supplier_hierarchy_tree_class)[0]
+            entity.parent_nodes = [supplier_hierarchy_tree_entity.root_node]
+            print "Associating SupplierCompany with object id = " + str(entity.object_id) + " to SupplierHierarchyTree root node with object id = " + str(supplier_hierarchy_tree_entity.root_node.object_id)
     
-    # @todo: refactor this code
+        self.convert_entity(internal_structure, entity_manager, "supplier_company", "SupplierCompany", {}, [supplier_company_handler])
+        entity_manager.commit_transaction("supplier_company_transaction")
+
+    def convert_supplier_employee(self, internal_structure, entity_manager):
+        print "###### CONVERTING SUPPLIER EMPLOYEES ######"
+        
+        entity_manager.create_transaction("supplier_employee_transaction")
+        
+        # handler used to associate the supplier employee with the supplier hierarchy tree's root node
+        def supplier_employee_handler(adapter, internal_structure, entity_manager, internal_structure_entity_name, entity_name, internal_entity, entity):
+            supplier_hierarchy_tree_class = entity_manager.get_entity_class("SupplierHierarchyTree")
+            supplier_hierarchy_tree_entity = entity_manager._find_all(supplier_hierarchy_tree_class)[0]
+            entity.parent_nodes = [supplier_hierarchy_tree_entity.root_node]
+            print "Associating SupplierEmployee with object id = " + str(entity.object_id) + " to SupplierHierarchyTree root node with object id = " + str(supplier_hierarchy_tree_entity.root_node.object_id)
+            
+        self.convert_entity(internal_structure, entity_manager, "supplier_employee", "SupplierEmployee", {}, [supplier_employee_handler])
+        entity_manager.commit_transaction("supplier_employee_transaction")
+
+    def convert_supplier_person(self, internal_structure, entity_manager):
+        print "###### CONVERTING SUPPLIER PERSONS ######"
+        
+        entity_manager.create_transaction("supplier_person_transaction")
+        
+        # handler used to associate the supplier person with the supplier hierarchy tree's root node
+        def supplier_person_handler(adapter, internal_structure, entity_manager, internal_structure_entity_name, entity_name, internal_entity, entity):
+            supplier_hierarchy_tree_class = entity_manager.get_entity_class("SupplierHierarchyTree")
+            supplier_hierarchy_tree_entity = entity_manager._find_all(supplier_hierarchy_tree_class)[0]
+            entity.parent_nodes = [supplier_hierarchy_tree_entity.root_node]
+            print "Associating Person with object id = " + str(entity.object_id) + " to SupplierHierarchyTree root node with object id = " + str(supplier_hierarchy_tree_entity.root_node.object_id)
+            
+        self.convert_entity(internal_structure, entity_manager, "supplier_person", "Person", {}, [supplier_person_handler])
+        entity_manager.commit_transaction("supplier_person_transaction")
+
     def convert_address(self, internal_structure, entity_manager):
-        # @todo: associate with ContactableOrganizationalHierarchyTreeNode
-        #        such as:    SupplierCompany, PartnerCompany, SystemCompany, CustomerCompany, Bank, BankBranch, PointOfSale,
-        #                    FunctionalUnit, Department, Company, Store, Warehouse, Factory, Person, Employee, CustomerPerson
+        print "###### CONVERTING ADDRESSES ######"
+        
         entity_manager.create_transaction("address_transaction")
-        self.convert_entity(internal_structure, entity_manager, "address", "Address")
+
+        def address_handler(adapter, internal_structure, entity_manager, internal_structure_entity_name, entity_name, internal_entity, entity):
+            if hasattr(internal_entity, "contactable_organizational_hierarchy_tree_node"):
+                adapter.associate_entities(entity_manager, [internal_entity.contactable_organizational_hierarchy_tree_node], entity, "contactable_organizational_hierarchy_tree_node")
+            elif hasattr(internal_entity, "system_company"):
+                adapter.associate_entities(entity_manager, [internal_entity.system_company], entity, "contactable_organizational_hierarchy_tree_node")
+                
+        self.convert_entity(internal_structure, entity_manager, "address", "Address", {}, [address_handler])
         entity_manager.commit_transaction("address_transaction")
+
+    def convert_contact_information(self, internal_structure, entity_manager):
+        print "###### CONVERTING CONTACT INFORMATIONS ######"
+        
+        entity_manager.create_transaction("contact_information_transaction")
+        
+        def contact_information_handler(adapter, internal_structure, entity_manager, internal_structure_entity_name, entity_name, internal_entity, entity):
+            if hasattr(internal_entity, "contactable_organizational_hierarchy_tree_node"):
+                adapter.associate_entities(entity_manager, [internal_entity.contactable_organizational_hierarchy_tree_node], entity, "contactable_organizational_hierarchy_tree_node")
+            elif hasattr(internal_entity, "system_company"):
+                adapter.associate_entities(entity_manager, [internal_entity.system_company], entity, "contactable_organizational_hierarchy_tree_node")
+        
+        self.convert_entity(internal_structure, entity_manager, "contact_information", "ContactInformation")
+        entity_manager.commit_transaction("contact_information_transaction")    
+
+    def convert_financial_account(self, internal_structure, entity_manager):
+        print "###### CONVERTING FINANCIAL ACCOUNTS ######"
+        
+        entity_manager.create_transaction("financial_account_transaction")
+        
+        def financial_account_handler(adapter, internal_structure, entity_manager, internal_structure_entity_name, entity_name, internal_entity, entity):
+             if hasattr(internal_entity, "contactable_organizational_hierarchy_tree_node"):
+                adapter.associate_entities(entity_manager, [internal_entity.contactable_organizational_hierarchy_tree_node], entity, "owners")
+
+        self.convert_entity(internal_structure, entity_manager, "financial_account", "FinancialAccount", {}, [financial_account_handler])
+        entity_manager.commit_transaction("financial_account_transaction")
+
+    def convert_person_relation(self, internal_structure, entity_manager):
+        print "###### CONVERTING PERSON RELATIONS ######"
+        
+        entity_manager.create_transaction("person_relation_transaction")
+        
+        def person_handler(adapter, internal_structure, entity_manager, internal_structure_entity_name, entity_name, internal_entity, entity):
+            first_person_class = entity_manager.get_entity_class(self.convert_internal_entity_name_to_omni_name(internal_entity.first_person._name))
+            first_person_entity = entity_manager.find_all(first_person_class, internal_entity.first_person.object_id, "object_id")[0]
+            second_person_class = entity_manager.get_entity_class(self.convert_internal_entity_name_to_omni_name(internal_entity.second_person._name))
+            second_person_entity = entity_manager.find_all(second_person_class, internal_entity.second_person.object_id, "object_id")[0]
+            entity.first_person = first_person_entity
+            entity.second_person = second_person_entity    
+            print "Associating PersonRelation between with object id = " + str(entity.object_id) + " between Person with object id = " + str(entity.first_person.object_id) + " and Person with object id = " + str(entity.second_person.object_id)
+
+        self.convert_entity(internal_structure, entity_manager, "person_relation", "PersonRelation", {}, [person_handler])
+        
+        entity_manager.commit_transaction("person_relation_transaction")
+
+    def convert_category(self, internal_structure, entity_manager):
+        print "###### CONVERTING CATEGORIES ######"
+        
+        entity_manager.create_transaction("category_transaction")
+
+        def category_handler(adapter, internal_structure, entity_manager, internal_structure_entity_name, entity_name, internal_entity, entity):
+            # if the internal entity has parent nodes defined then add the collection to the parent nodes
+            if hasattr(internal_entity, "parent_nodes"):
+                adapter.associate_entities(entity_manager, internal_entity.parent_nodes, entity, "parent_nodes")
+            else:
+                # otherwise add to the merchandise root node
+                merchandise_hierarchy_tree_class = entity_manager.get_entity_class("MerchandiseHierarchyTree")
+                merchandise_hierarchy_tree = entity_manager._find_all(merchandise_hierarchy_tree_class)[0]
+                entity.parent_nodes = [merchandise_hierarchy_tree.root_node]
+                print "Associating Category with object id = " + str(entity.object_id) + " to MerchandiseHierarchyTree root node with object id = " + str(merchandise_hierarchy_tree.root_node.object_id)
+
+        self.convert_entity(internal_structure, entity_manager, "category", "Category", {}, [category_handler])
+        entity_manager.commit_transaction("category_transaction")
     
-    # @todo: refactor this code
+    def convert_collection(self, internal_structure, entity_manager):
+        print "###### CONVERTING COLLECTIONS ######"
+        
+        entity_manager.create_transaction("collection_transaction")
+
+        def collection_handler(adapter, internal_structure, entity_manager, internal_structure_entity_name, entity_name, internal_entity, entity):
+            # if the internal entity has parent nodes defined then add the collection to the parent nodes
+            if hasattr(internal_entity, "parent_nodes"):
+                adapter.associate_entities(entity_manager, internal_entity.parent_nodes, entity, "parent_nodes")
+            else:
+                # otherwise add to the merchandise root node
+                merchandise_hierarchy_tree_class = entity_manager.get_entity_class("MerchandiseHierarchyTree")
+                merchandise_hierarchy_tree = entity_manager._find_all(merchandise_hierarchy_tree_class)[0]
+                entity.parent_nodes = [merchandise_hierarchy_tree.root_node]
+                print "Associating Collection with object id = " + str(entity.object_id) + " to MerchandiseHierarchyTree root node with object id = " + str(merchandise_hierarchy_tree.root_node.object_id)
+
+        self.convert_entity(internal_structure, entity_manager, "collection", "Collection", {}, [collection_handler])
+        entity_manager.commit_transaction("collection_transaction")
+
+    def convert_product(self, internal_structure, entity_manager):
+        print "###### CONVERTING PRODUCTS ######"
+        
+        entity_manager.create_transaction("product_transaction")
+
+        def product_handler(adapter, internal_structure, entity_manager, internal_structure_entity_name, entity_name, internal_entity, entity):
+            # if the internal entity has parent nodes defined then add the collection to the parent nodes
+            if hasattr(internal_entity, "parent_nodes"):
+                adapter.associate_entities(entity_manager, internal_entity.parent_nodes, entity, "parent_nodes")
+            else:
+                # otherwise add to the merchandise root node
+                merchandise_hierarchy_tree_class = entity_manager.get_entity_class("MerchandiseHierarchyTree")
+                merchandise_hierarchy_tree = entity_manager._find_all(merchandise_hierarchy_tree_class)[0]
+                entity.parent_nodes = [merchandise_hierarchy_tree.root_node]
+                print "Associating Product with object id = " + str(entity.object_id) + " to MerchandiseHierarchyTree root node with object id = " + str(merchandise_hierarchy_tree.root_node.object_id)
+            
+            if hasattr(internal_entity, "commercialization_suppliers"):
+                adapter.associate_entities(entity_manager, internal_entity.commercialization_suppliers, entity, "parent_nodes")
+                           
+        self.convert_entity(internal_structure, entity_manager, "product", "Product", {}, [product_handler])
+        entity_manager.commit_transaction("product_transaction")
+
+    def convert_sub_product(self, internal_structure, entity_manager):
+        print "###### CONVERTING SUB-PRODUCTS ######"
+
+        entity_manager.create_transaction("sub_product_transaction")
+        
+        def sub_product_handler(adapter, internal_structure, entity_manager, internal_structure_entity_name, entity_name, internal_entity, entity):
+            if hasattr(internal_entity, "parent_nodes"):
+                adapter.associate_entities(entity_manager, internal_entity.parent_nodes, entity, "parent_nodes")
+            
+            if hasattr(internal_entity, "commercialization_suppliers"):
+                adapter.associate_entities(entity_manager, internal_entity.commercialization_suppliers, entity, "parent_nodes")
+        
+        self.convert_entity(internal_structure, entity_manager, "sub_product", "SubProduct", {}, [sub_product_handler])
+        entity_manager.commit_transaction("sub_product_transaction")
+
+    def convert_repair(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("repair_transaction")
+        
+        def repair_handler(adapter, internal_structure, entity_manager, internal_structure_entity_name, entity_name, internal_entity, entity):
+            # if the internal entity has parent nodes defined then add the collection to the parent nodes
+            if hasattr(internal_entity, "parent_nodes"):
+                adapter.associate_entities(entity_manager, internal_entity.parent_nodes, entity, "parent_nodes")
+            else:
+                # otherwise add to the merchandise root node
+                merchandise_hierarchy_tree_class = entity_manager.get_entity_class("MerchandiseHierarchyTree")
+                merchandise_hierarchy_tree = entity_manager._find_all(merchandise_hierarchy_tree_class)[0]
+                entity.parent_nodes = [merchandise_hierarchy_tree.root_node]
+                print "Associating Repair with object id = " + str(entity.object_id) + " to MerchandiseHierarchyTree root node with object id = " + str(merchandise_hierarchy_tree.root_node.object_id)
+        
+        self.convert_entity(internal_structure, entity_manager, "repair", "Repair", {}, [repair_handler])
+        entity_manager.commit_transaction("repair_transaction")
+
+    def convert_media(self, internal_structure, entity_manager):      
+        entity_manager.create_transaction("media_transaction")
+        
+        # @todo: any more entities references ? 
+        # @todo: primary media
+        # @todo: load images from path
+        def media_handler(adapter, internal_structure, entity_manager, internal_structure_entity_name, entity_name, internal_entity, entity):
+            if hasattr(internal_entity, "product"):
+                adapter.associate_entities(entity_manager, [internal_entity.product], entity, "merchandise_hierarchy_tree_nodes")
+    
+            if hasattr(internal_entity, "system_company"):
+                adapter.associate_entities(entity_manager, [internal_entity.system_company], entity, "contactable_organizational_hierarchy_tree_nodes")
+        
+        self.convert_entity(internal_structure, entity_manager, "media", "Media", {}, [media_handler])
+        entity_manager.commit_transaction("media_transaction")
+
+    def convert_organizational_merchandise_hierarchy_tree_node_vat_class(self, internal_structure, entity_manager):
+        def organizational_merchandise_hierarchy_tree_node_vat_class_handler(adapter, internal_structure, entity_manager, internal_structure_entity_name, entity_name, internal_entity, entity):
+            if hasattr(internal_entity, "merchandise"):
+                adapter.associate_entities(entity_manager, [internal_entity.merchandise], entity, "merchandise")
+
+            if hasattr(internal_entity, "organizational_hierarchy_tree_node"):
+                adapter.associate_entities(entity_manager, [internal_entity.organizational_hierarchy_tree_node], entity, "organizational_hierarchy_tree_node")
+    
+            if hasattr(internal_entity, "vat_class"):
+                adapter.associate_entities(entity_manager, [internal_entity.vat_class], entity, "vat_class")
+                    
+        entity_manager.create_transaction("organizational_merchandise_hierarchy_tree_node_vat_class_transaction")
+        self.convert_entity(internal_structure, entity_manager, "organizational_merchandise_hierarchy_tree_node_vat_class", "OrganizationalMerchandiseHierarchyTreeNodeVatClass", {}, [organizational_merchandise_hierarchy_tree_node_vat_class_handler])
+        entity_manager.commit_transaction("organizational_merchandise_hierarchy_tree_node_vat_class_transaction")
+
     def convert_card_payment(self, internal_structure, entity_manager):
         entity_manager.create_transaction("card_payment_transaction")
         self.convert_entity(internal_structure, entity_manager, "card_payment", "CardPayment")
         entity_manager.commit_transaction("card_payment_transaction")
-    
-    # @todo: refactor this code
+
     def convert_cash_payment(self, internal_structure, entity_manager):
-        entity_manager.create_transaction("cash_payment_transaction")
+        entity_manager.create_transaction("cash_payment_transaction")       
         self.convert_entity(internal_structure, entity_manager, "cash_payment", "CashPayment")
         entity_manager.commit_transaction("cash_payment_transaction")
-    
-    # @todo: refactor this code
-    def convert_category(self, internal_structure, entity_manager):
-        # @todo: associate to parent nodes
-        # @todo: associate to merchandise hierarchy tree root node if no parents
-        entity_manager.create_transaction("category_transaction")
-        self.convert_entity(internal_structure, entity_manager, "category", "Category")
-        entity_manager.commit_transaction("category_transaction")
-    
-    # @todo: refactor this code
+
     def convert_check_payment(self, internal_structure, entity_manager):
         entity_manager.create_transaction("check_payment_transaction")
         self.convert_entity(internal_structure, entity_manager, "check_payment", "CheckPayment")
         entity_manager.commit_transaction("check_payment_transaction")
-    
-    # @todo: refactor this code
-    def convert_collection(self, internal_structure, entity_manager):
-        # @todo: associate to parent nodes
-        # @todo: associate to merchandise hierarchy tree root node if no parents
-        entity_manager.create_transaction("collection_transaction")
-        self.convert_entity(internal_structure, entity_manager, "collection", "Collection")
-        entity_manager.commit_transaction("collection_transaction")
-    
-    # @todo: refactor this code
+
     def convert_consignation_slip(self, internal_structure, entity_manager):
         entity_manager.create_transaction("consignation_slip_transaction")
         self.convert_entity(internal_structure, entity_manager, "consignation_slip", "ConsignationSlip")
         entity_manager.commit_transaction("consignation_slip_transaction")
-    
-    # @todo: refactor this code
+
     def convert_consignment(self, internal_structure, entity_manager):
-        # @todo: associate with ContactableOrganizationalHierarchyTreeNode as buyers
-        # @todo: associate with ContactableOrganizationalHierarchyTreeNode as supplier
         entity_manager.create_transaction("consignment_transaction")
-        self.convert_entity(internal_structure, entity_manager, "consignment", "Consignment")
+        
+        # @todo: add buyer and supplier relations to data model
+        def consignment_handler(adapter, internal_structure, entity_manager, internal_structure_entity_name, entity_name, internal_entity, entity):
+            if hasattr(internal_entity, "buyers"):
+                adapter.associate_entities(entity_manager, internal_entity.buyers, entity, "buyers")
+            if hasattr(internal_entity, "supplier"):
+                adapter.associate_entities(entity_manager, internal_entity.supplier, entity, "supplier")
+
+        self.convert_entity(internal_structure, entity_manager, "consignment", "Consignment", {}, [consignment_handler])
         entity_manager.commit_transaction("consignment_transaction")
     
     # @todo: refactor this code
@@ -360,15 +806,6 @@ class DataConverterAdapter:
         entity_manager.create_transaction("consignment_merchandise_hierarchy_tree_node")
         self.convert_entity(internal_structure, entity_manager, "consignment_merchandise_hierarchy_tree_node", "ConsignmentMerchandiseHierarchyTreeNode")
         entity_manager.commit_transaction("consignment_merchandise_hierarchy_tree_node")
-    
-    # @todo: refactor this code
-    def convert_contact_information(self, internal_structure, entity_manager):
-        # @todo: associate with ContactableOrganizationalHierarchyTreeNode
-        #        such as:    SupplierCompany, PartnerCompany, SystemCompany, CustomerCompany, Bank, BankBranch, PointOfSale,
-        #                    FunctionalUnit, Department, Company, Store, Warehouse, Factory, Person, Employee, CustomerPerson
-        entity_manager.create_transaction("contact_information_transaction")
-        self.convert_entity(internal_structure, entity_manager, "contact_information", "ContactInformation")
-        entity_manager.commit_transaction("contact_information_transaction")        
     
     # @todo: refactor this code
     def convert_credit_contract(self, internal_structure, entity_manager):
@@ -386,13 +823,11 @@ class DataConverterAdapter:
         self.convert_entity(internal_structure, entity_manager, "credit_note", "CreditNote")
         entity_manager.commit_transaction("credit_note_transaction")  
     
-    # @todo: refactor this code
     def convert_credit_contract(self, internal_structure, entity_manager):
         entity_manager.create_transaction("credit_contract_transaction")
         self.convert_entity(internal_structure, entity_manager, "credit_contract", "CreditContract")
         entity_manager.commit_transaction("credit_contract_transaction")
 
-    # @todo: refactor this code
     def convert_credit_note_payment(self, internal_structure, entity_manager):
         entity_manager.create_transaction("credit_note_transaction")
         self.convert_entity(internal_structure, entity_manager, "credit_note", "CreditNote")
@@ -407,14 +842,6 @@ class DataConverterAdapter:
         entity_manager.commit_transaction("credit_payment_transaction")
         
     # @todo: refactor this code    
-    def convert_currency(self, internal_structure, entity_manager):
-        # @todo: associate with system settings as preferred currency(if available)
-        # @todo: associate with system company as currencies
-        entity_manager.create_transaction("currency_transaction")
-        self.convert_entity(internal_structure, entity_manager, "currency", "Currency")
-        entity_manager.commit_transaction("currency_transaction")
-        
-    # @todo: refactor this code    
     def convert_customer_return(self, internal_structure, entity_manager):
         # @todo: associate with ContactableOrganizationalHierarchyTreeNode as sellers
         # @todo: associate with ContactableOrganizationalHierarchyTreeNode as return_site
@@ -426,17 +853,7 @@ class DataConverterAdapter:
         entity_manager.create_transaction("customer_return_transaction")
         self.convert_entity(internal_structure, entity_manager, "customer_return", "CustomerReturn")
         entity_manager.commit_transaction("customer_return_transaction")
-        
-    # @todo: refactor this code    
-    def convert_financial_account(self, internal_structure, entity_manager):
-        # @todo: associate with ContactableOrganizationalHierarchyTreeNode
-        #        such as:    SupplierCompany, PartnerCompany, SystemCompany, CustomerCompany, Bank, BankBranch, PointOfSale,
-        #                    FunctionalUnit, Department, Company, Store, Warehouse, Factory, Person, Employee, CustomerPerson
-        entity_manager.create_transaction("financial_account_transaction")
-        self.convert_entity(internal_structure, entity_manager, "financial_account", "FinancialAccount")
-        entity_manager.commit_transaction("financial_account_transaction")
-        
-    # @todo: refactor this code    
+
     def convert_gift_certificate(self, internal_structure, entity_manager):
         entity_manager.create_transaction("gift_certificate_transaction")
         self.convert_entity(internal_structure, entity_manager, "gift_certificate", "GiftCertificate")
@@ -449,35 +866,6 @@ class DataConverterAdapter:
         entity_manager.create_transaction("invoice_transaction")
         self.convert_entity(internal_structure, entity_manager, "invoice", "Invoice")
         entity_manager.commit_transaction("invoice_transaction")
-    
-    # @todo: refactor this code
-    def convert_language(self, internal_structure, entity_manager):
-        # @todo: associate with system settings as preferred language(if available)
-        # @todo: associate with system company as languages
-        entity_manager.create_transaction("language_transaction")
-        self.convert_entity(internal_structure, entity_manager, "language", "Language")
-        entity_manager.commit_transaction("language_transaction")
-    
-    # @todo: refactor this code
-    def convert_location(self, internal_structure, entity_manager):
-        # @todo: append to customer hierarchy tree root node
-        # @todo: append to supplier hierarchy tree root node
-        entity_manager.create_transaction("location_transaction")
-        self.convert_entity(internal_structure, entity_manager, "location", "Location")
-        entity_manager.commit_transaction("location_transaction")
-    
-    # @todo: refactor this code
-    def convert_media(self, internal_structure, entity_manager):
-        # @todo: associate with ContactableOrganizationalHierarchyTreeNode
-        #            such as:    SupplierCompany, PartnerCompany, SystemCompany, CustomerCompany, Bank, BankBranch, PointOfSale,
-        #                        FunctionalUnit, Department, Company, Store, Warehouse, Factory, Person, Employee, CustomerPerson
-        #        associate with MerchandiseHierarchyTreeNode
-        #            such as:    Product, SubProduct, TransactionalMerchandise, Repair, Service
-        #     as media and primary media
-        # @todo: load images from path
-        entity_manager.create_transaction("media_transaction")
-        self.convert_entity(internal_structure, entity_manager, "media", "Media")
-        entity_manager.commit_transaction("media_transaction")
         
     # @todo: refactor this code
     def convert_merchandise_contactable_organizational_hierarchy_tree_node(self, internal_structure, entity_manager):
@@ -497,7 +885,6 @@ class DataConverterAdapter:
         self.convert_entity(internal_structure, entity_manager, "merchandise_hierarchy_tree_node_return", "MerchandiseHierarchyTreeNodeReturn")
         entity_manager.commit_transaction("merchandise_hierarchy_tree_node_return_transaction")
    
-    # @todo: refactor this code
     def convert_money_sale(self, internal_structure, entity_manager):
         entity_manager.create_transaction("money_sale_transaction")
         self.convert_entity(internal_structure, entity_manager, "money_sale", "MoneySale")
@@ -511,15 +898,6 @@ class DataConverterAdapter:
         entity_manager.create_transaction("organizational_hierarchy_merchandise_supplier_transaction")
         self.convert_entity(internal_structure, entity_manager, "organizational_hierarchy_merchandise_supplier", "OrganizationalHierarchyMerchandiseSupplier")
         entity_manager.commit_transaction("organizational_hierarchy_merchandise_supplier_transaction")
-    
-    # @todo: refactor this code
-    def convert_organizational_merchandise_hierarchy_tree_node_vat_class(self, internal_structure, entity_manager):
-        # @todo: associate with OrganizationalHierarchyTreeNode
-        # @todo: associate with MerchandiseHierarchyTreeNode
-        # @todo: associate with VatClass
-        entity_manager.create_transaction("organizational_merchandise_hierarchy_tree_node_vat_class_transaction")
-        self.convert_entity(internal_structure, entity_manager, "organizational_merchandise_hierarchy_tree_node_vat_class", "OrganizationalMerchandiseHierarchyTreeNodeVatClass")
-        entity_manager.commit_transaction("organizational_merchandise_hierarchy_tree_node_vat_class_transaction")
         
     # @todo: refactor this code
     def convert_payment(self, internal_structure, entity_manager):
@@ -541,34 +919,16 @@ class DataConverterAdapter:
         self.convert_entity(internal_structure, entity_manager, "payment_line", "PaymentLine")
         entity_manager.commit_transaction("payment_line_transaction")
 
-    # @todo: refactor this code
     def convert_payment_terms(self, internal_structure, entity_manager):
         entity_manager.create_transaction("payment_terms_transaction")
         self.convert_entity(internal_structure, entity_manager, "payment_terms", "PaymentTerms")
         entity_manager.commit_transaction("payment_terms_transaction")
 
     # @todo: refactor this code
-    def convert_person_relation(self, internal_structure, entity_manager):
-        # @todo: associate with first person
-        # @todo: associate with second person
-        entity_manager.create_transaction("person_relation_transaction")
-        self.convert_entity(internal_structure, entity_manager, "person_relation", "PersonRelation")
-        entity_manager.commit_transaction("person_relation_transaction")
-
-    # @todo: refactor this code
     def convert_postdated_check_payment(self, internal_structure, entity_manager):
         entity_manager.create_transaction("postdated_check_payment_transaction")
         self.convert_entity(internal_structure, entity_manager, "postdated_check_payment", "PostdatedCheckPayment")
         entity_manager.commit_transaction("postdated_check_payment_transaction")
-
-    # @todo: refactor this code
-    def convert_product(self, internal_structure, entity_manager):
-        # @todo: associate with parent_nodes 
-        # @todo: if no parents associate with merchandise hierarchy tree root node
-        # @todo: associate with commercialization_suppliers
-        entity_manager.create_transaction("product_transaction")
-        self.convert_entity(internal_structure, entity_manager, "product", "Product")
-        entity_manager.commit_transaction("product_transaction")
     
     # @todo: refactor this code
     def convert_purchase(self, internal_structure, entity_manager):
@@ -589,25 +949,11 @@ class DataConverterAdapter:
         entity_manager.commit_transaction("purchase_merchandise_hierarchy_tree_node_transaction")
     
     # @todo: refactor this code
-    def convert_reason(self, internal_structure, entity_manager):
-        entity_manager.create_transaction("reason_transaction")
-        self.convert_entity(internal_structure, entity_manager, "reason", "Reason")
-        entity_manager.commit_transaction("reason_transaction")
-    
-    # @todo: refactor this code
     def convert_receipt(self, internal_structure, entity_manager):
         # @todo: associate with Payment as payment
         entity_manager.create_transaction("receipt_transaction")
         self.convert_entity(internal_structure, entity_manager, "receipt", "Receipt")
         entity_manager.commit_transaction("receipt_transaction")
-    
-    # @todo: refactor this code
-    def convert_repair(self, internal_structure, entity_manager):
-        # @todo: associate with parent nodes
-        # @todo: associate with merchandise hierarchy tree root node if no parents
-        entity_manager.create_transaction("repair_transaction")
-        self.convert_entity(internal_structure, entity_manager, "repair", "Repair")
-        entity_manager.commit_transaction("repair_transaction")
     
     # @todo: refactor this code
     def convert_sale_merchandise_hierarchy_tree_node_contactable_organizational_hierarchy_tree_node(self, internal_structure, entity_manager):
@@ -653,40 +999,7 @@ class DataConverterAdapter:
         entity_manager.create_transaction("stock_adjustment_merchandise_hierarchy_tree_node_transaction")
         self.convert_entity(internal_structure, entity_manager, "stock_adjustment_merchandise_hierarchy_tree_node", "StockAdjustmentMerchandiseHierarchyTreeNode")
         entity_manager.commit_transaction("stock_adjustment_merchandise_hierarchy_tree_node_transaction")
-    
-    # @todo: refactor this code
-    def convert_store(self, internal_structure, entity_manager):
-        # @todo: associate with system company as child/parent
-        entity_manager.create_transaction("store_transaction")
-        self.convert_entity(internal_structure, entity_manager, "store", "Store")
-        entity_manager.commit_transaction("store_transaction")
-    
-    # @todo: refactor this code
-    def convert_sub_product(self, internal_structure, entity_manager):
-        # @todo: associate with commercialization_suppliers
-        # @todo: associate with product as child/parent
-        entity_manager.create_transaction("sub_product_transaction")
-        self.convert_entity(internal_structure, entity_manager, "sub_product", "SubProduct")
-        entity_manager.commit_transaction("sub_product_transaction")
-    
-    # @todo: refactor this code
-    def convert_supplier_company(self, internal_structure, entity_manager):
-        entity_manager.create_transaction("supplier_company_transaction")
-        self.convert_entity(internal_structure, entity_manager, "supplier_company", "SupplierCompany")
-        entity_manager.commit_transaction("supplier_company_transaction")
-    
-    # @todo: refactor this code
-    def convert_supplier_employee(self, internal_structure, entity_manager):
-        entity_manager.create_transaction("supplier_employee_transaction")
-        self.convert_entity(internal_structure, entity_manager, "supplier_employee", "SupplierEmployee")
-        entity_manager.commit_transaction("supplier_employee_transaction")
-    
-    # @todo: refactor this code
-    def convert_supplier_person(self, internal_structure, entity_manager):
-        entity_manager.create_transaction("supplier_person_transaction")
-        self.convert_entity(internal_structure, entity_manager, "supplier_person", "SupplierPerson")
-        entity_manager.commit_transaction("supplier_person_transaction")
-    
+
     # @todo: refactor this code
     def convert_supplier_return(self, internal_structure, entity_manager):
         # @todo: associate with ContactableOrganizationalHierarchyTreeNode as return_requester
@@ -695,94 +1008,7 @@ class DataConverterAdapter:
         entity_manager.create_transaction("supplier_return_transaction")
         self.convert_entity(internal_structure, entity_manager, "supplier_return", "SupplierReturn")
         entity_manager.commit_transaction("supplier_return_transaction")
-    
-    # @todo: refactor this code
-    def convert_system_company(self, internal_structure, entity_manager):
-        # @todo: set system company as root node
-        entity_manager.create_transaction("system_company_transaction")
-        
-        # create organizational hierarchy tree
-        organizational_hierarchy_tree_class = entity_manager.get_entity_class("OrganizationalHierarchyTree")
-        organizational_hierarchy_tree_entity = organizational_hierarchy_tree_class()
-        self.object_id += 1
-        organizational_hierarchy_tree_entity.object_id = self.object_id
-        entity_manager.save(organizational_hierarchy_tree_entity)
-        
-        # create merchandise hierarchy tree
-        merchandise_hierarchy_tree_class = entity_manager.get_entity_class("MerchandiseHierarchyTree")
-        merchandise_hierarchy_tree_entity = merchandise_hierarchy_tree_class()
-        self.object_id += 1
-        merchandise_hierarchy_tree_entity.object_id = self.object_id
-        entity_manager.save(merchandise_hierarchy_tree_entity)
-        
-        # create supplier hierarchy tree
-        supplier_hierarchy_tree_class = entity_manager.get_entity_class("SupplierHierarchyTree")
-        supplier_hierarchy_tree_entity = supplier_hierarchy_tree_class()
-        self.object_id += 1
-        supplier_hierarchy_tree_entity.object_id = self.object_id
-        entity_manager.save(supplier_hierarchy_tree_entity)
-        
-        # create customer hierarchy tree
-        customer_hierarchy_tree_class = entity_manager.get_entity_class("CustomerHierarchyTree")
-        customer_hierarchy_tree_entity = customer_hierarchy_tree_class()
-        self.object_id += 1
-        customer_hierarchy_tree_entity.object_id = self.object_id
-        entity_manager.save(customer_hierarchy_tree_entity)
-        
-        # create merchandise hierarchy tree root node
-        merchandise_hierarchy_tree_node_class = entity_manager.get_entity_class("MerchandiseHierarchyTreeNode")
-        merchandise_hierarchy_tree_node_entity = merchandise_hierarchy_tree_node_class()
-        self.object_id += 1
-        merchandise_hierarchy_tree_node_entity.object_id = self.object_id
-        entity_manager.save(merchandise_hierarchy_tree_node_entity)
-        
-        # create supplier hierarchy tree root node
-        supplier_hierarchy_tree_node_class = entity_manager.get_entity_class("OrganizationalHierarchyTreeNode")
-        supplier_hierarchy_tree_node_entity = supplier_hierarchy_tree_node_class()
-        self.object_id += 1
-        supplier_hierarchy_tree_node_entity.object_id = self.object_id
-        entity_manager.save(supplier_hierarchy_tree_node_entity)
-        
-        # create customer hierarchy tree root node
-        customer_hierarchy_tree_node_class = entity_manager.get_entity_class("OrganizationalHierarchyTreeNode")
-        customer_hierarchy_tree_node_entity = customer_hierarchy_tree_node_class()
-        self.object_id += 1
-        customer_hierarchy_tree_node_entity.object_id = self.object_id
-        entity_manager.save(customer_hierarchy_tree_node_entity)
-        
-        # associate root nodes with their trees
-        customer_hierarchy_tree_entity.root_node = customer_hierarchy_tree_node_entity
-        supplier_hierarchy_tree_entity.root_node = supplier_hierarchy_tree_node_entity
-        merchandise_hierarchy_tree_entity.root_node = merchandise_hierarchy_tree_node_entity
-        
-        # handler used to associate the system company with the organizational hierarchy tree as root node
-        def system_company_handler(adapter, internal_structure, entity_manager, internal_structure_entity_name, entity_name, internal_entity, entity):
-            
-            organizational_hierarchy_tree_entity = entity_manager.find_all(organizational_hierarchy_tree_class)[0]
-            organizational_hierarchy_tree_entity.root_node = entity
-            entity_manager.save(organizational_hierarchy_tree_entity)
 
-        self.convert_entity(internal_structure, entity_manager, "system_company", "SystemCompany", {
-                                             "status" : 0}, [system_company_handler])
-
-        entity_manager.commit_transaction("system_company_transaction")
-        
-    # @todo: refactor this code
-    def convert_system_company_employee(self, internal_structure, entity_manager):
-        # @todo: associate with user
-        # @todo: append to store as child/parent
-        # @todo: associate with organizational hierarchy root node if no parent
-        entity_manager.create_transaction("system_company_employee_transaction")
-        self.convert_entity(internal_structure, entity_manager, "system_company_employee", "Employee")
-        entity_manager.commit_transaction("system_company_employee_transaction")
-
-    # @todo: refactor this code
-    def convert_system_settings(self, internal_structure, entity_manager):
-        # @todo: associate with organizational hierarchy tree root node
-        entity_manager.create_transaction("system_settings_transaction")
-        self.convert_entity(internal_structure, entity_manager, "system_settings", "SystemSettings")
-        entity_manager.commit_transaction("system_settings_transaction")
-    
     # @todo: refactor this code
     def convert_transfer(self, internal_structure, entity_manager):
         # @todo: associate with ContactableOrganizationalHierarchyTreeNode as sender
@@ -799,49 +1025,42 @@ class DataConverterAdapter:
         self.convert_entity(internal_structure, entity_manager, "transfer_merchandise_hierarchy_tree_node", "TransferMerchandiseHierarchyTreeNode")
         entity_manager.commit_transaction("transfer_merchandise_hierarchy_tree_node_transaction")
     
-    # @todo: refactor this code
-    def convert_vat_class(self, internal_structure, entity_manager):
-        # @todo: associate with system_company as contactable_organizational_hierarchy_tree_node
-        entity_manager.create_transaction("vat_class_transaction")
-        self.convert_entity(internal_structure, entity_manager, "vat_class", "VatClass")
-        entity_manager.commit_transaction("vat_class_transaction")
-    
     def convert_entity(self, internal_structure, entity_manager, internal_structure_entity_name, entity_name, default_values_map = {}, handlers = []):
         entity_class = entity_manager.get_entity_class(entity_name)
         
         # convert the internal entities
         internal_entities = internal_structure.get_entities(internal_structure_entity_name)
         for internal_entity in internal_entities:
-            
-            # create and commit the customer person entity
-            entity = entity_class()
-            entity.object_id = 0
-            fields = internal_entity.get_fields()
-            valid_fields = [(field_name, field_value) for field_name, field_value in fields.items() if not type(field_value) in (types.InstanceType, types.ListType)]
-            
-            # copy the values of the internal entity to the entity
-            for field_name, field_value in valid_fields:
-                # if there's an handler defined for this field name then
-                # execute it
-                if field_name in default_values_map:
-                    default_value = default_values_map[field_name]
-                    if type(default_value) == types.FunctionType:
-                        field_value = default_value(field_value)
-                if field_name in default_values_map:
-                    del default_values_map[field_name]
-                setattr(entity, field_name, field_value)
+            # @todo: make sure the entity doesnt exist yet
+            entities = entity_manager.find_all(entity_class, internal_entity.object_id, "object_id")
+            if len(entities) == 0:
+                entity = entity_class()
+                fields = internal_entity.get_fields()
+                valid_fields = [(field_name, field_value) for field_name, field_value in fields.items() if not field_value is None and not type(field_value) in (types.InstanceType, types.ListType)]
                 
-            # apply all remaining values default values
-            for field_name, field_value in default_values_map.items():
-                if not type(field_value) == types.FunctionType:
-                    setattr(internal_entity, field_name, field_value)
-                    
-            for handler in handlers:
-                handler(self, internal_structure, entity_manager, internal_structure_entity_name, entity_name, internal_entity, entity)
-                    
-            self.object_id += 1
-            entity.object_id = self.object_id
-            entity_manager.save(entity)
+                # copy the values of the internal entity to the entity
+                for field_name, field_value in valid_fields:
+                     if field_name in default_values_map:
+                        default_value = default_values_map[field_name]
+                        if type(default_value) == types.FunctionType:
+                            field_value = default_value(field_value)
+                        del default_values_map[field_name] 
+                     setattr(entity, field_name, field_value)
+           
+                # apply all remaining values default values
+                for field_name, field_value in default_values_map.items():
+                    if not type(field_value) == types.FunctionType:
+                        if type(field_value) == types.StringType:
+                            field_value = unicode(field_value)
+                        setattr(internal_entity, field_name, field_value)
+                
+                entity.object_id = internal_entity.object_id
+                
+                for handler in handlers:
+                    handler(self, internal_structure, entity_manager, internal_structure_entity_name, entity_name, internal_entity, entity)
+
+                print "Saving " + entity_name + " with object id = " + str(entity.object_id)
+                entity_manager.save(entity)
     
     def process_work_units(self, task):
         """

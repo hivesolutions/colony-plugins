@@ -75,8 +75,5 @@ class ConsoleDataConverter:
         return HELP_TEXT
 
     def process_convert_data(self, args, output_method):
-        if len(args) < 2:
-            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
-            return
-
-        self.data_converter_plugin.convert(args[0], args[1])
+    	# @todo: temporary hardcoding to make life easier (the entire data converter plugin will have to be redone in the future
+        self.data_converter_plugin.convert("pt.hive.omni.data_converter.configuration.input.diamante_2003", "pt.hive.omni.data_converter.configuration.input.diamante_2003")
