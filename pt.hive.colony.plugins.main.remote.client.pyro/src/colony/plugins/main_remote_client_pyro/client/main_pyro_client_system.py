@@ -52,7 +52,7 @@ class MainPyroClient:
     def __init__(self, main_pyro_client_plugin):
         """
         Constructor of the class.
-        
+
         @type main_pyro_client_plugin: MainPyroClientPlugin
         @param main_pyro_client_plugin: The main pyro client plugin.
         """
@@ -88,7 +88,7 @@ class PyroClient:
     def __init__(self, pyro_main_uri = "none", pyro_main_proxy = None):
         """
         Constructor of the class.
-        
+
         @type pyro_main_uri: String
         @param pyro_main_uri: The pyro main uri.
         @type pyro_main_proxy: Proxy
@@ -101,7 +101,7 @@ class PyroClient:
     def get_pyro_main_proxy(self):
         """
         Retrieves the pyro main proxy.
-        
+
         @rtype: Proxy
         @return: The pyro main proxy.
         """
