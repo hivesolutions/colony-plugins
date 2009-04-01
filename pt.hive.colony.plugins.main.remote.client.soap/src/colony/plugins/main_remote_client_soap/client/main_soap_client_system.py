@@ -50,7 +50,7 @@ class MainSoapClient:
     def __init__(self, main_soap_client_plugin):
         """
         Constructor of the class.
-        
+
         @type main_soap_client_plugin: MainSoapClientPlugin
         @param main_soap_client_plugin: The main soap client plugin.
         """
