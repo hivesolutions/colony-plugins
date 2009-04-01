@@ -54,7 +54,7 @@ class MainRemoteClientManager:
     def __init__(self, main_remote_client_manager_plugin):
         """
         Constructor of the class.
-        
+
         @type main_remote_client_manager_plugin: MainRemoteClientManagerPlugin
         @param main_remote_client_manager_plugin: The main remote client manager plugin.
         """
@@ -88,7 +88,7 @@ class MainRemoteClientManager:
         """
         Creates a remote client for the given service name,
         with the given service attributes.
-        
+
         @type service_name: String
         @param service_name: The name of the client service to be used.
         @type service_attributes: Dictionary
