@@ -86,7 +86,7 @@ class TreeVisualizerPanel(wx.Panel):
         self.fileidx = il.Add(wx.ArtProvider_GetBitmap(wx.ART_NORMAL_FILE, wx.ART_OTHER, isz))
         self.tree.SetImageList(il)
         self.il = il
-        self.set_root("Nothing to display...")       
+        self.set_root("Nothing to display...")
 
         # build search box
         self.search = wx.SearchCtrl(self, wx.ID_ANY, style = wx.TE_PROCESS_ENTER, size = (250, -1))
@@ -132,7 +132,7 @@ class TreeVisualizerPanel(wx.Panel):
 
     def on_hyperlink(self, evt):
         pass
-    
+
     def on_node_expanding(self, evt):
         pass
 
@@ -211,7 +211,7 @@ class TreeVisualizerPanel(wx.Panel):
             while not node == self.tree.GetRootItem():
                 if not node in self.parent_match_list:
                     self.parent_match_list.append(node)
-                node = self.tree.GetItemParent(node) 
+                node = self.tree.GetItemParent(node)
         self.delete_list = [item for item in self.non_match_list if item not in self.parent_match_list]
         for delete_node in self.delete_list:
             if self.tree.GetItemParent(delete_node) in self.delete_list:
@@ -258,7 +258,7 @@ class TreeVisualizerPanel(wx.Panel):
     def set_root(self, root_name):
         if self.tree.GetRootItem():
             self.tree.Delete(self.tree.GetRootItem())
-        self.tree.AddRoot(root_name)           
+        self.tree.AddRoot(root_name)
         self.tree.SetItemImage(self.tree.GetRootItem(), self.fldridx, wx.TreeItemIcon_Normal)
         self.tree.SetItemImage(self.tree.GetRootItem(), self.fldropenidx, wx.TreeItemIcon_Expanded)
 

@@ -68,7 +68,7 @@ class DependenciesVisualizer:
         return self.draw_panel
 
 class DrawPanel(wx.Panel):
-    
+
     drag_image = None
     drag_shape = None
     hilite_shape = None
@@ -244,13 +244,13 @@ class DrawPanel(wx.Panel):
                 self.drag_image.Show()
 
 class DragShape:
-    
+
     bitmap = None
     position = None
     shown = True
     text = None
     fullscreen = False
-    
+
     def __init__(self, bitmap):
         self.bitmap = bitmap
         self.position = (0,0)
@@ -278,8 +278,8 @@ class DragShape:
             return True
         else:
             return False
-        
+
 class GraphNodeDragShape(DragShape):
-    
+
     def __init__(self, bitmap, graph_node):
         DragNode.__init__(self, bitmap)

@@ -122,14 +122,14 @@ class PluginManagerPanel(misc_gui.tree_visualizer.tree_visualizer_system.TreeVis
                     self.add_item(package_node, "import name = \"%s\"" % package_dependency.package_import_name, 0)
                     self.add_item(package_node, "version = \"%s\"" % package_dependency.package_version, 0)
                     self.add_item(package_node, "url = \"%s\"" % package_dependency.package_url, 0)
-            if len(plugin_list) > 0: 
+            if len(plugin_list) > 0:
                 plugin_dependencies_node = self.add_item(dependencies_node, "Plugin dependencies", 0)
                 for plugin_dependency in plugin_list:
                     item_node = self.add_item(plugin_dependencies_node, "plugin dependency id = \"%s\"" % plugin_dependency.plugin_id, 0)
                     self.tree.SetItemHyperText(item_node, True)
                     self.tree.SetItemPyData(item_node, (plugin_dependency.plugin_id, plugin_dependency.plugin_version))
             plugin_list = self.parent_plugin.manager._get_plugins_by_dependency(plugin.id)
-            if len(plugin_list) > 0: 
+            if len(plugin_list) > 0:
                 dependent_plugins_node = self.add_item(dependencies_node, "Dependent plugins", 0)
                 for dependent_plugin in plugin_list:
                     item_node = self.add_item(dependent_plugins_node, "dependent plugin id = \"%s\"" % dependent_plugin.id, 0)
@@ -200,4 +200,4 @@ class PluginManagerPanel(misc_gui.tree_visualizer.tree_visualizer_system.TreeVis
         for plugin in plugin_list:
             self.add_plugin(self.tree.GetRootItem(), plugin)
         self.check_plugin_nodes()
-        self.tree.Expand(self.tree.GetRootItem())            
+        self.tree.Expand(self.tree.GetRootItem())

@@ -71,7 +71,7 @@ class TaskProgressInformationItem:
         self.percentage_complete = percentage_complete
         self.status = status
         self.panel = panel
-        
+
         self.status_changed_handlers_list = []
 
     def set_task_name(self, task_name):
@@ -124,7 +124,7 @@ class TaskProgressInformationItem:
         elif status == STATUS_STOPPED:
             self.set_status_message("Stopped")
 
-        self.panel.update_task_status(status)    
+        self.panel.update_task_status(status)
         self.status = status
 
     def get_status(self):

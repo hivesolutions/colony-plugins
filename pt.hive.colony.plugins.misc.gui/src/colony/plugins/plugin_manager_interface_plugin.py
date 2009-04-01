@@ -60,20 +60,20 @@ class PluginManagerInterfacePlugin(colony.plugins.plugin_system.Plugin):
     events_registrable = []
 
     panel = None
-    
+
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global misc_gui
         import misc_gui.plugin_manager_interface.plugin_manager_interface_system
-        
+
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
-            
+
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
@@ -82,9 +82,9 @@ class PluginManagerInterfacePlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)           
+        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def do_panel(self, parent):
         self.panel = misc_gui.plugin_manager_interface.plugin_manager_interface_system.PluginManagerPanel(parent, self)
-        self.panel.reset_interface() 
+        self.panel.reset_interface()
         return self.panel

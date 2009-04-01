@@ -127,7 +127,7 @@ class ConsoleWindow(wx.stc.StyledTextCtrl):
     def set_styles(self, faces):
         """
         Configures font size, typeface and color for lexer
-        
+
         @type faces: Dictionary
         @param faces: The dictionary that contains the style attributes
         """
@@ -169,7 +169,7 @@ class ConsoleWindow(wx.stc.StyledTextCtrl):
         """
         Display text in the shell
         Replace line endings with OS-specific endings
-        
+
         @type text: String
         @param text: The text to displayed
         """
@@ -199,7 +199,7 @@ class ConsoleWindow(wx.stc.StyledTextCtrl):
     def fix_line_endings(self, text):
         """
         Return text with line endings replaced by OS-specific endings
-        
+
         @type text: String
         @param text: The text to be returned with line endings replaced by OS-specific endings
         @rtype: String
@@ -218,7 +218,7 @@ class ConsoleWindow(wx.stc.StyledTextCtrl):
     def can_edit(self):
         """
         Returns true if editing should succeed
-        
+
         @rtype: bool
         @return: The result of the edit test (if successful or not)
         """
@@ -238,7 +238,7 @@ class ConsoleWindow(wx.stc.StyledTextCtrl):
     def can_remove(self):
         """
         Returns true if removal should succeed
-        
+
         @rtype: bool
         @return: The result of the removal test (if successful or not)
         """
@@ -261,7 +261,7 @@ class ConsoleWindow(wx.stc.StyledTextCtrl):
     def on_key_down(self, event):
         """
         Handler for the key down event
-        
+
         @type event: Event
         @param event: The triggered event
         """
@@ -324,7 +324,7 @@ class ConsoleWindow(wx.stc.StyledTextCtrl):
     def _clip(self, data):
         """
         Copies the given data to the clipboard
-        
+
         @type data: DataObject
         @param data: The data to be copied to the clipboard
         """

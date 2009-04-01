@@ -60,7 +60,7 @@ class ProgressInformationPlugin(colony.plugins.plugin_system.Plugin):
     events_registrable = ["task_information_changed"]
 
     progress_information = None
-    
+
     bitmap_loader_plugin = None
 
     def load_plugin(self):
@@ -70,13 +70,13 @@ class ProgressInformationPlugin(colony.plugins.plugin_system.Plugin):
         self.progress_information = misc_gui.progress_information.progress_information_system.ProgressInformation(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)

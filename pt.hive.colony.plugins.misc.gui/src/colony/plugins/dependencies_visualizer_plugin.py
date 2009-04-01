@@ -60,7 +60,7 @@ class DependenciesVisualizerPlugin(colony.plugins.plugin_system.Plugin):
     events_registrable = []
 
     dependencies_visualizer = None
-    
+
     dependencies_calculator_plugin = None
 
     def load_plugin(self):
@@ -70,13 +70,13 @@ class DependenciesVisualizerPlugin(colony.plugins.plugin_system.Plugin):
         self.dependencies_visualizer = misc_gui.dependencies_visualizer.dependencies_visualizer_system.DependenciesVisualizer(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)

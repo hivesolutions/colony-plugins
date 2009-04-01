@@ -71,13 +71,13 @@ STATUS_TASK_STOPPED = progress_information_logic.STATUS_STOPPED
 #@todo: review and comment this file
 #@TODO fazer refactor a todo a parte grafica para que fique com bom aspecto os nomes das variaveis etc.
 class ProgressInformation:
-    
+
     progress_information_plugin = None
 
     progress_information_panel = None
-    
+
     icons_loaded = False
-    
+
     task_id_task_progress_information_item_map = {}
 
     bitmaps_10x10_map = {}
@@ -85,7 +85,7 @@ class ProgressInformation:
 
     bitmaps_16x16_map = {}
     """ The bitmaps map for 16x16 bitmaps """
- 
+
     icons_10x10_map = {}
     """ The icons map for 10x10 icons """
 
@@ -143,7 +143,7 @@ class ProgressInformation:
             for args in args_map:
                 if args == "status":
                     status_value = args_map[args]
-                    
+
                     if status_value == "paused":
                         task_progress_information_item.set_status(progress_information_logic.STATUS_PAUSED)
                     elif status_value == "running":
@@ -166,7 +166,7 @@ class ProgressInformation:
         progress_information_panel_item = self.progress_information_panel.add_task_progress_information_item(task_progress_information_item)
         task_progress_information_item.panel = progress_information_panel_item
         return task_progress_information_item
-    
+
     def run_in_background(self):
         # generates the hide progress information panel event
         self.progress_information_plugin.generate_event("gui_progress_information_changed.hide_panel", [])
@@ -175,10 +175,10 @@ class ProgressInformationPanel(wx.Panel):
     """
     The progress information panel class
     """
-    
+
     MIN_WIDTH = 550
     """ The minimum width for the panel """
-    
+
     MIN_HEIGHT = 360
     """ The minimum height for the panel """
 
@@ -343,7 +343,7 @@ class ProgressInformationPanel(wx.Panel):
         self.panel.SetupScrolling()
 
     def add_task_progress_information_item(self, task_progress_information_item):
-        gauge_type = None 
+        gauge_type = None
         percentage_complete = task_progress_information_item.percentage_complete
 
         if percentage_complete != -1:
@@ -405,7 +405,7 @@ class ProgressInformationPanelItem(wx.Panel):
         self.gauge_type = gauge_type
 
         self.selected = False
-        
+
         task_name = self.task_progress_information_item.task_name
         task_description = self.task_progress_information_item.task_description
 
@@ -481,7 +481,7 @@ class ProgressInformationPanelItem(wx.Panel):
         task_name = self.task_progress_information_item.task_name
         status_message = self.task_progress_information_item.status_message
 
-        if status_message and not status_message == "" and not status_message == "none": 
+        if status_message and not status_message == "" and not status_message == "none":
             message = task_name + " " + "(" + status_message + ")"
         else:
             message = task_name
@@ -494,7 +494,7 @@ class ProgressInformationPanelItem(wx.Panel):
 
     def update_status_message(self):
         self.update_task_name()
- 
+
     def update_task_status(self, status):
         if status == STATUS_TASK_NONE:
             pass
@@ -539,7 +539,7 @@ class ProgressInformationPanelItem(wx.Panel):
         parent_panel.progress_information_items_sizer.Remove(self)
         parent_panel.progress_information_items_list.remove(self)
         container_panel.SetupScrolling()
-       
+
         # in case there's no tasks left we close the progress information panel
         if len(parent_panel.progress_information_items_list) == 0:
             parent_panel.progress_information.run_in_background()
