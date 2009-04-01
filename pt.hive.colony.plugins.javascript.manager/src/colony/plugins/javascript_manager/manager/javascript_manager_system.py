@@ -81,7 +81,7 @@ class JavascriptManager:
     def __init__(self, javascript_manager_plugin):
         """
         Constructor of the class.
-        
+
         @type javascript_manager_plugin: JavascriptManagerPlugin
         @param javascript_manager_plugin: The javascript manager plugin.
         """
@@ -116,7 +116,7 @@ class JavascriptManager:
                                                self.workspace_base_path + "/pt.hive.colony.demo.web.plugins.pacman.main/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.demo.web.plugins.pacman.output/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web/plugins",
-                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.data_structure/plugins", 
+                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.data_structure/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.business/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.gui.development/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.dummy/plugins",
@@ -142,7 +142,7 @@ class JavascriptManager:
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.misc/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.navigation_tree/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.pos/plugins",
-                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.purchases/plugins",          
+                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.purchases/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.sales/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.settings/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.system/plugins",
@@ -175,7 +175,7 @@ class JavascriptManager:
             self.index_plugin_search_directory(plugin_search_directory, current_plugin_search_directories_map)
 
         # retrieves the old plugin search directories map (for latter removal)
-        old_plugin_search_directories_map = self.plugin_search_directories_map 
+        old_plugin_search_directories_map = self.plugin_search_directories_map
 
         # sets the current plugin search directories map as the
         # plugin search directories map
@@ -202,7 +202,7 @@ class JavascriptManager:
         # the list of files in the javascript plugins directory
         dir_list = os.listdir(plugin_search_directory)
 
-        # for all the files in the directory 
+        # for all the files in the directory
         for file_name in dir_list:
             # retrieves the file full path
             full_path = plugin_search_directory + "/" + file_name
@@ -234,7 +234,7 @@ class JavascriptManager:
                 # the list of files in the javascript plugins directory
                 dir_list = os.listdir(plugin_search_directory)
 
-                # for all the files in the directory 
+                # for all the files in the directory
                 for file_name in dir_list:
                     # retrieves the file full path
                     full_path = plugin_search_directory + "/" + file_name

@@ -73,7 +73,7 @@ class JavascriptManagerAutoloader:
     def __init__(self, javascript_manager_autoloader_plugin):
         """
         Constructor of the class.
-        
+
         @type javascript_manager_autoloader_plugin: JavascriptManagerAutoloaderPlugin
         @param javascript_manager_autoloader_plugin: The javascript manager autoloader plugin.
         """
@@ -163,7 +163,7 @@ class JavascriptManagerAutoloader:
                         # retrieves the current file modified date
                         current_file_modified_date = self.plugin_id_file_modified_date_map[plugin_id]
 
-                        # in case the modified date is greater that the current file modified date 
+                        # in case the modified date is greater that the current file modified date
                         if modified_date > current_file_modified_date:
                             # prints a log message
                             self.javascript_manager_autoloader_plugin.debug("Javascript plugin %s updated" % plugin_id)
@@ -289,7 +289,7 @@ class JavascriptManagerAutoloader:
         """
         Retrieves the list of all the updated plugins since the time in
         the given local timestamp.
-        
+
         @type local_timestamp: TimestampTuple
         @param local_timestamp: The local timestamp to retrieve the updated plugins.
         @rtype: List
@@ -321,7 +321,7 @@ class JavascriptManagerAutoloader:
         """
         Retrieves the list of all the removed plugins since the time in
         the given local timestamp.
-        
+
         @type local_timestamp: TimestampTuple
         @param local_timestamp: The local timestamp to retrieve the removed plugins.
         @rtype: List
