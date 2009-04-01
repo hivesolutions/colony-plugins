@@ -54,7 +54,7 @@ class MainDistributionPluginSystem:
     def __init__(self, main_distribution_plugin_system_plugin):
         """
         Constructor of the class.
-        
+
         @type main_distribution_plugin_system_plugin: MainDistributionPluginSystemPlugin
         @param main_distribution_plugin_system_plugin: The main distribution plugin system plugin.
         """
@@ -140,7 +140,7 @@ class PluginProxy:
     def create_caller(self, calling_name):
         """
         Creates the caller method for the given calling name.
-        
+
         @type calling_name: String
         @param calling_name: The calling name for the calling method.
         @type calling_name: function

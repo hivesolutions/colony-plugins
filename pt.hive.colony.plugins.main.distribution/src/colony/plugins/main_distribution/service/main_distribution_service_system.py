@@ -51,7 +51,7 @@ class MainDistributionService:
     def __init__(self, main_distribution_service_plugin):
         """
         Constructor of the class.
-        
+
         @type main_distribution_service_plugin: MainDistributionServicePlugin
         @param main_distribution_service_plugin: The main distribution service plugin.
         """
