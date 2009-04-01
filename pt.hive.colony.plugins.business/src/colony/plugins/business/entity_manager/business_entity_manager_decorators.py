@@ -40,7 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 def transaction(transaction_type = "required"):
     """
     Decorator for the transactional business logic.
-    
+
     @type transaction_type: String
     @param plugin_id: The type of transaction to be created.
     @rtype: function
@@ -50,7 +50,7 @@ def transaction(transaction_type = "required"):
     def create_decorator_interceptor(func):
         """
         Creates a decorator interceptor, that intercepts the normal function call.
-        
+
         @type func: function
         @param func: The callback function.
         """
@@ -58,7 +58,7 @@ def transaction(transaction_type = "required"):
         def decorator_interceptor(*args, **kwargs):
             """
             The interceptor function for the load_allowed decorator.
-            
+
             @type args: pointer
             @param args: The function arguments list.
             @type kwargs: pointer pointer
@@ -90,7 +90,7 @@ def transaction(transaction_type = "required"):
     def decorator(func, *args, **kwargs):
         """
         The decorator function for the transaction decorator.
-        
+
         @type func: function
         @param func: The function to be decorated.
         @type args: pointer

@@ -56,7 +56,7 @@ class BusinessDummyEntityBundle:
     def __init__(self, business_dummy_entity_bundle_plugin):
         """
         Constructor of the class
-        
+
         @type business_dummy_entity_bundle_plugin: BusinessDummyEntityBundlePlugin
         @param business_dummy_entity_bundle_plugin: The business dummy entity bundle plugin
         """

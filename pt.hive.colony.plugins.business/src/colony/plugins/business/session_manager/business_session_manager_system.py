@@ -46,7 +46,7 @@ MAX_POOL_SIZE = 30
 """ The maximum pool size """
 
 SCHEDULING_ALGORITHM = 1
-""" The scheduling algorithm """ 
+""" The scheduling algorithm """
 
 GET_SESSION_METHODS_TYPE_VALUE = "get_session_methods"
 """ The get session methods type value """
@@ -74,7 +74,7 @@ class BusinessSessionManager:
     def __init__(self, business_session_manager_plugin):
         """
         Constructor of the class
-        
+
         @type business_session_manager_plugin: BusinessSessionManagerPlugin
         @param business_session_manager_plugin: The business session manager plugin
         """

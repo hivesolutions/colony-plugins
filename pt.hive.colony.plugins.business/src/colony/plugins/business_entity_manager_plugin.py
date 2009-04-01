@@ -69,13 +69,13 @@ class BusinessEntityManagerPlugin(colony.plugins.plugin_system.Plugin):
         self.business_entity_manager = business.entity_manager.business_entity_manager_system.BusinessEntityManager(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
     @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.business.entity_manager", "1.0.0")
     def load_allowed(self, plugin, capability):

@@ -65,7 +65,7 @@ class BusinessSessionSerializer:
     def __init__(self, business_session_serializer_plugin):
         """
         Constructor of the class
-        
+
         @type business_session_serializer_plugin: BusinessSessionSerializerPlugin
         @param business_session_serializer_plugin: The business session serializer plugin.
         """
@@ -170,7 +170,7 @@ class SessionInformation:
         """
         Converts the elements of the given map into attributes of
         the session information instance.
-        
+
         @type session_information_map: Dictionary
         @param session_information_map: The session information map to be used in the conversion.
         """

@@ -71,14 +71,14 @@ class BusinessDummyEntityBundlePlugin(colony.plugins.plugin_system.Plugin):
         self.business_dummy_entity_bundle = business.dummy_entity_bundle.business_dummy_entity_bundle_system.BusinessDummyEntityBundle(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
         self.business_dummy_entity_bundle.generate_classes()
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)

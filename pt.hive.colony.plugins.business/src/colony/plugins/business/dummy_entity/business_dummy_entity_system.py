@@ -53,7 +53,7 @@ class BusinessDummyEntity:
     def __init__(self, business_dummy_entity_plugin):
         """
         Constructor of the class
-        
+
         @type business_dummy_entity_plugin: BusinessDummyEntityPlugin
         @param business_dummy_entity_plugin: The business dummy entity plugin
         """

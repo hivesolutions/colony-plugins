@@ -48,7 +48,7 @@ class BusinessHelper:
     def __init__(self, business_helper_plugin):
         """
         Constructor of the class.
-        
+
         @type business_helper_plugin: BusinessHelperPlugin
         @param business_helper_plugin: The business helper plugin.
         """

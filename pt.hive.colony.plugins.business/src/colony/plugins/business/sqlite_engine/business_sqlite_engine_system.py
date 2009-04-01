@@ -152,7 +152,7 @@ class BusinessSqliteEngine:
     def __init__(self, business_sqlite_engine_plugin):
         """
         Constructor of the class
-        
+
         @type business_sqlite_engine_plugin: BusinessSqliteEnginePlugin
         @param business_sqlite_engine_plugin: The business sqlite engine plugin.
         """
@@ -162,7 +162,7 @@ class BusinessSqliteEngine:
     def get_engine_name(self):
         """
         Retrieves the name of the engine.
-        
+
         @rtype: String
         @return: The name of the engine.
         """
@@ -172,7 +172,7 @@ class BusinessSqliteEngine:
     def create_connection(self, connection_parameters):
         """
         Creates the connection using the given connection parameters.
-        
+
         @type connection_parameters: List
         @param connection_parameters: The connection parameters.
         @rtype: Connection
@@ -236,7 +236,7 @@ class BusinessSqliteEngine:
         return True
 
     def rollback_transaction(self, connection, transaction_name):
-        # "rollsback" the transaction        
+        # "rollsback" the transaction
         return self.rollback_connection(connection)
 
     def exists_entity_definition(self, connection, entity_class):
@@ -326,7 +326,7 @@ class BusinessSqliteEngine:
     def synced_entity_definition(self, connection, entity_class):
         """
         Checks if an entity definition is synchronized with the correspondent database information.
-        
+
         @type connection: Connection
         @param connection: The database connection to use.
         @type entity_class: Class
@@ -424,7 +424,7 @@ class BusinessSqliteEngine:
     def create_entity_definition(self, connection, entity_class):
         """
         Creates the entity definition in the database from the entity class.
-        
+
         @type connection: Connection
         @param connection: The database connection to use.
         @type entity_class: Class
@@ -556,7 +556,7 @@ class BusinessSqliteEngine:
     def update_entity_definition(self, connection, entity_class):
         """
         Updates the entity definition in the database from the entity class.
-        
+
         @type connection: Connection
         @param connection: The database connection to use.
         @type entity_class: Class
@@ -568,7 +568,7 @@ class BusinessSqliteEngine:
     def save_entity(self, connection, entity):
         """
         Saves the given entity instance in the database, using the given connection.
-        
+
         @type connection: Connection
         @param connection: The database connection to use.
         @type entity: Object
@@ -700,7 +700,7 @@ class BusinessSqliteEngine:
         """
         Saves the indirect relations for the given entity instance in the database,
         using the given connection.
-        
+
         @type connection: Connection
         @param connection: The database connection to use.
         @type entity: Object
@@ -858,7 +858,7 @@ class BusinessSqliteEngine:
     def remove_entity(self, connection, entity):
         """
         Removes the given entity instance from the database, using the given connection.
-        
+
         @type connection: Connection
         @param connection: The database connection to use.
         @type entity: Object
@@ -954,7 +954,7 @@ class BusinessSqliteEngine:
         """
         Retrieves an entity instance of the declared class type with the given id, using the given connection.
         The search field name is used to find an entity with a value different than the id field.
-        
+
         @type connection: Connection
         @param connection: The database connection to use.
         @type entity_class: Class
@@ -1166,7 +1166,7 @@ class BusinessSqliteEngine:
         """
         Retrieves all entity instances of the declared class type with the given value, using the given connection.
         The search field name is used to find an entity with a value of the given field.
-        
+
         @type connection: Connection
         @param connection: The database connection to use.
         @type entity_class: Class
@@ -1310,7 +1310,7 @@ class BusinessSqliteEngine:
     def get_entity_class_attribute_names(self, entity_class):
         """
         Retrieves a list with the names of all attributes from the given entity class.
-        
+
         @type entity_class: Class
         @param entity_class: The entity class.
         @rtype: List
@@ -1328,7 +1328,7 @@ class BusinessSqliteEngine:
     def get_entity_class_indirect_attribute_names(self, entity_class):
         """
         Retrieves a list with the names of all indirect attributes from the given entity class.
-        
+
         @type entity_class: Class
         @param entity_class: The entity class.
         @rtype: List
@@ -1346,7 +1346,7 @@ class BusinessSqliteEngine:
     def get_entity_attribute_names(self, entity):
         """
         Retrieves a list with the names of all attributes from the given entity instance.
-        
+
         @type entity: Object
         @param entity: The entity instance.
         @rtype: List
@@ -1361,7 +1361,7 @@ class BusinessSqliteEngine:
     def get_entity_indirect_attribute_names(self, entity):
         """
         Retrieves a list with the names of all indirect attributes from the given entity instance.
-        
+
         @type entity: Object
         @param entity: The entity instance.
         @rtype: List
@@ -1376,7 +1376,7 @@ class BusinessSqliteEngine:
     def get_entity_class_non_relation_attribute_names(self, entity_class):
         """
         Retrieves a list with the names of all the non relational attributes from the given entity class.
-        
+
         @type entity_class: Class
         @param entity_class: The entity class.
         @rtype: List
@@ -1394,7 +1394,7 @@ class BusinessSqliteEngine:
     def get_entity_non_relation_attribute_names(self, entity_class):
         """
         Retrieves a list with the names of all the non relational attributes from the given entity instance.
-        
+
         @type entity_class: Object
         @param entity_class: The entity instance.
         @rtype: List
@@ -1409,7 +1409,7 @@ class BusinessSqliteEngine:
     def get_entity_class_attribute_values(self, entity_class):
         """
         Retrieves a list with the values of all attributes from the given entity class.
-        
+
         @type entity_class: Class
         @param entity_class: The entity class.
         @rtype: List
@@ -1427,7 +1427,7 @@ class BusinessSqliteEngine:
     def get_entity_class_indirect_attribute_values(self, entity_class):
         """
         Retrieves a list with the values of all indirect attributes from the given entity class.
-        
+
         @type entity_class: Class
         @param entity_class: The entity class.
         @rtype: List
@@ -1445,7 +1445,7 @@ class BusinessSqliteEngine:
     def get_entity_attribute_values(self, entity):
         """
         Retrieves a list with the values of all attributes from the given entity instance.
-        
+
         @type entity: Object
         @param entity: The entity instance.
         @rtype: List
@@ -1466,7 +1466,7 @@ class BusinessSqliteEngine:
     def get_entity_indirect_attribute_values(self, entity):
         """
         Retrieves a list with the values of all indirect attributes from the given entity instance.
-        
+
         @type entity: Object
         @param entity: The entity instance.
         @rtype: List
@@ -1487,7 +1487,7 @@ class BusinessSqliteEngine:
     def get_entity_id_attribute_value(self, entity):
         """
         Retrieves the value of the entity id attribute.
-        
+
         @type entity: Entity
         @param entity: The entity to retrieve the id attribute value.
         @rtype: Object
@@ -1508,7 +1508,7 @@ class BusinessSqliteEngine:
     def get_entity_class_id_attribute_value(self, entity_class):
         """
         Retrieves the value of the entity class id attribute.
-        
+
         @type entity: Class
         @param entity: The entity class to retrieve the id attribute value.
         @rtype: Object
@@ -1526,7 +1526,7 @@ class BusinessSqliteEngine:
     def get_entity_class_id_attribute_name(self, entity_class):
         """
         Retrieves the name of the entity class id attribute.
-        
+
         @type entity: Class
         @param entity: The entity class to retrieve the id attribute name.
         @rtype: String
@@ -1553,7 +1553,7 @@ class BusinessSqliteEngine:
     def is_attribute_relation(self, attribute_value):
         """
         Retrieves the result of the attribute relation test.
-        
+
         @type attribute_value: Object
         @param attribute_value: The value of the attribute to test for relation.
         @rtype: bool
@@ -1573,7 +1573,7 @@ class BusinessSqliteEngine:
     def is_attribute_name_relation(self, attribute_name, entity_class):
         """
         Retrieves the result of the attribute name relation test.
-        
+
         @type attribute_name: Object
         @param attribute_name: The value of the attribute name to test for relation.
         @type entity_class: Class
@@ -1591,7 +1591,7 @@ class BusinessSqliteEngine:
     def is_attribute_lazy_relation(self, attribute_value):
         """
         Retrieves the result of the attribute lazy relation test.
-        
+
         @type attribute_value: Object
         @param attribute_value: The value of the attribute to test for lazy relation.
         @rtype: bool
@@ -1617,7 +1617,7 @@ class BusinessSqliteEngine:
     def is_attribute_name_lazy_relation(self, attribute_name, entity_class):
         """
         Retrieves the result of the attribute name lazy relation test.
-        
+
         @type attribute_name: Object
         @param attribute_name: The value of the attribute name to test for lazy relation.
         @type entity_class: Class
@@ -1635,7 +1635,7 @@ class BusinessSqliteEngine:
     def is_attribute_indirect_relation(self, attribute_value, attribute_name, entity_class):
         """
         Retrieves the result of the attribute indirect relation test.
-        
+
         @type attribute_value: Object
         @param attribute_value: The value of the attribute to test for indirect relation.
         @type attribute_name: String
@@ -1670,7 +1670,7 @@ class BusinessSqliteEngine:
     def is_attribute_name_indirect_relation(self, attribute_name, entity_class):
         """
         Retrieves the result of the attribute name indirect relation test.
-        
+
         @type attribute_name: Object
         @param attribute_name: The value of the attribute name to test for indirect relation.
         @type entity_class: Class
@@ -1688,7 +1688,7 @@ class BusinessSqliteEngine:
     def is_attribute_table_joined_relation(self, attribute_value, attribute_name, entity_class):
         """
         Retrieves the result of the attribute table joined relation test.
-        
+
         @type attribute_value: Object
         @param attribute_value: The value of the attribute to test for table joined relation.
         @type attribute_name: String
@@ -1715,7 +1715,7 @@ class BusinessSqliteEngine:
     def is_attribute_name_table_joined_relation(self, attribute_name, entity_class):
         """
         Retrieves the result of the attribute name table joined relation test.
-        
+
         @type attribute_name: Object
         @param attribute_name: The value of the attribute name to test for table joined relation.
         @type entity_class: Class
@@ -1733,7 +1733,7 @@ class BusinessSqliteEngine:
     def get_relation_attribute_value(self, attribute_value, class_attribute_value, entity_class, relation_attribute_name):
         """
         Retrieves the value of a relation attribute value sent for the given class attribute values.
-        
+
         @type attribute_value: Object
         @param attriobute_value: The relation attribute value.
         @type class_attribute_value: Dictionary
@@ -1788,7 +1788,7 @@ class BusinessSqliteEngine:
     def get_attribute_data_type(self, attribute_value, entity_class, relation_attribute_name):
         """
         Retrieves the data type of the give attribute value.
-        
+
         @type attribute_value: Dictionary
         @param attribute_value: The attribute value, containing the entity attribute metadata.
         @type entity_class: Class
@@ -1885,7 +1885,7 @@ class BusinessSqliteEngine:
     def execute_query(self, cursor, query_string_value):
         """
         Executes a query in the give cursor using the query string value provided.
-        
+
         @type cursor: Cursor
         @param cursor: The cursor where the query is going to be executed.
         @type query_string_value: String
@@ -1901,7 +1901,7 @@ class BusinessSqliteEngine:
     def log_query(self, query_string_value):
         """
         Logs the given query string value into the plugin manager logger.
-        
+
         @type query_string_value: String
         @param query_string_value: The query string value to be logged.
         """
@@ -1926,7 +1926,7 @@ class BufferedEntities:
     def add_entity(self, id_value, entity):
         """
         Adds an entity to the buffer.
-        
+
         @type id_value: Object
         @param id_value: The id of the entity to add.
         @type entity: Object
@@ -1946,7 +1946,7 @@ class BufferedEntities:
     def get_entity(self, entity_class, id_value):
         """
         Retrieves an entity from the buffer.
-        
+
         @type entity_class: Class
         @param entity_class: The entity class of the entity to retrieve.
         @type id_value: Object

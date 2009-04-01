@@ -70,7 +70,7 @@ class BusinessEntityManager:
     def __init__(self, business_entity_manager_plugin):
         """
         Constructor of the class.
-        
+
         @type business_entity_manager_plugin: BusinessEntityManagerPlugin
         @param business_entity_manager_plugin: The business entity manager plugin.
         """
@@ -164,7 +164,7 @@ class EntityManager:
     def get_connection(self):
         """
         Retrieves the current available connection.
-        
+
         @rtype: Connection
         @return: The current available database connection.
         """
@@ -192,7 +192,7 @@ class EntityManager:
     def get_database_connection(self):
         """
         Retrieves the current available database connection.
-        
+
         @rtype: Connection
         @return: The current available database connection.
         """
@@ -214,7 +214,7 @@ class EntityManager:
     def get_transaction_stack(self):
         """
         Retrieves the current available transaction stack.
-        
+
         @rtype: List
         @return: The current available transaction stack.
         """
@@ -259,7 +259,7 @@ class EntityManager:
         """
         Creates a new transaction in the entity manager
         with the given transaction name.
-        
+
         @type transaction_name: String
         @param transaction_name: The name of the transaction.
         @rtype: bool
@@ -281,7 +281,7 @@ class EntityManager:
         """
         Commits the transaction with the given transaction name,
         or the current available transaction if no name is specified.
-        
+
         @type transaction_name: String
         @param transaction_name: The name of the transaction to the "commited".
         @rtype: bool
@@ -307,7 +307,7 @@ class EntityManager:
         """
         "Rollsback" the transaction with the given transaction name,
         or the current available transaction if no name is specified.
-        
+
         @type transaction_name: String
         @param transaction_name: The name of the transaction to the "rolledback".
         @rtype: bool
@@ -365,7 +365,7 @@ class EntityManager:
     def remove(self, entity):
         """
         Removes an entity from the database.
-        
+
         @type entity: Object
         @param entity: The entity to be removed from the database.
         @rtype: bool
@@ -408,13 +408,13 @@ class EntityManager:
 
         # finds all the entities
         tobias = self.entity_manager_engine_plugin.find_all_entities(connection, entity_class, None, None)
-        
+
         return tobias
 
     def get_entity_class_attribute_names(self, entity_class):
         """
         Retrieves a list with the names of all attributes from the given entity class.
-        
+
         @type entity_class: Class
         @param entity_class: The entity class.
         @rtype: List
@@ -432,7 +432,7 @@ class EntityManager:
     def get_entity_class_non_relation_attribute_names(self, entity_class):
         """
         Retrieves a list with the names of all the non relational attributes from the given entity class.
-        
+
         @type entity_class: Class
         @param entity_class: The entity class.
         @rtype: List
@@ -450,7 +450,7 @@ class EntityManager:
     def get_entity_class_attribute_values(self, entity_class):
         """
         Retrieves a list with the values of all attributes from the given entity class.
-        
+
         @type entity_class: Class
         @param entity_class: The entity class.
         @rtype: List
@@ -468,7 +468,7 @@ class EntityManager:
     def get_entity_id_attribute_value(self, entity):
         """
         Retrieves the value of the entity id attribute.
-        
+
         @type entity: Entity
         @param entity: The entity to retrieve the id attribute value.
         @rtype: Object
@@ -489,7 +489,7 @@ class EntityManager:
     def get_entity_class_id_attribute_value(self, entity_class):
         """
         Retrieves the value of the entity class id attribute.
-        
+
         @type entity: Class
         @param entity: The entity class to retrieve the id attribute value.
         @rtype: Object
@@ -507,7 +507,7 @@ class EntityManager:
     def get_entity_class_id_attribute_name(self, entity_class):
         """
         Retrieves the name of the entity class id attribute.
-        
+
         @type entity: Class
         @param entity: The entity class to retrieve the id attribute name.
         @rtype: String

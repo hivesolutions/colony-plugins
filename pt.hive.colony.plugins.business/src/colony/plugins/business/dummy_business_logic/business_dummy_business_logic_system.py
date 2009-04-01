@@ -55,7 +55,7 @@ class BusinessDummyBusinessLogic:
     def __init__(self, business_dummy_business_logic_plugin):
         """
         Constructor of the class
-        
+
         @type business_dummy_business_logic_plugin: BusinessDummyBusinessLogicPlugin
         @param business_dummy_business_logic_plugin: The business dummy business logic plugin
         """

@@ -48,7 +48,7 @@ class BusinessMetadataProvider:
     def __init__(self, business_metadata_provider_plugin):
         """
         Constructor of the class.
-        
+
         @type business_metadata_provider_plugin: BusinessMetadataProviderPlugin
         @param business_metadata_provider_plugin: The business metadata provider plugin.
         """

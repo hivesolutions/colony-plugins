@@ -48,7 +48,7 @@ class BusinessDataProviderManager:
     def __init__(self, business_data_provider_manager_plugin):
         """
         Constructor of the class.
-        
+
         @type business_data_provider_manager_plugin: BusinessDataProviderManagerPlugin
         @param business_data_provider_manager_plugin: The business data provider manager plugin.
         """

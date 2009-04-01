@@ -70,7 +70,7 @@ class DummyBusinessLogic:
         self.entity_manager.save(dummy_entity_instance)
 
         # sets the entity name
-        self.name = dummy_entity_instance.name 
+        self.name = dummy_entity_instance.name
 
     @transaction_decorator("requires")
     def remove_entity(self):

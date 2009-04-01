@@ -67,7 +67,7 @@ class BusinessMysqlEngine:
     def __init__(self, business_mysql_engine_plugin):
         """
         Constructor of the class
-        
+
         @type business_mysql_engine_plugin: BusinessMysqlEnginePlugin
         @param business_mysql_engine_plugin: The business mysql engine plugin
         """
@@ -80,7 +80,7 @@ class BusinessMysqlEngine:
     def create_connection(self, connection_parameters):
         """
         Creates the connection using the given connection parameters.
-        
+
         @type connection_parameters: List
         @param connection_parameters: The connection parameters.
         @rtype: Connection
@@ -152,5 +152,5 @@ class BusinessMysqlEngine:
         return True
 
     def rollback_transaction(self, connection, transaction_name):
-        # "rollsback" the transaction        
+        # "rollsback" the transaction
         return self.rollback_connection(connection)

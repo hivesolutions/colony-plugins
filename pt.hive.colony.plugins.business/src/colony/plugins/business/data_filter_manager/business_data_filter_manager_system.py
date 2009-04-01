@@ -48,7 +48,7 @@ class BusinessDataFilterManager:
     def __init__(self, business_data_filter_manager_plugin):
         """
         Constructor of the class.
-        
+
         @type business_data_filter_manager_plugin: BusinessDataFilterManagerPlugin
         @param business_data_filter_manager_plugin: The business data filter manager plugin.
         """

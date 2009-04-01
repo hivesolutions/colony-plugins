@@ -48,7 +48,7 @@ class BusinessDbApiEngine:
     def __init__(self, business_db_api_engine_plugin):
         """
         Constructor of the class
-        
+
         @type business_db_api_engine_plugin: BusinessDbApiEnginePlugin
         @param business_db_api_engine_plugin: The business db api engine plugin
         """

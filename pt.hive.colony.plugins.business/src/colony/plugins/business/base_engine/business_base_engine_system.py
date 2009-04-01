@@ -48,7 +48,7 @@ class BusinessBaseEngine:
     def __init__(self, business_base_engine_plugin):
         """
         Constructor of the class
-        
+
         @type business_base_engine_plugin: BusinessBaseEnginePlugin
         @param business_base_engine_plugin: The business base engine plugin
         """
