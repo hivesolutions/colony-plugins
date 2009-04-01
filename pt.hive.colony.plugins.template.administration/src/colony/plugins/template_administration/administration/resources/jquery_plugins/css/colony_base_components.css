@@ -28,97 +28,97 @@
 */
 
 .colony-text-box {
-	text-align: left;
-	text-indent: 5px;
-	border: 1px solid #aaaaaa;
-	color: #888897;
+    text-align: left;
+    text-indent: 5px;
+    border: 1px solid #aaaaaa;
+    color: #888897;
 }
 
 .colony-text-box-small {
-	font-size: 12px;
-	height: 16px;
-	padding: 2px;
+    font-size: 12px;
+    height: 16px;
+    padding: 2px;
 }
 
 .colony-text-box-normal {
-	font-size: 15px;
-	height: 18px;
-	padding: 2px;
+    font-size: 15px;
+    height: 18px;
+    padding: 2px;
 }
 
 .colony-text-box-large {
-	font-size: 17px;
-	height: 20px;
-	padding: 3px;
+    font-size: 17px;
+    height: 20px;
+    padding: 3px;
 }
 
 .colony-button {
-	text-align: left;
-	border: 1px solid #e0cfc2;
-	background: #ede4d4 url("../pics/colony_button.png") repeat-x scroll 0 50%;
-	color: #888897;
+    text-align: left;
+    border: 1px solid #e0cfc2;
+    background: #ede4d4 url("../pics/colony_button.png") repeat-x scroll 0 50%;
+    color: #888897;
 }
 
 .colony-button:hover {
-	background: #ede4d4 url("../pics/colony_button_hover.png") repeat-x scroll 0
-		50%;
-	cursor: pointer;
+    background: #ede4d4 url("../pics/colony_button_hover.png") repeat-x scroll 0
+        50%;
+    cursor: pointer;
 }
 
 .colony-button #buttonImage {
-	vertical-align: top;
+    vertical-align: top;
 }
 
 .colony-button #buttonText {
-	vertical-align: top;
+    vertical-align: top;
 }
 
 .colony-button #buttonTextImage {
-	margin-left: 5px;
-	vertical-align: top;
+    margin-left: 5px;
+    vertical-align: top;
 }
 
 .colony-button-small {
-	padding: 3px;
+    padding: 3px;
 }
 
 .colony-button-normal {
-	padding: 5px;
+    padding: 5px;
 }
 
 .colony-button-large {
-	padding: 8px;
+    padding: 8px;
 }
 
 .colony-list-box {
-	text-align: left;
-	text-indent: 5px;
-	border: 1px solid #aaaaaa;
-	color: #878787;
-	background: #ffffff;
+    text-align: left;
+    text-indent: 5px;
+    border: 1px solid #aaaaaa;
+    color: #878787;
+    background: #ffffff;
 }
 
 .colony-list-box div {
-	padding-left: 5px;
-	padding-right: 5px;
-	padding-top: 2px;
-	padding-bottom: 2px;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 2px;
+    padding-bottom: 2px;
 }
 
 .colony-list-box-element {
 }
 
 .colony-list-box-element:hover {
-	cursor: pointer;
+    cursor: pointer;
 }
 
 .colony-list-box-element-selected {
-	background: #f4f0ec;
+    background: #f4f0ec;
 }
 
 .colony-list-box-element-selected:hover {
-	background: #f4f0ec;
-	cursor: pointer;
+    background: #f4f0ec;
+    cursor: pointer;
 }
 
 .colony-multi-level-list-box {
