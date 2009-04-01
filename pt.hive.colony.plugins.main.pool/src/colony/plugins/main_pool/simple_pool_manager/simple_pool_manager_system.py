@@ -65,7 +65,7 @@ class SimplePoolManager:
     def __init__(self, simple_pool_manager_plugin):
         """
         Constructor of the class
-        
+
         @type simple_pool_manager_plugin: Plugin
         @param simple_pool_manager_plugin: The simple pool manager plugin.
         """
@@ -77,7 +77,7 @@ class SimplePoolManager:
     def create_new_simple_pool(self, name, description, pool_size = DEFAULT_POOL_SIZE, scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM, maximum_pool_size = DEFAULT_MAXIMUM_POOL_SIZE):
         """
         Creates a new simple pool with the given name, description and pool size.
-        
+
         @type name: String
         @param name: The simple pool name.
         @type description: String
@@ -139,7 +139,7 @@ class SimplePoolImplementation:
     def __init__(self, name = "none", description = "none", pool_size = DEFAULT_POOL_SIZE, scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM, maximum_pool_size = DEFAULT_MAXIMUM_POOL_SIZE, logger = None):
         """
         Constructor of the class
-        
+
         @type name: String
         @param name: The simple pool name
         @type description: String
@@ -164,7 +164,7 @@ class SimplePoolImplementation:
     def pool_growable(self):
         """
         Returns if the simple pool can grow or not.
-        
+
         @rtype: bool
         @return: The result of the is growable test.
         """
