@@ -48,7 +48,7 @@ class BusinessAccessControl:
     def __init__(self, business_access_control_plugin):
         """
         Constructor of the class.
-        
+
         @type business_access_control_plugin: BusinessAccessControlPlugin
         @param business_access_control_plugin: The business access control plugin.
         """
