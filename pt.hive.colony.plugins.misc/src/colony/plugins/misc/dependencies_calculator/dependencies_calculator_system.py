@@ -50,7 +50,7 @@ class DependenciesCalculator:
         plugin_graph_generator.generate_graph()
         graph = plugin_graph_generator.get_value()
         return graph
-    
+
     def detect_circular_references(self, plugin_list):
         graph = self.generate_graph(plugin_list)
 
@@ -60,7 +60,7 @@ class DependenciesCalculator:
         return graph.has_circular_connections()
 
 class PluginGraphGenerator:
-    
+
     plugin_list = []
     plugin_id_version_node_map = {}
     graph = None
@@ -68,7 +68,7 @@ class PluginGraphGenerator:
     def __init__(self, plugin_list = []):
         self.plugin_list = plugin_list
         self.plugin_id_node_map = {}
-    
+
     def generate_graph(self):
         self.graph = Graph()
 
@@ -101,7 +101,7 @@ class PluginGraphGenerator:
         return self.graph
 
 class Graph:
-    
+
     # constants for node qualification
     MARK_WHITE = 1
     MARK_BLACK = 2

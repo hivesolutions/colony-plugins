@@ -60,7 +60,7 @@ class ConsoleEmail:
     def __init__(self, email_plugin = None):
         """
         Constructor of the class.
-        
+
         @type email_plugin: EmailPlugin
         @param email_plugin: The email plugin.
         """

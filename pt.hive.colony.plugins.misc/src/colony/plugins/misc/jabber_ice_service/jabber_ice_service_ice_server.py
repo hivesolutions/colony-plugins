@@ -90,7 +90,7 @@ if __name__ == "__main__":
 def get_server_path():
     """
     Retrieves the path to the ice server file
-    
+
     @rtype: String
     @return: The path to the ice server file
     """

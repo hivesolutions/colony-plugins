@@ -55,14 +55,14 @@ class ResourceManagerTestCase(unittest.TestCase):
         self.plugin.register_resource("namespace1", "name2", "type1", "data3")
 
         # this one should erase the previous
-        self.plugin.register_resource("namespace1", "name2", "type2", "data4") 
+        self.plugin.register_resource("namespace1", "name2", "type2", "data4")
         self.plugin.register_resource("namespace2", "name1", "type1", "data1")
         self.plugin.register_resource("namespace2", "name2", "type1", "data2")
         self.plugin.register_resource("namespace2", "name1", "type1", "data3")
         self.plugin.register_resource("namespace2", "name2", "type1", "data3")
 
         # this one should erase the previous
-        self.plugin.register_resource("namespace2", "name2", "type2", "data4") 
+        self.plugin.register_resource("namespace2", "name2", "type2", "data4")
 
         self.plugin.register_resource("namespace2.something", "name1", "type1", "data1")
         self.plugin.register_resource("namespace2.something", "name2", "type1", "data2")

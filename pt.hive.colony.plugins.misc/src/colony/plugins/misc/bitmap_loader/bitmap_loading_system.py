@@ -43,7 +43,7 @@ import wx
 
 #@todo: review and comment this file
 class BitmapLoader:
-    
+
     bitmap_loader_plugin = None
 
     def __init__(self, bitmap_loader_plugin):

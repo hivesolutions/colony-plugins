@@ -71,14 +71,14 @@ class IceHelperPlugin(colony.plugins.plugin_system.Plugin):
         self.console_ice_helper = misc.ice_helper.console_ice_helper.ConsoleIceHelper(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
         self.ice_helper.unload()
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
@@ -153,7 +153,7 @@ class IceHelperPlugin(colony.plugins.plugin_system.Plugin):
         return self.ice_helper.get_default_node()
 
     def get_default_server_templates(self):
-        return self.ice_helper.get_default_server_templates() 
+        return self.ice_helper.get_default_server_templates()
 
     def get_default_server_template(self):
         return self.ice_helper.get_default_server_template()

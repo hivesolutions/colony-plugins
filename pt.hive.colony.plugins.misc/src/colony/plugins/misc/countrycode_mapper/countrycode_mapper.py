@@ -43,20 +43,20 @@ import os
 FILE_PATH = "resources/iso_country_codes.dat"
 
 class CountryCodeMapper:
-    
+
     code_country_map = {}
     country_code_map = {}
-    
+
     def __init__(self):
         self.reset_state()
-    
+
     def reset_state(self):
         """
         Resets the objects attributes to their original state
         """
         self.code_country_map = {}
         self.country_code_map  = {}
-    
+
     #@todo: find better way to store country information
     def load_country_information(self):
         """
@@ -75,20 +75,20 @@ class CountryCodeMapper:
                 country_list.append(token)
             self.code_country_map[code] = country_list
         countries_file.close()
-    
+
     def get_country_name(self, country_code):
         """
         Returns the country name that corresponds to the given country code
-        
+
         @param country_code: The country code of the country whose name one wants to retrieve
         @return: Country name that corresponds to the provided country code
         """
         return self.code_country_map[string.lower(string.strip(country_code))]
-    
+
     def get_country_code(self, country_name):
         """
         Returns the country code that corresponds to the given country name
-        
+
         @param country_name: The country name of the country whose code one wants to retrieve
         @return: Country code that corresponds to the provided country name
         """

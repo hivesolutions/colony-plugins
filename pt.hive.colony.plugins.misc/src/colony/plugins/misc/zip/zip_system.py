@@ -48,10 +48,10 @@ BUFFER_LENGTH = 1024
 def get_file_paths(path, returned_path_list=[]):
     """
     Returns a list with full paths to all files contained within the specified directory.
-    
-    @type path: String 
+
+    @type path: String
     @param path: The root path from which all file paths will be retrieved.
-    @type returned_path_list: List 
+    @type returned_path_list: List
     @param returned_path_list: The list where all the paths will be stored (used in recursive calls).
     @rtype: List
     @return: A list of absolute file paths.
@@ -78,7 +78,7 @@ class Zip:
     def __init__(self, parent_plugin):
         """
         Class constructor.
-        
+
         @type parent_plugin: Plugin
         @param parent_plugin: Plugin that owns this class instance.
         """
@@ -88,7 +88,7 @@ class Zip:
     def get_directory_paths(self, file_path):
         """
         Returns a list with the paths to the directories contained in the specified zip file.
-        
+
         @type path: String
         @param path: Path to the zip file.
         @rtype: List
@@ -117,7 +117,7 @@ class Zip:
     def is_file_path(self, path):
         """
         Indicates if the path is pointing to a file.
-        
+
         @type path: String
         @param path: Filesystem path.
         @rtype: String
@@ -130,7 +130,7 @@ class Zip:
     def get_file_paths(self, file_path):
         """
         Returns a list with the paths to the files contained in the specified zip file.
-        
+
         @type path: String
         @param path: Path to the zip file.
         @rtype: List
@@ -153,10 +153,10 @@ class Zip:
     def create_directories(self, file_path, root_directory_path):
         """
         Creates the directory structure contained in the specified zip file.
-        
+
         @type file_path: String
         @param file_path: Full path to the zip file.
-        @type root_directory_path: String 
+        @type root_directory_path: String
         @param root_directory_path: Full path to the place where the directory structure will be created.
         """
 
@@ -176,10 +176,10 @@ class Zip:
     def create_files(self, file_path, root_directory_path):
         """
         Extracts the files contained in the specified zip file.
-        
+
         @type file_path: String
         @param file_path: Full path to the zip file.
-        @type root_directory_path: String 
+        @type root_directory_path: String
         @param root_directory_path: Full path to the place where the files will be extracted to.
         """
 
@@ -199,7 +199,7 @@ class Zip:
     def zip(self, zip_file_path, input_directory, file_path_list = None):
         """
         Compresses the contents of the provided directory into a zip file.
-        
+
         @type zip_file_path: String
         @param zip_file_path: Full path to the zip file.
         @type input_directory: String
@@ -223,7 +223,7 @@ class Zip:
     def unzip(self, zip_file_path, output_directory):
         """
         Extracts a zip file to the specified directory.
-        
+
         @type zip_file_path: String
         @param zip_file_path: Full path to the zip file.
         @type output_directory: String

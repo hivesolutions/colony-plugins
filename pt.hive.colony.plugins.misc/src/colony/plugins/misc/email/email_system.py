@@ -55,7 +55,7 @@ class Email:
     def __init__(self, email_plugin):
         """
         Constructor of the class.
-        
+
         @type email_plugin: EmailPlugin
         @param email_plugin: The email plugin.
         """

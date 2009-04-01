@@ -67,7 +67,7 @@ class ConsoleRepositoryDescriptorGenerator:
 
     def get_help(self):
         return HELP_TEXT
-    
+
     def process_generaterepositorydescriptor(self, args, output_method):
         if len(args) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)

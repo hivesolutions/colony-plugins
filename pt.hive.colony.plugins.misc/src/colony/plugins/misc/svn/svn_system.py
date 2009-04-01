@@ -53,7 +53,7 @@ class Svn:
     def __init__(self, svn_plugin):
         """
         Constructor of the class.
-        
+
         @type svn_plugin: SvnPlugin
         @param svn_plugin: The svn plugin.
         """

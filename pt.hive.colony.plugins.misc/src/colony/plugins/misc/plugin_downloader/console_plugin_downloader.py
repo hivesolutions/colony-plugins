@@ -80,7 +80,7 @@ class ConsolePluginDownloader:
         if len(args) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
-        
+
         plugin_identifier = args[0]
 
         if len(args) == 1:

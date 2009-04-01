@@ -103,7 +103,7 @@ class BotEngineAIML:
             aiml_path = args[0]
             self.teach_brain(aiml_path)
         else:
-            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE) 
+            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
 
     def process_bot_engine_aiml_send(self, args, output_method):
         if len(args) >= 1:

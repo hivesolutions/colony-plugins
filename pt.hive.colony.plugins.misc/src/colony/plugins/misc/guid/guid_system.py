@@ -57,7 +57,7 @@ class Guid:
     def __init__(self, guid_plugin):
         """
         Class contructor.
-        
+
         @type guid_plugin: GuidPlugin
         @param guid_plugin:  The guid plugin.
         """
@@ -85,7 +85,7 @@ class Guid:
     def generate_guid(self):
         """
         Generates a guid (unique in space and time) number
-        
+
         @rtype: String
         @return: The unique guid
         """
@@ -99,7 +99,7 @@ class Guid:
             # do we need to wait for the next millisecond (are we out of counters?)
             now = long(time.time() * 1000)
 
-            while self.last_time == now and self.counter == self.first_counter: 
+            while self.last_time == now and self.counter == self.first_counter:
                 time.sleep(.01)
                 now = long(time.time() * 1000)
 
@@ -118,7 +118,7 @@ class Guid:
             self.last_time = now
 
             # appends counter part
-            parts.append("%08x" % (self.counter)) 
+            parts.append("%08x" % (self.counter))
 
             # appends ip part
             parts.append(self.hexadecimal_ip)

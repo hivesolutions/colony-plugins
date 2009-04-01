@@ -62,7 +62,7 @@ class ExecutionEnvironment:
     def __init__(self, execution_environment_plugin):
         """
         Constructor of the class.
-        
+
         @type execution_environment_plugin: ExecutionEnvironmentPlugin
         @param execution_environment_plugin: The execution environment plugin.
         """

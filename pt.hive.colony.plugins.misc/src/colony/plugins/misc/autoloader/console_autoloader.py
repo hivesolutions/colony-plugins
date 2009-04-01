@@ -61,7 +61,7 @@ class ConsoleAutoloader:
     def __init__(self, autoloader_plugin = None):
         """
         Constructor of the class.
-        
+
         @type autoloader_plugin: AutoloaderPlugin
         @param autoloader_plugin: The autoloader plugin.
         """

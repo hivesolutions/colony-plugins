@@ -44,7 +44,7 @@ PLUGIN_DIRECTORY = "colony/plugins"
 
 #@todo: review and comment this file
 class Downloader:
-    
+
     downloader_plugin = None
 
     def __init__(self, downloader_plugin):
@@ -53,7 +53,7 @@ class Downloader:
     def download_package(self, address, target_directory = PLUGIN_DIRECTORY):
         """
         Downloads a package from the given url address to a target directory
-        
+
         @type address: String
         @param address: The url address of the package to download
         @type target_directory: String
@@ -95,7 +95,7 @@ class Downloader:
 
     def test_package(self, address):
         pass
-    
+
     def get_download_package_stream(self, address):
         try:
             file_name = get_file_name_url(address)
@@ -109,7 +109,7 @@ class Downloader:
 
 def get_file_name_url(url):
     url_split = url.split("/")
-    
+
     if url_split[-1] == "":
         return url_split[-2]
     else:

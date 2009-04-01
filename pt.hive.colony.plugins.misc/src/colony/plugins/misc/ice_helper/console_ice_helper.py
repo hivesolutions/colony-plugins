@@ -250,7 +250,7 @@ class ConsoleIceHelper:
         # splits the complete class name using the "." character
         split_result = access_complete_class_name.split(".")
 
-        # retrieves the module name 
+        # retrieves the module name
         access_module_name = string.join(split_result[:-1], ".")
         # retrieves just the class name
         access_class_name = split_result[-1]
@@ -276,7 +276,7 @@ class ConsoleIceHelper:
         # splits the complete class name using the "." character
         split_result = access_complete_class_name.split(".")
 
-        # retrieves the module name 
+        # retrieves the module name
         access_module_name = string.join(split_result[:-1], ".")
         # retrieves just the class name
         access_class_name = split_result[-1]
@@ -343,5 +343,5 @@ class IceOptionParser:
         opts, args = getopt.getopt(properties, ":", self.values)
 
         for option, value in opts:
-            treated_option = option[2:] 
+            treated_option = option[2:]
             options[treated_option] = value

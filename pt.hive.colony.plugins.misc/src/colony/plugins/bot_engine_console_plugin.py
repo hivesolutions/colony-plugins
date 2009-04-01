@@ -60,23 +60,23 @@ class BotEngineConsolePlugin(colony.plugins.plugin_system.Plugin):
     events_registrable = []
 
     console_plugin = None
-    
+
     bot_engine_console = None
-    
+
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global misc
         import misc.bot_engine_console.bot_engine_console_system
         self.bot_engine_console = misc.bot_engine_console.bot_engine_console_system.BotEngineConsole(self)
-        
+
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
@@ -88,6 +88,6 @@ class BotEngineConsolePlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
         if colony.plugins.plugin_system.is_capability_or_sub_capability_in_list("main_console", plugin.capabilities):
             self.console_plugin = plugin
-        
+
     def respond(self, message):
         return self.bot_engine_console.respond(message)

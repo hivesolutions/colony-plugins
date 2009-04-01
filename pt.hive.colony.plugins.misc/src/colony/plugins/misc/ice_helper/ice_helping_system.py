@@ -107,7 +107,7 @@ class IceHelper:
                     self.kill_node(admin_access, created_registry_name, created_node_name)
 
             # start the exist master flag
-            exists_master = False        
+            exists_master = False
 
             # iterates over all the replica names to kill all the registry replicas
             for created_registry_replica_name in created_registry_replica_names_list_clone:
@@ -130,7 +130,7 @@ class IceHelper:
     def create_registry(self, start_options):
         """
         Creates an ice grid registry with the given start options
-        
+
         @type start_options: Dictionary
         @param start_options: The start options for the ice grid registry creation
         """
@@ -276,7 +276,7 @@ class IceHelper:
     def create_node(self, start_options):
         """
         Creates an ice grid node with the given start options
-        
+
         @type start_options: Dictionary
         @param start_options: The start options for the ice grid node creation
         """
@@ -339,7 +339,7 @@ class IceHelper:
         ice_node_log_file = open(ice_grid_node_log_file, ice_grid_node_log_file_mode)
 
         # seeks the file to the end
-        ice_node_log_file.seek(0, os.SEEK_END) 
+        ice_node_log_file.seek(0, os.SEEK_END)
 
         # creates the list of parameters for the call
         params = [ice_grid_node_path, "--Ice.Default.Locator=" + ice_default_locator, "--IceGrid.Node.Data=" + ice_grid_node_data, "--IceGrid.Node.Endpoints=" + ice_grid_node_endpoints,
@@ -370,7 +370,7 @@ class IceHelper:
 
         # in case the node exists and is loaded
         if complete_node_name_tuple in self.created_registry_name_created_node_name_created_node_descriptors_list_map:
-            # retrieves the node descriptor 
+            # retrieves the node descriptor
             node_descriptor = self.created_registry_name_created_node_name_created_node_descriptors_list_map[complete_node_name_tuple]
 
             # removes the node descriptor from the list of node descriptors
@@ -387,7 +387,7 @@ class IceHelper:
 
             # in case the node exists in the registry
             if node_name in node_names_list:
-                # kills the node object 
+                # kills the node object
                 admin_access_object.shutdownNode(node_name)
 
     def create_update_application(self, admin_access_object, application_name, application_options):
@@ -414,7 +414,7 @@ class IceHelper:
         else:
             # adds the application to the registry
             admin_access_object.addApplication(application_descriptor)
-            
+
     def get_application(self, admin_access_object, application_name):
         application_names = admin_access_object.getAllApplicationNames()
 
@@ -748,7 +748,7 @@ class IceApplicationDescriptorParser:
 
     def __init__(self, application_descriptor = None):
         self.application_descriptor = application_descriptor
-        
+
     def parse(self):
         application_descriptor = self.application_descriptor
 

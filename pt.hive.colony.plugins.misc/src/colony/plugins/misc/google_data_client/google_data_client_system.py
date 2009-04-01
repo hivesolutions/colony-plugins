@@ -53,7 +53,7 @@ class GoogleDataClient:
     def connect(self, username, password):
         """
         Connects to the available services.
-        
+
         @type username: String
         @param username: The username for the connection.
         @type password: String

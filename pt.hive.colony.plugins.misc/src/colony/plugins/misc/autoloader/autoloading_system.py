@@ -80,7 +80,7 @@ class Autoloader:
 
                 dir_list = os.listdir(search_directory)
 
-                # for all the files in the directory 
+                # for all the files in the directory
                 for file_name in dir_list:
                     full_path = search_directory + "/" + file_name
                     file_stat = os.stat(full_path)
@@ -108,7 +108,7 @@ class Autoloader:
                                 self.load_module(search_directory, module_name)
 
                 # the list of file names to be removed
-                remove_list = [] 
+                remove_list = []
 
                 for file_name in self.search_directories_information_map[search_directory]:
                     file_information = self.search_directories_information_map[search_directory][file_name]
@@ -162,7 +162,7 @@ class FileInformation:
         self.exists = exists
 
 class FileProperties:
-    
+
     modified_date = None
 
     def __init__(self, modified_date = None):

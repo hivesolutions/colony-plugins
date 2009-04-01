@@ -46,7 +46,7 @@ class JabberIceService:
     def __init__(self, jabber_ice_service_plugin):
         """
         Constructor of the class
-        
+
         @type jabber_ice_service_plugin: Plugin
         @param jabber_ice_service_plugin: The jabber ice service plugin
         """

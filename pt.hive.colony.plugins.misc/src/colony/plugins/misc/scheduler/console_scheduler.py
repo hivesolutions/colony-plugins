@@ -63,7 +63,7 @@ class ConsoleScheduler:
     def __init__(self, scheduler_plugin = None):
         """
         Constructor of the class.
-        
+
         @type scheduler_plugin: SchedulerPlugin
         @param scheduler_plugin: The scheduler plugin.
         """

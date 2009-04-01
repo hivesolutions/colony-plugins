@@ -76,7 +76,7 @@ class Bot:
         response_message = self.bot_engine_plugin.respond(message)
         print response_message
         self.bot_output_plugin.send(self.bot_id, sender_id, response_message)
-    
+
 #@todo: comment this class
 class BotManager:
 
@@ -145,4 +145,4 @@ class BotManager:
 
     def process_bot_manager_list_outputs(self, args, output_method):
         for bot_output_plugin in self.parent_plugin.bot_output_plugins:
-            output_method(bot_output_plugin)  
+            output_method(bot_output_plugin)

@@ -69,14 +69,14 @@ class Scheduler:
     def __init__(self, scheduler_plugin):
         """
         Constructor of the class.
-        
+
         @type scheduler_plugin: SchedulerPlugin
         @param scheduler_plugin: The scheduler plugin.
         """
 
         self.scheduler_plugin = scheduler_plugin
 
-        # creates a new lock object 
+        # creates a new lock object
         self.scheduler_lock = threading.Lock()
 
         # sets the continue flag value

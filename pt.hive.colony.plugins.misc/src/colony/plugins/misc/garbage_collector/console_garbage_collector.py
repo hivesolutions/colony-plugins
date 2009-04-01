@@ -70,7 +70,7 @@ class ConsoleGarbageCollector:
 
     def get_help(self):
         return HELP_TEXT
-    
+
     def process_rungarbagecollector(self, args, output_method):
 
         output_method("running garbage collector")

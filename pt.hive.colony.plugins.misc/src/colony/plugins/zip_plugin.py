@@ -67,14 +67,14 @@ class ZipPlugin(colony.plugins.plugin_system.Plugin):
         self.zip_system = misc.zip.zip_system.Zip(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
         self.zip_system = None
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
@@ -88,7 +88,7 @@ class ZipPlugin(colony.plugins.plugin_system.Plugin):
     def zip(self, zip_file_path, input_directory, file_path_list = None):
         """
         Compresses the contents of the provided directory into a zip file.
-        
+
         @type zip_file_path: String
         @param zip_file_path: Full path to the zip file.
         @type input_directory: String
@@ -96,14 +96,14 @@ class ZipPlugin(colony.plugins.plugin_system.Plugin):
         @type file_path_list: List
         @param file_path_list: List of relative file paths.
         """
-        
+
         self.zip_system.zip(zip_file_path, input_directory, file_path_list)
 
 
     def unzip(self, zip_file_path, output_directory):
         """
         Extracts a zip file to the specified directory.
-        
+
         @type file_path: String
         @param zip_file_path: Full path to the zip file.
         @type output_directory: String
@@ -115,7 +115,7 @@ class ZipPlugin(colony.plugins.plugin_system.Plugin):
     def get_file_paths(self, file_path):
         """
         Returns a list with the paths to the files contained in the specified zip file.
-        
+
         @type path: String
         @param path: Path to the zip file.
         @rtype: List
@@ -127,7 +127,7 @@ class ZipPlugin(colony.plugins.plugin_system.Plugin):
     def get_directory_paths(self, file_path):
         """
         Returns a list with the paths to the directories contained in the specified zip file.
-        
+
         @type path: String
         @param path: Path to the zip file.
         @rtype: List

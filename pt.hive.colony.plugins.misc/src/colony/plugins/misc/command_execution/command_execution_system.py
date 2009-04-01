@@ -53,7 +53,7 @@ class CommandExecution:
     def __init__(self, command_execution_plugin):
         """
         Constructor of the class.
-        
+
         @type command_execution_plugin: CommandExecutionPlugin
         @param command_execution_plugin: The command execution plugin.
         """

@@ -105,7 +105,7 @@ class Bonjour:
     def __init__(self, bonjour_plugin):
         """
         Constructor of the class
-        
+
         @type bonjour_plugin: BonjourPlugin
         @param bonjour_plugin: The bonjour plugin.
         """
@@ -163,7 +163,7 @@ class Bonjour:
     def create_browsing_service_file_descriptor(self, browsing_service):
         """
         Creates a file descriptor for the given browsing service.
-        
+
         @type browsing_service: Tuple
         @param browsing_service: The browsing service tuple to create the file descriptor.
         @rtype: Tuple
@@ -186,7 +186,7 @@ class Bonjour:
         service_reference = bonjour.AllocateDNSServiceRef()
 
         # browsers for services of the defined registration type in the defined domain
-        return_value = bonjour.pyDNSServiceBrowse(service_reference, flags, interface_index, registration_type, domain, self.browse_service_bonjour_callback, user_data) 
+        return_value = bonjour.pyDNSServiceBrowse(service_reference, flags, interface_index, registration_type, domain, self.browse_service_bonjour_callback, user_data)
 
         # in case the search was not successful
         if not return_value == bonjour.kDNSServiceErr_NoError:
@@ -200,7 +200,7 @@ class Bonjour:
     def browse_service_bonjour_callback(self, service_reference, flags, interface_index, error_code, service_name, registration_type, domain, user_data):
         """
         The callback method for the bonjour service browsing, called upon service retrieval.
-        
+
         @type service_reference: Tuple
         @param service_reference: The service reference.
         @type flags: int
@@ -245,7 +245,7 @@ class Bonjour:
     def resolve_service_bonjour_callback(self, service_reference, flags, interface_index, error_code, service_full_name, host, port, txt_record_length, txt_record, user_data):
         """
         The callback method for the bonjour service resolution, called upon service resolution.
-        
+
         @type service_reference: String
         @param service_reference: The service reference.
         @type flags: int
@@ -292,7 +292,7 @@ class Bonjour:
     def add_service_value(self, service_value, registration_type, domain):
         """
         Adds a service value to map of services for the give registration type and domain.
-        
+
         @type service_value: Tuple
         @param service_value: The tuple containing the service values to be added.
         @type registration_type: String
@@ -343,7 +343,7 @@ class Bonjour:
     def remove_service_value(self, service_value, registration_type, domain):
         """
         Removes a service value to map of services.
-        
+
         @type service_value: Tuple
         @param service_value: The tuple containing the service values to be removed.
         @type registration_type: String
@@ -390,7 +390,7 @@ class Bonjour:
     def add_service_for_browsing(self, registration_type, domain):
         """
         Adds the service with the given registration type for browsing in the given domain.
-        
+
         @type registration_type: String
         @param registration_type: The registration type of browsing.
         @type domain: String
@@ -420,7 +420,7 @@ class Bonjour:
     def remove_service_for_browsing(self, registration_type, domain):
         """
         Removes the service with the given registration type for browsing in the given domain.
-        
+
         @type registration_type: String
         @param registration_type: The registration type of browsing.
         @type domain: String
@@ -458,7 +458,7 @@ class Bonjour:
     def register_bonjour_service(self, service_name, registration_type, domain, host, port):
         """
         Registers a bonjour service to the subnetwork.
-        
+
         @type service_name: String
         @param service_name: The service name.
         @type registration_type: String
@@ -527,7 +527,7 @@ class Bonjour:
     def browse_bonjour_services(self, registration_type, domain, timeout):
         """
         Browses bonjour services during the given timeout time.
-        
+
         @type registration_type: String
         @param registration_type: The registration type to search.
         @type domain: String
@@ -563,7 +563,7 @@ class Bonjour:
         service_reference = bonjour.AllocateDNSServiceRef()
 
         # browsers for services of the defined registration type in the defined domain
-        return_value = bonjour.pyDNSServiceBrowse(service_reference, flags, interface_index, registration_type, domain, self.browse_bonjour_callback, user_data) 
+        return_value = bonjour.pyDNSServiceBrowse(service_reference, flags, interface_index, registration_type, domain, self.browse_bonjour_callback, user_data)
 
         # in case the search was not successful
         if not return_value == bonjour.kDNSServiceErr_NoError:
@@ -599,7 +599,7 @@ class Bonjour:
     def browse_bonjour_services_fast(self, registration_type, domain):
         """
         Browses bonjour services (the fast way).
-        
+
         @type registration_type: String
         @param registration_type: The registration type to search.
         @type domain: String
@@ -619,14 +619,14 @@ class Bonjour:
     def register_bonjour_callback(self, service_reference, flags, error_code, service_name, registration_type, domain, user_data):
         """
         The callback method for the bonjour service registration, called upon registration completion.
-        
+
         @type service_reference: Tuple
         @param service_reference: The service reference tuple.
         @type flags: int
         @param flags: The callback flags.
         @type error_code: int
         @param error_code: The callback error code.
-        @type service_name: String 
+        @type service_name: String
         @param service_name: The service name.
         @type registration_type: String
         @param registration_type: The registration type.
@@ -651,7 +651,7 @@ class Bonjour:
     def browse_bonjour_callback(self, service_reference, flags, interface_index, error_code, service_name, registration_type, domain, user_data):
         """
         The callback method for the bonjour service browsing, called upon service retrieval.
-        
+
         @type service_reference: Tuple
         @param service_reference: The service reference.
         @type flags: int
@@ -698,7 +698,7 @@ class Bonjour:
     def resolve_bonjour_callback(self, service_reference, flags, interface_index, error_code, service_full_name, host, port, txt_record_length, txt_record, user_data):
         """
         The callback method for the bonjour service resolution, called upon service resolution.
-        
+
         @type service_reference: String
         @param service_reference: The service reference.
         @type flags: int
@@ -746,7 +746,7 @@ class Bonjour:
     def big_endian_to_little_endian(self, value):
         """
         Converts a big endian value to little endian.
-        
+
         @type value: int
         @param value: The value to be converted.
         @rtype: int
@@ -790,7 +790,7 @@ class Bonjour:
     def get_operative_system(self):
         """
         Retrieves the current operative system.
-        
+
         @rtype: String
         @return: The type of the current operative system.
         """
@@ -813,7 +813,7 @@ class Bonjour:
     def convert_type(self, type):
         """
         Converts the given type.
-        
+
         @type type: String
         @param type: The type to be converted.
         @rtype: String

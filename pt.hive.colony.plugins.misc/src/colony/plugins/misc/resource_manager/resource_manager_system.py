@@ -54,7 +54,7 @@ class ResourceManager:
     """ Map associating resource ids with resources """
 
     resource_name_resources_list_map = {}
-    """ Map associating resource name with the correspondent resources """ 
+    """ Map associating resource name with the correspondent resources """
 
     resource_type_resources_list_map = {}
     """ Map associating resource type with the correspondent resources """
@@ -65,7 +65,7 @@ class ResourceManager:
     def __init__(self, parent_plugin):
         """
         Class constructor.
-        
+
         @type parent_plugin: Plugin
         @param parent_plugin: Reference to the plugin that owns this object instance.
         """
@@ -87,7 +87,7 @@ class ResourceManager:
         # retrieves the parent plugin id
         parent_plugin_id = self.parent_plugin.id
 
-        # retrieves the base plugin path 
+        # retrieves the base plugin path
         plugin_path = manager.get_plugin_path_by_id(parent_plugin_id)
 
         # constructs the full base resources description file path
@@ -110,7 +110,7 @@ class ResourceManager:
     def register_resource(self, resource_namespace, resource_name, resource_type, resource_data):
         """
         Registers a resource in the resource manager.
-        
+
         @type resource_namespace: String
         @param resource_namespace: The namespace this resource should be included in.
         @type resource_name: String
@@ -122,7 +122,7 @@ class ResourceManager:
         """
 
         # creates a new resource with the given information
-        resource = Resource(resource_namespace, resource_name, resource_type, resource_data)        
+        resource = Resource(resource_namespace, resource_name, resource_type, resource_data)
 
         # if the resource already exists remove it from all indexes
         if self.is_resource_registered(resource.get_id()):
@@ -139,7 +139,7 @@ class ResourceManager:
         if not resource.get_type() in self.resource_type_resources_list_map:
             self.resource_type_resources_list_map[resource.get_type()] = []
         self.resource_type_resources_list_map[resource.get_type()].append(resource)
-        
+
         # index resource by namespace
         namespace_values_list = resource.get_namespace().get_list_value()
         current_namespace = ""
@@ -154,7 +154,7 @@ class ResourceManager:
     def unregister_resource(self, resource_id):
         """
         Unregisters the resource with the given id from the resource manager.
-        
+
         @type resource_id: String
         @param resource_id: The id of the resource.
         """
@@ -176,7 +176,7 @@ class ResourceManager:
     def is_resource_registered(self, resource_id):
         """
         Retrieves the existence (or not) of a resource with the given id.
-        
+
         @type resource_id: String
         @param resource_id: The id of the resource to be tested.
         @rtype: bool
@@ -191,7 +191,7 @@ class ResourceManager:
     def get_resource(self, resource_id):
         """
         Retrieves the resource with the given resource id.
-        
+
         @type resource_id: String
         @param resource_id: The id of the resource to be retrieved.
         @rtype: Resource
@@ -205,7 +205,7 @@ class ResourceManager:
         """
         Retrieves the resources for the given resource namespace, resource name and resource type.
         The given values are not mandatory and work as a filter.
-        
+
         @type resource_namespace: String
         @param resource_namespace: The namespace of the resource to be retrieved.
         @type resource_name: String

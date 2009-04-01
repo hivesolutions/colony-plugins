@@ -168,7 +168,7 @@ class JabberClient:
                 receiver_jabber_id = self.send_receiver_jabber_id[0]
                 message = self.send_message[0]
                 self.send(sender_jabber_id, receiver_jabber_id, message)
-                self.clear_send_parameters() 
+                self.clear_send_parameters()
             for jabber_id in self.clients:
                 self.clients[jabber_id].Process(1)
 

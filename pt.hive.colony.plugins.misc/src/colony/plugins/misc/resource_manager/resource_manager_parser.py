@@ -61,7 +61,7 @@ class Parser:
     def get_value(self):
         """
         Retrieves the result of the parse.
-        
+
         @rtype: Object
         @return: The result of the parse.
         """
@@ -102,7 +102,7 @@ class ResourcesFileParser(Parser):
                 self.resource_list = self.parse_resources(child_node)
 
     def parse_resources(self, resources):
-        resource_list = []        
+        resource_list = []
         child_nodes = resources.childNodes
 
         for child_node in child_nodes:
@@ -168,7 +168,7 @@ class Resource:
 def valid_node(node):
     """
     Gets if a node is valid or not for parsing
-    
+
     @type node: Node
     @param node: The Xml node to be validated
     @rtype: bool

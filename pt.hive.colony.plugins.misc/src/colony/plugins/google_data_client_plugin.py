@@ -71,13 +71,13 @@ class GoogleDataClientPlugin(colony.plugins.plugin_system.Plugin):
         self.console_google_data_client = misc.google_data_client.console_google_data_client.ConsoleGoogleDataClient(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
@@ -91,7 +91,7 @@ class GoogleDataClientPlugin(colony.plugins.plugin_system.Plugin):
     def connect(self, username, password):
         """
         Connects to the available services.
-        
+
         @type username: String
         @param username: The username for the connection.
         @type password: String

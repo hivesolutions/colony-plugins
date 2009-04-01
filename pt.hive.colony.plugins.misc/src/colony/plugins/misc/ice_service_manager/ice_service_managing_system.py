@@ -40,7 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 class IceServiceManager:
 
     ice_service_manager_plugin = None
-    
+
     ice_service_descriptors_list = []
     service_name_ice_service_descriptor_map = {}
 
@@ -49,7 +49,7 @@ class IceServiceManager:
 
         self.ice_service_descriptors_list = []
         self.service_name_ice_service_descriptor_map = {}
-        
+
     def unload(self):
         pass
 
@@ -76,7 +76,7 @@ class IceServiceManager:
     def start_service(self, ice_service_name):
         """
         Starts an ice service with the given name
-        
+
         @type ice_service_name: String
         @param ice_service_name: The name of the service to be started
         """
@@ -115,7 +115,7 @@ class IceServiceManager:
         default_server_template_templates_descriptor["execution_type"] = "python"
         templates_descriptor_options = default_server_template_templates_descriptor["options"]
         default_templates_descriptor_option = templates_descriptor_options[0]
-        default_templates_descriptor_option["value"] = ice_service_descriptor.server_file_path 
+        default_templates_descriptor_option["value"] = ice_service_descriptor.server_file_path
 
         application_replica_groups = application_options["replica_groups"]
 

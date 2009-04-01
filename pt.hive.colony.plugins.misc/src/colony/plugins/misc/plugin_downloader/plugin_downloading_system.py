@@ -75,13 +75,13 @@ class PluginDownloader:
     def __init__(self, plugin_downloader_plugin):
         """
         Constructor of the class
-        
+
         @type plugin_downloader_plugin: Plugin
         @param plugin_downloader_plugin: The plugin downloader plugin
         """
 
         self.plugin_downloader_plugin = plugin_downloader_plugin
-        
+
         self.repository_list = []
         self.repository_descriptor_list = []
         self.repository_repository_descriptor_map = {}
@@ -100,7 +100,7 @@ class PluginDownloader:
     def download_plugin(self, plugin_identifier, plugin_version = None):
         """
         Downloads the plugin with the given id and version
-        
+
         @type plugin_identifier: String
         @param plugin_identifier: The id of the plugin to download
         @type plugin_version: String
@@ -131,7 +131,7 @@ class PluginDownloader:
         """
         Processes a given plugin descriptor retrieving the validity of the plugin
         (if it exists, if the code is valid and if all the dependencies for it are loaded)
-        
+
         @type plugin_descriptor: PluginDescriptor
         @param plugin_descriptor: The plugin descriptor to verify
         @rtype: bool
@@ -190,7 +190,7 @@ class PluginDownloader:
     def get_dependencies_availability(self, plugin):
         """
         Tests if all the dependencies for the given plugin are available
-        
+
         @type plugin: Plugin
         @param plugin: The plugin to test for the availability of the dependencies
         @rtype: bool
@@ -219,7 +219,7 @@ class PluginDownloader:
     def get_plugin(self, plugin_id, plugin_version = None):
         """
         Retrieves the plugin descriptor for the given plugin id and version
-        
+
         @type plugin_id: String
         @param plugin_id: The id of the plugin to retrieve the plugin descriptor
         @type plugin_version: String
@@ -239,7 +239,7 @@ class PluginDownloader:
     def get_plugin_name(self, plugin_name, plugin_version = None):
         """
         Retrieves the plugin name for the given plugin id and version
-        
+
         @type plugin_id: String
         @param plugin_id: The id of the plugin to retrieve the plugin name
         @type plugin_version: String
@@ -259,12 +259,12 @@ class PluginDownloader:
     def get_repository_descriptor_plugin_descriptor(self, plugin_descriptor):
         """
         Retrieves the repository descriptor for the given plugin descriptor
-        
+
         @type plugin_descriptor: PluginDescriptor
         @param plugin_descriptor: The plugin descriptor to get the repository descriptor
         @rtype: RepositoryDescriptor
         @return: The repository descriptor for the given plugin descriptor
-        """ 
+        """
 
         for repository_descriptor in self.repository_descriptor_list:
             if plugin_descriptor in repository_descriptor.plugins:
@@ -285,7 +285,7 @@ class PluginDownloader:
     def get_repository_information_by_repository_name(self, repository_name):
         """
         Retrieves the repository descriptor for the given repository name
-        
+
         @type repository_name: String
         @param repository_name: The name of the repository to get the descriptor
         @rtype: RepositoryDescriptor
@@ -300,7 +300,7 @@ class PluginDownloader:
     def get_repository_information(self, repository):
         """
         Retrieves the repository descriptor for the given repository
-        
+
         @type repository: Repository
         @param repository: The repository to get the descriptor
         @rtype: RepositoryDescriptor
@@ -316,7 +316,7 @@ class PluginDownloader:
     def get_repository_descriptor_file(self, repository_addresses):
         """
         Retrieves the repository descriptor file for the given repository addresses
-        
+
         @type repository_addresses: List
         @param repository_addresses: The repository addresses to search
         @rtype: Stream
@@ -331,14 +331,14 @@ class PluginDownloader:
             repository_address_value = repository_address.value
             file_address = repository_address_value + "/" + REPOSITORY_DESCRIPTOR_FILE
             file_buffer = downloader_plugin.get_download_package_stream(file_address)
-            # in case the download was successful 
+            # in case the download was successful
             if file_buffer:
                 return file_buffer
 
     def get_plugin_file(self, repository_addresses, plugin_name, plugin_version, plugin_file_name):
         """
         Retrieves the plugin file stream for the given repository addresses and plugin name, version and file name
-        
+
         @type repository_addresses: List
         @param repository_addresses: The repository addresses to search
         @type plugin_name: String
@@ -359,14 +359,14 @@ class PluginDownloader:
             repository_address_value = repository_address.value
             file_address = repository_address_value + "/" + plugin_name + "/" + plugin_version + "/" + plugin_file_name
             file_buffer = downloader_plugin.get_download_package_stream(file_address)
-            # in case the download was successful 
+            # in case the download was successful
             if file_buffer:
                 return file_buffer
 
     def download_plugin_file(self, repository_addresses, plugin_name, plugin_version, plugin_file_name):
         """
         Downloads the plugin file for the given repository addresses and plugin name, version and file name
-        
+
         @type repository_addresses: List
         @param repository_addresses: The repository addresses to search
         @type plugin_name: String
@@ -387,7 +387,7 @@ class PluginDownloader:
             repository_address_value = repository_address.value
             file_address = repository_address_value + "/" + plugin_name + "/" + plugin_version + "/" + plugin_file_name
             result = downloader_plugin.download_package(file_address, PLUGINS_DIRECTORY)
-            # in case the download was successful 
+            # in case the download was successful
             if result:
                 return True
         return False
@@ -395,7 +395,7 @@ class PluginDownloader:
     def download_plugin_payload(self, repository_addresses, plugin_name, plugin_version, plugin_zip_file):
         """
         Downloads the plugin payload file for the given repository addresses and plugin name, version and plugin zip file name
-        
+
         @type repository_addresses: List
         @param repository_addresses: The repository addresses to search
         @type plugin_name: String
@@ -416,7 +416,7 @@ class PluginDownloader:
             repository_address_value = repository_address.value
             file_address = repository_address_value + "/" + plugin_name + "/" + plugin_version + "/" + plugin_zip_file
             result = downloader_plugin.download_package(file_address, PLUGINS_DIRECTORY)
-            # in case the download was successful 
+            # in case the download was successful
             if result:
                 self.uncompress_zip_file(PLUGINS_DIRECTORY + "/" + plugin_zip_file)
                 return True
@@ -425,7 +425,7 @@ class PluginDownloader:
     def uncompress_zip_file(self, file_path):
         """
         Uncompresses a zip file in the given path
-        
+
         @type file_path: String
         @param file_path: The file path of the file to unzip
         """
@@ -461,7 +461,7 @@ class Parser:
     def get_value(self):
         """
         Retrieves the result of the parse
-        
+
         @rtype: Object
         @return: The result of the parse
         """
@@ -469,21 +469,21 @@ class Parser:
         pass
 
 class RepositoriesFileParser(Parser):
-    
+
     file_path = None
 
     repository_list = []
-    
+
     def __init__(self, file_path = None):
         Parser.__init__(self)
         self.file_path = file_path
-        
+
     def parse(self):
         self.load_repository_file(self.file_path)
-    
+
     def get_value(self):
         return self.repository_list
-    
+
     def get_repository_list(self):
         return self.repository_list
 
@@ -497,13 +497,13 @@ class RepositoriesFileParser(Parser):
                 self.repository_list = self.parse_repositories(child_node)
 
     def parse_repositories(self, repositories):
-        repository_list = []        
+        repository_list = []
         child_nodes = repositories.childNodes
 
         for child_node in child_nodes:
             if valid_node(child_node):
                 repository_list.append(self.parse_repository(child_node))
-                
+
         return repository_list
 
     def parse_repository(self, repository):
@@ -529,7 +529,7 @@ class RepositoriesFileParser(Parser):
     def parse_name(self, name):
         repository_name = name.firstChild.data.strip()
         return repository_name
-    
+
     def parse_description(self, description):
         repository_description = description.firstChild.data.strip()
         return repository_description
@@ -641,7 +641,7 @@ class RepositoryDescriptorFileParser(Parser):
         elif node_name == "version":
             package_descriptor.version = self.parse_repository_descriptor_package_version(repository_descriptor_package_element)
         elif node_name == "plugins":
-            package_descriptor.plugins = self.parse_repository_descriptor_package_plugins(repository_descriptor_package_element)    
+            package_descriptor.plugins = self.parse_repository_descriptor_package_plugins(repository_descriptor_package_element)
 
     def parse_repository_descriptor_package_name(self, descriptor_package_name):
         repository_descriptor_package_name = descriptor_package_name.firstChild.data.strip()
@@ -702,11 +702,11 @@ class RepositoryDescriptorFileParser(Parser):
                 repository_descriptor_plugins_list.append(repository_descriptor_plugin)
 
         return repository_descriptor_plugins_list
-    
+
     def parse_repository_descriptor_plugin(self, descriptor_plugin):
         plugin_descriptor = PluginDescriptor()
         child_nodes = descriptor_plugin.childNodes
-        
+
         for child_node in child_nodes:
             if valid_node(child_node):
                 self.parse_repository_descriptor_plugin_element(child_node, plugin_descriptor)
@@ -715,7 +715,7 @@ class RepositoryDescriptorFileParser(Parser):
 
     def parse_repository_descriptor_plugin_element(self, repository_descriptor_plugin_element, plugin_descriptor):
         node_name = repository_descriptor_plugin_element.nodeName
-        
+
         if node_name == "name":
             plugin_descriptor.name = self.parse_repository_descriptor_plugin_name(repository_descriptor_plugin_element)
         elif node_name == "id":
@@ -873,7 +873,7 @@ class PluginDescriptor:
 def valid_node(node):
     """
     Gets if a node is valid or not for parsing
-    
+
     @type node: Node
     @param node: The Xml node to be validated
     @rtype: bool

@@ -59,7 +59,7 @@ class CountryCodeMapperPlugin(colony.plugins.plugin_system.Plugin):
     events_registrable = []
 
     logic = None
-    
+
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global misc
@@ -69,7 +69,7 @@ class CountryCodeMapperPlugin(colony.plugins.plugin_system.Plugin):
         self.logic.load_country_information()
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
@@ -77,7 +77,7 @@ class CountryCodeMapperPlugin(colony.plugins.plugin_system.Plugin):
         self.logic = None
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
@@ -91,16 +91,16 @@ class CountryCodeMapperPlugin(colony.plugins.plugin_system.Plugin):
     def get_country_name(self, country_code):
         """
         Returns a country name by providing it's iso country code
-        
+
         @param country_code: ISO country code (ex: Portugal's iso country code is pt)
         @return: Name of the country specified by the provided iso country code
         """
         return self.logic.get_country_name(country_code)
-    
+
     def get_country_code(self, country_name):
         """
         Returns a country code by providing a country name
-        
+
         @param country_name: Name of the country one wants to get the ISO country code for
         @return: ISO country code for the specified country name
         """

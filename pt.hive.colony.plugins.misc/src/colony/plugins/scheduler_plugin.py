@@ -88,7 +88,7 @@ class SchedulerPlugin(colony.plugins.plugin_system.Plugin):
         self.scheduler.unload_scheduler()
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)

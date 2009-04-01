@@ -57,7 +57,7 @@ class RepositoryDescriptorGeneratorPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    
+
     repository_descriptor_generator = None
     console_repository_descriptor_generator = None
 
@@ -70,13 +70,13 @@ class RepositoryDescriptorGeneratorPlugin(colony.plugins.plugin_system.Plugin):
         self.console_repository_descriptor_generator = misc.repository_descriptor_generator.console_repository_descriptor_generator.ConsoleRepositoryDescriptorGenerator(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
