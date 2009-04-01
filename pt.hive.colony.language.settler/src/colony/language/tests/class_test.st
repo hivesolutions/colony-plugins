@@ -21,46 +21,46 @@
 # __revision__  = $LastChangedRevision$
 # __date__      = $LastChangedDate$
 # __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
-# __license__   = GNU General Public License (GPL), Version 
+# __license__   = GNU General Public License (GPL), Version
 
 import sys
 import colony.plugins.plugin_system
 
 class Settler1:
-	function print_hello():
-		print("hello world")
-	end
+    function print_hello():
+        print("hello world")
+    end
 end
 
 class Settler2:
-	function print_hello():
-		print("hello world")
-	end
+    function print_hello():
+        print("hello world")
+    end
 end
 
 class Settler extends Settler1, Settler2:
-	a = 200
-	function set_settler(b):
-		self.a = b
-	end
-	function print_a():
-		print(self.a)
-	end
-	static function print_settler(a):
-		print(a)
-	end
+    a = 200
+    function set_settler(b):
+        self.a = b
+    end
+    function print_a():
+        print(self.a)
+    end
+    static function print_settler(a):
+        print(a)
+    end
 end
 
 plugin SettlerPlugin implements SettlerCapability allows T1:
 
-	id = "pt.hive.settler"
+    id = "pt.hive.settler"
 
-	platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
 
-	function set_settler(b):
-		self.a = b
-		print("ola")
-	end
+    function set_settler(b):
+        self.a = b
+        print("ola")
+    end
 
 end
 

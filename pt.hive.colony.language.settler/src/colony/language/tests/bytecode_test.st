@@ -21,11 +21,11 @@
 # __revision__  = $LastChangedRevision$
 # __date__      = $LastChangedDate$
 # __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
-# __license__   = GNU General Public License (GPL), Version 
-  
+# __license__   = GNU General Public License (GPL), Version
+
 function settler(a, b):
-	print(a)
-	return 1 + 2 + b
+    print(a)
+    return 1 + 2 + b
 end
 
 a = 2
@@ -39,17 +39,17 @@ settler("rabeton", 2)
 a = 6
 
 if a > 1 and a < 10:
-	if a > 3 and a < 5:
-		print("ola")
-	elif a > 5 and a < 7:
-		print("adeus")
-	elif a > 7 and a < 9:
-		print("settler")
-	else:
-		print("bosta")
-	end
+    if a > 3 and a < 5:
+        print("ola")
+    elif a > 5 and a < 7:
+        print("adeus")
+    elif a > 7 and a < 9:
+        print("settler")
+    else:
+        print("bosta")
+    end
 else:
-	print("a = other")
+    print("a = other")
 end
 
 a = False
@@ -59,18 +59,18 @@ d = False
 e = False
 
 if (a and b or c) and d or b and c:
-	print(a)
+    print(a)
 end
 
 a = 1
 
 while a < 10:
-	a = a + 1
-	print(a)
+    a = a + 1
+    print(a)
 end
 
 function rabeta(a, b):
-	return a + b
+    return a + b
 end
 
 print(rabeta(1, 3))

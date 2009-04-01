@@ -21,16 +21,16 @@
 # __revision__  = $LastChangedRevision$
 # __date__      = $LastChangedDate$
 # __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
-# __license__   = GNU General Public License (GPL), Version 
+# __license__   = GNU General Public License (GPL), Version
 
 class Tobias:
-	function thobias():
-		print("ola")
-	end
+    function thobias():
+        print("ola")
+    end
 end
 
 class Tobias2 extends Tobias:
-	function rabeton():
-		print("rabeton")
-	end
+    function rabeton():
+        print("rabeton")
+    end
 end

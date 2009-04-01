@@ -145,7 +145,7 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
         timestamp = time.time()
 
         # creates the pack for the timestamp
-        timestamp_pack = struct.pack("L", timestamp)
+        timestamp_pack = struct.pack("L", int(timestamp))
 
         # write the timestamp to the output file
         output_file.write(timestamp_pack)

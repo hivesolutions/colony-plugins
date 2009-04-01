@@ -21,33 +21,33 @@
 # __revision__  = $LastChangedRevision$
 # __date__      = $LastChangedDate$
 # __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
-# __license__   = GNU General Public License (GPL), Version 
+# __license__   = GNU General Public License (GPL), Version
 
 a = 1
 
 function sum_values(a, b, c):
-	return_value = a + b + c
-	return return_value
+    return_value = a + b + c
+    return return_value
 end
 
 function print_counter(limit_number):
-	counter = 0
-	while counter < limit_number:
-		print(counter)
-		counter = counter + 1
-	end
-	return 1
+    counter = 0
+    while counter < limit_number:
+        print(counter)
+        counter = counter + 1
+    end
+    return 1
 end
 
 function hello_world():
-	print("hello world")
-	return 1
+    print("hello world")
+    return 1
 end
 
 function test_global_a():
-	global a
-	a = a + 10
-	print(a)
+    global a
+    a = a + 10
+    print(a)
 end
 
 hello_world()

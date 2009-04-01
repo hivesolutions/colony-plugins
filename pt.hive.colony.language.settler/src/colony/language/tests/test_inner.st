@@ -21,14 +21,14 @@
 # __revision__  = $LastChangedRevision$
 # __date__      = $LastChangedDate$
 # __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
-# __license__   = GNU General Public License (GPL), Version 
+# __license__   = GNU General Public License (GPL), Version
 
 function print_settler(a):
-	function settler_inner():
-		return 1 + 1
-	end
-	value = settler_inner() + a
-	print(value)
+    function settler_inner():
+        return 1 + 1
+    end
+    value = settler_inner() + a
+    print(value)
 end
 
 print_settler(40)
