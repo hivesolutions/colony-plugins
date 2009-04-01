@@ -75,5 +75,5 @@ class ConsoleDataConverter:
         return HELP_TEXT
 
     def process_convert_data(self, args, output_method):
-    	# @todo: temporary hardcoding to make life easier (the entire data converter plugin will have to be redone in the future
+        # @todo: temporary hardcoding to make life easier (the entire data converter plugin will have to be redone in the future
         self.data_converter_plugin.convert("pt.hive.omni.data_converter.configuration.input.diamante_2003", "pt.hive.omni.data_converter.configuration.input.diamante_2003")

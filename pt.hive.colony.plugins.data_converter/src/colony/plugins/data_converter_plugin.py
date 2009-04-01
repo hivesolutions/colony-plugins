@@ -43,7 +43,7 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
     """
     Provides a means to convert data from one medium and schema to another.
     """
-    
+
     id = "pt.hive.colony.plugins.data_converter"
     name = "Data converter plugin"
     short_name = "Data converter"
@@ -59,7 +59,7 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
                     colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.log", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.business.entity_manager", "1.0.0"),                    
+                    "pt.hive.colony.plugins.business.entity_manager", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.resource_manager", "1.0.0")]
     events_handled = []
@@ -76,7 +76,7 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
 
     data_converter_input_configuration_plugins = []
     """ Plugins providing data conversion input configurations """
-    
+
     data_converter_output_configuration_plugins = []
     """ Plugins providing data conversion output configurations """
 
@@ -106,7 +106,7 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
         self.console_data_converter = None
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
     @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.data_converter", "1.0.0")
     def load_allowed(self, plugin, capability):
@@ -118,12 +118,12 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
 
     @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.data_converter", "1.0.0")
     def dependency_injected(self, plugin):
-        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)   
+        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def convert(self, data_converter_input_configuration_plugin_id, data_converter_output_configuration_plugin_id):
         """
         Converts data from one source medium and schema to another.
-        
+
         @type data_converter_input_configuration_plugin_id: String
         @param data_converter_input_configuration_plugin_id: Unique identifier for the plugin that provides the input configuration for the data converter.
         @type data_converter_output_configuration_plugin_id: String
@@ -151,7 +151,7 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.load_allowed_capability("data_converter_input_configuration")
     def data_converter_input_configuration_load_allowed(self, plugin, capability):
         self.data_converter_input_configuration_plugins.append(plugin)
-        
+
     @colony.plugins.decorators.load_allowed_capability("data_converter_output_configuration")
     def data_converter_output_configuration_load_allowed(self, plugin, capability):
         self.data_converter_output_configuration_plugins.append(plugin)
@@ -167,7 +167,7 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.unload_allowed_capability("data_converter_input_configuration")
     def data_converter_input_configuration_unload_allowed(self, plugin, capability):
         self.data_converter_input_configuration_plugins.remove(plugin)
-    
+
     @colony.plugins.decorators.unload_allowed_capability("data_converter_output_configuration")
     def data_converter_output_configuration_unload_allowed(self, plugin, capability):
         self.data_converter_output_configuration_plugins.remove(plugin)
@@ -189,14 +189,14 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.log")
     def set_logger_plugin(self, logger_plugin):
         self.logger_plugin = logger_plugin
-        
+
     def get_entity_manager_plugin(self):
         return self.entity_manager_plugin
 
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.business.entity_manager")
     def set_entity_manager_plugin(self, entity_manager_plugin):
         self.entity_manager_plugin = entity_manager_plugin
-        
+
     def get_resource_manager_plugin(self):
         return self.resource_manager_plugin
 

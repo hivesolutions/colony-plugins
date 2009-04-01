@@ -60,23 +60,23 @@ class InternalStructureVisualizerPlugin(colony.plugins.plugin_system.Plugin):
                     "Wx Python", "wx", "2.8.7.x", "http://wxpython.org")]
     events_handled = []
     events_registrable = []
-    
+
     panel = None
     """ Internal structure visualizer panel """
-    
+
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global data_converter
         import data_converter.tools.internal_structure_visualizer.internal_structure_visualizer_system
-        
+
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
@@ -94,11 +94,11 @@ class InternalStructureVisualizerPlugin(colony.plugins.plugin_system.Plugin):
     def notify_data_conversion_status(self, status):
         """
         Notifies this plugin of the current data conversion status.
-        
+
         @type status: Dictionary
         @param status: Dictionary with informations related to the data conversion status.
         """
-        
+
         internal_structure = status["internal_structure"]
         if self.panel:
             self.panel.set_internal_structure(internal_structure)

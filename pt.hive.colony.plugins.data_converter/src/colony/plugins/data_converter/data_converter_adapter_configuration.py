@@ -38,8 +38,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 class DataConverterAdapterConfiguration:
-    """ 
-    Stores the information defined by the input configuration file and provides an easy way to retrieve it. 
+    """
+    Stores the information defined by the input configuration file and provides an easy way to retrieve it.
     """
 
     domain_entity_name_domain_entity_map = {}
@@ -55,7 +55,7 @@ class DataConverterAdapterConfiguration:
     def add_domain_entity(self, domain_entity):
         """
         Adds a domain entity to the adapter configuration.
-        
+
         @type domain_entity: DomainEntity
         @param domain_entity: DomainEntity object to add to this configuration.
         """
@@ -65,7 +65,7 @@ class DataConverterAdapterConfiguration:
     def get_domain_entity(self, domain_entity_name):
         """
         Returns the specified domain entity.
-        
+
         @type domain_entity_name: String
         @param domain_entity_name: Name of the domain entity one wants to retrieve.
         @rtype: DomainEntity
@@ -92,7 +92,7 @@ class DomainEntity:
     """ This domain entity's foreign keys """
 
     domain_attribute_name_domain_attribute_map = {}
-    """ Dictionary relating domain attribute names with DomainAttribute objects """ 
+    """ Dictionary relating domain attribute names with DomainAttribute objects """
 
     instance_handlers = []
     """ List of handlers to process when an instance of this domain entity is processed """
@@ -114,9 +114,9 @@ class DomainEntity:
     def add_domain_attribute(self, domain_attribute):
         """
         Adds a domain attribute to this domain entity.
-        
+
         @type domain_attribute: DomainAttribute
-        @param domain_attribute: DomainAttribute object to add to this domain entity. 
+        @param domain_attribute: DomainAttribute object to add to this domain entity.
         """
 
         self.domain_attribute_name_domain_attribute_map[domain_attribute.name] = domain_attribute
@@ -124,7 +124,7 @@ class DomainEntity:
     def get_domain_attribute(self, domain_attribute_name):
         """
         Returns a domain attribute.
-        
+
         @type domain_attribute_name: String
         @return: Domain attribute object belonging to this domain entity.
         """
@@ -134,7 +134,7 @@ class DomainEntity:
     def get_domain_attributes(self):
         """
         Retrieves a list of this domain entity's attributes.
-        
+
         @rtype: List
         @return: List of domain attributes.
         """
@@ -145,13 +145,13 @@ class DomainEntity:
         """
         Retrieves a list with all the domain attributes belonging to this domain entity
         that are not part of any foreign key.
-        
+
         @rtype: List
         @return: List of domain attributes.
         """
 
         domain_attributes = self.get_domain_attributes()
-                       
+
         # remove foreign key domain attributes
         for foreign_key in self.foreign_keys:
             for foreign_key_domain_attribute in foreign_key.domain_attributes:
@@ -182,7 +182,7 @@ class DomainAttribute:
 
     def __init__(self):
         self.handlers = []
-    
+
 class ForeignKey:
     """
     Represents a foreign key that can be added to a domain entity object.

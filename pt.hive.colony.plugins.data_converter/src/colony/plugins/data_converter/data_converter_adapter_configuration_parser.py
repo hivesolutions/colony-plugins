@@ -113,7 +113,7 @@ class DataConverterAdapterConfigurationParser(Parser):
 
     def parse_domain_entity_element(self, domain_entity_element, domain_entity):
         node_name = domain_entity_element.nodeName
-        
+
         if node_name == "primary_key":
             self.parse_domain_entity_primary_key_domain_attributes(domain_entity_element, domain_entity)
         elif node_name == "foreign_keys":
@@ -143,7 +143,7 @@ class DataConverterAdapterConfigurationParser(Parser):
             if valid_node(child_node):
                 handler = self.parse_domain_entity_handler(child_node)
                 domain_entity.global_handlers.append(handler)
-           
+
     def parse_domain_entity_instance_handlers(self, handlers, domain_entity):
         child_nodes = handlers.childNodes
 
@@ -209,7 +209,7 @@ class DataConverterAdapterConfigurationParser(Parser):
                 domain_attribute = self.parse_domain_attribute(child_node)
                 domain_entity.add_domain_attribute(domain_attribute)
 
-                # replace previously parse primary key and foreign key domain attribute names 
+                # replace previously parse primary key and foreign key domain attribute names
                 # with their respective domain attribute instances
                 if domain_attribute.name in domain_entity.primary_key_domain_attributes:
                     domain_entity.primary_key_domain_attributes.remove(domain_attribute.name)
