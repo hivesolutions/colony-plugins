@@ -50,7 +50,7 @@ class MainJsonrpcClient:
     def __init__(self, main_jsonrpc_client_plugin):
         """
         Constructor of the class.
-        
+
         @type main_jsonrpc_client_plugin: MainJsonrpcClientPlugin
         @param main_jsonrpc_client_plugin: The main jsonrpc client plugin.
         """
