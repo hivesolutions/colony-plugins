@@ -57,12 +57,12 @@ class MockItemMapperPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    
+
     mock_item_mapper = None
-    
+
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
-        
+
         self.mock_item_mapper = MockItemMapper()
 
     def end_load_plugin(self):
@@ -89,7 +89,7 @@ class MockItemMapperPlugin(colony.plugins.plugin_system.Plugin):
     def process_items_for_string_with_context(self, items, search_string, context, max_items):
         """
         Returns a raw list with all the items matching the search_string.
-        
+
         @type input_list: List
         @param input_list: Processed list of EurekaItems.
         """
@@ -99,12 +99,12 @@ class MockItemMapperPlugin(colony.plugins.plugin_system.Plugin):
 
         return mapped_items[0:max_items]
 
-class MockItemMapper:        
+class MockItemMapper:
 
     def scorer(self,item, search_string):
         """
         Sets the score on an EurekaItem by searching for similarity with an input string.
-        
+
         @type item: EurekaItem
         @param item: The EurekaItem to be scored according to the search_string.
         @type search_string: String
@@ -113,7 +113,7 @@ class MockItemMapper:
 
         search_string_list = search_string.split()
         keywords_found = [word for word in search_string_list if word in item.keywords]
-    
+
         # score according to the ratio of keywords found by input words received
         # also factors in the size of the input words in relation to the overall keywords length
         joined_keywords_found_length = len("".join(keywords_found))

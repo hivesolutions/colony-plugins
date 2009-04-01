@@ -63,7 +63,7 @@ class MockItemExtensionPlugin(colony.plugins.plugin_system.Plugin):
     eureka_item_filter_plugins = []
     eureka_item_mapper_plugins = []
     eureka_item_sorter_plugins = []
-    
+
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global eureka

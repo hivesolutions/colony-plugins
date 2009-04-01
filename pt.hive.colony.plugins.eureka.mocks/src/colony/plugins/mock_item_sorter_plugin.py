@@ -57,7 +57,7 @@ class MockItemSorterPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    
+
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
 
@@ -85,7 +85,7 @@ class MockItemSorterPlugin(colony.plugins.plugin_system.Plugin):
     def process_items_for_string_with_context(self, items, search_string = None, context = None, max_items = None):
         """
         Returns a raw list with all the items matching the search_string.
-        
+
         @type input_list: List
         @param input_list: Processed list of EurekaItems.
         """
@@ -101,7 +101,7 @@ class MockItemSorterPlugin(colony.plugins.plugin_system.Plugin):
     def sort_by_attribute(self, sequence, attribute):
         """
         Sorts the sequence items based on the values of the given attribute.
-        
+
         @type sequence: List
         @param sequence: The list of EurekaItems to be sorted.
         @type attribute: String

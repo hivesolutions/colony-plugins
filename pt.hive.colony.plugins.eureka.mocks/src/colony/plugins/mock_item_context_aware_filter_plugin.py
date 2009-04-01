@@ -57,12 +57,12 @@ class MockItemContextAwareFilterPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    
+
     mock_item_context_aware_filter = None
-    
+
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
-        
+
         self.mock_item_context_aware_filter = MockItemContextAwareFilter()
 
     def end_load_plugin(self):
@@ -93,7 +93,7 @@ class MockItemContextAwareFilter:
     def process(self, items, input_string = None, context = None, max_items = None):
         """
         Returns a raw list with all the items matching the input_string.
-        
+
         @type input_list: List
         @param input_list: Processed list of EurekaItems.
         """
@@ -106,7 +106,7 @@ class MockItemContextAwareFilter:
         # look at the the top item in stack, and filter only the items with type in the allowed_items
         if not context == None:
             last_item = context[-1]
-        
+
             if last_item.types_allowed:
                 # since there is a context and the last_item has specific types_allowed
                 # filtering will take place

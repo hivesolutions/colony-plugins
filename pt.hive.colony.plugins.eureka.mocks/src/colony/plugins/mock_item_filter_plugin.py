@@ -57,7 +57,7 @@ class MockItemFilterPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    
+
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
 
@@ -85,7 +85,7 @@ class MockItemFilterPlugin(colony.plugins.plugin_system.Plugin):
     def process_items_for_string_with_context(self, items, search_string, context, max_items):
         """
         Returns a raw list with all the items matching the search_string.
-        
+
         @type input_list: List
         @param input_list: Processed list of EurekaItems.
         """
