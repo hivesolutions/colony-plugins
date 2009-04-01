@@ -43,7 +43,7 @@ class DummyPlugin(colony.plugins.plugin_system.Plugin):
     """
     The main class for the Dummy plugin.
     """
-    
+
     id = "pt.hive.colony.plugins.dummy"
     name = "Dummy Plugin"
     short_name = "Dummy"
@@ -72,7 +72,7 @@ class DummyPlugin(colony.plugins.plugin_system.Plugin):
         print "unloading dummy..."
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)

@@ -57,4 +57,3 @@ class DummyWindowsFormsLabel1:
 
     def get_label(self):
         return self.label
- 

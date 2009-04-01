@@ -86,7 +86,7 @@ class DummyPluginAux4(dummy_plugin.DummyPlugin):
         print "unloading dummy aux 4..."
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
         dummy_plugin.DummyPlugin.load_allowed(self, plugin, capability)

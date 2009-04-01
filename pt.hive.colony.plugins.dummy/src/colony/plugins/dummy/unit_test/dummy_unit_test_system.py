@@ -50,7 +50,7 @@ class DummyUnitTest:
     def __init__(self, dummy_unit_test_plugin):
         """
         Constructor of the class
-        
+
         @type dummy_unit_test_plugin: DummyUnitTestPlugin
         @param dummy_unit_test_plugin: The dummy unit test plugin
         """

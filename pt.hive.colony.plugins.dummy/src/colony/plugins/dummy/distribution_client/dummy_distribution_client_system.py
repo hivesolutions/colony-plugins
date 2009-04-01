@@ -48,7 +48,7 @@ class DummyDistributionClient:
     def __init__(self, dummy_distribution_client_plugin):
         """
         Constructor of the class.
-        
+
         @type dummy_distribution_client_plugin: DummyEntityManagerPlugin
         @param dummy_distribution_client_plugin: The dummy distribution client plugin.
         """

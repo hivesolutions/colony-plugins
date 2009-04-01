@@ -82,7 +82,7 @@ class DummyPluginWindowsForms(dummy_plugin.DummyPlugin):
         self.dummy_windows_forms.stop()
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
     @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.dummy.windows_forms", "1.0.0")
     def load_allowed(self, plugin, capability):

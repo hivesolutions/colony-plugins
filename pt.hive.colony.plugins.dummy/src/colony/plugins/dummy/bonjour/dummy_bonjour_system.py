@@ -50,13 +50,13 @@ class DummyBonjour:
     def __init__(self, dummy_bonjour_plugin):
         """
         Constructor of the class
-        
+
         @type dummy_bonjour_plugin: DummyBonjourPlugin
         @param dummy_bonjour_plugin: The dummy bonjour plugin
         """
 
         self.dummy_bonjour_plugin = dummy_bonjour_plugin
-    
+
     def register_bonjour_service(self):
         """
         Registers the dummy bonjour service.

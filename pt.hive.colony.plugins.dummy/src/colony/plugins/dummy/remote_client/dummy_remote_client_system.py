@@ -48,7 +48,7 @@ class DummyRemoteClient:
     def __init__(self, dummy_remote_client_plugin):
         """
         Constructor of the class.
-        
+
         @type dummy_remote_client_plugin: DummyRemoteClientPlugin
         @param dummy_remote_client_plugin: he dummy remote client plugin.
         """

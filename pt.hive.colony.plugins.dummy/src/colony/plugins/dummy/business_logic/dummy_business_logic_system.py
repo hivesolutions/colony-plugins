@@ -51,7 +51,7 @@ class DummyBusinessLogic:
     def __init__(self, dummy_business_logic_plugin):
         """
         Constructor of the class
-        
+
         @type dummy_business_logic_plugin: DummyBusinessLogicPlugin
         @param dummy_business_logic_plugin: The dummy business logic plugin
         """
@@ -61,7 +61,7 @@ class DummyBusinessLogic:
     def insert_user(self, user_id, username):
         """
         Inserts a user with the given user id and username into the database
-        
+
         @type user_id: int
         @param user_id: The identification of the user to insert into the database
         @type username: String
@@ -72,7 +72,7 @@ class DummyBusinessLogic:
         metadata = sqlalchemy.MetaData()
 
         # creates the mapper for the users table
-        users_table = sqlalchemy.Table('users', metadata, 
+        users_table = sqlalchemy.Table('users', metadata,
                                        sqlalchemy.Column("user_id", sqlalchemy.Integer, primary_key = True),
                                        sqlalchemy.Column("username", sqlalchemy.String))
 
@@ -82,7 +82,7 @@ class DummyBusinessLogic:
         # in case there is no map related with the entity object
         if not user_entity.__mapper__:
             # sets the relation between the mapper and the entity class
-            sqlalchemy.orm.mapper(user_entity, users_table, non_primary = True) 
+            sqlalchemy.orm.mapper(user_entity, users_table, non_primary = True)
 
         # creates the user instance
         user_instance = user_entity(user_id, username)

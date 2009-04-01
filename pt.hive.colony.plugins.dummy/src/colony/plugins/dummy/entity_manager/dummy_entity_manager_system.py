@@ -48,7 +48,7 @@ class DummyEntityManager:
     def __init__(self, dummy_entity_manager_plugin):
         """
         Constructor of the class
-        
+
         @type dummy_entity_manager_plugin: DummyEntityManagerPlugin
         @param dummy_entity_manager_plugin: The dummy entity manager plugin
         """
@@ -157,7 +157,7 @@ class DummyEntityManager:
         # creates a new transaction
         entity_manager.create_transaction("test_transaction_removal")
 
-        # removes the entity 
+        # removes the entity
         entity_manager.remove(dummy_entity_bundle)
 
         # removes the entity
