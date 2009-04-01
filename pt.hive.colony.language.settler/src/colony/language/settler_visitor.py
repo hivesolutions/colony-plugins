@@ -42,7 +42,7 @@ import settler_ast
 def _visit(ast_node_class):
     """
     Decorator for the visit of an ast node.
-    
+
     @type ast_node_class: String
     @param ast_node_class: The target class for the visit.
     @rtype: function
@@ -52,7 +52,7 @@ def _visit(ast_node_class):
     def decorator(func, *args, **kwargs):
         """
         The decorator function for the visit decorator.
-        
+
         @type func: function
         @param func: The function to be decorated.
         @type args: pointer
@@ -73,7 +73,7 @@ def _visit(ast_node_class):
 def dispatch_visit():
     """
     Decorator for the dispatch visit of an ast node.
-    
+
     @rtype: function
     @return: The created decorator.
     """
@@ -81,7 +81,7 @@ def dispatch_visit():
     def create_decorator_interceptor(func):
         """
         Creates a decorator interceptor, that intercepts the normal function call.
-        
+
         @type func: function
         @param func: The callback function.
         """
@@ -89,7 +89,7 @@ def dispatch_visit():
         def decorator_interceptor(*args, **kwargs):
             """
             The interceptor function for the dispatch visit decorator.
-            
+
             @type args: pointer
             @param args: The function arguments list.
             @type kwargs: pointer pointer
@@ -139,7 +139,7 @@ def dispatch_visit():
     def decorator(func, *args, **kwargs):
         """
         The decorator function for the dispatch visit decorator.
-        
+
         @type func: function
         @param func: The function to be decorated.
         @type args: pointer
@@ -154,7 +154,7 @@ def dispatch_visit():
         decorator_interceptor_function = create_decorator_interceptor(func)
 
         # returns the interceptor to be used
-        return decorator_interceptor_function 
+        return decorator_interceptor_function
 
     # returns the created decorator
     return decorator

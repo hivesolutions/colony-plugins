@@ -163,7 +163,7 @@ def interpret_command(command, processing_structure, global_interpretation_map, 
 def interactive_console(interpretation = False, debug = False, verbose = True, code_generation = False):
     # creates the exit flag
     exit_flag = False
-    
+
     # creates a new processing structure
     processing_structure = settler_processing.ProcessingStructure()
 

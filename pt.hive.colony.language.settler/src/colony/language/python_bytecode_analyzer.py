@@ -47,7 +47,7 @@ import types
 def show_file(file_name):
     """
     Shows some python bytecode information about the file with the given name.
-    
+
     @type file_name: String
     @param file_name: The file name of the file to show some python bytecode information.
     """
@@ -82,7 +82,7 @@ def show_file(file_name):
 def show_code(code, indentation = ""):
     """
     Shows some code information about the given code object.
-    
+
     @type code: Code
     @param code: The code object to show some code information.
     @type indentation: String
@@ -110,7 +110,7 @@ def show_code(code, indentation = ""):
     # prints the hexadecimal code in a string format
     show_hex("code", code.co_code, indentation = indentation)
 
-    # disassembles the code 
+    # disassembles the code
     dis.disassemble(code)
 
     # prints the constants text
@@ -151,7 +151,7 @@ def show_code(code, indentation = ""):
 def show_hex(label, hex_value, indentation):
     """
     Prints the give hexadecimal value to the stdout with the given label and indentation.
-    
+
     @type label: String
     @param label: The label value to be printed.
     @type hex_value: String

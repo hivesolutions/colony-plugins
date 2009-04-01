@@ -166,11 +166,11 @@ class ContextCodeInformation:
         self.meta_information_map = {}
 
         self.add_constant(None)
-        
+
     def set_global_context_code_information(self, global_context_code_information):
         """
         Sets the global context code information.
-        
+
         @type global_context_code_information: ContextCodeInformation
         @param global_context_code_information: The global context code information.
         """
@@ -180,9 +180,9 @@ class ContextCodeInformation:
     def add_variable(self, variable_name):
         """
         Adds a variable to the list of variables.
-        
+
         @type variable_name: String
-        @param variable_name: The name of the variable to add to the list of variables. 
+        @param variable_name: The name of the variable to add to the list of variables.
         """
 
         if variable_name in self.names_list:
@@ -196,9 +196,9 @@ class ContextCodeInformation:
     def remove_variable(self, variable_name):
         """
         Removes a variable from the list of variables.
-        
+
         @type variable_name: String
-        @param variable_name: The name of the variable to remove from the list of variables. 
+        @param variable_name: The name of the variable to remove from the list of variables.
         @rtype: bool
         @return: The result of the removal (if successful or not).
         """
@@ -218,7 +218,7 @@ class ContextCodeInformation:
     def get_variable_offset(self, variable_name):
         """
         Retrieves the offset to the given variable.
-        
+
         @type variable_name: String
         @param variable_name: The name of the variable to retrieve the offset.
         @rtype: int
@@ -232,9 +232,9 @@ class ContextCodeInformation:
     def add_variable_name(self, variable_name):
         """
         Adds a variable name to the list of variable names.
-        
+
         @type variable_name: String
-        @param variable_name: The name of the variable name to add to the list of variable names. 
+        @param variable_name: The name of the variable name to add to the list of variable names.
         """
 
         if variable_name in self.variable_names_list:
@@ -251,9 +251,9 @@ class ContextCodeInformation:
     def remove_variable_name(self, variable_name):
         """
         Removes a variable name from the list of variable names.
-        
+
         @type variable_name: String
-        @param variable_name: The name of the variable name to remove from the list of variable names. 
+        @param variable_name: The name of the variable name to remove from the list of variable names.
         @rtype: bool
         @return: The result of the removal (if successful or not).
         """
@@ -277,7 +277,7 @@ class ContextCodeInformation:
     def get_variable_name_offset(self, variable_name):
         """
         Retrieves the offset to the given variable name.
-        
+
         @type variable_name: String
         @param variable_name: The name of the variable name to retrieve the offset.
         @rtype: int
@@ -291,9 +291,9 @@ class ContextCodeInformation:
     def add_global_name(self, global_name):
         """
         Adds a global name to the list of global names.
-        
+
         @type global_name: String
-        @param global_name: The global name to add to the list of global names. 
+        @param global_name: The global name to add to the list of global names.
         """
 
         self.add_variable(global_name)
@@ -304,7 +304,7 @@ class ContextCodeInformation:
     def remove_global_name(self, global_name):
         """
         Removes a global name from the list of global names.
-        
+
         @type global_name: String
         @param global_name: The global name to remove from the list of global names.
         @rtype: bool
@@ -322,7 +322,7 @@ class ContextCodeInformation:
     def add_constant(self, value):
         """
         Adds a constant to the list of constants.
-        
+
         @type value: Object
         @param value: The constant value to add to the list of constants.
         """
@@ -338,7 +338,7 @@ class ContextCodeInformation:
     def remove_constant(self, value):
         """
         Removes a constant from the list of constants.
-        
+
         @type value: Object
         @param value: The constant value to remove from the list of constants.
         @rtype: bool
@@ -361,7 +361,7 @@ class ContextCodeInformation:
     def get_constant_offset(self, value):
         """
         Retrieves the offset to the given constant.
-        
+
         @type value: Object
         @param value: The constant value to retrieve the offset.
         @rtype: int
@@ -375,11 +375,11 @@ class ContextCodeInformation:
     def add_operation(self, operation, arguments):
         """
         Adds an operation to the list of operations.
-        
+
         @type operation: String
         @param operation: The name of the operation to be added.
         @type arguments: Tuple
-        @param arguments: The arguments of the operation to be added.        
+        @param arguments: The arguments of the operation to be added.
         """
 
         operation_tuple = (operation, arguments)
@@ -390,11 +390,11 @@ class ContextCodeInformation:
     def remove_operation(self, operation, arguments):
         """
         Removes an operation from the list of operations.
-        
+
         @type operation: String
         @param operation: The name of the operation to be removed.
         @type arguments: Tuple
-        @param arguments: The arguments of the operation to be removed.        
+        @param arguments: The arguments of the operation to be removed.
         """
 
         operation_tuple = (operation, arguments)
@@ -405,11 +405,11 @@ class ContextCodeInformation:
     def increment_line_number(self, line_increment = 1):
         """
         Increments the current line number.
-        
+
         @type line_increment: int
         @param line_increment: The line increment to be added.
         """
-        
+
         # create the line delta list
         line_delta = []
 
@@ -417,13 +417,13 @@ class ContextCodeInformation:
         line_delta.append(line_increment)
 
         self.line_intervals.append(line_delta)
-        
+
         self.current_line_number += line_increment
 
     def get_current_line_number(self):
         """
         Retrieves the current line number.
-        
+
         @rtype: int
         @return: The current line number.
         """
@@ -433,7 +433,7 @@ class ContextCodeInformation:
     def get_current_program_counter(self):
         """
         Retrieves the current value for the program counter.
-        
+
         @rtype: int
         @return: The current value for the program counter.
         """
@@ -443,7 +443,7 @@ class ContextCodeInformation:
     def increment_program_counter(self, operation):
         """
         Increments the program counter for the given operation.
-        
+
         @type operation: String
         @param operation: The operation used to calculate the program counter increment.
         """
@@ -456,7 +456,7 @@ class ContextCodeInformation:
     def decrement_program_counter(self, operation):
         """
         Decrements the program counter for the given operation.
-        
+
         @type operation: String
         @param operation: The operation used to calculate the program counter decrement.
         """
@@ -469,7 +469,7 @@ class ContextCodeInformation:
     def update_current_stack_size_add(self, operation, arguments):
         """
         Updates the current stack size value for the addition of the given operation and arguments.
-        
+
         @type operation: String
         @param operation: The operation used to update the current stack size.
         @type operation: Tuple
@@ -498,7 +498,7 @@ class ContextCodeInformation:
     def update_current_stack_size_remove(self, operation, arguments):
         """
         Updates the current stack size value for the removal of the given operation and arguments.
-        
+
         @type operation: String
         @param operation: The operation used to update the current stack size.
         @type operation: Tuple
@@ -527,7 +527,7 @@ class ContextCodeInformation:
     def generate_lnotab_string(self):
         """
         Generates the lnotab string.
-        
+
         @rtype: String
         @return: The generated lnotab string.
         """
@@ -548,7 +548,7 @@ class ContextCodeInformation:
     def generate_code_string(self):
         """
         Generates the code string.
-        
+
         @rtype: String
         @return: The generated code string.
         """
@@ -599,7 +599,7 @@ class ContextCodeInformation:
         """
         Generates the code for the given operation and arguments,
         appending the generated code to the the given code array object.
-        
+
         @type code: Array
         @param code: The code array object used to support the code stream.
         @type operation: String
@@ -987,11 +987,11 @@ class ContextCodeInformation:
     def generate_code_object(self):
         """
         Generates the code object for the current generation structure.
-        
+
         @rtype: Code
         @return: The generated code object.
         """
-        
+
         # generates the lnotab string
         lnotab_string = self.generate_lnotab_string()
 
@@ -1017,7 +1017,7 @@ class ContextCodeInformation:
     def get_operations_stack_memory_size(self, operations_stack = None):
         """
         Retrieves the memory size of the given operations stack.
-        
+
         @type operations_stack: List
         @param operations_stack: The stack of operation to calculate the memory size.
         @rtype: int

@@ -549,7 +549,7 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
     def is_global_context(self):
         """
         Retrieves if the current context is global or not.
-        
+
         @rtype: bool
         @return: The result of the global context test.
         """

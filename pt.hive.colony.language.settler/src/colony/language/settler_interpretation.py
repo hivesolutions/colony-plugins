@@ -566,7 +566,7 @@ class InterpretationVisitor(settler_visitor.Visitor):
 
             # sets the node value as the statements value
             node.set_value(last_statements_value)
- 
+
             # pushes the context type as execution
             self.push_current_context_type("execution", node)
 
@@ -1131,7 +1131,7 @@ class InterpretationVisitor(settler_visitor.Visitor):
             else:
                 # sets the node value as None
                 node.set_value(None)
- 
+
             # pops the current context as a local one
             self.pop_current_context_local()
 

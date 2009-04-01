@@ -61,7 +61,7 @@ class AstNode(object):
     def __repr__(self):
         """
         Returns the default representation of the class.
-        
+
         @rtype: String
         @return: The default representation of the class.
         """
@@ -71,7 +71,7 @@ class AstNode(object):
     def accept(self, visitor):
         """
         Accepts the visitor running the iteration logic.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -85,7 +85,7 @@ class AstNode(object):
     def accept_post_order(self, visitor):
         """
         Accepts the visitor running the iteration logic, in post order.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -99,7 +99,7 @@ class AstNode(object):
     def set_value(self, value):
         """
         Sets the value value.
-        
+
         @type value: Object
         @para value: The value value.
         """
@@ -109,7 +109,7 @@ class AstNode(object):
     def set_indent(self, indent):
         """
         Sets the indent value.
-        
+
         @type indent: int
         @param indent: The indent value.
         """
@@ -119,7 +119,7 @@ class AstNode(object):
     def add_child_node(self, child_node):
         """
         Adds a child node to the node.
-        
+
         @type child_node: AstNode
         @param child_node: The child node to be added.
         """
@@ -129,7 +129,7 @@ class AstNode(object):
     def remove_child_node(self, child_node):
         """
         Removes a child node from the node.
-        
+
         @type child_node: AstNode
         @param child_node: The child node to be removed.
         """
@@ -157,7 +157,7 @@ class AstSequenceNode(AstNode):
     def __iter__(self):
         """
         Returns the iterator object for sequence iteration.
-        
+
         @rtype: AstSequenceNodeIterator
         @return: The iterator object for sequence iteration.
         """
@@ -171,7 +171,7 @@ class AstSequenceNode(AstNode):
     def set_next_node(self, next_node):
         """
         Sets the next node.
-        
+
         @type next_node: AstSequenceNode
         @param next_node: The next node.
         """
@@ -181,7 +181,7 @@ class AstSequenceNode(AstNode):
     def get_last_node(self):
         """
         Retrieves the last node.
-        
+
         @rtype: AstSequenceNode
         @return: The last node.
         """
@@ -201,7 +201,7 @@ class AstSequenceNode(AstNode):
     def get_all_nodes(self):
         """
         Retrieves all the nodes in the sequence.
-        
+
         @rtype: List
         @return: All the nodes in the sequence.
         """
@@ -215,9 +215,9 @@ class AstSequenceNode(AstNode):
     def count(self):
         """
         Counts the number of nodes in the sequence.
-        
+
         @rtype: int
-        @return: The number of nodes in the sequence. 
+        @return: The number of nodes in the sequence.
         """
 
         # retrieve all nodes
@@ -232,7 +232,7 @@ class AstSequenceNode(AstNode):
     def is_valid(self):
         """
         Retrieves if a node is valid or not.
-        
+
         @rtype: bool
         @return: The is valid value.
         """
@@ -242,7 +242,7 @@ class AstSequenceNode(AstNode):
     def accept(self, visitor):
         """
         Accepts the visitor running the iteration logic.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -260,7 +260,7 @@ class AstSequenceNode(AstNode):
     def accept_post_order(self, visitor):
         """
         Accepts the visitor running the iteration logic, in post order.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -318,7 +318,7 @@ class ProgramNode(RootNode):
     def set_statements_node(self, statements_node):
         """
         Sets the statements node.
-        
+
         @type statements_node: StatementsNode
         @param statements_node: The statements node.
         """
@@ -344,7 +344,7 @@ class StatementsNode(AstSequenceNode):
     def set_statement_node(self, statement_node):
         """
         Sets the statement node.
-        
+
         @type statement_node: StatementNode
         @param statement_node: The statement node.
         """
@@ -397,7 +397,7 @@ class AssignNode(StatementNode):
     def set_name_reference_node(self, name_reference_node):
         """
         Sets the name reference node.
-        
+
         @type name_reference_node: NameReferenceNode
         @param name_reference_node: The name reference node.
         """
@@ -408,7 +408,7 @@ class AssignNode(StatementNode):
     def set_expression_node(self, expression_node):
         """
         Sets the expression node.
-        
+
         @type expression_node: ExpressionNode
         @param expression_node: The expression node.
         """
@@ -419,7 +419,7 @@ class AssignNode(StatementNode):
     def accept(self, visitor):
         """
         Accepts the visitor running the iteration logic.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -440,7 +440,7 @@ class AssignNode(StatementNode):
     def accept_post_order(self, visitor):
         """
         Accepts the visitor running the iteration logic, in post order.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -476,11 +476,11 @@ class ReturnNode(StatementNode):
     def set_expression_node(self, expression_node):
         """
         Sets the expression node.
-        
+
         @type expression_node: ExpressionNode
         @param expression_node: The expression node.
         """
-        
+
         self.expression_node = expression_node
         self.add_child_node(expression_node)
 
@@ -502,7 +502,7 @@ class GlobalNode(StatementNode):
     def set_name(self, name):
         """
         Sets the name value.
-        
+
         @type name: String
         @param name: The name value.
         """
@@ -533,7 +533,7 @@ class IfConditionNode(StatementNode):
     def set_expression_node(self, expression_node):
         """
         Sets the expression node.
-        
+
         @type expression_node: ExpressionNode
         @param expression_node: The expression node.
         """
@@ -544,7 +544,7 @@ class IfConditionNode(StatementNode):
     def set_statements_node(self, statements_node):
         """
         Sets the statements node.
-        
+
         @type statements_node: StatementsNode
         @param statements_node: The statements node.
         """
@@ -555,7 +555,7 @@ class IfConditionNode(StatementNode):
     def set_else_condition_node(self, else_condition_node):
         """
         Sets the else condition node.
-        
+
         @type else_condition_node: ElseConditionNode
         @param else_condition_node: The else condition node.
         """
@@ -566,7 +566,7 @@ class IfConditionNode(StatementNode):
     def accept(self, visitor):
         """
         Accepts the visitor running the iteration logic.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -587,7 +587,7 @@ class IfConditionNode(StatementNode):
     def accept_post_order(self, visitor):
         """
         Accepts the visitor running the iteration logic, in post order.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -623,7 +623,7 @@ class ElseConditionNode(AstSequenceNode):
     def set_statements_node(self, statements_node):
         """
         Sets the statements node.
-        
+
         @type statements_node: StatementsNode
         @param statements_node: The statements node.
         """
@@ -649,7 +649,7 @@ class ElseIfConditionNode(ElseConditionNode):
     def set_expression_node(self, expression_node):
         """
         Sets the expression node.
-        
+
         @type expression_node: ExpressionNode
         @param expression_node: The expression node.
         """
@@ -678,7 +678,7 @@ class WhileNode(StatementNode):
     def set_expression_node(self, expression_node):
         """
         Sets the expression node.
-        
+
         @type expression_node: ExpressionNode
         @param expression_node: The expression node.
         """
@@ -689,7 +689,7 @@ class WhileNode(StatementNode):
     def set_statements_node(self, statements_node):
         """
         Sets the statements node.
-        
+
         @type statements_node: StatementsNode
         @param statements_node: The statements node.
         """
@@ -700,7 +700,7 @@ class WhileNode(StatementNode):
     def accept(self, visitor):
         """
         Accepts the visitor running the iteration logic.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -721,7 +721,7 @@ class WhileNode(StatementNode):
     def accept_post_order(self, visitor):
         """
         Accepts the visitor running the iteration logic, in post order.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -763,7 +763,7 @@ class ForNode(StatementNode):
     def set_item_name(self, item_name):
         """
         Sets the item name.
-        
+
         @type item_name: String
         @param item_name: The item name.
         """
@@ -773,7 +773,7 @@ class ForNode(StatementNode):
     def set_expression_node(self, expression_node):
         """
         Sets the expression node.
-        
+
         @type expression_node: ExpressionNode
         @param expression_node: The expression node.
         """
@@ -784,7 +784,7 @@ class ForNode(StatementNode):
     def set_statements_node(self, statements_node):
         """
         Sets the statements node.
-        
+
         @type statements_node: StatementsNode
         @param statements_node: The statements node.
         """
@@ -834,7 +834,7 @@ class IntegerExpressionNode(NumberExpressionNode):
     def set_integer_value(self, integer_value):
         """
         Sets the integer value.
-        
+
         @type integer_value: int
         @param integer_value: The integer value.
         """
@@ -859,7 +859,7 @@ class StringExpressionNode(ExpressionNode):
     def set_string_value(self, string_value):
         """
         Sets the string value.
-        
+
         @type string_value: String
         @param string_value: The string value.
         """
@@ -884,7 +884,7 @@ class BoolExpressionNode(ExpressionNode):
     def set_bool_value(self, bool_value):
         """
         Sets the bool value.
-        
+
         @type bool_value: bool
         @param bool_value: The bool value.
         """
@@ -904,12 +904,12 @@ class NameExpressionNode(ExpressionNode):
         Constructor of the class.
         """
 
-        ExpressionNode.__init__(self)    
+        ExpressionNode.__init__(self)
 
     def set_name_reference_node(self, name_reference_node):
         """
         Sets the name reference node.
-        
+
         @type name_reference_node: NameReferenceNode
         @param name_reference_node: The name reference node.
         """
@@ -930,12 +930,12 @@ class ListExpressionNode(ExpressionNode):
         Constructor of the class.
         """
 
-        ExpressionNode.__init__(self)    
+        ExpressionNode.__init__(self)
 
     def set_list_contents_node(self, list_contents_node):
         """
         Sets the list contents node.
-        
+
         @type list_contents_node: ListContentsNode
         @param list_contents_node: The list contents node.
         """
@@ -961,7 +961,7 @@ class ListContentsNode(AstSequenceNode):
     def set_expression_node(self, expression_node):
         """
         Sets the expression node.
-        
+
         @type expression_node: ExpressionNode
         @param expression_node: The expression node.
         """
@@ -987,7 +987,7 @@ class UnaryExpressionNode(ExpressionNode):
     def set_expression_node(self, expression_node):
         """
         Sets the expression node.
-        
+
         @type expression_node: ExpressionNode
         @param expression_node: The expression node.
         """
@@ -1016,7 +1016,7 @@ class BinaryExpressionNode(ExpressionNode):
     def set_first_expression_node(self, first_expression_node):
         """
         Sets the first expression node.
-        
+
         @type first_expression_node: ExpressionNode
         @param first_expression_node: The first expression node.
         """
@@ -1027,7 +1027,7 @@ class BinaryExpressionNode(ExpressionNode):
     def set_second_expression_node(self, second_expression_node):
         """
         Sets the second expression node.
-        
+
         @type second_expression_node: ExpressionNode
         @param second_expression_node: The second expression node.
         """
@@ -1170,7 +1170,7 @@ class AndExpressionNode(BooleanExpressionNode):
     def accept(self, visitor):
         """
         Accepts the visitor running the iteration logic.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -1191,7 +1191,7 @@ class AndExpressionNode(BooleanExpressionNode):
     def accept_post_order(self, visitor):
         """
         Accepts the visitor running the iteration logic, in post order.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -1224,7 +1224,7 @@ class OrExpressionNode(BooleanExpressionNode):
     def accept(self, visitor):
         """
         Accepts the visitor running the iteration logic.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -1245,7 +1245,7 @@ class OrExpressionNode(BooleanExpressionNode):
     def accept_post_order(self, visitor):
         """
         Accepts the visitor running the iteration logic, in post order.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -1317,7 +1317,7 @@ class NameReferenceNode(AstSequenceNode):
     def set_name_reference(self, name_reference):
         """
         Sets the name reference.
-        
+
         @type name_reference: String
         @param name_reference: The name reference.
         """
@@ -1327,7 +1327,7 @@ class NameReferenceNode(AstSequenceNode):
     def to_name(self):
         """
         Converts the name reference node to a fully qualified name.
-        
+
         @rtype: String
         @return: The fully qualified name reference.
         """
@@ -1366,7 +1366,7 @@ class ImportNode(AstSequenceNode):
     def set_import_name_reference_node(self, import_name_reference_node):
         """
         Sets the import name reference node.
-        
+
         @type import_name_reference_node: NameReferenceNode
         @param import_name_reference_node: The import name reference node.
         """
@@ -1400,7 +1400,7 @@ class FunctionNode(ExpressionNode):
     def set_function_operators_node(self, function_operators_node):
         """
         Sets the function operators node.
-        
+
         @type function_operators_node: FunctionOperatorsNode
         @param function_operators_node: The function operators node.
         """
@@ -1411,7 +1411,7 @@ class FunctionNode(ExpressionNode):
     def set_function_name(self, function_name):
         """
         Sets the function name.
-        
+
         @type function_name: String
         @param function_name: The function name.
         """
@@ -1421,7 +1421,7 @@ class FunctionNode(ExpressionNode):
     def set_function_arguments_node(self, function_arguments_node):
         """
         Sets the function arguments node.
-        
+
         @type function_arguments_node: FunctionArgumentsNode
         @param function_arguments_node: The function arguments node.
         """
@@ -1432,7 +1432,7 @@ class FunctionNode(ExpressionNode):
     def set_statements_node(self, statements_node):
         """
         Sets the statements node.
-        
+
         @type statements_node: StatementsNode
         @param statements_node: The statements node.
         """
@@ -1443,7 +1443,7 @@ class FunctionNode(ExpressionNode):
     def is_static(self):
         """
         Returns if the function is of type static or not.
-        
+
         @rtype: bool
         @return: The result of the static type test.
         """
@@ -1453,7 +1453,7 @@ class FunctionNode(ExpressionNode):
 
         # iterates over all the function operators nodes
         for function_operators_node_item in self.function_operators_node:
-            # retrieves the function operator node 
+            # retrieves the function operator node
             function_operator_node = function_operators_node_item.function_operator_node
 
             if function_operator_node.function_operator_name == "static":
@@ -1464,7 +1464,7 @@ class FunctionNode(ExpressionNode):
     def accept(self, visitor):
         """
         Accepts the visitor running the iteration logic.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -1485,7 +1485,7 @@ class FunctionNode(ExpressionNode):
     def accept_post_order(self, visitor):
         """
         Accepts the visitor running the iteration logic, in post order.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -1521,7 +1521,7 @@ class FunctionOperatorsNode(AstSequenceNode):
     def set_function_operator_node(self, function_operator_node):
         """
         Sets the statements node.
-        
+
         @type statements_node: StatementsNode
         @param statements_node: The statements node.
         """
@@ -1547,7 +1547,7 @@ class FunctionOperatorNode(AstNode):
     def set_function_operator_name(self, function_operator_name):
         """
         Sets the function operator name.
-        
+
         @type function_operator_name: String
         @param function_operator_name: The function operator name.
         """
@@ -1585,7 +1585,7 @@ class ArgumentsNode(AstSequenceNode):
     def set_argument_node(self, argument_node):
         """
         Sets the argument node.
-        
+
         @type argument_node: ArgumentNode
         @param argument_node: The argument node.
         """
@@ -1611,7 +1611,7 @@ class ArgumentNode(AstNode):
     def set_name(self, name):
         """
         Sets the name value.
-        
+
         @type name: String
         @param name: The name value.
         """
@@ -1636,7 +1636,7 @@ class DefaultValueArgumentNode(ArgumentNode):
     def set_expression_node(self, expression_node):
         """
         Sets the expression node.
-        
+
         @type expression_node: ExpressionNode
         @param expression_node: The expression node.
         """
@@ -1665,7 +1665,7 @@ class FunctionCallNode(AstNode):
     def set_function_name_reference_node(self, function_name_reference_node):
         """
         Sets the function name reference node.
-        
+
         @type function_name_reference_node: NameReferenceNode
         @param function_name_reference_node: The name reference node.
         """
@@ -1676,7 +1676,7 @@ class FunctionCallNode(AstNode):
     def set_function_argument_values_node(self, function_argument_values_node):
         """
         Sets the function argument values node.
-        
+
         @type function_argument_values_node: ArgumentValuesNode
         @param function_argument_values_node: The function argument values node.
         """
@@ -1687,7 +1687,7 @@ class FunctionCallNode(AstNode):
     def accept(self, visitor):
         """
         Accepts the visitor running the iteration logic.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -1708,7 +1708,7 @@ class FunctionCallNode(AstNode):
     def accept_post_order(self, visitor):
         """
         Accepts the visitor running the iteration logic, in post order.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -1744,7 +1744,7 @@ class ArgumentValuesNode(AstSequenceNode):
     def set_argument_value_node(self, argument_value_node):
         """
         Sets the argument value node.
-        
+
         @type argument_value_node: ArgumentValueNode
         @param argument_value_node: The argument value node.
         """
@@ -1770,7 +1770,7 @@ class ArgumentValueNode(AstNode):
     def set_expression_node(self, expression_node):
         """
         Sets the expression node.
-        
+
         @type expression_node: ExpressionNode
         @param expression_node: The expression node.
         """
@@ -1805,7 +1805,7 @@ class ClassNode(ExpressionNode):
     def set_class_name(self, class_name):
         """
         Sets the class name.
-        
+
         @type class_name: String
         @param class_name: The class name.
         """
@@ -1815,7 +1815,7 @@ class ClassNode(ExpressionNode):
     def set_extends_node(self, extends_node):
         """
         Sets the extends node.
-        
+
         @type extends_node: ExtendsNode
         @param extends_node: The extends node.
         """
@@ -1826,7 +1826,7 @@ class ClassNode(ExpressionNode):
     def set_implements_node(self, implements_node):
         """
         Sets the implements node.
-        
+
         @type implements_node: ImplementsNode
         @param implements_node: The implements node.
         """
@@ -1837,7 +1837,7 @@ class ClassNode(ExpressionNode):
     def set_statements_node(self, statements_node):
         """
         Sets the statements node.
-        
+
         @type statements_node: StatementsNode
         @param statements_node: The statements node.
         """
@@ -1848,7 +1848,7 @@ class ClassNode(ExpressionNode):
     def accept(self, visitor):
         """
         Accepts the visitor running the iteration logic.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -1869,7 +1869,7 @@ class ClassNode(ExpressionNode):
     def accept_post_order(self, visitor):
         """
         Accepts the visitor running the iteration logic, in post order.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -1905,7 +1905,7 @@ class ExtendsNode(AstNode):
     def set_extends_values_node(self, extends_values_node):
         """
         Sets the extends values node.
-        
+
         @type extends_values_node: ExtendsValuesNode
         @param extends_values_node: The extends values node.
         """
@@ -1931,7 +1931,7 @@ class ExtendsValuesNode(AstSequenceNode):
     def set_extends_values_name(self, extends_values_name):
         """
         Sets the extends values name.
-        
+
         @type extends_values_name: String
         @param extends_values_name: The extends values name.
         """
@@ -1956,7 +1956,7 @@ class ImplementsNode(AstNode):
     def set_implements_values_node(self, implements_values_node):
         """
         Sets the implements values node.
-        
+
         @type implements_values_node: ImplementsValuesNode
         @param implements_values_node: The implements values node.
         """
@@ -1982,7 +1982,7 @@ class ImplementsValuesNode(AstSequenceNode):
     def set_implements_values_name(self, implements_values_name):
         """
         Sets the implements values name.
-        
+
         @type implements_values_name: String
         @param implements_values_name: The implements values name.
         """
@@ -2013,7 +2013,7 @@ class InterfaceNode(ExpressionNode):
     def set_interface_name(self, interface_name):
         """
         Sets the interface name.
-        
+
         @type interface_name: String
         @param interface_name: The interface name.
         """
@@ -2023,7 +2023,7 @@ class InterfaceNode(ExpressionNode):
     def set_extends_node(self, extends_node):
         """
         Sets the extends node.
-        
+
         @type extends_node: ExtendsNode
         @param extends_node: The extends node.
         """
@@ -2034,7 +2034,7 @@ class InterfaceNode(ExpressionNode):
     def set_statements_node(self, statements_node):
         """
         Sets the statements node.
-        
+
         @type statements_node: StatementsNode
         @param statements_node: The statements node.
         """
@@ -2072,7 +2072,7 @@ class PluginNode(ExpressionNode):
     def set_plugin_name(self, plugin_name):
         """
         Sets the plugin name.
-        
+
         @type plugin_name: String
         @param plugin_name: The plugin name.
         """
@@ -2082,7 +2082,7 @@ class PluginNode(ExpressionNode):
     def set_extends_node(self, extends_node):
         """
         Sets the extends node.
-        
+
         @type extends_node: ExtendsNode
         @param extends_node: The extends node.
         """
@@ -2093,7 +2093,7 @@ class PluginNode(ExpressionNode):
     def set_implements_node(self, implements_node):
         """
         Sets the implements node.
-        
+
         @type implements_node: ImplementsNode
         @param implements_node: The implements node.
         """
@@ -2104,7 +2104,7 @@ class PluginNode(ExpressionNode):
     def set_allows_node(self, allows_node):
         """
         Sets the allows node.
-        
+
         @type allows_node: AllowsNode
         @param allows_node: The allows node.
         """
@@ -2115,7 +2115,7 @@ class PluginNode(ExpressionNode):
     def set_statements_node(self, statements_node):
         """
         Sets the statements node.
-        
+
         @type statements_node: StatementsNode
         @param statements_node: The statements node.
         """
@@ -2126,7 +2126,7 @@ class PluginNode(ExpressionNode):
     def accept(self, visitor):
         """
         Accepts the visitor running the iteration logic.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -2147,7 +2147,7 @@ class PluginNode(ExpressionNode):
     def accept_post_order(self, visitor):
         """
         Accepts the visitor running the iteration logic, in post order.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -2183,7 +2183,7 @@ class AllowsNode(AstNode):
     def set_allows_values_node(self, allows_values_node):
         """
         Sets the allows values node.
-        
+
         @type allows_values_node: AllowsValuesNode
         @param allows_values_node: The allows values node.
         """
@@ -2209,7 +2209,7 @@ class AllowsValuesNode(AstSequenceNode):
     def set_allows_values_name(self, allows_values_name):
         """
         Sets the allows values name.
-        
+
         @type allows_values_name: String
         @param allows_values_name: The allows values name.
         """
@@ -2240,7 +2240,7 @@ class CapabilityNode(ExpressionNode):
     def set_capability_name(self, capability_name):
         """
         Sets the capability name.
-        
+
         @type capability_name: String
         @param capability_name: The capability name.
         """
@@ -2250,7 +2250,7 @@ class CapabilityNode(ExpressionNode):
     def set_extends_node(self, extends_node):
         """
         Sets the extends node.
-        
+
         @type extends_node: ExtendsNode
         @param extends_node: The extends node.
         """
@@ -2261,7 +2261,7 @@ class CapabilityNode(ExpressionNode):
     def set_statements_node(self, statements_node):
         """
         Sets the statements node.
-        
+
         @type statements_node: StatementsNode
         @param statements_node: The statements node.
         """
@@ -2280,7 +2280,7 @@ class AstSequenceNodeIterator:
     def __init__(self, ast_sequence_node):
         """
         Constructor of the class.
-        
+
         @type ast_sequence_node: AstSequenceNode
         @param ast_sequence_node: The ast sequence node for the iterator.
         """
@@ -2290,7 +2290,7 @@ class AstSequenceNodeIterator:
     def __iter__(self):
         """
         Returns the iterator object for sequence iteration.
-        
+
         @rtype: AstSequenceNodeIterator
         @return: The iterator object for sequence iteration.
         """
@@ -2300,7 +2300,7 @@ class AstSequenceNodeIterator:
     def next(self):
         """
         Retrieves the next ast sequence node.
-        
+
         @rtype: AstSequenceNode
         @return: The next ast sequence node.
         """
