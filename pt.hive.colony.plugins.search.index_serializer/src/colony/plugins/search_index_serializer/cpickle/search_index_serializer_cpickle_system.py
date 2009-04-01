@@ -60,7 +60,7 @@ class SearchIndexSerializerCpickle:
     def __init__(self, search_index_serializer_cpickle_plugin):
         """
         Constructor of the class.
-        
+
         @type search_index_serializer_cpickle_plugin: SearchIndexSerializerCpicklePlugin
         @param search_index_serializer_cpickle_plugin: The search index serializer cpickle plugin.
         """
@@ -74,13 +74,13 @@ class SearchIndexSerializerCpickle:
         if not FILE_PATH_VALUE in properties:
             raise search_index_serializer_cpickle_exceptions.MissingProperty(FILE_PATH_VALUE)
 
-        # retrieves the logger from the plugin 
+        # retrieves the logger from the plugin
         logger = self.search_index_serializer_cpickle_plugin.logger
 
         # retrieves the file path
         file_path = properties[FILE_PATH_VALUE]
 
-        # opens the file for writing in binary 
+        # opens the file for writing in binary
         # and if the file does not exists, it creates a new one
         file = open(file_path, "wb")
 
@@ -91,7 +91,7 @@ class SearchIndexSerializerCpickle:
         gc.disable()
 
         # wrapping the dump operation in a try-finally block to keep the garbage collector to staying disable after an exception
-        try:            
+        try:
             # dumps the search index object into the file using the cpickle serializer
             cPickle.dump(search_index, file, cPickle.HIGHEST_PROTOCOL)
         finally:
@@ -113,13 +113,13 @@ class SearchIndexSerializerCpickle:
         if not FILE_PATH_VALUE in properties:
             raise search_index_serializer_cpickle_exceptions.MissingProperty(FILE_PATH_VALUE)
 
-        # retrieves the logger from the plugin 
+        # retrieves the logger from the plugin
         logger = self.search_index_serializer_cpickle_plugin.logger
 
         # retrieves the file path
         file_path = properties[FILE_PATH_VALUE]
 
-        # opens the file for reading in binary 
+        # opens the file for reading in binary
         file = open(file_path, "rb")
 
         # gets the start time for the cPickle dump operation

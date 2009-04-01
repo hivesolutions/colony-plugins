@@ -58,7 +58,7 @@ class SearchIndexSerializerShelve:
     def __init__(self, search_index_serializer_shelve_plugin):
         """
         Constructor of the class.
-        
+
         @type search_index_serializer_shelve_plugin: SearchIndexSerializerShelvePlugin
         @param search_index_serializer_shelve_plugin: The search index serializer shelve plugin.
         """
