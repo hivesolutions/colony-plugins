@@ -53,7 +53,7 @@ class SearchIndexRepository:
     def __init__(self, search_index_repository_plugin):
         """
         Constructor of the class.
-        
+
         @type search_index_repository_plugin: SearchIndexRepositoryPlugin
         @param search_index_repository_plugin: The search index repository plugin.
         """
@@ -86,5 +86,5 @@ class SearchIndexRepository:
     def get_indexes(self):
         """
         Returns a list of search indexes, available in the repository.
-        """        
+        """
         return self.search_index_repository_map.values()

@@ -77,7 +77,7 @@ class Search:
     def __init__(self, search_plugin):
         """
         Constructor of the class.
-        
+
         @type search_plugin: SearchPlugin
         @param search_plugin: The search plugin.
         """
@@ -87,7 +87,7 @@ class Search:
     def create_index(self, properties):
         """
         Creates the search index for the given properties.
-        
+
         @type properties: Dictionary
         @param properties: The properties to create the search index.
         @rtype: SearchIndex
@@ -155,7 +155,7 @@ class Search:
     def remove_index_with_identifier(self, search_index_identifier, properties):
         """
         Remove an index from the repository.
-        
+
         @type search_index_identifier: String
         @param search_index_identifier: The index identifier in the repository.
         @type properties: Dictionary
@@ -167,14 +167,14 @@ class Search:
         search_index_repository_plugin.remove_index(search_index_identifier)
 
     def persist_index(self, search_index, properties):
-        """ 
+        """
         Persists the specified search index using the selected available persistence type.
-        
+
         @type search_index: SearchIndex
         @param search_index: The search index to be persisted.
         @type properties: Dictionary
         @param properties: The properties to create the search index.
-        @rtype: boolean 
+        @rtype: boolean
         @return: The success of the persistence operation.
         """
 
@@ -192,9 +192,9 @@ class Search:
         return persistence_success
 
     def load_index(self, properties):
-        """ 
+        """
         Loads an index from a given location using the specified persistence type.
-        
+
         @type properties: Dictionary
         @param properties: The properties to load the search index.
         @rtype: SearchIndex
@@ -215,10 +215,10 @@ class Search:
         return search_index
 
     def load_index_with_identifier(self, search_index_identifier, properties):
-        """ 
-        Loads an index from a given location using the specified persistence type, and 
+        """
+        Loads an index from a given location using the specified persistence type, and
         stores it in the index repository under the specified index identifier.
-        
+
         @type properties: Dictionary
         @param properties: The properties to load the search index.
         @rtype: SearchIndex
@@ -228,7 +228,7 @@ class Search:
         # retrieves the search index repository plugin
         search_index_repository_plugin = self.search_plugin.search_index_repository_plugin
 
-        # loads the index using the persistence type specified in the properties 
+        # loads the index using the persistence type specified in the properties
         search_index = self.load_index(properties)
 
         # inserts the index in the repository
@@ -239,7 +239,7 @@ class Search:
     def query_index(self, search_index, search_query, properties):
         """
         Queries the provided index, using an available search_query_evaluator plugin for the query type specified in the properties.
-        
+
         @type search_index: SearchIndex
         @param search_index: The index to use in the query.
         @type search_query: String
@@ -247,7 +247,7 @@ class Search:
         @type properties: Dictionary
         @param properties: The properties to to query the search index.
         @rtype: List
-        @return: The result set for the query in the search index, as a list of (document id, search result information) tuples.        
+        @return: The result set for the query in the search index, as a list of (document id, search result information) tuples.
         """
 
         # in case the persistence type value is not defined in the properties
@@ -277,16 +277,16 @@ class Search:
         search_results = self.query_index(search_index, search_query, properties)
 
         # return the final scored and sorted results
-        return search_results        
+        return search_results
 
     def search_index(self, search_index, search_query, properties):
         """
-        Queries the provided index, using an available search_query_evaluator plugin 
+        Queries the provided index, using an available search_query_evaluator plugin
         for the query type specified in the properties;
         Scores the results, using the injected search scorer plugin with the function
         specified in the properties;
         Sorts the results by score.
-        
+
         @type search_index: SearchIndex
         @param search_index: The index to use in the query.
         @type search_query: String
@@ -294,7 +294,7 @@ class Search:
         @type properties: Dictionary
         @param properties: The properties to to query the search index.
         @rtype: List
-        @return: The result set for the query in the search index, as a list of 
+        @return: The result set for the query in the search index, as a list of
         (document id, search result information) tuples sorted by score.
         """
 

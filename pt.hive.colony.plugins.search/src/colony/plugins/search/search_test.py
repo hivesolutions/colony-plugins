@@ -70,7 +70,7 @@ import cProfile
 class SearchTest:
     """
     The Search plugin unit test class.
-    The search plugin represents the centralized interface to the search infrastructure, 
+    The search plugin represents the centralized interface to the search infrastructure,
     and is used as entry point for the search features.
     This test suite exercises the plugin's façade, exercising any attached plugins in the process.
     """
@@ -81,7 +81,7 @@ class SearchTest:
     def __init__(self, search_plugin):
         """
         Constructor of the class
-        
+
         @type search_plugin: SearchPlugin
         @param search_plugin: The search plugin.
         """
@@ -98,7 +98,7 @@ class SearchTestCase(unittest.TestCase):
 
     def setUp(self):
         self.plugin.logger.info("Setting up Search Test Case...")
-    
+
     def test_method_create_index(self):
         """
         This method targets the index creation using an available test path.
@@ -117,7 +117,7 @@ class SearchTestCase(unittest.TestCase):
 
         # creates the test index
         test_index = self.plugin.create_index({"start_path" : "/remote_home/search/light-docs", "type" : "file_system"})
-        
+
         # persists the index to defined storage
         properties = {"file_path" : INDEX_PERSISTENCE_TARGET_FILE_PATH, "persistence_type" : PERSISTENCE_TYPE, "serializer_type": SERIALIZER_TYPE}
         persistence_sucess = self.plugin.persist_index(test_index, properties)
@@ -150,7 +150,7 @@ class SearchTestCase(unittest.TestCase):
 
     def test_method_query_index(self):
         """
-        This test exercises the query index of the search plugin's façade. 
+        This test exercises the query index of the search plugin's façade.
         The test begins by indexing small document repository containing only '.txt' files, and then query the resulting index.
         """
 
@@ -158,7 +158,7 @@ class SearchTestCase(unittest.TestCase):
         test_index = self.plugin.create_index({"start_path" : CRAWL_TARGET, "type" : INDEX_TYPE})
 
         search_results = self.plugin.query_index(test_index, "ford and jaguar", {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "term_frequency_scorer_function"})
-        # FIXME: getting a memory problem here, the second time a run the query some of the data is messed up        
+        # FIXME: getting a memory problem here, the second time a run the query some of the data is messed up
         search_results = self.plugin.query_index(test_index, "ford jaguar", {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "term_frequency_scorer_function"})
 
         first_result = search_results[0]
@@ -168,8 +168,8 @@ class SearchTestCase(unittest.TestCase):
 
     def test_method_search_index_term_frequency_formula(self):
         """
-        This test exercises querying the index, scoring the results and 
-        sorting according to the term frequency score.        
+        This test exercises querying the index, scoring the results and
+        sorting according to the term frequency score.
         """
 
         crawl_target = "/remote_home/search/scorer_test"
@@ -196,7 +196,7 @@ class SearchTestCase(unittest.TestCase):
 
     def test_method_create_index_with_identifier(self):
         """
-        This method targets the index creation using an available test path 
+        This method targets the index creation using an available test path
         and saving to the search index repository with a specified identifier.
         """
 
@@ -216,7 +216,7 @@ class SearchTestCase(unittest.TestCase):
 
     def test_term_frequency_metrics(self):
         """
-        This method targets the index time computation. 
+        This method targets the index time computation.
         """
 
         properties = {"start_path" : "/remote_home/search/scorer_test",
@@ -234,7 +234,7 @@ class SearchTestCase(unittest.TestCase):
 
     def test_word_document_level_metrics(self):
         """
-        This method targets the index time computation of word-document combination level metrics. 
+        This method targets the index time computation of word-document combination level metrics.
         """
 
         properties = {"start_path" : "/remote_home/search/scorer_test",
@@ -249,13 +249,13 @@ class SearchTestCase(unittest.TestCase):
 
         # assert that the term frequency scorer metric was correctly calculated for the word "luis" and the document
         file1_path = "/remote_home/search/scorer_test/ficheiro_1.txt"
-        self.assertEquals(test_index.inverted_index_map["luis"]["hits"][file1_path]["metrics"]["word_document_frequency_scorer_metric"], 1) 
+        self.assertEquals(test_index.inverted_index_map["luis"]["hits"][file1_path]["metrics"]["word_document_frequency_scorer_metric"], 1)
         file10_path = "/remote_home/search/scorer_test/ficheiro_10.txt"
         self.assertEquals(test_index.inverted_index_map["luis"]["hits"][file10_path]["metrics"]["word_document_frequency_scorer_metric"], 10)
 
     def test_document_level_metrics(self):
         """
-        This method targets the index time computation of document level metrics. 
+        This method targets the index time computation of document level metrics.
         """
 
         properties = {"start_path" : "/remote_home/search/scorer_test",
@@ -267,15 +267,15 @@ class SearchTestCase(unittest.TestCase):
         self.assertTrue(test_index)
         self.assertTrue(test_index.forward_index_map)
         self.assertTrue(test_index.inverted_index_map)
-        
+
         file1_path = "/remote_home/search/scorer_test/ficheiro_1.txt"
-        self.assertEquals(test_index.forward_index_map[file1_path]["metrics"]["document_hits_scorer_metric"], 6) 
+        self.assertEquals(test_index.forward_index_map[file1_path]["metrics"]["document_hits_scorer_metric"], 6)
         file10_path = "/remote_home/search/scorer_test/ficheiro_10.txt"
         self.assertEquals(test_index.forward_index_map[file10_path]["metrics"]["document_hits_scorer_metric"], 15)
- 
+
     def test_word_document_level_metrics(self):
         """
-        This method targets the index time computation of word-document combination level metrics. 
+        This method targets the index time computation of word-document combination level metrics.
         """
 
         properties = {"start_path" : "/remote_home/search/scorer_test",
@@ -290,13 +290,13 @@ class SearchTestCase(unittest.TestCase):
 
         # assert that the term frequency scorer metric was correctly calculated for the word "luis" and the document
         file1_path = "/remote_home/search/scorer_test/ficheiro_1.txt"
-        self.assertEquals(test_index.inverted_index_map["luis"]["hits"][file1_path]["metrics"]["word_document_frequency_scorer_metric"], 1) 
+        self.assertEquals(test_index.inverted_index_map["luis"]["hits"][file1_path]["metrics"]["word_document_frequency_scorer_metric"], 1)
         file10_path = "/remote_home/search/scorer_test/ficheiro_10.txt"
         self.assertEquals(test_index.inverted_index_map["luis"]["hits"][file10_path]["metrics"]["word_document_frequency_scorer_metric"], 10)
 
     def test_hit_level_metrics(self):
         """
-        This method targets the index time computation of hit level metrics. 
+        This method targets the index time computation of hit level metrics.
         """
 
         properties = {"start_path" : "/remote_home/search/scorer_test",
@@ -313,14 +313,14 @@ class SearchTestCase(unittest.TestCase):
         self.assertEquals(test_index.inverted_index_map["luis"]["hits"][file1_path]["hits"][0]["metrics"]["hit_distance_to_top_scorer_metric"], 0)
 
         file10_path = "/remote_home/search/scorer_test/ficheiro_10.txt"
-        self.assertEquals(test_index.inverted_index_map["luis"]["hits"][file10_path]["hits"][1]["metrics"]["hit_distance_to_top_scorer_metric"], 6)        
+        self.assertEquals(test_index.inverted_index_map["luis"]["hits"][file10_path]["hits"][1]["metrics"]["hit_distance_to_top_scorer_metric"], 6)
 
         file10_path = "/remote_home/search/scorer_test/ficheiro_10.txt"
-        self.assertEquals(test_index.inverted_index_map["luis"]["hits"][file10_path]["hits"][2]["metrics"]["hit_distance_to_top_scorer_metric"], 7)        
+        self.assertEquals(test_index.inverted_index_map["luis"]["hits"][file10_path]["hits"][2]["metrics"]["hit_distance_to_top_scorer_metric"], 7)
 
     def test_term_frequency_scoring(self):
         """
-        This method targets the scoring infrastructure, and asserts if the results were properly scored and sorted according to WF 
+        This method targets the scoring infrastructure, and asserts if the results were properly scored and sorted according to WF
         """
 
         test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier", {"start_path" : "/remote_home/search/scorer_test", "type" : INDEX_TYPE})
@@ -335,16 +335,16 @@ class SearchTestCase(unittest.TestCase):
         first_result = test_results[0]
         first_result_document_id = first_result["document_id"]
 
-        self.assertEqual(first_result_document_id, "/remote_home/search/scorer_test/ficheiro_5.txt") 
+        self.assertEqual(first_result_document_id, "/remote_home/search/scorer_test/ficheiro_5.txt")
 
     def test_word_frequency_scoring_with_index_time_metrics(self):
         """
         This method targets the scoring infrastructure, and asserts if the results were properly scored and sorted according to WF
         """
 
-        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier", 
-                                                              {"start_path" : "/remote_home/search/scorer_test", 
-                                                               "type" : INDEX_TYPE, 
+        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier",
+                                                              {"start_path" : "/remote_home/search/scorer_test",
+                                                               "type" : INDEX_TYPE,
                                                                "metrics_identifiers" : ["word_document_frequency_scorer_metric"]})
         # asserts that the index was sucessfully created
         self.assertTrue(test_index)
@@ -357,7 +357,7 @@ class SearchTestCase(unittest.TestCase):
         first_result = test_results[0]
         first_result_document_id = first_result["document_id"]
 
-        self.assertEqual(first_result_document_id, "/remote_home/search/scorer_test/ficheiro_10.txt") 
+        self.assertEqual(first_result_document_id, "/remote_home/search/scorer_test/ficheiro_10.txt")
 
     def test_word_frequency_scoring_with_search_time_metrics(self):
         """
@@ -366,8 +366,8 @@ class SearchTestCase(unittest.TestCase):
         """
 
         test_index = None
-        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.new_index_identifier", 
-                                                              {"start_path" : "/remote_home/search/scorer_test", 
+        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.new_index_identifier",
+                                                              {"start_path" : "/remote_home/search/scorer_test",
                                                                "type" : INDEX_TYPE})
         # asserts that the index was successfully created
         self.assertTrue(test_index)
@@ -389,8 +389,8 @@ class SearchTestCase(unittest.TestCase):
         """
 
         test_index = None
-        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.new_index_identifier", 
-                                                              {"start_path" : "/remote_home/search/scorer_functions_test", 
+        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.new_index_identifier",
+                                                              {"start_path" : "/remote_home/search/scorer_functions_test",
                                                                "type" : INDEX_TYPE,
                                                                "metrics_identifiers" : ["word_document_frequency_scorer_metric"]})
 
@@ -408,8 +408,8 @@ class SearchTestCase(unittest.TestCase):
         """
 
         test_index = None
-        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.new_index_identifier", 
-                                                              {"start_path" : "/remote_home/search/scorer_functions_test", 
+        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.new_index_identifier",
+                                                              {"start_path" : "/remote_home/search/scorer_functions_test",
                                                                "type" : INDEX_TYPE})
 
         properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "document_location_scorer_function"}
@@ -427,8 +427,8 @@ class SearchTestCase(unittest.TestCase):
         """
 
         test_index = None
-        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.new_index_identifier", 
-                                                              {"start_path" : "/remote_home/search/scorer_functions_test", 
+        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.new_index_identifier",
+                                                              {"start_path" : "/remote_home/search/scorer_functions_test",
                                                                "type" : INDEX_TYPE})
 
         properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "word_distance_scorer_function"}
@@ -446,7 +446,7 @@ class SearchTestCase(unittest.TestCase):
         """
 
         test_index = None
-        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.new_index_identifier", 
+        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.new_index_identifier",
                                                               {"start_path" : "/remote_home/search/scorer_functions_test",
                                                                "type" : INDEX_TYPE,
                                                                "file_extensions" : ["py", "PY", "txt", "TXT"]})
@@ -469,7 +469,7 @@ class SearchTestCase(unittest.TestCase):
         """
 
         test_index = None
-        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.new_index_identifier", 
+        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.new_index_identifier",
                                                               {"start_path" : "/remote_home/search/scorer_functions_test",
                                                                "type" : INDEX_TYPE,
                                                                "file_extensions" : ["py", "PY", "txt", "TXT"]})
@@ -530,14 +530,14 @@ class SearchTestCase(unittest.TestCase):
 
         serializer_types = ["cpickle"]
 
-        # switch to larger directory for more visible timing differences 
+        # switch to larger directory for more visible timing differences
         start_path = "/search/pt.hive.colony.plugins.search"
         index_file_path = "/search/indexes/pt.hive.colony.idx"
         query = "martinho"
 
         test_index = None
 
-        for serializer_type in serializer_types:    
+        for serializer_type in serializer_types:
             for i in range(2):
                 del test_index
                 start_time = time.time()
@@ -559,7 +559,7 @@ class SearchTestCase(unittest.TestCase):
 
                 self.assertTrue(persistence_sucess)
 
-        for serializer_type in serializer_types:    
+        for serializer_type in serializer_types:
             for i in range(2):
                 del test_index
                 start_time = time.time()
@@ -584,7 +584,7 @@ class SearchTestCase(unittest.TestCase):
 
                 duration = end_time - start_time
                 logger.debug("Query on index from file '%s' took %f" % (index_file_path, duration))
-                
+
                 self.assertTrue(test_results)
 
     def test_hive_source_code_indexing_searching_performance_index_metrics(self):
@@ -623,8 +623,8 @@ class SearchTestCase(unittest.TestCase):
             start_time = time.time()
             # if unable to load, create and store
             test_index = self.plugin.create_index_with_identifier(index_identifier,
-                                                                  {"start_path" : start_path, 
-                                                                   "type" : "file_system", 
+                                                                  {"start_path" : start_path,
+                                                                   "type" : "file_system",
                                                                    "file_extensions" : ["py", "PY", "txt", "TXT", "xml", "XML", "js", "JS"],
                                                                    "metrics_identifiers" : ["word_document_frequency_scorer_metric"]})
 
@@ -740,8 +740,8 @@ class SearchTestCase(unittest.TestCase):
 
             start_time = time.time()
             test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier",
-                                                                  {"start_path" : start_path, 
-                                                                   "type" : "file_system", 
+                                                                  {"start_path" : start_path,
+                                                                   "type" : "file_system",
                                                                    "file_extensions" : ["py", "PY", "txt", "TXT", "xml", "XML", "js", "JS"]})
 
             # gather index end time
@@ -778,7 +778,7 @@ class SearchTestCase(unittest.TestCase):
 
         def test_index_vs_search_time_metrics_performance(self):
             pass
-        
+
 class SearchPluginTestCase:
 
     @staticmethod
