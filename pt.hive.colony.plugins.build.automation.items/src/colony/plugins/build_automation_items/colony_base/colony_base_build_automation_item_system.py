@@ -48,7 +48,7 @@ class ColonyBaseBuildAutomationItem:
     def __init__(self, colony_base_build_automation_item_plugin):
         """
         Constructor of the class.
-        
+
         @type colony_base_build_automation_item_plugin: ColonyBaseBuildAutomationItemPlugin
         @param colony_base_build_automation_item_plugin: The colony base build automation item plugin.
         """
@@ -58,7 +58,7 @@ class ColonyBaseBuildAutomationItem:
     def get_build_automation_file_path(self):
         """
         Retrieves the build automation file path.
-        
+
         @rtype: String
         @return: The build automation file path.
         """
@@ -80,7 +80,7 @@ class ColonyBaseBuildAutomationItem:
     def get_build_automation_execution_path(self):
         """
         Retrieves the build automation execution path.
-        
+
         @rtype: String
         @return: The build automation execution path.
         """
