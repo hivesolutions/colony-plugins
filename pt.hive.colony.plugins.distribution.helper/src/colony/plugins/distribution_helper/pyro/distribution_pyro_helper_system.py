@@ -54,7 +54,7 @@ class DistributionPyroHelper:
     def __init__(self, distribution_pyro_helper_plugin):
         """
         Constructor of the class.
-        
+
         @type distribution_pyro_helper_plugin: DistributionPyroHelperPlugin
         @param distribution_pyro_helper_plugin: The distribution pyro helper plugin.
         """
@@ -67,7 +67,7 @@ class DistributionPyroHelper:
     def create_client(self, remote_reference):
         """
         Creates a pyro client proxy from a remote reference.
-        
+
         @type remote_reference: RemoteReference
         @param remote_reference: The remote reference to retrieve the pyro client proxy.
         @rtype: PyroClientProxy
@@ -115,7 +115,7 @@ class PyroClientProxy:
     def __init__(self, pyro_client = None, remote_reference = None):
         """
         Constructor of the class.
-        
+
         @type pyro_client: PyroClient
         @param pyro_client: The pyro client.
         @type remote_reference: RemoteReference

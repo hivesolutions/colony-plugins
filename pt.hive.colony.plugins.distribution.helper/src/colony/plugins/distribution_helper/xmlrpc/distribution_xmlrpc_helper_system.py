@@ -60,7 +60,7 @@ class DistributionXmlrpcHelper:
     def __init__(self, distribution_xmlrpc_helper_plugin):
         """
         Constructor of the class.
-        
+
         @type distribution_xmlrpc_helper_plugin: DistributionXmlrpcHelperPlugin
         @param distribution_xmlrpc_helper_plugin: The distribution xmlrpc helper plugin.
         """
@@ -73,7 +73,7 @@ class DistributionXmlrpcHelper:
     def create_client(self, remote_reference):
         """
         Creates a xmlrpc client proxy from a remote reference.
-        
+
         @type remote_reference: RemoteReference
         @param remote_reference: The remote reference to retrieve the xmlrpc client proxy.
         @rtype: XmlrpcClientProxy
@@ -113,7 +113,7 @@ class DistributionXmlrpcHelper:
     def create_client_host(self, hostname, port, properties):
         """
         Creates a xmlrpc client from an hostname, port and some properties.
-        
+
         @type hostname: String
         @param hostname: The hostname to create the xmlrpc client.
         @type port: int
@@ -156,7 +156,7 @@ class XmlrpcClientProxy:
     def __init__(self, xmlrpc_client = None, remote_reference = None):
         """
         Constructor of the class.
-        
+
         @type xmlrpc_client: XmlrpcClient
         @param xmlrpc_client: The xmlrpc client.
         @type remote_reference: RemoteReference
@@ -178,7 +178,7 @@ class XmlrpcClientProxy:
 
             # in case the attribute class getattr method has not been replaced
             if not hasattr(attribute_class, "__replaced_getattr__"):
-                new_getattr_method = self.create_getter_attr(attribute.__getattr__)                
+                new_getattr_method = self.create_getter_attr(attribute.__getattr__)
                 attribute_class.__getattr__ = new_getattr_method
                 attribute_class.__replaced_getattr__ = True
 
@@ -193,7 +193,7 @@ class XmlrpcClientProxy:
     def create_getter_attr(self, method):
         """
         Creates a getattr method, that redirects the call method.
-        
+
         @type method: Method
         @param method: The method to be modified.
         @rtype: Method
@@ -223,7 +223,7 @@ class XmlrpcClientProxy:
 def create_caller(method):
     """
     Creates the caller method for the colony xmlrpc specification.
-    
+
     @type method: Method
     @param method: The method to be converted to the xmlrpc specification.
     @rtype: Method
@@ -272,7 +272,7 @@ def create_caller(method):
                 # this should be viewed as a backup of the original data
                 class_instance.__original__ = return_value
 
-                # iterates over all the key values in the map 
+                # iterates over all the key values in the map
                 for key in return_value:
                     # sets the instance attributes as the map values
                     setattr(class_instance, key, return_value[key])
