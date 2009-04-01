@@ -68,7 +68,7 @@ class PluginManagerHandler:
     def __init__(self, req):
         """
         Constructor of the class.
-        
+
         @type req: HttpRequest
         @param req: The http request sent by the mod_python.
         """
@@ -79,7 +79,7 @@ class PluginManagerHandler:
     def handle_request(self, data):
         """
         Handles the requested data.
-        
+
         @type data: String
         @param data: The data to handle.
         """
@@ -108,7 +108,7 @@ class PluginManagerHandler:
     def get_plugin_manager(self, python_options = {}):
         """
         Retrieves the plugin manager with the given python options.
-        
+
         @type python_options: List
         @param python_options: The list of python options to the (possible) startup of the plugin manager.
         """
@@ -123,7 +123,7 @@ class PluginManagerHandler:
     def load_plugin_manager(self, python_options):
         """
         Loads the plugin manager with the given python options.
-        
+
         @type python_options: List
         @param python_options: The list of python options to the startup of the plugin manager.
         """
@@ -160,7 +160,7 @@ class PluginManagerHandler:
 def handler(req):
     """
     The initial handler function for the mod_python.
-    
+
     @type req: HttpRequest
     @param req: The http request sent by the mod_python.
     @rtype: int
