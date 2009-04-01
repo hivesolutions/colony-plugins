@@ -48,7 +48,7 @@ class MainLogin:
     def __init__(self, main_login_plugin):
         """
         Constructor of the class.
-        
+
         @type main_login_plugin: MainLoginPlugin
         @param main_login_plugin: The main login plugin.
         """
