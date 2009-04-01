@@ -52,7 +52,7 @@ class JavascriptFileHandler:
     def __init__(self, javascript_file_handler_plugin):
         """
         Constructor of the class.
-        
+
         @type javascript_file_handler_plugin: JavascriptFileHandlerPlugin
         @param javascript_file_handler_plugin: The javascript file handler plugin.
         """
