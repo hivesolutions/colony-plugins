@@ -45,7 +45,7 @@ class DocumentManager:
     def __init__(self, document_manager_plugin):
         """
         Class constructor.
-        
+
         @type document_manager_plugin: DocumentManagerPlugin
         @param document_manager_plugin: Reference to the document manager
         plugin.
@@ -53,38 +53,38 @@ class DocumentManager:
         self.document_manager_plugin = document_manager_plugin
         self.document_id_document_map = {}
         self.current_document_id = 1
-    
+
     def get_next_id(self):
         """
         Generates a new unique file identification number.
-        
+
         @rtype: Integer
         @return: Unique identification number.
         """
         self.current_document_id += 1
         return self.current_document_id
-    
+
     def get_open_documents(self):
         """
         Returns a list with references to the currently open documents.
-        
+
         @rtype: Array
         @return: List of references to open documents.
         """
         documents = self.document_id_document_map.values()
         return documents
-    
+
     def open(self, document_plugin, url):
         """
         Opens a document from the specified location and returns an object
         that allows performing operations on it.
-        
+
         @type document_plugin: DocumentPlugin
-        @param document_plugin: Plugin that allows performing operations 
-        over a document. 
+        @param document_plugin: Plugin that allows performing operations
+        over a document.
         @type url: String
         @param url: Location of the desired document.
-        
+
         @rtype: Document
         @return: Document object that allows performing operations over
         the specified document.
@@ -97,7 +97,7 @@ class DocumentManager:
     def close(self, document):
         """
         Closes a document.
-        
+
         @type document: Document
         @param document: Reference to the open document object.
         """

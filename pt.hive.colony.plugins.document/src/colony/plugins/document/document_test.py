@@ -86,7 +86,7 @@ class DocumentTestCase(unittest.TestCase):
             template.set_chunk("99999999", chunk_id = "fax")
             document.write(template)
             document.close()
-            
+
             # open the document again and check that the previously written data is there
             document = self.plugin.open(temp_document_path, "odt")
             self.assertNotEqual(document, None)
@@ -103,13 +103,13 @@ class DocumentTestCase(unittest.TestCase):
             self.assertEqual(template.get_chunk("phone").get_value(), "66666666")
             self.assertEqual(template.get_chunk("fax").get_value(), "99999999")
             document.close()
-            
+
             # clears the test txt file
             temp_document_path = os.path.join(os.path.dirname(__file__), "txt/resources/test_template.txt")
             temp_document_path = os.path.abspath(temp_document_path)
             file = open(temp_document_path, "w")
             file.close()
-            
+
             # opens the test txt file, and write's the template extracted from the odt into it
             document = self.plugin.open(temp_document_path, "txt")
             self.assertNotEqual(document, None)
@@ -119,7 +119,7 @@ class DocumentTestCase(unittest.TestCase):
             self.assertEqual(len(open_documents), 1)
             document.write(template)
             document.close()
-            
+
             # opens the txt file again and checks that the data previously written is there
             document = self.plugin.open(temp_document_path, "txt")
             self.assertNotEqual(document, None)

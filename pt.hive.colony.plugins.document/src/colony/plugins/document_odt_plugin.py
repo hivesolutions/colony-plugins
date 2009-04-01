@@ -58,12 +58,12 @@ class DocumentOdfPlugin(colony.plugins.plugin_system.Plugin):
     events_registrable = []
 
     zip_plugin = None
-    
+
     def __init__(self, manager):
         colony.plugins.plugin_system.Plugin.__init__(self, manager)
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self) 
+        colony.plugins.plugin_system.Plugin.load_plugin(self)
         global document
         import document.odt.document_odt
 
@@ -79,16 +79,16 @@ class DocumentOdfPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.document.odt", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
-   
+
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.zip")
     def set_zip_plugin(self, zip_plugin):
         self.zip_plugin = zip_plugin
-        
+
     def open(self, document_manager_plugin, url, file_id):
         """
-        Opens a document from the specified location and returns 
+        Opens a document from the specified location and returns
         document object that allows one to perform operations over it.
-        
+
         @type document_manager_plugin: DocumentManagerPlugin
         @param document_manager_plugin: Reference to the document manager
         plugin (the document will need it to inform the manager when it closes).
@@ -97,20 +97,20 @@ class DocumentOdfPlugin(colony.plugins.plugin_system.Plugin):
         @type file_id: Integer
         @param file_id: Identification number for this file as far as the document
         manager is concerned.
-        
+
         @rtype: DocumentOdt
         @return: Document object encapsulating the specified document.
         """
         file = document.odt.document_odt.DocumentOdt(document_manager_plugin, self, url, file_id)
         file.open()
         return file
-    
+
     def get_format(self):
         """
         Retrieves the document format supported by this plugins.
-        
+
         @rtype: String
-        @return: Returns a string indicating the document format supported by 
+        @return: Returns a string indicating the document format supported by
         this plugin.
         """
         return "odt"

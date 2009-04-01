@@ -46,17 +46,17 @@ class DocumentTxt:
 
     file = None
     """ Reference to the text file. """
-    
+
     url = None
     """ Location of the document. """
-    
+
     document_id = None
     """ Unique number that identifies this file in the document manager. """
-    
+
     def __init__(self, document_manager_plugin, url, document_id):
         """
         Class constructor.
-        
+
         @type document_manager_plugin: DocumentManagerPlugin
         @param document_manager_plugin: Reference to the document manager plugin.
         @type document_txt_plugin: DocumentPlugin
@@ -70,35 +70,35 @@ class DocumentTxt:
         self.file = None
         self.url = url
         self.document_id = document_id
-    
+
     def get_id(self):
         """
         Returns the unique number that identifies this file in the
         document manager.
-        
+
         @rtype: Integer
         @return: Unique identification number for this file.
         """
         return self.document_id
-    
+
     def open(self):
         """
         Opens the document.
         """
         self.file = open(self.url, "r+")
-    
+
     def close(self):
         """
         Closes the document and notifies the document manager.
         """
         self.file.close()
         self.document_manager_plugin.close(self)
-        
+
     def read(self):
         """
         Extracts data from the file into a document template (each line
         in the text file is considered as a different template item).
-        
+
         @rtype: DocumentTemplate
         @return: Template with data extracted from the document.
         """
@@ -114,10 +114,10 @@ class DocumentTxt:
         """
         Inserts data from the template into the document (each data item
         will be inserted into a different line in the file).
-        
+
         @type template: DocumentTemplate
         @param template: Template with the data one wants to insert
-        into the document. 
+        into the document.
         """
         chunks = template.get_chunks()
         for chunk in chunks:

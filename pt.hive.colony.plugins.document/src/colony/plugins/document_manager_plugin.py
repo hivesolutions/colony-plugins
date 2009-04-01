@@ -60,15 +60,15 @@ class DocumentManagerPlugin(colony.plugins.plugin_system.Plugin):
 
     format_plugins_map = {}
     """ Map associating a file format with a list of the plugins that handle it. """
-    
+
     document_manager = None
     """ Object that tracks open documents. """
-    
+
     document_test = None
     """ Object with the test suite for this plugin. """
-    
+
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self) 
+        colony.plugins.plugin_system.Plugin.load_plugin(self)
         global document
         import document.document_manager
         import document.document_template
@@ -77,22 +77,22 @@ class DocumentManagerPlugin(colony.plugins.plugin_system.Plugin):
         self.document_test = document.document_test.DocumentTest(self)
 
     def unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.unload_plugin(self) 
+        colony.plugins.plugin_system.Plugin.unload_plugin(self)
         self.format_plugins_map = {}
         self.document_manager = None
         self.document_test = None
-        
+
     @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.document.manager", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
-        
+
     @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.document.manager", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
-    
+
     @colony.plugins.decorators.load_allowed_capability("document")
     def document_load_allowed(self, plugin, capability):
         format = plugin.get_format()
@@ -100,30 +100,30 @@ class DocumentManagerPlugin(colony.plugins.plugin_system.Plugin):
             self.format_plugins_map[format] = []
         format_plugins = self.format_plugins_map[format]
         format_plugins.append(plugin)
-    
+
     @colony.plugins.decorators.unload_allowed_capability("document")
     def document_unload_allowed(self, plugin, capability):
         format = plugin.get_format()
         format_plugins = self.format_plugins_map[format]
         format_plugins.remove(plugin)
-        
+
     def get_plugin_test_case_bundle(self):
         return self.document_test.get_plugin_test_case_bundle()
 
     def get_supported_formats(self):
         """
         Returns a list with the formats supported by the document manager.
-        
+
         @rtype: Array
         @return: List of supported document formats.
         """
         formats = self.format_plugins_map.keys()
         return formats
-            
+
     def get_document_plugin(self, format):
         """
         Retrieves the plugin that is capable of handling the specified document format.
-        
+
         @type format: String
         @param format: Desired document format.
         @rtype: Plugin
@@ -137,33 +137,33 @@ class DocumentManagerPlugin(colony.plugins.plugin_system.Plugin):
     def get_open_documents(self):
         """
         Retrieves with references to the currently open documents.
-        
+
         @rtype: Array
         @return: List of open documents.
         """
         open_documents = self.document_manager.get_open_documents()
         return open_documents
-        
+
     def get_new_template(self):
         """
         Retrieves an empty document template object.
-        
+
         @rtype: DocumentTemplate
         @return: Empty document template.
         """
         template = document.document_template.DocumentTemplate()
         return template
-    
+
     def open(self, url, format):
         """
         Opens a document of the specified format and location.
-        
+
         @type url: String
         @param url: Location of the desired document.
         @type format: String
         @param format: Format of the desired document.
         @rtype: Document
-        @return: Returns a document object, or None if there is no plugin 
+        @return: Returns a document object, or None if there is no plugin
         supporting this document format, or the document is not found.
         """
         document_plugin = self.get_document_plugin(format)
@@ -174,9 +174,9 @@ class DocumentManagerPlugin(colony.plugins.plugin_system.Plugin):
     def close(self, document):
         """
         Removes the document from the document manager.
-        
+
         @type document: Document
         @param document: Reference to a document object.
         """
         self.document_manager.close(document)
-    
+

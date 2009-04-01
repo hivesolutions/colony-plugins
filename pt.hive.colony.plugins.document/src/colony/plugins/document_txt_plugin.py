@@ -57,7 +57,7 @@ class DocumentTxtPlugin(colony.plugins.plugin_system.Plugin):
     events_registrable = []
 
     def load_plugin(self):
-        colony.plugins.plugin_system.Plugin.load_plugin(self) 
+        colony.plugins.plugin_system.Plugin.load_plugin(self)
         global document
         import document.txt.document_txt
 
@@ -75,9 +75,9 @@ class DocumentTxtPlugin(colony.plugins.plugin_system.Plugin):
 
     def open(self, document_manager_plugin, url, document_id):
         """
-        Opens a document from the specified location and returns 
+        Opens a document from the specified location and returns
         document object that allows one to perform operations over it.
-        
+
         @type document_manager_plugin: DocumentManagerPlugin
         @param document_manager_plugin: Reference to the document manager
         plugin (the document will need it to inform the manager when it closes).
@@ -86,20 +86,20 @@ class DocumentTxtPlugin(colony.plugins.plugin_system.Plugin):
         @type file_id: Integer
         @param file_id: Identification number for this file as far as the document
         manager is concerned.
-        
+
         @rtype: DocumentOdt
         @return: Document object encapsulating the specified document.
         """
         document_file = document.txt.document_txt.DocumentTxt(document_manager_plugin, url, document_id)
         document_file.open()
         return document_file
-    
+
     def get_format(self):
         """
         Retrieves the document format supported by this plugins.
-        
+
         @rtype: String
-        @return: Returns a string indicating the document format supported by 
+        @return: Returns a string indicating the document format supported by
         this plugin.
         """
         return "txt"
