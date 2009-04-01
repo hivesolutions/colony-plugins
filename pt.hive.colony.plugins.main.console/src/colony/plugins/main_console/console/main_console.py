@@ -150,7 +150,7 @@ class MainConsole:
     def get_default_output_method(self):
         """
         Retrieves the default output method
-        
+
         @rtype: Method
         @return: The default output method for console
         """
@@ -160,7 +160,7 @@ class MainConsole:
     def get_build_automation_file_path(self):
         """
         Retrieves the build automation file path.
-        
+
         @rtype: String
         @return: The build automation file path.
         """
@@ -182,7 +182,7 @@ class MainConsole:
     def split_command_line_arguments(self, command_line):
         """
         Separates the various command line arguments per space or per quotes
-        
+
         @type command_line: String
         @param command_line: The command line string
         @rtype: List
@@ -256,7 +256,7 @@ class MainConsole:
             output_method(TABLE_TOP_TEXT)
             output_method(plugin_instance_current_id_str, False)
             for x in range(COLUMN_SPACING - len(plugin_instance_current_id_str)):
-                output_method(" ", False) 
+                output_method(" ", False)
             if plugin_instance.is_loaded():
                 output_method("ACTIVE" + "      ", False)
             else:
@@ -354,7 +354,7 @@ class MainConsole:
 
         # iterates over all the lines in the file
         for line in file:
-            striped_line = line.strip() 
+            striped_line = line.strip()
             non_commented_line = striped_line.partition("#")[0]
 
             # in case the line is not cleared
