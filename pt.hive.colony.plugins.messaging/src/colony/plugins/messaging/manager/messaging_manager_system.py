@@ -68,7 +68,7 @@ class MessagingManager:
     def __init__(self, messaging_manager_plugin):
         """
         Constructor of the class.
-        
+
         @type messaging_manager_plugin: MessagingManagerPlugin
         @param messaging_manager_plugin: The messaging manager plugin.
         """

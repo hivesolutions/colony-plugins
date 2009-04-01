@@ -50,7 +50,7 @@ class EmailMessagingExtension:
     def __init__(self, email_messaging_extension_plugin):
         """
         Constructor of the class.
-        
+
         @type email_messaging_extension_plugin: EmailMessagingExtensionPlugin
         @param email_messaging_extension_plugin: The email messaging extension plugin.
         """

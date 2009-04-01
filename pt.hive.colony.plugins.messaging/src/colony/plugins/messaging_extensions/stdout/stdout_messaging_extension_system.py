@@ -50,7 +50,7 @@ class StdoutMessagingExtension:
     def __init__(self, stdout_messaging_extension_plugin):
         """
         Constructor of the class.
-        
+
         @type stdout_messaging_extension_plugin: StdoutMessagingExtensionPlugin
         @param stdout_messaging_extension_plugin: The stdout messaging extension plugin.
         """
