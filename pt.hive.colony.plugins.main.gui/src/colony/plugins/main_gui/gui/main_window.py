@@ -83,7 +83,7 @@ ICONS_32X32_PATH = ICONS_PATH + "/" + "32x32"
 
 SPLASH_IMAGE_FILE_NAME = "logo_omni_animation.gif"
 
-MENU_TITLE = "The Hive Colony Administrator"
+MENU_TITLE = "Hive Colony Manager"
 TREE_PANEL_TITLE = "Tree Pane"
 LOG_PANEL_TITLE = "Log Pane"
 H_SIZE = 1024
@@ -168,7 +168,7 @@ class MainFrame(wx.Frame):
         self.n = 0
         self.x = 0
 
-        self.SetIcon(self.icons_16x16_map["logo_hive_mini_transparent_silver"])
+        self.SetIcon(self.icons_16x16_map["omni"])
 
         # create menu
         mb = wx.MenuBar()
@@ -217,7 +217,7 @@ class MainFrame(wx.Frame):
         self.statusbar = self.CreateStatusBar(2, wx.ST_SIZEGRIP)
         self.statusbar.SetStatusWidths([-2, -3])
         self.statusbar.SetStatusText("Ready", 0)
-        self.statusbar.SetStatusText("The Hive Colony Administrator", 1)
+        self.statusbar.SetStatusText(MENU_TITLE, 1)
 
         # min size for the frame itself isnt completely done.
         # see the end up FrameManager::Update() for the test
@@ -391,17 +391,17 @@ class MainFrame(wx.Frame):
         info = wx.AboutDialogInfo()
 
         # about dialog information
-        info.Name = "The Hive Colony Administrator"
+        info.Name = MENU_TITLE
         info.Version = "1.0.0"
-        info.Copyright = "(C) 2008 The Hive project"
+        info.Copyright = "(C) 2008 Hive Solutions Lda."
         info.Description = wx.lib.wordwrap.wordwrap(
             "Just another framework administrator from Hive Solutions.\n"
             "This one is targeted to everyone.\n",
             350, wx.ClientDC(self))
         info.WebSite = ("http://www.hive.pt", "Hive Solutions Lda. <development@hive.pt>")
         info.Developers = ["Joao Magalhaes", "Tiago Silva"]
-        info.License = wx.lib.wordwrap.wordwrap("GPL License", 500, wx.ClientDC(self))
-        info.SetIcon(self.icons_32x32_map["logo_hive_mini"])
+        info.License = wx.lib.wordwrap.wordwrap("GNU General Public License (GPL), Version 3", 500, wx.ClientDC(self))
+        info.SetIcon(self.icons_32x32_map["omni"])
 
         # creates the about box with the information
         wx.AboutBox(info)
