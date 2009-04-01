@@ -43,20 +43,20 @@ ROOT_NAME = "Data Conversion Plugins"
 
 #@todo: review and comment this file
 class PluginTree(wx.TreeCtrl):
-    
+
     tab_counter = 0
-    
+
     root = None
-    
+
     tree_icon_map = {}
-    
+
     def __init__(self, parent, id, pos, size=wx.Size, style=wx.TR_DEFAULT_STYLE | wx.NO_BORDER):
         wx.TreeCtrl.__init__(self, parent, id, pos, size, style)
-        
+
         self.tree_icon_map = {}
-        
+
         self.create_icon_list()
-        
+
     def start_draw(self):
         self.create_icon_list()
 
@@ -69,7 +69,7 @@ class PluginTree(wx.TreeCtrl):
         self.SetItemImage(self.root, self.tree_icon_map["folder_open"], wx.TreeItemIcon_Expanded)
 
         self.Bind(wx.EVT_LEFT_DCLICK, self.on_left_dbl_click)
-        
+
     def create_icon_list(self):
         icon_size = (16, 16)
         self.icon_list = wx.ImageList(icon_size[0], icon_size[1])
@@ -77,13 +77,13 @@ class PluginTree(wx.TreeCtrl):
         folder_icon_index = self.icon_list.Add(wx.ArtProvider_GetBitmap(wx.ART_FOLDER, wx.ART_OTHER, icon_size))
         folder_open_icon_index = self.icon_list.Add(wx.ArtProvider_GetBitmap(wx.ART_FILE_OPEN, wx.ART_OTHER, icon_size))
         file_icon_index = self.icon_list.Add(wx.ArtProvider_GetBitmap(wx.ART_NORMAL_FILE, wx.ART_OTHER, icon_size))
-        
+
         self.tree_icon_map["folder"] = folder_icon_index
         self.tree_icon_map["folder_open"] = folder_open_icon_index
         self.tree_icon_map["file_icon"] = file_icon_index
 
     def refresh(self):
-        
+
         self.Freeze()
         self.DeleteAllItems()
         self.start_draw()
@@ -98,7 +98,7 @@ class PluginTree(wx.TreeCtrl):
 
             for version in versions:
                 self.AppendItem(item, version, self.tree_icon_map["file_icon"], data = wx.TreeItemData(gui_plugin.id))
-        
+
         # refresh misc plugins
         for gui_plugin in self.GetParent().gui_panel_plugins:
             self.AppendItem(self.root, gui_plugin.short_name, self.tree_icon_map["file_icon"], data = wx.TreeItemData(gui_plugin.id))
@@ -107,25 +107,10 @@ class PluginTree(wx.TreeCtrl):
         self.ExpandAll()
         self.Refresh()
 
-# FAZER A PARTE DE PESQUISA COM BASE NESTE CODIGO
-#        self.Bind(wx.EVT_ACTIVATE, self.OnActivate)
-#        wx.GetApp().Bind(wx.EVT_ACTIVATE_APP, self.OnAppActivate)
-#
-#        # add the windows to the splitter and split it.
-#        leftBox = wx.BoxSizer(wx.VERTICAL)
-#        leftBox.Add(self.tree, 1, wx.EXPAND)
-#        leftBox.Add(wx.StaticText(leftPanel, label = "Filter Demos:"), 0, wx.TOP|wx.LEFT, 5)
-#        leftBox.Add(self.filter, 0, wx.EXPAND|wx.ALL, 5)
-#        leftPanel.SetSizer(leftBox)
-#
-#        # select initial items
-#        self.nb.SetSelection(0)
-#        self.tree.SelectItem(self.root)
-
     def on_left_dbl_click(self, event):
-        # FAZER ALGUM REFACTOR SE POSSIVEL POR NO PAI E TUDO
-        # ATE MESMO PARA O PAI PODER TER UM MENU ONDE SE PODE FECHAR TODAS AS TABS
-        # remover o contador para o imageID
+        #@todo make some refactor if possible in the parent of all
+        # event the parent may have a menu where we can close all tabs
+        # remove the counter for imageId
         parent = self.GetParent()
         tab_container_panel = parent.tab_container_panel
         book = tab_container_panel.book

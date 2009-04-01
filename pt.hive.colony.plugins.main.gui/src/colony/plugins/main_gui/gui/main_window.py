@@ -70,7 +70,7 @@ ID_HorizontalGradient = wx.NewId()
 
 ID_Settings = wx.NewId()
 ID_About = wx.NewId()
-ID_FirstPerspective = ID_CreatePerspective + 1000    
+ID_FirstPerspective = ID_CreatePerspective + 1000
 
 BASE_PATH = "/main_gui"
 GUI_PATH = BASE_PATH + "/" + "gui"
@@ -130,7 +130,7 @@ class MainFrame(wx.Frame):
 
     gui_plugins = []
     """ The list of gui plugins loaded """
-    
+
     gui_panel_plugins = []
     """ The list of gui panel plugins loaded """
 
@@ -138,7 +138,7 @@ class MainFrame(wx.Frame):
     """ The progress information plugin """
 
     event_queue = []
-    """ The queue of events to be processed """        
+    """ The queue of events to be processed """
 
     def __init__(self, main_gui_plugin, parent, id = wx.ID_ANY, title = MENU_TITLE, position = wx.DefaultPosition,
                  size = wx.Size(H_SIZE, V_SIZE), style = wx.DEFAULT_FRAME_STYLE | wx.SUNKEN_BORDER | wx.CLIP_CHILDREN):
@@ -155,7 +155,7 @@ class MainFrame(wx.Frame):
         # loads the icons
         self.main_gui_plugin.bitmap_loader_plugin.load_icons(self.plugin_path + ICONS_10X10_PATH, self.bitmaps_10x10_map, self.icons_10x10_map)
         self.main_gui_plugin.bitmap_loader_plugin.load_icons(self.plugin_path + ICONS_16X16_PATH, self.bitmaps_16x16_map, self.icons_16x16_map)
-        self.main_gui_plugin.bitmap_loader_plugin.load_icons(self.plugin_path + ICONS_32X32_PATH, self.bitmaps_32x32_map, self.icons_32x32_map)        
+        self.main_gui_plugin.bitmap_loader_plugin.load_icons(self.plugin_path + ICONS_32X32_PATH, self.bitmaps_32x32_map, self.icons_32x32_map)
 
         # tell FrameManager to manage this frame
         self._mgr = wx.aui.AuiManager()
@@ -176,7 +176,7 @@ class MainFrame(wx.Frame):
         file_menu = wx.Menu()
         file_menu.Append(wx.ID_EXIT, "Exit")
 
-        view_menu = wx.Menu()    
+        view_menu = wx.Menu()
         options_menu = wx.Menu()
         options_menu.AppendRadioItem(ID_TransparentHint, "Transparent Hint")
         options_menu.AppendRadioItem(ID_VenetianBlindsHint, "Venetian Blinds Hint")
@@ -205,13 +205,13 @@ class MainFrame(wx.Frame):
 
         help_menu = wx.Menu()
         help_menu.Append(ID_About, "About...")
-        
+
         mb.Append(file_menu, "File")
         mb.Append(view_menu, "View")
         mb.Append(self._perspectives_menu, "Perspectives")
         mb.Append(options_menu, "Options")
         mb.Append(help_menu, "Help")
-        
+
         self.SetMenuBar(mb)
 
         self.statusbar = self.CreateStatusBar(2, wx.ST_SIZEGRIP)
@@ -260,7 +260,7 @@ class MainFrame(wx.Frame):
 
         # make some default perspectives
         perspective_all = self._mgr.SavePerspective()
-        
+
         # retrieves all the current panes
         all_panes = self._mgr.GetAllPanes()
 
@@ -288,12 +288,12 @@ class MainFrame(wx.Frame):
         # saves perspective
         perspective_default = self._mgr.SavePerspective()
 
-        # saves perspectives in the same order as in the menu bar 
-        self._perspectives.append(perspective_default)        
+        # saves perspectives in the same order as in the menu bar
+        self._perspectives.append(perspective_default)
         self._perspectives.append(perspective_all)
         self._perspectives.append(perspective_vert)
 
-        # "commit" all changes made to FrameManager   
+        # "commit" all changes made to FrameManager
         self._mgr.Update()
 
         self.Bind(wx.EVT_ERASE_BACKGROUND, self.on_erase_background)
@@ -389,7 +389,7 @@ class MainFrame(wx.Frame):
 
     def on_about(self, event):
         info = wx.AboutDialogInfo()
-        
+
         # about dialog information
         info.Name = "The Hive Colony Administrator"
         info.Version = "1.0.0"
@@ -402,7 +402,7 @@ class MainFrame(wx.Frame):
         info.Developers = ["Joao Magalhaes", "Tiago Silva"]
         info.License = wx.lib.wordwrap.wordwrap("GPL License", 500, wx.ClientDC(self))
         info.SetIcon(self.icons_32x32_map["logo_hive_mini"])
-        
+
         # creates the about box with the information
         wx.AboutBox(info)
 
@@ -459,7 +459,7 @@ class MainFrame(wx.Frame):
             flag = wx.aui.AUI_MGR_VENETIAN_BLINDS_HINT
         elif eid == ID_RectangleHint:
             flag = wx.aui.AUI_MGR_RECTANGLE_HINT
-        
+
         self._mgr.SetFlags(self._mgr.GetFlags() ^ flag)
 
 
@@ -467,7 +467,7 @@ class MainFrame(wx.Frame):
 
         flags = self._mgr.GetFlags()
         eid = event.GetId()
-        
+
         if eid == ID_NoGradient:
             event.Check(self._mgr.GetArtProvider().GetMetric(wx.aui.AUI_DOCKART_GRADIENT_TYPE) == wx.aui.AUI_GRADIENT_NONE)
 
@@ -509,21 +509,21 @@ class MainFrame(wx.Frame):
         dlg.SetValue(("Perspective %d")%(len(self._perspectives)+1))
         if dlg.ShowModal() != wx.ID_OK:
             return
-        
+
         if len(self._perspectives) == 0:
             self._perspectives_menu.AppendSeparator()
-        
+
         self._perspectives_menu.Append(ID_FirstPerspective + len(self._perspectives), dlg.GetValue())
         self._perspectives.append(self._mgr.SavePerspective())
 
     def on_copy_perspective(self, event):
         s = self._mgr.SavePerspective()
-        
+
         if wx.TheClipboard.Open():
-        
+
             wx.TheClipboard.SetData(wx.TextDataObject(s))
             wx.TheClipboard.Close()
-        
+
     def on_restore_perspective(self, event):
         self._mgr.LoadPerspective(self._perspectives[event.GetId() - ID_FirstPerspective])
 
@@ -576,7 +576,7 @@ class MainFrame(wx.Frame):
         event = colony.plugins.util.Event("show_progress_information_frame")
         self.event_queue.append(event)
         self.Refresh()
-        
+
     def hide_progress_information_frame(self):
         # in case the progress information frame is already hidden
         if not self.progress_information_frame.IsShown():

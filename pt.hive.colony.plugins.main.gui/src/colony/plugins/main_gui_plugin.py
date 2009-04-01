@@ -68,7 +68,7 @@ class MainGuiManagerPlugin(colony.plugins.plugin_system.Plugin):
     application = None
 
     bitmap_loader_plugin = None
-    
+
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global main_gui
@@ -93,7 +93,7 @@ class MainGuiManagerPlugin(colony.plugins.plugin_system.Plugin):
         self.bitmap_loader_plugin = None
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)

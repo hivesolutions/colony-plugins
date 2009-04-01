@@ -48,7 +48,7 @@ class MainGui:
     def __init__(self, main_gui_plugin):
         """
         Constructor of the class.
-        
+
         @type main_gui_plugin: MainGuiPlugin
         @param main_gui_plugin: The mainn gui plugin.
         """
@@ -58,7 +58,7 @@ class MainGui:
     def get_build_automation_file_path(self):
         """
         Retrieves the build automation file path.
-        
+
         @rtype: String
         @return: The build automation file path.
         """
