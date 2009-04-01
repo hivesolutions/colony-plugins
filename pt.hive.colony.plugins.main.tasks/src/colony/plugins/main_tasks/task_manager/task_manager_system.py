@@ -79,14 +79,14 @@ class TaskManager:
 
     thread_pool = None
     """ The thread pool used to manage threads, only used in the thread pool dynamic and constant schedulings """
-    
+
     task_descriptor_class = None
     """ The task descriptor class for the thread pool """
 
     def __init__(self, task_manager_plugin, task_scheduling_algorithm = THREAD_POOL_CONSTANT_SCHEDULING_ALGORITHM):
         """
         Constructor of the class
-        
+
         @type task_manager_plugin: Plugin
         @param task_manager_plugin: The task manager plugin
         @type task_scheduling_algorithm: int
@@ -121,7 +121,7 @@ class TaskManager:
     def create_new_task(self, name, description, task_creation_handler):
         """
         Create a new task with the given name, description and task creation handler
-        
+
         @type name: String
         @param name: The name for the new task
         @type description: String
@@ -141,7 +141,7 @@ class TaskManager:
     def get_task_by_id(self, task_id):
         """
         Retrieves the task with the given task id
-        
+
         @type task_id: String
         @param task_id: The task id of the task to retrieve
         @rtype: Task
@@ -154,7 +154,7 @@ class TaskManager:
     def start_task(self, task, args):
         """
         Starts at task according to the current scheduling algorithm
-        
+
         @type task: Task
         @param task: The task to be started
         @type args: List
@@ -172,7 +172,7 @@ class TaskManager:
             # retrieves the task descriptor class
             task_descriptor_class = self.task_manager_plugin.thread_pool_manager_plugin.get_thread_task_descriptor_class()
 
-            # creates a task descriptor to the task 
+            # creates a task descriptor to the task
             task_descriptor = self.task_descriptor_class(start_method = task.task_creation_handler)
 
             # creates the list of arguments to the task creation handler method
@@ -243,7 +243,7 @@ class Task:
     def __init__(self, task_manager = None, id = -1, name = "none", description = "none", task_creation_handler = None):
         """
         Constructor of the class
-        
+
         @type task_manager: TaskManager
         @param task_manager: The task manager associated
         @type id: String
@@ -270,7 +270,7 @@ class Task:
     def set_task_creation_handler(self, task_creation_handler):
         """
         Sets the task creation handler for the task
-        
+
         @type task_creation_handler: Method
         @param task_creation_handler: The task creation handler method
         """
@@ -280,7 +280,7 @@ class Task:
     def set_task_pause_handler(self, task_pause_handler):
         """
         Sets the task pause handler for the task
-        
+
         @type task_pause_handler: Method
         @param task_pause_handler: The task pause handler method
         """
@@ -290,7 +290,7 @@ class Task:
     def set_task_resume_handler(self, task_resume_handler):
         """
         Sets the task resume handler for the task
-        
+
         @type task_resume_handler: Method
         @param task_resume_handler: The task resume handler method
         """
@@ -300,7 +300,7 @@ class Task:
     def set_task_stop_handler(self, task_stop_handler):
         """
         Sets the task stop handler for the task
-        
+
         @type task_stop_handler: Method
         @param task_stop_handler: The task stop handler method
         """
@@ -310,7 +310,7 @@ class Task:
     def set_percentage_complete(self, percentage_complete):
         """
         Sets the percentage complete for the task
-        
+
         @type percentage_complete: int
         @param percentage_complete: The percentage complete
         """
@@ -323,7 +323,7 @@ class Task:
     def start(self, args):
         """
         Starts the task with the given arguments
-        
+
         @type args: List
         @param args: The arguments to start the task
         """
@@ -341,7 +341,7 @@ class Task:
     def pause(self, args):
         """
         Pauses the task with the given arguments
-        
+
         @type args: List
         @param args: The arguments to pause the task
         """
@@ -359,7 +359,7 @@ class Task:
     def resume(self, args):
         """
         Resumes the task with the given arguments
-        
+
         @type args: List
         @param args: The arguments to resume the task
         """
@@ -377,7 +377,7 @@ class Task:
     def stop(self, args):
         """
         Stops the task with the given arguments
-        
+
         @type args: List
         @param args: The arguments to stop the task
         """
@@ -395,7 +395,7 @@ class Task:
     def confirm_pause(self, force = False):
         """
         Confirms the pause, for the current pending pause in the task
-        
+
         @type force: bool
         @param force: The force value for the confirm (if already confirmed re-confirms)
         """
@@ -414,7 +414,7 @@ class Task:
     def confirm_resume(self, force = False):
         """
         Confirms the resume, for the current pending resume in the task
-        
+
         @type force: bool
         @param force: The force value for the confirm (if already confirmed re-confirms)
         """
@@ -433,7 +433,7 @@ class Task:
     def confirm_stop(self, force = False):
         """
         Confirms the stop, for the current pending stop in the task
-        
+
         @type force: bool
         @param force: The force value for the confirm (if already confirmed re-confirms)
         """
@@ -466,7 +466,7 @@ class TaskThread(threading.Thread):
     def __init__(self, task, task_creation_handler = None, args = []):
         """
         Constructor of the class
-        
+
         @type task: Task
         @param task: The associated task
         @type task_creation_handler: Method
