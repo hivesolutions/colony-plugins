@@ -61,7 +61,7 @@ class Parser:
     def get_value(self):
         """
         Retrieves the result of the parse
-        
+
         @rtype: Object
         @return: The result of the parse
         """
@@ -82,7 +82,7 @@ class StartupConfigurationParser(Parser):
     def __init__(self, file_path = None):
         """
         Constructor of the class
-        
+
         @type file_path: String
         @param file_path: The path to the xml file
         """
@@ -213,7 +213,7 @@ class StartupConfigurationPlugin:
 def valid_node(node):
     """
     Gets if a node is valid or not for parsing
-    
+
     @type node: Node
     @param node: The Xml node to be validated
     @rtype: bool
