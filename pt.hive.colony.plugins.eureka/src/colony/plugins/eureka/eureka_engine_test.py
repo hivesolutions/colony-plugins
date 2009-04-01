@@ -50,7 +50,7 @@ class EurekaEngineTest:
     def __init__(self, eureka_engine_plugin):
         """
         Constructor of the class
-        
+
         @type eureka_engine_plugin: EurekaEnginePlugin
         @param eureka_engine_plugin: The eureka engine plugin.
         """
@@ -78,11 +78,11 @@ class EurekaEngineTestCase(unittest.TestCase):
         """
 
         # @todo: specify test environment (use the MockItemExtensionPlugin)
-        
+
         # testing with valid keyword
         test_items = self.plugin.get_all_items("mock")
         self.assertEqual(len(test_items), 4)
-        
+
         # testing with non-present keyword
         test_items = self.plugin.get_all_items("badkeyword")
         # as all items are being fetched, it should return 4 items
@@ -141,7 +141,7 @@ class EurekaEngineTestCase(unittest.TestCase):
         context = [operation_item]
         test_items = self.plugin.get_items_for_string_with_context("mock", context, max_items = None)
         self.assertEqual(test_items[0].key, "mock_entity")
-        # due to context should only find one item 
+        # due to context should only find one item
         self.assertEqual(len(test_items), 1)
 
         # testing context awareness filter without context

@@ -87,7 +87,7 @@ class EurekaEnginePlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.eureka.engine", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
-        
+
     @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.eureka.engine", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
@@ -98,7 +98,7 @@ class EurekaEnginePlugin(colony.plugins.plugin_system.Plugin):
     def get_items_for_string(self, search_string, max_items):
         """
         Returns a processed list of max_items EurekaItems, matching the supplied search_string.
-        
+
         @type search_string: String
         @param search_string: The string to be matched.
         @type max_items: Integer
@@ -108,17 +108,17 @@ class EurekaEnginePlugin(colony.plugins.plugin_system.Plugin):
         """
 
         return self.eureka_engine.get_items_for_string(search_string, max_items)
-    
+
     def get_items_for_string_with_context(self, search_string, context, max_items):
         """
         Returns a processed list of max_items EurekaItems, matching the supplied search_string for the supplied context.
-        
+
         @type search_string: String
         @param search_string: The string to be matched.
         @type max_items: Integer
         @param max_items: The number of items to be returned.
         @type context: List
-        @param context: A stack of EurekaItems to allow Eureka to take the previously selected items into account 
+        @param context: A stack of EurekaItems to allow Eureka to take the previously selected items into account
         while matching the search_string.
         @rtype: List
         @return: A processed list of max_items EurekaItems, matching the supplied search_string for the supplied context.
@@ -166,4 +166,4 @@ class EurekaEnginePlugin(colony.plugins.plugin_system.Plugin):
 
     @colony.plugins.decorators.unload_allowed_capability("eureka_engine_item_processer.sorter")
     def eureka_item_sorter_unload_allowed(self, plugin, capability):
-        self.eureka_item_sorter_plugins.remove(plugin)  
+        self.eureka_item_sorter_plugins.remove(plugin)

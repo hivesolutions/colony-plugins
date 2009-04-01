@@ -50,7 +50,7 @@ class EurekaItem:
 
     score = None
     """
-    The score is calculated by the plugin chain connected to the Eureka Engine. 
+    The score is calculated by the plugin chain connected to the Eureka Engine.
     Although each plugin can evaluate as necessary, this value is expected to be between 0 and 1
     """
 
