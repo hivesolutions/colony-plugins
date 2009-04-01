@@ -48,7 +48,7 @@ class TestBuildAutomationExtension:
     def __init__(self, test_build_automation_extension_plugin):
         """
         Constructor of the class.
-        
+
         @type test_build_automation_extension_plugin: TestBuildAutomationExtensionPlugin
         @param test_build_automation_extension_plugin: The test build automation extension plugin.
         """

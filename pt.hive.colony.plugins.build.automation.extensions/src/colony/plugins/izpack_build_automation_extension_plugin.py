@@ -77,13 +77,13 @@ class IzpackBuildAutomationExtensionPlugin(colony.plugins.plugin_system.Plugin):
         self.izpack_build_automation_extension = build_automation_extensions.izpack.izpack_build_automation_extension_system.IzpackBuildAutomationExtension(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)

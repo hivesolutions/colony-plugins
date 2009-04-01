@@ -48,7 +48,7 @@ class IzpackBuildAutomationExtension:
     def __init__(self, izpack_build_automation_extension_plugin):
         """
         Constructor of the class.
-        
+
         @type izpack_build_automation_extension_plugin: IzpackBuildAutomationExtensionPlugin
         @param izpack_build_automation_extension_plugin: The izpack build automation extension plugin.
         """
