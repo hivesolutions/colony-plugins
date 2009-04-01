@@ -66,18 +66,18 @@ class InvalidNumberArguments(BadServiceRequest):
     def __init__(self, message):
         """
         Constructor of the class.
-        
+
         @type message: String
         @param message: The message to be printed.
         """
-        
+
         BadServiceRequest.__init__(self)
         self.message = message
 
     def __str__(self):
         """
         Returns the string representation of the class.
-        
+
         @rtype: String
         @return: The string representation of the class.
         """
@@ -92,7 +92,7 @@ class InvalidMethod(BadServiceRequest):
     def __init__(self, message):
         """
         Constructor of the class.
-        
+
         @type message: String
         @param message: The message to be printed.
         """
@@ -103,7 +103,7 @@ class InvalidMethod(BadServiceRequest):
     def __str__(self):
         """
         Returns the string representation of the class.
-        
+
         @rtype: String
         @return: The string representation of the class.
         """
@@ -112,13 +112,13 @@ class InvalidMethod(BadServiceRequest):
 
 class JsonEncodeException(Exception):
     """
-    The json encode exception class. 
+    The json encode exception class.
     """
 
     def __init__(self, object):
         """
         Constructor of the class.
-        
+
         @type object: Object
         @param object: The object containing the encoding problems.
         """
@@ -129,7 +129,7 @@ class JsonEncodeException(Exception):
     def __str__(self):
         """
         Returns the string representation of the class.
-        
+
         @rtype: String
         @return: The string representation of the class.
         """
@@ -138,13 +138,13 @@ class JsonEncodeException(Exception):
 
 class JsonDecodeException(Exception):
     """
-    The json decode exception class. 
+    The json decode exception class.
     """
 
     def __init__(self, message):
         """
         Constructor of the class.
-        
+
         @type message: String
         @param message: The message to be printed.
         """
@@ -155,7 +155,7 @@ class JsonDecodeException(Exception):
     def __str__(self):
         """
         Returns the string representation of the class.
-        
+
         @rtype: String
         @return: The string representation of the class.
         """

@@ -260,7 +260,7 @@ class MainJsonrpcManager:
     def translate_request(self, data):
         """
         Translates the given json data data into a python request
-        
+
         @type data: String
         @param data: The json data to be translated into a python request
         @rtype: Any
@@ -278,7 +278,7 @@ class MainJsonrpcManager:
     def translate_result(self, result, error, id_):
         """
         Translates the given python result into json data
-        
+
         @type result: Any
         @param result: The python result to be translated into json data
         @type error: Error
