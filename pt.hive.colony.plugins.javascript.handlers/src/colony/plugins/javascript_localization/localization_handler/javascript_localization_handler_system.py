@@ -54,7 +54,7 @@ class JavascriptLocalizationHandler:
     def __init__(self, javascript_localization_handler_plugin):
         """
         Constructor of the class.
-        
+
         @type javascript_localization_handler_plugin: JavascriptLocalizationHandlerPlugin
         @param javascript_localization_handler_plugin: The javascript localization handler plugin.
         """
@@ -64,7 +64,7 @@ class JavascriptLocalizationHandler:
     def get_javascript_handler_name(self):
         """
         Retrieves the javascript handler name.
-        
+
         @rtype: String
         @return: The javascript handler name.
         """
@@ -73,7 +73,7 @@ class JavascriptLocalizationHandler:
 
     def handle_contents(self, contents):
         # compiles the regular expression generating the pattern
-        pattern = re.compile(LOCALIZATION_REGEX) 
+        pattern = re.compile(LOCALIZATION_REGEX)
 
         # retrieves the match iterator
         match_iterator = pattern.finditer(contents)
