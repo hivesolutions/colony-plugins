@@ -259,7 +259,7 @@ class MainXmlrpcManager:
     def translate_request(self, data):
         """
         Translates the given xml data data into a python request
-        
+
         @type data: String
         @param data: The xml data to be translated into a python request
         @rtype: Any
@@ -277,7 +277,7 @@ class MainXmlrpcManager:
     def translate_result(self, result, method_name, error):
         """
         Translates the given python result into xml data
-        
+
         @type result: Any
         @param result: The python result to be translated into xml data
         @type method_name: String
