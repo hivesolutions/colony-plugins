@@ -83,7 +83,7 @@ class BuildAutomation:
     def __init__(self, build_automation_plugin):
         """
         Constructor of the class.
-        
+
         @type build_automation_plugin: BuildAutomationPlugin
         @param build_automation_plugin: The build automation plugin.
         """
@@ -123,7 +123,7 @@ class BuildAutomation:
     def get_base_build_automation_structure(self):
         """
         Retrieves the base build automation structure.
-        
+
         @rtype: BuildAutomationStructure
         @return: The base build automation structure.
         """
@@ -156,7 +156,7 @@ class BuildAutomation:
     def get_build_automation_structure(self, build_automation_id, build_automation_version = None):
         """
         Retrieves the build automation structure with the given id and version.
-        
+
         @type build_automation_id: String
         @param build_automation_id: The build automation id.
         @type build_automation_version: String
@@ -168,7 +168,7 @@ class BuildAutomation:
         # iterates over all the loaded build automation item plugins
         for build_automation_item_plugin in self.loaded_build_automation_item_plugins_list:
             if build_automation_item_plugin.id == build_automation_id and (build_automation_item_plugin.version == build_automation_version or not build_automation_version):
-                # retrieves the build automation item plugin id                
+                # retrieves the build automation item plugin id
                 build_automation_item_plugin_id = build_automation_item_plugin.id
 
                 # retrieves the build automation item plugin version
@@ -195,7 +195,7 @@ class BuildAutomation:
     def get_all_automation_plugins(self):
         """
         Retrieves all the available automation extension plugins.
-        
+
         @rtype: List
         @return: The list of all the available automation extension plugins.
         """
@@ -209,7 +209,7 @@ class BuildAutomation:
     def get_all_build_automation_item_plugins(self):
         """
         Retrieves all the available build automation item plugins.
-        
+
         @rtype: List
         @return: The list of all the available build automation item plugins.
         """
@@ -220,7 +220,7 @@ class BuildAutomation:
     def run_automation_plugin_id_version(self, plugin_id, plugin_version = None):
         """
         Runs all the automation plugins for the given plugin id and version.
-        
+
         @type plugin_id: String
         @param plugin_id: The id of the plugin to run all the automation plugins.
         @type plugin_version: String
@@ -250,7 +250,7 @@ class BuildAutomation:
 
             # creates the automation plugin tuple
             automation_plugin_tuple = (automation_plugin_id, automation_plugin_version)
-            
+
             # retrieves the automation plugin configurations
             automation_plugin_configurations = build_automation_structure.get_all_automation_plugin_configurations(automation_plugin_tuple)
 
@@ -260,7 +260,7 @@ class BuildAutomation:
     def generate_build_automation_structure(self, build_automation_parsing_structure):
         """
         Generates a build automation structure object from the given build automation parsing structure.
-        
+
         @type build_automation_parsing_structure: BuildAutomation
         @param build_automation_parsing_structure: The build automation parsing structure to generate the build automation structure.
         @rtype: BuildAutomationStructure
@@ -406,7 +406,7 @@ class BuildAutomation:
             # retrieves all the build automation plugin configuration item names
             build_automation_plugin_configuration_item_names = dir(build_automation_plugin_configuration)
 
-            # filters all the build automation plugin configuration item names 
+            # filters all the build automation plugin configuration item names
             build_automation_plugin_configuration_filtered_item_names = [value for value in build_automation_plugin_configuration_item_names if value not in EXCLUSION_LIST]
 
             # iterates over all the build automation plugin configuration filtered item names
@@ -423,10 +423,10 @@ class BuildAutomation:
                 # adds the value to the map containing the automation plugins configurations for the current build automation plugin
                 build_automation_plugin_automation_plugins_configurations[build_automation_plugin_configuration_filtered_item_name] = parsed_build_automation_plugin_configuration_item
 
-    def generate_build_automation_profiles_structure(self, build_automation_parsing_structure, build_automation_structure): 
+    def generate_build_automation_profiles_structure(self, build_automation_parsing_structure, build_automation_structure):
         # retrieves the profiles parsing value
         profiles = build_automation_parsing_structure.profiles
-        
+
     def create_build_automation_directories(self, build_automation_structure):
         # retrieves the build properties
         build_properties = build_automation_structure.get_all_build_properties()
@@ -464,7 +464,7 @@ class BuildAutomation:
     def get_build_automation_extension_plugin(self, plugin_id, plugin_version = None):
         """
         Retrieves the build automation extension plugin with the given id and version.
-        
+
         @type plugin_id: String
         @param plugin_id: The id of the build automation extension plugin to retrive.
         @type plugin_version: String
@@ -485,7 +485,7 @@ class BuildAutomation:
     def parse_string(self, string, build_automation_structure):
         """
         Parses a string for the given build automation structure.
-        
+
         @type string: String
         @param string: The string to be parsed in the given build automation structure context.
         @type build_automation_structure: BuildAutomationStructure
@@ -495,7 +495,7 @@ class BuildAutomation:
         """
 
         # compiles the variable regular expression generating the pattern
-        variable_pattern = re.compile(VARIABLE_REGEX) 
+        variable_pattern = re.compile(VARIABLE_REGEX)
 
         # retrieves the variable match iterator
         variable_match_iterator = variable_pattern.finditer(string)
@@ -524,7 +524,7 @@ class BuildAutomation:
             string = string.replace(group, real_variable_value_parsed)
 
         # compiles the call regular expression generating the pattern
-        call_pattern = re.compile(CALL_REGEX) 
+        call_pattern = re.compile(CALL_REGEX)
 
         # retrieves the call match iterator
         call_match_iterator = call_pattern.finditer(string)
@@ -549,7 +549,7 @@ class BuildAutomation:
     def get_variable_value(self, variable_value, variable_list_value, build_automation_structure):
         # creates the is valid boolean flag
         is_valid = True
-        
+
         # sets the current structure selection to the build automation parsing structure
         current_structure_selection = build_automation_structure.build_automation_parsing_structure
 
@@ -621,7 +621,7 @@ class BuildAutomationStructure:
     def __init__(self, parent = None, build_automation_parsing_structure = None):
         """
         Constructor of the class.
-        
+
         @type parent: BuildAutomationStructure
         @param parent: The parent build automation structure.
         """
@@ -652,7 +652,7 @@ class BuildAutomationStructure:
     def get_all_automation_plugins(self):
         """
         Retrieves all the automation plugins using a recursive approach.
-        
+
         @rtype: List
         @return: A list containing all the automation plugins.
         """
@@ -674,7 +674,7 @@ class BuildAutomationStructure:
     def get_all_automation_plugin_configurations(self, automation_plugin_tuple):
         """
         Retrieves all the automation plugin configurations using a recursive approach.
-        
+
         @type automation_plugin_tuple: Tuple
         @param automation_plugin_tuple: The automation plugin tuple containg both the id and version of the automation plugin.
         @rtype: Dictionary
@@ -710,7 +710,7 @@ class ColonyBuildAutomationStructure(BuildAutomationStructure):
     def __init__(self, parent = None, associated_plugin = None):
         """
         Constructor of the class.
-        
+
         @type parent: BuildAutomationStructure
         @param parent: The parent build automation structure.
         @type associated_plugin: Plugin
@@ -723,7 +723,7 @@ class ColonyBuildAutomationStructure(BuildAutomationStructure):
 def copy_map(source_map, destiny_map):
     """
     Copies the contains of the source map to the destiny map.
-    
+
     @type source_map: Dictionary
     @param source_map: The source map of the copy.
     @type destiny_map: Dictionary

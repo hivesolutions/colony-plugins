@@ -61,7 +61,7 @@ class Parser:
     def get_value(self):
         """
         Retrieves the result of the parse
-        
+
         @rtype: Object
         @return: The result of the parse
         """
@@ -498,7 +498,7 @@ class Build:
     """
     The build class.
     """
-    
+
     default_stage = "none"
     execution_directory = "none"
     target_directory = "none"
@@ -595,7 +595,7 @@ class Property:
 def valid_node(node):
     """
     Gets if a node is valid or not for parsing.
-    
+
     @type node: Node
     @param node: The Xml node to be validated.
     @rtype: bool

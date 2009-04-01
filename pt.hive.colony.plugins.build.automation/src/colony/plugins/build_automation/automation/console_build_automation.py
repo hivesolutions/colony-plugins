@@ -72,7 +72,7 @@ class ConsoleBuildAutomation:
     def __init__(self, build_automation_plugin = None):
         """
         Constructor of the class.
-        
+
         @type build_automation_plugin: BuildAutomationPlugin
         @param build_automation_plugin: The build automation plugin.
         """
@@ -102,7 +102,7 @@ class ConsoleBuildAutomation:
         # retrieves the plugin id
         plugin_id = args[0]
 
-        # retrieves the real 
+        # retrieves the real
         real_plugin_id = self.get_plugin_id(plugin_id)
 
         # runs the automation for the plugin

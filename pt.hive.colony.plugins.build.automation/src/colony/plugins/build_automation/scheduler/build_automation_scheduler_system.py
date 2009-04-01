@@ -51,7 +51,7 @@ class BuildAutomationScheduler:
     def __init__(self, build_automation_scheduler_plugin):
         """
         Constructor of the class.
-        
+
         @type build_automation_scheduler_plugin: BuildAutomationSchedulerPlugin
         @param build_automation_scheduler_plugin: The build automation scheduler plugin.
         """
@@ -61,13 +61,13 @@ class BuildAutomationScheduler:
         self.build_automation_scheduling_item_list = []
 
     def register_build_automation_plugin_id(self, plugin_id, date_time, recursion_list):
-        # retrieves the build automation plugin        
+        # retrieves the build automation plugin
         build_automation_plugin = self.build_automation_scheduler_plugin.build_automation_plugin
 
-        # retrieves the scheduler plugin        
+        # retrieves the scheduler plugin
         scheduler_plugin = self.build_automation_scheduler_plugin.scheduler_plugin
 
-        # retrieves the guid plugin        
+        # retrieves the guid plugin
         guid_plugin = self.build_automation_scheduler_plugin.guid_plugin
 
         # generates a guid for the item id

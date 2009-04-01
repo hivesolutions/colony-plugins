@@ -45,7 +45,7 @@ def BuildAutomationException(Exception):
     def __init__(self, message):
         """
         Constructor of the class.
-        
+
         @type message: String
         @param message: The message to be printed.
         """
@@ -56,7 +56,7 @@ def BuildAutomationException(Exception):
     def __str__(self):
         """
         Returns the string representation of the class.
-        
+
         @rtype: String
         @return: The string representation of the class.
         """
@@ -71,7 +71,7 @@ def InvalidVaribleException(BuildAutomationException):
     def __init__(self, message):
         """
         Constructor of the class.
-        
+
         @type message: String
         @param message: The message to be printed.
         """
@@ -81,7 +81,7 @@ def InvalidVaribleException(BuildAutomationException):
     def __str__(self):
         """
         Returns the string representation of the class.
-        
+
         @rtype: String
         @return: The string representation of the class.
         """

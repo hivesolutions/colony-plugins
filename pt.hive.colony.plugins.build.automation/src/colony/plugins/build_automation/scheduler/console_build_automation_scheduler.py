@@ -81,7 +81,7 @@ class ConsoleBuildAutomationScheduler:
     def __init__(self, build_automation_scheduler_plugin = None):
         """
         Constructor of the class.
-        
+
         @type build_automation_scheduler_plugin: BuildAutomationSchedulerPlugin
         @param build_automation_scheduler_plugin: The build automation scheduler plugin.
         """
