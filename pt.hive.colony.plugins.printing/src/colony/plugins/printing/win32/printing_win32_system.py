@@ -66,7 +66,7 @@ class PrintingWin32:
     def __init__(self, printing_win32_plugin):
         """
         Constructor of the class.
-        
+
         @type printing_win32_plugin: PrintingWin32Plugin
         @param printing_win32_plugin: The printing win32 plugin.
         """

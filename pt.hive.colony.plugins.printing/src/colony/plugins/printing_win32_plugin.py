@@ -69,13 +69,13 @@ class PrintingWin32Plugin(colony.plugins.plugin_system.Plugin):
         self.printing_win32 = printing.win32.printing_win32_system.PrintingWin32(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)

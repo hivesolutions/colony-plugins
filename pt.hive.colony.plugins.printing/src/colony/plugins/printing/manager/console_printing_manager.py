@@ -64,7 +64,7 @@ class ConsolePrintingManager:
     def __init__(self, printing_manager_plugin):
         """
         Constructor of the class.
-        
+
         @type printing_manager_plugin: PrintingManagerPlugin
         @param printing_manager_plugin: The printing manager plugin.
         """
