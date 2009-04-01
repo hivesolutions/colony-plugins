@@ -51,7 +51,7 @@ class DistributionRegistryService:
     def __init__(self, distribution_registry_service_plugin):
         """
         Constructor of the class.
-        
+
         @type distribution_registry_service_plugin: DistributionRegistryServicePlugin
         @param distribution_registry_service_plugin: The distribution registry service plugin.
         """
