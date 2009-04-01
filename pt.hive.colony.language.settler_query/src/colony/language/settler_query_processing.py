@@ -75,7 +75,7 @@ class ProcessingStructure:
             raise settler_exceptions.SettlerSymbolNotFound("symbol " + name + " not found in context " + context)
 
         # retrieves the symbol value
-        value = context_symbols_table[name] 
+        value = context_symbols_table[name]
 
         return value
 

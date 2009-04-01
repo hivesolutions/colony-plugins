@@ -48,7 +48,7 @@ class VisitorNode(object):
     def accept(self, visitor):
         """
         Accepts the visitor running the iteration logic.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -58,7 +58,7 @@ class VisitorNode(object):
     def accept_post_order(self, visitor):
         """
         Accepts the visitor running the iteration logic, in post order.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -114,7 +114,7 @@ class SelectQuery(Query):
     def accept(self, visitor):
         """
         Accepts the visitor running the iteration logic.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -134,7 +134,7 @@ class SelectQuery(Query):
     def accept_post_order(self, visitor):
         """
         Accepts the visitor running the iteration logic, in post order.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -155,7 +155,7 @@ class Field(VisitorNode):
     """
     The field class.
     """
-    
+
     def __init__(self):
         VisitorNode.__init__(self)
 
@@ -227,7 +227,7 @@ class BinaryTermFilter(Filter):
     def accept(self, visitor):
         """
         Accepts the visitor running the iteration logic.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -239,7 +239,7 @@ class BinaryTermFilter(Filter):
     def accept_post_order(self, visitor):
         """
         Accepts the visitor running the iteration logic, in post order.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """

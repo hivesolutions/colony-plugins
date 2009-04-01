@@ -61,7 +61,7 @@ class AstNode(object):
     def __repr__(self):
         """
         Returns the default representation of the class.
-        
+
         @rtype: String
         @return: The default representation of the class.
         """
@@ -71,7 +71,7 @@ class AstNode(object):
     def accept(self, visitor):
         """
         Accepts the visitor running the iteration logic.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -85,7 +85,7 @@ class AstNode(object):
     def accept_post_order(self, visitor):
         """
         Accepts the visitor running the iteration logic, in post order.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -99,7 +99,7 @@ class AstNode(object):
     def set_value(self, value):
         """
         Sets the value value.
-        
+
         @type value: Object
         @para value: The value value.
         """
@@ -109,7 +109,7 @@ class AstNode(object):
     def set_indent(self, indent):
         """
         Sets the indent value.
-        
+
         @type indent: int
         @param indent: The indent value.
         """
@@ -119,7 +119,7 @@ class AstNode(object):
     def add_child_node(self, child_node):
         """
         Adds a child node to the node.
-        
+
         @type child_node: AstNode
         @param child_node: The child node to be added.
         """
@@ -129,7 +129,7 @@ class AstNode(object):
     def remove_child_node(self, child_node):
         """
         Removes a child node from the node.
-        
+
         @type child_node: AstNode
         @param child_node: The child node to be removed.
         """
@@ -157,7 +157,7 @@ class AstSequenceNode(AstNode):
     def __iter__(self):
         """
         Returns the iterator object for sequence iteration.
-        
+
         @rtype: AstSequenceNodeIterator
         @return: The iterator object for sequence iteration.
         """
@@ -171,7 +171,7 @@ class AstSequenceNode(AstNode):
     def set_next_node(self, next_node):
         """
         Sets the next node.
-        
+
         @type next_node: AstSequenceNode
         @param next_node: The next node.
         """
@@ -181,7 +181,7 @@ class AstSequenceNode(AstNode):
     def get_last_node(self):
         """
         Retrieves the last node.
-        
+
         @rtype: AstSequenceNode
         @return: The last node.
         """
@@ -201,7 +201,7 @@ class AstSequenceNode(AstNode):
     def get_all_nodes(self):
         """
         Retrieves all the nodes in the sequence.
-        
+
         @rtype: List
         @return: All the nodes in the sequence.
         """
@@ -215,9 +215,9 @@ class AstSequenceNode(AstNode):
     def count(self):
         """
         Counts the number of nodes in the sequence.
-        
+
         @rtype: int
-        @return: The number of nodes in the sequence. 
+        @return: The number of nodes in the sequence.
         """
 
         # retrieve all nodes
@@ -232,7 +232,7 @@ class AstSequenceNode(AstNode):
     def is_valid(self):
         """
         Retrieves if a node is valid or not.
-        
+
         @rtype: bool
         @return: The is valid value.
         """
@@ -242,7 +242,7 @@ class AstSequenceNode(AstNode):
     def accept(self, visitor):
         """
         Accepts the visitor running the iteration logic.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -260,7 +260,7 @@ class AstSequenceNode(AstNode):
     def accept_post_order(self, visitor):
         """
         Accepts the visitor running the iteration logic, in post order.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -306,7 +306,7 @@ class AstEnumerationNode(AstNode):
     def set_enumeration_value(self, enumeration_value):
         """
         Sets the enumeration value.
-        
+
         @type enumeration_value: String
         @param enumeration_value: The enumeration value.
         """
@@ -343,7 +343,7 @@ class ProgramNode(RootNode):
     def set_statements_node(self, statements_node):
         """
         Sets the statements node.
-        
+
         @type statements_node: StatementsNode
         @param statements_node: The statements node.
         """
@@ -369,7 +369,7 @@ class StatementsNode(AstSequenceNode):
     def set_statement_node(self, statement_node):
         """
         Sets the statement node.
-        
+
         @type statement_node: StatementNode
         @param statement_node: The statement node.
         """
@@ -405,7 +405,7 @@ class SelectNode(StatementNode):
     """
     The select node class.
     """
-    
+
     optional_all_distinct_node = None
     """ The optional all distinct node """
 
@@ -425,7 +425,7 @@ class SelectNode(StatementNode):
     def set_optional_all_distinct_node(self, optional_all_distinct_node):
         """
         Sets the optional all distinct node.
-        
+
         @type optional_all_distinct_node: OptionalAllDistinctNode
         @param optional_all_distinct_node: The optional all distinct node.
         """
@@ -436,7 +436,7 @@ class SelectNode(StatementNode):
     def set_selection_node(self, selection_node):
         """
         Sets the selection node.
-        
+
         @type selection_node: SelectionNode
         @param selection_node: The selection node.
         """
@@ -447,7 +447,7 @@ class SelectNode(StatementNode):
     def set_entity_expression_node(self, entity_expression_node):
         """
         Sets the entity expression node.
-        
+
         @type entity_expression_node: EntityExpressionNode
         @param entity_expression_node: The entity expression node.
         """
@@ -485,7 +485,7 @@ class SelectionNode(AstNode):
     def set_scalar_expression_commalist_node(self, scalar_expression_commalist_node):
         """
         Sets the scalar expression commalist node.
-        
+
         @type scalar_expression_commalist_node: ScalarExpressionCommalistNode
         @param scalar_expression_commalist_node: The scalar expression commalist node.
         """
@@ -511,7 +511,7 @@ class ScalarExpressionCommalistNode(AstSequenceNode):
     def set_scalar_expression_node(self, scalar_expression_node):
         """
         Sets the scalar expression node.
-        
+
         @type scalar_expression_node: ScalarExpressionNode
         @param scalar_expression_node: The scalar expression node.
         """
@@ -549,7 +549,7 @@ class AtomScalarExpressionNode(ScalarExpressionNode):
     def set_atom_node(self, atom_node):
         """
         Sets the atom node.
-        
+
         @type atom_node: AtomNode
         @param atom_node: The atom node.
         """
@@ -576,7 +576,7 @@ class FieldReferenceScalarExpressionNode(ScalarExpressionNode):
     def set_field_reference_node(self, field_reference_node):
         """
         Sets the field reference node.
-        
+
         @type field_reference_node: FieldReferenceNode
         @param field_reference_node: The field reference node.
         """
@@ -602,7 +602,7 @@ class AtomNode(AstNode):
     def set_literal_node(self, literal_node):
         """
         Sets the literal node.
-        
+
         @type literal_node: LiteralNode
         @param literal_node: The literal node.
         """
@@ -640,7 +640,7 @@ class StringLiteralNode(LiteralNode):
     def set_string_value(self, string_value):
         """
         Sets the string value.
-        
+
         @type string_value: String
         @param string_value: The string value.
         """
@@ -677,7 +677,7 @@ class IntegerLiteralNode(NumberLiteralNode):
     def set_integer_value(self, integer_value):
         """
         Sets the integer value.
-        
+
         @type integer_value: int
         @param integer_value: The integer value.
         """
@@ -702,7 +702,7 @@ class FieldRefereceNode(AstSequenceNode):
     def set_field_reference_name(self, field_reference_name):
         """
         Sets the field reference name.
-        
+
         @type field_reference_name: String
         @param field_reference_name: The field reference name.
         """
@@ -730,7 +730,7 @@ class EntityExpressionNode(AstNode):
     def set_from_clause_node(self, from_clause_node):
         """
         Sets the from clause node.
-        
+
         @type from_clause_node: FromClauseNode
         @param from_clause_node: The from clause node.
         """
@@ -741,7 +741,7 @@ class EntityExpressionNode(AstNode):
     def set_optional_where_clause_node(self, optional_where_clause_node):
         """
         Sets the optional where clause node.
-        
+
         @type optional_where_clause_node: OptionalWhereClauseNode
         @param optional_where_clause_node: The optional where clause node.
         """
@@ -767,7 +767,7 @@ class FromClauseNode(AstNode):
     def set_entity_reference_commalist_node(self, entity_reference_commalist_node):
         """
         Sets the entity reference commalist node.
-        
+
         @type entity_reference_commalist_node: EntityReferenceCommalistNode
         @param entity_reference_commalist_node: The entity reference commalist node.
         """
@@ -793,7 +793,7 @@ class EntityReferenceCommalistNode(AstSequenceNode):
     def set_entity_reference_node(self, entity_reference_node):
         """
         Sets the entity reference node.
-        
+
         @type entity_reference_node: EntityReferenceNode
         @param entity_reference_node: The entity reference node.
         """
@@ -819,7 +819,7 @@ class EntityReferenceNode(AstNode):
     def set_entity_node(self, entity_node):
         """
         Sets the entity node.
-        
+
         @type entity_node: EntityNode
         @param entity_node: The entity node.
         """
@@ -845,7 +845,7 @@ class EntityNode(AstNode):
     def set_qualified_entity_name_node(self, qualified_entity_name_node):
         """
         Sets the qualified entity name node.
-        
+
         @type qualified_entity_name_node: QualifiedEntityNameNode
         @param qualified_entity_name_node: The qualified entity name node.
         """
@@ -871,7 +871,7 @@ class EntityAsNameNode(EntityNode):
     def set_entity_as_name_value(self, entity_as_name_value):
         """
         Sets the entity as name value.
-        
+
         @type entity_as_name_value: String
         @param entity_as_name_value: The entity as name value.
         """
@@ -896,7 +896,7 @@ class QualifiedEntityNameNode(AstNode):
     def set_qualified_entity_name_value(self, qualified_entity_name_value):
         """
         Sets the qualified entity name value.
-        
+
         @type qualified_entity_name_value: String
         @param qualified_entity_name_value: The qualified entity name value.
         """
@@ -921,7 +921,7 @@ class OptionalWhereClauseNode(AstNode):
     def set_where_clause_node(self, where_clause_node):
         """
         Sets the where clause node.
-        
+
         @type where_clause_node: WhereClauseNode
         @param where_clause_node: The where clause node.
         """
@@ -947,7 +947,7 @@ class WhereClauseNode(AstNode):
     def set_search_condition_node(self, search_condition_node):
         """
         Sets the search condition node.
-        
+
         @type search_condition_node: SearchConditionNode
         @param search_condition_node: The search condition node.
         """
@@ -985,7 +985,7 @@ class PredicateSearchConditionNode(SearchConditionNode):
     def set_predicate_node(self, predicate_node):
         """
         Sets the predicate node.
-        
+
         @type predicate_node: PredicateNode
         @param predicate_node: The predicate node.
         """
@@ -1026,7 +1026,7 @@ class BinaryExpressionSearchConditionNode(ExpressionSearchConditionNode):
     def set_first_expression_search_condition_node(self, first_expression_search_condition_node):
         """
         Sets the first expression search condition node.
-        
+
         @type first_expression_search_condition_node: SearchConditionNode
         @param first_expression_search_condition_node: The first expression search condition node.
         """
@@ -1037,7 +1037,7 @@ class BinaryExpressionSearchConditionNode(ExpressionSearchConditionNode):
     def set_second_expression_search_condition_node(self, second_expression_search_condition_node):
         """
         Sets the second expression search condition node.
-        
+
         @type second_expression_search_condition_node: SearchConditionNode
         @param second_expression_search_condition_node: The second expression search condition node.
         """
@@ -1087,7 +1087,7 @@ class UnaryExpressionSearchConditionNode(ExpressionSearchConditionNode):
     def set_expression_search_condition_node(self, expression_search_condition_node):
         """
         Sets the expression search condition node.
-        
+
         @type expression_search_condition_node: SearchConditionNode
         @param expression_search_condition_node: The expression search condition node.
         """
@@ -1152,7 +1152,7 @@ class BinaryPredicateNode(PredicateNode):
     def set_first_scalar_expression_node(self, first_scalar_expression_node):
         """
         Sets the first scalar expression node.
-        
+
         @type first_scalar_expression_node: ScalarExpressionNode
         @param first_scalar_expression_node: The first scalar expression node.
         """
@@ -1163,7 +1163,7 @@ class BinaryPredicateNode(PredicateNode):
     def set_second_scalar_expression_node(self, second_scalar_expression_node):
         """
         Sets the second scalar expression node.
-        
+
         @type second_scalar_expression_node: ScalarExpressionNode
         @param second_scalar_expression_node: The second scalar expression node.
         """
@@ -1285,7 +1285,7 @@ class UnaryPredicateNode(PredicateNode):
     def set_scalar_expression_node(self, scalar_expression_node):
         """
         Sets the scalar expression node.
-        
+
         @type scalar_expression_node: ScalarExpressionNode
         @param scalar_expression_node: The scalar expression node.
         """
@@ -1338,7 +1338,7 @@ class InPredicateNode(PredicateNode):
     def set_scalar_expression_node(self, scalar_expression_node):
         """
         Sets the scalar expression node.
-        
+
         @type scalar_expression_node: ScalarExpressionNode
         @param scalar_expression_node: The scalar expression node.
         """
@@ -1349,7 +1349,7 @@ class InPredicateNode(PredicateNode):
     def set_scalar_expression_commalist_node(self, scalar_expression_commalist_node):
         """
         Sets the scalar expression commalist node.
-        
+
         @type scalar_expression_commalist_node: ScalarExpressionNode
         @param scalar_expression_commalist_node: The scalar expression commalist node.
         """
@@ -1390,7 +1390,7 @@ class InSubqueryPredicateNode(PredicateNode):
     def set_scalar_expression_node(self, scalar_expression_node):
         """
         Sets the scalar expression node.
-        
+
         @type scalar_expression_node: ScalarExpressionNode
         @param scalar_expression_node: The scalar expression node.
         """
@@ -1401,7 +1401,7 @@ class InSubqueryPredicateNode(PredicateNode):
     def set_subquery_node(self, subquery_node):
         """
         Sets the subquery node.
-        
+
         @type subquery_node: SubqueryNode
         @param subquery_node: The subquery node.
         """
@@ -1445,7 +1445,7 @@ class AllOrAnyPredicateNode(PredicateNode):
     def set_scalar_expression_node(self, scalar_expression_node):
         """
         Sets the scalar expression node.
-        
+
         @type scalar_expression_node: ScalarExpressionNode
         @param scalar_expression_node: The scalar expression node.
         """
@@ -1456,7 +1456,7 @@ class AllOrAnyPredicateNode(PredicateNode):
     def set_any_all_some_node(self, any_all_some_node):
         """
         Sets the any all some node.
-        
+
         @type any_all_some_node: AnyAllSomeNode
         @param any_all_some_node: The any all some node.
         """
@@ -1467,7 +1467,7 @@ class AllOrAnyPredicateNode(PredicateNode):
     def set_subquery_node(self, subquery_node):
         """
         Sets the subquery node.
-        
+
         @type subquery_node: SubqueryNode
         @param subquery_node: The subquery node.
         """
@@ -1493,7 +1493,7 @@ class AnyAllSomeNode(AstNode):
     def set_any_all_some_value(self, any_all_some_value):
         """
         Sets the any all some value.
-        
+
         @type any_all_some_value: String
         @param any_all_some_value: The any all some value.
         """
@@ -1518,7 +1518,7 @@ class ExistenceTestNode(AstNode):
     def set_subquery_node(self, subquery_node):
         """
         Sets the subquery node.
-        
+
         @type subquery_node: SubqueryNode
         @param subquery_node: The subquery node.
         """
@@ -1544,7 +1544,7 @@ class ScalarExpressionPredicateNode(PredicateNode):
     def set_scalar_expression_node(self, scalar_expression_node):
         """
         Sets the scalar expression node.
-        
+
         @type scalar_expression_node: ScalarExpressionNode
         @param scalar_expression_node: The scalar expression node.
         """
@@ -1576,7 +1576,7 @@ class SubqueryNode(AstNode):
     def set_optional_all_distinct_node(self, optional_all_distinct_node):
         """
         Sets the optional all distinct node.
-        
+
         @type optional_all_distinct_node: OptionalAllDistinctNode
         @param optional_all_distinct_node: The optional all distinct node.
         """
@@ -1587,7 +1587,7 @@ class SubqueryNode(AstNode):
     def set_selection_node(self, selection_node):
         """
         Sets the selection node.
-        
+
         @type selection_node: SelectionNode
         @param selection_node: The selection node.
         """
@@ -1598,7 +1598,7 @@ class SubqueryNode(AstNode):
     def set_entity_expression_node(self, entity_expression_node):
         """
         Sets the entity expression node.
-        
+
         @type entity_expression_node: EntityExpressionNode
         @param entity_expression_node: The entity expression node.
         """

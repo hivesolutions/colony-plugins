@@ -428,7 +428,7 @@ def p_qualified_entity_name(t):
     t[0] = qualified_entity_name_node
 
 def p_optional_where_clause(t):
-    """optional_where_clause : 
+    """optional_where_clause :
                              | where_clause"""
 
     # retrieves the arguments length

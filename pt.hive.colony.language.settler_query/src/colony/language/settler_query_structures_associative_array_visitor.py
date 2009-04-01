@@ -44,19 +44,19 @@ VALUE_TYPE = "value"
 """ The value type value """
 
 FIELD_TYPE = "field"
-""" The field type value """ 
+""" The field type value """
 
 class AssociativeArrayVisitor(settler_query_structures_visitor.Visitor):
     """
     The associative array visitor class.
     """
-    
+
     associative_array = {}
     """ The associative array """
 
     data_stack = []
     """ The resulting data stack """
-    
+
     selected_fields = []
     """ The selected fields """
 
