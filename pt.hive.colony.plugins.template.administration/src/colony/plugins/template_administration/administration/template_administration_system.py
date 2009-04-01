@@ -60,7 +60,7 @@ class TemplateAdministration:
     def __init__(self, template_administration_plugin):
         """
         Constructor of the class.
-        
+
         @type template_administration_plugin: TemplateAdministrationPlugin
         @param template_administration_plugin: The template administration plugin.
         """

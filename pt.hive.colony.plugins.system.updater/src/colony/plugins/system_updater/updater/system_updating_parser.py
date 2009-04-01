@@ -61,7 +61,7 @@ class Parser:
     def get_value(self):
         """
         Retrieves the result of the parse.
-        
+
         @rtype: Object
         @return: The result of the parse.
         """
@@ -97,7 +97,7 @@ class RepositoriesFileParser(Parser):
                 self.repository_list = self.parse_repositories(child_node)
 
     def parse_repositories(self, repositories):
-        repository_list = []        
+        repository_list = []
         child_nodes = repositories.childNodes
 
         for child_node in child_nodes:
@@ -243,7 +243,7 @@ class RepositoryDescriptorFileParser(Parser):
         elif node_name == "version":
             package_descriptor.version = self.parse_repository_descriptor_package_version(repository_descriptor_package_element)
         elif node_name == "plugins":
-            package_descriptor.plugins = self.parse_repository_descriptor_package_plugins(repository_descriptor_package_element)    
+            package_descriptor.plugins = self.parse_repository_descriptor_package_plugins(repository_descriptor_package_element)
 
     def parse_repository_descriptor_package_name(self, descriptor_package_name):
         repository_descriptor_package_name = descriptor_package_name.firstChild.data.strip()
@@ -260,7 +260,7 @@ class RepositoryDescriptorFileParser(Parser):
     def parse_repository_descriptor_package_version(self, descriptor_package_version):
         repository_descriptor_package_version = descriptor_package_version.firstChild.data.strip()
         return repository_descriptor_package_version
-    
+
     def parse_repository_descriptor_package_plugins(self, descriptor_package_plugins):
         repository_descriptor_package_plugins_list = []
         child_nodes = descriptor_package_plugins.childNodes
@@ -578,7 +578,7 @@ class PluginDependency:
 
     id = "none"
     """ The id of the plugin dependency """
-    
+
     version = "none"
     """ The version of the plugin dependency """
 
@@ -596,7 +596,7 @@ class PluginDependency:
 def valid_node(node):
     """
     Gets if a node is valid or not for parsing.
-    
+
     @type node: Node
     @param node: The Xml node to be validated.
     @rtype: bool

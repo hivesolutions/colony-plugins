@@ -51,7 +51,7 @@ class TemplateAdministrationDefaultItems:
     def __init__(self, template_administration_default_items_plugin):
         """
         Constructor of the class.
-        
+
         @type template_administration_default_items_plugin: TemplateAdministrationDefaultItemsPlugin
         @param template_administration_default_items_plugin: The template administration default items plugin.
         """
@@ -127,13 +127,13 @@ class TemplateAdministrationDefaultItems:
 
         # creates the file path
         file_path = resources_path + "/" + relative_file_path
-    
+
         # opens the file
         file = open(file_path, "r")
-    
+
         # reads the file contents
         file_contents = file.read()
-    
+
         # closes the file
         file.close()
 

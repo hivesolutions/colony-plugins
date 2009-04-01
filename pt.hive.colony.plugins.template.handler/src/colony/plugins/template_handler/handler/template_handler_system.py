@@ -79,7 +79,7 @@ class TemplateHandler:
     def __init__(self, template_handler_plugin):
         """
         Constructor of the class.
-        
+
         @type template_handler_plugin: TemplateHandlerPlugin
         @param template_handler_plugin: The template handler plugin.
         """
@@ -199,7 +199,7 @@ class TemplateHandler:
     def interpret_file(self, file_path, request):
         """
         Interprets the file with the given path in colony template.
-        
+
         @type file_path: String
         @param file_path: The file to be interpreted in colony template.
         @type request: HttpRequest
@@ -231,7 +231,7 @@ class TemplateHandler:
     def interpret(self, contents, request = None):
         """
         Interprets the given contents in colony template.
-        
+
         @type contents: String
         @param contents: The contents to be interpreted in colony template.
         @type request: HttpRequest
@@ -343,7 +343,7 @@ class TemplateHandler:
     def import_js_library(self, library_name):
         """
         Imports the javascript library with the given name.
-        
+
         @type library_name: String
         @param library_name: The name of the library to be imported.
         """
@@ -381,7 +381,7 @@ class TemplateHandler:
     def parse_request_attributes(self, request):
         """
         Parses the request attributes in the default response format.
-        
+
         @type request: HttpRequest
         @param request: The http request to be parsed for attributes.
         @rtype: Dictionary
@@ -421,7 +421,7 @@ class TemplateHandler:
     def escape_dots(self, string_value):
         """
         Escapes the "." changing it to "-".
-        
+
         @type string_value: String
         @param string_value: The string to be escaped.
         @rtype: String

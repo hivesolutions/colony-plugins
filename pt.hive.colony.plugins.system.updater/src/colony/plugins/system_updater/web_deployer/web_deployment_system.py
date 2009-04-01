@@ -87,7 +87,7 @@ class WebDeployer:
     def get_deployer_type(self):
         """
         Retrieves the type of deployer.
-        
+
         @rtype: String
         @return: The type of deployer.
         """
@@ -97,7 +97,7 @@ class WebDeployer:
     def uncompress_zip_file(self, file, web_deployment_path):
         """
         Uncompresses a zip file into the plugins directory
-        
+
         @type file: Stream
         @param file: The file to unzip into the plugins directory
         @type web_deployment_path: String

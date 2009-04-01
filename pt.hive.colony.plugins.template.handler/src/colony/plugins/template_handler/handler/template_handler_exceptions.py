@@ -52,7 +52,7 @@ class FileNotFoundException(TemplateHandlerException):
     def __init__(self, message, status_code):
         """
         Constructor of the class.
-        
+
         @type message: String
         @param message: The message to be printed.
         @type status_code: int
@@ -66,7 +66,7 @@ class FileNotFoundException(TemplateHandlerException):
     def __str__(self):
         """
         Returns the string representation of the class.
-        
+
         @rtype: String
         @return: The string representation of the class.
         """

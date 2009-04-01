@@ -85,12 +85,12 @@ class SystemUpdater:
             if repository_descriptor:
                 self.repository_descriptor_list.append(repository_descriptor)
                 self.repository_repository_descriptor_map[repository] = repository_descriptor
-                self.repository_descriptor_repository_map[repository_descriptor] = repository 
+                self.repository_descriptor_repository_map[repository_descriptor] = repository
 
     def get_repositories(self):
         """
         Retrieves the list of available repositories
-        
+
         @rtype: List
         @return: The list of available repositories
         """
@@ -100,7 +100,7 @@ class SystemUpdater:
     def get_repository_by_repository_name(self, repository_name):
         """
         Retrieves the repository structure for the given repository name
-        
+
         @type repository_name: String
         @param repository_name: The name of the repository to get the repository structure
         @rtype: Repository
@@ -115,7 +115,7 @@ class SystemUpdater:
     def get_repository_information_by_repository_name(self, repository_name):
         """
         Retrieves the repository descriptor for the given repository name
-        
+
         @type repository_name: String
         @param repository_name: The name of the repository to get the descriptor
         @rtype: RepositoryDescriptor
@@ -130,7 +130,7 @@ class SystemUpdater:
     def get_package_information_list_by_repository_name(self, repository_name):
         """
         Retrieves the list of package information for the given repository name
-        
+
         @type repository_name: String
         @param repository_name: The name of the repository to get the list of package information
         @rtype: List
@@ -143,7 +143,7 @@ class SystemUpdater:
     def get_plugin_information_list_by_repository_name(self, repository_name):
         """
         Retrieves the list of plugin information for the given repository name
-        
+
         @type repository_name: String
         @param repository_name: The name of the repository to get the list of plugin information
         @rtype: List
@@ -156,7 +156,7 @@ class SystemUpdater:
     def get_repository_information(self, repository):
         """
         Retrieves the repository descriptor for the given repository
-        
+
         @type repository: Repository
         @param repository: The repository to get the descriptor
         @rtype: RepositoryDescriptor
@@ -172,7 +172,7 @@ class SystemUpdater:
     def get_repository_descriptor_file(self, repository_addresses):
         """
         Retrieves the repository descriptor file for the given repository addresses
-        
+
         @type repository_addresses: List
         @param repository_addresses: The repository addresses to search
         @rtype: Stream
@@ -187,14 +187,14 @@ class SystemUpdater:
             repository_address_value = repository_address.value
             file_address = repository_address_value + "/" + REPOSITORY_DESCRIPTOR_FILE
             file_buffer = downloader_plugin.get_download_package_stream(file_address)
-            # in case the download was successful 
+            # in case the download was successful
             if file_buffer:
                 return file_buffer
 
     def install_plugin(self, plugin_id, plugin_version = None):
         """
         Install the plugin with the given id and version from a random repository
-        
+
         @type plugin_id: String
         @param plugin_id: The id of the plugin to install
         @type plugin_version: String
@@ -227,7 +227,7 @@ class SystemUpdater:
         if not plugin_deployer:
             return False
 
-        # retrieves the repository descriptor from the plugin descriptor 
+        # retrieves the repository descriptor from the plugin descriptor
         repository_descriptor = self.get_repository_descriptor_plugin_descriptor(plugin_descriptor)
 
         # retrieves the repository structure for the provided repository descriptor
@@ -243,11 +243,11 @@ class SystemUpdater:
         self.delete_zip_file(zip_file)
 
         return True
-    
+
     def install_plugin_dependencies(self, plugin_descriptor):
         """
         Install the plugin dependencies for the given plugin descriptor
-        
+
         @type plugin_descriptor: PluginDescriptor
         @param plugin_id: The plugin descriptor of the plugin to install the dependencies
         @rtype: bool
@@ -286,7 +286,7 @@ class SystemUpdater:
     def get_repositories_list(self):
         """
         Retrieves the list of available repositories
-        
+
         @rtype: List
         @return: The list of available repositories
         """
@@ -296,7 +296,7 @@ class SystemUpdater:
     def get_package_list(self):
         """
         Retrieves the list of available packages
-        
+
         @rtype: List
         @return: The list of available packages
         """
@@ -306,17 +306,17 @@ class SystemUpdater:
     def get_plugin_list(self):
         """
         Retrieves the list of available plugins
-        
+
         @rtype: List
         @return: The list of available plugins
         """
 
         pass
-    
+
     def get_package_descriptor(self, package_id, package_version = None):
         """
         Retrieves the package descriptor for the given package id and version
-        
+
         @type package_id: String
         @param package_id: The id of the package to retrieve the package descriptor
         @type package_version: String
@@ -332,11 +332,11 @@ class SystemUpdater:
             # in case package descriptor exists in current repository descriptor
             if package_descripton:
                 return package_descripton
-    
+
     def get_plugin_descriptor(self, plugin_id, plugin_version = None):
         """
         Retrieves the plugin descriptor for the given plugin id and version
-        
+
         @type plugin_id: String
         @param plugin_id: The id of the plugin to retrieve the plugin descriptor
         @type plugin_version: String
@@ -352,16 +352,16 @@ class SystemUpdater:
             # in case plugin descriptor exists in current repository descriptor
             if plugin_descripton:
                 return plugin_descripton
-            
+
     def get_repository_descriptor_plugin_descriptor(self, plugin_descriptor):
         """
         Retrieves the repository descriptor for the given plugin descriptor
-        
+
         @type plugin_descriptor: PluginDescriptor
         @param plugin_descriptor: The plugin descriptor to get the repository descriptor
         @rtype: RepositoryDescriptor
         @return: The repository descriptor for the given plugin descriptor
-        """ 
+        """
 
         for repository_descriptor in self.repository_descriptor_list:
             if plugin_descriptor in repository_descriptor.plugins:
@@ -370,7 +370,7 @@ class SystemUpdater:
     def get_zip_file(self, repository_name, plugin_name, plugin_version, zip_file):
         """
         Retrieves the plugin zip file for the given repository name, plugin name, plugin version and zip file name
-        
+
         @type repository_name: String
         @param repository_name: The name of the repository to use in the plugin zip file retrieval
         @type plugin_name: String
@@ -380,7 +380,7 @@ class SystemUpdater:
         @type zip_file: String
         @param zip_file: The name of the plugin zip file to retrieve
         @rtype: Stream
-        @return: The retrieved plugin zip file stream 
+        @return: The retrieved plugin zip file stream
         """
 
         # retrieves the repository structure for the given repository name
@@ -394,7 +394,7 @@ class SystemUpdater:
 
         # the created zip file path
         zip_file_path = TEMP_DIRECTORY + "/" + zip_file;
-        
+
         # the created zip file
         zip_file = open(zip_file_path, "r")
 
@@ -403,7 +403,7 @@ class SystemUpdater:
     def download_zip_file(self, repository_addresses, plugin_name, plugin_version, zip_file, target_directory = TEMP_DIRECTORY):
         """
         Downloads the plugin zip file for the given repository name, plugin name, plugin version and zip file name
-        
+
         @type repository_name: String
         @param repository_name: The name of the repository to use in the plugin zip file download
         @type plugin_name: String
@@ -426,7 +426,7 @@ class SystemUpdater:
             repository_address_value = repository_address.value
             file_address = repository_address_value + "/" + plugin_name + "/" + plugin_version + "/" + zip_file
             result = downloader_plugin.download_package(file_address, target_directory)
-            # in case the download was successful 
+            # in case the download was successful
             if result:
                 return True
         return False

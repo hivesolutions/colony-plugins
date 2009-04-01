@@ -51,7 +51,7 @@ class TemplateAdministrationSearchItems:
     def __init__(self, template_administration_search_items_plugin):
         """
         Constructor of the class.
-        
+
         @type template_administration_search_items_plugin: TemplateAdministrationSearchItemsPlugin
         @param template_administration_search_items_plugin: The template administration search items plugin.
         """
@@ -127,13 +127,13 @@ class TemplateAdministrationSearchItems:
 
         # creates the file path
         file_path = resources_path + "/" + relative_file_path
-    
+
         # opens the file
         file = open(file_path, "r")
-    
+
         # reads the file contents
         file_contents = file.read()
-    
+
         # closes the file
         file.close()
 

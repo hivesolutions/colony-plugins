@@ -74,7 +74,7 @@ class ConsoleSystemUpdater:
 
     def get_help(self):
         return HELP_TEXT
-    
+
     def process_listrepositories(self, args, output_method):
 
         repositories_list = self.system_updater_plugin.system_updater.get_repositories()
@@ -93,7 +93,7 @@ class ConsoleSystemUpdater:
 
         for package_information in package_information_list:
             self.print_package_info(package_information, output_method)
-            
+
     def process_listrepositoryplugins(self, args, output_method):
         if len(args) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
@@ -157,7 +157,7 @@ class ConsoleSystemUpdater:
         for dependency_information in plugin_information.dependencies:
             output_method("dependency")
             self.print_dependency_info(dependency_information, output_method)
-            
+
     def print_dependency_info(self, dependency_information, output_method):
         output_method("id:          " + dependency_information.id)
         output_method("version:     " + dependency_information.version)

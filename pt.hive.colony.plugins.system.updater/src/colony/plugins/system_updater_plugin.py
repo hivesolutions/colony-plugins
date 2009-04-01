@@ -102,7 +102,7 @@ class SystemUpdaterPlugin(colony.plugins.plugin_system.Plugin):
     def get_deployer_by_deployer_type(self, deployer_type):
         """
         Retrieves a deployer for the given deployer type
-        
+
         @type deployer_type : String
         @param deployer_type: The type of the deployer to retrieve
         @rtype: Plugin
