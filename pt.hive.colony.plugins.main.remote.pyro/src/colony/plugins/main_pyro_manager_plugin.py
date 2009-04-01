@@ -86,7 +86,7 @@ class MainPyroManagerPlugin(colony.plugins.plugin_system.Plugin):
         self.main_pyro_manager.deactivate_server()
 
     def end_unload_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
     @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.main.remote.pyro.manager", "1.0.0")
     def load_allowed(self, plugin, capability):

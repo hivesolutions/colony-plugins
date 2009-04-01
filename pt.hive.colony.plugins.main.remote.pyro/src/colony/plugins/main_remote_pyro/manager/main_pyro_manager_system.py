@@ -73,7 +73,7 @@ class MainPyroManager:
     def __init__(self, main_pyro_manager_plugin):
         """
         Constructor of the class.
-        
+
         @type main_pyro_manager_plugin: MainPyroManagerPlugin
         @param main_pyro_manager_plugin: The main pyro manager plugin.
         """
@@ -279,7 +279,7 @@ class MainPyroManager:
     def get_service_class(self, service_method):
         """
         Retrieves the service class for the given service method.
-        
+
         @type service_method: String
         @param service_method: The service method to retrieve the service class.
         @rtype: String
@@ -297,7 +297,7 @@ class MainPyroManager:
     def get_service_name(self, service_method):
         """
         Retrieves the service name for the given service method.
-        
+
         @type service_method: String
         @param service_method: The service method to retrieve the service name.
         @rtype: String
@@ -331,7 +331,7 @@ class BaseRemote(Pyro.core.ObjBase):
     def add_proxy_uri(self, name, proxy_uri):
         """
         Adds a new proxy uri to the base remote.
-        
+
         @type name: String
         @param name: The name of the proxy uri to be added.
         @type proxy_uri: String
@@ -349,7 +349,7 @@ class BaseRemote(Pyro.core.ObjBase):
     def get_proxy_uri(self, name):
         """
         Retrieves the proxy uri for the given object name.
-        
+
         @type name: String
         @param name: The object name to retrieve the proxy uri.
         @rtype: String
