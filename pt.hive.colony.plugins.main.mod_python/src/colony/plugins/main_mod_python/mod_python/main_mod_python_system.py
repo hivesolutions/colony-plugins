@@ -48,7 +48,7 @@ class MainModPython:
     def __init__(self, main_mod_python_plugin):
         """
         Constructor of the class.
-        
+
         @type main_mod_python_plugin: MainModPythonPlugin
         @param main_mod_python_plugin: The main mod python plugin.
         """
@@ -58,7 +58,7 @@ class MainModPython:
     def handle_request(self, request, plugin_handler_id):
         """
         Handles the http request sent.
-        
+
         @type request: HttpRequest
         @param request: The http request sent by the mod_python.
         @type plugin_handler_id: String
