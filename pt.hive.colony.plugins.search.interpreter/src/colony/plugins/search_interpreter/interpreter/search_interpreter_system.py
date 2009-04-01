@@ -48,7 +48,7 @@ class SearchInterpreter:
     def __init__(self, search_interpreter_plugin):
         """
         Constructor of the class.
-        
+
         @type search_interpreter_plugin: SearchInterpreterPlugin
         @param search_interpreter_plugin: The search interpreter plugin.
         """

@@ -67,7 +67,7 @@ class SearchInterpreterCapitalsAdapterPlugin(colony.plugins.plugin_system.Plugin
         self.search_interpreter_capitals_adapter = search_interpreter.capitals_adapter.search_interpreter_capitals_adapter_system.SearchInterpreterCapitalsAdapter(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)

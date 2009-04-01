@@ -46,14 +46,14 @@ class SearchScorerMetricRepository:
 
     search_scorer_metric_repository_plugin = None
     """ The search scorer metric repository plugin """
-    
+
     metrics_map = {}
     """ The map of metrics instances currently injected in the repository """
 
     def __init__(self, search_scorer_metric_repository_plugin):
         """
         Constructor of the class.
-        
+
         @type search_scorer_metric_repository_plugin: SearchScorerMetricRepositoryPlugin
         @param search_scorer_metric_repository_plugin: The search scorer metric repository plugin.
         """
@@ -63,14 +63,14 @@ class SearchScorerMetricRepository:
     def add_search_scorer_metrics_map(self, scorer_metrics_map):
         """
         Adds a set of metrics to the repository.
-        
+
         @type scorer_metrics_map: Dictionary
         @param scorer_metrics_map: A dictionary with the metrics to be inserted into the repository.
         """
-        
-        # adds each metric to the repository metric map 
+
+        # adds each metric to the repository metric map
         for metric_identifier, metric in scorer_metrics_map.items():
-            
+
             # checks for duplicates insertion
             if metric_identifier in self.metrics_map:
                 raise search_scorer_metric_repository_exceptions.SearchScorerMetricRepositoryException(metric_identifier)
@@ -80,11 +80,11 @@ class SearchScorerMetricRepository:
     def remove_search_scorer_metrics_map(self, scorer_metrics_map):
         """
         Adds a set of metrics from the repository.
-        
+
         @type scorer_metrics_map: Dictionary
         @param scorer_metrics_map: A dictionary with the metrics to be deleted from the repository.
         """
-        
+
         # removes all the metrics made available by the plugin
         # (since no duplicates are allowed, the plugin is assumed to be the single provider of the metric)
         for metric_identifier, metric in scorer_metrics_map.items():
@@ -93,17 +93,17 @@ class SearchScorerMetricRepository:
     def get_metric_identifiers(self):
         """
         Retrieves the list of metric identifiers registered in the repository.
-        
+
         @rtype: List
         @return: The list of metric identifiers in the repository.
         """
-        
+
         return self.metrics_map.keys()
 
     def get_metric(self, scorer_metric_identifier):
         """
         Retrieves the metric instance for the provided metric identifier
-        
+
         @type scorer_metric_identifier: String
         @param scorer_metric_identifier: The identifier for the intended metric.
         @rtype: SearchScorerMetric
@@ -113,7 +113,7 @@ class SearchScorerMetricRepository:
             raise search_scorer_metric_repository_exceptions.InvalidMetricRequested(scorer_metric_identifier)
 
         return self.metrics_map[scorer_metric_identifier]
-    
+
     def get_metrics(self, scorer_metric_identifier_list):
         """
         Retrieves the metric instance for the provided metric identifier

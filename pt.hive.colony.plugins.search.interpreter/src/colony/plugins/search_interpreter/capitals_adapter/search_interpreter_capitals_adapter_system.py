@@ -53,7 +53,7 @@ class SearchInterpreterCapitalsAdapter:
     def __init__(self, search_interpreter_capitals_adapter_plugin):
         """
         Constructor of the class.
-        
+
         @type search_interpreter_capitals_adapter_plugin: SearchInterpreterCapitalsAdapterPlugin
         @param search_interpreter_capitals_adapter_plugin: The search interpreter capitals adapter plugin.
         """
@@ -64,7 +64,7 @@ class SearchInterpreterCapitalsAdapter:
         return SEARCH_INTERPRETER_ADAPTER_TYPE
 
     def process_tokens_list(self, tokens_list, properties):
-        
+
         for tokens_list_item in tokens_list:
             words_list, words_metadata_list, file_information_map = tokens_list_item
 

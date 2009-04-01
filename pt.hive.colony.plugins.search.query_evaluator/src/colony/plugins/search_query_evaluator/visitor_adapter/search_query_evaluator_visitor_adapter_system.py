@@ -57,7 +57,7 @@ class SearchQueryEvaluatorVisitorAdapter:
     def __init__(self, search_query_evaluator_visitor_adapter_plugin):
         """
         Constructor of the class.
-        
+
         @type search_query_evaluator_visitor_adapter_plugin: SearchQueryEvaluatorVisitorAdapterPlugin
         @param search_query_evaluator_visitor_adapter_plugin: The search query evaluator visitor adapter plugin.
         """
@@ -74,7 +74,7 @@ class SearchQueryEvaluatorVisitorAdapter:
     def evaluate_query(self, search_index, query, properties):
         """
         The method to start the search query evaluator visitor adapter.
-        
+
         @type search_index: SearchIndex
         @param search_index: The search index to be used.
         @type query: String
@@ -106,7 +106,7 @@ class SearchQueryEvaluatorVisitorAdapter:
         # the search results list will hold a search result information map for each search result
         search_results = []
 
-        # convert the index search visitor results map 
+        # convert the index search visitor results map
         # into a search result list of search result information maps containing the key
         for index_search_visitor_result_key, index_search_visitor_result_value in index_search_visitor_results.items():
 

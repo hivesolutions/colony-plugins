@@ -59,7 +59,7 @@ class SearchQueryEvaluatorPlugin(colony.plugins.plugin_system.Plugin):
     events_registrable = []
 
     search_query_evaluator = None
-    
+
     search_query_evaluator_adapter_plugins = []
 
     def load_plugin(self):
@@ -69,7 +69,7 @@ class SearchQueryEvaluatorPlugin(colony.plugins.plugin_system.Plugin):
         self.search_query_evaluator = search_query_evaluator.query_evaluator.search_query_evaluator_system.SearchQueryEvaluator(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)

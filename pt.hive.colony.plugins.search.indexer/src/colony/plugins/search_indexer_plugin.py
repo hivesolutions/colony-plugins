@@ -69,7 +69,7 @@ class SearchIndexerPlugin(colony.plugins.plugin_system.Plugin):
         self.search_indexer = search_indexer.indexer.search_indexer_system.SearchIndexer(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)

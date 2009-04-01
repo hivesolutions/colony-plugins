@@ -50,7 +50,7 @@ class SearchQueryInterpreter:
     def __init__(self, search_query_interpreter_plugin):
         """
         Constructor of the class.
-        
+
         @type search_query_interpreter_plugin: SearchQueryInterpreterPlugin
         @param search_query_interpreter_plugin: The search query interpreter plugin.
         """
@@ -60,7 +60,7 @@ class SearchQueryInterpreter:
     def parse_query(self, query_string, properties):
         """
         The method to start the search query interpreter.
-        
+
         @type query_string: String
         @param query_string: The query string with the search terms.
         @type properties: Dictionary

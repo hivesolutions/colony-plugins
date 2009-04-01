@@ -70,7 +70,7 @@ class SearchQueryEvaluatorVisitorAdapterPlugin(colony.plugins.plugin_system.Plug
         self.search_query_evaluator_visitor_adapter = search_query_evaluator.visitor_adapter.search_query_evaluator_visitor_adapter_system.SearchQueryEvaluatorVisitorAdapter(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)

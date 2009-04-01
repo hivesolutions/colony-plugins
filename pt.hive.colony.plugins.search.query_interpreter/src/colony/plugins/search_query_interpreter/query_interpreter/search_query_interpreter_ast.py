@@ -58,7 +58,7 @@ class AstNode(object):
     def __repr__(self):
         """
         Returns the default representation of the class.
-        
+
         @rtype: String
         @return: The default representation of the class.
         """
@@ -68,7 +68,7 @@ class AstNode(object):
     def accept(self, visitor):
         """
         Accepts the visitor running the iteration logic.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -82,7 +82,7 @@ class AstNode(object):
     def accept_post_order(self, visitor):
         """
         Accepts the visitor running the iteration logic, in post order.
-        
+
         @type visitor: Visitor
         @param visitor: The visitor object.
         """
@@ -96,7 +96,7 @@ class AstNode(object):
     def set_value(self, value):
         """
         Sets the value value.
-        
+
         @type value: Object
         @para value: The value value.
         """
@@ -106,7 +106,7 @@ class AstNode(object):
     def add_child_node(self, child_node):
         """
         Adds a child node to the node.
-        
+
         @type child_node: AstNode
         @param child_node: The child node to be added.
         """
@@ -116,7 +116,7 @@ class AstNode(object):
     def remove_child_node(self, child_node):
         """
         Removes a child node from the node.
-        
+
         @type child_node: AstNode
         @param child_node: The child node to be removed.
         """
@@ -150,7 +150,7 @@ class SimpleQueryNode(QueryNode):
     def set_term_node(self, term_node):
         """
         Sets the term node.
-        
+
         @type term_node: TermNode
         @param term_node: The term node.
         """
@@ -176,7 +176,7 @@ class BooleanQueryNode(QueryNode):
     def set_first_query_node(self, first_query_node):
         """
         Sets the first query node.
-        
+
         @type first_query_node: QueryNode
         @param first_query_node: The first query node.
         """
@@ -187,7 +187,7 @@ class BooleanQueryNode(QueryNode):
     def set_second_query_node(self, second_query_node):
         """
         Sets the second query node.
-        
+
         @type second_query_node: QueryNode
         @param second_query_node: The second query node.
         """
@@ -220,7 +220,7 @@ class MultipleTermNode(AstNode):
     def set_first_term_node(self, first_term_node):
         """
         Sets the first term node.
-        
+
         @type first_term_node: TermNode
         @param first_term_node: The first term node.
         """
@@ -231,7 +231,7 @@ class MultipleTermNode(AstNode):
     def set_second_term_node(self, second_term_node):
         """
         Sets the first term node.
-        
+
         @type second_term_node: TermNode
         @param second_term_node: The second term node.
         """

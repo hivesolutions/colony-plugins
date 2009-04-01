@@ -70,7 +70,7 @@ class SearchScorerDefaultMetricBundlePlugin(colony.plugins.plugin_system.Plugin)
         self.search_scorer_default_metric_bundle = search_scorer.default_metric_bundle.search_scorer_default_metric_bundle_system.SearchScorerDefaultMetricBundle(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)

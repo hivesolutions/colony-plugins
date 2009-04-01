@@ -101,20 +101,20 @@ class SearchScorerDefaultFunctionBundle:
 
     search_scorer_default_function_bundle_plugin = None
     """ The search scorer default function bundle plugin """
-    
+
     functions_map = None
 
     def __init__(self, search_scorer_default_function_bundle_plugin):
         """
         Constructor of the class.
-        
+
         @type search_scorer_default_formula_bundle_plugin: SearchScorerDefaultFormulaBundlePlugin
         @param search_scorer_default_formula_bundle_plugin: The search scorer default formula bundle plugin.
         """
 
         # initializes the functions dictionary
         self.functions_map = {}
-        
+
         # retrieves the function bundle plugin
         self.search_scorer_default_function_bundle_plugin = search_scorer_default_function_bundle_plugin
 
@@ -128,28 +128,28 @@ class SearchScorerDefaultFunctionBundle:
 
         # creates a new TermFrequencyFunction instance, to insert in the default functions map
         term_frequency_scorer_function = TermFrequencyFunction(search_scorer_function_repository_plugin)
-        self.functions_map[TERM_FREQUENCY_SCORER_FUNCTION_IDENTIFIER] = term_frequency_scorer_function 
+        self.functions_map[TERM_FREQUENCY_SCORER_FUNCTION_IDENTIFIER] = term_frequency_scorer_function
 
         # creates a new WordFrequencyFunction instance, to insert in the default functions map
         word_frequency_scorer_function = WordFrequencyFunction(search_scorer_function_repository_plugin)
-        self.functions_map[WORD_FREQUENCY_SCORER_FUNCTION_IDENTIFIER] = word_frequency_scorer_function 
+        self.functions_map[WORD_FREQUENCY_SCORER_FUNCTION_IDENTIFIER] = word_frequency_scorer_function
 
         # creates a new DocumentLocationFunction instance, to insert in the default functions map
         document_location_scorer_function = DocumentLocationFunction(search_scorer_function_repository_plugin)
-        self.functions_map[DOCUMENT_LOCATION_SCORER_FUNCTION_IDENTIFIER] = document_location_scorer_function 
+        self.functions_map[DOCUMENT_LOCATION_SCORER_FUNCTION_IDENTIFIER] = document_location_scorer_function
 
         # creates a new WordDistance instance, to insert in the default functions map
         word_distance_scorer_function = WordDistanceFunction(search_scorer_function_repository_plugin)
-        self.functions_map[WORD_DISTANCE_SCORER_FUNCTION_IDENTIFIER] = word_distance_scorer_function 
+        self.functions_map[WORD_DISTANCE_SCORER_FUNCTION_IDENTIFIER] = word_distance_scorer_function
 
         # creates a new FrequencyLocationDistanceFunction instance, to insert in the default functions map
         frequency_location_distance_scorer_function = FrequencyLocationDistanceFunction(search_scorer_function_repository_plugin)
-        self.functions_map[FREQUENCY_LOCATION_DISTANCE_FUNCTION_IDENTIFIER] = frequency_location_distance_scorer_function 
+        self.functions_map[FREQUENCY_LOCATION_DISTANCE_FUNCTION_IDENTIFIER] = frequency_location_distance_scorer_function
 
     def get_functions_map(self):
         """
         Retrieves a map with the available functions map
-        
+
         @rtype: Dictionary
         @return: The map of functions provided by the bundle.
         """
@@ -159,7 +159,7 @@ class SearchScorerDefaultFunctionBundle:
 class DefaultBundleFunction:
     """
     The base class for function classes in the bundle.
-    """ 
+    """
 
     required_metrics_identifiers = []
     """ The list of metrics required by the function computation """
@@ -176,7 +176,7 @@ class DefaultBundleFunction:
     def __init__(self, search_scorer_function_repository_plugin):
         """
         Constructor for search scorer function objects.
-        
+
         @type search_scorer_function_repository_plugin: SearchScorerFunctionRepositoryPlugin
         @param search_scorer_function_repository_plugin: The function repository plugin used to obtain other functions.
         """
@@ -189,7 +189,7 @@ class DefaultBundleFunction:
     def get_required_metrics_identifiers(self):
         """
         Retrieves the list of required metrics for the function computation.
-        
+
         @rtype: List
         @return: the list of metrics identifiers required for the function computation.
         """
@@ -199,7 +199,7 @@ class DefaultBundleFunction:
     def get_required_functions_identifiers(self):
         """
         Retrieves the list of identifiers of the required sub-functions for the function computation.
-        
+
         @rtype: List
         @return: the list of identifiers for the sub-functions required for the function computation.
         """
@@ -210,13 +210,13 @@ class DefaultBundleFunction:
         """
         The normalization function to assure that the results from each scoring function is comparable and combinable.
         The function range is narrowed to 0..1, where 1 is the score of the best result.
-        
+
         @type computed_values: List
         @param computed_values: The list of computed scores for a set of search results.
         @type properties: Dictionary
         @param properties: The properties to configure the scoring function behavior.
         @rtype: List
-        @return: The list of normalized scores for the given search results. 
+        @return: The list of normalized scores for the given search results.
         """
 
         # smaller is better
@@ -279,14 +279,14 @@ class WordFrequencyFunction(DefaultBundleFunction):
     def __init__(self, search_scorer_function_repository_plugin):
         """
         Constructor of the class.
-        
+
         @type search_scorer_function_repository_plugin: SearchScorerDefaultFormulaBundlePlugin
         @param search_scorer_function_repository_plugin: The search scorer default formula bundle plugin.
         """
 
         # call the parent class constructor
         DefaultBundleFunction.__init__(self, search_scorer_function_repository_plugin)
-        
+
         # initialize the required metrics list for the function object
         self.required_metrics_identifiers = [WORD_DOCUMENT_FREQUENCY_SCORER_METRIC_IDENTIFIER]
 
@@ -305,7 +305,7 @@ class WordFrequencyFunction(DefaultBundleFunction):
                 word_metrics = word_information_map[METRICS_VALUE]
                 word_document_frequency = word_metrics[WORD_DOCUMENT_FREQUENCY_SCORER_METRIC_IDENTIFIER]
                 average_word_frequency = ((average_word_frequency * word_count) + word_document_frequency) / (word_count + 1)
-                word_count += 1  
+                word_count += 1
 
             # store the computed average frequency as the computed value for the current search result
             computed_values.append(average_word_frequency)
@@ -323,14 +323,14 @@ class DocumentLocationFunction(DefaultBundleFunction):
     def __init__(self, search_scorer_function_repository_plugin):
         """
         Constructor of the class.
-        
+
         @type search_scorer_function_repository_plugin: SearchScorerDefaultFormulaBundlePlugin
         @param search_scorer_function_repository_plugin: The search scorer default formula bundle plugin.
         """
 
         # call the parent class constructor
         DefaultBundleFunction.__init__(self, search_scorer_function_repository_plugin)
-        
+
         # set the specific sort order for the current function: a lower average location means a better result.
         self.sort_order = ASCENDING_SORT_ORDER
 
@@ -367,7 +367,7 @@ class WordDistanceFunction(DefaultBundleFunction):
     def __init__(self, search_scorer_function_repository_plugin):
         """
         Constructor of the class.
-        
+
         @type search_scorer_function_repository_plugin: SearchScorerDefaultFormulaBundlePlugin
         @param search_scorer_function_repository_plugin: The search scorer default formula bundle plugin.
         """
@@ -397,7 +397,7 @@ class WordDistanceFunction(DefaultBundleFunction):
             pivot_word_hits = pivot_word_information_map[HITS_VALUE]
 
             # get the remaining words to compare with the pivot
-            other_search_result_hits_items = search_result_hits_items[1:] 
+            other_search_result_hits_items = search_result_hits_items[1:]
 
             # for each hit of the pivot word, compare against all the other query word hits
             for pivot_hit_information_map in pivot_word_hits:
@@ -420,7 +420,7 @@ class WordDistanceFunction(DefaultBundleFunction):
                         # get the hit position
                         hit_position = hit_information_map[POSITION_VALUE]
 
-                        # compute the distance from the pivot hit to the current hit 
+                        # compute the distance from the pivot hit to the current hit
                         distance = abs(pivot_hit_position - hit_position)
 
                         # if the current distance is the minimum distance or the first comparison
@@ -454,7 +454,7 @@ class FrequencyLocationDistanceFunction(DefaultBundleFunction):
     def __init__(self, search_scorer_function_repository_plugin):
         """
         Constructor of the class.
-        
+
         @type search_scorer_function_repository_plugin: SearchScorerDefaultFormulaBundlePlugin
         @param search_scorer_function_repository_plugin: The search scorer default formula bundle plugin.
         """
@@ -518,7 +518,7 @@ class FrequencyLocationDistanceFunction(DefaultBundleFunction):
 
         # computes the score using each required function
         for function_identifier, function in required_functions.items():
-            required_computed_values[function_identifier] = function.compute(search_results, properties) 
+            required_computed_values[function_identifier] = function.compute(search_results, properties)
 
         # compute the function score for all the search results
         for search_result_index in range(len(search_results)):
@@ -532,8 +532,8 @@ class FrequencyLocationDistanceFunction(DefaultBundleFunction):
                 # adds-in the weight for the function
                 weighted_value = value * function_parameters[function_identifier]
 
-                # adds the weighted value for the function 
-                total_weighted_value += weighted_value 
+                # adds the weighted value for the function
+                total_weighted_value += weighted_value
 
             computed_values.append(total_weighted_value)
 

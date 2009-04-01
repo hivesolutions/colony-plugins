@@ -62,7 +62,7 @@ class SearchProviderText:
     def __init__(self, search_provider_text_plugin):
         """
         Constructor of the class.
-        
+
         @type search_provider_text_plugin: SearchProviderTextPlugin
         @param search_provider_text_plugin: The search provider text plugin.
         """
@@ -84,7 +84,7 @@ class SearchProviderText:
         if FILE_EXTENSIONS_VALUE in properties:
            file_extensions = properties[FILE_EXTENSIONS_VALUE]
         else:
-            file_extensions = DEFAULT_FILE_EXTENSIONS 
+            file_extensions = DEFAULT_FILE_EXTENSIONS
 
         # retrieves the file extension
         file_extension = file_path.split(".")[-1]

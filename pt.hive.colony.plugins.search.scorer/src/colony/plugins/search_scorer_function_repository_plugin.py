@@ -69,7 +69,7 @@ class SearchScorerFunctionRepositoryPlugin(colony.plugins.plugin_system.Plugin):
         self.search_scorer_function_repository = search_scorer.function_repository.search_scorer_function_repository_system.SearchScorerFunctionRepository(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)

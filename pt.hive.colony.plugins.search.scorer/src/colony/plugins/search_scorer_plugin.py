@@ -73,7 +73,7 @@ class SearchScorerPlugin(colony.plugins.plugin_system.Plugin):
         self.search_scorer = search_scorer.scorer.search_scorer_system.SearchScorer(self)
 
     def end_load_plugin(self):
-        colony.plugins.plugin_system.Plugin.end_load_plugin(self)    
+        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)

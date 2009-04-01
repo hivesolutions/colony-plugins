@@ -64,7 +64,7 @@ WORD_DOCUMENT_LEVEL = "word_document_level"
 """ The word document scorer metric level """
 
 HIT_LEVEL = "hit_level"
-""" The hit scorer metric level """ 
+""" The hit scorer metric level """
 
 DOCUMENT_ID_VALUE = "document_id"
 """ The key that retrieves the document id from the search result map"""
@@ -85,14 +85,14 @@ class SearchScorerDefaultMetricBundle:
 
     search_scorer_default_metric_bundle_plugin = None
     """ The search scorer default metric bundle plugin """
-    
+
     metrics_map = None
     """ The map of metrics provided by the bundle. """
 
     def __init__(self, search_scorer_default_metric_bundle_plugin):
         """
         Constructor of the class.
-        
+
         @type search_scorer_default_metric_bundle_plugin: SearchScorerDefaultMetricBundlePlugin
         @param search_scorer_default_metric_bundle_plugin: The search scorer default metric bundle plugin.
         """
@@ -113,7 +113,7 @@ class SearchScorerDefaultMetricBundle:
         self.metrics_map[WORD_DOCUMENT_FREQUENCY_SCORER_METRIC_IDENTIFIER] = word_document_frequency_scorer_metric
 
         document_hits_scorer_metric = DocumentHitsScorerMetric()
-        self.metrics_map[DOCUMENT_HITS_SCORER_METRIC_IDENTIFIER] = document_hits_scorer_metric 
+        self.metrics_map[DOCUMENT_HITS_SCORER_METRIC_IDENTIFIER] = document_hits_scorer_metric
 
         hit_distance_to_top_metric = HitDistanceToTopScorerMetric()
         self.metrics_map[HIT_DISTANCE_TO_TOP_SCORER_METRIC_IDENTIFIER] = hit_distance_to_top_metric
@@ -121,7 +121,7 @@ class SearchScorerDefaultMetricBundle:
     def get_metrics_map(self):
         """
         Retrieves a map with the available metrics map
-        
+
         @rtype: Dictionary
         @return: The map of metrics provided by the bundle.
         """
@@ -137,22 +137,22 @@ class DefaultBundleMetric:
     """ The identifier for the metric """
 
     level = "none"
-    """ The index level for which the metric is computed """ 
+    """ The index level for which the metric is computed """
 
     def get_identifier(self):
         """
         Returns the identifier for the current scorer metric.
-        
+
         @rtype: String
         @return: Returns the scorer metric identifier.
         """
-        
+
         return self.identifier
-    
+
     def get_level(self):
         """
         Returns the index level at which to store the current metric.
-        
+
         @rtype: String
         @return: Returns the index level for the metric.
         """
@@ -163,7 +163,7 @@ class DefaultBundleMetric:
         """
         The main entry point for the metric object. Method that implements the metric computation for a set of search results.
         This method is reserved for query time execution.
-        
+
         @type search_results: List
         @param search_results: The list of search results to score using the metric.
         @type search_index: SearchIndex
@@ -171,7 +171,7 @@ class DefaultBundleMetric:
         @type properties: Dictionary
         @param properties: The properties to configure the scoring metric behavior.
         @rtype: List
-        @return: A list of metric values, one for each search result.    
+        @return: A list of metric values, one for each search result.
         """
 
         pass
@@ -180,7 +180,7 @@ class DefaultBundleMetric:
         """
         The main entry point for the metric object. Method that implements the metric computation for a search index.
         This method is required for pre-calculated metrics to allow index time computation.
-        
+
         @type search_index: SearchIndex
         @param search_index: The index to analyze obtained.
         @type properties: Dictionary
@@ -196,7 +196,7 @@ class TermFrequencyScorerMetric(DefaultBundleMetric):
     def __init__(self):
         """
         Constructor of the class.
-        
+
         @type search_scorer_metric_repository_plugin: SearchScorerDefaultMetricBundlePlugin
         @param search_scorer_metric_repository_plugin: The search scorer default metric bundle plugin.
         """
@@ -215,7 +215,7 @@ class TermFrequencyScorerMetric(DefaultBundleMetric):
         if TERM_FREQUENCY_SCORER_METRIC_IDENTIFIER in search_index.metrics and search_index.metrics[TERM_FREQUENCY_SCORER_METRIC_IDENTIFIER]:
             # retrieves the inverted index map
             inverted_index_map = search_index.inverted_index_map
-    
+
             # gather the relevant metrics for the search results from the index
             for search_result in search_results:
                 # get the document hits in the search result, to retrieve all the hit words
@@ -235,7 +235,7 @@ class TermFrequencyScorerMetric(DefaultBundleMetric):
         return metric_values
 
     def compute_for_index(self, search_index, properties):
-        # the metric_values 
+        # the metric_values
         metric_values = {}
 
         # retrieves the inverted index map from the index
@@ -267,7 +267,7 @@ class DocumentHitsScorerMetric(DefaultBundleMetric):
         """
         Constructor of the class.
         """
-        
+
         # sets the identifier for the scorer metric
         self.identifier = DOCUMENT_HITS_SCORER_METRIC_IDENTIFIER
 
@@ -282,29 +282,29 @@ class DocumentHitsScorerMetric(DefaultBundleMetric):
         if DOCUMENT_HITS_SCORER_METRIC_IDENTIFIER in search_index.metrics and search_index.metrics[DOCUMENT_HITS_SCORER_METRIC_IDENTIFIER]:
             # retrieves the forward index map
             forward_index_map = search_index.forward_index_map
-    
+
             # gather the relevant metrics for the search results from the index
             for search_result in search_results:
                 # get the document id
                 document_id = search_result[DOCUMENT_ID_VALUE]
-                
+
                 # retrieve the document metrics
                 document_metrics = search_result[METRICS_VALUE]
-                
+
                 # retrieve the document hits metric
                 document_hits_scorer_metric = document_metrics[DOCUMENT_HITS_SCORER_METRIC_IDENTIFIER]
-                
+
                 # add the metric value to the return list
                 metric_values[document_id] = document_hits_scorer_metric
         else:
             # compute the metric
             metric_values = self.compute_for_index(search_index, properties)
 
-        return metric_values 
+        return metric_values
 
 
-    def compute_for_index(self, search_index, properties):        
-        # the metric_values 
+    def compute_for_index(self, search_index, properties):
+        # the metric_values
         metric_values = {}
 
         # retrieves the forward index map from the index
@@ -326,7 +326,7 @@ class DocumentHitsScorerMetric(DefaultBundleMetric):
 
             # set the hit count for the current document
             if document_id not in metric_values:
-                metric_values[document_id] = {} 
+                metric_values[document_id] = {}
             metric_values[document_id] = document_hit_count
 
         # returns a map with the count for each word id
@@ -341,7 +341,7 @@ class WordDocumentFrequencyScorerMetric(DefaultBundleMetric):
         """
         Constructor of the class.
         """
-        
+
         # sets the identifier for the scorer metric
         self.identifier = WORD_DOCUMENT_FREQUENCY_SCORER_METRIC_IDENTIFIER
 
@@ -353,10 +353,10 @@ class WordDocumentFrequencyScorerMetric(DefaultBundleMetric):
         metric_values = {}
 
         # checks if the metric has been computed for the specified index
-        if WORD_DOCUMENT_FREQUENCY_SCORER_METRIC_IDENTIFIER in search_index.metrics and search_index.metrics[WORD_DOCUMENT_FREQUENCY_SCORER_METRIC_IDENTIFIER]:             
+        if WORD_DOCUMENT_FREQUENCY_SCORER_METRIC_IDENTIFIER in search_index.metrics and search_index.metrics[WORD_DOCUMENT_FREQUENCY_SCORER_METRIC_IDENTIFIER]:
             # retrieves the forward index map
             forward_index_map = search_index.forward_index_map
-    
+
             # gathers the relevant metrics for the search results from the index
             for search_result in search_results:
                 document_id = search_result[DOCUMENT_ID_VALUE]
@@ -364,7 +364,7 @@ class WordDocumentFrequencyScorerMetric(DefaultBundleMetric):
                 for word_id, word_information_map in document_hits.items():
                     word_metrics = forward_index_map[document_id][HITS_VALUE][word_id][METRICS_VALUE]
                     term_frequency = word_metrics[WORD_DOCUMENT_FREQUENCY_SCORER_METRIC_IDENTIFIER]
-    
+
                     if document_id not in metric_values:
                         metric_values[document_id] = {}
                     metric_values[document_id][word_id] = term_frequency
@@ -377,14 +377,14 @@ class WordDocumentFrequencyScorerMetric(DefaultBundleMetric):
                 document_id = search_result[DOCUMENT_ID_VALUE]
                 document_id_list.append(document_id)
 
-            # computes the metric only for the relevant search results     
+            # computes the metric only for the relevant search results
             metric_values = self.compute_for_document_ids(search_index, document_id_list, properties)
 
         return metric_values
 
     def compute_for_index(self, search_index, properties):
-            
-        # the metric_values 
+
+        # the metric_values
         metric_values = {}
 
         # retrieves the inverted index map from the index
@@ -397,23 +397,23 @@ class WordDocumentFrequencyScorerMetric(DefaultBundleMetric):
 
             # for each document in which the word appears
             for document_id, word_document_information_map in word_hits.items():
-                
+
                 word_document_hits = word_document_information_map[HITS_VALUE]
-                
+
                 # count the word's hits, in each document where it appears
                 count = len(word_document_hits)
 
                 # increment the count for the word, with the count from all the documents
                 if document_id not in metric_values:
-                    metric_values[document_id] = {} 
+                    metric_values[document_id] = {}
                 metric_values[document_id][word_id] = count
 
         # returns a map with the count for each word id
         return metric_values
 
     def compute_for_document_ids(self, search_index, document_id_list, properties):
-            
-        # the metric_values 
+
+        # the metric_values
         metric_values = {}
 
         # retrieves the inverted index map from the index
@@ -425,19 +425,19 @@ class WordDocumentFrequencyScorerMetric(DefaultBundleMetric):
             word_hits = word_information_map[HITS_VALUE]
 
             # for each document in which the word appears
-            
+
             for document_id in document_id_list:
                 if document_id in word_hits:
                     word_document_information_map = word_hits[document_id]
-                
+
                     word_document_hits = word_document_information_map[HITS_VALUE]
-                    
+
                     # count the word's hits, in each document where it appears
                     count = len(word_document_hits)
-    
+
                     # increment the count for the word, with the count from all the documents
                     if document_id not in metric_values:
-                        metric_values[document_id] = {} 
+                        metric_values[document_id] = {}
                     metric_values[document_id][word_id] = count
 
         # returns a map with the count for each word id
@@ -452,7 +452,7 @@ class HitDistanceToTopScorerMetric(DefaultBundleMetric):
         """
         Constructor of the class.
         """
-        
+
         # sets the identifier for the scorer metric
         self.identifier = HIT_DISTANCE_TO_TOP_SCORER_METRIC_IDENTIFIER
 
@@ -464,10 +464,10 @@ class HitDistanceToTopScorerMetric(DefaultBundleMetric):
         metric_values = {}
 
         # check if the metric has been computed for the specified index
-        if WORD_DOCUMENT_FREQUENCY_SCORER_METRIC_IDENTIFIER in search_index.metrics and search_index.metrics[WORD_DOCUMENT_FREQUENCY_SCORER_METRIC_IDENTIFIER]:             
+        if WORD_DOCUMENT_FREQUENCY_SCORER_METRIC_IDENTIFIER in search_index.metrics and search_index.metrics[WORD_DOCUMENT_FREQUENCY_SCORER_METRIC_IDENTIFIER]:
             # retrieves the forward index map
             forward_index_map = search_index.forward_index_map
-    
+
             # gather the relevant metrics for the search results from the index
             for search_result in search_results:
                 document_id = search_result[DOCUMENT_ID_VALUE]
@@ -485,7 +485,7 @@ class HitDistanceToTopScorerMetric(DefaultBundleMetric):
         return metric_values
 
     def compute_for_index(self, search_index, properties):
-        # the metric_values 
+        # the metric_values
         metric_values = {}
 
         # retrieves the inverted index map from the index

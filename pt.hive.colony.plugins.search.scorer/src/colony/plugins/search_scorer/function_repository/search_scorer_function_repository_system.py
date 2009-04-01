@@ -46,14 +46,14 @@ class SearchScorerFunctionRepository:
 
     search_scorer_function_repository_plugin = None
     """ The search scorer function repository plugin """
-    
+
     functions_map = {}
-    """ The map of functions instances currently injected in the repository """ 
-    
+    """ The map of functions instances currently injected in the repository """
+
     def __init__(self, search_scorer_function_repository_plugin):
         """
         Constructor of the class.
-        
+
         @type search_scorer_function_repository_plugin: SearchScorerFunctionRepositoryPlugin
         @param search_scorer_function_repository_plugin: The search scorer function repository plugin.
         """
@@ -65,14 +65,14 @@ class SearchScorerFunctionRepository:
     def add_search_scorer_functions_map(self, scorer_functions_map):
         """
         Adds a set of functions to the repository.
-        
+
         @type scorer_functions_map: Dictionary
         @param scorer_functions_map: A dictionary with the functions to be inserted into the repository.
         """
-        
-        # adds each function to the repository function map 
+
+        # adds each function to the repository function map
         for function_identifier, function in scorer_functions_map.items():
-            
+
             # checks for duplicates insertion
             if function_identifier in self.functions_map:
                 raise search_scorer_function_repository_exceptions.SearchScorerFunctionRepositoryException(function_identifier)
@@ -82,11 +82,11 @@ class SearchScorerFunctionRepository:
     def remove_search_scorer_functions_map(self, scorer_functions_map):
         """
         Adds a set of functions from the repository.
-        
+
         @type scorer_functions_map: Dictionary
         @param scorer_functions_map: A dictionary with the functions to be deleted from the repository.
         """
-        
+
         # removes all the functions made available by the plugin
         # (since no duplicates are allowed, the plugin is assumed to be the single provider of the function)
         for function_identifier, function in scorer_functions_map.items():
@@ -95,17 +95,17 @@ class SearchScorerFunctionRepository:
     def get_function_identifiers(self):
         """
         Retrieves the list of function identifiers registered in the repository.
-        
+
         @rtype: List
         @return: The list of function identifiers in the repository.
         """
-        
+
         return self.functions_map.keys()
 
     def get_function(self, scorer_function_identifier):
         """
         Retrieves the function instance for the provided function identifier
-        
+
         @type scorer_function_identifier: String
         @param scorer_function_identifier: The identifier for the intended function.
         @rtype: SearchScorerFunction

@@ -52,7 +52,7 @@ class SearchRemoteService:
     def __init__(self, search_remote_service_plugin):
         """
         Constructor of the class.
-        
+
         @type search_remote_service_plugin: SearchRemoteServicePlugin
         @param search_remote_service_plugin: The search remote service plugin.
         """

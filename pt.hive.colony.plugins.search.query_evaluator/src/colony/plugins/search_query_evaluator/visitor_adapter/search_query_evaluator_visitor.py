@@ -50,7 +50,7 @@ WORDS_VALUE = "words"
 def _visit(ast_node_class):
     """
     Decorator for the visit of an ast node.
-    
+
     @type ast_node_class: String
     @param ast_node_class: The target class for the visit.
     @rtype: function
@@ -60,7 +60,7 @@ def _visit(ast_node_class):
     def decorator(func, *args, **kwargs):
         """
         The decorator function for the visit decorator.
-        
+
         @type func: function
         @param func: The function to be decorated.
         @type args: pointer
@@ -81,7 +81,7 @@ def _visit(ast_node_class):
 def dispatch_visit():
     """
     Decorator for the dispatch visit of an ast node.
-    
+
     @rtype: function
     @return: The created decorator.
     """
@@ -89,7 +89,7 @@ def dispatch_visit():
     def create_decorator_interceptor(func):
         """
         Creates a decorator interceptor, that intercepts the normal function call.
-        
+
         @type func: function
         @param func: The callback function.
         """
@@ -97,7 +97,7 @@ def dispatch_visit():
         def decorator_interceptor(*args, **kwargs):
             """
             The interceptor function for the dispatch visit decorator.
-            
+
             @type args: pointer
             @param args: The function arguments list.
             @type kwargs: pointer pointer
@@ -147,7 +147,7 @@ def dispatch_visit():
     def decorator(func, *args, **kwargs):
         """
         The decorator function for the dispatch visit decorator.
-        
+
         @type func: function
         @param func: The function to be decorated.
         @type args: pointer
@@ -162,7 +162,7 @@ def dispatch_visit():
         decorator_interceptor_function = create_decorator_interceptor(func)
 
         # returns the interceptor to be used
-        return decorator_interceptor_function 
+        return decorator_interceptor_function
 
     # returns the created decorator
     return decorator
@@ -368,7 +368,7 @@ class IndexSearchVisitor:
         self.context_stack.append(biggest_operand)
 
     @_visit(search_query_interpreter_ast.MultipleTermNode)
-    def visit_multiple_term_node(self, node):        
+    def visit_multiple_term_node(self, node):
         second_operand = self.context_stack.pop()
         first_operand = self.context_stack.pop()
 
@@ -385,7 +385,7 @@ class IndexSearchVisitor:
             if document_id in biggest_operand:
                 for word_id, word_information_map in biggest_operand[document_id][HITS_VALUE].items():
                     smallest_operand[document_id][HITS_VALUE][word_id] = word_information_map
-            else:               
+            else:
                document_id_removal_list.append(document_id)
 
         for document_id_removal_list_item in document_id_removal_list:
@@ -404,19 +404,19 @@ class IndexSearchVisitor:
             # get the hits for the current word from the index
             index_word_hits = word_information_map[HITS_VALUE]
             # create a copy of the hits map for the current word
-            word_hits = copy.deepcopy(index_word_hits) 
-    
+            word_hits = copy.deepcopy(index_word_hits)
+
             # the word hits map contains the information for each document containing the current word
-            # for each document containing the word 
+            # for each document containing the word
             for document_id, document_information_map in word_hits.items():
                 # retrieves the word document hits
                 word_document_hits = document_information_map[HITS_VALUE]
-    
+
                 # stores the the hits under the current term value
                 document_hits = {}
                 document_hits[term_value] = {}
                 document_hits[term_value][HITS_VALUE] = word_document_hits
-    
+
                 # stores the document hits in the document information maps, under the key HITS_VALUE
                 document_information_map[HITS_VALUE] = document_hits
         else:
@@ -427,7 +427,7 @@ class IndexSearchVisitor:
     @_visit(search_query_interpreter_ast.QuotedNode)
     def visit_quoted_node(self, node):
         term_value_list = node.term_value_list
-        term_value_list_length = len(term_value_list) 
+        term_value_list_length = len(term_value_list)
 
         # accumulator for the common documents for the quoted text
         current_document_intersection = None
@@ -443,14 +443,14 @@ class IndexSearchVisitor:
             if word_information_map:
                 if not current_document_intersection:
                     index_word_hits = word_information_map[HITS_VALUE]
-                    current_document_intersection = copy.deepcopy(index_word_hits) 
+                    current_document_intersection = copy.deepcopy(index_word_hits)
                 else:
                     new_map = {}
-    
+
                     for document_id in word_information_map[HITS_VALUE]:
                         if document_id in current_document_intersection:
                             new_map[document_id] = None
-    
+
                     current_document_intersection = new_map
             # in case the word is not found, break the loop with an empty document intersection
             else:
@@ -488,9 +488,9 @@ class IndexSearchVisitor:
                 previous_sortable_hit_item = sortable_hit_items[index - 1]
 
                 # this hit item is adjacent to its previous item:
-                # if its the first item in the quote value list 
+                # if its the first item in the quote value list
                 # or if its position is equal to the previous position plus 1
-                is_adjacent = term_value_list_index == 0 or sortable_hit_items[index].position == previous_sortable_hit_item.position + 1 
+                is_adjacent = term_value_list_index == 0 or sortable_hit_items[index].position == previous_sortable_hit_item.position + 1
 
                 if sortable_hit_items[index].word == term_value_list[term_value_list_index] and is_adjacent:
                     # we have a hit, increment the query index
@@ -524,11 +524,11 @@ class SortableHitItem:
     def __init__(self, word, word_hit_item):
         self.word = word
         self.word_hit_item = word_hit_item
-        self.position = self.word_hit_item["position"] 
- 
+        self.position = self.word_hit_item["position"]
+
     def __cmp__(self, other):
         # retrieves the other position
         other_position = other.position
 
         # compares both positions
-        return self.position - other_position    
+        return self.position - other_position

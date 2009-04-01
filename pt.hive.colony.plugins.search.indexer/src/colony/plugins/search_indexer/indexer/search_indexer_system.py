@@ -79,7 +79,7 @@ class SearchIndexer:
     def __init__(self, search_indexer_plugin):
         """
         Constructor of the class.
-        
+
         @type search_indexer_plugin: SearchIndexerPlugin
         @param search_indexer_plugin: The search indexer plugin.
         """
@@ -89,7 +89,7 @@ class SearchIndexer:
     def create_index(self, token_list, properties):
         """
         Abstract factory method for index products.
-        
+
         @type token_list: List
         @param token_list: The list of tokens for the index creation.
         @type properties: Dictionary
@@ -108,7 +108,7 @@ class SearchIndexer:
 
         # retrieves the first search scorer metric repository from the search indexer plugin's repository list
         search_scorer_metric_repository_plugins = self.search_indexer_plugin.search_scorer_metric_repository_plugins
-        search_scorer_metric_repository_plugin = search_scorer_metric_repository_plugins[0] 
+        search_scorer_metric_repository_plugin = search_scorer_metric_repository_plugins[0]
 
         # gets the identifiers of all the metrics available in the repository
         available_metrics_identifiers = search_scorer_metric_repository_plugin.get_metric_identifiers()
@@ -166,7 +166,7 @@ class SearchIndexer:
         """
         Creates the forward index map, using the tokens list
         and the given properties.
-        
+
         @type token_list: List
         @param token_list: The list of tokens.
         @type properties: Dictionary
@@ -223,7 +223,7 @@ class SearchIndexer:
         """
         Creates the inverted index map, using the forward index map
         and the given properties.
-        
+
         @type forward_index_map: Dictionary
         @param forward_index_map: The forward index map.
         @type properties: Dictionary
@@ -233,7 +233,7 @@ class SearchIndexer:
         """
 
         inverted_index_map = {}
- 
+
         for document_id, document_information_map in forward_index_map.items():
             word_map = document_information_map[HITS_VALUE]
 
@@ -241,7 +241,7 @@ class SearchIndexer:
                 if not word_id in inverted_index_map:
                     inverted_index_map[word_id] = {}
                 word_information_map = inverted_index_map[word_id]
-                
+
                 if not HITS_VALUE in word_information_map:
                     word_information_map[HITS_VALUE] = {}
                 word_hits = word_information_map[HITS_VALUE]
@@ -253,7 +253,7 @@ class SearchIndexer:
     def compute_metrics(self, scorer_metrics, search_index, properties):
         """
         Computes the specified metrics for the specified search index.
-        
+
         @type scorer_metrics: List
         @param scorer_metrics: The list of SearchScorerMetrics to apply to the index.
         @type search_index: SearchIndex
@@ -272,9 +272,9 @@ class SearchIndexer:
         # - word level: metrics that apply to a word across all documents
         # - word in document level: metrics that apply to a word in a specific document
         # - hit level: metrics that apply to a specific hit of a specific word in a specific document
-        metrics_values_level_map = {DOCUMENT_LEVEL_VALUE : {}, 
-                                    WORD_LEVEL_VALUE : {}, 
-                                    WORD_DOCUMENT_LEVEL_VALUE : {}, 
+        metrics_values_level_map = {DOCUMENT_LEVEL_VALUE : {},
+                                    WORD_LEVEL_VALUE : {},
+                                    WORD_DOCUMENT_LEVEL_VALUE : {},
                                     HIT_LEVEL_VALUE : {}}
 
         # computes each metric for the whole index
@@ -297,14 +297,14 @@ class SearchIndexer:
 
         # retrieves the document level metrics
         document_level_metrics_values_map = metrics_values_level_map[DOCUMENT_LEVEL_VALUE]
-        
+
         # for each document level metric
         for scorer_metric_identifier, metric_values in document_level_metrics_values_map.items():
             # for each document with a computed metric
             for document_id, value in metric_values.items():
                 # store the metric value in the index
                 document_information_map = search_index.forward_index_map[document_id]
-                
+
                 # if this is the first document level metric for the current document
                 if not METRICS_VALUE in document_information_map:
                     document_information_map[METRICS_VALUE] = {}
@@ -324,7 +324,7 @@ class SearchIndexer:
             for word_id, value in metric_values.items():
                 # store the metric value in the index
                 word_information_map = search_index.inverted_index_map[word_id]
-                
+
                 # if this is the first word level metric for the current word
                 if not METRICS_VALUE in word_information_map:
                     word_information_map[METRICS_VALUE] = {}
@@ -348,14 +348,14 @@ class SearchIndexer:
                     word_information_map = search_index.inverted_index_map[word_id]
                     word_hits = word_information_map[HITS_VALUE]
                     word_document_information_map = word_hits[document_id]
-                    
+
                     # if this is the first word document level metric for the current word document combination
                     if not METRICS_VALUE in word_document_information_map:
                         word_document_information_map[METRICS_VALUE] = {}
                     word_document_metrics = word_document_information_map[METRICS_VALUE]
 
                     word_document_metrics[scorer_metric_identifier] = value
-            
+
             # update the index level metadata to show the current metric is available
             search_index.metrics[scorer_metric_identifier] = True
 
@@ -371,15 +371,15 @@ class SearchIndexer:
 
                     word_information_map = search_index.inverted_index_map[word_id]
                     word_hits = word_information_map[HITS_VALUE]
-                    
+
                     word_document_information_map = word_hits[document_id]
                     word_document_hits = word_document_information_map[HITS_VALUE]
-                    
+
                     # for each hit for the word in the document
                     for hit_index, value in hit_map.items():
                         # store the metric value in the index
                         hit_information_map = word_document_hits[hit_index]
-                                                
+
                         # if this is the first hit level metric for the current hit
                         if not METRICS_VALUE in hit_information_map:
                             hit_information_map[METRICS_VALUE] = {}
@@ -407,7 +407,7 @@ class SearchIndex:
 
     metrics = {}
     """ The map of available metrics by identifier """
-    
+
     statistics = {}
     """ The map with index statistics """
 

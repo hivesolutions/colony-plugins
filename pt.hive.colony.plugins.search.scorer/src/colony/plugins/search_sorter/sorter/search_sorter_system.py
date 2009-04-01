@@ -63,7 +63,7 @@ class SearchSorter:
     def __init__(self, search_sorter_plugin):
         """
         Constructor of the class.
-        
+
         @type search_sorter_plugin: SearchSorterPlugin
         @param search_sorter_plugin: The search sorter plugin.
         """
@@ -73,7 +73,7 @@ class SearchSorter:
     def sort_results(self, search_results, properties):
         """
         Sorts result sets according to previously computed scores.
-        
+
         @type search_results: List
         @param search_results: The list of search results
         @rtype: List
@@ -115,7 +115,7 @@ class SortableSearchResult:
     def __init__(self, search_result, score):
         self.search_result = search_result
         self.score = score
- 
+
     def __cmp__(self, other):
         # retrieves the other position
         other_score = other.score

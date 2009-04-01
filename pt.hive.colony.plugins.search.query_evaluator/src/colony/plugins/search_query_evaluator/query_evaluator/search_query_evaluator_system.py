@@ -47,14 +47,14 @@ class SearchQueryEvaluator:
 
     search_query_evaluator_plugin = None
     """ The search query evaluator plugin """
-    
+
     search_query_evaluator_adapter_plugins_map = {}
     """ The search query evaluator adapter plugins map """
 
     def __init__(self, search_query_evaluator_plugin):
         """
         Constructor of the class.
-        
+
         @type search_query_evaluator_plugin: SearchQueryEvaluatorPlugin
         @param search_query_evaluator_plugin: The search query evaluator plugin.
         """
@@ -68,7 +68,7 @@ class SearchQueryEvaluator:
     def evaluate_query(self, search_index, query, properties):
         """
         The method to start the search query evaluation using a specified query evaluator type.
-        
+
         @type search_index: SearchIndex
         @param search_index: The search index to be used.
         @type query: String
@@ -92,8 +92,8 @@ class SearchQueryEvaluator:
 
     def get_search_query_evaluator_adapter_types(self):
         """
-        Returns a list with the types of all the loaded search query evaluator adapter plugins. 
-        
+        Returns a list with the types of all the loaded search query evaluator adapter plugins.
+
         @rtype: list
         @return: List of search query evaluator adapter types.
         """
@@ -106,11 +106,11 @@ class SearchQueryEvaluator:
     def get_search_query_evaluator_adapter_plugin(self, search_query_evaluator_adapter_type):
         """
         Retrieves the loaded search query evaluator adapter plugin for the specified adapter type.
-        
+
         @type search_query_evaluator_adapter_type: String
         @param search_query_evaluator_adapter_type: The search query evaluator adapter type of the plugin to retrieve.
         @rtype: SearchQueryEvaluatorAdapterPlugin
-        @return: The loaded plugin for the adapter type 
+        @return: The loaded plugin for the adapter type
         """
 
         # checks for invalid plugin type
@@ -122,12 +122,12 @@ class SearchQueryEvaluator:
     def add_search_query_evaluator_adapter_plugin(self, plugin):
         """
         Inserts the search query evaluator adapter plugin in the Search Query Evaluator's internal structures.
-        
+
         @type plugin: SearchQueryEvaluatorAdapterPlugin
         @param plugin: The search query evaluator adapter plugin to remove.
         """
 
-        # retrieve the search query evaluator adapter plugin type 
+        # retrieve the search query evaluator adapter plugin type
         plugin_type = plugin.get_type()
 
         # update the search query evaluator adapter plugins map with the new plugin
@@ -136,12 +136,12 @@ class SearchQueryEvaluator:
     def remove_search_query_evaluator_adapter_plugin(self, plugin):
         """
         Removes the search query evaluator adapter plugin, with the type of the provided plugin, from the Search Query Evaluator's internal structures.
-        
+
         @type plugin: SearchQueryEvaluatorAdapterPlugin
         @param plugin: The search index_persistence adapter plugin to remove.
-        """ 
+        """
 
-        # retrieves the search index persistence adapter plugin type 
+        # retrieves the search index persistence adapter plugin type
         plugin_type = plugin.get_type()
 
         # checks for invalid plugin type
