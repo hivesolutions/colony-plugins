@@ -123,4 +123,3 @@ class SortableSearchResult:
         # compares both scores
         comparison_result = cmp(self.score, other_score)
         return comparison_result
-
