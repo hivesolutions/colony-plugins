@@ -418,6 +418,9 @@ class HttpClientServiceTask:
                         if "Content-Length" in request.headers_map:
                             # retrieves the message size
                             message_size = int(request.headers_map["Content-Length"])
+                        elif "Content-length" in request.headers_map:
+                            # retrieves the message size
+                            message_size = int(request.headers_map["Content-length"])
                         # in case there is no content length defined in the headers map
                         else:
                             # returns the request
