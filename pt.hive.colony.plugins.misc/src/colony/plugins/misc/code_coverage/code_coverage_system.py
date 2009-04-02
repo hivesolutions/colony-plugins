@@ -57,4 +57,3 @@ class CodeCoverage:
 
     def get_code_coverage(self):
         return figleaf.get_info()
-

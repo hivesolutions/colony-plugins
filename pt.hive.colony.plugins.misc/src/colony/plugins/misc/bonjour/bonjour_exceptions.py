@@ -95,4 +95,3 @@ class BonjourBrowsingFailed(BonjourException):
         """
 
         return "Bonjour browsing failed: %s" % self.message
-
