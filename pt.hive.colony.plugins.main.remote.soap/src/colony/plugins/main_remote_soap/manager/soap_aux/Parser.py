@@ -119,14 +119,13 @@ class SOAPParser(xml.sax.handler.ContentHandler):
         self._rules    = rules
 
     def startElementNS(self, name, qname, attrs):
-        # Workaround two sax bugs
+        # workaround two sax bugs
         if name[0] == None and name[1][0] == ' ':
             name = (None, name[1][1:])
         else:
             name = tuple(name)
 
-        # First some checking of the layout of the message
-
+        # first some checking of the layout of the message
         if self._next == "E":
             if name[1] != 'Envelope':
                 raise Error, "expected `SOAP-ENV:Envelope', gto `%s:%s'" % \
@@ -268,8 +267,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
                     if i >= 0:
                         kind = (self._prem[kind[:i]], kind[i + 1:])
                     else:
-# XXX What to do here? (None, kind) is just going to fail in convertType
-                        #print "Kind with no NS:", kind
+                        # XXX What to do here? (None, kind) is just going to fail in convertType
                         kind = (None, kind)
 
             null = 0

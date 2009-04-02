@@ -39,15 +39,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import exceptions
 
-################################################################################
-# Exceptions
-################################################################################
 class Error(exceptions.Exception):
+
     def __init__(self, msg):
         self.msg = msg
+
     def __str__(self):
         return "<Error : %s>" % self.msg
     __repr__ = __str__
+
     def __call__(self):
         return (msg,)
 
@@ -58,13 +58,20 @@ class UnknownTypeError(Error):
     pass
 
 class HTTPError(Error):
-    # indicates an HTTP protocol error
+    """
+    Indicates an HTTP protocol error.
+    """
+
     def __init__(self, code, msg):
         self.code = code
         self.msg  = msg
+
     def __str__(self):
         return "<HTTPError %s %s>" % (self.code, self.msg)
-    __repr__ = __str__
+
+    def __repr__(self):
+        return "<HTTPError %s %s>" % (self.code, self.msg)
+
     def __call___(self):
         return (self.code, self.msg, )
 

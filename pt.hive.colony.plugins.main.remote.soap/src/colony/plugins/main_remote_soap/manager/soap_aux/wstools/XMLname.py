@@ -42,10 +42,8 @@ from re import *
 def _NCNameChar(x):
     return x.isalpha() or x.isdigit() or x=="." or x=='-' or x=="_"
 
-
 def _NCNameStartChar(x):
     return x.isalpha() or x=="_"
-
 
 def _toUnicodeHex(x):
     hexval = hex(ord(x[0]))[2:]
@@ -63,10 +61,8 @@ def _toUnicodeHex(x):
 
     return "_x"+ hexval + "_"
 
-
 def _fromUnicodeHex(x):
-    return eval( r'u"\u'+x[2:-1]+'"' )
-
+    return eval(r'u"\u'+x[2:-1]+'"')
 
 def toXMLname(string):
     """Convert string to a XML name."""
@@ -96,7 +92,6 @@ def toXMLname(string):
     if prefix:
         return "%s:%s" % (prefix, u''.join(X))
     return u''.join(X)
-
 
 def fromXMLname(string):
     """

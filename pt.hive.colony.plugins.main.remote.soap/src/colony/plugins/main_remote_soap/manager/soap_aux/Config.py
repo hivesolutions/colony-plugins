@@ -47,15 +47,14 @@ from NS import NS
 ################################################################################
 
 class SOAPConfig:
-    __readonly = ('SSLserver', 'SSLclient', 'GSIserver', 'GSIclient')
+    __readonly = ("SSLserver", "SSLclient", "GSIserver", "GSIclient")
 
     def __init__(self, config = None, **kw):
         d = self.__dict__
 
         if config:
             if not isinstance(config, SOAPConfig):
-                raise AttributeError, \
-                    "initializer must be SOAPConfig instance"
+                raise AttributeError, "initializer must be SOAPConfig instance"
 
             s = config.__dict__
 
