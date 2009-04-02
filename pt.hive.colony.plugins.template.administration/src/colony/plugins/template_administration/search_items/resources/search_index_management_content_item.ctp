@@ -123,4 +123,3 @@ __license__ = "GNU General Public License (GPL), Version 3"
         <span id="searchIndexListRefresh" class="button smallIconButton" style="width: 70px;"><img id="buttonIcon" src="pics/cancel.png"/><span id="buttonTextImage">Cancel</span></span>
     </div>
 </div>
-
