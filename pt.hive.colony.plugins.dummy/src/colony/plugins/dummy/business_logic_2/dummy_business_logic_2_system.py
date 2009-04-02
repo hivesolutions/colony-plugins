@@ -75,6 +75,7 @@ class DummyBusinessLogic2:
         # creates the dummy session master
         dummy_session_master = business_session_manager_plugin.load_session_manager_master_entity_manager("dummy_session_2", "sqlite")
 
+        # starts the session manager pool
         dummy_session_master.start_session_manager_pool("dummy_session_2")
 
         # retrieves the entity manager
@@ -86,37 +87,11 @@ class DummyBusinessLogic2:
         # loads the entity manager
         entity_manager.load_entity_manager()
 
+        # starts the session manager
         dummy_session_master.start_session()
 
+        # creates a session proxy
         dummy_session_master.create_session_proxy()
 
+        # registers the session proxy
         dummy_session_master.register_session_proxy()
-
-        print dummy_session_master
-
-        # retrieves the entity manager
-        #entity_manager = dummy_session.entity_manager
-
-        # sets the connection parameters for the entity manager
-        #entity_manager.set_connection_parameters({"file_path" : user_home_path + "/test_database.db", "autocommit" : False})
-
-        # loads the entity manager
-        #entity_manager.load_entity_manager()
-
-        # start the session in the dummy session
-        #dummy_session.start_session()
-
-        # calls the print dummy method in the dummy business logic entity
-        #dummy_session.DummyBusinessLogic.print_dummy()
-
-        # calls the save entity method in the dummy business logic entity
-        #dummy_session.DummyBusinessLogic.save_entity()
-
-        # calls the remove entity method in the dummy business logic entity
-        #dummy_session.DummyBusinessLogic.remove_entity()
-
-        # calls the save remove entity method in the dummy business logic entity
-        #dummy_session.DummyBusinessLogic.save_remove_entity()
-
-        # calls the save complex entity method in the dummy business logic entity
-        #dummy_session.DummyBusinessLogic.save_complex_entity()
