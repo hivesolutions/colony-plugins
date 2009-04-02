@@ -63,7 +63,7 @@ class SOAPConfig:
                 if k[0] != '_':
                     d[k] = v
         else:
-            # Setting debug also sets returnFaultInfo, 
+            # Setting debug also sets returnFaultInfo,
             # dumpHeadersIn, dumpHeadersOut, dumpSOAPIn, and dumpSOAPOut
             self.debug = 0
             self.dumpFaultInfo = 1
@@ -119,7 +119,7 @@ class SOAPConfig:
             except:
                 d['GSIserver'] = 0
                 d['GSIclient'] = 0
-                
+
 
             # Server SSL support if M2Crypto.SSL available
             try:
@@ -195,7 +195,6 @@ class SOAPConfig:
                 d['dumpHeadersOut']     = \
                 d['dumpSOAPIn']         = \
                 d['dumpSOAPOut']        = value
-            
         else:
             d[name] = value
 

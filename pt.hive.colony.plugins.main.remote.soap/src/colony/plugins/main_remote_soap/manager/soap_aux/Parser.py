@@ -292,7 +292,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
                         null = 1
 
                 # check for nil=1, but watch out for string values
-                try:                
+                try:
                     null = int(null)
                 except ValueError, e:
                     if not e[0].startswith("invalid literal for int()"):

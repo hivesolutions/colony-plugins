@@ -147,11 +147,11 @@ class SOAPBuildesr:
 
             if hasattr(self.config, "argsOrdering") and self.config.argsOrdering.has_key(self.method):
                 for k in self.config.argsOrdering.get(self.method):
-                    self.dump(self.kw.get(k), k, typed = typed, ns_map = ns_map)                
+                    self.dump(self.kw.get(k), k, typed = typed, ns_map = ns_map)
             else:
                 for (k, v) in self.kw.items():
                     self.dump(v, k, typed = typed, ns_map = ns_map)
-                
+
         except RecursionError:
             if self.use_refs == 0:
                 # restart
@@ -353,7 +353,7 @@ class SOAPBuildesr:
         else:
             obj = repr(obj)
 
-	# Note: python 'float' is actually a SOAP 'double'.
+    # Note: python 'float' is actually a SOAP 'double'.
         self.out.append(self.dumper(None, "double", obj, tag, typed, ns_map,
                                     self.genroot(ns_map)))
 
@@ -407,12 +407,12 @@ class SOAPBuildesr:
         except:
             # preserve type if present
             if getattr(obj,"_typed",None) and getattr(obj,"_type",None):
-		if getattr(obj, "_complexType", None):
+                if getattr(obj, "_complexType", None):
                     sample = typedArrayType(typed=obj._type,
                                             complexType = obj._complexType)
                     sample._typename = obj._type
                     if not getattr(obj,"_ns",None): obj._ns = NS.URN
-		else:
+                else:
                     sample = typedArrayType(typed=obj._type)
             else:
                 sample = structType()
@@ -449,7 +449,7 @@ class SOAPBuildesr:
                     typename = "SOAPStruct"
 
                 t = ns + typename
-                                
+
             elif isinstance(sample, anyType):
                 ns = sample._validNamespaceURI(self.config.typesNamespaceURI,
                                                self.config.strictNamespaces)
@@ -459,22 +459,20 @@ class SOAPBuildesr:
                 else:
                     t = 'ur-type'
             else:
-		typename = type(sample).__name__
+                typename = type(sample).__name__
 
                 # For Python 2.2+
                 if type(sample) == StringType: typename = 'string'
 
                 # HACK: unicode is a SOAP string
                 if type(sample) == UnicodeType: typename = 'string'
-                
-		# HACK: python 'float' is actually a SOAP 'double'.
-		if typename=="float": typename="double"  
-                t = self.genns(ns_map, self.config.typesNamespaceURI)[0] + \
-		    typename
 
+        # HACK: python 'float' is actually a SOAP 'double'.
+        if typename=="float":
+            typename = "double"
+            t = self.genns(ns_map, self.config.typesNamespaceURI)[0] + typename
         else:
-            t = self.genns(ns_map, self.config.typesNamespaceURI)[0] + \
-                "ur-type"
+            t = self.genns(ns_map, self.config.typesNamespaceURI)[0] + "ur-type"
 
         try: a = obj._marshalAttrs(ns_map, self)
         except: a = ''
@@ -493,7 +491,7 @@ class SOAPBuildesr:
             except: elemsname = "item"
         else:
             elemsname = tag
-            
+
         for i in data:
             self.dump(i, elemsname, not same_type, ns_map)
 
@@ -513,7 +511,7 @@ class SOAPBuildesr:
         try: a = obj._marshalAttrs(ns_map, self)
         except: a = ''
 
-        self.out.append('<%s%s%s%s>\n' % 
+        self.out.append('<%s%s%s%s>\n' %
                         (tag, id, a, self.genroot(ns_map)))
 
         for (k, v) in obj.items():

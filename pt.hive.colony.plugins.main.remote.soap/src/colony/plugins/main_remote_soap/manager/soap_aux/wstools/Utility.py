@@ -61,17 +61,17 @@ except:
     def SplitQName(qname):
         """
         SplitQName(qname) -> (string, string)
-        
-        Split Qualified Name into a tuple of len 2, consisting 
-        of the prefix and the local name.  
-    
+
+        Split Qualified Name into a tuple of len 2, consisting
+        of the prefix and the local name.
+
         (prefix, localName)
-        
+
         Special Cases:
             xmlns -- (localName, 'xmlns')
             None -- (None, localName)
         """
-        
+
         l = qname.split(':')
         if len(l) == 1:
             l.insert(0, None)
@@ -249,7 +249,7 @@ class DOM:
     SOAP_ACTOR_NEXT_1_1 = "http://schemas.xmlsoap.org/soap/actor/next"
     SOAP_ACTOR_NEXT_1_2 = "http://www.w3.org/2001/06/soap-envelope/actor/next"
     SOAP_ACTOR_NEXT_ALL = (SOAP_ACTOR_NEXT_1_1, SOAP_ACTOR_NEXT_1_2)
-    
+
     def SOAPUriToVersion(self, uri):
         """
         Return the SOAP version related to an envelope uri
@@ -308,10 +308,10 @@ class DOM:
     # Namespace stuff related to XML Schema.
 
     NS_XSD_99 = 'http://www.w3.org/1999/XMLSchema'
-    NS_XSI_99 = 'http://www.w3.org/1999/XMLSchema-instance'    
+    NS_XSI_99 = 'http://www.w3.org/1999/XMLSchema-instance'
 
     NS_XSD_00 = 'http://www.w3.org/2000/10/XMLSchema'
-    NS_XSI_00 = 'http://www.w3.org/2000/10/XMLSchema-instance'    
+    NS_XSI_00 = 'http://www.w3.org/2000/10/XMLSchema-instance'
 
     NS_XSD_01 = 'http://www.w3.org/2001/XMLSchema'
     NS_XSI_01 = 'http://www.w3.org/2001/XMLSchema-instance'
@@ -370,12 +370,12 @@ class DOM:
     NS_SOAP_HTTP_1_1 = 'http://schemas.xmlsoap.org/soap/http'
     NS_SOAP_HTTP_ALL = (NS_SOAP_HTTP_1_1,)
     NS_SOAP_HTTP = NS_SOAP_HTTP_1_1
-    
+
 
     _wsdl_uri_mapping = {
         NS_WSDL_1_1 : '1.1',
     }
-    
+
     def WSDLUriToVersion(self, uri):
         """Return the WSDL version related to a WSDL namespace uri."""
         value = self._wsdl_uri_mapping.get(uri)
@@ -488,7 +488,7 @@ class DOM:
             for child in element.childNodes:
                 if child.nodeType == ELEMENT_NODE:
                     self.getMappingById(None, depth, child, mapping, level)
-        return mapping        
+        return mapping
 
     def getElements(self, node, name, nsuri=None):
         """Return a sequence of the child elements of the given node that
@@ -534,7 +534,7 @@ class DOM:
         return ''
 
     def getAttrs(self, node):
-        """Return a Collection of all attributes 
+        """Return a Collection of all attributes
         """
         attrs = {}
         for k,v in node._attrs.items():
@@ -670,7 +670,7 @@ class DOM:
         else:
             file = urlopen(url)
 
-        try:     
+        try:
             result = self.loadDocument(file)
         except Exception, exception:
             file.close()
@@ -683,7 +683,7 @@ DOM = DOM()
 
 
 class MessageInterface:
-    '''Higher Level Interface, delegates to DOM singleton, must 
+    '''Higher Level Interface, delegates to DOM singleton, must
     be subclassed and implement all methods that throw NotImplementedError.
     '''
     def __init__(self, sw):
@@ -738,7 +738,7 @@ class MessageInterface:
         raise NotImplementedError, ''
 
     def setNamespaceAttribute(self, namespaceURI, prefix):
-        '''set namespace attribute xmlns:prefix=namespaceURI 
+        '''set namespace attribute xmlns:prefix=namespaceURI
         '''
         raise NotImplementedError, ''
 
@@ -777,7 +777,7 @@ class ElementProxy(Base, MessageInterface):
     namespaceURI = None
 
     def __init__(self, sw, message=None):
-        '''Initialize. 
+        '''Initialize.
            sw -- SoapWriter
         '''
         self._indx = 0
@@ -810,7 +810,7 @@ class ElementProxy(Base, MessageInterface):
 
     #############################################
     # Methods for checking/setting the
-    # classes (namespaceURI,name) node. 
+    # classes (namespaceURI,name) node.
     #############################################
     def checkNode(self, namespaceURI=None, localName=None):
         '''
@@ -839,7 +839,7 @@ class ElementProxy(Base, MessageInterface):
         else:
             #self.node = self._dom.create(self.node, self.name, self.namespaceURI, default=None)
             self.createDocument(self.namespaceURI, localName=self.name, doctype=None)
-        
+
         self.checkNode()
 
     #############################################
@@ -856,7 +856,7 @@ class ElementProxy(Base, MessageInterface):
 
     def _getUniquePrefix(self):
         '''I guess we need to resolve all potential prefixes
-        because when the current node is attached it copies the 
+        because when the current node is attached it copies the
         namespaces into the parent node.
         '''
         while True:
@@ -905,7 +905,7 @@ class ElementProxy(Base, MessageInterface):
         '''
         Keyword arguments:
             child -- DOM Element Node to insert
-            refChild -- DOM Element Node 
+            refChild -- DOM Element Node
         '''
         self.node.insertBefore(newChild, refChild)
 
@@ -930,7 +930,7 @@ class ElementProxy(Base, MessageInterface):
         try:
             prefix = self._getPrefix(node=self.node, nsuri=namespaceURI)
         except NamespaceError, ex:
-            prefix = self._getUniquePrefix() 
+            prefix = self._getUniquePrefix()
             self.setNamespaceAttribute(prefix, namespaceURI)
         return prefix
 
@@ -978,8 +978,8 @@ class ElementProxy(Base, MessageInterface):
 
         #set up reserved namespace attributes
         for prefix,nsuri in self.reserved_ns.items():
-            self._setAttributeNS(namespaceURI=self._xmlns_nsuri, 
-                qualifiedName='%s:%s' %(self._xmlns_prefix,prefix), 
+            self._setAttributeNS(namespaceURI=self._xmlns_nsuri,
+                qualifiedName='%s:%s' %(self._xmlns_prefix,prefix),
                 value=nsuri)
 
     #############################################
@@ -1014,7 +1014,7 @@ class ElementProxy(Base, MessageInterface):
                 attributes in no namespace.
             localName -- local name of new attribute
             value -- value of new attribute
-        ''' 
+        '''
         prefix = None
         if namespaceURI:
             try:
@@ -1078,7 +1078,7 @@ class ElementProxy(Base, MessageInterface):
             except:
                 declare = True
                 prefix = prefix or self._getUniquePrefix()
-            if prefix: 
+            if prefix:
                 qualifiedName = '%s:%s' %(prefix, localName)
         node = self.createElementNS(namespaceURI, qualifiedName)
         if declare:
@@ -1089,7 +1089,7 @@ class ElementProxy(Base, MessageInterface):
     def createInsertBefore(self, namespaceURI, localName, refChild):
         qualifiedName = localName
         prefix = self.getPrefix(namespaceURI)
-        if prefix: 
+        if prefix:
             qualifiedName = '%s:%s' %(prefix, localName)
         node = self.createElementNS(namespaceURI, qualifiedName)
         self._insertBefore(newChild=node._getNode(), refChild=refChild._getNode())
@@ -1118,7 +1118,7 @@ class ElementProxy(Base, MessageInterface):
         return None
 
     def getValue(self):
-        return self._dom.getElementText(self.node, preserve_ws=True)    
+        return self._dom.getElementText(self.node, preserve_ws=True)
 
     #############################################
     #Methods for text nodes
@@ -1316,95 +1316,94 @@ if 1:
 # ('http://www.w3.org/2000/xmlns/', 'xmlns')   <xml.dom.minidom.Attr instance at 0x8414b3c>
 #
 # xml.dom.minidom.Attr.nodeName = xmlns:xsd
-# xml.dom.minidom.Attr.value =  = http://www.w3.org/2001/XMLSchema 
+# xml.dom.minidom.Attr.value =  = http://www.w3.org/2001/XMLSchema
 
 if 1:
     def _clone_node(node, deep, newOwnerDocument):
-	"""
-	Clone a node and give it the new owner document.
-	Called by Node.cloneNode and Document.importNode
-	"""
-	if node.ownerDocument.isSameNode(newOwnerDocument):
-	    operation = xml.dom.UserDataHandler.NODE_CLONED
-	else:
-	    operation = xml.dom.UserDataHandler.NODE_IMPORTED
-	if node.nodeType == xml.dom.minidom.Node.ELEMENT_NODE:
-	    clone = newOwnerDocument.createElementNS(node.namespaceURI,
-						     node.nodeName)
-	    for attr in node.attributes.values():
-		clone.setAttributeNS(attr.namespaceURI, attr.nodeName, attr.value)
+        """
+        Clone a node and give it the new owner document.
+        Called by Node.cloneNode and Document.importNode
+        """
+        if node.ownerDocument.isSameNode(newOwnerDocument):
+            operation = xml.dom.UserDataHandler.NODE_CLONED
+        else:
+            operation = xml.dom.UserDataHandler.NODE_IMPORTED
+        if node.nodeType == xml.dom.minidom.Node.ELEMENT_NODE:
+            clone = newOwnerDocument.createElementNS(node.namespaceURI,
+                                 node.nodeName)
+            for attr in node.attributes.values():
+                clone.setAttributeNS(attr.namespaceURI, attr.nodeName, attr.value)
 
-		prefix, tag = xml.dom.minidom._nssplit(attr.nodeName)
-		if prefix == 'xmlns':
-		    a = clone.getAttributeNodeNS(attr.namespaceURI, tag)
-		elif prefix:
-		    a = clone.getAttributeNodeNS(attr.namespaceURI, tag)
-		else:
-		    a = clone.getAttributeNodeNS(attr.namespaceURI, attr.nodeName)
-		a.specified = attr.specified
+                prefix, tag = xml.dom.minidom._nssplit(attr.nodeName)
+                if prefix == 'xmlns':
+                    a = clone.getAttributeNodeNS(attr.namespaceURI, tag)
+                elif prefix:
+                    a = clone.getAttributeNodeNS(attr.namespaceURI, tag)
+                else:
+                    a = clone.getAttributeNodeNS(attr.namespaceURI, attr.nodeName)
+                a.specified = attr.specified
 
-	    if deep:
-		for child in node.childNodes:
-		    c = xml.dom.minidom._clone_node(child, deep, newOwnerDocument)
-		    clone.appendChild(c)
-	elif node.nodeType == xml.dom.minidom.Node.DOCUMENT_FRAGMENT_NODE:
-	    clone = newOwnerDocument.createDocumentFragment()
-	    if deep:
-		for child in node.childNodes:
-		    c = xml.dom.minidom._clone_node(child, deep, newOwnerDocument)
-		    clone.appendChild(c)
+            if deep:
+                for child in node.childNodes:
+                    c = xml.dom.minidom._clone_node(child, deep, newOwnerDocument)
+                    clone.appendChild(c)
+        elif node.nodeType == xml.dom.minidom.Node.DOCUMENT_FRAGMENT_NODE:
+            clone = newOwnerDocument.createDocumentFragment()
+            if deep:
+                for child in node.childNodes:
+                    c = xml.dom.minidom._clone_node(child, deep, newOwnerDocument)
+                    clone.appendChild(c)
 
-	elif node.nodeType == xml.dom.minidom.Node.TEXT_NODE:
-	    clone = newOwnerDocument.createTextNode(node.data)
-	elif node.nodeType == xml.dom.minidom.Node.CDATA_SECTION_NODE:
-	    clone = newOwnerDocument.createCDATASection(node.data)
-	elif node.nodeType == xml.dom.minidom.Node.PROCESSING_INSTRUCTION_NODE:
-	    clone = newOwnerDocument.createProcessingInstruction(node.target,
-								 node.data)
-	elif node.nodeType == xml.dom.minidom.Node.COMMENT_NODE:
-	    clone = newOwnerDocument.createComment(node.data)
-	elif node.nodeType == xml.dom.minidom.Node.ATTRIBUTE_NODE:
-	    clone = newOwnerDocument.createAttributeNS(node.namespaceURI,
-						       node.nodeName)
-	    clone.specified = True
-	    clone.value = node.value
-	elif node.nodeType == xml.dom.minidom.Node.DOCUMENT_TYPE_NODE:
-	    assert node.ownerDocument is not newOwnerDocument
-	    operation = xml.dom.UserDataHandler.NODE_IMPORTED
-	    clone = newOwnerDocument.implementation.createDocumentType(
-		node.name, node.publicId, node.systemId)
-	    clone.ownerDocument = newOwnerDocument
-	    if deep:
-		clone.entities._seq = []
-		clone.notations._seq = []
-		for n in node.notations._seq:
-		    notation = xml.dom.minidom.Notation(n.nodeName, n.publicId, n.systemId)
-		    notation.ownerDocument = newOwnerDocument
-		    clone.notations._seq.append(notation)
-		    if hasattr(n, '_call_user_data_handler'):
-			n._call_user_data_handler(operation, n, notation)
-		for e in node.entities._seq:
-		    entity = xml.dom.minidom.Entity(e.nodeName, e.publicId, e.systemId,
-				    e.notationName)
-		    entity.actualEncoding = e.actualEncoding
-		    entity.encoding = e.encoding
-		    entity.version = e.version
-		    entity.ownerDocument = newOwnerDocument
-		    clone.entities._seq.append(entity)
-		    if hasattr(e, '_call_user_data_handler'):
-			e._call_user_data_handler(operation, n, entity)
-	else:
-	    # Note the cloning of Document and DocumentType nodes is
-	    # implemenetation specific.  minidom handles those cases
-	    # directly in the cloneNode() methods.
-	    raise xml.dom.NotSupportedErr("Cannot clone node %s" % repr(node))
+        elif node.nodeType == xml.dom.minidom.Node.TEXT_NODE:
+            clone = newOwnerDocument.createTextNode(node.data)
+        elif node.nodeType == xml.dom.minidom.Node.CDATA_SECTION_NODE:
+            clone = newOwnerDocument.createCDATASection(node.data)
+        elif node.nodeType == xml.dom.minidom.Node.PROCESSING_INSTRUCTION_NODE:
+            clone = newOwnerDocument.createProcessingInstruction(node.target,
+                                     node.data)
+        elif node.nodeType == xml.dom.minidom.Node.COMMENT_NODE:
+            clone = newOwnerDocument.createComment(node.data)
+        elif node.nodeType == xml.dom.minidom.Node.ATTRIBUTE_NODE:
+            clone = newOwnerDocument.createAttributeNS(node.namespaceURI,
+                                   node.nodeName)
+            clone.specified = True
+            clone.value = node.value
+        elif node.nodeType == xml.dom.minidom.Node.DOCUMENT_TYPE_NODE:
+            assert node.ownerDocument is not newOwnerDocument
+            operation = xml.dom.UserDataHandler.NODE_IMPORTED
+            clone = newOwnerDocument.implementation.createDocumentType(
+            node.name, node.publicId, node.systemId)
+            clone.ownerDocument = newOwnerDocument
+            if deep:
+                clone.entities._seq = []
+                clone.notations._seq = []
+                for n in node.notations._seq:
+                    notation = xml.dom.minidom.Notation(n.nodeName, n.publicId, n.systemId)
+                    notation.ownerDocument = newOwnerDocument
+                    clone.notations._seq.append(notation)
+                    if hasattr(n, '_call_user_data_handler'):
+                        n._call_user_data_handler(operation, n, notation)
+                for e in node.entities._seq:
+                    entity = xml.dom.minidom.Entity(e.nodeName, e.publicId, e.systemId,
+                            e.notationName)
+                    entity.actualEncoding = e.actualEncoding
+                    entity.encoding = e.encoding
+                    entity.version = e.version
+                    entity.ownerDocument = newOwnerDocument
+                    clone.entities._seq.append(entity)
+                    if hasattr(e, '_call_user_data_handler'):
+                        e._call_user_data_handler(operation, n, entity)
+        else:
+            # Note the cloning of Document and DocumentType nodes is
+            # implemenetation specific.  minidom handles those cases
+            # directly in the cloneNode() methods.
+            raise xml.dom.NotSupportedErr("Cannot clone node %s" % repr(node))
 
-	# Check for _call_user_data_handler() since this could conceivably
-	# used with other DOM implementations (one of the FourThought
-	# DOMs, perhaps?).
-	if hasattr(node, '_call_user_data_handler'):
-	    node._call_user_data_handler(operation, node, clone)
-	return clone
+        # Check for _call_user_data_handler() since this could conceivably
+        # used with other DOM implementations (one of the FourThought
+        # DOMs, perhaps?).
+        if hasattr(node, '_call_user_data_handler'):
+            node._call_user_data_handler(operation, node, clone)
+        return clone
 
-    xml.dom.minidom._clone_node = _clone_node
-
+xml.dom.minidom._clone_node = _clone_node

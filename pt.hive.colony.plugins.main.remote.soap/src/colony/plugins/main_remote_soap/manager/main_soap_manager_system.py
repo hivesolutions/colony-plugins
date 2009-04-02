@@ -260,7 +260,7 @@ class MainSoapManager:
     def translate_request(self, data):
         """
         Translates the given soap data data into a python request
-        
+
         @type data: String
         @param data: The soap data to be translated into a python request
         @rtype: Any
@@ -278,7 +278,7 @@ class MainSoapManager:
     def translate_result(self, result, method_name, error):
         """
         Translates the given python result into soap data
-        
+
         @type result: Any
         @param result: The python result to be translated into soap data
         @type method_name: String

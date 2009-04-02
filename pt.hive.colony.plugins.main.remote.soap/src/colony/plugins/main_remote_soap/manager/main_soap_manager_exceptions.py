@@ -61,12 +61,12 @@ class BadServiceRequest(ServiceException):
 class InvalidNumberArguments(BadServiceRequest):
     """
     The invalid number arguments class.
-    """    
+    """
 
     def __init__(self, message):
         """
         Constructor of the class.
-        
+
         @type message: String
         @param message: The message to be printed.
         """
@@ -77,7 +77,7 @@ class InvalidNumberArguments(BadServiceRequest):
     def __str__(self):
         """
         Returns the string representation of the class.
-        
+
         @rtype: String
         @return: The string representation of the class.
         """
@@ -92,7 +92,7 @@ class InvalidMethod(BadServiceRequest):
     def __init__(self, message):
         """
         Constructor of the class.
-        
+
         @type message: String
         @param message: The message to be printed.
         """
@@ -103,7 +103,7 @@ class InvalidMethod(BadServiceRequest):
     def __str__(self):
         """
         Returns the string representation of the class.
-        
+
         @rtype: String
         @return: The string representation of the class.
         """
@@ -118,7 +118,7 @@ class SoapEncodeException(Exception):
     def __init__(self, object):
         """
         Constructor of the class.
-        
+
         @type object: Object
         @param object: The object containing the encoding problems.
         """
@@ -129,7 +129,7 @@ class SoapEncodeException(Exception):
     def __str__(self):
         """
         Returns the string representation of the class.
-        
+
         @rtype: String
         @return: The string representation of the class.
         """
@@ -144,7 +144,7 @@ class SoapDecodeException(Exception):
     def __init__(self, message):
         """
         Constructor of the class.
-        
+
         @type message: String
         @param message: The message to be printed.
         """
@@ -155,7 +155,7 @@ class SoapDecodeException(Exception):
     def __str__(self):
         """
         Returns the string representation of the class.
-        
+
         @rtype: String
         @return: The string representation of the class.
         """

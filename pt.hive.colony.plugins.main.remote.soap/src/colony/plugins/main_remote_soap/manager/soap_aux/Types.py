@@ -75,7 +75,7 @@ class anyType:
         else:
             self._ns = self._validURIs[0]
             self._name = name
-            
+
         self._typed = typed
         self._attrs = {}
 
@@ -141,7 +141,7 @@ class anyType:
             value = unicode(value)
 
         self._attrs[attr] = value
-            
+
 
     def _setAttrs(self, attrs):
         if type(attrs) in (ListType, TupleType):
@@ -1420,7 +1420,7 @@ class arrayType(UserList.UserList, compoundType):
 
             map( fun, range(len(self.data)) )
             return retval
- 
+
     def __getitem__(self, item):
         try:
             return self.data[int(item)]
@@ -1580,7 +1580,7 @@ class faultType(structType, Error):
     __str__ = __repr__
 
     def __call__(self):
-        return (self.faultcode, self.faultstring, self.detail)        
+        return (self.faultcode, self.faultstring, self.detail)
 
 class SOAPException(Exception):
     def __init__(self, code="", string="", detail=None):
@@ -1621,7 +1621,7 @@ class MethodFailed(Exception):
 
     def __str__(self):
         return repr(self.value)
-        
+
 def simplify(object, level=0):
     """
     Convert the SOAPpy objects and their contents to simple python types.
@@ -1629,7 +1629,7 @@ def simplify(object, level=0):
     This function recursively converts the passed 'container' object,
     and all public subobjects. (Private subobjects have names that
     start with '_'.)
-    
+
     Conversions:
     - faultType    --> raise python exception
     - arrayType    --> array
@@ -1680,13 +1680,13 @@ def simplify_contents(object, level = 0):
 
     This function recursively converts the sub-objects contained in a
     'container' object to simple python types.
-    
+
     Conversions:
     - faultType    --> raise python exception
     - arrayType    --> array
     - compoundType --> dictionary
     """
-    
+
     if level>10: return object
 
     if isinstance( object, faultType ):
@@ -1694,7 +1694,7 @@ def simplify_contents(object, level = 0):
             if isPublic(k):
                 setattr(object, k, simplify(object[k], level=level+1))
         raise object
-    elif isinstance( object, arrayType ): 
+    elif isinstance( object, arrayType ):
         data = object._aslist()
         for k in range(len(data)):
             object[k] = simplify(data[k], level=level+1)
@@ -1715,5 +1715,5 @@ def simplify_contents(object, level = 0):
     elif type(object)==list:
         for k in range(len(object)):
             object[k] = simplify(object[k])
-    
+
     return object
