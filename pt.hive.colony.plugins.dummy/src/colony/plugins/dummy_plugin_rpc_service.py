@@ -78,7 +78,6 @@ class DummyPluginRpcService(dummy_plugin.DummyPlugin):
 
     def unload_allowed(self, plugin, capability):
         dummy_plugin.DummyPlugin.unload_allowed(self, plugin, capability)
-        print "unloading dummy windows forms label 1 allowed..."
 
     def dependency_injected(self, plugin):
         dummy_plugin.DummyPlugin.dependency_injected(self, plugin)
@@ -100,4 +99,4 @@ class DummyPluginRpcService(dummy_plugin.DummyPlugin):
         return {self.echo : []}
 
     def echo(self, value):
-        return "ola signor: " + value
+        return "echo: " + value
