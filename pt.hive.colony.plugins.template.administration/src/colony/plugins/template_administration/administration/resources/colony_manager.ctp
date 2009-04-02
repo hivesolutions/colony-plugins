@@ -39,21 +39,21 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 ?>
 
-<!DOCTYPE html 
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"> 
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 
 <!-- the head of the html -->
-<head> 
+<head>
     <title><?colony print "Hive Colony Manager" ?></title>
     <?colony self.import_js_library("jquery") ?>
     <?colony self.import_js_library("jquery.ui.all") ?>
     <?colony self.import_js_library("jquery.tablesorter") ?>
     <?colony self.import_js_library("jquery.contextmenu") ?>
     <?colony self.import_js_library("jquery.jgrowl") ?>
-	<script type="text/javascript" src="jquery_plugins/js/colony_base_components.js"></script>
-	<script type="text/javascript" src="jquery_plugins/js/colony_base_logic.js"></script>
+    <script type="text/javascript" src="jquery_plugins/js/colony_base_components.js"></script>
+    <script type="text/javascript" src="jquery_plugins/js/colony_base_logic.js"></script>
     <script type="text/javascript" src="js/colony_manager.js"></script>
 
     <?colony
@@ -65,10 +65,10 @@ js_files = template_administrator_plugin.get_js_files()
 
 # iterates over all the js files
 for js_file in js_files:
-	print "<script type=\"text/javascript\" src=\""
-	print js_file
-	print "\"></script>"
-	?>
+    print "<script type=\"text/javascript\" src=\""
+    print js_file
+    print "\"></script>"
+    ?>
 
     <link rel="stylesheet" href="css/jquery.contextmenu.css" type="text/css">
     <link rel="stylesheet" href="css/jquery.jgrowl.css" type="text/css">
@@ -85,10 +85,10 @@ css_files = template_administrator_plugin.get_css_files()
 
 # iterates over all the css files
 for css_file in css_files:
-	print "<link rel=\"stylesheet\" href=\""
-	print css_file
-	print "\" type=\"text/css\""
-	?>
+    print "<link rel=\"stylesheet\" href=\""
+    print css_file
+    print "\" type=\"text/css\""
+    ?>
 
 </head>
 
@@ -99,13 +99,13 @@ for css_file in css_files:
 <div id="testListBox" style="width:200px;"></div>
 
 <div id="testMultiLevelListBox">
-	<table>
-		<tr>
-			<td><div id="mainList"></div></td>
-			<td><div id="list1"></div></td>
-			<td><div id="list2"></div></td>
-		</tr>
-	</table>
+    <table>
+        <tr>
+            <td><div id="mainList"></div></td>
+            <td><div id="list1"></div></td>
+            <td><div id="list2"></div></td>
+        </tr>
+    </table>
 </div>
 
 <div id="jgrowlNotifier"></div>
@@ -118,36 +118,36 @@ for css_file in css_files:
 </div>
 
 <div id="settingsWindow" class="window" title="Settings">
-	<div class="window-body">
-		<table>
-			<tr>
-				<td>
-					<table class="settingsTableCell">
-						<tr><td><img src="pics/icons/48x48/computer.png"/></td></tr>
-						<tr><td>General</td></tr>
-					</table>
-				</td>
-				<td>
-					<table class="settingsTableCell">
-						<tr><td><img src="pics/icons/48x48/search.png"/></td></tr>
-						<tr><td>Search</td></tr>
-					</table>
-				</td>
-				<td>
-					<table class="settingsTableCell">
-						<tr><td><img src="pics/icons/48x48/mail.png"/></td></tr>
-						<tr><td>Email</td></tr>
-					</table>
-				</td>
-				<td>
-				<table class="settingsTableCell">
-						<tr><td><img src="pics/icons/48x48/personal_security.png"/></td></tr>
-						<tr><td>Personal Security</td></tr>
-					</table>
-				</td>
-			</tr>
-		</table>
-	</div>
+    <div class="window-body">
+        <table>
+            <tr>
+                <td>
+                    <table class="settingsTableCell">
+                        <tr><td><img src="pics/icons/48x48/computer.png"/></td></tr>
+                        <tr><td>General</td></tr>
+                    </table>
+                </td>
+                <td>
+                    <table class="settingsTableCell">
+                        <tr><td><img src="pics/icons/48x48/search.png"/></td></tr>
+                        <tr><td>Search</td></tr>
+                    </table>
+                </td>
+                <td>
+                    <table class="settingsTableCell">
+                        <tr><td><img src="pics/icons/48x48/mail.png"/></td></tr>
+                        <tr><td>Email</td></tr>
+                    </table>
+                </td>
+                <td>
+                <table class="settingsTableCell">
+                        <tr><td><img src="pics/icons/48x48/personal_security.png"/></td></tr>
+                        <tr><td>Personal Security</td></tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
 </div>
 
 <div id="loginFormContainer">
@@ -224,23 +224,23 @@ menu_items = template_administrator_plugin.get_menu_items()
 
 # iterates over all the menu items
 for menu_item in menu_items:
-	print "<tr>"
-	self.interpret(menu_item)
-	print "</tr>"
-						?>
+    print "<tr>"
+    self.interpret(menu_item)
+    print "</tr>"
+                        ?>
                     </table>
                 </div>
             </td>
             <td class="mainPanelCell2">
                 <div id="mainTabPanel">
                     <ul>
-                    	<li><a href="#homeContentItem"><span>Home <img src='pics/icons/bullet_green.png' style='border:0px;'/></span></a></li>
+                        <li><a href="#homeContentItem"><span>Home <img src='pics/icons/bullet_green.png' style='border:0px;'/></span></a></li>
                     </ul>
                     <div id="homeContentItem">
-                   	home
+                       home
                     </div>
                     <div id="extraContentItems" class="hidable">
-               	        <?colony
+                           <?colony
 # retrieves the template administrator plugin
 template_administrator_plugin = plugin_manager.get_plugin_by_id("pt.hive.colony.plugins.template.administration")
 
@@ -249,9 +249,9 @@ content_items = template_administrator_plugin.get_content_items()
 
 # iterates over all the content items
 for content_item in content_items:
-	self.interpret(content_item)
-					    ?>
-					</div>
+    self.interpret(content_item)
+                        ?>
+                    </div>
                 </div>
             </td>
         </tr>

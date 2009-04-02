@@ -42,85 +42,85 @@ __license__ = "GNU General Public License (GPL), Version 3"
 <div id="searchIndexManagementContentItem">
     <h2 class="mainTitle">Search Index Management</h2>
 
-	<span id="searchIndexListNew"></span>
+    <span id="searchIndexListNew"></span>
     <span id="searchIndexListRefresh" class="button smallIconButton" style="width: 70px;"><img id="buttonIcon" src="pics/arrow_refresh.png"/><span id="buttonTextImage">refresh</span></span>
 </div>
 
 <div id="newSearchIndexWindow" class="window" title="New Search Index">
-	<div class="window-body">
-		<div style="margin-right: 30px">
-			<div class="optionBlock">
-				<div class="optionTitle">
-					<span class="mainTitle" style="text-indent: 4px;">Name:</span>
-				</div>
-				<div>
-					<input type="text" class="box" style="width: 100%;"/>
-				</div>
-			</div>
-			<div class="optionBlock">
-				<div class="optionTitle">
-					<span class="mainTitle" style="text-indent: 4px;">Options:</span>
-				</div>
-				<table>
-					<tr style="vertical-align: top;">
-						<td>
-							<div id="propertiesSelector" class="listBox">
-								<div class="listBoxElement">Type</div>
-								<div class="listBoxElement">Metrics</div>
-								<div class="listBoxElement">File Extensions</div>
-							</div>
-							<div class="listBoxButtons">
-								<span id="searchIndexListRefresh" class="simple-button listBoxIconButton" style="width: 70px"><img id="buttonIcon" src="pics/icons/add.png"/><span id="buttonTextImage">Add</span></span>
-								<span id="searchIndexListRefresh" class="simple-button listBoxIconButton" style="width: 70px;"><img id="buttonIcon" src="pics/icons/delete.png"/><span id="buttonTextImage">Remove</span></span>
-							</div>
-						</td>
-						<td>
-							<div id="propertiesEditor">
-								<div id="newSearchIndexWindowPropertiesType">
-									<div id="propertiesTypeSelector" class="listBox newSearchIndexWindowPropertiesListBox">
-										<div class="listBoxElement">File System</div>
-										<div class="listBoxElement">Database</div>
-									</div>
-								</div>
-								<div id="newSearchIndexWindowPropertiesMetrics">
-									<div id="propertiesTypeSelector" class="listBox newSearchIndexWindowPropertiesListBox">
-										<div class="listBoxElement">Term Frequency</div>
-										<div class="listBoxElement">Document Hits</div>
-										<div class="listBoxElement">Word Document Frequency</div>
-										<div class="listBoxElement">Hit Distance to Top</div>
-									</div>
-								</div>
-								<div id="newSearchIndexWindowPropertiesFileExtensions">
-									<div id="propertiesTypeSelector" class="listBox newSearchIndexWindowPropertiesListBox">
-										<div class="listBoxElement">Text (*.txt)</div>
-										<div class="listBoxElement">Python Source (*.py)</div>
-										<div class="listBoxElement">JavaScript Source (*.js)</div>
-										<div class="listBoxElement">Java Source (*.java)</div>
-										<div class="listBoxElement">XML (*.xml)</div>
-									</div>
-								</div>
-							</div>
-						</td>
-						<td>
-							<div id="propertiesVisualizer">
-								<div id="newSearchIndexWindowPropertiesTypeFileSystem">
-									<span class="mainTitle">File System</span>
-									<p>The File system based profiles...</p>
-								</div>
-								<div id="newSearchIndexWindowPropertiesTypeDatabase">
-									<span class="mainTitle">Database</span>
-									<p>The database based file system...</p>
-								</div>
-							</div>
-						</td>
-					</tr>
-				</table>
-			</div>
-		</div>
-	</div>
-	<div class="window-buttons">
-		<span id="searchIndexListRefresh" class="button smallIconButton" style="width: 70px;"><img id="buttonIcon" src="pics/accept.png"/><span id="buttonTextImage">Confirm</span></span>
-		<span id="searchIndexListRefresh" class="button smallIconButton" style="width: 70px;"><img id="buttonIcon" src="pics/cancel.png"/><span id="buttonTextImage">Cancel</span></span>
-	</div>
+    <div class="window-body">
+        <div style="margin-right: 30px">
+            <div class="optionBlock">
+                <div class="optionTitle">
+                    <span class="mainTitle" style="text-indent: 4px;">Name:</span>
+                </div>
+                <div>
+                    <input type="text" class="box" style="width: 100%;"/>
+                </div>
+            </div>
+            <div class="optionBlock">
+                <div class="optionTitle">
+                    <span class="mainTitle" style="text-indent: 4px;">Options:</span>
+                </div>
+                <table>
+                    <tr style="vertical-align: top;">
+                        <td>
+                            <div id="propertiesSelector" class="listBox">
+                                <div class="listBoxElement">Type</div>
+                                <div class="listBoxElement">Metrics</div>
+                                <div class="listBoxElement">File Extensions</div>
+                            </div>
+                            <div class="listBoxButtons">
+                                <span id="searchIndexListRefresh" class="simple-button listBoxIconButton" style="width: 70px"><img id="buttonIcon" src="pics/icons/add.png"/><span id="buttonTextImage">Add</span></span>
+                                <span id="searchIndexListRefresh" class="simple-button listBoxIconButton" style="width: 70px;"><img id="buttonIcon" src="pics/icons/delete.png"/><span id="buttonTextImage">Remove</span></span>
+                            </div>
+                        </td>
+                        <td>
+                            <div id="propertiesEditor">
+                                <div id="newSearchIndexWindowPropertiesType">
+                                    <div id="propertiesTypeSelector" class="listBox newSearchIndexWindowPropertiesListBox">
+                                        <div class="listBoxElement">File System</div>
+                                        <div class="listBoxElement">Database</div>
+                                    </div>
+                                </div>
+                                <div id="newSearchIndexWindowPropertiesMetrics">
+                                    <div id="propertiesTypeSelector" class="listBox newSearchIndexWindowPropertiesListBox">
+                                        <div class="listBoxElement">Term Frequency</div>
+                                        <div class="listBoxElement">Document Hits</div>
+                                        <div class="listBoxElement">Word Document Frequency</div>
+                                        <div class="listBoxElement">Hit Distance to Top</div>
+                                    </div>
+                                </div>
+                                <div id="newSearchIndexWindowPropertiesFileExtensions">
+                                    <div id="propertiesTypeSelector" class="listBox newSearchIndexWindowPropertiesListBox">
+                                        <div class="listBoxElement">Text (*.txt)</div>
+                                        <div class="listBoxElement">Python Source (*.py)</div>
+                                        <div class="listBoxElement">JavaScript Source (*.js)</div>
+                                        <div class="listBoxElement">Java Source (*.java)</div>
+                                        <div class="listBoxElement">XML (*.xml)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div id="propertiesVisualizer">
+                                <div id="newSearchIndexWindowPropertiesTypeFileSystem">
+                                    <span class="mainTitle">File System</span>
+                                    <p>The File system based profiles...</p>
+                                </div>
+                                <div id="newSearchIndexWindowPropertiesTypeDatabase">
+                                    <span class="mainTitle">Database</span>
+                                    <p>The database based file system...</p>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="window-buttons">
+        <span id="searchIndexListRefresh" class="button smallIconButton" style="width: 70px;"><img id="buttonIcon" src="pics/accept.png"/><span id="buttonTextImage">Confirm</span></span>
+        <span id="searchIndexListRefresh" class="button smallIconButton" style="width: 70px;"><img id="buttonIcon" src="pics/cancel.png"/><span id="buttonTextImage">Cancel</span></span>
+    </div>
 </div>
 

@@ -52,6 +52,6 @@ properties = {"query_evaluator_type" : "query_parser", "search_scorer_function_i
 test_results = search_plugin.search_index_by_identifier("pt.hive.colony.plugins.search.test_index_identifier", search_value, properties)
 
 for test_result in test_results:
-	print test_result["score"]
-	print test_result["document_id"]
+    print test_result["score"]
+    print test_result["document_id"]
 ?>

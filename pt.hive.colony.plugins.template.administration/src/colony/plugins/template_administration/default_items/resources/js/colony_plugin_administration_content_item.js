@@ -24,60 +24,60 @@
 // __license__   = GNU General Public License (GPL), Version 3
 
 function endPluginLoad(responseText, textStatus) {
-	var pluginIdsList = processAnswer(responseText);
+    var pluginIdsList = processAnswer(responseText);
 
-	for (var i = 0; i < pluginIdsList.length; i++) {
-		var pluginId = pluginIdsList[i];
-		if (pluginId != "") {
-			var element = $("#" + escapeDots(pluginId))
-			element.fadeOut("fast", endPluginLoadFadeOut)
-		}
-	}
+    for (var i = 0; i < pluginIdsList.length; i++) {
+        var pluginId = pluginIdsList[i];
+        if (pluginId != "") {
+            var element = $("#" + escapeDots(pluginId))
+            element.fadeOut("fast", endPluginLoadFadeOut)
+        }
+    }
 }
 
 function endPluginUnLoad(responseText, textStatus) {
-	var pluginIdsList = processAnswer(responseText);
+    var pluginIdsList = processAnswer(responseText);
 
-	for (var i = 0; i < pluginIdsList.length; i++) {
-		var pluginId = pluginIdsList[i];
-		if (pluginId != "") {
-			var element = $("#" + escapeDots(pluginId))
-			element.fadeOut("fast", endPluginUnLoadFadeOut);
-		}
-	}
+    for (var i = 0; i < pluginIdsList.length; i++) {
+        var pluginId = pluginIdsList[i];
+        if (pluginId != "") {
+            var element = $("#" + escapeDots(pluginId))
+            element.fadeOut("fast", endPluginUnLoadFadeOut);
+        }
+    }
 }
 
 function endPluginUnLoadFadeOut() {
-	var element = $(this)
-	element.removeClass("loaded");
-	element.addClass("unloaded");
-	element.html("UNLOADED");
-	element.fadeIn("fast");
-	$("#pluginManagement").trigger("update");
+    var element = $(this)
+    element.removeClass("loaded");
+    element.addClass("unloaded");
+    element.html("UNLOADED");
+    element.fadeIn("fast");
+    $("#pluginManagement").trigger("update");
 }
 
 function endPluginLoadFadeOut() {
-	var element = $(this)
-	element.removeClass("unloaded");
-	element.addClass("loaded");
-	element.html("LOADED");
-	element.fadeIn("fast");
-	$("#pluginManagement").trigger("update");
+    var element = $(this)
+    element.removeClass("unloaded");
+    element.addClass("loaded");
+    element.html("LOADED");
+    element.fadeIn("fast");
+    $("#pluginManagement").trigger("update");
 }
 
 function loadPlugin(pluginId) {
-	var value = $("#" + escapeDots(pluginId)).html()
+    var value = $("#" + escapeDots(pluginId)).html()
 
-	if (value == "LOADED") {
-		var type = "unload";
-		var handler = endPluginUnLoad;
-	} else if (value == "UNLOADED") {
-		var type = "load";
-		var handler = endPluginLoad;
-	}
+    if (value == "LOADED") {
+        var type = "unload";
+        var handler = endPluginUnLoad;
+    } else if (value == "UNLOADED") {
+        var type = "load";
+        var handler = endPluginLoad;
+    }
 
-	$.post("actions/plugin_loader.ctp", {
-				"pluginId" : pluginId,
-				"type" : type
-			}, handler);
+    $.post("actions/plugin_loader.ctp", {
+                "pluginId" : pluginId,
+                "type" : type
+            }, handler);
 }

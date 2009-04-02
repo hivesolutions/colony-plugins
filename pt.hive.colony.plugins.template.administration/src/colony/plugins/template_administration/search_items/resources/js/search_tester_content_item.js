@@ -24,11 +24,11 @@
 // __license__   = GNU General Public License (GPL), Version 3
 
 function sendSearchQuery(searchValue) {
-	$.post("actions/search_tester_query_sender.ctp", {
-				"searchValue" : searchValue
-			}, sendSearchQueryHandler);
+    $.post("actions/search_tester_query_sender.ctp", {
+                "searchValue" : searchValue
+            }, sendSearchQueryHandler);
 }
 
 function sendSearchQueryHandler(responseText, textStatus) {
-	
+
 }
