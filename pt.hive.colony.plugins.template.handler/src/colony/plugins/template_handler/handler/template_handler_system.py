@@ -207,7 +207,7 @@ class TemplateHandler:
         """
 
         # opens the requested file
-        file = open(file_path, "rb")
+        file = open(file_path, "r")
 
         # reads the file contents
         file_contents = file.read()
