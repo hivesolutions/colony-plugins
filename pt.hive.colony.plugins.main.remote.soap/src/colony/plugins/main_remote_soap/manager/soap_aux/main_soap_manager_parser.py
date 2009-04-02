@@ -342,8 +342,6 @@ class SOAPParser(xml.sax.handler.ContentHandler):
 
                 break
 
-            #print "No rules, using kind or cur.kind..."
-
             if (kind == None and cur.kind != None) or \
                 (kind == (NS.ENC, 'Array')):
                 kind = cur.kind
@@ -843,11 +841,6 @@ class SOAPParser(xml.sax.handler.ContentHandler):
 
     def convertToBasicTypes(self, d, t, attrs, config=Config):
         dnn = d or ''
-
-        #if Config.debug:
-            #print "convertToBasicTypes:"
-            #print "   requested_type=", t
-            #print "   data=", d
 
         if t[0] in NS.EXSD_L:
             if t[1] == "integer":

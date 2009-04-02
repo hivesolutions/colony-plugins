@@ -101,7 +101,6 @@ class SOAPBuildesr:
         self.noroot     = noroot
 
     def build(self):
-        if Config.debug: print "In build."
         ns_map = {}
 
         # Cache whether typing is on or not
@@ -198,7 +197,6 @@ class SOAPBuildesr:
         return ''.join(self.out)
 
     def gentag(self):
-        if Config.debug: print "In gentag."
         self.tcounter += 1
         return "v%d" % self.tcounter
 
@@ -277,7 +275,6 @@ class SOAPBuildesr:
     # dumpers
 
     def dump(self, obj, tag = None, typed = 1, ns_map = {}):
-        if Config.debug: print "In dump.", "obj=", obj
         ns_map = ns_map.copy()
         self.depth += 1
 
@@ -306,14 +303,14 @@ class SOAPBuildesr:
     def dumper(self, nsURI, obj_type, obj, tag, typed = 1, ns_map = {},
                rootattr = '', id = '',
                xml = '<%(tag)s%(type)s%(id)s%(attrs)s%(root)s>%(data)s</%(tag)s>\n'):
-        if Config.debug: print "In dumper."
 
         if nsURI == None:
             nsURI = self.config.typesNamespaceURI
 
         tag = tag or self.gentag()
 
-        tag = toXMLname(tag) # convert from SOAP 1.2 XML name encoding
+        # converts from sopa 1.2 xml name encoding
+        tag = toXMLname(tag)
 
         a = n = t = ''
         if typed and obj_type:
@@ -336,10 +333,10 @@ class SOAPBuildesr:
             "id": id, "attrs": a}
 
     def dump_float(self, obj, tag, typed = 1, ns_map = {}):
-        if Config.debug: print "In dump_float."
         tag = tag or self.gentag()
 
-        tag = toXMLname(tag) # convert from SOAP 1.2 XML name encoding
+        # converts from soap 1.2 xml name encoding
+        tag = toXMLname(tag)
 
         if Config.strict_range:
             doubleType(obj)
@@ -353,14 +350,14 @@ class SOAPBuildesr:
         else:
             obj = repr(obj)
 
-    # Note: python 'float' is actually a SOAP 'double'.
-        self.out.append(self.dumper(None, "double", obj, tag, typed, ns_map,
-                                    self.genroot(ns_map)))
+        # python float is actually a soap double
+        self.out.append(self.dumper(None, "double", obj, tag, typed, ns_map, self.genroot(ns_map)))
 
     def dump_string(self, obj, tag, typed = 0, ns_map = {}):
-        if Config.debug: print "In dump_string."
         tag = tag or self.gentag()
-        tag = toXMLname(tag) # convert from SOAP 1.2 XML name encoding
+
+        # converts from soap 1.2 xml name encoding
+        tag = toXMLname(tag)
 
         id = self.checkref(obj, tag, ns_map)
         if id == None:
@@ -376,18 +373,15 @@ class SOAPBuildesr:
     dump_unicode = dump_string
 
     def dump_None(self, obj, tag, typed = 0, ns_map = {}):
-        if Config.debug: print "In dump_None."
         tag = tag or self.gentag()
         tag = toXMLname(tag) # convert from SOAP 1.2 XML name encoding
         ns = self.genns(ns_map, self.config.schemaNamespaceURI)[0]
 
-        self.out.append('<%s %snull="1"%s/>\n' %
-                        (tag, ns, self.genroot(ns_map)))
+        self.out.append('<%s %snull="1"%s/>\n' % (tag, ns, self.genroot(ns_map)))
 
     dump_NoneType = dump_None # For Python 2.2+
 
     def dump_list(self, obj, tag, typed = 1, ns_map = {}):
-        if Config.debug: print "In dump_list.",  "obj=", obj
         tag = tag or self.gentag()
         tag = toXMLname(tag) # convert from SOAP 1.2 XML name encoding
 
@@ -500,7 +494,6 @@ class SOAPBuildesr:
     dump_tuple = dump_list
 
     def dump_dictionary(self, obj, tag, typed = 1, ns_map = {}):
-        if Config.debug: print "In dump_dictionary."
         tag = tag or self.gentag()
         tag = toXMLname(tag) # convert from SOAP 1.2 XML name encoding
 
@@ -520,12 +513,11 @@ class SOAPBuildesr:
 
         self.out.append('</%s>\n' % tag)
 
-    dump_dict = dump_dictionary # For Python 2.2+
+    dump_dict = dump_dictionary
 
     def dump_instance(self, obj, tag, typed = 1, ns_map = {}):
-        if Config.debug: print "In dump_instance.", "obj=", obj, "tag=", tag
         if not tag:
-            # If it has a name use it.
+            # in case it has a name use it
             if isinstance(obj, anyType) and obj._name:
                 tag = obj._name
             else:

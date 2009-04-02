@@ -160,11 +160,3 @@ def cleanDate(d, first = 0):
 
         if d[2] > months[d[1]] + leap:
             raise ValueError, "day out of range"
-
-def debugHeader(title):
-    s = "*** " + title + " "
-    print s + ("*" * (72 - len(s)))
-
-def debugFooter(title):
-    print "*" * 72
-    sys.stdout.flush()
