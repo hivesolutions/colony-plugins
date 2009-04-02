@@ -121,6 +121,9 @@ class BusinessSqliteEnginePlugin(colony.plugins.plugin_system.Plugin):
     def save_entity(self, connection, entity):
         return self.business_sqlite_engine.save_entity(connection, entity)
 
+    def update_entity(self, connection, entity):
+        return self.business_sqlite_engine.update_entity(connection, entity)
+
     def remove_entity(self, connection, entity):
         return self.business_sqlite_engine.remove_entity(connection, entity)
 

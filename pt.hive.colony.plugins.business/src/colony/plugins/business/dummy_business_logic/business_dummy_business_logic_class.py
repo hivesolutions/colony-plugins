@@ -64,13 +64,25 @@ class DummyBusinessLogic:
 
         # sets the entity attribute values
         dummy_entity_instance.name = "dummy_name"
-        dummy_entity_instance.address = "Tobias Street, 120"
+        dummy_entity_instance.address = "Test Street, 123"
 
         # saves the entity instance
         self.entity_manager.save(dummy_entity_instance)
 
-        # sets the entity name
-        self.name = dummy_entity_instance.name
+    @transaction_decorator("requires")
+    def update_entity(self):
+        # retrieves the DummyEntity class from the entity manager
+        dummy_entity_class = self.entity_manager.get_entity_class("DummyEntity")
+
+        # creates a new dummy entity instance
+        dummy_entity_instance = dummy_entity_class()
+
+        # sets the entity attribute values
+        dummy_entity_instance.name = "dummy_name"
+        dummy_entity_instance.address = "Test Street 2, 123"
+
+        # updates the entity instance
+        self.entity_manager.update(dummy_entity_instance)
 
     @transaction_decorator("requires")
     def remove_entity(self):
@@ -81,7 +93,7 @@ class DummyBusinessLogic:
         dummy_entity_instance = dummy_entity_class()
 
         # sets the entity attribute values
-        dummy_entity_instance.name = self.name
+        dummy_entity_instance.name = "dummy_name"
 
         # removes the entity instance
         self.entity_manager.remove(dummy_entity_instance)

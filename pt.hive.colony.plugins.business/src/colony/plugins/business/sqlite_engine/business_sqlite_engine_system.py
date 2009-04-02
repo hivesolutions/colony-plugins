@@ -855,6 +855,111 @@ class BusinessSqliteEngine:
         # closes the cursor
         cursor.close()
 
+    def update_entity(self, connection, entity):
+        """
+        Updates the given entity instance in the database, using the given connection.
+
+        @type connection: Connection
+        @param connection: The database connection to use.
+        @type entity: Object
+        @param entity: The entity instance to be saved.
+        """
+
+        # retrieves the database connection from the connection object
+        database_connection = connection.database_connection
+
+        # retrieves the entity class for the entity
+        entity_class = entity.__class__
+
+        # retrieves the entity class id attribute value
+        entity_class_id_attribute_value = self.get_entity_class_id_attribute_value(entity_class)
+
+        # retrieves the entity class id attribute name
+        entity_class_id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
+
+        # retrieves the entity id attribute value
+        entity_id_attribute_value = self.get_entity_id_attribute_value(entity)
+
+        # in case there is already an entry with the same key value
+        if not self.find_entity(connection, entity_class, entity_id_attribute_value):
+            # @todo should raise exception
+            pass
+
+        # creates the cursor for the given connection
+        cursor = database_connection.cursor()
+
+        # retrieves the entity class name
+        entity_class_name = entity_class.__name__
+
+        # retrieves all the valid attribute names, removes method values and the name exceptions
+        entity_valid_attribute_names = self.get_entity_attribute_names(entity)
+
+        # retrieves all the valid attribute values
+        entity_valid_attribute_values = self.get_entity_attribute_values(entity)
+
+        # retrieves all the valid class attribute values
+        entity_class_valid_attribute_values = self.get_entity_class_attribute_values(entity_class)
+
+        # creates the initial query string value
+        query_string_value = "update " + entity_class_name + " set "
+
+        # creates the initial index value
+        index = 0
+
+        # the first flag to control the first field to be processed
+        is_first = True
+
+        # iterates over all the entity valid attribute names and valid attribute values
+        for entity_valid_attribute_name, entity_valid_attribute_value in zip(entity_valid_attribute_names, entity_valid_attribute_values):
+            # retrieves the current entity class valid attribute value
+            entity_class_valid_attribute_value = entity_class_valid_attribute_values[index]
+
+            # retrieves the entity class valid attribute value data type
+            entity_class_valid_attribute_data_type = self.get_attribute_data_type(entity_class_valid_attribute_value, entity_class, entity_valid_attribute_name)
+
+            # in case the attribute is of type relation
+            if self.is_attribute_relation(entity_class_valid_attribute_value):
+                entity_valid_attribute_value = self.get_relation_attribute_value(entity_valid_attribute_value, entity_class_valid_attribute_value, entity_class, entity_valid_attribute_name)
+
+            # in case is the first field to be processed
+            if is_first:
+                # sets the is flag to false to start adding commas
+                is_first = False
+            else:
+                # adds a comma to the query string value
+                query_string_value += ", "
+
+            # extends the query string value
+            query_string_value += entity_valid_attribute_name + " = "
+
+            # in case the value is None a null is added
+            if entity_valid_attribute_value == None:
+                query_string_value += "null"
+            else:
+                if entity_class_valid_attribute_data_type == "text":
+                    # extends the query string value
+                    query_string_value += "'" + entity_valid_attribute_value + "'"
+                else:
+                    # extends the query string value
+                    query_string_value += str(entity_valid_attribute_value)
+
+            # increments the index value
+            index += 1
+
+        # extends the query string value
+        query_string_value += " where " + entity_class_id_attribute_name + " = "
+
+        if type(entity_id_attribute_value) in types.StringTypes:
+            query_string_value += "'" + entity_id_attribute_value + "'"
+        else:
+            query_string_value += str(entity_id_attribute_value)
+
+        # executes the query updating the values
+        self.execute_query(cursor, query_string_value)
+
+        # closes the cursor
+        cursor.close()
+
     def remove_entity(self, connection, entity):
         """
         Removes the given entity instance from the database, using the given connection.

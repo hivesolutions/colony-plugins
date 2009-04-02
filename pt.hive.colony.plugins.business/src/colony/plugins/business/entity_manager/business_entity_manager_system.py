@@ -362,6 +362,13 @@ class EntityManager:
         # persists the entity
         return self.entity_manager_engine_plugin.save_entity(connection, entity)
 
+    def update(self, entity):
+        # retrieves the connection object
+        connection = self.get_connection()
+
+        # persists the entity
+        return self.entity_manager_engine_plugin.update_entity(connection, entity)
+
     def remove(self, entity):
         """
         Removes an entity from the database.
