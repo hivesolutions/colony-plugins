@@ -139,5 +139,3 @@ class FoxProInputOutputConnection :
         Closes the connection
         """
         pass
-
-
