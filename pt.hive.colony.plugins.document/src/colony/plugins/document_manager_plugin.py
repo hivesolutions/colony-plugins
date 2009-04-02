@@ -179,4 +179,3 @@ class DocumentManagerPlugin(colony.plugins.plugin_system.Plugin):
         @param document: Reference to a document object.
         """
         self.document_manager.close(document)
-

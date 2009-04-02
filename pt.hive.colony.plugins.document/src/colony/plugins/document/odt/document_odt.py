@@ -178,4 +178,3 @@ class DocumentOdt:
         self.file.seek(0)
         self.file.write(content_xml)
         self.file.seek(0)
-
