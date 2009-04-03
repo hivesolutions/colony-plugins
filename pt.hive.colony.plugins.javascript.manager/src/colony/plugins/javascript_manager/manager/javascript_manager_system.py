@@ -66,6 +66,12 @@ class JavascriptManager:
     javascript_manager_last_update_timestamp = None
     """ The javascript manager last update timestamp """
 
+    auto_index_plugin_search_directories_flag = None
+    """ The auto index plugin seach directories flag """
+
+    auto_index_plugin_search_directories_timer = None
+    """ The auto index plugin seach directories timer """
+
     plugin_search_directories_list = []
     """ The plugin search directories list """
 
@@ -147,9 +153,20 @@ class JavascriptManager:
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.system/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.toolbar/plugins"]
 
+    def start_auto_index_plugin_search_directories(self):
+        self.auto_index_plugin_search_directories_flag = True
+        self.auto_index_plugin_search_directories()
+
+    def stop_auto_index_plugin_search_directories(self):
+        self.auto_index_plugin_search_directories_flag = False
+        if self.auto_index_plugin_search_directories_timer:
+            self.auto_index_plugin_search_directories_timer.cancel()
+
     def auto_index_plugin_search_directories(self):
-        # launches the auto index plugin search directories system
-        threading.Timer(DEFAULT_INDEX_TIME, self.auto_index_plugin_search_directories_handler, ()).start()
+        if self.auto_index_plugin_search_directories_flag:
+            # launches the auto index plugin search directories system
+            self.auto_index_plugin_search_directories_timer = threading.Timer(DEFAULT_INDEX_TIME, self.auto_index_plugin_search_directories_handler, ())
+            self.auto_index_plugin_search_directories_timer.start()
 
     def auto_index_plugin_search_directories_handler(self):
         # indexes the plugin search directories

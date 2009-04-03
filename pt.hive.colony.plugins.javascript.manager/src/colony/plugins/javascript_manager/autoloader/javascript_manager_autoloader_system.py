@@ -61,6 +61,12 @@ class JavascriptManagerAutoloader:
     update_plugin_lock = None
     """ The update plugin lock """
 
+    auto_update_plugin_files_flag = None
+    """ The auto update plugin files flag """
+
+    auto_update_plugin_files_timer = None
+    """ The auto update plugin files timer """
+
     plugin_id_modified_date_map = {}
     """ The map that relates the plugin id with it's modification date """
 
@@ -86,9 +92,20 @@ class JavascriptManagerAutoloader:
         self.plugin_id_removal_date_map = {}
         self.plugin_id_file_modified_date_map = {}
 
+    def start_auto_update_plugin_files(self):
+        self.auto_update_plugin_files_flag = True
+        self.auto_update_plugin_files()
+
+    def stop_auto_update_plugin_files(self):
+        self.auto_update_plugin_files_flag = False
+        if self.auto_update_plugin_files_timer:
+            self.auto_update_plugin_files_timer.cancel()
+
     def auto_update_plugin_files(self):
-        # launches the auto update plugin files system
-        threading.Timer(DEFAULT_UPDATING_TIME, self.auto_update_plugin_files_handler, ()).start()
+        if self.auto_update_plugin_files_flag:
+            # launches the auto update plugin files system
+            self.auto_update_plugin_files_timer = threading.Timer(DEFAULT_UPDATING_TIME, self.auto_update_plugin_files_handler, ())
+            self.auto_update_plugin_files_timer.start()
 
     def auto_update_plugin_files_handler(self):
         # updates the plugin files
