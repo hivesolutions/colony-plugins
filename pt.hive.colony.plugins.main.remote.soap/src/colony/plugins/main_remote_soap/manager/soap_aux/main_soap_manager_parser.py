@@ -37,9 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import main_soap_manager_namespace
+
 from Config    import Config
 from Types     import *
-from NS        import NS
 from Utilities import *
 
 import string
@@ -112,8 +113,8 @@ class SOAPParser(xml.sax.handler.ContentHandler):
 
         # Make two dictionaries to store the prefix <-> URI mappings, and
         # initialize them with the default
-        self._prem      = {NS.XML_T: NS.XML}
-        self._prem_r    = {NS.XML: NS.XML_T}
+        self._prem      = {main_soap_manager_namespace.Namespace.XML_T: main_soap_manager_namespace.Namespace.XML}
+        self._prem_r    = {main_soap_manager_namespace.Namespace.XML: main_soap_manager_namespace.Namespace.XML_T}
         self._ids       = {}
         self._refs      = {}
         self._rules    = rules
@@ -130,20 +131,20 @@ class SOAPParser(xml.sax.handler.ContentHandler):
             if name[1] != 'Envelope':
                 raise Error, "expected `SOAP-ENV:Envelope', gto `%s:%s'" % \
                     (self._prem_r[name[0]], name[1])
-            if name[0] != NS.ENV:
-                raise faultType, ("%s:VersionMismatch" % NS.ENV_T,
+            if name[0] != main_soap_manager_namespace.Namespace.ENV:
+                raise faultType, ("%s:VersionMismatch" % main_soap_manager_namespace.Namespace.ENV_T,
                     "Don't understand version `%s' Envelope" % name[0])
             else:
                 self._next = "HorB"
         elif self._next == "HorB":
-            if name[0] == NS.ENV and name[1] in ("Header", "Body"):
+            if name[0] == main_soap_manager_namespace.Namespace.ENV and name[1] in ("Header", "Body"):
                 self._next = None
             else:
                 raise Error, \
                     "expected `SOAP-ENV:Header' or `SOAP-ENV:Body', " \
                     "got `%s'" % self._prem_r[name[0]] + ':' + name[1]
         elif self._next == "B":
-            if name == (NS.ENV, "Body"):
+            if name == (main_soap_manager_namespace.Namespace.ENV, "Body"):
                 self._next = None
             else:
                 raise Error, "expected `SOAP-ENV:Body', got `%s'" % \
@@ -163,10 +164,10 @@ class SOAPParser(xml.sax.handler.ContentHandler):
         if type(rules) not in (NoneType, DictType):
             kind = rules
         else:
-            kind = attrs.get((NS.ENC, "arrayType"))
+            kind = attrs.get((main_soap_manager_namespace.Namespace.ENC, "arrayType"))
 
             if kind != None:
-                del attrs._attrs[(NS.ENC, "arrayType")]
+                del attrs._attrs[(main_soap_manager_namespace.Namespace.ENC, "arrayType")]
 
                 i = kind.find(':')
                 if i >= 0:
@@ -214,8 +215,8 @@ class SOAPParser(xml.sax.handler.ContentHandler):
         root = 1
 
         if len(self._stack) == 3:
-            if attrs.has_key((NS.ENC, 'root')):
-                root = int(attrs[(NS.ENC, 'root')])
+            if attrs.has_key((main_soap_manager_namespace.Namespace.ENC, 'root')):
+                root = int(attrs[(main_soap_manager_namespace.Namespace.ENC, 'root')])
 
                 # Do some preliminary checks. First, if root="0" is present,
                 # the element must have an id. Next, if root="n" is present,
@@ -227,7 +228,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
                 elif root != 1:
                     raise Error, "SOAP-ENC:root must be `0' or `1'"
 
-                del attrs[(NS.ENC, 'root')]
+                del attrs[(main_soap_manager_namespace.Namespace.ENC, 'root')]
 
         while True:
             href = attrs.get((None, 'href'))
@@ -257,7 +258,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
             kind = None
 
             if attrs:
-                for i in NS.XSI_L:
+                for i in main_soap_manager_namespace.Namespace.XSI_L:
                     if attrs.has_key((i, 'type')):
                         kind = attrs[(i, 'type')]
                         del attrs[(i, 'type')]
@@ -273,20 +274,20 @@ class SOAPParser(xml.sax.handler.ContentHandler):
             null = 0
 
             if attrs:
-                for i in (NS.XSI, NS.XSI2):
-                    if attrs.has_key((i, 'null')):
-                        null = attrs[(i, 'null')]
-                        del attrs[(i, 'null')]
+                for i in (main_soap_manager_namespace.Namespace.XSI, main_soap_manager_namespace.Namespace.XSI2):
+                    if attrs.has_key((i, "null")):
+                        null = attrs[(i, "null")]
+                        del attrs[(i, "null")]
 
-                if attrs.has_key((NS.XSI3, 'nil')):
-                    null = attrs[(NS.XSI3, 'nil')]
-                    del attrs[(NS.XSI3, 'nil')]
+                if attrs.has_key((main_soap_manager_namespace.Namespace.XSI3, "nil")):
+                    null = attrs[(main_soap_manager_namespace.Namespace.XSI3, "nil")]
+                    del attrs[(main_soap_manager_namespace.Namespace.XSI3, "nil")]
 
                 ## Check for nil
 
                 # check for nil='true'
                 if type(null) in (StringType, UnicodeType):
-                    if null.lower() == 'true':
+                    if null.lower() == "true":
                         null = 1
 
                 # check for nil=1, but watch out for string values
@@ -307,16 +308,16 @@ class SOAPParser(xml.sax.handler.ContentHandler):
                     break
 
             if len(self._stack) == 2:
-                if (ns, name) == (NS.ENV, "Header"):
+                if (ns, name) == (main_soap_manager_namespace.Namespace.ENV, "Header"):
                     self.header = data = headerType(attrs = attrs)
                     self._next = "B"
                     break
-                elif (ns, name) == (NS.ENV, "Body"):
+                elif (ns, name) == (main_soap_manager_namespace.Namespace.ENV, "Body"):
                     self.body = data = bodyType(attrs = attrs)
                     self._next = ""
                     break
             elif len(self._stack) == 3 and self._next == None:
-                if (ns, name) == (NS.ENV, "Fault"):
+                if (ns, name) == (main_soap_manager_namespace.Namespace.ENV, "Fault"):
                     data = faultType()
                     self._next = None # allow followons
                     break
@@ -343,7 +344,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
                 break
 
             if (kind == None and cur.kind != None) or \
-                (kind == (NS.ENC, 'Array')):
+                (kind == (main_soap_manager_namespace.Namespace.ENC, 'Array')):
                 kind = cur.kind
 
                 if kind == None:
@@ -366,7 +367,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
                 data = structType(name = (ns, name), attrs = attrs)
                 break
 
-            if len(cur) == 0 and ns != NS.URN:
+            if len(cur) == 0 and ns != main_soap_manager_namespace.Namespace.URN:
                 # Nothing's been added to the current frame so it must be a
                 # simple type.
 
@@ -469,10 +470,10 @@ class SOAPParser(xml.sax.handler.ContentHandler):
         if type(self.arrayre) == StringType:
             self.arrayre = re.compile (self.arrayre)
 
-        offset = attrs.get((NS.ENC, "offset"))
+        offset = attrs.get((main_soap_manager_namespace.Namespace.ENC, "offset"))
 
         if offset != None:
-            del attrs[(NS.ENC, "offset")]
+            del attrs[(main_soap_manager_namespace.Namespace.ENC, "offset")]
 
             try:
                 if offset[0] == '[' and offset[-1] == ']':
@@ -825,14 +826,14 @@ class SOAPParser(xml.sax.handler.ContentHandler):
                     return(d)
                 else:
                     newarr = map( lambda(di):
-                                  self.convertToBasicTypes(d=di,
-                                                       t = ( NS.XSD, elemtype),
-                                                       attrs=attrs,
-                                                       config=config),
+                                  self.convertToBasicTypes(d = di,
+                                                       t = (main_soap_manager_namespace.Namespace.XSD, elemtype),
+                                                       attrs = attrs,
+                                                       config = config),
                                   d)
                     return newarr
             else:
-                t = (NS.XSD, t[1])
+                t = (main_soap_manager_namespace.Namespace.XSD, t[1])
 
         return self.convertToBasicTypes(d, t, attrs, config)
 
@@ -842,7 +843,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
     def convertToBasicTypes(self, d, t, attrs, config=Config):
         dnn = d or ''
 
-        if t[0] in NS.EXSD_L:
+        if t[0] in main_soap_manager_namespace.Namespace.EXSD_L:
             if t[1] == "integer":
                 try:
                     d = int(d)
@@ -929,7 +930,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
             if t[1] in ("IDREFS", "ENTITIES", "NMTOKENS"):
                 d = collapseWhiteSpace(d)
                 return d.split()
-        if t[0] in NS.XSD_L:
+        if t[0] in main_soap_manager_namespace.Namespace.XSD_L:
             if t[1] in ("base64", "base64Binary"):
                 if d:
                     return base64.decodestring(d)
@@ -944,13 +945,13 @@ class SOAPParser(xml.sax.handler.ContentHandler):
                 return urllib.unquote(collapseWhiteSpace(d))
             if t[1] in ("normalizedString", "token"):
                 return collapseWhiteSpace(d)
-        if t[0] == NS.ENC:
+        if t[0] == main_soap_manager_namespace.Namespace.ENC:
             if t[1] == "base64":
                 if d:
                     return base64.decodestring(d)
                 else:
                     return ''
-        if t[0] == NS.XSD:
+        if t[0] == main_soap_manager_namespace.Namespace.XSD:
             if t[1] == "binary":
                 try:
                     e = attrs[(None, 'encoding')]
@@ -970,17 +971,17 @@ class SOAPParser(xml.sax.handler.ContentHandler):
                 return urllib.unquote(collapseWhiteSpace(d))
             if t[1] == "recurringInstant":
                 return self.convertDateTime(d, t[1])
-        if t[0] in (NS.XSD2, NS.ENC):
+        if t[0] in (main_soap_manager_namespace.Namespace.XSD2, main_soap_manager_namespace.Namespace.ENC):
             if t[1] == "uriReference":
                 return urllib.unquote(collapseWhiteSpace(d))
             if t[1] == "timePeriod":
                 return self.convertDateTime(d, t[1])
             if t[1] in ("century", "year"):
                 return self.convertDateTime(d, t[1])
-        if t[0] in (NS.XSD, NS.XSD2, NS.ENC):
+        if t[0] in (main_soap_manager_namespace.Namespace.XSD, main_soap_manager_namespace.Namespace.XSD2, main_soap_manager_namespace.Namespace.ENC):
             if t[1] == "timeDuration":
                 return self.convertDateTime(d, t[1])
-        if t[0] == NS.XSD3:
+        if t[0] == main_soap_manager_namespace.Namespace.XSD3:
             if t[1] == "anyURI":
                 return urllib.unquote(collapseWhiteSpace(d))
             if t[1] in ("gYearMonth", "gMonthDay"):
@@ -993,7 +994,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
                 return self.convertDateTime(d, t[1])
             if t[1] == "duration":
                 return self.convertDateTime(d, t[1])
-        if t[0] in (NS.XSD2, NS.XSD3):
+        if t[0] in (main_soap_manager_namespace.Namespace.XSD2, main_soap_manager_namespace.Namespace.XSD3):
             if t[1] == "token":
                 return collapseWhiteSpace(d)
             if t[1] == "recurringDate":
@@ -1002,7 +1003,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
                 return self.convertDateTime(d, t[1])
             if t[1] == "recurringDay":
                 return self.convertDateTime(d, t[1])
-        if t[0] == NS.XSD2:
+        if t[0] == main_soap_manager_namespace.Namespace.XSD2:
             if t[1] == "CDATA":
                 return collapseWhiteSpace(d)
 

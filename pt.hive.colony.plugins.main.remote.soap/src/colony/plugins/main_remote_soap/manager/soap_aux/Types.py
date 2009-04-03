@@ -48,8 +48,8 @@ from types import *
 
 # SOAPpy modules
 import main_soap_manager_errors
+import main_soap_manager_namespace
 
-from NS        import NS
 from Utilities import encodeHexString, cleanDate
 from Config    import Config
 
@@ -65,7 +65,8 @@ def isPublic(name):  return name[0]!='_'
 ###############################################################################
 
 class anyType:
-    _validURIs = (NS.XSD, NS.XSD2, NS.XSD3, NS.ENC)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD, main_soap_manager_namespace.Namespace.XSD2,
+                  main_soap_manager_namespace.Namespace.XSD3, main_soap_manager_namespace.Namespace.ENC)
 
     def __init__(self, data = None, name = None, typed = 1, attrs = None):
         if self.__class__ == anyType:
@@ -162,16 +163,16 @@ class anyType:
             self._setAttr(attr, value)
 
     def _setMustUnderstand(self, val):
-        self._setAttr((NS.ENV, "mustUnderstand"), val)
+        self._setAttr((main_soap_manager_namespace.Namespace.ENV, "mustUnderstand"), val)
 
     def _getMustUnderstand(self):
-        return self._getAttr((NS.ENV, "mustUnderstand"))
+        return self._getAttr((main_soap_manager_namespace.Namespace.ENV, "mustUnderstand"))
 
     def _setActor(self, val):
-        self._setAttr((NS.ENV, "actor"), val)
+        self._setAttr((main_soap_manager_namespace.Namespace.ENV, "actor"), val)
 
     def _getActor(self):
-        return self._getAttr((NS.ENV, "actor"))
+        return self._getAttr((main_soap_manager_namespace.Namespace.ENV, "actor"))
 
     def _typeName(self):
         return self.__class__.__name__[:-4]
@@ -212,7 +213,7 @@ class NMTOKENType(stringType): pass
 class QNameType(stringType): pass
 
 class tokenType(anyType):
-    _validURIs = (NS.XSD2, NS.XSD3)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD2, main_soap_manager_namespace.Namespace.XSD3)
     __invalidre = '[\n\t]|^ | $|  '
 
     def _checkValueSpace(self, data):
@@ -231,7 +232,7 @@ class tokenType(anyType):
         return data
 
 class normalizedStringType(anyType):
-    _validURIs = (NS.XSD3,)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD3,)
     __invalidre = '[\n\r\t]'
 
     def _checkValueSpace(self, data):
@@ -250,7 +251,7 @@ class normalizedStringType(anyType):
         return data
 
 class CDATAType(normalizedStringType):
-    _validURIs = (NS.XSD2,)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD2,)
 
 class booleanType(anyType):
     def __int__(self):
@@ -312,7 +313,7 @@ class doubleType(anyType):
         return "%.18g" % self._data # More precision
 
 class durationType(anyType):
-    _validURIs = (NS.XSD3,)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD3,)
 
     def _checkValueSpace(self, data):
         if data == None:
@@ -417,10 +418,10 @@ class durationType(anyType):
         return self._cache
 
 class timeDurationType(durationType):
-    _validURIs = (NS.XSD, NS.XSD2, NS.ENC)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD, main_soap_manager_namespace.Namespace.XSD2, main_soap_manager_namespace.Namespace.ENC)
 
 class dateTimeType(anyType):
-    _validURIs = (NS.XSD3,)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD3,)
 
     def _checkValueSpace(self, data):
         try:
@@ -465,7 +466,7 @@ class dateTimeType(anyType):
         return self._cache
 
 class recurringInstantType(anyType):
-    _validURIs = (NS.XSD,)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD,)
 
     def _checkValueSpace(self, data):
         try:
@@ -547,10 +548,10 @@ class recurringInstantType(anyType):
         return self._cache
 
 class timeInstantType(dateTimeType):
-    _validURIs = (NS.XSD, NS.XSD2, NS.ENC)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD, main_soap_manager_namespace.Namespace.XSD2, main_soap_manager_namespace.Namespace.ENC)
 
 class timePeriodType(dateTimeType):
-    _validURIs = (NS.XSD2, NS.ENC)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD2, main_soap_manager_namespace.Namespace.ENC)
 
 class timeType(anyType):
     def _checkValueSpace(self, data):
@@ -641,7 +642,7 @@ class dateType(anyType):
         return self._cache
 
 class gYearMonthType(anyType):
-    _validURIs = (NS.XSD3,)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD3,)
 
     def _checkValueSpace(self, data):
         try:
@@ -684,7 +685,7 @@ class gYearMonthType(anyType):
         return self._cache
 
 class gYearType(anyType):
-    _validURIs = (NS.XSD3,)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD3,)
 
     def _checkValueSpace(self, data):
         try:
@@ -730,7 +731,7 @@ class gYearType(anyType):
         return self._cache
 
 class centuryType(anyType):
-    _validURIs = (NS.XSD2, NS.ENC)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD2, main_soap_manager_namespace.Namespace.ENC)
 
     def _checkValueSpace(self, data):
         try:
@@ -776,10 +777,10 @@ class centuryType(anyType):
         return self._cache
 
 class yearType(gYearType):
-    _validURIs = (NS.XSD2, NS.ENC)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD2, main_soap_manager_namespace.Namespace.ENC)
 
 class gMonthDayType(anyType):
-    _validURIs = (NS.XSD3,)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD3,)
 
     def _checkValueSpace(self, data):
         try:
@@ -817,10 +818,10 @@ class gMonthDayType(anyType):
         return self._cache
 
 class recurringDateType(gMonthDayType):
-    _validURIs = (NS.XSD2, NS.ENC)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD2, main_soap_manager_namespace.Namespace.ENC)
 
 class gMonthType(anyType):
-    _validURIs = (NS.XSD3,)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD3,)
 
     def _checkValueSpace(self, data):
         try:
@@ -864,10 +865,10 @@ class gMonthType(anyType):
         return self._cache
 
 class monthType(gMonthType):
-    _validURIs = (NS.XSD2, NS.ENC)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD2, main_soap_manager_namespace.Namespace.ENC)
 
 class gDayType(anyType):
-    _validURIs = (NS.XSD3,)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD3,)
 
     def _checkValueSpace(self, data):
         try:
@@ -911,10 +912,10 @@ class gDayType(anyType):
         return self._cache
 
 class recurringDayType(gDayType):
-    _validURIs = (NS.XSD2, NS.ENC)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD2, main_soap_manager_namespace.Namespace.ENC)
 
 class hexBinaryType(anyType):
-    _validURIs = (NS.XSD3,)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD3,)
 
     def _checkValueSpace(self, data):
         if data == None:
@@ -932,7 +933,7 @@ class hexBinaryType(anyType):
         return self._cache
 
 class base64BinaryType(anyType):
-    _validURIs = (NS.XSD3,)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD3,)
 
     def _checkValueSpace(self, data):
         if data == None:
@@ -950,10 +951,10 @@ class base64BinaryType(anyType):
         return self._cache
 
 class base64Type(base64BinaryType):
-    _validURIs = (NS.ENC,)
+    _validURIs = (main_soap_manager_namespace.Namespace.ENC,)
 
 class binaryType(anyType):
-    _validURIs = (NS.XSD, NS.ENC)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD, main_soap_manager_namespace.Namespace.ENC)
 
     def __init__(self, data, name = None, typed = 1, encoding = 'base64',
         attrs = None):
@@ -993,7 +994,7 @@ class binaryType(anyType):
 
 
 class anyURIType(anyType):
-    _validURIs = (NS.XSD3,)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD3,)
 
     def _checkValueSpace(self, data):
         if data == None:
@@ -1011,10 +1012,10 @@ class anyURIType(anyType):
         return self._cache
 
 class uriType(anyURIType):
-    _validURIs = (NS.XSD,)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD,)
 
 class uriReferenceType(anyURIType):
-    _validURIs = (NS.XSD2,)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD2,)
 
 class NOTATIONType(anyType):
     def __init__(self, data, name = None, typed = 1, attrs = None):
@@ -1055,7 +1056,7 @@ class integerType(anyType):
         return data
 
 class nonPositiveIntegerType(anyType):
-    _validURIs = (NS.XSD2, NS.XSD3, NS.ENC)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD2, main_soap_manager_namespace.Namespace.XSD3, main_soap_manager_namespace.Namespace.ENC)
 
     def _checkValueSpace(self, data):
         if data == None:
@@ -1067,13 +1068,13 @@ class nonPositiveIntegerType(anyType):
         return data
 
 class non_Positive_IntegerType(nonPositiveIntegerType):
-    _validURIs = (NS.XSD,)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD,)
 
     def _typeName(self):
         return 'non-positive-integer'
 
 class negativeIntegerType(anyType):
-    _validURIs = (NS.XSD2, NS.XSD3, NS.ENC)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD2, main_soap_manager_namespace.Namespace.XSD3, main_soap_manager_namespace.Namespace.ENC)
 
     def _checkValueSpace(self, data):
         if data == None:
@@ -1085,13 +1086,13 @@ class negativeIntegerType(anyType):
         return data
 
 class negative_IntegerType(negativeIntegerType):
-    _validURIs = (NS.XSD,)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD,)
 
     def _typeName(self):
         return 'negative-integer'
 
 class longType(anyType):
-    _validURIs = (NS.XSD2, NS.XSD3, NS.ENC)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD2, main_soap_manager_namespace.Namespace.XSD3, main_soap_manager_namespace.Namespace.ENC)
 
     def _checkValueSpace(self, data):
         if data == None:
@@ -1105,7 +1106,7 @@ class longType(anyType):
         return data
 
 class intType(anyType):
-    _validURIs = (NS.XSD2, NS.XSD3, NS.ENC)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD2, main_soap_manager_namespace.Namespace.XSD3, main_soap_manager_namespace.Namespace.ENC)
 
     def _checkValueSpace(self, data):
         if data == None:
@@ -1119,7 +1120,7 @@ class intType(anyType):
         return data
 
 class shortType(anyType):
-    _validURIs = (NS.XSD2, NS.XSD3, NS.ENC)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD2, main_soap_manager_namespace.Namespace.XSD3, main_soap_manager_namespace.Namespace.ENC)
 
     def _checkValueSpace(self, data):
         if data == None:
@@ -1133,7 +1134,7 @@ class shortType(anyType):
         return data
 
 class byteType(anyType):
-    _validURIs = (NS.XSD2, NS.XSD3, NS.ENC)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD2, main_soap_manager_namespace.Namespace.XSD3, main_soap_manager_namespace.Namespace.ENC)
 
     def _checkValueSpace(self, data):
         if data == None:
@@ -1147,7 +1148,7 @@ class byteType(anyType):
         return data
 
 class nonNegativeIntegerType(anyType):
-    _validURIs = (NS.XSD2, NS.XSD3, NS.ENC)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD2, main_soap_manager_namespace.Namespace.XSD3, main_soap_manager_namespace.Namespace.ENC)
 
     def _checkValueSpace(self, data):
         if data == None:
@@ -1159,13 +1160,13 @@ class nonNegativeIntegerType(anyType):
         return data
 
 class non_Negative_IntegerType(nonNegativeIntegerType):
-    _validURIs = (NS.XSD,)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD,)
 
     def _typeName(self):
         return 'non-negative-integer'
 
 class unsignedLongType(anyType):
-    _validURIs = (NS.XSD2, NS.XSD3, NS.ENC)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD2, main_soap_manager_namespace.Namespace.XSD3, main_soap_manager_namespace.Namespace.ENC)
 
     def _checkValueSpace(self, data):
         if data == None:
@@ -1179,7 +1180,7 @@ class unsignedLongType(anyType):
         return data
 
 class unsignedIntType(anyType):
-    _validURIs = (NS.XSD2, NS.XSD3, NS.ENC)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD2, main_soap_manager_namespace.Namespace.XSD3, main_soap_manager_namespace.Namespace.ENC)
 
     def _checkValueSpace(self, data):
         if data == None:
@@ -1193,7 +1194,7 @@ class unsignedIntType(anyType):
         return data
 
 class unsignedShortType(anyType):
-    _validURIs = (NS.XSD2, NS.XSD3, NS.ENC)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD2, main_soap_manager_namespace.Namespace.XSD3, main_soap_manager_namespace.Namespace.ENC)
 
     def _checkValueSpace(self, data):
         if data == None:
@@ -1207,7 +1208,7 @@ class unsignedShortType(anyType):
         return data
 
 class unsignedByteType(anyType):
-    _validURIs = (NS.XSD2, NS.XSD3, NS.ENC)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD2, main_soap_manager_namespace.Namespace.XSD3, main_soap_manager_namespace.Namespace.ENC)
 
     def _checkValueSpace(self, data):
         if data == None:
@@ -1221,7 +1222,7 @@ class unsignedByteType(anyType):
         return data
 
 class positiveIntegerType(anyType):
-    _validURIs = (NS.XSD2, NS.XSD3, NS.ENC)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD2, main_soap_manager_namespace.Namespace.XSD3, main_soap_manager_namespace.Namespace.ENC)
 
     def _checkValueSpace(self, data):
         if data == None:
@@ -1233,7 +1234,7 @@ class positiveIntegerType(anyType):
         return data
 
 class positive_IntegerType(positiveIntegerType):
-    _validURIs = (NS.XSD,)
+    _validURIs = (main_soap_manager_namespace.Namespace.XSD,)
 
     def _typeName(self):
         return 'positive-integer'
@@ -1328,13 +1329,13 @@ class structType(compoundType):
     pass
 
 class headerType(structType):
-    _validURIs = (NS.ENV,)
+    _validURIs = (main_soap_manager_namespace.Namespace.ENV,)
 
     def __init__(self, data = None, typed = 1, attrs = None):
         structType.__init__(self, data, "Header", typed, attrs)
 
 class bodyType(structType):
-    _validURIs = (NS.ENV,)
+    _validURIs = (main_soap_manager_namespace.Namespace.ENV,)
 
     def __init__(self, data = None, typed = 1, attrs = None):
         structType.__init__(self, data, "Body", typed, attrs)
@@ -1443,7 +1444,7 @@ class arrayType(UserList.UserList, compoundType):
         if self._full:
             raise ValueError, "Array is full"
 
-        pos = attrs.get((NS.ENC, 'position'))
+        pos = attrs.get((main_soap_manager_namespace.Namespace.ENC, 'position'))
 
         if pos != None:
             if self._posstate == 0:

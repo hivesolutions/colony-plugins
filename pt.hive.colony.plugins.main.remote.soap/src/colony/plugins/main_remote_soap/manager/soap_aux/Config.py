@@ -37,14 +37,12 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import copy, socket
+import copy
+import socket
+
+import main_soap_manager_namespace
+
 from types import *
-
-from NS import NS
-
-################################################################################
-# Configuration class
-################################################################################
 
 class SOAPConfig:
     __readonly = ("SSLserver", "SSLclient", "GSIserver", "GSIclient")
@@ -59,7 +57,7 @@ class SOAPConfig:
             s = config.__dict__
 
             for k, v in s.items():
-                if k[0] != '_':
+                if k[0] != "_":
                     d[k] = v
         else:
             # Setting debug also sets returnFaultInfo,
@@ -68,7 +66,7 @@ class SOAPConfig:
             self.dumpFaultInfo = 1
             # Setting namespaceStyle sets typesNamespace, typesNamespaceURI,
             # schemaNamespace, and schemaNamespaceURI
-            self.namespaceStyle = '1999'
+            self.namespaceStyle = "1999"
             self.strictNamespaces = 0
             self.typed = 1
             self.buildWithNamespacePrefix = 1
@@ -78,7 +76,7 @@ class SOAPConfig:
             self.strict_range = 0
 
             # Default encoding for dictionary keys
-            self.dict_encoding = 'ascii'
+            self.dict_encoding = "ascii"
 
             # New argument name handling mechanism.  See
             # README.MethodParameterNaming for details
@@ -113,29 +111,29 @@ class SOAPConfig:
             # Globus Support if pyGlobus.io available
             try:
                 from pyGlobus import io;
-                d['GSIserver'] = 1
-                d['GSIclient'] = 1
+                d["GSIserver"] = 1
+                d["GSIclient"] = 1
             except:
-                d['GSIserver'] = 0
-                d['GSIclient'] = 0
+                d["GSIserver"] = 0
+                d["GSIclient"] = 0
 
 
             # Server SSL support if M2Crypto.SSL available
             try:
                 from M2Crypto import SSL
-                d['SSLserver'] = 1
+                d["SSLserver"] = 1
             except:
-                d['SSLserver'] = 0
+                d["SSLserver"] = 0
 
             # Client SSL support if socket.ssl available
             try:
                 from socket import ssl
-                d['SSLclient'] = 1
+                d["SSLclient"] = 1
             except:
-                d['SSLclient'] = 0
+                d["SSLclient"] = 0
 
         for k, v in kw.items():
-            if k[0] != '_':
+            if k[0] != "_":
                 setattr(self, k, v)
 
     def __setattr__(self, name, value):
@@ -144,19 +142,19 @@ class SOAPConfig:
 
         d = self.__dict__
 
-        if name in ('typesNamespace', 'typesNamespaceURI',
-                    'schemaNamespace', 'schemaNamespaceURI'):
+        if name in ("typesNamespace", "typesNamespaceURI",
+                    "schemaNamespace", "schemaNamespaceURI"):
 
-            if name[-3:] == 'URI':
+            if name[-3:] == "URI":
                 base, uri = name[:-3], 1
             else:
                 base, uri = name, 0
 
             if type(value) == StringType:
-                if NS.NSMAP.has_key(value):
-                    n = (value, NS.NSMAP[value])
-                elif NS.NSMAP_R.has_key(value):
-                    n = (NS.NSMAP_R[value], value)
+                if main_soap_manager_namespace.Namespace.NSMAP.has_key(value):
+                    n = (value, main_soap_manager_namespace.Namespace.NSMAP[value])
+                elif main_soap_manager_namespace.Namespace.NSMAP_R.has_key(value):
+                    n = (main_soap_manager_namespace.Namespace.NSMAP_R[value], value)
                 else:
                     raise AttributeError, "unknown namespace"
             elif type(value) in (ListType, TupleType):
@@ -167,33 +165,33 @@ class SOAPConfig:
             else:
                 raise AttributeError, "unknown namespace type"
 
-            d[base], d[base + 'URI'] = n
+            d[base], d[base + "URI"] = n
 
             try:
-                d['namespaceStyle'] = \
-                    NS.STMAP_R[(d['typesNamespace'], d['schemaNamespace'])]
+                d["namespaceStyle"] = \
+                    main_soap_manager_namespace.Namespace.STMAP_R[(d["typesNamespace"], d["schemaNamespace"])]
             except:
-                d['namespaceStyle'] = ''
+                d["namespaceStyle"] = ""
 
-        elif name == 'namespaceStyle':
+        elif name == "namespaceStyle":
             value = str(value)
 
-            if not NS.STMAP.has_key(value):
+            if not main_soap_manager_namespace.Namespace.STMAP.has_key(value):
                 raise AttributeError, "unknown namespace style"
 
             d[name] = value
-            n = d['typesNamespace'] = NS.STMAP[value][0]
-            d['typesNamespaceURI'] = NS.NSMAP[n]
-            n = d['schemaNamespace'] = NS.STMAP[value][1]
-            d['schemaNamespaceURI'] = NS.NSMAP[n]
+            n = d["typesNamespace"] = main_soap_manager_namespace.Namespace.STMAP[value][0]
+            d["typesNamespaceURI"] = main_soap_manager_namespace.Namespace.NSMAP[n]
+            n = d["schemaNamespace"] = main_soap_manager_namespace.Namespace.STMAP[value][1]
+            d["schemaNamespaceURI"] = main_soap_manager_namespace.Namespace.NSMAP[n]
 
-        elif name == 'debug':
+        elif name == "debug":
             d[name]                     = \
-                d['returnFaultInfo']    = \
-                d['dumpHeadersIn']      = \
-                d['dumpHeadersOut']     = \
-                d['dumpSOAPIn']         = \
-                d['dumpSOAPOut']        = value
+                d["returnFaultInfo"]    = \
+                d["dumpHeadersIn"]      = \
+                d["dumpHeadersOut"]     = \
+                d["dumpSOAPIn"]         = \
+                d["dumpSOAPOut"]        = value
         else:
             d[name] = value
 

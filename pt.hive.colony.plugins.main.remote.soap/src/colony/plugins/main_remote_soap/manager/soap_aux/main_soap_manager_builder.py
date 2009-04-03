@@ -43,8 +43,10 @@ from wstools.XMLname import toXMLname, fromXMLname
 import fpconst
 
 # SOAPpy modules
+
+import main_soap_manager_namespace
+
 from Config import Config
-from NS     import NS
 from Types  import *
 
 # Test whether this Python version has Types.BooleanType
@@ -61,14 +63,19 @@ except NameError:
 class SOAPBuildesr:
     _xml_top = "<?xml version='1.0'?>\n"
     _xml_enc_top = "<?xml version='1.0' encoding='%s'?>\n"
-    _env_top = ("%(ENV_T)s:Envelope\n" + "  %(ENV_T)s:encodingStyle='%(ENC)s'\n") %  NS.__dict__
-    _env_bot = "</%(ENV_T)s:Envelope>\n" % NS.__dict__
+    _env_top = ("%(ENV_T)s:Envelope\n" + "  %(ENV_T)s:encodingStyle='%(ENC)s'\n") %  main_soap_manager_namespace.Namespace.__dict__
+    _env_bot = "</%(ENV_T)s:Envelope>\n" % main_soap_manager_namespace.Namespace.__dict__
 
     # namespaces potentially defined in the Envelope tag.
 
-    _env_ns = {NS.ENC: NS.ENC_T, NS.ENV: NS.ENV_T,
-        NS.XSD: NS.XSD_T, NS.XSD2: NS.XSD2_T, NS.XSD3: NS.XSD3_T,
-        NS.XSI: NS.XSI_T, NS.XSI2: NS.XSI2_T, NS.XSI3: NS.XSI3_T}
+    _env_ns = {main_soap_manager_namespace.Namespace.ENC: main_soap_manager_namespace.Namespace.ENC_T,
+               main_soap_manager_namespace.Namespace.ENV: main_soap_manager_namespace.Namespace.ENV_T,
+               main_soap_manager_namespace.Namespace.XSD: main_soap_manager_namespace.Namespace.XSD_T,
+               main_soap_manager_namespace.Namespace.XSD2: main_soap_manager_namespace.Namespace.XSD2_T,
+               main_soap_manager_namespace.Namespace.XSD3: main_soap_manager_namespace.Namespace.XSD3_T,
+               main_soap_manager_namespace.Namespace.XSI: main_soap_manager_namespace.Namespace.XSI_T,
+               main_soap_manager_namespace.Namespace.XSI2: main_soap_manager_namespace.Namespace.XSI2_T,
+               main_soap_manager_namespace.Namespace.XSI3: main_soap_manager_namespace.Namespace.XSI3_T}
 
     def __init__(self, args = (), kw = {}, method = None, namespace = None,
         header = None, methodattrs = None, envelope = 1, encoding = 'UTF-8',
@@ -114,11 +121,11 @@ class SOAPBuildesr:
         if self.body:
             # Call genns to record that we've used SOAP-ENV.
             self.depth += 1
-            body_ns = self.genns(ns_map, NS.ENV)[0]
+            body_ns = self.genns(ns_map, main_soap_manager_namespace.Namespace.ENV)[0]
             self.out.append("<%sBody>\n" % body_ns)
 
         if self.method:
-            # Save the NS map so that it can be restored when we
+            # Save the ns map so that it can be restored when we
             # fall out of the scope of the method definition
             save_ns_map = ns_map.copy()
             self.depth += 1
@@ -235,7 +242,7 @@ class SOAPBuildesr:
         if self.depth != 2:
             return ''
 
-        ns, n = self.genns(ns_map, NS.ENC)
+        ns, n = self.genns(ns_map, main_soap_manager_namespace.Namespace.ENC)
         return ' %sroot="%d"%s' % (ns, not self.multis, n)
 
     # checkref checks an element to see if it needs to be encoded as a
@@ -405,7 +412,7 @@ class SOAPBuildesr:
                     sample = typedArrayType(typed=obj._type,
                                             complexType = obj._complexType)
                     sample._typename = obj._type
-                    if not getattr(obj,"_ns",None): obj._ns = NS.URN
+                    if not getattr(obj,"_ns",None): obj._ns = main_soap_manager_namespace.Namespace.URN
                 else:
                     sample = typedArrayType(typed=obj._type)
             else:
@@ -431,9 +438,9 @@ class SOAPBuildesr:
                     (getattr(sample, "_complexType", None) and \
                      sample._complexType)): # force to urn struct
                 try:
-                    tns = obj._ns or NS.URN
+                    tns = obj._ns or main_soap_manager_namespace.Namespace.URN
                 except:
-                    tns = NS.URN
+                    tns = main_soap_manager_namespace.Namespace.URN
 
                 ns, ndecl = self.genns(ns_map, tns)
 
@@ -471,7 +478,7 @@ class SOAPBuildesr:
         try: a = obj._marshalAttrs(ns_map, self)
         except: a = ''
 
-        ens, edecl = self.genns(ns_map, NS.ENC)
+        ens, edecl = self.genns(ns_map, main_soap_manager_namespace.Namespace.ENC)
         ins, idecl = self.genns(ns_map, self.config.schemaNamespaceURI)
 
         if typed:
@@ -529,8 +536,8 @@ class SOAPBuildesr:
             return
 
         if isinstance(obj, faultType):    # Fault
-            cns, cdecl = self.genns(ns_map, NS.ENC)
-            vns, vdecl = self.genns(ns_map, NS.ENV)
+            cns, cdecl = self.genns(ns_map, main_soap_manager_namespace.Namespace.ENC)
+            vns, vdecl = self.genns(ns_map, main_soap_manager_namespace.Namespace.ENV)
             self.out.append('''<%sFault %sroot="1"%s%s>
 <faultcode>%s</faultcode>
 <faultstring>%s</faultstring>

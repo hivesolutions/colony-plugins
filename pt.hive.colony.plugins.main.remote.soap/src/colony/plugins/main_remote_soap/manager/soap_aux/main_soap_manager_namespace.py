@@ -37,7 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-def invertDict(dict):
+def invert_dictionary(dict):
     d = {}
 
     for k, v in dict.items():
@@ -45,7 +45,7 @@ def invertDict(dict):
 
     return d
 
-class NS:
+class Namespace:
     """
     The namespace class.
     """
@@ -84,10 +84,10 @@ class NS:
     NSMAP = {ENV_T: ENV, ENC_T: ENC, XSD_T: XSD, XSD2_T: XSD2,
              XSD3_T: XSD3, XSI_T: XSI, XSI2_T: XSI2, XSI3_T: XSI3,
              URN_T: URN}
-    NSMAP_R = invertDict(NSMAP)
+    NSMAP_R = invert_dictionary(NSMAP)
 
     STMAP = {"1999" : (XSD_T, XSI_T), "2000" : (XSD2_T, XSI2_T), "2001" : (XSD3_T, XSI3_T)}
-    STMAP_R = invertDict(STMAP)
+    STMAP_R = invert_dictionary(STMAP)
 
     def __init__(self):
         raise Error, "Don't instantiate this"
