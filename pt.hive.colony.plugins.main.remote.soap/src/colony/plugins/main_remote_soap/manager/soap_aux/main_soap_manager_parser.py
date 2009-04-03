@@ -39,8 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import main_soap_manager_namespace
 import main_soap_manager_config
+import main_soap_manager_types
+import main_soap_manager_errors
 
-from Types     import *
 from Utilities import *
 
 import string
@@ -132,7 +133,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
                 raise Error, "expected `SOAP-ENV:Envelope', gto `%s:%s'" % \
                     (self._prem_r[name[0]], name[1])
             if name[0] != main_soap_manager_namespace.Namespace.ENV:
-                raise faultType, ("%s:VersionMismatch" % main_soap_manager_namespace.Namespace.ENV_T,
+                raise main_soap_manager_types.faultType, ("%s:VersionMismatch" % main_soap_manager_namespace.Namespace.ENV_T,
                     "Don't understand version `%s' Envelope" % name[0])
             else:
                 self._next = "HorB"
@@ -161,7 +162,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
             except:
                 rules = None
 
-        if type(rules) not in (NoneType, DictType):
+        if type(rules) not in (main_soap_manager_types.NoneType, main_soap_manager_types.DictType):
             kind = rules
         else:
             kind = attrs.get((main_soap_manager_namespace.Namespace.ENC, "arrayType"))
@@ -286,7 +287,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
                 ## Check for nil
 
                 # check for nil='true'
-                if type(null) in (StringType, UnicodeType):
+                if type(null) in (main_soap_manager_types.StringType, main_soap_manager_types.UnicodeType):
                     if null.lower() == "true":
                         null = 1
 
@@ -309,37 +310,36 @@ class SOAPParser(xml.sax.handler.ContentHandler):
 
             if len(self._stack) == 2:
                 if (ns, name) == (main_soap_manager_namespace.Namespace.ENV, "Header"):
-                    self.header = data = headerType(attrs = attrs)
+                    self.header = data = main_soap_manager_types.headerType(attrs = attrs)
                     self._next = "B"
                     break
                 elif (ns, name) == (main_soap_manager_namespace.Namespace.ENV, "Body"):
-                    self.body = data = bodyType(attrs = attrs)
+                    self.body = data = main_soap_manager_types.bodyType(attrs = attrs)
                     self._next = ""
                     break
             elif len(self._stack) == 3 and self._next == None:
                 if (ns, name) == (main_soap_manager_namespace.Namespace.ENV, "Fault"):
-                    data = faultType()
+                    data = main_soap_manager_types.faultType()
                     self._next = None # allow followons
                     break
 
             if cur.rules != None:
                 rule = cur.rules
 
-                if type(rule) in (StringType, UnicodeType):
-                    rule = (None, rule) # none flags special handling
-                elif type(rule) == ListType:
+                if type(rule) in (main_soap_manager_types.StringType, main_soap_manager_types.UnicodeType):
+                    # none flags special handling
+                    rule = (None, rule)
+                elif type(rule) == main_soap_manager_types.ListType:
                     rule = tuple(rule)
 
                 if callable(rule):
                     data = rule(string.join(self._data, ""))
-                elif type(rule) == DictType:
-                    data = structType(name = (ns, name), attrs = attrs)
+                elif type(rule) == main_soap_manager_types.DictType:
+                    data = main_soap_manager_types.structType(name = (ns, name), attrs = attrs)
                 elif rule[1][:9] == 'arrayType':
-                    data = self.convertType(cur.contents,
-                                            rule, attrs)
+                    data = self.convertType(cur.contents, rule, attrs)
                 else:
-                    data = self.convertType(string.join(self._data, ""),
-                                            rule, attrs)
+                    data = self.convertType(string.join(self._data, ""), rule, attrs)
 
                 break
 
@@ -364,7 +364,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
             if len(self._stack) == 3 and kind == None and \
                 len(cur) == 0 and \
                 (self._data == None or string.join(self._data, "").strip() == ''):
-                data = structType(name = (ns, name), attrs = attrs)
+                data = main_soap_manager_types.structType(name = (ns, name), attrs = attrs)
                 break
 
             if len(cur) == 0 and ns != main_soap_manager_namespace.Namespace.URN:
@@ -388,9 +388,8 @@ class SOAPParser(xml.sax.handler.ContentHandler):
 
                 if kind != None:
                     try:
-                        data = self.convertType(string.join(self._data, ""),
-                                                kind, attrs)
-                    except UnknownTypeError:
+                        data = self.convertType(string.join(self._data, ""), kind, attrs)
+                    except main_soap_manager_errors.UnknownTypeError:
                         data = None
                 else:
                     data = None
@@ -407,11 +406,11 @@ class SOAPParser(xml.sax.handler.ContentHandler):
 
                 break
 
-            data = structType(name = (ns, name), attrs = attrs)
+            data = main_soap_manager_types.structType(name = (ns, name), attrs = attrs)
 
             break
 
-        if isinstance(data, compoundType):
+        if isinstance(data, main_soap_manager_types.compoundType):
             for i in range(len(cur)):
                 v = cur.contents[i]
                 data._addItem(cur.names[i], v, cur.subattrs[i])
@@ -433,7 +432,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
 
         self.attrs[id(data)] = attrs
 
-        if isinstance(data, anyType):
+        if isinstance(data, main_soap_manager_types.anyType):
             data._setAttrs(attrs)
 
         self._data = None       # Stop accumulating
@@ -467,7 +466,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
         '(?:\[(?P<asize>\d+(?:,\d+)*)?\])$'
 
     def startArray(self, name, kind, attrs, elemsname):
-        if type(self.arrayre) == StringType:
+        if type(self.arrayre) == main_soap_manager_types.StringType:
             self.arrayre = re.compile (self.arrayre)
 
         offset = attrs.get((main_soap_manager_namespace.Namespace.ENC, "offset"))
@@ -496,14 +495,14 @@ class SOAPParser(xml.sax.handler.ContentHandler):
             t = m.group('type')
 
             if t == 'ur-type':
-                return arrayType(None, name, attrs, offset, m.group('rank'),
+                return main_soap_manager_types.arrayType(None, name, attrs, offset, m.group('rank'),
                     m.group('asize'), elemsname)
             elif m.group('ns') != None:
-                return typedArrayType(None, name,
+                return main_soap_manager_types.typedArrayType(None, name,
                     (self._prem[m.group('ns')], t), attrs, offset,
                     m.group('rank'), m.group('asize'), elemsname)
             else:
-                return typedArrayType(None, name, (None, t), attrs, offset,
+                return main_soap_manager_types.typedArrayType(None, name, (None, t), attrs, offset,
                     m.group('rank'), m.group('asize'), elemsname)
         except:
             raise AttributeError, "invalid Array type `%s'" % kind
@@ -646,7 +645,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
         except AttributeError:
             return None
 
-        if type(exp) == StringType:
+        if type(exp) == main_soap_manager_types.StringType:
             exp = re.compile(exp)
             setattr (self.DATETIMECONSTS, kind, exp)
 
@@ -804,13 +803,8 @@ class SOAPParser(xml.sax.handler.ContentHandler):
         'unsignedShort':        (0, 0, 65535),
         'unsignedByte':         (0, 0, 255),
     }
-    floatlimits = \
-    {
-        'float':        (7.0064923216240861E-46, -3.4028234663852886E+38,
-                         3.4028234663852886E+38),
-        'double':       (2.4703282292062327E-324, -1.7976931348623158E+308,
-                         1.7976931348623157E+308),
-    }
+    floatlimits = {'float': (7.0064923216240861E-46, -3.4028234663852886E+38, 3.4028234663852886E+38),
+                   'double': (2.4703282292062327E-324, -1.7976931348623158E+308, 1.7976931348623157E+308),}
     zerofloatre = '[1-9]'
 
     def convertType(self, d, t, attrs, config=main_soap_manager_config.Config):
@@ -913,7 +907,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
                 elif d > 0 and ( d < l[0] or d > l[2] ):
                         raise OverflowError, "%s too large: %s" % (t[1], s)
                 elif d == 0:
-                    if type(self.zerofloatre) == StringType:
+                    if type(self.zerofloatre) == main_soap_manager_types.StringType:
                         self.zerofloatre = re.compile(self.zerofloatre)
 
                     if self.zerofloatre.search(s):
@@ -1007,7 +1001,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
             if t[1] == "CDATA":
                 return collapseWhiteSpace(d)
 
-        raise UnknownTypeError, "unknown type `%s'" % (str(t[0]) + ':' + t[1])
+        raise main_soap_manager_errors.UnknownTypeError, "unknown type `%s'" % (str(t[0]) + ':' + t[1])
 
 ################################################################################
 # call to SOAPParser that keeps all of the info
@@ -1059,7 +1053,7 @@ def parseSOAPRPC(xml_str, header = 0, body = 0, attrs = 0, rules = None):
         for k in t.body.__dict__.keys():
             if k[0] != "_":
                 name = k
-        p = structType(name)
+        p = main_soap_manager_types.structType(name)
 
     if header or body or attrs:
         ret = (p,)

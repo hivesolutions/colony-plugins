@@ -46,13 +46,12 @@ import fpconst
 
 import main_soap_manager_namespace
 import main_soap_manager_config
+import main_soap_manager_types
 
-from Types  import *
-
-# Test whether this Python version has Types.BooleanType
-# If it doesn't have it, then False and True are serialized as integers
+# tests whether this Python version has Types.BooleanType
+# if it doesn't have it, then False and True are serialized as integers
 try:
-    BooleanType
+    main_soap_manager_types.BooleanType
     pythonHasBooleanType = 1
 except NameError:
     pythonHasBooleanType = 0
@@ -104,7 +103,7 @@ class SOAPBuildesr:
         self.depth      = 0
         self.multirefs  = []
         self.multis     = 0
-        self.body       = not isinstance(args, bodyType)
+        self.body       = not isinstance(args, main_soap_manager_types.bodyType)
         self.noroot     = noroot
 
     def build(self):
@@ -143,7 +142,7 @@ class SOAPBuildesr:
                 methodns, self.method, n, a, self.genroot(ns_map)))
 
         try:
-            if type(self.args) != TupleType:
+            if type(self.args) != main_soap_manager_types.TupleType:
                 args = (self.args,)
             else:
                 args = self.args
@@ -211,7 +210,7 @@ class SOAPBuildesr:
         if nsURI == None:
             return ('', '')
 
-        if type(nsURI) == TupleType: # already a tuple
+        if type(nsURI) == main_soap_manager_types.TupleType: # already a tuple
             if len(nsURI) == 2:
                 ns, nsURI = nsURI
             else:
@@ -285,21 +284,20 @@ class SOAPBuildesr:
         ns_map = ns_map.copy()
         self.depth += 1
 
-        if type(tag) not in (NoneType, StringType, UnicodeType):
+        if type(tag) not in (main_soap_manager_types.NoneType, main_soap_manager_types.StringType, main_soap_manager_types.UnicodeType):
             raise KeyError, "tag must be a string or None"
 
         try:
             meth = getattr(self, "dump_" + type(obj).__name__)
         except AttributeError:
-            if type(obj) == LongType:
+            if type(obj) == main_soap_manager_types.LongType:
                 obj_type = "integer"
-            elif pythonHasBooleanType and type(obj) == BooleanType:
+            elif pythonHasBooleanType and type(obj) == main_soap_manager_types.BooleanType:
                 obj_type = "boolean"
             else:
                 obj_type = type(obj).__name__
 
-            self.out.append(self.dumper(None, obj_type, obj, tag, typed,
-                                        ns_map, self.genroot(ns_map)))
+            self.out.append(self.dumper(None, obj_type, obj, tag, typed, ns_map, self.genroot(ns_map)))
         else:
             meth(obj, tag, typed, ns_map)
 
@@ -346,7 +344,7 @@ class SOAPBuildesr:
         tag = toXMLname(tag)
 
         if main_soap_manager_config.Config.strict_range:
-            doubleType(obj)
+            main_soap_manager_types.doubleType(obj)
 
         if fpconst.isPosInf(obj):
             obj = "INF"
@@ -373,8 +371,7 @@ class SOAPBuildesr:
         try: data = obj._marshalData()
         except: data = obj
 
-        self.out.append(self.dumper(None, "string", cgi.escape(data), tag,
-                                    typed, ns_map, self.genroot(ns_map), id))
+        self.out.append(self.dumper(None, "string", cgi.escape(data), tag, typed, ns_map, self.genroot(ns_map), id))
 
     dump_str = dump_string # For Python 2.2+
     dump_unicode = dump_string
@@ -392,7 +389,7 @@ class SOAPBuildesr:
         tag = tag or self.gentag()
         tag = toXMLname(tag) # convert from SOAP 1.2 XML name encoding
 
-        if type(obj) == InstanceType:
+        if type(obj) == main_soap_manager_types.InstanceType:
             data = obj.data
         else:
             data = obj
@@ -409,31 +406,29 @@ class SOAPBuildesr:
             # preserve type if present
             if getattr(obj,"_typed",None) and getattr(obj,"_type",None):
                 if getattr(obj, "_complexType", None):
-                    sample = typedArrayType(typed=obj._type,
+                    sample = main_soap_manager_types.typedArrayType(typed=obj._type,
                                             complexType = obj._complexType)
                     sample._typename = obj._type
                     if not getattr(obj,"_ns",None): obj._ns = main_soap_manager_namespace.Namespace.URN
                 else:
-                    sample = typedArrayType(typed=obj._type)
+                    sample = main_soap_manager_types.typedArrayType(typed=obj._type)
             else:
-                sample = structType()
+                sample = main_soap_manager_types.structType()
             empty = 1
 
-        # First scan list to see if all are the same type
+        # first scan list to see if all are the same type
         same_type = 1
 
         if not empty:
             for i in data[1:]:
-                if type(sample) != type(i) or \
-                    (type(sample) == InstanceType and \
-                        sample.__class__ != i.__class__):
+                if type(sample) != type(i) or (type(sample) == main_soap_manager_types.InstanceType and sample.__class__ != i.__class__):
                     same_type = 0
                     break
 
         ndecl = ''
         if same_type:
-            if (isinstance(sample, structType)) or \
-                   type(sample) == DictType or \
+            if (isinstance(sample, main_soap_manager_types.structType)) or \
+                   type(sample) == main_soap_manager_types.DictType or \
                    (isinstance(sample, anyType) and \
                     (getattr(sample, "_complexType", None) and \
                      sample._complexType)): # force to urn struct
@@ -451,7 +446,7 @@ class SOAPBuildesr:
 
                 t = ns + typename
 
-            elif isinstance(sample, anyType):
+            elif isinstance(sample, main_soap_manager_types.anyType):
                 ns = sample._validNamespaceURI(self.config.typesNamespaceURI,
                                                self.config.strictNamespaces)
                 if ns:
@@ -463,10 +458,10 @@ class SOAPBuildesr:
                 typename = type(sample).__name__
 
                 # For Python 2.2+
-                if type(sample) == StringType: typename = 'string'
+                if type(sample) == main_soap_manager_types.StringType: typename = 'string'
 
                 # HACK: unicode is a SOAP string
-                if type(sample) == UnicodeType: typename = 'string'
+                if type(sample) == main_soap_manager_types.UnicodeType: typename = 'string'
 
         # HACK: python 'float' is actually a SOAP 'double'.
         if typename=="float":
@@ -525,17 +520,17 @@ class SOAPBuildesr:
     def dump_instance(self, obj, tag, typed = 1, ns_map = {}):
         if not tag:
             # in case it has a name use it
-            if isinstance(obj, anyType) and obj._name:
+            if isinstance(obj, main_soap_manager_types.anyType) and obj._name:
                 tag = obj._name
             else:
                 tag = self.gentag()
         tag = toXMLname(tag) # convert from SOAP 1.2 XML name encoding
 
-        if isinstance(obj, arrayType):      # Array
+        if isinstance(obj, main_soap_manager_types.arrayType):      # Array
             self.dump_list(obj, tag, typed, ns_map)
             return
 
-        if isinstance(obj, faultType):    # Fault
+        if isinstance(obj, main_soap_manager_types.faultType):    # Fault
             cns, cdecl = self.genns(ns_map, main_soap_manager_namespace.Namespace.ENC)
             vns, vdecl = self.genns(ns_map, main_soap_manager_namespace.Namespace.ENV)
             self.out.append('''<%sFault %sroot="1"%s%s>
@@ -552,7 +547,7 @@ class SOAPBuildesr:
         try: a = obj._marshalAttrs(ns_map, self)
         except: a = ''
 
-        if isinstance(obj, voidType):     # void
+        if isinstance(obj, main_soap_manager_types.voidType):     # void
             self.out.append("<%s%s%s></%s>\n" % (tag, a, r, tag))
             return
 
@@ -560,7 +555,7 @@ class SOAPBuildesr:
         if id == None:
             return
 
-        if isinstance(obj, structType):
+        if isinstance(obj, main_soap_manager_types.structType):
             # Check for namespace
             ndecl = ''
             ns = obj._validNamespaceURI(self.config.typesNamespaceURI,
@@ -583,7 +578,7 @@ class SOAPBuildesr:
                 if (k[0] != "_"):
                     self.dump(getattr(obj,k), k, 1, ns_map)
 
-            if isinstance(obj, bodyType):
+            if isinstance(obj, main_soap_manager_types.bodyType):
                 self.multis = 1
 
                 for v, k in self.multirefs:
@@ -591,7 +586,7 @@ class SOAPBuildesr:
 
             self.out.append('</%s>\n' % tag)
 
-        elif isinstance(obj, anyType):
+        elif isinstance(obj, main_soap_manager_types.anyType):
             t = ''
 
             if typed:

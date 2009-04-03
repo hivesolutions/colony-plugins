@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import soap_aux.main_soap_manager_parser
 import soap_aux.main_soap_manager_builder
-import soap_aux.Types
+import soap_aux.main_soap_manager_types
 
 import main_soap_manager_exceptions
 
@@ -291,17 +291,17 @@ class MainSoapManager:
 
         # in case there is an error
         if not error == None:
-            error_fault = soap_aux.Types.faultType("SOAP-ENV:Client", error.__class__.__name__, error.message)
+            error_fault = soap_aux.main_soap_manager_types.faultType("SOAP-ENV:Client", error.__class__.__name__, error.message)
             data = soap_aux.main_soap_manager_builder.buildSOAP(error_fault)
             return data
 
         try:
             data = soap_aux.main_soap_manager_builder.buildSOAP(kw = {"%sResponse" % method_name: result})
         except main_soap_manager_exceptions.SoapEncodeException, exception:
-            error_fault = soap_aux.Types.faultType("SOAP-ENV:Client", "SoapEncodeException", "Result Object Not Serializable")
+            error_fault = soap_aux.main_soap_manager_types.faultType("SOAP-ENV:Client", "SoapEncodeException", "Result Object Not Serializable")
             data = soap_aux.main_soap_manager_builder.buildSOAP(error_fault)
         except Exception, exception:
-            error_fault = soap_aux.Types.faultType("SOAP-ENV:Client", "SoapEncodeException", "Result Object Not Serializable")
+            error_fault = soap_aux.main_soap_manager_types.faultType("SOAP-ENV:Client", "SoapEncodeException", "Result Object Not Serializable")
             data = soap_aux.main_soap_manager_builder.buildSOAP(error_fault)
 
         # returns the soap data
