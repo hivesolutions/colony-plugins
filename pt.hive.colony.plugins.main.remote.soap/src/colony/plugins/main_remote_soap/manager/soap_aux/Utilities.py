@@ -42,7 +42,7 @@ import copy
 import re
 import string
 import sys
-from types import *
+import types
 
 def collapseWhiteSpace(s):
     return re.sub("\s+", " ", s).strip()
@@ -123,7 +123,7 @@ def cleanDate(d, first = 0):
     for i in range(first, 6):
         s = d[i]
 
-        if type(s) == FloatType:
+        if type(s) == types.FloatType:
             if i < 5:
                 try:
                     s = int(s)
@@ -136,10 +136,10 @@ def cleanDate(d, first = 0):
                     raise ValueError, "%s must be integral" % names[i]
 
                 d[i] = s
-        elif type(s) == LongType:
+        elif type(s) == types.LongType:
             try: s = int(s)
             except: pass
-        elif type(s) != IntType:
+        elif type(s) != types.IntType:
             raise TypeError, "%s isn't a valid type" % names[i]
 
         if i == first and s < 0:
