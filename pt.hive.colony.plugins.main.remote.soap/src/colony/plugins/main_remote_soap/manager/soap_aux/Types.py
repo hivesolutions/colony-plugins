@@ -47,7 +47,8 @@ import time
 from types import *
 
 # SOAPpy modules
-from Errors    import *
+import main_soap_manager_errors
+
 from NS        import NS
 from Utilities import encodeHexString, cleanDate
 from Config    import Config
@@ -68,7 +69,7 @@ class anyType:
 
     def __init__(self, data = None, name = None, typed = 1, attrs = None):
         if self.__class__ == anyType:
-            raise Error, "anyType can't be instantiated directly"
+            raise main_soap_manager_errors.Error, "anyType can't be instantiated directly"
 
         if type(name) in (ListType, TupleType):
             self._ns, self._name = name
@@ -182,8 +183,7 @@ class anyType:
             return URI
         if not strict:
             return self._ns
-        raise AttributeError, \
-            "not a valid namespace for type %s" % self._type
+        raise AttributeError, "not a valid namespace for type %s" % self._type
 
 class voidType(anyType):
     pass
@@ -277,7 +277,7 @@ class decimalType(anyType):
             raise ValueError, "must supply initial %s value" % self._type
 
         if type(data) not in (IntType, LongType, FloatType):
-            raise Error, "invalid %s value" % self._type
+            raise main_soap_manager_errors.Error, "invalid %s value" % self._type
 
         return data
 
@@ -1020,7 +1020,7 @@ class NOTATIONType(anyType):
     def __init__(self, data, name = None, typed = 1, attrs = None):
 
         if self.__class__ == NOTATIONType:
-            raise Error, "a NOTATION can't be instantiated directly"
+            raise main_soap_manager_errors.Error, "a NOTATION can't be instantiated directly"
 
         anyType.__init__(self, data, name, typed, attrs)
 
@@ -1243,7 +1243,7 @@ class positive_IntegerType(positiveIntegerType):
 class compoundType(anyType):
     def __init__(self, data = None, name = None, typed = 1, attrs = None):
         if self.__class__ == compoundType:
-            raise Error, "a compound can't be instantiated directly"
+            raise main_soap_manager_errors.Error, "a compound can't be instantiated directly"
 
         anyType.__init__(self, data, name, typed, attrs)
         self._keyord    = []
@@ -1345,7 +1345,7 @@ class arrayType(UserList.UserList, compoundType):
 
         if data:
             if type(data) not in (ListType, TupleType):
-                raise Error, "Data must be a sequence"
+                raise main_soap_manager_errors.Error, "Data must be a sequence"
 
         UserList.UserList.__init__(self, data)
         compoundType.__init__(self, data, name, 0, attrs)
@@ -1533,7 +1533,7 @@ class arrayType(UserList.UserList, compoundType):
                 break
 
         if self._dims[i] != 0 and pos:
-            raise Error, "array index out of range"
+            raise main_soap_manager_errors.Error, "array index out of range"
 
         a = self.data
 
@@ -1555,7 +1555,7 @@ class typedArrayType(arrayType):
         self._type = typed
         self._complexType = complexType
 
-class faultType(structType, Error):
+class faultType(structType, main_soap_manager_errors.Error):
     def __init__(self, faultcode = "", faultstring = "", detail = None):
         self.faultcode = faultcode
         self.faultstring = faultstring

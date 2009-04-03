@@ -44,9 +44,6 @@ import string
 import sys
 from types import *
 
-# SOAPpy modules
-from Errors import *
-
 def collapseWhiteSpace(s):
     return re.sub("\s+", " ", s).strip()
 

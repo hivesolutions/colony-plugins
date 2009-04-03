@@ -46,7 +46,9 @@ class Error(exceptions.Exception):
 
     def __str__(self):
         return "<Error : %s>" % self.msg
-    __repr__ = __str__
+
+    def __repr__(self):
+        return "<Error : %s>" % self.msg
 
     def __call__(self):
         return (msg,)
