@@ -46,12 +46,10 @@ import re
 import time
 from types import *
 
-# SOAPpy modules
 import main_soap_manager_errors
 import main_soap_manager_namespace
 import main_soap_manager_config
-
-from Utilities import encodeHexString, cleanDate
+import main_soap_manager_utilities
 
 ###############################################################################
 # Utility functions
@@ -442,7 +440,7 @@ class dateTimeType(anyType):
 
                 data = list(data[:6])
 
-                cleanDate(data)
+                main_soap_manager_utilities.cleanDate(data)
             else:
                 raise Exception, "invalid type"
         except Exception, exception:
@@ -500,7 +498,7 @@ class recurringInstantType(anyType):
                         f = i
                         break
 
-                cleanDate(data, f)
+                main_soap_manager_utilities.cleanDate(data, f)
             else:
                 raise Exception, "invalid type"
         except Exception, exception:
@@ -575,7 +573,7 @@ class timeType(anyType):
                 if len(data) < 6:
                     data += [0] * (6 - len(data))
 
-                cleanDate(data, 3)
+                main_soap_manager_utilities.cleanDate(data, 3)
 
                 data = data[3:]
             else:
@@ -620,7 +618,7 @@ class dateType(anyType):
 
                 data += [0, 0, 0]
 
-                cleanDate(data)
+                main_soap_manager_utilities.cleanDate(data)
 
                 data = data[:3]
             else:
@@ -663,7 +661,7 @@ class gYearMonthType(anyType):
 
                 data += [1, 0, 0, 0]
 
-                cleanDate(data)
+                main_soap_manager_utilities.cleanDate(data)
 
                 data = data[:2]
             else:
@@ -801,7 +799,7 @@ class gMonthDayType(anyType):
 
                 data = [0] + data + [0, 0, 0]
 
-                cleanDate(data, 1)
+                main_soap_manager_utilities.cleanDate(data, 1)
 
                 data = data[1:3]
             else:
@@ -928,7 +926,7 @@ class hexBinaryType(anyType):
 
     def _marshalData(self):
         if self._cache == None:
-            self._cache = encodeHexString(self._data)
+            self._cache = main_soap_manager_utilities.encodeHexString(self._data)
 
         return self._cache
 
@@ -968,7 +966,7 @@ class binaryType(anyType):
             if self._getAttr((None, 'encoding')) == 'base64':
                 self._cache = base64.encodestring(self._data)
             else:
-                self._cache = encodeHexString(self._data)
+                self._cache = main_soap_manager_utilities.encodeHexString(self._data)
 
         return self._cache
 

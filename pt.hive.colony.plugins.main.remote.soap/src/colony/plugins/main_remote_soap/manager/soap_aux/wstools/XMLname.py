@@ -48,18 +48,28 @@ def _NCNameStartChar(x):
 def _toUnicodeHex(x):
     hexval = hex(ord(x[0]))[2:]
     hexlen = len(hexval)
-    # Make hexval have either 4 or 8 digits by prepending 0's
-    if   (hexlen==1): hexval = "000" + hexval
-    elif (hexlen==2): hexval = "00"  + hexval
-    elif (hexlen==3): hexval = "0"   + hexval
-    elif (hexlen==4): hexval = ""    + hexval
-    elif (hexlen==5): hexval = "000" + hexval
-    elif (hexlen==6): hexval = "00"  + hexval
-    elif (hexlen==7): hexval = "0"   + hexval
-    elif (hexlen==8): hexval = ""    + hexval
-    else: raise Exception, "Illegal Value returned from hex(ord(x))"
 
-    return "_x"+ hexval + "_"
+    # makes hexval have either 4 or 8 digits by prepending 0's
+    if hexlen == 1:
+        hexval = "000" + hexval
+    elif hexlen == 2:
+        hexval = "00" + hexval
+    elif hexlen == 3:
+        hexval = "0" + hexval
+    elif hexlen == 4:
+        hexval = "" + hexval
+    elif hexlen == 5:
+        hexval = "000" + hexval
+    elif hexlen == 6:
+        hexval = "00" + hexval
+    elif hexlen == 7:
+        hexval = "0" + hexval
+    elif hexlen == 8:
+        hexval = ""    + hexval
+    else:
+        raise Exception, "Illegal Value returned from hex(ord(x))"
+
+    return "_x" + hexval + "_"
 
 def _fromUnicodeHex(x):
     return eval(r'u"\u'+x[2:-1]+'"')

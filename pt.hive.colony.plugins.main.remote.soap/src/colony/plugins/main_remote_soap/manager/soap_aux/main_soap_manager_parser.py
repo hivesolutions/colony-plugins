@@ -41,8 +41,7 @@ import main_soap_manager_namespace
 import main_soap_manager_config
 import main_soap_manager_types
 import main_soap_manager_errors
-
-from Utilities import *
+import main_soap_manager_utilities
 
 import string
 import fpconst
@@ -722,7 +721,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
                 if fn < len(r) and d['sign'] == '-':
                     r[fn] = -r[fn]
 
-                cleanDate(r, fn)
+                main_soap_manager_utilities.cleanDate(r, fn)
 
                 return tuple(applyZoneOffset(self.DATETIMECONSTS.months,
                     getZoneOffset(d), r, fn, 0))
@@ -761,7 +760,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
             if d.get('sign') == '-':
                 r[fn] = -r[fn]
 
-            cleanDate(r, fn)
+            main_soap_manager_utilities.cleanDate(r, fn)
 
             zoffs = getZoneOffset(d)
 
@@ -920,9 +919,9 @@ class SOAPParser(xml.sax.handler.ContentHandler):
                 return float(d)
             if t[1] in ("language", "QName", "NOTATION", "NMTOKEN", "Name",
                 "NCName", "ID", "IDREF", "ENTITY"):
-                return collapseWhiteSpace(d)
+                return main_soap_manager_utilities.collapseWhiteSpace(d)
             if t[1] in ("IDREFS", "ENTITIES", "NMTOKENS"):
-                d = collapseWhiteSpace(d)
+                d = main_soap_manager_utilities.collapseWhiteSpace(d)
                 return d.split()
         if t[0] in main_soap_manager_namespace.Namespace.XSD_L:
             if t[1] in ("base64", "base64Binary"):
@@ -932,13 +931,13 @@ class SOAPParser(xml.sax.handler.ContentHandler):
                     return ''
             if t[1] == "hexBinary":
                 if d:
-                    return decodeHexString(d)
+                    return main_soap_manager_utilities.decodeHexString(d)
                 else:
                     return
             if t[1] == "anyURI":
-                return urllib.unquote(collapseWhiteSpace(d))
+                return urllib.unquote(main_soap_manager_utilities.collapseWhiteSpace(d))
             if t[1] in ("normalizedString", "token"):
-                return collapseWhiteSpace(d)
+                return main_soap_manager_utilities.collapseWhiteSpace(d)
         if t[0] == main_soap_manager_namespace.Namespace.ENC:
             if t[1] == "base64":
                 if d:
@@ -952,7 +951,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
 
                     if d:
                         if e == 'hex':
-                            return decodeHexString(d)
+                            return main_soap_manager_utilities.decodeHexString(d)
                         elif e == 'base64':
                             return base64.decodestring(d)
                     else:
@@ -962,12 +961,12 @@ class SOAPParser(xml.sax.handler.ContentHandler):
 
                 raise Error, "unknown or missing binary encoding"
             if t[1] == "uri":
-                return urllib.unquote(collapseWhiteSpace(d))
+                return urllib.unquote(main_soap_manager_utilities.collapseWhiteSpace(d))
             if t[1] == "recurringInstant":
                 return self.convertDateTime(d, t[1])
         if t[0] in (main_soap_manager_namespace.Namespace.XSD2, main_soap_manager_namespace.Namespace.ENC):
             if t[1] == "uriReference":
-                return urllib.unquote(collapseWhiteSpace(d))
+                return urllib.unquote(main_soap_manager_utilities.collapseWhiteSpace(d))
             if t[1] == "timePeriod":
                 return self.convertDateTime(d, t[1])
             if t[1] in ("century", "year"):
@@ -977,7 +976,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
                 return self.convertDateTime(d, t[1])
         if t[0] == main_soap_manager_namespace.Namespace.XSD3:
             if t[1] == "anyURI":
-                return urllib.unquote(collapseWhiteSpace(d))
+                return urllib.unquote(main_soap_manager_utilities.collapseWhiteSpace(d))
             if t[1] in ("gYearMonth", "gMonthDay"):
                 return self.convertDateTime(d, t[1])
             if t[1] == "gYear":
@@ -990,7 +989,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
                 return self.convertDateTime(d, t[1])
         if t[0] in (main_soap_manager_namespace.Namespace.XSD2, main_soap_manager_namespace.Namespace.XSD3):
             if t[1] == "token":
-                return collapseWhiteSpace(d)
+                return main_soap_manager_utilities.collapseWhiteSpace(d)
             if t[1] == "recurringDate":
                 return self.convertDateTime(d, t[1])
             if t[1] == "month":
@@ -999,7 +998,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
                 return self.convertDateTime(d, t[1])
         if t[0] == main_soap_manager_namespace.Namespace.XSD2:
             if t[1] == "CDATA":
-                return collapseWhiteSpace(d)
+                return main_soap_manager_utilities.collapseWhiteSpace(d)
 
         raise main_soap_manager_errors.UnknownTypeError, "unknown type `%s'" % (str(t[0]) + ':' + t[1])
 
