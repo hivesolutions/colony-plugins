@@ -39,10 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import copy
 import socket
+import types
 
 import main_soap_manager_namespace
-
-from types import *
 
 class SOAPConfig:
     __readonly = ("SSLserver", "SSLclient", "GSIserver", "GSIclient")
@@ -150,14 +149,14 @@ class SOAPConfig:
             else:
                 base, uri = name, 0
 
-            if type(value) == StringType:
+            if type(value) == types.StringType:
                 if main_soap_manager_namespace.Namespace.NSMAP.has_key(value):
                     n = (value, main_soap_manager_namespace.Namespace.NSMAP[value])
                 elif main_soap_manager_namespace.Namespace.NSMAP_R.has_key(value):
                     n = (main_soap_manager_namespace.Namespace.NSMAP_R[value], value)
                 else:
                     raise AttributeError, "unknown namespace"
-            elif type(value) in (ListType, TupleType):
+            elif type(value) in (types.ListType, types.TupleType):
                 if uri:
                     n = (value[1], value[0])
                 else:

@@ -37,16 +37,16 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import string
+import fpconst
+import xml.sax
+
 import main_soap_manager_namespace
 import main_soap_manager_config
 import main_soap_manager_types
 import main_soap_manager_errors
 import main_soap_manager_utilities
-
-import string
-import fpconst
-import xml.sax
-from wstools.XMLname import fromXMLname
+import main_soap_manager_xml_name_utilities
 
 try: from M2Crypto import SSL
 except: pass
@@ -192,7 +192,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
         else:
             ns, name = tuple(name)
 
-        name = fromXMLname(name) # convert to SOAP 1.2 XML name encoding
+        name = main_soap_manager_xml_name_utilities.fromXMLname(name) # convert to SOAP 1.2 XML name encoding
 
         if self._next == "E":
             raise Error, "didn't get SOAP-ENV:Envelope"

@@ -39,14 +39,12 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import cgi
 import copy
-from wstools.XMLname import toXMLname, fromXMLname
 import fpconst
-
-# SOAPpy modules
 
 import main_soap_manager_namespace
 import main_soap_manager_config
 import main_soap_manager_types
+import main_soap_manager_xml_name_utilities
 
 # tests whether this Python version has Types.BooleanType
 # if it doesn't have it, then False and True are serialized as integers
@@ -315,7 +313,7 @@ class SOAPBuildesr:
         tag = tag or self.gentag()
 
         # converts from sopa 1.2 xml name encoding
-        tag = toXMLname(tag)
+        tag = main_soap_manager_xml_name_utilities.toXMLname(tag)
 
         a = n = t = ''
         if typed and obj_type:
@@ -341,7 +339,7 @@ class SOAPBuildesr:
         tag = tag or self.gentag()
 
         # converts from soap 1.2 xml name encoding
-        tag = toXMLname(tag)
+        tag = main_soap_manager_xml_name_utilities.toXMLname(tag)
 
         if main_soap_manager_config.Config.strict_range:
             main_soap_manager_types.doubleType(obj)
@@ -362,7 +360,7 @@ class SOAPBuildesr:
         tag = tag or self.gentag()
 
         # converts from soap 1.2 xml name encoding
-        tag = toXMLname(tag)
+        tag = main_soap_manager_xml_name_utilities.toXMLname(tag)
 
         id = self.checkref(obj, tag, ns_map)
         if id == None:
@@ -378,7 +376,9 @@ class SOAPBuildesr:
 
     def dump_None(self, obj, tag, typed = 0, ns_map = {}):
         tag = tag or self.gentag()
-        tag = toXMLname(tag) # convert from SOAP 1.2 XML name encoding
+
+        # converts from soap 1.2 xml name encoding
+        tag = main_soap_manager_xml_name_utilities.toXMLname(tag)
         ns = self.genns(ns_map, self.config.schemaNamespaceURI)[0]
 
         self.out.append('<%s %snull="1"%s/>\n' % (tag, ns, self.genroot(ns_map)))
@@ -387,7 +387,9 @@ class SOAPBuildesr:
 
     def dump_list(self, obj, tag, typed = 1, ns_map = {}):
         tag = tag or self.gentag()
-        tag = toXMLname(tag) # convert from SOAP 1.2 XML name encoding
+
+        # converts from soap 1.2 xml name encoding
+        tag = main_soap_manager_xml_name_utilities.toXMLname(tag)
 
         if type(obj) == main_soap_manager_types.InstanceType:
             data = obj.data
@@ -497,7 +499,9 @@ class SOAPBuildesr:
 
     def dump_dictionary(self, obj, tag, typed = 1, ns_map = {}):
         tag = tag or self.gentag()
-        tag = toXMLname(tag) # convert from SOAP 1.2 XML name encoding
+
+        # converts from soap 1.2 xml name encoding
+        tag = main_soap_manager_xml_name_utilities.toXMLname(tag)
 
         id = self.checkref(obj, tag, ns_map)
         if id == None:
@@ -524,7 +528,9 @@ class SOAPBuildesr:
                 tag = obj._name
             else:
                 tag = self.gentag()
-        tag = toXMLname(tag) # convert from SOAP 1.2 XML name encoding
+
+        # converts from soap 1.2 xml name encoding
+        tag = main_soap_manager_xml_name_utilities.toXMLname(tag)
 
         if isinstance(obj, main_soap_manager_types.arrayType):      # Array
             self.dump_list(obj, tag, typed, ns_map)
@@ -616,10 +622,8 @@ class SOAPBuildesr:
 # SOAPBuilder's more public interface
 ################################################################################
 
-def buildSOAP(args=(), kw={}, method=None, namespace=None,
-              header=None, methodattrs=None, envelope=1, encoding='UTF-8',
-              config=main_soap_manager_config.Config, noroot = 0):
-    t = SOAPBuildesr(args=args, kw=kw, method=method, namespace=namespace,
-                    header=header, methodattrs=methodattrs,envelope=envelope,
-                    encoding=encoding, config=config,noroot=noroot)
+def buildSOAP(args = (), kw = {}, method = None, namespace = None, header = None, methodattrs = None, envelope = 1, encoding = "UTF-8",
+              config = main_soap_manager_config.Config, noroot = 0):
+    t = SOAPBuildesr(args = args, kw = kw, method = method, namespace = namespace, header = header, methodattrs = methodattrs, envelope = envelope,
+                     encoding = encoding, config = config, noroot = noroot)
     return t.build()
