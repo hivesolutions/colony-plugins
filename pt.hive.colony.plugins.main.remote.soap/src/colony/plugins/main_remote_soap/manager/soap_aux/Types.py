@@ -49,9 +49,9 @@ from types import *
 # SOAPpy modules
 import main_soap_manager_errors
 import main_soap_manager_namespace
+import main_soap_manager_config
 
 from Utilities import encodeHexString, cleanDate
-from Config    import Config
 
 ###############################################################################
 # Utility functions
@@ -1258,7 +1258,7 @@ class compoundType(anyType):
         else:
             return map( lambda x: self.__dict__[x], self._keyord)
 
-    def _asdict(self, item=None, encoding=Config.dict_encoding):
+    def _asdict(self, item = None, encoding = main_soap_manager_config.Config.dict_encoding):
         if item is not None:
             if type(item) in (UnicodeType,StringType):
                 item = item.encode(encoding)
@@ -1410,7 +1410,7 @@ class arrayType(UserList.UserList, compoundType):
         else:
             return self.data
 
-    def _asdict(self, item=None, encoding=Config.dict_encoding):
+    def _asdict(self, item=None, encoding=main_soap_manager_config.Config.dict_encoding):
         if item is not None:
             if type(item) in (UnicodeType,StringType):
                 item = item.encode(encoding)

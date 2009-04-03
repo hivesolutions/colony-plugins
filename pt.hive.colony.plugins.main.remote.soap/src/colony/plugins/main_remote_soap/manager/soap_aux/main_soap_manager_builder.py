@@ -45,8 +45,8 @@ import fpconst
 # SOAPpy modules
 
 import main_soap_manager_namespace
+import main_soap_manager_config
 
-from Config import Config
 from Types  import *
 
 # Test whether this Python version has Types.BooleanType
@@ -79,7 +79,7 @@ class SOAPBuildesr:
 
     def __init__(self, args = (), kw = {}, method = None, namespace = None,
         header = None, methodattrs = None, envelope = 1, encoding = 'UTF-8',
-        use_refs = 0, config = Config, noroot = 0):
+        use_refs = 0, config = main_soap_manager_config.Config, noroot = 0):
 
         # Test the encoding, raising an exception if it's not known
         if encoding != None:
@@ -345,7 +345,7 @@ class SOAPBuildesr:
         # converts from soap 1.2 xml name encoding
         tag = toXMLname(tag)
 
-        if Config.strict_range:
+        if main_soap_manager_config.Config.strict_range:
             doubleType(obj)
 
         if fpconst.isPosInf(obj):
@@ -623,7 +623,7 @@ class SOAPBuildesr:
 
 def buildSOAP(args=(), kw={}, method=None, namespace=None,
               header=None, methodattrs=None, envelope=1, encoding='UTF-8',
-              config=Config, noroot = 0):
+              config=main_soap_manager_config.Config, noroot = 0):
     t = SOAPBuildesr(args=args, kw=kw, method=method, namespace=namespace,
                     header=header, methodattrs=methodattrs,envelope=envelope,
                     encoding=encoding, config=config,noroot=noroot)

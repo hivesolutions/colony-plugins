@@ -38,8 +38,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import main_soap_manager_namespace
+import main_soap_manager_config
 
-from Config    import Config
 from Types     import *
 from Utilities import *
 
@@ -813,7 +813,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
     }
     zerofloatre = '[1-9]'
 
-    def convertType(self, d, t, attrs, config=Config):
+    def convertType(self, d, t, attrs, config=main_soap_manager_config.Config):
         if t[0] is None and t[1] is not None:
             type = t[1].strip()
             if type[:9] == 'arrayType':
@@ -837,10 +837,10 @@ class SOAPParser(xml.sax.handler.ContentHandler):
 
         return self.convertToBasicTypes(d, t, attrs, config)
 
-    def convertToSOAPpyTypes(self, d, t, attrs, config=Config):
+    def convertToSOAPpyTypes(self, d, t, attrs, config=main_soap_manager_config.Config):
         pass
 
-    def convertToBasicTypes(self, d, t, attrs, config=Config):
+    def convertToBasicTypes(self, d, t, attrs, config=main_soap_manager_config.Config):
         dnn = d or ''
 
         if t[0] in main_soap_manager_namespace.Namespace.EXSD_L:
