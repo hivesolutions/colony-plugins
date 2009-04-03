@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import soap_aux.main_soap_manager_parser
-import soap_aux.main_soap_manager_builder
-import soap_aux.main_soap_manager_types
+import soap_internal.main_soap_manager_parser
+import soap_internal.main_soap_manager_builder
+import soap_internal.main_soap_manager_types
 
 import main_soap_manager_exceptions
 
@@ -268,7 +268,7 @@ class MainSoapManager:
         """
 
         try:
-            (request, header, body, attrs) = soap_aux.main_soap_manager_parser.parseSOAPRPC(data, header = 1, body = 1, attrs = 1)
+            (request, header, body, attrs) = soap_internal.main_soap_manager_parser.parseSOAPRPC(data, header = 1, body = 1, attrs = 1)
         except:
             raise main_soap_manager_exceptions.ServiceRequestNotTranslatable(data)
 
@@ -291,18 +291,18 @@ class MainSoapManager:
 
         # in case there is an error
         if not error == None:
-            error_fault = soap_aux.main_soap_manager_types.faultType("SOAP-ENV:Client", error.__class__.__name__, error.message)
-            data = soap_aux.main_soap_manager_builder.buildSOAP(error_fault)
+            error_fault = soap_internal.main_soap_manager_types.faultType("SOAP-ENV:Client", error.__class__.__name__, error.message)
+            data = soap_internal.main_soap_manager_builder.buildSOAP(error_fault)
             return data
 
         try:
-            data = soap_aux.main_soap_manager_builder.buildSOAP(kw = {"%sResponse" % method_name: result})
+            data = soap_internal.main_soap_manager_builder.buildSOAP(kw = {"%sResponse" % method_name: result})
         except main_soap_manager_exceptions.SoapEncodeException, exception:
-            error_fault = soap_aux.main_soap_manager_types.faultType("SOAP-ENV:Client", "SoapEncodeException", "Result Object Not Serializable")
-            data = soap_aux.main_soap_manager_builder.buildSOAP(error_fault)
+            error_fault = soap_internal.main_soap_manager_types.faultType("SOAP-ENV:Client", "SoapEncodeException", "Result Object Not Serializable")
+            data = soap_internal.main_soap_manager_builder.buildSOAP(error_fault)
         except Exception, exception:
-            error_fault = soap_aux.main_soap_manager_types.faultType("SOAP-ENV:Client", "SoapEncodeException", "Result Object Not Serializable")
-            data = soap_aux.main_soap_manager_builder.buildSOAP(error_fault)
+            error_fault = soap_internal.main_soap_manager_types.faultType("SOAP-ENV:Client", "SoapEncodeException", "Result Object Not Serializable")
+            data = soap_internal.main_soap_manager_builder.buildSOAP(error_fault)
 
         # returns the soap data
         return data
