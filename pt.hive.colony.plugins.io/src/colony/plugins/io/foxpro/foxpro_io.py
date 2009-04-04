@@ -121,13 +121,16 @@ class FoxProInputOutputConnection :
                 result_map = {}
                 for x in range(len(result)):
                     # fix for null dbiDates
-                    if type(result[x]) == type(dbi.dbiDate(0)) and int(result[x]) == -1:
-                        result_map[column_list[x]] = None
+                    if type(result[x]) == type(dbi.dbiDate(0)):
+                        if int(result[x]) == -1:
+                            result_map[column_list[x]] = None
+                        else:
+                            result_map[column_list[x]] = datetime.datetime.fromtimestamp(int(dbi.dbiDate(result[x])))
                     elif type(result[x]) == str:
                         if string.strip(result[x]) == "":
                             result_map[column_list[x]] = None
                         else:
-                            result_map[column_list[x]] = string.strip(result[x])
+                            result_map[column_list[x]] = unicode(string.strip(result[x]))
                     else:
                         result_map[column_list[x]] = result[x]
                 returned_results.append(result_map)
