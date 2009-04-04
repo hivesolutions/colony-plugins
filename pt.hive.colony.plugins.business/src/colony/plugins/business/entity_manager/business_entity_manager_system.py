@@ -414,9 +414,7 @@ class EntityManager:
         connection = self.get_connection()
 
         # finds all the entities
-        tobias = self.entity_manager_engine_plugin.find_all_entities(connection, entity_class, None, None)
-
-        return tobias
+        return self.entity_manager_engine_plugin.find_all_entities(connection, entity_class, None, None)
 
     def get_entity_class_attribute_names(self, entity_class):
         """

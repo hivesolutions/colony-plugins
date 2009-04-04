@@ -1337,7 +1337,7 @@ class BusinessSqliteEngine:
         self.execute_query(cursor, query_string_value)
 
         # selects the values from the cursor
-        values_list = [value for value in cursor]
+        values_list = cursor.fetchall()
 
         # creates the list of entities
         entities_list = []
@@ -1347,62 +1347,9 @@ class BusinessSqliteEngine:
             # creates a new entity instance
             entity = entity_class()
 
-            # retrieves the id attribute value
-            id_attribute_value = self.get_entity_id_attribute_value(entity)
-
-            # adds the entity to the list of retrieved entities
-            retrieved_entities_list.add_entity(id_attribute_value, entity)
-
-            # creates the initial index value
-            index = 0
-
-            # creates the relation attributes list
-            # this list is used for relation attributes post-processing
-            relation_attributes_list = []
-
             # iterates over all the attribute values of the value
             for attribute_value in value:
-                # retrieves the entity class attribute name
-                entity_class_valid_attribute_name = entity_class_valid_attribute_names[index]
-
-                # in case the attribute is a relation
-                if self.is_attribute_name_relation(entity_class_valid_attribute_name, entity_class) and not self.is_attribute_name_lazy_relation(entity_class_valid_attribute_name, entity_class):
-                    # creates the relation attribute tuple
-                    relation_attribute_tuple = (entity_class_valid_attribute_name, attribute_value)
-
-                    # adds the relation attribute tuple to the list of relation attributes
-                    relation_attributes_list.append(relation_attribute_tuple)
-                else:
-                    # sets the attribute in the instance
-                    setattr(entity, entity_class_valid_attribute_name, attribute_value)
-
-                # increments the index value
-                index += 1
-
-            # retrieves the id attribute value
-            id_attribute_value = self.get_entity_id_attribute_value(entity)
-
-            # retrieves the already buffered entity
-            buffered_entity = retrieved_entities_list.get_entity(entity_class, id_attribute_value)
-
-            # in case the entity is already buffered
-            if buffered_entity:
-                # closes the cursor
-                cursor.close()
-
-                # sets the entity as the buffered entity
-                entity = buffered_entity
-            else:
-                # adds the entity to the list of retrieved entities
-                retrieved_entities_list.add_entity(id_attribute_value, entity)
-
-                # iterates over all the relation attributes list
-                for entity_class_valid_attribute_name, attribute_value in relation_attributes_list:
-                    # retrieves the relation attribute value
-                    relation_attribute_value = self.get_relation_value(connection, entity_class_valid_attribute_name, entity_class, attribute_value, id_attribute_value, retrieved_entities_list)
-
-                    # sets the relation attribute in the instance
-                    setattr(entity, entity_class_valid_attribute_name, relation_attribute_value)
+                setattr(entity, entity_class_valid_attribute_name, attribute_value)
 
             # adds the entity to the list of entities
             entities_list.append(entity)
