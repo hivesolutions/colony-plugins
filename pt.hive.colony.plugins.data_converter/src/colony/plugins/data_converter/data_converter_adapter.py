@@ -41,6 +41,7 @@ import types
 import md5
 import base64
 import copy
+import time
 
 import data_converter.data_converter_adapter_configuration_parser
 
@@ -122,7 +123,6 @@ class DataConverterAdapter:
 
         self.convert_omni(internal_structure)
 
-    # @todo: this method is temporary
     def convert_omni(self, internal_structure):
         entity_manager_plugin = self.data_converter_plugin.entity_manager_plugin
         resource_manager_plugin = self.data_converter_plugin.resource_manager_plugin
@@ -131,6 +131,8 @@ class DataConverterAdapter:
         entity_manager = entity_manager_plugin.load_entity_manager("sqlite")
         entity_manager.set_connection_parameters({"file_path" : user_home_path + "/conversion_database.db", "autocommit" : False})
         entity_manager.load_entity_manager()
+
+        start_time = time.time()
 
         entity_manager.create_transaction("organizational_hierarchy_transaction")
 
@@ -222,8 +224,16 @@ class DataConverterAdapter:
 
         entity_manager.commit_transaction("organizational_hierarchy_transaction")
 
+        self.foreign_key_queue =  []
+        self.missing_relations = []
         # convert every entity in the internal structure
-        internal_entity_names = internal_structure.get_entity_names()
+        internal_entity_names = ["system_company", "store", "system_company_employee", "users", "reason", "location", "vat_class", "customer_company", "customer_person", "supplier_company", "supplier_employee", "supplier_person"
+ "address", "contact_information", "financial_account", "person_relation", "category", "collection", "product", "sub_product", "repair", "media", "organizational_merchandise_hierarchy_tree_node_vat_class",
+ "merchandise_contactable_organizational_hierarchy_tree_node", "stock_adjustment", "stock_adjustment_merchandise_hierarchy_tree_node", "consignment", "consignment_merchandise_hierarchy_tree_node",
+ "purchase", "purchase_merchandise_hierarchy_tree_node", "payment_terms", "sale_transaction", "sale_merchandise_hierarchy_tree_node_contactable_organizational_hierarchy_tree_node", "shipment", "invoice",
+ "receipt", "supplier_return", "customer_return", "merchandise_hierarchy_tree_node_return", "credit_note", "card_payment", "cash_payment", "check_payment", "credit_note_payment",
+ "gift_certificate", "credit_contract", "credit_payment", "payment", "payment_line", "transfer", "transfer_merchandise_hierarchy_tree_node"]
+        #internal_entity_names = internal_structure.get_entity_names()
         for internal_entity_name in internal_entity_names:
             print "##### CONVERTING " + internal_entity_name + " entities #####"
             # for all internal entity instance
@@ -232,6 +242,35 @@ class DataConverterAdapter:
             entity_manager.commit_transaction(internal_entity_name)
 
         # create user group and profile for every user
+        user_group_class = entity_manager.get_entity_class("UserGroup")
+        user_group_entity = user_group_class()
+        user_group_entity.name = "Utilizadores"
+        entity_manager.save(user_group_entity)
+        user_class = entity_manager.get_entity_class("User")
+        users = entity_manager._find_all(user_class)
+        for user in users:
+            user.secret_answer_hash = md5.new(user.secret_answer_hash).digest()
+            user.secret_answer_hash_type = "md5"
+            user.password_hash = md5.new(user.password_hash).digest()
+            user.password_hash_type = "md5"
+            user.status = 0
+            entity_manager.save_or_update(user)
+            profile_class = entity_manager.get_entity_class("Profile")
+            profile_entity = profile_class()
+            profile_entity.user_groups = [user_group_entity]
+            profile_entity.user = user
+            entity_manager.save(profile_entity)
+
+        # add parentless tree nodes to the root node
+        customer_hierarchy_tree_class = entity_manager.get_entity_class("CustomerHierarchyTree")
+        customer_hierarchy_tree_entity = entity_manager._find_all(customer_hierarchy_tree_class)[0]
+        supplier_hierarchy_tree_class = entity_manager.get_entity_class("SupplierHierarchyTree")
+        supplier_hierarchy_tree_entity = entity_manager._find_all(supplier_hierarchy_tree_class)[0]
+        organizational_hierarchy_tree_class = entity_manager.get_entity_class("OrganizationalHierarchyTree")
+        organizational_hierarchy_tree_entity = entity_manager._find_all(organizational_hierarchy_tree_class)[0]
+        merchandise_hierarchy_tree_class = entity_manager.get_entity_class("MerchandiseHierarchyTree")
+        merchandise_hierarchy_tree = entity_manager._find_all(merchandise_hierarchy_tree_class)[0]
+
         # create system settings, currencies and languages
 
         # initializes variable for deadlock protection
@@ -259,19 +298,76 @@ class DataConverterAdapter:
                 entity_attribute_name = foreign_key_information["entity_attribute_name"]
                 destination_entity_name = foreign_key_information["destination_entity_name"]
                 destination_entity_object_id = foreign_key_information["destination_entity_object_id"]
-                processed_foreign_keys.append(foreign_key_information)
+                entity_class = entity_manager.get_entity_class(entity_name)
+                entity = entity_manager.find_all(entity_class, entity_object_id, "object_id")[0]
+                destination_entity_class = entity_manager.get_entity_class(destination_entity_name)
+                destination_entities = entity_manager.find_all(destination_entity_class, destination_entity_object_id, "object_id")
+                if len(destination_entities) == 1:
+                    destination_entity = destination_entities[0]
+                    setattr(entity, entity_attribute_name, destination_entity)
+                    entity_manager.save_or_update(entity)
+                    processed_foreign_keys.append(foreign_key_information)
 
             # remove the processed foreign keys from the foreign key queue
             for processed_foreign_key in processed_foreign_keys:
                 self.foreign_key_queue.remove(processed_foreign_key)
 
+
+        print "##### CONVERSION FINISHED #####"
+        print "-> MISSING RELATIONS <-"
+        for missing_relation in self.missing_relations:
+            print missing_relation
+        print "MISSING ASSOCIATIONS: " + str(len(self.foreign_key_queue))
+        end_time = time.time()
+        time_elapsed = end_time - start_time
+        print "TIME ELAPSED: " + str(time_elapsed)
+
     # @todo: this method is temporary
     def convert_internal_attribute_name_to_omni_name(self, internal_entity_name, internal_attribute_name):
         map = {"address" : {"system_company" : "contactable_organizational_hierarchy_tree_node",
                             "customer" : "contactable_organizational_hierarchy_tree_node"},
+               "payment" : {"sale" : "sales"},
                "card_payment" : {"payments" : "payment_lines"},
                "cash_payment" : {"payments" : "payment_lines"},
-               "check_payment" : {"payments" : "payment_lines"}}
+               "check_payment" : {"payments" : "payment_lines"},
+               "product" : {"purchase_merchandise_hierarchy_tree_node" : "purchase_merchandise_hierarchy_tree_nodes"},
+
+               "system_company" : {"preferred_languge" : "preferred_language"},
+               "store" : {"sales_stockholder" : "sales_stockholders"},
+               "financial_account" : {"contactable_organizational_hierarchy_tree_node" : "owners"},
+               "product" : {"category" : "parent_nodes"},
+               "customer_return" : {"return_site" : "return_sites",
+                                    "merchandise_hierarchy_tree_node_return" : "merchandise_hierarchy_tree_node_returns",
+                                    "sellers" : "return_processors",
+                                    "return_processor" : "return_processors"},
+               "supplier_return" : {"merchandise_hierarchy_tree_node_return" : "merchandise_hierarchy_tree_node_returns"},
+               "sale_transaction" : {"money_sale" : "money_sale_slip",
+                                     "returns" : "customer_returns"},
+               "merchandise_hierarchy_tree_node_return" : {"product" : "merchandise",
+                                                           "subproduct" : "merchandise",
+                                                           "return" : "merchandise_return",
+                                                           "consignment_supplier_return" : "merchandise_return"},
+               "merchandise_contactable_organizational_hierarchy_tree_node" : {"product" : "merchandise",
+                                                                               "merchandise_hierarchy_tree_node" : "merchandise",
+                                                                               "store" : "contactable_organizational_hierarchy_tree_node",
+                                                                               "subproduct" : "merchandise"},
+               # @todo: warning
+               "payment_line" : {"credit_notes" : "credit_note"},
+               "repair" : {"purchase_merchandise_hierarchy_tree_node" : "purchase_merchandise_hierarchy_tree_nodes"},
+               "stock_adjustment_merchandise_hierarchy_tree_node" : {"store" : "adjustment_target"},
+               "credit_contract" : {"sale" : "sales"},
+               "credit_note_payment" : {"payments" : "payment_lines"},
+               "stock_adjustment" : {"reason" : "stock_adjustment_reason"},
+               "transfer_merchandise_hierarchy_tree_node" : {"product" : "merchandise"},
+               "contact_information" : {"supplier" : "contactable_organizational_hierarchy_tree_node",
+                                        "customer" : "contactable_organizational_hierarchy_tree_node",
+                                        "system_company" : "contactable_organizational_hierarchy_tree_node"},
+               "media" : {"product" : "merchandise_hierarchy_tree_nodes",
+                          "customer" : "contactable_organizational_hierarchy_tree_nodes",
+                          "system_company" : "contactable_organizational_hierarchy_tree_nodes"},
+               "purchase" : {"money_sale" : "money_sale_slip"},
+               "PurchaseMerchandiseHierarchyTreeNode" : {"merchandise_hierarchy_tree_node" : "merchandise"}}
+
         if internal_entity_name in map and internal_attribute_name in map[internal_entity_name]:
             return map[internal_entity_name][internal_attribute_name]
         else:
@@ -280,7 +376,13 @@ class DataConverterAdapter:
     # @todo: this method is temporary
     def convert_internal_entity_name_to_omni_name(self, internal_entity_name):
         map = {"supplier_person" : "SupplierCompany",
-               "customer" : "CustomerPerson"}
+               "customer" : "CustomerPerson",
+               "consignment_supplier_return" : "SupplierReturn",
+               "subproduct" : "SubProduct",
+               "system_company_employee" : "Employee",
+               "supplier" : "SupplierCompany",
+               "postdated_check_payment" : "PostDatedCheckPayment",
+               "money_sale" : "MoneySaleSlip"}
         if internal_entity_name in map:
             return map[internal_entity_name]
         else:
@@ -295,9 +397,11 @@ class DataConverterAdapter:
         # convert the internal entities
         internal_entities = list(set(internal_structure.get_entities(internal_structure_entity_name)))
         for internal_entity_index in range(len(internal_entities)):
-            internal_entity = internal_entities[internal_entity_index]
-            print "Converting internal entity with object id = " + str(internal_entity.object_id) + " " + str(internal_entity_index) + " / " + str(len(internal_entities))
+            if internal_entity_index > 0 and internal_entity_index % 50 == 0:
+                break
+                #print "Converting internal entity with object id = " + str(internal_entity.object_id) + " " + str(internal_entity_index) + " / " + str(len(internal_entities))
 
+            internal_entity = internal_entities[internal_entity_index]
             # if the entity doesn't exist create a new one
             entity_name = self.convert_internal_entity_name_to_omni_name(internal_entity._name)
             entity_class = entity_manager.get_entity_class(entity_name)
@@ -314,13 +418,14 @@ class DataConverterAdapter:
                         if type(default_value) == types.FunctionType:
                             field_value = default_value(field_value)
                         del default_values_map[field_name]
+                     # @todo: this is a hack
+                     if type(field_value) in (types.StringType, types.FloatType, types.LongType, types.BooleanType):
+                            field_value = unicode(field_value)
                      setattr(entity, field_name, field_value)
 
                 # apply all remaining values default values
                 for field_name, field_value in default_values_map.items():
                     if not type(field_value) == types.FunctionType:
-                        if type(field_value) == types.StringType:
-                            field_value = unicode(field_value)
                         setattr(internal_entity, field_name, field_value)
 
                 entity.object_id = internal_entity.object_id
@@ -342,46 +447,51 @@ class DataConverterAdapter:
 
     # @todo: this method is temporary
     def associate_entities(self, entity_manager, internal_entities, entity, entity_attribute_name):
-        entity_attribute = getattr(entity, entity_attribute_name)
-        entity_name = entity.__class__.__name__
+        if hasattr(entity, entity_attribute_name):
+            entity_attribute = getattr(entity, entity_attribute_name)
+            entity_name = entity.__class__.__name__
 
-        # @todo: this is a hack for dealing with garbage data
-        if internal_entities:
-            for internal_entity in internal_entities:
-               # @todo: this is a hack for dealing with garbage data
-                if internal_entity:
-                    internal_entity_name = internal_entity._name
-                    internal_entity_class_name = self.convert_internal_entity_name_to_omni_name(internal_entity_name)
-                    internal_entity_class = entity_manager.get_entity_class(internal_entity_class_name)
-                    if internal_entity_class == None:
-                        print "################################# " + internal_entity_name + " ##################################"
-                    internal_entity_entities = entity_manager.find_all(internal_entity_class, internal_entity.object_id, "object_id")
+            # @todo: this is a hack for dealing with garbage data
+            if internal_entities:
+                for internal_entity in internal_entities:
+                   # @todo: this is a hack for dealing with garbage data
+                   if internal_entity:
+                        internal_entity_name = internal_entity._name
+                        internal_entity_class_name = self.convert_internal_entity_name_to_omni_name(internal_entity_name)
+                        internal_entity_class = entity_manager.get_entity_class(internal_entity_class_name)
+                        if internal_entity_class == None:
+                            print "################################# " + internal_entity_name + " ##################################"
+                        internal_entity_entities = entity_manager.find_all(internal_entity_class, internal_entity.object_id, "object_id")
 
-                    # if the entity for the internal entity exists then create the association
-                    if len(internal_entity_entities) == 1:
-                        internal_entity_entity = internal_entity_entities[0]
-                        print "Associating " + entity_name + " with object id = " + str(entity.object_id) + " to " + internal_entity_class_name + " with object id = " + str(internal_entity.object_id)
-                        if type(entity_attribute) == types.ListType:
-                            entity_attribute.append(internal_entity_entity)
+                        # if the entity for the internal entity exists then create the association
+                        if len(internal_entity_entities) == 1:
+                            internal_entity_entity = internal_entity_entities[0]
+                            # print "Associating " + entity_name + " with object id = " + str(entity.object_id) + " to " + internal_entity_class_name + " with object id = " + str(internal_entity.object_id)
+                            if type(entity_attribute) == types.ListType:
+                                entity_attribute.append(internal_entity_entity)
+                            else:
+                                entity_attribute = internal_entity_entity
+                                break
                         else:
-                            entity_attribute = internal_entity_entity
-                            break
-                    else:
-                        # otherwise add the association parameters to the foreign key queue
-                        self.foreign_key_queue.append({
-                                              "entity_name" : entity_name,
-                                              "entity_object_id" : entity.object_id,
-                                              "entity_attribute_name" : entity_attribute_name,
-                                              "destination_entity_name" : internal_entity_class_name,
-                                              "destination_entity_object_id" : internal_entity.object_id})
-                        print "Failed to associate " + entity_name + " with object id = " + str(entity.object_id) + " to " + internal_entity_class_name + " with object id = " + str(internal_entity.object_id)
+                            # otherwise add the association parameters to the foreign key queue
+                            self.foreign_key_queue.append({
+                                                  "entity_name" : entity_name,
+                                                  "entity_object_id" : entity.object_id,
+                                                  "entity_attribute_name" : entity_attribute_name,
+                                                  "destination_entity_name" : internal_entity_class_name,
+                                                  "destination_entity_object_id" : internal_entity.object_id})
+                            # print "Failed to associate " + entity_name + " with object id = " + str(entity.object_id) + " to " + internal_entity_class_name + " with object id = " + str(internal_entity.object_id)
 
-        # if the relation attribute is a list then remove duplicates
-        # that may be caused by a second passing
-        if type(entity_attribute) == types.ListType:
-            entity_attribute = list(set(entity_attribute))
+            # if the relation attribute is a list then remove duplicates
+            # that may be caused by a second passing
+            if type(entity_attribute) == types.ListType:
+                entity_attribute = list(set(entity_attribute))
 
-        setattr(entity, entity_attribute_name, entity_attribute)
+            setattr(entity, entity_attribute_name, entity_attribute)
+        else:
+            relation_name = entity.__class__.__name__ + "." + entity_attribute_name
+            if not relation_name in self.missing_relations:
+                self.missing_relations.append(relation_name)
 
     def process_work_units(self, task):
         """
