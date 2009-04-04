@@ -43,7 +43,13 @@ __credits__ = "Jan-Klaas Kollhof <keyjaque@yahoo.com>"
 import re
 import types
 
+import cStringIO
+
 import main_jsonrpc_manager_exceptions
+
+EXCLUSION_LIST = ["__class__", "__delattr__", "__dict__", "__doc__", "__getattribute__", "__hash__",
+                  "__init__", "__module__", "__new__", "__reduce__", "__reduce_ex__", "__repr__",
+                  "__setattr__", "__str__", "__weakref__"]
 
 char_replacements = {
         "\t" : "\\t",
@@ -81,62 +87,128 @@ def escape_char(match):
             return c
 
 def dumps(obj):
-    return unicode("".join([part for part in dump_parts(obj)]))
+    # creates the string buffer
+    string_buffer = cStringIO.StringIO()
 
-def dump_parts(obj):
+    # dumps the object parts to the string buffer
+    dump_parts_buffer(obj, string_buffer)
+
+    # retrieves the string value
+    string_value = string_buffer.getvalue()
+
+    # returns the string value
+    return string_value
+
+def dump_parts_buffer(obj, string_buffer):
     obj_type = type(obj)
     if obj == None:
-        yield u"null"
+        string_buffer.write("null")
     elif obj_type is types.FunctionType:
-        yield u"\"function\""
+        string_buffer.write("\"function\"")
     elif obj_type is types.ModuleType:
-        yield u"\"module\""
+        string_buffer.write("\"module\"")
     elif obj_type is types.MethodType:
-        yield u"\"method\""
+        string_buffer.write("\"method\"")
     elif obj_type is types.InstanceType:
-        yield u"{"
+        string_buffer.write("{")
         is_first = True
-        obj_items = dir(obj)
+        obj_items = [value for value in dir(obj) if not value in EXCLUSION_LIST]
         for obj_item in obj_items:
             if is_first:
                 is_first = False
             else:
-                yield u","
+                string_buffer.write(",")
             obj_value = getattr(obj, obj_item)
-            yield "\"" + obj_item + "\"" + ":"
-            for part in dump_parts(obj_value):
-                yield part
-        yield u"}"
+            string_buffer.write("\"" + obj_item + "\"" + ":")
+            dump_parts_buffer(obj_value, string_buffer)
+        string_buffer.write("}")
     elif obj_type is types.BooleanType:
         if obj:
-            yield u"true"
+            string_buffer.write("true")
         else:
-            yield u"false"
+            string_buffer.write("false")
     elif obj_type is types.DictionaryType:
-        yield u"{"
+        string_buffer.write("{")
         is_first = True
         for (key, value) in obj.items():
             if is_first:
                 is_first = False
             else:
-                yield u","
-            yield u"\"" + string_escape_re.sub(escape_char, key) + u"\":"
-            for part in dump_parts(value):
-                yield part
-        yield u"}"
+                string_buffer.write(",")
+            string_buffer.write("\"" + string_escape_re.sub(escape_char, key) + "\":")
+            dump_parts_buffer(value, string_buffer)
+        string_buffer.write("}")
     elif obj_type in types.StringTypes:
-        yield u"\"" + string_escape_re.sub(escape_char, obj) + u"\""
+        string_buffer.write("\"" + string_escape_re.sub(escape_char, obj) + "\"")
     elif obj_type in [types.TupleType, types.ListType, types.GeneratorType]:
-        yield u"["
+        string_buffer.write("[")
         is_first = True
         for item in obj:
             if is_first:
                 is_first = False
             else:
-                yield u","
+                string_buffer.write(",")
+            dump_parts_buffer(item, string_buffer)
+        string_buffer.write("]")
+    elif obj_type in [types.IntType, types.LongType, types.FloatType]:
+        string_buffer.write(str(obj))
+    else:
+        raise main_jsonrpc_manager_exceptions.JsonEncodeException(obj)
+
+def dump_parts(obj):
+    obj_type = type(obj)
+    if obj == None:
+        yield "null"
+    elif obj_type is types.FunctionType:
+        yield "\"function\""
+    elif obj_type is types.ModuleType:
+        yield "\"module\""
+    elif obj_type is types.MethodType:
+        yield "\"method\""
+    elif obj_type is types.InstanceType:
+        yield "{"
+        is_first = True
+        obj_items = [value for value in dir(obj) if not value in EXCLUSION_LIST]
+        for obj_item in obj_items:
+            if is_first:
+                is_first = False
+            else:
+                yield ","
+            obj_value = getattr(obj, obj_item)
+            yield "\"" + obj_item + "\"" + ":"
+            for part in dump_parts(obj_value):
+                yield part
+        yield "}"
+    elif obj_type is types.BooleanType:
+        if obj:
+            yield "true"
+        else:
+            yield "false"
+    elif obj_type is types.DictionaryType:
+        yield "{"
+        is_first = True
+        for (key, value) in obj.items():
+            if is_first:
+                is_first = False
+            else:
+                yield ","
+            yield "\"" + string_escape_re.sub(escape_char, key) + "\":"
+            for part in dump_parts(value):
+                yield part
+        yield "}"
+    elif obj_type in types.StringTypes:
+        yield "\"" + string_escape_re.sub(escape_char, obj) + "\""
+    elif obj_type in [types.TupleType, types.ListType, types.GeneratorType]:
+        yield "["
+        is_first = True
+        for item in obj:
+            if is_first:
+                is_first = False
+            else:
+                yield ","
             for part in dump_parts(item):
                 yield part
-        yield u"]"
+        yield "]"
     elif obj_type in [types.IntType, types.LongType, types.FloatType]:
         yield unicode(obj)
     else:
