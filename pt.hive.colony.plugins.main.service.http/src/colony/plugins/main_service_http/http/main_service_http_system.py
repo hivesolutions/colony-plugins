@@ -42,7 +42,7 @@ import socket
 import select
 import traceback
 
-import StringIO
+import cStringIO
 
 import main_service_http_exceptions
 
@@ -314,7 +314,7 @@ class HttpClientServiceTask:
         """
 
         # creates the string io for the message
-        message = StringIO.StringIO()
+        message = cStringIO.StringIO()
 
         # creates a request object
         request = HttpRequest()
@@ -632,7 +632,7 @@ class HttpRequest:
     content_type = "none"
     """ The content type """
 
-    message_stream = StringIO.StringIO()
+    message_stream = cStringIO.StringIO()
     """ The message stream """
 
     status_code = None
@@ -656,7 +656,7 @@ class HttpRequest:
     def __init__(self):
         self.attributes_map = {}
         self.headers_map = {}
-        self.message_stream = StringIO.StringIO()
+        self.message_stream = cStringIO.StringIO()
         self.properties = {}
 
     def __repr__(self):
@@ -707,7 +707,7 @@ class HttpRequest:
         return self.chunked_encoding
 
     def get_result(self):
-        result = StringIO.StringIO()
+        result = cStringIO.StringIO()
         message = self.message_stream.getvalue()
 
         if self.mediated:
