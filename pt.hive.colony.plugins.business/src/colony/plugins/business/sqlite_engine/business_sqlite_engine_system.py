@@ -1392,7 +1392,7 @@ class BusinessSqliteEngine:
             else:
                 query_string_value += str(field_value)
 
-        query_string_value += " limit " + start_record + ", " + number_of_records
+        query_string_value += " limit " + str(start_record) + ", " + str(number_of_records)
 
         # executes the query retrieving the values
         self.execute_query(cursor, query_string_value)
