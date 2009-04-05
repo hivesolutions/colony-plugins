@@ -1418,7 +1418,22 @@ class BusinessSqliteEngine:
                     else:
                         " or "
 
-                    query_string_value += filter_field["field_name"] + " like "  + "\"%" + filter_field["field_value"] + "%\""
+                    # retrieves the filter field value
+                    filter_field_value = filter_field["field_value"]
+
+                    # creates a new string for the filter field value
+                    filter_field_value_string = str()
+
+                    is_first_filter_field_value = True
+
+                    for splitted_filter_value in filter_field_value.split():
+                        if is_first_filter_field_value:
+                            is_first_filter_field_value = False
+                        else:
+                            filter_field_value_string += "%"
+                        filter_field_value_string += splitted_filter_value
+
+                    query_string_value += filter_field["field_name"] + " like "  + "\"%" + filter_field_value_string + "%\""
 
             query_string_value += ")"
 
