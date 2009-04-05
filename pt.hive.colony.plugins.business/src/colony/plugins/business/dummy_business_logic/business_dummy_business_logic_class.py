@@ -176,6 +176,11 @@ class DummyBusinessLogic:
         # updates the entity bundle instance
         self.entity_manager.update(dummy_entity_bundle_instance)
 
+        # finds all the dummy entity bundle entities with the given filter
+        find_all_values = self.entity_manager._find_all_options(dummy_entity_bundle_class, {"filters" : [{"filter_type" : "like",
+                                                                                                          "filter_fields" : [{"field_name" : "name",
+                                                                                                                              "field_value" : "test"}]}]})
+
         # removes the entity instance
         self.entity_manager.remove(dummy_entity_bundle_new_instance)
 

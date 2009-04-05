@@ -1345,6 +1345,8 @@ class BusinessSqliteEngine:
 
         number_records = options.get("number_records", -1)
 
+        filters = options.get("filters", [])
+
         # retrieves the database connection from the connection object
         database_connection = connection.database_connection
 
@@ -1382,6 +1384,8 @@ class BusinessSqliteEngine:
 
             query_string_value += entity_class_valid_attribute_name
 
+        is_first_where = True
+
         if field_value == None:
             query_string_value += " from " + entity_class_name
         else:
@@ -1391,6 +1395,32 @@ class BusinessSqliteEngine:
                 query_string_value += "'" + field_value + "'"
             else:
                 query_string_value += str(field_value)
+
+            is_first_where = False
+
+        for filter in filters:
+            if is_first_where:
+                query_string_value += " where ("
+                is_first_where = False
+            else:
+                query_string_value += " and ("
+
+            filter_type = filter["filter_type"]
+
+            if filter_type == "like":
+                filter_fields = filter["filter_fields"]
+
+                is_first_field = True
+
+                for filter_field in filter_fields:
+                    if is_first_field:
+                        is_first_field = False
+                    else:
+                        " or "
+
+                    query_string_value += filter_field["field_name"] + " like "  + "\"%" + filter_field["field_value"] + "%\""
+
+            query_string_value += ")"
 
         query_string_value += " limit " + str(start_record) + ", " + str(number_records)
 
