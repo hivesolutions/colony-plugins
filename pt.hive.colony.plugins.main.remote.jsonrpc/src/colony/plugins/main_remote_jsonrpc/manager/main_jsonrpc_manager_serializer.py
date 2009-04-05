@@ -51,6 +51,8 @@ EXCLUSION_LIST = ["__class__", "__delattr__", "__dict__", "__doc__", "__getattri
                   "__init__", "__module__", "__new__", "__reduce__", "__reduce_ex__", "__repr__",
                   "__setattr__", "__str__", "__weakref__"]
 
+EXCLUSION_TYPES = [types.MethodType, types.FunctionType]
+
 char_replacements = {
         "\t" : "\\t",
         "\b" : "\\b",
@@ -112,7 +114,7 @@ def dump_parts_buffer(obj, string_buffer):
     elif obj_type is types.InstanceType:
         string_buffer.write("{")
         is_first = True
-        obj_items = [value for value in dir(obj) if not value in EXCLUSION_LIST]
+        obj_items = [value for value in dir(obj) if not value in EXCLUSION_LIST and not type(getattr(obj, value)) in EXCLUSION_TYPES]
         for obj_item in obj_items:
             if is_first:
                 is_first = False
@@ -168,7 +170,7 @@ def dump_parts(obj):
     elif obj_type is types.InstanceType:
         yield "{"
         is_first = True
-        obj_items = [value for value in dir(obj) if not value in EXCLUSION_LIST]
+        obj_items = [value for value in dir(obj) if not value in EXCLUSION_LIST and not type(getattr(obj, value)) in EXCLUSION_TYPES]
         for obj_item in obj_items:
             if is_first:
                 is_first = False
