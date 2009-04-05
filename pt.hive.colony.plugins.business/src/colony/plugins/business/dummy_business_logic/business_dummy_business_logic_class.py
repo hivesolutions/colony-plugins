@@ -114,6 +114,9 @@ class DummyBusinessLogic:
         # retrieves the DummyEntityBundleAssociation class from the entity manager
         dummy_entity_bundle_association_class = self.entity_manager.get_entity_class("DummyEntityBundleAssociation")
 
+        # retrieves the DummyEntityBundleNew class from the entity manager
+        dummy_entity_bundle_new_class = self.entity_manager.get_entity_class("DummyEntityBundleNew")
+
         # creates a new dummy entity bundle instance
         dummy_entity_bundle_instance = dummy_entity_bundle_class()
 
@@ -122,6 +125,9 @@ class DummyBusinessLogic:
 
         # creates a new dummy entity bundle association instance
         dummy_entity_bundle_association_instance = dummy_entity_bundle_association_class()
+
+        # create a new dummy entity bundle new instance
+        dummy_entity_bundle_new_instance = dummy_entity_bundle_new_class()
 
         # sets the dummy entity bundle instance attributes
         dummy_entity_bundle_instance.name = "test"
@@ -134,10 +140,19 @@ class DummyBusinessLogic:
         # sets the dummy entity bundle association instance attributes
         dummy_entity_bundle_association_instance.name = "test_association"
 
+        # sets the dummy entity bundle new instance attributes
+        dummy_entity_bundle_new_instance.name = "test_association_2"
+
         # sets the entity instances relation attributes
+        dummy_entity_bundle_association_instance.entity_other_to_many_relation = [dummy_entity_bundle_new_instance]
+
+        dummy_entity_bundle_instance.entity_relation = dummy_entity_bundle_association_instance
         dummy_entity_bundle_instance.entity_relation = dummy_entity_bundle_association_instance
         dummy_entity_bundle_instance_1.entity_relation = dummy_entity_bundle_association_instance
         dummy_entity_bundle_instance.entity_to_many_relation = [dummy_entity_bundle_association_instance]
+
+        # saves the entity instance
+        self.entity_manager.save(dummy_entity_bundle_new_instance)
 
         # saves the entity instance
         self.entity_manager.save(dummy_entity_bundle_association_instance)
@@ -148,8 +163,21 @@ class DummyBusinessLogic:
         # saves the entity instance
         self.entity_manager.save(dummy_entity_bundle_instance_1)
 
+        # creates the find options map
+        find_options = {"eager_loading_relations" : {"entity_relation" : {},
+                                                     "entity_to_many_relation" : {"eager_loading_relations" : {"entity_other_to_many_relation" : {}}}}}
+
         # finds the entity bundle instance
-        self.entity_manager.find(dummy_entity_bundle_class, "test")
+        dummy_entity_bundle_instance = self.entity_manager.find_options(dummy_entity_bundle_class, "test", find_options)
+
+        # sets the entity to many as empty
+        dummy_entity_bundle_instance.entity_to_many_relation = []
+
+        # updates the entity bundle instance
+        self.entity_manager.update(dummy_entity_bundle_instance)
+
+        # removes the entity instance
+        self.entity_manager.remove(dummy_entity_bundle_new_instance)
 
         # removes the entity instance
         self.entity_manager.remove(dummy_entity_bundle_association_instance)

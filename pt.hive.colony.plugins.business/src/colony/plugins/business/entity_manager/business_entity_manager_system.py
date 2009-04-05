@@ -402,6 +402,13 @@ class EntityManager:
         # finds the entity
         return self.entity_manager_engine_plugin.find_entity(connection, entity_class, id_value)
 
+    def find_options(self, entity_class, id_value, options):
+        # retrieves the connection object
+        connection = self.get_connection()
+
+        # finds the entity
+        return self.entity_manager_engine_plugin.find_entity_options(connection, entity_class, id_value, options)
+
     def find_all(self, entity_class, value, search_field_name):
         # retrieves the connection object
         connection = self.get_connection()
