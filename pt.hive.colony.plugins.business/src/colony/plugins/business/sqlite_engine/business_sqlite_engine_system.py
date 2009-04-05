@@ -1161,12 +1161,13 @@ class BusinessSqliteEngine:
                 entity_class_valid_attribute_name = entity_class_valid_attribute_names[index]
 
                 # in case the attribute is a relation
-                if self.is_attribute_name_relation(entity_class_valid_attribute_name, entity_class) and not self.is_attribute_name_lazy_relation(entity_class_valid_attribute_name, entity_class):
-                    # creates the relation attribute tuple
-                    relation_attribute_tuple = (entity_class_valid_attribute_name, attribute_value)
+                if self.is_attribute_name_relation(entity_class_valid_attribute_name, entity_class):
+                    if not self.is_attribute_name_lazy_relation(entity_class_valid_attribute_name, entity_class):
+                        # creates the relation attribute tuple
+                        relation_attribute_tuple = (entity_class_valid_attribute_name, attribute_value)
 
-                    # adds the relation attribute tuple to the list of relation attributes
-                    relation_attributes_list.append(relation_attribute_tuple)
+                        # adds the relation attribute tuple to the list of relation attributes
+                        relation_attributes_list.append(relation_attribute_tuple)
                 else:
                     # sets the attribute in the instance
                     setattr(entity, entity_class_valid_attribute_name, attribute_value)
