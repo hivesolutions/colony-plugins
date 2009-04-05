@@ -423,6 +423,20 @@ class EntityManager:
         # finds all the entities
         return self.entity_manager_engine_plugin.find_all_entities(connection, entity_class, None, None)
 
+    def find_all_options(self, entity_class, value, search_field_name, options):
+        # retrieves the connection object
+        connection = self.get_connection()
+
+        # finds all the entities
+        return self.entity_manager_engine_plugin.find_all_entities_options(connection, entity_class, value, search_field_name, options)
+
+    def _find_all_options(self, entity_class):
+        # retrieves the connection object
+        connection = self.get_connection()
+
+        # finds all the entities
+        return self.entity_manager_engine_plugin.find_all_entities_options(connection, entity_class, None, None, options)
+
     def get_entity_class_attribute_names(self, entity_class):
         """
         Retrieves a list with the names of all attributes from the given entity class.

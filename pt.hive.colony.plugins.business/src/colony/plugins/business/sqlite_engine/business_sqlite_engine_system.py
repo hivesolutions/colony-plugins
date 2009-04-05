@@ -1341,6 +1341,10 @@ class BusinessSqliteEngine:
         return self.find_all_entities_options(connection, entity_class, field_value, search_field_name, retrieved_entities_list)
 
     def find_all_entities_options(self, connection, entity_class, field_value, search_field_name, retrieved_entities_list = None, options = {}):
+        start_record = options.get("start_record", 0)
+
+        number_of_records = options.get("number_of_records", -1)
+
         # retrieves the database connection from the connection object
         database_connection = connection.database_connection
 
@@ -1387,6 +1391,8 @@ class BusinessSqliteEngine:
                 query_string_value += "'" + field_value + "'"
             else:
                 query_string_value += str(field_value)
+
+        query_string_value += " limit " + start_record + ", " + number_of_records
 
         # executes the query retrieving the values
         self.execute_query(cursor, query_string_value)
