@@ -960,6 +960,9 @@ class BusinessSqliteEngine:
         # closes the cursor
         cursor.close()
 
+        # saves the entity indirect relations
+        self.save_entity_indirect_relations(connection, entity)
+
     def remove_entity(self, connection, entity):
         """
         Removes the given entity instance from the database, using the given connection.
@@ -1347,9 +1350,19 @@ class BusinessSqliteEngine:
             # creates a new entity instance
             entity = entity_class()
 
+            # creates the initial index value
+            index = 0
+
             # iterates over all the attribute values of the value
             for attribute_value in value:
+                # retrieves the entity class attribute name
+                entity_class_valid_attribute_name = entity_class_valid_attribute_names[index]
+
+                # sets the attribute value in the entity
                 setattr(entity, entity_class_valid_attribute_name, attribute_value)
+
+                # increments the index value
+                index += 1
 
             # adds the entity to the list of entities
             entities_list.append(entity)

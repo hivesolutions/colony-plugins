@@ -148,7 +148,7 @@ class DummyBusinessLogic:
         # saves the entity instance
         self.entity_manager.save(dummy_entity_bundle_instance_1)
 
-        # fins the entity bundle instance
+        # finds the entity bundle instance
         self.entity_manager.find(dummy_entity_bundle_class, "test")
 
         # removes the entity instance

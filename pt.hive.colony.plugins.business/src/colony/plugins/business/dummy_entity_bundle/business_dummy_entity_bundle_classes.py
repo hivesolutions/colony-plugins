@@ -79,7 +79,7 @@ class DummyEntityBundleAssociation(DummyEntityBundleParent):
     def __init__(self):
         DummyEntityBundleParent.__init__(self)
         self.hair_type = None
-        self.entity_relation = None
+        self.entity_relation = []
         self.entity_to_many_relation = []
 
     def get_hair_type(self):
@@ -134,7 +134,7 @@ class DummyEntityBundle(DummyEntityBundleParent):
 
     @staticmethod
     def get_relation_attributes_entity_relation():
-        return {"relation_type" : "one-to-one",
+        return {"relation_type" : "many-to-one",
                 "target_entity" : DummyEntityBundleAssociation,
                 "target_entity_name" : "DummyEntityBundleAssociation",
                 "join_attribute" : DummyEntityBundleAssociation.name,
