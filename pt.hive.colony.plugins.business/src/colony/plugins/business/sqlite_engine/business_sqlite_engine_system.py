@@ -1447,11 +1447,15 @@ class BusinessSqliteEngine:
 
                     if like_filter_type in ["left", "both"]:
                          query_string_value += "\"%"
+                    else:
+                         query_string_value += "\""
 
                     query_string_value += filter_field_value_string
 
                     if like_filter_type in ["right", "both"]:
-                         query_string_value += "\"%"
+                         query_string_value += "%\""
+                    else:
+                         query_string_value += "\""
 
             query_string_value += ")"
 
