@@ -1341,10 +1341,16 @@ class BusinessSqliteEngine:
         return self.find_all_entities_options(connection, entity_class, field_value, search_field_name, retrieved_entities_list)
 
     def find_all_entities_options(self, connection, entity_class, field_value, search_field_name, retrieved_entities_list = None, options = {}):
+        # retrieves the eager loading relations option
+        eager_loading_relations = options.get("eager_loading_relations", {})
+
+        # retrieves the start record
         start_record = options.get("start_record", 0)
 
+        # retrieves the number of records
         number_records = options.get("number_records", -1)
 
+        # retrieves the filters
         filters = options.get("filters", [])
 
         # retrieves the database connection from the connection object
@@ -1448,27 +1454,98 @@ class BusinessSqliteEngine:
         # creates the list of entities
         entities_list = []
 
-        # iterates over all the values in the values list
-        for value in values_list:
-            # creates a new entity instance
-            entity = entity_class()
+        # in case there are eager loading relations
+        if eager_loading_relations:
+            # iterates over all the values in the values list
+            for value in values_list:
+                # creates a new entity instance
+                entity = entity_class()
 
-            # creates the initial index value
-            index = 0
+                # retrieves the id attribute value
+                id_attribute_value = self.get_entity_id_attribute_value(entity)
 
-            # iterates over all the attribute values of the value
-            for attribute_value in value:
-                # retrieves the entity class attribute name
-                entity_class_valid_attribute_name = entity_class_valid_attribute_names[index]
+                # adds the entity to the list of retrieved entities
+                retrieved_entities_list.add_entity(id_attribute_value, entity)
 
-                # sets the attribute value in the entity
-                setattr(entity, entity_class_valid_attribute_name, attribute_value)
+                # creates the initial index value
+                index = 0
 
-                # increments the index value
-                index += 1
+                # creates the relation attributes list
+                # this list is used for relation attributes post-processing
+                relation_attributes_list = []
 
-            # adds the entity to the list of entities
-            entities_list.append(entity)
+                # iterates over all the attribute values of the value
+                for attribute_value in value:
+                    # retrieves the entity class attribute name
+                    entity_class_valid_attribute_name = entity_class_valid_attribute_names[index]
+
+                    # in case the attribute is a relation
+                    if self.is_attribute_name_relation(entity_class_valid_attribute_name, entity_class):
+                        if not self.is_attribute_name_lazy_relation(entity_class_valid_attribute_name, entity_class) or entity_class_valid_attribute_name in eager_loading_relations:
+                            # creates the relation attribute tuple
+                            relation_attribute_tuple = (entity_class_valid_attribute_name, attribute_value)
+
+                            # adds the relation attribute tuple to the list of relation attributes
+                            relation_attributes_list.append(relation_attribute_tuple)
+                    else:
+                        # sets the attribute in the instance
+                        setattr(entity, entity_class_valid_attribute_name, attribute_value)
+
+                    # increments the index value
+                    index += 1
+
+                # retrieves the id attribute value
+                id_attribute_value = self.get_entity_id_attribute_value(entity)
+
+                # retrieves the already buffered entity
+                buffered_entity = retrieved_entities_list.get_entity(entity_class, id_attribute_value)
+
+                # in case the entity is already buffered
+                if buffered_entity:
+                    # closes the cursor
+                    cursor.close()
+
+                    # sets the entity as the buffered entity
+                    entity = buffered_entity
+                else:
+                    # adds the entity to the list of retrieved entities
+                    retrieved_entities_list.add_entity(id_attribute_value, entity)
+
+                    # iterates over all the relation attributes list
+                    for entity_class_valid_attribute_name, attribute_value in relation_attributes_list:
+                        # retrieves the relation options
+                        relation_options = eager_loading_relations.get(entity_class_valid_attribute_name, {})
+
+                        # retrieves the relation attribute value
+                        relation_attribute_value = self.get_relation_value(connection, entity_class_valid_attribute_name, entity_class, attribute_value, id_attribute_value, retrieved_entities_list, options = relation_options)
+
+                        # sets the relation attribute in the instance
+                        setattr(entity, entity_class_valid_attribute_name, relation_attribute_value)
+
+                # adds the entity to the list of entities
+                entities_list.append(entity)
+        else:
+            # iterates over all the values in the values list
+            for value in values_list:
+                # creates a new entity instance
+                entity = entity_class()
+
+                # creates the initial index value
+                index = 0
+
+                # iterates over all the attribute values of the value
+                for attribute_value in value:
+                    # retrieves the entity class attribute name
+                    entity_class_valid_attribute_name = entity_class_valid_attribute_names[index]
+
+                    # sets the attribute value in the entity
+                    setattr(entity, entity_class_valid_attribute_name, attribute_value)
+
+                    # increments the index value
+                    index += 1
+
+                # adds the entity to the list of entities
+                entities_list.append(entity)
 
         # closes the cursor
         cursor.close()
