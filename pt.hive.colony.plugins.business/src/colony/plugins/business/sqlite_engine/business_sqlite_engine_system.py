@@ -1413,8 +1413,12 @@ class BusinessSqliteEngine:
 
             filter_type = filter["filter_type"]
 
+            # in case the filter is of type like
             if filter_type == "like":
+                # retrieves the filter fields
                 filter_fields = filter["filter_fields"]
+
+                like_filter_type = filter.get("like_filter_type", "both")
 
                 is_first_field = True
 
@@ -1439,7 +1443,15 @@ class BusinessSqliteEngine:
                             filter_field_value_string += "%"
                         filter_field_value_string += splitted_filter_value
 
-                    query_string_value += filter_field["field_name"] + " like "  + "\"%" + filter_field_value_string + "%\""
+                    query_string_value += filter_field["field_name"] + " like "
+
+                    if like_filter_type in ["left", "both"]:
+                         query_string_value += "\"%"
+
+                    query_string_value += filter_field_value_string
+
+                    if like_filter_type in ["right", "both"]:
+                         query_string_value += "\"%"
 
             query_string_value += ")"
 
