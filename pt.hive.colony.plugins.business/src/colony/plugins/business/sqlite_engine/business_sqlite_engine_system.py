@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import time
 import types
 import sqlite3
+import cStringIO
 
 import business_sqlite_engine_exceptions
 
@@ -578,34 +579,29 @@ class BusinessSqliteEngine:
         # retrieves the database connection from the connection object
         database_connection = connection.database_connection
 
-        # retrieves the entity class for the entity
-        entity_class = entity.__class__
-
-        # retrieves the entity class id attribute value
-        entity_class_id_attribute_value = self.get_entity_class_id_attribute_value(entity_class)
-
-        # retrieves the entity id attribute value
-        entity_id_attribute_value = self.get_entity_id_attribute_value(entity)
-
-        # in case the id attribute is note defined
-        if entity_id_attribute_value == None:
-            # in case the id field is to be generated
-            if GENERATED_FIELD in entity_class_id_attribute_value:
-                # retrieves the entity class id attribute name
-                entity_class_id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
-
-                # sets the new entity id attribute value
-                setattr(entity, entity_class_id_attribute_name, int(time.time() % 10 * 100000000))
-
-                # retrieves the entity id attribute value
-                entity_id_attribute_value = self.get_entity_id_attribute_value(entity)
-
-        # in case there is already an entry with the same key value
-        if self.find_entity(connection, entity_class, entity_id_attribute_value):
-            raise business_sqlite_engine_exceptions.SqliteEngineDuplicateEntry("the key value " + str(entity_id_attribute_value) + " already exists in the database")
-
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
+
+        # retrieves the query string value
+        query_string_value = self.create_save_query(entity)
+
+        # executes the query inserting the values
+        self.execute_query(cursor, query_string_value)
+
+        # closes the cursor
+        cursor.close()
+
+        # saves the entity indirect relations
+        self.save_entity_indirect_relations(connection, entity)
+
+    def save_entities(self, connection, entities):
+        # iterates over all the entities
+        for entity in entities:
+            self.save_entity(connection, entity)
+
+    def create_save_query(self, entity):
+        # retrieves the entity class for the entity
+        entity_class = entity.__class__
 
         # retrieves the entity class name
         entity_class_name = entity_class.__name__
@@ -619,8 +615,11 @@ class BusinessSqliteEngine:
         # retrieves all the valid class attribute values
         entity_class_valid_attribute_values = self.get_entity_class_attribute_values(entity_class)
 
-        # creates the initial query string value
-        query_string_value = "insert into " + entity_class_name + "("
+        # creates the query string buffer
+        query_string_buffer = cStringIO.StringIO()
+
+        # creates the initial query string buffer
+        query_string_buffer.write("insert into " + entity_class_name + "(")
 
         # the first flag to control the first field to be processed
         is_first = True
@@ -632,14 +631,14 @@ class BusinessSqliteEngine:
                 # sets the is flag to false to start adding commas
                 is_first = False
             else:
-                # adds a comma to the query string value
-                query_string_value += ", "
+                # adds a comma to the query string buffer
+                query_string_buffer.write(", ")
 
-            # extends the query string value
-            query_string_value += entity_valid_attribute_name
+            # extends the query string buffer
+            query_string_buffer.write(entity_valid_attribute_name)
 
-        # extends the query string value
-        query_string_value += ") values("
+        # extends the query string buffer
+        query_string_buffer.write(") values(")
 
         # creates the initial index value
         index = 0
@@ -669,34 +668,61 @@ class BusinessSqliteEngine:
                     # sets the is flag to false to start adding commas
                     is_first = False
                 else:
-                    # adds a comma to the query string value
-                    query_string_value += ", "
+                    # adds a comma to the query string buffer
+                    query_string_buffer.write(", ")
 
                 # in case the value is None a null is added
                 if entity_valid_attribute_value == None:
-                    query_string_value += "null"
+                    query_string_buffer.write("null")
                 else:
                     if entity_class_valid_attribute_data_type == "text":
-                        # extends the query string value
-                        query_string_value += "'" + entity_valid_attribute_value + "'"
+                        # extends the query string buffer
+                        query_string_buffer.write("'" + entity_valid_attribute_value + "'")
                     else:
-                        # extends the query string value
-                        query_string_value += str(entity_valid_attribute_value)
+                        # extends the query string buffer
+                        query_string_buffer.write(str(entity_valid_attribute_value))
 
             # increments the index value
             index += 1
 
-        # closes the query string value
-        query_string_value += ")"
+        # closes the query string buffer
+        query_string_buffer.write(")")
 
-        # executes the query inserting the values
-        self.execute_query(cursor, query_string_value)
+        # retrieves the query string value
+        query_string_value = query_string_buffer.getvalue()
 
-        # closes the cursor
-        cursor.close()
+        # returns the query string value
+        return query_string_value
 
-        # saves the entity indirect relations
-        self.save_entity_indirect_relations(connection, entity)
+    def exists_entity(self, connection, entity):
+        # retrieves the database connection from the connection object
+        database_connection = connection.database_connection
+
+        # retrieves the entity class for the entity
+        entity_class = entity.__class__
+
+        # retrieves the entity class id attribute value
+        entity_class_id_attribute_value = self.get_entity_class_id_attribute_value(entity_class)
+
+        # retrieves the entity id attribute value
+        entity_id_attribute_value = self.get_entity_id_attribute_value(entity)
+
+        # in case the id attribute is note defined
+        if entity_id_attribute_value == None:
+            # in case the id field is to be generated
+            if GENERATED_FIELD in entity_class_id_attribute_value:
+                # retrieves the entity class id attribute name
+                entity_class_id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
+
+                # sets the new entity id attribute value
+                setattr(entity, entity_class_id_attribute_name, int(time.time() % 10 * 100000000))
+
+                # retrieves the entity id attribute value
+                entity_id_attribute_value = self.get_entity_id_attribute_value(entity)
+
+        # in case there is already an entry with the same key value
+        if self.find_entity(connection, entity_class, entity_id_attribute_value):
+            raise business_sqlite_engine_exceptions.SqliteEngineDuplicateEntry("the key value " + str(entity_id_attribute_value) + " already exists in the database")
 
     def save_entity_indirect_relations(self, connection, entity):
         """
@@ -2145,7 +2171,7 @@ class BusinessSqliteEngine:
 
     def execute_query(self, cursor, query_string_value):
         """
-        Executes a query in the give cursor using the query string value provided.
+        Executes a query in the given cursor using the query string value provided.
 
         @type cursor: Cursor
         @param cursor: The cursor where the query is going to be executed.
@@ -2159,6 +2185,22 @@ class BusinessSqliteEngine:
         # executes the query in the database
         cursor.execute(query_string_value)
 
+    def execute_script(self, cursor, script_string_value):
+        """
+        Executes a script in the given cursor using the script string value provided.
+
+        @type cursor: Cursor
+        @param cursor: The cursor where the script is going to be executed.
+        @type script_string_value: String
+        @param script_string_value: The string value of the script to be executed.
+        """
+
+        # logs the script string value
+        self.log_script(script_string_value)
+
+        # executes the script in the database
+        cursor.executescript(script_string_value)
+
     def log_query(self, query_string_value):
         """
         Logs the given query string value into the plugin manager logger.
@@ -2168,6 +2210,16 @@ class BusinessSqliteEngine:
         """
 
         self.business_sqlite_engine_plugin.debug("sql: " + query_string_value)
+
+    def log_script(self, script_string_value):
+        """
+        Logs the given script string value into the plugin manager logger.
+
+        @type script_string_value: String
+        @param script_string_value: The script string value to be logged.
+        """
+
+        self.business_sqlite_engine_plugin.debug("sql script: " + script_string_value)
 
 class BufferedEntities:
     """

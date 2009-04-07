@@ -362,6 +362,13 @@ class EntityManager:
         # persists the entity
         return self.entity_manager_engine_plugin.save_entity(connection, entity)
 
+    def save_many(self, entities):
+        # retrieves the connection object
+        connection = self.get_connection()
+
+        # persists the entities
+        return self.entity_manager_engine_plugin.save_entities(connection, entities)
+
     def update(self, entity):
         # retrieves the connection object
         connection = self.get_connection()
