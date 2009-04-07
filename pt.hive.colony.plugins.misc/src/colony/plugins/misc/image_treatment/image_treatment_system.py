@@ -72,10 +72,10 @@ class ImageTreatment:
         # saves the image into the string buffer
         image_resize.save(string_buffer, "jpeg")
 
-        # seeks the buffer to the begining of the file
+        # seeks the buffer to the beginning of the file
         string_buffer.seek(0)
 
-        # returs the string buffer
+        # returns the string buffer
         return string_buffer
 
     def resize_image_aspect(self, image_path, width, height):
@@ -134,15 +134,16 @@ class ImageTreatment:
         # retrieves the resized image
         resized_image_file = self.resize_image(image_path, resize_width, resize_height)
 
-        # openst the resized image file
+        # opens the resized image file
         resized_image = PIL.Image.open(resized_image_file)
 
+        # retrieves the resized image width and the resized image height
         resized_image_width, resized_image_height = resized_image.size
 
         # creates the new image
         new_image = PIL.Image.new("RGBA", (width, height))
 
-        # pastes the resized inmage into the new image
+        # pastes the resized image into the new image
         new_image.paste(resized_image, ((width - resized_image_width) / 2, (height - resized_image_height) / 2))
 
         # creates a new string buffer for the image
@@ -151,7 +152,7 @@ class ImageTreatment:
         # saves the new image into the string buffer
         new_image.save(string_buffer, "png")
 
-        # seeks the buffer to the begining of the file
+        # seeks the buffer to the beginning of the file
         string_buffer.seek(0)
 
         # returns the new image
