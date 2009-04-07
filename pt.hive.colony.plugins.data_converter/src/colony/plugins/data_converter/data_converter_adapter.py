@@ -277,7 +277,8 @@ class DataConverterAdapter:
                                      "primary_language" : None},
                "money_sale" : {"sale" : "sale_transaction"},
                "address" : {"system_company" : "contactable_organizational_hierarchy_tree_node",
-                            "customer" : "contactable_organizational_hierarchy_tree_node"},
+                            "customer" : "contactable_organizational_hierarchy_tree_node",
+                            "name" : "street_name"},
                "payment" : {"sale" : "sales",
                             "payments_received" : None},
                "card_payment" : {"payments" : "payment_lines"},
@@ -340,7 +341,7 @@ class DataConverterAdapter:
                "stock_adjustment_merchandise_hierarchy_tree_node" :  {"adjustment_target" : None,
                                                                       "store" : None},
                "user" : {"system_company_employee" : "person"},
-               "credit_note" : {"return_point" : "return_point"},
+               "credit_note" : {"return_point" : None},
                "money" : {"return_point" : "return_point"}}
 
         if internal_entity_name in map and internal_attribute_name in map[internal_entity_name]:
@@ -381,14 +382,26 @@ class DataConverterAdapter:
                  # @todo: this is a hack
                  if type(field_value) in (types.StringType, types.FloatType, types.LongType, types.BooleanType):
                         field_value = unicode(field_value)
+
                  entity_attribute_name = self.convert_internal_attribute_name_to_omni_name(internal_entity._name, field_name)
+
+                 # @todo: this is a hack
+                 if type(field_value) in types.StringTypes:
+                    field_value = unicode(field_value)
+                    if entity_attribute_name == "name":
+                       field_value = field_value.capitalize()
+
                  if hasattr(entity, entity_attribute_name):
                      setattr(entity, entity_attribute_name, field_value)
 
             entity.object_id = internal_entity.object_id
-            entity_manager.save(entity)
             self.object_id_entity_map[entity.object_id] = entity
             print "Saved " + entity_name + " with object id = " + str(entity.object_id)
+
+            try:
+                entity_manager.save(entity)
+            except:
+                print "ERROR SAVING ENTITY"
 
     # @todo: this method is temporary
     def convert_relations(self, internal_structure, entity_manager, internal_structure_entity_name):
@@ -414,14 +427,14 @@ class DataConverterAdapter:
                                 if relation_internal_entity:
                                     if relation_internal_entity.object_id in self.object_id_entity_map:
                                         relation_entity = self.object_id_entity_map[relation_internal_entity.object_id]
-                                        entity_attribute.append(internal_entity_entity)
+                                        entity_attribute.append(relation_entity)
                                         entity_attribute = list(set(entity_attribute))
                                     else:
                                         self.missing_relation_entities.append((internal_entity._name, internal_entity.object_id, field_name, relation_internal_entity.object_id))
                         else:
                             if field_value.object_id in self.object_id_entity_map:
                                 relation_entity = self.object_id_entity_map[field_value.object_id]
-                                entity_attribute = internal_entity_entity
+                                entity_attribute = relation_entity
                             else:
                                self.missing_relation_entities.append((internal_entity._name, internal_entity.object_id, field_name, field_value.object_id))
 
@@ -432,10 +445,11 @@ class DataConverterAdapter:
                             self.missing_relations.append(relation_name)
 
             print "Saving " + internal_entity._name + " with object id = " + str(internal_entity.object_id) + " (relations)"
+
             try:
                 entity_manager.update(internal_entity_entity)
             except:
-                print "ERROR"
+                print "ERROR SAVING RELATION"
 
     def process_work_units(self, task):
         """
