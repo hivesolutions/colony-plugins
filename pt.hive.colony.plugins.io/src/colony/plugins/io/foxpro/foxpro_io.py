@@ -37,7 +37,12 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import dbi, odbc, os, stat, string
+import dbi
+import odbc
+import os
+import stat
+import string
+import datetime
 
 DBF_EXTENSION = ".dbf"
 SLASH = "/"
@@ -130,7 +135,7 @@ class FoxProInputOutputConnection :
                         if string.strip(result[x]) == "":
                             result_map[column_list[x]] = None
                         else:
-                            result_map[column_list[x]] = unicode(string.strip(result[x]))
+                            result_map[column_list[x]] = unicode(string.strip(result[x]), "latin1")
                     else:
                         result_map[column_list[x]] = result[x]
                 returned_results.append(result_map)
