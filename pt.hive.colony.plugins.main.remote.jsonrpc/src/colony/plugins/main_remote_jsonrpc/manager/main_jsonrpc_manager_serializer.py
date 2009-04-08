@@ -88,7 +88,7 @@ def escape_char(match):
         else:
             return c
 
-def dumps(obj):
+def dumps_buffer(obj):
     # creates the string buffer
     string_buffer = cStringIO.StringIO()
 
@@ -100,6 +100,9 @@ def dumps(obj):
 
     # returns the string value
     return string_value
+
+def dumps(obj):
+    return "".join([part for part in dump_parts(obj)])
 
 def dump_parts_buffer(obj, string_buffer):
     obj_type = type(obj)
