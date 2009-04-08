@@ -86,10 +86,10 @@ class ImageTreatmentPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def resize_image(self, image_path, width, height):
-        self.image_treatment.resize_image(image_path, width, height)
+        return self.image_treatment.resize_image(image_path, width, height)
 
     def resize_image_aspect(self, image_path, width, height):
-        self.image_treatment.resize_image_aspect(image_path, width, height)
+        return self.image_treatment.resize_image_aspect(image_path, width, height)
 
     def resize_image_aspect_background(self, image_path, width, height):
-        self.image_treatment.resize_image_aspect_background(image_path, width, height)
+        return self.image_treatment.resize_image_aspect_background(image_path, width, height)
