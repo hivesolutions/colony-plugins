@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import time
 import types
 import sqlite3
+import datetime
 import cStringIO
 
 import business_sqlite_engine_exceptions
@@ -49,6 +50,7 @@ ENGINE_NAME = "sqlite"
 
 DATA_TYPE_MAP = {"text" : "text",
                  "numeric" : "numeric",
+                 "date" : "numeric",
                  "relation" : "relation"}
 """ The data type map """
 
@@ -671,16 +673,11 @@ class BusinessSqliteEngine:
                     # adds a comma to the query string buffer
                     query_string_buffer.write(", ")
 
-                # in case the value is None a null is added
-                if entity_valid_attribute_value == None:
-                    query_string_buffer.write("null")
-                else:
-                    if entity_class_valid_attribute_data_type == "text":
-                        # extends the query string buffer
-                        query_string_buffer.write("'" + entity_valid_attribute_value + "'")
-                    else:
-                        # extends the query string buffer
-                        query_string_buffer.write(str(entity_valid_attribute_value))
+                # retrieves the entity valid attribute sqlite string value
+                entity_valid_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(entity_valid_attribute_value, entity_class_valid_attribute_data_type)
+
+                # writes the entity valid attribute sqlite string value into the query string buffer
+                query_string_buffer.write(entity_valid_attribute_value_sqlite_string_value)
 
             # increments the index value
             index += 1
@@ -786,11 +783,26 @@ class BusinessSqliteEngine:
                     # retrieves the join attribute name field
                     join_attribute_name_field = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
 
+                    # retrieves the id attribute name
+                    id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
+
                     # retrieves the id attribute value
                     id_attribute_value = self.get_entity_id_attribute_value(entity)
 
+                    # retrieves the class id attribute value
+                    class_id_attribute_value = self.get_entity_class_id_attribute_value(entity_class)
+
+                    # retrieves the id attribute value data type
+                    id_attribute_value_data_type = self.get_attribute_data_type(class_id_attribute_value, entity_class, id_attribute_name)
+
                     # retrieves the target entity id attribute name
                     target_entity_id_attribute_name = self.get_entity_class_id_attribute_name(target_entity_field)
+
+                    # retrieves the target entity id attribute value
+                    target_entity_id_attribute_value = self.get_entity_class_id_attribute_value(target_entity_field)
+
+                    # retrieves the target entity id attribute value data type
+                    target_entity_id_attribute_value_data_type = self.get_attribute_data_type(target_entity_id_attribute_value, target_entity_field, target_entity_id_attribute_name)
 
                     # iterates over all the objects in the entity valid indirect attribute value (list)
                     for object_value in entity_valid_indirect_attribute_value:
@@ -800,17 +812,17 @@ class BusinessSqliteEngine:
                         # creates the initial query string value
                         query_string_value = "update " + target_entity_name_field + " set " + join_attribute_name_field + " = "
 
-                        if type(id_attribute_value) in types.StringTypes:
-                            query_string_value += "'" + id_attribute_value + "'"
-                        else:
-                            query_string_value += str(id_attribute_value)
+                        # retrieves the id attribute sqlite string value
+                        id_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(id_attribute_value, id_attribute_value_data_type)
+
+                        query_string_value += id_attribute_value_sqlite_string_value
 
                         query_string_value += " where " + target_entity_id_attribute_name + " = "
 
-                        if type(target_entity_id_attribute_value) in types.StringTypes:
-                            query_string_value += "'" + target_entity_id_attribute_value + "'"
-                        else:
-                            query_string_value += str(target_entity_id_attribute_value)
+                        # retrieves the id attribute sqlite string value
+                        target_entity_id_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(target_entity_id_attribute_value, target_entity_id_attribute_value_data_type)
+
+                        query_string_value += target_entity_id_attribute_value_sqlite_string_value
 
                         # executes the query updating the values
                         self.execute_query(cursor, query_string_value)
@@ -862,19 +874,19 @@ class BusinessSqliteEngine:
                         query_string_value = "insert into " + join_table_field + "(" + attribute_column_name_field + ", " +\
                                              join_attribute_column_name_field + ") values("
 
-                        if id_attribute_value_data_type == "text":
-                            # extends the query string value
-                            query_string_value += "'" + id_attribute_value + "', "
-                        else:
-                            # extends the query string value
-                            query_string_value += str(id_attribute_value) + ", "
+                        # retrieves the id attribute sqlite string value
+                        id_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(id_attribute_value, id_attribute_value_data_type)
 
-                        if target_attribute_value_data_type == "text":
-                            # extends the query string value
-                            query_string_value += "'" + target_attribute_value + "')"
-                        else:
-                            # extends the query string value
-                            query_string_value += str(target_attribute_value) + ")"
+                        query_string_value += id_attribute_value_sqlite_string_value
+
+                        query_string_value += ", "
+
+                        # retrieves the target attribute sqlite string value
+                        target_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(target_attribute_value, target_attribute_value_data_type)
+
+                        query_string_value += target_attribute_value_sqlite_string_value
+
+                        query_string_value += ")"
 
                         # executes the query inserting the values
                         self.execute_query(cursor, query_string_value)
@@ -1370,6 +1382,9 @@ class BusinessSqliteEngine:
         # retrieves the eager loading relations option
         eager_loading_relations = options.get("eager_loading_relations", {})
 
+        # retrieves the retrieve eager loading relations option
+        retrieve_eager_loading_relations = options.get("retrieve_eager_loading_relations", False)
+
         # retrieves the start record
         start_record = options.get("start_record", 0)
 
@@ -1496,8 +1511,8 @@ class BusinessSqliteEngine:
         # creates the list of entities
         entities_list = []
 
-        # in case there are eager loading relations
-        if eager_loading_relations:
+        # in case the eager loading relations should be retrieved
+        if retrieve_eager_loading_relations:
             # iterates over all the values in the values list
             for value in values_list:
                 # creates a new entity instance
@@ -2220,6 +2235,43 @@ class BusinessSqliteEngine:
         """
 
         self.business_sqlite_engine_plugin.debug("sql script: " + script_string_value)
+
+    def get_attribute_sqlite_string_value(self, attribute_value, attribute_date_type):
+        """
+        Retrieves the sqlite string representation of the given attribute.
+
+        @type attribute_value: Object
+        @param attribute_value: The attribute value.
+        @type attribute_date_type: String
+        @param attribute_date_type: The attribute data type.
+        @rtype: String
+        @return: The sqlite string representation of the given attribute.
+        """
+
+        # in case the value is None a null is added
+        if attribute_value == None:
+            return "null"
+        else:
+            if attribute_date_type == "text":
+                return "'" + attribute_value + "'"
+            elif attribute_date_type == "date":
+                # in case the attribute is given in the date time format
+                if type(attribute_value) == datetime.datetime:
+                    # retrieves the date time tuple
+                    date_time_tuple = attribute_value.timetuple()
+
+                    # creates the date time timestamp
+                    date_time_timestamp = time.mktime(date_time_tuple)
+
+                    return str(date_time_timestamp)
+                elif type(attribute_value) == types.IntType:
+                    float_attribute_value = float(attribute_value)
+
+                    return str(float_attribute_value)
+                else:
+                    return str(attribute_value)
+            else:
+                return str(attribute_value)
 
 class BufferedEntities:
     """

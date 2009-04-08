@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import datetime
+
 class DummyBusinessLogic:
 
     def print_dummy(self):
@@ -136,6 +138,7 @@ class DummyBusinessLogic:
         # sets the dummy entity bundle instance attributes
         dummy_entity_bundle_instance_1.name = "test_1"
         dummy_entity_bundle_instance_1.age = 21
+        dummy_entity_bundle_instance_1.current_date = datetime.datetime.now()
 
         # sets the dummy entity bundle association instance attributes
         dummy_entity_bundle_association_instance.name = "test_association"
@@ -177,7 +180,8 @@ class DummyBusinessLogic:
         self.entity_manager.update(dummy_entity_bundle_instance)
 
         # finds all the dummy entity bundle entities with the given filter
-        find_all_values = self.entity_manager._find_all_options(dummy_entity_bundle_class, {"filters" : [{"filter_type" : "like",
+        find_all_values = self.entity_manager._find_all_options(dummy_entity_bundle_class, {"retrieve_eager_loading_relations" : True,
+                                                                                            "filters" : [{"filter_type" : "like",
                                                                                                           "filter_fields" : [{"field_name" : "name",
                                                                                                                               "field_value" : "test"}]}]})
 

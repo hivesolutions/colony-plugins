@@ -45,6 +45,9 @@ class DummyEntityBundleParent:
     address = {"data_type" : "text"}
     """ The address of the entity """
 
+    current_date = {"data_type" : "date"}
+    """ The current date of the entity """
+
     mapping_options = {"inheritance_mapping": "table_per_class"}
     #mapping_options = {"inheritance_mapping": "single_table"}
     """ The object relational (o/r) options """
@@ -52,6 +55,7 @@ class DummyEntityBundleParent:
     def __init__(self):
         self.name = None
         self.address = None
+        self.current_date = None
 
     def get_name(self):
         return self.name
@@ -64,6 +68,12 @@ class DummyEntityBundleParent:
 
     def set_address(self, name):
         self.address = address
+
+    def get_current_date(self):
+        return self.current_date
+
+    def set_current_date(self, current_date):
+        self.current_date = current_date
 
 class DummyEntityBundleAssociation(DummyEntityBundleParent):
 
@@ -129,7 +139,7 @@ class DummyEntityBundle(DummyEntityBundleParent):
     age = {"data_type" : "numeric"}
     """ The age of the entity """
 
-    entity_relation = {"data_type" : "relation", "fetch_type" : "lazy"}
+    entity_relation = {"data_type" : "relation"}
     """ The dummy entity relation """
 
     entity_to_many_relation = {"data_type" : "relation", "fetch_type" : "lazy"}
