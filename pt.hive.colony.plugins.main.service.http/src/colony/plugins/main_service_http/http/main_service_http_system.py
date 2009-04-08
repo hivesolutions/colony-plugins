@@ -715,7 +715,7 @@ class HttpRequest:
         else:
             content_length = len(message)
 
-        status_code_value = STATUS_CODE_VALUES[self.status_code]
+        status_code_value = STATUS_CODE_VALUES.get(self.status_code, 500)
 
         result.write(self.protocol_version + " " + str(self.status_code) + " " + status_code_value + "\r\n")
         if self.content_type:
