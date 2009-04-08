@@ -487,7 +487,7 @@ class HttpClientServiceTask:
             request.status_code = 500
 
         # retrieves the value for the status code
-        status_code_value = STATUS_CODE_VALUES.get([request.status_code], 500)
+        status_code_value = STATUS_CODE_VALUES.get(request.status_code, 500)
 
         # writes the header message in the message
         request.write("colony web server - " + str(request.status_code) + " " + status_code_value + "\n")
