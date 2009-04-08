@@ -486,8 +486,11 @@ class HttpClientServiceTask:
             # sets the internal server error status code
             request.status_code = 500
 
+        if not request.status_code:
+            request.status_code = 500
+
         # retrieves the value for the status code
-        status_code_value = STATUS_CODE_VALUES.get(request.status_code, 500)
+        status_code_value = STATUS_CODE_VALUES[request.status_code]
 
         # writes the header message in the message
         request.write("colony web server - " + str(request.status_code) + " " + status_code_value + "\n")
@@ -715,7 +718,10 @@ class HttpRequest:
         else:
             content_length = len(message)
 
-        status_code_value = STATUS_CODE_VALUES.get(self.status_code, 500)
+        if not request.status_code:
+            request.status_code = 500
+
+        status_code_value = STATUS_CODE_VALUES[self.status_code]
 
         result.write(self.protocol_version + " " + str(self.status_code) + " " + status_code_value + "\r\n")
         if self.content_type:
