@@ -718,8 +718,8 @@ class HttpRequest:
         else:
             content_length = len(message)
 
-        if not request.status_code:
-            request.status_code = 500
+        if not self.status_code:
+            self.status_code = 500
 
         status_code_value = STATUS_CODE_VALUES[self.status_code]
 
