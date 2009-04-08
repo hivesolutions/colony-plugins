@@ -1383,7 +1383,7 @@ class BusinessSqliteEngine:
         eager_loading_relations = options.get("eager_loading_relations", {})
 
         # retrieves the retrieve eager loading relations option
-        retrieve_eager_loading_relations = options.get("retrieve_eager_loading_relations", False)
+        retrieve_eager_loading_relations = options.get("retrieve_eager_loading_relations", len(eager_loading_relations) > 0)
 
         # retrieves the start record
         start_record = options.get("start_record", 0)
