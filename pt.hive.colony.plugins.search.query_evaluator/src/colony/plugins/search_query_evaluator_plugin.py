@@ -101,5 +101,5 @@ class SearchQueryEvaluatorPlugin(colony.plugins.plugin_system.Plugin):
 
     @colony.plugins.decorators.unload_allowed_capability("search_query_evaluator_adapter")
     def search_query_evaluator_adapter_unload_allowed(self, plugin, capability):
-        self.search_query_evaluator_adapter_adapter_plugins.remove(plugin)
+        self.search_query_evaluator_adapter_plugins.remove(plugin)
         self.search_query_evaluator.remove_search_query_evaluator_adapter_plugin(plugin)
