@@ -919,6 +919,9 @@ class BusinessSqliteEngine:
         # retrieves the entity class id attribute name
         entity_class_id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
 
+        # retrieves the entity class id attribute value data type
+        entity_class_id_attribute_value_data_type = self.get_attribute_data_type(entity_class_id_attribute_value, entity_class, entity_class_id_attribute_name)
+
         # retrieves the entity id attribute value
         entity_id_attribute_value = self.get_entity_id_attribute_value(entity)
 
@@ -976,16 +979,10 @@ class BusinessSqliteEngine:
                 # extends the query string value
                 query_string_value += entity_valid_attribute_name + " = "
 
-                # in case the value is None a null is added
-                if entity_valid_attribute_value == None:
-                    query_string_value += "null"
-                else:
-                    if entity_class_valid_attribute_data_type == "text":
-                        # extends the query string value
-                        query_string_value += "'" + entity_valid_attribute_value + "'"
-                    else:
-                        # extends the query string value
-                        query_string_value += str(entity_valid_attribute_value)
+                # retrieves the entity valid attribute value sqlite string value
+                entity_valid_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(entity_valid_attribute_value, entity_class_valid_attribute_data_type)
+
+                query_string_value += entity_valid_attribute_value_sqlite_string_value
 
             # increments the index value
             index += 1
@@ -993,10 +990,10 @@ class BusinessSqliteEngine:
         # extends the query string value
         query_string_value += " where " + entity_class_id_attribute_name + " = "
 
-        if type(entity_id_attribute_value) in types.StringTypes:
-            query_string_value += "'" + entity_id_attribute_value + "'"
-        else:
-            query_string_value += str(entity_id_attribute_value)
+        # retrieves the entity id attribute value sqlite string value
+        entity_id_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(entity_id_attribute_value, entity_class_id_attribute_value_data_type)
+
+        query_string_value += entity_id_attribute_value_sqlite_string_value
 
         # executes the query updating the values
         self.execute_query(cursor, query_string_value)
