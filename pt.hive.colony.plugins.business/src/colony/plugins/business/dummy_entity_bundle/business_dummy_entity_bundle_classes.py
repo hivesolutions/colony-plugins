@@ -45,8 +45,8 @@ class DummyEntityBundleParent:
     address = {"data_type" : "text"}
     """ The address of the entity """
 
-    current_date = {"data_type" : "date"}
-    """ The current date of the entity """
+    local_date = {"data_type" : "date"}
+    """ The local date of the entity """
 
     mapping_options = {"inheritance_mapping": "table_per_class"}
     #mapping_options = {"inheritance_mapping": "single_table"}
@@ -55,7 +55,7 @@ class DummyEntityBundleParent:
     def __init__(self):
         self.name = None
         self.address = None
-        self.current_date = None
+        self.local_date = None
 
     def get_name(self):
         return self.name
@@ -69,11 +69,11 @@ class DummyEntityBundleParent:
     def set_address(self, name):
         self.address = address
 
-    def get_current_date(self):
-        return self.current_date
+    def get_local_date(self):
+        return self.local_date
 
-    def set_current_date(self, current_date):
-        self.current_date = current_date
+    def set_local_date(self, local_date):
+        self.local_date = local_date
 
 class DummyEntityBundleAssociation(DummyEntityBundleParent):
 
