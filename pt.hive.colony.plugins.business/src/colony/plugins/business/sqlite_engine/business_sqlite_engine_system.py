@@ -1427,6 +1427,9 @@ class BusinessSqliteEngine:
         # retrieves the retrieve eager loading relations option
         retrieve_eager_loading_relations = options.get("retrieve_eager_loading_relations", len(eager_loading_relations) > 0)
 
+        # retrieves the count
+        count = options.get("count", False)
+
         # retrieves the start record
         start_record = options.get("start_record", 0)
 
@@ -1467,19 +1470,24 @@ class BusinessSqliteEngine:
         # creates the initial query string value
         query_string_value = "select "
 
-        # the first flag to control the first field to be processed
-        is_first = True
+        # in case it's a count slect
+        if count:
+            query_string_value += " count(1) "
+        # in case it's a normal select
+        else:
+            # the first flag to control the first field to be processed
+            is_first = True
 
-        for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
-            # in case is the first field to be processed
-            if is_first:
-                # sets the is flag to false to start adding commas
-                is_first = False
-            else:
-                # adds a comma to the query string value
-                query_string_value += ", "
+            for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
+                # in case is the first field to be processed
+                if is_first:
+                    # sets the is flag to false to start adding commas
+                    is_first = False
+                else:
+                    # adds a comma to the query string value
+                    query_string_value += ", "
 
-            query_string_value += entity_class_valid_attribute_name
+                query_string_value += entity_class_valid_attribute_name
 
         is_first_where = True
 
@@ -1557,6 +1565,11 @@ class BusinessSqliteEngine:
 
         # selects the values from the cursor
         values_list = cursor.fetchall()
+
+        # in case it's a count select
+        if count:
+            # retrieves the number of entities
+            return values_list[0][0]
 
         # creates the list of entities
         entities_list = []
