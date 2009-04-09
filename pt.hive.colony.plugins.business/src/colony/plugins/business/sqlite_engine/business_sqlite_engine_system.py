@@ -1039,13 +1039,19 @@ class BusinessSqliteEngine:
         # retrieves the entity class id attribute name
         entity_class_id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
 
+        # retrieves the entity class id attribute value
+        entity_class_id_attribute_value = self.get_entity_class_id_attribute_value(entity_class)
+
+        # retrieves the entity class id attribute value data type
+        entity_class_id_attribute_value_data_type = self.get_attribute_data_type(entity_class_id_attribute_value, entity_class, entity_class_id_attribute_name)
+
         # creates the initial query string value
         query_string_value = "delete from " + entity_class_name + " where " + entity_class_id_attribute_name + " = "
 
-        if type(entity_id_attribute_value) in types.StringTypes:
-            query_string_value += "'" + entity_id_attribute_value + "'"
-        else:
-            query_string_value += str(entity_id_attribute_value)
+        # retrieves the entity id attribute value sqlite string value
+        entity_id_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(entity_id_attribute_value, entity_class_id_attribute_value_data_type)
+
+        query_string_value += entity_id_attribute_value_sqlite_string_value
 
         # executes the query removing the values
         self.execute_query(cursor, query_string_value)
@@ -1065,6 +1071,18 @@ class BusinessSqliteEngine:
 
         # retrieves the entity class for the entity
         entity_class = entity.__class__
+
+        # retrieves the entity class id attribute name
+        entity_class_id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
+
+        # retrieves the entity class id attribute value
+        entity_class_id_attribute_value = self.get_entity_class_id_attribute_value(entity_class)
+
+        # retrieves the entity class id attribute value data type
+        entity_class_id_attribute_value_data_type = self.get_attribute_data_type(entity_class_id_attribute_value, entity_class, entity_class_id_attribute_name)
+
+        # retrieves the id attribute value
+        id_attribute_value = self.get_entity_id_attribute_value(entity)
 
         # retrieves all the valid indirect attribute names, removes method values and the name exceptions
         entity_valid_indirect_attribute_names = self.get_entity_indirect_attribute_names(entity)
@@ -1089,16 +1107,13 @@ class BusinessSqliteEngine:
                     # retrieves the attribute column name field
                     attribute_column_name_field = relation_attributes[ATTRIBUTE_COLUMN_NAME_FIELD]
 
-                    # retrieves the id attribute value
-                    id_attribute_value = self.get_entity_id_attribute_value(entity)
-
                     # creates the initial query string value
                     query_string_value = "delete from " + join_table_field + " where " + attribute_column_name_field + " = "
 
-                    if type(id_attribute_value) in types.StringTypes:
-                        query_string_value += "'" + id_attribute_value + "'"
-                    else:
-                        query_string_value += str(id_attribute_value)
+                    # retrieves the entity id attribute value sqlite string value
+                    entity_id_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(id_attribute_value, entity_class_id_attribute_value_data_type)
+
+                    query_string_value += entity_id_attribute_value_sqlite_string_value
 
                     # executes the query removing the values
                     self.execute_query(cursor, query_string_value)
@@ -1143,6 +1158,12 @@ class BusinessSqliteEngine:
         # retrieves the entity class id attribute name
         entity_class_id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
 
+        # retrieves the entity class id attribute value
+        entity_class_id_attribute_value = self.get_entity_class_id_attribute_value(entity_class)
+
+        # retrieves the entity class id attribute value data type
+        entity_class_id_attribute_value_data_type = self.get_attribute_data_type(entity_class_id_attribute_value, entity_class, entity_class_id_attribute_name)
+
         # in case the retrieved entities object is not started
         if not retrieved_entities_list:
             # creates a retrieved entities object
@@ -1152,6 +1173,12 @@ class BusinessSqliteEngine:
         if search_field_name:
             # the id attribute name is changed to the search field name
             entity_class_id_attribute_name = search_field_name
+
+            # the value of the id attribute is changed to the search field attribute value
+            entity_class_id_attribute_value = getattr(entity_class, search_field_name)
+
+            # retrieves the entity class id attribute value data type
+            entity_class_id_attribute_value_data_type = self.get_attribute_data_type(entity_class_id_attribute_value, entity_class, entity_class_id_attribute_name)
         else:
             # retrieves the already buffered entity
             buffered_entity = retrieved_entities_list.get_entity(entity_class, id_value)
@@ -1190,10 +1217,10 @@ class BusinessSqliteEngine:
 
         query_string_value += " from " + entity_class_name + " where " + entity_class_id_attribute_name + " = "
 
-        if type(id_value) in types.StringTypes:
-            query_string_value += "'" + id_value + "'"
-        else:
-            query_string_value += str(id_value)
+        # retrieves the id value sqlite string value
+        id_value_sqlite_string_value = self.get_attribute_sqlite_string_value(id_value, entity_class_id_attribute_value_data_type)
+
+        query_string_value += id_value_sqlite_string_value
 
         # executes the query retrieving the values
         self.execute_query(cursor, query_string_value)
@@ -1317,13 +1344,22 @@ class BusinessSqliteEngine:
                         # retrieves the id attribute value
                         id_attribute_value = self.get_entity_id_attribute_value(entity)
 
+                        # retrieves the entity class id attribute name
+                        entity_class_id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
+
+                        # retrieves the entity class id attribute value
+                        entity_class_id_attribute_value = self.get_entity_class_id_attribute_value(entity_class)
+
+                        # retrieves the entity class id attribute value data type
+                        entity_class_id_attribute_value_data_type = self.get_attribute_data_type(entity_class_id_attribute_value, entity_class, entity_class_id_attribute_name)
+
                         # creates the initial query string value
                         query_string_value = "select " + join_attribute_column_name_field + " from " + join_table_field + " where " + attribute_column_name_field + " = "
 
-                        if type(id_attribute_value) in types.StringTypes:
-                            query_string_value += "'" + id_attribute_value + "'"
-                        else:
-                            query_string_value += str(id_attribute_value)
+                        # retrieves the entity id attribute value sqlite string value
+                        entity_id_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(id_attribute_value, entity_class_id_attribute_value_data_type)
+
+                        query_string_value += entity_id_attribute_value_sqlite_string_value
 
                         # executes the query removing the values
                         self.execute_query(cursor, query_string_value)
@@ -1400,8 +1436,16 @@ class BusinessSqliteEngine:
         # retrieves all the valid class attribute names, removes method values and the name exceptions
         entity_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_class)
 
-        # retrieves the entity class id attribute name
-        entity_class_id_attribute_name = search_field_name
+        # in case the search field is defined
+        if search_field_name:
+            # retrieves the entity class id attribute name
+            entity_class_id_attribute_name = search_field_name
+
+            # the value of the id attribute is changed to the search field attribute value
+            entity_class_id_attribute_value = getattr(entity_class, search_field_name)
+
+            # retrieves the entity class id attribute value data type
+            entity_class_id_attribute_value_data_type = self.get_attribute_data_type(entity_class_id_attribute_value, entity_class, entity_class_id_attribute_name)
 
         # in case the retrieved entities object is not started
         if not retrieved_entities_list:
@@ -1435,10 +1479,10 @@ class BusinessSqliteEngine:
         else:
             query_string_value += " from " + entity_class_name + " where " + entity_class_id_attribute_name + " = "
 
-            if type(field_value) in types.StringTypes:
-                query_string_value += "'" + field_value + "'"
-            else:
-                query_string_value += str(field_value)
+            # retrieves the field value value sqlite string value
+            field_value_sqlite_string_value = self.get_attribute_sqlite_string_value(field_value, entity_class_id_attribute_value_data_type)
+
+            query_string_value += field_value_sqlite_string_value
 
             is_first_where = False
 
