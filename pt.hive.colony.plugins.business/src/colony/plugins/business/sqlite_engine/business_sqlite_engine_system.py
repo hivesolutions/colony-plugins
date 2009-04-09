@@ -2169,6 +2169,9 @@ class BusinessSqliteEngine:
                 # retrieves the join attribute name field
                 join_attribute_name_field = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
 
+                # sets the retrieve eager loading relations option as true or the assigned value
+                options["retrieve_eager_loading_relations"] = options.get("retrieve_eager_loading_relations", True)
+
                 return self.find_all_entities_options(connection, target_entity_class, id_value, join_attribute_name_field, retrieved_entities_list = retrieved_entities_list, options = options)
 
     def get_relation_attributes(self, entity_class, relation_attribute_name):
