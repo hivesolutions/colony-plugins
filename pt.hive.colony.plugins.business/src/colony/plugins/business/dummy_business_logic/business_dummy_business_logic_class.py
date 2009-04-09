@@ -134,6 +134,7 @@ class DummyBusinessLogic:
         # sets the dummy entity bundle instance attributes
         dummy_entity_bundle_instance.name = "test"
         dummy_entity_bundle_instance.age = 21
+        dummy_entity_bundle_instance_1.current_date = datetime.datetime.now()
 
         # sets the dummy entity bundle instance attributes
         dummy_entity_bundle_instance_1.name = "test_1"

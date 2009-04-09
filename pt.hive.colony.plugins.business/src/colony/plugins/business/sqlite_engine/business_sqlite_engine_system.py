@@ -1261,8 +1261,17 @@ class BusinessSqliteEngine:
                         # adds the relation attribute tuple to the list of relation attributes
                         relation_attributes_list.append(relation_attribute_tuple)
                 else:
-                    # sets the attribute in the instance
-                    setattr(entity, entity_class_valid_attribute_name, attribute_value)
+                    # retrieves the entity class attribute value
+                    entity_class_valid_attribute_value = getattr(entity_class, entity_class_valid_attribute_name)
+
+                    # retrieves the attribute data type
+                    attribute_data_type = self.get_attribute_data_type(entity_class_valid_attribute_value, entity_class, entity_class_valid_attribute_name)
+
+                    # retrieves the processed attribute value
+                    processed_attribute_value = self.get_processed_sqlite_attribute_value(attribute_value, attribute_data_type)
+
+                    # sets the processed attribute value in the instance
+                    setattr(entity, entity_class_valid_attribute_name, processed_attribute_value)
 
                 # increments the index value
                 index += 1
@@ -1586,8 +1595,17 @@ class BusinessSqliteEngine:
                             # adds the relation attribute tuple to the list of relation attributes
                             relation_attributes_list.append(relation_attribute_tuple)
                     else:
-                        # sets the attribute in the instance
-                        setattr(entity, entity_class_valid_attribute_name, attribute_value)
+                        # retrieves the entity class attribute value
+                        entity_class_valid_attribute_value = getattr(entity_class, entity_class_valid_attribute_name)
+
+                        # retrieves the attribute data type
+                        attribute_data_type = self.get_attribute_data_type(entity_class_valid_attribute_value, entity_class, entity_class_valid_attribute_name)
+
+                        # retrieves the processed attribute value
+                        processed_attribute_value = self.get_processed_sqlite_attribute_value(attribute_value, attribute_data_type)
+
+                        # sets the processed attribute value in the instance
+                        setattr(entity, entity_class_valid_attribute_name, processed_attribute_value)
 
                     # increments the index value
                     index += 1
@@ -2316,6 +2334,27 @@ class BusinessSqliteEngine:
                     return str(attribute_value)
             else:
                 return str(attribute_value)
+
+    def get_processed_sqlite_attribute_value(self, attribute_value, attribute_date_type):
+        """
+        Retrieves the sqlite string representation of the given attribute.
+
+        @type attribute_value: Object
+        @param attribute_value: The attribute value.
+        @type attribute_date_type: String
+        @param attribute_date_type: The attribute data type.
+        @rtype: Object
+        @return: The python object representing the given sqlite object.
+        """
+
+        # in case the value is None
+        if attribute_value == None:
+            return None
+
+        if attribute_date_type == "date":
+            return datetime.datetime.fromtimestamp(float(attribute_value))
+
+        return attribute_value
 
 class BufferedEntities:
     """
