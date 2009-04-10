@@ -1470,7 +1470,7 @@ class BusinessSqliteEngine:
         # creates the initial query string value
         query_string_value = "select "
 
-        # in case it's a count slect
+        # in case it's a count select
         if count:
             query_string_value += " count(1) "
         # in case it's a normal select
