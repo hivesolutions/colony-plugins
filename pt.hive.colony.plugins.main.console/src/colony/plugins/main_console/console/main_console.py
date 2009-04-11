@@ -54,7 +54,7 @@ show <plugin-id>    - shows the status of the plugin with the defined id\n\
 showall             - shows the status of all the loaded plugins\n\
 info <plugin-id>    - shows information about the plugin with the defined id\n\
 infoall             - shows information about all the loaded plugins\n\
-add <plugin-path>   - adds a news plugin\n\
+add <plugin-path>   - adds a new plugin\n\
 remove <plugin-id>  - removes a plugin\n\
 load <plugin-id>    - loads a plugin\n\
 unload <plugin-id>  - unloads a plugin\n\
