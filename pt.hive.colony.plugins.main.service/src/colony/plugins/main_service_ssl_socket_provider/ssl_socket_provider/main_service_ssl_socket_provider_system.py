@@ -43,6 +43,9 @@ import socket
 PROVIDER_NAME = "ssl"
 """ The provider name """
 
+RESOURCES_PATH = "main_service_ssl_socket_provider/ssl_socket_provider/resources"
+""" The resources path """
+
 class MainServiceSslSocketProvider:
     """
     The main service ssl socket provider class.
@@ -65,11 +68,26 @@ class MainServiceSslSocketProvider:
         return PROVIDER_NAME
 
     def provide_socket(self):
+        # retrieves the plugin manager
+        manager = self.main_service_ssl_socket_provider_plugin.manager
+
+        # retrieves the main service ssl socket provicer plugin base path
+        main_service_ssl_socket_provicer_plugin_path = manager.get_plugin_path_by_id(self.main_service_ssl_socket_provider_plugin.id)
+
+        # sets the main service ssl socket provicer plugin resources path
+        main_service_ssl_socket_provicer_plugin_resources_path = main_service_ssl_socket_provicer_plugin_path + "/main_service_ssl_socket_provider/ssl_socket_provider/resources"
+
         # creates the normal socket
         normal_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
+        # retrieves the dummy ssl key path
+        dummy_ssl_key_path = main_service_ssl_socket_provicer_plugin_resources_path + "/dummy.key"
+
+        # retrieves the dummy ssl certificate path
+        dummy_ssl_certificate_path = main_service_ssl_socket_provicer_plugin_resources_path + "/dummy.crt"
+
         # warps the normal socket into an ssl socket
-        ssl_socket = ssl.wrap_socket(normal_socket, "c:/localhost.key", "c:/localhost.crt")
+        ssl_socket = ssl.wrap_socket(normal_socket, dummy_ssl_key_path, dummy_ssl_certificate_path)
 
         # returns the ssl socket
         return ssl_socket
