@@ -79,6 +79,9 @@ MAX_NUMBER_THREADS = 30
 SCHEDULING_ALGORITHM = 2
 """ The scheduling algorithm """
 
+DEFAULT_PORT = 8080
+""" The default port """
+
 STATUS_CODE_VALUES = {200 : "OK", 207 : "Multi-Status",
                       301 : "Moved permanently", 302 : "Found", 303 : "See Other",
                       403 : "Forbidden", 404 : "Not Found",
@@ -117,23 +120,31 @@ class MainServiceHttp:
         @param parameters: The parameters to start the service.
         """
 
+        # retrieves the socket provider value
+        socket_provider = parameters.get("socket_provider", None)
+
         # retrieves the port value
-        port = parameters["port"]
+        port = parameters.get("port", DEFAULT_PORT)
 
-        # start the server for the given port
-        self.start_server(port)
+        # start the server for the given socket provider and port
+        self.start_server(socket_provider, port)
 
-    def stop_service(self):
+    def stop_service(self, parameters):
         """
         Stops the service.
+
+        @type parameters: Dictionary
+        @param parameters: The parameters to start the service.
         """
 
         self.stop_server()
 
-    def start_server(self, port):
+    def start_server(self, socket_provider, port):
         """
         Starts the server in the given port.
 
+        @type port: String
+        @param port: The name of the socket provider to be used.
         @type port: int
         @param port: The port to start the server.
         """
@@ -155,8 +166,23 @@ class MainServiceHttp:
         # sets the http connection active flag as true
         self.http_connection_active = True
 
-        # creates the http socket
-        self.http_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # in case the socket provider is defined
+        if socket_provider:
+            # retrieves the socket provider plugins
+            socket_provider_plugins = self.main_service_http_plugin.socket_provider_plugins
+
+            # iterates over all the socket provider plugins
+            for socket_provider_plugin in socket_provider_plugins:
+                # retrieves the provider name from the socket provider plugin
+                socket_provider_plugin_provider_name = socket_provider_plugin.get_provider_name()
+
+                # in case the names are the same
+                if socket_provider_plugin_provider_name == socket_provider:
+                    # creates a new http socket with the socket provider plugin
+                    self.http_socket = socket_provider_plugin.provide_socket()
+        else:
+            # creates the http socket
+            self.http_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         # binds the http socket
         self.http_socket.bind((HOST_VALUE, port))
@@ -186,22 +212,25 @@ class MainServiceHttp:
             if not self.http_connection_active:
                 return
 
-            # accepts the connection retrieving the http connection object and the address
-            http_connection, http_address = self.http_socket.accept()
+            try:
+                # accepts the connection retrieving the http connection object and the address
+                http_connection, http_address = self.http_socket.accept()
 
-            # creates a new http client service task, with the given http connection and address
-            http_client_service_task = HttpClientServiceTask(self.main_service_http_plugin, http_connection, http_address)
+                # creates a new http client service task, with the given http connection and address
+                http_client_service_task = HttpClientServiceTask(self.main_service_http_plugin, http_connection, http_address)
 
-            # creates a new task descriptor
-            task_descriptor = task_descriptor_class(start_method = http_client_service_task.start,
-                                                    stop_method = http_client_service_task.stop,
-                                                    pause_method = http_client_service_task.pause,
-                                                    resume_method = http_client_service_task.resume)
+                # creates a new task descriptor
+                task_descriptor = task_descriptor_class(start_method = http_client_service_task.start,
+                                                        stop_method = http_client_service_task.stop,
+                                                        pause_method = http_client_service_task.pause,
+                                                        resume_method = http_client_service_task.resume)
 
-            # inserts the new task descriptor into the http client thread pool
-            self.http_client_thread_pool.insert_task(task_descriptor)
+                # inserts the new task descriptor into the http client thread pool
+                self.http_client_thread_pool.insert_task(task_descriptor)
 
-            self.main_service_http_plugin.debug("Number of threads in pool: %d" % self.http_client_thread_pool.current_number_threads)
+                self.main_service_http_plugin.debug("Number of threads in pool: %d" % self.http_client_thread_pool.current_number_threads)
+            except:
+                self.main_service_http_plugin.error("Error accepting connection")
 
     def stop_server(self):
         """

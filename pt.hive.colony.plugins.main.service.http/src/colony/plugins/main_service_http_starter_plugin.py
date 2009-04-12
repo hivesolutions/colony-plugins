@@ -40,37 +40,41 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.plugins.plugin_system
 import colony.plugins.decorators
 
-class MainServiceHttpColonyHandlerPlugin(colony.plugins.plugin_system.Plugin):
+class MainServiceHttpStarterPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Http Service Main Colony Handler plugin.
+    The main class for the Http Service Main Starter plugin.
     """
 
-    id = "pt.hive.colony.plugins.main.service.http.colony_handler"
-    name = "Http Service Main Colony Handler Plugin"
-    short_name = "Http Service Main Colony Handler"
-    description = "The plugin that offers the http service colony handler"
+    id = "pt.hive.colony.plugins.main.service.http.starter"
+    name = "Http Service Main Starter Plugin"
+    short_name = "Http Service Main Starter"
+    description = "The plugin that starts the http service"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["http_service_handler"]
-    capabilities_allowed = ["http_python_handler"]
-    dependencies = []
+    capabilities = ["main"]
+    capabilities_allowed = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.main.service.http", "1.0.0")]
     events_handled = []
     events_registrable = []
 
-    main_service_http_colony_handler = None
-
-    http_python_handler_plugins = []
+    main_service_http_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
-        global main_service_http_colony_handler
-        import main_service_http_colony_handler.colony_handler.main_service_http_colony_handler_system
-        self.main_service_http_colony_handler = main_service_http_colony_handler.colony_handler.main_service_http_colony_handler_system.MainServiceHttpColonyHandler(self)
+
+        # notifies the ready semaphore
+        self.release_ready_semaphore()
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+
+        # notifies the ready semaphore
+        self.release_ready_semaphore()
+
+        self.main_service_http_plugin.start_service({"socket_provider" : "normal", "port" : 8080})
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
@@ -78,27 +82,19 @@ class MainServiceHttpColonyHandlerPlugin(colony.plugins.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.main.service.http.colony_handler", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.main.service.http.colony_handler", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.main.service.http.starter", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def get_handler_name(self):
-        return self.main_service_http_colony_handler.get_handler_name()
+    def get_main_service_http_plugin(self):
+        return self.main_service_http_plugin
 
-    def handle_request(self, request):
-        return self.main_service_http_colony_handler.handle_request(request)
-
-    @colony.plugins.decorators.load_allowed_capability("http_python_handler")
-    def http_python_handler_capability_load_allowed(self, plugin, capability):
-        self.http_python_handler_plugins.append(plugin)
-
-    @colony.plugins.decorators.unload_allowed_capability("http_python_handler")
-    def http_python_handler_capability_unload_allowed(self, plugin, capability):
-        self.http_python_handler_plugins.remove(plugin)
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.service.http")
+    def set_main_service_http_plugin(self, main_service_http_plugin):
+        self.main_service_http_plugin = main_service_http_plugin

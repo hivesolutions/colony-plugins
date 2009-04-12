@@ -53,8 +53,8 @@ class MainServiceHttpPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["main", "http_service"]
-    capabilities_allowed = ["http_service_handler"]
+    capabilities = ["http_service"]
+    capabilities_allowed = ["http_service_handler", "socket_provider"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
     events_handled = []
@@ -63,6 +63,7 @@ class MainServiceHttpPlugin(colony.plugins.plugin_system.Plugin):
     main_service_http = None
 
     http_service_handler_plugins = []
+    socket_provider_plugins = []
 
     thread_pool_manager_plugin = None
 
@@ -72,16 +73,8 @@ class MainServiceHttpPlugin(colony.plugins.plugin_system.Plugin):
         import main_service_http.http.main_service_http_system
         self.main_service_http = main_service_http.http.main_service_http_system.MainServiceHttp(self)
 
-        # notifies the ready semaphore
-        self.release_ready_semaphore()
-
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
-
-        # notifies the ready semaphore
-        self.release_ready_semaphore()
-
-        self.main_service_http.start_service({"port" : 8080})
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
@@ -90,6 +83,12 @@ class MainServiceHttpPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
         self.main_service_http.stop_service()
+
+    def start_service(self, parameters):
+        self.main_service_http.start_service(parameters)
+
+    def stop_service(self, parameters):
+        self.main_service_http.stop_service(parameters)
 
     @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.main.service.http", "1.0.0")
     def load_allowed(self, plugin, capability):
@@ -107,9 +106,17 @@ class MainServiceHttpPlugin(colony.plugins.plugin_system.Plugin):
     def http_service_handler_load_allowed(self, plugin, capability):
         self.http_service_handler_plugins.append(plugin)
 
+    @colony.plugins.decorators.load_allowed_capability("socket_provider")
+    def socket_provider_load_allowed(self, plugin, capability):
+        self.socket_provider_plugins.append(plugin)
+
     @colony.plugins.decorators.unload_allowed_capability("http_service_handler")
     def http_service_handler_unload_allowed(self, plugin, capability):
         self.http_service_handler_plugins.remove(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("socket_provider")
+    def socket_provider_unload_allowed(self, plugin, capability):
+        self.socket_provider_plugins.remove(plugin)
 
     def get_thread_pool_manager_plugin(self):
         return self.thread_pool_manager_plugin

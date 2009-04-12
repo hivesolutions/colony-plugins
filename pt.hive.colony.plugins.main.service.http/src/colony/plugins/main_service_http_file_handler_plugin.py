@@ -46,7 +46,7 @@ class MainServiceHttpFileHandlerPlugin(colony.plugins.plugin_system.Plugin):
 
     id = "pt.hive.colony.plugins.main.service.http.file_handler"
     name = "Http Service Main File Handler Plugin"
-    short_name = "Http Service Main File Handler "
+    short_name = "Http Service Main File Handler"
     description = "The plugin that offers the http service file handler"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
