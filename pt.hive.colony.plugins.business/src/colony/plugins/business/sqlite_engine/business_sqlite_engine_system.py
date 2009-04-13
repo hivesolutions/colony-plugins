@@ -1466,6 +1466,9 @@ class BusinessSqliteEngine:
         # retrieves the number of records
         number_records = options.get("number_records", -1)
 
+        # retrieves the order by
+        order_by = options.get("order_by", [])
+
         # retrieves the filters
         filters = options.get("filters", [])
 
@@ -1587,6 +1590,28 @@ class BusinessSqliteEngine:
                          query_string_value += "\""
 
             query_string_value += ")"
+
+        # in case there is at least one order by definition
+        if len(order_by):
+            query_string_value += " order by "
+
+            is_first_order_by = True
+
+            # iterates over all the order by values
+            for order_by_value in order_by:
+                order_by_name, order_by_order = order_by_value
+
+                if is_first_order_by:
+                    is_first_order_by = False
+                else:
+                    # adds a comma to the query string value
+                    query_string_value += ", "
+                query_string_value += order_by_name
+
+                if order_by_order == "ascending":
+                    query_string_value += " asc"
+                elif order_by_order == "descending":
+                    query_string_value += " desc"
 
         query_string_value += " limit " + str(start_record) + ", " + str(number_records)
 

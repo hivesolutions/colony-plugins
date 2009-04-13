@@ -133,7 +133,7 @@ class DummyBusinessLogic:
 
         # sets the dummy entity bundle instance attributes
         dummy_entity_bundle_instance.name = "test"
-        dummy_entity_bundle_instance.age = 21
+        dummy_entity_bundle_instance.age = 25
         dummy_entity_bundle_instance.local_date = datetime.datetime.now()
 
         # sets the dummy entity bundle instance attributes
@@ -183,6 +183,7 @@ class DummyBusinessLogic:
         # finds all the dummy entity bundle entities with the given filter
         find_all_values = self.entity_manager._find_all_options(dummy_entity_bundle_class, {"retrieve_eager_loading_relations" : True,
                                                                                             "fields" : ["age"],
+                                                                                            "order_by" : [("name", "descending"), ("age", "descending")],
                                                                                             "filters" : [{"filter_type" : "like",
                                                                                                           "filter_fields" : [{"field_name" : "name",
                                                                                                                               "field_value" : "test"}]}]})
