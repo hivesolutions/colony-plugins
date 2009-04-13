@@ -42,7 +42,7 @@ import md5
 import base64
 import copy
 import time
-import pickle
+import os.path
 
 import data_converter.data_converter_adapter_configuration_parser
 
@@ -133,7 +133,7 @@ class DataConverterAdapter:
         user_home_path_resource = resource_manager_plugin.get_resource("system.path.user_home")
         user_home_path = user_home_path_resource.data
         entity_manager = entity_manager_plugin.load_entity_manager("sqlite")
-        entity_manager.set_connection_parameters({"file_path" : user_home_path + "/conversion_database.db", "autocommit" : False})
+        entity_manager.set_connection_parameters({"file_path" : user_home_path + "/diamante.db", "autocommit" : False})
         entity_manager.load_entity_manager()
 
         start_time = time.time()
@@ -272,9 +272,40 @@ class DataConverterAdapter:
 
     # @todo: this method is temporary
     def convert_internal_attribute_name_to_omni_name(self, internal_entity_name, internal_attribute_name):
+
+# @todo:
+#        missing in data model
+#
+#        postdated_check_payment.payments
+#        transfer_merchandise_hierarchy_tree_node.store
+#        payment_line.credit_note
+#        payment_line.return_point
+#        purchase.payment_terms
+#        purchase.invoice
+#        invoice.purchase
+#        system_settings.payments_received
+#        customer_return.company_buyer
+#        supplier_return.credit_note
+#        credit_note.return_point
+#        credit_payment.systemn_company_employee
+#        gift_certificate.payments
+#
+#        relations that need to be activated
+#
+#        supplier_return.supplier
+#        payment_terms.default_payment_terms_of
+#
+#        incorrect in internal structure
+#
+#        sale_transaction.sale
+#        person_relation.customer
+#        reason.stock_adjustments
+#        customer_company.personally_related_with_as_first_person
+
         map = {"postdated_check_payment" :  {"payments" : None},
-               "system_settings" :  {"primary_currency" : None,
-                                     "primary_language" : None},
+               "system_settings" :  {"primary_currency" : "preferred_currency",
+                                     "primary_language" : "preferred_language",
+                                     "currency" : "preferred_currency"},
                "money_sale" : {"sale" : "sale_transaction"},
                "address" : {"system_company" : "contactable_organizational_hierarchy_tree_node",
                             "customer" : "contactable_organizational_hierarchy_tree_node",
@@ -285,15 +316,17 @@ class DataConverterAdapter:
                "cash_payment" : {"payments" : "payment_lines"},
                "check_payment" : {"payments" : "payment_lines"},
                "product" : {"purchase_merchandise_hierarchy_tree_node" : "purchase_merchandise_hierarchy_tree_nodes",
-                            "category" : "parent_nodes"},
+                            "category" : "parent_nodes",
+                            "collection" : "parent_nodes"},
                "system_company" : {"preferred_languge" : "preferred_language",
                                    "currency" : None},
                "store" : {"sales_stockholder" : "sales_stockholders"},
-               "financial_account" : {"contactable_organizational_hierarchy_tree_node" : "owners"},
+               "financial_account" : {"contactable_organizational_hierarchy_tree_node" : "owners",
+                                      "customer" : "owners"},
                "customer_return" : {"return_site" : "return_sites",
                                     "merchandise_hierarchy_tree_node_return" : "merchandise_hierarchy_tree_node_returns",
                                     "sellers" : "return_processors",
-                                    "return_site" : None,
+                                    "return_site" : "return_sites",
                                     "return_processor" : "return_processors",
                                     "company_buyer" : None},
                "supplier_return" : {"merchandise_hierarchy_tree_node_return" : "merchandise_hierarchy_tree_node_returns",
@@ -322,7 +355,8 @@ class DataConverterAdapter:
                                         "system_company" : "contactable_organizational_hierarchy_tree_node"},
                "media" : {"product" : "merchandise_hierarchy_tree_nodes",
                           "customer" : "contactable_organizational_hierarchy_tree_nodes",
-                          "system_company" : "contactable_organizational_hierarchy_tree_nodes"},
+                          "system_company" : "contactable_organizational_hierarchy_tree_nodes",
+                          "name" : None},
                "purchase" : {"money_sale" : "money_sale_slip",
                              "invoice" : None,
                              "payment_terms" : None,
@@ -338,8 +372,7 @@ class DataConverterAdapter:
                "payment_terms" :  {"default_payment_terms_of" : None},
                "subproduct" : {"product" : "parent_nodes",
                                "purchase_merchandise_hierarchy_tree_node" : "purchase_merchandise_hierarchy_tree_nodes"},
-               "stock_adjustment_merchandise_hierarchy_tree_node" :  {"adjustment_target" : None,
-                                                                      "store" : None},
+               "stock_adjustment_merchandise_hierarchy_tree_node" :  {"store" : "adjustment_owners"},
                "user" : {"system_company_employee" : "person"},
                "credit_note" : {"return_point" : None},
                "money" : {"return_point" : "return_point"}}
@@ -358,7 +391,9 @@ class DataConverterAdapter:
                "system_company_employee" : "Employee",
                "supplier" : "SupplierCompany",
                "postdated_check_payment" : "PostDatedCheckPayment",
-               "money_sale" : "MoneySaleSlip"}
+               "money_sale" : "MoneySaleSlip",
+               "stock_adjustment_merchandise_hierarchy_tree_node" : "StockAdjustment"}
+
         if internal_entity_name in map:
             return map[internal_entity_name]
         else:
@@ -370,6 +405,7 @@ class DataConverterAdapter:
 
     # @todo: this method is temporary
     def convert_entities(self, internal_structure, entity_manager, internal_structure_entity_name):
+        entities = []
         internal_entities = list(set(internal_structure.get_entities(internal_structure_entity_name)))
         for internal_entity_index in range(len(internal_entities)):
             internal_entity = internal_entities[internal_entity_index]
@@ -384,24 +420,28 @@ class DataConverterAdapter:
                         field_value = unicode(field_value)
 
                  entity_attribute_name = self.convert_internal_attribute_name_to_omni_name(internal_entity._name, field_name)
+                 if not entity_attribute_name is None:
+                     # @todo: this is a hack
+                     if type(field_value) in types.StringTypes:
+                        field_value = unicode(field_value)
+                        if entity_attribute_name == "name":
+                           field_value = field_value.capitalize()
+                        if internal_entity._name == "media" and field_name == "name":
+                              file_path = os.path.join("C:/DIA2002/IMAGENS/DEFINITIVO/", field_value)
+                              if os.path.exists(file_path):
+                                  string_buffer = self.data_converter_plugin.image_treatment_plugin.resize_image_aspect(file_path, 130, 115)
+                                  file_content = string_buffer.read()
+                                  file_content_base64 = base64.b64encode(file_content)
+                                  entity.description = "size:130x115"
+                                  field_value = file_content_base64
 
-                 # @todo: this is a hack
-                 if type(field_value) in types.StringTypes:
-                    field_value = unicode(field_value)
-                    if entity_attribute_name == "name":
-                       field_value = field_value.capitalize()
-
-                 if hasattr(entity, entity_attribute_name):
-                     setattr(entity, entity_attribute_name, field_value)
+                     if hasattr(entity, entity_attribute_name):
+                         setattr(entity, entity_attribute_name, field_value)
 
             entity.object_id = internal_entity.object_id
             self.object_id_entity_map[entity.object_id] = entity
             print "Saved " + entity_name + " with object id = " + str(entity.object_id)
-
-            try:
-                entity_manager.save(entity)
-            except:
-                print "ERROR SAVING ENTITY"
+            entity_manager.save(entity)
 
     # @todo: this method is temporary
     def convert_relations(self, internal_structure, entity_manager, internal_structure_entity_name):

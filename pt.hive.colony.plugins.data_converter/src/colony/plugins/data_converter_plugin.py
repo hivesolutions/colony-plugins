@@ -61,18 +61,14 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
                     colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.business.entity_manager", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.resource_manager", "1.0.0")]
+                    "pt.hive.colony.plugins.misc.resource_manager", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.image_treatment", "1.0.0")]
     events_handled = []
     events_registrable = []
 
     io_plugins = []
     """ Input/output adapter plugins """
-
-    logger_plugin = None
-    """ Logger plugin """
-
-    task_manager_plugin = None
-    """ Task manager plugin """
 
     data_converter_input_configuration_plugins = []
     """ Plugins providing data conversion input configurations """
@@ -82,6 +78,18 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
 
     data_converter_observer_plugins = []
     """ Plugins that want to observe the conversion process """
+
+    logger_plugin = None
+    """ Logger plugin """
+
+    task_manager_plugin = None
+    """ Task manager plugin """
+
+    resource_manager_plugin = None
+    """ Resource manager plugin """
+
+    image_treatment_plugin = None
+    """ Image treatment plugin """
 
     def __init__(self, manager):
         colony.plugins.plugin_system.Plugin.__init__(self, manager)
@@ -203,3 +211,10 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.resource_manager")
     def set_resource_manager_plugin(self, resource_manager_plugin):
         self.resource_manager_plugin = resource_manager_plugin
+
+    def get_image_treatment_plugin(self):
+        return self.image_treatment_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.image_treatment")
+    def set_image_treatment_plugin(self, image_treatment_plugin):
+        self.image_treatment_plugin = image_treatment_plugin
