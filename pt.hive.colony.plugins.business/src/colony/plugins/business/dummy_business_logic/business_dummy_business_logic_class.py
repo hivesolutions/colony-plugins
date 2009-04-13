@@ -182,6 +182,7 @@ class DummyBusinessLogic:
 
         # finds all the dummy entity bundle entities with the given filter
         find_all_values = self.entity_manager._find_all_options(dummy_entity_bundle_class, {"retrieve_eager_loading_relations" : True,
+                                                                                            "fields" : ["age"],
                                                                                             "filters" : [{"filter_type" : "like",
                                                                                                           "filter_fields" : [{"field_name" : "name",
                                                                                                                               "field_value" : "test"}]}]})

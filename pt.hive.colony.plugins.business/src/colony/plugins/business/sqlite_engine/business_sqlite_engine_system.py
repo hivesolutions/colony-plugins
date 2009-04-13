@@ -1146,6 +1146,9 @@ class BusinessSqliteEngine:
         # retrieves the eager loading relations option
         eager_loading_relations = options.get("eager_loading_relations", {})
 
+        # retrieves the fields option
+        fields = options.get("fields", {})
+
         # retrieves the database connection from the connection object
         database_connection = connection.database_connection
 
@@ -1393,11 +1396,26 @@ class BusinessSqliteEngine:
                         # sets the relation attribute in the instance
                         setattr(entity, entity_valid_indirect_attribute_name, target_entities_list)
 
+            # sets the entity fields
+            entity = self.set_fields(entity, fields)
+
             # returns the created entity
             return entity
 
         # closes the cursor
         cursor.close()
+
+    def set_fields(self, entity, fields):
+        if not fields:
+            return entity
+
+        new_entity = DefaultEntity()
+
+        for field in fields:
+            field_value = getattr(entity, field)
+            setattr(new_entity, field, field_value)
+
+        return new_entity
 
     def find_all_entities(self, connection, entity_class, field_value, search_field_name, retrieved_entities_list = None):
         """
@@ -1423,6 +1441,9 @@ class BusinessSqliteEngine:
     def find_all_entities_options(self, connection, entity_class, field_value, search_field_name, retrieved_entities_list = None, options = {}):
         # retrieves the eager loading relations option
         eager_loading_relations = options.get("eager_loading_relations", {})
+
+        # retrieves the fields option
+        fields = options.get("fields", {})
 
         # retrieves the retrieve eager loading relations option
         retrieve_eager_loading_relations = options.get("retrieve_eager_loading_relations", len(eager_loading_relations) > 0)
@@ -1651,6 +1672,9 @@ class BusinessSqliteEngine:
                         # sets the relation attribute in the instance
                         setattr(entity, entity_class_valid_attribute_name, relation_attribute_value)
 
+                # sets the entity fields
+                entity = self.set_fields(entity, fields)
+
                 # adds the entity to the list of entities
                 entities_list.append(entity)
         else:
@@ -1672,6 +1696,9 @@ class BusinessSqliteEngine:
 
                     # increments the index value
                     index += 1
+
+                # sets the entity fields
+                entity = self.set_fields(entity, fields)
 
                 # adds the entity to the list of entities
                 entities_list.append(entity)
@@ -2425,3 +2452,10 @@ class BufferedEntities:
         entity = buffered_entities_map_entity_class_map[id_value]
 
         return entity
+
+class DefaultEntity:
+    """
+    The default entity class.
+    """
+
+    pass
