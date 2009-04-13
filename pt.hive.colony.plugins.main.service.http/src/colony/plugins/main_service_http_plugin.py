@@ -82,8 +82,6 @@ class MainServiceHttpPlugin(colony.plugins.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
-        self.main_service_http.stop_service()
-
     def start_service(self, parameters):
         self.main_service_http.start_service(parameters)
 
