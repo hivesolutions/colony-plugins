@@ -233,7 +233,7 @@ class DataConverterAdapter:
         self.missing_relation_entities = []
 
         # convert every entity in the internal structure
-        internal_entity_names = internal_structure.get_entity_names()
+        internal_entity_names = ["product", "media"] #internal_structure.get_entity_names()
         entity_conversion_start_time = time.time()
         for internal_entity_name in internal_entity_names:
             print "##### CONVERTING " + internal_entity_name + " entities #####"
@@ -265,10 +265,10 @@ class DataConverterAdapter:
         print "RELATION CONVERSION TIME: " + str(relation_conversion_time_elapsed)
         print "TOTAL CONVERSION TIME: " + str(time_elapsed)
 
-        file = open("c:\\Users\\srio\\conversion_log.txt", "w")
-        for missing_relation_entity in self.missing_relation_entities:
-            file.write(str(missing_relation_entity) + "\n")
-        file.close()
+        #file = open("c:\\Users\\srio\\conversion_log.txt", "w")
+        #for missing_relation_entity in self.missing_relation_entities:
+        #    file.write(str(missing_relation_entity) + "\n")
+        #file.close()
 
     # @todo: this method is temporary
     def convert_internal_attribute_name_to_omni_name(self, internal_entity_name, internal_attribute_name):
@@ -424,6 +424,7 @@ class DataConverterAdapter:
                      # @todo: this is a hack
                      if type(field_value) in types.StringTypes:
                         field_value = unicode(field_value)
+                        field_value = field_value.replace("'", "''")
                         if entity_attribute_name == "name":
                            field_value = field_value.capitalize()
                         if internal_entity._name == "media" and field_name == "name":
@@ -441,7 +442,11 @@ class DataConverterAdapter:
             entity.object_id = internal_entity.object_id
             self.object_id_entity_map[entity.object_id] = entity
             print "Saved " + entity_name + " with object id = " + str(entity.object_id)
-            entity_manager.save(entity)
+            entities.append(entity)#entity_manager.save(entity)
+
+        print "before save many"
+        entity_manager.save_many(entities)
+        print "after save many"
 
     # @todo: this method is temporary
     def convert_relations(self, internal_structure, entity_manager, internal_structure_entity_name):
