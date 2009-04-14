@@ -48,6 +48,9 @@ MAX_POOL_SIZE = 30
 SCHEDULING_ALGORITHM = 1
 """ The scheduling algorithm """
 
+CREATE_PERSISTENT_SESSION_TYPE_VALUE = "create_persistent_session"
+""" The create persistent session type value """
+
 GET_SESSION_METHODS_TYPE_VALUE = "get_session_methods"
 """ The get session methods type value """
 
@@ -380,7 +383,9 @@ class SessionManagerProxy:
         return session_name
 
     def handle_request(self, session_information, session_request):
-        if session_request.session_request_type == GET_SESSION_METHODS_TYPE_VALUE:
+        if session_request.session_request_type == CREATE_PERSISTENT_SESSION_TYPE_VALUE:
+            return None
+        elif session_request.session_request_type == GET_SESSION_METHODS_TYPE_VALUE:
             return self.session_manager.handle_get_session_methods_request(session_information, session_request)
         elif session_request.session_request_type == CALL_SESSION_METHOD_TYPE_VALUE:
             return self.session_manager.handle_call_method_request(session_information, session_request)
