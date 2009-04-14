@@ -42,7 +42,7 @@ import thread
 
 import business_entity_manager_exceptions
 
-ATTRIBUTE_EXCLUSION_LIST = ["__doc__", "__init__", "__module__", "mapping_options"]
+ATTRIBUTE_EXCLUSION_LIST = ["__doc__", "__init__", "__module__", "mapping_options", "id_attribute_name"]
 
 TYPE_EXCLUSION_LIST = [types.MethodType, types.FunctionType, types.ClassType]
 

@@ -63,7 +63,7 @@ AUTOCOMMIT_VALUE = "autocommit"
 ISOLATION_LEVEL_VALUE = "isolation_level"
 """ The isolation level value """
 
-ATTRIBUTE_EXCLUSION_LIST = ["__class__", "__delattr__", "__dict__", "__doc__", "__getattribute__", "__hash__", "__module__", "__new__", "__reduce__", "__reduce_ex__", "__repr__", "__setattr__", "__str__", "__weakref__", "mapping_options"]
+ATTRIBUTE_EXCLUSION_LIST = ["__class__", "__delattr__", "__dict__", "__doc__", "__getattribute__", "__hash__", "__module__", "__new__", "__reduce__", "__reduce_ex__", "__repr__", "__setattr__", "__str__", "__weakref__", "mapping_options", "id_attribute_name"]
 """ The attribute exclusion list """
 
 TYPE_EXCLUSION_LIST = [types.MethodType, types.FunctionType, types.ClassType]
@@ -143,6 +143,12 @@ MANY_TO_ONE_RELATION = "many-to-one"
 
 MANY_TO_MANY_RELATION = "many-to-many"
 """ The many to many relation """
+
+ID_ATTRIBUTE_NAME_VALUE = "id_attribute_name"
+""" The id attribute name value """
+
+EXISTS_ENTITY_DEFINITION_QUERY = "select name from SQLite_Master"
+""" The exists entity definition query """
 
 class BusinessSqliteEngine:
     """
@@ -253,7 +259,7 @@ class BusinessSqliteEngine:
         cursor = database_connection.cursor()
 
         # selects all the names of existing tables
-        self.execute_query(cursor, "select name from SQLite_Master")
+        self.execute_query(cursor, EXISTS_ENTITY_DEFINITION_QUERY)
 
         # selects the table names from the cursor
         table_names_list = [value[0] for value in cursor]
@@ -275,7 +281,7 @@ class BusinessSqliteEngine:
         cursor = database_connection.cursor()
 
         # selects all the names of existing tables
-        self.execute_query(cursor, "select name from SQLite_Master")
+        self.execute_query(cursor, EXISTS_ENTITY_DEFINITION_QUERY)
 
         # selects the table names from the cursor
         table_names_list = [value[0] for value in cursor]
@@ -299,8 +305,8 @@ class BusinessSqliteEngine:
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
 
-        # creates the initial query string value
-        query_string_value = "pragma table_info(" + table_name + ")"
+        # retrieves the query string value
+        query_string_value = self.create_exists_table_column_definition(table_name)
 
         # executes the query retrieving the values
         self.execute_query(cursor, query_string_value)
@@ -325,6 +331,13 @@ class BusinessSqliteEngine:
         cursor.close()
 
         return False
+
+    def create_exists_table_column_definition(self, table_name):
+        # creates the initial query string value
+        query_string_value = "pragma table_info(" + table_name + ")"
+
+        # returns the query string value
+        return query_string_value
 
     def synced_entity_definition(self, connection, entity_class):
         """
@@ -594,7 +607,7 @@ class BusinessSqliteEngine:
         cursor = database_connection.cursor()
 
         # retrieves the query string value
-        query_string_value = self.create_save_query(entity)
+        query_string_value = self.create_save_entity_query(entity)
 
         # executes the query inserting the values
         self.execute_query(cursor, query_string_value)
@@ -610,7 +623,7 @@ class BusinessSqliteEngine:
         for entity in entities:
             self.save_entity(connection, entity)
 
-    def create_save_query(self, entity):
+    def create_save_entity_query(self, entity):
         # retrieves the entity class for the entity
         entity_class = entity.__class__
 
@@ -1968,6 +1981,9 @@ class BusinessSqliteEngine:
         @return: The name of the entity class id attribute.
         """
 
+        if hasattr(entity_class, ID_ATTRIBUTE_NAME_VALUE):
+            return getattr(entity_class, ID_ATTRIBUTE_NAME_VALUE)
+
         # retrieves all the valid class attribute names, removes method values and the name exceptions
         entity_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_class)
 
@@ -1980,6 +1996,7 @@ class BusinessSqliteEngine:
         for entity_class_valid_attribute_value in entity_class_valid_attribute_values:
             if ID_FIELD in entity_class_valid_attribute_value:
                 if entity_class_valid_attribute_value[ID_FIELD]:
+                    setattr(entity_class, ID_ATTRIBUTE_NAME_VALUE, entity_class_valid_attribute_names[index])
                     return entity_class_valid_attribute_names[index]
 
             # increments the index value
