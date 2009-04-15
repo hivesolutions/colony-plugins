@@ -45,28 +45,6 @@ import stat
 BUFFER_LENGTH = 1024
 """ The length for the zip operation buffer """
 
-def get_file_paths(path, returned_path_list=[]):
-    """
-    Returns a list with full paths to all files contained within the specified directory.
-
-    @type path: String
-    @param path: The root path from which all file paths will be retrieved.
-    @type returned_path_list: List
-    @param returned_path_list: The list where all the paths will be stored (used in recursive calls).
-    @rtype: List
-    @return: A list of absolute file paths.
-    """
-
-    dir_list = os.listdir(path)
-    for fname in dir_list:
-        full_path = os.path.join(path, fname)
-        mode = os.stat(full_path)[stat.ST_MODE]
-        if not stat.S_ISDIR(mode):
-            returned_path_list.append(full_path)
-        else:
-            get_file_paths(full_path, returned_path_list)
-    return returned_path_list
-
 class Zip:
     """
     Provides functions to interact with zip files.
@@ -235,3 +213,25 @@ class Zip:
         if os.path.isfile(zip_file_path):
             self.create_directories(zip_file_path, output_directory)
             self.create_files(zip_file_path, output_directory)
+
+def get_file_paths(path, returned_path_list=[]):
+    """
+    Returns a list with full paths to all files contained within the specified directory.
+
+    @type path: String
+    @param path: The root path from which all file paths will be retrieved.
+    @type returned_path_list: List
+    @param returned_path_list: The list where all the paths will be stored (used in recursive calls).
+    @rtype: List
+    @return: A list of absolute file paths.
+    """
+
+    dir_list = os.listdir(path)
+    for fname in dir_list:
+        full_path = os.path.join(path, fname)
+        mode = os.stat(full_path)[stat.ST_MODE]
+        if not stat.S_ISDIR(mode):
+            returned_path_list.append(full_path)
+        else:
+            get_file_paths(full_path, returned_path_list)
+    return returned_path_list
