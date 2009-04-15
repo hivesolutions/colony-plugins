@@ -1571,7 +1571,7 @@ class BusinessSqliteEngine:
                     if is_first_field:
                         is_first_field = False
                     else:
-                        " or "
+                        query_string_value += " or "
 
                     # retrieves the filter field value
                     filter_field_value = filter_field["field_value"]
