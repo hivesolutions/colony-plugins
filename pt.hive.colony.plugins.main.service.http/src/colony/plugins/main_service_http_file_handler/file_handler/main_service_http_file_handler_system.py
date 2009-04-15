@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import cStringIO
 import os.path
 
 import main_service_http_file_handler_exceptions
@@ -44,7 +45,7 @@ import main_service_http_file_handler_exceptions
 HANDLER_NAME = "file"
 """ The handler name """
 
-CHUNK_FILE_SIZE_LIMIT = 3072
+CHUNK_FILE_SIZE_LIMIT = 3072000
 """ The chunk file size limit """
 
 CHUNK_SIZE = 1024
@@ -156,6 +157,21 @@ class ChunkHandler:
 
         self.file = file
         self.file_size = file_size
+
+    def encode_file(self, encoding_handler, encoding_name):
+        file_contents = self.file.read()
+
+        file_contents_encoded = encoding_handler(file_contents)
+
+        file_contents_encoded_file = cStringIO.StringIO()
+
+        file_contents_encoded_file.write(file_contents_encoded)
+
+        self.file = file_contents_encoded_file
+        self.file_size = file_contents_encoded_file.tell()
+
+        # seeks to the beginning of the file
+        file_contents_encoded_file.seek(0)
 
     def get_size(self):
         """

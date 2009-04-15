@@ -56,7 +56,9 @@ class MainServiceHttpPlugin(colony.plugins.plugin_system.Plugin):
     capabilities = ["http_service"]
     capabilities_allowed = ["http_service_handler", "socket_provider"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
+                    "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.gzip", "1.0.0")]
     events_handled = []
     events_registrable = []
 
@@ -66,6 +68,7 @@ class MainServiceHttpPlugin(colony.plugins.plugin_system.Plugin):
     socket_provider_plugins = []
 
     thread_pool_manager_plugin = None
+    gzip_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -122,3 +125,10 @@ class MainServiceHttpPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.threads.thread_pool_manager")
     def set_thread_pool_manager_plugin(self, thread_pool_manager_plugin):
         self.thread_pool_manager_plugin = thread_pool_manager_plugin
+
+    def get_gzip_plugin(self):
+        return self.gzip_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.gzip")
+    def set_gzip_plugin(self, gzip_plugin):
+        self.gzip_plugin = gzip_plugin

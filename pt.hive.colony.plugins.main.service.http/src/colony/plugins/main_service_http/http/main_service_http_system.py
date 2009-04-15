@@ -538,6 +538,10 @@ class HttpClientServiceTask:
         self.send_request(request)
 
     def send_request(self, request):
+        request.encoded = True
+        request.set_encoding_handler(self.encoding_handler)
+        request.set_encoding_name("gzip")
+
         if request.is_mediated():
             self.send_request_mediated(request)
         elif request.is_chunked_encoded():
@@ -546,6 +550,8 @@ class HttpClientServiceTask:
             self.send_request_simple(request)
 
     def send_request_simple(self, request):
+        message = request.get_message()
+
         # retrieves the result value
         result_value = request.get_result()
 
@@ -580,7 +586,7 @@ class HttpClientServiceTask:
 
             try:
                 # sends the mediated value to the client
-                self.http_connection.send(mediated_value)
+                self.http_connection.send(mediated_value_gzip)
             except:
                 # error in the client side
                 return
@@ -607,10 +613,17 @@ class HttpClientServiceTask:
 
             try:
                 # sends the chunk value to the client
-                self.http_connection.send(chunk_value)
+                self.http_connection.send(chunk_value_gzip)
             except:
                 # error in the client side
                 return
+
+    def encoding_handler(self, message):
+        gzip_plugin = self.main_service_http_plugin.gzip_plugin
+
+        message_gzip = gzip_plugin.gzip_contents(message)
+
+        return message_gzip
 
     def keep_alive(self, request):
         """
@@ -676,6 +689,15 @@ class HttpRequest:
     chunked_encoding = False
     """ The chunked encoding """
 
+    encoded = False
+    """ The encoded flag """
+
+    encoding_handler = "none"
+    """ The encoding type """
+
+    encoding_type = "none"
+    """ The encoding type """
+
     chunk_handler = None
     """ The chunk handler """
 
@@ -740,8 +762,10 @@ class HttpRequest:
         message = self.message_stream.getvalue()
 
         if self.mediated:
+            self.mediated_handler.encode_file(self.encoding_handler, self.encoding_type)
             content_length = self.mediated_handler.get_size()
         else:
+            message = self.encoding_handler(message)
             content_length = len(message)
 
         status_code_value = STATUS_CODE_VALUES[self.status_code]
@@ -749,6 +773,8 @@ class HttpRequest:
         result.write(self.protocol_version + " " + str(self.status_code) + " " + status_code_value + "\r\n")
         if self.content_type:
             result.write("Content-Type: " + self.content_type + "\r\n")
+        if self.encoded:
+            result.write("Content-Encoding: " + self.encoding_name +"\r\n")
         if self.chunked_encoding:
             result.write("Transfer-Encoding: chunked\r\n")
         if not self.chunked_encoding:
@@ -767,6 +793,25 @@ class HttpRequest:
 
     def set_attribute(self, attribute_name, attribute_value):
         self.__setattribute__(attribute_name, attribute_value)
+
+    def get_message(self):
+        return self.message_stream.getvalue()
+
+    def set_message(self, message):
+        self.message_stream = cStringIO.StringIO()
+        self.message_stream.write(message)
+
+    def set_encoding_handler(self, encoding_handler):
+        self.encoding_handler = encoding_handler
+
+    def get_encoding_handler(self):
+        return encoding_handler
+
+    def set_encoding_name(self, encoding_name):
+        self.encoding_name = encoding_name
+
+    def get_encoding_name(self):
+        return encoding_name
 
     def set_operation_type(self, operation_type):
         self.operation_type = operation_type
