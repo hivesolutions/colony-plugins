@@ -389,3 +389,20 @@ class SessionManagerProxy:
             return self.session_manager.handle_get_session_methods_request(session_information, session_request)
         elif session_request.session_request_type == CALL_SESSION_METHOD_TYPE_VALUE:
             return self.session_manager.handle_call_method_request(session_information, session_request)
+
+class SessionInformation:
+    """
+    The session information class.
+    """
+
+    session_information_map = {}
+    """ The session information map """
+
+    def __init__(self):
+        self.session_information_map = {}
+
+    def get_session_property(self, property_name):
+        return self.session_information_map.get(property_name, None)
+
+    def set_session_property(self, property_name, property_value):
+        self.session_information_map[property_name] = property_value
