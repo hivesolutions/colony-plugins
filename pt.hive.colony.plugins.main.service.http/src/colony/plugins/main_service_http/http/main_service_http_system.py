@@ -586,7 +586,7 @@ class HttpClientServiceTask:
 
             try:
                 # sends the mediated value to the client
-                self.http_connection.send(mediated_value_gzip)
+                self.http_connection.send(mediated_value)
             except:
                 # error in the client side
                 return
@@ -609,11 +609,22 @@ class HttpClientServiceTask:
 
             # in case the read is complete
             if not chunk_value:
+                # sends the final empty chunk
+                self.http_connection.send("0\r\n\r\n")
                 return
 
             try:
-                # sends the chunk value to the client
-                self.http_connection.send(chunk_value_gzip)
+                # retrieves the length of the chunk value
+                length_chunk_value = len(chunk_value)
+
+                # sets the value for the hexadecimal length part of the chunk
+                length_chunk_value_hexadecimal_string = "%X\r\n" % length_chunk_value
+
+                # sets the message value
+                message_value = length_chunk_value_hexadecimal_string + chunk_value + "\r\n"
+
+                # sends the message value to the client
+                self.http_connection.send(message_value)
             except:
                 # error in the client side
                 return
@@ -761,11 +772,17 @@ class HttpRequest:
         result = cStringIO.StringIO()
         message = self.message_stream.getvalue()
 
+        if self.encoded:
+            if self.mediated:
+                self.mediated_handler.encode_file(self.encoding_handler, self.encoding_type)
+            elif self.chunked_encoding:
+                self.chunk_handler.encode_file(self.encoding_handler, self.encoding_type)
+            else:
+                message = self.encoding_handler(message)
+
         if self.mediated:
-            self.mediated_handler.encode_file(self.encoding_handler, self.encoding_type)
             content_length = self.mediated_handler.get_size()
         else:
-            message = self.encoding_handler(message)
             content_length = len(message)
 
         status_code_value = STATUS_CODE_VALUES[self.status_code]

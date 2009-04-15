@@ -45,7 +45,7 @@ import main_service_http_file_handler_exceptions
 HANDLER_NAME = "file"
 """ The handler name """
 
-CHUNK_FILE_SIZE_LIMIT = 3072000
+CHUNK_FILE_SIZE_LIMIT = 3072
 """ The chunk file size limit """
 
 CHUNK_SIZE = 1024
