@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt> & Tiago Silva <tsilva@hive.pt>"
+__author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
@@ -41,6 +41,9 @@ import zlib
 import time
 import struct
 import cStringIO
+
+DEFAULT_COMPRESSION_LEVEL = 3
+""" The default compression level """
 
 class Gzip:
     """
@@ -78,7 +81,8 @@ class Gzip:
         string_buffer.write("\002")
         string_buffer.write("\377")
 
-        contents_string_compressed = zlib.compress(contents_string, 3)
+        # compresses the contents with the zlib
+        contents_string_compressed = zlib.compress(contents_string, DEFAULT_COMPRESSION_LEVEL)
 
         string_buffer.write(contents_string_compressed[2:])
 
