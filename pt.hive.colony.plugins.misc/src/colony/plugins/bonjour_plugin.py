@@ -48,7 +48,7 @@ class BonjourPlugin(colony.plugins.plugin_system.Plugin):
     id = "pt.hive.colony.plugins.misc.bonjour"
     name = "Bonjour Plugin"
     short_name = "Bonjour"
-    description = "A Plugin to manage the bonjour API"
+    description = "A plugin to manage the bonjour API"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE

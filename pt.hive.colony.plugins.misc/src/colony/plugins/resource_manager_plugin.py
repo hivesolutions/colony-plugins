@@ -47,7 +47,7 @@ class ResourceManagerPlugin(colony.plugins.plugin_system.Plugin):
     id = "pt.hive.colony.plugins.misc.resource_manager"
     name = "Resource Manager Plugin"
     short_name = "Resource Manager"
-    description = "A Plugin to manage the resources contained in the plugins"
+    description = "A plugin to manage the resources contained in the plugins"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE

@@ -47,7 +47,7 @@ class RepositoryDescriptorGeneratorPlugin(colony.plugins.plugin_system.Plugin):
     id = "pt.hive.colony.plugins.misc.repository_descriptor_generator"
     name = "Repository Descriptor Generator Plugin"
     short_name = "Repository Descriptor Generator"
-    description = "A Plugin to generate repository descriptors"
+    description = "A plugin to generate repository descriptors"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE

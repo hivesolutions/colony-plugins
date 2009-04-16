@@ -25,10 +25,10 @@ __author__ = "João Magalhães <joamag@hive.pt>"
 __version__ = "1.0.0"
 """ The version of the module """
 
-__revision__ = "$LastChangedRevision$"
+__revision__ = "$LastChangedRevision: 2341 $"
 """ The revision number of the module """
 
-__date__ = "$LastChangedDate$"
+__date__ = "$LastChangedDate: 2009-04-01 17:42:37 +0100 (qua, 01 Abr 2009) $"
 """ The last change date of the module """
 
 __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
@@ -39,32 +39,32 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.plugins.plugin_system
 
-class GuidPlugin(colony.plugins.plugin_system.Plugin):
+class RandomPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Guid plugin
+    The main class for the Random plugin.
     """
 
-    id = "pt.hive.colony.plugins.misc.guid"
-    name = "Guid Plugin"
-    short_name = "Guid"
-    description = "A plugin to generate guid numbers"
+    id = "pt.hive.colony.plugins.misc.random"
+    name = "Random Plugin"
+    short_name = "Random"
+    description = "A plugin to generate ramdom numbers"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["guid"]
+    capabilities = ["random"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
     events_registrable = []
 
-    guid = None
+    random = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global misc
-        import misc.guid.guid_system
-        self.guid = misc.guid.guid_system.Guid(self)
+        import misc.random.random_system
+        self.random = misc.random.random_system.Random(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -84,5 +84,11 @@ class GuidPlugin(colony.plugins.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def generate_guid(self):
-        return self.guid.generate_guid()
+    def generate_random(self):
+        return self.random.generate_random()
+
+    def generate_random_md5(self):
+        return self.random.generate_random_md5()
+
+    def generate_random_md5_string(self):
+        return self.random.generate_random_md5_string()

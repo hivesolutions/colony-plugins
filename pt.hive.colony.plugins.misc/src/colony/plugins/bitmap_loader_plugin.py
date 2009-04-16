@@ -47,7 +47,7 @@ class BitmapLoaderPlugin(colony.plugins.plugin_system.Plugin):
     id = "pt.hive.colony.plugins.misc.bitmap_loader"
     name = "Bitmap Loader Plugin"
     short_name = "Bitmap Loader"
-    description = "A Plugin to manage the loading of bitmap files"
+    description = "A plugin to manage the loading of bitmap files"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE

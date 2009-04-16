@@ -47,7 +47,7 @@ class PluginPackageManagerPlugin(colony.plugins.plugin_system.Plugin):
     id = "pt.hive.colony.plugins.misc.plugin_package_manager"
     name = "Plugin Package Manager Plugin"
     short_name = "Plugin Package Manager"
-    description = "A Plugin to manage the plugin packages for deployment"
+    description = "A plugin to manage the plugin packages for deployment"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE

@@ -50,9 +50,7 @@ class Guid:
     """
 
     guid_plugin = None
-    """
-    The guid plugin.
-    """
+    """ The guid plugin """
 
     def __init__(self, guid_plugin):
         """

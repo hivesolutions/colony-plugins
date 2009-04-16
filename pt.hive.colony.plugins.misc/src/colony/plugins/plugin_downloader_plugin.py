@@ -47,7 +47,7 @@ class PluginDownloaderPlugin(colony.plugins.plugin_system.Plugin):
     id = "pt.hive.colony.plugins.misc.plugin_downloader"
     name = "Plugin Downloader Plugin"
     short_name = "Plugin Downloader"
-    description = "A Plugin to automatically download plugins and dependencies"
+    description = "A plugin to automatically download plugins and dependencies"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE

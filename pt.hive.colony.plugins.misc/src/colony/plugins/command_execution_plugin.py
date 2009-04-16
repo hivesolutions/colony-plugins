@@ -47,7 +47,7 @@ class CommandExecutionPlugin(colony.plugins.plugin_system.Plugin):
     id = "pt.hive.colony.plugins.misc.command_execution"
     name = "Command Execution Plugin"
     short_name = "Command Execution"
-    description = "A Plugin to manage the command execution"
+    description = "A plugin to manage the command execution"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE

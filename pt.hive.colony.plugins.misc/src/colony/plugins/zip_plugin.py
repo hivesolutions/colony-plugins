@@ -47,7 +47,7 @@ class ZipPlugin(colony.plugins.plugin_system.Plugin):
     id = "pt.hive.colony.plugins.misc.zip"
     name = "Zip Plugin"
     short_name = "Zip"
-    description = "A Plugin to manage zip files"
+    description = "A plugin to manage zip files"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE

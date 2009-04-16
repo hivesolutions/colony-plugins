@@ -48,7 +48,7 @@ class SvnPlugin(colony.plugins.plugin_system.Plugin):
     id = "pt.hive.colony.plugins.misc.svn"
     name = "Svn Plugin"
     short_name = "Svn"
-    description = "A Plugin to manage svn repositories"
+    description = "A plugin to manage svn repositories"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
