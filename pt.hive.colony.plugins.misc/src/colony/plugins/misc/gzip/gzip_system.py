@@ -76,21 +76,30 @@ class Gzip:
         # writes the flag values
         string_buffer.write(chr(0))
 
+        # writes the timestamp value
         string_buffer.write(struct.pack("<L", long(time.time())))
 
+        # writes some heading values
         string_buffer.write("\002")
         string_buffer.write("\377")
 
         # compresses the contents with the zlib
         contents_string_compressed = zlib.compress(contents_string, DEFAULT_COMPRESSION_LEVEL)
 
+        # writes the the contents string compressed into the string buffer
         string_buffer.write(contents_string_compressed[2:])
 
         # computes the contents string crc 32
         contents_string_crc32 = zlib.crc32(contents_string)
 
+        # computes the crc 32 lower values
         unsigned_contents_string_crc32 = contents_string_crc32 & 0xFFFFFFFFL
 
+        # writes the crd 32 lower values
         string_buffer.write(struct.pack("<L", contents_string_crc32))
 
-        return string_buffer.getvalue()
+        # retrieves the string value from the string buffer
+        string_value = string_buffer.getvalue()
+
+        # returns the string value
+        return string_value

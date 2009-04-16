@@ -159,19 +159,37 @@ class ChunkHandler:
         self.file_size = file_size
 
     def encode_file(self, encoding_handler, encoding_name):
+        """
+        Encodes the file using the given encoding handler with the given name.
+
+        @type encoding_handler: Method
+        @param encoding_handler: The encoding handler method to be used.
+        @type encoding_name: String
+        @param encoding_name: The name of the encoding to be used.
+        """
+
+        # reads the file contents
         file_contents = self.file.read()
 
+        # encodes the file contents using the given encoding handler
         file_contents_encoded = encoding_handler(file_contents)
 
-        file_contents_encoded_file = cStringIO.StringIO()
+        # creates a new string buffer to used as a memory file
+        # for the encoded file
+        file_contents_encoded_file_buffer = cStringIO.StringIO()
 
-        file_contents_encoded_file.write(file_contents_encoded)
+        # writes the file contents encoded into the file contents
+        # file buffer
+        file_contents_encoded_file_buffer.write(file_contents_encoded)
 
-        self.file = file_contents_encoded_file
-        self.file_size = file_contents_encoded_file.tell()
+        # sets the new file
+        self.file = file_contents_encoded_file_buffer
+
+        # sets the new file size
+        self.file_size = file_contents_encoded_file_buffer.tell()
 
         # seeks to the beginning of the file
-        file_contents_encoded_file.seek(0)
+        file_contents_encoded_file_buffer.seek(0)
 
     def get_size(self):
         """
