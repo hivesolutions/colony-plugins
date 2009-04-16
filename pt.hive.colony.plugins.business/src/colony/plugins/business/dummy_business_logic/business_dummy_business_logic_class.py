@@ -184,7 +184,12 @@ class DummyBusinessLogic:
         find_all_values = self.entity_manager._find_all_options(dummy_entity_bundle_class, {"retrieve_eager_loading_relations" : True,
                                                                                             "fields" : ["age"],
                                                                                             "order_by" : [("name", "descending"), ("age", "descending")],
-                                                                                            "filters" : [{"filter_type" : "like",
+                                                                                            "filters" : [{"filter_type" : "equals",
+                                                                                                          "filter_fields" : [{"field_name" : "name",
+                                                                                                                              "field_value" : "test_1"},
+                                                                                                                              {"field_name" : "name",
+                                                                                                                              "field_value" : "test"}]},
+                                                                                                         {"filter_type" : "like",
                                                                                                           "filter_fields" : [{"field_name" : "name",
                                                                                                                               "field_value" : "test"}]}]})
 

@@ -1549,6 +1549,7 @@ class BusinessSqliteEngine:
 
             is_first_where = False
 
+        # iterates over all the filters
         for filter in filters:
             if is_first_where:
                 query_string_value += " where ("
@@ -1558,8 +1559,37 @@ class BusinessSqliteEngine:
 
             filter_type = filter["filter_type"]
 
+            if filter_type == "equals":
+                # retrieves the filter fields
+                filter_fields = filter["filter_fields"]
+
+                is_first_field = True
+
+                for filter_field in filter_fields:
+                    if is_first_field:
+                        is_first_field = False
+                    else:
+                        query_string_value += " or "
+
+                    # retrieves the filter field name
+                    filter_field_name = filter_field["field_name"]
+
+                    # retrieves the filter field value
+                    filter_field_value = filter_field["field_value"]
+
+                    # retrieves the filter field class value
+                    filter_field_class_value = getattr(entity_class, filter_field_name)
+
+                    # retrieves the entity class id attribute value data type
+                    filter_value_data_type = self.get_attribute_data_type(filter_field_class_value, entity_class, filter_field_name)
+
+                    # retrieves the filter field value value sqlite string value
+                    filter_field_value_sqlite_string_value = self.get_attribute_sqlite_string_value(filter_field_value, filter_value_data_type)
+
+                    query_string_value += filter_field_name + " = " + filter_field_value_sqlite_string_value
+
             # in case the filter is of type like
-            if filter_type == "like":
+            elif filter_type == "like":
                 # retrieves the filter fields
                 filter_fields = filter["filter_fields"]
 
@@ -1572,6 +1602,9 @@ class BusinessSqliteEngine:
                         is_first_field = False
                     else:
                         query_string_value += " or "
+
+                    # retrieves the filter field name
+                    filter_field_name = filter_field["field_name"]
 
                     # retrieves the filter field value
                     filter_field_value = filter_field["field_value"]
@@ -1588,7 +1621,7 @@ class BusinessSqliteEngine:
                             filter_field_value_string += "%"
                         filter_field_value_string += splitted_filter_value
 
-                    query_string_value += filter_field["field_name"] + " like "
+                    query_string_value += filter_field_name + " like "
 
                     if like_filter_type in ["left", "both"]:
                          query_string_value += "\"%"
