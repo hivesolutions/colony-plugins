@@ -126,8 +126,11 @@ class MainServiceHttp:
         # retrieves the port value
         port = parameters.get("port", DEFAULT_PORT)
 
-        # start the server for the given socket provider and port
-        self.start_server(socket_provider, port)
+        # retrieves the encoding value
+        encoding = parameters.get("encoding", None)
+
+        # start the server for the given socket provider, port and encoding
+        self.start_server(socket_provider, port, encoding)
 
     def stop_service(self, parameters):
         """
@@ -139,14 +142,16 @@ class MainServiceHttp:
 
         self.stop_server()
 
-    def start_server(self, socket_provider, port):
+    def start_server(self, socket_provider, port, encoding):
         """
         Starts the server in the given port.
 
-        @type port: String
-        @param port: The name of the socket provider to be used.
+        @type socket_provider: String
+        @param socket_provider: The name of the socket provider to be used.
         @type port: int
         @param port: The port to start the server.
+        @type encoding: String
+        @param encoding: The encoding to be used in the connection.
         """
 
         # retrieves the thread pool manager plugin
@@ -165,6 +170,28 @@ class MainServiceHttp:
 
         # sets the http connection active flag as true
         self.http_connection_active = True
+
+        # sets the encoding handler as null
+        encoding_handler = None
+
+        # in case the encoding is defined
+        if encoding:
+            # retrieves the http service encoding plugins
+            http_service_encoding_plugins = self.main_service_http_plugin.http_service_encoding_plugins
+
+            # iterates over all the http service encoding plugins
+            for http_service_encoding_plugin in http_service_encoding_plugins:
+                # retrieves the encoding name from the http service encoding plugin
+                http_service_encoding_plugin_encoding_name = http_service_encoding_plugin.get_encoding_name()
+
+                # in case the names are the same
+                if http_service_encoding_plugin_encoding_name == encoding:
+                    encoding_handler = http_service_encoding_plugin.encode_contents
+                    break
+
+            # in case there is no encoding handler found
+            if not encoding_handler:
+                raise main_service_http_exceptions.EncodingNotFound("encoding %s not found" % encoding)
 
         # in case the socket provider is defined
         if socket_provider:
@@ -216,8 +243,8 @@ class MainServiceHttp:
                 # accepts the connection retrieving the http connection object and the address
                 http_connection, http_address = self.http_socket.accept()
 
-                # creates a new http client service task, with the given http connection and address
-                http_client_service_task = HttpClientServiceTask(self.main_service_http_plugin, http_connection, http_address)
+                # creates a new http client service task, with the given http connection, address, encoding and encoding handler
+                http_client_service_task = HttpClientServiceTask(self.main_service_http_plugin, http_connection, http_address, encoding, encoding_handler)
 
                 # creates a new task descriptor
                 task_descriptor = task_descriptor_class(start_method = http_client_service_task.start,
@@ -263,10 +290,18 @@ class HttpClientServiceTask:
     http_address = None
     """ The http address """
 
-    def __init__(self, main_service_http_plugin, http_connection, http_address):
+    encoding = None
+    """ The encoding """
+
+    encoding_handler = None
+    """ The encoding handler """
+
+    def __init__(self, main_service_http_plugin, http_connection, http_address, encoding, encoding_handler):
         self.main_service_http_plugin = main_service_http_plugin
         self.http_connection = http_connection
         self.http_address = http_address
+        self.encoding = encoding
+        self.encoding_handler = encoding_handler
 
     def start(self):
         # retrieves the http service handler plugins
@@ -538,9 +573,16 @@ class HttpClientServiceTask:
         self.send_request(request)
 
     def send_request(self, request):
-        request.encoded = True
-        request.set_encoding_handler(self.encoding_handler)
-        request.set_encoding_name("gzip")
+        # in case the encoding is defined
+        if self.encoding:
+            # sets the encoded flag
+            request.encoded = True
+
+            # sets the encoding handler
+            request.set_encoding_handler(self.encoding_handler)
+
+            # sets the encoding name
+            request.set_encoding_name(self.encoding)
 
         if request.is_mediated():
             self.send_request_mediated(request)
@@ -628,13 +670,6 @@ class HttpClientServiceTask:
             except:
                 # error in the client side
                 return
-
-    def encoding_handler(self, message):
-        gzip_plugin = self.main_service_http_plugin.gzip_plugin
-
-        message_gzip = gzip_plugin.gzip_contents(message)
-
-        return message_gzip
 
     def keep_alive(self, request):
         """

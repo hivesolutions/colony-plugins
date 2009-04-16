@@ -54,21 +54,19 @@ class MainServiceHttpPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["http_service"]
-    capabilities_allowed = ["http_service_handler", "socket_provider"]
+    capabilities_allowed = ["http_service_handler", "http_service_encoding", "socket_provider"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0"),
-                    colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.gzip", "1.0.0")]
+                    "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
 
     main_service_http = None
 
     http_service_handler_plugins = []
+    http_service_encoding_plugins = []
     socket_provider_plugins = []
 
     thread_pool_manager_plugin = None
-    gzip_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -107,6 +105,10 @@ class MainServiceHttpPlugin(colony.plugins.plugin_system.Plugin):
     def http_service_handler_load_allowed(self, plugin, capability):
         self.http_service_handler_plugins.append(plugin)
 
+    @colony.plugins.decorators.load_allowed_capability("http_service_encoding")
+    def http_service_encoding_load_allowed(self, plugin, capability):
+        self.http_service_encoding_plugins.append(plugin)
+
     @colony.plugins.decorators.load_allowed_capability("socket_provider")
     def socket_provider_load_allowed(self, plugin, capability):
         self.socket_provider_plugins.append(plugin)
@@ -114,6 +116,10 @@ class MainServiceHttpPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.unload_allowed_capability("http_service_handler")
     def http_service_handler_unload_allowed(self, plugin, capability):
         self.http_service_handler_plugins.remove(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("http_service_encoding")
+    def http_service_encoding_unload_allowed(self, plugin, capability):
+        self.http_service_encoding_plugins.remove(plugin)
 
     @colony.plugins.decorators.unload_allowed_capability("socket_provider")
     def socket_provider_unload_allowed(self, plugin, capability):
@@ -125,10 +131,3 @@ class MainServiceHttpPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.threads.thread_pool_manager")
     def set_thread_pool_manager_plugin(self, thread_pool_manager_plugin):
         self.thread_pool_manager_plugin = thread_pool_manager_plugin
-
-    def get_gzip_plugin(self):
-        return self.gzip_plugin
-
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.gzip")
-    def set_gzip_plugin(self, gzip_plugin):
-        self.gzip_plugin = gzip_plugin

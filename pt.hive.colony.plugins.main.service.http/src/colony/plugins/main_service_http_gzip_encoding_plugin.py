@@ -40,46 +40,41 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.plugins.plugin_system
 import colony.plugins.decorators
 
-class MainServiceHttpStarterPlugin(colony.plugins.plugin_system.Plugin):
+class MainServiceHttpGzipEncodingPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Http Service Main Starter plugin.
+    The main class for the Http Service Main Gzip Encoding plugin.
     """
 
-    id = "pt.hive.colony.plugins.main.service.http.starter"
-    name = "Http Service Main Starter Plugin"
-    short_name = "Http Service Main Starter"
-    description = "The plugin that starts the http service"
+    id = "pt.hive.colony.plugins.main.service.http.gzip_encoding"
+    name = "Http Service Main Gzip Encoding Plugin"
+    short_name = "Http Service Main Gzip Encoding"
+    description = "The plugin that offers the http service gzip encoding"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["main"]
+    capabilities = ["http_service_encoding"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.service.http", "1.0.0")]
+                    "pt.hive.colony.plugins.misc.gzip", "1.0.0")]
     events_handled = []
     events_registrable = []
 
-    main_service_http_plugin = None
+    main_service_http_gzip_encoding = None
+
+    gzip_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
-
-        # notifies the ready semaphore
-        self.release_ready_semaphore()
+        global main_service_gzip_encoding
+        import main_service_gzip_encoding.gzip_encoding.main_service_http_gzip_encoding_system
+        self.main_service_http_gzip_encoding = main_service_gzip_encoding.gzip_encoding.main_service_http_gzip_encoding_system.MainServiceHttpGzipEncoding(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
-        # notifies the ready semaphore
-        self.release_ready_semaphore()
-
-        self.main_service_http_plugin.start_service({"socket_provider" : "normal", "port" : 8080, "encoding" : "gzip"})
-
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
-
-        self.main_service_http_plugin.stop_service({})
 
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
@@ -90,13 +85,19 @@ class MainServiceHttpStarterPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.main.service.http.starter", "1.0.0")
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.main.service.http.gzip_encoding", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def get_main_service_http_plugin(self):
-        return self.main_service_http_plugin
+    def get_encoding_name(self):
+        return self.main_service_http_gzip_encoding.get_encoding_name()
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.service.http")
-    def set_main_service_http_plugin(self, main_service_http_plugin):
-        self.main_service_http_plugin = main_service_http_plugin
+    def encode_contents(self, contents_string):
+        return self.main_service_http_gzip_encoding.encode_contents(contents_string)
+
+    def get_gzip_plugin(self):
+        return self.gzip_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.gzip")
+    def set_gzip_plugin(self, gzip_plugin):
+        self.gzip_plugin = gzip_plugin
