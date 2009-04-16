@@ -58,7 +58,9 @@ class BusinessSessionManagerPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.business.entity_manager", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.pool.simple_pool_manager", "1.0.0")]
+                    "pt.hive.colony.plugins.main.pool.simple_pool_manager", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.random", "1.0.0")]
     events_handled = []
     events_registrable = []
 
@@ -68,6 +70,7 @@ class BusinessSessionManagerPlugin(colony.plugins.plugin_system.Plugin):
 
     business_entity_manager_plugin = None
     simple_pool_manager_plugin = None
+    random_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -153,3 +156,10 @@ class BusinessSessionManagerPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.pool.simple_pool_manager")
     def set_simple_pool_manager_plugin(self, simple_pool_manager_plugin):
         self.simple_pool_manager_plugin = simple_pool_manager_plugin
+
+    def get_random_plugin(self):
+        return self.random_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.random")
+    def set_random_plugin(self, random_plugin):
+        self.random_plugin = random_plugin

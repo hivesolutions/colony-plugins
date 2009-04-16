@@ -37,7 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import time
 import types
+
+import business_session_manager_exceptions
 
 POOL_SIZE = 15
 """ The pool size """
@@ -57,9 +60,12 @@ GET_SESSION_METHODS_TYPE_VALUE = "get_session_methods"
 CALL_SESSION_METHOD_TYPE_VALUE = "call_session_method"
 """ The call session method type value """
 
+DEFAULT_PERSISTENT_SESSION_TIMEOUT = 86400
+""" The default persistent session timeout """
+
 class BusinessSessionManager:
     """
-    The business session manager class
+    The business session manager class.
     """
 
     business_session_manager_plugin = None
@@ -76,10 +82,10 @@ class BusinessSessionManager:
 
     def __init__(self, business_session_manager_plugin):
         """
-        Constructor of the class
+        Constructor of the class.
 
         @type business_session_manager_plugin: BusinessSessionManagerPlugin
-        @param business_session_manager_plugin: The business session manager plugin
+        @param business_session_manager_plugin: The business session manager plugin.
         """
 
         self.business_session_manager_plugin = business_session_manager_plugin
@@ -114,8 +120,11 @@ class BusinessSessionManager:
             self.unload_business_logic_class(business_logic_class)
 
     def load_session_manager(self, session_name, entity_manager = None):
+        # retrieves the random plugin
+        random_plugin = self.business_session_manager_plugin.random_plugin
+
         # creates the session manager
-        session_manager = SessionManager(session_name, self.loaded_business_logic_classes_list, self.loaded_business_logic_classes_map, entity_manager)
+        session_manager = SessionManager(session_name, self.loaded_business_logic_classes_list, self.loaded_business_logic_classes_map, entity_manager, random_plugin)
 
         # adds the created session manager to the list of active session managers
         self.active_session_manager_list.append(session_manager)
@@ -124,6 +133,9 @@ class BusinessSessionManager:
         return session_manager
 
     def load_session_manager_master(self, session_name, entity_manager = None):
+        # retrieves the random plugin
+        random_plugin = self.business_session_manager_plugin.random_plugin
+
         # retrieves the business session serializer plugins
         business_session_serializer_plugins = self.business_session_manager_plugin.business_session_serializer_plugins
 
@@ -131,7 +143,7 @@ class BusinessSessionManager:
         simple_pool_manager_plugin = self.business_session_manager_plugin.simple_pool_manager_plugin
 
         # creates the session manager master
-        session_manager_master = SessionManagerMaster(session_name, self.loaded_business_logic_classes_list, self.loaded_business_logic_classes_map, entity_manager, business_session_serializer_plugins, simple_pool_manager_plugin)
+        session_manager_master = SessionManagerMaster(session_name, self.loaded_business_logic_classes_list, self.loaded_business_logic_classes_map, entity_manager, random_plugin, business_session_serializer_plugins, simple_pool_manager_plugin)
 
         # adds the created session manager master to the list of active session managers
         self.active_session_manager_list.append(session_manager_master)
@@ -176,6 +188,12 @@ class SessionManager:
     entity_manager = None
     """ The entity manager associated with the current session"""
 
+    random_plugin = None
+    """ The random plugin """
+
+    session_information_registry = None
+    """ The session information registry """
+
     business_logic_instances_list = []
     """ The list of business logic instances """
 
@@ -185,12 +203,14 @@ class SessionManager:
     business_logic_class_methods_map = {}
     """ The map associating the business logic classes with their methods """
 
-    def __init__(self, session_name, business_logic_classes_list, business_logic_classes_map, entity_manager = None):
+    def __init__(self, session_name, business_logic_classes_list, business_logic_classes_map, entity_manager = None, random_plugin = None):
         self.session_name = session_name
         self.business_logic_classes_list = business_logic_classes_list
         self.business_logic_classes_map = business_logic_classes_map
         self.entity_manager = entity_manager
+        self.random_plugin = random_plugin
 
+        self.session_information_registry = SessionInformationRegistry()
         self.business_logic_instances_list = []
         self.business_logic_instances_map = {}
         self.business_logic_class_methods_map = {}
@@ -250,6 +270,36 @@ class SessionManager:
 
             setattr(self, business_logic_instance_name, business_logic_instance)
 
+    def create_persistent_session(self):
+        """
+        Creates a new persistent session,
+        returning the new session id.
+
+        @rtype: String
+        @return: The created session id.
+        """
+
+        # creates a new random session id
+        session_id = self.random_plugin.generate_random_md5_string()
+
+        # retrieves the current time
+        current_time = time.time()
+
+        # creates the session creation time
+        session_creation_time = current_time
+
+        # creates the session timeout time
+        session_timeout_time = current_time + DEFAULT_PERSISTENT_SESSION_TIMEOUT
+
+        # creates a new session information
+        session_information = SessionInformation(session_id, session_creation_time, session_timeout_time)
+
+        # sets the session information in the session information registry
+        self.session_information_registry.set_session_information(session_id, session_information)
+
+        # returns the session id
+        return session_id
+
 class SessionManagerMaster(SessionManager):
     """
     The session manager master class.
@@ -291,8 +341,11 @@ class SessionManagerMaster(SessionManager):
     session_manager_pool = []
     """ The session manager pool """
 
-    def __init__(self, session_name, business_logic_classes_list, business_logic_classes_map, entity_manager = None, business_session_serializer_plugins = [], simple_pool_manager_plugin = None):
-        SessionManager.__init__(self, session_name, business_logic_classes_list, business_logic_classes_map, entity_manager)
+    session_information_registry = None
+    """ The session information registry """
+
+    def __init__(self, session_name, business_logic_classes_list, business_logic_classes_map, entity_manager = None, random_plugin = None, business_session_serializer_plugins = [], simple_pool_manager_plugin = None):
+        SessionManager.__init__(self, session_name, business_logic_classes_list, business_logic_classes_map, entity_manager, random_plugin)
 
         self.business_session_serializer_plugins = business_session_serializer_plugins
         self.simple_pool_manager_plugin = simple_pool_manager_plugin
@@ -342,6 +395,9 @@ class SessionManagerMaster(SessionManager):
     def stop_session_manager_pool(self):
         pass
 
+    def handle_create_persistent_session_request(self, session_information, session_request):
+        return self.create_persistent_session()
+
     def handle_get_session_methods_request(self, session_information, session_request):
         return self.business_logic_class_methods_map
 
@@ -373,6 +429,13 @@ class SessionManagerProxy:
     """ The session manager """
 
     def __init__(self, session_manager):
+        """
+        Constructor of the class.
+
+        @type session_manager: SessionManager
+        @param session_manager: The session manager.
+        """
+
         self.session_manager = session_manager
 
     def get_session_name(self):
@@ -384,21 +447,62 @@ class SessionManagerProxy:
 
     def handle_request(self, session_information, session_request):
         if session_request.session_request_type == CREATE_PERSISTENT_SESSION_TYPE_VALUE:
-            return None
+            return self.session_manager.handle_create_persistent_session_request(session_information, session_request)
         elif session_request.session_request_type == GET_SESSION_METHODS_TYPE_VALUE:
             return self.session_manager.handle_get_session_methods_request(session_information, session_request)
         elif session_request.session_request_type == CALL_SESSION_METHOD_TYPE_VALUE:
             return self.session_manager.handle_call_method_request(session_information, session_request)
+
+class SessionInformationRegistry:
+    """
+    The session information registry class.
+    """
+
+    session_id_session_information_map = {}
+    """ The map relating the session id with the session information """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        self.session_information_map = {}
+
+    def get_session_information(self, session_id):
+        if not session_id in self.session_id_session_information_map:
+            raise business_session_manager_exceptions.InvalidSessionId("session id %s is invalid", session_id)
+
+        return session_id_session_information_map[session_id]
+
+    def set_session_information(self, session_id, session_information):
+        self.session_id_session_information_map[session_id] = session_information
 
 class SessionInformation:
     """
     The session information class.
     """
 
+    session_id = None
+    """ The session id """
+
+    session_creation_time = None
+    """ The session creation time """
+
+    session_timeout_time = None
+    """ The session timeout time """
+
     session_information_map = {}
     """ The session information map """
 
-    def __init__(self):
+    def __init__(self, session_id, session_creation_time, session_timeout_time):
+        """
+        Constructor of the class.
+        """
+
+        self.session_id = session_id
+        self.session_creation_time = session_creation_time
+        self.session_timeout_time = session_timeout_time
+
         self.session_information_map = {}
 
     def get_session_property(self, property_name):
