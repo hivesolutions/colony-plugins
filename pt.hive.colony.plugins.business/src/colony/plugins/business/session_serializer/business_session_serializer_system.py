@@ -45,6 +45,9 @@ SERVICE_ID = "business_session_serializer"
 SESSION_NAME_VALUE = "session_name"
 """ The session name value """
 
+CREATE_PERSISTENT_SESSION_TYPE_VALUE = "create_persistent_session"
+""" The create persistent session type value """
+
 GET_SESSION_METHODS_TYPE_VALUE = "get_session_methods"
 """ The get session methods type value """
 
@@ -104,6 +107,29 @@ class BusinessSessionSerializer:
     def get_rpc_methods_alias(self):
         return {}
 
+    def create_persistent_session(self, session_information):
+        # prints the debug message
+        self.business_session_serializer_plugin.debug("Received create persistent session request")
+
+        # retrieves the session name
+        session_name = session_information[SESSION_NAME_VALUE]
+
+        # retrieves the session proxy
+        session_proxy = self.get_session_proxy(session_name)
+
+        # creates the session information entity
+        session_information_structure = SessionInformation()
+
+        # populates the session information entity from the session information map
+        session_information_structure.convert_from_map(session_information)
+
+        # creates the session request entity
+        session_request_structure = CreatePersistentSessionSessionRequest()
+
+        # send the session information and session request to the session proxy
+        # for handling
+        return session_proxy.handle_request(session_information_structure, session_request_structure)
+
     def get_session_methods(self, session_information):
         # prints the debug message
         self.business_session_serializer_plugin.debug("Received session methods retrieval request")
@@ -111,10 +137,8 @@ class BusinessSessionSerializer:
         # retrieves the session name
         session_name = session_information[SESSION_NAME_VALUE]
 
-        if session_name in self.session_proxy_map:
-            session_proxy = self.session_proxy_map[session_name]
-        else:
-            raise business_session_serializer_exceptions.SessionSerializerProxyNotFound("proxy " + session_name + " does not exists")
+        # retrieves the session proxy
+        session_proxy = self.get_session_proxy(session_name)
 
         # creates the session information entity
         session_information_structure = SessionInformation()
@@ -136,10 +160,8 @@ class BusinessSessionSerializer:
         # retrieves the session name
         session_name = session_information[SESSION_NAME_VALUE]
 
-        if session_name in self.session_proxy_map:
-            session_proxy = self.session_proxy_map[session_name]
-        else:
-            raise business_session_serializer_exceptions.SessionSerializerProxyNotFound("proxy " + session_name + " does not exists")
+        # retrieves the session proxy
+        session_proxy = self.get_session_proxy(session_name)
 
         # creates the session information entity
         session_information_structure = SessionInformation()
@@ -153,6 +175,12 @@ class BusinessSessionSerializer:
         # send the session information and session request to the session proxy
         # for handling
         return session_proxy.handle_request(session_information_structure, session_request_structure)
+
+    def get_session_proxy(self, session_name):
+        if not session_name in self.session_proxy_map:
+            raise business_session_serializer_exceptions.SessionSerializerProxyNotFound("proxy " + session_name + " does not exists")
+
+        return self.session_proxy_map[session_name]
 
 class SessionInformation:
     """
@@ -188,6 +216,14 @@ class SessionRequest:
 
     def __init__(self, session_request_type):
         self.session_request_type = session_request_type
+
+class CreatePersistentSessionSessionRequest(SessionRequest):
+    """
+    The create persistent session session request class.
+    """
+
+    def __init__(self):
+        SessionRequest.__init__(self, CREATE_PERSISTENT_SESSION_TYPE_VALUE)
 
 class GetSessionMethodsSessionRequest(SessionRequest):
     """

@@ -110,6 +110,10 @@ class BusinessSessionSerializerPlugin(colony.plugins.plugin_system.Plugin):
         return self.business_session_serializer.get_rpc_methods_alias()
 
     @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
+    def create_persistent_session(self, session_information):
+        return self.business_session_serializer.create_persistent_session(session_information)
+
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
     def get_session_methods(self, session_information):
         return self.business_session_serializer.get_session_methods(session_information)
 
