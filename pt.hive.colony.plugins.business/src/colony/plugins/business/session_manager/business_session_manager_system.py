@@ -351,13 +351,25 @@ class SessionManagerMaster(SessionManager):
         self.simple_pool_manager_plugin = simple_pool_manager_plugin
 
     def create_session_proxy(self):
+        """
+        Creates a session proxy for the session master.
+        """
+
         self.session_proxy = SessionManagerProxy(self)
 
     def register_session_proxy(self):
+        """
+        Registers the session proxy in the session serializer.
+        """
+
         for business_session_serializer_plugin in self.business_session_serializer_plugins:
             business_session_serializer_plugin.add_session_proxy(self.session_proxy)
 
     def unregister_session_proxy(self):
+        """
+        Unregisters the session proxy in the session serializer.
+        """
+
         for business_session_serializer_plugin in self.business_session_serializer_plugins:
             business_session_serializer_plugin.remove_session_proxy(self.session_proxy)
 
@@ -396,12 +408,45 @@ class SessionManagerMaster(SessionManager):
         pass
 
     def handle_create_persistent_session_request(self, session_information, session_request):
+        """
+        The handler for the create persistent session request.
+
+        @type session_information: SessionInformation
+        @param session_information: The session information object.
+        @type session_request: SessionRequest
+        @param session_request: The session request object.
+        @rtype: String
+        @return: The id of the created session.
+        """
+
         return self.create_persistent_session()
 
     def handle_get_session_methods_request(self, session_information, session_request):
+        """
+        The handler for the get session methods request.
+
+        @type session_information: SessionInformation
+        @param session_information: The session information object.
+        @type session_request: SessionRequest
+        @param session_request: The session request object.
+        @rtype: List
+        @return: The list with all the session methods.
+        """
+
         return self.business_logic_class_methods_map
 
     def handle_call_method_request(self, session_information, session_request):
+        """
+        The handler for the call method request.
+
+        @type session_information: SessionInformation
+        @param session_information: The session information object.
+        @type session_request: SessionRequest
+        @param session_request: The session request object.
+        @rtype: Object
+        @return: The return of the method call.
+        """
+
         # retrieves the entity attribute from the instance
         entity_attribute = getattr(self, session_request.session_entity)
 
