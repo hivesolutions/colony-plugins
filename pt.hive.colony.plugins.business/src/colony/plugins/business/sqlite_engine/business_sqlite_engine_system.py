@@ -1702,7 +1702,7 @@ class BusinessSqliteEngine:
 
                     # in case the attribute is a relation
                     if self.is_attribute_name_relation(entity_class_valid_attribute_name, entity_class):
-                        if self.is_attribute_name_lazy_relation(entity_class_valid_attribute_name, entity_class) or entity_class_valid_attribute_name in eager_loading_relations:
+                        if self.is_attribute_name_lazy_relation(entity_class_valid_attribute_name, entity_class) and not entity_class_valid_attribute_name in eager_loading_relations:
                             # sets the lazy loaded attribute in the instance
                             setattr(entity, entity_class_valid_attribute_name, "%lazy-loaded%")
                         else:
