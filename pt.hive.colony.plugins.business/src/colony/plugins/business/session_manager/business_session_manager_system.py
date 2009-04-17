@@ -275,8 +275,8 @@ class SessionManager:
         Creates a new persistent session,
         returning the new session id.
 
-        @rtype: String
-        @return: The created session id.
+        @rtype: SessionInformation
+        @return: The created session information.
         """
 
         # creates a new random session id
@@ -297,8 +297,8 @@ class SessionManager:
         # sets the session information in the session information registry
         self.session_information_registry.set_session_information(session_id, session_information)
 
-        # returns the session id
-        return session_id
+        # returns the session information
+        return session_information
 
 class SessionManagerMaster(SessionManager):
     """
@@ -415,8 +415,8 @@ class SessionManagerMaster(SessionManager):
         @param session_information: The session information object.
         @type session_request: SessionRequest
         @param session_request: The session request object.
-        @rtype: String
-        @return: The id of the created session.
+        @rtype: SessionInformation
+        @return: The created session information.
         """
 
         return self.create_persistent_session()
