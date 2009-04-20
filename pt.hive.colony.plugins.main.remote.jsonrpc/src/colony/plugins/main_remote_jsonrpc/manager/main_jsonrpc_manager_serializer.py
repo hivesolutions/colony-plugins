@@ -41,7 +41,9 @@ __credits__ = "Jan-Klaas Kollhof <keyjaque@yahoo.com>"
 """ The credits for the module """
 
 import re
+import time
 import types
+import datetime
 
 import cStringIO
 
@@ -157,6 +159,10 @@ def dump_parts_buffer(obj, string_buffer):
         string_buffer.write("]")
     elif obj_type in [types.IntType, types.LongType, types.FloatType]:
         string_buffer.write(str(obj))
+    elif obj_type == datetime.datetime:
+        obj_time_tuple = obj.timetuple()
+        date_time_timestamp = time.mktime(obj_time_tuple)
+        string_buffer.write(str(date_time_timestamp))
     else:
         raise main_jsonrpc_manager_exceptions.JsonEncodeException(obj)
 
@@ -216,6 +222,10 @@ def dump_parts(obj):
         yield "]"
     elif obj_type in [types.IntType, types.LongType, types.FloatType]:
         yield unicode(obj)
+    elif obj_type == datetime.datetime:
+        obj_time_tuple = obj.timetuple()
+        date_time_timestamp = time.mktime(obj_time_tuple)
+        yield unicode(date_time_timestamp)
     else:
         raise main_jsonrpc_manager_exceptions.JsonEncodeException(obj)
 
