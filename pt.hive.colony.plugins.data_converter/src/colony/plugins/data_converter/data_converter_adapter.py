@@ -127,375 +127,6 @@ class DataConverterAdapter:
 
         self.convert_omni(internal_structure)
 
-    def convert_omni(self, internal_structure):
-        entity_manager_plugin = self.data_converter_plugin.entity_manager_plugin
-        resource_manager_plugin = self.data_converter_plugin.resource_manager_plugin
-        user_home_path_resource = resource_manager_plugin.get_resource("system.path.user_home")
-        user_home_path = user_home_path_resource.data
-        entity_manager = entity_manager_plugin.load_entity_manager("sqlite")
-        entity_manager.set_connection_parameters({"file_path" : user_home_path + "/diamante.db", "autocommit" : False})
-        entity_manager.load_entity_manager()
-
-        start_time = time.time()
-
-        entity_manager.create_transaction("organizational_hierarchy_transaction")
-
-        # create merchandise hierarchy tree root node
-        merchandise_hierarchy_tree_node_class = entity_manager.get_entity_class("MerchandiseHierarchyTreeNode")
-        merchandise_hierarchy_tree_node_entity = merchandise_hierarchy_tree_node_class()
-        internal_structure.object_id += 1
-        merchandise_hierarchy_tree_node_entity.object_id = internal_structure.object_id
-        print "Saving MerchandiseHierarchyTree root node with object id = " + str(merchandise_hierarchy_tree_node_entity.object_id)
-        entity_manager.save(merchandise_hierarchy_tree_node_entity)
-
-        # create organizational hierarchy tree root node
-        organizational_hierarchy_tree_node_class = entity_manager.get_entity_class("OrganizationalHierarchyTreeNode")
-        organizational_hierarchy_tree_root_node_entity = organizational_hierarchy_tree_node_class()
-        internal_structure.object_id += 1
-        organizational_hierarchy_tree_root_node_entity.object_id = internal_structure.object_id
-        print "Saving OrganizationalHierarchyTree root node with object id = " + str(organizational_hierarchy_tree_root_node_entity.object_id)
-        entity_manager.save(organizational_hierarchy_tree_root_node_entity)
-
-        # create supplier hierarchy tree root node
-        organizational_hierarchy_tree_node_class = entity_manager.get_entity_class("OrganizationalHierarchyTreeNode")
-        supplier_hierarchy_tree_node_entity = organizational_hierarchy_tree_node_class()
-        internal_structure.object_id += 1
-        supplier_hierarchy_tree_node_entity.object_id = internal_structure.object_id
-        print "Saving SupplierHierarchyTree root node with object id = " + str(organizational_hierarchy_tree_root_node_entity.object_id)
-        entity_manager.save(supplier_hierarchy_tree_node_entity)
-
-        # create customer hierarchy tree root node
-        organizational_hierarchy_tree_node_class = entity_manager.get_entity_class("OrganizationalHierarchyTreeNode")
-        customer_hierarchy_tree_node_entity = organizational_hierarchy_tree_node_class()
-        internal_structure.object_id += 1
-        customer_hierarchy_tree_node_entity.object_id = internal_structure.object_id
-        print "Saving CustomerHierarchyTree root node with object id = " + str(customer_hierarchy_tree_node_entity.object_id)
-        entity_manager.save(customer_hierarchy_tree_node_entity)
-
-        # create organizational hierarchy tree
-        organizational_hierarchy_tree_class = entity_manager.get_entity_class("OrganizationalHierarchyTree")
-        organizational_hierarchy_tree_entity = organizational_hierarchy_tree_class()
-        internal_structure.object_id += 1
-        organizational_hierarchy_tree_entity.object_id = internal_structure.object_id
-        organizational_hierarchy_tree_entity.root_node = organizational_hierarchy_tree_root_node_entity
-        print "Saving OrganizationalHierarchyTree with object id = " + str(organizational_hierarchy_tree_entity.object_id)
-        entity_manager.save(organizational_hierarchy_tree_entity)
-
-        # create merchandise hierarchy tree
-        merchandise_hierarchy_tree_class = entity_manager.get_entity_class("MerchandiseHierarchyTree")
-        merchandise_hierarchy_tree_entity = merchandise_hierarchy_tree_class()
-        internal_structure.object_id += 1
-        merchandise_hierarchy_tree_entity.object_id = internal_structure.object_id
-        merchandise_hierarchy_tree_entity.root_node = merchandise_hierarchy_tree_node_entity
-        print "Saving MerchandiseHierarchyTree with object id = " + str(merchandise_hierarchy_tree_entity.object_id)
-        entity_manager.save(merchandise_hierarchy_tree_entity)
-
-        # create supplier hierarchy tree
-        supplier_hierarchy_tree_class = entity_manager.get_entity_class("SupplierHierarchyTree")
-        supplier_hierarchy_tree_entity = supplier_hierarchy_tree_class()
-        internal_structure.object_id += 1
-        supplier_hierarchy_tree_entity.object_id = internal_structure.object_id
-        supplier_hierarchy_tree_entity.root_node = supplier_hierarchy_tree_node_entity
-        print "Saving SupplierHierarchyTree with object id = " + str(supplier_hierarchy_tree_entity.object_id)
-        entity_manager.save(supplier_hierarchy_tree_entity)
-
-        # create customer hierarchy tree
-        customer_hierarchy_tree_class = entity_manager.get_entity_class("CustomerHierarchyTree")
-        customer_hierarchy_tree_entity = customer_hierarchy_tree_class()
-        internal_structure.object_id += 1
-        customer_hierarchy_tree_entity.object_id = internal_structure.object_id
-        customer_hierarchy_tree_entity.root_node = customer_hierarchy_tree_node_entity
-        print "Saving CustomerHierarchyTree with object id = " + str(customer_hierarchy_tree_entity.object_id)
-        entity_manager.save(customer_hierarchy_tree_entity)
-
-        # create the euro currency
-        currency_class = entity_manager.get_entity_class("Currency")
-        currency_entity = currency_class()
-        currency_entity.name = "euro"
-        internal_structure.object_id += 1
-        currency_entity.object_id = internal_structure.object_id
-        print "Saving Currency with object id = " + str(currency_entity.object_id)
-        entity_manager.save(currency_entity)
-
-        # create the portuguese language
-        language_class = entity_manager.get_entity_class("Language")
-        language_entity = language_class()
-        language_entity.name = "portugues"
-        internal_structure.object_id += 1
-        language_entity.object_id = internal_structure.object_id
-        print "Saving Language with object id = " + str(language_entity.object_id)
-        entity_manager.save(language_entity)
-
-        entity_manager.commit_transaction("organizational_hierarchy_transaction")
-
-        self.foreign_key_queue =  []
-        self.missing_relations = []
-        self.missing_relation_entities = []
-
-        # convert every entity in the internal structure
-        internal_entity_names = ["product", "media"] #internal_structure.get_entity_names()
-        entity_conversion_start_time = time.time()
-        for internal_entity_name in internal_entity_names:
-            print "##### CONVERTING " + internal_entity_name + " entities #####"
-            # for all internal entity instance
-            entity_manager.create_transaction(internal_entity_name)
-            self.convert_entities(internal_structure, entity_manager, internal_entity_name)
-            entity_manager.commit_transaction(internal_entity_name)
-        entity_conversion_end_time = time.time()
-        entity_conversion_time_elapsed = entity_conversion_end_time - entity_conversion_start_time
-
-        # convert every relation in the internal structure
-        relation_conversion_start_time = time.time()
-        for internal_entity_name in internal_entity_names:
-            print "##### CONVERTING " + internal_entity_name + " relations #####"
-            # for all internal entity instance
-            entity_manager.create_transaction(internal_entity_name)
-            self.convert_relations(internal_structure, entity_manager, internal_entity_name)
-            entity_manager.commit_transaction(internal_entity_name)
-        relation_conversion_end_time = time.time()
-        relation_conversion_time_elapsed = relation_conversion_end_time - relation_conversion_start_time
-
-        print "##### CONVERSION FINISHED #####"
-        print "-> MISSING RELATIONS <-"
-        for missing_relation in self.missing_relations:
-            print missing_relation
-        end_time = time.time()
-        time_elapsed = end_time - start_time
-        print "ENTITY CONVERSION TIME: " + str(entity_conversion_time_elapsed)
-        print "RELATION CONVERSION TIME: " + str(relation_conversion_time_elapsed)
-        print "TOTAL CONVERSION TIME: " + str(time_elapsed)
-
-        #file = open("c:\\Users\\srio\\conversion_log.txt", "w")
-        #for missing_relation_entity in self.missing_relation_entities:
-        #    file.write(str(missing_relation_entity) + "\n")
-        #file.close()
-
-    # @todo: this method is temporary
-    def convert_internal_attribute_name_to_omni_name(self, internal_entity_name, internal_attribute_name):
-
-# @todo:
-#        missing in data model
-#
-#        postdated_check_payment.payments
-#        transfer_merchandise_hierarchy_tree_node.store
-#        payment_line.credit_note
-#        payment_line.return_point
-#        purchase.payment_terms
-#        purchase.invoice
-#        invoice.purchase
-#        system_settings.payments_received
-#        customer_return.company_buyer
-#        supplier_return.credit_note
-#        credit_note.return_point
-#        credit_payment.systemn_company_employee
-#        gift_certificate.payments
-#
-#        relations that need to be activated
-#
-#        supplier_return.supplier
-#        payment_terms.default_payment_terms_of
-#
-#        incorrect in internal structure
-#
-#        sale_transaction.sale
-#        person_relation.customer
-#        reason.stock_adjustments
-#        customer_company.personally_related_with_as_first_person
-
-        map = {"postdated_check_payment" :  {"payments" : None},
-               "system_settings" :  {"primary_currency" : "preferred_currency",
-                                     "primary_language" : "preferred_language",
-                                     "currency" : "preferred_currency"},
-               "money_sale" : {"sale" : "sale_transaction"},
-               "address" : {"system_company" : "contactable_organizational_hierarchy_tree_node",
-                            "customer" : "contactable_organizational_hierarchy_tree_node",
-                            "name" : "street_name"},
-               "payment" : {"sale" : "sales",
-                            "payments_received" : None},
-               "card_payment" : {"payments" : "payment_lines"},
-               "cash_payment" : {"payments" : "payment_lines"},
-               "check_payment" : {"payments" : "payment_lines"},
-               "product" : {"purchase_merchandise_hierarchy_tree_node" : "purchase_merchandise_hierarchy_tree_nodes",
-                            "category" : "parent_nodes",
-                            "collection" : "parent_nodes"},
-               "system_company" : {"preferred_languge" : "preferred_language",
-                                   "currency" : None},
-               "store" : {"sales_stockholder" : "sales_stockholders"},
-               "financial_account" : {"contactable_organizational_hierarchy_tree_node" : "owners",
-                                      "customer" : "owners"},
-               "customer_return" : {"return_site" : "return_sites",
-                                    "merchandise_hierarchy_tree_node_return" : "merchandise_hierarchy_tree_node_returns",
-                                    "sellers" : "return_processors",
-                                    "return_site" : "return_sites",
-                                    "return_processor" : "return_processors",
-                                    "company_buyer" : None},
-               "supplier_return" : {"merchandise_hierarchy_tree_node_return" : "merchandise_hierarchy_tree_node_returns",
-                                    "credit_note" : None,
-                                    "supplier" : None},
-               "sale_transaction" : {"sale" : None,
-                                     "money_sale" : "money_sale_slip",
-                                     "returns" : "customer_returns"},
-               "merchandise_hierarchy_tree_node_return" : {"product" : "merchandise",
-                                                           "subproduct" : "merchandise",
-                                                           "return" : "merchandise_return",
-                                                           "consignment_supplier_return" : "merchandise_return"},
-               "merchandise_contactable_organizational_hierarchy_tree_node" : {"product" : "merchandise",
-                                                                               "merchandise_hierarchy_tree_node" : "merchandise",
-                                                                               "store" : "contactable_organizational_hierarchy_tree_node",
-                                                                               "subproduct" : "merchandise"},
-               "repair" : {"purchase_merchandise_hierarchy_tree_node" : "purchase_merchandise_hierarchy_tree_nodes"},
-               "stock_adjustment_merchandise_hierarchy_tree_node" : {"store" : "adjustment_target"},
-               "credit_contract" : {"sale" : "sales"},
-               "credit_note_payment" : {"payments" : "payment_lines"},
-               "stock_adjustment" : {"reason" : "stock_adjustment_reason"},
-               "transfer_merchandise_hierarchy_tree_node" : {"product" : "merchandise",
-                                                             "store" : None},
-               "contact_information" : {"supplier" : "contactable_organizational_hierarchy_tree_node",
-                                        "customer" : "contactable_organizational_hierarchy_tree_node",
-                                        "system_company" : "contactable_organizational_hierarchy_tree_node"},
-               "media" : {"product" : "merchandise_hierarchy_tree_nodes",
-                          "customer" : "contactable_organizational_hierarchy_tree_nodes",
-                          "system_company" : "contactable_organizational_hierarchy_tree_nodes",
-                          "name" : None},
-               "purchase" : {"money_sale" : "money_sale_slip",
-                             "invoice" : None,
-                             "payment_terms" : None,
-                             "money_sale" : None},
-               "purchase_merchandise_hierarchy_tree_node" : {"merchandise_hierarchy_tree_node" : "merchandise"},
-               "invoice" : {"purchase" : None},
-               "credit_payment" : {"system_company_employee" : None},
-               "person_relation" : {"customer" : None},
-               "reason" : {"stock_adjustments" : None},
-               "payment_line" :  {"credit_note" : None,
-                                  "credit_notes" : "credit_note",
-                                  "return_point" : None},
-               "payment_terms" :  {"default_payment_terms_of" : None},
-               "subproduct" : {"product" : "parent_nodes",
-                               "purchase_merchandise_hierarchy_tree_node" : "purchase_merchandise_hierarchy_tree_nodes"},
-               "stock_adjustment_merchandise_hierarchy_tree_node" :  {"store" : "adjustment_owners"},
-               "user" : {"system_company_employee" : "person"},
-               "credit_note" : {"return_point" : None},
-               "money" : {"return_point" : "return_point"}}
-
-        if internal_entity_name in map and internal_attribute_name in map[internal_entity_name]:
-            return map[internal_entity_name][internal_attribute_name]
-        else:
-            return internal_attribute_name
-
-    # @todo: this method is temporary
-    def convert_internal_entity_name_to_omni_name(self, internal_entity_name):
-        map = {"supplier_person" : "SupplierCompany",
-               "customer" : "CustomerPerson",
-               "consignment_supplier_return" : "SupplierReturn",
-               "subproduct" : "SubProduct",
-               "system_company_employee" : "Employee",
-               "supplier" : "SupplierCompany",
-               "postdated_check_payment" : "PostDatedCheckPayment",
-               "money_sale" : "MoneySaleSlip",
-               "stock_adjustment_merchandise_hierarchy_tree_node" : "StockAdjustment"}
-
-        if internal_entity_name in map:
-            return map[internal_entity_name]
-        else:
-            new_name = ""
-            internal_entity_name_tokens = internal_entity_name.split("_")
-            for token in internal_entity_name_tokens:
-                new_name += token.capitalize()
-            return new_name
-
-    # @todo: this method is temporary
-    def convert_entities(self, internal_structure, entity_manager, internal_structure_entity_name):
-        entities = []
-        internal_entities = list(set(internal_structure.get_entities(internal_structure_entity_name)))
-        for internal_entity_index in range(len(internal_entities)):
-            internal_entity = internal_entities[internal_entity_index]
-            entity_name = self.convert_internal_entity_name_to_omni_name(internal_entity._name)
-            entity_class = entity_manager.get_entity_class(entity_name)
-            entity = entity_class()
-            fields = internal_entity.get_fields()
-            attribute_fields = [(field_name, field_value) for field_name, field_value in fields.items() if not field_value is None and not type(field_value) in (types.InstanceType, types.ListType)]
-            for field_name, field_value in attribute_fields:
-                 # @todo: this is a hack
-                 if type(field_value) in (types.StringType, types.FloatType, types.LongType, types.BooleanType):
-                        field_value = unicode(field_value)
-
-                 entity_attribute_name = self.convert_internal_attribute_name_to_omni_name(internal_entity._name, field_name)
-                 if not entity_attribute_name is None:
-                     # @todo: this is a hack
-                     if type(field_value) in types.StringTypes:
-                        field_value = unicode(field_value)
-                        field_value = field_value.replace("'", "''")
-                        if entity_attribute_name == "name":
-                           field_value = field_value.capitalize()
-                        if internal_entity._name == "media" and field_name == "name":
-                              file_path = os.path.join("C:/DIA2002/IMAGENS/DEFINITIVO/", field_value)
-                              if os.path.exists(file_path):
-                                  string_buffer = self.data_converter_plugin.image_treatment_plugin.resize_image_aspect(file_path, 130, 115)
-                                  file_content = string_buffer.read()
-                                  file_content_base64 = base64.b64encode(file_content)
-                                  entity.description = "size:130x115"
-                                  field_value = file_content_base64
-
-                     if hasattr(entity, entity_attribute_name):
-                         setattr(entity, entity_attribute_name, field_value)
-
-            entity.object_id = internal_entity.object_id
-            self.object_id_entity_map[entity.object_id] = entity
-            print "Saved " + entity_name + " with object id = " + str(entity.object_id)
-            entities.append(entity)#entity_manager.save(entity)
-
-        print "before save many"
-        entity_manager.save_many(entities)
-        print "after save many"
-
-    # @todo: this method is temporary
-    def convert_relations(self, internal_structure, entity_manager, internal_structure_entity_name):
-        internal_entities = list(set(internal_structure.get_entities(internal_structure_entity_name)))
-        for internal_entity_index in range(len(internal_entities)):
-            internal_entity = internal_entities[internal_entity_index]
-            internal_entity_entity = self.object_id_entity_map[internal_entity.object_id]
-            fields = internal_entity.get_fields()
-            relation_fields = [(field_name, field_value) for field_name, field_value in fields.items() if not field_value is None and type(field_value) in (types.InstanceType, types.ListType)]
-
-            for field_name, field_value in relation_fields:
-                entity_attribute_name = self.convert_internal_attribute_name_to_omni_name(internal_entity._name, field_name)
-                if entity_attribute_name:
-                    if hasattr(internal_entity_entity, entity_attribute_name):
-                        entity_attribute = getattr(internal_entity_entity, entity_attribute_name)
-
-                        if type(entity_attribute) == types.ListType:
-                            # @todo: this is a hack
-                            if not type(field_value) == types.ListType:
-                                field_value = [field_value]
-
-                            for relation_internal_entity in field_value:
-                                if relation_internal_entity:
-                                    if relation_internal_entity.object_id in self.object_id_entity_map:
-                                        relation_entity = self.object_id_entity_map[relation_internal_entity.object_id]
-                                        entity_attribute.append(relation_entity)
-                                        entity_attribute = list(set(entity_attribute))
-                                    else:
-                                        self.missing_relation_entities.append((internal_entity._name, internal_entity.object_id, field_name, relation_internal_entity.object_id))
-                        else:
-                            if field_value.object_id in self.object_id_entity_map:
-                                relation_entity = self.object_id_entity_map[field_value.object_id]
-                                entity_attribute = relation_entity
-                            else:
-                               self.missing_relation_entities.append((internal_entity._name, internal_entity.object_id, field_name, field_value.object_id))
-
-                        setattr(internal_entity_entity, entity_attribute_name, entity_attribute)
-                    else:
-                        relation_name = internal_entity_entity.__class__.__name__ + "." + entity_attribute_name
-                        if not relation_name in self.missing_relations:
-                            self.missing_relations.append(relation_name)
-
-            print "Saving " + internal_entity._name + " with object id = " + str(internal_entity.object_id) + " (relations)"
-
-            try:
-                entity_manager.update(internal_entity_entity)
-            except:
-                print "ERROR SAVING RELATION"
-
     def process_work_units(self, task):
         """
         Performs the operations necessary to complete each of the specified work units.
@@ -746,6 +377,475 @@ class DataConverterAdapter:
             primary_key_domain_entity_conversion_info_map = self.internal_entity_name_primary_key_domain_entity_conversion_info_map[entity_name]
             if primary_key_string in primary_key_domain_entity_conversion_info_map:
                 return primary_key_domain_entity_conversion_info_map[primary_key_string]
+
+    def convert_omni(self, internal_structure):
+        entity_manager_plugin = self.data_converter_plugin.entity_manager_plugin
+        resource_manager_plugin = self.data_converter_plugin.resource_manager_plugin
+        user_home_path_resource = resource_manager_plugin.get_resource("system.path.user_home")
+        user_home_path = user_home_path_resource.data
+        entity_manager = entity_manager_plugin.load_entity_manager("sqlite")
+        entity_manager.set_connection_parameters({"file_path" : user_home_path + "/diamante.db", "autocommit" : False})
+        entity_manager.load_entity_manager()
+
+        start_time = time.time()
+
+        self.foreign_key_queue =  []
+        self.missing_relations = []
+        self.missing_relation_entities = []
+
+        # convert every entity in the internal structure
+        internal_entity_names = internal_structure.get_entity_names()
+        entity_conversion_start_time = time.time()
+        for internal_entity_name in internal_entity_names:
+            print "##### CONVERTING " + internal_entity_name + " entities #####"
+            # for all internal entity instance
+            entity_manager.create_transaction(internal_entity_name)
+            self.convert_entities(internal_structure, entity_manager, internal_entity_name)
+            entity_manager.commit_transaction(internal_entity_name)
+        entity_conversion_end_time = time.time()
+        entity_conversion_time_elapsed = entity_conversion_end_time - entity_conversion_start_time
+
+        # convert every relation in the internal structure
+        relation_conversion_start_time = time.time()
+        for internal_entity_name in internal_entity_names:
+            print "##### CONVERTING " + internal_entity_name + " relations #####"
+            # for all internal entity instance
+            entity_manager.create_transaction(internal_entity_name)
+            self.convert_relations(internal_structure, entity_manager, internal_entity_name)
+            entity_manager.commit_transaction(internal_entity_name)
+        relation_conversion_end_time = time.time()
+        relation_conversion_time_elapsed = relation_conversion_end_time - relation_conversion_start_time
+
+        entity_manager.create_transaction("primaries_transaction")
+        print "##### SETTING PRIMARY CONTACTS AND ADDRESSES #####"
+        customer_person_class = entity_manager.get_entity_class("CustomerPerson")
+        customer_company_class = entity_manager.get_entity_class("CustomerCompany")
+        supplier_company_class = entity_manager.get_entity_class("SupplierCompany")
+        employee_class = entity_manager.get_entity_class("Employee")
+        store_class = entity_manager.get_entity_class("Store")
+        department_class = entity_manager.get_entity_class("Department")
+        system_company_class = entity_manager.get_entity_class("SystemCompany")
+        find_options = {"eager_loading_relations" : {"contacts" : {},
+                                                     "primary_contact_information" : {},
+                                                     "primary_address" : {}}}
+        contactable_organizational_hierarchy_tree_node_entities = []
+        contactable_organizational_hierarchy_tree_node_entities.extend(entity_manager._find_all_options(customer_person_class, find_options))
+        contactable_organizational_hierarchy_tree_node_entities.extend(entity_manager._find_all_options(customer_company_class, find_options))
+        contactable_organizational_hierarchy_tree_node_entities.extend(entity_manager._find_all_options(supplier_company_class, find_options))
+        contactable_organizational_hierarchy_tree_node_entities.extend(entity_manager._find_all_options(employee_class, find_options))
+        contactable_organizational_hierarchy_tree_node_entities.extend(entity_manager._find_all_options(store_class, find_options))
+        contactable_organizational_hierarchy_tree_node_entities.extend(entity_manager._find_all_options(department_class, find_options))
+        contactable_organizational_hierarchy_tree_node_entities.extend(entity_manager._find_all_options(system_company_class, find_options))
+        for contactable_organizational_hierarchy_tree_node_entity in contactable_organizational_hierarchy_tree_node_entities:
+            if not contactable_organizational_hierarchy_tree_node_entity.primary_contact_information:
+                if len(contactable_organizational_hierarchy_tree_node_entity.contacts):
+                    contact_information_entity = contactable_organizational_hierarchy_tree_node_entity.contacts[0]
+                    contactable_organizational_hierarchy_tree_node_entity.primary_contact_information = contact_information_entity
+                    print "Adding primary contact information " + contact_information_entity.object_id + " to " + contactable_organizational_hierarchy_tree_node_entity.object_id
+            if not contactable_organizational_hierarchy_tree_node_entity.primary_address:
+                if len(contactable_organizational_hierarchy_tree_node_entity.addresses):
+                    address_entity = contactable_organizational_hierarchy_tree_node_entity.addresses[0]
+                    contactable_organizational_hierarchy_tree_node_entity.primary_address = address_entity
+                    print "Adding primary address " + address_entity.object_id + " to " + contactable_organizational_hierarchy_tree_node_entity.object_id
+            entity_manager.update(contactable_organizational_hierarchy_tree_node_entity)
+        entity_manager.commit_transaction("primaries_transaction")
+
+
+        # copy costs from organizational hierarchy merchandise supplier to merchandise contactable organizational hierarchy tree node
+        entity_manager.create_transaction("costs_transaction")
+        print "##### COPYING COSTS #####"
+        merchandise_contactable_organizational_hierarchy_tree_node_class = entity_manager.get_entity_class("MerchandiseContactableOrganizationalHierarchyTreeNode")
+        organizational_hierarchy_merchandise_supplier_class = entity_manager.get_entity_class("OrganizationalHierarchyMerchandiseSupplier")
+        find_options = {"eager_loading_relations" : {"supplied_organizational_hierarchy" : {"eager_loading_relations" : {"inventory" : {}}}}}
+        organizational_hierarchy_merchandise_supplier_entities = entity_manager._find_all_options(organizational_hierarchy_merchandise_supplier_class, find_options)
+        for organizational_hierarchy_merchandise_supplier_entity in organizational_hierarchy_merchandise_supplier_entities:
+            organizational_hierarchy_entity = organizational_hierarchy_merchandise_supplier_entity.supplied_organizational_hierarchy
+            if organizational_hierarchy_entity:
+                for merchandise_entity in organizational_hierarchy_entity.inventory:
+                    merchandise_entity.cost = organizational_hierarchy_merchandise_supplier_entity.unit_cost
+                    entity_manager.update(merchandise_entity)
+        entity_manager.commit_transaction("costs_transaction")
+
+        entity_manager.create_transaction("trees_transaction")
+
+        print "##### CREATING TREES #####"
+
+        # create merchandise hierarchy tree root node and append orfan merchandise nodes to it
+        merchandise_hierarchy_tree_node_class = entity_manager.get_entity_class("MerchandiseHierarchyTreeNode")
+        merchandise_hierarchy_tree_node_entity = merchandise_hierarchy_tree_node_class()
+        internal_structure.object_id += 1
+        merchandise_hierarchy_tree_node_entity.object_id = internal_structure.object_id
+        print "Saving MerchandiseHierarchyTree root node with object id = " + str(merchandise_hierarchy_tree_node_entity.object_id)
+        entity_manager.save(merchandise_hierarchy_tree_node_entity)
+#        product_class = entity_manager.get_entity_class("Product")
+#        sub_product_class = entity_manager.get_entity_class("SubProduct")
+#        material_class = entity_manager.get_entity_class("Material")
+#        category_class = entity_manager.get_entity_class("Category")
+#        collection_class = entity_manager.get_entity_class("Collection")
+#        brand_class = entity_manager.get_entity_class("Brand")
+#        merchandise_entities = []
+#        find_options = {"eager_loading_relations" : {"parent_nodes" : {}}}
+#        merchandise_entities.extend(entity_manager._find_all_options(product_class, find_options))
+#        merchandise_entities.extend(entity_manager._find_all_options(sub_product_class, find_options))
+#        merchandise_entities.extend(entity_manager._find_all_options(material_class, find_options))
+#        merchandise_entities.extend(entity_manager._find_all_options(category_class, find_options))
+#        merchandise_entities.extend(entity_manager._find_all_options(collection_class, find_options))
+#        merchandise_entities.extend(entity_manager._find_all_options(brand_class, find_options))
+#        for merchandise_entity in merchandise_entities:
+#            if not len(merchandise_entity.parent_nodes):
+#                merchandise_entity.parent_nodes = [merchandise_hierarchy_tree_node_entity]
+#                entity_manager.update(merchandise_entity)
+
+        # create organizational hierarchy tree root node and append orfan suppliers to it
+        organizational_hierarchy_tree_node_class = entity_manager.get_entity_class("OrganizationalHierarchyTreeNode")
+        organizational_hierarchy_tree_root_node_entity = organizational_hierarchy_tree_node_class()
+        internal_structure.object_id += 1
+        organizational_hierarchy_tree_root_node_entity.object_id = internal_structure.object_id
+        print "Saving OrganizationalHierarchyTree root node with object id = " + str(organizational_hierarchy_tree_root_node_entity.object_id)
+        entity_manager.save(organizational_hierarchy_tree_root_node_entity)
+
+        # create supplier hierarchy tree root node
+        organizational_hierarchy_tree_node_class = entity_manager.get_entity_class("OrganizationalHierarchyTreeNode")
+        supplier_hierarchy_tree_node_entity = organizational_hierarchy_tree_node_class()
+        internal_structure.object_id += 1
+        supplier_hierarchy_tree_node_entity.object_id = internal_structure.object_id
+        print "Saving SupplierHierarchyTree root node with object id = " + str(organizational_hierarchy_tree_root_node_entity.object_id)
+        entity_manager.save(supplier_hierarchy_tree_node_entity)
+#        supplier_company_class = entity_manager.get_entity_class("SupplierCompany")
+#        supplier_employee_class = entity_manager.get_entity_class("SupplierEmployee")
+#        supplier_entities = []
+#        find_options = {"eager_loading_relations" : {"parent_nodes" : {}}}
+#        supplier_entities.extend(entity_manager._find_all_options(supplier_company_class, find_options))
+#        supplier_entities.extend(entity_manager._find_all_options(supplier_employee_class, find_options))
+#        for supplier_entity in supplier_entities:
+#            if not len(supplier_entity.parent_nodes):
+#                supplier_entity.parent_nodes = [supplier_hierarchy_tree_node_entity]
+#                entity_manager.update(supplier_entity)
+
+        # create customer hierarchy tree root node and append orfan customers to it
+        organizational_hierarchy_tree_node_class = entity_manager.get_entity_class("OrganizationalHierarchyTreeNode")
+        customer_hierarchy_tree_node_entity = organizational_hierarchy_tree_node_class()
+        internal_structure.object_id += 1
+        customer_hierarchy_tree_node_entity.object_id = internal_structure.object_id
+        print "Saving CustomerHierarchyTree root node with object id = " + str(customer_hierarchy_tree_node_entity.object_id)
+        entity_manager.save(customer_hierarchy_tree_node_entity)
+#        customer_person_class = entity_manager.get_entity_class("CustomerPerson")
+#        customer_company_class = entity_manager.get_entity_class("CustomerCompany")
+#        supplier_entities = []
+#        find_options = {"eager_loading_relations" : {"parent_nodes" : {}}}
+#        customer_entities.extend(entity_manager._find_all_options(customer_company_class, find_options))
+#        customer_entities.extend(entity_manager._find_all_options(customer_person_class, find_options))
+#        for customer_entity in customer_entities:
+#            if not len(customer_entity.parent_nodes):
+#                customer_entity.parent_nodes = [customer_hierarchy_tree_node_entity]
+#                entity_manager.update(customer_entity)
+
+        # create organizational hierarchy tree
+        organizational_hierarchy_tree_class = entity_manager.get_entity_class("OrganizationalHierarchyTree")
+        organizational_hierarchy_tree_entity = organizational_hierarchy_tree_class()
+        internal_structure.object_id += 1
+        organizational_hierarchy_tree_entity.object_id = internal_structure.object_id
+        organizational_hierarchy_tree_entity.root_node = organizational_hierarchy_tree_root_node_entity
+        print "Saving OrganizationalHierarchyTree with object id = " + str(organizational_hierarchy_tree_entity.object_id)
+        entity_manager.save(organizational_hierarchy_tree_entity)
+
+        # create merchandise hierarchy tree
+        merchandise_hierarchy_tree_class = entity_manager.get_entity_class("MerchandiseHierarchyTree")
+        merchandise_hierarchy_tree_entity = merchandise_hierarchy_tree_class()
+        internal_structure.object_id += 1
+        merchandise_hierarchy_tree_entity.object_id = internal_structure.object_id
+        merchandise_hierarchy_tree_entity.root_node = merchandise_hierarchy_tree_node_entity
+        print "Saving MerchandiseHierarchyTree with object id = " + str(merchandise_hierarchy_tree_entity.object_id)
+        entity_manager.save(merchandise_hierarchy_tree_entity)
+
+        # create supplier hierarchy tree
+        supplier_hierarchy_tree_class = entity_manager.get_entity_class("SupplierHierarchyTree")
+        supplier_hierarchy_tree_entity = supplier_hierarchy_tree_class()
+        internal_structure.object_id += 1
+        supplier_hierarchy_tree_entity.object_id = internal_structure.object_id
+        supplier_hierarchy_tree_entity.root_node = supplier_hierarchy_tree_node_entity
+        print "Saving SupplierHierarchyTree with object id = " + str(supplier_hierarchy_tree_entity.object_id)
+        entity_manager.save(supplier_hierarchy_tree_entity)
+        #supplier_company_class = entity_manager.get_entity_class("SupplierCompany")
+        #supplier_employee_class = entity_manager.get_entity_class("SupplierEmployee")
+
+        # create customer hierarchy tree
+        customer_hierarchy_tree_class = entity_manager.get_entity_class("CustomerHierarchyTree")
+        customer_hierarchy_tree_entity = customer_hierarchy_tree_class()
+        internal_structure.object_id += 1
+        customer_hierarchy_tree_entity.object_id = internal_structure.object_id
+        customer_hierarchy_tree_entity.root_node = customer_hierarchy_tree_node_entity
+        print "Saving CustomerHierarchyTree with object id = " + str(customer_hierarchy_tree_entity.object_id)
+        entity_manager.save(customer_hierarchy_tree_entity)
+        #customer_company_class = entity_manager.get_entity_class("CustomerCompany")
+        #customer_person_class = entity_manager.get_entity_class("CustomerPerson")
+
+        # create the euro currency
+        currency_class = entity_manager.get_entity_class("Currency")
+        currency_entity = currency_class()
+        currency_entity.name = "euro"
+        internal_structure.object_id += 1
+        currency_entity.object_id = internal_structure.object_id
+        print "Saving Currency with object id = " + str(currency_entity.object_id)
+        entity_manager.save(currency_entity)
+
+        # create the portuguese language
+        language_class = entity_manager.get_entity_class("Language")
+        language_entity = language_class()
+        language_entity.name = "portugues"
+        internal_structure.object_id += 1
+        language_entity.object_id = internal_structure.object_id
+        print "Saving Language with object id = " + str(language_entity.object_id)
+        entity_manager.save(language_entity)
+
+        entity_manager.commit_transaction("trees_transaction")
+
+        print "##### CONVERSION FINISHED #####"
+        print "-> MISSING RELATIONS <-"
+        for missing_relation in self.missing_relations:
+            print missing_relation
+        end_time = time.time()
+        time_elapsed = end_time - start_time
+        print "ENTITY CONVERSION TIME: " + str(entity_conversion_time_elapsed)
+        print "RELATION CONVERSION TIME: " + str(relation_conversion_time_elapsed)
+        print "TOTAL CONVERSION TIME: " + str(time_elapsed)
+
+        file = open("c:\\Users\\srio\\conversion_log.txt", "w")
+        for missing_relation_entity in self.missing_relation_entities:
+            file.write(str(missing_relation_entity) + "\n")
+        file.close()
+
+    # @todo: this method is temporary
+    def convert_internal_attribute_name_to_omni_name(self, internal_entity_name, internal_attribute_name):
+
+        # CreditContract.sales
+        # GiftCertificate.payments
+        # Reason.stock_adjustments
+        # StockAdjustment.reason
+        # StockAdjustment.stock_adjustment
+
+        map = {"system_settings" :  {"primary_currency" : "preferred_currency",
+                                     "primary_language" : "preferred_language",
+                                     "currency" : "preferred_currency"},
+               "address" : {"system_company" : "contactable_organizational_hierarchy_tree_node",
+                            "customer" : "contactable_organizational_hierarchy_tree_node",
+                            "name" : "street_name"},
+
+               "vat_class" : {"contactable_organizational_hierarchy_tree_node" : "organizational_hierarchy_tree_nodes"},
+               "invoice" : {"purchase" : "purchase_transaction",
+                            "sale" : "sale_transaction"},
+               "money_sale" : {"sale" : "sale_transaction",
+                               "purchase" : "purchase_transaction"},
+               "purchase" : {"purchase_lines" : "purchase_transaction_lines",
+                             "money_sale" : "money_sale_slip"},
+               "postdated_check_payment" : {"payments" : "payment_lines"},
+               "payment" : {"sale" : "sales",
+                            "credit_payments" : None},
+               "customer_company" : {"personally_related_with_as_first_person" : None},
+               "consignment" : {"purchases" : "purchase_transactions"},
+               "card_payment" : {"payments" : "payment_lines"},
+               "cash_payment" : {"payments" : "payment_lines"},
+               "check_payment" : {"payments" : "payment_lines"},
+               "product" : {"purchase_merchandise_hierarchy_tree_node" : "purchase_transaction_lines",
+                            "merchandise_hierarchy_tree_nodes_transfered" : "transfer_lines",
+                            "returns" : "return_lines",
+                            "category" : "parent_nodes",
+                            "collection" : "parent_nodes"},
+               "system_company" : {"preferred_languge" : "preferred_language",
+                                   "currency" : "preferred_currency",
+                                   "consignments" : "consignments_buyer"},
+               "financial_account" : {"contactable_organizational_hierarchy_tree_node" : "owners",
+                                      "customer" : "owners"},
+               "customer_return" : {"return_site" : "return_sites",
+                                    "merchandise_hierarchy_tree_node_return" : "return_lines",
+                                    "sellers" : "return_processors",
+                                    "return_site" : "return_sites",
+                                    "return_processor" : "return_processors",
+                                    "payment_terms" : None,
+                                    "company_buyer" : "customer"},
+               "supplier_return" : {"merchandise_hierarchy_tree_node_return" : "return_lines"},
+               "sale_transaction" : {"money_sale" : "money_sale_slip",
+                                     "returns" : "customer_returns",
+                                     "credit_contracts" : None},
+               "merchandise_hierarchy_tree_node_return" : {"product" : "merchandise",
+                                                           "subproduct" : "merchandise",
+                                                           "return" : "merchandise_return",
+                                                           "consignment_supplier_return" : "merchandise_return"},
+               "merchandise_contactable_organizational_hierarchy_tree_node" : {"product" : "merchandise",
+                                                                               "merchandise_hierarchy_tree_node" : "merchandise",
+                                                                               "store" : "contactable_organizational_hierarchy_tree_node",
+                                                                               "subproduct" : "merchandise"},
+               "repair" : {"purchase_merchandise_hierarchy_tree_node" : "purchase_transaction_lines"},
+               "stock_adjustment_merchandise_hierarchy_tree_node" : {"store" : "adjustment_target",
+                                                                     #"store" : "adjustment_owners",
+                                                                     "reason" : "stock_adjustment_reason",
+                                                                     "merchandise" : "stock_adjustment_lines"},
+               "credit_contract" : {"sale" : None},
+               "credit_note" : {"return_point" : None},
+               "credit_payment" : {"payment" : None,
+                                   "system_company_employee" : None},
+               "payment_terms" : {"customer_returns" : None},
+               "credit_note_payment" : {"payments" : "payment_lines"},
+               "transfer_merchandise_hierarchy_tree_node" : {"product" : "merchandise"},
+               "contact_information" : {"supplier" : "contactable_organizational_hierarchy_tree_node",
+                                        "customer" : "contactable_organizational_hierarchy_tree_node",
+                                        "system_company" : "contactable_organizational_hierarchy_tree_node"},
+               "media" : {"product" : "merchandise_hierarchy_tree_nodes",
+                          "customer" : "contactable_organizational_hierarchy_tree_nodes",
+                          "system_company" : "contactable_organizational_hierarchy_tree_nodes",
+                          "name" : "base_64_data"},
+               "transfer" : {"merchandise_hierarchy_tree_nodes_transfered" : "transfer_lines"},
+               "purchase_merchandise_hierarchy_tree_node" : {"merchandise_hierarchy_tree_node" : "merchandise",
+                                                             "purchase" : "purchase_transaction"},
+               "supplier_company" : {"consignments" : "consignments_supplier"},
+               "payment_line" :  {"credit_notes" : None},
+               "subproduct" : {"product" : "parent_nodes",
+                               "returns" : "return_lines",
+                               "merchandise_hierarchy_tree_nodes_transfered" : "transfer_lines",
+                               "purchase_merchandise_hierarchy_tree_node" : "purchase_transaction_lines"},
+               "user" : {"system_company_employee" : "person"},
+               "money" : {"return_point" : "return_point"}}
+
+        if internal_entity_name in map and internal_attribute_name in map[internal_entity_name]:
+            return map[internal_entity_name][internal_attribute_name]
+        else:
+            return internal_attribute_name
+
+    # @todo: this method is temporary
+    def convert_internal_entity_name_to_omni_name(self, internal_entity_name):
+        map = {"purchase" : "PurchaseTransaction",
+               "supplier_person" : "SupplierCompany",
+               "customer" : "CustomerPerson",
+               "consignment_supplier_return" : "SupplierReturn",
+               "subproduct" : "SubProduct",
+               "system_company_employee" : "Employee",
+               "supplier" : "SupplierCompany",
+               "postdated_check_payment" : "PostDatedCheckPayment",
+               "money_sale" : "MoneySaleSlip",
+               "stock_adjustment_merchandise_hierarchy_tree_node" : "StockAdjustment",
+               "purchase_merchandise_hierarchy_tree_node" : "PurchaseTransactionMerchandiseHierarchyTreeNode",
+               "sale_merchandise_hierarchy_tree_node_contactable_organizational_hierarchy_tree_node" : "SaleMerchandiseHierarchyTreeNode"}
+
+        if internal_entity_name in map:
+            return map[internal_entity_name]
+        else:
+            new_name = ""
+            internal_entity_name_tokens = internal_entity_name.split("_")
+            for token in internal_entity_name_tokens:
+                new_name += token.capitalize()
+            return new_name
+
+    # @todo: this method is temporary
+    def convert_entities(self, internal_structure, entity_manager, internal_structure_entity_name):
+        entities = []
+
+        # for every internal entity
+        internal_entities = list(set(internal_structure.get_entities(internal_structure_entity_name)))
+        for internal_entity_index in range(len(internal_entities)):
+            internal_entity = internal_entities[internal_entity_index]
+            entity_name = self.convert_internal_entity_name_to_omni_name(internal_entity._name)
+            entity_class = entity_manager.get_entity_class(entity_name)
+            entity = entity_class()
+            fields = internal_entity.get_fields()
+
+            # for every attribute in the internal entity
+            attribute_fields = [(field_name, field_value) for field_name, field_value in fields.items() if not field_value is None and not type(field_value) in (types.InstanceType, types.ListType)]
+            for field_name, field_value in attribute_fields:
+
+                 # convert all types to string (@todo: this is a hack)
+                 if type(field_value) in (types.StringType, types.FloatType, types.LongType, types.BooleanType):
+                        field_value = unicode(field_value)
+
+                 # if there is a corresponding attribute in the omni data model
+                 entity_attribute_name = self.convert_internal_attribute_name_to_omni_name(internal_entity._name, field_name)
+                 if not entity_attribute_name is None and hasattr(entity, entity_attribute_name):
+                     if type(field_value) in types.StringTypes:
+
+                        # @todo: convert to unicode, this is a hack
+                        field_value = unicode(field_value)
+
+                        # @todo: replace all ' with '' to stop the orm from crashing
+                        field_value = field_value.replace("'", "''")
+
+                        # convert images
+                        if internal_entity._name == "media" and field_name == "name":
+                           file_path = os.path.join("C:/DIA2002/IMAGENS/DEFINITIVO/", field_value)
+                           if os.path.exists(file_path):
+                              string_buffer = self.data_converter_plugin.image_treatment_plugin.resize_image_aspect(file_path, 130, 115)
+                              file_content = string_buffer.read()
+                              file_content_base64 = base64.b64encode(file_content)
+                              entity.description = "size:130x115"
+                              field_value = file_content_base64
+                        elif entity_attribute_name.find("name") > -1 or entity_attribute_name.find("description") > -1:
+                           # capitalize all names and descriptions
+                           field_value = field_value.capitalize()
+                        elif entity_attribute_name.find("price") > -1:
+                            price_class = entity_manager.get_entity_class("Price")
+                            price_entity = price_class()
+                            price_entity.value = field_value
+                            internal_structure.object_id += 1
+                            price_entity.object_id = internal_structure.object_id
+                            entity_manager.save(price_entity)
+                            field_value = price_entity
+                        elif entity_attribute_name.find("cost") > -1:
+                            cost_class = entity_manager.get_entity_class("Cost")
+                            cost_entity = cost_class()
+                            cost_entity.value = field_value
+                            internal_structure.object_id += 1
+                            cost_entity.object_id = internal_structure.object_id
+                            entity_manager.save(cost_entity)
+                            field_value = cost_entity
+
+                     setattr(entity, entity_attribute_name, field_value)
+
+            entity.object_id = internal_entity.object_id
+            self.object_id_entity_map[entity.object_id] = entity
+            entities.append(entity)
+
+        entity_manager.save_many(entities)
+
+    # @todo: this method is temporary
+    def convert_relations(self, internal_structure, entity_manager, internal_structure_entity_name):
+        internal_entities = list(set(internal_structure.get_entities(internal_structure_entity_name)))
+        for internal_entity_index in range(len(internal_entities)):
+            internal_entity = internal_entities[internal_entity_index]
+            internal_entity_entity = self.object_id_entity_map[internal_entity.object_id]
+            fields = internal_entity.get_fields()
+
+            # for every relation field in that entity
+            relation_fields = [(field_name, field_value) for field_name, field_value in fields.items() if not field_value is None and type(field_value) in (types.InstanceType, types.ListType)]
+            for field_name, field_value in relation_fields:
+                # if there is a corresponding attribute in the omni data model
+                entity_attribute_name = self.convert_internal_attribute_name_to_omni_name(internal_entity._name, field_name)
+                if entity_attribute_name and hasattr(internal_entity_entity, entity_attribute_name):
+                    # @todo: temporarily skip saves in mapped by relations
+                    function_name = "get_relation_attributes_" + entity_attribute_name
+                    get_relations_function = getattr(internal_entity_entity, function_name)
+                    if not "mapped_by" in get_relations_function():
+                        # if the relation is valid  bind the two entities and store missing relations for later viewing
+                        entity_attribute = getattr(internal_entity_entity, entity_attribute_name)
+                        if type(entity_attribute) == types.ListType:
+                            if not type(field_value) == types.ListType:
+                                field_value = [field_value]
+                            for relation_internal_entity in field_value:
+                                if relation_internal_entity and relation_internal_entity.object_id in self.object_id_entity_map:
+                                    relation_entity = self.object_id_entity_map[relation_internal_entity.object_id]
+                                    entity_attribute.append(relation_entity)
+                                elif relation_internal_entity:
+                                    self.missing_relation_entities.append((internal_entity._name, internal_entity.object_id, field_name, relation_internal_entity.object_id))
+                        elif field_value.object_id in self.object_id_entity_map:
+                            relation_entity = self.object_id_entity_map[field_value.object_id]
+                            entity_attribute = relation_entity
+                        else:
+                            self.missing_relation_entities.append((internal_entity._name, internal_entity.object_id, field_name, field_value.object_id))
+
+                        setattr(internal_entity_entity, entity_attribute_name, entity_attribute)
+                elif entity_attribute_name:
+                    relation_name = internal_entity_entity.__class__.__name__ + "." + entity_attribute_name
+                    if not relation_name in self.missing_relations:
+                        self.missing_relations.append(relation_name)
+
+            entity_manager.update(internal_entity_entity)
 
 class DomainEntityConversionInfo:
     """
