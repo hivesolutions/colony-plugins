@@ -362,6 +362,13 @@ class EntityManager:
         # persists the entity
         return self.entity_manager_engine_plugin.save_entity(connection, entity)
 
+    def _save(self, entity):
+        # retrieves the connection object
+        connection = self.get_connection()
+
+        # persists the entity
+        return self.entity_manager_engine_plugin.save_entity(connection, entity)
+
     def save_many(self, entities):
         # retrieves the connection object
         connection = self.get_connection()
@@ -370,6 +377,23 @@ class EntityManager:
         return self.entity_manager_engine_plugin.save_entities(connection, entities)
 
     def update(self, entity):
+        # retrieves the connection object
+        connection = self.get_connection()
+
+        # retrieves the entity class for the entity
+        entity_class = entity.__class__
+
+        # retrieves the entity class id attribute value
+        entity_id_attribute_value = self.get_entity_id_attribute_value(entity)
+
+        # in case there is no entry with the same key value
+        if not self.entity_manager_engine_plugin.find_entity(connection, entity_class, entity_id_attribute_value):
+            raise business_entity_manager_exceptions.EntityManagerEngineEntryNotFound("the key value " + str(entity_id_attribute_value) + " was not found in the database")
+
+        # persists the entity
+        return self.entity_manager_engine_plugin.update_entity(connection, entity)
+
+    def _update(self, entity):
         # retrieves the connection object
         connection = self.get_connection()
 
@@ -398,6 +422,13 @@ class EntityManager:
         # in case there is no entry with the same key value
         if not self.entity_manager_engine_plugin.find_entity(connection, entity_class, entity_id_attribute_value):
             raise business_entity_manager_exceptions.EntityManagerEngineEntryNotFound("the key value " + str(entity_id_attribute_value) + " was not found in the database")
+
+        # removes the entity
+        return self.entity_manager_engine_plugin.remove_entity(connection, entity)
+
+    def _remove(self, entity):
+        # retrieves the connection object
+        connection = self.get_connection()
 
         # removes the entity
         return self.entity_manager_engine_plugin.remove_entity(connection, entity)

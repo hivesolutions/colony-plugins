@@ -606,6 +606,9 @@ class BusinessSqliteEngine:
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
 
+        # generates the id for the entity if necessary
+        self.generate_id(connection, entity);
+
         # retrieves the query string value
         query_string_value = self.create_save_entity_query(entity)
 
@@ -713,7 +716,7 @@ class BusinessSqliteEngine:
         # returns the query string value
         return query_string_value
 
-    def exists_entity(self, connection, entity):
+    def generate_id(self, connection, entity):
         # retrieves the database connection from the connection object
         database_connection = connection.database_connection
 
@@ -738,10 +741,6 @@ class BusinessSqliteEngine:
 
                 # retrieves the entity id attribute value
                 entity_id_attribute_value = self.get_entity_id_attribute_value(entity)
-
-        # in case there is already an entry with the same key value
-        if self.find_entity(connection, entity_class, entity_id_attribute_value):
-            raise business_sqlite_engine_exceptions.SqliteEngineDuplicateEntry("the key value " + str(entity_id_attribute_value) + " already exists in the database")
 
     def save_entity_indirect_relations(self, connection, entity):
         """
@@ -932,6 +931,9 @@ class BusinessSqliteEngine:
         # retrieves the database connection from the connection object
         database_connection = connection.database_connection
 
+        # creates the cursor for the given connection
+        cursor = database_connection.cursor()
+
         # retrieves the entity class for the entity
         entity_class = entity.__class__
 
@@ -946,14 +948,6 @@ class BusinessSqliteEngine:
 
         # retrieves the entity id attribute value
         entity_id_attribute_value = self.get_entity_id_attribute_value(entity)
-
-        # in case there is already an entry with the same key value
-        if not self.find_entity(connection, entity_class, entity_id_attribute_value):
-            # @todo should raise exception
-            pass
-
-        # creates the cursor for the given connection
-        cursor = database_connection.cursor()
 
         # retrieves the entity class name
         entity_class_name = entity_class.__name__
@@ -1042,18 +1036,14 @@ class BusinessSqliteEngine:
         # retrieves the database connection from the connection object
         database_connection = connection.database_connection
 
+        # creates the cursor for the given connection
+        cursor = database_connection.cursor()
+
         # retrieves the entity class for the entity
         entity_class = entity.__class__
 
         # retrieves the entity class id attribute value
         entity_id_attribute_value = self.get_entity_id_attribute_value(entity)
-
-        # in case there is no entry with the same key value
-        if not self.find_entity(connection, entity_class, entity_id_attribute_value):
-            raise business_sqlite_engine_exceptions.SqliteEngineEntryNotFound("the key value " + str(entity_id_attribute_value) + " was not found in the database")
-
-        # creates the cursor for the given connection
-        cursor = database_connection.cursor()
 
         # retrieves the entity class name
         entity_class_name = entity_class.__name__
