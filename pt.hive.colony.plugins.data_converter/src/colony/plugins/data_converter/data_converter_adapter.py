@@ -395,6 +395,7 @@ class DataConverterAdapter:
 
         # convert every entity in the internal structure
         internal_entity_names = internal_structure.get_entity_names()
+        internal_entity_names.remove("payment_terms")
         entity_conversion_start_time = time.time()
         for internal_entity_name in internal_entity_names:
             print "##### CONVERTING " + internal_entity_name + " entities #####"
@@ -426,6 +427,7 @@ class DataConverterAdapter:
         department_class = entity_manager.get_entity_class("Department")
         system_company_class = entity_manager.get_entity_class("SystemCompany")
         find_options = {"eager_loading_relations" : {"contacts" : {},
+                                                     "addresses" : {},
                                                      "primary_contact_information" : {},
                                                      "primary_address" : {}}}
         contactable_organizational_hierarchy_tree_node_entities = []
@@ -441,15 +443,12 @@ class DataConverterAdapter:
                 if len(contactable_organizational_hierarchy_tree_node_entity.contacts):
                     contact_information_entity = contactable_organizational_hierarchy_tree_node_entity.contacts[0]
                     contactable_organizational_hierarchy_tree_node_entity.primary_contact_information = contact_information_entity
-                    print "Adding primary contact information " + contact_information_entity.object_id + " to " + contactable_organizational_hierarchy_tree_node_entity.object_id
             if not contactable_organizational_hierarchy_tree_node_entity.primary_address:
                 if len(contactable_organizational_hierarchy_tree_node_entity.addresses):
                     address_entity = contactable_organizational_hierarchy_tree_node_entity.addresses[0]
                     contactable_organizational_hierarchy_tree_node_entity.primary_address = address_entity
-                    print "Adding primary address " + address_entity.object_id + " to " + contactable_organizational_hierarchy_tree_node_entity.object_id
-            entity_manager.update(contactable_organizational_hierarchy_tree_node_entity)
+            entity_manager._update(contactable_organizational_hierarchy_tree_node_entity)
         entity_manager.commit_transaction("primaries_transaction")
-
 
         # copy costs from organizational hierarchy merchandise supplier to merchandise contactable organizational hierarchy tree node
         entity_manager.create_transaction("costs_transaction")
@@ -463,7 +462,7 @@ class DataConverterAdapter:
             if organizational_hierarchy_entity:
                 for merchandise_entity in organizational_hierarchy_entity.inventory:
                     merchandise_entity.cost = organizational_hierarchy_merchandise_supplier_entity.unit_cost
-                    entity_manager.update(merchandise_entity)
+                    entity_manager._update(merchandise_entity)
         entity_manager.commit_transaction("costs_transaction")
 
         entity_manager.create_transaction("trees_transaction")
@@ -476,7 +475,7 @@ class DataConverterAdapter:
         internal_structure.object_id += 1
         merchandise_hierarchy_tree_node_entity.object_id = internal_structure.object_id
         print "Saving MerchandiseHierarchyTree root node with object id = " + str(merchandise_hierarchy_tree_node_entity.object_id)
-        entity_manager.save(merchandise_hierarchy_tree_node_entity)
+        entity_manager._save(merchandise_hierarchy_tree_node_entity)
 #        product_class = entity_manager.get_entity_class("Product")
 #        sub_product_class = entity_manager.get_entity_class("SubProduct")
 #        material_class = entity_manager.get_entity_class("Material")
@@ -494,7 +493,7 @@ class DataConverterAdapter:
 #        for merchandise_entity in merchandise_entities:
 #            if not len(merchandise_entity.parent_nodes):
 #                merchandise_entity.parent_nodes = [merchandise_hierarchy_tree_node_entity]
-#                entity_manager.update(merchandise_entity)
+#                entity_manager._update(merchandise_entity)
 
         # create organizational hierarchy tree root node and append orfan suppliers to it
         organizational_hierarchy_tree_node_class = entity_manager.get_entity_class("OrganizationalHierarchyTreeNode")
@@ -502,7 +501,7 @@ class DataConverterAdapter:
         internal_structure.object_id += 1
         organizational_hierarchy_tree_root_node_entity.object_id = internal_structure.object_id
         print "Saving OrganizationalHierarchyTree root node with object id = " + str(organizational_hierarchy_tree_root_node_entity.object_id)
-        entity_manager.save(organizational_hierarchy_tree_root_node_entity)
+        entity_manager._save(organizational_hierarchy_tree_root_node_entity)
 
         # create supplier hierarchy tree root node
         organizational_hierarchy_tree_node_class = entity_manager.get_entity_class("OrganizationalHierarchyTreeNode")
@@ -510,7 +509,7 @@ class DataConverterAdapter:
         internal_structure.object_id += 1
         supplier_hierarchy_tree_node_entity.object_id = internal_structure.object_id
         print "Saving SupplierHierarchyTree root node with object id = " + str(organizational_hierarchy_tree_root_node_entity.object_id)
-        entity_manager.save(supplier_hierarchy_tree_node_entity)
+        entity_manager._save(supplier_hierarchy_tree_node_entity)
 #        supplier_company_class = entity_manager.get_entity_class("SupplierCompany")
 #        supplier_employee_class = entity_manager.get_entity_class("SupplierEmployee")
 #        supplier_entities = []
@@ -520,7 +519,7 @@ class DataConverterAdapter:
 #        for supplier_entity in supplier_entities:
 #            if not len(supplier_entity.parent_nodes):
 #                supplier_entity.parent_nodes = [supplier_hierarchy_tree_node_entity]
-#                entity_manager.update(supplier_entity)
+#                entity_manager._update(supplier_entity)
 
         # create customer hierarchy tree root node and append orfan customers to it
         organizational_hierarchy_tree_node_class = entity_manager.get_entity_class("OrganizationalHierarchyTreeNode")
@@ -528,7 +527,7 @@ class DataConverterAdapter:
         internal_structure.object_id += 1
         customer_hierarchy_tree_node_entity.object_id = internal_structure.object_id
         print "Saving CustomerHierarchyTree root node with object id = " + str(customer_hierarchy_tree_node_entity.object_id)
-        entity_manager.save(customer_hierarchy_tree_node_entity)
+        entity_manager._save(customer_hierarchy_tree_node_entity)
 #        customer_person_class = entity_manager.get_entity_class("CustomerPerson")
 #        customer_company_class = entity_manager.get_entity_class("CustomerCompany")
 #        supplier_entities = []
@@ -538,7 +537,7 @@ class DataConverterAdapter:
 #        for customer_entity in customer_entities:
 #            if not len(customer_entity.parent_nodes):
 #                customer_entity.parent_nodes = [customer_hierarchy_tree_node_entity]
-#                entity_manager.update(customer_entity)
+#                entity_manager._update(customer_entity)
 
         # create organizational hierarchy tree
         organizational_hierarchy_tree_class = entity_manager.get_entity_class("OrganizationalHierarchyTree")
@@ -547,7 +546,7 @@ class DataConverterAdapter:
         organizational_hierarchy_tree_entity.object_id = internal_structure.object_id
         organizational_hierarchy_tree_entity.root_node = organizational_hierarchy_tree_root_node_entity
         print "Saving OrganizationalHierarchyTree with object id = " + str(organizational_hierarchy_tree_entity.object_id)
-        entity_manager.save(organizational_hierarchy_tree_entity)
+        entity_manager._save(organizational_hierarchy_tree_entity)
 
         # create merchandise hierarchy tree
         merchandise_hierarchy_tree_class = entity_manager.get_entity_class("MerchandiseHierarchyTree")
@@ -556,7 +555,7 @@ class DataConverterAdapter:
         merchandise_hierarchy_tree_entity.object_id = internal_structure.object_id
         merchandise_hierarchy_tree_entity.root_node = merchandise_hierarchy_tree_node_entity
         print "Saving MerchandiseHierarchyTree with object id = " + str(merchandise_hierarchy_tree_entity.object_id)
-        entity_manager.save(merchandise_hierarchy_tree_entity)
+        entity_manager._save(merchandise_hierarchy_tree_entity)
 
         # create supplier hierarchy tree
         supplier_hierarchy_tree_class = entity_manager.get_entity_class("SupplierHierarchyTree")
@@ -565,7 +564,7 @@ class DataConverterAdapter:
         supplier_hierarchy_tree_entity.object_id = internal_structure.object_id
         supplier_hierarchy_tree_entity.root_node = supplier_hierarchy_tree_node_entity
         print "Saving SupplierHierarchyTree with object id = " + str(supplier_hierarchy_tree_entity.object_id)
-        entity_manager.save(supplier_hierarchy_tree_entity)
+        entity_manager._save(supplier_hierarchy_tree_entity)
         #supplier_company_class = entity_manager.get_entity_class("SupplierCompany")
         #supplier_employee_class = entity_manager.get_entity_class("SupplierEmployee")
 
@@ -576,7 +575,7 @@ class DataConverterAdapter:
         customer_hierarchy_tree_entity.object_id = internal_structure.object_id
         customer_hierarchy_tree_entity.root_node = customer_hierarchy_tree_node_entity
         print "Saving CustomerHierarchyTree with object id = " + str(customer_hierarchy_tree_entity.object_id)
-        entity_manager.save(customer_hierarchy_tree_entity)
+        entity_manager._save(customer_hierarchy_tree_entity)
         #customer_company_class = entity_manager.get_entity_class("CustomerCompany")
         #customer_person_class = entity_manager.get_entity_class("CustomerPerson")
 
@@ -587,7 +586,7 @@ class DataConverterAdapter:
         internal_structure.object_id += 1
         currency_entity.object_id = internal_structure.object_id
         print "Saving Currency with object id = " + str(currency_entity.object_id)
-        entity_manager.save(currency_entity)
+        entity_manager._save(currency_entity)
 
         # create the portuguese language
         language_class = entity_manager.get_entity_class("Language")
@@ -596,7 +595,7 @@ class DataConverterAdapter:
         internal_structure.object_id += 1
         language_entity.object_id = internal_structure.object_id
         print "Saving Language with object id = " + str(language_entity.object_id)
-        entity_manager.save(language_entity)
+        entity_manager._save(language_entity)
 
         entity_manager.commit_transaction("trees_transaction")
 
@@ -620,7 +619,9 @@ class DataConverterAdapter:
 
         # CreditContract.sales
         # GiftCertificate.payments
+        # PurchaseTransaction.payment_terms
         # Reason.stock_adjustments
+        # SaleTransaction.payment_terms
         # StockAdjustment.reason
         # StockAdjustment.stock_adjustment
 
@@ -630,7 +631,7 @@ class DataConverterAdapter:
                "address" : {"system_company" : "contactable_organizational_hierarchy_tree_node",
                             "customer" : "contactable_organizational_hierarchy_tree_node",
                             "name" : "street_name"},
-
+               "sale_merchandise_hierarchy_tree_node_contactable_organizational_hierarchy_tree_node" : {"sale" : "sale_transaction"},
                "vat_class" : {"contactable_organizational_hierarchy_tree_node" : "organizational_hierarchy_tree_nodes"},
                "invoice" : {"purchase" : "purchase_transaction",
                             "sale" : "sale_transaction"},
@@ -650,7 +651,8 @@ class DataConverterAdapter:
                             "merchandise_hierarchy_tree_nodes_transfered" : "transfer_lines",
                             "returns" : "return_lines",
                             "category" : "parent_nodes",
-                            "collection" : "parent_nodes"},
+                            "collection" : "parent_nodes",
+                            "sale_lines" : "sale_transaction_lines"},
                "system_company" : {"preferred_languge" : "preferred_language",
                                    "currency" : "preferred_currency",
                                    "consignments" : "consignments_buyer"},
@@ -666,7 +668,8 @@ class DataConverterAdapter:
                "supplier_return" : {"merchandise_hierarchy_tree_node_return" : "return_lines"},
                "sale_transaction" : {"money_sale" : "money_sale_slip",
                                      "returns" : "customer_returns",
-                                     "credit_contracts" : None},
+                                     "credit_contracts" : None,
+                                     "sale_lines" : "sale_transaction_lines"},
                "merchandise_hierarchy_tree_node_return" : {"product" : "merchandise",
                                                            "subproduct" : "merchandise",
                                                            "return" : "merchandise_return",
@@ -701,6 +704,7 @@ class DataConverterAdapter:
                "payment_line" :  {"credit_notes" : None},
                "subproduct" : {"product" : "parent_nodes",
                                "returns" : "return_lines",
+                               "sale_lines" : "sale_transaction_lines",
                                "merchandise_hierarchy_tree_nodes_transfered" : "transfer_lines",
                                "purchase_merchandise_hierarchy_tree_node" : "purchase_transaction_lines"},
                "user" : {"system_company_employee" : "person"},
@@ -714,6 +718,7 @@ class DataConverterAdapter:
     # @todo: this method is temporary
     def convert_internal_entity_name_to_omni_name(self, internal_entity_name):
         map = {"purchase" : "PurchaseTransaction",
+               "payment_line" : "PaymentPaymentMethod",
                "supplier_person" : "SupplierCompany",
                "customer" : "CustomerPerson",
                "consignment_supplier_return" : "SupplierReturn",
@@ -724,7 +729,7 @@ class DataConverterAdapter:
                "money_sale" : "MoneySaleSlip",
                "stock_adjustment_merchandise_hierarchy_tree_node" : "StockAdjustment",
                "purchase_merchandise_hierarchy_tree_node" : "PurchaseTransactionMerchandiseHierarchyTreeNode",
-               "sale_merchandise_hierarchy_tree_node_contactable_organizational_hierarchy_tree_node" : "SaleMerchandiseHierarchyTreeNode"}
+               "sale_merchandise_hierarchy_tree_node_contactable_organizational_hierarchy_tree_node" : "SaleTransactionMerchandiseHierarchyTreeNode"}
 
         if internal_entity_name in map:
             return map[internal_entity_name]
@@ -785,7 +790,7 @@ class DataConverterAdapter:
                             price_entity.value = field_value
                             internal_structure.object_id += 1
                             price_entity.object_id = internal_structure.object_id
-                            entity_manager.save(price_entity)
+                            entity_manager._save(price_entity)
                             field_value = price_entity
                         elif entity_attribute_name.find("cost") > -1:
                             cost_class = entity_manager.get_entity_class("Cost")
@@ -793,7 +798,7 @@ class DataConverterAdapter:
                             cost_entity.value = field_value
                             internal_structure.object_id += 1
                             cost_entity.object_id = internal_structure.object_id
-                            entity_manager.save(cost_entity)
+                            entity_manager._save(cost_entity)
                             field_value = cost_entity
 
                      setattr(entity, entity_attribute_name, field_value)
@@ -845,7 +850,7 @@ class DataConverterAdapter:
                     if not relation_name in self.missing_relations:
                         self.missing_relations.append(relation_name)
 
-            entity_manager.update(internal_entity_entity)
+            entity_manager._update(internal_entity_entity)
 
 class DomainEntityConversionInfo:
     """
