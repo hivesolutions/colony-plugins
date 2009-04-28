@@ -66,9 +66,9 @@ class MainServiceHttpGzipEncodingPlugin(colony.plugins.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
-        global main_service_gzip_encoding
-        import main_service_gzip_encoding.gzip_encoding.main_service_http_gzip_encoding_system
-        self.main_service_http_gzip_encoding = main_service_gzip_encoding.gzip_encoding.main_service_http_gzip_encoding_system.MainServiceHttpGzipEncoding(self)
+        global main_service_http_gzip_encoding
+        import main_service_http_gzip_encoding.gzip_encoding.main_service_http_gzip_encoding_system
+        self.main_service_http_gzip_encoding = main_service_http_gzip_encoding.gzip_encoding.main_service_http_gzip_encoding_system.MainServiceHttpGzipEncoding(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
