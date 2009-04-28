@@ -207,6 +207,10 @@ class MainServiceHttp:
                 if socket_provider_plugin_provider_name == socket_provider:
                     # creates a new http socket with the socket provider plugin
                     self.http_socket = socket_provider_plugin.provide_socket()
+
+            # in case the socket was not created, no socket provider found
+            if not self.http_socket:
+                raise main_service_http_exceptions.SocketProviderNotFound("socket provider %s not found" % socket_provider)
         else:
             # creates the http socket
             self.http_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

@@ -70,6 +70,32 @@ class EncodingNotFound(MainServiceHttpException):
 
         return "Encoding not found: %s" % self.message
 
+class SocketProviderNotFound(MainServiceHttpException):
+    """
+    The socket provider not found class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        MainServiceHttpException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Socket provider not found: %s" % self.message
+
 class ServerRequestTimeout(MainServiceHttpException):
     """
     The server request timeout class.
