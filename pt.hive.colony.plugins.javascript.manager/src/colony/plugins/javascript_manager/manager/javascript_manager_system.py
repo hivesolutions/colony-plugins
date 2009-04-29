@@ -138,6 +138,7 @@ class JavascriptManager:
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.misc/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.mvc/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.printing/plugins",
+                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.ui/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.context_view/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.customers_suppliers/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.finances/plugins",
@@ -153,7 +154,8 @@ class JavascriptManager:
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.sales/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.settings/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.system/plugins",
-                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.toolbar/plugins"]
+                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.toolbar/plugins",
+                                               self.workspace_base_path + "/pt.hive.colony.web.ui"]
 
     def start_auto_index_plugin_search_directories(self):
         self.auto_index_plugin_search_directories_flag = True
