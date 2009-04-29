@@ -137,6 +137,7 @@ class JavascriptManager:
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.gui.main.extjs/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.misc/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.mvc/plugins",
+                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.printing/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.context_view/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.customers_suppliers/plugins",
                                                self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.finances/plugins",
