@@ -40,6 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 TEST_IMAGE_PATH = "printing/manager/resources/test_logo.png"
 """ The test image relative path """
 
+import printing_language_parser
+
 class PrintingManager:
     """
     The printing manager class.
@@ -58,10 +60,10 @@ class PrintingManager:
 
         self.printing_manager_plugin = printing_manager_plugin
 
-    def print_test(self):
-        self.printing_manager_plugin.printing_plugins[0].print_test()
+    def print_test(self, printing_options):
+        self.printing_manager_plugin.printing_plugins[0].print_test(printing_options)
 
-    def print_test_image(self):
+    def print_test_image(self, printing_options):
         # retrieves the plugin manager
         plugin_manager = self.printing_manager_plugin.manager
 
@@ -69,4 +71,15 @@ class PrintingManager:
 
         image_path = plugin_path + "/" + TEST_IMAGE_PATH
 
-        self.printing_manager_plugin.printing_plugins[0].print_test_image(image_path)
+        self.printing_manager_plugin.printing_plugins[0].print_test_image(image_path, printing_options)
+
+    def print_printing_language(self, printing_language_string, printing_options):
+        parser = printing_language_parser.PrintingLanguageParser()
+        parser.string = printing_language_string
+        parser.parse_string()
+        value = parser.get_value()
+        import printing_language_visitor
+        visitor = printing_language_visitor.Visitor()
+        value.accept(visitor)
+
+        self.printing_manager_plugin.printing_plugins[0].print_printing_language(value, printing_options)

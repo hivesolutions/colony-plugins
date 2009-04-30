@@ -86,8 +86,11 @@ class PrintingWin32Plugin(colony.plugins.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def print_test(self):
-        self.printing_win32.print_test()
+    def print_test(self, printing_options):
+        self.printing_win32.print_test(printing_options)
 
-    def print_test_image(self, image_path):
-        self.printing_win32.print_test_image(image_path)
+    def print_test_image(self, image_path, printing_options):
+        self.printing_win32.print_test_image(image_path, printing_options)
+
+    def print_printing_language(self, printing_document, printing_options):
+        self.printing_win32.print_printing_language(printing_document, printing_options)

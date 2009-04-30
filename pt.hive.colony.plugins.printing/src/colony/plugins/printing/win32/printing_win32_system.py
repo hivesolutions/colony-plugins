@@ -45,6 +45,7 @@ import PIL.Image
 import PIL.ImageWin
 
 import printing_win32_constants
+import printing_win32_visitor
 
 PRINTING_SCALE = 4
 """ The printing scale """
@@ -73,9 +74,9 @@ class PrintingWin32:
 
         self.printing_win32_plugin = printing_win32_plugin
 
-    def print_test(self):
+    def print_test(self, printing_options):
         # retrieves the printer handler
-        handler_device_context, printable_area, printer_size, printer_margins = self.get_printer_handler()
+        handler_device_context, printable_area, printer_size, printer_margins = self.get_printer_handler(printing_options)
 
         # starts the document
         handler_device_context.StartDoc(TEST_TITLE)
@@ -98,12 +99,9 @@ class PrintingWin32:
         # closes the printer handler
         self.close_printer_handler(handler_device_context)
 
-    def print_test_configuration(self, configuration):
-        pass
-
-    def print_test_image(self, image_path):
+    def print_test_image(self, image_path, printing_options):
         # retrieves the printer handler
-        handler_device_context, printable_area, printer_size, printer_margins = self.get_printer_handler()
+        handler_device_context, printable_area, printer_size, printer_margins = self.get_printer_handler(printing_options)
 
         # opens the bitmap image
         bitmap_image = PIL.Image.open(image_path)
@@ -144,21 +142,16 @@ class PrintingWin32:
         # closes the printer handler
         self.close_printer_handler(handler_device_context)
 
-    def print_test_image_configuration(self, image_path, configuration):
-        pass
+    def print_printing_language(self, printing_document, printing_options):
+        visitor = printing_win32_visitor.Visitor()
+        #visitor.set_printing_options(printing_options)
+        printing_document.accept(visitor)
 
-    def print_text(self, text):
-        pass
-
-    def print_test_configuration(self, text, configuration):
-        pass
-
-    def load_printer(self, configuration):
-        pass
-
-    def get_printer_handler(self, printer_name = None):
+    def get_printer_handler(self, printing_options):
         # in case the printer name is not defined
-        if not printer_name:
+        if "printer_name" in printing_options:
+            printer_name = printing_options["printer_name"]
+        else:
             # retrieves the default printer name
             printer_name = win32print.GetDefaultPrinter()
 

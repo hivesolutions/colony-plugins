@@ -105,11 +105,14 @@ class PrintingManagerPlugin(colony.plugins.plugin_system.Plugin):
     def get_help(self):
         return self.console_printing_manager.get_help()
 
-    def print_test(self):
-        self.printing_manager.print_test()
+    def print_test(self, printing_options):
+        self.printing_manager.print_test(printing_options)
 
-    def print_test_image(self):
-        self.printing_manager.print_test_image()
+    def print_test_image(self, printing_options):
+        self.printing_manager.print_test_image(printing_options)
+
+    def print_printing_language(self, printing_language_string, printing_options):
+        self.printing_manager.print_printing_language(printing_language_string, printing_options)
 
     @colony.plugins.decorators.load_allowed_capability("printing")
     def printing_load_allowed(self, plugin, capability):
