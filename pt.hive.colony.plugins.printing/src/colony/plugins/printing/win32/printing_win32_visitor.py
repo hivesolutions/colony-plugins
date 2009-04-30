@@ -174,10 +174,22 @@ class Visitor:
     visit_next = True
     """ The visit next flag """
 
+    visit_index = 0
+    """ The visit index, for multiple visits """
+
+    printer_handler = None
+    """ The printer handler """
+
+    printing_options = {}
+    """ The printing options """
+
     def __init__(self):
         self.node_method_map = {}
         self.visit_childs = True
         self.visit_next = True
+        self.visit_index = 0
+        self.printer_handler = None
+        self.printing_options = {}
 
         self.update_node_method_map()
 
@@ -200,6 +212,18 @@ class Visitor:
 
                 self.node_method_map[ast_node_class] = self_class_real_element
 
+    def get_printer_handler(self):
+        return self.printer_handler
+
+    def set_printer_handler(self, printer_handler):
+        self.printer_handler = printer_handler
+
+    def get_printing_options(self):
+        return self.printing_options
+
+    def set_printing_options(self, printing_options):
+        self.printing_options = printing_options
+
     @dispatch_visit()
     def visit(self, node):
         print "unrecognized element node of type " + node.__class__.__name__
@@ -221,7 +245,24 @@ class Visitor:
 
     @_visit(printing.manager.printing_language_ast.PrintingDocument)
     def visit_printing_document(self, node):
-        print "PrintingDocument: " + str(node)
+        handler_device_context, printable_area, printer_size, printer_margins = self.printer_handler
+
+        if self.visit_index == 0:
+            # starts the document
+            handler_device_context.StartDoc("teste")
+
+            # starts the first page
+            handler_device_context.StartPage()
+
+            # sets the map mode
+            handler_device_context.SetMapMode(win32con.MM_TWIPS)
+
+        elif self.visit_index == 1:
+            # ends the current page
+            handler_device_context.EndPage()
+
+            # ends the document
+            handler_device_context.EndDoc()
 
     @_visit(printing.manager.printing_language_ast.Paragraph)
     def visit_paragraph(self, node):
@@ -233,6 +274,8 @@ class Visitor:
 
     @_visit(printing.manager.printing_language_ast.Text)
     def visit_text(self, node):
+        handler_device_context, printable_area, printer_size, printer_margins = self.printer_handler
+
         print "Text: " + str(node)
 
     @_visit(printing.manager.printing_language_ast.Image)

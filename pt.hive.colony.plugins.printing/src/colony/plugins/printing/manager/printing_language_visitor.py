@@ -174,10 +174,14 @@ class Visitor:
     visit_next = True
     """ The visit next flag """
 
+    visit_index = 0
+    """ The visit index, for multiple visits """
+
     def __init__(self):
         self.node_method_map = {}
         self.visit_childs = True
         self.visit_next = True
+        self.visit_index = 0
 
         self.update_node_method_map()
 

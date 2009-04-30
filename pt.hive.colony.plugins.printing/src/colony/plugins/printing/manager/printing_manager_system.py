@@ -60,10 +60,10 @@ class PrintingManager:
 
         self.printing_manager_plugin = printing_manager_plugin
 
-    def print_test(self, printing_options):
+    def print_test(self, printing_options = {}):
         self.printing_manager_plugin.printing_plugins[0].print_test(printing_options)
 
-    def print_test_image(self, printing_options):
+    def print_test_image(self, printing_options = {}):
         # retrieves the plugin manager
         plugin_manager = self.printing_manager_plugin.manager
 
@@ -73,7 +73,7 @@ class PrintingManager:
 
         self.printing_manager_plugin.printing_plugins[0].print_test_image(image_path, printing_options)
 
-    def print_printing_language(self, printing_language_string, printing_options):
+    def print_printing_language(self, printing_language_string, printing_options = {}):
         parser = printing_language_parser.PrintingLanguageParser()
         parser.string = printing_language_string
         parser.parse_string()

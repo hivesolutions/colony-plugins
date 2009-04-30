@@ -74,7 +74,7 @@ class PrintingWin32:
 
         self.printing_win32_plugin = printing_win32_plugin
 
-    def print_test(self, printing_options):
+    def print_test(self, printing_options = {}):
         # retrieves the printer handler
         handler_device_context, printable_area, printer_size, printer_margins = self.get_printer_handler(printing_options)
 
@@ -99,7 +99,7 @@ class PrintingWin32:
         # closes the printer handler
         self.close_printer_handler(handler_device_context)
 
-    def print_test_image(self, image_path, printing_options):
+    def print_test_image(self, image_path, printing_options = {}):
         # retrieves the printer handler
         handler_device_context, printable_area, printer_size, printer_margins = self.get_printer_handler(printing_options)
 
@@ -142,18 +142,25 @@ class PrintingWin32:
         # closes the printer handler
         self.close_printer_handler(handler_device_context)
 
-    def print_printing_language(self, printing_document, printing_options):
+    def print_printing_language(self, printing_document, printing_options = {}):
         visitor = printing_win32_visitor.Visitor()
-        #visitor.set_printing_options(printing_options)
-        printing_document.accept(visitor)
+
+        # retrieves the printer handler
+        printer_handler = self.get_printer_handler(printing_options)
+
+        # sets the printer handler in the visitor
+        visitor.set_printer_handler(printer_handler)
+
+        # sets the printing options in the visitor
+        visitor.set_printing_options(printing_options)
+
+        # accepts the visitor in the printing document,
+        # using double visiting mode
+        printing_document.accept_double(visitor)
 
     def get_printer_handler(self, printing_options):
-        # in case the printer name is not defined
-        if "printer_name" in printing_options:
-            printer_name = printing_options["printer_name"]
-        else:
-            # retrieves the default printer name
-            printer_name = win32print.GetDefaultPrinter()
+        # retrieves the printer name
+        printer_name = printing_options.get("printer_name", win32print.GetDefaultPrinter())
 
         # creates a new win32 device context and retrieves the handler
         handler_device_context = win32ui.CreateDC()
@@ -161,17 +168,26 @@ class PrintingWin32:
         # creates a printer device context using the handler
         handler_device_context.CreatePrinterDC(printer_name)
 
-        # retrieves the printable area
-        printable_area = handler_device_context.GetDeviceCaps(printing_win32_constants.HORIZONTAL_RESOLUTION), handler_device_context.GetDeviceCaps(printing_win32_constants.VERTICAL_RESOLUTION)
-
         # retrieves the printer size
-        printer_size = handler_device_context.GetDeviceCaps(printing_win32_constants.PHYSICAL_WIDTH), handler_device_context.GetDeviceCaps(printing_win32_constants.PHYSICAL_HEIGHT)
+        printer_size = printing_options.get("printer_size", self.get_default_printer_size(handler_device_context))
+
+        # retrieves the printable area
+        printable_area = printing_options.get("printable_area", self.get_default_printable_area(handler_device_context))
 
         # retrieves the printer margins
-        printer_margins = handler_device_context.GetDeviceCaps(printing_win32_constants.PHYSICAL_OFFSET_X), handler_device_context.GetDeviceCaps(printing_win32_constants.PHYSICAL_OFFSET_Y)
+        printer_margins = printing_options.get("printer_margins", self.get_default_printer_margins(handler_device_context))
 
         return (handler_device_context, printable_area, printer_size, printer_margins)
 
     def close_printer_handler(self, printer_handler_context):
         # releases the resource
         printer_handler_context.DeleteDC()
+
+    def get_default_printable_area(self, handler_device_context):
+        return handler_device_context.GetDeviceCaps(printing_win32_constants.HORIZONTAL_RESOLUTION), handler_device_context.GetDeviceCaps(printing_win32_constants.VERTICAL_RESOLUTION)
+
+    def get_default_printer_size(self, handler_device_context):
+        return handler_device_context.GetDeviceCaps(printing_win32_constants.PHYSICAL_WIDTH), handler_device_context.GetDeviceCaps(printing_win32_constants.PHYSICAL_HEIGHT)
+
+    def get_default_printer_margins(self, handler_device_context):
+        return handler_device_context.GetDeviceCaps(printing_win32_constants.PHYSICAL_OFFSET_X), handler_device_context.GetDeviceCaps(printing_win32_constants.PHYSICAL_OFFSET_Y)
