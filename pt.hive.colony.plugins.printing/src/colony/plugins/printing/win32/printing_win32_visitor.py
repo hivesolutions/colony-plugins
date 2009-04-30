@@ -37,6 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import win32ui
+import win32con
+
+import printing_win32_constants
 import printing.manager.printing_language_ast
 
 def _visit(ast_node_class):
@@ -256,7 +260,6 @@ class Visitor:
 
             # sets the map mode
             handler_device_context.SetMapMode(win32con.MM_TWIPS)
-
         elif self.visit_index == 1:
             # ends the current page
             handler_device_context.EndPage()
@@ -276,7 +279,21 @@ class Visitor:
     def visit_text(self, node):
         handler_device_context, printable_area, printer_size, printer_margins = self.printer_handler
 
-        print "Text: " + str(node)
+        scale_factor = 20
+
+        pen = win32ui.CreatePen(0, scale_factor, 0)
+
+        handler_device_context.SelectObject(pen)
+
+        font = win32ui.CreateFont({
+            "name": "Calibri",
+            "height": int(scale_factor * 10),
+            "weight": 400,
+        })
+
+        handler_device_context.SelectObject(font)
+
+        handler_device_context.TextOut(scale_factor * 72, -1 * scale_factor * 72, node.text)
 
     @_visit(printing.manager.printing_language_ast.Image)
     def visit_image(self, node):

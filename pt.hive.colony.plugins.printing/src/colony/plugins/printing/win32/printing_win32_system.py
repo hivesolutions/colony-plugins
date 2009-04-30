@@ -158,6 +158,12 @@ class PrintingWin32:
         # using double visiting mode
         printing_document.accept_double(visitor)
 
+        # retrieves the handler device context
+        handler_device_context = printer_handler[0]
+
+        # closes the printer handler
+        self.close_printer_handler(handler_device_context)
+
     def get_printer_handler(self, printing_options):
         # retrieves the printer name
         printer_name = printing_options.get("printer_name", win32print.GetDefaultPrinter())
