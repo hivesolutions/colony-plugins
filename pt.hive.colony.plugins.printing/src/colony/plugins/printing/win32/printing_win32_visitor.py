@@ -41,7 +41,14 @@ import win32ui
 import win32con
 
 import printing_win32_constants
+import printing_win32_exceptions
 import printing.manager.printing_language_ast
+
+FONT_SCALE_FACTOR = 20
+""" The font scale factor """
+
+EXCLUSION_LIST = ["__class__", "__delattr__", "__dict__", "__doc__", "__getattribute__", "__hash__", "__init__", "__module__", "__new__", "__reduce__", "__reduce_ex__", "__repr__", "__setattr__", "__str__", "__weakref__", "accept", "accept_double", "accept_post_order", "add_child_node", "remove_child_node", "set_indent", "set_value", "indent", "value", "child_nodes"]
+""" The exclusion list """
 
 def _visit(ast_node_class):
     """
@@ -187,6 +194,12 @@ class Visitor:
     printing_options = {}
     """ The printing options """
 
+    current_position = None
+    """ The current position """
+
+    context_information_map = {}
+    """ The context information map """
+
     def __init__(self):
         self.node_method_map = {}
         self.visit_childs = True
@@ -194,6 +207,8 @@ class Visitor:
         self.visit_index = 0
         self.printer_handler = None
         self.printing_options = {}
+        self.current_position = None
+        self.context_information_map = {}
 
         self.update_node_method_map()
 
@@ -252,14 +267,26 @@ class Visitor:
         handler_device_context, printable_area, printer_size, printer_margins = self.printer_handler
 
         if self.visit_index == 0:
+            # retrieves the printing document name
+            printing_document_name = node.name
+
             # starts the document
-            handler_device_context.StartDoc("teste")
+            handler_device_context.StartDoc(printing_document_name)
 
             # starts the first page
             handler_device_context.StartPage()
 
             # sets the map mode
             handler_device_context.SetMapMode(win32con.MM_TWIPS)
+
+            # creates a pen with the given scale factor
+            pen = win32ui.CreatePen(0, FONT_SCALE_FACTOR, 0)
+
+            # selects the pen object
+            handler_device_context.SelectObject(pen)
+
+            # sets the initial position
+            self.current_position = (0, 0)
         elif self.visit_index == 1:
             # ends the current page
             handler_device_context.EndPage()
@@ -269,32 +296,100 @@ class Visitor:
 
     @_visit(printing.manager.printing_language_ast.Paragraph)
     def visit_paragraph(self, node):
-        print "Paragraph: " + str(node)
+        if self.visit_index == 0:
+            self.add_context_information(node)
+        elif self.visit_index == 1:
+            self.remove_context_information(node)
 
     @_visit(printing.manager.printing_language_ast.Line)
     def visit_line(self, node):
-        print "Line: " + str(node)
+        if self.visit_index == 0:
+            self.add_context_information(node)
+        elif self.visit_index == 1:
+            self.remove_context_information(node)
+
+            # retrieves the current position in x and y
+            current_position_x, current_position_y = self.current_position
+
+            # sets the new current position
+            self.current_position = current_position_x, current_position_y + 20
 
     @_visit(printing.manager.printing_language_ast.Text)
     def visit_text(self, node):
         handler_device_context, printable_area, printer_size, printer_margins = self.printer_handler
 
-        scale_factor = 20
+        if self.visit_index == 0:
+            self.add_context_information(node)
 
-        pen = win32ui.CreatePen(0, scale_factor, 0)
+            # retrieves the font name
+            font_name = str(self.get_context_information("font"))
 
-        handler_device_context.SelectObject(pen)
+            # retrieves the font size
+            font_size = int(self.get_context_information("font_size"))
 
-        font = win32ui.CreateFont({
-            "name": "Calibri",
-            "height": int(scale_factor * 10),
-            "weight": 400,
-        })
+            # creates the font
+            font = win32ui.CreateFont({"name": font_name, "height": FONT_SCALE_FACTOR * font_size, "weight": 400})
 
-        handler_device_context.SelectObject(font)
+            # selects the font object
+            handler_device_context.SelectObject(font)
 
-        handler_device_context.TextOut(scale_factor * 72, -1 * scale_factor * 72, node.text)
+            current_position_context_x, current_position_context_y = self.get_current_position_context()
+
+            handler_device_context.TextOut(current_position_context_x, current_position_context_y, node.text)
+        elif self.visit_index == 1:
+            self.remove_context_information(node)
 
     @_visit(printing.manager.printing_language_ast.Image)
     def visit_image(self, node):
         print "Image: " + str(node)
+
+    def get_current_position_context(self):
+        # retrieves the current position in x and y
+        current_position_x, current_position_y = self.current_position
+
+        # converts the current position to context
+        current_position_context = (FONT_SCALE_FACTOR * current_position_x, -1 * FONT_SCALE_FACTOR * current_position_y)
+
+        return current_position_context
+
+    def get_context_information(self, context_information_name):
+        if not self.has_context_information(context_information_name):
+            raise printing_win32_exceptions.InvalidContextInformationName("the context information name: " + context_information_name + " is invalid")
+
+        return self.peek_context_information(context_information_name)
+
+    def add_context_information(self, node):
+        valid_attributes = [(value, getattr(node, value)) for value in dir(node) if value not in EXCLUSION_LIST]
+
+        for valid_attribute_name, valid_attribute_value in valid_attributes:
+            self.push_context_information(valid_attribute_name, valid_attribute_value)
+
+    def remove_context_information(self, node):
+        valid_attribute_names = [value for value in dir(node) if value not in EXCLUSION_LIST]
+
+        for valid_attribute_name in valid_attribute_names:
+            self.pop_context_information(valid_attribute_name)
+
+    def push_context_information(self, context_information_name, context_information_value):
+        if not context_information_name in self.context_information_map:
+            self.context_information_map[context_information_name] = []
+
+        self.context_information_map[context_information_name].append(context_information_value)
+
+    def pop_context_information(self, context_information_name):
+        if not context_information_name in self.context_information_map:
+            raise printing_win32_exceptions.InvalidContextInformationName("the context information name: " + context_information_name + " is invalid")
+
+        self.context_information_map[context_information_name].pop()
+
+    def peek_context_information(self, context_information_name):
+        if not context_information_name in self.context_information_map:
+            raise printing_win32_exceptions.InvalidContextInformationName("the context information name: " + context_information_name + " is invalid")
+
+        return self.context_information_map[context_information_name][-1]
+
+    def has_context_information(self, context_information_name):
+        if not context_information_name in self.context_information_map or not self.context_information_map[context_information_name]:
+            return False
+        else:
+            return True

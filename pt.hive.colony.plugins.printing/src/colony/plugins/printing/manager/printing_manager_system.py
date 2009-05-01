@@ -67,19 +67,25 @@ class PrintingManager:
         # retrieves the plugin manager
         plugin_manager = self.printing_manager_plugin.manager
 
+        # retrieves the plugin path
         plugin_path = plugin_manager.get_plugin_path_by_id(self.printing_manager_plugin.id)
 
+        # creates the complete image path
         image_path = plugin_path + "/" + TEST_IMAGE_PATH
 
         self.printing_manager_plugin.printing_plugins[0].print_test_image(image_path, printing_options)
 
     def print_printing_language(self, printing_language_string, printing_options = {}):
+        # creates a new printing language parser
         parser = printing_language_parser.PrintingLanguageParser()
-        parser.string = printing_language_string
-        parser.parse_string()
-        value = parser.get_value()
-        import printing_language_visitor
-        visitor = printing_language_visitor.Visitor()
-        value.accept(visitor)
 
-        self.printing_manager_plugin.printing_plugins[0].print_printing_language(value, printing_options)
+        # sets the printing language string in the parser
+        parser.string = printing_language_string
+
+        # parses the string
+        parser.parse_string()
+
+        # retrieves the printing document
+        printing_document = parser.get_value()
+
+        self.printing_manager_plugin.printing_plugins[0].print_printing_language(printing_document, printing_options)
