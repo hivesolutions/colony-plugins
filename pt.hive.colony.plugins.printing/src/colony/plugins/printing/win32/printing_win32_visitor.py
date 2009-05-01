@@ -38,7 +38,11 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import win32ui
+import win32gui
 import win32con
+
+import PIL.Image
+import PIL.ImageWin
 
 import printing_win32_constants
 import printing_win32_exceptions
@@ -46,6 +50,9 @@ import printing.manager.printing_language_ast
 
 FONT_SCALE_FACTOR = 20
 """ The font scale factor """
+
+IMAGE_SCALE_FACTOR = 10
+""" The image scale factor """
 
 EXCLUSION_LIST = ["__class__", "__delattr__", "__dict__", "__doc__", "__getattribute__", "__hash__", "__init__", "__module__", "__new__", "__reduce__", "__reduce_ex__", "__repr__", "__setattr__", "__str__", "__weakref__", "accept", "accept_double", "accept_post_order", "add_child_node", "remove_child_node", "set_indent", "set_value", "indent", "value", "child_nodes"]
 """ The exclusion list """
@@ -267,6 +274,8 @@ class Visitor:
         handler_device_context, printable_area, printer_size, printer_margins = self.printer_handler
 
         if self.visit_index == 0:
+            self.add_context_information(node)
+
             # retrieves the printing document name
             printing_document_name = node.name
 
@@ -294,6 +303,8 @@ class Visitor:
             # ends the document
             handler_device_context.EndDoc()
 
+            self.remove_context_information(node)
+
     @_visit(printing.manager.printing_language_ast.Paragraph)
     def visit_paragraph(self, node):
         if self.visit_index == 0:
@@ -305,20 +316,45 @@ class Visitor:
     def visit_line(self, node):
         if self.visit_index == 0:
             self.add_context_information(node)
+
+            self.push_context_information("biggest_height", 0)
+
+            if self.has_context_information("margin_top"):
+                # retrieves the margin top
+                margin_top = int(self.get_context_information("margin_top"))
+            else:
+                # sets the default margin top
+                margin_top = 0
+
+            # retrieves the current position in x and y
+            current_position_x, current_position_y = self.current_position
+
+            self.current_position = current_position_x, current_position_y - margin_top * FONT_SCALE_FACTOR
         elif self.visit_index == 1:
-            self.remove_context_information(node)
+            biggest_height = self.get_context_information("biggest_height")
+
+            self.pop_context_information("biggest_height")
+
+            if self.has_context_information("margin_bottom"):
+                # retrieves the margin bottom
+                margin_bottom = int(self.get_context_information("margin_bottom"))
+            else:
+                # sets the default margin bottom
+                margin_bottom = 0
 
             # retrieves the current position in x and y
             current_position_x, current_position_y = self.current_position
 
             # sets the new current position
-            self.current_position = current_position_x, current_position_y + 20
+            self.current_position = 0, current_position_y - biggest_height - margin_bottom * FONT_SCALE_FACTOR
+
+            self.remove_context_information(node)
 
     @_visit(printing.manager.printing_language_ast.Text)
     def visit_text(self, node):
-        handler_device_context, printable_area, printer_size, printer_margins = self.printer_handler
-
         if self.visit_index == 0:
+            handler_device_context, printable_area, printer_size, printer_margins = self.printer_handler
+
             self.add_context_information(node)
 
             # retrieves the font name
@@ -327,21 +363,135 @@ class Visitor:
             # retrieves the font size
             font_size = int(self.get_context_information("font_size"))
 
+            # retrieves the text align
+            text_align = self.get_context_information("text_align")
+
+            if self.has_context_information("font_style"):
+                # retrieves the font style
+                font_style = self.get_context_information("font_style")
+            else:
+                # sets the font style
+                font_style = "regular"
+
+            if self.has_context_information("margin_left"):
+                # retrieves the margin left
+                margin_left = int(self.get_context_information("margin_left"))
+            else:
+                # sets the default margin left
+                margin_left = 0
+
+            if self.has_context_information("margin_right"):
+                # retrieves the margin right
+                margin_right = int(self.get_context_information("margin_right"))
+            else:
+                # sets the default margin right
+                margin_right = 0
+
+            text_weight = 400
+            text_italic = False
+
+            if font_style == "bold" or font_style == "bold_italic":
+                text_weight = 800
+            elif font_style == "italic" or font_style == "bold_italic":
+                text_italic = True
+
             # creates the font
-            font = win32ui.CreateFont({"name": font_name, "height": FONT_SCALE_FACTOR * font_size, "weight": 400})
+            font = win32ui.CreateFont({"name" : font_name,
+                                       "height" : font_size * FONT_SCALE_FACTOR,
+                                       "weight" : text_weight,
+                                       "italic" : text_italic})
 
             # selects the font object
             handler_device_context.SelectObject(font)
 
-            current_position_context_x, current_position_context_y = self.get_current_position_context()
+            # retrieves the current position in x and y
+            current_position_context_x, current_position_context_y = self.current_position
 
-            handler_device_context.TextOut(current_position_context_x, current_position_context_y, node.text)
+            # retrieves the text width and height
+            text_width, text_height = handler_device_context.GetTextExtent(node.text)
+
+            # retrieves the current clip box values
+            clip_box_left, clip_box_top, clip_box_right, clip_box_bottom = handler_device_context.GetClipBox()
+
+            text_x = (margin_left - margin_right) * FONT_SCALE_FACTOR
+
+            if text_align == "left":
+                text_x += 0
+            elif text_align == "right":
+                text_x += clip_box_right - text_width
+            elif text_align == "center":
+                text_x += int(clip_box_right / 2) - int(text_width / 2)
+
+            text_y = current_position_context_y
+
+            handler_device_context.TextOut(text_x, text_y, node.text)
+
+            if self.get_context_information("biggest_height") < text_height:
+                self.put_context_information("biggest_height", text_height)
+
         elif self.visit_index == 1:
             self.remove_context_information(node)
 
     @_visit(printing.manager.printing_language_ast.Image)
     def visit_image(self, node):
-        print "Image: " + str(node)
+        if self.visit_index == 0:
+            handler_device_context, printable_area, printer_size, printer_margins = self.printer_handler
+
+            self.add_context_information(node)
+
+            # retrieves the image path
+            image_path = self.get_context_information("path")
+
+            # retrieves the text align
+            text_align = self.get_context_information("text_align")
+
+            # opens the bitmap image
+            bitmap_image = PIL.Image.open(image_path)
+
+            # retrieves the bitmap image width and height
+            bitmap_image_width, bitmap_image_height = bitmap_image.size
+
+            # creates the dib image from the original
+            # bitmap image, created with PIL
+            dib_image = PIL.ImageWin.Dib(bitmap_image)
+
+            real_bitmap_image_width = bitmap_image_width
+            real_bitmap_image_height = bitmap_image_height
+
+            # retrieves the current position in x and y
+            current_position_x, current_position_y = self.current_position
+
+            # retrieves the current clip box values
+            clip_box_left, clip_box_top, clip_box_right, clip_box_bottom = handler_device_context.GetClipBox()
+
+            if text_align == "left":
+                real_bitmap_x1 = 0
+            elif text_align == "right":
+                real_bitmap_x1 = clip_box_right - real_bitmap_image_width * IMAGE_SCALE_FACTOR
+            elif text_align == "center":
+                real_bitmap_x1 = int(clip_box_right / 2) - int(real_bitmap_image_width * IMAGE_SCALE_FACTOR / 2)
+
+            real_bitmap_y1 = current_position_y
+            real_bitmap_x2 = real_bitmap_x1 + (real_bitmap_image_width * IMAGE_SCALE_FACTOR)
+            real_bitmap_y2 = real_bitmap_y1 - (real_bitmap_image_height * IMAGE_SCALE_FACTOR)
+
+            # retrieves the output for the handler device context
+            handler_device_context_output = handler_device_context.GetHandleOutput()
+
+            # draws the image in the output for the handler device context
+            dib_image.draw(handler_device_context_output, (real_bitmap_x1, real_bitmap_y1, real_bitmap_x2, real_bitmap_y2))
+
+            # sets the map mode
+            handler_device_context.SetMapMode(win32con.MM_TWIPS)
+
+            # sets the new current position
+            self.current_position = current_position_x + real_bitmap_x2, current_position_y
+
+            if self.get_context_information("biggest_height") < real_bitmap_image_height * IMAGE_SCALE_FACTOR:
+                self.put_context_information("biggest_height", real_bitmap_image_height * IMAGE_SCALE_FACTOR)
+
+        elif self.visit_index == 1:
+            self.remove_context_information(node)
 
     def get_current_position_context(self):
         # retrieves the current position in x and y
@@ -387,6 +537,12 @@ class Visitor:
             raise printing_win32_exceptions.InvalidContextInformationName("the context information name: " + context_information_name + " is invalid")
 
         return self.context_information_map[context_information_name][-1]
+
+    def put_context_information(self, context_information_name, context_information_value):
+        if not context_information_name in self.context_information_map:
+            raise printing_win32_exceptions.InvalidContextInformationName("the context information name: " + context_information_name + " is invalid")
+
+        self.context_information_map[context_information_name][-1] = context_information_value
 
     def has_context_information(self, context_information_name):
         if not context_information_name in self.context_information_map or not self.context_information_map[context_information_name]:
