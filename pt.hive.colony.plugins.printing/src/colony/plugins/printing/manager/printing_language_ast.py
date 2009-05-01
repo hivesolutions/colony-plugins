@@ -109,7 +109,7 @@ class AstNode(object):
 
         if visitor.visit_childs:
             for child_node in self.child_nodes:
-                child_node.accept_post_order(visitor)
+                child_node.accept_double(visitor)
 
         visitor.visit_index = 1
         visitor.visit(self)
