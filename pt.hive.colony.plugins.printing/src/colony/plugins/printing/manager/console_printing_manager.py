@@ -48,7 +48,8 @@ INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 
 HELP_TEXT = "### PRINTING HELP ###\n\
 print_test - prints a test page\n\
-print_test_image - prints a test page with an image"
+print_test_image - prints a test page with an image\n\
+print_printing_language <file-path> - prints the page described in the file of the given file path"
 """ The help text """
 
 class ConsolePrintingManager:
@@ -56,7 +57,7 @@ class ConsolePrintingManager:
     The console printing manager class.
     """
 
-    commands = ["print_test", "print_test_image"]
+    commands = ["print_test", "print_test_image", "print_printing_language"]
 
     printing_manager_plugin = None
     """ The printing manager plugin """
@@ -99,3 +100,26 @@ class ConsolePrintingManager:
 
         # prints the test page with an image
         printing_manager.print_test_image()
+
+    def process_print_printing_language(self, args, output_method):
+        if len(args) < 1:
+            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
+            return
+
+        # retrieves the printing language file path
+        printing_language_file_path = args[0]
+
+        # opens the printing language file
+        printing_language_file = open(printing_language_file_path, "r")
+
+        # reads the printing language file contents
+        printing_language_file_contents = printing_language_file.read();
+
+        # closes the printing language file
+        printing_language_file.close()
+
+        # retrieves the printing manager instance
+        printing_manager = self.printing_manager_plugin.printing_manager
+
+        # prints the printing language file
+        printing_manager.print_printing_language(printing_language_file_contents)
