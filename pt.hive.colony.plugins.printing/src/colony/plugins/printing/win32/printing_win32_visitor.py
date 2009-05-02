@@ -392,7 +392,8 @@ class Visitor:
 
             if font_style == "bold" or font_style == "bold_italic":
                 text_weight = 800
-            elif font_style == "italic" or font_style == "bold_italic":
+
+            if font_style == "italic" or font_style == "bold_italic":
                 text_italic = True
 
             # creates the font
