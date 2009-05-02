@@ -48,10 +48,10 @@ END_TAG_VALUE = "\$\{\/[^\{\}][^\/\{}\{}]*\}"
 SINGLE_TAG_VALUE = "\$\{[^\{\}]*\/\}"
 """ The single tag value """
 
-ATTRIBUTE_VALUE = "[a-zA-Z]+=[a-zA-Z0-9]+"
+ATTRIBUTE_VALUE = "[a-zA-Z_]+=[a-zA-Z_0-9\.]+"
 """ The attribute value """
 
-ATTRIBUTE_QUOTED_VALUE = "[a-zA-Z]+=\".+\""
+ATTRIBUTE_QUOTED_VALUE = "[a-zA-Z_]+=\".+\""
 """ The attribute quoted value """
 
 START_VALUE = "start"
@@ -375,14 +375,14 @@ class MatchTreeNode(TreeNode):
 
             attribute_name, attribute_value = attribute_splitted
 
-            self.attributes_map[attribute_name] = {"value" : attribute_value, type : "variable"}
+            self.attributes_map[attribute_name] = {"value" : attribute_value, "type" : "variable"}
 
         for attribute_quoted in attributes_quoted:
             attribute_quoted_splitted = attribute_quoted.split("=")
 
             attribute_quoted_name, attribute_quoted_value = attribute_quoted_splitted
 
-            self.attributes_map[attribute_quoted_name] = {"value" : attribute_quoted_value, type : "literal"}
+            self.attributes_map[attribute_quoted_name] = {"value" : attribute_quoted_value, "type" : "literal"}
 
     def get_value_type(self):
         return self.value_type
