@@ -304,11 +304,11 @@ class TemplateEngineManager:
                 # adds the literal node as a child to the parent node
                 parent_node.add_child_node(literal_node)
 
-        # creates the parsed file from the root node
-        parsed_file = ParsedFile(root_node)
+        # creates the template file from the root node
+        template_file = TemplateFile(root_node)
 
-        # returns the parsed file
-        return parsed_file
+        # returns the template file
+        return template_file
 
 class MatchOrderer:
     """
@@ -362,9 +362,9 @@ class LiteralMatch:
     def end(self):
         return self.end_index
 
-class ParsedFile:
+class TemplateFile:
     """
-    The parsed file class.
+    The template file class.
     """
 
     root_node = None
