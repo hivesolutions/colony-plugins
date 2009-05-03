@@ -120,11 +120,14 @@ class BusinessSessionManager:
             self.unload_business_logic_class(business_logic_class)
 
     def load_session_manager(self, session_name, entity_manager = None):
+        # retrieves the plugin manager
+        plugin_manager = self.business_session_manager_plugin.manager
+
         # retrieves the random plugin
         random_plugin = self.business_session_manager_plugin.random_plugin
 
         # creates the session manager
-        session_manager = SessionManager(session_name, self.loaded_business_logic_classes_list, self.loaded_business_logic_classes_map, entity_manager, random_plugin)
+        session_manager = SessionManager(session_name, self.loaded_business_logic_classes_list, self.loaded_business_logic_classes_map, plugin_manager, entity_manager, random_plugin)
 
         # adds the created session manager to the list of active session managers
         self.active_session_manager_list.append(session_manager)
@@ -133,6 +136,9 @@ class BusinessSessionManager:
         return session_manager
 
     def load_session_manager_master(self, session_name, entity_manager = None):
+        # retrieves the plugin manager
+        plugin_manager = self.business_session_manager_plugin.manager
+
         # retrieves the random plugin
         random_plugin = self.business_session_manager_plugin.random_plugin
 
@@ -143,7 +149,7 @@ class BusinessSessionManager:
         simple_pool_manager_plugin = self.business_session_manager_plugin.simple_pool_manager_plugin
 
         # creates the session manager master
-        session_manager_master = SessionManagerMaster(session_name, self.loaded_business_logic_classes_list, self.loaded_business_logic_classes_map, entity_manager, random_plugin, business_session_serializer_plugins, simple_pool_manager_plugin)
+        session_manager_master = SessionManagerMaster(session_name, self.loaded_business_logic_classes_list, self.loaded_business_logic_classes_map, plugin_manager, entity_manager, random_plugin, business_session_serializer_plugins, simple_pool_manager_plugin)
 
         # adds the created session manager master to the list of active session managers
         self.active_session_manager_list.append(session_manager_master)
@@ -185,6 +191,9 @@ class SessionManager:
     business_logic_classes_map = {}
     """ The map associating the business logic classes with their names """
 
+    plugin_manager = None
+    """ The current plugin manager """
+
     entity_manager = None
     """ The entity manager associated with the current session"""
 
@@ -203,10 +212,11 @@ class SessionManager:
     business_logic_class_methods_map = {}
     """ The map associating the business logic classes with their methods """
 
-    def __init__(self, session_name, business_logic_classes_list, business_logic_classes_map, entity_manager = None, random_plugin = None):
+    def __init__(self, session_name, business_logic_classes_list, business_logic_classes_map, plugin_manager = None, entity_manager = None, random_plugin = None):
         self.session_name = session_name
         self.business_logic_classes_list = business_logic_classes_list
         self.business_logic_classes_map = business_logic_classes_map
+        self.plugin_manager = plugin_manager
         self.entity_manager = entity_manager
         self.random_plugin = random_plugin
 
@@ -222,6 +232,7 @@ class SessionManager:
 
         self.instantiate_business_logic()
         self.inject_entity_manager()
+        self.inject_plugin_manager()
         self.inject_business_logic()
 
     def stop_session(self):
@@ -261,6 +272,11 @@ class SessionManager:
         # iterates over all the business logic classes
         for business_logic_class in self.business_logic_classes_list:
             business_logic_class.entity_manager = self.entity_manager
+
+    def inject_plugin_manager(self):
+        # iterates over all the business logic classes
+        for business_logic_class in self.business_logic_classes_list:
+            business_logic_class.plugin_manager = self.plugin_manager
 
     def inject_business_logic(self):
         # iterates over the business logic instance map
@@ -344,8 +360,8 @@ class SessionManagerMaster(SessionManager):
     session_information_registry = None
     """ The session information registry """
 
-    def __init__(self, session_name, business_logic_classes_list, business_logic_classes_map, entity_manager = None, random_plugin = None, business_session_serializer_plugins = [], simple_pool_manager_plugin = None):
-        SessionManager.__init__(self, session_name, business_logic_classes_list, business_logic_classes_map, entity_manager, random_plugin)
+    def __init__(self, session_name, business_logic_classes_list, business_logic_classes_map, plugin_manager = None, entity_manager = None, random_plugin = None, business_session_serializer_plugins = [], simple_pool_manager_plugin = None):
+        SessionManager.__init__(self, session_name, business_logic_classes_list, business_logic_classes_map, plugin_manager, entity_manager, random_plugin)
 
         self.business_session_serializer_plugins = business_session_serializer_plugins
         self.simple_pool_manager_plugin = simple_pool_manager_plugin
