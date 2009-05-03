@@ -86,7 +86,7 @@ class TemplateEngineManagerPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def parse_file_path(self, file_path):
-        self.template_engine_manager.parse_file_path(file_path)
+        return self.template_engine_manager.parse_file_path(file_path)
 
     def parse_file(self, file):
-        self.template_engine_manager.parse_file(file)
+        return self.template_engine_manager.parse_file(file)

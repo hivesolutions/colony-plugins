@@ -39,6 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import re
 
+import template_engine_ast
+import template_engine_visitor
+
 START_TAG_VALUE = "\$\{[^\/\{}\{}][^\{\}][^\/\{}\{}]*\}"
 """ The start tag value """
 
@@ -62,6 +65,9 @@ END_VALUE = "end"
 
 SINGLE_VALUE = "single"
 """ The single value """
+
+LITERAL_VALUE = "literal"
+""" The literal value """
 
 class TemplateEngineManager:
     """
@@ -105,6 +111,12 @@ class TemplateEngineManager:
 
         # creates the template single regex
         template_single_regex = re.compile(SINGLE_TAG_VALUE)
+
+        # creates the attribute regex
+        attribute_regex = re.compile(ATTRIBUTE_VALUE)
+
+        # creates the attribute quoted single regex
+        attribute_quoted_regex = re.compile(ATTRIBUTE_QUOTED_VALUE)
 
         # retrieves the start matches iterator
         start_matches_iterator = template_start_regex.finditer(file_contents)
@@ -166,88 +178,137 @@ class TemplateEngineManager:
         # reverses the list so that it's ordered in ascending form
         match_orderer_list.reverse()
 
-        # creates the match pairs list
-        match_pairs_tree_root_node = TreeNode(("root", "root"))
+        # creates the temporary literal match orderer list
+        literal_match_orderer_list = []
 
-        tree_node_stack = [match_pairs_tree_root_node]
+        # creates the initial previous end
+        previous_end = 1
 
         # iterates over all the matches in
         # the match orderer list
         for match_orderer in match_orderer_list:
+            # retrieves the match orderer match start
+            match_orderer_match_start = match_orderer.match.start()
+
+            # in case the current match orderer value start is not the same
+            # as the previous end plus one
+            if not match_orderer_match_start == previous_end:
+                # calculates the literal match start
+                literal_match_start = previous_end - 1
+
+                # calculates the literal match end
+                literal_match_end = match_orderer_match_start
+
+                # calculates the literal match value
+                literal_match_value = file_contents[literal_match_start:literal_match_end]
+
+                # creates the literal match object with the
+                # literal match start and the literal match end
+                literal_match = LiteralMatch(literal_match_start, literal_match_end)
+
+                # creates a match orderer object for the literal match
+                literal_match_orderer = MatchOrderer(literal_match, LITERAL_VALUE, literal_match_value)
+
+                # appends the literal match orderer object to
+                # the list of literal match orderer list
+                literal_match_orderer_list.append(literal_match_orderer)
+
+            # updates the previous end value
+            previous_end = match_orderer.match.end() + 1
+
+        # in case there is still a final literal to be processed
+        if not previous_end == len(file_contents):
+            # calculates the literal match start
+            literal_match_start = previous_end - 1
+
+            # calculates the literal match end
+            literal_match_end = len(file_contents)
+
+            # calculates the literal match value
+            literal_match_value = file_contents[literal_match_start:literal_match_end]
+
+            # creates the literal match object with the
+            # literal match start and the literal match end
+            literal_match = LiteralMatch(literal_match_start, literal_match_end)
+
+            # creates a match orderer object for the literal match
+            literal_match_orderer = MatchOrderer(literal_match, LITERAL_VALUE, literal_match_value)
+
+            # appends the literal match orderer object to
+            # the list of literal match orderer list
+            literal_match_orderer_list.append(literal_match_orderer)
+
+        # adds the elements of the literal math orderer list
+        # to the match orderer list
+        match_orderer_list += literal_match_orderer_list
+
+        # orders the match orderer list
+        match_orderer_list.sort()
+
+        # reverses the list so that it's ordered in ascending form
+        match_orderer_list.reverse()
+
+        # creates the root node
+        root_node = template_engine_ast.RootNode()
+
+        # creates the tree node stack with the root node inserted
+        tree_node_stack = [root_node]
+
+        # iterates over all the matches in
+        # the match orderer list
+        for match_orderer in match_orderer_list:
+            # retrieves the match orderer type
             match_orderer_type = match_orderer.get_match_type()
 
             # in case the match order is of type start
             if match_orderer_type == START_VALUE:
-                parent_tree_node = tree_node_stack[-1]
-                match_pair_tree_node = CompositeTreeNode([match_orderer], parent_tree_node)
-                parent_tree_node.get_childs().append(match_pair_tree_node)
-                tree_node_stack.append(match_pair_tree_node)
+                # retrieves the parent node
+                parent_node = tree_node_stack[-1]
+
+                # creates the composite node from the match orderer
+                composite_node = template_engine_ast.CompositeNode([match_orderer], attribute_regex, attribute_quoted_regex)
+
+                # adds the composite node as a child to the parent node
+                parent_node.add_child_node(composite_node)
+
+                # adds the composite node to the tree node stack
+                tree_node_stack.append(composite_node)
             # in case the match order is of type end
             elif match_orderer_type == END_VALUE:
-                match_pair_tree_node = tree_node_stack.pop()
-                match_pair_tree_node.value.append(match_orderer)
-                tuple(match_pair_tree_node.value)
+                # retrieves the composite node
+                composite_node = tree_node_stack.pop()
+
+                # adds the match orderer to the value of the composite node
+                composite_node.value.append(match_orderer)
+
+                # converts the composite node value to a tuple
+                tuple(composite_node.value)
             # in case the match order is of type single
             elif match_orderer_type == SINGLE_VALUE:
-                parent_tree_node = tree_node_stack[-1]
-                match_pair_tree_node = SingleTreeNode(match_orderer, parent_tree_node)
-                parent_tree_node.get_childs().append(match_pair_tree_node)
+                # retrieves the parent node
+                parent_node = tree_node_stack[-1]
 
-        # iterates over all the match pairs tree root node child nodes
-        for match_pairs_tree_root_node_child_node in match_pairs_tree_root_node.childs:
-            self.visit_node(match_pairs_tree_root_node_child_node)
+                # creates the single node from the match orderer
+                single_node = template_engine_ast.SingleNode(match_orderer,  attribute_regex, attribute_quoted_regex)
 
-    def visit_node(self, node):
-        # retrieves the node class
-        node_class = node.__class__
+                # adds the single node as a child to the parent node
+                parent_node.add_child_node(single_node)
+            # in case the match order is of type literal
+            elif match_orderer_type == LITERAL_VALUE:
+                # retrieves the parent node
+                parent_node = tree_node_stack[-1]
 
-        # in case the node is of type single tree node class
-        if node_class == SingleTreeNode:
-            single_match_value = node.value
+                # creates the literal node from the match orderer
+                literal_node = template_engine_ast.LiteralNode(match_orderer)
 
-            print "single: " + single_match_value.match_value
-            print "type:   " + node.get_value_type()
+                # adds the literal node as a child to the parent node
+                parent_node.add_child_node(literal_node)
 
-            node_value_type = node.get_value_type()
+        # creates the parsed file from the root node
+        parsed_file = ParsedFile(root_node)
 
-            process_method = getattr(self, "process_" + node_value_type)
-
-            process_method("", node)
-
-        elif node_class == CompositeTreeNode:
-            start_match_value, end_match_value = node.value
-
-            print "start:  " + start_match_value.match_value
-            print "end:    " + end_match_value.match_value
-            print "type:   " + node.get_value_type()
-
-            node_value_type = node.get_value_type()
-
-            process_method = getattr(self, "process_" + node_value_type)
-
-            for node_child in node.childs:
-                self.visit_node(node_child)
-
-    def process_out(self, inside_buffer, node):
-        pass
-
-    def process_var(self, inside_buffer, node):
-        pass
-
-    def process_foreach(self, inside_buffer, node):
-        pass
-
-    def process_foreach1(self, inside_buffer, node):
-        pass
-
-    def process_foreach2(self, inside_buffer, node):
-        pass
-
-    def process_foreach3(self, inside_buffer, node):
-        pass
-
-    def process_foreach4(self, inside_buffer, node):
-        pass
+        # returns the parsed file
+        return parsed_file
 
 class MatchOrderer:
     """
@@ -283,142 +344,52 @@ class MatchOrderer:
     def set_match_value(self, match_value):
         self.match_value = match_value
 
-class TreeNode:
+class LiteralMatch:
+
+    start_index = None
+    """ The start index value """
+
+    end_index = None
+    """ The end index value """
+
+    def __init__(self, start_index = None, end_index = None):
+        self.start_index = start_index
+        self.end_index = end_index
+
+    def start(self):
+        return self.start_index
+
+    def end(self):
+        return self.end_index
+
+class ParsedFile:
     """
-    The tree node class.
-    """
-
-    value = None
-    """ The tree node value """
-
-    parent = None
-    """ The tree node parent node """
-
-    childs = []
-    """ The tree node child nodes """
-
-    def __init__(self, value = None, parent = None):
-        self.value = value
-        self.parent = parent
-        self.childs = []
-
-    def get_value(self):
-        return self.value
-
-    def set_value(self, value):
-        self.value = value
-
-    def get_parent(self):
-        return self.childs
-
-    def set_parent(self, parent):
-        self.parent = parent
-
-    def get_childs(self):
-        return self.childs
-
-    def set_childs(self, childs):
-        self.childs = childs
-
-class MatchTreeNode(TreeNode):
-    """
-    The match tree node class.
+    The parsed file class.
     """
 
-    value_type = None
-    """ The value type """
+    root_node = None
+    """ The root node """
 
-    attributes_map = {}
-    """ The attributes map """
+    visitor = None
+    """ The visitor """
 
-    def __init__(self, value = None, parent = None):
-        TreeNode.__init__(self, value, parent)
-        self.attributes_map = {}
+    def __init__(self, root_node = None):
+        self.root_node = root_node
 
-        self.process_value_type()
-        self.process_value_attributes()
+        self.visitor = template_engine_visitor.Visitor()
 
-    def process_value_type(self):
-        # retrieve the start match value
-        start_match_value = self.get_start_match_value()
+    def assign(self, variable_name, variable_value):
+        self.visitor.add_global_variable(variable_name, variable_value)
 
-        # retrieves the start match value match value
-        start_match_value_match_value = start_match_value.get_match_value()
+    def process(self):
+        # accepts the visitor in the root node
+        self.root_node.accept(self.visitor)
 
-        # splits the start match value match value
-        start_match_value_match_value_splitted = start_match_value_match_value.split()
+        # retrieves the visitor string buffer
+        visitor_string_buffer = self.visitor.string_buffer
 
-        # retrieves the value type from the start match value match value splitted
-        self.value_type = start_match_value_match_value_splitted[0][2:]
+        # retrieves the visitor string buffer value
+        visitor_string_buffer_value = visitor_string_buffer.getvalue()
 
-    def process_value_attributes(self):
-        # retrieve the start match value
-        start_match_value = self.get_start_match_value()
-
-        # retrieves the start match value match value
-        start_match_value_match_value = start_match_value.get_match_value()
-
-        # creates the attribute regex
-        attribute_regex = re.compile(ATTRIBUTE_VALUE)
-
-        # creates the attribute quoted single regex
-        attribute_quoted_regex = re.compile(ATTRIBUTE_QUOTED_VALUE)
-
-        # finds all the attributes
-        attributes = attribute_regex.findall(start_match_value_match_value)
-
-        # finds all the attributes quoted
-        attributes_quoted = attribute_quoted_regex.findall(start_match_value_match_value)
-
-        for attribute in attributes:
-            attribute_splitted = attribute.split("=")
-
-            attribute_name, attribute_value = attribute_splitted
-
-            self.attributes_map[attribute_name] = {"value" : attribute_value, "type" : "variable"}
-
-        for attribute_quoted in attributes_quoted:
-            attribute_quoted_splitted = attribute_quoted.split("=")
-
-            attribute_quoted_name, attribute_quoted_value = attribute_quoted_splitted
-
-            self.attributes_map[attribute_quoted_name] = {"value" : attribute_quoted_value, "type" : "literal"}
-
-    def get_value_type(self):
-        return self.value_type
-
-    def set_value_type(self, value_type):
-        self.value_type = value_type
-
-    def get_value_type(self):
-        return self.value_type
-
-    def set_value_type(self, value_type):
-        self.value_type = value_type
-
-class SingleTreeNode(MatchTreeNode):
-    """
-    The single tree node class.
-    """
-
-    def __init__(self, value = None, parent = None):
-        TreeNode.__init__(self, value, parent)
-
-        self.attributes_map = {}
-
-        self.process_value_type()
-        self.process_value_attributes()
-
-    def get_start_match_value(self):
-        return self.value
-
-class CompositeTreeNode(MatchTreeNode):
-    """
-    The composite tree node class.
-    """
-
-    def __init__(self, value = None, parent = None):
-        MatchTreeNode.__init__(self, value, parent)
-
-    def get_start_match_value(self):
-        return self.value[0]
+        # returns the visitor string buffer value
+        return visitor_string_buffer_value
