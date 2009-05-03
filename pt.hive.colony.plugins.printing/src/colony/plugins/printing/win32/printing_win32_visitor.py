@@ -37,9 +37,11 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import base64
 import win32ui
 import win32gui
 import win32con
+import cStringIO
 
 import PIL.Image
 import PIL.ImageWin
@@ -440,14 +442,42 @@ class Visitor:
 
             self.add_context_information(node)
 
-            # retrieves the image path
-            image_path = self.get_context_information("path")
+            # sets the image path object
+            image_path = None
+
+            # starts the image source object
+            image_source = None
+
+            if self.has_context_information("path"):
+                # retrieves the image path
+                image_path = self.get_context_information("path")
+            elif self.has_context_information("source"):
+                # retrieves the image source
+                image_source = self.get_context_information("source")
 
             # retrieves the text align
             text_align = self.get_context_information("text_align")
 
-            # opens the bitmap image
-            bitmap_image = PIL.Image.open(image_path)
+            # in case the image path is defined
+            if image_path:
+                # opens the bitmap image
+                bitmap_image = PIL.Image.open(image_path)
+            # in case the image source is defined
+            elif image_source:
+                # decodes the image source
+                image_source_decoded = base64.b64decode(image_source)
+
+                # creates the image buffer
+                image_source_buffer = cStringIO.StringIO()
+
+                # writes the image source decoded in the image source buffer
+                image_source_buffer.write(image_source_decoded)
+
+                # goes to the beginning of the file
+                image_source_buffer.seek(0)
+
+                # opens the bitmap image
+                bitmap_image = PIL.Image.open(image_source_buffer)
 
             # retrieves the bitmap image width and height
             bitmap_image_width, bitmap_image_height = bitmap_image.size
