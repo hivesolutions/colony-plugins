@@ -264,7 +264,7 @@ class Visitor:
         attributes_map = node.get_attributes_map()
         attribute_value = attributes_map["value"]
         attribute_value_value = self.get_value(attribute_value)
-        self.string_buffer.write(attribute_value_value)
+        self.string_buffer.write(str(attribute_value_value))
 
     def process_var(self, node):
         pass
@@ -305,10 +305,10 @@ class Visitor:
             variable_name_splitted = variable_name.split(".")
 
             # retrieves the first variable name split
-            fisrt_variable_name_split = variable_name_splitted[0]
+            first_variable_name_split = variable_name_splitted[0]
 
             # sets the current variable as the first split
-            current_variable = self.global_map[fisrt_variable_name_split]
+            current_variable = self.global_map[first_variable_name_split]
 
             for variable_name_split in variable_name_splitted[1:]:
                 # retrieves the current variable
