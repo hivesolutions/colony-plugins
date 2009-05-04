@@ -45,7 +45,7 @@ import cStringIO
 
 import business_sqlite_engine_exceptions
 
-import business.entity_manager.business_entity_manager_system
+import business.helper.business_helper_system
 
 ENGINE_NAME = "sqlite"
 """ The engine name """
@@ -2293,7 +2293,7 @@ class BusinessSqliteEngine:
             optional_field = relation_attributes.get(OPTIONAL_FIELD, DEFAULT_OPTIONAL_FIELD_VALUE)
 
             # in case the relation attribute value is not defined
-            if not isinstance(attribute_value, business.entity_manager.business_entity_manager_system.EntityClass):
+            if not isinstance(attribute_value, business.helper.business_helper_system.EntityClass):
                 # in case the value is optional
                 if optional_field:
                     # returns None
