@@ -1219,13 +1219,25 @@ class BusinessSqliteEngine:
         # appends the entity class to the entity sub classes
         entity_sub_classes.append(entity_class)
 
+        # creates the entity sub classes map
+        entity_sub_classes_map = {}
+
+        # creates the entity class valid attribute names list
         entity_class_valid_attribute_names = []
 
+        # iterates over all the entity sub classes
         for entity_sub_class in entity_sub_classes:
+            # retrieves the entity sub class name
+            entity_sub_class_name = entity_sub_class.__name__
+
+            # adds the entity sub class to the entity sub classes map
+            entity_sub_classes_map[entity_sub_class_name] = entity_sub_class
+
             # retrieves the entity sub class valid attribute names
             entity_sub_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_sub_class)
 
-            entity_class_valid_attribute_names += [value for value in entity_sub_class_valid_attribute_names if not value in entity_class_valid_attribute_names]
+            # extends the entity class valid attribute names with the new entity sub class valid attribute names
+            entity_class_valid_attribute_names.extend([value for value in entity_sub_class_valid_attribute_names if not value in entity_class_valid_attribute_names])
 
         # the first flag to control the sub class to be processed
         is_first_sub_class = True
@@ -1281,17 +1293,16 @@ class BusinessSqliteEngine:
             # retrieves the first value from the values list
             first_value = values_list[0]
 
-            for entity_sub_class in entity_sub_classes:
-                if entity_sub_class.__name__ == first_value[0]:
-                    # creates a new entity
-                    entity = entity_sub_class()
+            # retrieves the entity class name
+            entity_class_name = first_value[0]
 
-                    # sets the current entity class
-                    entity_class = entity_sub_class
+            # sets the current entity class
+            entity_class = entity_sub_classes_map[entity_class_name]
 
-                    # breaks the loop
-                    break
+            # creates a new entity
+            entity = entity_class()
 
+            # changes the first value to start one step forward
             first_value = first_value[1:]
 
             # creates the initial index value
