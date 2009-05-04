@@ -116,19 +116,6 @@ def dump_parts_buffer(obj, string_buffer):
         string_buffer.write("\"module\"")
     elif obj_type is types.MethodType:
         string_buffer.write("\"method\"")
-    elif obj_type is types.InstanceType or hasattr(obj, "__class__"):
-        string_buffer.write("{")
-        is_first = True
-        obj_items = [value for value in dir(obj) if not value in EXCLUSION_LIST and not type(getattr(obj, value)) in EXCLUSION_TYPES]
-        for obj_item in obj_items:
-            if is_first:
-                is_first = False
-            else:
-                string_buffer.write(",")
-            obj_value = getattr(obj, obj_item)
-            string_buffer.write("\"" + obj_item + "\"" + ":")
-            dump_parts_buffer(obj_value, string_buffer)
-        string_buffer.write("}")
     elif obj_type is types.BooleanType:
         if obj:
             string_buffer.write("true")
@@ -163,6 +150,19 @@ def dump_parts_buffer(obj, string_buffer):
         obj_time_tuple = obj.timetuple()
         date_time_timestamp = time.mktime(obj_time_tuple)
         string_buffer.write(str(date_time_timestamp))
+    elif obj_type is types.InstanceType or hasattr(obj, "__class__"):
+        string_buffer.write("{")
+        is_first = True
+        obj_items = [value for value in dir(obj) if not value in EXCLUSION_LIST and not type(getattr(obj, value)) in EXCLUSION_TYPES]
+        for obj_item in obj_items:
+            if is_first:
+                is_first = False
+            else:
+                string_buffer.write(",")
+            obj_value = getattr(obj, obj_item)
+            string_buffer.write("\"" + obj_item + "\"" + ":")
+            dump_parts_buffer(obj_value, string_buffer)
+        string_buffer.write("}")
     else:
         raise main_jsonrpc_manager_exceptions.JsonEncodeException(obj)
 
@@ -176,20 +176,6 @@ def dump_parts(obj):
         yield "\"module\""
     elif obj_type is types.MethodType:
         yield "\"method\""
-    elif obj_type is types.InstanceType or hasattr(obj, "__class__"):
-        yield "{"
-        is_first = True
-        obj_items = [value for value in dir(obj) if not value in EXCLUSION_LIST and not type(getattr(obj, value)) in EXCLUSION_TYPES]
-        for obj_item in obj_items:
-            if is_first:
-                is_first = False
-            else:
-                yield ","
-            obj_value = getattr(obj, obj_item)
-            yield "\"" + obj_item + "\"" + ":"
-            for part in dump_parts(obj_value):
-                yield part
-        yield "}"
     elif obj_type is types.BooleanType:
         if obj:
             yield "true"
@@ -226,6 +212,20 @@ def dump_parts(obj):
         obj_time_tuple = obj.timetuple()
         date_time_timestamp = time.mktime(obj_time_tuple)
         yield unicode(date_time_timestamp)
+    elif obj_type is types.InstanceType or hasattr(obj, "__class__"):
+        yield "{"
+        is_first = True
+        obj_items = [value for value in dir(obj) if not value in EXCLUSION_LIST and not type(getattr(obj, value)) in EXCLUSION_TYPES]
+        for obj_item in obj_items:
+            if is_first:
+                is_first = False
+            else:
+                yield ","
+            obj_value = getattr(obj, obj_item)
+            yield "\"" + obj_item + "\"" + ":"
+            for part in dump_parts(obj_value):
+                yield part
+        yield "}"
     else:
         raise main_jsonrpc_manager_exceptions.JsonEncodeException(obj)
 
