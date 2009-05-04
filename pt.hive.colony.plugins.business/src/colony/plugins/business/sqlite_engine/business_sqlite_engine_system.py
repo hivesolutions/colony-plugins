@@ -45,6 +45,8 @@ import cStringIO
 
 import business_sqlite_engine_exceptions
 
+import business.entity_manager.business_entity_manager_system
+
 ENGINE_NAME = "sqlite"
 """ The engine name """
 
@@ -1213,29 +1215,62 @@ class BusinessSqliteEngine:
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
 
+        # retrieves the entity sub classes
+        entity_sub_classes = self.get_entity_sub_classes(entity_class)
+
+        # appends the entity class to the entity sub classes
+        entity_sub_classes.append(entity_class)
+
+        entity_class_valid_attribute_names = []
+
+        for entity_sub_class in entity_sub_classes:
+            # retrieves the entity sub class valid attribute names
+            entity_sub_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_sub_class)
+
+            entity_class_valid_attribute_names += [value for value in entity_sub_class_valid_attribute_names if not value in entity_class_valid_attribute_names]
+
+        # the first flag to control the sub class to be processed
+        is_first_sub_class = True
+
         # creates the initial query string value
-        query_string_value = "select "
+        query_string_value = ""
 
-        # the first flag to control the first field to be processed
-        is_first = True
+        # iterates over all the entity sub classes
+        for entity_sub_class in entity_sub_classes:
+            # retrieves the entity sub class name
+            entity_sub_class_name = entity_sub_class.__name__
 
-        for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
-            # in case is the first field to be processed
-            if is_first:
-                # sets the is flag to false to start adding commas
-                is_first = False
+            # in case is the first sub class to be processed
+            if is_first_sub_class:
+                # sets the is flag to false to start adding union all
+                is_first_sub_class = False
             else:
+                # adds a union all to the query string value
+                query_string_value += " union all "
+
+            # creates the select query string value
+            query_string_value += "select "
+
+            query_string_value += "\"" + entity_sub_class_name + "\" as class_data_type"
+
+            # @todo cache this value it's to painful to use
+            entity_sub_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_sub_class)
+
+            for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
                 # adds a comma to the query string value
                 query_string_value += ", "
 
-            query_string_value += entity_class_valid_attribute_name
+                if entity_class_valid_attribute_name in entity_sub_class_valid_attribute_names:
+                    query_string_value += entity_class_valid_attribute_name
+                else:
+                    query_string_value += "\"\" as " + entity_class_valid_attribute_name
 
-        query_string_value += " from " + entity_class_name + " where " + entity_class_id_attribute_name + " = "
+            query_string_value += " from " + entity_sub_class_name + " where " + entity_class_id_attribute_name + " = "
 
-        # retrieves the id value sqlite string value
-        id_value_sqlite_string_value = self.get_attribute_sqlite_string_value(id_value, entity_class_id_attribute_value_data_type)
+            # retrieves the id value sqlite string value
+            id_value_sqlite_string_value = self.get_attribute_sqlite_string_value(id_value, entity_class_id_attribute_value_data_type)
 
-        query_string_value += id_value_sqlite_string_value
+            query_string_value += id_value_sqlite_string_value
 
         # executes the query retrieving the values
         self.execute_query(cursor, query_string_value)
@@ -1245,11 +1280,21 @@ class BusinessSqliteEngine:
 
         # in case there is at least one selection
         if len(values_list):
-            # creates a new entity instance
-            entity = entity_class()
-
             # retrieves the first value from the values list
             first_value = values_list[0]
+
+            for entity_sub_class in entity_sub_classes:
+                if entity_sub_class.__name__ == first_value[0]:
+                    # creates a new entity
+                    entity = entity_sub_class()
+
+                    # sets the current entity class
+                    entity_class = entity_sub_class
+
+                    # breaks the loop
+                    break
+
+            first_value = first_value[1:]
 
             # creates the initial index value
             index = 0
@@ -1263,30 +1308,32 @@ class BusinessSqliteEngine:
                 # retrieves the entity class attribute name
                 entity_class_valid_attribute_name = entity_class_valid_attribute_names[index]
 
-                # in case the attribute is a relation
-                if self.is_attribute_name_relation(entity_class_valid_attribute_name, entity_class):
-                    # in case the relation attribute is not meant to be eager loaded
-                    if self.is_attribute_name_lazy_relation(entity_class_valid_attribute_name, entity_class) and not entity_class_valid_attribute_name in eager_loading_relations:
-                        # sets the lazy loaded attribute in the instance
-                        setattr(entity, entity_class_valid_attribute_name, "%lazy-loaded%")
+                # in case the attribute exists for the current entity class
+                if hasattr(entity_class, entity_class_valid_attribute_name):
+                    # in case the attribute is a relation
+                    if self.is_attribute_name_relation(entity_class_valid_attribute_name, entity_class):
+                        # in case the relation attribute is not meant to be eager loaded
+                        if self.is_attribute_name_lazy_relation(entity_class_valid_attribute_name, entity_class) and not entity_class_valid_attribute_name in eager_loading_relations:
+                            # sets the lazy loaded attribute in the instance
+                            setattr(entity, entity_class_valid_attribute_name, "%lazy-loaded%")
+                        else:
+                            # creates the relation attribute tuple
+                            relation_attribute_tuple = (entity_class_valid_attribute_name, attribute_value)
+
+                            # adds the relation attribute tuple to the list of relation attributes
+                            relation_attributes_list.append(relation_attribute_tuple)
                     else:
-                        # creates the relation attribute tuple
-                        relation_attribute_tuple = (entity_class_valid_attribute_name, attribute_value)
+                        # retrieves the entity class attribute value
+                        entity_class_valid_attribute_value = getattr(entity_class, entity_class_valid_attribute_name)
 
-                        # adds the relation attribute tuple to the list of relation attributes
-                        relation_attributes_list.append(relation_attribute_tuple)
-                else:
-                    # retrieves the entity class attribute value
-                    entity_class_valid_attribute_value = getattr(entity_class, entity_class_valid_attribute_name)
+                        # retrieves the attribute data type
+                        attribute_data_type = self.get_attribute_data_type(entity_class_valid_attribute_value, entity_class, entity_class_valid_attribute_name)
 
-                    # retrieves the attribute data type
-                    attribute_data_type = self.get_attribute_data_type(entity_class_valid_attribute_value, entity_class, entity_class_valid_attribute_name)
+                        # retrieves the processed attribute value
+                        processed_attribute_value = self.get_processed_sqlite_attribute_value(attribute_value, attribute_data_type)
 
-                    # retrieves the processed attribute value
-                    processed_attribute_value = self.get_processed_sqlite_attribute_value(attribute_value, attribute_data_type)
-
-                    # sets the processed attribute value in the instance
-                    setattr(entity, entity_class_valid_attribute_name, processed_attribute_value)
+                        # sets the processed attribute value in the instance
+                        setattr(entity, entity_class_valid_attribute_name, processed_attribute_value)
 
                 # increments the index value
                 index += 1
@@ -2245,11 +2292,8 @@ class BusinessSqliteEngine:
             # retrieves the optional field
             optional_field = relation_attributes.get(OPTIONAL_FIELD, DEFAULT_OPTIONAL_FIELD_VALUE)
 
-            # retrieves the attribute value type
-            attribute_value_type = type(attribute_value)
-
-            # in case the relation attribute value type is not of type instance
-            if not attribute_value_type == types.InstanceType:
+            # in case the relation attribute value is not defined
+            if not isinstance(attribute_value, business.entity_manager.business_entity_manager_system.EntityClass):
                 # in case the value is optional
                 if optional_field:
                     # returns None
@@ -2473,6 +2517,27 @@ class BusinessSqliteEngine:
 
         return attribute_value
 
+    def get_entity_sub_classes(self, entity_class):
+        # retrieves the entity class direct sub classes
+        entity_sub_classes = entity_class.__subclasses__()
+
+        # start the entity sub sub classes list
+        entity_sub_sub_classes = []
+
+        # iterates over all the entity direct sub classes
+        for entity_sub_class in entity_sub_classes:
+            # retrieves the sub entity sub classes list
+            entity_sub_sub_classses_list = self.get_entity_sub_classes(entity_sub_class)
+
+            # extends the entity sub sub classes list sub entity sub classes list
+            entity_sub_sub_classes.extend(entity_sub_sub_classses_list)
+
+        # extends the entity sub classes with the entity sub sub classes
+        entity_sub_classes.extend(entity_sub_sub_classes)
+
+        # returns the entity sub classes
+        return entity_sub_classes
+
 class BufferedEntities:
     """
     The buffered entities class.
@@ -2518,17 +2583,52 @@ class BufferedEntities:
         @param id_value: The id of the entity to retrieve.
         """
 
-        if not entity_class in self.buffered_entities_map:
+        # retrieves the entity sub classes
+        entity_sub_classes = self.get_entity_sub_classes(entity_class)
+
+        # appends the entity class to the valid entity sub classes list
+        entity_sub_classes.append(entity_class)
+
+        # retrieves the valid entity sub classes
+        valid_entity_sub_classes = [value for value in entity_sub_classes if value in self.buffered_entities_map]
+
+        if not valid_entity_sub_classes:
             return None
 
-        buffered_entities_map_entity_class_map = self.buffered_entities_map[entity_class]
+        # iterates over all the valid entity sub classes
+        for valid_entity_sub_class in valid_entity_sub_classes:
+            buffered_entities_map_entity_class_map = self.buffered_entities_map[valid_entity_sub_class]
 
-        if not id_value in buffered_entities_map_entity_class_map:
-            return None
+            # in case the id value exists in the buffered entities map entity class map
+            if id_value in buffered_entities_map_entity_class_map:
+                # retrieves the entity from the buffered entities map entity class map
+                entity = buffered_entities_map_entity_class_map[id_value]
 
-        entity = buffered_entities_map_entity_class_map[id_value]
+                # returns the buffered entity
+                return entity
 
-        return entity
+        return None
+
+    def get_entity_sub_classes(self, entity_class):
+        # retrieves the entity class direct sub classes
+        entity_sub_classes = entity_class.__subclasses__()
+
+        # start the entity sub sub classes list
+        entity_sub_sub_classes = []
+
+        # iterates over all the entity direct sub classes
+        for entity_sub_class in entity_sub_classes:
+            # retrieves the sub entity sub classes list
+            entity_sub_sub_classses_list = self.get_entity_sub_classes(entity_sub_class)
+
+            # extends the entity sub sub classes list sub entity sub classes list
+            entity_sub_sub_classes.extend(entity_sub_sub_classses_list)
+
+        # extends the entity sub classes with the entity sub sub classes
+        entity_sub_classes.extend(entity_sub_sub_classes)
+
+        # returns the entity sub classes
+        return entity_sub_classes
 
 class DefaultEntity:
     """

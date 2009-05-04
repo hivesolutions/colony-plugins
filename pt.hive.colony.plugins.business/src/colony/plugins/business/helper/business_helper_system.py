@@ -69,5 +69,16 @@ class BusinessHelper:
                 # adds the value to globals
                 globals[local_key_value] = local_value
 
+        # adds the entity class to the globals map
+        globals[EntityClass.__name__] = EntityClass
+
         # executes the file in the given environment
         execfile(base_directory_path + "/" + class_module_name + ".py", globals, globals)
+
+class EntityClass(object):
+    """
+    The entity class.
+    """
+
+    def __init__(self):
+        pass
