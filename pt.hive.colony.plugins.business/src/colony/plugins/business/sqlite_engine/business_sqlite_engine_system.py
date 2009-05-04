@@ -1243,7 +1243,7 @@ class BusinessSqliteEngine:
         is_first_sub_class = True
 
         # creates the initial query string value
-        query_string_value = ""
+        query_string_value = str()
 
         # iterates over all the entity sub classes
         for entity_sub_class in entity_sub_classes:
@@ -1559,129 +1559,174 @@ class BusinessSqliteEngine:
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
 
+        # retrieves the entity sub classes
+        entity_sub_classes = self.get_entity_sub_classes(entity_class)
+
+        # appends the entity class to the entity sub classes
+        entity_sub_classes.append(entity_class)
+
+        # creates the entity sub classes map
+        entity_sub_classes_map = {}
+
+        # creates the entity class valid attribute names list
+        entity_class_valid_attribute_names = []
+
+        # iterates over all the entity sub classes
+        for entity_sub_class in entity_sub_classes:
+            # retrieves the entity sub class name
+            entity_sub_class_name = entity_sub_class.__name__
+
+            # adds the entity sub class to the entity sub classes map
+            entity_sub_classes_map[entity_sub_class_name] = entity_sub_class
+
+            # retrieves the entity sub class valid attribute names
+            entity_sub_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_sub_class)
+
+            # extends the entity class valid attribute names with the new entity sub class valid attribute names
+            entity_class_valid_attribute_names.extend([value for value in entity_sub_class_valid_attribute_names if not value in entity_class_valid_attribute_names])
+
+        # the first flag to control the sub class to be processed
+        is_first_sub_class = True
+
         # creates the initial query string value
-        query_string_value = "select "
+        query_string_value = str()
 
-        # in case it's a count select
-        if count:
-            query_string_value += " count(1) "
-        # in case it's a normal select
-        else:
-            # the first flag to control the first field to be processed
-            is_first = True
+        # iterates over all the entity sub classes
+        for entity_sub_class in entity_sub_classes:
+            # retrieves the entity sub class name
+            entity_sub_class_name = entity_sub_class.__name__
 
-            for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
-                # in case is the first field to be processed
-                if is_first:
-                    # sets the is flag to false to start adding commas
-                    is_first = False
-                else:
+            # in case is the first sub class to be processed
+            if is_first_sub_class:
+                # sets the is flag to false to start adding union all
+                is_first_sub_class = False
+            else:
+                # adds a union all to the query string value
+                query_string_value += " union all "
+
+            # creates the select query string value
+            query_string_value += "select "
+
+            # in case it's a count select
+            if count:
+                query_string_value += " count(1) "
+            # in case it's a normal select
+            else:
+                query_string_value += "\"" + entity_sub_class_name + "\" as class_data_type"
+
+                # @todo cache this value it's to painful to use
+                entity_sub_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_sub_class)
+
+                for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
                     # adds a comma to the query string value
                     query_string_value += ", "
 
-                query_string_value += entity_class_valid_attribute_name
+                    if entity_class_valid_attribute_name in entity_sub_class_valid_attribute_names:
+                        query_string_value += entity_class_valid_attribute_name
+                    else:
+                        query_string_value += "\"\" as " + entity_class_valid_attribute_name
 
-        is_first_where = True
+            is_first_where = True
 
-        if field_value == None:
-            query_string_value += " from " + entity_class_name
-        else:
-            query_string_value += " from " + entity_class_name + " where " + entity_class_id_attribute_name + " = "
-
-            # retrieves the field value value sqlite string value
-            field_value_sqlite_string_value = self.get_attribute_sqlite_string_value(field_value, entity_class_id_attribute_value_data_type)
-
-            query_string_value += field_value_sqlite_string_value
-
-            is_first_where = False
-
-        # iterates over all the filters
-        for filter in filters:
-            if is_first_where:
-                query_string_value += " where ("
-                is_first_where = False
+            if field_value == None:
+                query_string_value += " from " + entity_sub_class_name
             else:
-                query_string_value += " and ("
+                query_string_value += " from " + entity_sub_class_name + " where " + entity_class_id_attribute_name + " = "
 
-            filter_type = filter["filter_type"]
+                # retrieves the field value value sqlite string value
+                field_value_sqlite_string_value = self.get_attribute_sqlite_string_value(field_value, entity_class_id_attribute_value_data_type)
 
-            if filter_type == "equals":
-                # retrieves the filter fields
-                filter_fields = filter["filter_fields"]
+                query_string_value += field_value_sqlite_string_value
 
-                is_first_field = True
+                is_first_where = False
 
-                for filter_field in filter_fields:
-                    if is_first_field:
-                        is_first_field = False
-                    else:
-                        query_string_value += " or "
+            # iterates over all the filters
+            for filter in filters:
+                if is_first_where:
+                    query_string_value += " where ("
+                    is_first_where = False
+                else:
+                    query_string_value += " and ("
 
-                    # retrieves the filter field name
-                    filter_field_name = filter_field["field_name"]
+                filter_type = filter["filter_type"]
 
-                    # retrieves the filter field value
-                    filter_field_value = filter_field["field_value"]
+                if filter_type == "equals":
+                    # retrieves the filter fields
+                    filter_fields = filter["filter_fields"]
 
-                    # retrieves the filter field class value
-                    filter_field_class_value = getattr(entity_class, filter_field_name)
+                    is_first_field = True
 
-                    # retrieves the entity class id attribute value data type
-                    filter_value_data_type = self.get_attribute_data_type(filter_field_class_value, entity_class, filter_field_name)
-
-                    # retrieves the filter field value value sqlite string value
-                    filter_field_value_sqlite_string_value = self.get_attribute_sqlite_string_value(filter_field_value, filter_value_data_type)
-
-                    query_string_value += filter_field_name + " = " + filter_field_value_sqlite_string_value
-
-            # in case the filter is of type like
-            elif filter_type == "like":
-                # retrieves the filter fields
-                filter_fields = filter["filter_fields"]
-
-                like_filter_type = filter.get("like_filter_type", "both")
-
-                is_first_field = True
-
-                for filter_field in filter_fields:
-                    if is_first_field:
-                        is_first_field = False
-                    else:
-                        query_string_value += " or "
-
-                    # retrieves the filter field name
-                    filter_field_name = filter_field["field_name"]
-
-                    # retrieves the filter field value
-                    filter_field_value = filter_field["field_value"]
-
-                    # creates a new string for the filter field value
-                    filter_field_value_string = str()
-
-                    is_first_filter_field_value = True
-
-                    for splitted_filter_value in filter_field_value.split():
-                        if is_first_filter_field_value:
-                            is_first_filter_field_value = False
+                    for filter_field in filter_fields:
+                        if is_first_field:
+                            is_first_field = False
                         else:
-                            filter_field_value_string += "%"
-                        filter_field_value_string += splitted_filter_value
+                            query_string_value += " or "
 
-                    query_string_value += filter_field_name + " like "
+                        # retrieves the filter field name
+                        filter_field_name = filter_field["field_name"]
 
-                    if like_filter_type in ["left", "both"]:
-                         query_string_value += "\"%"
-                    else:
-                         query_string_value += "\""
+                        # retrieves the filter field value
+                        filter_field_value = filter_field["field_value"]
 
-                    query_string_value += filter_field_value_string
+                        # retrieves the filter field class value
+                        filter_field_class_value = getattr(entity_class, filter_field_name)
 
-                    if like_filter_type in ["right", "both"]:
-                         query_string_value += "%\""
-                    else:
-                         query_string_value += "\""
+                        # retrieves the entity class id attribute value data type
+                        filter_value_data_type = self.get_attribute_data_type(filter_field_class_value, entity_class, filter_field_name)
 
-            query_string_value += ")"
+                        # retrieves the filter field value value sqlite string value
+                        filter_field_value_sqlite_string_value = self.get_attribute_sqlite_string_value(filter_field_value, filter_value_data_type)
+
+                        query_string_value += filter_field_name + " = " + filter_field_value_sqlite_string_value
+
+                # in case the filter is of type like
+                elif filter_type == "like":
+                    # retrieves the filter fields
+                    filter_fields = filter["filter_fields"]
+
+                    like_filter_type = filter.get("like_filter_type", "both")
+
+                    is_first_field = True
+
+                    for filter_field in filter_fields:
+                        if is_first_field:
+                            is_first_field = False
+                        else:
+                            query_string_value += " or "
+
+                        # retrieves the filter field name
+                        filter_field_name = filter_field["field_name"]
+
+                        # retrieves the filter field value
+                        filter_field_value = filter_field["field_value"]
+
+                        # creates a new string for the filter field value
+                        filter_field_value_string = str()
+
+                        is_first_filter_field_value = True
+
+                        for splitted_filter_value in filter_field_value.split():
+                            if is_first_filter_field_value:
+                                is_first_filter_field_value = False
+                            else:
+                                filter_field_value_string += "%"
+                            filter_field_value_string += splitted_filter_value
+
+                        query_string_value += filter_field_name + " like "
+
+                        if like_filter_type in ["left", "both"]:
+                             query_string_value += "\"%"
+                        else:
+                             query_string_value += "\""
+
+                        query_string_value += filter_field_value_string
+
+                        if like_filter_type in ["right", "both"]:
+                             query_string_value += "%\""
+                        else:
+                             query_string_value += "\""
+
+                query_string_value += ")"
 
         # in case there is at least one order by definition
         if len(order_by):
@@ -1715,8 +1760,14 @@ class BusinessSqliteEngine:
 
         # in case it's a count select
         if count:
-            # retrieves the number of entities
-            return values_list[0][0]
+            # starts the count value
+            count_value = 0
+
+            for value in values_list[0]:
+                count_value += value
+
+            # returns the count value
+            return count_value
 
         # creates the list of entities
         entities_list = []
@@ -1725,8 +1776,17 @@ class BusinessSqliteEngine:
         if retrieve_eager_loading_relations:
             # iterates over all the values in the values list
             for value in values_list:
-                # creates a new entity instance
+                # retrieves the entity class name
+                entity_class_name = value[0]
+
+                # sets the current entity class
+                entity_class = entity_sub_classes_map[entity_class_name]
+
+                # creates a new entity
                 entity = entity_class()
+
+                # changes the value to start one step forward
+                value = value[1:]
 
                 # retrieves the id attribute value
                 id_attribute_value = self.get_entity_id_attribute_value(entity)
@@ -1746,29 +1806,31 @@ class BusinessSqliteEngine:
                     # retrieves the entity class attribute name
                     entity_class_valid_attribute_name = entity_class_valid_attribute_names[index]
 
-                    # in case the attribute is a relation
-                    if self.is_attribute_name_relation(entity_class_valid_attribute_name, entity_class):
-                        if self.is_attribute_name_lazy_relation(entity_class_valid_attribute_name, entity_class) and not entity_class_valid_attribute_name in eager_loading_relations:
-                            # sets the lazy loaded attribute in the instance
-                            setattr(entity, entity_class_valid_attribute_name, "%lazy-loaded%")
+                    # in case the attribute exists for the current entity class
+                    if hasattr(entity_class, entity_class_valid_attribute_name):
+                        # in case the attribute is a relation
+                        if self.is_attribute_name_relation(entity_class_valid_attribute_name, entity_class):
+                            if self.is_attribute_name_lazy_relation(entity_class_valid_attribute_name, entity_class) and not entity_class_valid_attribute_name in eager_loading_relations:
+                                # sets the lazy loaded attribute in the instance
+                                setattr(entity, entity_class_valid_attribute_name, "%lazy-loaded%")
+                            else:
+                                # creates the relation attribute tuple
+                                relation_attribute_tuple = (entity_class_valid_attribute_name, attribute_value)
+
+                                # adds the relation attribute tuple to the list of relation attributes
+                                relation_attributes_list.append(relation_attribute_tuple)
                         else:
-                            # creates the relation attribute tuple
-                            relation_attribute_tuple = (entity_class_valid_attribute_name, attribute_value)
+                            # retrieves the entity class attribute value
+                            entity_class_valid_attribute_value = getattr(entity_class, entity_class_valid_attribute_name)
 
-                            # adds the relation attribute tuple to the list of relation attributes
-                            relation_attributes_list.append(relation_attribute_tuple)
-                    else:
-                        # retrieves the entity class attribute value
-                        entity_class_valid_attribute_value = getattr(entity_class, entity_class_valid_attribute_name)
+                            # retrieves the attribute data type
+                            attribute_data_type = self.get_attribute_data_type(entity_class_valid_attribute_value, entity_class, entity_class_valid_attribute_name)
 
-                        # retrieves the attribute data type
-                        attribute_data_type = self.get_attribute_data_type(entity_class_valid_attribute_value, entity_class, entity_class_valid_attribute_name)
+                            # retrieves the processed attribute value
+                            processed_attribute_value = self.get_processed_sqlite_attribute_value(attribute_value, attribute_data_type)
 
-                        # retrieves the processed attribute value
-                        processed_attribute_value = self.get_processed_sqlite_attribute_value(attribute_value, attribute_data_type)
-
-                        # sets the processed attribute value in the instance
-                        setattr(entity, entity_class_valid_attribute_name, processed_attribute_value)
+                            # sets the processed attribute value in the instance
+                            setattr(entity, entity_class_valid_attribute_name, processed_attribute_value)
 
                     # increments the index value
                     index += 1
@@ -1809,8 +1871,17 @@ class BusinessSqliteEngine:
         else:
             # iterates over all the values in the values list
             for value in values_list:
-                # creates a new entity instance
+                # retrieves the entity class name
+                entity_class_name = value[0]
+
+                # sets the current entity class
+                entity_class = entity_sub_classes_map[entity_class_name]
+
+                # creates a new entity
                 entity = entity_class()
+
+                # changes the value to start one step forward
+                value = value[1:]
 
                 # creates the initial index value
                 index = 0
@@ -1820,8 +1891,10 @@ class BusinessSqliteEngine:
                     # retrieves the entity class attribute name
                     entity_class_valid_attribute_name = entity_class_valid_attribute_names[index]
 
-                    # sets the attribute value in the entity
-                    setattr(entity, entity_class_valid_attribute_name, attribute_value)
+                    # in case the attribute exists for the current entity class
+                    if hasattr(entity_class, entity_class_valid_attribute_name):
+                        # sets the attribute value in the entity
+                        setattr(entity, entity_class_valid_attribute_name, attribute_value)
 
                     # increments the index value
                     index += 1
