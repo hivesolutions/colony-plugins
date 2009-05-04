@@ -75,6 +75,9 @@ class BusinessHelper:
         # executes the file in the given environment
         execfile(base_directory_path + "/" + class_module_name + ".py", globals, globals)
 
+    def get_entity_class(self):
+        return EntityClass
+
 class EntityClass(object):
     """
     The entity class.

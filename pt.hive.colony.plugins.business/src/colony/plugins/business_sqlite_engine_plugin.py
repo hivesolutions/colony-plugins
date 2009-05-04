@@ -55,11 +55,14 @@ class BusinessSqliteEnginePlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["entity_manager_engine"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.business.helper", "1.0.0")]
     events_handled = []
     events_registrable = []
 
     business_sqlite_engine = None
+
+    business_helper_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -82,6 +85,7 @@ class BusinessSqliteEnginePlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.business.sqlite_engine", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -141,3 +145,10 @@ class BusinessSqliteEnginePlugin(colony.plugins.plugin_system.Plugin):
 
     def find_all_entities_options(self, connection, entity_class, value, search_field_name, options):
         return self.business_sqlite_engine.find_all_entities_options(connection, entity_class, value, search_field_name, options = options)
+
+    def get_business_helper_plugin(self):
+        return self.business_helper_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.business.helper")
+    def set_business_helper_plugin(self, business_helper_plugin):
+        self.business_helper_plugin = business_helper_plugin
