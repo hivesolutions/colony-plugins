@@ -266,6 +266,14 @@ class Visitor:
         attribute_value_value = self.get_value(attribute_value)
         self.string_buffer.write(str(attribute_value_value))
 
+    def process_out_none(self, node):
+        attributes_map = node.get_attributes_map()
+        attribute_value = attributes_map["value"]
+        attribute_value_value = self.get_value(attribute_value)
+
+        if not attribute_value_value == None:
+            self.string_buffer.write(str(attribute_value_value))
+
     def process_var(self, node):
         attributes_map = node.get_attributes_map()
         attribute_item = attributes_map["item"]
