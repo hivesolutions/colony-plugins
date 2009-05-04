@@ -116,7 +116,7 @@ def dump_parts_buffer(obj, string_buffer):
         string_buffer.write("\"module\"")
     elif obj_type is types.MethodType:
         string_buffer.write("\"method\"")
-    elif obj_type is types.InstanceType or hasattr(obj_type, "__class__"):
+    elif obj_type is types.InstanceType or hasattr(obj, "__class__"):
         string_buffer.write("{")
         is_first = True
         obj_items = [value for value in dir(obj) if not value in EXCLUSION_LIST and not type(getattr(obj, value)) in EXCLUSION_TYPES]
@@ -176,7 +176,7 @@ def dump_parts(obj):
         yield "\"module\""
     elif obj_type is types.MethodType:
         yield "\"method\""
-    elif obj_type is types.InstanceType or hasattr(obj_type, "__class__"):
+    elif obj_type is types.InstanceType or hasattr(obj, "__class__"):
         yield "{"
         is_first = True
         obj_items = [value for value in dir(obj) if not value in EXCLUSION_LIST and not type(getattr(obj, value)) in EXCLUSION_TYPES]
