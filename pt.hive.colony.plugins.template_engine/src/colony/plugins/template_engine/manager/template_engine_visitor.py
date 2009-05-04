@@ -283,17 +283,32 @@ class Visitor:
                 for node_child_node in node.child_nodes:
                     node_child_node.accept(self)
 
-    def process_foreach1(self, node):
-        pass
+    def process_if(self, node):
+        attributes_map = node.get_attributes_map()
+        attribute_item = attributes_map["item"]
+        attribute_item_value = self.get_value(attribute_item)
+        attribute_value = attributes_map["value"]
+        attribute_value_value = self.get_value(attribute_value)
+        attribute_operator = attributes_map["operator"]
+        attribute_operator_literal_value = self.get_literal_value(attribute_operator)
 
-    def process_foreach2(self, node):
-        pass
+        if attribute_operator_literal_value == "eq":
+            result = attribute_item_value == attribute_value_value
+        elif attribute_operator_literal_value == "neq":
+            result = not attribute_item_value == attribute_value_value
+        elif attribute_operator_literal_value == "gte":
+            result = attribute_item_value >= attribute_value_value
+        elif attribute_operator_literal_value == "gt":
+            result = attribute_item_value > attribute_value_value
+        elif attribute_operator_literal_value == "lte":
+            result = attribute_item_value <= attribute_value_value
+        elif attribute_operator_literal_value == "lt":
+            result = attribute_item_value < attribute_value_value
 
-    def process_foreach3(self, node):
-        pass
-
-    def process_foreach4(self, node):
-        pass
+        if result:
+            if self.visit_childs:
+                for node_child_node in node.child_nodes:
+                    node_child_node.accept(self)
 
     def get_value(self, attribute_value):
         # in case the attribute value is of type variable
@@ -301,21 +316,25 @@ class Visitor:
             # retrieves the variable name
             variable_name = attribute_value["value"]
 
-            # splits the variable name in the dots
-            variable_name_splitted = variable_name.split(".")
+            # in case the variable name is none
+            if variable_name == "None":
+                value = None
+            else:
+                # splits the variable name in the dots
+                variable_name_splitted = variable_name.split(".")
 
-            # retrieves the first variable name split
-            first_variable_name_split = variable_name_splitted[0]
+                # retrieves the first variable name split
+                first_variable_name_split = variable_name_splitted[0]
 
-            # sets the current variable as the first split
-            current_variable = self.global_map[first_variable_name_split]
+                # sets the current variable as the first split
+                current_variable = self.global_map[first_variable_name_split]
 
-            for variable_name_split in variable_name_splitted[1:]:
-                # retrieves the current variable
-                current_variable = getattr(current_variable, variable_name_split)
+                for variable_name_split in variable_name_splitted[1:]:
+                    # retrieves the current variable
+                    current_variable = getattr(current_variable, variable_name_split)
 
-            # sets the value as the current variable value
-            value = current_variable
+                # sets the value as the current variable value
+                value = current_variable
         # in case the attribute value is of type literal
         elif attribute_value["type"] == "literal":
             value = attribute_value["value"]
