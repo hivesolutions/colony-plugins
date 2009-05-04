@@ -267,7 +267,13 @@ class Visitor:
         self.string_buffer.write(str(attribute_value_value))
 
     def process_var(self, node):
-        pass
+        attributes_map = node.get_attributes_map()
+        attribute_item = attributes_map["item"]
+        attribute_item_literal_value = self.get_literal_value(attribute_item)
+        attribute_value = attributes_map["value"]
+        attribute_value_value = self.get_value(attribute_value)
+
+        self.global_map[attribute_item_literal_value] = attribute_value_value
 
     def process_foreach(self, node):
         attributes_map = node.get_attributes_map()
@@ -337,8 +343,16 @@ class Visitor:
                 value = current_variable
         # in case the attribute value is of type literal
         elif attribute_value["type"] == "literal":
-            value = attribute_value["value"]
+            # retrieves the literal value
+            literal_value = attribute_value["value"]
 
+            # strips the literal value
+            literal_value_stripped = literal_value.strip("\"")
+
+            # sets the value as the literal value stripped
+            value = literal_value_stripped
+
+        # returns the value
         return value
 
     def get_literal_value(self, attribute_value):
