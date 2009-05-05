@@ -207,7 +207,10 @@ class PrintingLanguageParser(Parser):
         # parses the element attributes
         self.parse_element_attributes(text, text_structure)
 
-        text_structure.text = text.firstChild.data.strip()
+        if text.firstChild:
+            text_structure.text = text.firstChild.data.strip()
+        else:
+            text_structure.text = str()
 
         return text_structure
 
