@@ -222,12 +222,30 @@ class BusinessSqliteEngine:
 
         return True
 
+    def commit_system_connection(self, connection):
+        # retrieves the database system connection from the connection object
+        database_system_connection = connection.database_system_connection
+
+        # commits the changes to the connection
+        database_system_connection.commit()
+
+        return True
+
     def rollback_connection(self, connection):
         # retrieves the database connection from the connection object
         database_connection = connection.database_connection
 
         # "rollsback" the changes to the connection
         database_connection.rollback()
+
+        return True
+
+    def rollback_system_connection(self, connection):
+        # retrieves the database system connection from the connection object
+        database_system_connection = connection.database_system_connection
+
+        # "rollsback" the changes to the connection
+        database_system_connection.rollback()
 
         return True
 
@@ -590,6 +608,135 @@ class BusinessSqliteEngine:
 
         pass
 
+    def create_table_generator(self, connection):
+        """
+        Creates the table generator.
+
+        @type connection: Connection
+        @param connection: The database connection to use.
+        """
+
+        # retrieves the database connection from the connection object
+        database_connection = connection.database_connection
+
+        # creates the cursor for the given connection
+        cursor = database_connection.cursor()
+
+        # creates the query for the creation of the generator table
+        query_string_value = "create table generator (name numeric, next_id numeric)"
+
+        # executes the query creating the table
+        self.execute_query(cursor, query_string_value)
+
+        # closes the cursor
+        cursor.close()
+
+    def exists_table_generator(self, connection):
+        # retrieves the database connection from the connection object
+        database_connection = connection.database_connection
+
+        # creates the cursor for the given connection
+        cursor = database_connection.cursor()
+
+        # creates the query for the existence checking in generator table
+        query_string_value = "pragma table_info(generator)"
+
+        # executes the query creating the table
+        self.execute_query(cursor, query_string_value)
+
+        # selects the values from the cursor
+        values_list = [value for value in cursor]
+
+        # closes the cursor
+        cursor.close()
+
+        if values_list:
+            return True
+        else:
+            return False
+
+    def retrieve_next_name_id(self, connection, name):
+        # retrieves the database connection from the connection object
+        database_connection = connection.database_connection
+
+        # creates the cursor for the given connection
+        cursor = database_connection.cursor()
+
+        # creates the query for the database lock
+        query_string_value = "update generator set next_id = next_id where 0=1"
+
+        # executes the query creating the table
+        self.execute_query(cursor, query_string_value)
+
+        # creates the query for the creation of the generator table
+        query_string_value = "select name, next_id from generator where name = \"" + name + "\""
+
+        # executes the query creating the table
+        self.execute_query(cursor, query_string_value)
+
+        # selects the values from the cursor
+        values_list = [value for value in cursor]
+
+        if not values_list:
+            # closes the cursor
+            cursor.close()
+
+            # returns none, no such value
+            return None
+
+        # closes the cursor
+        cursor.close()
+
+        return values_list[0][1]
+
+    def set_next_name_id(self, connection, name, next_id):
+        # retrieves the database connection from the connection object
+        database_connection = connection.database_connection
+
+        # creates the cursor for the given connection
+        cursor = database_connection.cursor()
+
+        # in case there is currently no valid next id
+        if self.retrieve_next_name_id(connection, name):
+            # creates the query for the update of the data
+            query_string_value = "update generator set next_id = "
+
+            if type(next_id) == types.StringType:
+                query_string_value += "\"" + next_id + "\""
+            else:
+                query_string_value += str(next_id)
+
+            query_string_value += " where name = \"" + name + "\""
+        else:
+            # creates the query for the insertion of the data
+            query_string_value = "insert into generator(name, next_id) values(\"" + name + "\", "
+
+            if type(next_id) == types.StringType:
+                query_string_value += "\"" + next_id + "\")"
+            else:
+                query_string_value += str(next_id) + ")"
+
+        # executes the query creating the table
+        self.execute_query(cursor, query_string_value)
+
+        # closes the cursor
+        cursor.close()
+
+    def increment_next_name_id(self, connection, name, id_increment = 1):
+        # retrieves the previous next name id
+        previous_next_name_id = self.retrieve_next_name_id(connection, name)
+
+        # in case there is no previous next name id defined
+        if not previous_next_name_id:
+            # @todo should raise exception
+            pass
+
+        # calculates the next name id based on the previous next name id
+        next_name_id = previous_next_name_id + id_increment
+
+        # sets the next name id
+        self.set_next_name_id(connection, name, next_name_id)
+
     def save_entity(self, connection, entity):
         """
         Saves the given entity instance in the database, using the given connection.
@@ -723,6 +870,9 @@ class BusinessSqliteEngine:
         # retrieves the entity class for the entity
         entity_class = entity.__class__
 
+        # retrieves the entity class name for the entity
+        entity_class_name = entity_class.__name__
+
         # retrieves the entity class id attribute value
         entity_class_id_attribute_value = self.get_entity_class_id_attribute_value(entity_class)
 
@@ -733,11 +883,31 @@ class BusinessSqliteEngine:
         if entity_id_attribute_value == None:
             # in case the id field is to be generated
             if GENERATED_FIELD in entity_class_id_attribute_value:
+                generator_type = entity_class_id_attribute_value[GENERATOR_TYPE_FIELD]
+
+                if generator_type == "uuid":
+                    next_id_value = int(time.time() % 10 * 100000000)
+                elif generator_type == "table":
+                    if "table_generator_field_name" in entity_class_id_attribute_value:
+                        table_generator_field_name = entity_class_id_attribute_value["table_generator_field_name"]
+                    else:
+                        table_generator_field_name = entity_class_name
+
+                    # retrieves the next id value
+                    next_id_value = self.retrieve_next_name_id(connection, table_generator_field_name)
+
+                    if next_id_value:
+                        self.increment_next_name_id(connection, table_generator_field_name)
+                    else:
+                        next_id_value = 1
+
+                        self.set_next_name_id(connection, table_generator_field_name, 2)
+
                 # retrieves the entity class id attribute name
                 entity_class_id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
 
                 # sets the new entity id attribute value
-                setattr(entity, entity_class_id_attribute_name, int(time.time() % 10 * 100000000))
+                setattr(entity, entity_class_id_attribute_name, next_id_value)
 
                 # retrieves the entity id attribute value
                 entity_id_attribute_value = self.get_entity_id_attribute_value(entity)

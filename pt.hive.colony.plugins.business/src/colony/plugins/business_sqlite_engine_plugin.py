@@ -122,6 +122,21 @@ class BusinessSqliteEnginePlugin(colony.plugins.plugin_system.Plugin):
     def update_entity_definition(self, connection, entity_class):
         return self.business_sqlite_engine.update_entity_definition(connection, entity_class)
 
+    def create_table_generator(self, connection):
+        return self.business_sqlite_engine.create_table_generator(connection)
+
+    def exists_table_generator(self, connection):
+        return self.business_sqlite_engine.exists_table_generator(connection)
+
+    def retrieve_next_name_id(self, connection, name):
+        return self.business_sqlite_engine.retrieve_next_name_id(connection, name)
+
+    def set_next_name_id(self, connection, name, next_id):
+        return self.business_sqlite_engine.set_next_name_id(connection, name, next_id)
+
+    def increment_next_name_id(self, connection, name, id_increment = 1):
+        return self.business_sqlite_engine.increment_next_name_id(connection, name, id_increment)
+
     def save_entity(self, connection, entity):
         return self.business_sqlite_engine.save_entity(connection, entity)
 

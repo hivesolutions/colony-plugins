@@ -145,6 +145,9 @@ class EntityManager:
     database_connection_thread_id_map = {}
     """ The map containing the database connection object for the thread id """
 
+    database_system_connection_thread_id_map = {}
+    """ The map containing the system database connection object for the thread id """
+
     transaction_stack_thread_id_map = {}
     """ The map containing the stack containing the pending transactions for the thread id """
 
@@ -158,6 +161,7 @@ class EntityManager:
 
         self.connection_thread_id_map = {}
         self.database_connection_thread_id_map = {}
+        self.database_system_connection_thread_id_map = {}
         self.transaction_stack_thread_id_map = {}
 
         self.connection_parameters = {}
@@ -178,11 +182,15 @@ class EntityManager:
             # retrieves the database connection
             database_connection = self.get_database_connection()
 
+            # retrieves the database system connection
+            database_system_connection = self.get_database_system_connection()
+
             # retrieves the transaction stack
             transaction_stack = self.get_transaction_stack()
 
-            # creates the connection object with the specified database connection, the specified connection parameters and the specified transaction stack
-            connection = Connection(database_connection, self.connection_parameters, transaction_stack)
+            # creates the connection object with the specified database connection, database system connection
+            # the specified connection parameters and the specified transaction stack
+            connection = Connection(database_connection, database_system_connection, self.connection_parameters, transaction_stack)
 
             # sets the current thread connection
             self.connection_thread_id_map[current_thread_id] = connection
@@ -212,6 +220,28 @@ class EntityManager:
         # returns the current thread database connection
         return self.database_connection_thread_id_map[current_thread_id]
 
+    def get_database_system_connection(self):
+        """
+        Retrieves the current available database system connection.
+
+        @rtype: Connection
+        @return: The current available database system connection.
+        """
+
+        # gets the id of the current thread
+        current_thread_id = thread.get_ident()
+
+        # in case there is no database connection available for the current thread
+        if not current_thread_id in self.database_system_connection_thread_id_map:
+            # creates the database system connection to the specified engine with the specified connection parameters
+            database_system_connection = self.entity_manager_engine_plugin.create_connection(self.connection_parameters)
+
+            # sets the current thread database system connection
+            self.database_system_connection_thread_id_map[current_thread_id] = database_system_connection
+
+        # returns the current thread database system connection
+        return self.database_system_connection_thread_id_map[current_thread_id]
+
     def get_transaction_stack(self):
         """
         Retrieves the current available transaction stack.
@@ -239,6 +269,7 @@ class EntityManager:
 
     def load_entity_manager(self):
         self.register_classes()
+        self.create_table_generator()
 
     def register_classes(self):
         # retrieves the connection object
@@ -248,9 +279,34 @@ class EntityManager:
             if self.entity_manager_engine_plugin.exists_entity_definition(connection, entity_class):
                 if not self.entity_manager_engine_plugin.synced_entity_definition(connection, entity_class):
                     pass
-                    # @todo not synched needs to be updated
+                    # @todo not synced needs to be updated
             else:
                 self.entity_manager_engine_plugin.create_entity_definition(connection, entity_class)
+
+    def create_table_generator(self):
+        # retrieves the connection object
+        connection = self.get_connection()
+
+        if not self.entity_manager_engine_plugin.exists_table_generator(connection):
+            self.entity_manager_engine_plugin.create_table_generator(connection)
+
+    def retrieve_next_name_id(self, name):
+        # retrieves the connection object
+        connection = self.get_connection()
+
+        return self.entity_manager_engine_plugin.retrieve_next_name_id(connection, name)
+
+    def set_next_name_id(self, name, next_id):
+        # retrieves the connection object
+        connection = self.get_connection()
+
+        return self.entity_manager_engine_plugin.set_next_name_id(connection, name, next_id)
+
+    def increment_next_name_id(self, name, id_increment = 1):
+        # retrieves the connection object
+        connection = self.get_connection()
+
+        return self.entity_manager_engine_plugin.increment_next_name_id(connection, name, id_increment)
 
     def get_entity_class(self, entity_class_name):
         if entity_class_name in self.entity_classes_map:
@@ -605,14 +661,18 @@ class Connection:
     database_connection = None
     """ The database connection object """
 
+    database_system_connection = None
+    """ The database system connection object """
+
     connection_parameters = []
     """ The connection parameters for the connection """
 
     transaction_stack = []
     """ The transaction stack for the connection """
 
-    def __init__(self, database_connection, connection_parameters, transaction_stack):
+    def __init__(self, database_connection, database_system_connection, connection_parameters, transaction_stack):
         self.database_connection = database_connection
+        self.database_system_connection = database_system_connection
         self.connection_parameters = connection_parameters
         self.transaction_stack = transaction_stack
 
