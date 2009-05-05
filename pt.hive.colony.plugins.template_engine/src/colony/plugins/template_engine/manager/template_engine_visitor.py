@@ -264,7 +264,7 @@ class Visitor:
         attributes_map = node.get_attributes_map()
         attribute_value = attributes_map["value"]
         attribute_value_value = self.get_value(attribute_value)
-        self.string_buffer.write(str(attribute_value_value))
+        self.string_buffer.write(unicode(attribute_value_value).encode("utf-8"))
 
     def process_out_none(self, node):
         attributes_map = node.get_attributes_map()
@@ -272,7 +272,7 @@ class Visitor:
         attribute_value_value = self.get_value(attribute_value)
 
         if not attribute_value_value == None:
-            self.string_buffer.write(str(attribute_value_value))
+            self.string_buffer.write(unicode(attribute_value_value).encode("utf-8"))
 
     def process_var(self, node):
         attributes_map = node.get_attributes_map()
