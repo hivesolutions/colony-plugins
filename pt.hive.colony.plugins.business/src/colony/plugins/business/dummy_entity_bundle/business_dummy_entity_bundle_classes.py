@@ -42,12 +42,12 @@ class TestEntity(EntityClass):
     id = {"id" : True, "data_type" : "numeric", "generated" : True, "generator_type" : "table", "table_generator_field_name" : "Test"}
     """ The id of the entity """
 
-    value = {"data_type" : "text"}
-    """ The value of the entity """
+    object_value = {"data_type" : "text"}
+    """ The object value of the entity """
 
     def __init__(self):
         self.id = None
-        self.value = None
+        self.object_value = None
 
 class DummyEntityBundleParent(EntityClass):
 
