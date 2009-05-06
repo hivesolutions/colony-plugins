@@ -51,7 +51,7 @@ import main_jsonrpc_manager_exceptions
 
 EXCLUSION_LIST = ["__class__", "__delattr__", "__dict__", "__doc__", "__getattribute__", "__hash__",
                   "__init__", "__module__", "__new__", "__reduce__", "__reduce_ex__", "__repr__",
-                  "__setattr__", "__str__", "__weakref__"]
+                  "__setattr__", "__str__", "__weakref__", "__format__", "__sizeof__", "__subclasshook__"]
 
 EXCLUSION_TYPES = [types.MethodType, types.FunctionType]
 
