@@ -43,6 +43,7 @@ import base64
 import copy
 import time
 import os.path
+import datetime
 
 import data_converter.data_converter_adapter_configuration_parser
 
@@ -56,6 +57,8 @@ class DataConverterAdapter:
 
     object_id_entity_map = {}
     # @todo: comment this
+
+    object_ids = []
 
     foreign_key_queue = []
     """ Queue of foreign keys that are waiting of the entity are referencing to be processed """
@@ -77,6 +80,7 @@ class DataConverterAdapter:
         @param data_converter_plugin: Reference to the plugin that owns this code.
         """
 
+        self.object_id_entity_map = {}
         self.data_converter_plugin = data_converter_plugin
         self.logger = self.data_converter_plugin.logger_plugin.get_logger("main").get_logger()
 
@@ -134,7 +138,6 @@ class DataConverterAdapter:
         @type task: Task
         @param task: Task monitoring object used to inform the status of the query.
         @type work_units: List
-        @param work_units: List of work units to complete.
         """
 
         # where the counter should start at for this operation
@@ -396,7 +399,10 @@ class DataConverterAdapter:
 
         # convert every entity in the internal structure
         internal_entity_names = internal_structure.get_entity_names()
-        internal_entity_names.remove("payment_terms")
+        internal_entity_names.remove("language")
+        internal_entity_names.remove("currency")
+        #internal_entity_names.remove("payment_terms")
+
         entity_conversion_start_time = time.time()
         for internal_entity_name in internal_entity_names:
             print "##### CONVERTING " + internal_entity_name + " entities #####"
@@ -418,6 +424,11 @@ class DataConverterAdapter:
         relation_conversion_end_time = time.time()
         relation_conversion_time_elapsed = relation_conversion_end_time - relation_conversion_start_time
 
+        # set the generated entities will start from now on
+        entity_manager.create_transaction("root_entity")
+        entity_manager.set_next_name_id("RootEntity", internal_structure.object_id + 1 )
+        entity_manager.commit_transaction("root_entity")
+
         self.post_process(internal_structure, entity_manager)
 
         print "##### CONVERSION FINISHED #####"
@@ -438,13 +449,198 @@ class DataConverterAdapter:
             file.write(str(missing_relation_entity) + "\n")
         file.close()
 
+        file = open("c:\\Users\\srio\\object_map.txt", "w")
+        file.write(str(self.object_id_entity_map))
+        file.close()
+
     def post_process(self, internal_structure, entity_manager):
-        self.post_process_primary_contacts(internal_structure, entity_manager)
-        self.post_process_costs(internal_structure, entity_manager)
-        self.post_process_trees(internal_structure, entity_manager)
-        self.post_process_sale_transaction_price(internal_structure, entity_manager)
-        self.post_process_purchase_transaction_cost(internal_structure, entity_manager)
-        self.post_process_payment_date_amount(internal_structure, entity_manager)
+         self.post_process_primary_contacts(internal_structure, entity_manager)
+         self.post_process_customer_codes(internal_structure, entity_manager)
+         self.post_process_costs(internal_structure, entity_manager)
+         self.post_process_trees(internal_structure, entity_manager)
+         self.post_process_sale_price(internal_structure, entity_manager)
+         self.post_process_purchase_cost(internal_structure, entity_manager)
+         self.post_process_payment_date_amount(internal_structure, entity_manager)
+         self.post_process_missing_money_sale_slip_associations(internal_structure, entity_manager)
+         self.post_process_missing_product_subproduct_associations(internal_structure, entity_manager)
+         self.post_process_transfers(internal_structure, entity_manager)
+         self.post_process_purchase_transaction_discounts(internal_structure, entity_manager)
+
+    def post_process_purchase_transaction_discounts(self, internal_structure, entity_manager):
+        print "##### FIXING PURCHASE TRANSACTION DISCOUNTS #####"
+
+        file = open("c:\\Users\\srio\\purchase-transactions.sql", "w")
+        internal_entities = internal_structure.get_entities("purchase")
+        for internal_entity in internal_entities:
+            if internal_entity.has_field("discount") and internal_entity.has_field("discount_vat"):
+               discount = internal_entity.get_field_value("discount")
+               discount_vat = internal_entity.get_field_value("discount_vat")
+               file.write("UPDATE PurchaseTransaction SET discount = " + str(discount) + ", discount_vat = " + str(discount_vat) + " WHERE object_id = " + str(internal_entity.object_id) + ";\n")
+        file.close()
+
+    def post_process_customer_codes(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("customer_codes")
+
+        print "##### CREATING CUSTOMER CODES #####"
+
+        # @todo: this relation is not needed, but the orm crashes if its not present
+        find_options = {"eager_loading_relations" : {"addresses" : {}}}
+        customer_person_class = entity_manager.get_entity_class("CustomerPerson")
+        customer_person_entities = entity_manager._find_all_options(customer_person_class, find_options)
+        customer_person_entities_with_code = [customer_person_entity for customer_person_entity in customer_person_entities if customer_person_entity.customer_code]
+        customer_person_entities_without_code = [customer_person_entity for customer_person_entity in customer_person_entities if not customer_person_entity.customer_code]
+
+        max_customer_code = 0
+        for customer_person_entity in customer_person_entities_with_code:
+            customer_code = int(customer_person_entity.customer_code)
+            if customer_code > max_customer_code:
+                max_customer_code = customer_code
+
+        customer_code = max_customer_code
+        for customer_person_entity in customer_person_entities_without_code:
+            customer_code += 1
+            customer_person_entity.customer_code = customer_code
+            if not customer_person_entity.customer_since:
+                customer_person_entity.customer_since = datetime.datetime.now()
+            entity_manager._update(customer_person_entity)
+
+        entity_manager.set_next_name_id("CustomerPersonCustomerCode", customer_code + 1)
+
+        entity_manager.commit_transaction("customer_codes")
+
+    def post_process_transfers(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("transfers")
+
+        print "##### CREATING TRANSFERS #####"
+
+        find_options = {"eager_loading_relations" : {"sender" : {"eager_loading_relations" : {"inventory" : {"eager_loading_relations" : {"merchandise" : {}, "price" : {}, "cost" : {}}}}},
+                                                     "receiver" : {"eager_loading_relations" : {"inventory" : {"eager_loading_relations" : {"merchandise" : {}, "price" : {}, "cost" : {}}}}},
+                                                     "transfer_lines" : {"eager_loading_relations" : {"merchandise" : {}}}}}
+
+        transfer_class = entity_manager.get_entity_class("Transfer")
+        transfer_entities = entity_manager._find_all_options(transfer_class, find_options)
+
+        # for every transfer
+        for transfer_entity in transfer_entities:
+            transfered_merchandise_object_id_quantity_map = {}
+            receiver_inventory_merchandise_object_id_entity_map = {}
+
+            # store the transfered merchandise and quantity
+            for transfer_line_entity in transfer_entity.transfer_lines:
+                if transfer_line_entity.merchandise.__class__.__name__ == "SubProduct":
+                    transfered_merchandise_object_id_quantity_map[transfer_line_entity.merchandise.object_id] = transfer_line_entity.quantity
+
+            # for every inventory line in the sender
+            for inventory_line_entity in transfer_entity.receiver.inventory:
+                receiver_inventory_merchandise_object_id_entity_map[inventory_line_entity.merchandise.object_id] = inventory_line_entity
+
+            # for every inventory line in the sender
+            for inventory_line_entity in transfer_entity.sender.inventory:
+                # if the inventory line corresponds to a transfer
+                if inventory_line_entity.merchandise.object_id in transfered_merchandise_object_id_quantity_map:
+
+                    # decrement the transfered quantity in the inventory line
+                    quantity = transfered_merchandise_object_id_quantity_map[inventory_line_entity.merchandise.object_id]
+                    previous_quantity = inventory_line_entity.stock_on_hand
+                    inventory_line_entity.stock_on_hand -= quantity
+                    entity_manager._update(inventory_line_entity)
+
+                    # create a new line for the store and copy the contents
+                    if inventory_line_entity.merchandise.object_id in receiver_inventory_merchandise_object_id_entity_map:
+                        merchandise_contactable_organizational_hierarchy_tree_node_entity = receiver_inventory_merchandise_object_id_entity_map[inventory_line_entity.merchandise.object_id]
+                    else:
+                        merchandise_contactable_organizational_hierarchy_tree_node_class = entity_manager.get_entity_class("MerchandiseContactableOrganizationalHierarchyTreeNode")
+                        merchandise_contactable_organizational_hierarchy_tree_node_entity = merchandise_contactable_organizational_hierarchy_tree_node_class()
+                        entity_manager._save(merchandise_contactable_organizational_hierarchy_tree_node_entity)
+
+                    merchandise_contactable_organizational_hierarchy_tree_node_entity.discount = inventory_line_entity.discount
+                    merchandise_contactable_organizational_hierarchy_tree_node_entity.min_stock = inventory_line_entity.min_stock
+                    merchandise_contactable_organizational_hierarchy_tree_node_entity.max_stock = inventory_line_entity.max_stock
+                    merchandise_contactable_organizational_hierarchy_tree_node_entity.stock_in_transit = inventory_line_entity.stock_in_transit
+                    merchandise_contactable_organizational_hierarchy_tree_node_entity.stock_reserved = inventory_line_entity.stock_reserved
+                    if inventory_line_entity.cost:
+                        cost_class = entity_manager.get_entity_class("Cost")
+                        cost_entity = cost_class()
+                        cost_entity.value = inventory_line_entity.cost.value
+                        entity_manager.save(cost_entity)
+                        merchandise_contactable_organizational_hierarchy_tree_node_entity.cost = cost_entity
+                    if inventory_line_entity.price:
+                        price_class = entity_manager.get_entity_class("Price")
+                        price_entity = price_class()
+                        price_entity.value = inventory_line_entity.price.value
+                        entity_manager.save(price_entity)
+                        merchandise_contactable_organizational_hierarchy_tree_node_entity.price = price_entity
+                    merchandise_contactable_organizational_hierarchy_tree_node_entity.merchandise = inventory_line_entity.merchandise
+
+                    # update the stock and save
+                    merchandise_contactable_organizational_hierarchy_tree_node_entity.contactable_organizational_hierarchy_tree_node = transfer_entity.receiver
+                    merchandise_contactable_organizational_hierarchy_tree_node_entity.stock_on_hand = 0
+                    merchandise_contactable_organizational_hierarchy_tree_node_entity.stock_on_hand += quantity
+                    entity_manager._update(merchandise_contactable_organizational_hierarchy_tree_node_entity)
+
+                    del transfered_merchandise_object_id_quantity_map[inventory_line_entity.merchandise.object_id]
+
+        entity_manager.commit_transaction("transfers")
+
+    def post_process_missing_product_subproduct_associations(self, internal_structure, entity_manager):
+        print "##### ASSOCIATING MISSING PRODUCT-SUBPRODUCT SLIPS #####"
+
+        file = open("c:\\Users\\srio\\subproduct-products.sql", "w")
+        internal_entities = internal_structure.get_entities("subproduct")
+        for internal_entity in internal_entities:
+            if internal_entity.has_field("product"):
+                product = internal_entity.get_field_value("product")
+                file.write("INSERT INTO TreeNodeTreeNodeRelation(parent_tree_node_object_id, child_tree_node_object_id) VALUES(" + str(product.object_id) + "," + str(internal_entity.object_id) + ");\n")
+        file.close()
+
+        file = open("c:\\Users\\srio\\products-subproducts.sql", "w")
+        internal_entities = internal_structure.get_entities("product")
+        for internal_entity in internal_entities:
+            if internal_entity.has_field("subproduct"):
+                subproduct = internal_entity.get_field_value("subproduct")
+                file.write("INSERT INTO TreeNodeTreeNodeRelation(parent_tree_node_object_id, child_tree_node_object_id) VALUES(" + str(internal_entity.object_id) + "," + str(subproduct.object_id) + ");\n")
+        file.close()
+
+    def post_process_missing_money_sale_slip_associations(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("missing_money_sale_slips")
+
+        print "##### ASSOCIATING MISSING MONEY SALE SLIPS #####"
+
+        file = open("c:\\Users\\srio\\money_sale_slip-sale_transaction.sql", "w")
+        internal_entities = internal_structure.get_entities("sale_transaction")
+        for internal_entity in internal_entities:
+            if internal_entity.has_field("money_sale"):
+                money_sale_slip = internal_entity.get_field_value("money_sale")
+                file.write("UPDATE SaleTransaction SET money_sale_slip = " + str(money_sale_slip.object_id) + " WHERE object_id = " + str(internal_entity.object_id) + ";\n")
+        file.close()
+
+        file = open("c:\\Users\\srio\\money_sale_slip-payment.sql", "w")
+        internal_entities = internal_structure.get_entities("payment")
+        for internal_entity in internal_entities:
+            if internal_entity.has_field("money_sale"):
+                money_sale_slip = internal_entity.get_field_value("money_sale")
+                file.write("UPDATE MoneySaleSlip SET payment = " + str(internal_entity.object_id) + " WHERE object_id = " + str(money_sale_slip.object_id) + ";\n")
+        file.close()
+
+        internal_entities = internal_structure.get_entities("sale_transaction")
+        for internal_entity in internal_entities:
+            if internal_entity.has_field("money_sale"):
+                money_sale_slip = internal_entity.get_field_value("money_sale")
+                money_sale_slip_entity = entity_manager.find_options(entity_manager.get_entity_class("MoneySaleSlip"), money_sale_slip.object_id, {"eager_loading_relations" : {"sale_transaction" : {}}})
+                sale_transaction_entity = entity_manager.find_options(entity_manager.get_entity_class("SaleTransaction"), internal_entity.object_id, {"eager_loading_relations" : {"money_sale_slip" : {}}})
+                sale_transaction_entity.money_sale_slip = money_sale_slip_entity
+                entity_manager._update(sale_transaction_entity)
+
+        internal_entities = internal_structure.get_entities("payment")
+        for internal_entity in internal_entities:
+            if internal_entity.has_field("money_sale"):
+                money_sale_slip = internal_entity.get_field_value("money_sale")
+                money_sale_slip_entity = entity_manager.find_options(entity_manager.get_entity_class("MoneySaleSlip"), money_sale_slip.object_id, {"eager_loading_relations" : {"payments" : {}}})
+                payment_entity = entity_manager.find_options(entity_manager.get_entity_class("Payment"), internal_entity.object_id, {"eager_loading_relations" : {"money_sale_slip" : {}}})
+                money_sale_slip_entity.payments = [payment_entity]
+                entity_manager._update(money_sale_slip_entity)
+
+        entity_manager.commit_transaction("missing_money_sale_slips")
 
     def post_process_trees(self, internal_structure, entity_manager):
         entity_manager.create_transaction("trees_transaction")
@@ -453,113 +649,96 @@ class DataConverterAdapter:
 
         # create merchandise hierarchy tree root node and append orfan merchandise nodes to it
         merchandise_hierarchy_tree_node_class = entity_manager.get_entity_class("MerchandiseHierarchyTreeNode")
-        merchandise_hierarchy_tree_node_entity = merchandise_hierarchy_tree_node_class()
-        internal_structure.object_id += 1
-        merchandise_hierarchy_tree_node_entity.object_id = internal_structure.object_id
-        print "Saving MerchandiseHierarchyTree root node with object id = " + str(merchandise_hierarchy_tree_node_entity.object_id)
-        entity_manager._save(merchandise_hierarchy_tree_node_entity)
-#        product_class = entity_manager.get_entity_class("Product")
-#        sub_product_class = entity_manager.get_entity_class("SubProduct")
-#        material_class = entity_manager.get_entity_class("Material")
-#        category_class = entity_manager.get_entity_class("Category")
-#        collection_class = entity_manager.get_entity_class("Collection")
-#        brand_class = entity_manager.get_entity_class("Brand")
-#        merchandise_entities = []
-#        find_options = {"eager_loading_relations" : {"parent_nodes" : {}}}
-#        merchandise_entities.extend(entity_manager._find_all_options(product_class, find_options))
-#        merchandise_entities.extend(entity_manager._find_all_options(sub_product_class, find_options))
-#        merchandise_entities.extend(entity_manager._find_all_options(material_class, find_options))
-#        merchandise_entities.extend(entity_manager._find_all_options(category_class, find_options))
-#        merchandise_entities.extend(entity_manager._find_all_options(collection_class, find_options))
-#        merchandise_entities.extend(entity_manager._find_all_options(brand_class, find_options))
-#        for merchandise_entity in merchandise_entities:
-#            if not len(merchandise_entity.parent_nodes):
-#                merchandise_entity.parent_nodes = [merchandise_hierarchy_tree_node_entity]
-#                entity_manager._update(merchandise_entity)
+        transactional_merchandise_class = entity_manager.get_entity_class("TransactionalMerchandise")
+        product_class = entity_manager.get_entity_class("Product")
+        sub_product_class = entity_manager.get_entity_class("SubProduct")
+        service_class = entity_manager.get_entity_class("Service")
+        repair_class = entity_manager.get_entity_class("Repair")
+        root_merchandise_hierarchy_tree_node_entity = merchandise_hierarchy_tree_node_class()
+        find_options = {"eager_loading_relations" : {"parent_nodes" : {}}}
+#        merchandise_hierarchy_tree_node_entities = []
+#        merchandise_hierarchy_tree_node_entities.extend(entity_manager._find_all_options(merchandise_hierarchy_tree_node_class, find_options))
+#        merchandise_hierarchy_tree_node_entities.extend(entity_manager._find_all_options(transactional_merchandise_class, find_options))
+#        merchandise_hierarchy_tree_node_entities.extend(entity_manager._find_all_options(product_class, find_options))
+#        merchandise_hierarchy_tree_node_entities.extend(entity_manager._find_all_options(sub_product_class, find_options))
+#        merchandise_hierarchy_tree_node_entities.extend(entity_manager._find_all_options(service_class, find_options))
+#        merchandise_hierarchy_tree_node_entities.extend(entity_manager._find_all_options(repair_class, find_options))
+#        merchandise_hierarchy_tree_node_entities = list(set(merchandise_hierarchy_tree_node_entities))
+        entity_manager._save(root_merchandise_hierarchy_tree_node_entity)
+#        for merchandise_hierarchy_tree_node_entity in merchandise_hierarchy_tree_node_entities:
+#            if not merchandise_hierarchy_tree_node_entity.parent_nodes:
+#                merchandise_hierarchy_tree_node_entity.parent_nodes = [root_merchandise_hierarchy_tree_node_entity]
+#                entity_manager._update(merchandise_hierarchy_tree_node_entity)
 
         # create organizational hierarchy tree root node and append orfan suppliers to it
         organizational_hierarchy_tree_node_class = entity_manager.get_entity_class("OrganizationalHierarchyTreeNode")
-        organizational_hierarchy_tree_root_node_entity = organizational_hierarchy_tree_node_class()
-        internal_structure.object_id += 1
-        organizational_hierarchy_tree_root_node_entity.object_id = internal_structure.object_id
-        print "Saving OrganizationalHierarchyTree root node with object id = " + str(organizational_hierarchy_tree_root_node_entity.object_id)
-        entity_manager._save(organizational_hierarchy_tree_root_node_entity)
+        root_organizational_hierarchy_tree_node_entity = organizational_hierarchy_tree_node_class()
+        entity_manager._save(root_organizational_hierarchy_tree_node_entity)
+#        system_company_class = entity_manager.get_entity_class("SystemCompany")
+#        functional_unit_class = entity_manager.get_entity_class("FunctionalUnit")
+#        store_class = entity_manager.get_entity_class("Store")
+#        organizational_hierarchy_tree_node_entities = []
+#        find_options = {"eager_loading_relations" : {"parent_nodes" : {}}}
+#        organizational_hierarchy_tree_node_entities.extend(entity_manager._find_all_options(system_company_class, find_options))
+#        organizational_hierarchy_tree_node_entities.extend(entity_manager._find_all_options(functional_unit_class, find_options))
+#        organizational_hierarchy_tree_node_entities.extend(entity_manager._find_all_options(store_class, find_options))
+#        organizational_hierarchy_tree_node_entities = list(set(merchandise_hierarchy_tree_node_entities))
+#        for organizational_hierarchy_tree_node_entity in organizational_hierarchy_tree_node_entities:
+#            if not organizational_hierarchy_tree_node_entity.parent_nodes:
+#                organizational_hierarchy_tree_node_entity.parent_nodes = [root_organizational_hierarchy_tree_node_entity]
+#                entity_manager._update(organizational_hierarchy_tree_node_entity)
 
         # create supplier hierarchy tree root node
         organizational_hierarchy_tree_node_class = entity_manager.get_entity_class("OrganizationalHierarchyTreeNode")
-        supplier_hierarchy_tree_node_entity = organizational_hierarchy_tree_node_class()
-        internal_structure.object_id += 1
-        supplier_hierarchy_tree_node_entity.object_id = internal_structure.object_id
-        print "Saving SupplierHierarchyTree root node with object id = " + str(organizational_hierarchy_tree_root_node_entity.object_id)
-        entity_manager._save(supplier_hierarchy_tree_node_entity)
+        root_supplier_hierarchy_tree_node_entity = organizational_hierarchy_tree_node_class()
+        entity_manager._save(root_supplier_hierarchy_tree_node_entity)
 #        supplier_company_class = entity_manager.get_entity_class("SupplierCompany")
-#        supplier_employee_class = entity_manager.get_entity_class("SupplierEmployee")
 #        supplier_entities = []
 #        find_options = {"eager_loading_relations" : {"parent_nodes" : {}}}
 #        supplier_entities.extend(entity_manager._find_all_options(supplier_company_class, find_options))
-#        supplier_entities.extend(entity_manager._find_all_options(supplier_employee_class, find_options))
 #        for supplier_entity in supplier_entities:
-#            if not len(supplier_entity.parent_nodes):
-#                supplier_entity.parent_nodes = [supplier_hierarchy_tree_node_entity]
+#            if not supplier_entity.parent_nodes:
+#                supplier_entity.parent_nodes = [root_supplier_hierarchy_tree_node_entity]
 #                entity_manager._update(supplier_entity)
 
         # create customer hierarchy tree root node and append orfan customers to it
         organizational_hierarchy_tree_node_class = entity_manager.get_entity_class("OrganizationalHierarchyTreeNode")
-        customer_hierarchy_tree_node_entity = organizational_hierarchy_tree_node_class()
-        internal_structure.object_id += 1
-        customer_hierarchy_tree_node_entity.object_id = internal_structure.object_id
-        print "Saving CustomerHierarchyTree root node with object id = " + str(customer_hierarchy_tree_node_entity.object_id)
-        entity_manager._save(customer_hierarchy_tree_node_entity)
+        root_customer_hierarchy_tree_node_entity = organizational_hierarchy_tree_node_class()
+        entity_manager._save(root_customer_hierarchy_tree_node_entity)
 #        customer_person_class = entity_manager.get_entity_class("CustomerPerson")
 #        customer_company_class = entity_manager.get_entity_class("CustomerCompany")
-#        supplier_entities = []
+#        customer_entities = []
 #        find_options = {"eager_loading_relations" : {"parent_nodes" : {}}}
 #        customer_entities.extend(entity_manager._find_all_options(customer_company_class, find_options))
 #        customer_entities.extend(entity_manager._find_all_options(customer_person_class, find_options))
 #        for customer_entity in customer_entities:
-#            if not len(customer_entity.parent_nodes):
-#                customer_entity.parent_nodes = [customer_hierarchy_tree_node_entity]
+#            if not customer_entity.parent_nodes:
+#                customer_entity.parent_nodes = [root_customer_hierarchy_tree_node_entity]
 #                entity_manager._update(customer_entity)
 
         # create organizational hierarchy tree
         organizational_hierarchy_tree_class = entity_manager.get_entity_class("OrganizationalHierarchyTree")
         organizational_hierarchy_tree_entity = organizational_hierarchy_tree_class()
-        internal_structure.object_id += 1
-        organizational_hierarchy_tree_entity.object_id = internal_structure.object_id
-        organizational_hierarchy_tree_entity.root_node = organizational_hierarchy_tree_root_node_entity
-        print "Saving OrganizationalHierarchyTree with object id = " + str(organizational_hierarchy_tree_entity.object_id)
+        organizational_hierarchy_tree_entity.root_node = root_organizational_hierarchy_tree_node_entity
         entity_manager._save(organizational_hierarchy_tree_entity)
 
         # create merchandise hierarchy tree
         merchandise_hierarchy_tree_class = entity_manager.get_entity_class("MerchandiseHierarchyTree")
         merchandise_hierarchy_tree_entity = merchandise_hierarchy_tree_class()
-        internal_structure.object_id += 1
-        merchandise_hierarchy_tree_entity.object_id = internal_structure.object_id
-        merchandise_hierarchy_tree_entity.root_node = merchandise_hierarchy_tree_node_entity
-        print "Saving MerchandiseHierarchyTree with object id = " + str(merchandise_hierarchy_tree_entity.object_id)
+        merchandise_hierarchy_tree_entity.root_node = root_merchandise_hierarchy_tree_node_entity
         entity_manager._save(merchandise_hierarchy_tree_entity)
 
         # create supplier hierarchy tree
         supplier_hierarchy_tree_class = entity_manager.get_entity_class("SupplierHierarchyTree")
         supplier_hierarchy_tree_entity = supplier_hierarchy_tree_class()
-        internal_structure.object_id += 1
-        supplier_hierarchy_tree_entity.object_id = internal_structure.object_id
-        supplier_hierarchy_tree_entity.root_node = supplier_hierarchy_tree_node_entity
-        print "Saving SupplierHierarchyTree with object id = " + str(supplier_hierarchy_tree_entity.object_id)
+        supplier_hierarchy_tree_entity.root_node = root_supplier_hierarchy_tree_node_entity
         entity_manager._save(supplier_hierarchy_tree_entity)
-        #supplier_company_class = entity_manager.get_entity_class("SupplierCompany")
-        #supplier_employee_class = entity_manager.get_entity_class("SupplierEmployee")
 
         # create customer hierarchy tree
         customer_hierarchy_tree_class = entity_manager.get_entity_class("CustomerHierarchyTree")
         customer_hierarchy_tree_entity = customer_hierarchy_tree_class()
-        internal_structure.object_id += 1
-        customer_hierarchy_tree_entity.object_id = internal_structure.object_id
-        customer_hierarchy_tree_entity.root_node = customer_hierarchy_tree_node_entity
-        print "Saving CustomerHierarchyTree with object id = " + str(customer_hierarchy_tree_entity.object_id)
+        customer_hierarchy_tree_entity.root_node = root_customer_hierarchy_tree_node_entity
         entity_manager._save(customer_hierarchy_tree_entity)
-        #customer_company_class = entity_manager.get_entity_class("CustomerCompany")
-        #customer_person_class = entity_manager.get_entity_class("CustomerPerson")
 
         entity_manager.commit_transaction("trees_transaction")
 
@@ -601,73 +780,120 @@ class DataConverterAdapter:
         entity_manager.commit_transaction("primaries_transaction")
 
     def post_process_costs(self, internal_structure, entity_manager):
-         # copy costs from organizational hierarchy merchandise supplier to merchandise contactable organizational hierarchy tree node
         entity_manager.create_transaction("costs_transaction")
 
         print "##### COPYING COSTS #####"
 
         merchandise_contactable_organizational_hierarchy_tree_node_class = entity_manager.get_entity_class("MerchandiseContactableOrganizationalHierarchyTreeNode")
+        find_options = {"eager_loading_relations" : {"merchandise" : {},
+                                                     "contactable_organizational_hierarchy_tree_node" : {},
+                                                     "cost" : {}}}
+        merchandise_contactable_organizational_hierarchy_tree_node_entities = entity_manager._find_all_options(merchandise_contactable_organizational_hierarchy_tree_node_class, find_options)
+
         organizational_hierarchy_merchandise_supplier_class = entity_manager.get_entity_class("OrganizationalHierarchyMerchandiseSupplier")
-        find_options = {"eager_loading_relations" : {"supplied_organizational_hierarchy" : {"eager_loading_relations" : {"inventory" : {}}}}}
+        find_options = {"eager_loading_relations" : {"supplied_organizational_hierarchy" : {},
+                                                     "supplied_merchandise" : {},
+                                                     "unit_cost" : {}}}
         organizational_hierarchy_merchandise_supplier_entities = entity_manager._find_all_options(organizational_hierarchy_merchandise_supplier_class, find_options)
-        for organizational_hierarchy_merchandise_supplier_entity in organizational_hierarchy_merchandise_supplier_entities:
-            organizational_hierarchy_entity = organizational_hierarchy_merchandise_supplier_entity.supplied_organizational_hierarchy
-            if organizational_hierarchy_entity:
-                for merchandise_entity in organizational_hierarchy_entity.inventory:
-                    merchandise_entity.cost = organizational_hierarchy_merchandise_supplier_entity.unit_cost
-                    entity_manager._update(merchandise_entity)
+
+        inventory_line_map = {}
+
+        for inventory_line_entity_index in range(len(merchandise_contactable_organizational_hierarchy_tree_node_entities)):
+            inventory_line_entity = merchandise_contactable_organizational_hierarchy_tree_node_entities[inventory_line_entity_index]
+            key = (inventory_line_entity.contactable_organizational_hierarchy_tree_node.object_id, inventory_line_entity.merchandise.object_id)
+            inventory_line_map[key] = inventory_line_entity
+
+        for supplier_line_entity_index in range(len(organizational_hierarchy_merchandise_supplier_entities)):
+            supplier_line_entity = organizational_hierarchy_merchandise_supplier_entities[supplier_line_entity_index]
+            key = str((supplier_line_entity.supplied_organizational_hierarchy.object_id, supplier_line_entity.supplied_merchandise.object_id))
+            if key in inventory_line_map:
+                inventory_line_entity = inventory_line_map[key]
+                print supplier_line_entity.unit_cost
+                print inventory_line_entity.cost
+                if supplier_line_entity.unit_cost and not inventory_line_entity.cost:
+                    print "saving cost"
+                    cost_class = entity_manager.get_entity_class("Cost")
+                    cost_entity = cost_class()
+                    cost_entity.value = supplier_line_entity.unit_cost.value
+                    entity_manager._save(cost_entity)
+                    inventory_line_entity.cost = cost_entity
+                    entity_manager._update(inventory_line)
 
         entity_manager.commit_transaction("costs_transaction")
 
-    def post_process_sale_transaction_price(self, internal_structure, entity_manager):
-        entity_manager.create_transaction("sale_transaction_price")
+    def post_process_sale_price(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("sale_price")
 
-        print "##### CALCULATING SALE TRANSACTION PRICES #####"
+        print "##### CALCULATING SALE PRICES #####"
 
-        sale_transaction_merchandise_hierarchy_tree_node_class = entity_manager.get_entity_class("SaleTransactionMerchandiseHierarchyTreeNode")
-        find_options = {"eager_loading_relations" : {"price" : {},
-                                                     "sale_transaction" : {"eager_loading_relations" : {"price" : {}}}}}
-        sale_transaction_merchandise_hierarchy_tree_node_entities = entity_manager._find_all_options(sale_transaction_merchandise_hierarchy_tree_node_class, find_options)
-        for sale_transaction_merchandise_hierarchy_tree_node_entity in sale_transaction_merchandise_hierarchy_tree_node_entities:
-            if sale_transaction_merchandise_hierarchy_tree_node_entity.sale_transaction:
-                if not sale_transaction_merchandise_hierarchy_tree_node_entity.sale_transaction.price:
-                    price_class = entity_manager.get_entity_class("Price")
-                    price_entity = price_class()
-                    price_entity.value = 0
-                    internal_structure.object_id += 1
-                    price_entity.object_id = internal_structure.object_id
-                    entity_manager._save(price_entity)
-                    sale_transaction_merchandise_hierarchy_tree_node_entity.sale_transaction.price = price_entity
-                    entity_manager._update(sale_transaction_merchandise_hierarchy_tree_node_entity.sale_transaction)
-                sale_transaction_merchandise_hierarchy_tree_node_entity.sale_transaction.price.value += sale_transaction_merchandise_hierarchy_tree_node_entity.price.value
-                entity_manager._update(sale_transaction_merchandise_hierarchy_tree_node_entity.sale_transaction.price)
+        sale_merchandise_hierarchy_tree_node_class = entity_manager.get_entity_class("SaleMerchandiseHierarchyTreeNode")
+        find_options = {"eager_loading_relations" : {"unit_price" : {},
+                                                     "sale" : {"eager_loading_relations" : {"price" : {}}}}}
+        sale_merchandise_hierarchy_tree_node_entities = entity_manager._find_all(sale_merchandise_hierarchy_tree_node_class)
 
-        entity_manager.commit_transaction("sale_transaction_price")
+        for sale_merchandise_hierarchy_tree_node_entity in sale_merchandise_hierarchy_tree_node_entities:
+            sale_merchandise_hierarchy_tree_node_entity = entity_manager.find_options(sale_merchandise_hierarchy_tree_node_class, sale_merchandise_hierarchy_tree_node_entity.object_id, find_options)
 
-    def post_process_purchase_transaction_cost(self, internal_structure, entity_manager):
-        entity_manager.create_transaction("purchase_transaction_cost")
+            if not sale_merchandise_hierarchy_tree_node_entity.sale.price:
+                price_class = entity_manager.get_entity_class("Price")
+                price_entity = price_class()
+                price_entity.value = 0
+                entity_manager._save(price_entity)
+                sale_merchandise_hierarchy_tree_node_entity.sale.price = price_entity
+                entity_manager._update(sale_merchandise_hierarchy_tree_node_entity.sale)
 
-        print "##### CALCULATING PURCHASE TRANSACTION COSTS #####"
+            if not sale_merchandise_hierarchy_tree_node_entity.sale.vat:
+                sale_merchandise_hierarchy_tree_node_entity.sale.vat = 0
+            if not sale_merchandise_hierarchy_tree_node_entity.sale.discount:
+                sale_merchandise_hierarchy_tree_node_entity.sale.discount = 0
+            if not sale_merchandise_hierarchy_tree_node_entity.sale.discount_vat:
+                sale_merchandise_hierarchy_tree_node_entity.sale.discount_vat = 0
+            quantity = sale_merchandise_hierarchy_tree_node_entity.quantity
+            if sale_merchandise_hierarchy_tree_node_entity.unit_price.value:
+                sale_merchandise_hierarchy_tree_node_entity.sale.price.value += sale_merchandise_hierarchy_tree_node_entity.unit_price.value * quantity
+            if sale_merchandise_hierarchy_tree_node_entity.unit_vat:
+                sale_merchandise_hierarchy_tree_node_entity.sale.vat += sale_merchandise_hierarchy_tree_node_entity.unit_vat * quantity
+            entity_manager._update(sale_merchandise_hierarchy_tree_node_entity.sale.price)
+            entity_manager._update(sale_merchandise_hierarchy_tree_node_entity.sale)
 
-        purchase_transaction_merchandise_hierarchy_tree_node_class = entity_manager.get_entity_class("PurchaseTransactionMerchandiseHierarchyTreeNode")
-        find_options = {"eager_loading_relations" : {"cost" : {},
-                                                     "purchase_transaction" : {"eager_loading_relations" : {"cost" : {}}}}}
-        purchase_transaction_merchandise_hierarchy_tree_node_entities = entity_manager._find_all_options(purchase_transaction_merchandise_hierarchy_tree_node_class, find_options)
-        for purchase_transaction_merchandise_hierarchy_tree_node_entity in purchase_transaction_merchandise_hierarchy_tree_node_entities:
-            if purchase_transaction_merchandise_hierarchy_tree_node_entity.purchase_transaction:
-                if not purchase_transaction_merchandise_hierarchy_tree_node_entity.purchase_transaction.cost:
-                    cost_class = entity_manager.get_entity_class("Cost")
-                    cost_entity = cost_class()
-                    cost_entity.value = 0
-                    internal_structure.object_id += 1
-                    cost_entity.object_id = internal_structure.object_id
-                    entity_manager._save(cost_entity)
-                    purchase_transaction_merchandise_hierarchy_tree_node_entity.purchase_transaction.cost = cost_entity
-                    entity_manager._update(purchase_transaction_merchandise_hierarchy_tree_node_entity.purchase_transaction)
-                purchase_transaction_merchandise_hierarchy_tree_node_entity.purchase_transaction.cost.value += purchase_transaction_merchandise_hierarchy_tree_node_entity.cost.value
-                entity_manager._update(purchase_transaction_merchandise_hierarchy_tree_node_entity.purchase_transaction.cost)
+        entity_manager.commit_transaction("sale_price")
 
-        entity_manager.commit_transaction("purchase_transaction_cost")
+    def post_process_purchase_cost(self, internal_structure, entity_manager):
+        entity_manager.create_transaction("purchase_cost")
+
+        print "##### CALCULATING PURCHASE COSTS #####"
+
+        purchase_merchandise_hierarchy_tree_node_class = entity_manager.get_entity_class("PurchaseMerchandiseHierarchyTreeNode")
+        find_options = {"eager_loading_relations" : {"unit_cost" : {},
+                                                     "purchase" : {"eager_loading_relations" : {"cost" : {}}}}}
+        purchase_merchandise_hierarchy_tree_node_entities = entity_manager._find_all(purchase_merchandise_hierarchy_tree_node_class)
+
+        for purchase_merchandise_hierarchy_tree_node_entity in purchase_merchandise_hierarchy_tree_node_entities:
+            purchase_merchandise_hierarchy_tree_node_entity = entity_manager.find_options(purchase_merchandise_hierarchy_tree_node_class, purchase_merchandise_hierarchy_tree_node_entity.object_id, find_options)
+
+            if not purchase_merchandise_hierarchy_tree_node_entity.purchase.cost:
+                cost_class = entity_manager.get_entity_class("Cost")
+                cost_entity = cost_class()
+                cost_entity.value = 0
+                entity_manager._save(cost_entity)
+                purchase_merchandise_hierarchy_tree_node_entity.purchase.cost = cost_entity
+                entity_manager._update(purchase_merchandise_hierarchy_tree_node_entity.purchase)
+
+            if not purchase_merchandise_hierarchy_tree_node_entity.purchase.vat:
+                purchase_merchandise_hierarchy_tree_node_entity.purchase.vat = 0
+            if not purchase_merchandise_hierarchy_tree_node_entity.purchase.discount:
+                purchase_merchandise_hierarchy_tree_node_entity.purchase.discount = 0
+            if not purchase_merchandise_hierarchy_tree_node_entity.purchase.discount_vat:
+                purchase_merchandise_hierarchy_tree_node_entity.purchase.discount_vat = 0
+            quantity = purchase_merchandise_hierarchy_tree_node_entity.quantity
+            if purchase_merchandise_hierarchy_tree_node_entity.unit_cost:
+                purchase_merchandise_hierarchy_tree_node_entity.purchase.cost.value += purchase_merchandise_hierarchy_tree_node_entity.unit_cost.value * quantity
+            if purchase_merchandise_hierarchy_tree_node_entity.unit_vat:
+                purchase_merchandise_hierarchy_tree_node_entity.purchase.vat += purchase_merchandise_hierarchy_tree_node_entity.unit_vat * quantity
+            entity_manager._update(purchase_merchandise_hierarchy_tree_node_entity.purchase.cost)
+            entity_manager._update(purchase_merchandise_hierarchy_tree_node_entity.purchase)
+
+        entity_manager.commit_transaction("purchase_cost")
 
     def post_process_payment_date_amount(self, internal_structure, entity_manager):
         entity_manager.create_transaction("payment_date_amount")
@@ -678,14 +904,18 @@ class DataConverterAdapter:
         find_options = {"eager_loading_relations" : {"sales" : {},
                                                      "purchases" : {},
                                                      "payment_lines" : {}}}
-        payment_entities = entity_manager._find_all_options(payment_class, find_options)
+        payment_entities = entity_manager._find_all(payment_class)
         for payment_entity in payment_entities:
+            payment_entity = entity_manager.find_options(payment_class, payment_entity.object_id, find_options)
+            payment_entity.amount = 0
 
             for sale_entity in payment_entity.sales:
                 payment_entity.date = sale_entity.date
+                break
 
             for purchase_entity in payment_entity.purchases:
                 payment_entity.date = purchase_entity.date
+                break
 
             for payment_line_entity in payment_entity.payment_lines:
                 if payment_line_entity.amount:
@@ -697,6 +927,10 @@ class DataConverterAdapter:
 
     # @todo: this method is temporary
     def convert_internal_attribute_name_to_omni_name(self, internal_entity_name, internal_attribute_name):
+    #GiftCertificate.credit_notes
+    #Payment.sale_transaction_customer_return
+    #PurchaseTransaction.payment_terms
+    #StockAdjustment.stock_adjustment
 
         map = {"system_settings" :  {"primary_currency" : "preferred_currency",
                                      "primary_language" : "preferred_language",
@@ -704,49 +938,48 @@ class DataConverterAdapter:
                "address" : {"system_company" : "contactable_organizational_hierarchy_tree_node",
                             "customer" : "contactable_organizational_hierarchy_tree_node",
                             "name" : "street_name"},
-               "sale_merchandise_hierarchy_tree_node_contactable_organizational_hierarchy_tree_node" : {"sale" : "sale_transaction"},
                "vat_class" : {"contactable_organizational_hierarchy_tree_node" : "organizational_hierarchy_tree_nodes"},
                "invoice" : {"purchase" : "purchase_transaction",
                             "sale" : "sale_transaction"},
                "money_sale" : {"sale" : "sale_transaction",
                                "purchase" : "purchase_transaction"},
-               "purchase" : {"purchase_lines" : "purchase_transaction_lines",
-                             "money_sale" : "money_sale_slip",
+               "purchase" : {"money_sale" : "money_sale_slip",
                              "payment" : "payments"},
                "postdated_check_payment" : {"payments" : "payment_lines"},
                "payment" : {"sale" : "sales",
+                            "money_sale" : "money_sale_slip",
                             "credit_payments" : None},
                "customer_company" : {"personally_related_with_as_first_person" : None},
                "consignment" : {"purchases" : "purchase_transactions"},
                "card_payment" : {"payments" : "payment_lines"},
                "cash_payment" : {"payments" : "payment_lines"},
                "check_payment" : {"payments" : "payment_lines"},
-               "product" : {"purchase_merchandise_hierarchy_tree_node" : "purchase_transaction_lines",
+               "product" : {"purchase_merchandise_hierarchy_tree_node" : "purchase_lines",
                             "merchandise_hierarchy_tree_nodes_transfered" : "transfer_lines",
                             "returns" : "return_lines",
                             "category" : "parent_nodes",
-                            "collection" : "parent_nodes",
-                            "sale_lines" : "sale_transaction_lines"},
+                            "collection" : "parent_nodes"},
                "system_company" : {"preferred_languge" : "preferred_language",
                                    "currency" : "preferred_currency",
                                    "consignments" : "consignments_buyer"},
                "financial_account" : {"contactable_organizational_hierarchy_tree_node" : "owners",
                                       "customer" : "owners"},
                "customer_return" : {"return_site" : "return_sites",
+                                    "return_point" : "return_sites",
                                     "merchandise_hierarchy_tree_node_return" : "return_lines",
                                     "sellers" : "return_processors",
                                     "return_site" : "return_sites",
                                     "return_processor" : "return_processors",
                                     "payment_terms" : None,
                                     "company_buyer" : "customer"},
-               "supplier_return" : {"merchandise_hierarchy_tree_node_return" : "return_lines"},
+               "supplier_return" : {"merchandise_hierarchy_tree_node_return" : "return_lines",
+                                    "original_purchase" : "original_purchase_transaction"},
                "sale_transaction" : {"money_sale" : "money_sale_slip",
                                      "returns" : "customer_returns",
                                      "credit_contracts" : None,
                                      "payment" : "payments",
                                      "payment_terms" : None,
-                                     "company_buyer" : "person_buyer",
-                                     "sale_lines" : "sale_transaction_lines"},
+                                     "company_buyer" : "person_buyer"},
                "merchandise_hierarchy_tree_node_return" : {"product" : "merchandise",
                                                            "subproduct" : "merchandise",
                                                            "return" : "merchandise_return",
@@ -755,12 +988,15 @@ class DataConverterAdapter:
                                                                                "merchandise_hierarchy_tree_node" : "merchandise",
                                                                                "store" : "contactable_organizational_hierarchy_tree_node",
                                                                                "subproduct" : "merchandise"},
-               "repair" : {"purchase_merchandise_hierarchy_tree_node" : "purchase_transaction_lines"},
+               "repair" : {"purchase_merchandise_hierarchy_tree_node" : "purchase_lines"},
                "stock_adjustment_merchandise_hierarchy_tree_node" : {"store" : "adjustment_target",
                                                                      #"store" : "adjustment_owners",
                                                                      "reason" : "stock_adjustment_reason",
                                                                      "merchandise" : "stock_adjustment_lines"},
-               "gift_certificate" : {"payments" : None},
+               "gift_certificate" : {"payments" : None,
+                                     "status" : "gift_certificate_status"},
+               "consignment_return" : {"merchandise_hierarchy_tree_node_return" : "return_lines"},
+               "shipment" : {"status" : "shipment_status"},
                "stock_adjustment" : {"stock_adjustment" : None,
                                      "reason" : "stock_adjustment_reason"},
                "purchase_transaction" : {"payment_terms" : None},
@@ -770,26 +1006,33 @@ class DataConverterAdapter:
                "credit_payment" : {"payment" : None,
                                    "system_company_employee" : None},
                "payment_terms" : {"customer_returns" : None},
+               "credit_note" : {"status" : "credit_note_status"},
                "credit_note_payment" : {"payments" : "payment_lines"},
                "transfer_merchandise_hierarchy_tree_node" : {"product" : "merchandise",
                                                              "subproduct" : "merchandise"},
                "contact_information" : {"supplier" : "contactable_organizational_hierarchy_tree_node",
                                         "customer" : "contactable_organizational_hierarchy_tree_node",
                                         "system_company" : "contactable_organizational_hierarchy_tree_node"},
-               "media" : {"product" : "merchandise_hierarchy_tree_nodes",
-                          "customer" : "contactable_organizational_hierarchy_tree_nodes",
-                          "system_company" : "contactable_organizational_hierarchy_tree_nodes",
+               "media" : {"product" : "entities",
+                          "customer" : "entities",
+                          "system_company" : "entities",
                           "name" : "base_64_data"},
                "transfer" : {"merchandise_hierarchy_tree_nodes_transfered" : "transfer_lines"},
                "purchase_merchandise_hierarchy_tree_node" : {"merchandise_hierarchy_tree_node" : "merchandise",
-                                                             "purchase" : "purchase_transaction"},
+                                                             "vat" : "unit_vat",
+                                                             "discount" : "unit_discount",
+                                                             "discount_vat" : "unit_discount_vat",
+                                                             "cost" : "unit_cost"},
                "supplier_company" : {"consignments" : "consignments_supplier"},
                "payment_line" :  {"credit_notes" : None},
                "subproduct" : {"product" : "parent_nodes",
                                "returns" : "return_lines",
-                               "sale_lines" : "sale_transaction_lines",
                                "merchandise_hierarchy_tree_nodes_transfered" : "transfer_lines",
-                               "purchase_merchandise_hierarchy_tree_node" : "purchase_transaction_lines"},
+                               "purchase_merchandise_hierarchy_tree_node" : "purchase_lines"},
+               "sale_merchandise_hierarchy_tree_node_contactable_organizational_hierarchy_tree_node" : {"vat" : "unit_vat",
+                                                                                                        "discount" : "unit_discount",
+                                                                                                        "discount_vat" : "unit_discount_vat",
+                                                                                                        "price" : "unit_price"},
                "user" : {"system_company_employee" : "person"},
                "money" : {"return_point" : "return_point"}}
 
@@ -811,9 +1054,8 @@ class DataConverterAdapter:
                "postdated_check_payment" : "PostDatedCheckPayment",
                "money_sale" : "MoneySaleSlip",
                "reason" : "StockAdjustmentReason",
-               "stock_adjustment_merchandise_hierarchy_tree_node" : "StockAdjustment",
-               "purchase_merchandise_hierarchy_tree_node" : "PurchaseTransactionMerchandiseHierarchyTreeNode",
-               "sale_merchandise_hierarchy_tree_node_contactable_organizational_hierarchy_tree_node" : "SaleTransactionMerchandiseHierarchyTreeNode"}
+               "stock_adjustment_merchandise_hierarchy_tree_node" : "StockAdjustmentMerchandiseHierarchyTreeNode",
+               "sale_merchandise_hierarchy_tree_node_contactable_organizational_hierarchy_tree_node" : "SaleMerchandiseHierarchyTreeNode"}
 
         if internal_entity_name in map:
             return map[internal_entity_name]
@@ -861,28 +1103,30 @@ class DataConverterAdapter:
                             if internal_entity._name == "media" and field_name == "name":
                                file_path = os.path.join("C:/DIA2002/IMAGENS/DEFINITIVO/", field_value)
                                if os.path.exists(file_path):
-                                  string_buffer = self.data_converter_plugin.image_treatment_plugin.resize_image_aspect(file_path, 130, 115)
+                                  string_buffer = self.data_converter_plugin.image_treatment_plugin.resize_image_aspect_background(file_path, 130, 115)
                                   file_content = string_buffer.read()
                                   file_content_base64 = base64.b64encode(file_content)
                                   entity.description = "size:130x115"
                                   field_value = file_content_base64
                             elif entity_attribute_name.find("name") > -1 or entity_attribute_name.find("description") > -1:
-                               # capitalize all names and descriptions
-                               field_value = field_value.capitalize()
+                                # capitalize all names and descriptions
+                                field_value = field_value.capitalize()
+                            elif entity_attribute_name == "customer_code":
+                                field_value = int(field_value)
                             elif entity_attribute_name.find("price") > -1:
                                 price_class = entity_manager.get_entity_class("Price")
                                 price_entity = price_class()
-                                price_entity.value = field_value
                                 internal_structure.object_id += 1
                                 price_entity.object_id = internal_structure.object_id
+                                price_entity.value = field_value
                                 entity_manager._save(price_entity)
                                 field_value = price_entity
                             elif entity_attribute_name.find("cost") > -1:
                                 cost_class = entity_manager.get_entity_class("Cost")
                                 cost_entity = cost_class()
-                                cost_entity.value = field_value
                                 internal_structure.object_id += 1
                                 cost_entity.object_id = internal_structure.object_id
+                                cost_entity.value = field_value
                                 entity_manager._save(cost_entity)
                                 field_value = cost_entity
 
@@ -893,7 +1137,7 @@ class DataConverterAdapter:
                         self.missing_attributes.append(attribute_name)
 
             entity.object_id = internal_entity.object_id
-            self.object_id_entity_map[entity.object_id] = entity
+            self.object_id_entity_map[str(internal_entity.object_id)] = entity
             entities.append(entity)
 
         entity_manager.save_many(entities)
@@ -903,7 +1147,7 @@ class DataConverterAdapter:
         internal_entities = list(set(internal_structure.get_entities(internal_structure_entity_name)))
         for internal_entity_index in range(len(internal_entities)):
             internal_entity = internal_entities[internal_entity_index]
-            internal_entity_entity = self.object_id_entity_map[internal_entity.object_id]
+            internal_entity_entity = self.object_id_entity_map[str(internal_entity.object_id)]
             fields = internal_entity.get_fields()
 
             # for every relation field in that entity
@@ -922,16 +1166,16 @@ class DataConverterAdapter:
                             if not type(field_value) == types.ListType:
                                 field_value = [field_value]
                             for relation_internal_entity in field_value:
-                                if relation_internal_entity and relation_internal_entity.object_id in self.object_id_entity_map:
-                                    relation_entity = self.object_id_entity_map[relation_internal_entity.object_id]
+                                if relation_internal_entity and str(relation_internal_entity.object_id) in self.object_id_entity_map:
+                                    relation_entity = self.object_id_entity_map[str(relation_internal_entity.object_id)]
                                     entity_attribute.append(relation_entity)
                                 elif relation_internal_entity:
-                                    self.missing_relation_entities.append((internal_entity._name, internal_entity.object_id, field_name, relation_internal_entity.object_id))
-                        elif field_value.object_id in self.object_id_entity_map:
-                            relation_entity = self.object_id_entity_map[field_value.object_id]
+                                    self.missing_relation_entities.append((internal_entity._name, internal_entity.object_id, field_name, relation_internal_entity.object_id, str(relation_internal_entity.object_id) in self.object_id_entity_map))
+                        elif str(field_value.object_id) in self.object_id_entity_map:
+                            relation_entity = self.object_id_entity_map[str(field_value.object_id)]
                             entity_attribute = relation_entity
                         else:
-                            self.missing_relation_entities.append((internal_entity._name, internal_entity.object_id, field_name, field_value.object_id))
+                            self.missing_relation_entities.append((internal_entity._name, internal_entity.object_id, field_name, field_value.object_id, str(field_value.object_id) in self.object_id_entity_map))
 
                         # @todo: this is a hack... some person buyers were being placed in the company buyer relation
                         if internal_entity._name == "sale_transaction" and field_name == "company_buyer":
@@ -944,6 +1188,7 @@ class DataConverterAdapter:
                     if not relation_name in self.missing_relations:
                         self.missing_relations.append(relation_name)
 
+            internal_entity_entity.status = 1
             entity_manager._update(internal_entity_entity)
 
 class DomainEntityConversionInfo:
