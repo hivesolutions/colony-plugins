@@ -1113,6 +1113,8 @@ class DataConverterAdapter:
                                 field_value = field_value.capitalize()
                             elif entity_attribute_name == "customer_code":
                                 field_value = int(field_value)
+                            elif internal_entity._name == "card_payment" and entity_attribute_name == "name":
+                                entity.card_type = field_value
                             elif entity_attribute_name.find("price") > -1:
                                 price_class = entity_manager.get_entity_class("Price")
                                 price_entity = price_class()
