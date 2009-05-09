@@ -59,6 +59,9 @@ IMAGE_SCALE_FACTOR = 10
 EXCLUSION_LIST = ["__class__", "__delattr__", "__dict__", "__doc__", "__getattribute__", "__hash__", "__init__", "__module__", "__new__", "__reduce__", "__reduce_ex__", "__repr__", "__setattr__", "__str__", "__weakref__", "__format__", "__sizeof__", "__subclasshook__", "accept", "accept_double", "accept_post_order", "add_child_node", "remove_child_node", "set_indent", "set_value", "indent", "value", "child_nodes"]
 """ The exclusion list """
 
+DEFAULT_ENCODER = "Cp1252"
+""" The default encoder """
+
 def _visit(ast_node_class):
     """
     Decorator for the visit of an ast node.
@@ -178,7 +181,6 @@ def dispatch_visit():
 
     # returns the created decorator
     return decorator
-
 
 class Visitor:
     """
@@ -411,7 +413,7 @@ class Visitor:
             current_position_context_x, current_position_context_y = self.current_position
 
             # retrieves the text width and height
-            text_width, text_height = handler_device_context.GetTextExtent(node.text)
+            text_width, text_height = handler_device_context.GetTextExtent(node.text.encode(DEFAULT_ENCODER))
 
             # retrieves the current clip box values
             clip_box_left, clip_box_top, clip_box_right, clip_box_bottom = handler_device_context.GetClipBox()
@@ -427,7 +429,7 @@ class Visitor:
 
             text_y = current_position_context_y
 
-            handler_device_context.TextOut(text_x, text_y, node.text)
+            handler_device_context.TextOut(text_x, text_y, node.text.encode(DEFAULT_ENCODER))
 
             if self.get_context_information("biggest_height") < text_height:
                 self.put_context_information("biggest_height", text_height)
