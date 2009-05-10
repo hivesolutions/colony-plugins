@@ -37,6 +37,18 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+class TestEntity(EntityClass):
+
+    id = {"id" : True, "data_type" : "numeric", "generated" : True, "generator_type" : "table", "table_generator_field_name" : "Test"}
+    """ The id of the entity """
+
+    object_value = {"data_type" : "text"}
+    """ The object value of the entity """
+
+    def __init__(self):
+        self.id = None
+        self.object_value = None
+
 class DummyEntityBundleParent(EntityClass):
 
     name = {"id" : True, "data_type" : "text"}

@@ -80,7 +80,7 @@ class BusinessDummyEntityBundle:
         business_helper_plugin.import_class_module("business_dummy_entity_bundle_classes", globals(), locals(), global_values, base_directory_name)
 
         # sets the entity bundle
-        self.entity_bundle = [DummyEntityBundleParent, DummyEntityBundleAssociation, DummyEntityBundle, DummyEntityBundleNew]
+        self.entity_bundle = [TestEntity, DummyEntityBundleParent, DummyEntityBundleAssociation, DummyEntityBundle, DummyEntityBundleNew]
 
         # creates the entity bundle map
         entity_bundle_map = {}
