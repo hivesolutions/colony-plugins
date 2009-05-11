@@ -2745,7 +2745,7 @@ class BusinessSqliteEngine:
         else:
             if attribute_date_type == "text":
                 # retrieves the escaped attribute value
-                escaped_attribute_value = escape_text_value(attribute_value)
+                escaped_attribute_value = self.escape_text_value(attribute_value)
 
                 return "'" + escaped_attribute_value + "'"
             elif attribute_date_type == "date":
