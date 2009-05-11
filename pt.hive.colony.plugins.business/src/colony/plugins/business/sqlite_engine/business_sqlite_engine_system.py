@@ -2744,7 +2744,10 @@ class BusinessSqliteEngine:
             return "null"
         else:
             if attribute_date_type == "text":
-                return "'" + attribute_value + "'"
+                # retrieves the escaped attribute value
+                escaped_attribute_value = escape_text_value(attribute_value)
+
+                return "'" + escaped_attribute_value + "'"
             elif attribute_date_type == "date":
                 # in case the attribute is given in the date time format
                 if type(attribute_value) == datetime.datetime:
@@ -2763,6 +2766,23 @@ class BusinessSqliteEngine:
                     return str(attribute_value)
             else:
                 return str(attribute_value)
+
+    def escape_text_value(self, text_value):
+        """
+        Escapes the text value in the sqlite context.
+
+        @rtype: String
+        @return: The escaped text value.
+        """
+
+        # escapes the double quote values
+        escaped_text_value = text_value.replace("\"", "\"\"")
+
+        # escapes the quote values
+        escaped_text_value = text_value.replace("'", "''")
+
+        # returns the escaped text value
+        return escaped_text_value
 
     def get_processed_sqlite_attribute_value(self, attribute_value, attribute_date_type):
         """
