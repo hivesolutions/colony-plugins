@@ -1771,6 +1771,10 @@ class BusinessSqliteEngine:
         # creates the initial query string value
         query_string_value = str()
 
+        # in case it's a count select
+        if count:
+            query_string_value += " select sum(counter) from ("
+
         # iterates over all the entity sub classes
         for entity_sub_class in entity_sub_classes:
             # retrieves the entity sub class name
@@ -1789,7 +1793,7 @@ class BusinessSqliteEngine:
 
             # in case it's a count select
             if count:
-                query_string_value += " count(1) "
+                query_string_value += " count(1) as counter "
             # in case it's a normal select
             else:
                 query_string_value += "\"" + entity_sub_class_name + "\" as class_data_type"
@@ -1907,6 +1911,10 @@ class BusinessSqliteEngine:
                              query_string_value += "\""
 
                 query_string_value += ")"
+
+        # in case it's a count select
+        if count:
+            query_string_value += ")"
 
         # in case there is at least one order by definition
         if len(order_by):
