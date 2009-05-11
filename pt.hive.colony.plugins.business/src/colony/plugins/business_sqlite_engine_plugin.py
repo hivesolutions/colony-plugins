@@ -95,6 +95,9 @@ class BusinessSqliteEnginePlugin(colony.plugins.plugin_system.Plugin):
     def create_connection(self, connection_parameters):
         return self.business_sqlite_engine.create_connection(connection_parameters)
 
+    def close_connection(self, connection):
+        return self.business_sqlite_engine.close_connection(connection)
+
     def commit_connection(self, connection):
         return self.business_sqlite_engine.commit_connection(connection)
 

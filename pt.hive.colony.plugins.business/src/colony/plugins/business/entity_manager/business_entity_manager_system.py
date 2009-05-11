@@ -198,6 +198,14 @@ class EntityManager:
         # returns the current thread connection
         return self.connection_thread_id_map[current_thread_id]
 
+    def close_connection(self):
+        """
+        Closes the current available connection.
+        """
+
+        self.close_database_connection()
+        self.close_database_system_connection()
+
     def get_database_connection(self):
         """
         Retrieves the current available database connection.
@@ -242,6 +250,28 @@ class EntityManager:
         # returns the current thread database system connection
         return self.database_system_connection_thread_id_map[current_thread_id]
 
+    def close_database_connection(self):
+        """
+        Closes the current available database connection.
+        """
+
+        # retrieves the database connection
+        database_connection = self.get_database_connection()
+
+        # closes the database connection to the specified engine
+        self.entity_manager_engine_plugin.close_connection(database_connection)
+
+    def close_database_system_connection(self):
+        """
+        Closes the current available database system connection.
+        """
+
+        # retrieves the database system connection
+        database_system_connection = self.get_database_system_connection()
+
+        # closes the database system connection to the specified engine
+        self.entity_manager_engine_plugin.close_connection(database_system_connection)
+
     def get_transaction_stack(self):
         """
         Retrieves the current available transaction stack.
@@ -270,6 +300,9 @@ class EntityManager:
     def load_entity_manager(self):
         self.register_classes()
         self.create_table_generator()
+
+    def unload_entity_manager(self):
+        pass
 
     def register_classes(self):
         # retrieves the connection object

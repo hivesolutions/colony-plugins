@@ -213,6 +213,16 @@ class BusinessSqliteEngine:
 
         return connection
 
+    def close_connection(self, connection):
+        """
+        Closes the given connection.
+
+        @type connection: Connection
+        @param connection: The connection to be closed.
+        """
+
+        connection.close()
+
     def commit_connection(self, connection):
         # retrieves the database connection from the connection object
         database_connection = connection.database_connection
