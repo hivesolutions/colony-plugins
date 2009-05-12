@@ -39,7 +39,10 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import cStringIO
 
+import xml.sax.saxutils
+
 import template_engine_ast
+import template_engine_exceptions
 
 def _visit(ast_node_class):
     """
@@ -264,15 +267,36 @@ class Visitor:
         attributes_map = node.get_attributes_map()
         attribute_value = attributes_map["value"]
         attribute_value_value = self.get_value(attribute_value)
-        self.string_buffer.write(unicode(attribute_value_value).encode("utf-8"))
+        if "xml_escape" in attributes_map:
+            attribute_xml_escape = attributes_map["xml_escape"]
+            attribute_xml_escape_value = self.get_boolean_value(attribute_xml_escape)
+        else:
+            attribute_xml_escape_value = False
+
+        attribute_value_value = unicode(attribute_value_value).encode("utf-8")
+
+        if attribute_xml_escape_value:
+            attribute_value_value = xml.sax.saxutils.escape(attribute_value_value)
+
+        self.string_buffer.write(attribute_value_value)
 
     def process_out_none(self, node):
         attributes_map = node.get_attributes_map()
         attribute_value = attributes_map["value"]
         attribute_value_value = self.get_value(attribute_value)
+        if "xml_escape" in attributes_map:
+            attribute_xml_escape = attributes_map["xml_escape"]
+            attribute_xml_escape_value = self.get_boolean_value(attribute_xml_escape)
+        else:
+            attribute_xml_escape_value = False
 
         if not attribute_value_value == None:
-            self.string_buffer.write(unicode(attribute_value_value).encode("utf-8"))
+            attribute_value_value = unicode(attribute_value_value).encode("utf-8")
+
+            if attribute_xml_escape_value:
+                attribute_value_value = xml.sax.saxutils.escape(attribute_value_value)
+
+            self.string_buffer.write(attribute_value_value)
 
     def process_var(self, node):
         attributes_map = node.get_attributes_map()
@@ -367,3 +391,13 @@ class Visitor:
         literal_value = attribute_value["value"]
 
         return literal_value
+
+    def get_boolean_value(self, attribute_value):
+        literal_value = attribute_value["value"]
+
+        if literal_value == "True":
+            return True
+        elif literal_value == "False":
+            return False
+
+        raise template_engine_exceptions.InvalidBooleanValue("invalid boolean " + literal_value)
