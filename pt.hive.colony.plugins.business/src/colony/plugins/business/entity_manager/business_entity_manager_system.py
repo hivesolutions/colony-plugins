@@ -597,7 +597,7 @@ class EntityManager:
         entity_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_class)
 
         # retrieves all the non relation attribute names
-        entity_class_non_relation_attribute_names = [attribute_name for attribute_name in entity_class_valid_attribute_names if not attribute_name[DATA_TYPE_FIELD] == RELATION_DATA_TYPE]
+        entity_class_non_relation_attribute_names = [attribute_name for attribute_name in entity_class_valid_attribute_names if not getattr(entity_class, attribute_name)[DATA_TYPE_FIELD] == RELATION_DATA_TYPE]
 
         return entity_class_non_relation_attribute_names
 
