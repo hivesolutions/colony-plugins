@@ -39,28 +39,32 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.plugins.plugin_system
 
-class DataConverterIntermediateStructureIoAdapterPicklePlugin(colony.plugins.plugin_system.Plugin):
+class DataConverterIntermediateStructureIoAdapterDbasePlugin(colony.plugins.plugin_system.Plugin):
     """
-    Provides a means to serialize and deserialize intermediate structures to and from pickle binary format.
+    Provides a means to serialize and deserialize intermediate structures to and from dbase binary format.
     """
 
-    id = "pt.hive.colony.plugins.data_converter.intermediate_structure.io_adapter.pickle"
-    name = "Data Converter Intermediate Structure Input Output Adapter Pickle plugin"
-    short_name = "Data Converter Intermediate Structure Input Output Adapter Pickle"
-    description = "Provides a means to serialize and deserialize intermediate structures to and from pickle binary format"
+    id = "pt.hive.colony.plugins.data_converter.intermediate_structure.io_adapter.dbase"
+    name = "Data Converter Intermediate Structure Input Output Adapter Dbase plugin"
+    short_name = "Data Converter Intermediate Structure Input Output Adapter Dbase"
+    description = "Provides a means to serialize and deserialize intermediate structures to and from dbase binary format"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["data_converter_intermediate_structure_io_adapter.pickle"]
+    capabilities = ["data_converter_intermediate_structure_io_adapter.dbase"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.log", "1.0.0")]
+                    "pt.hive.colony.plugins.main.log", "1.0.0"),
+                    colony.plugins.plugin_system.PackageDependency(
+                    "Win32 Extensions for Python", "dbi", "b202", "http://starship.python.net/crew/mhammond/win32"),
+                    colony.plugins.plugin_system.PackageDependency(
+                    "Win32 Extensions for Python", "odbc", "b202", "http://starship.python.net/crew/mhammond/win32")]
     events_handled = []
     events_registrable = []
 
-    io_adapter_pickle = None
-    """ The intermediate structure pickle input output adapter """
+    io_adapter_dbase = None
+    """ The intermediate structure dbase input output adapter """
 
     logger_plugin = None
     """ Logger plugin """
@@ -70,36 +74,36 @@ class DataConverterIntermediateStructureIoAdapterPicklePlugin(colony.plugins.plu
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
-        global data_converter_intermediate_structure_io_adapter_pickle
-        import data_converter_intermediate_structure_io_adapter_pickle.io_adapter_pickle.io_adapter_pickle_system
-        self.io_adapter_pickle = data_converter_intermediate_structure_io_adapter_pickle.io_adapter_pickle.io_adapter_pickle_system.IoAdapterPickle(self)
+        global data_converter_intermediate_structure_io_adapter_dbase
+        import data_converter_intermediate_structure_io_adapter_dbase.io_adapter_dbase.io_adapter_dbase_system
+        self.io_adapter_dbase = data_converter_intermediate_structure_io_adapter_dbase.io_adapter_dbase.io_adapter_dbase_system.IoAdapterDbase(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
-        self.io_adapter_pickle = None
+        self.io_adapter_dbase = None
         self.logger_plugin = None
 
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.data_converter.intermediate_structure.io_adapter.pickle", "1.0.0")
+    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.data_converter.intermediate_structure.io_adapter.dbase", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.data_converter.intermediate_structure.io_adapter.pickle", "1.0.0")
+    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.data_converter.intermediate_structure.io_adapter.dbase", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.data_converter.intermediate_structure.io_adapter.pickle", "1.0.0")
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.data_converter.intermediate_structure.io_adapter.dbase", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def load(self, intermediate_structure, options):
         """
-        Populates the intermediate structure with data retrieved from the pickle source specified in the options.
+        Populates the intermediate structure with data retrieved from the dbase source specified in the options.
 
         @type intermediate_structure: IntermediateStructure
         @param intermediate_structure: Intermediate structure where to load the data into.
@@ -107,19 +111,19 @@ class DataConverterIntermediateStructureIoAdapterPicklePlugin(colony.plugins.plu
         @param options: Options used to determine how to load data into the provided intermediate structure.
         """
 
-        return self.io_adapter_pickle.load(intermediate_structure, options)
+        return self.io_adapter_dbase.load(intermediate_structure, options)
 
     def save(self, intermediate_structure, options):
         """
-        Saves the intermediate structure to a file in pickle format at the location and with characteristics defined in the options.
+        Saves the intermediate structure to a file in dbase format at the location and with characteristics defined in the options.
 
         @type intermediate_structure: IntermediateStructure
         @param intermediate_structure: Intermediate structure one wants to save.
         @type options: Dictionary
-        @param options: Options used to determine how to save the intermediate structure into pickle format.
+        @param options: Options used to determine how to save the intermediate structure into dbase format.
         """
 
-        return self.io_adapter_pickle.save(intermediate_structure, options)
+        return self.io_adapter_dbase.save(intermediate_structure, options)
 
     def get_logger_plugin(self):
         return self.logger_plugin

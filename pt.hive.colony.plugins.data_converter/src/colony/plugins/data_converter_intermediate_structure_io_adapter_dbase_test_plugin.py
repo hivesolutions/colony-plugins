@@ -40,15 +40,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.plugins.plugin_system
 import colony.plugins.decorators
 
-class DataConverterIntermediateStructureIoAdapterPickleTestPlugin(colony.plugins.plugin_system.Plugin):
+class DataConverterIntermediateStructureIoAdapterDbaseTestPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Data Converter Intermediate Structure Io Adapter Pickle Test plugin.
+    The main class for the Data Converter Intermediate Structure Io Adapter Dbase Test plugin.
     """
 
-    id = "pt.hive.colony.plugins.data_converter.intermediate_structure.io_adapter.pickle_test"
-    name = "Data Converter Input Output Pickle Test Plugin"
-    short_name = "Data Converter Input Output Pickle Test"
-    description = "Data Converter Input Output Pickle Test Plugin"
+    id = "pt.hive.colony.plugins.data_converter.intermediate_structure.io_adapter.dbase_test"
+    name = "Data Converter Input Output Dbase Test Plugin"
+    short_name = "Data Converter Input Output Dbase Test"
+    description = "Data Converter Input Output Dbase Test Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
@@ -62,8 +62,8 @@ class DataConverterIntermediateStructureIoAdapterPickleTestPlugin(colony.plugins
     events_handled = []
     events_registrable = []
 
-    io_adapter_pickle_test = None
-    """ The pickle input output adapter tests """
+    io_adapter_dbase_test = None
+    """ The dbase input output adapter tests """
 
     intermediate_structure_plugin = None
     """ The intermediate structure plugin """
@@ -73,16 +73,16 @@ class DataConverterIntermediateStructureIoAdapterPickleTestPlugin(colony.plugins
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
-        global data_converter_intermediate_structure_io_adapter_pickle
-        import data_converter_intermediate_structure_io_adapter_pickle.test.io_adapter_pickle_test
-        self.io_adapter_pickle_test = data_converter_intermediate_structure_io_adapter_pickle.test.io_adapter_pickle_test.IoAdapterPickleTest(self)
+        global data_converter_intermediate_structure_io_adapter_dbase
+        import data_converter_intermediate_structure_io_adapter_dbase.test.io_adapter_dbase_test
+        self.io_adapter_dbase_test = data_converter_intermediate_structure_io_adapter_dbase.test.io_adapter_dbase_test.IoAdapterDbaseTest(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
-        self.io_adapter_pickle_test = None
+        self.io_adapter_dbase_test = None
         self.intermediate_structure_plugin = None
         self.resource_manager_plugin = None
 
@@ -95,12 +95,12 @@ class DataConverterIntermediateStructureIoAdapterPickleTestPlugin(colony.plugins
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.data_converter.intermediate_structure.io_adapter.pickle_test", "1.0.0")
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.data_converter.intermediate_structure.io_adapter.dbase_test", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_plugin_test_case_bundle(self):
-        return self.io_adapter_pickle_test.get_plugin_test_case_bundle()
+        return self.io_adapter_dbase_test.get_plugin_test_case_bundle()
 
     def get_intermediate_structure_plugin(self):
         return self.intermediate_structure_plugin

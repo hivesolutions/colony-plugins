@@ -192,13 +192,10 @@ class IoAdapterCsvTestCase(unittest.TestCase):
 
     def tearDown(self):
         self.plugin.info("Tearing down Io Adapter Csv Test Case...")
-        self.intermediate_structure_plugin = None
 
         # removes the files created in the test
         if os.path.exists(self.test_intermediate_structure_file_path):
             os.remove(self.test_intermediate_structure_file_path)
-
-        self.test_intermediate_structure_file_path = None
 
 class IoAdapterCsvTestPluginTestCase:
 

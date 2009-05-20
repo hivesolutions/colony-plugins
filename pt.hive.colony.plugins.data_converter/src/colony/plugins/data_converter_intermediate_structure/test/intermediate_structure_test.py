@@ -128,7 +128,6 @@ class IntermediateStructureTestCase(unittest.TestCase):
 
     def tearDown(self):
         self.plugin.info("Tearing down Intermediate Structure Test Case...")
-        self.intermediate_structure_plugin = None
 
 class IntermediateStructureTestPluginTestCase:
 
