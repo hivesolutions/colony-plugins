@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import sys
+import types
 import os.path
 
 import intermediate_structure_exceptions
@@ -56,38 +57,53 @@ class IntermediateStructure:
     entities = []
     """ List used to store the entities in the order they were created """
 
-    store_map = {}
+    entity_name_entities_map = {}
     """ Dictionary used to store the intermediate structure sorted by entity name """
 
-    index_map = {}
+    index_entity_map = {}
     """ Dictionary used to store the intermediate structure index """
 
-    def __init__(self, intermediate_structure_plugin):
+    configuration_map = None
+    """ Map used to configure the intermediate structure to obey to a certain schema """
+
+    def __init__(self, intermediate_structure_plugin, configuration_map = None):
         """
         Class constructor.
 
         @type intermediate_structure_plugin: IntermediateStructurePlugin
         @param intermediate_structure_plugin: Intermediate structure plugin.
+        @type configuration_map: Dictionary
+        @param configuration_map: Optional map defining the intermediate structure's schema.
         """
 
         self.intermediate_structure_plugin = intermediate_structure_plugin
         self.next_object_id = 1
         self.entities = []
-        self.store_map = {}
-        self.index_map = {}
+        self.entity_name_entities_map = {}
+        self.index_entity_map = {}
+        self.configuration_map = configuration_map
 
-    def configure(self):
+        # creates storage in the store for each configured entity name
+        if self.configuration_map:
+            for entity_name in configuration_map:
+                self.entity_name_entities_map[entity_name] = []
+
+    def reset(self):
         """
-        Configures the intermediate structure to adhere to the specified schema.
+        Resets the intermediate structure.
         """
 
         self.next_object_id = 1
         self.entities = []
-        self.index_map = {}
+        self.index_entity_map = {}
 
-        # resets the store map without destroying the configured schema
-        for entity_name in self.store_map:
-            self.store_map[entity_name] = []
+        # resets the lists for the entities specified in the configuration in case it exists
+        if self.configuration_map:
+            for entity_name in self.configuration_map:
+                self.entity_name_entities_map[entity_name] = []
+        else:
+            # otherwise resets the whole store
+            self.entity_name_entities_map = {}
 
     def load(self, io_adapter_plugin_id, options):
         """
@@ -110,7 +126,7 @@ class IntermediateStructure:
             raise intermediate_structure_exceptions.IntermediateStructurePluginMissing("IntermediateStructure.load - Specified input output adapter plugin was not found (io_adapter_plugin = %s)" % io_adapter_plugin_id)
 
         # resets the intermediate structure's state
-        self.configure()
+        self.reset()
 
         # redirects the load request to the specified input output adapter
         input_adapter_plugin.load(self, options)
@@ -140,13 +156,17 @@ class IntermediateStructure:
 
     def has_entities(self, entity_name):
         """
-        Indicates if the intermediate structure is configured to store entities with the specified name.
+        Indicates if the intermediate structure has entities with the specified name.
 
         @rtype: bool
-        @return: Boolean indicating if the intermediate structure is configured to store entities with the specified name.
+        @return: Boolean indicating if the intermediate structure has entities with the specified name.
         """
 
-        return entity_name in self.store_map
+        # raises an exception in case the intermediate structure is configured and doesn't accept entities with this name
+        if self.configuration_map and not entity_name in self.configuration_map:
+            raise intermediate_structure_exceptions.IntermediateStructureOperationNotAllowed("IntermediateStructure.has_entities - The intermediate structure is not configured to allow this entity name (entity_name = %s)" % entity_name)
+
+        return entity_name in self.entity_name_entities_map
 
     def get_entities(self, entity_name = None):
         """
@@ -158,14 +178,14 @@ class IntermediateStructure:
         @return: List with the intermediate structure's entities.
         """
 
-        # @todo: re-enable exception when intermediate structure supports configuration
-        # raises an exception in case the specified entity is not found in the store
-        # if entity_name and not entity_name in self.store_map:
-        #    raise intermediate_structure_exceptions.IntermediateStructureEntityNotAllowed("IntermediateStructure.get_entities - Intermediate structure was not configured to support entities with the specified name (entity_name = %s)" % entity_name)
-
         # retrieves the specified entity instances that exist in the intermediate structure
         if entity_name:
-            entities = self.store_map[entity_name]
+
+            # raises an exception in case the intermediate structure is configured and doesn't accept entities with this name
+            if self.configuration_map and not entity_name in self.configuration_map:
+                raise intermediate_structure_exceptions.IntermediateStructureOperationNotAllowed("IntermediateStructure.get_entities - The intermediate structure is not configured to allow this entity name (entity_name = %s)" % entity_name)
+
+            entities = self.entity_name_entities_map[entity_name]
         else:
             entities = self.entities
 
@@ -181,7 +201,11 @@ class IntermediateStructure:
         @return: Boolean indicating if the entity exists in the intermediate structure.
         """
 
-        return index in self.index_map
+        # raises an exception if the provided index is not a string
+        if not type(index) == types.StringType:
+            raise intermediate_structure_exceptions.IntermediateStructureOptionInvalid("IntermediateStructure.index_entity - The index must be a string")
+
+        return index in self.index_entity_map
 
     def get_entity(self, index):
         """
@@ -193,12 +217,16 @@ class IntermediateStructure:
         @return: The specified intermediate structure entity.
         """
 
+        # raises an exception if the provided index is not a string
+        if not type(index) == types.StringType:
+            raise intermediate_structure_exceptions.IntermediateStructureOptionInvalid("IntermediateStructure.get_entity - The index must be a string")
+
         # raises and exception in case the specified entity is not found in the index
-        if not index in self.index_map:
+        if not index in self.index_entity_map:
             raise intermediate_structure_exceptions.IntermediateStructureEntityNotFound("IntermediateStructure.get_entity - Intermediate structure index doesn't have the specified entity (index = %s)" % index)
 
         # retrieves the specified entity from the intermediate structure's index
-        entity = self.index_map[index]
+        entity = self.index_entity_map[index]
 
         return entity
 
@@ -212,13 +240,20 @@ class IntermediateStructure:
         @return: The specified intermediate structure entity.
         """
 
-        # creates an entity with the specified name and adds it to the
-        # intermediate structure
-        entity = Entity(self.next_object_id, entity_name)
+        # raises an exception in case the intermediate structure is configured and doesn't accept entities with this name
+        if self.configuration_map and not entity_name in self.configuration_map:
+            raise intermediate_structure_exceptions.IntermediateStructureOperationNotAllowed("IntermediateStructure.create_entity - The intermediate structure is not configured to allow this entity name (entity_name = %s)" % entity_name)
+
+        # retrieves the configuration map for the entity in case the intermediate structure was configured
+        entity_configuration_map = None
+        if self.configuration_map:
+             entity_configuration_map = self.configuration_map[entity_name]
+
+        # creates an entity with the specified name and adds it to the intermediate structure
+        entity = Entity(self, self.next_object_id, entity_name, entity_configuration_map)
         self.add_entity(entity)
 
-        # increments the next object id so the next created entity
-        # receives an object id different from this one
+        # increments the next object id so the next created entity receives an object id different from this one
         self.next_object_id += 1
 
         return entity
@@ -231,22 +266,27 @@ class IntermediateStructure:
         @param entity: Entity to add to the intermediate structure.
         """
 
+        # raises an exception in case the intermediate structure is configured and doesn't accept entities with this name
         entity_name = entity.get_name()
+        if self.configuration_map and not entity_name in self.configuration_map:
+            raise intermediate_structure_exceptions.IntermediateStructureOperationNotAllowed("IntermediateStructure.add_entity - The intermediate structure is not configured to allow this entity name (entity_name = %s)" % entity_name)
 
-        # @todo: re-enable exception when intermediate structure supports configuration
-        # raises an exception in case the intermediate structure was not configured to support entities with the specified name
-        # if not self.has_entities(entity_name):
-        #    raise intermediate_structure_exceptions.IntermediateStructureEntityNotAllowed("IntermediateStructure.add_entity - Intermediate structure was not configured to support entities with the specified name (entity_name = %s)" % entity_name)
-        if not entity_name in self.store_map:
-            self.store_map[entity_name] = []
+        # creates a list for the entity type in the store in case it doesn't exist
+        if not entity_name in self.entity_name_entities_map:
+            self.entity_name_entities_map[entity_name] = []
 
         # adds the entity to the store
-        entities = self.store_map[entity_name]
+        entities = self.entity_name_entities_map[entity_name]
         entities.append(entity)
-        self.store_map[entity_name] = entities
+        self.entity_name_entities_map[entity_name] = entities
 
         # adds the entity to the ordered list
         self.entities.append(entity)
+
+        # indexes the entity by its object id
+        entity_object_id = entity.get_object_id()
+        index = str((entity_name, "object_id", entity_object_id))
+        self.index_entity(entity, index)
 
     def index_entity(self, entity, index):
         """
@@ -258,12 +298,21 @@ class IntermediateStructure:
         @param index: Index with which to index the entity by.
         """
 
+        # raises an exception if the provided index is not a string
+        if not type(index) == types.StringType:
+            raise intermediate_structure_exceptions.IntermediateStructureOperationNotAllowed("IntermediateStructure.index_entity - The index must be a string")
+
+        # raises an exception in case the intermediate structure is configured and doesn't accept entities with this name
+        entity_name = entity.get_name()
+        if self.configuration_map and not entity_name in self.configuration_map:
+            raise intermediate_structure_exceptions.IntermediateStructureOperationNotAllowed("IntermediateStructure.index_entity - The intermediate structure is not configured to allow this entity name (entity_name = %s)" % entity_name)
+
         # raises an exception in case an entity is already occupying the specified index position
-        if index in self.index_map:
+        if index in self.index_entity_map:
             raise intermediate_structure_exceptions.IntermediateStructureIndexOcuppied("IntermediateStructure.index_entity - An entity is already indexed with the specified key (index = %s)" % index)
 
         # indexes the entity by the specified key
-        self.index_map[index] = entity
+        self.index_entity_map[index] = entity
         entity.indexes.append(index)
 
     def remove_entity(self, entity):
@@ -274,6 +323,11 @@ class IntermediateStructure:
         @param entity: Entity one wants to remove from the intermediate structure.
         """
 
+        # raises an exception in case the intermediate structure is configured and doesn't accept entities with this name
+        entity_name = entity.get_name()
+        if self.configuration_map and not entity_name in self.configuration_map:
+            raise intermediate_structure_exceptions.IntermediateStructureOperationNotAllowed("IntermediateStructure.remove_entity - The intermediate structure is not configured to allow this entity name (entity_name = %s)" % entity_name)
+
         # raises an exception in case the entity isn't found
         if not entity in self.entities:
             raise intermediate_structure_exceptions.IntermediateStructureEntityNotFound("IntermediateStructure.remove_entity - Intermediate structure doesn't have the specified entity")
@@ -283,15 +337,23 @@ class IntermediateStructure:
 
         # removes the entity from the store
         entity_name = entity.get_name()
-        entities = self.store_map[entity_name]
+        entities = self.entity_name_entities_map[entity_name]
         entities.remove(entity)
-        self.store_map[entity_name] = entities
+        self.entity_name_entities_map[entity_name] = entities
+
+        # removes the entity entry in the store in case the intermediate structure is not configured and
+        # removing this entity resulted in the list becoming empty
+        if not self.configuration_map and not entities:
+            del self.entity_name_entities_map[entity_name]
 
         # removes the entity from the index
         for index in entity.indexes:
-            del self.index_map[index]
+            del self.index_entity_map[index]
 
 class Entity:
+
+    intermediate_structure = None
+    """ The intermediate structure the entity belongs to """
 
     object_id = None
     """ The entity's unique identifier in the intermediate structure """
@@ -305,20 +367,34 @@ class Entity:
     attribute_name_value_map = {}
     """ Dictionary associating the name of an attribute with its value """
 
-    def __init__(self, object_id, name):
+    configuration_map = None
+    """ Map used to configure the intermediate structure to obey to a certain schema """
+
+    def __init__(self, intermediate_structure, object_id, name, configuration_map = None):
         """
         Class constructor.
 
+        @type intermediate_structure: IntermediateStructure
+        @param intermediate_structure: The intermediate structure the entity belongs to.
         @type object_id: int
         @param object_id: Unique identifier for the entity in the intermediate structure.
         @type name: str
         @param name: Name of the entity.
+        @type configuration_map: Dictionary
+        @param configuration_map: Optional map defining the intermediate structure's schema.
         """
 
+        self.intermediate_struture = intermediate_structure
         self.object_id = object_id
         self.name = name
         self.indexes = []
         self.attribute_name_value_map = {}
+        self.configuration_map = configuration_map
+
+        # initializes the entity's attributes with the default values in case a configuration was specified
+        if self.configuration_map:
+            for attribute_name in configuration_map:
+                self.attribute_name_value_map[attribute_name] = None
 
     def get_object_id(self):
         """
@@ -342,7 +418,7 @@ class Entity:
 
     def has_attribute(self, attribute_name):
         """
-        Indicates if the entity is configured to have the specified attribute.
+        Indicates if the entity has the specified attribute.
 
         @type: str
         @param attribute_name: Name of the attribute one wants to know if its exists in the entity.
@@ -350,7 +426,21 @@ class Entity:
         @return: Boolean indicating if the attribute exists in the entity.
         """
 
+        # raises an exception in case the entity is configured and doesn't accept attributes with this name
+        if self.configuration_map and not attribute_name in self.configuration_map:
+           raise intermediate_structure_exceptions.IntermediateStructureOperationNotAllowed("Entity.has_attribute - The entity is not configured to allow this attribute name (attribute_name = %s)" % attribute_name)
+
         return attribute_name in self.attribute_name_value_map
+
+    def get_attributes(self):
+        """
+        Retrieves a map with the entity's attributes.
+
+        @rtype: Dictionary
+        @return: Map with the entity's attributes indexed by their name.
+        """
+
+        return self.attribute_name_value_map
 
     def get_attribute(self, attribute_name):
         """
@@ -361,10 +451,9 @@ class Entity:
         @return: Retrieves the value of the specified attribute.
         """
 
-        # @todo: re-enable exception when intermediate structure supports configuration
-        # raises an exception if the specified attribute does not exist
-        #if not attribute_name in self.attribute_name_value_map:
-        #    raise intermediate_structure_exceptions.IntermediateStructureEntityAttributeNotAllowed("IntermediateStructure.get_attribute - Intermediate structure entity was not configured to support attributes with the specified name (entity_name = %s, attribute_name = %s)" % (self.name, attribute_name))
+        # raises an exception in case the entity is configured and doesn't accept attributes with this name
+        if self.configuration_map and not attribute_name in self.configuration_map:
+           raise intermediate_structure_exceptions.IntermediateStructureOperationNotAllowed("Entity.get_attribute - The entity is not configured to allow this attribute name (attribute_name = %s)" % attribute_name)
 
         # retrieves the attribute value
         attribute_value = self.attribute_name_value_map[attribute_name]
@@ -380,9 +469,8 @@ class Entity:
         @param attribute_value: Attribute value one wants to set.
         """
 
-        # @todo: re-enable exception when intermediate structure supports configuration
-        # raises an exception if the specified attribute does not exist
-        #if not attribute_name in self.attribute_name_value_map:
-        #    raise intermediate_structure_exceptions.IntermediateStructureEntityAttributeNotAllowed("IntermediateStructure.set_attribute - Intermediate structure entity was not configured to support attributes with the specified name (entity_name = %s, attribute_name = %s)" % (self.name, attribute_name))
+        # raises an exception in case the entity is configured and doesn't accept attributes with this name
+        if self.configuration_map and not attribute_name in self.configuration_map:
+           raise intermediate_structure_exceptions.IntermediateStructureOperationNotAllowed("Entity.set_attribute - The entity is not configured to allow this attribute name (attribute_name = %s)" % attribute_name)
 
         self.attribute_name_value_map[attribute_name] = attribute_value

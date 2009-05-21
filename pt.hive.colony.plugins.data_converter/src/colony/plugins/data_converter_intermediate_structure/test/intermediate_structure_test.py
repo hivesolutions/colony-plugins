@@ -80,7 +80,9 @@ class IntermediateStructureTestCase(unittest.TestCase):
 
     def test_intermediate_structure(self):
         # creates an intermediate structure instance
-        intermediate_structure = self.intermediate_structure_plugin.create_intermediate_structure()
+        configuration_map = {"dummy_entity" : {"normal_attribute" : {},
+                                               "relation_attribute" : {}}}
+        intermediate_structure = self.intermediate_structure_plugin.create_intermediate_structure(configuration_map)
         self.assertNotEquals(intermediate_structure, None)
 
         first_entity_index = str(("dummy_entity", 1))
@@ -105,6 +107,10 @@ class IntermediateStructureTestCase(unittest.TestCase):
         first_entity.set_attribute("relation_attribute", second_entity)
         self.assertEquals(first_entity.has_attribute("relation_attribute"), True)
         self.assertEquals(first_entity.get_attribute("relation_attribute"), second_entity)
+        self.assertTrue("normal_attribute" in first_entity.get_attributes())
+        self.assertEquals(first_entity.get_attributes()["normal_attribute"], 1)
+        self.assertTrue("relation_attribute" in first_entity.get_attributes())
+        self.assertEquals(first_entity.get_attributes()["relation_attribute"], second_entity)
 
         # sets the second entity's attributes
         self.assertEquals(second_entity.get_object_id(), 2)
@@ -115,6 +121,10 @@ class IntermediateStructureTestCase(unittest.TestCase):
         second_entity.set_attribute("relation_attribute", first_entity)
         self.assertEquals(second_entity.has_attribute("relation_attribute"), True)
         self.assertEquals(second_entity.get_attribute("relation_attribute"), first_entity)
+        self.assertTrue("normal_attribute" in second_entity.get_attributes())
+        self.assertEquals(second_entity.get_attributes()["normal_attribute"], 2)
+        self.assertTrue("relation_attribute" in second_entity.get_attributes())
+        self.assertEquals(second_entity.get_attributes()["relation_attribute"], first_entity)
 
         # clears the internal structure and tests that it has been cleared correctly
         intermediate_structure.remove_entity(first_entity)
@@ -123,8 +133,8 @@ class IntermediateStructureTestCase(unittest.TestCase):
         self.assertEquals(intermediate_structure.has_entity(first_entity_index), False)
         self.assertEquals(intermediate_structure.has_entity(second_entity_index), False)
         self.assertEquals(len(intermediate_structure.entities), 0)
-        self.assertEquals(len(intermediate_structure.store_map.keys()), 1)
-        self.assertEquals(len(intermediate_structure.index_map.keys()), 0)
+        self.assertEquals(len(intermediate_structure.entity_name_entities_map.keys()), 1)
+        self.assertEquals(len(intermediate_structure.index_entity_map.keys()), 0)
 
     def tearDown(self):
         self.plugin.info("Tearing down Intermediate Structure Test Case...")
