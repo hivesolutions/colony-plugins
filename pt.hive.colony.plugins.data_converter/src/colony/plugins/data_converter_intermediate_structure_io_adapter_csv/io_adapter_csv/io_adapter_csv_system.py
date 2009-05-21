@@ -69,11 +69,13 @@ class IoAdapterCsv:
         @param options: Options used to determine how to load data into the provided intermediate structure.
         """
 
+        self.io_adapter_csv_plugin.logger.info("Loading intermediate structure with csv io adapter")
+
         # raises an exception in case one of the mandatory options is not provided
         mandatory_options = ["file_path", "entity_names", "entity_name_attribute_names"]
         for mandatory_option in mandatory_options:
             if not mandatory_option in options:
-                raise io_adapter_csv_exceptions.IoAdapterCsvOptionMissing("IoAdapterCsv.load - Mandatory option not supplied (option_name = %s)" % mandatory_option)
+                raise io_adapter_csv_exceptions.IoAdapterCsvOptionNotFound("IoAdapterCsv.load - Mandatory option not supplied (option_name = %s)" % mandatory_option)
 
         # extracts the mandatory options
         file_path = options["file_path"]
@@ -83,7 +85,7 @@ class IoAdapterCsv:
         # raises an exception if there is a specified entity whose schema was not provided
         for entity_name in entity_names:
             if not entity_name in entity_name_attribute_names_map:
-                raise io_adapter_csv_exceptions.IoAdapterCsvOptionMissing("IoAdapterCsv.load - Schema missing for specified entity (entity_name = %s)" % entity_name)
+                raise io_adapter_csv_exceptions.IoAdapterCsvOptionNotFound("IoAdapterCsv.load - Schema missing for specified entity (entity_name = %s)" % entity_name)
 
         # extracts the non-mandatory options
         csv_token_separator = DEFAULT_CSV_TOKEN_SEPARATOR
@@ -129,11 +131,13 @@ class IoAdapterCsv:
         @param options: Options used to determine how to save the intermediate structure into csv format.
         """
 
+        self.io_adapter_csv_plugin.logger.info("Saving intermediate structure with csv io adapter")
+
         # raises an exception in case one of the mandatory options is not provided
         mandatory_options = ["file_path", "entity_names", "entity_name_attribute_names"]
         for mandatory_option in mandatory_options:
             if not mandatory_option in options:
-                raise io_adapter_csv_exceptions.IoAdapterCsvOptionMissing("IoAdapterCsv.save - Mandatory option not supplied (option_name = %s)" % mandatory_option)
+                raise io_adapter_csv_exceptions.IoAdapterCsvOptionNotFound("IoAdapterCsv.save - Mandatory option not supplied (option_name = %s)" % mandatory_option)
 
         # extracts the mandatory options
         file_path = options["file_path"]
@@ -143,7 +147,7 @@ class IoAdapterCsv:
         # raises an exception if there is a specified entity whose schema was not provided
         for entity_name in entity_names:
             if not entity_name in entity_name_attribute_names_map:
-                raise io_adapter_csv_exceptions.IoAdapterCsvOptionMissing("IoAdapterCsv.save - Schema missing for specified entity (entity_name = %s)" % entity_name)
+                raise io_adapter_csv_exceptions.IoAdapterCsvOptionNotFound("IoAdapterCsv.save - Schema missing for specified entity (entity_name = %s)" % entity_name)
 
         # extracts the non-mandatory options
         csv_token_separator = DEFAULT_CSV_TOKEN_SEPARATOR

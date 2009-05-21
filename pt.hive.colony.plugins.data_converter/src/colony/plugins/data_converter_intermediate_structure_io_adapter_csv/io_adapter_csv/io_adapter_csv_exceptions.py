@@ -44,9 +44,9 @@ class IoAdapterCsvException(Exception):
 
     pass
 
-class IoAdapterCsvOptionMissing(IoAdapterCsvException):
+class IoAdapterCsvOptionNotFound(IoAdapterCsvException):
     """
-    The io adapter csv option missing class.
+    The io adapter csv option not found class.
     """
 
     def __init__(self, message):
