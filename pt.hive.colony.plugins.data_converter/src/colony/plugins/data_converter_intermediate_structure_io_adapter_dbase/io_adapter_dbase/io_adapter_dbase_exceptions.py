@@ -44,9 +44,9 @@ class IoAdapterDbaseException(Exception):
 
     pass
 
-class IoAdapterDbaseOptionMissing(IoAdapterDbaseException):
+class IoAdapterDbaseOptionNotFound(IoAdapterDbaseException):
     """
-    The io adapter dbase option missing class.
+    The io adapter dbase option not found class.
     """
 
     def __init__(self, message):
