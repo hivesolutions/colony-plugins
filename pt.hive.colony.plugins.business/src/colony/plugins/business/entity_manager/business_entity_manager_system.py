@@ -583,6 +583,24 @@ class EntityManager:
 
         return entity_class_valid_attribute_names
 
+    def get_entity_class_relation_attribute_names(self, entity_class):
+        """
+        Retrieves a list with the names of all the relational attributes from the given entity class.
+
+        @type entity_class: Class
+        @param entity_class: The entity class.
+        @rtype: List
+        @return: The list with the names of all the relational attributes from the given entity class.
+        """
+
+        # retrieves all the valid class attribute names
+        entity_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_class)
+
+        # retrieves all the relation attribute names
+        entity_class_relation_attribute_names = [attribute_name for attribute_name in entity_class_valid_attribute_names if getattr(entity_class, attribute_name)[DATA_TYPE_FIELD] == RELATION_DATA_TYPE]
+
+        return entity_class_relation_attribute_names
+
     def get_entity_class_non_relation_attribute_names(self, entity_class):
         """
         Retrieves a list with the names of all the non relational attributes from the given entity class.
