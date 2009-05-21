@@ -69,6 +69,8 @@ class DataConverter:
         @param conversion_options: Options used to determine how to perform the conversion process.
         """
 
+        self.data_converter_plugin.logger.info("Data conversion process started")
+
         # raises an exception in case one of the mandatory options is not provided
         mandatory_input_output_options = ["io_adapter_plugin_id"]
         for mandatory_input_output_option in mandatory_input_output_options:
@@ -86,10 +88,7 @@ class DataConverter:
         # loads the source data into the input intermediate structure
         input_intermediate_structure.load(input_adapter_plugin_id, input_options)
 
-        # converts data from the input to the output intermediate structures
-        entities = input_intermediate_structure.get_entities()
-        for entity in entities:
-            output_intermediate_structure.add_entity(entity)
-
         # saves the output intermediate structure with the results of the conversion
-        output_intermediate_structure.save(output_adapter_plugin_id, output_options)
+        input_intermediate_structure.save(output_adapter_plugin_id, output_options)
+
+        self.data_converter_plugin.logger.info("Data conversion process ended")

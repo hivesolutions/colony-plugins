@@ -102,8 +102,19 @@ class DataConverterIntermediateStructurePlugin(colony.plugins.plugin_system.Plug
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def create_intermediate_structure(self):
-        intermediate_structure = data_converter_intermediate_structure.intermediate_structure.intermediate_structure_system.IntermediateStructure(self)
+    def create_intermediate_structure(self, configuration_map=None):
+        """
+        Creates an intermediate structure instance.
+
+        @type configuration_map: Dictionary
+        @param configuration_map: Optional map defining the intermediate structure's schema.
+        @rtype: IntermediateStructure
+        @return: The created intermediate structure.
+        """
+
+        # creates the intermediate structure
+        intermediate_structure = data_converter_intermediate_structure.intermediate_structure.intermediate_structure_system.IntermediateStructure(self, configuration_map)
+
         return intermediate_structure
 
     @colony.plugins.decorators.load_allowed_capability("data_converter_intermediate_structure_io_adapter")

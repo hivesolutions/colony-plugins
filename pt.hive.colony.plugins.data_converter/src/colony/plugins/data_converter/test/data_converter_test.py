@@ -87,7 +87,7 @@ class DataConverterTestCase(unittest.TestCase):
         # creates the path where to store the serialized input intermediate structures used in the test
         self.test_output_intermediate_structure_file_path = os.path.join(user_home_path, "test_output_intermediate_structure")
 
-    def test_convert_data(self):
+    def test_convert_data_csv_to_pickle(self):
         # defines the csv schema
         entity_names = ["dummy_entity", "dummy_entity"]
         entity_name_attribute_names_map = {"dummy_entity" : ["normal_attribute"],
