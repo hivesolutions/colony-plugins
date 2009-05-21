@@ -67,6 +67,8 @@ class IoAdapterPickle:
         @param options: Options used to determine how to load data into the provided intermediate structure.
         """
 
+        self.io_adapter_pickle_plugin.logger.info("Loading intermediate structure with pickle io adapter")
+
         # raises an exception in case one of the mandatory options is not provided
         mandatory_options = ["file_path"]
         for mandatory_option in mandatory_options:
@@ -82,7 +84,9 @@ class IoAdapterPickle:
 
         # loads intermediate structure from the specified file
         storage_file = open(file_path, "r")
-        intermediate_structure.entities, intermediate_structure.store_map, intermediate_structure.index_map = pickle.load(storage_file)
+        unpickler = pickle.Unpickler(storage_file)
+        unpickler.persistent_load = self.get_persistent_object
+        intermediate_structure.entities, intermediate_structure.entity_name_entities_map, intermediate_structure.index_entity_map = unpickler.load()
         storage_file.close()
 
     def save(self, intermediate_structure, options):
@@ -95,6 +99,8 @@ class IoAdapterPickle:
         @param options: Options used to determine how to save the intermediate structure into pickle format.
         """
 
+        self.io_adapter_pickle_plugin.logger.info("Saving intermediate structure with pickle io adapter")
+
         # raises an exception in case one of the mandatory options is not provided
         mandatory_options = ["file_path"]
         for mandatory_option in mandatory_options:
@@ -106,5 +112,33 @@ class IoAdapterPickle:
 
         # serializes the intermediate structure
         storage_file = open(file_path, "w")
-        pickle.dump((intermediate_structure.entities, intermediate_structure.store_map, intermediate_structure.index_map), storage_file)
+        pickler = pickle.Pickler(storage_file)
+        pickler.persistent_id = self.get_persistent_object_id
+        pickler.dump((intermediate_structure.entities, intermediate_structure.entity_name_entities_map, intermediate_structure.index_entity_map))
         storage_file.close()
+
+    def get_persistent_object_id(self, object):
+        """
+        Retrieves an identifier to replace for the object in the serialization process.
+
+        @param object: Object that is going to be serialized by pickle.
+        @rtype: str
+        @return: String that will be serialized instead of the object, None in case the object itself should be serialized.
+        """
+
+        if object.__class__.__name__.endswith("Plugin"):
+            return object.id + ";" + object.version
+
+    def get_persistent_object(self, persistent_object_id):
+        """
+        Retrieves the object that corresponds to the serialized persistent object id.
+
+        @type: str
+        @param persistent_object_id: Identifier that was serialized instead of the object.
+        @return: The object that corresponds to the persistent object id.
+        """
+
+        plugin_id, plugin_version = persistent_object_id.split(";")
+        plugin = self.io_adapter_pickle_plugin.manager.get_plugin_by_id_and_version(plugin_id, plugin_version)
+
+        return plugin

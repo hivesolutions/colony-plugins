@@ -76,7 +76,7 @@ class IoAdapterPickleTestCase(unittest.TestCase):
         user_home_path = user_home_path_resource.data
 
         # creates the path where to store the serialized intermediate structures used in the test
-        self.test_intermediate_structure_file_path = os.path.join(user_home_path, "test_intermediate_structure")
+        self.test_intermediate_structure_file_path = os.path.join(user_home_path, "test_intermediate_structure.pickle")
 
         # retrieves the intermediate structure plugin
         self.intermediate_structure_plugin = self.plugin.intermediate_structure_plugin
@@ -154,12 +154,12 @@ class IoAdapterPickleTestCase(unittest.TestCase):
         # clears the internal structure and tests that it has been cleared correctly
         intermediate_structure.remove_entity(first_entity)
         intermediate_structure.remove_entity(second_entity)
-        self.assertEquals(len(intermediate_structure.get_entities("dummy_entity")), 0)
+        self.assertEquals(intermediate_structure.has_entities("dummy_entity"), False)
         self.assertEquals(intermediate_structure.has_entity(first_entity_index), False)
         self.assertEquals(intermediate_structure.has_entity(second_entity_index), False)
         self.assertEquals(len(intermediate_structure.entities), 0)
-        self.assertEquals(len(intermediate_structure.store_map.keys()), 1)
-        self.assertEquals(len(intermediate_structure.index_map.keys()), 0)
+        self.assertEquals(len(intermediate_structure.entity_name_entities_map.keys()), 0)
+        self.assertEquals(len(intermediate_structure.index_entity_map.keys()), 0)
 
         # closes the intermediate structure thereby persisting it
         intermediate_structure.save(io_adapter_plugin_id, load_save_options)
@@ -168,12 +168,12 @@ class IoAdapterPickleTestCase(unittest.TestCase):
         intermediate_structure.load(io_adapter_plugin_id, load_save_options)
 
         # tests that the intermediate structure is still cleared
-        self.assertEquals(len(intermediate_structure.get_entities("dummy_entity")), 0)
+        self.assertEquals(intermediate_structure.has_entities("dummy_entity"), False)
         self.assertEquals(intermediate_structure.has_entity(first_entity_index), False)
         self.assertEquals(intermediate_structure.has_entity(second_entity_index), False)
         self.assertEquals(len(intermediate_structure.entities), 0)
-        self.assertEquals(len(intermediate_structure.store_map.keys()), 1)
-        self.assertEquals(len(intermediate_structure.index_map.keys()), 0)
+        self.assertEquals(len(intermediate_structure.entity_name_entities_map.keys()), 0)
+        self.assertEquals(len(intermediate_structure.index_entity_map.keys()), 0)
 
         # closes the intermediate structure
         intermediate_structure.save(io_adapter_plugin_id, load_save_options)
