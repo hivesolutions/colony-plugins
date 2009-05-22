@@ -148,7 +148,8 @@ class DataConverterTestCase(unittest.TestCase):
                                                                          "index" : self.get_creator_index("client", "pt.hive.ContactInformation")}]}
         relation_mapping = {"entities" : [customer_person_address_relation, customer_person_contact_information_relation, customer_company_address_relation, customer_company_contact_information_relation]}
 
-        conversion_options = {"attribute_mapping" : attribute_mapping,
+        conversion_options = {"map_data" : True,
+                              "attribute_mapping" : attribute_mapping,
                               "relation_mapping" : relation_mapping}
 
         # converts the data

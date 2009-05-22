@@ -339,7 +339,13 @@ class Entity:
         # initializes the entity's attributes with the default values in case a configuration was specified
         if self.configuration_map:
             for attribute_name in configuration_map:
+                attribute_configuration_map = configuration_map[attribute_name]
                 self.attribute_name_value_map[attribute_name] = None
+
+                # applies the default value to the attribute if one is specified
+                if "default_value" in attribute_configuration_map:
+                    default_value = attribute_configuration_map["default_value"]
+                    self.attribute_name_value_map[attribute_name] = default_value
 
     def get_object_id(self):
         """
@@ -418,4 +424,18 @@ class Entity:
         if self.configuration_map and not attribute_name in self.configuration_map:
            raise intermediate_structure_exceptions.IntermediateStructureOperationNotAllowed("Entity.set_attribute - The entity is not configured to allow this attribute name (attribute_name = %s)" % attribute_name)
 
+        # checks if the value is compatible with the configuration applied to this attribute in case there is one
+        if self.configuration_map and attribute_name in self.configuration_map:
+            attribute_configuration_map = self.configuration_map[attribute_name]
+
+            # tests if the provided attribute value is of the same type as the configuration specified for this attribute
+            if "type" in attribute_configuration_map:
+                type = attribute_configuration_map["type"]
+
+                # raises an exception in case a type was configured for this attribute and the specified attribute value does not match it
+                allowed_types = [("instance", types.InstanceType), ("float", types.FloatType), ("integer", types.IntegerType), ("string", types.StringType), ("list", types.ListType)]
+                if not (type, type(attribute_value)) in allowed_types:
+                    raise intermediate_structure_exceptions.IntermediateStructureOperationNotAllowed("Entity.set_attribute - The specified attribute type is not allowed for this attribute (attribute_name = %s)" % attribute_name)
+
+        # sets the attribute value in the entity's attribute
         self.attribute_name_value_map[attribute_name] = attribute_value

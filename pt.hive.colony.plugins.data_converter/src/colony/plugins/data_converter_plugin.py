@@ -121,6 +121,10 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
+        # @todo: the intermediate structure is not being injected in the correspondent decorated method (is this a bug?)
+        if plugin.id == "pt.hive.colony.plugins.data_converter.intermediate_structure":
+            self.intermediate_structure_plugin = plugin
+
     def get_console_extension_name(self):
         return self.console_data_converter.get_console_extension_name()
 
@@ -143,9 +147,11 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
         @param output_options: Options used to determine how the output intermediate structure should save its data.
         @type conversion_options: Dictionary
         @param conversion_options: Options used to determine how to perform the conversion process.
+        @rtype: IntermediateStructure
+        @return: Output intermediate structure.
         """
 
-        self.data_converter.convert_data(input_options, output_options, conversion_options)
+        return self.data_converter.convert_data(input_options, output_options, conversion_options)
 
     def get_intermediate_structure_plugin(self):
         return self.intermediate_structure_plugin

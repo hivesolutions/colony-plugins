@@ -60,8 +60,6 @@ class DataConverterTestPlugin(colony.plugins.plugin_system.Plugin):
                     colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.data_converter.intermediate_structure", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.data_converter.intermediate_structure.io_adapter.csv", "1.0.0"),
-                    colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.data_converter.intermediate_structure.io_adapter.pickle", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.resource_manager", "1.0.0")]
@@ -76,9 +74,6 @@ class DataConverterTestPlugin(colony.plugins.plugin_system.Plugin):
 
     intermediate_structure_plugin = None
     """ The intermediate structure plugin """
-
-    io_adapter_csv_plugin = None
-    """ The input output adapter csv plugin """
 
     io_adapter_pickle_plugin = None
     """ The input output adapter pickle plugin """
@@ -100,7 +95,6 @@ class DataConverterTestPlugin(colony.plugins.plugin_system.Plugin):
         self.data_converter_test = None
         self.data_converter_plugin = None
         self.intermediate_structure_plugin = None
-        self.io_adapter_csv_plugin = None
         self.io_adapter_pickle_plugin = None
         self.resource_manager_plugin = None
 
@@ -133,13 +127,6 @@ class DataConverterTestPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.data_converter.intermediate_structure")
     def set_intermediate_structure_plugin(self, intermediate_structure_plugin):
         self.intermediate_structure_plugin = intermediate_structure_plugin
-
-    def get_io_adapter_csv_plugin(self):
-        return self.io_adapter_csv_plugin
-
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.data_converter.intermediate_structure.io_adapter.csv")
-    def set_io_adapter_csv_plugin(self, io_adapter_csv_plugin):
-        self.io_adapter_csv_plugin = io_adapter_csv_plugin
 
     def get_io_adapter_pickle_plugin(self):
         return self.io_adapter_pickle_plugin

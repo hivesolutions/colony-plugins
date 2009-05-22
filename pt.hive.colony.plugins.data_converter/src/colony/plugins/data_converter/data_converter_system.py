@@ -64,6 +64,16 @@ class DataConverter:
         self.index_entity_map = {}
 
     def check_mandatory_options(self, mandatory_attributes, options, function_name):
+        """
+        Checks if the provided options have all the options listed as mandatory and raises an exception in case not.
+        @type: List
+        @param mandatory_attributes: List with the names of the attributes that the provided options must have.
+        @type: Dictionary
+        @param options: Map with the options that will be validated.
+        @type function_name: str
+        @param function_name: Name of the function that invoked this validator.
+        """
+
         # raises an exception in case one of the mandatory conversion options is not provided
         for mandatory_attribute_name in mandatory_attributes:
             if not mandatory_attribute_name in options:
@@ -79,40 +89,65 @@ class DataConverter:
         @param output_options: Options used to determine how the output intermediate structure should save its data.
         @type conversion_options: Dictionary
         @param conversion_options: Options used to determine how to perform the conversion process.
+        @rtype: IntermediateStructure
+        @return: Intermediate structure that resulted from the conversion process.
         """
 
         self.data_converter_plugin.logger.info("[%s] Data conversion process started" % self.data_converter_plugin.id)
 
+        # raises an exception in case mandatory options were not provided
+        self.check_mandatory_options(["map_data"], conversion_options, "DataConverter.convert_data")
+
+        # extracts the mandatory options
+        map_data = conversion_options["map_data"]
+
         # clears the index used in the last conversion
         self.index_entity_map = {}
 
-        # extracts the mandatory options
-        input_adapter_plugin_id = input_options["io_adapter_plugin_id"]
-        output_adapter_plugin_id = output_options["io_adapter_plugin_id"]
+        # uses the input intermediate structure provided in the input options
+        if "intermediate_structure" in input_options:
+            input_intermediate_structure = input_options["input_intermediate_structure"]
+        elif "io_adapter_plugin_id" in input_options:
+            # otherwise uses the specified io adapter to load the input intermediate structure
+            input_adapter_plugin_id = input_options["io_adapter_plugin_id"]
+            input_intermediate_structure = self.data_converter_plugin.intermediate_structure_plugin.create_intermediate_structure()
+            self.data_converter_plugin.intermediate_structure_plugin.load(input_intermediate_structure, input_adapter_plugin_id, input_options)
+        else:
+            # otherwise raises an exception because no input was provided
+            raise "DataConverter.convert_data - Either the input intermediate structure or a place to load it from must be provided"
 
-        # creates the input and output intermediate structures
-        input_intermediate_structure = self.data_converter_plugin.intermediate_structure_plugin.create_intermediate_structure()
-        output_intermediate_structure = self.data_converter_plugin.intermediate_structure_plugin.create_intermediate_structure()
+        # uses the output intermediate structure provided in the output options
+        if "intermediate_structure" in output_options:
+            output_intermediate_structure = output_options["intermediate_structure"]
+        else:
+            # otherwise creates a blank intermediate structure
+            output_intermediate_structure = self.data_converter_plugin.intermediate_structure_plugin.create_intermediate_structure()
 
-        # loads the source data into the input intermediate structure
-        self.data_converter_plugin.intermediate_structure_plugin.load(input_intermediate_structure, input_adapter_plugin_id, input_options)
+        # performs data mapping in case the data converter was commanded to do so
+        if map_data:
+            # migrates the input intermediate structure's entity attributes to the output intermediate structure
+            if "attribute_mapping" in conversion_options:
+                attribute_mapping = conversion_options["attribute_mapping"]
+                self.convert_entities(input_intermediate_structure, output_intermediate_structure, attribute_mapping)
 
-        # migrate the input intermediate structure's entity attributes to the output intermediate structure
-        if "attribute_mapping" in conversion_options:
-            attribute_mapping = conversion_options["attribute_mapping"]
-            self.convert_attributes(input_intermediate_structure, output_intermediate_structure, attribute_mapping)
+            # migrates the output intermediate structure's entity relations to the output intermediate structure
+            if "relation_mapping" in conversion_options:
+                relation_mapping = conversion_options["relation_mapping"]
+                self.convert_relations(input_intermediate_structure, output_intermediate_structure, relation_mapping)
+        else:
+            # otherwise uses the input intermediate structure as the output intermediate structure
+            output_intermediate_structure = input_intermediate_structure
 
-        # migrate the output intermediate structure's entity relations to the output intermediate structure
-        if "relation_mapping" in conversion_options:
-            relation_mapping = conversion_options["relation_mapping"]
-            self.convert_relations(input_intermediate_structure, output_intermediate_structure, relation_mapping)
-
-        # saves the output intermediate structure with the results of the conversion
-        self.data_converter_plugin.intermediate_structure_plugin.save(output_intermediate_structure, output_adapter_plugin_id, output_options)
+        # saves the output intermediate structure with the results of the conversion in case the output destination was specified
+        if "io_adapter_plugin_id" in output_options:
+            output_adapter_plugin_id = output_options["io_adapter_plugin_id"]
+            self.data_converter_plugin.intermediate_structure_plugin.save(output_intermediate_structure, output_adapter_plugin_id, output_options)
 
         self.data_converter_plugin.logger.info("[%s] Data conversion process ended" % self.data_converter_plugin.id)
 
-    def convert_attributes(self, input_intermediate_structure, output_intermediate_structure, attribute_mapping):
+        return output_intermediate_structure
+
+    def convert_entities(self, input_intermediate_structure, output_intermediate_structure, attribute_mapping):
         """
         Converts the entities in the input intermediate structure and their respective attributes into entities in the output intermediate structure.
 
@@ -127,11 +162,11 @@ class DataConverter:
         # converts each input intermediate entity with the name specified in the mapping
         input_entities_mapping = attribute_mapping["input_entities"]
         for input_entity_mapping in input_entities_mapping:
-            self.convert_attributes_input_entity_mapping(input_intermediate_structure, output_intermediate_structure, input_entity_mapping)
+            self.convert_entities_input_entity_mapping(input_intermediate_structure, output_intermediate_structure, input_entity_mapping)
 
-    def convert_attributes_input_entity_mapping(self, input_intermediate_structure, output_intermediate_structure, input_entity_mapping):
+    def convert_entities_input_entity_mapping(self, input_intermediate_structure, output_intermediate_structure, input_entity_mapping):
         # raises an exception in case one of the mandatory options is not provided
-        self.check_mandatory_options(["name"], input_entity_mapping, "DataConverter.convert_attributes_input_entity_mapping")
+        self.check_mandatory_options(["name"], input_entity_mapping, "DataConverter.convert_entities_input_entity_mapping")
 
         # extracts the mandatory options
         input_entity_name = input_entity_mapping["name"]
@@ -139,11 +174,11 @@ class DataConverter:
         # converts each input entity into a number of output entities
         output_entities_mapping = input_entity_mapping["output_entities"]
         for output_entity_mapping in output_entities_mapping:
-            self.convert_attributes_input_entity_output_entity_mapping(input_intermediate_structure, output_intermediate_structure, output_entity_mapping, input_entity_name)
+            self.convert_entities_input_entity_output_entity_mapping(input_intermediate_structure, output_intermediate_structure, output_entity_mapping, input_entity_name)
 
-    def convert_attributes_input_entity_output_entity_mapping(self, input_intermediate_structure, output_intermediate_structure, output_entity_mapping, input_entity_name):
+    def convert_entities_input_entity_output_entity_mapping(self, input_intermediate_structure, output_intermediate_structure, output_entity_mapping, input_entity_name):
         # raises an exception in case one of the mandatory options is not provided
-        self.check_mandatory_options(["name"], output_entity_mapping, "DataConverter.convert_attributes_input_entity_output_entity_mapping")
+        self.check_mandatory_options(["name"], output_entity_mapping, "DataConverter.convert_entities_input_entity_output_entity_mapping")
 
         # extracts the mandatory options
         output_entity_name = output_entity_mapping["name"]
@@ -170,7 +205,7 @@ class DataConverter:
                 # converts the input entities' attributes into a number of output entity attributes
                 output_attributes_mapping = output_entity_mapping["output_attributes"]
                 for output_attribute_mapping in output_attributes_mapping:
-                    self.convert_attributes_input_entity_output_entity_attribute_mapping(input_intermediate_structure, output_intermediate_structure, output_attribute_mapping, input_entity, output_entity)
+                    self.convert_entities_input_entity_output_entity_attribute_mapping(input_intermediate_structure, output_intermediate_structure, output_attribute_mapping, input_entity, output_entity)
 
                 # pipes the output entity through the configured handlers, if any
                 if "handlers" in output_entity_mapping:
@@ -187,9 +222,9 @@ class DataConverter:
                 # index the created output entity so that its origins can be traced back afterwards
                 self.index_entity(("input_entity_object_id", input_entity.get_name(), "=", input_entity.get_object_id(), "created", "output_entity_name", "=", output_entity.get_name()), output_entity)
 
-    def convert_attributes_input_entity_output_entity_attribute_mapping(self, input_intermediate_structure, output_intermediate_structure, output_attribute_mapping, input_entity, output_entity):
+    def convert_entities_input_entity_output_entity_attribute_mapping(self, input_intermediate_structure, output_intermediate_structure, output_attribute_mapping, input_entity, output_entity):
         # raises an exception in case one of the mandatory options is not provided
-        self.check_mandatory_options(["name", "attribute_name"], output_attribute_mapping, "DataConverter.convert_attributes_input_entity_output_entity_attribute_mapping")
+        self.check_mandatory_options(["name", "attribute_name"], output_attribute_mapping, "DataConverter.convert_entities_input_entity_output_entity_attribute_mapping")
 
         # extracts the mandatory options
         output_attribute_name = output_attribute_mapping["name"]
