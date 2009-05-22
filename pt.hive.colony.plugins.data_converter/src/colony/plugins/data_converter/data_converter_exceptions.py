@@ -95,3 +95,81 @@ class DataConverterPluginMissing(DataConverterException):
         """
 
         return "Data Converter plugin missing: %s" % self.message
+
+class DataConverterDuplicateIndex(DataConverterException):
+    """
+    The data converter duplicate index class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        DataConverterException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Data Converter duplicate index: %s" % self.message
+
+class DataConverterEntityNotFound(DataConverterException):
+    """
+    The data converter entity not found class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        DataConverterException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Data Converter entity not found: %s" % self.message
+
+class DataConverterIndexElementTypeUnknown(DataConverterException):
+    """
+    The data converter index element type unknown class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        DataConverterException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Data Converter index element type unknown: %s" % self.message

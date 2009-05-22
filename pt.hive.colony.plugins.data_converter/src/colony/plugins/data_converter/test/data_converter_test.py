@@ -82,85 +82,112 @@ class DataConverterTestCase(unittest.TestCase):
         self.intermediate_structure_plugin = self.plugin.intermediate_structure_plugin
 
         # creates the path where to store the serialized input intermediate structures used in the test
-        self.test_input_intermediate_structure_file_path = os.path.join(user_home_path, "test_input_intermediate_structure")
+        self.test_intermediate_structure_file_path = os.path.join(user_home_path, "test_intermediate_structure.pickle")
 
-        # creates the path where to store the serialized input intermediate structures used in the test
-        self.test_output_intermediate_structure_file_path = os.path.join(user_home_path, "test_output_intermediate_structure")
-
-    def test_convert_data_csv_to_pickle(self):
-        # defines the csv schema
-        entity_names = ["dummy_entity", "dummy_entity"]
-        entity_name_attribute_names_map = {"dummy_entity" : ["normal_attribute"],
-                                           "dummy_entity" : ["normal_attribute"]}
-
-        # creates test csv data
-        file_data = ""
-        for entity_index in range(len(entity_names)):
-            entity_name = entity_names[entity_index]
-            attribute_names = entity_name_attribute_names_map[entity_name]
-            for attribute_index in range(len(attribute_names)):
-                file_data += "%s;" % (entity_index + 1)
-        file_data = file_data[:-1]
-
-        # writes the test csv data to the test csv file
-        file = open(self.test_input_intermediate_structure_file_path, "w")
-        file.write(file_data)
-        file.close()
-
-        # defines the input options
-        input_options = {"io_adapter_plugin_id" : "pt.hive.colony.plugins.data_converter.intermediate_structure.io_adapter.csv",
-                         "file_path" : self.test_input_intermediate_structure_file_path,
-                         "entity_names" : entity_names,
-                         "entity_name_attribute_names" : entity_name_attribute_names_map,
-                         "csv_token_separator" : ";"}
+    def test_convert_data(self):
+        # creates the input intermediate structure where to start the conversion from
+        intermediate_structure = self.intermediate_structure_plugin.create_intermediate_structure()
+        dummy_entity = intermediate_structure.create_entity("dummy_entity")
+        dummy_entity.set_attribute("attribute_1", "attribute_1_value")
+        self.assertEquals(dummy_entity.get_attribute("attribute_1"), "attribute_1_value")
+        dummy_entity.set_attribute("attribute_2", " attribute_2_value")
+        self.assertEquals(dummy_entity.get_attribute("attribute_2"), " attribute_2_value")
+        dummy_entity = intermediate_structure.create_entity("dummy_entity")
+        dummy_entity.set_attribute("attribute_1", "attribute_1_value")
+        self.assertEquals(dummy_entity.get_attribute("attribute_1"), "attribute_1_value")
+        dummy_entity.set_attribute("attribute_2", " attribute_2_value")
+        self.assertEquals(dummy_entity.get_attribute("attribute_2"), " attribute_2_value")
 
         # defines the output options
-        output_options = {"io_adapter_plugin_id" : "pt.hive.colony.plugins.data_converter.intermediate_structure.io_adapter.pickle",
-                          "file_path" : self.test_output_intermediate_structure_file_path}
+        input_output_options = {"io_adapter_plugin_id" : "pt.hive.colony.plugins.data_converter.intermediate_structure.io_adapter.pickle",
+                                "file_path" : self.test_intermediate_structure_file_path}
+
+        # saves the input intermediate structure
+        self.intermediate_structure_plugin.save(intermediate_structure, "pt.hive.colony.plugins.data_converter.intermediate_structure.io_adapter.pickle", input_output_options)
 
         # defines the conversion options
-        conversion_options = {}
+        conversion_options = {"attribute_mapping" : {"intermediate_entities" : [{"name" : "dummy_entity",
+                                                                                 "remote_entities" : [{"name" : "mock_entity",
+                                                                                                       "validators" : [self.is_valid_entity],
+                                                                                                       "handlers" : [self.entity_handler],
+                                                                                                       "index" : [("constant", "object_id"), ("function", self.get_entity_object_id), ("input_attribute", "attribute_1"), ("output_attribute", "mock_attribute_1")],
+                                                                                                       "remote_attributes" : [{"name" : "mock_attribute_1",
+                                                                                                                               "attribute_name" : "attribute_1",
+                                                                                                                               "validators" : [self.is_valid_attribute],
+                                                                                                                               "handlers" : [self.attribute_handler]},
+                                                                                                                              {"name" : "mock_attribute_2",
+                                                                                                                               "attribute_name" : "attribute_2"}]},
+                                                                                                      {"name" : "mock_entity",
+                                                                                                       "validators" : [self.is_valid_entity],
+                                                                                                       "handlers" : [self.entity_handler],
+                                                                                                       "index" : [("constant", "object_id"), ("function", self.get_entity_object_id), ("input_attribute", "attribute_1"), ("output_attribute", "mock_attribute_1")],
+                                                                                                       "remote_attributes" : [{"name" : "mock_attribute_1",
+                                                                                                                               "attribute_name" : "attribute_1",
+                                                                                                                               "validators" : [self.is_valid_attribute],
+                                                                                                                               "handlers" : [self.attribute_handler]},
+                                                                                                                              {"name" : "mock_attribute_2",
+                                                                                                                               "attribute_name" : "attribute_2"}]}]}]}}
 
         # converts the data
-        self.data_converter_plugin.convert_data(input_options, output_options, conversion_options)
-
-        # creates an intermediate structure instance
-        intermediate_structure = self.intermediate_structure_plugin.create_intermediate_structure()
-        self.assertNotEquals(intermediate_structure, None)
+        self.data_converter_plugin.convert_data(input_output_options, input_output_options, conversion_options)
 
         # loads the results of the data conversion operation
-        self.intermediate_structure_plugin.load(intermediate_structure, "pt.hive.colony.plugins.data_converter.intermediate_structure.io_adapter.pickle", output_options)
+        self.intermediate_structure_plugin.load(intermediate_structure, "pt.hive.colony.plugins.data_converter.intermediate_structure.io_adapter.pickle", input_output_options)
 
         # retrieves the previously created entities
         entities = intermediate_structure.get_entities()
-        self.assertEquals(len(entities), 2)
-        first_entity = entities[0]
-        second_entity = entities[1]
+        self.assertEquals(len(entities), 4)
+        dummy_entities = []
+        mock_entities = []
+        for entity in entities:
+            entity_name = entity.get_name()
+            if entity_name == "dummy_entity":
+                dummy_entities.append(entity)
+            elif entity_name == "mock_entity":
+                mock_entities.append(entity)
+        self.assertEquals(len(dummy_entities), 0)
+        self.assertEquals(len(mock_entities), 4)
 
-        # sets the first entity's attributes
-        self.assertEquals(first_entity.get_object_id(), 1)
-        self.assertEquals(first_entity.get_name(), "dummy_entity")
-        first_entity.set_attribute("normal_attribute", 1)
-        self.assertEquals(first_entity.has_attribute("normal_attribute"), True)
-        self.assertEquals(first_entity.get_attribute("normal_attribute"), 1)
-
-        # sets the second entity's attributes
-        self.assertEquals(second_entity.get_object_id(), 2)
-        self.assertEquals(second_entity.get_name(), "dummy_entity")
-        second_entity.set_attribute("normal_attribute", 2)
-        self.assertEquals(second_entity.has_attribute("normal_attribute"), True)
-        self.assertEquals(second_entity.get_attribute("normal_attribute"), 2)
+        # tests that all mock entities have two mock attributes with the same value as their object id
+        for mock_entity in mock_entities:
+            self.assertEquals(len(mock_entity.get_attributes().keys()), 2)
+            self.assertEquals(mock_entity.has_attribute("mock_attribute_1"), True)
+            self.assertEquals(mock_entity.get_attribute("mock_attribute_1"), "Attribute_1_value")
+            self.assertEquals(mock_entity.has_attribute("mock_attribute_2"), True)
+            self.assertEquals(mock_entity.get_attribute("mock_attribute_2"), "attribute_2_value")
+            mock_entity_index = ("object_id", mock_entity.get_object_id(), "attribute_1_value", "Attribute_1_value")
+            mock_entity = self.data_converter_plugin.data_converter.get_entity(mock_entity_index)
+            self.assertEquals(len(mock_entity.get_attributes().keys()), 2)
+            self.assertEquals(mock_entity.has_attribute("mock_attribute_1"), True)
+            self.assertEquals(mock_entity.get_attribute("mock_attribute_1"), "Attribute_1_value")
+            self.assertEquals(mock_entity.has_attribute("mock_attribute_2"), True)
+            self.assertEquals(mock_entity.get_attribute("mock_attribute_2"), "attribute_2_value")
 
     def tearDown(self):
         self.plugin.info("Tearing down Data Converter Test Case...")
 
-        # removes the test input file
-        if os.path.exists(self.test_input_intermediate_structure_file_path):
-            os.remove(self.test_input_intermediate_structure_file_path)
+        # removes the test intermediate structure file
+        if os.path.exists(self.test_intermediate_structure_file_path):
+            os.remove(self.test_intermediate_structure_file_path)
 
-        # removes the test output file
-        if os.path.exists(self.test_output_intermediate_structure_file_path):
-            os.remove(self.test_output_intermediate_structure_file_path)
+    def is_valid_entity(self, entity):
+        return True
+
+    def entity_handler(self, entity):
+        attribute_value = entity.get_attribute("mock_attribute_2")
+        attribute_value = attribute_value.strip()
+        entity.set_attribute("mock_attribute_2", attribute_value)
+
+        return entity
+
+    def is_valid_attribute(self, attribute_value):
+        return True
+
+    def attribute_handler(self, attribute_value):
+        return attribute_value.capitalize()
+
+    def get_entity_object_id(self, input_entity, output_entity):
+        return output_entity.get_object_id()
 
 class DataConverterTestPluginTestCase:
 
