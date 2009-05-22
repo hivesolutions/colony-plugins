@@ -51,7 +51,7 @@ CHUNK_FILE_SIZE_LIMIT = 3072
 CHUNK_SIZE = 1024
 """ The chunk size """
 
-FILE_MIME_TYPE_MAPPING = {"html" : "text/html", "txt" : "text/plain",
+FILE_MIME_TYPE_MAPPING = {"html" : "text/html", "txt" : "text/plain", "css" : "text/css",
                           "jpg" : "image/jpg", "png" : "image/png"}
 """ The map that relates the file extension and the associated mime type """
 

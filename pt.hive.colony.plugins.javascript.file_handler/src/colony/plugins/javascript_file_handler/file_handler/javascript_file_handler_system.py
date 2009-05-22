@@ -39,7 +39,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 HANDLER_FILENAME = "none"
 
-CONTENT_TYPE = "text/plain;charset=Cp1252"
+FILE_MIME_TYPE_MAPPING = {"html" : "text/html", "txt" : "text/plain", "css" : "text/css",
+                          "jpg" : "image/jpg", "png" : "image/png"}
+""" The map that relates the file extension and the associated mime type """
+
+DEFAULT_MIME_TYPE = "text/plain"
+""" The default mime type """
+
+DEFAULT_CHARSET = "Cp1252"
+""" The default charset """
 
 class JavascriptFileHandler:
     """
@@ -78,9 +86,6 @@ class JavascriptFileHandler:
         # retrieves the javascript manager plugin
         javascript_manager_plugin = self.javascript_file_handler_plugin.javascript_manager_plugin
 
-        # sets the content type for the request
-        request.content_type = CONTENT_TYPE
-
         # splits the uri using the "/" character
         uri_splited = request.uri.split("/")
 
@@ -108,6 +113,12 @@ class JavascriptFileHandler:
 
         # closes the file
         file.close()
+
+        # retrieves the mime type for the given file
+        mime_type = FILE_MIME_TYPE_MAPPING.get(file_extension, DEFAULT_MIME_TYPE)
+
+        # sets the content type for the request
+        request.content_type = mime_type + ";charset=" + DEFAULT_CHARSET
 
         # iterates over all the javascript handler plugins
         for javascript_handler_plugin in javascript_handler_plugins:
