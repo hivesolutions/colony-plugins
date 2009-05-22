@@ -76,7 +76,7 @@ class IoAdapterDbase:
         @param options: Options used to determine how to load data into the provided intermediate structure.
         """
 
-        self.io_adapter_dbase_plugin.logger.info("Loading intermediate structure with dbase io adapter")
+        self.io_adapter_dbase_plugin.logger.info("[%s] Loading intermediate structure with dbase io adapter" % self.io_adapter_dbase_plugin.id)
 
         # raises an exception in case one of the mandatory options is not provided
         mandatory_options = ["directory_paths"]
@@ -106,13 +106,13 @@ class IoAdapterDbase:
         # for each table open a connection to it and dump the table's contents to the intermediate structure
         table_names = table_name_path_map.keys()
 
-        self.io_adapter_dbase_plugin.logger.info("Loading %d tables with dbase io adapter" % len(table_names))
+        self.io_adapter_dbase_plugin.logger.info("[%s] Loading %d tables with dbase io adapter" % (self.io_adapter_dbase_plugin.id, len(table_names)))
 
         # copies every table to the intermediate structure
         for table_index in range(len(table_names)):
             table_name = table_names[table_index]
 
-            self.io_adapter_dbase_plugin.logger.info("Loading table '%s' (%d/%d) with dbase io adapter" % (table_name, table_index, len(table_names)))
+            self.io_adapter_dbase_plugin.logger.info("[%s] Loading table '%s' (%d/%d) with dbase io adapter" % (self.io_adapter_dbase_plugin.id, table_name, table_index, len(table_names)))
 
             # retrieves the file path where the table is located
             table_file_path = table_name_path_map[table_name]
@@ -139,7 +139,7 @@ class IoAdapterDbase:
         @param options: Options used to determine how to save the intermediate structure into dbase format.
         """
 
-        self.io_adapter_dbase_plugin.logger.info("Saving intermediate structure with dbase io adapter")
+        self.io_adapter_dbase_plugin.logger.info("[%s] Saving intermediate structure with dbase io adapter" % (self.io_adapter_dbase_plugin.id))
 
         raise io_adapter_dbase_exceptions.IoAdapterDbaseOperationNotSupported("IoAdapterDbase.save - The intermediate structure dbase io adapter currently does not support the save operation")
 

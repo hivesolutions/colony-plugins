@@ -70,7 +70,7 @@ class IoAdapterEntityManager:
         @param options: Options used to determine how to load data into the provided intermediate structure.
         """
 
-        self.io_adapter_entity_manager_plugin.logger.info("Loading intermediate structure with entity manager io adapter")
+        self.io_adapter_entity_manager_plugin.logger.info("[%s] Loading intermediate structure with entity manager io adapter" % self.io_adapter_entity_manager_plugin.id)
 
         # raises an exception in case one of the mandatory options is not provided
         mandatory_options = ["file_path", "entity_manager_engine"]
@@ -114,7 +114,7 @@ class IoAdapterEntityManager:
         @return: List with a map associating the created entity object ids with the entities themselves and a map associating the object ids of the entities with the ones of the created intermediate entities.
         """
 
-        self.io_adapter_entity_manager_plugin.logger.info("Loading intermediate structure entities' attributes with entity manager io adapter")
+        self.io_adapter_entity_manager_plugin.logger.info("[%s] Loading intermediate structure entities' attributes with entity manager io adapter" % self.io_adapter_entity_manager_plugin.id)
 
         # dictionary used to index the entities retrieved in the load attributes step by their object id
         entity_object_id_entity_map = {}
@@ -169,7 +169,7 @@ class IoAdapterEntityManager:
         @param entity_object_id_intermediate_entity_object_id_map: Map associating the entity object ids with the object ids of the correspondent intermediate entities created in the load attributes step.
         """
 
-        self.io_adapter_entity_manager_plugin.logger.info("Loading intermediate structure entities' relations with entity manager io adapter")
+        self.io_adapter_entity_manager_plugin.logger.info("[%s] Loading intermediate structure entities' relations with entity manager io adapter" % self.io_adapter_entity_manager_plugin.id)
 
         # creates a map where to store the computation of intermediate entity non-relation attribute names
         entity_name_relation_attribute_names_map = {}
@@ -288,7 +288,7 @@ class IoAdapterEntityManager:
         @return: List with a map associating the created entity object ids with the entities themselves and a map associating the object ids of the intermediate entities with the ones of the created entities.
         """
 
-        self.io_adapter_entity_manager_plugin.logger.info("Saving intermediate structure entities' attributes with entity manager io adapter")
+        self.io_adapter_entity_manager_plugin.logger.info("[%s] Saving intermediate structure entities' attributes with entity manager io adapter" % self.io_adapter_entity_manager_plugin.id)
 
         # dictionary used to index the entities created in the save attributes step by their object id
         entity_object_id_entity_map = {}
@@ -355,7 +355,7 @@ class IoAdapterEntityManager:
         @param intermediate_entity_object_id_entity_object_id_map: Map associating the intermediate entity object ids with the object ids of the correspondent entities created in the save attributes step.
         """
 
-        self.io_adapter_entity_manager_plugin.logger.info("Saving intermediate structure entities' relations with entity manager io adapter")
+        self.io_adapter_entity_manager_plugin.logger.info("[%s] Saving intermediate structure entities' relations with entity manager io adapter" % self.io_adapter_entity_manager_plugin.id)
 
         # creates a transaction for the save relations operation
         entity_manager.create_transaction("io_adapter_entity_manager_save_relations_transaction")

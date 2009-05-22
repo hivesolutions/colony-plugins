@@ -87,16 +87,18 @@ class DataConverterTestCase(unittest.TestCase):
     def test_convert_data(self):
         # creates the input intermediate structure where to start the conversion from
         intermediate_structure = self.intermediate_structure_plugin.create_intermediate_structure()
-        dummy_entity = intermediate_structure.create_entity("dummy_entity")
-        dummy_entity.set_attribute("attribute_1", "attribute_1_value")
-        self.assertEquals(dummy_entity.get_attribute("attribute_1"), "attribute_1_value")
-        dummy_entity.set_attribute("attribute_2", " attribute_2_value")
-        self.assertEquals(dummy_entity.get_attribute("attribute_2"), " attribute_2_value")
-        dummy_entity = intermediate_structure.create_entity("dummy_entity")
-        dummy_entity.set_attribute("attribute_1", "attribute_1_value")
-        self.assertEquals(dummy_entity.get_attribute("attribute_1"), "attribute_1_value")
-        dummy_entity.set_attribute("attribute_2", " attribute_2_value")
-        self.assertEquals(dummy_entity.get_attribute("attribute_2"), " attribute_2_value")
+        client_entity = intermediate_structure.create_entity("client")
+        client_entity.set_attribute("customer_type", "person")
+        client_entity.set_attribute("name", "customer person")
+        client_entity.set_attribute("telephone", "1234")
+        client_entity.set_attribute("fax", "4321")
+        client_entity.set_attribute("street", "person street name")
+        client_entity = intermediate_structure.create_entity("client")
+        client_entity.set_attribute("customer_type", "company")
+        client_entity.set_attribute("name", "customer company")
+        client_entity.set_attribute("telephone", "5678")
+        client_entity.set_attribute("fax", "8765")
+        client_entity.set_attribute("street", "company street name")
 
         # defines the output options
         input_output_options = {"io_adapter_plugin_id" : "pt.hive.colony.plugins.data_converter.intermediate_structure.io_adapter.pickle",
@@ -105,28 +107,49 @@ class DataConverterTestCase(unittest.TestCase):
         # saves the input intermediate structure
         self.intermediate_structure_plugin.save(intermediate_structure, "pt.hive.colony.plugins.data_converter.intermediate_structure.io_adapter.pickle", input_output_options)
 
-        # defines the conversion options
-        conversion_options = {"attribute_mapping" : {"intermediate_entities" : [{"name" : "dummy_entity",
-                                                                                 "remote_entities" : [{"name" : "mock_entity",
-                                                                                                       "validators" : [self.is_valid_entity],
-                                                                                                       "handlers" : [self.entity_handler],
-                                                                                                       "index" : [("constant", "object_id"), ("function", self.get_entity_object_id), ("input_attribute", "attribute_1"), ("output_attribute", "mock_attribute_1")],
-                                                                                                       "remote_attributes" : [{"name" : "mock_attribute_1",
-                                                                                                                               "attribute_name" : "attribute_1",
-                                                                                                                               "validators" : [self.is_valid_attribute],
-                                                                                                                               "handlers" : [self.attribute_handler]},
-                                                                                                                              {"name" : "mock_attribute_2",
-                                                                                                                               "attribute_name" : "attribute_2"}]},
-                                                                                                      {"name" : "mock_entity",
-                                                                                                       "validators" : [self.is_valid_entity],
-                                                                                                       "handlers" : [self.entity_handler],
-                                                                                                       "index" : [("constant", "object_id"), ("function", self.get_entity_object_id), ("input_attribute", "attribute_1"), ("output_attribute", "mock_attribute_1")],
-                                                                                                       "remote_attributes" : [{"name" : "mock_attribute_1",
-                                                                                                                               "attribute_name" : "attribute_1",
-                                                                                                                               "validators" : [self.is_valid_attribute],
-                                                                                                                               "handlers" : [self.attribute_handler]},
-                                                                                                                              {"name" : "mock_attribute_2",
-                                                                                                                               "attribute_name" : "attribute_2"}]}]}]}}
+        # defines the attribute mapping options
+        customer_output_attributes = [{"name" : "name",
+                                       "attribute_name" : "name",
+                                       "handlers" : [self.capitalize_name]}]
+        client_output_entities = [{"name" : "pt.hive.CustomerPerson",
+                                   "validators" : [self.is_customer_person_entity],
+                                   "output_attributes" : customer_output_attributes},
+                                  {"name" : "pt.hive.CustomerCompany",
+                                   "validators" : [self.is_customer_company_entity],
+                                   "output_attributes" : customer_output_attributes},
+                                  {"name" : "pt.hive.ContactInformation",
+                                   "output_attributes" : [{"name": "phone_number",
+                                                           "attribute_name" : "telephone"}]},
+                                  {"name" : "pt.hive.ContactInformation",
+                                   "output_attributes" : [{"name": "fax_number",
+                                                           "attribute_name" : "fax"}]},
+                                  {"name" : "pt.hive.Address",
+                                   "output_attributes" : [{"name": "street_name",
+                                                           "attribute_name" : "street"}]}]
+        attribute_mapping = {"input_entities" : [{"name" : "client",
+                                                  "output_entities" : client_output_entities}]}
+
+        # defines the relation mapping options
+        customer_person_address_relation = {"name" : "pt.hive.CustomerPerson",
+                                            "relations" : [{"entity_relation_attribute_names" : ["addresses"],
+                                                            "related_entity_relation_attribute_names" : ["contactable_organizational_hierarchy_tree_node"],
+                                                            "index" : self.get_creator_index("client", "pt.hive.Address")}]}
+        customer_person_contact_information_relation = {"name" : "pt.hive.CustomerPerson",
+                                                        "relations" : [{"entity_relation_attribute_names" : ["contact_informations"],
+                                                                        "related_entity_relation_attribute_names" : ["contactable_organizational_hierarchy_tree_node"],
+                                                                        "index" : self.get_creator_index("client", "pt.hive.ContactInformation")}]}
+        customer_company_address_relation = {"name" : "pt.hive.CustomerCompany",
+                                             "relations" : [{"entity_relation_attribute_names" : ["addresses"],
+                                                             "related_entity_relation_attribute_names" : ["contactable_organizational_hierarchy_tree_node"],
+                                                             "index" : self.get_creator_index("client", "pt.hive.Address")}]}
+        customer_company_contact_information_relation = {"name" : "pt.hive.CustomerCompany",
+                                                         "relations" : [{"entity_relation_attribute_names" : ["contact_informations"],
+                                                                         "related_entity_relation_attribute_names" : ["contactable_organizational_hierarchy_tree_node"],
+                                                                         "index" : self.get_creator_index("client", "pt.hive.ContactInformation")}]}
+        relation_mapping = {"entities" : [customer_person_address_relation, customer_person_contact_information_relation, customer_company_address_relation, customer_company_contact_information_relation]}
+
+        conversion_options = {"attribute_mapping" : attribute_mapping,
+                              "relation_mapping" : relation_mapping}
 
         # converts the data
         self.data_converter_plugin.convert_data(input_output_options, input_output_options, conversion_options)
@@ -134,34 +157,45 @@ class DataConverterTestCase(unittest.TestCase):
         # loads the results of the data conversion operation
         self.intermediate_structure_plugin.load(intermediate_structure, "pt.hive.colony.plugins.data_converter.intermediate_structure.io_adapter.pickle", input_output_options)
 
-        # retrieves the previously created entities
-        entities = intermediate_structure.get_entities()
-        self.assertEquals(len(entities), 4)
-        dummy_entities = []
-        mock_entities = []
-        for entity in entities:
-            entity_name = entity.get_name()
-            if entity_name == "dummy_entity":
-                dummy_entities.append(entity)
-            elif entity_name == "mock_entity":
-                mock_entities.append(entity)
-        self.assertEquals(len(dummy_entities), 0)
-        self.assertEquals(len(mock_entities), 4)
+        # retrieves the entities that were the result of the conversion
+        customer_company_entities = intermediate_structure.get_entities("pt.hive.CustomerCompany")
+        self.assertEquals(len(customer_company_entities), 1)
+        customer_person_entities = intermediate_structure.get_entities("pt.hive.CustomerPerson")
+        self.assertEquals(len(customer_person_entities), 1)
+        address_entities = intermediate_structure.get_entities("pt.hive.Address")
+        self.assertEquals(len(address_entities), 2)
+        contact_information_entities = intermediate_structure.get_entities("pt.hive.ContactInformation")
+        self.assertEquals(len(contact_information_entities), 4)
 
-        # tests that all mock entities have two mock attributes with the same value as their object id
-        for mock_entity in mock_entities:
-            self.assertEquals(len(mock_entity.get_attributes().keys()), 2)
-            self.assertEquals(mock_entity.has_attribute("mock_attribute_1"), True)
-            self.assertEquals(mock_entity.get_attribute("mock_attribute_1"), "Attribute_1_value")
-            self.assertEquals(mock_entity.has_attribute("mock_attribute_2"), True)
-            self.assertEquals(mock_entity.get_attribute("mock_attribute_2"), "attribute_2_value")
-            mock_entity_index = ("object_id", mock_entity.get_object_id(), "attribute_1_value", "Attribute_1_value")
-            mock_entity = self.data_converter_plugin.data_converter.get_entity(mock_entity_index)
-            self.assertEquals(len(mock_entity.get_attributes().keys()), 2)
-            self.assertEquals(mock_entity.has_attribute("mock_attribute_1"), True)
-            self.assertEquals(mock_entity.get_attribute("mock_attribute_1"), "Attribute_1_value")
-            self.assertEquals(mock_entity.has_attribute("mock_attribute_2"), True)
-            self.assertEquals(mock_entity.get_attribute("mock_attribute_2"), "attribute_2_value")
+        # test the customer person entity
+        customer_person_entity = customer_person_entities[0]
+        self.assertEquals(len(customer_person_entity.get_attributes()), 3)
+        self.assertEquals(customer_person_entity.get_attribute("name"), "Customer Person")
+        self.assertEquals(len(customer_person_entity.get_attribute("addresses").get_attributes()), 2)
+        self.assertEquals(customer_person_entity.get_attribute("addresses").get_attribute("street_name"), "person street name")
+        self.assertEquals(customer_person_entity.get_attribute("addresses").get_attribute("contactable_organizational_hierarchy_tree_node"), customer_person_entity)
+        self.assertEquals(len(customer_person_entity.get_attribute("contact_informations")), 2)
+        for contact_information_entity in customer_person_entity.get_attribute("contact_informations"):
+            if contact_information_entity.has_attribute("phone_number"):
+                self.assertEquals(contact_information_entity.get_attribute("phone_number"), "1234")
+            else:
+                self.assertEquals(contact_information_entity.get_attribute("fax_number"), "4321")
+            self.assertEquals(contact_information_entity.get_attribute("contactable_organizational_hierarchy_tree_node"), customer_person_entity)
+
+        # test the customer company entity
+        customer_company_entity = customer_company_entities[0]
+        self.assertEquals(len(customer_company_entity.get_attributes()), 3)
+        self.assertEquals(customer_company_entity.get_attribute("name"), "Customer Company")
+        self.assertEquals(len(customer_company_entity.get_attribute("addresses").get_attributes()), 2)
+        self.assertEquals(customer_company_entity.get_attribute("addresses").get_attribute("street_name"), "company street name")
+        self.assertEquals(customer_company_entity.get_attribute("addresses").get_attribute("contactable_organizational_hierarchy_tree_node"), customer_company_entity)
+        self.assertEquals(len(customer_company_entity.get_attribute("contact_informations")), 2)
+        for contact_information_entity in customer_company_entity.get_attribute("contact_informations"):
+            if contact_information_entity.has_attribute("phone_number"):
+                self.assertEquals(contact_information_entity.get_attribute("phone_number"), "5678")
+            else:
+                self.assertEquals(contact_information_entity.get_attribute("fax_number"), "8765")
+            self.assertEquals(contact_information_entity.get_attribute("contactable_organizational_hierarchy_tree_node"), customer_company_entity)
 
     def tearDown(self):
         self.plugin.info("Tearing down Data Converter Test Case...")
@@ -170,24 +204,34 @@ class DataConverterTestCase(unittest.TestCase):
         if os.path.exists(self.test_intermediate_structure_file_path):
             os.remove(self.test_intermediate_structure_file_path)
 
-    def is_valid_entity(self, entity):
-        return True
+    def is_customer_person_entity(self, entity):
+        if entity.get_attribute("customer_type") == "person":
+            return True
+        return False
 
-    def entity_handler(self, entity):
-        attribute_value = entity.get_attribute("mock_attribute_2")
-        attribute_value = attribute_value.strip()
-        entity.set_attribute("mock_attribute_2", attribute_value)
+    def is_customer_company_entity(self, entity):
+        if entity.get_attribute("customer_type") == "company":
+            return True
+        return False
 
-        return entity
+    def capitalize_name(self, name):
+        name_tokens = name.split(" ")
+        name = "".join([(name_token.capitalize() + " ") for name_token in name_tokens])[:-1]
 
-    def is_valid_attribute(self, attribute_value):
-        return True
+        return name
 
-    def attribute_handler(self, attribute_value):
-        return attribute_value.capitalize()
+    def get_creator_index(self, input_entity_name, output_entity_name):
+        return (("constant", "input_entity_object_id"),
+                ("constant", input_entity_name),
+                ("constant", "="),
+                ("function", self.get_input_entity_object_id),
+                ("constant", "created"),
+                ("constant", "output_entity_name"),
+                ("constant", "="),
+                ("constant", output_entity_name))
 
-    def get_entity_object_id(self, input_entity, output_entity):
-        return output_entity.get_object_id()
+    def get_input_entity_object_id(self, input_entity, output_entity):
+        return input_entity.get_object_id()
 
 class DataConverterTestPluginTestCase:
 

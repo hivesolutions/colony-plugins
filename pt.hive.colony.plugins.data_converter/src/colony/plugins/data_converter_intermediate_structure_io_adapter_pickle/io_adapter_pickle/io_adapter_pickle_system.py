@@ -67,7 +67,7 @@ class IoAdapterPickle:
         @param options: Options used to determine how to load data into the provided intermediate structure.
         """
 
-        self.io_adapter_pickle_plugin.logger.info("Loading intermediate structure with pickle io adapter")
+        self.io_adapter_pickle_plugin.logger.info("[%s] Loading intermediate structure with pickle io adapter" % self.io_adapter_pickle_plugin.id)
 
         # raises an exception in case one of the mandatory options is not provided
         mandatory_options = ["file_path"]
@@ -99,7 +99,7 @@ class IoAdapterPickle:
         @param options: Options used to determine how to save the intermediate structure into pickle format.
         """
 
-        self.io_adapter_pickle_plugin.logger.info("Saving intermediate structure with pickle io adapter")
+        self.io_adapter_pickle_plugin.logger.info("[%s] Saving intermediate structure with pickle io adapter" % self.io_adapter_pickle_plugin.id)
 
         # raises an exception in case one of the mandatory options is not provided
         mandatory_options = ["file_path"]

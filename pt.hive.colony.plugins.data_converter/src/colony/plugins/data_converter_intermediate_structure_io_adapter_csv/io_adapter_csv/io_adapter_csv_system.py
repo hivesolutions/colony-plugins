@@ -69,7 +69,7 @@ class IoAdapterCsv:
         @param options: Options used to determine how to load data into the provided intermediate structure.
         """
 
-        self.io_adapter_csv_plugin.logger.info("Loading intermediate structure with csv io adapter")
+        self.io_adapter_csv_plugin.logger.info("[%s] Loading intermediate structure with csv io adapter" % self.io_adapter_csv_plugin.id)
 
         # raises an exception in case one of the mandatory options is not provided
         mandatory_options = ["file_path", "entity_names", "entity_name_attribute_names"]
@@ -131,7 +131,7 @@ class IoAdapterCsv:
         @param options: Options used to determine how to save the intermediate structure into csv format.
         """
 
-        self.io_adapter_csv_plugin.logger.info("Saving intermediate structure with csv io adapter")
+        self.io_adapter_csv_plugin.logger.info("[%s] Saving intermediate structure with csv io adapter" % self.io_adapter_csv_plugin.id)
 
         # raises an exception in case one of the mandatory options is not provided
         mandatory_options = ["file_path", "entity_names", "entity_name_attribute_names"]
