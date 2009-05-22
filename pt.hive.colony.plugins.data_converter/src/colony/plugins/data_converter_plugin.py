@@ -45,14 +45,14 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.data_converter"
-    name = "Data converter plugin"
-    short_name = "Data converter"
+    name = "Data Converter plugin"
+    short_name = "Data Converter"
     description = "Provides plugin to convert data from one medium and schema to another"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["console_command_extension"]
+    capabilities = []
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.data_converter.intermediate_structure", "1.0.0"),
@@ -67,9 +67,6 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
 
     data_converter = None
     """ Data converter backend """
-
-    console_data_converter = None
-    """ Console for the data converter """
 
     intermediate_structure_plugin = None
     """ Intermediate structure plugin """
@@ -90,17 +87,14 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global data_converter
         import data_converter.data_converter_system
-        import data_converter.console_data_converter
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
         self.data_converter = data_converter.data_converter_system.DataConverter(self)
-        self.console_data_converter = data_converter.console_data_converter.ConsoleDataConverter(self)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
         self.data_converter = None
-        self.console_data_converter = None
         self.intermediate_structure_plugin = None
         self.logger_plugin = None
         self.task_manager_plugin = None
@@ -124,18 +118,6 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
         # @todo: the intermediate structure is not being injected in the correspondent decorated method (is this a bug?)
         if plugin.id == "pt.hive.colony.plugins.data_converter.intermediate_structure":
             self.intermediate_structure_plugin = plugin
-
-    def get_console_extension_name(self):
-        return self.console_data_converter.get_console_extension_name()
-
-    def get_all_commands(self):
-        return self.console_data_converter.get_all_commands()
-
-    def get_handler_command(self, command):
-        return self.console_data_converter.get_handler_command(command)
-
-    def get_help(self):
-        return self.console_data_converter.get_help()
 
     def convert_data(self, input_options, output_options, conversion_options):
         """
