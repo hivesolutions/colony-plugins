@@ -138,10 +138,10 @@ class IoAdapterCsvTestCase(unittest.TestCase):
         self.assertEquals(second_entity.get_attribute("normal_attribute"), "2")
 
         # closes the intermediate structure thereby persisting it
-        intermediate_structure.save(io_adapter_plugin_id, load_save_options)
+        self.intermediate_structure_plugin.save(intermediate_structure, io_adapter_plugin_id, load_save_options)
 
         # re-opens the intermediate structure
-        intermediate_structure.load(io_adapter_plugin_id, load_save_options)
+        self.intermediate_structure_plugin.load(intermediate_structure, io_adapter_plugin_id, load_save_options)
 
         # tests the intermediate structure
         entities = intermediate_structure.get_entities("dummy_entity")
@@ -171,10 +171,10 @@ class IoAdapterCsvTestCase(unittest.TestCase):
         self.assertEquals(len(intermediate_structure.index_entity_map.keys()), 0)
 
         # closes the intermediate structure thereby persisting it
-        intermediate_structure.save(io_adapter_plugin_id, load_save_options)
+        self.intermediate_structure_plugin.save(intermediate_structure, io_adapter_plugin_id, load_save_options)
 
         # re-opens the intermediate structure
-        intermediate_structure.load(io_adapter_plugin_id, load_save_options)
+        self.intermediate_structure_plugin.load(intermediate_structure, io_adapter_plugin_id, load_save_options)
 
         # tests that the intermediate structure is still cleared
         self.assertEquals(len(intermediate_structure.entities), 0)
@@ -182,7 +182,7 @@ class IoAdapterCsvTestCase(unittest.TestCase):
         self.assertEquals(len(intermediate_structure.index_entity_map.keys()), 0)
 
         # closes the intermediate structure
-        intermediate_structure.save(io_adapter_plugin_id, load_save_options)
+        self.intermediate_structure_plugin.save(intermediate_structure, io_adapter_plugin_id, load_save_options)
 
     def tearDown(self):
         self.plugin.info("Tearing down Io Adapter Csv Test Case...")

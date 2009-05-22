@@ -61,6 +61,9 @@ class DataConverterIntermediateStructurePlugin(colony.plugins.plugin_system.Plug
     events_handled = []
     events_registrable = []
 
+    intermediate_structure = None
+    """ The intermediate structure plugin's backend """
+
     io_adapter_plugins = []
     """ Input output adapter plugins for the intermediate structure """
 
@@ -76,7 +79,9 @@ class DataConverterIntermediateStructurePlugin(colony.plugins.plugin_system.Plug
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global data_converter_intermediate_structure
+        import data_converter_intermediate_structure.intermediate_structure.intermediate_structure
         import data_converter_intermediate_structure.intermediate_structure.intermediate_structure_system
+        self.intermediate_structure = data_converter_intermediate_structure.intermediate_structure.intermediate_structure_system.IntermediateStructure(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -113,9 +118,39 @@ class DataConverterIntermediateStructurePlugin(colony.plugins.plugin_system.Plug
         """
 
         # creates the intermediate structure
-        intermediate_structure = data_converter_intermediate_structure.intermediate_structure.intermediate_structure_system.IntermediateStructure(self, configuration_map)
+        intermediate_structure = data_converter_intermediate_structure.intermediate_structure.intermediate_structure.IntermediateStructure(configuration_map)
 
         return intermediate_structure
+
+    def load(self, intermediate_structure, io_adapter_plugin_id, options):
+        """
+        Populates the intermediate structure with data retrieved from the csv source specified in the options.
+
+        @type intermediate_structure: IntermediateStructure
+        @param intermediate_structure: Intermediate structure where to load the data into.
+        @type io_adapter_plugin_id: str
+        @param io_adapter_plugin_id: Unique identifier for the input output adapter plugin one wants to use to save intermediate structure.
+        @type options: Dictionary
+        @param options: Options used to determine how to load data into the provided intermediate structure.
+        """
+
+        # loads data into the intermediate structure
+        self.intermediate_structure.load(intermediate_structure, io_adapter_plugin_id, options)
+
+    def save(self, intermediate_structure, io_adapter_plugin_id, options):
+        """
+        Saves the intermediate structure to a file in csv format at the location and with characteristics defined in the options.
+
+        @type intermediate_structure: IntermediateStructure
+        @param intermediate_structure: Intermediate structure one wants to save.
+        @type io_adapter_plugin_id: str
+        @param io_adapter_plugin_id: Unique identifier for the input output adapter plugin one wants to use to save intermediate structure.
+        @type options: Dictionary
+        @param options: Options used to determine how to save the intermediate structure into csv format.
+        """
+
+        # saves the intermediate structure
+        self.intermediate_structure.save(intermediate_structure, io_adapter_plugin_id, options)
 
     @colony.plugins.decorators.load_allowed_capability("data_converter_intermediate_structure_io_adapter")
     def data_converter_intermediate_structure_io_adapter_load_allowed(self, plugin, capability):

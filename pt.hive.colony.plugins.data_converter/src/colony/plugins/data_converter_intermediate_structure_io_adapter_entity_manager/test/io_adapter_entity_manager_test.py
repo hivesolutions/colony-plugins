@@ -197,10 +197,10 @@ class IoAdapterEntityManagerTestCase(unittest.TestCase):
         self.assertEquals(second_entity_replica.get_attribute("first_entities"), [first_entity])
 
         # closes the intermediate structure thereby persisting it
-        intermediate_structure.save(io_adapter_plugin_id, load_save_options)
+        self.intermediate_structure_plugin.save(intermediate_structure, io_adapter_plugin_id, load_save_options)
 
         # re-opens the intermediate structure
-        intermediate_structure.load(io_adapter_plugin_id, load_save_options)
+        self.intermediate_structure_plugin.load(intermediate_structure, io_adapter_plugin_id, load_save_options)
 
         # tests the intermediate structure
         entities = intermediate_structure.get_entities("FirstEntity")

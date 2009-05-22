@@ -126,8 +126,7 @@ class IoAdapterPickle:
         @return: String that will be serialized instead of the object, None in case the object itself should be serialized.
         """
 
-        if object.__class__.__name__.endswith("Plugin"):
-            return object.id + ";" + object.version
+        pass
 
     def get_persistent_object(self, persistent_object_id):
         """
@@ -138,7 +137,4 @@ class IoAdapterPickle:
         @return: The object that corresponds to the persistent object id.
         """
 
-        plugin_id, plugin_version = persistent_object_id.split(";")
-        plugin = self.io_adapter_pickle_plugin.manager.get_plugin_by_id_and_version(plugin_id, plugin_version)
-
-        return plugin
+        pass

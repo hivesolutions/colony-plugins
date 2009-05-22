@@ -129,7 +129,7 @@ class DataConverterTestCase(unittest.TestCase):
         self.assertNotEquals(intermediate_structure, None)
 
         # loads the results of the data conversion operation
-        intermediate_structure.load("pt.hive.colony.plugins.data_converter.intermediate_structure.io_adapter.pickle", output_options)
+        self.intermediate_structure_plugin.load(intermediate_structure, "pt.hive.colony.plugins.data_converter.intermediate_structure.io_adapter.pickle", output_options)
 
         # retrieves the previously created entities
         entities = intermediate_structure.get_entities()

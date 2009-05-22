@@ -86,9 +86,9 @@ class DataConverter:
         output_intermediate_structure = self.data_converter_plugin.intermediate_structure_plugin.create_intermediate_structure()
 
         # loads the source data into the input intermediate structure
-        input_intermediate_structure.load(input_adapter_plugin_id, input_options)
+        self.data_converter_plugin.intermediate_structure_plugin.load(input_intermediate_structure, input_adapter_plugin_id, input_options)
 
         # saves the output intermediate structure with the results of the conversion
-        input_intermediate_structure.save(output_adapter_plugin_id, output_options)
+        self.data_converter_plugin.intermediate_structure_plugin.save(input_intermediate_structure, output_adapter_plugin_id, output_options)
 
         self.data_converter_plugin.logger.info("Data conversion process ended")
