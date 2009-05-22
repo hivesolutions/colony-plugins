@@ -80,8 +80,10 @@ class IntermediateStructureTestCase(unittest.TestCase):
 
     def test_intermediate_structure(self):
         # creates an intermediate structure instance
-        configuration_map = {"dummy_entity" : {"normal_attribute" : {},
-                                               "relation_attribute" : {}}}
+        configuration_map = {"dummy_entity" : {"normal_attribute" : {"default_value" : -1,
+                                                                     "type" : "integer"},
+                                               "relation_attribute" : {"default_value" : None,
+                                                                       "type" : "instance"}}}
         intermediate_structure = self.intermediate_structure_plugin.create_intermediate_structure(configuration_map)
         self.assertNotEquals(intermediate_structure, None)
 
@@ -90,7 +92,9 @@ class IntermediateStructureTestCase(unittest.TestCase):
 
         # creates two entities and indexes them
         first_entity = intermediate_structure.create_entity("dummy_entity")
+        self.assertEquals(first_entity.get_attribute("normal_attribute"), -1)
         second_entity = intermediate_structure.create_entity("dummy_entity")
+        self.assertEquals(second_entity.get_attribute("relation_attribute"), None)
         intermediate_structure.index_entity(first_entity, first_entity_index)
         intermediate_structure.index_entity(second_entity, second_entity_index)
 

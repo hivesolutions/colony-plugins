@@ -430,11 +430,11 @@ class Entity:
 
             # tests if the provided attribute value is of the same type as the configuration specified for this attribute
             if "type" in attribute_configuration_map:
-                type = attribute_configuration_map["type"]
+                attribute_type = attribute_configuration_map["type"]
 
                 # raises an exception in case a type was configured for this attribute and the specified attribute value does not match it
-                allowed_types = [("instance", types.InstanceType), ("float", types.FloatType), ("integer", types.IntegerType), ("string", types.StringType), ("list", types.ListType)]
-                if not (type, type(attribute_value)) in allowed_types:
+                allowed_types = [("instance", types.InstanceType), ("float", types.FloatType), ("integer", types.IntType), ("string", types.StringType), ("list", types.ListType)]
+                if not (attribute_type, type(attribute_value)) in allowed_types:
                     raise intermediate_structure_exceptions.IntermediateStructureOperationNotAllowed("Entity.set_attribute - The specified attribute type is not allowed for this attribute (attribute_name = %s)" % attribute_name)
 
         # sets the attribute value in the entity's attribute
