@@ -57,6 +57,10 @@ class DataConverterIntermediateStructureIoAdapterDbasePlugin(colony.plugins.plug
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.log", "1.0.0"),
                     colony.plugins.plugin_system.PackageDependency(
+                    "Win32 Extensions for Python", "dbi", "b202", "http://starship.python.net/crew/mhammond/win32"),
+                    colony.plugins.plugin_system.PackageDependency(
+                    "Win32 Extensions for Python", "odbc", "b202", "http://starship.python.net/crew/mhammond/win32"),
+                    colony.plugins.plugin_system.PackageDependency(
                     "DBFpy", "dbfpy", "2.2.3", "http://sourceforge.net/projects/dbfpy")]
     events_handled = []
     events_registrable = []

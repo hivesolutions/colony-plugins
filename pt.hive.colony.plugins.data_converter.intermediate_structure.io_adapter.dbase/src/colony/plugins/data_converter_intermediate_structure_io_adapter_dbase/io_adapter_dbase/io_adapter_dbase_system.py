@@ -38,6 +38,10 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import datetime
+import dbi
+import odbc
+import stat
+import string
 import os.path
 import dbfpy.dbf
 import dbfpy.fields
@@ -45,11 +49,19 @@ import dbfpy.fields
 import io_adapter_dbase_exceptions
 
 DBASE_EXTENSION = ".dbf"
+CONNECTION_STRING = "Driver={Microsoft Visual FoxPro Driver};SourceType=DBF;SourceDB=%s;Exclusive=No;Collate=Machine;NULL=NO;DELETED=NO;BACKGROUNDFETCH=NO;"
+SQL_TABLE_DUMP_QUERY = "SELECT * FROM %s;"
 
 class IoAdapterDbase:
     """
     Input output adapter used to serialize data converter intermediate structures to dbase format.
     """
+
+    input_field_handlers = []
+    """ List of handlers every field value is passed through before being input """
+
+    output_field_handlers = []
+    """ List of handlers every field value is passed through before being output """
 
     def __init__(self, io_adapter_dbase_plugin):
         """
@@ -61,7 +73,14 @@ class IoAdapterDbase:
 
         self.io_adapter_dbase_plugin = io_adapter_dbase_plugin
 
-        # adds support for memo and general datatypes to dbfpy
+        # sets the default input field handlers to process dates, strings and raw value
+        self.input_field_handlers = [self.process_dbi_date, self.process_dbi_raw, self.process_string]
+
+        # sets the default output field handlers
+        self.output_field_handlers = []
+
+        # overrides the dbfpy handler for general, memo and date field types
+        # so it doesn't crash when the column names are retrieved through it
         dbfpy.fields.registerField(DbfGeneralFieldDef)
         dbfpy.fields.registerField(DbfMemoFieldDef)
         dbfpy.fields.registerField(DbfDateFieldDef)
@@ -87,6 +106,16 @@ class IoAdapterDbase:
         # extracts the mandatory options
         directory_paths = options["directory_paths"]
 
+        # adds the provided input field handlers to the default field handlers
+        if "input_field_handlers" in options:
+            input_field_handlers = options["input_field_handlers"]
+            self.input_field_handlers.extend(input_field_handlers)
+
+        # adds the provided output field handlers to the default field handlers
+        if "output_field_handlers" in options:
+            output_field_handlers = options["output_field_handlers"]
+            self.output_field_handlers.extend(output_field_handlers)
+
         # raises an exception in case the specified directory does not exist
         for directory_path in directory_paths:
             if not os.path.exists(directory_path):
@@ -100,8 +129,7 @@ class IoAdapterDbase:
                     extension_name = file_name[len(file_name) - 4:]
                     if extension_name == DBASE_EXTENSION:
                         table_name = file_name[:-4]
-                        table_file_path = os.path.join(root_path, file_name)
-                        table_name_path_map[table_name] = table_file_path
+                        table_name_path_map[table_name] = root_path
 
         # for each table open a connection to it and dump the table's contents to the intermediate structure
         table_names = table_name_path_map.keys()
@@ -115,19 +143,92 @@ class IoAdapterDbase:
             self.io_adapter_dbase_plugin.logger.info("[%s] Loading table '%s' (%d/%d) with dbase io adapter" % (self.io_adapter_dbase_plugin.id, table_name, table_index, len(table_names)))
 
             # retrieves the file path where the table is located
-            table_file_path = table_name_path_map[table_name]
+            table_path = table_name_path_map[table_name]
 
-            # retrieves the tables records
+            # sets ups the means to interact with the table
+            table_file_path = os.path.join(table_path, table_name + ".dbf")
             records = dbfpy.dbf.Dbf(table_file_path)
+            column_names_query = [table_name + "." + field_name + ", " for field_name in records.fieldNames][:-2]
+            odbc_connection_string = CONNECTION_STRING % (table_path)
+            odbc_connection = odbc.odbc(odbc_connection_string)
+            cursor = odbc_connection.cursor()
+            sql_table_dump_query = SQL_TABLE_DUMP_QUERY % (table_name)
 
-            # creates an entity for each record and adds it to the intermediate structure
-            for record_index in range(len(records)):
-                record = records[record_index]
-                record_map = record.asDict()
-                for column_name in record_map:
-                    field_value = record_map[column_name]
-                    entity = intermediate_structure.create_entity(column_name)
-                    entity.set_attribute(column_name, field_value)
+            try:
+                # performs an sql query on the table to retrieve its data
+                cursor.execute(sql_table_dump_query)
+                results = cursor.fetchall()
+
+                # creates an entity for each record and adds it to the intermediate structure
+                for result in results:
+                    entity = intermediate_structure.create_entity(table_name)
+
+                    # sets each field as an entity attribute
+                    for column_name_index in range(len(records.fieldNames)):
+
+                        # retrieves the field value and passes it through the
+                        # configured field handlers
+                        field_value = result[column_name_index]
+                        for input_field_handler in self.input_field_handlers:
+                            field_value = input_field_handler(field_value)
+
+                        # sets the post-processed field value in the entity attribute
+                        column_name = records.fieldNames[column_name_index]
+                        entity.set_attribute(column_name, field_value)
+            except:
+                self.io_adapter_dbase_plugin.logger.error("[%s] Error executing query (query = %s)" % (self.io_adapter_dbase_plugin.id, sql_table_dump_query))
+
+    def process_dbi_raw(self, value):
+        """
+        Converts the DbiRaw value to a string.
+
+        @type value: DbiRaw
+        @param value: The value one wants to convert.
+        @rtype: str
+        @return: The converted value.
+        """
+
+        if type(value) == type(dbi.dbiRaw(0)):
+            value = str(value)
+
+        return value
+
+    def process_dbi_date(self, value):
+        """
+        Converts the DbiDate value to a Date object.
+
+        @type value: DbiDate
+        @param value: The value one wants to convert.
+        @rtype: Date
+        @return: The converted value.
+        """
+
+        if type(value) == type(dbi.dbiDate(0)):
+            if int(value) == -1:
+                value = None
+            else:
+                value = datetime.datetime.fromtimestamp(int(dbi.dbiDate(value)))
+
+        return value
+
+    def process_string(self, value):
+        """
+        Converts the string to a stripped string or to a null value to
+        circunvent dbase's string representation problems.
+
+        @type value: str
+        @param value: The value one wants to convert.
+        @rtype: str
+        @return: The stripped string, or None in case it is an empty string.
+        """
+
+        if type(value) == str:
+            if string.strip(value) == "":
+                value = None
+            else:
+                value = string.strip(value)
+
+        return value
 
     def save(self, intermediate_structure, options):
         """
@@ -163,8 +264,7 @@ class DbfMemoFieldDef(dbfpy.fields.DbfFieldDef):
     """
 
     typeCode = "M"
-    defaultValue = " " * 10
-    length = 10
+    defaultValue = ""
 
     def decodeValue(self, value):
         return ""
@@ -179,8 +279,6 @@ class DbfDateFieldDef(dbfpy.fields.DbfFieldDef):
 
     typeCode = "D"
     defaultValue = ""
-    # "yyyymmdd" gives us 8 characters
-    length = 8
 
     def decodeValue(self, value):
         return ""
