@@ -41,7 +41,6 @@ import sys
 import socket
 import select
 import traceback
-
 import cStringIO
 
 import main_service_http_exceptions
