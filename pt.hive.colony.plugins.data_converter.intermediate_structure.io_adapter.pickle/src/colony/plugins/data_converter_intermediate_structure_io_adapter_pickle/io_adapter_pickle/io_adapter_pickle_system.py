@@ -37,14 +37,15 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import cPickle
 import os.path
-import cPickle as pickle
 
 import io_adapter_pickle_exceptions
 
 class IoAdapterPickle:
     """
-    Input output adapter used to serialize data converter intermediate structures to pickle binary format.
+    Input output adapter used to serialize data converter
+    intermediate structures to pickle binary format.
     """
 
     def __init__(self, io_adapter_pickle_plugin):
@@ -59,7 +60,8 @@ class IoAdapterPickle:
 
     def load(self, intermediate_structure, options):
         """
-        Populates the intermediate structure with data retrieved from the pickle source specified in the options.
+        Populates the intermediate structure with data retrieved
+        from the pickle source specified in the options.
 
         @type intermediate_structure: IntermediateStructure
         @param intermediate_structure: Intermediate structure where to load the data into.
@@ -67,7 +69,7 @@ class IoAdapterPickle:
         @param options: Options used to determine how to load data into the provided intermediate structure.
         """
 
-        self.io_adapter_pickle_plugin.logger.info("[%s] Loading intermediate structure with pickle io adapter" % self.io_adapter_pickle_plugin.id)
+        self.io_adapter_pickle_plugin.info("Loading intermediate structure with pickle io adapter")
 
         # raises an exception in case one of the mandatory options is not provided
         mandatory_options = ["file_path"]
@@ -84,7 +86,7 @@ class IoAdapterPickle:
 
         # loads intermediate structure from the specified file
         storage_file = open(file_path, "r")
-        unpickler = pickle.Unpickler(storage_file)
+        unpickler = cPickle.Unpickler(storage_file)
         unpickler.persistent_load = self.get_persistent_object
         intermediate_structure.entities, intermediate_structure.entity_name_entities_map, intermediate_structure.index_entity_map = unpickler.load()
         storage_file.close()
@@ -112,18 +114,24 @@ class IoAdapterPickle:
 
         # serializes the intermediate structure
         storage_file = open(file_path, "w")
-        pickler = pickle.Pickler(storage_file)
-        pickler.persistent_id = self.get_persistent_object_id
-        pickler.dump((intermediate_structure.entities, intermediate_structure.entity_name_entities_map, intermediate_structure.index_entity_map))
-        storage_file.close()
+
+        try:
+            pickler = cPickle.Pickler(storage_file)
+            pickler.persistent_id = self.get_persistent_object_id
+            pickler.dump((intermediate_structure.entities, intermediate_structure.entity_name_entities_map, intermediate_structure.index_entity_map))
+        finally:
+            storage_file.close()
 
     def get_persistent_object_id(self, object):
         """
-        Retrieves an identifier to replace for the object in the serialization process.
+        Retrieves an identifier to replace for the object in the
+        serialization process.
 
+        @type object: Object
         @param object: Object that is going to be serialized by pickle.
-        @rtype: str
-        @return: String that will be serialized instead of the object, None in case the object itself should be serialized.
+        @rtype: String
+        @return: String that will be serialized instead of the object,
+        none in case the object itself should be serialized.
         """
 
         pass
@@ -132,7 +140,7 @@ class IoAdapterPickle:
         """
         Retrieves the object that corresponds to the serialized persistent object id.
 
-        @type: str
+        @type: String
         @param persistent_object_id: Identifier that was serialized instead of the object.
         @return: The object that corresponds to the persistent object id.
         """
