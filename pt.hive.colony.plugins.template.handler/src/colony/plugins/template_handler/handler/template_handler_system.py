@@ -62,8 +62,15 @@ JAVASCRIPT_TAG_START = "<script type=\"text/javascript\">"
 JAVASCRIPT_TAG_END = "</script>"
 """ The javascript end tag """
 
-DEFAULT_CONTENT_TYPE = "text/html"
-""" The default content type """
+FILE_MIME_TYPE_MAPPING = {"html" : "text/html", "txt" : "text/plain", "css" : "text/css",
+                          "jpg" : "image/jpg", "png" : "image/png"}
+""" The map that relates the file extension and the associated mime type """
+
+DEFAULT_MIME_TYPE = "text/plain"
+""" The default mime type """
+
+TEMPLATE_MIME_TYPE = "text/html"
+""" The template mime type """
 
 class TemplateHandler:
     """
@@ -173,8 +180,11 @@ class TemplateHandler:
                 if file_name_extension == TEMPLATE_FILE_EXENSION:
                     break
                 else:
+                    # retrieves the mime type for the given file name extension
+                    mime_type = FILE_MIME_TYPE_MAPPING.get(file_name_extension, DEFAULT_MIME_TYPE)
+
                     # sets the empty content type
-                    request.content_type = ""
+                    request.content_type = mime_type
 
                     # opens the requested file
                     file = open(complete_path, "rb")
@@ -214,7 +224,7 @@ class TemplateHandler:
 
         try:
             # sets the default content type
-            request.content_type = DEFAULT_CONTENT_TYPE
+            request.content_type = TEMPLATE_MIME_TYPE
 
             # sets the stdout as request
             sys.stdout = request
