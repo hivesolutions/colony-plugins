@@ -142,7 +142,11 @@ class ResourceManager:
             # in case the plugin is valid
             if plugin:
                 for plugin_configuration_resource in plugin_configuration_resources_list:
-                    plugin.configuration[plugin_configuration_resource.name] = plugin_configuration_resource
+                    # retrieves the plugin configuration resource name
+                    plugin_configuration_resource_name = plugin_configuration_resource.name
+
+                    # sets the plugin configuration resource as configuration property in the plugin
+                    plugin.set_configuration_property(plugin_configuration_resource_name, plugin_configuration_resource)
 
         # iterates over all the resources in the base resource list
         for resource in base_resource_list:
