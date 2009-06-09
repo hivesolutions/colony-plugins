@@ -38,8 +38,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 configuration = {
-                 "default_socket_provider" : "ssl",
-                 "default_port" : 443,
+                 "default_socket_provider" : "normal",
+                 "default_port" : 8080,
                  "default_handler" : "file",
                  "contexts" : {
                      "/hive/plugins" : {
