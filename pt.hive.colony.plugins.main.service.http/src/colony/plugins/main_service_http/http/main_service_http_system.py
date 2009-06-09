@@ -128,6 +128,18 @@ class MainServiceHttp:
         # retrieves the encoding value
         encoding = parameters.get("encoding", None)
 
+        # retrieves the service configuration
+        service_configuration = self.main_service_http_plugin.get_configuration_property("server_configuration").get_data();
+
+        # retrieves the socket provider configuration value
+        socket_provider = service_configuration.get("default_socket_provider", socket_provider)
+
+        # retrieves the port configuration value
+        port = service_configuration.get("default_port", port)
+
+        # retrieves the encoding configuration value
+        encoding = service_configuration.get("default_encoding", encoding)
+
         # start the server for the given socket provider, port and encoding
         self.start_server(socket_provider, port, encoding)
 
