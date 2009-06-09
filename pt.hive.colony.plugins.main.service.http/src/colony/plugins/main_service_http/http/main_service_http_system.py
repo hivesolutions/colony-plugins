@@ -95,6 +95,9 @@ class MainServiceHttp:
     main_service_http_plugin = None
     """ The main service http plugin """
 
+    http_service_handler_plugins_map = {}
+    """ The http service handler plugin map """
+
     http_socket = None
     """ The http socket """
 
@@ -110,6 +113,8 @@ class MainServiceHttp:
         """
 
         self.main_service_http_plugin = main_service_http_plugin
+
+        self.http_service_handler_plugin_map = {}
 
     def start_service(self, parameters):
         """
@@ -141,7 +146,7 @@ class MainServiceHttp:
         encoding = service_configuration.get("default_encoding", encoding)
 
         # start the server for the given socket provider, port and encoding
-        self.start_server(socket_provider, port, encoding)
+        self.start_server(socket_provider, port, encoding, service_configuration)
 
     def stop_service(self, parameters):
         """
@@ -153,7 +158,7 @@ class MainServiceHttp:
 
         self.stop_server()
 
-    def start_server(self, socket_provider, port, encoding):
+    def start_server(self, socket_provider, port, encoding, service_configuration):
         """
         Starts the server in the given port.
 
@@ -163,6 +168,8 @@ class MainServiceHttp:
         @param port: The port to start the server.
         @type encoding: String
         @param encoding: The encoding to be used in the connection.
+        @type service_configuration: Map
+        @param service_configuration: The service configuration map.
         """
 
         # retrieves the thread pool manager plugin
@@ -259,7 +266,7 @@ class MainServiceHttp:
                 http_connection, http_address = self.http_socket.accept()
 
                 # creates a new http client service task, with the given http connection, address, encoding and encoding handler
-                http_client_service_task = HttpClientServiceTask(self.main_service_http_plugin, http_connection, http_address, encoding, encoding_handler)
+                http_client_service_task = HttpClientServiceTask(self.main_service_http_plugin, http_connection, http_address, encoding, service_configuration, encoding_handler)
 
                 # creates a new task descriptor
                 task_descriptor = task_descriptor_class(start_method = http_client_service_task.start,
@@ -291,6 +298,18 @@ class MainServiceHttp:
         # stops the pool
         self.http_client_thread_pool.stop_pool()
 
+    def http_service_handler_load(self, service_handler_plugin):
+        # retrieves the plugin handler name
+        handler_name = service_handler_plugin.get_handler_name()
+
+        self.http_service_handler_plugins_map[handler_name] = service_handler_plugin
+
+    def http_service_handler_unload(self, service_handler_plugin):
+        # retrieves the plugin handler name
+        handler_name = service_handler_plugin.get_handler_name()
+
+        del self.http_service_handler_plugins_map[handler_name]
+
 class HttpClientServiceTask:
     """
     The http client service task class.
@@ -308,19 +327,23 @@ class HttpClientServiceTask:
     encoding = None
     """ The encoding """
 
+    service_configuration = None
+    """ The service configuration """
+
     encoding_handler = None
     """ The encoding handler """
 
-    def __init__(self, main_service_http_plugin, http_connection, http_address, encoding, encoding_handler):
+    def __init__(self, main_service_http_plugin, http_connection, http_address, encoding, service_configuration, encoding_handler):
         self.main_service_http_plugin = main_service_http_plugin
         self.http_connection = http_connection
         self.http_address = http_address
         self.encoding = encoding
+        self.service_configuration = service_configuration
         self.encoding_handler = encoding_handler
 
     def start(self):
-        # retrieves the http service handler plugins
-        http_service_handler_plugins = self.main_service_http_plugin.http_service_handler_plugins
+        # retrieves the http service handler plugins map
+        http_service_handler_plugins_map = self.main_service_http_plugin.main_service_http.http_service_handler_plugins_map
 
         # prints debug message about connection
         self.main_service_http_plugin.debug("Connected to: %s" % str(self.http_address))
@@ -339,21 +362,34 @@ class HttpClientServiceTask:
                 # prints debug message about request
                 self.main_service_http_plugin.debug("Handling request: %s" % str(request))
 
-                if request.path.find("/hive/plugins") == 0:
-                    # sets the plugin handler that will handle the request
-                    request.properties["plugin_handler"] = "pt.hive.colony.plugins.javascript.file_handler"
+                # retrieves the service configuration contexts
+                service_configuration_contexts = self.service_configuration["contexts"]
 
-                    # handles the request
-                    http_service_handler_plugins[0].handle_request(request)
-                elif request.path.find("/colony_manager") == 0:
-                    # handles the request
-                    http_service_handler_plugins[0].handle_request(request)
-                elif request.path.find("/colony_mod_python") == 0:
-                    # handles the request
-                    http_service_handler_plugins[0].handle_request(request)
-                else:
-                    # handles the request
-                    http_service_handler_plugins[1].handle_request(request)
+                # starts the request handled
+                request_handled = False
+
+                # iterates over the service configuration context names
+                for service_configuration_context_name, service_configuration_context in service_configuration_contexts.items():
+                    if request.path.find(service_configuration_context_name) == 0:
+                        # sets the request properties
+                        request.properties = service_configuration_context.get("request_properties", {})
+
+                        # retrieves the handler name
+                        handler_name = service_configuration_context["handler"]
+
+                        # sets the request handled flag
+                        request_handled = True
+
+                        # breaks the loop
+                        break
+
+                # in case the request was not already handled
+                if not request_handled:
+                    # retrieves the default handler name
+                    handler_name = self.service_configuration["default_handler"]
+
+                # handles the request by the request handler
+                http_service_handler_plugins_map[handler_name].handle_request(request)
 
                 # sends the request to the client (response)
                 self.send_request(request)
