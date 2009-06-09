@@ -39,8 +39,11 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import resource_manager_parser
 
-DESCRIPTION_FILE_PATH = "/resources/resource_manager/resources/base_resources.xml"
-""" The description file path """
+BASE_RESOURCES_PATH = "/resources/resource_manager/resources"
+""" The base resources path """
+
+DESCRIPTION_FILE = "base_resources.xml"
+""" The description file """
 
 class ResourceManager:
     """
@@ -91,8 +94,11 @@ class ResourceManager:
         # retrieves the base plugin path
         plugin_path = manager.get_plugin_path_by_id(resource_manager_plugin_id)
 
+        # constructs the full resources path
+        full_resources_path = plugin_path + BASE_RESOURCES_PATH
+
         # constructs the full base resources description file path
-        full_path = plugin_path + DESCRIPTION_FILE_PATH
+        full_path = full_resources_path + "/" + DESCRIPTION_FILE
 
         # creates the resources file parser
         resources_file_parser = resource_manager_parser.ResourcesFileParser(full_path)
@@ -105,20 +111,66 @@ class ResourceManager:
 
         # iterates over all the resources in the list
         for resource in resource_list:
-            # processes the resources
-            self.process_resource(resource)
+            # in case the resource is of type plugin configurations
+            if(resource.__class__ == resource_manager_parser.PluginConfiguration):
+                for resource_item in resource.resources_list:
+                    # processes the resource
+                    self.process_resource(resource_item, full_resources_path)
+            else:
+                # processes the resources
+                self.process_resource(resource, full_resources_path)
 
-        # iterates over all the resources in the list
-        for resource in resource_list:
+        # creates the plugin configuration list
+        plugin_configuration_list = [value for value in resource_list if value.__class__ == resource_manager_parser.PluginConfiguration]
+
+        # creates the base resource list
+        base_resource_list = [value for value in resource_list if value.__class__ == resource_manager_parser.Resource]
+
+        # retrieves the plugin manager
+        plugin_manager = self.resource_manager_plugin.manager
+
+        # iterates over all the resources in the plugin configuration list
+        for plugin_configuration in plugin_configuration_list:
+            # retrieves the plugin configuration plugin id
+            plugin_configuration_plugin_id = plugin_configuration.plugin_id
+
+            plugin_configuration_resources_list = plugin_configuration.resources_list
+
+            # retrieves the plugin for the given id
+            plugin = plugin_manager._get_plugin_by_id(plugin_configuration_plugin_id)
+
+            # in case the plugin is valid
+            if plugin:
+                for plugin_configuration_resource in plugin_configuration_resources_list:
+                    plugin.configuration[plugin_configuration_resource.name] = plugin_configuration_resource
+
+        # iterates over all the resources in the base resource list
+        for resource in base_resource_list:
             # registers the resource
             self.register_resource(resource.namespace, resource.name, resource.type, resource.data)
 
-    def process_resource(self, resource):
+
+    def process_resource(self, resource, full_resources_path):
         """
-        Processes a resource parsing the data value.
+        Processes a resource.
 
         @type resource: Resource
         @param resource: The resource to be processed.
+        @type full_resources_path: String
+        @param full_resources_path: The full resources path.
+        """
+
+        # sets the resource full resources path
+        resource.full_resources_path = full_resources_path
+
+        return self.parse_resource_data(resource)
+
+    def parse_resource_data(self, resource):
+        """
+        Parses a resource data value.
+
+        @type resource: Resource
+        @param resource: The resource to have the data processed.
         """
 
         # retrieves the resource type
@@ -128,9 +180,19 @@ class ResourceManager:
             resource.data = int(resource.data)
         elif resource_type == "float":
             resource.data = float(resource.data)
+        elif resource_type == "string":
+            resource.data = str(resource.data)
         elif resource_type in self.resource_parser_plugins_map:
             resource_parser_plugin = self.resource_parser_plugins_map[resource_type]
             resource_parser_plugin.parse_resource(resource)
+        else:
+            # sets the parse resource data handler
+            resource.parse_resource_data = self.parse_resource_data
+
+            # returns in failure
+            return False
+
+        return True
 
     def register_resource(self, resource_namespace, resource_name, resource_type, resource_data):
         """

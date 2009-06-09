@@ -107,12 +107,12 @@ class ResourcesFileParser(Parser):
 
         for child_node in child_nodes:
             if valid_node(child_node):
-                resource_list.append(self.parse_resource(child_node))
+                resource_list.append(self.parse_resource_element(child_node))
 
         return resource_list
 
-    def parse_resource_element(self, resource):
-        node_name = resource.nodeName
+    def parse_resource_element(self, resource_element):
+        node_name = resource_element.nodeName
 
         if node_name == "plugin_configuration":
             resource = self.parse_plugin_configuration(resource_element)
@@ -127,7 +127,7 @@ class ResourcesFileParser(Parser):
 
         for child_node in child_nodes:
             if valid_node(child_node):
-                self.parse_plugin_configuration_element(child_node, resource_structure)
+                self.parse_plugin_configuration_element(child_node, plugin_configuration_structure)
 
         return plugin_configuration_structure
 
@@ -137,7 +137,7 @@ class ResourcesFileParser(Parser):
         if node_name == "plugin_id":
             plugin_configuration.plugin_id = self.parse_plugin_id(plugin_configuration_element)
         elif node_name == "resource":
-            plugin_configuration.resource = self.parse_resource(plugin_configuration_element)
+            plugin_configuration.resources_list.append(self.parse_resource(plugin_configuration_element))
 
     def parse_plugin_id(self, plugin_id):
         plugin_configuration_plugin_id = plugin_id.firstChild.data.strip()
@@ -149,11 +149,11 @@ class ResourcesFileParser(Parser):
 
         for child_node in child_nodes:
             if valid_node(child_node):
-                self.parse_resource_element(child_node, resource_structure)
+                self.parse_base_resource_element(child_node, resource_structure)
 
         return resource_structure
 
-    def parse_resource_element(self, resource_element, resource):
+    def parse_base_resource_element(self, resource_element, resource):
         node_name = resource_element.nodeName
 
         if node_name == "namespace":
@@ -187,11 +187,14 @@ class PluginConfiguration:
     """
 
     plugin_id = "none"
-    resource = None
+    """ The plugin configuration plugin id """
 
-    def __init__(self, plugin_id = "none", resource = None):
+    resources_list = []
+    """ The plugin configuration resources list """
+
+    def __init__(self, plugin_id = "none"):
         self.plugin_id = plugin_id
-        self.resource = resource
+        self.resources_list = []
 
 class Resource:
     """
@@ -199,15 +202,34 @@ class Resource:
     """
 
     namespace = "none"
+    """ The resource namespace """
+
     name = "none"
+    """ The resource name """
+
     type = "none"
+    """ The resource type """
+
     data = "none"
+    """ The resource data """
+
+    process_resouce = None
+    """ The process resource handler """
 
     def __init__(self, namespace = "none", name = "none", type = "none", data = "none"):
         self.namespace = namespace
         self.name = name
         self.type = type
         self.data = data
+
+    def get_data(self):
+        if self.parse_resource_data:
+            if self.parse_resource_data(self):
+                self.parse_resource_data = None
+            else:
+                return None
+
+        return self.data
 
 def valid_node(node):
     """

@@ -61,7 +61,7 @@ class ResourceManagerPlugin(colony.plugins.plugin_system.Plugin):
 
     resource_manager = None
 
-    resoucer_parser_plugins = []
+    resource_parser_plugins = []
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)

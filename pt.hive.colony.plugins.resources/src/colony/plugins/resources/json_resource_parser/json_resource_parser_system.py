@@ -67,14 +67,17 @@ class JsonResourceParser:
         # retrieves the json file path
         json_file_path = resource.data
 
-        # opens the json file
-        json_file = open(json_file_path, "r")
+        # retrieves the full resources path
+        full_resources_path = resource.full_resources_path
 
-        # reads the json file contents
-        json_file_contents = json_file.read();
+        # constructs the full json file path
+        full_json_file_path = full_resources_path + "/" + json_file_path
+
+        # opens the json file
+        json_file = open(full_json_file_path, "r")
+
+        # parses the json contents into the resource data
+        resource.data = json.load(json_file)
 
         # closes the json file
         json_file.close()
-
-        # parses the json contents into the resource data
-        resource.data = json.loads(json_file_contents)
