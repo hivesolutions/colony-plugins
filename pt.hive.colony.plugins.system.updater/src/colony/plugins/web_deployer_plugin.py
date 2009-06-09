@@ -58,7 +58,7 @@ class WebDeployerPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.zip", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.resource_manager", "1.0.0")]
+                    "pt.hive.colony.plugins.resources.resource_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
 
@@ -112,6 +112,6 @@ class WebDeployerPlugin(colony.plugins.plugin_system.Plugin):
     def get_resource_manager_plugin(self):
         return self.resource_manager_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.resource_manager")
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.resources.resource_manager")
     def set_resource_manager_plugin(self, resource_manager_plugin):
         self.resource_manager_plugin = resource_manager_plugin

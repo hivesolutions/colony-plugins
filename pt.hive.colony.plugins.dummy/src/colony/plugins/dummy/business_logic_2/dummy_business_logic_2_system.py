@@ -95,3 +95,6 @@ class DummyBusinessLogic2:
 
         # registers the session proxy
         dummy_session_master.register_session_proxy()
+
+        # creates a persistent connection
+        dummy_session_master.create_persistent_session()
