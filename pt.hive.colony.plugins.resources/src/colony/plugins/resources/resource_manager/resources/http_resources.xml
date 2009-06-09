@@ -36,7 +36,7 @@
 	<plugin_configuration>
 		<plugin_id>pt.hive.colony.plugins.main.service.http</plugin_id>
 		<resource>
-			<name>system_configuration</name>
+			<name>server_configuration</name>
 			<type>json</type>
 			<data>http_configuration.json</data>
 		</resource>

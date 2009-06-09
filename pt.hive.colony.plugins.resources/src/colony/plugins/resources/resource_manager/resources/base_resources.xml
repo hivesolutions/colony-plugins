@@ -93,15 +93,6 @@
 		<data>py</data>
 	</resource>
 
-	<plugin_configuration>
-		<plugin_id>pt.hive.colony.plugins.main.service.http</plugin_id>
-		<resource>
-			<name>server_configuration</name>
-			<type>json</type>
-			<data>http_configuration.json</data>
-		</resource>
-	</plugin_configuration>
-
 	<!-- Distribution registry client management -->
 	<!-- <resource>
 		<namespace>pt.hive.colony.plugins.distribution.registry_client</namespace>

@@ -37,13 +37,21 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
+
 import resource_manager_parser
 
 BASE_RESOURCES_PATH = "/resources/resource_manager/resources"
 """ The base resources path """
 
-DESCRIPTION_FILE = "base_resources.xml"
-""" The description file """
+RESOURCES_SUFIX_VALUE = "resources.xml"
+""" The resources sufix value """
+
+RESOURCES_SUFIX_LENGTH = 13
+""" The resources sufix length """
+
+RESOURCES_SUFIX_START_INDEX = -13
+""" The resources sufix value """
 
 class ResourceManager:
     """
@@ -100,11 +108,21 @@ class ResourceManager:
         # constructs the full resources path
         full_resources_path = plugin_path + BASE_RESOURCES_PATH
 
-        # constructs the full base resources description file path
-        full_path = full_resources_path + "/" + DESCRIPTION_FILE
+        # retrieves the resources path directory contents
+        resources_path_directory_contents = os.listdir(full_resources_path)
 
+        # iterates over the resources path directory contents
+        for resources_path_item in resources_path_directory_contents:
+            if len(resources_path_item) > RESOURCES_SUFIX_LENGTH and resources_path_item[RESOURCES_SUFIX_START_INDEX:] == RESOURCES_SUFIX_VALUE:
+                # creates the resources full path item
+                resources_full_path_item = full_resources_path + "/" + resources_path_item
+
+                # parses the resources description file
+                self.parse_file(resources_full_path_item, full_resources_path)
+
+    def parse_file(self, file_path, full_resources_path):
         # creates the resources file parser
-        resources_file_parser = resource_manager_parser.ResourcesFileParser(full_path)
+        resources_file_parser = resource_manager_parser.ResourcesFileParser(file_path)
 
         # parses the file
         resources_file_parser.parse()
@@ -156,7 +174,6 @@ class ResourceManager:
         for resource in base_resource_list:
             # registers the resource
             self.register_resource(resource.namespace, resource.name, resource.type, resource.data)
-
 
     def process_resource(self, resource, full_resources_path):
         """
