@@ -65,6 +65,9 @@ class ResourceManager:
     resource_namespace_resources_list_map = {}
     """ Map associating namespace with the correspondent resources """
 
+    resource_parser_plugins_map = {}
+    """ The resource parser plugins map """
+
     def __init__(self, resource_manager_plugin):
         """
         Class constructor.
@@ -134,6 +137,7 @@ class ResourceManager:
             # retrieves the plugin configuration plugin id
             plugin_configuration_plugin_id = plugin_configuration.plugin_id
 
+            # retrieves the plugin configuration resources list
             plugin_configuration_resources_list = plugin_configuration.resources_list
 
             # retrieves the plugin for the given id

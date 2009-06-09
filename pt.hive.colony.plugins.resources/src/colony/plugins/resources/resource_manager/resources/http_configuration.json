@@ -1,16 +1,21 @@
 {
-    "default_socket_provider" : "ssl",
-    "default_port" : 443,
+    "default_socket_provider" : "normal",
+    "default_port" : 8080,
     "default_handler" : "file",
     "contexts" : {
         "/hive/plugins" : {
-            "handler" : "colony"
+            "handler" : "colony",
+            "request_properties" : {
+            	"plugin_handler" : "pt.hive.colony.plugins.javascript.file_handler"
+            }
         },
         "/colony_manager" : {
-            "handler" : "colony"
+            "handler" : "colony",
+            "request_properties" : {}
         },
         "/colony_mod_python" : {
-            "handler" : "colony"
+            "handler" : "colony",
+            "request_properties" : {}
         }
     }
 }
