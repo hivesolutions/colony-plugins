@@ -37,47 +37,47 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import json
+import sys
 
-RESOURCE_PARSER_NAME = "json"
+RESOURCE_PARSER_NAME = "python"
 """ The resource parser name """
 
-class JsonResourceParser:
+class PythonResourceParser:
     """
-    The json resource parser class.
+    The python resource parser class.
     """
 
-    json_resource_parser_plugin = None
-    """ The json resource parser plugin """
+    python_resource_parser_plugin = None
+    """ The python resource parser plugin """
 
-    def __init__(self, json_resource_parser_plugin):
+    def __init__(self, python_resource_parser_plugin):
         """
         Constructor of the class
 
-        @type json_resource_parser_plugin: Plugin
-        @param json_resource_parser_plugin: The json resource parser plugin.
+        @type python_resource_parser_plugin: Plugin
+        @param python_resource_parser_plugin: The python resource parser plugin.
         """
 
-        self.json_resource_parser_plugin = json_resource_parser_plugin
+        self.python_resource_parser_plugin = python_resource_parser_plugin
 
     def get_resource_parser_name(self):
         return RESOURCE_PARSER_NAME
 
     def parse_resource(self, resource):
-        # retrieves the json file path
-        json_file_path = resource.data
+        # retrieves the python file path
+        python_file_path = resource.data
 
         # retrieves the full resources path
         full_resources_path = resource.full_resources_path
 
-        # constructs the full json file path
-        full_json_file_path = full_resources_path + "/" + json_file_path
+        # adds the full resources path to the system path
+        sys.path.append(full_resources_path)
 
-        # opens the json file
-        json_file = open(full_json_file_path, "r")
+        # import the python module
+        python_module = __import__(python_file_path.rstrip(".py"))
 
-        # parses the json contents into the resource data
-        resource.data = json.load(json_file)
+        # pops the full resources path from the system path
+        sys.path.pop()
 
-        # closes the json file
-        json_file.close()
+        # parses the configuration contents from the python module
+        resource.data = python_module.configuration

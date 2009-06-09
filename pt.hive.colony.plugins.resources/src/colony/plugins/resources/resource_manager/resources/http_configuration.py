@@ -37,47 +37,24 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import json
-
-RESOURCE_PARSER_NAME = "json"
-""" The resource parser name """
-
-class JsonResourceParser:
-    """
-    The json resource parser class.
-    """
-
-    json_resource_parser_plugin = None
-    """ The json resource parser plugin """
-
-    def __init__(self, json_resource_parser_plugin):
-        """
-        Constructor of the class
-
-        @type json_resource_parser_plugin: Plugin
-        @param json_resource_parser_plugin: The json resource parser plugin.
-        """
-
-        self.json_resource_parser_plugin = json_resource_parser_plugin
-
-    def get_resource_parser_name(self):
-        return RESOURCE_PARSER_NAME
-
-    def parse_resource(self, resource):
-        # retrieves the json file path
-        json_file_path = resource.data
-
-        # retrieves the full resources path
-        full_resources_path = resource.full_resources_path
-
-        # constructs the full json file path
-        full_json_file_path = full_resources_path + "/" + json_file_path
-
-        # opens the json file
-        json_file = open(full_json_file_path, "r")
-
-        # parses the json contents into the resource data
-        resource.data = json.load(json_file)
-
-        # closes the json file
-        json_file.close()
+configuration = {
+                 "default_socket_provider" : "ssl",
+                 "default_port" : 443,
+                 "default_handler" : "file",
+                 "contexts" : {
+                     "/hive/plugins" : {
+                         "handler" : "colony",
+                         "request_properties" : {
+                             "plugin_handler" : "pt.hive.colony.plugins.javascript.file_handler"
+                         }
+                     },
+                     "/colony_manager" : {
+                         "handler" : "colony",
+                         "request_properties" : {}
+                     },
+                     "/colony_mod_python" : {
+                         "handler" : "colony",
+                         "request_properties" : {}
+                     }
+                 }
+             }
