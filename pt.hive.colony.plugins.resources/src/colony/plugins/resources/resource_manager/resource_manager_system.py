@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
+import re
 
 import resource_manager_parser
 
@@ -52,6 +53,9 @@ RESOURCES_SUFIX_LENGTH = 13
 
 RESOURCES_SUFIX_START_INDEX = -13
 """ The resources sufix value """
+
+ENVIRONMENT_VARIABLE_REGEX = "\$\{[a-zA-Z0-9_]*\}"
+""" The regular expression for the environment variable """
 
 class ResourceManager:
     """
@@ -200,6 +204,26 @@ class ResourceManager:
 
         # retrieves the resource type
         resource_type = resource.type
+
+        # compiles the environment variable regular expression
+        environment_variable_regex = re.compile(ENVIRONMENT_VARIABLE_REGEX)
+
+        # retrieves the find iterator for the given regular expression
+        find_iterator = environment_variable_regex.finditer(resource.data)
+
+        # iterates over all the matches in the find iterator
+        for match in find_iterator:
+            # retrieves the match group
+            match_group = match.group()
+
+            # retrieves the variable name
+            variable_name = match_group[2:-1]
+
+            # retrieves the variable value
+            variable_value = os.environ.get(variable_name, "")
+
+            # sets the new resource data
+            resource.data = resource.data.replace(match_group, variable_value)
 
         if resource_type == "integer":
             resource.data = int(resource.data)

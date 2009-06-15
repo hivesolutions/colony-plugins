@@ -41,4 +41,13 @@
 			<data>http_configuration.py</data>
 		</resource>
 	</plugin_configuration>
+
+	<plugin_configuration>
+		<plugin_id>pt.hive.colony.plugins.main.service.http.file_handler</plugin_id>
+		<resource>
+			<name>handler_configuration</name>
+			<type>python</type>
+			<data>http_file_configuration.py</data>
+		</resource>
+	</plugin_configuration>
 </resources>

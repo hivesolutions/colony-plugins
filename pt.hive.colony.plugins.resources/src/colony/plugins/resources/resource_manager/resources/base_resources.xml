@@ -38,13 +38,13 @@
 		<namespace>system.path</namespace>
 		<name>workspace_home</name>
 		<type>string</type>
-		<data>C:/Users/joamag/workspace</data>
+		<data>${WORKSPACE_HOME}</data>
 	</resource>
 	<resource>
 		<namespace>system.path</namespace>
 		<name>user_home</name>
 		<type>string</type>
-		<data>C:/Users/joamag</data>
+		<data>${HOME}</data>
 	</resource>
 	<resource>
 		<namespace>system.path</namespace>
