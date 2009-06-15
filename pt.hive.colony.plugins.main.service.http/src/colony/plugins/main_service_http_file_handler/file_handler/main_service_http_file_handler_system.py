@@ -77,8 +77,11 @@ class MainServiceHttpFileHandler:
         return HANDLER_NAME
 
     def handle_request(self, request):
+        # retrieves the handler configuration
+        handler_configuration = self.main_service_http_file_handler_plugin.get_configuration_property("handler_configuration").get_data();
+
         # sets the base directory
-        base_directory = "C:/Program Files/Apache Software Foundation/Apache2.2/htdocs"
+        base_directory = handler_configuration.get("default_path", "/")
 
         # retrieves the requested path
         path = request.get_resource_path()
