@@ -558,8 +558,41 @@ class HttpClientServiceTask:
                     # sets the received message
                     request.received_message = message_value_message
 
+                    # decodes the request if necessary
+                    self.decode_request(request)
+
                     # returns the request
                     return request
+
+    def decode_request(self, request):
+        # in case the content type is not defined
+        if not "Content-Type" in request.headers_map:
+            return
+
+        # retrieves the content type
+        content_type = request.headers_map["Content-Type"]
+
+        # splits the content type
+        content_type_splited = content_type.split(";")
+
+        # iterates over all the items in the content type splited
+        for content_type_item in content_type_splited:
+            # strips the content type item
+            content_type_item_stripped = content_type_item.strip();
+
+            # in case the item is the charset definition
+            if content_type_item_stripped.startswith("charset"):
+                # splits the content type item stripped
+                content_type_item_stripped_splited = content_type_item_stripped.split("=")
+
+                # retrieves the content type charset
+                content_type_charset = content_type_item_stripped_splited[1].lower()
+
+                # retrieves the received message value
+                received_message_value = request.received_message
+
+                # re-encodes the message value in the current default encoding
+                request.received_message = received_message_value.decode(content_type_charset).encode()
 
     def retrieve_data(self, request_timeout = REQUEST_TIMEOUT, chunk_size = CHUNK_SIZE):
         try:
