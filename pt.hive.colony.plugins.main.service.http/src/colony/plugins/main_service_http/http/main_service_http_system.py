@@ -51,6 +51,9 @@ GET_METHOD_VALUE = "GET"
 POST_METHOD_VALUE = "POST"
 """ The post mehtod value """
 
+MULTIPART_FORM_DATA_VALUE = "multipart/form-data"
+""" The multipart form data value """
+
 HOST_VALUE = ""
 """ The host value """
 
@@ -591,6 +594,10 @@ class HttpClientServiceTask:
             for content_type_item in content_type_splited:
                 # strips the content type item
                 content_type_item_stripped = content_type_item.strip();
+
+                # in case the content is of type multipart form data
+                if content_type_item_stripped.startswith(MULTIPART_FORM_DATA_VALUE):
+                    return
 
                 # in case the item is the charset definition
                 if content_type_item_stripped.startswith("charset"):
