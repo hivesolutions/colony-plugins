@@ -565,6 +565,14 @@ class HttpClientServiceTask:
                     return request
 
     def decode_request(self, request):
+        """
+        Decodes the request message for the encoding
+        specified in the request.
+
+        @type request: HttpRequest
+        @param request: The request to be decoded.
+        """
+
         # in case the content type is not defined
         if not "Content-Type" in request.headers_map:
             return
