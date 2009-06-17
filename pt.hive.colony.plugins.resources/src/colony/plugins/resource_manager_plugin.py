@@ -52,8 +52,9 @@ class ResourceManagerPlugin(colony.plugins.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["resource_manager", "test_case"]
+    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
+                 colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
+    capabilities = ["startup", "resource_manager", "test_case"]
     capabilities_allowed = ["resource_parser"]
     dependencies = []
     events_handled = []
