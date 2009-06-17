@@ -48,6 +48,9 @@ import business_sqlite_engine_exceptions
 ENGINE_NAME = "sqlite"
 """ The engine name """
 
+DEFAULT_TIMEOUT_VALUE = 30
+""" The default timeout value """
+
 DATA_TYPE_MAP = {"text" : "text",
                  "numeric" : "numeric",
                  "date" : "numeric",
@@ -209,7 +212,7 @@ class BusinessSqliteEngine:
             isolation_level_value = connection_parameters[ISOLATION_LEVEL_VALUE]
 
         # creates the sqlite database connection
-        connection = sqlite3.connect(file_path, isolation_level = isolation_level_value)
+        connection = sqlite3.connect(file_path, timeout = DEFAULT_TIMEOUT_VALUE, isolation_level = isolation_level_value)
 
         return connection
 
