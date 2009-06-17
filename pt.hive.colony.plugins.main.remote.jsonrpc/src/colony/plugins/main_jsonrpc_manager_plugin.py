@@ -52,7 +52,8 @@ class MainJsonrpcManagerPlugin(colony.plugins.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
+                 colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
     capabilities = ["jsonrpc_manager", "http_python_handler", "rpc_handler"]
     capabilities_allowed = ["rpc_service"]
     dependencies = []
