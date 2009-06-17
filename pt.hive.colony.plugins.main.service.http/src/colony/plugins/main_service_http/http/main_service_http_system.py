@@ -242,10 +242,13 @@ class MainServiceHttp:
         # binds the http socket
         self.http_socket.bind((HOST_VALUE, port))
 
+        # start listening in the http socket
+        self.http_socket.listen(5)
+
         # loops while the http connection is active
         while self.http_connection_active:
-            # start listening in the http socket
-            self.http_socket.listen(5)
+            # sets the socket to non blocking mode
+            self.http_socket.setblocking(0)
 
             # starts the select values
             selected_values = ([], [], [])
@@ -266,6 +269,9 @@ class MainServiceHttp:
             # in case the connection is disabled
             if not self.http_connection_active:
                 return
+
+            # sets the socket to blocking mode
+            self.http_socket.setblocking(1)
 
             try:
                 # accepts the connection retrieving the http connection object and the address
@@ -625,11 +631,17 @@ class HttpClientServiceTask:
         request.received_message = received_message_value.decode(content_type_charset).encode()
 
     def retrieve_data(self, request_timeout = REQUEST_TIMEOUT, chunk_size = CHUNK_SIZE):
+        # sets the connection to non blocking mode
+        self.http_connection.setblocking(0)
+
         try:
             # runs the select in the http connection, with timeout
             selected_values = select.select([self.http_connection], [], [], request_timeout)
         except:
             raise main_service_http_exceptions.RequestClosed("invalid socket")
+
+        # sets the connection to blocking mode
+        self.http_connection.setblocking(1)
 
         if selected_values == ([], [], []):
              self.http_connection.close()

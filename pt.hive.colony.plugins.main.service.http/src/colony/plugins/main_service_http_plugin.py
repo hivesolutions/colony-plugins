@@ -52,7 +52,8 @@ class MainServiceHttpPlugin(colony.plugins.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
+                 colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
     capabilities = ["http_service"]
     capabilities_allowed = ["http_service_handler", "http_service_encoding", "socket_provider"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
