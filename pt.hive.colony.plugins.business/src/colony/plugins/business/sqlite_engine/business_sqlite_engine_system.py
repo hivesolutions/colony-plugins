@@ -2696,8 +2696,11 @@ class BusinessSqliteEngine:
         # logs the query string value
         self.log_query(query_string_value)
 
+        # converts the query string to unicode
+        query_string_value_unicode = unicode(query_string_value)
+
         # executes the query in the database
-        cursor.execute(query_string_value)
+        cursor.execute(query_string_value_unicode)
 
     def execute_script(self, cursor, script_string_value):
         """
