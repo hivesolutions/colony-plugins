@@ -83,11 +83,11 @@ class DummyPluginSwind(dummy_plugin.DummyPlugin):
 
     def load_allowed(self, plugin, capability):
         dummy_plugin.DummyPlugin.load_allowed(self, plugin, capability)
-        print "loading dummy windows forms allowed..."
+        print "loading dummy swing allowed..."
 
     def unload_allowed(self, plugin, capability):
         dummy_plugin.DummyPlugin.unload_allowed(self, plugin, capability)
-        print "unloading dummy windows forms allowed..."
+        print "unloading dummy swing allowed..."
 
     def dependency_injected(self, plugin):
         dummy_plugin.DummyPlugin.dependency_injected(self, plugin)
