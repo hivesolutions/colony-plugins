@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt>"
+__author__ = "João Magalhães <joamag@hive.pt> & Luís Martinho <lmartinho@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
@@ -703,14 +703,21 @@ class BusinessSqliteEngine:
         return values_list[0][1]
 
     def set_next_name_id(self, connection, name, next_id):
+        # retrieves the previous next id
+        previous_next_name_id = self.retrieve_next_name_id(connection, name)
+
+        # uses the internal setter method
+        self._set_next_name_id(name, next_id, previous_next_name_id)
+
+    def _set_next_name_id(self, connection, name, next_id, previous_next_name_id):
         # retrieves the database connection from the connection object
         database_connection = connection.database_connection
 
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
 
-        # in case there is currently no valid next id
-        if self.retrieve_next_name_id(connection, name):
+        # in case there is already a valid next id
+        if previous_next_name_id:
             # creates the query for the update of the data
             query_string_value = "update generator set next_id = "
 
@@ -739,6 +746,10 @@ class BusinessSqliteEngine:
         # retrieves the previous next name id
         previous_next_name_id = self.retrieve_next_name_id(connection, name)
 
+        # uses the internal increment method
+        self._increment_next_name_id(connection, name, previous_next_name_id, id_increment)
+
+    def _increment_next_name_id(self, connection, name, previous_next_name_id, id_increment = 1):
         # in case there is no previous next name id defined
         if not previous_next_name_id:
             # @todo should raise exception
@@ -748,7 +759,7 @@ class BusinessSqliteEngine:
         next_name_id = previous_next_name_id + id_increment
 
         # sets the next name id
-        self.set_next_name_id(connection, name, next_name_id)
+        self._set_next_name_id(connection, name, next_name_id, previous_next_name_id)
 
     def save_entity(self, connection, entity):
         """
@@ -910,7 +921,7 @@ class BusinessSqliteEngine:
                     next_id_value = self.retrieve_next_name_id(connection, table_generator_field_name)
 
                     if next_id_value:
-                        self.increment_next_name_id(connection, table_generator_field_name)
+                        self._increment_next_name_id(connection, table_generator_field_name, next_id_value)
                     else:
                         next_id_value = 1
 
