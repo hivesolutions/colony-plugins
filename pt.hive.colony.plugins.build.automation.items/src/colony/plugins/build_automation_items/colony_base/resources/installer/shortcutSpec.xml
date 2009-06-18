@@ -20,7 +20,7 @@
  along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<!-- 
+<!--
  __author__    = João Magalhães <joamag@hive.pt>
  __version__   = 1.0.0
  __revision__  = $LastChangedRevision: 72 $
@@ -31,23 +31,23 @@
 
 <shortcuts>
 
-	<skipIfNotSupported/>
+    <skipIfNotSupported/>
 
-	<programGroup defaultName="Hive Solutions/Hive Colony" location="applications"/>
+    <programGroup defaultName="Hive Solutions/Hive Colony" location="applications"/>
 
-	<shortcut
-		name="Hive Colony $APP_VER"
-		programGroup="yes"
-		desktop="no"
-		applications="no"
-		startMenu="no"
-		startup="no"
-		target="$INSTALL_PATH/converter/main.bat"
-		commandLine=""
-		workingDirectory="$INSTALL_PATH/converter"
-		description="Hive Colony">
+    <shortcut
+        name="Hive Colony $APP_VER"
+        programGroup="yes"
+        desktop="no"
+        applications="no"
+        startMenu="no"
+        startup="no"
+        target="$INSTALL_PATH/converter/main.bat"
+        commandLine=""
+        workingDirectory="$INSTALL_PATH/converter"
+        description="Hive Colony">
 
-		<createForPack name="Hive Colony Framework"/>
-	</shortcut>
+        <createForPack name="Hive Colony Framework"/>
+    </shortcut>
 
 </shortcuts>
