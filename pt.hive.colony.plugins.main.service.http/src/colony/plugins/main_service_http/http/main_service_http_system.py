@@ -72,6 +72,12 @@ SERVER_NAME = "Hive-Colony-Web"
 SERVER_VERSION = "1.0.0"
 """ The server version """
 
+ENVIRONMENT_VERSION = str(sys.version_info[0]) + "." +  str(sys.version_info[1]) + "." + str(sys.version_info[2]) + "-" + str(sys.version_info[3])
+""" The environment version """
+
+SERVER_IDENTIFIER = SERVER_NAME + "/" + SERVER_VERSION + " (Python/" + sys.platform + "/" + ENVIRONMENT_VERSION + ")"
+""" The server identifier """
+
 NUMBER_THREADS = 15
 """ The number of threads """
 
@@ -92,6 +98,30 @@ STATUS_CODE_VALUES = {200 : "OK", 207 : "Multi-Status",
                       403 : "Forbidden", 404 : "Not Found",
                       500 : "Internal Server Error"}
 """ The status code values map """
+
+CONTENT_TYPE_VALUE = "Content-Type"
+""" The content type value """
+
+CONTENT_ENCODING_VALUE = "Content-Encoding"
+""" The content encoding value """
+
+TRANSFER_ENCODING_VALUE = "Transfer-Encoding"
+""" The transfer encoding value """
+
+CONTENT_LENGTH_VALUE = "Content-Length"
+""" The content length value """
+
+SERVER_VALUE = "Server"
+""" The server value """
+
+CONNECTION_VALUE = "Connection"
+""" The connection value """
+
+CHUNKED_VALUE = "chunked"
+""" The chunked value """
+
+KEEP_ALIVE_VALUE = "Keep-Alive"
+""" The keep alive value """
 
 class MainServiceHttp:
     """
@@ -950,15 +980,15 @@ class HttpRequest:
 
         result.write(self.protocol_version + " " + str(self.status_code) + " " + status_code_value + "\r\n")
         if self.content_type:
-            result.write("Content-Type: " + self.content_type + "\r\n")
+            result.write(CONTENT_TYPE_VALUE + ": " + self.content_type + "\r\n")
         if self.encoded:
-            result.write("Content-Encoding: " + self.encoding_name +"\r\n")
+            result.write(CONTENT_ENCODING_VALUE + ": " + self.encoding_name +"\r\n")
         if self.chunked_encoding:
-            result.write("Transfer-Encoding: chunked\r\n")
+            result.write(TRANSFER_ENCODING_VALUE + ": " + CHUNKED_VALUE + "\r\n")
         if not self.chunked_encoding:
-            result.write("Content-Length: " + str(content_length) + "\r\n")
-        result.write("Server: " + SERVER_NAME + "/" + SERVER_VERSION + "\r\n")
-        result.write("Connection: Keep-Alive" + "\r\n")
+            result.write(CONTENT_LENGTH_VALUE  + ": " + str(content_length) + "\r\n")
+        result.write(SERVER_VALUE + ": " + SERVER_IDENTIFIER + "\r\n")
+        result.write(CONNECTION_VALUE + ": " + KEEP_ALIVE_VALUE + "\r\n")
         result.write("\r\n")
         result.write(message)
 
