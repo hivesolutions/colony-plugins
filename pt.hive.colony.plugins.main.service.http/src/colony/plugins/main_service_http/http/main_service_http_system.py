@@ -269,6 +269,9 @@ class MainServiceHttp:
             # creates the http socket
             self.http_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
+        # sets the socket to be able to reuse the socket
+        self.http_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
         # binds the http socket
         self.http_socket.bind((HOST_VALUE, port))
 
@@ -323,9 +326,6 @@ class MainServiceHttp:
             except:
                 self.main_service_http_plugin.error("Error accepting connection")
 
-        # closes the http socket
-        self.http_socket.close()
-
     def stop_server(self):
         """
         Stops the server.
@@ -333,6 +333,9 @@ class MainServiceHttp:
 
         # sets the http connection active flag as false
         self.http_connection_active = False
+
+        # closes the http socket
+        self.http_socket.close()
 
         # stops all the pool tasks
         self.http_client_thread_pool.stop_pool_tasks()
