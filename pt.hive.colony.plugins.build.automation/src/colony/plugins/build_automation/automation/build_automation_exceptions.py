@@ -37,7 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-def BuildAutomationException(Exception):
+class BuildAutomationException(Exception):
     """
     The build automation exception class.
     """
@@ -63,7 +63,7 @@ def BuildAutomationException(Exception):
 
         return "Build automation exception: %s" % self.message
 
-def InvalidVaribleException(BuildAutomationException):
+class InvalidVaribleException(BuildAutomationException):
     """
     The invalid variable exception class.
     """
