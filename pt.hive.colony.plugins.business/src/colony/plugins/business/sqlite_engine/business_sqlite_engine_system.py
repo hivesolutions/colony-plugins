@@ -707,7 +707,7 @@ class BusinessSqliteEngine:
         previous_next_name_id = self.retrieve_next_name_id(connection, name)
 
         # uses the internal setter method
-        self._set_next_name_id(name, next_id, previous_next_name_id)
+        self._set_next_name_id(connection, name, next_id, previous_next_name_id)
 
     def _set_next_name_id(self, connection, name, next_id, previous_next_name_id):
         # retrieves the database connection from the connection object
