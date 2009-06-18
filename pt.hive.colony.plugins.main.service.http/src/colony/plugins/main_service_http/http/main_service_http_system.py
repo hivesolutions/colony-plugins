@@ -331,9 +331,6 @@ class MainServiceHttp:
         # sets the http connection active flag as false
         self.http_connection_active = False
 
-        # closes the http socket
-        self.http_socket.close()
-
         # stops all the pool tasks
         self.http_client_thread_pool.stop_pool_tasks()
 
@@ -451,6 +448,9 @@ class HttpClientServiceTask:
         self.http_connection.close()
 
     def stop(self):
+        # shutdown the http connection
+        self.http_connection.shutdown(socket.SHUT_RDWR)
+
         # closes the http connection
         self.http_connection.close()
 
