@@ -18,7 +18,7 @@
  along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<!-- 
+<!--
  __author__    = João Magalhães <joamag@hive.pt>
  __version__   = 1.0.0
  __revision__  = $LastChangedRevision$
@@ -28,7 +28,7 @@
 -->
 
 <web_deployer_configuration>
-	<web_apps_path>${system.path.workspace_home}</web_apps_path>
-	<project_path>pt.hive.colony.web</project_path>
-	<plugins_path>plugins</plugins_path>
+    <web_apps_path>${system.path.workspace_home}</web_apps_path>
+    <project_path>pt.hive.colony.web</project_path>
+    <plugins_path>plugins</plugins_path>
 </web_deployer_configuration>

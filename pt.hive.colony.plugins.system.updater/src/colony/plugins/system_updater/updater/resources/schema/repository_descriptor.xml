@@ -20,7 +20,7 @@
  along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<!-- 
+<!--
  __author__    = João Magalhães <joamag@hive.pt>
  __version__   = 1.0.0
  __revision__  = $LastChangedRevision$
@@ -30,34 +30,34 @@
 -->
 
 <repository xmlns="http://www.hive.pt"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.hive.pt ../xsd/repository_descriptor.xsd">
-	<name>Main Repository</name>
-	<description>Description</description>
-	<packages>
-		<package>
-			<name></name>
-			<type></type>
-			<id></id>
-			<version></version>
-			<plugins>
-				<plugin>
-					<id></id>
-					<version></version>
-				</plugin>
-			</plugins>
-		</package>
-	</packages>
-	<plugins>
-		<plugin>
-			<name></name>
-			<type></type>
-			<id></id>
-			<version></version>
-			<main_module></main_module>
-			<main_class></main_class>
-			<file_name></file_name>
-			<zip_file></zip_file>
-		</plugin>
-	</plugins>
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.hive.pt ../xsd/repository_descriptor.xsd">
+    <name>Main Repository</name>
+    <description>Description</description>
+    <packages>
+        <package>
+            <name></name>
+            <type></type>
+            <id></id>
+            <version></version>
+            <plugins>
+                <plugin>
+                    <id></id>
+                    <version></version>
+                </plugin>
+            </plugins>
+        </package>
+    </packages>
+    <plugins>
+        <plugin>
+            <name></name>
+            <type></type>
+            <id></id>
+            <version></version>
+            <main_module></main_module>
+            <main_class></main_class>
+            <file_name></file_name>
+            <zip_file></zip_file>
+        </plugin>
+    </plugins>
 </repository>
