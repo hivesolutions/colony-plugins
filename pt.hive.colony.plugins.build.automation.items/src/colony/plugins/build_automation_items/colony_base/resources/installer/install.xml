@@ -37,7 +37,7 @@
 		<appname>Hive Colony Framework</appname>
 		<appversion>1.0.0</appversion>
 		<authors>
-			<author name="Hive Solutions Lda. <development@hive.pt>" email="global@hive.pt"/>
+			<author name="Hive Solutions Lda." email="global@hive.pt"/>
 		</authors>
 		<url>http://www.hive.pt/colony</url>
 	</info>
