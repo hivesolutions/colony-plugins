@@ -20,7 +20,7 @@
  along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<!-- 
+<!--
  __author__    = João Magalhães <joamag@hive.pt>
  __version__   = 1.0.0
  __revision__  = $LastChangedRevision: 72 $
@@ -30,24 +30,24 @@
 -->
 
 <resources xmlns="http://www.hive.pt"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.hive.pt xsd/resources.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.hive.pt xsd/resources.xsd">
 
-	<plugin_configuration>
-		<plugin_id>pt.hive.colony.plugins.main.service.http</plugin_id>
-		<resource>
-			<name>server_configuration</name>
-			<type>python</type>
-			<data>http_configuration.py</data>
-		</resource>
-	</plugin_configuration>
+    <plugin_configuration>
+        <plugin_id>pt.hive.colony.plugins.main.service.http</plugin_id>
+        <resource>
+            <name>server_configuration</name>
+            <type>python</type>
+            <data>http_configuration.py</data>
+        </resource>
+    </plugin_configuration>
 
-	<plugin_configuration>
-		<plugin_id>pt.hive.colony.plugins.main.service.http.file_handler</plugin_id>
-		<resource>
-			<name>handler_configuration</name>
-			<type>python</type>
-			<data>http_file_configuration.py</data>
-		</resource>
-	</plugin_configuration>
+    <plugin_configuration>
+        <plugin_id>pt.hive.colony.plugins.main.service.http.file_handler</plugin_id>
+        <resource>
+            <name>handler_configuration</name>
+            <type>python</type>
+            <data>http_file_configuration.py</data>
+        </resource>
+    </plugin_configuration>
 </resources>
