@@ -20,7 +20,7 @@
  along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<!-- 
+<!--
  __author__    = João Magalhães <joamag@hive.pt>
  __version__   = 1.0.0
  __revision__  = $LastChangedRevision$
@@ -30,32 +30,32 @@
 -->
 
 <repositories xmlns="http://www.hive.pt"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.hive.pt xsd/repositories.xsd">
-	<repository>
-		<name>Main Repository</name>
-		<description>Contains most of the main plugins</description>
-		<addresses>
-			<address name="Local Address">
-				http://localhost/colony/repository
-			</address>
-			<address name="Example Address">
-				http://example.com/colony/repository
-			</address>
-		</addresses>
-	</repository>
-	<repository>
-		<name>Aux Repository</name>
-		<description>
-			Contains most of the auxiliary plugins
-		</description>
-		<addresses>
-			<address name="Local Address">
-				http://localhost/colony/auxiliary_repository
-			</address>
-			<address name="Example Address">
-				http://example.com/colony/auxiliary_repository
-			</address>
-		</addresses>
-	</repository>
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.hive.pt xsd/repositories.xsd">
+    <repository>
+        <name>Main Repository</name>
+        <description>Contains most of the main plugins</description>
+        <addresses>
+            <address name="Local Address">
+                http://localhost/colony/repository
+            </address>
+            <address name="Example Address">
+                http://example.com/colony/repository
+            </address>
+        </addresses>
+    </repository>
+    <repository>
+        <name>Aux Repository</name>
+        <description>
+            Contains most of the auxiliary plugins
+        </description>
+        <addresses>
+            <address name="Local Address">
+                http://localhost/colony/auxiliary_repository
+            </address>
+            <address name="Example Address">
+                http://example.com/colony/auxiliary_repository
+            </address>
+        </addresses>
+    </repository>
 </repositories>
