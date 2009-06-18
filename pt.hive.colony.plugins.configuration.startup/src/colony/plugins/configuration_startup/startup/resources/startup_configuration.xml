@@ -18,7 +18,7 @@
  along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<!-- 
+<!--
  __author__    = João Magalhães <joamag@hive.pt>
  __version__   = 1.0.0
  __revision__  = $LastChangedRevision$
@@ -28,38 +28,38 @@
 -->
 
 <startup_configuration xmlns="http://www.hive.pt"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.hive.pt xsd/startup_configuration.xsd">
-	<plugins>
-		<plugin>
-			<name>Main Gui Plugin</name>
-			<id>pt.hive.colony.plugins.main.gui</id>
-			<version>1.0.0</version>
-			<load>true</load>
-		</plugin>
-		<plugin>
-			<name>Console Main Plugin</name>
-			<id>pt.hive.colony.plugins.main.console</id>
-			<version>1.0.0</version>
-			<load>true</load>
-		</plugin>
-		<plugin>
-			<name>Autoloader Plugin</name>
-			<id>pt.hive.colony.plugins.misc.autoloader</id>
-			<version>1.0.0</version>
-			<load>true</load>
-		</plugin>
-		<plugin>
-			<name>Http Service Main Plugin</name>
-			<id>pt.hive.colony.plugins.main.service.http</id>
-			<version>1.0.0</version>
-			<load>true</load>
-		</plugin>
-		<plugin>
-			<name>Javascript Manager plugin</name>
-			<id>pt.hive.colony.plugins.javascript.manager</id>
-			<version>1.0.0</version>
-			<load>true</load>
-		</plugin>
-	</plugins>
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.hive.pt xsd/startup_configuration.xsd">
+    <plugins>
+        <plugin>
+            <name>Main Gui Plugin</name>
+            <id>pt.hive.colony.plugins.main.gui</id>
+            <version>1.0.0</version>
+            <load>true</load>
+        </plugin>
+        <plugin>
+            <name>Console Main Plugin</name>
+            <id>pt.hive.colony.plugins.main.console</id>
+            <version>1.0.0</version>
+            <load>true</load>
+        </plugin>
+        <plugin>
+            <name>Autoloader Plugin</name>
+            <id>pt.hive.colony.plugins.misc.autoloader</id>
+            <version>1.0.0</version>
+            <load>true</load>
+        </plugin>
+        <plugin>
+            <name>Http Service Main Plugin</name>
+            <id>pt.hive.colony.plugins.main.service.http</id>
+            <version>1.0.0</version>
+            <load>true</load>
+        </plugin>
+        <plugin>
+            <name>Javascript Manager plugin</name>
+            <id>pt.hive.colony.plugins.javascript.manager</id>
+            <version>1.0.0</version>
+            <load>true</load>
+        </plugin>
+    </plugins>
 </startup_configuration>
