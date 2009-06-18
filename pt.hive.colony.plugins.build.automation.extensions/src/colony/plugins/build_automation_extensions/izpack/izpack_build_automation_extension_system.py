@@ -37,6 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os.path
+
+import izpack_build_automation_extension_exceptions
+
 class IzpackBuildAutomationExtension:
     """
     The izpack build automation extension class.
@@ -71,12 +75,16 @@ class IzpackBuildAutomationExtension:
         # retrieves the izpack home path resource
         izpack_home_path_resource = resource_manager_plugin.get_resource("system.path.izpack_home")
 
-        # in case the izpach_home resource is not defined
+        # in case the izpack_home resource is not defined
         if not izpack_home_path_resource:
-            return
+            raise izpack_build_automation_extension_exceptions.IzpackNotFoundException("izpack configuration not found")
 
         # retrieves the izpack home path value
         izpack_home_path = izpack_home_path_resource.data
+
+        # in case the path does not exists
+        if not os.path.exists(izpack_home_path):
+            raise izpack_build_automation_extension_exceptions.IzpackNotFoundException("izpack home directory not found")
 
         # retrieves the current operative system
         current_operative_system = execution_environment_plugin.get_operative_system()
