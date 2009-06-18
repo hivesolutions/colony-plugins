@@ -323,6 +323,9 @@ class MainServiceHttp:
             except:
                 self.main_service_http_plugin.error("Error accepting connection")
 
+        # closes the http socket
+        self.http_socket.close()
+
     def stop_server(self):
         """
         Stops the server.
@@ -448,9 +451,6 @@ class HttpClientServiceTask:
         self.http_connection.close()
 
     def stop(self):
-        # shutdown the http connection
-        self.http_connection.shutdown(socket.SHUT_RDWR)
-
         # closes the http connection
         self.http_connection.close()
 
