@@ -86,8 +86,8 @@ class BusinessSessionSerializerPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     @colony.plugins.decorators.plugin_call(True)
-    def add_session_proxy(self, session_proxy):
-        self.business_session_serializer.add_session_proxy(session_proxy)
+    def add_session_proxy(self, session_proxy, replace_proxy):
+        self.business_session_serializer.add_session_proxy(session_proxy, replace_proxy)
 
     @colony.plugins.decorators.plugin_call(True)
     def remove_session_proxy(self, session_proxy):

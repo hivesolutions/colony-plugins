@@ -373,13 +373,13 @@ class SessionManagerMaster(SessionManager):
 
         self.session_proxy = SessionManagerProxy(self)
 
-    def register_session_proxy(self):
+    def register_session_proxy(self, replace_proxy = False):
         """
         Registers the session proxy in the session serializer.
         """
 
         for business_session_serializer_plugin in self.business_session_serializer_plugins:
-            business_session_serializer_plugin.add_session_proxy(self.session_proxy)
+            business_session_serializer_plugin.add_session_proxy(self.session_proxy, replace_proxy)
 
     def unregister_session_proxy(self):
         """

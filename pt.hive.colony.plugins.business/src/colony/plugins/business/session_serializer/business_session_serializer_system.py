@@ -77,11 +77,11 @@ class BusinessSessionSerializer:
 
         self.session_proxy_map = {}
 
-    def add_session_proxy(self, session_proxy):
+    def add_session_proxy(self, session_proxy, replace_proxy):
         # retrieves the session name
         session_name = session_proxy.get_session_name()
 
-        if session_name in self.session_proxy_map:
+        if session_name in self.session_proxy_map and not replace_proxy:
             raise business_session_serializer_exceptions.SessionSerializerDuplicatedProxy("proxy " + session_name + " already exists")
         else:
             self.session_proxy_map[session_name] = session_proxy
