@@ -43,10 +43,13 @@ import time
 import stat
 import string
 
-SLEEP_TIME = 1
+SLEEP_TIME_VALUE = 1
+""" The sleep time value """
 
-#@todo: review and comment this file
 class Autoloader:
+    """
+    The autoloader class.
+    """
 
     autoloader_plugin = None
     manager = None
@@ -57,6 +60,13 @@ class Autoloader:
     search_directories_information_map = {}
 
     def __init__(self, autoloader_plugin):
+        """
+        Constructor of the class.
+
+        @type autoloader_plugin: AutoloaderPlugin
+        @param autoloader_plugin: The autoloader plugin.
+        """
+
         self.autoloader_plugin = autoloader_plugin
         self.manager = autoloader_plugin.manager
 
@@ -78,6 +88,7 @@ class Autoloader:
                     self.search_directories_information_map[search_directory] = {}
                     new_flag = True
 
+                # retrieves the directories list
                 dir_list = os.listdir(search_directory)
 
                 # for all the files in the directory
@@ -122,7 +133,8 @@ class Autoloader:
                     self.unload_module(module_name)
                     del self.search_directories_information_map[search_directory][remove_item]
 
-            time.sleep(SLEEP_TIME)
+            # sleeps for the given sleep time
+            time.sleep(SLEEP_TIME_VALUE)
 
     def load_module(self, search_directory, module_name):
         self.autoloader_plugin.info("Loading module " + module_name)
@@ -151,6 +163,9 @@ class Autoloader:
         self.search_directories.append(path)
 
 class FileInformation:
+    """
+    The file information class.
+    """
 
     filename = "none"
     file_properties = None
@@ -162,6 +177,9 @@ class FileInformation:
         self.exists = exists
 
 class FileProperties:
+    """
+    The file properties class.
+    """
 
     modified_date = None
 
