@@ -83,7 +83,7 @@
         </pack>
         <pack name="Console Plugin" required="no">
             <description>The console plugin for simple interaction</description>
-            <fileset dir="../../../../pt.hive.colony.plugins.main.console/src/colony/plugins" targetdir="$INSTALL_PATH/plugins">
+            <fileset dir="../../../../pt.hive.colony.plugins.main.console/src/colony/plugins" targetdir="$INSTALL_PATH/colony/plugins">
                 <exclude name="**/.svn"/>
                 <exclude name="**/*.pyc"/>
                 <exclude name="**/*.class"/>
