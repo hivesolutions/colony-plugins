@@ -162,7 +162,17 @@ class Autoloader:
         plugin_id = plugin.id
 
         # retrieves the plugin loaded value
-        loaded_value = plugin.loaded
+        loaded_value = plugin.is_loaded()
+
+        # retrieves the loaded plugins
+        loaded_plugins = self.manager.get_all_loaded_plugins()
+
+        # creates a new list for the loaded plugins ids
+        loaded_plugins_ids = []
+
+        # iterates over all the loaded plugins
+        for loaded_plugin in loaded_plugins:
+            loaded_plugins_ids.append(loaded_plugin.id)
 
         # stops the module
         self.manager.stop_module(module_name)
@@ -181,8 +191,10 @@ class Autoloader:
             # reloads the main modules
             plugin.reload_main_modules()
 
-            # reloads the plugin
-            self.manager.load_plugin(plugin_id)
+            # iterates over all the loaded plugins ids
+            for loaded_plugin_id in loaded_plugins_ids:
+                # tries to load the plugin with the given id
+                self.manager.load_plugin(loaded_plugin_id)
 
     def unload_autoloader(self):
         self.continue_flag = False
