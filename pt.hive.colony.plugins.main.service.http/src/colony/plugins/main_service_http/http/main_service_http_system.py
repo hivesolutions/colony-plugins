@@ -300,7 +300,7 @@ class MainServiceHttp:
                 self.http_socket.setblocking(1)
             except:
                 # prints debug message about connection
-                self.main_service_http_plugin.error("An error has occurred in the selection of the pool")
+                self.main_service_http_plugin.info("The socket is not valid for selection of the pool")
                 return
 
             # in case the connection is disabled
