@@ -280,31 +280,32 @@ class MainServiceHttp:
 
         # loops while the http connection is active
         while self.http_connection_active:
-            # sets the socket to non blocking mode
-            self.http_socket.setblocking(0)
+            try:
+                # sets the socket to non blocking mode
+                self.http_socket.setblocking(0)
 
-            # starts the select values
-            selected_values = ([], [], [])
+                # starts the select values
+                selected_values = ([], [], [])
 
-            # iterates while there is no selected values
-            while selected_values == ([], [], []):
-                # in case the connection is disabled
-                if not self.http_connection_active:
-                    return
-                try:
+                # iterates while there is no selected values
+                while selected_values == ([], [], []):
+                    # in case the connection is disabled
+                    if not self.http_connection_active:
+                        return
+
                     # selects the values
                     selected_values = select.select([self.http_socket], [], [], CLIENT_CONNECTION_TIMEOUT)
-                except:
-                    # prints debug message about connection
-                    self.main_service_http_plugin.error("An error has occurred in the selection of the pool")
-                    return
+
+                # sets the socket to blocking mode
+                self.http_socket.setblocking(1)
+            except:
+                # prints debug message about connection
+                self.main_service_http_plugin.error("An error has occurred in the selection of the pool")
+                return
 
             # in case the connection is disabled
             if not self.http_connection_active:
                 return
-
-            # sets the socket to blocking mode
-            self.http_socket.setblocking(1)
 
             try:
                 # accepts the connection retrieving the http connection object and the address
@@ -664,17 +665,17 @@ class HttpClientServiceTask:
         request.received_message = received_message_value.decode(content_type_charset).encode()
 
     def retrieve_data(self, request_timeout = REQUEST_TIMEOUT, chunk_size = CHUNK_SIZE):
-        # sets the connection to non blocking mode
-        self.http_connection.setblocking(0)
-
         try:
+            # sets the connection to non blocking mode
+            self.http_connection.setblocking(0)
+
             # runs the select in the http connection, with timeout
             selected_values = select.select([self.http_connection], [], [], request_timeout)
+
+            # sets the connection to blocking mode
+            self.http_connection.setblocking(1)
         except:
             raise main_service_http_exceptions.RequestClosed("invalid socket")
-
-        # sets the connection to blocking mode
-        self.http_connection.setblocking(1)
 
         if selected_values == ([], [], []):
              self.http_connection.close()
