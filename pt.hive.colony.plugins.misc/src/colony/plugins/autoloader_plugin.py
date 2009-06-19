@@ -39,8 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.plugins.plugin_system
 
-PLUGIN_DIRECTORY = "colony/plugins"
-
 class AutoloaderPlugin(colony.plugins.plugin_system.Plugin):
     """
     The main class for the Autoloader plugin
@@ -70,7 +68,6 @@ class AutoloaderPlugin(colony.plugins.plugin_system.Plugin):
         import misc.autoloader.console_autoloader
         self.autoloader = misc.autoloader.autoloading_system.Autoloader(self)
         self.console_autoloader = misc.autoloader.console_autoloader.ConsoleAutoloader(self)
-        self.autoloader.add_search_directory(PLUGIN_DIRECTORY)
         self.autoloader.load_autoloader()
 
     def end_load_plugin(self):

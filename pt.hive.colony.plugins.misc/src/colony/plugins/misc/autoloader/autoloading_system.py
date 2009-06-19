@@ -74,6 +74,11 @@ class Autoloader:
         self.search_directories = []
 
     def load_autoloader(self):
+        # iterates over all the plugin manager paths
+        for plugin_path in self.manager.plugin_paths:
+            # adds the search path
+            self.add_search_directory(plugin_path)
+
         # notifies the ready semaphore
         self.autoloader_plugin.release_ready_semaphore()
 
@@ -170,6 +175,12 @@ class Autoloader:
 
         # in case the plugin was loaded
         if loaded_value:
+            # retrieves the plugin using the plugin id
+            plugin = self.manager._get_plugin_by_id(plugin_id)
+
+            # reloads the main modules
+            plugin.reload_main_modules()
+
             # reloads the plugin
             self.manager.load_plugin(plugin_id)
 
