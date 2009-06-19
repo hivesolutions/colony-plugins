@@ -267,6 +267,12 @@ class Visitor:
         attributes_map = node.get_attributes_map()
         attribute_value = attributes_map["value"]
         attribute_value_value = self.get_value(attribute_value)
+
+        if "format" in attributes_map:
+            format_string = attributes_map["format"]
+            format_string_value = self.get_value(format_string)
+            attribute_value_value = format_string_value % attribute_value_value
+
         if "xml_escape" in attributes_map:
             attribute_xml_escape = attributes_map["xml_escape"]
             attribute_xml_escape_value = self.get_boolean_value(attribute_xml_escape)
