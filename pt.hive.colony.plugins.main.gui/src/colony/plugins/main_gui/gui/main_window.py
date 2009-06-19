@@ -687,6 +687,9 @@ class SplashScreen(wx.SplashScreen):
         wx.CallAfter(self.application.SetTopWindow, self.parent)
 
 class MainApplication(wx.App):
+    """
+    The main application class.
+    """
 
     main_gui_plugin = None
 
@@ -698,13 +701,16 @@ class MainApplication(wx.App):
         wx.App.__init__(self, number)
 
     def load_main_frame(self):
+        # creates the main frame
         self.main_frame = MainFrame(self.main_gui_plugin, None, wx.ID_ANY, MENU_TITLE, size = wx.Size(H_SIZE, V_SIZE))
+
         # creates the splash screen (in case this is the first load of the gui main plugin)
-        if self.splash_screen == None:
+        if self.splash_screen == None and not self.main_gui_plugin.manager.init_complete:
             plugin_path = self.main_gui_plugin.manager.get_plugin_path_by_id(self.main_gui_plugin.id)
             splash_screen_image_path = plugin_path + "/" + IMAGES_PATH + "/" + SPLASH_IMAGE_FILE_NAME
             splash_screen_bitmap = wx.Image(name = splash_screen_image_path).ConvertToBitmap()
             self.splash_screen = SplashScreen(self, self.main_frame, splash_screen_bitmap)
+
         # notifies the ready semaphore
         self.main_gui_plugin.release_ready_semaphore()
 
