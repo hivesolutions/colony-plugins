@@ -89,5 +89,13 @@
                 <exclude name="**/*.class"/>
             </fileset>
         </pack>
+        <pack name="Misc Plugins" required="no">
+            <description>The misc plugins</description>
+            <fileset dir="../../../../pt.hive.colony.plugins.misc/src/colony/plugins" targetdir="$INSTALL_PATH/colony/plugins">
+                <exclude name="**/.svn"/>
+                <exclude name="**/*.pyc"/>
+                <exclude name="**/*.class"/>
+            </fileset>
+        </pack>
     </packs>
 </installation>
