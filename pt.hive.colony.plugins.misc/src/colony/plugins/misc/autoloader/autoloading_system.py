@@ -149,9 +149,29 @@ class Autoloader:
 
     def reload_module(self, module_name):
         self.autoloader_plugin.info("Reloading module " + module_name)
+
+        # retrieves the plugin from the module name
+        plugin = self.manager.get_plugin_by_module_name(module_name)
+
+        # retrieves the plugin id
+        plugin_id = plugin.id
+
+        # retrieves the plugin loaded value
+        loaded_value = plugin.loaded
+
+        # stops the module
         self.manager.stop_module(module_name)
+
+        # loads the plugins for the module name
         self.manager.load_plugins([module_name])
+
+        # starts all the plugins in the plugin manager
         self.manager.start_plugins()
+
+        # in case the plugin was loaded
+        if loaded_value:
+            # reloads the plugin
+            self.manager.load_plugin(plugin_id)
 
     def unload_autoloader(self):
         self.continue_flag = False
