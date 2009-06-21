@@ -41,6 +41,7 @@ configuration = {
                  "default_socket_provider" : "normal",
                  "default_port" : 8080,
                  "default_handler" : "file",
+                 "default_encoding" : None,
                  "contexts" : {
                      "/hive/plugins" : {
                          "handler" : "colony",
@@ -55,6 +56,12 @@ configuration = {
                      "/colony_mod_python" : {
                          "handler" : "colony",
                          "request_properties" : {}
+                     },
+                     "/eclipse" : {
+                         "handler" : "file",
+                         "request_properties" : {
+                             "base_path" : "C:\Users\joamag\workspace\pt.hive.eclipse.plugins.site"
+                         }
                      }
                  }
              }
