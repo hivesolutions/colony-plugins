@@ -420,6 +420,9 @@ class HttpClientServiceTask:
                         # sets the request properties
                         request.properties = service_configuration_context.get("request_properties", {})
 
+                        # sets the handler path
+                        request.handler_path = service_configuration_context_name
+
                         # retrieves the handler name
                         handler_name = service_configuration_context["handler"]
 
@@ -433,6 +436,9 @@ class HttpClientServiceTask:
                 if not request_handled:
                     # retrieves the default handler name
                     handler_name = self.service_configuration["default_handler"]
+
+                    # sets the handler path
+                    request.handler_path = None
 
                 # handles the request by the request handler
                 http_service_handler_plugins_map[handler_name].handle_request(request)
@@ -865,6 +871,9 @@ class HttpRequest:
     resource_path = "none"
     """ The resource path """
 
+    handler_path = "none"
+    """ The handler path """
+
     protocol_version = "none"
     """ The protocol version """
 
@@ -1045,3 +1054,6 @@ class HttpRequest:
 
     def get_resource_path(self):
         return self.resource_path
+
+    def get_handler_path(self):
+        return self.handler_path

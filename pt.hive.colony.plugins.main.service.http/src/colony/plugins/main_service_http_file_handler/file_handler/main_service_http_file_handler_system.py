@@ -80,14 +80,30 @@ class MainServiceHttpFileHandler:
         # retrieves the handler configuration
         handler_configuration = self.main_service_http_file_handler_plugin.get_configuration_property("handler_configuration").get_data();
 
-        # sets the base directory
-        base_directory = handler_configuration.get("default_path", "/")
+        # retrieves the default path
+        default_path = handler_configuration.get("default_path", "/")
 
-        # retrieves the requested path
-        path = request.get_resource_path()
+        # retrieves the default page
+        default_page = handler_configuration.get("default_page", "index.html")
 
-        if path == "/":
-            path = "/index.html"
+        # sets the base directory for file search
+        base_directory = request.properties.get("base_path", default_path)
+
+        # retrieves the requested resource path
+        resource_path = request.get_resource_path()
+
+        # retrieves the handler path
+        handler_path = request.get_handler_path()
+
+        # in case there is a valid handler path
+        if handler_path:
+            path = resource_path.replace(handler_path, "", 1)
+        else:
+            path = resource_path
+
+        # in case the path is the base one
+        if path == "/" or path == "":
+            path = "/" + default_page
 
         # retrieves the extension of the file
         extension = path.split(".")[-1]
@@ -104,7 +120,7 @@ class MainServiceHttpFileHandler:
         # in case the paths does not exist
         if not os.path.exists(complete_path):
             # raises file not found exception with 404 http error code
-            raise main_service_http_file_handler_exceptions.FileNotFoundException(path, 404)
+            raise main_service_http_file_handler_exceptions.FileNotFoundException(resource_path, 404)
 
         # sets the request mime type
         request.content_type = mime_type
