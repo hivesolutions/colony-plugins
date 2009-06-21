@@ -964,7 +964,10 @@ class HttpRequest:
         return self.chunked_encoding
 
     def get_result(self):
+        # retrieves the result stream
         result = cStringIO.StringIO()
+
+        # retrieves the result string value
         message = self.message_stream.getvalue()
 
         if self.encoded:
