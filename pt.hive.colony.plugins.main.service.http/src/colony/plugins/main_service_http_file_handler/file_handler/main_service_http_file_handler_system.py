@@ -89,6 +89,9 @@ class MainServiceHttpFileHandler:
         # sets the base directory for file search
         base_directory = request.properties.get("base_path", default_path)
 
+        # sets the default page
+        default_page = request.properties.get("default_page", default_page)
+
         # retrieves the requested resource path
         resource_path = request.get_resource_path()
 

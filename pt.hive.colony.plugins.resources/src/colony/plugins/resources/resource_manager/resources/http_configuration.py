@@ -60,7 +60,8 @@ configuration = {
                      "/eclipse" : {
                          "handler" : "file",
                          "request_properties" : {
-                             "base_path" : "C:\Users\joamag\workspace\pt.hive.eclipse.plugins.site"
+                             "base_path" : "C:\Users\joamag\workspace\pt.hive.eclipse.plugins.site",
+                             "default_page" : "site.xml"
                          }
                      }
                  }
