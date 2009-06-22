@@ -141,8 +141,8 @@ class MainServiceHttp:
     http_connection_active = False
     """ The http connection active flag """
 
-    http_connection_close_lock = None
-    """ The http connection close lock """
+    http_connection_close_event = None
+    """ The http connection close event """
 
     def __init__(self, main_service_http_plugin):
         """
@@ -155,10 +155,7 @@ class MainServiceHttp:
         self.main_service_http_plugin = main_service_http_plugin
 
         self.http_service_handler_plugin_map = {}
-        self.http_connection_close_lock = threading.Lock()
-
-        # acquires the http connection close lock
-        self.http_connection_close_lock.acquire()
+        self.http_connection_close_event = threading.Event()
 
     def start_service(self, parameters):
         """
@@ -192,8 +189,8 @@ class MainServiceHttp:
         # start the server for the given socket provider, port and encoding
         self.start_server(socket_provider, port, encoding, service_configuration)
 
-        # releases the http connection close lock
-        self.http_connection_close_lock.release()
+        # clears the http connection close event
+        self.http_connection_close_event.clear()
 
     def stop_service(self, parameters):
         """
@@ -290,7 +287,7 @@ class MainServiceHttp:
         self.http_socket.listen(5)
 
         # loops while the http connection is active
-        while self.http_connection_active:
+        while not self.http_connection_close_event.isSet():
             try:
                 # sets the socket to non blocking mode
                 self.http_socket.setblocking(0)
@@ -300,8 +297,8 @@ class MainServiceHttp:
 
                 # iterates while there is no selected values
                 while selected_values == ([], [], []):
-                    # in case the connection is disabled
-                    if not self.http_connection_active:
+                    # in case the connection is closed
+                    if self.http_connection_close_event.isSet():
                         # closes the http socket
                         self.http_socket.close()
 
@@ -318,8 +315,8 @@ class MainServiceHttp:
 
                 return
 
-            # in case the connection is disabled
-            if not self.http_connection_active:
+            # in case the connection is closed
+            if self.http_connection_close_event.isSet():
                 # closes the http socket
                 self.http_socket.close()
 
@@ -356,8 +353,8 @@ class MainServiceHttp:
         # sets the http connection active flag as false
         self.http_connection_active = False
 
-        # acquires the http connection close lock
-        self.http_connection_close_lock.acquire()
+        # sets the http connection close event
+        self.http_connection_close_event.set()
 
         # stops all the pool tasks
         self.http_client_thread_pool.stop_pool_tasks()
