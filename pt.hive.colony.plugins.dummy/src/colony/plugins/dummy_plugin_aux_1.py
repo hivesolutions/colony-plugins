@@ -64,7 +64,7 @@ class DummyPluginAux1(colony.plugins.plugin_system.Plugin):
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
     events_handled = ["dummy_aux1_event"]
-    events_registrable = ["plugin_manager.loaded_plugin"]
+    events_registrable = ["plugin_manager.end_load_plugin"]
 
     thread_pool_manager_plugin = None
 
@@ -143,9 +143,9 @@ class DummyPluginAux1(colony.plugins.plugin_system.Plugin):
     def set_thread_pool_manager_plugin(self, thread_pool_manager_plugin):
         self.thread_pool_manager_plugin = thread_pool_manager_plugin
 
-    @colony.plugins.decorators.event_handler_method("plugin_manager.loaded_plugin")
-    def loaded_plugin_handler(self, event_name, plugin_id, plugin_version, plugin, *event_args):
-        print "dummy aux 1 detected the loading of " + plugin_id + " with version " + plugin_version
+    @colony.plugins.decorators.event_handler_method("plugin_manager.end_load_plugin")
+    def end_load_plugin_handler(self, event_name, plugin_id, plugin_version, plugin, *event_args):
+        print "dummy aux 1 detected the end of loading of " + plugin_id + " with version " + plugin_version
 
     def start_print_running_thread_pool(self):
         while self.valid:
