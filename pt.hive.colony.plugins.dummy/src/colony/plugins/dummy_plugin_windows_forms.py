@@ -81,8 +81,14 @@ class DummyPluginWindowsForms(dummy_plugin.DummyPlugin):
         print "unloading dummy windows forms..."
         self.dummy_windows_forms.stop()
 
+        # notifies the ready semaphore
+        self.release_ready_semaphore()
+
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+
+        # notifies the ready semaphore
+        self.release_ready_semaphore()
 
     @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.dummy.windows_forms", "1.0.0")
     def load_allowed(self, plugin, capability):
