@@ -144,6 +144,9 @@ class MainServiceHttp:
     http_connection_close_event = None
     """ The http connection close event """
 
+    http_connection_close_end_event = None
+    """ The http connection close end event """
+
     def __init__(self, main_service_http_plugin):
         """
         Constructor of the class.
@@ -156,6 +159,7 @@ class MainServiceHttp:
 
         self.http_service_handler_plugin_map = {}
         self.http_connection_close_event = threading.Event()
+        self.http_connection_close_end_event = threading.Event()
 
     def start_service(self, parameters):
         """
@@ -191,6 +195,9 @@ class MainServiceHttp:
 
         # clears the http connection close event
         self.http_connection_close_event.clear()
+
+        # sets the http connection close end event
+        self.http_connection_close_end_event.set()
 
     def stop_service(self, parameters):
         """
@@ -355,6 +362,12 @@ class MainServiceHttp:
 
         # sets the http connection close event
         self.http_connection_close_event.set()
+
+        # waits for the http connection close end event
+        self.http_connection_close_end_event.wait()
+
+        # clears the http connection close end event
+        self.http_connection_close_end_event.clear()
 
         # stops all the pool tasks
         self.http_client_thread_pool.stop_pool_tasks()
