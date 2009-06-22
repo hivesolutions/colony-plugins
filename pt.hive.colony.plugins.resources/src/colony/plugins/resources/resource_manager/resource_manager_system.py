@@ -94,6 +94,7 @@ class ResourceManager:
         self.resource_name_resources_list_map = {}
         self.resource_type_resources_list_map = {}
         self.resource_parser_plugins_map = {}
+        self.plugin_id_configuration_resources_list_map = {}
 
     def load_base_resources(self):
         """
@@ -162,22 +163,39 @@ class ResourceManager:
             # retrieves the plugin configuration resources list
             plugin_configuration_resources_list = plugin_configuration.resources_list
 
-            # retrieves the plugin for the given id
-            plugin = plugin_manager._get_plugin_by_id(plugin_configuration_plugin_id)
-
-            # in case the plugin is valid
-            if plugin:
-                for plugin_configuration_resource in plugin_configuration_resources_list:
-                    # retrieves the plugin configuration resource name
-                    plugin_configuration_resource_name = plugin_configuration_resource.name
-
-                    # sets the plugin configuration resource as configuration property in the plugin
-                    plugin.set_configuration_property(plugin_configuration_resource_name, plugin_configuration_resource)
+            # sets the plugin configuration resources list in the plugin id configuration resources list map
+            self.plugin_id_configuration_resources_list_map[plugin_configuration_plugin_id] = plugin_configuration_resources_list
 
         # iterates over all the resources in the base resource list
         for resource in base_resource_list:
             # registers the resource
             self.register_resource(resource.namespace, resource.name, resource.type, resource.data)
+
+    def register_plugin_resources(self, plugin):
+        """
+        Registers the plugin resources in the plugin.
+
+        @type plugin: Plugin
+        @param plugin: The plugin to have the resouces registered.
+        """
+
+        # retrieves the plugin id
+        plugin_id = plugin.id
+
+        # in case the plugin id is not defined in the plugin id configuration resource map
+        if not plugin_id in self.plugin_id_configuration_resources_list_map:
+            return
+
+        # retrieves the plugin configuration resources list
+        plugin_configuration_resources_list = self.plugin_id_configuration_resources_list_map[plugin_id]
+
+        # iterates over all the plugin configuration resources
+        for plugin_configuration_resource in plugin_configuration_resources_list:
+            # retrieves the plugin configuration resource name
+            plugin_configuration_resource_name = plugin_configuration_resource.name
+
+            # sets the plugin configuration resource as configuration property in the plugin
+            plugin.set_configuration_property(plugin_configuration_resource_name, plugin_configuration_resource)
 
     def process_resource(self, resource, full_resources_path):
         """

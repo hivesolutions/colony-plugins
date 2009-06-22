@@ -58,7 +58,7 @@ class ResourceManagerPlugin(colony.plugins.plugin_system.Plugin):
     capabilities_allowed = ["resource_parser"]
     dependencies = []
     events_handled = []
-    events_registrable = []
+    events_registrable = ["plugin_manager.init_load_plugin"]
 
     resource_manager = None
 
@@ -93,6 +93,10 @@ class ResourceManagerPlugin(colony.plugins.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    @colony.plugins.decorators.event_handler("pt.hive.colony.plugins.resources.resource_manager", "1.0.0")
+    def event_handler(self, event_name, *event_args):
+        colony.plugins.plugin_system.Plugin.event_handler(self, event_name, *event_args)
+
     def register_resource(self, resource_namespace, resource_name, resource_type, resource_data):
         self.resource_manager.register_resource(resource_namespace, resource_name, resource_type, resource_data)
 
@@ -120,3 +124,7 @@ class ResourceManagerPlugin(colony.plugins.plugin_system.Plugin):
     def resource_parser_unload_allowed(self, plugin, capability):
         self.resource_parser_plugins.remove(plugin);
         self.resource_manager.unload_resource_parser_plugin(plugin)
+
+    @colony.plugins.decorators.event_handler_method("plugin_manager.init_load_plugin")
+    def init_load_plugin_handler(self, event_name, plugin_id, plugin_version, plugin, *event_args):
+        self.resource_manager.register_plugin_resources(plugin)
