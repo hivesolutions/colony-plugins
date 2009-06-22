@@ -61,8 +61,8 @@ class DummySwing:
         self.dummmy_swing_plugin = dummmy_swing_plugin
 
     def start(self):
-        self.main_frame = javax.swing.JFrame("Hello Jython")
-        label = javax.swing.JLabel("Hello Jython!", javax.swing.JLabel.CENTER)
+        self.main_frame = javax.swing.JFrame("Dummy Swing")
+        label = javax.swing.JLabel("Hello Colony!", javax.swing.JLabel.CENTER)
         self.main_frame.add(label)
         self.main_frame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE)
         self.main_frame.setSize(300, 300)
