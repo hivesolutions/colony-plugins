@@ -327,6 +327,9 @@ class MainServiceHttp:
             except:
                 self.main_service_http_plugin.error("Error accepting connection")
 
+        # closes the http socket
+        self.http_socket.close()
+
     def stop_server(self):
         """
         Stops the server.
@@ -334,9 +337,6 @@ class MainServiceHttp:
 
         # sets the http connection active flag as false
         self.http_connection_active = False
-
-        # closes the http socket
-        self.http_socket.close()
 
         # stops all the pool tasks
         self.http_client_thread_pool.stop_pool_tasks()
