@@ -47,6 +47,9 @@ class DummySwing:
     dummmy_swing_plugin = None
     """ The dummy swing plugin """
 
+    main_frame = None
+    """ The main frame """
+
     def __init__(self, dummmy_swing_plugin):
         """
         Constructor of the class
@@ -58,9 +61,12 @@ class DummySwing:
         self.dummmy_swing_plugin = dummmy_swing_plugin
 
     def start(self):
-        frame = javax.swing.JFrame("Hello Jython")
+        self.main_frame = javax.swing.JFrame("Hello Jython")
         label = javax.swing.JLabel("Hello Jython!", javax.swing.JLabel.CENTER)
-        frame.add(label)
-        frame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE)
-        frame.setSize(300, 300)
-        frame.show()
+        self.main_frame.add(label)
+        self.main_frame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE)
+        self.main_frame.setSize(300, 300)
+        self.main_frame.show()
+
+    def stop(self):
+        self.main_frame.dispose()
