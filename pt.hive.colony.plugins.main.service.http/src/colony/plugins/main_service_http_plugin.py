@@ -60,6 +60,7 @@ class MainServiceHttpPlugin(colony.plugins.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["main_service_http.http.main_service_http_system", "main_service_http.http.main_service_http_exceptions"]
 
     main_service_http = None
 

@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import sys
 import socket
 import select
+import threading
 import traceback
 import cStringIO
 
@@ -140,6 +141,9 @@ class MainServiceHttp:
     http_connection_active = False
     """ The http connection active flag """
 
+    http_connection_close_lock = None
+    """ The http connection close lock """
+
     def __init__(self, main_service_http_plugin):
         """
         Constructor of the class.
@@ -151,6 +155,10 @@ class MainServiceHttp:
         self.main_service_http_plugin = main_service_http_plugin
 
         self.http_service_handler_plugin_map = {}
+        self.http_connection_close_lock = threading.Lock()
+
+        # acquires the http connection close lock
+        self.http_connection_close_lock.acquire()
 
     def start_service(self, parameters):
         """
@@ -183,6 +191,9 @@ class MainServiceHttp:
 
         # start the server for the given socket provider, port and encoding
         self.start_server(socket_provider, port, encoding, service_configuration)
+
+        # releases the http connection close lock
+        self.http_connection_close_lock.release()
 
     def stop_service(self, parameters):
         """
@@ -291,6 +302,9 @@ class MainServiceHttp:
                 while selected_values == ([], [], []):
                     # in case the connection is disabled
                     if not self.http_connection_active:
+                        # closes the http socket
+                        self.http_socket.close()
+
                         return
 
                     # selects the values
@@ -301,10 +315,14 @@ class MainServiceHttp:
             except:
                 # prints debug message about connection
                 self.main_service_http_plugin.info("The socket is not valid for selection of the pool")
+
                 return
 
             # in case the connection is disabled
             if not self.http_connection_active:
+                # closes the http socket
+                self.http_socket.close()
+
                 return
 
             try:
@@ -337,6 +355,9 @@ class MainServiceHttp:
 
         # sets the http connection active flag as false
         self.http_connection_active = False
+
+        # acquires the http connection close lock
+        self.http_connection_close_lock.acquire()
 
         # stops all the pool tasks
         self.http_client_thread_pool.stop_pool_tasks()

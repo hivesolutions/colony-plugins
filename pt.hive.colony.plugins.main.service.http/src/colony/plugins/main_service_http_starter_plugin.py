@@ -82,8 +82,14 @@ class MainServiceHttpStarterPlugin(colony.plugins.plugin_system.Plugin):
 
         self.main_service_http_plugin.stop_service({})
 
+        # notifies the ready semaphore
+        self.release_ready_semaphore()
+
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+
+        # notifies the ready semaphore
+        self.release_ready_semaphore()
 
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
