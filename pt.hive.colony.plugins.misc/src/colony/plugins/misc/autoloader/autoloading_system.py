@@ -168,9 +168,6 @@ class Autoloader:
             # retrieves the plugin id
             plugin_id = plugin.id
 
-            # retrieves the plugin loaded value
-            loaded_value = plugin.is_loaded()
-
             # retrieves the loaded plugins
             loaded_plugins = self.manager.get_all_loaded_plugins()
 
@@ -190,18 +187,16 @@ class Autoloader:
             # starts all the plugins in the plugin manager
             self.manager.start_plugins()
 
-            # in case the plugin was loaded before
-            if loaded_value:
-                # retrieves the plugin using the plugin id
-                plugin = self.manager._get_plugin_by_id(plugin_id)
+            # retrieves the plugin using the plugin id
+            plugin = self.manager._get_plugin_by_id(plugin_id)
 
-                # reloads the main modules
-                plugin.reload_main_modules()
+            # reloads the main modules
+            plugin.reload_main_modules()
 
-                # iterates over all the loaded plugins ids
-                for loaded_plugin_id in loaded_plugins_ids:
-                    # tries to load the plugin with the given id
-                    self.manager.load_plugin(loaded_plugin_id)
+            # iterates over all the loaded plugins ids
+            for loaded_plugin_id in loaded_plugins_ids:
+                # tries to load the plugin with the given id
+                self.manager.load_plugin(loaded_plugin_id)
         except:
             self.autoloader_plugin.info("There was an error reloading module " + module_name)
 
