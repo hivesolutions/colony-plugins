@@ -142,59 +142,68 @@ class Autoloader:
             time.sleep(SLEEP_TIME_VALUE)
 
     def load_module(self, search_directory, module_name):
-        self.autoloader_plugin.info("Loading module " + module_name)
-        if not search_directory in sys.path:
-            sys.path.insert(0, search_directory)
-        self.manager.load_plugins([module_name])
-        self.manager.start_plugins()
+        try:
+            self.autoloader_plugin.info("Loading module " + module_name)
+            if not search_directory in sys.path:
+                sys.path.insert(0, search_directory)
+            self.manager.load_plugins([module_name])
+            self.manager.start_plugins()
+        except:
+            self.autoloader_plugin.info("There was an error loading module " + module_name)
 
     def unload_module(self, module_name):
-        self.autoloader_plugin.info("Removing module " + module_name)
-        self.manager.stop_module(module_name)
+        try:
+            self.autoloader_plugin.info("Unloading module " + module_name)
+            self.manager.stop_module(module_name)
+        except:
+            self.autoloader_plugin.info("There was an error unloading module " + module_name)
 
     def reload_module(self, module_name):
-        self.autoloader_plugin.info("Reloading module " + module_name)
+        try:
+            self.autoloader_plugin.info("Reloading module " + module_name)
 
-        # retrieves the plugin from the module name
-        plugin = self.manager.get_plugin_by_module_name(module_name)
+            # retrieves the plugin from the module name
+            plugin = self.manager.get_plugin_by_module_name(module_name)
 
-        # retrieves the plugin id
-        plugin_id = plugin.id
+            # retrieves the plugin id
+            plugin_id = plugin.id
 
-        # retrieves the plugin loaded value
-        loaded_value = plugin.is_loaded()
+            # retrieves the plugin loaded value
+            loaded_value = plugin.is_loaded()
 
-        # retrieves the loaded plugins
-        loaded_plugins = self.manager.get_all_loaded_plugins()
+            # retrieves the loaded plugins
+            loaded_plugins = self.manager.get_all_loaded_plugins()
 
-        # creates a new list for the loaded plugins ids
-        loaded_plugins_ids = []
+            # creates a new list for the loaded plugins ids
+            loaded_plugins_ids = []
 
-        # iterates over all the loaded plugins
-        for loaded_plugin in loaded_plugins:
-            loaded_plugins_ids.append(loaded_plugin.id)
+            # iterates over all the loaded plugins
+            for loaded_plugin in loaded_plugins:
+                loaded_plugins_ids.append(loaded_plugin.id)
 
-        # stops the module
-        self.manager.stop_module(module_name)
+            # stops the module
+            self.manager.stop_module(module_name)
 
-        # loads the plugins for the module name
-        self.manager.load_plugins([module_name])
+            # loads the plugins for the module name
+            self.manager.load_plugins([module_name])
 
-        # starts all the plugins in the plugin manager
-        self.manager.start_plugins()
+            # starts all the plugins in the plugin manager
+            self.manager.start_plugins()
 
-        # in case the plugin was loaded
-        if loaded_value:
-            # retrieves the plugin using the plugin id
-            plugin = self.manager._get_plugin_by_id(plugin_id)
+            # in case the plugin was loaded before
+            if loaded_value:
+                # retrieves the plugin using the plugin id
+                plugin = self.manager._get_plugin_by_id(plugin_id)
 
-            # reloads the main modules
-            plugin.reload_main_modules()
+                # reloads the main modules
+                plugin.reload_main_modules()
 
-            # iterates over all the loaded plugins ids
-            for loaded_plugin_id in loaded_plugins_ids:
-                # tries to load the plugin with the given id
-                self.manager.load_plugin(loaded_plugin_id)
+                # iterates over all the loaded plugins ids
+                for loaded_plugin_id in loaded_plugins_ids:
+                    # tries to load the plugin with the given id
+                    self.manager.load_plugin(loaded_plugin_id)
+        except:
+            self.autoloader_plugin.info("There was an error reloading module " + module_name)
 
     def unload_autoloader(self):
         self.continue_flag = False
