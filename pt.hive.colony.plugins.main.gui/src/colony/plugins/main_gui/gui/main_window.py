@@ -89,7 +89,6 @@ LOG_PANEL_TITLE = "Log Pane"
 H_SIZE = 1024
 V_SIZE = 768
 
-#@todo: review and comment this file
 class MainFrame(wx.Frame):
     """
     The main frame used in the gui.
