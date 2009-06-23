@@ -112,7 +112,16 @@ class Autoloader:
                             file_information = self.search_directories_information_map[search_directory][file_name]
                             file_properties = file_information.file_properties
                             if not modified_date == file_properties.modified_date:
-                                self.reload_module(module_name)
+                                # tries to retrieve the plugin from the plugin manager using the module name
+                                plugin = self.manager.get_plugin_by_module_name(module_name)
+
+                                # in case the plugin is already loaded in the plugin manager
+                                if plugin:
+                                    self.reload_module(plugin, module_name)
+                                else:
+                                    self.load_module(search_directory, module_name)
+
+                                # sets the new modified date
                                 file_properties.modified_date = modified_date
                             file_information.exists = True
                         else:
@@ -149,21 +158,18 @@ class Autoloader:
             self.manager.load_plugins([module_name])
             self.manager.start_plugins()
         except:
-            self.autoloader_plugin.info("There was an error loading module " + module_name)
+            self.autoloader_plugin.info("There was a problem loading module " + module_name)
 
     def unload_module(self, module_name):
         try:
             self.autoloader_plugin.info("Unloading module " + module_name)
             self.manager.stop_module(module_name)
         except:
-            self.autoloader_plugin.info("There was an error unloading module " + module_name)
+            self.autoloader_plugin.info("There was a problem unloading module " + module_name)
 
-    def reload_module(self, module_name):
+    def reload_module(self, plugin, module_name):
         try:
             self.autoloader_plugin.info("Reloading module " + module_name)
-
-            # retrieves the plugin from the module name
-            plugin = self.manager.get_plugin_by_module_name(module_name)
 
             # retrieves the plugin id
             plugin_id = plugin.id
@@ -198,7 +204,7 @@ class Autoloader:
                 # tries to load the plugin with the given id
                 self.manager.load_plugin(loaded_plugin_id)
         except:
-            self.autoloader_plugin.info("There was an error reloading module " + module_name)
+            self.autoloader_plugin.error("There was a problem reloading module " + module_name)
 
     def unload_autoloader(self):
         self.continue_flag = False
