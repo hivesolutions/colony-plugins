@@ -37,11 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import dummy_plugin
 import colony.plugins.plugin_system
 import colony.plugins.decorators
 
-class DummyPluginRpcService(dummy_plugin.DummyPlugin):
+class DummyPluginRpcService(colony.plugins.plugin_system.Plugin):
     """
     The main class for the Dummy Rpc Service plugin.
     """
@@ -59,28 +58,27 @@ class DummyPluginRpcService(dummy_plugin.DummyPlugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    valid = True
 
     def load_plugin(self):
-        dummy_plugin.DummyPlugin.load_plugin(self)
+        colony.plugins.plugin_system.Plugin.load_plugin(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        dummy_plugin.DummyPlugin.unload_plugin(self)
+        colony.plugins.plugin_system.Plugin.unload_plugin(self)
 
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        dummy_plugin.DummyPlugin.load_allowed(self, plugin, capability)
+        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
     def unload_allowed(self, plugin, capability):
-        dummy_plugin.DummyPlugin.unload_allowed(self, plugin, capability)
+        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
-        dummy_plugin.DummyPlugin.dependency_injected(self, plugin)
+        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     @colony.plugins.decorators.plugin_call(True)
     def get_service_id(self):

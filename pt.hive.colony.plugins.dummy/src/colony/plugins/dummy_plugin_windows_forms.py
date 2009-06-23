@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import dummy_plugin
 import colony.plugins.plugin_system
+import colony.plugins.decorators
 
-class DummyPluginWindowsForms(dummy_plugin.DummyPlugin):
+class DummyPluginWindowsForms(colony.plugins.plugin_system.Plugin):
     """
     The main class for the Dummy Windows Forms plugin.
     """
@@ -58,12 +58,11 @@ class DummyPluginWindowsForms(dummy_plugin.DummyPlugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    valid = True
 
     dummy_windows_forms = None
 
     def load_plugin(self):
-        dummy_plugin.DummyPlugin.load_plugin(self)
+        colony.plugins.plugin_system.Plugin.load_plugin(self)
         print "loading dummy windows forms..."
 
         # notifies the ready semaphore
@@ -77,7 +76,7 @@ class DummyPluginWindowsForms(dummy_plugin.DummyPlugin):
         self.dummy_windows_forms.start()
 
     def unload_plugin(self):
-        dummy_plugin.DummyPlugin.unload_plugin(self)
+        colony.plugins.plugin_system.Plugin.unload_plugin(self)
         print "unloading dummy windows forms..."
         self.dummy_windows_forms.stop()
 
@@ -92,16 +91,16 @@ class DummyPluginWindowsForms(dummy_plugin.DummyPlugin):
 
     @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.dummy.windows_forms", "1.0.0")
     def load_allowed(self, plugin, capability):
-        dummy_plugin.DummyPlugin.load_allowed(self, plugin, capability)
+        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
         print "loading dummy windows forms allowed..."
 
     @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.dummy.windows_forms", "1.0.0")
     def unload_allowed(self, plugin, capability):
-        dummy_plugin.DummyPlugin.unload_allowed(self, plugin, capability)
+        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
         print "unloading dummy windows forms allowed..."
 
     def dependency_injected(self, plugin):
-        dummy_plugin.DummyPlugin.dependency_injected(self, plugin)
+        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     @colony.plugins.decorators.load_allowed_capability("dummy_windows_forms_label")
     def dummy_windows_forms_label_load_allowed(self, plugin, capability):

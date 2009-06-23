@@ -37,11 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import dummy_plugin
 import colony.plugins.plugin_system
 import colony.plugins.decorators
 
-class DummyPluginWindowsFormsLabel1(dummy_plugin.DummyPlugin):
+class DummyPluginWindowsFormsLabel1(colony.plugins.plugin_system.Plugin):
     """
     The main class for the Dummy Windows Forms Label 1 plugin.
     """
@@ -59,12 +58,11 @@ class DummyPluginWindowsFormsLabel1(dummy_plugin.DummyPlugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    valid = True
 
     dummy_windows_forms_label_1 = None
 
     def load_plugin(self):
-        dummy_plugin.DummyPlugin.load_plugin(self)
+        colony.plugins.plugin_system.Plugin.load_plugin(self)
         print "loading dummy windows forms label 1..."
 
         global dummy
@@ -75,22 +73,22 @@ class DummyPluginWindowsFormsLabel1(dummy_plugin.DummyPlugin):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        dummy_plugin.DummyPlugin.unload_plugin(self)
+        colony.plugins.plugin_system.Plugin.unload_plugin(self)
         print "unloading dummy windows forms label 1..."
 
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        dummy_plugin.DummyPlugin.load_allowed(self, plugin, capability)
+        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
         print "loading dummy windows forms label 1 allowed..."
 
     def unload_allowed(self, plugin, capability):
-        dummy_plugin.DummyPlugin.unload_allowed(self, plugin, capability)
+        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
         print "unloading dummy windows forms label 1 allowed..."
 
     def dependency_injected(self, plugin):
-        dummy_plugin.DummyPlugin.dependency_injected(self, plugin)
+        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     @colony.plugins.decorators.plugin_call(True)
     def get_label(self):

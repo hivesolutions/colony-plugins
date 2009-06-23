@@ -39,7 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import time
 
-import dummy_plugin
 import colony.plugins.plugin_system
 
 STATUS_TASK_CREATED = 1
@@ -49,7 +48,7 @@ STATUS_TASK_STOPPED = 4
 
 TIMEOUT = 0.5
 
-class DummyPluginAux4(dummy_plugin.DummyPlugin):
+class DummyPluginAux4(colony.plugins.plugin_system.Plugin):
     """
     The main class for the Dummy Aux 4 plugin.
     """
@@ -70,34 +69,33 @@ class DummyPluginAux4(dummy_plugin.DummyPlugin):
                     "pt.hive.colony.plugins.main.tasks.task_manager", "1.0.0")]
     events_handled = ["task_information_changed"]
     events_registrable = []
-    valid = True
 
     task_manager_plugin = None
 
     def load_plugin(self):
-        dummy_plugin.DummyPlugin.load_plugin(self)
+        colony.plugins.plugin_system.Plugin.load_plugin(self)
         print "loading dummy aux 4..."
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
-        dummy_plugin.DummyPlugin.unload_plugin(self)
+        colony.plugins.plugin_system.Plugin.unload_plugin(self)
         print "unloading dummy aux 4..."
 
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
     def load_allowed(self, plugin, capability):
-        dummy_plugin.DummyPlugin.load_allowed(self, plugin, capability)
+        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
         print "loading dummy aux 4 allowed..."
 
     def unload_allowed(self, plugin, capability):
-        dummy_plugin.DummyPlugin.unload_allowed(self, plugin, capability)
+        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
         print "unloading dummy aux 4 allowed..."
 
     def dependency_injected(self, plugin):
-        dummy_plugin.DummyPlugin.dependency_injected(self, plugin)
+        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
         if colony.plugins.plugin_system.is_capability_or_sub_capability_in_list("task_manager", plugin.capabilities):
             self.task_manager_plugin = plugin
 
