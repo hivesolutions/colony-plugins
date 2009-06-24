@@ -691,9 +691,13 @@ class MainApplication(wx.App):
     """
 
     main_gui_plugin = None
+    """ The main gui plugin """
 
     main_frame = None
+    """ The main frame """
+
     splash_screen = None
+    """ The splash screen """
 
     def __init__(self, number, main_gui_plugin):
         self.main_gui_plugin = main_gui_plugin
