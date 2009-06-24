@@ -77,7 +77,10 @@ class MainWebView:
             raise main_web_view_exceptions.MainWebViewInvalidWindow("window already created")
 
         # creates the main window
-        self.main_window = MainWindow()
+        self.main_window = MainWindow(self.main_web_view_plugin)
+
+        # constructs the main window
+        self.main_window.contruct()
 
         # shows the main window
         self.main_window.show()
@@ -97,14 +100,22 @@ class MainWindow(PyQt4.QtGui.QWidget):
     The main window class.
     """
 
-    def __init__(self):
+    main_web_view_plugin = None
+    """ The main web view plugin """
+
+    def __init__(self, main_web_view_plugin):
         """
         Constructor of the class.
         """
 
         PyQt4.QtGui.QWidget.__init__(self)
 
-        #icon = QtGui.QIcon("omni.png")
+        self.main_web_view_plugin = main_web_view_plugin
+
+    def contruct(self):
+        plugin_path = self.main_web_view_plugin.manager.get_plugin_path_by_id(self.main_web_view_plugin.id)
+
+        icon = PyQt4.QtGui.QIcon(plugin_path + "/main_web/web_view/resources/omni.png")
 
         self.a = A(self)
         self.txt = PyQt4.QtWebKit.QWebView()
@@ -119,8 +130,8 @@ class MainWindow(PyQt4.QtGui.QWidget):
 
         tab.setContentsMargins(0, 0, 0, 0)
         self.setLayout(tab)
-        #self.setWindowIcon(icon)
-        self.setWindowTitle('Hive Colony')
+        self.setWindowIcon(icon)
+        self.setWindowTitle("Hive Colony")
 
         self.connect(self.txt.page().mainFrame(), PyQt4.QtCore.SIGNAL("javaScriptWindowObjectCleared()"), self.object_cleared)
 
