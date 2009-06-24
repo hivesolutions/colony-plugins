@@ -53,7 +53,7 @@ class MainWebViewPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["thread"]
+    capabilities = ["main"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PackageDependency(
                     "PyQt 4.5", "PyQt4", "4.5.x", "http://www.riverbankcomputing.co.uk")]
