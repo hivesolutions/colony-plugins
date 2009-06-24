@@ -103,6 +103,12 @@ class MainWindow(PyQt4.QtGui.QWidget):
     main_web_view_plugin = None
     """ The main web view plugin """
 
+    web_view = None
+    """ The web view """
+
+    main_frame = None
+    """ The main frame """
+
     def __init__(self, main_web_view_plugin):
         """
         Constructor of the class.
@@ -113,50 +119,73 @@ class MainWindow(PyQt4.QtGui.QWidget):
         self.main_web_view_plugin = main_web_view_plugin
 
     def contruct(self):
+        """
+        The method to construct the ui.
+        """
+
+        # retrieves the plugin path
         plugin_path = self.main_web_view_plugin.manager.get_plugin_path_by_id(self.main_web_view_plugin.id)
 
+        # creates a new icon
         icon = PyQt4.QtGui.QIcon(plugin_path + "/main_web/web_view/resources/omni.png")
 
-        self.a = A(self)
-        self.txt = PyQt4.QtWebKit.QWebView()
+        # creates the base url value
+        base_url = PyQt4.QtCore.QUrl("file:///C:/Users/joamag/workspace/pt.hive.colony.web.ui/test_web_ui.html")
 
-        self.txt.setUrl(PyQt4.QtCore.QUrl("file:///C:/Users/joamag/workspace/pt.hive.colony.web.ui/test_web_ui.html"))
+        # creates the web view
+        self.web_view = PyQt4.QtWebKit.QWebView()
 
-        #self.txt.page().mainFrame().evaluateJavaScript("alert(1)")
+        # retrieves the main frame
+        self.main_frame = self.web_view.page().mainFrame()
 
-        tab = PyQt4.QtGui.QVBoxLayout()
+        # sets the base url value
+        self.web_view.setUrl(base_url)
 
-        tab.addWidget(self.txt)
+        # creates the box layout
+        box_layout = PyQt4.QtGui.QVBoxLayout()
 
-        tab.setContentsMargins(0, 0, 0, 0)
-        self.setLayout(tab)
+        # adds the web view widget to the box layout
+        box_layout.addWidget(self.web_view)
+
+        # resets the box layout margins
+        box_layout.setContentsMargins(0, 0, 0, 0)
+
+        # sets the layout
+        self.setLayout(box_layout)
+
+        # sets the window icon
         self.setWindowIcon(icon)
+
+        # sets the window title
         self.setWindowTitle("Hive Colony")
 
-        self.connect(self.txt.page().mainFrame(), PyQt4.QtCore.SIGNAL("javaScriptWindowObjectCleared()"), self.object_cleared)
+        # connects the register symbols method to the java script window object cleared signal
+        self.connect(self.main_frame, PyQt4.QtCore.SIGNAL("javaScriptWindowObjectCleared()"), self.register_symbols)
 
-    def object_cleared(self):
-        self.txt.page().mainFrame().addToJavaScriptWindowObject("a", self.a)
+    def register_symbols(self):
+        # creates the window access instance
+        window_access = WindowAccess(self)
 
-class A(PyQt4.QtCore.QObject):
+        # registers the symbol in the javascript engine
+        self.main_frame.addToJavaScriptWindowObject("windowAccess", window_access)
+
+class WindowAccess(PyQt4.QtCore.QObject):
+    """
+    The window access class
+    """
+
     def __init__(self, window):
         PyQt4.QtCore.QObject.__init__(self)
+
         self.window = window
-        self.b = 24
 
-    @PyQt4.QtCore.pyqtSlot(result = int)
-    def b(self):
-        return 2
-
-    @PyQt4.QtCore.pyqtSlot(result = int)
+    @PyQt4.QtCore.pyqtSlot()
     def full(self):
         self.window.showFullScreen()
-        return 1
 
-    @PyQt4.QtCore.pyqtSlot(result = int)
+    @PyQt4.QtCore.pyqtSlot()
     def normal(self):
         self.window.showNormal()
-        return 1
 
     @PyQt4.QtCore.pyqtSlot(result = bool)
     def is_full(self):
