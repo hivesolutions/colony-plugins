@@ -43,6 +43,8 @@ import PyQt4.QtCore
 import PyQt4.QtGui
 import PyQt4.QtWebKit
 
+import main_web_view_exceptions
+
 class MainWebView:
     """
     The main web view class.
@@ -68,12 +70,17 @@ class MainWebView:
         self.main_web_view_plugin = main_web_view_plugin
 
     def start(self):
-        # creates a new qt gui application
-        self.application = PyQt4.QtGui.QApplication(sys.argv )
+        if not MainWebView.application:
+            self.application = PyQt4.QtGui.QApplication(sys.argv)
+            MainWebView.application = self.application
+        else:
+            raise main_web_view_exceptions.MainWebViewInvalidWindow("window already created")
 
-        self.mt = MyThread()
+        # creates the main window
+        self.main_window = MainWindow()
 
-        self.mt.start()
+        # shows the main window
+        self.main_window.show()
 
         # notifies the ready semaphore
         self.main_web_view_plugin.release_ready_semaphore()
@@ -82,7 +89,8 @@ class MainWebView:
         self.application.exec_()
 
     def stop(self):
-        self.mt.add_event("close")
+        # exits the application
+        self.application.exit()
 
 class MainWindow(PyQt4.QtGui.QWidget):
     """
@@ -114,46 +122,10 @@ class MainWindow(PyQt4.QtGui.QWidget):
         #self.setWindowIcon(icon)
         self.setWindowTitle('Hive Colony')
 
-        self.close_signal = PyQt4.QtCore.SIGNAL("close")
-
-        self.connect(self, self.close_signal, self.close_2)
-
         self.connect(self.txt.page().mainFrame(), PyQt4.QtCore.SIGNAL("javaScriptWindowObjectCleared()"), self.object_cleared)
 
     def object_cleared(self):
         self.txt.page().mainFrame().addToJavaScriptWindowObject("a", self.a)
-
-    def close_2(self):
-        self.close()
-
-    def call_signal(self):
-        self.emit(self.close_signal)
-
-class MyThread(PyQt4.QtCore.QThread ):
-    def __init__(self):
-        PyQt4.QtCore.QThread.__init__( self )
-
-        self.queue = []
-
-    def run(self):
-        # creates the main window
-        self.main_window = MainWindow()
-
-        # shows the main window
-        self.main_window.show()
-
-        while True:
-            print "adeus"
-            if self.queue:
-                value = self.queue.pop()
-                if value == "close":
-                    self.main_window.close()
-
-            self.sleep(1)
-            print "ola"
-
-    def add_event(self, event_name):
-        self.queue.append(event_name)
 
 class A(PyQt4.QtCore.QObject):
     def __init__(self, window):

@@ -74,11 +74,14 @@ class MainWebViewPlugin(colony.plugins.plugin_system.Plugin):
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+
+        # starts the main web view
         self.main_web_view.start()
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
 
+        # stops the main web view
         self.main_web_view.stop()
 
         # notifies the ready semaphore
