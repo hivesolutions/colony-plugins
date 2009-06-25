@@ -112,6 +112,9 @@ TRANSFER_ENCODING_VALUE = "Transfer-Encoding"
 CONTENT_LENGTH_VALUE = "Content-Length"
 """ The content length value """
 
+CONTENT_LENGTH_LOWER_VALUE = "Content-length"
+""" The content length lower value """
+
 SERVER_VALUE = "Server"
 """ The server value """
 
@@ -613,12 +616,12 @@ class HttpClientServiceTask:
                     # in case the operation type is post
                     elif request.operation_type == POST_METHOD_VALUE:
                         # in case the content length is defined in the headers map
-                        if "Content-Length" in request.headers_map:
+                        if CONTENT_LENGTH_VALUE in request.headers_map:
                             # retrieves the message size
-                            message_size = int(request.headers_map["Content-Length"])
-                        elif "Content-length" in request.headers_map:
+                            message_size = int(request.headers_map[CONTENT_LENGTH_VALUE])
+                        elif CONTENT_LENGTH_LOWER_VALUE in request.headers_map:
                             # retrieves the message size
-                            message_size = int(request.headers_map["Content-length"])
+                            message_size = int(request.headers_map[CONTENT_LENGTH_LOWER_VALUE])
                         # in case there is no content length defined in the headers map
                         else:
                             # returns the request
