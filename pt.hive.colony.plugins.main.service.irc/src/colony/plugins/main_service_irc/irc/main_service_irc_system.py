@@ -84,7 +84,7 @@ class MainServiceIrc:
         port = parameters.get("port", DEFAULT_PORT)
 
         # retrieves the service configuration
-        #service_configuration = self.main_service_http_plugin.get_configuration_property("server_configuration").get_data();
+        #service_configuration = self.main_service_irc_plugin.get_configuration_property("server_configuration").get_data();
 
         # retrieves the socket provider configuration value
         #socket_provider = service_configuration.get("default_socket_provider", socket_provider)
@@ -95,11 +95,11 @@ class MainServiceIrc:
         # start the server for the given socket provider, port and encoding
         self.start_server(socket_provider, port, encoding, service_configuration)
 
-        # clears the http connection close event
-        #self.http_connection_close_event.clear()
+        # clears the irc connection close event
+        #self.irc_connection_close_event.clear()
 
-        # sets the http connection close end event
-        #self.http_connection_close_end_event.set()
+        # sets the irc connection close end event
+        #self.irc_connection_close_end_event.set()
 
     def stop_service(self, parameters):
         """
@@ -131,8 +131,8 @@ class MainServiceIrc:
 
         # creates the irc client thread pool
         self.irc_client_thread_pool = thread_pool_manager_plugin.create_new_thread_pool("irc pool",
-                                                                                         "pool to support http client connections",
-                                                                                         NUMBER_THREADS, SCHEDULING_ALGORITHM, MAX_NUMBER_THREADS)
+                                                                                        "pool to support irc client connections",
+                                                                                        NUMBER_THREADS, SCHEDULING_ALGORITHM, MAX_NUMBER_THREADS)
 
         # starts the irc client thread pool
         self.irc_client_thread_pool.start_pool()
@@ -171,11 +171,11 @@ class MainServiceIrc:
         # start listening in the irc socket
         self.irc_socket.listen(5)
 
-        # loops while the http connection is active
+        # loops while the irc connection is active
         while not self.irc_connection_close_event.isSet():
             try:
                 # sets the socket to non blocking mode
-                self.http_socket.setblocking(0)
+                self.irc_socket.setblocking(0)
 
                 # starts the select values
                 selected_values = ([], [], [])
@@ -183,7 +183,7 @@ class MainServiceIrc:
                 # iterates while there is no selected values
                 while selected_values == ([], [], []):
                     # in case the connection is closed
-                    if self.http_connection_close_event.isSet():
+                    if self.irc_connection_close_event.isSet():
                         # closes the irc socket
                         self.irc_socket.close()
 
@@ -250,7 +250,7 @@ class IrcClientServiceTask:
     encoding_handler = None
     """ The encoding handler """
 
-    def __init__(self, main_service_http_plugin, http_connection, http_address, service_configuration, encoding_handler):
+    def __init__(self, main_service_irc_plugin, irc_connection, irc_address, service_configuration, encoding_handler):
         self.main_service_irc_plugin = main_service_irc_plugin
         self.irc_connection = irc_connection
         self.irc_address = irc_address

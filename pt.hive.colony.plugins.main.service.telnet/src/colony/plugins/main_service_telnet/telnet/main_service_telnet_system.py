@@ -65,7 +65,29 @@ class MainServiceTelnet:
         @param parameters: The parameters to start the service.
         """
 
-        pass
+        # retrieves the socket provider value
+        socket_provider = parameters.get("socket_provider", None)
+
+        # retrieves the port value
+        port = parameters.get("port", DEFAULT_PORT)
+
+        # retrieves the service configuration
+        #service_configuration = self.main_service_telnet_plugin.get_configuration_property("server_configuration").get_data();
+
+        # retrieves the socket provider configuration value
+        #socket_provider = service_configuration.get("default_socket_provider", socket_provider)
+
+        # retrieves the port configuration value
+        #port = service_configuration.get("default_port", port)
+
+        # start the server for the given socket provider, port and encoding
+        self.start_server(socket_provider, port, encoding, service_configuration)
+
+        # clears the telnet connection close event
+        #self.telnet_connection_close_event.clear()
+
+        # sets the telnet connection close end event
+        #self.telnet_connection_close_end_event.set()
 
     def stop_service(self, parameters):
         """
@@ -76,3 +98,619 @@ class MainServiceTelnet:
         """
 
         pass
+
+    def start_server(self, socket_provider, port, service_configuration):
+        """
+        Starts the server in the given port.
+
+        @type socket_provider: String
+        @param socket_provider: The name of the socket provider to be used.
+        @type port: int
+        @param port: The port to start the server.
+        @type service_configuration: Map
+        @param service_configuration: The service configuration map.
+        """
+
+        # retrieves the thread pool manager plugin
+        thread_pool_manager_plugin = self.main_service_telnet_plugin.thread_pool_manager_plugin
+
+        # retrieves the task descriptor class
+        task_descriptor_class = thread_pool_manager_plugin.get_thread_task_descriptor_class()
+
+        # creates the telnet client thread pool
+        self.telnet_client_thread_pool = thread_pool_manager_plugin.create_new_thread_pool("telnet pool",
+                                                                                           "pool to support telnet client connections",
+                                                                                           NUMBER_THREADS, SCHEDULING_ALGORITHM, MAX_NUMBER_THREADS)
+
+        # starts the telnet client thread pool
+        self.telnet_client_thread_pool.start_pool()
+
+        # sets the telnet connection active flag as true
+        self.telnet_connection_active = True
+
+        # in case the socket provider is defined
+        if socket_provider:
+            # retrieves the socket provider plugins
+            socket_provider_plugins = self.main_service_telnet_plugin.socket_provider_plugins
+
+            # iterates over all the socket provider plugins
+            for socket_provider_plugin in socket_provider_plugins:
+                # retrieves the provider name from the socket provider plugin
+                socket_provider_plugin_provider_name = socket_provider_plugin.get_provider_name()
+
+                # in case the names are the same
+                if socket_provider_plugin_provider_name == socket_provider:
+                    # creates a new telnet socket with the socket provider plugin
+                    self.telnet_socket = socket_provider_plugin.provide_socket()
+
+            # in case the socket was not created, no socket provider found
+            if not self.telnet_socket:
+                raise main_service_telnet_exceptions.SocketProviderNotFound("socket provider %s not found" % socket_provider)
+        else:
+            # creates the telnet socket
+            self.telnet_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        # sets the socket to be able to reuse the socket
+        self.telnet_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+        # binds the telnet socket
+        self.telnet_socket.bind((HOST_VALUE, port))
+
+        # start listening in the telnet socket
+        self.telnet_socket.listen(5)
+
+        # loops while the telnet connection is active
+        while not self.telnet_connection_close_event.isSet():
+            try:
+                # sets the socket to non blocking mode
+                self.telnet_socket.setblocking(0)
+
+                # starts the select values
+                selected_values = ([], [], [])
+
+                # iterates while there is no selected values
+                while selected_values == ([], [], []):
+                    # in case the connection is closed
+                    if self.telnet_connection_close_event.isSet():
+                        # closes the telnet socket
+                        self.telnet_socket.close()
+
+                        return
+
+                    # selects the values
+                    selected_values = select.select([self.telnet_socket], [], [], CLIENT_CONNECTION_TIMEOUT)
+
+                # sets the socket to blocking mode
+                self.telnet_socket.setblocking(1)
+            except:
+                # prints debug message about connection
+                self.main_service_telnet_plugin.info("The socket is not valid for selection of the pool")
+
+                return
+
+            # in case the connection is closed
+            if self.telnet_connection_close_event.isSet():
+                # closes the telnet socket
+                self.telnet_socket.close()
+
+                return
+
+            try:
+                # accepts the connection retrieving the telnet connection object and the address
+                telnet_connection, telnet_address = self.telnet_socket.accept()
+
+                # creates a new telnet client service task, with the given telnet connection, address, encoding and encoding handler
+                telnet_client_service_task = TelnetClientServiceTask(self.main_service_telnet_plugin, telnet_connection, telnet_address, encoding, service_configuration, encoding_handler)
+
+                # creates a new task descriptor
+                task_descriptor = task_descriptor_class(start_method = telnet_client_service_task.start,
+                                                        stop_method = telnet_client_service_task.stop,
+                                                        pause_method = telnet_client_service_task.pause,
+                                                        resume_method = telnet_client_service_task.resume)
+
+                # inserts the new task descriptor into the telnet client thread pool
+                self.telnet_client_thread_pool.insert_task(task_descriptor)
+
+                self.main_service_telnet_plugin.debug("Number of threads in pool: %d" % self.telnet_client_thread_pool.current_number_threads)
+            except:
+                self.main_service_telnet_plugin.error("Error accepting connection")
+
+        # closes the telnet socket
+        self.telnet_socket.close()
+
+class TelnetClientServiceTask:
+    """
+    The telnet client service task class.
+    """
+
+    main_service_telnet_plugin = None
+    """ The main service telnet plugin """
+
+    telnet_connection = None
+    """ The telnet connection """
+
+    telnet_address = None
+    """ The telnet address """
+
+    service_configuration = None
+    """ The service configuration """
+
+    encoding_handler = None
+    """ The encoding handler """
+
+    def __init__(self, main_service_telnet_plugin, telnet_connection, telnet_address, service_configuration, encoding_handler):
+        self.main_service_telnet_plugin = main_service_telnet_plugin
+        self.telnet_connection = telnet_connection
+        self.telnet_address = telnet_address
+        self.service_configuration = service_configuration
+        self.encoding_handler = encoding_handler
+
+    def start(self):
+        # retrieves the telnet service handler plugins map
+        telnet_service_handler_plugins_map = self.main_service_telnet_plugin.main_service_telnet.telnet_service_handler_plugins_map
+
+        # prints debug message about connection
+        self.main_service_telnet_plugin.debug("Connected to: %s" % str(self.telnet_address))
+
+        # sets the request timeout
+        request_timeout = REQUEST_TIMEOUT
+
+        while True:
+            try:
+                request = self.retrieve_request(request_timeout)
+            except main_service_telnet_exceptions.MainServiceTelnetException:
+                self.main_service_telnet_plugin.debug("Connection: %s closed" % str(self.telnet_address))
+                return
+
+            try:
+                # prints debug message about request
+                self.main_service_telnet_plugin.debug("Handling request: %s" % str(request))
+
+                # retrieves the service configuration contexts
+                service_configuration_contexts = self.service_configuration["contexts"]
+
+                # starts the request handled
+                request_handled = False
+
+                # iterates over the service configuration context names
+                for service_configuration_context_name, service_configuration_context in service_configuration_contexts.items():
+                    if request.path.find(service_configuration_context_name) == 0:
+                        # sets the request properties
+                        request.properties = service_configuration_context.get("request_properties", {})
+
+                        # sets the handler path
+                        request.handler_path = service_configuration_context_name
+
+                        # retrieves the handler name
+                        handler_name = service_configuration_context["handler"]
+
+                        # sets the request handled flag
+                        request_handled = True
+
+                        # breaks the loop
+                        break
+
+                # in case the request was not already handled
+                if not request_handled:
+                    # retrieves the default handler name
+                    handler_name = self.service_configuration["default_handler"]
+
+                    # sets the handler path
+                    request.handler_path = None
+
+                # handles the request by the request handler
+                telnet_service_handler_plugins_map[handler_name].handle_request(request)
+
+                # sends the request to the client (response)
+                self.send_request(request)
+
+                # in case the connection is meant to be kept alive
+                if self.keep_alive(request):
+                    self.main_service_telnet_plugin.debug("Connection: %s kept alive for %ss" % (str(self.telnet_address), str(request_timeout)))
+                # in case the connection is not meant to be kept alive
+                else:
+                    self.main_service_telnet_plugin.debug("Connection: %s closed" % str(self.telnet_address))
+                    break
+
+            except Exception, exception:
+                self.send_exception(request, exception)
+
+        # closes the telnet connection
+        self.telnet_connection.close()
+
+    def stop(self):
+        # closes the telnet connection
+        self.telnet_connection.close()
+
+    def pause(self):
+        pass
+
+    def resume(self):
+        pass
+
+    def retrieve_request(self, request_timeout = REQUEST_TIMEOUT):
+        """
+        Retrieves the request from the received message.
+
+        @type request_timeout: int
+        @param request_timeout: The timeout for the request retrieval.
+        @rtype: TelnetRequest
+        @return: The request from the received message.
+        """
+
+        # creates the string io for the message
+        message = cStringIO.StringIO()
+
+        # creates a request object
+        request = TelnetRequest()
+
+        # creates the start line loaded flag
+        start_line_loaded = False
+
+        # creates the header loaded flag
+        header_loaded = False
+
+        # creates the message loaded flag
+        message_loaded = False
+
+        # creates the message size value
+        message_size = 0
+
+        # continuous loop
+        while True:
+            # retrieves the data
+            data = self.retrieve_data(request_timeout)
+
+            # in case no valid data was received
+            if data == "":
+                raise main_service_telnet_exceptions.TelnetInvalidDataException("empty data received")
+
+            # writes the data to the string io
+            message.write(data)
+
+            # retrieves the message value from the string io
+            message_value = message.getvalue()
+
+            # in case the start line is not loaded
+            if not start_line_loaded:
+                # finds the first new line value
+                start_line_index = message_value.find("\r\n")
+
+                # in case there is a new line value found
+                if not start_line_index == -1:
+                    # retrieves the start line
+                    start_line = message_value[:start_line_index]
+
+                    # splits the start line to retrieve the operation type the path
+                    # and the protocol version
+                    operation_type, path, protocol_version = start_line.split(" ")
+
+                    # sets the request  operation type
+                    request.set_operation_type(operation_type)
+
+                    # sets the request path
+                    request.set_path(path)
+
+                    # sets the request protocol version
+                    request.set_protocol_version(protocol_version)
+
+                    # sets the start line loaded flag
+                    start_line_loaded = True
+
+            # in case the header is not loaded
+            if not header_loaded:
+                # retrieves the end header index (two new lines)
+                end_header_index = message_value.find("\r\n\r\n")
+
+                # in case the end header index is found
+                if not end_header_index == -1:
+                    # sets the header loaded flag
+                    header_loaded = True
+
+                    # retrieves the start header index
+                    start_header_index = start_line_index + 2
+
+                    # retrieves the headers part of the message
+                    headers = message_value[start_header_index:end_header_index]
+
+                    # splits the headers by line
+                    headers_splitted = headers.split("\r\n")
+
+                    # iterates over the headers lines
+                    for header_splitted in headers_splitted:
+                        # finds the header separator
+                        division_index = header_splitted.find(":")
+
+                        # retrieves the header name
+                        header_name = header_splitted[:division_index].strip()
+
+                        # retrieves the header value
+                        header_value = header_splitted[division_index + 1:].strip()
+
+                        # sets the header in the headers map
+                        request.headers_map[header_name] = header_value
+
+                    # in case the operation type is get
+                    if request.operation_type == GET_METHOD_VALUE:
+                        # parses the get attributes
+                        request.__parse_get_attributes__()
+
+                        # returns the request
+                        return request
+                    # in case the operation type is post
+                    elif request.operation_type == POST_METHOD_VALUE:
+                        # in case the content length is defined in the headers map
+                        if CONTENT_LENGTH_VALUE in request.headers_map:
+                            # retrieves the message size
+                            message_size = int(request.headers_map[CONTENT_LENGTH_VALUE])
+                        elif CONTENT_LENGTH_LOWER_VALUE in request.headers_map:
+                            # retrieves the message size
+                            message_size = int(request.headers_map[CONTENT_LENGTH_LOWER_VALUE])
+                        # in case there is no content length defined in the headers map
+                        else:
+                            # returns the request
+                            return request
+
+            # in case the message is not loaded and the header is loaded
+            if not message_loaded and header_loaded:
+                # retrieves the start message size
+                start_message_index = end_header_index + 4
+
+                # retrieves the message part of the message value
+                message_value_message = message_value[start_message_index:]
+
+                # in case the length of the message value message is the same
+                # as the message size
+                if len(message_value_message) == message_size:
+                    # sets the message loaded flag
+                    message_loaded = True
+
+                    # sets the received message
+                    request.received_message = message_value_message
+
+                    # decodes the request if necessary
+                    self.decode_request(request)
+
+                    # returns the request
+                    return request
+
+    def decode_request(self, request):
+        """
+        Decodes the request message for the encoding
+        specified in the request.
+
+        @type request: TelnetRequest
+        @param request: The request to be decoded.
+        """
+
+        # start the valid charset flag
+        valid_charset = False
+
+        # in case the content type is not defined
+        if "Content-Type" in request.headers_map:
+            # retrieves the content type
+            content_type = request.headers_map["Content-Type"]
+
+            # splits the content type
+            content_type_splited = content_type.split(";")
+
+            # iterates over all the items in the content type splited
+            for content_type_item in content_type_splited:
+                # strips the content type item
+                content_type_item_stripped = content_type_item.strip();
+
+                # in case the content is of type multipart form data
+                if content_type_item_stripped.startswith(MULTIPART_FORM_DATA_VALUE):
+                    return
+
+                # in case the item is the charset definition
+                if content_type_item_stripped.startswith("charset"):
+                    # splits the content type item stripped
+                    content_type_item_stripped_splited = content_type_item_stripped.split("=")
+
+                    # retrieves the content type charset
+                    content_type_charset = content_type_item_stripped_splited[1].lower()
+
+                    # sets the valid charset flag
+                    valid_charset = True
+
+                    # breaks the cycle
+                    break
+
+        # in case there is no valid charset defined
+        if not valid_charset:
+            # sets the default content type charset
+            content_type_charset = DEFAULT_CHARSET
+
+        # retrieves the received message value
+        received_message_value = request.received_message
+
+        # re-encodes the message value in the current default encoding
+        request.received_message = received_message_value.decode(content_type_charset).encode()
+
+    def retrieve_data(self, request_timeout = REQUEST_TIMEOUT, chunk_size = CHUNK_SIZE):
+        try:
+            # sets the connection to non blocking mode
+            self.telnet_connection.setblocking(0)
+
+            # runs the select in the telnet connection, with timeout
+            selected_values = select.select([self.telnet_connection], [], [], request_timeout)
+
+            # sets the connection to blocking mode
+            self.telnet_connection.setblocking(1)
+        except:
+            raise main_service_telnet_exceptions.RequestClosed("invalid socket")
+
+        if selected_values == ([], [], []):
+             self.telnet_connection.close()
+             raise main_service_telnet_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
+        try:
+            # receives the data in chunks
+            data = self.telnet_connection.recv(chunk_size)
+        except:
+            raise main_service_telnet_exceptions.ClientRequestTimeout("timeout")
+
+        return data
+
+    def send_exception(self, request, exception):
+        """
+        Sends the exception to the given request for the given exception.
+
+        @type request: TelnetRequest
+        @param request: The request to send the exception.
+        @type exception: Exception
+        @param exception: The exception to be sent.
+        """
+
+        # sets the request content type
+        request.content_type = "text/plain"
+
+        # checks if the exception contains a status code
+        if hasattr(exception, "status_code"):
+            # sets the status code in the request
+            request.status_code = exception.status_code
+        # in case there is no status code defined in the exception
+        else:
+            # sets the internal server error status code
+            request.status_code = 500
+
+        # retrieves the value for the status code
+        status_code_value = STATUS_CODE_VALUES[request.status_code]
+
+        # writes the header message in the message
+        request.write("colony web server - " + str(request.status_code) + " " + status_code_value + "\n")
+
+        # writes the exception message
+        request.write("error: '" + str(exception) + "'\n")
+
+        # writes the traceback message in the request
+        request.write("traceback:\n")
+
+        # writes the traceback in the request
+        formated_traceback = traceback.format_tb(sys.exc_traceback)
+
+        # iterates over the traceback lines
+        for formated_traceback_line in formated_traceback:
+            request.write(formated_traceback_line)
+
+        # sends the request to the client (response)
+        self.send_request(request)
+
+    def send_request(self, request):
+        # in case the encoding is defined
+        if self.encoding:
+            # sets the encoded flag
+            request.encoded = True
+
+            # sets the encoding handler
+            request.set_encoding_handler(self.encoding_handler)
+
+            # sets the encoding name
+            request.set_encoding_name(self.encoding)
+
+        if request.is_mediated():
+            self.send_request_mediated(request)
+        elif request.is_chunked_encoded():
+            self.send_request_chunked(request)
+        else:
+            self.send_request_simple(request)
+
+    def send_request_simple(self, request):
+        message = request.get_message()
+
+        # retrieves the result value
+        result_value = request.get_result()
+
+        try:
+            # sends the result value to the client
+            self.telnet_connection.send(result_value)
+        except:
+            # error in the client side
+            return
+
+    def send_request_mediated(self, request):
+        # retrieves the result value
+        result_value = request.get_result()
+
+        try:
+            # sends the result value to the client
+            self.telnet_connection.send(result_value)
+        except:
+            # error in the client side
+            return
+
+        # continuous loop
+        while True:
+            # retrieves the mediated value
+            mediated_value = request.mediated_handler.get_chunk(CHUNK_SIZE)
+
+            # in case the read is complete
+            if not mediated_value:
+                # closes the mediated file
+                request.mediated_handler.close_file()
+                return
+
+            try:
+                # sends the mediated value to the client
+                self.telnet_connection.send(mediated_value)
+            except:
+                # error in the client side
+                return
+
+    def send_request_chunked(self, request):
+        # retrieves the result value
+        result_value = request.get_result()
+
+        try:
+            # sends the result value to the client
+            self.telnet_connection.send(result_value)
+        except:
+            # error in the client side
+            return
+
+        # continuous loop
+        while True:
+            # retrieves the chunk value
+            chunk_value = request.chunk_handler.get_chunk(CHUNK_SIZE)
+
+            # in case the read is complete
+            if not chunk_value:
+                # sends the final empty chunk
+                self.telnet_connection.send("0\r\n\r\n")
+                return
+
+            try:
+                # retrieves the length of the chunk value
+                length_chunk_value = len(chunk_value)
+
+                # sets the value for the hexadecimal length part of the chunk
+                length_chunk_value_hexadecimal_string = "%X\r\n" % length_chunk_value
+
+                # sets the message value
+                message_value = length_chunk_value_hexadecimal_string + chunk_value + "\r\n"
+
+                # sends the message value to the client
+                self.telnet_connection.send(message_value)
+            except:
+                # error in the client side
+                return
+
+    def keep_alive(self, request):
+        """
+        Retrieves the value of the keep alive for the given request.
+
+        @type request: TelnetRequest
+        @param request: The request to retrieve the keep alive value.
+        @rtype: bool
+        @return: The value of the keep alive for the given request.
+        """
+
+        if "Connection" in request.headers_map:
+            connection_type = request.headers_map["Connection"]
+
+            if connection_type.lower() == "keep-alive":
+                return True
+            else:
+                return False
+        else:
+            return False
