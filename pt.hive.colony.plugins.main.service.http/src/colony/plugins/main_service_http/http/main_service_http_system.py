@@ -144,6 +144,9 @@ class MainServiceHttp:
     http_connection_active = False
     """ The http connection active flag """
 
+    http_client_thread_pool = None
+    """ The http client thread pool """
+
     http_connection_close_event = None
     """ The http connection close event """
 
