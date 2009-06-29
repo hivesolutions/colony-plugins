@@ -54,7 +54,7 @@ class MainServiceHttpPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
-    capabilities = ["http_service"]
+    capabilities = ["service.http"]
     capabilities_allowed = ["http_service_handler", "http_service_encoding", "socket_provider"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
@@ -85,12 +85,6 @@ class MainServiceHttpPlugin(colony.plugins.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
-    def start_service(self, parameters):
-        self.main_service_http.start_service(parameters)
-
-    def stop_service(self, parameters):
-        self.main_service_http.stop_service(parameters)
-
     @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.main.service.http", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
@@ -102,6 +96,12 @@ class MainServiceHttpPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.main.service.http", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    def start_service(self, parameters):
+        self.main_service_http.start_service(parameters)
+
+    def stop_service(self, parameters):
+        self.main_service_http.stop_service(parameters)
 
     @colony.plugins.decorators.load_allowed_capability("http_service_handler")
     def http_service_handler_load_allowed(self, plugin, capability):
