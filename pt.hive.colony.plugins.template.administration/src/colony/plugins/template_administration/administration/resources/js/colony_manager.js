@@ -99,20 +99,20 @@ $(document).ready(function() {
 
     $("#settingsButton").click(function() {
                 $("#settingsWindow").dialog({
-                            "width" : 430,
-                            "height" : 140,
-                            "show" : "drop",
-                            "hide" : "drop"
+                            width : 430,
+                            height : 140,
+                            show : "drop",
+                            hide : "drop"
                         });
                 $("#settingsWindow").dialog("open");
             });
 
     $("#testBox").colonyButton("tobias", {
-                "size" : "large",
-                "click" : function() {
+                size : "large",
+                click : function() {
                     alert("tobias")
                 },
-                "image" : "pics/add.png"
+                image : "pics/add.png"
             });
 
     // creates a new data store
@@ -248,8 +248,8 @@ function tryLogin(username, password) {
     $("#loginMessage").html("Trying to login...");
     $("#loginMessage").fadeIn("fast");
     $.post("login_validator.ctp", {
-                "username" : username,
-                "password" : password
+                username : username,
+                password : password
             }, loginHandler);
 }
 

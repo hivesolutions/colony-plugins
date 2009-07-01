@@ -25,7 +25,7 @@
 
 function sendSearchQuery(searchValue) {
     $.post("actions/search_tester_query_sender.ctp", {
-                "searchValue" : searchValue
+                searchValue : searchValue
             }, sendSearchQueryHandler);
 }
 

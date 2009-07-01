@@ -199,7 +199,7 @@ DATA_PROXY_NAME_VALUE = "dataProxyName";
      * @type Map
      */
     $.fn.colonyDataStore.defaults = {
-        "dataProxy" : "memory"
+        dataProxy : "memory"
     };
 
     /**

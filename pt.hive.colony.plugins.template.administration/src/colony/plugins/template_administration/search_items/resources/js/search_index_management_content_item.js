@@ -31,15 +31,15 @@ $("#searchIndexManagementContentItem").ready(function() {
             });
 
     $("#searchIndexListNew").colonyButton("new", {
-        "size" : "normal",
-        "click" : function() {
+        size : "normal",
+        click : function() {
             $("#newSearchIndexWindow").dialog({
-                        "width" : 620,
-                        "height" : 410,
-                        "autoOpen" : false,
-                        "show" : "drop",
-                        "hide" : "drop",
-                        "resizeStop" : function() {
+                        width : 620,
+                        height : 410,
+                        autoOpen : false,
+                        show : "drop",
+                        hide : "drop",
+                        resizeStop : function() {
                             alert("tobias");
                         }
                     });
@@ -53,7 +53,7 @@ $("#searchIndexManagementContentItem").ready(function() {
                         $(this).hide();
                     });
         },
-        "image" : "pics/add.png"
+        image : "pics/add.png"
     });
 
     $("#newSearchIndexWindow #propertiesSelector > .listBoxElement").click(
@@ -111,7 +111,7 @@ $("#searchIndexManagementContentItem").ready(function() {
 
 function refreshIndexManagerTable() {
     $.post("actions/search_index_information_retrieval.ctp", {
-                "queryValue" : "getIndexIdentifiers"
+                queryValue : "getIndexIdentifiers"
             }, refreshIndexManagerTableHandler);
 }
 

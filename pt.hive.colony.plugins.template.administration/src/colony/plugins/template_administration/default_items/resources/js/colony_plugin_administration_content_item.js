@@ -77,7 +77,7 @@ function loadPlugin(pluginId) {
     }
 
     $.post("actions/plugin_loader.ctp", {
-                "pluginId" : pluginId,
-                "type" : type
+                pluginId : pluginId,
+                type : type
             }, handler);
 }
