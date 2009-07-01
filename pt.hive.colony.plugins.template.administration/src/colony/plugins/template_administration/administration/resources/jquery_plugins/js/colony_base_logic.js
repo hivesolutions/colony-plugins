@@ -45,7 +45,7 @@ DATA_PROXY_NAME_VALUE = "dataProxyName";
         var dataStoreInformation = new ColonyDataStore($this);
 
         // in case the dataProxy property is defined
-        if (completeOptions["dataProxy"]) {
+        if (completeOptions.dataProxy) {
             // retrieves the dataProxy property
             var colontDataStoreDataProxy = completeOptions.dataProxy;
 
@@ -71,7 +71,7 @@ DATA_PROXY_NAME_VALUE = "dataProxyName";
         }
 
         // in case the name property is defined
-        if (completeOptions["elementAdded"]) {
+        if (completeOptions.elementAdded) {
             // retrieves the elementAdded property
             var colonyDataStoreElementAdded = completeOptions.elementAdded;
 
@@ -80,7 +80,7 @@ DATA_PROXY_NAME_VALUE = "dataProxyName";
         }
 
         // in case the name property is defined
-        if (completeOptions["name"])
+        if (completeOptions.name)
             // retrieves the name property
             var dataStoreName = completeOptions.name;
         else
@@ -227,7 +227,7 @@ DATA_PROXY_NAME_VALUE = "dataProxyName";
         var memoryDataProxyInformation = new ColonyMemoryDataProxy($this);
 
         // in case the name property is defined
-        if (completeOptions["name"])
+        if (completeOptions.name)
             // retrieves the name property
             var memoryDataProxyName = completeOptions.name;
         else

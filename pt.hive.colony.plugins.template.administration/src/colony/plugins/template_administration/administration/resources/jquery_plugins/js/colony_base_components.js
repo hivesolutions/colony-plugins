@@ -41,7 +41,7 @@
         $this.addClass("colony-text-box");
 
         // in case the size property is defined
-        if (completeOptions["size"]) {
+        if (completeOptions.size) {
             // retrieves the size property
             var colonyTextBoxSize = completeOptions.size;
 
@@ -94,7 +94,7 @@
         $this.addClass("colony-button");
 
         // in case the size property is defined
-        if (completeOptions["size"]) {
+        if (completeOptions.size) {
             // retrieves the size property
             var colonyButtonSize = completeOptions.size;
 
@@ -116,7 +116,7 @@
         }
 
         // in case the click property is defined
-        if (completeOptions["click"]) {
+        if (completeOptions.click) {
             // retrieves the click property
             var colonyButtonClick = completeOptions.click;
 
@@ -125,7 +125,7 @@
         }
 
         // in case the image property is defined
-        if (completeOptions["image"]) {
+        if (completeOptions.image) {
             // retrieves the image property
             var colonyButtonImage = completeOptions.image;
 
