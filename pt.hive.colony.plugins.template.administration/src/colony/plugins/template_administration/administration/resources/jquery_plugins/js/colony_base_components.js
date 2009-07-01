@@ -43,7 +43,7 @@
         // in case the size property is defined
         if (completeOptions["size"]) {
             // retrieves the size property
-            var colonyTextBoxSize = completeOptions["size"];
+            var colonyTextBoxSize = completeOptions.size;
 
             // switches in the size property
             switch (colonyTextBoxsize) {
@@ -96,7 +96,7 @@
         // in case the size property is defined
         if (completeOptions["size"]) {
             // retrieves the size property
-            var colonyButtonSize = completeOptions["size"];
+            var colonyButtonSize = completeOptions.size;
 
             // switches in the size property
             switch (colonyButtonSize) {
@@ -118,7 +118,7 @@
         // in case the click property is defined
         if (completeOptions["click"]) {
             // retrieves the click property
-            var colonyButtonClick = completeOptions["click"];
+            var colonyButtonClick = completeOptions.click;
 
             // sets the click handler
             $this.click(colonyButtonClick);
@@ -127,7 +127,7 @@
         // in case the image property is defined
         if (completeOptions["image"]) {
             // retrieves the image property
-            var colonyButtonImage = completeOptions["image"];
+            var colonyButtonImage = completeOptions.image;
 
             // creates the button image element
             var buttonImage = $("<img id='buttonImage' src='"

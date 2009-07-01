@@ -53,7 +53,7 @@ $("#searchIndexManagementContentItem").ready(function() {
                         $(this).hide();
                     });
         },
-        image : "pics/add.png"
+        image : "pics/icons/add.png"
     });
 
     $("#newSearchIndexWindow #propertiesSelector > .listBoxElement").click(

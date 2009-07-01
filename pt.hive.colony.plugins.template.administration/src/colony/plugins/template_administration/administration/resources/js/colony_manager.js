@@ -112,7 +112,7 @@ $(document).ready(function() {
                 click : function() {
                     alert("tobias")
                 },
-                image : "pics/add.png"
+                image : "pics/icons/add.png"
             });
 
     // creates a new data store

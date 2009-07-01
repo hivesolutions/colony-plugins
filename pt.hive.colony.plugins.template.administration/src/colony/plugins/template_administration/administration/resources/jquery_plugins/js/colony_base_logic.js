@@ -47,7 +47,7 @@ DATA_PROXY_NAME_VALUE = "dataProxyName";
         // in case the dataProxy property is defined
         if (completeOptions["dataProxy"]) {
             // retrieves the dataProxy property
-            var colontDataStoreDataProxy = completeOptions["dataProxy"];
+            var colontDataStoreDataProxy = completeOptions.dataProxy;
 
             // switches in the dataProxy property
             switch (colontDataStoreDataProxy) {
@@ -59,13 +59,13 @@ DATA_PROXY_NAME_VALUE = "dataProxyName";
                     // in case the dataProxyName property is defined
                     if (completeOptions[DATA_PROXY_NAME_VALUE])
                         // retrieves the dataProxyName property
-                        colonyMemoryDataProxyOptions["name"] = completeOptions[DATA_PROXY_NAME_VALUE];
+                        colonyMemoryDataProxyOptions.name = completeOptions[DATA_PROXY_NAME_VALUE];
 
                     // creates a new memory data proxy
                     var memoryDataProxy = $this.colonyMemoryDataProxy(colonyMemoryDataProxyOptions);
 
                     dataStoreInformation.dataProxy = memoryDataProxy;
-                    dataStoreInformation.dataProxyName = memoryDataProxy["name"];
+                    dataStoreInformation.dataProxyName = memoryDataProxy.name;
                     break;
             }
         }
@@ -73,16 +73,16 @@ DATA_PROXY_NAME_VALUE = "dataProxyName";
         // in case the name property is defined
         if (completeOptions["elementAdded"]) {
             // retrieves the elementAdded property
-            var colonyDataStoreElementAdded = completeOptions["elementAdded"];
+            var colonyDataStoreElementAdded = completeOptions.elementAdded;
 
             // adds the element added handler to the list of element added handlers
-            dataStoreInformation["elementAddedHandlers"].push(colonyDataStoreElementAdded)
+            dataStoreInformation.elementAddedHandlers.push(colonyDataStoreElementAdded)
         }
 
         // in case the name property is defined
         if (completeOptions["name"])
             // retrieves the name property
-            var dataStoreName = completeOptions["name"];
+            var dataStoreName = completeOptions.name;
         else
             // sets the default name in the name property
             var dataStoreName = $.fn.colonyDataStore.DEFAULT_NAME;
@@ -229,7 +229,7 @@ DATA_PROXY_NAME_VALUE = "dataProxyName";
         // in case the name property is defined
         if (completeOptions["name"])
             // retrieves the name property
-            var memoryDataProxyName = completeOptions["name"];
+            var memoryDataProxyName = completeOptions.name;
         else
             // sets the default name in the name property
             var memoryDataProxyName = $.fn.colonyMemoryDataProxy.DEFAULT_NAME;
