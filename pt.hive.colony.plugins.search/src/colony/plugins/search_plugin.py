@@ -37,8 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.plugin_system
 import colony.plugins.decorators
+import colony.plugins.plugin_system
 
 class SearchPlugin(colony.plugins.plugin_system.Plugin):
     """
@@ -147,6 +147,9 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
 
     def search_index_by_identifier(self, search_index_identifier, search_query, properties):
         return self.search.search_index_by_identifier(search_index_identifier, search_query, properties)
+
+    def get_indexes_metadata(self):
+        return self.search.get_indexes_metadata()
 
     def get_plugin_test_case_bundle(self):
         return self.search_test.get_plugin_test_case_bundle()

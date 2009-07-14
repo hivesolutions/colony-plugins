@@ -43,10 +43,10 @@ import time
 
 import unittest
 
-CRAWL_TARGET = "/remote_home/search/light-docs"
+CRAWL_TARGET = "/remote_home/lmartinho/search/light-docs"
 INDEX_TYPE = "file_system"
 
-INDEX_PERSISTENCE_TARGET_FILE_PATH = "/remote_home/search/light-docs/t.dmp"
+INDEX_PERSISTENCE_TARGET_FILE_PATH = "/remote_home/lmartinho/search/light-docs/t.dmp"
 PERSISTENCE_TYPE = "file_system"
 SERIALIZER_TYPE = "cpickle"
 
@@ -56,7 +56,7 @@ CRAWL_TARGET_INDEX_CREATION_BENCHMARK = 0.050
 TEST_QUERY = "ford"
 """ The test query for index querying """
 
-TEST_QUERY_FIRST_RESULT = "/remote_home/search/light-docs/cars.txt"
+TEST_QUERY_FIRST_RESULT = "/remote_home/lmartinho/search/light-docs/cars.txt"
 """ The first result expected for the test query """
 
 QUERY_EVALUATOR_TYPE_VALUE = "query_evaluator_type"
@@ -99,6 +99,12 @@ class SearchTestCase(unittest.TestCase):
     def setUp(self):
         self.plugin.logger.info("Setting up Search Test Case...")
 
+        self.generate_test_files()
+
+    def generate_test_files(self):
+        # @todo: generate test payload for search
+        pass
+
     def test_method_create_index(self):
         """
         This method targets the index creation using an available test path.
@@ -116,7 +122,7 @@ class SearchTestCase(unittest.TestCase):
         """
 
         # creates the test index
-        test_index = self.plugin.create_index({"start_path" : "/remote_home/search/light-docs", "type" : "file_system"})
+        test_index = self.plugin.create_index({"start_path" : "/remote_home/lmartinho/search/light-docs", "type" : "file_system"})
 
         # persists the index to defined storage
         properties = {"file_path" : INDEX_PERSISTENCE_TARGET_FILE_PATH, "persistence_type" : PERSISTENCE_TYPE, "serializer_type": SERIALIZER_TYPE}
@@ -172,12 +178,12 @@ class SearchTestCase(unittest.TestCase):
         sorting according to the term frequency score.
         """
 
-        crawl_target = "/remote_home/search/scorer_test"
+        crawl_target = "/remote_home/lmartinho/search/scorer_test"
 
         query = "luis"
         """ The query for the tf query test """
 
-        term_frequency_scorer_first_result = "/remote_home/search/scorer_test/ficheiro_10.txt"
+        term_frequency_scorer_first_result = "/remote_home/lmartinho/search/scorer_test/ficheiro_10.txt"
         """ The expected result for the tf query test """
 
         # creates in-memory index
@@ -219,7 +225,7 @@ class SearchTestCase(unittest.TestCase):
         This method targets the index time computation.
         """
 
-        properties = {"start_path" : "/remote_home/search/scorer_test",
+        properties = {"start_path" : "/remote_home/lmartinho/search/scorer_test",
                       "type" : INDEX_TYPE,
                       "metrics_identifiers" : ["term_frequency_scorer_metric"]}
         test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier", properties)
@@ -237,7 +243,7 @@ class SearchTestCase(unittest.TestCase):
         This method targets the index time computation of word-document combination level metrics.
         """
 
-        properties = {"start_path" : "/remote_home/search/scorer_test",
+        properties = {"start_path" : "/remote_home/lmartinho/search/scorer_test",
                       "type" : INDEX_TYPE,
                       "metrics_identifiers" : ["word_document_frequency_scorer_metric"]}
         test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier", properties)
@@ -248,9 +254,9 @@ class SearchTestCase(unittest.TestCase):
         self.assertTrue(test_index.inverted_index_map)
 
         # assert that the term frequency scorer metric was correctly calculated for the word "luis" and the document
-        file1_path = "/remote_home/search/scorer_test/ficheiro_1.txt"
+        file1_path = "/remote_home/lmartinho/search/scorer_test/ficheiro_1.txt"
         self.assertEquals(test_index.inverted_index_map["luis"]["hits"][file1_path]["metrics"]["word_document_frequency_scorer_metric"], 1)
-        file10_path = "/remote_home/search/scorer_test/ficheiro_10.txt"
+        file10_path = "/remote_home/lmartinho/search/scorer_test/ficheiro_10.txt"
         self.assertEquals(test_index.inverted_index_map["luis"]["hits"][file10_path]["metrics"]["word_document_frequency_scorer_metric"], 10)
 
     def test_document_level_metrics(self):
@@ -258,7 +264,7 @@ class SearchTestCase(unittest.TestCase):
         This method targets the index time computation of document level metrics.
         """
 
-        properties = {"start_path" : "/remote_home/search/scorer_test",
+        properties = {"start_path" : "/remote_home/lmartinho/search/scorer_test",
                       "type" : INDEX_TYPE,
                       "metrics_identifiers" : ["document_hits_scorer_metric"]}
         test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier", properties)
@@ -268,9 +274,9 @@ class SearchTestCase(unittest.TestCase):
         self.assertTrue(test_index.forward_index_map)
         self.assertTrue(test_index.inverted_index_map)
 
-        file1_path = "/remote_home/search/scorer_test/ficheiro_1.txt"
+        file1_path = "/remote_home/lmartinho/search/scorer_test/ficheiro_1.txt"
         self.assertEquals(test_index.forward_index_map[file1_path]["metrics"]["document_hits_scorer_metric"], 6)
-        file10_path = "/remote_home/search/scorer_test/ficheiro_10.txt"
+        file10_path = "/remote_home/lmartinho/search/scorer_test/ficheiro_10.txt"
         self.assertEquals(test_index.forward_index_map[file10_path]["metrics"]["document_hits_scorer_metric"], 15)
 
     def test_word_document_level_metrics(self):
@@ -278,7 +284,7 @@ class SearchTestCase(unittest.TestCase):
         This method targets the index time computation of word-document combination level metrics.
         """
 
-        properties = {"start_path" : "/remote_home/search/scorer_test",
+        properties = {"start_path" : "/remote_home/lmartinho/search/scorer_test",
                       "type" : INDEX_TYPE,
                       "metrics_identifiers" : ["word_document_frequency_scorer_metric"]}
         test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier", properties)
@@ -289,9 +295,9 @@ class SearchTestCase(unittest.TestCase):
         self.assertTrue(test_index.inverted_index_map)
 
         # assert that the term frequency scorer metric was correctly calculated for the word "luis" and the document
-        file1_path = "/remote_home/search/scorer_test/ficheiro_1.txt"
+        file1_path = "/remote_home/lmartinho/search/scorer_test/ficheiro_1.txt"
         self.assertEquals(test_index.inverted_index_map["luis"]["hits"][file1_path]["metrics"]["word_document_frequency_scorer_metric"], 1)
-        file10_path = "/remote_home/search/scorer_test/ficheiro_10.txt"
+        file10_path = "/remote_home/lmartinho/search/scorer_test/ficheiro_10.txt"
         self.assertEquals(test_index.inverted_index_map["luis"]["hits"][file10_path]["metrics"]["word_document_frequency_scorer_metric"], 10)
 
     def test_hit_level_metrics(self):
@@ -299,7 +305,7 @@ class SearchTestCase(unittest.TestCase):
         This method targets the index time computation of hit level metrics.
         """
 
-        properties = {"start_path" : "/remote_home/search/scorer_test",
+        properties = {"start_path" : "/remote_home/lmartinho/search/scorer_test",
                       "type" : INDEX_TYPE,
                       "metrics_identifiers" : ["hit_distance_to_top_scorer_metric"]}
         test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier", properties)
@@ -309,13 +315,13 @@ class SearchTestCase(unittest.TestCase):
         self.assertTrue(test_index.forward_index_map)
         self.assertTrue(test_index.inverted_index_map)
 
-        file1_path = "/remote_home/search/scorer_test/ficheiro_1.txt"
+        file1_path = "/remote_home/lmartinho/search/scorer_test/ficheiro_1.txt"
         self.assertEquals(test_index.inverted_index_map["luis"]["hits"][file1_path]["hits"][0]["metrics"]["hit_distance_to_top_scorer_metric"], 0)
 
-        file10_path = "/remote_home/search/scorer_test/ficheiro_10.txt"
+        file10_path = "/remote_home/lmartinho/search/scorer_test/ficheiro_10.txt"
         self.assertEquals(test_index.inverted_index_map["luis"]["hits"][file10_path]["hits"][1]["metrics"]["hit_distance_to_top_scorer_metric"], 6)
 
-        file10_path = "/remote_home/search/scorer_test/ficheiro_10.txt"
+        file10_path = "/remote_home/lmartinho/search/scorer_test/ficheiro_10.txt"
         self.assertEquals(test_index.inverted_index_map["luis"]["hits"][file10_path]["hits"][2]["metrics"]["hit_distance_to_top_scorer_metric"], 7)
 
     def test_term_frequency_scoring(self):
@@ -323,7 +329,7 @@ class SearchTestCase(unittest.TestCase):
         This method targets the scoring infrastructure, and asserts if the results were properly scored and sorted according to WF
         """
 
-        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier", {"start_path" : "/remote_home/search/scorer_test", "type" : INDEX_TYPE})
+        test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier", {"start_path" : "/remote_home/lmartinho/search/scorer_test", "type" : INDEX_TYPE})
         # asserts that the index was sucessfully created
         self.assertTrue(test_index)
         self.assertTrue(test_index.forward_index_map)
@@ -335,7 +341,7 @@ class SearchTestCase(unittest.TestCase):
         first_result = test_results[0]
         first_result_document_id = first_result["document_id"]
 
-        self.assertEqual(first_result_document_id, "/remote_home/search/scorer_test/ficheiro_5.txt")
+        self.assertEqual(first_result_document_id, "/remote_home/lmartinho/search/scorer_test/ficheiro_5.txt")
 
     def test_word_frequency_scoring_with_index_time_metrics(self):
         """
@@ -343,7 +349,7 @@ class SearchTestCase(unittest.TestCase):
         """
 
         test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier",
-                                                              {"start_path" : "/remote_home/search/scorer_test",
+                                                              {"start_path" : "/remote_home/lmartinho/search/scorer_test",
                                                                "type" : INDEX_TYPE,
                                                                "metrics_identifiers" : ["word_document_frequency_scorer_metric"]})
         # asserts that the index was sucessfully created
@@ -357,7 +363,7 @@ class SearchTestCase(unittest.TestCase):
         first_result = test_results[0]
         first_result_document_id = first_result["document_id"]
 
-        self.assertEqual(first_result_document_id, "/remote_home/search/scorer_test/ficheiro_10.txt")
+        self.assertEqual(first_result_document_id, "/remote_home/lmartinho/search/scorer_test/ficheiro_10.txt")
 
     def test_word_frequency_scoring_with_search_time_metrics(self):
         """
@@ -367,7 +373,7 @@ class SearchTestCase(unittest.TestCase):
 
         test_index = None
         test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.new_index_identifier",
-                                                              {"start_path" : "/remote_home/search/scorer_test",
+                                                              {"start_path" : "/remote_home/lmartinho/search/scorer_test",
                                                                "type" : INDEX_TYPE})
         # asserts that the index was successfully created
         self.assertTrue(test_index)
@@ -380,7 +386,7 @@ class SearchTestCase(unittest.TestCase):
         first_result = test_results[0]
         first_result_document_id = first_result["document_id"]
 
-        self.assertEqual(first_result_document_id, "/remote_home/search/scorer_test/ficheiro_10.txt")
+        self.assertEqual(first_result_document_id, "/remote_home/lmartinho/search/scorer_test/ficheiro_10.txt")
 
     def test_word_frequency_scoring(self):
         """
@@ -390,7 +396,7 @@ class SearchTestCase(unittest.TestCase):
 
         test_index = None
         test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.new_index_identifier",
-                                                              {"start_path" : "/remote_home/search/scorer_functions_test",
+                                                              {"start_path" : "/remote_home/lmartinho/search/scorer_functions_test",
                                                                "type" : INDEX_TYPE,
                                                                "metrics_identifiers" : ["word_document_frequency_scorer_metric"]})
 
@@ -400,7 +406,7 @@ class SearchTestCase(unittest.TestCase):
         first_result = test_results[0]
         first_result_document_id = first_result["document_id"]
 
-        self.assertEqual(first_result_document_id, "/remote_home/search/scorer_functions_test/word_frequency_best/word_frequency_best.txt")
+        self.assertEqual(first_result_document_id, "/remote_home/lmartinho/search/scorer_functions_test/word_frequency_best/word_frequency_best.txt")
 
     def test_document_location_scoring(self):
         """
@@ -409,7 +415,7 @@ class SearchTestCase(unittest.TestCase):
 
         test_index = None
         test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.new_index_identifier",
-                                                              {"start_path" : "/remote_home/search/scorer_functions_test",
+                                                              {"start_path" : "/remote_home/lmartinho/search/scorer_functions_test",
                                                                "type" : INDEX_TYPE})
 
         properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "document_location_scorer_function"}
@@ -418,7 +424,7 @@ class SearchTestCase(unittest.TestCase):
         first_result = test_results[0]
         first_result_document_id = first_result["document_id"]
 
-        self.assertEqual(first_result_document_id, "/remote_home/search/scorer_functions_test/document_location_best.txt")
+        self.assertEqual(first_result_document_id, "/remote_home/lmartinho/search/scorer_functions_test/document_location_best.txt")
 
     def test_word_distance_scoring(self):
         """
@@ -428,7 +434,7 @@ class SearchTestCase(unittest.TestCase):
 
         test_index = None
         test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.new_index_identifier",
-                                                              {"start_path" : "/remote_home/search/scorer_functions_test",
+                                                              {"start_path" : "/remote_home/lmartinho/search/scorer_functions_test",
                                                                "type" : INDEX_TYPE})
 
         properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "word_distance_scorer_function"}
@@ -437,7 +443,7 @@ class SearchTestCase(unittest.TestCase):
         first_result = test_results[0]
         first_result_document_id = first_result["document_id"]
 
-        self.assertEqual(first_result_document_id, "/remote_home/search/scorer_functions_test/word_distance_best.txt")
+        self.assertEqual(first_result_document_id, "/remote_home/lmartinho/search/scorer_functions_test/word_distance_best.txt")
 
     def test_hive_source_code_indexing_compare_scorer_functions(self):
         """
@@ -447,7 +453,7 @@ class SearchTestCase(unittest.TestCase):
 
         test_index = None
         test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.new_index_identifier",
-                                                              {"start_path" : "/remote_home/search/scorer_functions_test",
+                                                              {"start_path" : "/remote_home/lmartinho/search/scorer_functions_test",
                                                                "type" : INDEX_TYPE,
                                                                "file_extensions" : ["py", "PY", "txt", "TXT"]})
 
@@ -470,7 +476,7 @@ class SearchTestCase(unittest.TestCase):
 
         test_index = None
         test_index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.new_index_identifier",
-                                                              {"start_path" : "/remote_home/search/scorer_functions_test",
+                                                              {"start_path" : "/remote_home/lmartinho/search/scorer_functions_test",
                                                                "type" : INDEX_TYPE,
                                                                "file_extensions" : ["py", "PY", "txt", "TXT"]})
         test_results = {}
@@ -506,7 +512,7 @@ class SearchTestCase(unittest.TestCase):
                 self.assertEquals(test_results[scorer_function][i]["score"], combined_test_results[scorer_function][i]["score"])
 
     def test_no_hits_found(self):
-        index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier", {"start_path" : "/remote_home/search/scorer_functions_test", "type" : "file_system"})
+        index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier", {"start_path" : "/remote_home/lmartinho/search/scorer_functions_test", "type" : "file_system"})
 
         properties = {"query_evaluator_type" : "query_parser", "search_scorer_function_identifier" : "term_frequency_scorer_function"}
         test_results = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.test_index_identifier", "luis query", properties)
@@ -515,7 +521,7 @@ class SearchTestCase(unittest.TestCase):
         self.assertEquals(len(test_results), 0)
 
     def test_no_documents_for_indexing(self):
-        index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier_nodocs", {"start_path" : "/remote_home/search/empty_directory", "type" : "file_system"})
+        index = self.plugin.create_index_with_identifier("pt.hive.colony.plugins.search.test_index_identifier_nodocs", {"start_path" : "/remote_home/lmartinho/search/empty_directory", "type" : "file_system"})
         properties = {"query_evaluator_type" : "query_parser", "search_scorer_function_identifier" : "term_frequency_scorer_function"}
         test_results = self.plugin.search_index_by_identifier("pt.hive.colony.plugins.search.test_index_identifier_nodocs", "luis query", properties)
         print test_results
@@ -532,7 +538,7 @@ class SearchTestCase(unittest.TestCase):
 
         # switch to larger directory for more visible timing differences
         start_path = "/search/pt.hive.colony.plugins.search"
-        index_file_path = "/search/indexes/pt.hive.colony.idx"
+        index_file_path = "/remote_home/lmartinho/search/indexes/pt.hive.colony.idx"
         query = "martinho"
 
         test_index = None
@@ -602,7 +608,7 @@ class SearchTestCase(unittest.TestCase):
         start_path = "/search"
         index_identifier = "pt.hive.colony.plugins.search.test_index_identifier"
         query = "tiago silva hive ext"
-        index_file_path = "/search/indexes/pt.hive.idx"
+        index_file_path = "/remote_home/lmartinho/search/indexes/pt.hive.idx"
 
         # run the index creation and search repeatedly
         # index time metrics
@@ -751,7 +757,7 @@ class SearchTestCase(unittest.TestCase):
             duration = end_time - start_time
 
             logger.debug("Index creation WITHOUT metrics on '%s' took %f s" % (start_path, duration))
-            index_statistics = test_index.get_statistics()
+            index_statistics = test_index.calculate_statistics()
             logger.debug(index_statistics)
 
             properties = {"search_scorer_function_identifier" : "frequency_location_distance_scorer_function",

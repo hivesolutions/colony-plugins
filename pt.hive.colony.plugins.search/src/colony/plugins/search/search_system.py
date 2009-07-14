@@ -367,7 +367,7 @@ class Search:
 
     def search_index_by_identifier(self, search_index_identifier, search_query, properties):
         """
-        Call the query_index method for the index identified (in the index repository) by the provided search index identifier.
+        Calls the query_index method for the index identified (in the index repository) by the provided search index identifier.
         """
 
         # retrieves the reference for the index repository
@@ -382,3 +382,16 @@ class Search:
 
         # return the final scored and sorted results
         return sorted_search_results
+
+    def get_indexes_metadata(self):
+        """
+        Retrieves the metadata for all the indexes in the index repository.
+        """
+
+        # retrieves the reference for the index repository
+        search_index_repository_plugin = self.search_plugin.search_index_repository_plugin
+
+        # retrieves all the index metadata
+        indexes_metadata = search_index_repository_plugin.get_indexes_metadata()
+
+        return indexes_metadata
