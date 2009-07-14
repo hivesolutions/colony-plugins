@@ -40,6 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 QUERY_EVALUATOR_TYPE_VALUE = "query_evaluator_type"
 """ The key for the properties map, to access the query evaluator type """
 
+import search_query_evaluator_exceptions
+
 class SearchQueryEvaluator:
     """
     The search query evaluator class.
