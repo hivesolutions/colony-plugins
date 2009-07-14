@@ -114,6 +114,10 @@ class SearchRemoteServicePlugin(colony.plugins.plugin_system.Plugin):
     def search_index(self, search_index_identifier, search_query, properties):
         return self.search_remote_service.search_index(search_index_identifier, search_query, properties)
 
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
+    def get_indexes_metadata(self):
+        return self.search_remote_service.get_indexes_metadata()
+
     def get_search_plugin(self):
         return self.search_plugin
 
