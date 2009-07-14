@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import colony.plugins.decorators
 import colony.plugins.plugin_system
 
 class SearchQueryEvaluatorVisitorAdapterPlugin(colony.plugins.plugin_system.Plugin):
@@ -52,7 +53,7 @@ class SearchQueryEvaluatorVisitorAdapterPlugin(colony.plugins.plugin_system.Plug
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["search_query_evaluator_adapter.visitor"]
+    capabilities = ["search_query_evaluator_adapter"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.search.query_interpreter", "1.0.0")]
