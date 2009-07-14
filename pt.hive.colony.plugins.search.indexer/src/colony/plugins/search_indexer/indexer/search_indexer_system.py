@@ -106,20 +106,8 @@ class SearchIndexer:
         if METRICS_IDENTIFIERS_VALUE in properties:
             metrics_identifiers = properties[METRICS_IDENTIFIERS_VALUE]
 
-        # retrieves the first search scorer metric repository from the search indexer plugin's repository list
-        search_scorer_metric_repository_plugins = self.search_indexer_plugin.search_scorer_metric_repository_plugins
-        search_scorer_metric_repository_plugin = search_scorer_metric_repository_plugins[0]
-
-        # gets the identifiers of all the metrics available in the repository
-        available_metrics_identifiers = search_scorer_metric_repository_plugin.get_metric_identifiers()
-
-        # checks if all the requested metrics are available
-        for metric_identifier in metrics_identifiers:
-            if not metric_identifier in available_metrics_identifiers:
-                 raise search_indexer_exceptions.MissingMetric(metric_identifier)
-
-        # retrieves the required metrics from the metrics repository
-        scorer_metrics = search_scorer_metric_repository_plugin.get_metrics(metrics_identifiers)
+        # retrieves the metrics from the metrics repository plugin
+        scorer_metrics = self.get_metrics(metrics_identifiers)
 
         start_time = time.time()
 
@@ -127,8 +115,8 @@ class SearchIndexer:
         forward_index_map = self.create_forward_index(token_list, properties)
 
         end_time = time.time()
-        duration = end_time - start_time
-        logger.debug("Build forward index finished in %f s" % duration)
+        forward_index_creation_duration = end_time - start_time
+        logger.debug("Build forward index finished in %f s" % forward_index_creation_duration)
 
         start_time = time.time()
 
@@ -136,8 +124,8 @@ class SearchIndexer:
         inverted_index_map = self.create_inverted_index(forward_index_map, properties)
 
         end_time = time.time()
-        duration = end_time - start_time
-        logger.debug("Build inverted index finished in %f s" % duration)
+        inverted_index_creation_duration = end_time - start_time
+        logger.debug("Build inverted index finished in %f s" % inverted_index_creation_duration)
 
         # creates the search index object
         search_index = SearchIndex()
@@ -156,8 +144,16 @@ class SearchIndexer:
             self.compute_metrics(scorer_metrics, search_index, properties)
 
         end_time = time.time()
-        duration = end_time - start_time
-        logger.debug("Metrics computation finished in %f s" % duration)
+        metrics_computation_duration = end_time - start_time
+        logger.debug("Metrics computation finished in %f s" % metrics_computation_duration)
+
+        # calculates the index statistics
+        search_index.calculate_statistics()
+
+        # stores the durations in the index metadata
+        search_index.statistics["forward_index_creation_duration"] = forward_index_creation_duration
+        search_index.statistics["inverted_index_creation_duration"] = inverted_index_creation_duration
+        search_index.statistics["metrics_computation_duration"] = metrics_computation_duration
 
         # returns the search index object
         return search_index
@@ -391,6 +387,28 @@ class SearchIndexer:
         # returns the success status
         return True
 
+    def get_metrics(self, metrics_identifiers):
+        """
+        Retrieves the metrics for the specified identifiers from the metrics repository.
+        """
+
+        # retrieves the first search scorer metric repository from the search indexer plugin's repository list
+        search_scorer_metric_repository_plugins = self.search_indexer_plugin.search_scorer_metric_repository_plugins
+        search_scorer_metric_repository_plugin = search_scorer_metric_repository_plugins[0]
+
+        # gets the identifiers of all the metrics available in the repository
+        available_metrics_identifiers = search_scorer_metric_repository_plugin.get_metric_identifiers()
+
+        # checks if all the requested metrics are available
+        for metric_identifier in metrics_identifiers:
+            if not metric_identifier in available_metrics_identifiers:
+                 raise search_indexer_exceptions.MissingMetric(metric_identifier)
+
+        # retrieves the required metrics from the metrics repository
+        scorer_metrics = search_scorer_metric_repository_plugin.get_metrics(metrics_identifiers)
+
+        return scorer_metrics
+
 class SearchIndex:
     """
     The search index class.
@@ -418,7 +436,7 @@ class SearchIndex:
         self.metrics = {}
         self.statistics = {}
 
-    def get_statistics(self):
+    def calculate_statistics(self):
         """
         Returns a map with several index statistics.
         """
@@ -432,3 +450,8 @@ class SearchIndex:
         self.statistics[DOCUMENT_COUNT_VALUE] = document_count
 
         return self.statistics
+
+    def get_metadata(self):
+        metadata = {"properties" : self.properties, "metrics" : self.metrics, "statistics": self.statistics}
+
+        return metadata
