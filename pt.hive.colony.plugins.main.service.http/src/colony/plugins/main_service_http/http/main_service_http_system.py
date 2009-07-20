@@ -805,6 +805,9 @@ class HttpClientServiceTask:
             self.http_connection.send(result_value)
         except:
             # error in the client side
+            self.main_service_http_plugin.error("Problem sending request simple")
+
+            # returns immediately
             return
 
     def send_request_mediated(self, request):
@@ -816,6 +819,9 @@ class HttpClientServiceTask:
             self.http_connection.send(result_value)
         except:
             # error in the client side
+            self.main_service_http_plugin.error("Problem sending request mediated")
+
+            # returns immediately
             return
 
         # continuous loop
@@ -827,6 +833,8 @@ class HttpClientServiceTask:
             if not mediated_value:
                 # closes the mediated file
                 request.mediated_handler.close_file()
+
+                # returns immediately
                 return
 
             try:
@@ -834,6 +842,9 @@ class HttpClientServiceTask:
                 self.http_connection.send(mediated_value)
             except:
                 # error in the client side
+                self.main_service_http_plugin.error("Problem sending request mediated")
+
+                # returns immediately
                 return
 
     def send_request_chunked(self, request):
@@ -845,6 +856,9 @@ class HttpClientServiceTask:
             self.http_connection.send(result_value)
         except:
             # error in the client side
+            self.main_service_http_plugin.error("Problem sending request chunked")
+
+            # returns immediately
             return
 
         # continuous loop
@@ -856,6 +870,8 @@ class HttpClientServiceTask:
             if not chunk_value:
                 # sends the final empty chunk
                 self.http_connection.send("0\r\n\r\n")
+
+                # returns immediately
                 return
 
             try:
@@ -872,6 +888,9 @@ class HttpClientServiceTask:
                 self.http_connection.send(message_value)
             except:
                 # error in the client side
+                self.main_service_http_plugin.error("Problem sending request chunked")
+
+                # returns immediately
                 return
 
     def keep_alive(self, request):
