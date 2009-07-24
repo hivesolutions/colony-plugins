@@ -171,7 +171,7 @@ class MainWindow(PyQt4.QtGui.QWidget):
 
 class WindowAccess(PyQt4.QtCore.QObject):
     """
-    The window access class
+    The window access class.
     """
 
     def __init__(self, window):
@@ -190,3 +190,7 @@ class WindowAccess(PyQt4.QtCore.QObject):
     @PyQt4.QtCore.pyqtSlot(result = bool)
     def is_full(self):
         return self.window.isFullScreen()
+
+    @PyQt4.QtCore.pyqtSlot(result = bool)
+    def exit(self):
+        return self.window.main_web_view_plugin.manager.unload_system();
