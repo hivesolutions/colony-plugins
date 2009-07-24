@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 configuration = {
                  "default_socket_provider" : "normal",
-                 "default_port" : 8081,
+                 "default_port" : 8080,
                  "default_handler" : "file",
                  "default_encoding" : None,
                  "contexts" : {
