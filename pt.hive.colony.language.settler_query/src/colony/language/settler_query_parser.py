@@ -568,7 +568,7 @@ def p_comparison_predicate(t):
         comparison_predicate_node = settler_query_ast.GreaterComparisonPredicateNode()
     elif t[2] == ">=" or t[2] == "<=":
         # creates the greater equals comparison predicate node
-        comparison_predicate_node = settler_query_ast.GreaterEqualComparisonPredicateNode();
+        comparison_predicate_node = settler_query_ast.GreaterEqualComparisonPredicateNode()
 
     # sets the first scalar expression node in the comparison predicate node
     comparison_predicate_node.set_first_scalar_expression_node(first_scalar_expression_node)

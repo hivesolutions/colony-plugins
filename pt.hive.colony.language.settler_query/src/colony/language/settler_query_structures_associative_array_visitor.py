@@ -134,16 +134,16 @@ class AssociativeArrayVisitor(settler_query_structures_visitor.Visitor):
     @settler_query_structures_visitor._visit(settler_query_structures.EqualTermFilter)
     def visit_equal_term_filter_node(self, node):
         # retrieves the first operand value
-        first_operand_value = self.values_stack.pop();
+        first_operand_value = self.values_stack.pop()
 
         # retrieves the second operand value
-        second_operand_value = self.values_stack.pop();
+        second_operand_value = self.values_stack.pop()
 
         # retrieves the first operand type
-        first_operand_type = self.types_stack.pop();
+        first_operand_type = self.types_stack.pop()
 
         # retrieves the second operand type
-        second_operand_type = self.types_stack.pop();
+        second_operand_type = self.types_stack.pop()
 
         # in case is a join
         if(first_operand_type == FIELD_TYPE and second_operand_type == FIELD_TYPE):
@@ -182,16 +182,16 @@ class AssociativeArrayVisitor(settler_query_structures_visitor.Visitor):
     @settler_query_structures_visitor._visit(settler_query_structures.GreaterTermFilter)
     def visit_greater_term_filter_node(self, node):
         # retrieves the first operand value
-        first_operand_value = self.values_stack.pop();
+        first_operand_value = self.values_stack.pop()
 
         # retrieves the second operand value
-        second_operand_value = self.values_stack.pop();
+        second_operand_value = self.values_stack.pop()
 
         # retrieves the first operand type
-        first_operand_type = self.types_stack.pop();
+        first_operand_type = self.types_stack.pop()
 
         # retrieves the second operand type
-        second_operand_type = self.types_stack.pop();
+        second_operand_type = self.types_stack.pop()
 
         # in case is a join
         if(first_operand_type == FIELD_TYPE and second_operand_type == FIELD_TYPE):
