@@ -189,7 +189,7 @@ class JavascriptManager:
         del old_plugin_search_directories_map
 
         # creates a new timestamp for the update
-        self.javascript_manager_last_update_timestamp = time.time();
+        self.javascript_manager_last_update_timestamp = time.time()
 
         # releases the plugin search directories lock
         self.plugin_search_directories_lock.release()
@@ -267,7 +267,7 @@ class JavascriptManager:
                         plugin_descriptor = plugin_descriptor_parser.get_value()
 
                         # retrieves the plugin id from the plugin descriptor
-                        plugin_id = plugin_descriptor.id;
+                        plugin_id = plugin_descriptor.id
 
                         # adds the plugin descriptor to the list of plugin descriptors
                         self.plugin_descriptors_list.append(plugin_descriptor)
