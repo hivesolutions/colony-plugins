@@ -185,7 +185,7 @@ class MainServiceHttp:
         encoding = parameters.get("encoding", None)
 
         # retrieves the service configuration
-        service_configuration = self.main_service_http_plugin.get_configuration_property("server_configuration").get_data();
+        service_configuration = self.main_service_http_plugin.get_configuration_property("server_configuration").get_data()
 
         # retrieves the socket provider configuration value
         socket_provider = service_configuration.get("default_socket_provider", socket_provider)
@@ -676,7 +676,7 @@ class HttpClientServiceTask:
             # iterates over all the items in the content type splited
             for content_type_item in content_type_splited:
                 # strips the content type item
-                content_type_item_stripped = content_type_item.strip();
+                content_type_item_stripped = content_type_item.strip()
 
                 # in case the content is of type multipart form data
                 if content_type_item_stripped.startswith(MULTIPART_FORM_DATA_VALUE):

@@ -78,7 +78,7 @@ class MainServiceHttpFileHandler:
 
     def handle_request(self, request):
         # retrieves the handler configuration
-        handler_configuration = self.main_service_http_file_handler_plugin.get_configuration_property("handler_configuration").get_data();
+        handler_configuration = self.main_service_http_file_handler_plugin.get_configuration_property("handler_configuration").get_data()
 
         # retrieves the default path
         default_path = handler_configuration.get("default_path", "/")
