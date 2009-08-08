@@ -109,7 +109,7 @@ class MainRemotePluginManagerAccessIceServerImplementation:
         adapter = self.communicator.createObjectAdapter(DEFAULT_ADAPTER_NAME)
 
         # creates a new identity for the server
-        plugin_manager_op_access_id = Ice.Identity("plugin_manager_access_op_access", "");
+        plugin_manager_op_access_id = Ice.Identity("plugin_manager_access_op_access", "")
 
         # adds the service object to the adapter
         adapter.add(PluginManagerAccessOp(properties.getProperty("Ice.ServerId")), plugin_manager_op_access_id)
