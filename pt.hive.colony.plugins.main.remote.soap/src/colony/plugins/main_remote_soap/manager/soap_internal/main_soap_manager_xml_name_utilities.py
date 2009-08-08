@@ -85,7 +85,7 @@ def toXMLname(string):
     T = unicode(localname)
 
     N = len(localname)
-    X = [];
+    X = []
     for i in range(N) :
         if i< N-1 and T[i]==u'_' and T[i+1]==u'x':
             X.append(u'_x005F_')

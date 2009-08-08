@@ -168,7 +168,7 @@ class SOAPBuildesr:
 
         if self.method:
             self.out.append("</%s%s>\n" % (methodns, self.method))
-            # End of the method definition; drop any local namespaces
+            # end of the method definition, drop any local namespaces
             ns_map = save_ns_map
             self.depth -= 1
 
