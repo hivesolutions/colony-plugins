@@ -366,7 +366,7 @@ class MainConsole:
                     break
 
         # closes the file
-        file.close();
+        file.close()
 
     def process_exit(self, args, output_method):
         self.manager.unload_system()
