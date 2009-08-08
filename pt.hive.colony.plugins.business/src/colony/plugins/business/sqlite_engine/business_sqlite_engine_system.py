@@ -537,7 +537,7 @@ class BusinessSqliteEngine:
         entity_id_attribute_name = self.get_entity_class_id_attribute_name(entity_class)
 
         # creates the initial query string value
-        query_string_value = "create index " + entity_class_name + entity_id_attribute_name + "index on " + entity_class_name + "(" + entity_id_attribute_name + ")";
+        query_string_value = "create index " + entity_class_name + entity_id_attribute_name + "index on " + entity_class_name + "(" + entity_id_attribute_name + ")"
 
         # executes the query creating the table
         self.execute_query(cursor, query_string_value)
@@ -778,7 +778,7 @@ class BusinessSqliteEngine:
         cursor = database_connection.cursor()
 
         # generates the id for the entity if necessary
-        self.generate_id(connection, entity);
+        self.generate_id(connection, entity)
 
         # retrieves the query string value
         query_string_value = self.create_save_entity_query(entity)
