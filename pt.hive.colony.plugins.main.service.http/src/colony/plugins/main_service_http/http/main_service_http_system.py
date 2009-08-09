@@ -436,6 +436,7 @@ class HttpClientServiceTask:
 
         while True:
             try:
+                # retrieves the request
                 request = self.retrieve_request(request_timeout)
             except main_service_http_exceptions.MainServiceHttpException:
                 self.main_service_http_plugin.debug("Connection: %s closed" % str(self.http_address))
