@@ -55,7 +55,7 @@ class MainServiceTelnetPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
     capabilities = ["service.telnet"]
-    capabilities_allowed = []
+    capabilities_allowed = ["telnet_service_handler", "socket_provider"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
     events_handled = []
@@ -63,6 +63,9 @@ class MainServiceTelnetPlugin(colony.plugins.plugin_system.Plugin):
     main_modules = ["main_service_telnet.telnet.main_service_telnet_system", "main_service_telnet.telnet.main_service_telnet_exceptions"]
 
     main_service_telnet = None
+
+    telnet_service_handler_plugins = []
+    socket_provider_plugins = []
 
     thread_pool_manager_plugin = None
 
@@ -81,9 +84,11 @@ class MainServiceTelnetPlugin(colony.plugins.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
+    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.main.service.telnet", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.main.service.telnet", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
@@ -96,6 +101,22 @@ class MainServiceTelnetPlugin(colony.plugins.plugin_system.Plugin):
 
     def stop_service(self, parameters):
         self.main_service_telnet.stop_service(parameters)
+
+    @colony.plugins.decorators.load_allowed_capability("telnet_service_handler")
+    def telnet_service_handler_load_allowed(self, plugin, capability):
+        self.telnet_service_handler_plugins.append(plugin)
+
+    @colony.plugins.decorators.load_allowed_capability("socket_provider")
+    def socket_provider_load_allowed(self, plugin, capability):
+        self.socket_provider_plugins.append(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("telnet_service_handler")
+    def telnet_service_handler_unload_allowed(self, plugin, capability):
+        self.telnet_service_handler_plugins.remove(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("socket_provider")
+    def socket_provider_unload_allowed(self, plugin, capability):
+        self.socket_provider_plugins.remove(plugin)
 
     def get_thread_pool_manager_plugin(self):
         return self.thread_pool_manager_plugin
