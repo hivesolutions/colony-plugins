@@ -37,7 +37,19 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import socket
+import select
+
 import main_service_irc_exceptions
+
+HOST_VALUE = ""
+""" The host value """
+
+REQUEST_TIMEOUT = 3
+""" The request timeout """
+
+CHUNK_SIZE = 4096
+""" The chunk size """
 
 NUMBER_THREADS = 15
 """ The number of threads """
@@ -84,7 +96,7 @@ class MainServiceIrc:
         port = parameters.get("port", DEFAULT_PORT)
 
         # retrieves the service configuration
-        #service_configuration = self.main_service_irc_plugin.get_configuration_property("server_configuration").get_data();
+        #service_configuration = self.main_service_irc_plugin.get_configuration_property("server_configuration").get_data()
 
         # retrieves the socket provider configuration value
         #socket_provider = service_configuration.get("default_socket_provider", socket_provider)
@@ -93,7 +105,7 @@ class MainServiceIrc:
         #port = service_configuration.get("default_port", port)
 
         # start the server for the given socket provider, port and encoding
-        self.start_server(socket_provider, port, encoding, service_configuration)
+        self.start_server(socket_provider, port, service_configuration)
 
         # clears the irc connection close event
         #self.irc_connection_close_event.clear()
@@ -509,7 +521,7 @@ class IrcClientServiceTask:
             # iterates over all the items in the content type splited
             for content_type_item in content_type_splited:
                 # strips the content type item
-                content_type_item_stripped = content_type_item.strip();
+                content_type_item_stripped = content_type_item.strip()
 
                 # in case the content is of type multipart form data
                 if content_type_item_stripped.startswith(MULTIPART_FORM_DATA_VALUE):

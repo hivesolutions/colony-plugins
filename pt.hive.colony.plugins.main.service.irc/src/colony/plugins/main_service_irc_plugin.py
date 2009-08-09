@@ -55,7 +55,7 @@ class MainServiceIrcPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
     capabilities = ["service.irc"]
-    capabilities_allowed = []
+    capabilities_allowed = ["socket_provider"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
     events_handled = []
@@ -63,6 +63,8 @@ class MainServiceIrcPlugin(colony.plugins.plugin_system.Plugin):
     main_modules = ["main_service_irc.irc.main_service_irc_system", "main_service_irc.irc.main_service_irc_exceptions"]
 
     main_service_irc = None
+
+    socket_provider_plugins = []
 
     thread_pool_manager_plugin = None
 
@@ -82,9 +84,11 @@ class MainServiceIrcPlugin(colony.plugins.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
+    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.main.service.irc", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.main.service.irc", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
@@ -97,6 +101,14 @@ class MainServiceIrcPlugin(colony.plugins.plugin_system.Plugin):
 
     def stop_service(self, parameters):
         self.main_service_irc.stop_service(parameters)
+
+    @colony.plugins.decorators.load_allowed_capability("socket_provider")
+    def socket_provider_load_allowed(self, plugin, capability):
+        self.socket_provider_plugins.append(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("socket_provider")
+    def socket_provider_unload_allowed(self, plugin, capability):
+        self.socket_provider_plugins.remove(plugin)
 
     def get_thread_pool_manager_plugin(self):
         return self.thread_pool_manager_plugin
