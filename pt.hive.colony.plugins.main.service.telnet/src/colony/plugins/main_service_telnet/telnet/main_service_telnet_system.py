@@ -37,9 +37,11 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import sys
 import socket
 import select
 import threading
+import traceback
 import cStringIO
 
 import main_service_telnet_exceptions
@@ -295,9 +297,6 @@ class TelnetClientServiceTask:
         self.service_configuration = service_configuration
 
     def start(self):
-        # retrieves the telnet service handler plugins map
-        #telnet_service_handler_plugins_map = self.main_service_telnet_plugin.main_service_telnet.telnet_service_handler_plugins_map
-
         # prints debug message about connection
         self.main_service_telnet_plugin.debug("Connected to: %s" % str(self.telnet_address))
 
@@ -321,53 +320,6 @@ class TelnetClientServiceTask:
 
                 # sends the request to the client (response)
                 self.send_request(request)
-#
-#                # retrieves the service configuration contexts
-#                service_configuration_contexts = self.service_configuration["contexts"]
-#
-#                # starts the request handled
-#                request_handled = False
-#
-#                # iterates over the service configuration context names
-#                for service_configuration_context_name, service_configuration_context in service_configuration_contexts.items():
-#                    if request.path.find(service_configuration_context_name) == 0:
-#                        # sets the request properties
-#                        request.properties = service_configuration_context.get("request_properties", {})
-#
-#                        # sets the handler path
-#                        request.handler_path = service_configuration_context_name
-#
-#                        # retrieves the handler name
-#                        handler_name = service_configuration_context["handler"]
-#
-#                        # sets the request handled flag
-#                        request_handled = True
-#
-#                        # breaks the loop
-#                        break
-#
-#                # in case the request was not already handled
-#                if not request_handled:
-#                    # retrieves the default handler name
-#                    handler_name = self.service_configuration["default_handler"]
-#
-#                    # sets the handler path
-#                    request.handler_path = None
-#
-#                # handles the request by the request handler
-#                telnet_service_handler_plugins_map[handler_name].handle_request(request)
-#
-#                # sends the request to the client (response)
-#                self.send_request(request)
-#
-#                # in case the connection is meant to be kept alive
-#                if self.keep_alive(request):
-#                    self.main_service_telnet_plugin.debug("Connection: %s kept alive for %ss" % (str(self.telnet_address), str(request_timeout)))
-#                # in case the connection is not meant to be kept alive
-#                else:
-#                    self.main_service_telnet_plugin.debug("Connection: %s closed" % str(self.telnet_address))
-#                    break
-
             except Exception, exception:
                 self.send_exception(request, exception)
 
@@ -432,60 +384,6 @@ class TelnetClientServiceTask:
                 # returns the request
                 return request
 
-    def decode_request(self, request):
-        """
-        Decodes the request message for the encoding
-        specified in the request.
-
-        @type request: TelnetRequest
-        @param request: The request to be decoded.
-        """
-
-        # start the valid charset flag
-        valid_charset = False
-
-        # in case the content type is not defined
-        if "Content-Type" in request.headers_map:
-            # retrieves the content type
-            content_type = request.headers_map["Content-Type"]
-
-            # splits the content type
-            content_type_splited = content_type.split(";")
-
-            # iterates over all the items in the content type splited
-            for content_type_item in content_type_splited:
-                # strips the content type item
-                content_type_item_stripped = content_type_item.strip()
-
-                # in case the content is of type multipart form data
-                if content_type_item_stripped.startswith(MULTIPART_FORM_DATA_VALUE):
-                    return
-
-                # in case the item is the charset definition
-                if content_type_item_stripped.startswith("charset"):
-                    # splits the content type item stripped
-                    content_type_item_stripped_splited = content_type_item_stripped.split("=")
-
-                    # retrieves the content type charset
-                    content_type_charset = content_type_item_stripped_splited[1].lower()
-
-                    # sets the valid charset flag
-                    valid_charset = True
-
-                    # breaks the cycle
-                    break
-
-        # in case there is no valid charset defined
-        if not valid_charset:
-            # sets the default content type charset
-            content_type_charset = DEFAULT_CHARSET
-
-        # retrieves the received message value
-        received_message_value = request.received_message
-
-        # re-encodes the message value in the current default encoding
-        request.received_message = received_message_value.decode(content_type_charset).encode()
-
     def retrieve_data(self, request_timeout = REQUEST_TIMEOUT, chunk_size = CHUNK_SIZE):
         try:
             # sets the connection to non blocking mode
@@ -520,24 +418,6 @@ class TelnetClientServiceTask:
         @param exception: The exception to be sent.
         """
 
-        # sets the request content type
-        request.content_type = "text/plain"
-
-        # checks if the exception contains a status code
-        if hasattr(exception, "status_code"):
-            # sets the status code in the request
-            request.status_code = exception.status_code
-        # in case there is no status code defined in the exception
-        else:
-            # sets the internal server error status code
-            request.status_code = 500
-
-        # retrieves the value for the status code
-        status_code_value = STATUS_CODE_VALUES[request.status_code]
-
-        # writes the header message in the message
-        request.write("colony web server - " + str(request.status_code) + " " + status_code_value + "\n")
-
         # writes the exception message
         request.write("error: '" + str(exception) + "'\n")
 
@@ -567,26 +447,6 @@ class TelnetClientServiceTask:
         except:
             # error in the client side
             return
-
-    def keep_alive(self, request):
-        """
-        Retrieves the value of the keep alive for the given request.
-
-        @type request: TelnetRequest
-        @param request: The request to retrieve the keep alive value.
-        @rtype: bool
-        @return: The value of the keep alive for the given request.
-        """
-
-        if "Connection" in request.headers_map:
-            connection_type = request.headers_map["Connection"]
-
-            if connection_type.lower() == "keep-alive":
-                return True
-            else:
-                return False
-        else:
-            return False
 
 class TelnetRequest:
     """
