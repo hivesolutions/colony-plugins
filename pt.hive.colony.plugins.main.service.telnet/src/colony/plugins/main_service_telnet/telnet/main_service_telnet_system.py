@@ -482,11 +482,8 @@ class TelnetRequest:
         # retrieves the result string value
         message = self.message_stream.getvalue()
 
-        # creates the return message
-        return_message = message + "\r"
-
         # returns the return message
-        return return_message
+        return message
 
     def get_message(self):
         return self.message
