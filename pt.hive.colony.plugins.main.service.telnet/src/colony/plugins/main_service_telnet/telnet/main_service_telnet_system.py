@@ -303,10 +303,27 @@ class TelnetClientServiceTask:
         # sets the request timeout
         request_timeout = REQUEST_TIMEOUT
 
+        # sends the welcome message
+        self.telnet_connection.send("Welcome to colony telnet server\r\n")
+
+        # creates the initial request object
+        request = TelnetRequest()
+
+        # handles the initial request by the request handler
+        self.main_service_telnet_plugin.telnet_service_handler_plugins[0].handle_initial_request(request)
+
+        # sends the initial request to the client (initial response)
+        self.send_request(request)
+
         while True:
             try:
                 # retrieves the request
                 request = self.retrieve_request(request_timeout)
+
+                # in case a close message is received
+                if request.get_message() == "close":
+                    break
+
             except main_service_telnet_exceptions.MainServiceTelnetException:
                 self.main_service_telnet_plugin.debug("Connection: %s closed" % str(self.telnet_address))
                 return

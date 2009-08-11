@@ -97,6 +97,9 @@ class MainServiceTelnetConsoleHandlerPlugin(colony.plugins.plugin_system.Plugin)
     def handle_request(self, request):
         self.main_service_telnet_console_handler.handle_request(request)
 
+    def handle_initial_request(self, request):
+        self.main_service_telnet_console_handler.handle_initial_request(request)
+
     def get_main_console_plugin(self):
         return self.main_console_plugin
 

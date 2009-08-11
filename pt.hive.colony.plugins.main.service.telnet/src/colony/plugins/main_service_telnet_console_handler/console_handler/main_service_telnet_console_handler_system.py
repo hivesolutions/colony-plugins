@@ -78,6 +78,10 @@ class MainServiceTelnetConsoleHandler:
         # writes the caret
         request.write(">> ")
 
+    def handle_initial_request(self, request):
+        # writes the caret
+        request.write(">> ")
+
     def create_write(self, request):
         def write(text, new_line = True):
             # replaces the newlines to newlines with carriage return
