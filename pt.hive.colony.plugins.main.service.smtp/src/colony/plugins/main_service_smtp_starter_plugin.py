@@ -40,87 +40,70 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.plugins.plugin_system
 import colony.plugins.decorators
 
-class MainServiceSmtpPlugin(colony.plugins.plugin_system.Plugin):
+class MainServiceSmtpStarterPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Smtp Service Main plugin.
+    The main class for the Smtp Service Main Starter plugin.
     """
 
-    id = "pt.hive.colony.plugins.main.service.smtp"
-    name = "Smtp Service Main Plugin"
-    short_name = "Smtp Service Main"
-    description = "The plugin that offers the smtp service"
+    id = "pt.hive.colony.plugins.main.service.smtp.starter"
+    name = "Smtp Service Main Starter Plugin"
+    short_name = "Smtp Service Main Starter"
+    description = "The plugin that starts the smtp service"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
-    capabilities = ["service.smtp"]
-    capabilities_allowed = ["socket_provider"]
+    capabilities = ["main"]
+    capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
+                    "pt.hive.colony.plugins.main.service.smtp", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["main_service_smtp.smtp.main_service_smtp_system", "main_service_smtp.smtp.main_service_smtp_exceptions"]
 
-    main_service_smtp = None
-
-    smtp_service_handler_plugins = []
-    socket_provider_plugins = []
-
-    thread_pool_manager_plugin = None
+    main_service_smtp_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
-        global main_service_smtp
-        import main_service_smtp.smtp.main_service_smtp_system
-        self.main_service_smtp = main_service_smtp.smtp.main_service_smtp_system.MainServiceSmtp(self)
+
+        # notifies the ready semaphore
+        self.release_ready_semaphore()
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
+        # notifies the ready semaphore
+        self.release_ready_semaphore()
+
+        self.main_service_smtp_plugin.start_service({"socket_provider" : "normal", "port" : 23})
+
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
+
+        self.main_service_smtp_plugin.stop_service({})
+
+        # notifies the ready semaphore
+        self.release_ready_semaphore()
 
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.main.service.smtp", "1.0.0")
+        # notifies the ready semaphore
+        self.release_ready_semaphore()
+
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.main.service.smtp", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.main.service.smtp", "1.0.0")
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.main.service.smtp.starter", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def start_service(self, parameters):
-        self.main_service_smtp.start_service(parameters)
+    def get_main_service_smtp_plugin(self):
+        return self.main_service_smtp_plugin
 
-    def stop_service(self, parameters):
-        self.main_service_smtp.stop_service(parameters)
-
-    @colony.plugins.decorators.load_allowed_capability("smtp_service_handler")
-    def smtp_service_handler_load_allowed(self, plugin, capability):
-        self.smtp_service_handler_plugins.append(plugin)
-
-    @colony.plugins.decorators.load_allowed_capability("socket_provider")
-    def socket_provider_load_allowed(self, plugin, capability):
-        self.socket_provider_plugins.append(plugin)
-
-    @colony.plugins.decorators.unload_allowed_capability("smtp_service_handler")
-    def smtp_service_handler_unload_allowed(self, plugin, capability):
-        self.smtp_service_handler_plugins.remove(plugin)
-
-    @colony.plugins.decorators.unload_allowed_capability("socket_provider")
-    def socket_provider_unload_allowed(self, plugin, capability):
-        self.socket_provider_plugins.remove(plugin)
-
-    def get_thread_pool_manager_plugin(self):
-        return self.thread_pool_manager_plugin
-
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.threads.thread_pool_manager")
-    def set_thread_pool_manager_plugin(self, thread_pool_manager_plugin):
-        self.thread_pool_manager_plugin = thread_pool_manager_plugin
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.service.smtp")
+    def set_main_service_smtp_plugin(self, main_service_smtp_plugin):
+        self.main_service_smtp_plugin = main_service_smtp_plugin
