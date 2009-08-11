@@ -300,9 +300,6 @@ class TelnetClientServiceTask:
         # prints debug message about connection
         self.main_service_telnet_plugin.debug("Connected to: %s" % str(self.telnet_address))
 
-        # sets the request timeout
-        request_timeout = REQUEST_TIMEOUT
-
         # sends the welcome message
         self.telnet_connection.send("Welcome to colony telnet server\r\n")
 
@@ -314,6 +311,9 @@ class TelnetClientServiceTask:
 
         # sends the initial request to the client (initial response)
         self.send_request(request)
+
+        # sets the request timeout
+        request_timeout = REQUEST_TIMEOUT
 
         while True:
             try:
