@@ -121,3 +121,80 @@ class ClientRequestTimeout(MainServiceTelnetException):
         """
 
         return "Client request timeout: %s" % self.message
+
+class RequestClosed(MainServiceTelnetException):
+    """
+    The request closed class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        MainServiceTelnetException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Request closed: %s" % self.message
+
+class TelnetRuntimeException(MainServiceTelnetException):
+    """
+    The telnet runtime exception class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        MainServiceTelnetException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Telnet runtime exception: %s" % self.message
+
+class TelnetInvalidDataException(TelnetRuntimeException):
+    """
+    The telnet invalid data exception class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        TelnetRuntimeException.__init__(self, message)
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Telnet invalid data exception: %s" % self.message
