@@ -522,6 +522,9 @@ class SmtpRequest:
     response_message = "none"
     """ The response message """
 
+    response_messages = []
+    """ The response messages """
+
     response_code = None
     """ The response code """
 
@@ -551,12 +554,27 @@ class SmtpRequest:
         # retrieves the result string value
         message = self.message_stream.getvalue()
 
-        # creates the return message
-        return_message = str(self.response_code) + " " + self.response_message + "\r\n"
+        if self.response_messages:
+            # initializes the return message
+            return_message = ""
 
-        # in case the message is not empty
-        if not message == "":
-            return_message += message + "\r\n"
+            # starts the counter value
+            counter = len(self.response_messages)
+
+            for response_message in self.response_messages:
+                if(counter == 1):
+                    return_message += str(self.response_code) + " " + response_message + "\r\n"
+                else:
+                    return_message += str(self.response_code) + "-" + response_message + "\r\n"
+
+                counter -= 1
+        else:
+            # creates the return message
+            return_message = str(self.response_code) + " " + self.response_message + "\r\n"
+
+            # in case the message is not empty
+            if not message == "":
+                return_message += message + "\r\n"
 
         # returns the return message
         return return_message
@@ -584,6 +602,12 @@ class SmtpRequest:
 
     def set_response_message(self, response_message):
         self.response_message = response_message
+
+    def get_response_messages(self):
+        return seld.response_messages
+
+    def set_response_messages(self, response_messages):
+        self.response_messages = response_messages
 
     def get_response_code(self, response_code):
         return self.response_code

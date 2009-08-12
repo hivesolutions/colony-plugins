@@ -72,16 +72,25 @@ class MainServiceSmtpStreamHandler:
         # retrieves the current session
         session = request.get_session()
 
+        # in case the data transmission mode is active
         if session.get_data_transmission():
-            print request.get_message()
+            if "authentication" in session.get_properties() and session.get_properties()["authentication"]:
+                auth_value = request.get_message()
 
-            session.set_data_transmission(False)
+                # sets the request response code
+                request.set_response_code(235)
 
-            # sets the request response code
-            request.set_response_code(250)
+                # sets the request response message
+                request.set_response_message("2.7.0 Authentication successful")
+            else:
+                # sets the data transmission mode to false
+                session.set_data_transmission(False)
 
-            # sets the request response message
-            request.set_response_message("OK: message queued for delivery")
+                # sets the request response code
+                request.set_response_code(250)
+
+                # sets the request response message
+                request.set_response_message("OK: message queued for delivery")
 
         # retrieves the command
         command = request.get_command()
@@ -90,20 +99,24 @@ class MainServiceSmtpStreamHandler:
         arguments = request.get_arguments()
 
         if command == "helo":
+            # retrieves the client hostname
+            client_hostname = arguments[0]
+
             # sets the request response code
             request.set_response_code(250)
 
             # sets the request response message
             request.set_response_message("Hello pleased to meet you")
 
-            session.set_client_hostname(arguments[0])
+            # sets the client hostname
+            session.set_client_hostname(client_hostname)
 
         elif command == "ehlo":
             # sets the request response code
             request.set_response_code(250)
 
-            # sets the request response message
-            request.set_response_message("Hello pleased to meet you")
+            # este ja faz parte das extensoes SE CALHAR DEVE SER METIDO A PARTE (TLX..... ver isso) !!!!
+            request.set_response_messages(["Hello pleased to meet you", "AUTH PLAIN"])
 
             session.set_extensions_active(True)
 
@@ -140,7 +153,51 @@ class MainServiceSmtpStreamHandler:
             # sets the request response message
             request.set_response_message("End data with \".\"")
 
+            # sets the data transmission mode to true
             session.set_data_transmission(True)
+
+        # este ja faz parte das extensoes SE CALHAR DEVE SER METIDO A PARTE (TLX..... ver isso) !!!!
+        elif command == "auth":
+            # retrieves the authentication type
+            authentication_type = arguments[0]
+
+            # sets the authentication type in the session properties
+            session.get_properties()["authentication_type"] = authentication_type
+
+            # in case the number of arguments is bigger than one
+            if arguments > 1:
+                # retrieves the authentication token
+                authentication_token = arguments[1]
+
+                import base64
+
+                # decodes the authentication token
+                authentication_token_decoded = base64.b64decode(authentication_token)
+
+                invalid, username, password = authentication_token_decoded.split("\x00")
+
+                print "trying to login with: " + username + ", " + password
+
+                # se falhar 535 5.7.8  Authentication credentials invalid
+                # se nao tiver o mecanismo certo 534 5.7.9  Authentication mechanism is too weak
+
+                # sets the request response code
+                request.set_response_code(235)
+
+                # sets the request response message
+                request.set_response_message("2.7.0 Authentication successful")
+            else:
+                # sets the data transmission mode to true
+                session.set_data_transmission(True)
+
+                # sets the authentication property
+                session.get_properties()["authentication"] = True
+
+                # sets the request response code
+                request.set_response_code(334)
+
+                # sets the request response message
+                request.set_response_message("Authentication started")
 
         elif command == "quit":
             # sets the request response code
@@ -149,6 +206,7 @@ class MainServiceSmtpStreamHandler:
             # sets the request response message
             request.set_response_message("Bye")
 
+            # sets the session as closed
             session.set_closed(True)
 
     def handle_initial_request(self, request):
