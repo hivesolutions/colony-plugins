@@ -55,7 +55,7 @@ class MainServiceSmtpPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
     capabilities = ["service.smtp"]
-    capabilities_allowed = ["socket_provider"]
+    capabilities_allowed = ["smtp_service_handler", "socket_provider"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
     events_handled = []

@@ -300,13 +300,28 @@ class SmtpClientServiceTask:
         # prints debug message about connection
         self.main_service_smtp_plugin.debug("Connected to: %s" % str(self.smtp_address))
 
+        # creates the session object
+        session = SmtpSession()
+
+        # creates the initial request object
+        request = SmtpRequest()
+
+        # sets the session object in the request
+        request.set_session(session)
+
+        # handles the initial request by the request handler
+        self.main_service_smtp_plugin.smtp_service_handler_plugins[0].handle_initial_request(request)
+
+        # sends the initial request to the client (initial response)
+        self.send_request(request)
+
         # sets the request timeout
         request_timeout = REQUEST_TIMEOUT
 
         while True:
             try:
                 # retrieves the request
-                request = self.retrieve_request(request_timeout)
+                request = self.retrieve_request(session, request_timeout)
             except main_service_smtp_exceptions.MainServiceSmtpException:
                 self.main_service_smtp_plugin.debug("Connection: %s closed" % str(self.smtp_address))
                 return
@@ -320,6 +335,14 @@ class SmtpClientServiceTask:
 
                 # sends the request to the client (response)
                 self.send_request(request)
+
+                # in case the session is closed
+                if session.get_closed():
+                    # prints debug message about session
+                    self.main_service_smtp_plugin.debug("Session closed: %s" % str(session))
+
+                    break;
+
             except Exception, exception:
                 self.send_exception(request, exception)
 
@@ -336,10 +359,12 @@ class SmtpClientServiceTask:
     def resume(self):
         pass
 
-    def retrieve_request(self, request_timeout = REQUEST_TIMEOUT):
+    def retrieve_request(self, session, request_timeout = REQUEST_TIMEOUT):
         """
         Retrieves the request from the received message.
 
+        @type session: SmtpSession
+        @param session: The current smtp session.
         @type request_timeout: int
         @param request_timeout: The timeout for the request retrieval.
         @rtype: SmtpRequest
@@ -362,7 +387,7 @@ class SmtpClientServiceTask:
 
             # in case no valid data was received
             if data == "":
-                raise main_service_smtp_exceptions.smtpInvalidDataException("empty data received")
+                raise main_service_smtp_exceptions.SmtpInvalidDataException("empty data received")
 
             # writes the data to the string io
             message.write(data)
@@ -370,16 +395,42 @@ class SmtpClientServiceTask:
             # retrieves the message value from the string io
             message_value = message.getvalue()
 
-            # finds the first new line value
-            new_line_index = message_value.find("\r\n")
+            # in case the session is in data transmission mode
+            if session.data_transmission:
+                end_token = ".\r\n"
+            else:
+                end_token = "\r\n"
 
-            # in case there is a new line value found
-            if not new_line_index == -1:
+            # finds the first end token value
+            end_token_index = message_value.find(end_token)
+
+            # in case there is an end token found
+            if not end_token_index == -1:
                 # retrieves the smtp message
-                smtp_message = message_value[:new_line_index]
+                smtp_message = message_value[:end_token_index]
+
+                # in case the session is not in data transmission mode
+                if not session.data_transmission:
+                    # splits the smtp message
+                    smtp_message_splitted = smtp_message.split(" ")
+
+                    # retrieves the smtp command
+                    smtp_command = smtp_message_splitted[0].lower()
+
+                    # retrieves the smpt arguments
+                    smtp_arguments = smtp_message_splitted[1:]
+
+                    # sets the smtp command in the request
+                    request.set_command(smtp_command)
+
+                    # sets the smtp arguments in the request
+                    request.set_arguments(smtp_arguments)
 
                 # sets the smtp message in the request
                 request.set_message(smtp_message)
+
+                # sets the session object in the request
+                request.set_session(session)
 
                 # returns the request
                 return request
@@ -417,6 +468,12 @@ class SmtpClientServiceTask:
         @type exception: Exception
         @param exception: The exception to be sent.
         """
+
+        # sets the request response code
+        request.set_response_code(554)
+
+        # sets the request response message
+        request.set_response_message("Exception occurred")
 
         # writes the exception message
         request.write("error: '" + str(exception) + "'\n")
@@ -456,8 +513,20 @@ class SmtpRequest:
     message = "none"
     """ The received message """
 
-    operation_type = "none"
-    """ The operation type """
+    command = "none"
+    """ The received command """
+
+    arguments = "none"
+    """ The received arguments """
+
+    response_message = "none"
+    """ The response message """
+
+    response_code = None
+    """ The response code """
+
+    session = None
+    """ The session """
 
     message_stream = cStringIO.StringIO()
     """ The message stream """
@@ -470,7 +539,7 @@ class SmtpRequest:
         self.properties = {}
 
     def __repr__(self):
-        return "(%s, %s)" % (self.operation_type, self.message)
+        return "(%s, %s)" % (self.command, self.message)
 
     def read(self):
         return self.message
@@ -483,7 +552,11 @@ class SmtpRequest:
         message = self.message_stream.getvalue()
 
         # creates the return message
-        return_message = message + "\r"
+        return_message = str(self.response_code) + " " + self.response_message + "\r\n"
+
+        # in case the message is not empty
+        if not message == "":
+            return_message += message + "\r\n"
 
         # returns the return message
         return return_message
@@ -493,3 +566,112 @@ class SmtpRequest:
 
     def set_message(self, message):
         self.message = message
+
+    def get_command(self):
+        return self.command
+
+    def set_command(self, command):
+        self.command = command
+
+    def get_arguments(self):
+        return self.arguments
+
+    def set_arguments(self, arguments):
+        self.arguments = arguments
+
+    def get_response_message(self):
+        return self.response_message
+
+    def set_response_message(self, response_message):
+        self.response_message = response_message
+
+    def get_response_code(self, response_code):
+        return self.response_code
+
+    def set_response_code(self, response_code):
+        self.response_code = response_code
+
+    def get_session(self):
+        return self.session
+
+    def set_session(self, session):
+        self.session = session
+
+class SmtpSession:
+    """
+    The smtp session class.
+    """
+
+    client_hostname = "none"
+    """ The client hostname """
+
+    extensions_active = False
+    """ The extensions active flag """
+
+    data_transmission = False
+    """ The data transmission flag """
+
+    closed = False
+    """ The closed flag """
+
+    properties = {}
+    """ The properties """
+
+    def __init__(self):
+        self.properties = {}
+
+    def __repr__(self):
+        return "(%s, %s)" % (self.client_hostname, self.properties)
+
+    def read(self):
+        return self.message
+
+    def write(self, message):
+        self.message_stream.write(message)
+
+    def get_result(self):
+        # retrieves the result string value
+        message = self.message_stream.getvalue()
+
+        # creates the return message
+        return_message = str(self.response_code) + " " + self.response_message + "\r\n"
+
+        # in case the message is not empty
+        if not message == "":
+            return_message += message + "\r\n"
+
+        # returns the return message
+        return return_message
+
+    def get_client_hostname(self):
+        return self.client_hostname
+
+    def set_client_hostname(self, client_hostname):
+        self.client_hostname = client_hostname
+
+    def get_extensions_active(self):
+        return self.extensions_active
+
+    def set_extensions_active(self, extensions_active):
+        self.extensions_active = extensions_active
+
+    def get_data_transmission(self):
+        return self.data_transmission
+
+    def set_data_transmission(self, data_transmission):
+        self.data_transmission = data_transmission
+
+    def get_closed(self):
+        return self.closed
+
+    def set_closed(self, closed):
+        self.closed = closed
+
+    def set_data_transmission(self, data_transmission):
+        self.data_transmission = data_transmission
+
+    def get_properties(self):
+        return self.properties
+
+    def set_properties(self, properties):
+        self.properties = properties

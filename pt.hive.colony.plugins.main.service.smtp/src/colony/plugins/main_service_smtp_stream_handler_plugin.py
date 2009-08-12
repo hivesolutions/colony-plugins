@@ -40,56 +40,43 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.plugins.plugin_system
 import colony.plugins.decorators
 
-class MainServiceSmtpStarterPlugin(colony.plugins.plugin_system.Plugin):
+class MainServiceSmtpStreamHandlerPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Smtp Service Main Starter plugin.
+    The main class for the Smtp Service Main Stream Handler plugin.
     """
 
-    id = "pt.hive.colony.plugins.main.service.smtp.starter"
-    name = "Smtp Service Main Starter Plugin"
-    short_name = "Smtp Service Main Starter"
-    description = "The plugin that starts the smtp service"
+    id = "pt.hive.colony.plugins.main.service.smtp.stream_handler"
+    name = "Smtp Service Main Stream Handler Plugin"
+    short_name = "Smtp Service Main Stream Handler"
+    description = "The plugin that offers the smtp service stream handler"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
-    capabilities = ["main"]
+    capabilities = ["smtp_service_handler"]
     capabilities_allowed = []
-    dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.service.smtp", "1.0.0")]
+    dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["main_service_smtp_stream_handler.stream_handler.main_service_smtp_stream_handler_system", "main_service_smtp_stream_handler.stream_handler.main_service_smtp_stream_handler_exceptions"]
 
-    main_service_smtp_plugin = None
+    main_service_smtp_stream_handler = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
-
-        # notifies the ready semaphore
-        self.release_ready_semaphore()
+        global main_service_smtp_stream_handler
+        import main_service_smtp_stream_handler.stream_handler.main_service_smtp_stream_handler_system
+        self.main_service_smtp_stream_handler =  main_service_smtp_stream_handler.stream_handler.main_service_smtp_stream_handler_system.MainServiceSmtpStreamHandler(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
-        # notifies the ready semaphore
-        self.release_ready_semaphore()
-
-        self.main_service_smtp_plugin.start_service({"socket_provider" : "normal", "port" : 25})
-
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
 
-        self.main_service_smtp_plugin.stop_service({})
-
-        # notifies the ready semaphore
-        self.release_ready_semaphore()
-
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
-
-        # notifies the ready semaphore
-        self.release_ready_semaphore()
 
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
@@ -97,13 +84,14 @@ class MainServiceSmtpStarterPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.main.service.smtp.starter", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def get_main_service_smtp_plugin(self):
-        return self.main_service_smtp_plugin
+    def get_handler_name(self):
+        return self.main_service_smtp_stream_handler.get_handler_name()
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.service.smtp")
-    def set_main_service_smtp_plugin(self, main_service_smtp_plugin):
-        self.main_service_smtp_plugin = main_service_smtp_plugin
+    def handle_request(self, request):
+        self.main_service_smtp_stream_handler.handle_request(request)
+
+    def handle_initial_request(self, request):
+        self.main_service_smtp_stream_handler.handle_initial_request(request)
