@@ -213,7 +213,7 @@ class HttpInvalidDataException(HttpRuntimeException):
         @param message: The message to be printed.
         """
 
-        MainServiceHttpException.__init__(self)
+        HttpRuntimeException.__init__(self)
         self.message = message
 
     def __str__(self):
