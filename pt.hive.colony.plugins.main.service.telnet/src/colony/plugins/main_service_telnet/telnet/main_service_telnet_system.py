@@ -148,7 +148,23 @@ class MainServiceTelnet:
         @param parameters: The parameters to start the service.
         """
 
-        pass
+        # sets the telnet connection active flag as false
+        self.telnet_connection_active = False
+
+        # sets the telnet connection close event
+        self.telnet_connection_close_event.set()
+
+        # waits for the telnet connection close end event
+        self.telnet_connection_close_end_event.wait()
+
+        # clears the telnet connection close end event
+        self.telnet_connection_close_end_event.clear()
+
+        # stops all the pool tasks
+        self.telnet_client_thread_pool.stop_pool_tasks()
+
+        # stops the pool
+        self.telnet_client_thread_pool.stop_pool()
 
     def start_server(self, socket_provider, port, service_configuration):
         """

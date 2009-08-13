@@ -148,7 +148,23 @@ class MainServiceSmtp:
         @param parameters: The parameters to start the service.
         """
 
-        pass
+        # sets the smtp connection active flag as false
+        self.smtp_connection_active = False
+
+        # sets the smtp connection close event
+        self.smtp_connection_close_event.set()
+
+        # waits for the smtp connection close end event
+        self.smtp_connection_close_end_event.wait()
+
+        # clears the smtp connection close end event
+        self.smtp_connection_close_end_event.clear()
+
+        # stops all the pool tasks
+        self.smtp_client_thread_pool.stop_pool_tasks()
+
+        # stops the pool
+        self.smtp_client_thread_pool.stop_pool()
 
     def start_server(self, socket_provider, port, service_configuration):
         """
