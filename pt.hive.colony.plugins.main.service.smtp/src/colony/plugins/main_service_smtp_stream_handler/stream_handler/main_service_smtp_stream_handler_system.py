@@ -37,15 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import os.path
-
 import main_service_smtp_stream_handler_exceptions
 
 HANDLER_NAME = "stream"
 """ The handler name """
-
-PLUGIN_HANDLER_VALUE = "plugin_handler"
-""" The plugin handler value """
 
 class MainServiceSmtpStreamHandler:
     """
