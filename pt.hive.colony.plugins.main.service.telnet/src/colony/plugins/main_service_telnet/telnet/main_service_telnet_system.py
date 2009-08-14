@@ -385,9 +385,6 @@ class TelnetClientServiceTask:
         # creates a request object
         request = TelnetRequest()
 
-        # creates the message size value
-        message_size = 0
-
         # continuous loop
         while True:
             # retrieves the data
