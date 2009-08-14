@@ -393,9 +393,6 @@ class SmtpClientServiceTask:
         # creates a request object
         request = SmtpRequest()
 
-        # creates the message size value
-        message_size = 0
-
         # continuous loop
         while True:
             # retrieves the data
