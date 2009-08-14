@@ -55,16 +55,22 @@ class MainServiceXmppPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
     capabilities = ["service.xmpp"]
-    capabilities_allowed = []
+    capabilities_allowed = ["xmpp_service_handler", "socket_provider"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
+                    "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.main.service.xmpp_helper", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["main_service_xmpp.xmpp.main_service_xmpp_system", "main_service_xmpp.xmpp.main_service_xmpp_exceptions"]
 
     main_service_xmpp = None
 
+    xmpp_service_handler_plugins = []
+    socket_provider_plugins = []
+
     thread_pool_manager_plugin = None
+    main_service_xmpp_helper_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -81,9 +87,11 @@ class MainServiceXmppPlugin(colony.plugins.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
+    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.main.service.xmpp", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.main.service.xmpp", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
@@ -97,9 +105,32 @@ class MainServiceXmppPlugin(colony.plugins.plugin_system.Plugin):
     def stop_service(self, parameters):
         self.main_service_xmpp.stop_service(parameters)
 
+    @colony.plugins.decorators.load_allowed_capability("xmpp_service_handler")
+    def xmpp_service_handler_load_allowed(self, plugin, capability):
+        self.xmpp_service_handler_plugins.append(plugin)
+
+    @colony.plugins.decorators.load_allowed_capability("socket_provider")
+    def socket_provider_load_allowed(self, plugin, capability):
+        self.socket_provider_plugins.append(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("xmpp_service_handler")
+    def xmpp_service_handler_unload_allowed(self, plugin, capability):
+        self.xmpp_service_handler_plugins.remove(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("socket_provider")
+    def socket_provider_unload_allowed(self, plugin, capability):
+        self.socket_provider_plugins.remove(plugin)
+
     def get_thread_pool_manager_plugin(self):
         return self.thread_pool_manager_plugin
 
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.threads.thread_pool_manager")
     def set_thread_pool_manager_plugin(self, thread_pool_manager_plugin):
         self.thread_pool_manager_plugin = thread_pool_manager_plugin
+
+    def get_main_service_xmpp_helper_plugin(self):
+        return self.main_service_xmpp_helper_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.service.xmpp_helper")
+    def set_main_service_xmpp_helper_plugin(self, main_service_xmpp_helper_plugin):
+        self.main_service_xmpp_helper_plugin = main_service_xmpp_helper_plugin

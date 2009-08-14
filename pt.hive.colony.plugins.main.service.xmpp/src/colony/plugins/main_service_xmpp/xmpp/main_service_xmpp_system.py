@@ -67,8 +67,27 @@ MAX_NUMBER_THREADS = 30
 SCHEDULING_ALGORITHM = 2
 """ The scheduling algorithm """
 
-DEFAULT_PORT = 23
+DEFAULT_PORT = 5222
 """ The default port """
+
+MESSAGE_ELEMENT_TYPE_VALUE = 1
+""" The message element type value """
+
+PRESENCE_ELEMENT_TYPE_VALUE = 2
+""" The presence element type value """
+
+IQ_ELEMENT_TYPE_VALUE = 3
+""" The iq element type value """
+
+ELEMENT_START_TAGS_MAP = {MESSAGE_ELEMENT_TYPE_VALUE : "<message",
+                        PRESENCE_ELEMENT_TYPE_VALUE : "<presence",
+                        IQ_ELEMENT_TYPE_VALUE : "<iq"}
+""" The element start tags map """
+
+ELEMENT_END_TAGS_MAP = {MESSAGE_ELEMENT_TYPE_VALUE : "</message>",
+                        PRESENCE_ELEMENT_TYPE_VALUE : "</presence>",
+                        IQ_ELEMENT_TYPE_VALUE : "</iq>"}
+""" The element end tags map """
 
 class MainServiceXmpp:
     """
@@ -316,25 +335,25 @@ class XmppClientServiceTask:
         # prints debug message about connection
         self.main_service_xmpp_plugin.debug("Connected to: %s" % str(self.xmpp_address))
 
-        # sends the welcome message
-        self.xmpp_connection.send("Welcome to colony xmpp server\r\n")
+        # sets the request timeout
+        request_timeout = REQUEST_TIMEOUT
 
-        # creates the initial request object
-        request = XmppRequest()
+        # creates the session object
+        session = XmppSession()
 
-        # handles the initial request by the request handler
+        # retrieves the initial request
+        request = self.retrieve_initial_request(session, request_timeout)
+
+        # handles the request by the request handler
         self.main_service_xmpp_plugin.xmpp_service_handler_plugins[0].handle_initial_request(request)
 
         # sends the initial request to the client (initial response)
         self.send_request(request)
 
-        # sets the request timeout
-        request_timeout = REQUEST_TIMEOUT
-
         while True:
             try:
                 # retrieves the request
-                request = self.retrieve_request(request_timeout)
+                request = self.retrieve_request(session, request_timeout)
 
                 # in case a close message is received
                 if request.get_message() == "close":
@@ -347,6 +366,9 @@ class XmppClientServiceTask:
             try:
                 # prints debug message about request
                 self.main_service_xmpp_plugin.debug("Handling request: %s" % str(request))
+
+                # parses the request
+                parsed_request = self.main_service_xmpp_plugin.main_service_xmpp_helper_plugin.parse_request(request)
 
                 # handles the request by the request handler
                 self.main_service_xmpp_plugin.xmpp_service_handler_plugins[0].handle_request(request)
@@ -369,10 +391,12 @@ class XmppClientServiceTask:
     def resume(self):
         pass
 
-    def retrieve_request(self, request_timeout = REQUEST_TIMEOUT):
+    def retrieve_initial_request(self, session, request_timeout = REQUEST_TIMEOUT):
         """
-        Retrieves the request from the received message.
+        Retrieves the initial request from the received message.
 
+        @type session: XmppSession
+        @param session: The current xmpp session.
         @type request_timeout: int
         @param request_timeout: The timeout for the request retrieval.
         @rtype: XmppRequest
@@ -384,9 +408,6 @@ class XmppClientServiceTask:
 
         # creates a request object
         request = XmppRequest()
-
-        # creates the message size value
-        message_size = 0
 
         # continuous loop
         while True:
@@ -403,19 +424,75 @@ class XmppClientServiceTask:
             # retrieves the message value from the string io
             message_value = message.getvalue()
 
-            # finds the first new line value
-            new_line_index = message_value.find("\r\n")
+            # finds the end token index value
+            end_token_index = message_value.find("version='1.0'>")
 
-            # in case there is a new line value found
-            if not new_line_index == -1:
-                # retrieves the xmpp message
-                xmpp_message = message_value[:new_line_index]
-
+            # in case there is a end token value found
+            if not end_token_index == -1:
                 # sets the xmpp message in the request
-                request.set_message(xmpp_message)
+                request.set_message(message_value)
 
                 # returns the request
                 return request
+
+    def retrieve_request(self, session, request_timeout = REQUEST_TIMEOUT):
+        """
+        Retrieves the request from the received message.
+
+        @type session: XmppSession
+        @param session: The current xmpp session.
+        @type request_timeout: int
+        @param request_timeout: The timeout for the request retrieval.
+        @rtype: XmppRequest
+        @return: The request from the received message.
+        """
+
+        # creates the string io for the message
+        message = cStringIO.StringIO()
+
+        # creates a request object
+        request = XmppRequest()
+
+        # continuous loop
+        while True:
+            # retrieves the data
+            data = self.retrieve_data(request_timeout)
+
+            # in case no valid data was received
+            if data == "":
+                raise main_service_xmpp_exceptions.XmppInvalidDataException("empty data received")
+
+            # writes the data to the string io
+            message.write(data)
+
+            # retrieves the message value from the string io
+            message_value = message.getvalue()
+
+            # in case the element type is not defined in the request
+            if not request.element_type:
+                iq_token_index = message_value.find(ELEMENT_START_TAGS_MAP[IQ_ELEMENT_TYPE_VALUE])
+                message_token_index = message_value.find(ELEMENT_START_TAGS_MAP[MESSAGE_ELEMENT_TYPE_VALUE])
+                presence_token_index = message_value.find(ELEMENT_START_TAGS_MAP[PRESENCE_ELEMENT_TYPE_VALUE])
+
+                if not iq_token_index == -1:
+                    request.set_element_type(IQ_ELEMENT_TYPE_VALUE)
+                elif not message_token_index == -1:
+                    request.set_element_type(MESSAGE_ELEMENT_TYPE_VALUE)
+                elif not presence_token_index == -1:
+                    request.set_element_type(PRESENCE_ELEMENT_TYPE_VALUE)
+
+            # in case the element type is defined in the request
+            if request.element_type:
+                # finds the first new line value
+                new_line_index = message_value.find(ELEMENT_END_TAGS_MAP[request.element_type])
+
+                # in case there is a new line value found
+                if not new_line_index == -1:
+                    # sets the xmpp message in the request
+                    request.set_message(message_value)
+
+                    # returns the request
+                    return request
 
     def retrieve_data(self, request_timeout = REQUEST_TIMEOUT, chunk_size = CHUNK_SIZE):
         try:
@@ -489,6 +566,9 @@ class XmppRequest:
     message = "none"
     """ The received message """
 
+    element_type = None
+    """ The element type """
+
     operation_type = "none"
     """ The operation type """
 
@@ -523,3 +603,68 @@ class XmppRequest:
 
     def set_message(self, message):
         self.message = message
+
+    def get_element_type(self):
+        return self.element_type
+
+    def set_element_type(self, element_type):
+        self.element_type = element_type
+
+class XmppSession:
+    """
+    The xmpp session class.
+    """
+
+    client_hostname = "none"
+    """ The client hostname """
+
+    extensions_active = False
+    """ The extensions active flag """
+
+    data_transmission = False
+    """ The data transmission flag """
+
+    closed = False
+    """ The closed flag """
+
+    properties = {}
+    """ The properties """
+
+    def __init__(self):
+        self.properties = {}
+
+    def __repr__(self):
+        return "(%s, %s)" % (self.client_hostname, self.properties)
+
+    def get_client_hostname(self):
+        return self.client_hostname
+
+    def set_client_hostname(self, client_hostname):
+        self.client_hostname = client_hostname
+
+    def get_extensions_active(self):
+        return self.extensions_active
+
+    def set_extensions_active(self, extensions_active):
+        self.extensions_active = extensions_active
+
+    def get_data_transmission(self):
+        return self.data_transmission
+
+    def set_data_transmission(self, data_transmission):
+        self.data_transmission = data_transmission
+
+    def get_closed(self):
+        return self.closed
+
+    def set_closed(self, closed):
+        self.closed = closed
+
+    def set_data_transmission(self, data_transmission):
+        self.data_transmission = data_transmission
+
+    def get_properties(self):
+        return self.properties
+
+    def set_properties(self, properties):
+        self.properties = properties
