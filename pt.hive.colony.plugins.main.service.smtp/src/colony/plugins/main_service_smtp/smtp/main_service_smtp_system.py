@@ -316,23 +316,20 @@ class SmtpClientServiceTask:
         # prints debug message about connection
         self.main_service_smtp_plugin.debug("Connected to: %s" % str(self.smtp_address))
 
+        # sets the request timeout
+        request_timeout = REQUEST_TIMEOUT
+
         # creates the session object
         session = SmtpSession()
 
-        # creates the initial request object
-        request = SmtpRequest()
-
-        # sets the session object in the request
-        request.set_session(session)
+        # retrieves the initial request
+        request = self.retrieve_initial_request(session, request_timeout)
 
         # handles the initial request by the request handler
         self.main_service_smtp_plugin.smtp_service_handler_plugins[0].handle_initial_request(request)
 
         # sends the initial request to the client (initial response)
         self.send_request(request)
-
-        # sets the request timeout
-        request_timeout = REQUEST_TIMEOUT
 
         while True:
             try:
@@ -374,6 +371,27 @@ class SmtpClientServiceTask:
 
     def resume(self):
         pass
+
+    def retrieve_initial_request(self, session, request_timeout = REQUEST_TIMEOUT):
+        """
+        Retrieves the initial request from the received message.
+
+        @type session: SmtpSession
+        @param session: The current smtp session.
+        @type request_timeout: int
+        @param request_timeout: The timeout for the request retrieval.
+        @rtype: SmtpRequest
+        @return: The request from the received message.
+        """
+
+        # creates the initial request object
+        request = SmtpRequest()
+
+        # sets the session object in the request
+        request.set_session(session)
+
+        # returns the initial request
+        return request
 
     def retrieve_request(self, session, request_timeout = REQUEST_TIMEOUT):
         """
@@ -659,26 +677,6 @@ class SmtpSession:
 
     def __repr__(self):
         return "(%s, %s)" % (self.client_hostname, self.properties)
-
-    def read(self):
-        return self.message
-
-    def write(self, message):
-        self.message_stream.write(message)
-
-    def get_result(self):
-        # retrieves the result string value
-        message = self.message_stream.getvalue()
-
-        # creates the return message
-        return_message = str(self.response_code) + " " + self.response_message + "\r\n"
-
-        # in case the message is not empty
-        if not message == "":
-            return_message += message + "\r\n"
-
-        # returns the return message
-        return return_message
 
     def get_client_hostname(self):
         return self.client_hostname
