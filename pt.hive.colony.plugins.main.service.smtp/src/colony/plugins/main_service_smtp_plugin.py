@@ -55,7 +55,7 @@ class MainServiceSmtpPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
     capabilities = ["service.smtp"]
-    capabilities_allowed = ["smtp_service_handler", "socket_provider"]
+    capabilities_allowed = ["smtp_service_handler", "smtp_service_session_handler", "socket_provider"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
     events_handled = []
@@ -65,6 +65,7 @@ class MainServiceSmtpPlugin(colony.plugins.plugin_system.Plugin):
     main_service_smtp = None
 
     smtp_service_handler_plugins = []
+    smtp_service_session_handler_plugins = []
     socket_provider_plugins = []
 
     thread_pool_manager_plugin = None
@@ -106,6 +107,10 @@ class MainServiceSmtpPlugin(colony.plugins.plugin_system.Plugin):
     def smtp_service_handler_load_allowed(self, plugin, capability):
         self.smtp_service_handler_plugins.append(plugin)
 
+    @colony.plugins.decorators.load_allowed_capability("smtp_service_session_handler")
+    def smtp_service_session_handler_load_allowed(self, plugin, capability):
+        self.smtp_service_session_handler_plugins.append(plugin)
+
     @colony.plugins.decorators.load_allowed_capability("socket_provider")
     def socket_provider_load_allowed(self, plugin, capability):
         self.socket_provider_plugins.append(plugin)
@@ -113,6 +118,10 @@ class MainServiceSmtpPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.unload_allowed_capability("smtp_service_handler")
     def smtp_service_handler_unload_allowed(self, plugin, capability):
         self.smtp_service_handler_plugins.remove(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("smtp_service_session_handler")
+    def smtp_service_session_handler_unload_allowed(self, plugin, capability):
+        self.smtp_service_session_handler_plugins.remove(plugin)
 
     @colony.plugins.decorators.unload_allowed_capability("socket_provider")
     def socket_provider_unload_allowed(self, plugin, capability):
