@@ -37,6 +37,16 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+LDAP_REQUEST_TYPE_MAP = {"bind" : 0x60, "unbind" : 0x62,
+                         "search" : 0x63, "modify" : 0x66,
+                         "add" : 0x68, "delete" : 0x6a,
+                         "modify_dn" : 0x00, "compare" : 0x00,
+                         "abandon" : 0x00, "extended" : 0x00}
+
+LDAP_RESPONSE_TYPE_MAP = {"bind" : 0x61, "search_result_enttry" : 0x64,
+                          "search_result_reference" : 0x73, "search_result_done" : 0x65,
+                          "modify" : 0x67, "add" : 0x69, "delete" : 0x6b}
+
 import main_client_ldap_exceptions
 
 class MainClientLdap:
@@ -62,3 +72,13 @@ class MainClientLdap:
 
     def create_request(self, parameters):
         pass
+
+class LdapClient:
+    pass
+
+class LdapRequest:
+    """
+    The ldap request class.
+    """
+
+    pass
