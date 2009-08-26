@@ -60,6 +60,7 @@ class JavascriptManagerPlugin(colony.plugins.plugin_system.Plugin):
                     "pt.hive.colony.plugins.resources.resource_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["javascript_manager.manager.javascript_manager_system", "javascript_manager.manager.javascript_manager_parser", "javascript_manager.manager.javascript_manager_exceptions"]
 
     javascript_manager = None
 
@@ -105,16 +106,36 @@ class JavascriptManagerPlugin(colony.plugins.plugin_system.Plugin):
 
     @colony.plugins.decorators.plugin_call(True)
     def get_available_rpc_methods(self):
-        return [self.get_plugin_descriptor, self.get_available_plugins, self.get_available_plugin_descriptors]
+        return [self.get_plugin_descriptor, self.get_plugin_file, self.get_plugins_files, self.get_available_plugins, self.get_available_plugin_descriptors]
 
     @colony.plugins.decorators.plugin_call(True)
     def get_rpc_methods_alias(self):
         return {self.get_plugin_descriptor : ["getPluginDescriptor"],
+                self.get_plugin_file : ["getPluginFile"],
+                self.get_plugins_files : ["getPluginsFiles"],
                 self.get_available_plugins : ["getAvailablePlugins"],
                 self.get_available_plugin_descriptors : ["getAvailablePluginDescriptors"]}
 
     def get_plugin_descriptor(self, plugin_id):
         return self.javascript_manager.get_plugin_descriptor(plugin_id)
+
+    def get_plugin_file(self, plugin_id):
+        return self.javascript_manager.get_plugin_file(plugin_id)
+
+    def get_plugins_files(self, plugin_id_list):
+        return self.javascript_manager.get_plugins_files(plugin_id_list)
+
+    def get_plugin_payload(self, plugin_id):
+        return self.javascript_manager.get_plugin_payload(plugin_id)
+
+    def get_plugins_payload(self, plugin_id_list):
+        return self.javascript_manager.get_plugins_payload(plugin_id_list)
+
+    def get_plugin_file_payload(self, plugin_id):
+        return self.javascript_manager.get_plugin_file_payload(plugin_id)
+
+    def get_plugins_files_payload(self, plugin_id_list):
+        return self.javascript_manager.get_plugins_files_payload(plugin_id_list)
 
     def get_available_plugins(self):
         return self.javascript_manager.get_available_plugins()

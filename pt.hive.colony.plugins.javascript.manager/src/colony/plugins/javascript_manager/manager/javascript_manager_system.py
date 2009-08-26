@@ -41,6 +41,7 @@ import os
 import time
 import stat
 import threading
+import cStringIO
 import os.path
 
 import javascript_manager_parser
@@ -277,6 +278,58 @@ class JavascriptManager:
 
     def get_plugin_descriptor(self, plugin_id):
         return self.plugin_id_plugin_descriptor_map.get(plugin_id, None)
+
+    def get_plugin_file(self, plugin_id):
+        # retrieves the plugin descriptor for the given plugin id
+        plugin_descriptor = self.plugin_id_plugin_descriptor_map.get(plugin_id, None)
+
+        # retrieves the plugin descriptor main file
+        main_file = plugin_descriptor.main_file
+
+        # retrieves the main file full path
+        main_file_full_path = self.get_file_full_path(main_file)
+
+        # opens the file for reading
+        file = open(main_file_full_path, "rb")
+
+        # reads the file contents
+        file_contents = file.read()
+
+        # closes the file
+        file.close()
+
+        # returns the file contents
+        return file_contents
+
+    def get_plugins_files(self, plugin_id_list):
+        # creates the stream buffer
+        stream_buffer = cStringIO.StringIO()
+
+        # iterates over the plugins ids list
+        for plugin_id in plugin_id_list:
+            # retrieves the file contents for the given plugin id
+            file_contents = self.get_plugin_file(plugin_id)
+
+            # writes the file contents to the stream buffer
+            stream_buffer.write(file_contents)
+
+        # retrieves the stream buffer contents
+        files_contents = stream_buffer.getvalue()
+
+        # returns the files contents
+        return files_contents
+
+    def get_plugin_payload(self, plugin_id):
+        pass
+
+    def get_plugins_payload(self, plugin_id_list):
+        pass
+
+    def get_plugin_file_payload(self, plugin_id):
+        pass
+
+    def get_plugins_files_payload(self, plugin_id_list):
+        pass
 
     def get_available_plugins(self):
         # the available plugins list

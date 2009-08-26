@@ -59,6 +59,7 @@ class JavascriptManagerAutoloaderPlugin(colony.plugins.plugin_system.Plugin):
                     "pt.hive.colony.plugins.javascript.manager", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["javascript_manager.autoloader.javascript_manager_autoloader_system"]
 
     javascript_manager_autoloader = None
 
