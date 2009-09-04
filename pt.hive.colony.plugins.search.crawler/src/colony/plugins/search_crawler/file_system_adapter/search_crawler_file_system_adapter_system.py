@@ -109,9 +109,6 @@ class SearchCrawlerFileSystemAdapter:
         @param names: The name of the files of the current directory.
         """
 
-        # retrieve the plugin logger
-        logger = self.search_crawler_file_system_adapter_plugin.logger
-
         # retrieves the token list
         properties = args
         token_list = properties[TOKEN_LIST_VALUE]

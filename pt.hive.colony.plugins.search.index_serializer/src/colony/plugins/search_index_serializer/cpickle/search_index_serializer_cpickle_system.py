@@ -74,9 +74,6 @@ class SearchIndexSerializerCpickle:
         if not FILE_PATH_VALUE in properties:
             raise search_index_serializer_cpickle_exceptions.MissingProperty(FILE_PATH_VALUE)
 
-        # retrieves the logger from the plugin
-        logger = self.search_index_serializer_cpickle_plugin.logger
-
         # retrieves the file path
         file_path = properties[FILE_PATH_VALUE]
 
@@ -102,7 +99,7 @@ class SearchIndexSerializerCpickle:
         end_time = time.time()
 
         duration = end_time - start_time
-        logger.debug("SearchIndexSerializerCpickle persist index cPickle.dump finished in %s" % duration)
+        self.search_index_serializer_cpickle_plugin.debug("SearchIndexSerializerCpickle persist index cPickle.dump finished in %s" % duration)
 
         # closes the file
         file.close()
@@ -113,8 +110,8 @@ class SearchIndexSerializerCpickle:
         if not FILE_PATH_VALUE in properties:
             raise search_index_serializer_cpickle_exceptions.MissingProperty(FILE_PATH_VALUE)
 
-        # retrieves the logger from the plugin
-        logger = self.search_index_serializer_cpickle_plugin.logger
+        # retrieves the self.search_index_serializer_cpickle_plugin from the plugin
+        self.search_index_serializer_cpickle_plugin = self.search_index_serializer_cpickle_plugin.self.search_index_serializer_cpickle_plugin
 
         # retrieves the file path
         file_path = properties[FILE_PATH_VALUE]
@@ -140,7 +137,7 @@ class SearchIndexSerializerCpickle:
         end_time = time.time()
 
         duration = end_time - start_time
-        logger.debug("SearchIndexSerializerCpickle load index cPickle.load finished in %s" % duration)
+        self.search_index_serializer_cpickle_plugin.debug("SearchIndexSerializerCpickle load index cPickle.load finished in %s" % duration)
 
         # closes the file
         file.close()

@@ -98,9 +98,6 @@ class SearchIndexer:
         @return: The created index.
         """
 
-        # retrieves a reference to the logger
-        logger = self.search_indexer_plugin.logger
-
         metrics_identifiers = []
         # checks for metrics specified in the properties map
         if METRICS_IDENTIFIERS_VALUE in properties:
@@ -116,7 +113,7 @@ class SearchIndexer:
 
         end_time = time.time()
         forward_index_creation_duration = end_time - start_time
-        logger.debug("Build forward index finished in %f s" % forward_index_creation_duration)
+        self.search_indexer_plugin.debug("Build forward index finished in %f s" % forward_index_creation_duration)
 
         start_time = time.time()
 
@@ -125,7 +122,7 @@ class SearchIndexer:
 
         end_time = time.time()
         inverted_index_creation_duration = end_time - start_time
-        logger.debug("Build inverted index finished in %f s" % inverted_index_creation_duration)
+        self.search_indexer_plugin.debug("Build inverted index finished in %f s" % inverted_index_creation_duration)
 
         # creates the search index object
         search_index = SearchIndex()
@@ -145,7 +142,7 @@ class SearchIndexer:
 
         end_time = time.time()
         metrics_computation_duration = end_time - start_time
-        logger.debug("Metrics computation finished in %f s" % metrics_computation_duration)
+        self.search_indexer_plugin.debug("Metrics computation finished in %f s" % metrics_computation_duration)
 
         # calculates the index statistics
         search_index.calculate_statistics()

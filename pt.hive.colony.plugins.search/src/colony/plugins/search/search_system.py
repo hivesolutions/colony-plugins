@@ -94,9 +94,6 @@ class Search:
         @return: The search index for the given properties.
         """
 
-        # retrieves a reference to the logger
-        logger = self.search_plugin.logger
-
         # in case type value is not defined in properties
         if not TYPE_VALUE in properties:
             properties[TYPE_VALUE] = DEFAULT_INDEX_TYPE
@@ -120,7 +117,7 @@ class Search:
 
         end_time = time.time()
         duration = end_time - start_time
-        logger.debug("Crawling finished in %f s" % duration)
+        self.search_plugin.debug("Crawling finished in %f s" % duration)
 
         start_time = time.time()
 
@@ -129,7 +126,7 @@ class Search:
 
         end_time = time.time()
         duration = end_time - start_time
-        logger.debug("Processing tokens finished in %f s" % duration)
+        self.search_plugin.debug("Processing tokens finished in %f s" % duration)
 
         start_time = time.time()
 
@@ -138,7 +135,7 @@ class Search:
 
         end_time = time.time()
         duration = end_time - start_time
-        logger.debug("Build index finished in %f s" % duration)
+        self.search_plugin.debug("Build index finished in %f s" % duration)
 
         # returns the search index
         return search_index
@@ -315,9 +312,6 @@ class Search:
         if not search_scorer_function_identifier in search_scorer_plugin.get_function_identifiers():
             raise search_exceptions.InvalidFunctionRequested(search_scorer_function_identifier)
 
-        # retrieves a reference to the logger
-        logger = self.search_plugin.logger
-
         # performs the search using own query_index method
         start_time = time.time()
 
@@ -333,7 +327,7 @@ class Search:
 
         end_time = time.time()
         duration = end_time - start_time
-        logger.debug("Querying index finished in %f s" % duration)
+        self.search_plugin.debug("Querying index finished in %f s" % duration)
 
         if search_results:
             # scores the results using the available search scorer plugin
@@ -343,7 +337,7 @@ class Search:
 
             end_time = time.time()
             duration = end_time - start_time
-            logger.debug("Scoring results finished in %f s" % duration)
+            self.search_plugin.debug("Scoring results finished in %f s" % duration)
 
             # gets the search scorer function repository plugin
             search_scorer_function_repository_plugin = self.search_plugin.search_scorer_function_repository_plugin
@@ -358,7 +352,7 @@ class Search:
 
             end_time = time.time()
             duration = end_time - start_time
-            logger.debug("Sorting results finished in %f s" % duration)
+            self.search_plugin.debug("Sorting results finished in %f s" % duration)
         else:
             # an empty result set is sorted by nature
             sorted_search_results = search_results

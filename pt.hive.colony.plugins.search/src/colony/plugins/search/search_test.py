@@ -97,7 +97,7 @@ class SearchTestCase(unittest.TestCase):
     """
 
     def setUp(self):
-        self.plugin.logger.info("Setting up Search Test Case...")
+        self.plugin.info("Setting up Search Test Case...")
 
         self.generate_test_files()
 
@@ -531,9 +531,6 @@ class SearchTestCase(unittest.TestCase):
         This method targets the index persistence façade method of the search plugin.
         """
 
-        # get the logger
-        logger = self.plugin.logger
-
         serializer_types = ["cpickle"]
 
         # switch to larger directory for more visible timing differences
@@ -552,7 +549,7 @@ class SearchTestCase(unittest.TestCase):
                 end_time = time.time()
 
                 duration = end_time - start_time
-                logger.debug("Index creation on '%s' took %f s" % (start_path, duration))
+                self.plugin.debug("Index creation on '%s' took %f s" % (start_path, duration))
 
                 start_time = time.time()
                 # persists the index to defined storage
@@ -561,7 +558,7 @@ class SearchTestCase(unittest.TestCase):
                 end_time = time.time()
 
                 duration = end_time - start_time
-                logger.debug("Persisting index on '%s' to index file '%s' took %f s using %s" % (start_path, index_file_path, duration, serializer_type))
+                self.plugin.debug("Persisting index on '%s' to index file '%s' took %f s using %s" % (start_path, index_file_path, duration, serializer_type))
 
                 self.assertTrue(persistence_sucess)
 
@@ -575,7 +572,7 @@ class SearchTestCase(unittest.TestCase):
                 end_time = time.time()
 
                 duration = end_time - start_time
-                logger.debug("Index loading from '%s' took %f s" % (index_file_path, duration))
+                self.plugin.debug("Index loading from '%s' took %f s" % (index_file_path, duration))
 
                 properties = {"search_scorer_function_identifier" : "frequency_location_distance_scorer_function",
                               "frequency_location_distance_scorer_function_parameters" : {"word_frequency_scorer_function" : 1.0,
@@ -589,7 +586,7 @@ class SearchTestCase(unittest.TestCase):
                 end_time = time.time()
 
                 duration = end_time - start_time
-                logger.debug("Query on index from file '%s' took %f" % (index_file_path, duration))
+                self.plugin.debug("Query on index from file '%s' took %f" % (index_file_path, duration))
 
                 self.assertTrue(test_results)
 
@@ -598,9 +595,6 @@ class SearchTestCase(unittest.TestCase):
         This method targets the scoring infrastructure, and asserts if the results were properly scored and sorted according to the Combined Scorer
         computing the metrics in index time.
         """
-
-        # get the logger
-        logger = self.plugin.logger
 
         test_index = None
         test_results = None
@@ -636,7 +630,7 @@ class SearchTestCase(unittest.TestCase):
 
             end_time = time.time()
             duration = end_time - start_time
-            logger.debug("Index creation on '%s' took %f s" % (start_path, duration))
+            self.plugin.debug("Index creation on '%s' took %f s" % (start_path, duration))
 
             properties = {"file_path" : index_file_path, "persistence_type" : "file_system", "serializer_type" : "cpickle"}
             self.plugin.persist_index(test_index, properties)
@@ -648,7 +642,7 @@ class SearchTestCase(unittest.TestCase):
                                                                                   "word_distance_scorer_function" : 1.0}}
 
         durations = []
-        logger.debug("START PERFORMANCE WATCH SEARCH BLOCK")
+        self.plugin.debug("START PERFORMANCE WATCH SEARCH BLOCK")
         for i in range(10):
             # gather query start time
             start_time = time.time()
@@ -661,17 +655,17 @@ class SearchTestCase(unittest.TestCase):
             # compute duration
             duration = end_time - start_time
 
-            logger.debug("Search for '%s' with pre-computed metrics took %f s" % (query, duration))
+            self.plugin.debug("Search for '%s' with pre-computed metrics took %f s" % (query, duration))
             durations.append(duration)
 
         # compute average run time
         average = sum(durations) / len(durations)
-        logger.debug(">>> Search for '%s' with pre-computed metrics took on AVERAGE %f s" % (query, average))
-        logger.debug("END PERFORMANCE WATCH SEARCH BLOCK")
+        self.plugin.debug(">>> Search for '%s' with pre-computed metrics took on AVERAGE %f s" % (query, average))
+        self.plugin.debug("END PERFORMANCE WATCH SEARCH BLOCK")
 
         durations = []
         query = "tiago silva"
-        logger.debug("START PERFORMANCE WATCH SEARCH BLOCK")
+        self.plugin.debug("START PERFORMANCE WATCH SEARCH BLOCK")
         for i in range(10):
             # gather query start time
             start_time = time.time()
@@ -684,17 +678,17 @@ class SearchTestCase(unittest.TestCase):
             # compute duration
             duration = end_time - start_time
 
-            logger.debug("Search for '%s' with pre-computed metrics took %f s" % (query, duration))
+            self.plugin.debug("Search for '%s' with pre-computed metrics took %f s" % (query, duration))
             durations.append(duration)
 
         # compute average run time
         average = sum(durations) / len(durations)
-        logger.debug(">>> Search for '%s' with pre-computed metrics took on AVERAGE %f s" % (query, average))
-        logger.debug("END PERFORMANCE WATCH SEARCH BLOCK")
+        self.plugin.debug(">>> Search for '%s' with pre-computed metrics took on AVERAGE %f s" % (query, average))
+        self.plugin.debug("END PERFORMANCE WATCH SEARCH BLOCK")
 
         durations = []
         query = "tiago silva hive"
-        logger.debug("START PERFORMANCE WATCH SEARCH BLOCK")
+        self.plugin.debug("START PERFORMANCE WATCH SEARCH BLOCK")
         for i in range(10):
             # gather query start time
             start_time = time.time()
@@ -707,22 +701,19 @@ class SearchTestCase(unittest.TestCase):
             # compute duration
             duration = end_time - start_time
 
-            logger.debug("Search for '%s' with pre-computed metrics took %f s" % (query, duration))
+            self.plugin.debug("Search for '%s' with pre-computed metrics took %f s" % (query, duration))
             durations.append(duration)
 
         # compute average run time
         average = sum(durations) / len(durations)
-        logger.debug(">>> Search for '%s' with pre-computed metrics took on AVERAGE %f s" % (query, average))
-        logger.debug("END PERFORMANCE WATCH SEARCH BLOCK")
+        self.plugin.debug(">>> Search for '%s' with pre-computed metrics took on AVERAGE %f s" % (query, average))
+        self.plugin.debug("END PERFORMANCE WATCH SEARCH BLOCK")
 
     def test_hive_source_code_indexing_searching_performance_search_metrics(self):
         """
         This method targets the scoring infrastructure, and asserts if the results were properly scored and sorted according to the Combined Scorer
         computing the metrics in index time.
         """
-
-        # get the logger
-        logger = self.plugin.logger
 
         test_index = None
         # index the hive source
@@ -740,9 +731,9 @@ class SearchTestCase(unittest.TestCase):
             test_index = None
             test_results = None
 
-            logger.debug("Performance Test garbage collection started")
+            self.plugin.debug("Performance Test garbage collection started")
             garbage_collection_return = gc.collect()
-            logger.debug("Performance Test garbage collection finished in %f s returning %s" % (time.time() - start_time, garbage_collection_return))
+            self.plugin.debug("Performance Test garbage collection finished in %f s returning %s" % (time.time() - start_time, garbage_collection_return))
 
             start_time = time.time()
             test_index = self.plugin.create_index_with_identifier("test_index_identifier",
@@ -756,9 +747,9 @@ class SearchTestCase(unittest.TestCase):
             # compute duration
             duration = end_time - start_time
 
-            logger.debug("Index creation WITHOUT metrics on '%s' took %f s" % (start_path, duration))
+            self.plugin.debug("Index creation WITHOUT metrics on '%s' took %f s" % (start_path, duration))
             index_statistics = test_index.calculate_statistics()
-            logger.debug(index_statistics)
+            self.plugin.debug(index_statistics)
 
             properties = {"search_scorer_function_identifier" : "frequency_location_distance_scorer_function",
                           "frequency_location_distance_scorer_function_parameters" : {"word_frequency_scorer_function" : 1.0,
@@ -776,11 +767,11 @@ class SearchTestCase(unittest.TestCase):
             # compute duration
             duration = end_time - start_time
 
-            logger.debug("Search for '%s' with search time metrics took %f s" % (query, duration))
+            self.plugin.debug("Search for '%s' with search time metrics took %f s" % (query, duration))
 
-            logger.debug("frequency_location_distance_scorer_function %s" % properties["frequency_location_distance_scorer_function_parameters"])
+            self.plugin.debug("frequency_location_distance_scorer_function %s" % properties["frequency_location_distance_scorer_function_parameters"])
             for test_result in test_results[0:10]:
-                logger.debug(" %s SCORE: %f" % (test_result["document_id"], test_result["score"]))
+                self.plugin.debug(" %s SCORE: %f" % (test_result["document_id"], test_result["score"]))
 
         def test_index_vs_search_time_metrics_performance(self):
             pass
