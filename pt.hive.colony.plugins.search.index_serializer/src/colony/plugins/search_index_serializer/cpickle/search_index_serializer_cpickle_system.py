@@ -110,9 +110,6 @@ class SearchIndexSerializerCpickle:
         if not FILE_PATH_VALUE in properties:
             raise search_index_serializer_cpickle_exceptions.MissingProperty(FILE_PATH_VALUE)
 
-        # retrieves the self.search_index_serializer_cpickle_plugin from the plugin
-        self.search_index_serializer_cpickle_plugin = self.search_index_serializer_cpickle_plugin.self.search_index_serializer_cpickle_plugin
-
         # retrieves the file path
         file_path = properties[FILE_PATH_VALUE]
 
