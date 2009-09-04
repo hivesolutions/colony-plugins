@@ -74,11 +74,17 @@ class SearchRemoteService:
     def create_index_with_identifier(self, search_index_identifier, properties):
         search_plugin = self.search_remote_service_plugin.search_plugin
 
+        # @todo: wrap this in thread so that the rpc returns immediately
         search_index = search_plugin.create_index_with_identifier(search_index_identifier, properties)
 
         search_index_metadata = search_index.get_metadata()
 
         return search_index_metadata
+
+    def remove_index_with_identifier(self, search_index_identifier, properties):
+        search_plugin = self.search_remote_service_plugin.search_plugin
+
+        return search_plugin.remove_index_with_identifier(search_index_identifier, properties)
 
     def search_index(self, search_index_identifier, search_query, properties):
         search_plugin = self.search_remote_service_plugin.search_plugin
