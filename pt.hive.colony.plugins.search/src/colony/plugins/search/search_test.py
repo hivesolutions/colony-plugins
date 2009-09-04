@@ -116,6 +116,23 @@ class SearchTestCase(unittest.TestCase):
         self.assertTrue(test_index.forward_index_map)
         self.assertTrue(test_index.inverted_index_map)
 
+
+    def test_method_create_index_using_repository(self):
+        """
+        This method targets the index creation using an available test path and uses the repository in the process.
+        """
+
+        create_index_result = self.plugin.create_index_with_identifier("test_index_identifier", {"start_path" : CRAWL_TARGET, "type" : INDEX_TYPE})
+
+        # asserts that the index was sucessfully created
+        self.assertTrue(create_index_result)
+
+        test_index = self.plugin.get_index_by_identifier("test_index_identifier")
+
+        self.assertTrue(test_index)
+        self.assertTrue(test_index.forward_index_map)
+        self.assertTrue(test_index.inverted_index_map)
+
     def test_method_persist_index(self):
         """
         This method targets the index persistence façade method of the search plugin.
@@ -749,7 +766,6 @@ class SearchTestCase(unittest.TestCase):
 
             self.plugin.debug("Index creation WITHOUT metrics on '%s' took %f s" % (start_path, duration))
             index_statistics = test_index.calculate_statistics()
-            self.plugin.debug(index_statistics)
 
             properties = {"search_scorer_function_identifier" : "frequency_location_distance_scorer_function",
                           "frequency_location_distance_scorer_function_parameters" : {"word_frequency_scorer_function" : 1.0,

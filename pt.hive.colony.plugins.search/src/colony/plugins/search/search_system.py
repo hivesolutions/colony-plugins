@@ -377,6 +377,17 @@ class Search:
         # return the final scored and sorted results
         return sorted_search_results
 
+    def get_index_by_identifier(self, search_index_identifier):
+        """
+        Retrieves the index with the specified identifier from the index repository.
+        """
+
+        # retrieves the reference for the index repository
+        search_index_repository_plugin = self.search_plugin.search_index_repository_plugin
+
+        # retrieves the index from the repository
+        return search_index_repository_plugin.get_index(search_index_identifier)
+
     def get_indexes_metadata(self):
         """
         Retrieves the metadata for all the indexes in the index repository.
