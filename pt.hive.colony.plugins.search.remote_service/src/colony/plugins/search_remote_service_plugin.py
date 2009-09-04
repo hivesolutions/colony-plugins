@@ -56,13 +56,18 @@ class SearchRemoteServicePlugin(colony.plugins.plugin_system.Plugin):
     capabilities = ["rpc_service"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.search", "1.0.0")]
+                    "pt.hive.colony.plugins.search", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.main.tasks.task_manager", "1.0.0"),]
     events_handled = []
     events_registrable = []
 
     search_remote_service = None
 
     search_plugin = None
+    """ Search plugin """
+    task_manager_plugin = None
+    """ Task manager plugin """
 
     @colony.plugins.decorators.load_plugin("pt.hive.colony.plugins.search.remote_service", "1.0.0")
     def load_plugin(self):
@@ -128,3 +133,10 @@ class SearchRemoteServicePlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.search")
     def set_search_plugin(self, search_plugin):
         self.search_plugin = search_plugin
+
+    def get_task_manager_plugin(self):
+        return self.task_manager_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.tasks.task_manager")
+    def set_task_manager_plugin(self, task_manager_plugin):
+        self.task_manager_plugin = task_manager_plugin

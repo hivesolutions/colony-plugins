@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt>"
+__author__ = "João Magalhães <joamag@hive.pt> & Luís Martinho <lmartinho@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
@@ -40,6 +40,12 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 SERVICE_ID = "search_remote_service"
 """ The service id """
+
+SEARCH_INDEX_IDENTIFIER_VALUE = "search_index_identifier"
+""" The search index identifier parameter name """
+
+PROPERTIES_VALUE = "properties"
+""" The properties parameter name """
 
 class SearchRemoteService:
     """
@@ -72,14 +78,19 @@ class SearchRemoteService:
         return {}
 
     def create_index_with_identifier(self, search_index_identifier, properties):
-        search_plugin = self.search_remote_service_plugin.search_plugin
 
-        # @todo: wrap this in thread so that the rpc returns immediately
-        search_index = search_plugin.create_index_with_identifier(search_index_identifier, properties)
+        # the task options map
+        options = {SEARCH_INDEX_IDENTIFIER_VALUE : search_index_identifier,
+                   PROPERTIES_VALUE : properties}
 
-        search_index_metadata = search_index.get_metadata()
+        # creates an index creation task using the task manager
+        self.task = self.search_remote_service_plugin.task_manager_plugin.create_new_task("Search Remote Service", "Creating index", self.start_create_index_handler)
+        self.task.set_task_pause_handler(self.pause_handler)
+        self.task.set_task_resume_handler(self.resume_handler)
+        self.task.set_task_stop_handler(self.stop_handler)
+        self.task.start(options)
 
-        return search_index_metadata
+        return True
 
     def remove_index_with_identifier(self, search_index_identifier, properties):
         search_plugin = self.search_remote_service_plugin.search_plugin
@@ -95,3 +106,46 @@ class SearchRemoteService:
         search_plugin = self.search_remote_service_plugin.search_plugin
 
         return search_plugin.get_indexes_metadata()
+
+    def start_create_index_handler(self, task, options):
+        """
+        Handler invoked when the create index task starts
+
+        @param task: Create index task object
+        @param options: Create index task options.
+        """
+
+        # retrieves the search index identifier for the creation operation
+        search_index_identifier = options[SEARCH_INDEX_IDENTIFIER_VALUE]
+        # retrieves the creation properties for the creation operation
+        properties = options[PROPERTIES_VALUE]
+
+        search_plugin = self.search_remote_service_plugin.search_plugin
+
+        search_plugin.create_index_with_identifier(search_index_identifier, properties)
+
+        task.confirm_stop(True)
+
+    def pause_handler(self, options):
+        """
+        Handler invoked when a task pauses.
+
+        @param options: Task options.
+        """
+        pass
+
+    def resume_handler(self, options):
+        """
+        Handler invoked when a task resumes.
+
+        @param options: Task options.
+        """
+        pass
+
+    def stop_handler(self, options):
+        """
+        Handler invoked when a task stops.
+
+        @param options: Task options.
+        """
+        pass
