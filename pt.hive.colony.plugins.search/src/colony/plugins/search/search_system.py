@@ -400,3 +400,16 @@ class Search:
         indexes_metadata = search_index_repository_plugin.get_indexes_metadata()
 
         return indexes_metadata
+
+    def get_search_crawler_adapter_types(self):
+        """
+        Retrieves the available crawler adapter types in the crawler plugin.
+        """
+
+        # retrieves the reference for the search crawler plugin
+        search_crawler_plugin = self.search_plugin.search_crawler_plugin
+
+        # retrieves all the crawler types
+        crawler_types = search_crawler_plugin.get_search_crawler_adapter_types()
+
+        return crawler_types
