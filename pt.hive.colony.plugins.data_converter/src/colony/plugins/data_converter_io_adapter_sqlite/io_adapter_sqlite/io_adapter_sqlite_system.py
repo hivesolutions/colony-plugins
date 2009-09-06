@@ -568,6 +568,7 @@ class IoAdapterSqlite:
         cursor = connection.cursor()
 
         try:
+            print query
             cursor.execute(query)
             results = cursor.fetchall()
         finally:
@@ -724,7 +725,7 @@ class IoAdapterSqlite:
         field_values_sql_query = "".join([field_values_sql_query_template % field_value for field_value in escaped_field_values])[:-1]
 
         # replaces all none strings with a null constant in the field values part of the sql insert query
-        field_values_sql_query = field_values_sql_query.replace(("'%s'") % None, None)
+        field_values_sql_query = field_values_sql_query.replace("'None'", "NULL")
 
         # creates the sql insert query
         insert_row_sql_query = INSERT_ROW_SQL_QUERY_TEMPLATE % (table_name, column_names_sql_query, field_values_sql_query)
