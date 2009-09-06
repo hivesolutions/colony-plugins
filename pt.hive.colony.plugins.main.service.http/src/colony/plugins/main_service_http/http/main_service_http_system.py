@@ -352,8 +352,8 @@ class MainServiceHttp:
                 self.http_client_thread_pool.insert_task(task_descriptor)
 
                 self.main_service_http_plugin.debug("Number of threads in pool: %d" % self.http_client_thread_pool.current_number_threads)
-            except:
-                self.main_service_http_plugin.error("Error accepting connection")
+            except Exception, exception:
+                self.main_service_http_plugin.error("Error accepting connection: " + exception)
 
         # closes the http socket
         self.http_socket.close()
