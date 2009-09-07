@@ -568,7 +568,6 @@ class IoAdapterSqlite:
         cursor = connection.cursor()
 
         try:
-            print query
             cursor.execute(query)
             results = cursor.fetchall()
         finally:
