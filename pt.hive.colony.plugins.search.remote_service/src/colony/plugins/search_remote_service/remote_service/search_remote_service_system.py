@@ -112,6 +112,11 @@ class SearchRemoteService:
 
         return search_plugin.get_search_crawler_adapter_types()
 
+    def get_search_index_persistence_adapter_types(self):
+        search_plugin = self.search_remote_service_plugin.search_plugin
+
+        return search_plugin.get_search_index_persistence_adapter_types()
+
     def start_create_index_handler(self, task, options):
         """
         Handler invoked when the create index task starts

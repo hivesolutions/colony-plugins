@@ -131,6 +131,10 @@ class SearchRemoteServicePlugin(colony.plugins.plugin_system.Plugin):
     def get_search_crawler_adapter_types(self):
         return self.search_remote_service.get_search_crawler_adapter_types()
 
+    @colony.plugins.decorators.plugin_meta_information("rpc_method", {"alias" : []})
+    def get_search_index_persistence_adapter_types(self):
+        return self.search_remote_service.get_search_index_persistence_adapter_types()
+
     def get_search_plugin(self):
         return self.search_plugin
 
