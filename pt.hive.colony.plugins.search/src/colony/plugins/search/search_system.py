@@ -413,3 +413,16 @@ class Search:
         crawler_types = search_crawler_plugin.get_search_crawler_adapter_types()
 
         return crawler_types
+
+    def get_search_index_persistence_adapter_types(self):
+        """
+        Retrieves the available search persistence adapter types in the search persistence plugin.
+        """
+
+        # retrieves the reference for the search persistence plugin
+        search_index_persistence_plugin = self.search_plugin.search_index_persistence_plugin
+
+        # retrieves all the search persistence adapter types
+        search_index_persistence_adapter_types = search_index_persistence_plugin.get_search_index_persistence_adapter_types()
+
+        return search_index_persistence_adapter_types

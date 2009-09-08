@@ -157,6 +157,9 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
     def get_search_crawler_adapter_types(self):
         return self.search.get_search_crawler_adapter_types()
 
+    def get_search_index_persistence_adapter_types(self):
+        return self.search.get_search_index_persistence_adapter_types()
+
     def get_plugin_test_case_bundle(self):
         return self.search_test.get_plugin_test_case_bundle()
 
