@@ -117,6 +117,18 @@ class SearchRemoteService:
 
         return search_plugin.get_search_index_persistence_adapter_types()
 
+    def persist_index_with_identifier(self, search_index_identifier, properties):
+        search_plugin = self.search_remote_service_plugin.search_plugin
+
+        # @todo: wrap this operation in a task
+        return search_plugin.persist_index_with_identifier(search_index_identifier, properties)
+
+    def load_index_with_identifier(self, search_index_identifier, properties):
+        search_plugin = self.search_remote_service_plugin.search_plugin
+
+        # @todo: wrap this operation in a task
+        return search_plugin.load_index_with_identifier(search_index_identifier, properties)
+
     def start_create_index_handler(self, task, options):
         """
         Handler invoked when the create index task starts

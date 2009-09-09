@@ -130,6 +130,9 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
     def persist_index(self, search_index, properties):
         return self.search.persist_index(search_index, properties)
 
+    def persist_index_with_identifier(self, search_index_identifier, properties):
+        return self.search.persist_index_with_identifier(search_index_identifier, properties)
+
     def load_index(self, properties):
         return self.search.load_index(properties)
 

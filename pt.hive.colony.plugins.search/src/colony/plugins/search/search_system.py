@@ -188,6 +188,31 @@ class Search:
         # returns with the success status signaled by the persist operation
         return persistence_success
 
+    def persist_index_with_identifier(self, search_index_identifier, properties):
+        """
+        Persists an index from the index repository under the specified index identifier
+        to a given location using the specified persistence type and respective options.
+
+        @type search_index_identifier: String
+        @param search_index_identifier: The index identifier in the repository.
+        @type properties: Dictionary
+        @param properties: The properties to persist the search index.
+        @rtype: SearchIndex
+        @return: The loaded search index
+        """
+
+        # retrieves the reference for the index repository
+        search_index_repository_plugin = self.search_plugin.search_index_repository_plugin
+
+        # retrieves the search index from the repository
+        search_index = search_index_repository_plugin.get_index(search_index_identifier)
+
+        # persists the index using the base method
+        persistence_success = self.persist_index(search_index, properties)
+
+        # propagates the persistence success
+        return persistence_success
+
     def load_index(self, properties):
         """
         Loads an index from a given location using the specified persistence type.
@@ -231,7 +256,8 @@ class Search:
         # inserts the index in the repository
         search_index_repository_plugin.add_index(search_index, search_index_identifier)
 
-        return search_index
+        # returns the index with which the index was added to the repository
+        return search_index_identifier
 
     def query_index(self, search_index, search_query, properties):
         """

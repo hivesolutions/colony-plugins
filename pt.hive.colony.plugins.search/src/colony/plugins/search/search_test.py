@@ -146,6 +146,22 @@ class SearchTestCase(unittest.TestCase):
         persistence_sucess = self.plugin.persist_index(test_index, properties)
         self.assertTrue(persistence_sucess)
 
+    def test_method_persist_index_with_identifier(self):
+        """
+        This method targets the index persistence façade method of the search plugin, using an index already in the repository
+        """
+
+        # declares the index identifier
+        test_index_identifier = "test_index_identifier"
+
+        # creates the test index
+        test_index = self.plugin.create_index_with_identifier(test_index_identifier, {"start_path" : CRAWL_TARGET, "type" : INDEX_TYPE})
+
+        # persists the index to defined storage from the specified identifier
+        properties = {"file_path" : INDEX_PERSISTENCE_TARGET_FILE_PATH, "persistence_type" : PERSISTENCE_TYPE, "serializer_type": SERIALIZER_TYPE}
+        persistence_sucess = self.plugin.persist_index_with_identifier(test_index_identifier, properties)
+        self.assertTrue(persistence_sucess)
+
     def test_method_performance_create_index(self):
         """
         This test times the execution of the create index method, and fails if the specified benchmark is not met.
