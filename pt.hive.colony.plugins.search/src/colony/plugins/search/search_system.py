@@ -94,6 +94,8 @@ class Search:
         @return: The search index for the given properties.
         """
 
+        start_time = time.time()
+
         # in case type value is not defined in properties
         if not TYPE_VALUE in properties:
             properties[TYPE_VALUE] = DEFAULT_INDEX_TYPE
@@ -110,32 +112,41 @@ class Search:
         # retrieves the type of index
         index_type = properties[TYPE_VALUE]
 
-        start_time = time.time()
+        crawling_start_time = time.time()
 
         # retrieves the tokens list
         tokens_list = search_crawler_plugin.get_tokens(properties)
 
-        end_time = time.time()
-        duration = end_time - start_time
-        self.search_plugin.debug("Crawling finished in %f s" % duration)
+        crawling_end_time = time.time()
+        crawling_duration = crawling_end_time - crawling_start_time
+        self.search_plugin.debug("Crawling finished in %f s" % crawling_duration)
 
-        start_time = time.time()
+        tokens_processing_start_time = time.time()
 
         # processes the tokens list (modifying it) and retrieves the used interpreter adapters list
         used_interpreter_adapter_list = search_interpreter_plugin.process_tokens_list(tokens_list, properties)
 
-        end_time = time.time()
-        duration = end_time - start_time
-        self.search_plugin.debug("Processing tokens finished in %f s" % duration)
+        tokens_processing_end_time = time.time()
+        tokens_processing_duration = tokens_processing_end_time - tokens_processing_start_time
+        self.search_plugin.debug("Processing tokens finished in %f s" % tokens_processing_duration)
 
-        start_time = time.time()
+        indexing_start_time = time.time()
 
         # creates the search index with the given tokens list and properties
         search_index = search_indexer_plugin.create_index(tokens_list, properties)
 
+        indexing_end_time = time.time()
+        indexing_duration = indexing_end_time - indexing_start_time
+        self.search_plugin.debug("Build index finished in %f s" % indexing_duration)
+
         end_time = time.time()
-        duration = end_time - start_time
-        self.search_plugin.debug("Build index finished in %f s" % duration)
+        index_creation_duration = end_time - start_time
+
+        # sets the retrieved durations in the index statistics
+        search_index.statistics["crawling_duration"] = crawling_duration
+        search_index.statistics["tokens_processing_duration"] = tokens_processing_duration
+        search_index.statistics["indexing_duration"] = indexing_duration
+        search_index.statistics["index_creation_duration"] = index_creation_duration
 
         # returns the search index
         return search_index
