@@ -258,7 +258,7 @@ class SearchIndexer:
         """
 
         # the computed metrics values are gathered in a map, and then applied to the search index
-        # decreasing coupling between the metrics computation and from the index internal structure
+        # decreasing coupling between the metrics computation and the index internal structure
 
         # the map holds the computed metrics for each metric level:
         # - document level: metrics that apply to a document as a whole
