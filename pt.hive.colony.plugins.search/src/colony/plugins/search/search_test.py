@@ -62,9 +62,6 @@ TEST_QUERY_FIRST_RESULT = "/remote_home/lmartinho/search/light-docs/cars.txt"
 QUERY_EVALUATOR_TYPE_VALUE = "query_evaluator_type"
 """ The key for the properties map, to access the query evaluator type """
 
-SEARCH_SCORER_FORMULA_TYPE_VALUE = "search_scorer_formula_type"
-""" The search scorer formula intended for testing """
-
 import cProfile
 
 class SearchTest:
