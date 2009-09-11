@@ -394,6 +394,16 @@ class Search:
             # an empty result set is sorted by nature
             sorted_search_results = search_results
 
+        # @todo: perform smarter cut of the search results, as earlier as possible
+        start_record = properties.get("start_record", None)
+        number_records = properties.get("number_records", None)
+        if not start_record == None and not number_records == None:
+            end_record = start_record + number_records
+        else:
+            end_record = None
+
+        sorted_search_results = sorted_search_results[start_record:end_record]
+
         return sorted_search_results
 
     def search_index_by_identifier(self, search_index_identifier, search_query, properties):

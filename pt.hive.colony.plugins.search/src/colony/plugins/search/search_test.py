@@ -802,8 +802,22 @@ class SearchTestCase(unittest.TestCase):
             for test_result in test_results[0:10]:
                 self.plugin.debug(" %s SCORE: %f" % (test_result["document_id"], test_result["score"]))
 
-        def test_index_vs_search_time_metrics_performance(self):
-            pass
+    def test_search_index_start_record_number_records(self):
+        """
+        This method targets the sliding window feature of the search infrastructure. The search method
+        provides optional start_record and number_records specification, allowing for variable size result set.
+        """
+
+        test_index = None
+        test_index = self.plugin.create_index_with_identifier("new_index_identifier",
+                                                              {"start_path" : "/remote_home/lmartinho/search/scorer_functions_test",
+                                                               "type" : INDEX_TYPE})
+
+        properties = {"start_record" : 0, "number_records" : 2}
+        test_results = self.plugin.search_index_by_identifier("new_index_identifier", "luis", properties)
+        test_results_size = len(test_results)
+
+        self.assertTrue(test_results_size == 2)
 
 class SearchPluginTestCase:
 
