@@ -97,7 +97,7 @@ class SearchRemoteService:
 
         return search_plugin.remove_index_with_identifier(search_index_identifier, properties)
 
-    def search_index(self, search_index_identifier, search_query, properties):
+    def search_index_by_identifier(self, search_index_identifier, search_query, properties):
         search_plugin = self.search_remote_service_plugin.search_plugin
 
         return search_plugin.search_index_by_identifier(search_index_identifier, search_query, properties)

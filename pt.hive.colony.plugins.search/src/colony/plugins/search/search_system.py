@@ -66,6 +66,12 @@ DEFAULT_QUERY_EVALUATOR_TYPE = "query_parser"
 SORT_ORDER_VALUE = "sort_order"
 """ The key to retrieve the sort order from the properties map """
 
+SEARCH_RESULTS_VALUE = "search_results"
+""" The key to retrieve the actual search results list from the search results map """
+
+SEARCH_STATISTICS_VALUE = "search_statistics"
+""" The key to retrieve the statistics for the search from the search results map """
+
 class Search:
     """
     The search class.
@@ -332,24 +338,21 @@ class Search:
         (document id, search result information) tuples sorted by score.
         """
 
+        # retrieves the search scorer plugin
+        search_scorer_plugin = self.search_plugin.search_scorer_plugin
+
         # in case the search scorer function is not defined in the properties
         if not SEARCH_SCORER_FUNCTION_IDENTIFIER_VALUE in properties:
             properties[SEARCH_SCORER_FUNCTION_IDENTIFIER_VALUE] = DEFAULT_SEARCH_SCORER_FUNCTION_IDENTIFIER
 
-        # retrieves the search scorer plugins
-        search_scorer_plugin = self.search_plugin.search_scorer_plugin
-
-        # retrieves the search sorter plugins
-        search_sorter_plugin = self.search_plugin.search_sorter_plugin
-
         # retrieves the search scorer formula type specified in the properties parameter
         search_scorer_function_identifier = properties[SEARCH_SCORER_FUNCTION_IDENTIFIER_VALUE]
 
-        # if there was no search scorer plugin available
+        # if the specified scorer function is not available
         if not search_scorer_function_identifier in search_scorer_plugin.get_function_identifiers():
             raise search_exceptions.InvalidFunctionRequested(search_scorer_function_identifier)
 
-        # performs the search using own query_index method
+        # performs the search using query_index method
         start_time = time.time()
 
         # disable the garbage collector during parsing, to improve performance
@@ -362,49 +365,47 @@ class Search:
             # re-enable the garbage collector
             gc.enable()
 
-        end_time = time.time()
-        duration = end_time - start_time
-        self.search_plugin.debug("Querying index finished in %f s" % duration)
+        querying_duration = time.time() - start_time
+        self.search_plugin.debug("Querying index finished in %f s" % querying_duration)
 
         if search_results:
             # scores the results using the available search scorer plugin
             start_time = time.time()
-
-            scored_search_results = search_scorer_plugin.score_results(search_results, search_index, properties)
-
-            end_time = time.time()
-            duration = end_time - start_time
-            self.search_plugin.debug("Scoring results finished in %f s" % duration)
-
-            # gets the search scorer function repository plugin
-            search_scorer_function_repository_plugin = self.search_plugin.search_scorer_function_repository_plugin
-
-            # retrieves the top level scorer function
-            search_scorer_function = search_scorer_function_repository_plugin.get_function(search_scorer_function_identifier)
+            scored_search_results = self.score_results(search_results, search_index, properties)
+            scoring_duration = time.time() - start_time
+            self.search_plugin.debug("Scoring results finished in %f s" % scoring_duration)
 
             # sorts the search results using the score
             start_time = time.time()
+            sorted_search_results = self.sort_results(scored_search_results, properties)
+            sorting_duration = time.time() - start_time
+            self.search_plugin.debug("Sorting results finished in %f s" % sorting_duration)
 
-            sorted_search_results = search_sorter_plugin.sort_results(scored_search_results, properties)
+            # limit search results according to start record and number of records
+            start_time = time.time()
+            limited_search_results = self.limit_results(sorted_search_results, properties)
+            limiting_duration = time.time() - start_time
+            self.search_plugin.debug("Limiting results finished in %f s" % limiting_duration)
 
-            end_time = time.time()
-            duration = end_time - start_time
-            self.search_plugin.debug("Sorting results finished in %f s" % duration)
+            final_search_results = limited_search_results
         else:
-            # an empty result set is sorted by nature
-            sorted_search_results = search_results
+            # an empty result set
+            scoring_duration = 0
+            sorting_duration = 0
+            limiting_duration = 0
 
-        # @todo: perform smarter cut of the search results, as earlier as possible
-        start_record = properties.get("start_record", None)
-        number_records = properties.get("number_records", None)
-        if not start_record == None and not number_records == None:
-            end_record = start_record + number_records
-        else:
-            end_record = None
+            # the final search results
+            final_search_results = search_results
 
-        sorted_search_results = sorted_search_results[start_record:end_record]
+        search_statistics = {"querying_duration" : querying_duration,
+                             "scoring_duration" : scoring_duration,
+                             "sorting_duration" : sorting_duration,
+                             "limiting_duration" : limiting_duration}
 
-        return sorted_search_results
+        search_results_map = {SEARCH_RESULTS_VALUE : final_search_results,
+                              SEARCH_STATISTICS_VALUE : search_statistics}
+
+        return search_results_map
 
     def search_index_by_identifier(self, search_index_identifier, search_query, properties):
         """
@@ -419,10 +420,10 @@ class Search:
 
         # queries the index with the search query
         # requesting scoring and sorting services
-        sorted_search_results = self.search_index(search_index, search_query, properties)
+        search_results_map = self.search_index(search_index, search_query, properties)
 
         # return the final scored and sorted results
-        return sorted_search_results
+        return search_results_map
 
     def get_index_by_identifier(self, search_index_identifier):
         """
@@ -473,3 +474,35 @@ class Search:
         search_index_persistence_adapter_types = search_index_persistence_plugin.get_search_index_persistence_adapter_types()
 
         return search_index_persistence_adapter_types
+
+    def score_results(self, search_results, search_index, properties):
+        # retrieves the search scorer plugin
+        search_scorer_plugin = self.search_plugin.search_scorer_plugin
+
+        # scores the results using the plugin
+        scored_search_results = search_scorer_plugin.score_results(search_results, search_index, properties)
+
+        return scored_search_results
+
+    def sort_results(self, scored_search_results, properties):
+        # retrieves the search sorter plugin
+        search_sorter_plugin = self.search_plugin.search_sorter_plugin
+
+        # sorts the already scored search results
+        sorted_search_results = search_sorter_plugin.sort_results(scored_search_results, properties)
+
+        return sorted_search_results
+
+    def limit_results(self, sorted_search_results, properties):
+        # @todo: perform smarter cut of the search results, as earlier as possible
+        start_record = properties.get("start_record", None)
+        number_records = properties.get("number_records", None)
+
+        if not start_record == None and not number_records == None:
+            end_record = start_record + number_records
+        else:
+            end_record = None
+
+        limited_search_results = sorted_search_results[start_record:end_record]
+
+        return limited_search_results
