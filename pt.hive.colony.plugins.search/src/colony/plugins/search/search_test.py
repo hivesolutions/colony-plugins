@@ -59,6 +59,9 @@ TEST_QUERY = "ford"
 QUERY_EVALUATOR_TYPE_VALUE = "query_evaluator_type"
 """ The key for the properties map, to access the query evaluator type """
 
+TEST_INDEX_IDENTIFIER = "test_index_identifier"
+""" The index identifier to be used throughout the testes """
+
 import cProfile
 
 class SearchTest:
@@ -94,6 +97,15 @@ class SearchTestCase(unittest.TestCase):
         self.plugin.info("Setting up Search Test Case...")
 
         self.generate_test_files()
+
+    def tearDown(self):
+        properties = {}
+
+        # if an index has been added to the repository remove it
+        try:
+            self.plugin.remove_index_with_identifier(TEST_INDEX_IDENTIFIER, properties)
+        except Exception:
+            pass
 
     def generate_test_files(self):
         # @todo: generate the test input on the fly
@@ -131,12 +143,12 @@ class SearchTestCase(unittest.TestCase):
         This method targets the index creation using an available test path and uses the repository in the process.
         """
 
-        create_index_result = self.plugin.create_index_with_identifier("test_index_identifier", {"start_path" : self.crawl_target, "type" : INDEX_TYPE})
+        create_index_result = self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER, {"start_path" : self.crawl_target, "type" : INDEX_TYPE})
 
         # asserts that the index was sucessfully created
         self.assertTrue(create_index_result)
 
-        test_index = self.plugin.get_index_by_identifier("test_index_identifier")
+        test_index = self.plugin.get_index_by_identifier(TEST_INDEX_IDENTIFIER)
 
         self.assertTrue(test_index)
         self.assertTrue(test_index.forward_index_map)
@@ -153,23 +165,27 @@ class SearchTestCase(unittest.TestCase):
         # persists the index to defined storage
         properties = {"file_path" : self.index_persistence_target_file_path, "persistence_type" : PERSISTENCE_TYPE, "serializer_type": SERIALIZER_TYPE}
         persistence_sucess = self.plugin.persist_index(test_index, properties)
+
         self.assertTrue(persistence_sucess)
+
+        # remove the persisted index file
+        os.unlink(self.index_persistence_target_file_path)
 
     def test_method_persist_index_with_identifier(self):
         """
         This method targets the index persistence façade method of the search plugin, using an index already in the repository
         """
 
-        # declares the index identifier
-        test_index_identifier = "test_index_identifier"
-
         # creates the test index
-        test_index = self.plugin.create_index_with_identifier(test_index_identifier, {"start_path" : self.crawl_target, "type" : INDEX_TYPE})
+        test_index = self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER, {"start_path" : self.crawl_target, "type" : INDEX_TYPE})
 
         # persists the index to defined storage from the specified identifier
         properties = {"file_path" : self.index_persistence_target_file_path, "persistence_type" : PERSISTENCE_TYPE, "serializer_type": SERIALIZER_TYPE}
-        persistence_sucess = self.plugin.persist_index_with_identifier(test_index_identifier, properties)
+        persistence_sucess = self.plugin.persist_index_with_identifier(TEST_INDEX_IDENTIFIER, properties)
         self.assertTrue(persistence_sucess)
+
+        # remove the persisted index file
+        os.unlink(self.index_persistence_target_file_path)
 
     def test_method_query_index(self):
         """
@@ -198,7 +214,7 @@ class SearchTestCase(unittest.TestCase):
         query = "luis"
         """ The query for the tf query test """
 
-        term_frequency_scorer_first_result = "/remote_home/lmartinho/search/scorer_test/ficheiro_10.txt"
+        term_frequency_scorer_first_result = self.scorer_test_crawler_target + "/ficheiro_10.txt"
         """ The expected result for the tf query test """
 
         # creates in-memory index
@@ -218,6 +234,7 @@ class SearchTestCase(unittest.TestCase):
         first_result_document_id = first_result["document_id"]
 
         # @todo: create assertion for the first result
+        # assertEqual(first_result_document_id, term_frequency_scorer_first_result)
 
     def test_method_create_index_with_identifier(self):
         """
@@ -225,14 +242,14 @@ class SearchTestCase(unittest.TestCase):
         and saving to the search index repository with a specified identifier.
         """
 
-        test_index = self.plugin.create_index_with_identifier("test_index_identifier", {"start_path" : self.crawl_target, "type" : INDEX_TYPE})
+        test_index = self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER, {"start_path" : self.crawl_target, "type" : INDEX_TYPE})
         # asserts that the index was sucessfully created
         self.assertTrue(test_index)
         self.assertTrue(test_index.forward_index_map)
         self.assertTrue(test_index.inverted_index_map)
 
         properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "term_frequency_scorer_function"}
-        test_results_map = self.plugin.search_index_by_identifier("test_index_identifier", "ford", properties)
+        test_results_map = self.plugin.search_index_by_identifier(TEST_INDEX_IDENTIFIER, "ford", properties)
 
         test_results = test_results_map["search_results"]
 
@@ -250,7 +267,7 @@ class SearchTestCase(unittest.TestCase):
         properties = {"start_path" : self.scorer_test_crawler_target,
                       "type" : INDEX_TYPE,
                       "metrics_identifiers" : ["term_frequency_scorer_metric"]}
-        test_index = self.plugin.create_index_with_identifier("test_index_identifier", properties)
+        test_index = self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER, properties)
 
         # asserts that the index was sucessfully created
         self.assertTrue(test_index)
@@ -268,7 +285,7 @@ class SearchTestCase(unittest.TestCase):
         properties = {"start_path" : self.scorer_test_crawler_target,
                       "type" : INDEX_TYPE,
                       "metrics_identifiers" : ["word_document_frequency_scorer_metric"]}
-        test_index = self.plugin.create_index_with_identifier("test_index_identifier", properties)
+        test_index = self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER, properties)
 
         # asserts that the index was sucessfully created
         self.assertTrue(test_index)
@@ -289,7 +306,7 @@ class SearchTestCase(unittest.TestCase):
         properties = {"start_path" : self.scorer_test_crawler_target,
                       "type" : INDEX_TYPE,
                       "metrics_identifiers" : ["document_hits_scorer_metric"]}
-        test_index = self.plugin.create_index_with_identifier("test_index_identifier", properties)
+        test_index = self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER, properties)
 
         # asserts that the index was sucessfully created
         self.assertTrue(test_index)
@@ -309,7 +326,7 @@ class SearchTestCase(unittest.TestCase):
         properties = {"start_path" : self.scorer_test_crawler_target,
                       "type" : INDEX_TYPE,
                       "metrics_identifiers" : ["word_document_frequency_scorer_metric"]}
-        test_index = self.plugin.create_index_with_identifier("test_index_identifier", properties)
+        test_index = self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER, properties)
 
         # asserts that the index was sucessfully created
         self.assertTrue(test_index)
@@ -330,7 +347,7 @@ class SearchTestCase(unittest.TestCase):
         properties = {"start_path" : self.scorer_test_crawler_target,
                       "type" : INDEX_TYPE,
                       "metrics_identifiers" : ["hit_distance_to_top_scorer_metric"]}
-        test_index = self.plugin.create_index_with_identifier("test_index_identifier", properties)
+        test_index = self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER, properties)
 
         # asserts that the index was sucessfully created
         self.assertTrue(test_index)
@@ -351,14 +368,14 @@ class SearchTestCase(unittest.TestCase):
         This method targets the scoring infrastructure, and asserts if the results were properly scored and sorted according to WF
         """
 
-        test_index = self.plugin.create_index_with_identifier("test_index_identifier", {"start_path" : self.scorer_test_crawler_target, "type" : INDEX_TYPE})
+        test_index = self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER, {"start_path" : self.scorer_test_crawler_target, "type" : INDEX_TYPE})
         # asserts that the index was sucessfully created
         self.assertTrue(test_index)
         self.assertTrue(test_index.forward_index_map)
         self.assertTrue(test_index.inverted_index_map)
 
         properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "term_frequency_scorer_function"}
-        test_results_map = self.plugin.search_index_by_identifier("test_index_identifier", "luis pedro", properties)
+        test_results_map = self.plugin.search_index_by_identifier(TEST_INDEX_IDENTIFIER, "luis pedro", properties)
         test_results = test_results_map["search_results"]
 
         # asserts that the index was sucessfully created
@@ -373,7 +390,7 @@ class SearchTestCase(unittest.TestCase):
         This method targets the scoring infrastructure, and asserts if the results were properly scored and sorted according to WF
         """
 
-        test_index = self.plugin.create_index_with_identifier("test_index_identifier",
+        test_index = self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER,
                                                               {"start_path" : self.scorer_test_crawler_target,
                                                                "type" : INDEX_TYPE,
                                                                "metrics_identifiers" : ["word_document_frequency_scorer_metric"]})
@@ -384,7 +401,7 @@ class SearchTestCase(unittest.TestCase):
 
         properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "word_frequency_scorer_function"}
 
-        test_results_map = self.plugin.search_index_by_identifier("test_index_identifier", "luis", properties)
+        test_results_map = self.plugin.search_index_by_identifier(TEST_INDEX_IDENTIFIER, "luis", properties)
         test_results = test_results_map["search_results"]
 
         # asserts that the index was sucessfully created
@@ -401,7 +418,7 @@ class SearchTestCase(unittest.TestCase):
         """
 
         test_index = None
-        test_index = self.plugin.create_index_with_identifier("new_index_identifier",
+        test_index = self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER,
                                                               {"start_path" : self.scorer_test_crawler_target,
                                                                "type" : INDEX_TYPE})
         # asserts that the index was successfully created
@@ -410,7 +427,7 @@ class SearchTestCase(unittest.TestCase):
         self.assertTrue(test_index.inverted_index_map)
 
         properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "word_frequency_scorer_function"}
-        test_results_map = self.plugin.search_index_by_identifier("new_index_identifier", "luis", properties)
+        test_results_map = self.plugin.search_index_by_identifier(TEST_INDEX_IDENTIFIER, "luis", properties)
         test_results = test_results_map["search_results"]
 
         first_result = test_results[0]
@@ -426,13 +443,13 @@ class SearchTestCase(unittest.TestCase):
         """
 
         test_index = None
-        test_index = self.plugin.create_index_with_identifier("new_index_identifier",
+        test_index = self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER,
                                                               {"start_path" : self.scorer_functions_test_crawler_target,
                                                                "type" : INDEX_TYPE,
                                                                "metrics_identifiers" : ["word_document_frequency_scorer_metric"]})
 
         properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "word_frequency_scorer_function"}
-        test_results_map = self.plugin.search_index_by_identifier("new_index_identifier", "luis martinho", properties)
+        test_results_map = self.plugin.search_index_by_identifier(TEST_INDEX_IDENTIFIER, "luis martinho", properties)
         test_results = test_results_map["search_results"]
 
         first_result = test_results[0]
@@ -447,12 +464,12 @@ class SearchTestCase(unittest.TestCase):
         """
 
         test_index = None
-        test_index = self.plugin.create_index_with_identifier("new_index_identifier",
+        test_index = self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER,
                                                               {"start_path" : self.scorer_functions_test_crawler_target,
                                                                "type" : INDEX_TYPE})
 
         properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "document_location_scorer_function"}
-        test_results_map = self.plugin.search_index_by_identifier("new_index_identifier", "luis martinho", properties)
+        test_results_map = self.plugin.search_index_by_identifier(TEST_INDEX_IDENTIFIER, "luis martinho", properties)
         test_results = test_results_map["search_results"]
 
         first_result = test_results[0]
@@ -468,12 +485,12 @@ class SearchTestCase(unittest.TestCase):
         """
 
         test_index = None
-        test_index = self.plugin.create_index_with_identifier("new_index_identifier",
+        test_index = self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER,
                                                               {"start_path" : self.scorer_functions_test_crawler_target,
                                                                "type" : INDEX_TYPE})
 
         properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "word_distance_scorer_function"}
-        test_results_map = self.plugin.search_index_by_identifier("new_index_identifier", "luis martinho", properties)
+        test_results_map = self.plugin.search_index_by_identifier(TEST_INDEX_IDENTIFIER, "luis martinho", properties)
         test_results = test_results_map["search_results"]
 
         first_result = test_results[0]
@@ -489,7 +506,7 @@ class SearchTestCase(unittest.TestCase):
         """
 
         test_index = None
-        test_index = self.plugin.create_index_with_identifier("new_index_identifier",
+        test_index = self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER,
                                                               {"start_path" : self.scorer_functions_test_crawler_target,
                                                                "type" : INDEX_TYPE,
                                                                "file_extensions" : ["py", "PY", "txt", "TXT"]})
@@ -498,13 +515,13 @@ class SearchTestCase(unittest.TestCase):
 
         for scorer_function in scorer_functions:
             properties = {"search_scorer_function_identifier" : scorer_function}
-            test_results_map = self.plugin.search_index_by_identifier("new_index_identifier", "luis martinho plugin", properties)
+            test_results_map = self.plugin.search_index_by_identifier(TEST_INDEX_IDENTIFIER, "luis martinho plugin", properties)
             test_results = test_results_map["search_results"]
 
             # print top 5 results for each function method
-            print scorer_function
             for result in test_results[0:5]:
-                print result["document_id"], "score: ", result["score"]
+                message = "%s score: %f" % (result["document_id"], result["score"])
+                self.plugin.debug(message)
 
     def test_hive_source_code_indexing_combined_scorer_verification(self):
         """
@@ -513,7 +530,7 @@ class SearchTestCase(unittest.TestCase):
         """
 
         test_index = None
-        test_index = self.plugin.create_index_with_identifier("new_index_identifier",
+        test_index = self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER,
                                                               {"start_path" : self.scorer_functions_test_crawler_target,
                                                                "type" : INDEX_TYPE,
                                                                "file_extensions" : ["py", "PY", "txt", "TXT"]})
@@ -522,7 +539,7 @@ class SearchTestCase(unittest.TestCase):
         scorer_functions = ["word_frequency_scorer_function", "document_location_scorer_function", "word_distance_scorer_function"]
         for scorer_function in scorer_functions:
             properties = {"search_scorer_function_identifier" : scorer_function}
-            search_results_map = self.plugin.search_index_by_identifier("new_index_identifier", "luis martinho", properties)
+            search_results_map = self.plugin.search_index_by_identifier(TEST_INDEX_IDENTIFIER, "luis martinho", properties)
             search_results = search_results_map["search_results"]
             test_results[scorer_function] = search_results
 
@@ -532,7 +549,7 @@ class SearchTestCase(unittest.TestCase):
                       "frequency_location_distance_scorer_function_parameters" : {"word_frequency_scorer_function" : 1.0,
                                                                                   "document_location_scorer_function" : 0.0,
                                                                                   "word_distance_scorer_function" : 0.0}}
-        search_results_map = self.plugin.search_index_by_identifier("new_index_identifier", "luis martinho", properties)
+        search_results_map = self.plugin.search_index_by_identifier(TEST_INDEX_IDENTIFIER, "luis martinho", properties)
         search_results = search_results_map["search_results"]
         combined_test_results["word_frequency_scorer_function"] = search_results
 
@@ -540,7 +557,7 @@ class SearchTestCase(unittest.TestCase):
                       "frequency_location_distance_scorer_function_parameters" : {"word_frequency_scorer_function" : 0.0,
                                                                                   "document_location_scorer_function" : 1.0,
                                                                                   "word_distance_scorer_function" : 0.0}}
-        search_results_map = self.plugin.search_index_by_identifier("new_index_identifier", "luis martinho", properties)
+        search_results_map = self.plugin.search_index_by_identifier(TEST_INDEX_IDENTIFIER, "luis martinho", properties)
         search_results = search_results_map["search_results"]
         combined_test_results["document_location_scorer_function"] = search_results
 
@@ -548,7 +565,7 @@ class SearchTestCase(unittest.TestCase):
                       "frequency_location_distance_scorer_function_parameters" : {"word_frequency_scorer_function" : 0.0,
                                                                                   "document_location_scorer_function" : 0.0,
                                                                                   "word_distance_scorer_function" : 1.0}}
-        search_results_map = self.plugin.search_index_by_identifier("new_index_identifier", "luis martinho", properties)
+        search_results_map = self.plugin.search_index_by_identifier(TEST_INDEX_IDENTIFIER, "luis martinho", properties)
         combined_test_results["word_distance_scorer_function"] = search_results_map["search_results"]
 
         for scorer_function in test_results:
@@ -557,21 +574,23 @@ class SearchTestCase(unittest.TestCase):
                 self.assertEquals(test_results[scorer_function][i]["score"], combined_test_results[scorer_function][i]["score"])
 
     def test_no_hits_found(self):
-        index = self.plugin.create_index_with_identifier("test_index_identifier", {"start_path" : self.scorer_functions_test_crawler_target, "type" : "file_system"})
+        index = self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER, {"start_path" : self.scorer_functions_test_crawler_target, "type" : "file_system"})
 
         properties = {"query_evaluator_type" : "query_parser", "search_scorer_function_identifier" : "term_frequency_scorer_function"}
-        test_results_map = self.plugin.search_index_by_identifier("test_index_identifier", "luis query", properties)
+        test_results_map = self.plugin.search_index_by_identifier(TEST_INDEX_IDENTIFIER, "luis query", properties)
         test_results = test_results_map["search_results"]
         self.assertEquals(len(test_results), 0)
-        test_results_map = self.plugin.search_index_by_identifier("test_index_identifier", "query", properties)
+        test_results_map = self.plugin.search_index_by_identifier(TEST_INDEX_IDENTIFIER, "query", properties)
         test_results = test_results_map["search_results"]
         self.assertEquals(len(test_results), 0)
 
     def test_no_documents_for_indexing(self):
-        index = self.plugin.create_index_with_identifier("test_index_identifier_nodocs", {"start_path" : self.empty_crawler_target, "type" : "file_system"})
+        index = self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER, {"start_path" : self.empty_crawler_target, "type" : "file_system"})
         properties = {"query_evaluator_type" : "query_parser", "search_scorer_function_identifier" : "term_frequency_scorer_function"}
-        test_results = self.plugin.search_index_by_identifier("test_index_identifier_nodocs", "luis query", properties)
-        print test_results
+        test_results = self.plugin.search_index_by_identifier(TEST_INDEX_IDENTIFIER, "luis query", properties)
+
+        # checks if no exception ocurred
+        self.assertTrue(True)
 
     def test_method_persist_index_performance(self):
         """
@@ -637,6 +656,9 @@ class SearchTestCase(unittest.TestCase):
 
                 self.assertTrue(test_results)
 
+        # remove the persisted index file
+        os.unlink(self.index_persistence_target_file_path)
+
     def test_hive_source_code_indexing_searching_performance_index_metrics(self):
         """
         This method targets the scoring infrastructure, and asserts if the results were properly scored and sorted according to the Combined Scorer
@@ -647,7 +669,7 @@ class SearchTestCase(unittest.TestCase):
         test_results = None
         # index the hive source
         start_path = self.test_files_path
-        index_identifier = "test_index_identifier"
+        index_identifier = TEST_INDEX_IDENTIFIER
         query = "tiago silva hive ext"
         index_file_path = self.index_persistence_target_file_path
 
@@ -759,6 +781,9 @@ class SearchTestCase(unittest.TestCase):
         self.plugin.debug(">>> Search for '%s' with pre-computed metrics took on AVERAGE %f s" % (query, average))
         self.plugin.debug("END PERFORMANCE WATCH SEARCH BLOCK")
 
+        # remove the persisted index file
+        os.unlink(self.index_persistence_target_file_path)
+
     def test_hive_source_code_indexing_searching_performance_search_metrics(self):
         """
         This method targets the scoring infrastructure, and asserts if the results were properly scored and sorted according to the Combined Scorer
@@ -786,7 +811,7 @@ class SearchTestCase(unittest.TestCase):
             self.plugin.debug("Performance Test garbage collection finished in %f s returning %s" % (time.time() - start_time, garbage_collection_return))
 
             start_time = time.time()
-            test_index = self.plugin.create_index_with_identifier("test_index_identifier",
+            test_index = self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER,
                                                                   {"start_path" : start_path,
                                                                    "type" : "file_system",
                                                                    "file_extensions" : ["py", "PY", "txt", "TXT", "xml", "XML", "js", "JS"]})
@@ -808,7 +833,7 @@ class SearchTestCase(unittest.TestCase):
             # gather query start time
             start_time = time.time()
 
-            test_results_map = self.plugin.search_index_by_identifier("test_index_identifier", query, properties)
+            test_results_map = self.plugin.search_index_by_identifier(TEST_INDEX_IDENTIFIER, query, properties)
             test_results = test_results_map["search_results"]
 
             # gather index end time
@@ -830,12 +855,12 @@ class SearchTestCase(unittest.TestCase):
         """
 
         test_index = None
-        test_index = self.plugin.create_index_with_identifier("new_index_identifier",
+        test_index = self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER,
                                                               {"start_path" : self.scorer_functions_test_crawler_target,
                                                                "type" : INDEX_TYPE})
 
         properties = {"start_record" : 0, "number_records" : 2}
-        test_results = self.plugin.search_index_by_identifier("new_index_identifier", "luis", properties)
+        test_results = self.plugin.search_index_by_identifier(TEST_INDEX_IDENTIFIER, "luis", properties)
         test_results_size = len(test_results)
 
         self.assertTrue(test_results_size == 2)
