@@ -89,6 +89,24 @@ class SearchIndexRepository:
         """
         return self.search_index_repository_map.values()
 
+    def get_index_metadata(self, search_index_identifier):
+        """
+        Retrieves the metadata for the specified index.
+
+        @type search_index_identifier: String
+        @param search_index_identifier: The identifier for the index, in the repository.
+        @rtype Dictionary
+        @return Returns the index metadata dictionary.
+        """
+
+        # retrieves the index from the repository
+        search_index = self.search_index_repository_map[search_index_identifier]
+
+        # retrieves the metadata from the index
+        index_metadata = search_index.get_metadata()
+
+        return index_metadata
+
     def get_indexes_metadata(self):
         """
         Retrieves the metadata for all the indexes in the repository.

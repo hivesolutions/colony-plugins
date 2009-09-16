@@ -154,6 +154,12 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
     def get_index_by_identifier(self, search_index_identifier):
         return self.search.get_index_by_identifier(search_index_identifier)
 
+    def get_index_identifiers(self):
+        return self.search.get_index_identifiers()
+
+    def get_index_metadata(self, search_index_identifier):
+        return self.search.get_index_metadata(search_index_identifier)
+
     def get_indexes_metadata(self):
         return self.search.get_indexes_metadata()
 

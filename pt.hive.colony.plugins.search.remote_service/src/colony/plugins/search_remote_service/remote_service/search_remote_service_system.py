@@ -102,6 +102,16 @@ class SearchRemoteService:
 
         return search_plugin.search_index_by_identifier(search_index_identifier, search_query, properties)
 
+    def get_index_identifiers(self):
+        search_plugin = self.search_remote_service_plugin.search_plugin
+
+        return search_plugin.get_index_identifiers()
+
+    def get_index_metadata(self, search_index_identifier):
+        search_plugin = self.search_remote_service_plugin.search_plugin
+
+        return search_plugin.get_index_metadata(search_index_identifier)
+
     def get_indexes_metadata(self):
         search_plugin = self.search_remote_service_plugin.search_plugin
 

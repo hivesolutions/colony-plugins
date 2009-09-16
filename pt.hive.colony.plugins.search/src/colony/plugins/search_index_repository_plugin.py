@@ -100,5 +100,8 @@ class SearchIndexRepositoryPlugin(colony.plugins.plugin_system.Plugin):
     def get_indexes(self):
         return self.search_index_repository.get_indexes()
 
+    def get_index_metadata(self, search_index_identifier):
+        return self.search_index_repository.get_index_metadata(search_index_identifier)
+
     def get_indexes_metadata(self):
         return self.search_index_repository.get_indexes_metadata()

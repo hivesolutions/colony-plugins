@@ -436,12 +436,38 @@ class Search:
         # retrieves the index from the repository
         return search_index_repository_plugin.get_index(search_index_identifier)
 
+    def get_index_identifiers(self):
+        """
+        Retrieves a list with the identifiers for all the indexes in the index repository.
+        """
+
+        # retrieves the reference to the index repository
+        search_index_repository_plugin = self.search_plugin.search_index_repository_plugin
+
+        # retrieves all the identifiers
+        index_identifiers = search_index_repository_plugin.get_index_identifiers()
+
+        return index_identifiers
+
+    def get_index_metadata(self, search_index_identifier):
+        """
+        Retrieves the metadata for the index with the specified identifier.
+        """
+
+        # retrieves the reference to the index repository
+        search_index_repository_plugin = self.search_plugin.search_index_repository_plugin
+
+        # retrieves the index metadata
+        index_metadata = search_index_repository_plugin.get_index_metadata(search_index_identifier)
+
+        return index_metadata
+
     def get_indexes_metadata(self):
         """
         Retrieves the metadata for all the indexes in the index repository.
         """
 
-        # retrieves the reference for the index repository
+        # retrieves the reference to the index repository
         search_index_repository_plugin = self.search_plugin.search_index_repository_plugin
 
         # retrieves all the index metadata
