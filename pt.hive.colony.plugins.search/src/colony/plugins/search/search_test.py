@@ -107,6 +107,12 @@ class SearchTestCase(unittest.TestCase):
         except Exception:
             pass
 
+        # if the index persistence file has been created, remove it
+        try:
+            os.unlink(self.index_persistence_target_file_path)
+        except OSError:
+            pass
+
     def generate_test_files(self):
         # @todo: generate the test input on the fly
 
@@ -168,9 +174,6 @@ class SearchTestCase(unittest.TestCase):
 
         self.assertTrue(persistence_sucess)
 
-        # remove the persisted index file
-        os.unlink(self.index_persistence_target_file_path)
-
     def test_method_persist_index_with_identifier(self):
         """
         This method targets the index persistence façade method of the search plugin, using an index already in the repository
@@ -183,9 +186,6 @@ class SearchTestCase(unittest.TestCase):
         properties = {"file_path" : self.index_persistence_target_file_path, "persistence_type" : PERSISTENCE_TYPE, "serializer_type": SERIALIZER_TYPE}
         persistence_sucess = self.plugin.persist_index_with_identifier(TEST_INDEX_IDENTIFIER, properties)
         self.assertTrue(persistence_sucess)
-
-        # remove the persisted index file
-        os.unlink(self.index_persistence_target_file_path)
 
     def test_method_query_index(self):
         """
@@ -656,9 +656,6 @@ class SearchTestCase(unittest.TestCase):
 
                 self.assertTrue(test_results)
 
-        # remove the persisted index file
-        os.unlink(self.index_persistence_target_file_path)
-
     def test_hive_source_code_indexing_searching_performance_index_metrics(self):
         """
         This method targets the scoring infrastructure, and asserts if the results were properly scored and sorted according to the Combined Scorer
@@ -780,9 +777,6 @@ class SearchTestCase(unittest.TestCase):
         average = sum(durations) / len(durations)
         self.plugin.debug(">>> Search for '%s' with pre-computed metrics took on AVERAGE %f s" % (query, average))
         self.plugin.debug("END PERFORMANCE WATCH SEARCH BLOCK")
-
-        # remove the persisted index file
-        os.unlink(self.index_persistence_target_file_path)
 
     def test_hive_source_code_indexing_searching_performance_search_metrics(self):
         """
