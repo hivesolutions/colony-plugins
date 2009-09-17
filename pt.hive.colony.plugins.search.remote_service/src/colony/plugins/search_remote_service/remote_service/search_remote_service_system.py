@@ -128,16 +128,32 @@ class SearchRemoteService:
         return search_plugin.get_search_index_persistence_adapter_types()
 
     def persist_index_with_identifier(self, search_index_identifier, properties):
-        search_plugin = self.search_remote_service_plugin.search_plugin
+        # the task options map
+        options = {SEARCH_INDEX_IDENTIFIER_VALUE : search_index_identifier,
+                   PROPERTIES_VALUE : properties}
 
-        # @todo: wrap this operation in a task
-        return search_plugin.persist_index_with_identifier(search_index_identifier, properties)
+        # creates an index persistence task using the task manager
+        self.task = self.search_remote_service_plugin.task_manager_plugin.create_new_task("Search Remote Service", "Persisting index", self.start_persist_index_with_identifier_handler)
+        self.task.set_task_pause_handler(self.pause_handler)
+        self.task.set_task_resume_handler(self.resume_handler)
+        self.task.set_task_stop_handler(self.stop_handler)
+        self.task.start(options)
+
+        return True
 
     def load_index_with_identifier(self, search_index_identifier, properties):
-        search_plugin = self.search_remote_service_plugin.search_plugin
+        # the task options map
+        options = {SEARCH_INDEX_IDENTIFIER_VALUE : search_index_identifier,
+                   PROPERTIES_VALUE : properties}
 
-        # @todo: wrap this operation in a task
-        return search_plugin.load_index_with_identifier(search_index_identifier, properties)
+        # creates an index load task using the task manager
+        self.task = self.search_remote_service_plugin.task_manager_plugin.create_new_task("Search Remote Service", "Loading index", self.start_load_index_with_identifier_handler)
+        self.task.set_task_pause_handler(self.pause_handler)
+        self.task.set_task_resume_handler(self.resume_handler)
+        self.task.set_task_stop_handler(self.stop_handler)
+        self.task.start(options)
+
+        return True
 
     def start_create_index_handler(self, task, options):
         """
@@ -155,6 +171,44 @@ class SearchRemoteService:
         search_plugin = self.search_remote_service_plugin.search_plugin
 
         search_plugin.create_index_with_identifier(search_index_identifier, properties)
+
+        task.confirm_stop(True)
+
+    def start_persist_index_with_identifier_handler(self, task, options):
+        """
+        Handler invoked when the persist index task starts
+
+        @param task: Persist index task object.
+        @param options: Persist index task options.
+        """
+
+        # retrieves the search index identifier for the persistence operation
+        search_index_identifier = options[SEARCH_INDEX_IDENTIFIER_VALUE]
+        # retrieves the persistence properties for the persistence operation
+        properties = options[PROPERTIES_VALUE]
+
+        search_plugin = self.search_remote_service_plugin.search_plugin
+
+        search_plugin.persist_index_with_identifier(search_index_identifier, properties)
+
+        task.confirm_stop(True)
+
+    def start_load_index_with_identifier_handler(self, task, options):
+        """
+        Handler invoked when the load index task starts
+
+        @param task: Load index task object.
+        @param options: Load index task options.
+        """
+
+        # retrieves the search index identifier for the load operation
+        search_index_identifier = options[SEARCH_INDEX_IDENTIFIER_VALUE]
+        # retrieves the load properties for the load operation
+        properties = options[PROPERTIES_VALUE]
+
+        search_plugin = self.search_remote_service_plugin.search_plugin
+
+        search_plugin.load_index_with_identifier(search_index_identifier, properties)
 
         task.confirm_stop(True)
 
