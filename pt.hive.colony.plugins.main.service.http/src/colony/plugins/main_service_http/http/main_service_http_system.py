@@ -323,7 +323,7 @@ class MainServiceHttp:
                 # sets the socket to blocking mode
                 self.http_socket.setblocking(1)
             except:
-                # prints debug message about connection
+                # prints info message about connection
                 self.main_service_http_plugin.info("The socket is not valid for selection of the pool")
 
                 return
@@ -493,6 +493,10 @@ class HttpClientServiceTask:
                     break
 
             except Exception, exception:
+                # prints info message about exception
+                self.main_service_http_plugin.info("There was an exception handling the request: " + exception.message)
+
+                # sends the exception
                 self.send_exception(request, exception)
 
         # closes the http connection
