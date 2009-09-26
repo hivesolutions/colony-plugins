@@ -392,8 +392,6 @@ class LexerGenerator:
     def split_all(self):
         self.words = self.buffer.split()
 
-        print self.words
-
 # creates a new lexer generator
 lexer_generator = LexerGenerator()
 
@@ -402,9 +400,6 @@ lexer_generator.construct(locals())
 
 # sets the buffer in the lexer generator
 lexer_generator.set_buffer("\"asdasd\" 234 + . \"hdfgs\" #asdasd fhfgh\n")
-
-# splits all the words in the buffer
-lexer_generator.split_all()
 
 # loop indefinitely
 while True:
