@@ -163,6 +163,13 @@ def t_comment(t):
     r"\#[^\n]*\n+"
     pass
 
+# ignored characters
+t_ignore = " "
+
+# other character
+def t_error(t):
+    print "Illegal character '%s'" % t.value[0]
+
 class Token:
     """
     The token class.
@@ -173,6 +180,12 @@ class Token:
 
     value = None
     """ The value of the token """
+
+    start_index = None
+    """ The start index of the token """
+
+    end_index = None
+    """ The end index of the token """
 
     def __init__(self):
         """
@@ -189,9 +202,11 @@ class Token:
         @return: The default representation of the class.
         """
 
-        return "<%s, %s>" % (
+        return "<%s, %s, %i, %i>" % (
             self.type,
             self.value,
+            self.start_index,
+            self.end_index
         )
 
 class LexerGenerator:
@@ -222,6 +237,8 @@ class LexerGenerator:
 
     words = []
     """ The words to be used """
+
+    current_base_index = 0;
 
     current_index = 0;
 
@@ -264,7 +281,7 @@ class LexerGenerator:
                 self.string_name_list.append(local.split("_")[1])
 
             # in case the type of the local is function
-            elif local_type is types.FunctionType:
+            elif local_type is types.FunctionType and not local == "t_error":
                 # adds the local value to the functions list
                 self.functions_list.append(local_value)
 
@@ -290,40 +307,81 @@ class LexerGenerator:
             self.function_regex_list.append(function_regex)
 
     def get_token(self):
-        # in case the current index is invalid
-        if self.current_index >= len(self.words):
-            return None
-
-        # retrieves the current word
-        current_word = self.words[self.current_index]
-
         # creates a new token
         token = Token()
 
-        for string_regex, string_name in zip(self.string_regex_list, self.string_name_list):
-            if string_regex.match(current_word):
-                # increments the current index
-                self.current_index += 1
+        # loop while the index is valid
+        while self.current_index < len(self.buffer):
+            if self.buffer[self.current_index] == "":
+                continue
 
-                token.value = current_word
-                token.type = string_name
+            for string_regex, string_name in zip(self.string_regex_list, self.string_name_list):
+                # tries to match the buffer with the string regex
+                buffer_match = string_regex.match(self.buffer, self.current_index)
 
-                return token
+                # in case there was a buffer match
+                if buffer_match:
+                    # sets the token value
+                    token.value = buffer_match.group()
 
-        for function_regex, function_name, function in zip(self.function_regex_list, self.function_name_list, self.functions_list):
-            if function_regex.match(current_word):
-                # increments the current index
-                self.current_index += 1
+                    # sets the token type
+                    token.type = string_name
 
-                token.value = current_word
-                token.type = function_name
+                    # sets the token start index
+                    token.start_index = self.current_index
 
-                # calls the funciton with the token
-                function(token)
+                    # sets the token end index
+                    token.end_index = buffer_match.end() - 1
 
-                return token
+                    # sets the new current index
+                    self.current_index = token.end_index + 1
 
-        raise "Problem in the parse"
+                    # returns the token
+                    return token
+
+            for function_regex, function_name, function in zip(self.function_regex_list, self.function_name_list, self.functions_list):
+                # tries to match the buffer with the function regex
+                buffer_match = function_regex.match(self.buffer, self.current_index)
+
+                # in case there was a buffer match
+                if buffer_match:
+                    # sets the token value
+                    token.value =  buffer_match.group()
+
+                    # sets the token type
+                    token.type = function_name
+
+                    # sets the token start index
+                    token.start_index = self.current_index
+
+                    # sets the token end index
+                    token.end_index = buffer_match.end() - 1
+
+                    # calls the function with the token
+                    function(token)
+
+                    # sets the new current index
+                    self.current_index = token.end_index + 1
+
+                    # returns the token
+                    return token
+
+            # sets the token value
+            token.value = self.buffer[self.current_index:]
+
+            # sets the token type
+            token.type = "error"
+
+            # sets the token start index
+            token.start_index = self.current_index
+
+            # calls the error token handler
+            t_error(token)
+
+            raise Exception("Invalid token")
+
+        # in case no valid token was found
+        return None
 
     def get_buffer(self):
         return self.buffer
@@ -343,13 +401,13 @@ lexer_generator = LexerGenerator()
 lexer_generator.construct(locals())
 
 # sets the buffer in the lexer generator
-lexer_generator.set_buffer("\"asdasd\" 234 + . \"hdfgs\"")
+lexer_generator.set_buffer("\"asdasd\" 234 + . \"hdfgs\" #asdasd fhfgh\n")
 
 # splits all the words in the buffer
 lexer_generator.split_all()
 
 # loop indefinitely
-while 1:
+while True:
     # retrieves the token
     token = lexer_generator.get_token()
 
