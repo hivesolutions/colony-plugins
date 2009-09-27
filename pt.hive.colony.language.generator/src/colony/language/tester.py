@@ -37,8 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import lexer
-import parser
+import lexer_generator
+import parser_generator
 
 # the token definitions
 tokens = ("NAME", "NUMBER", "STRING", "BOOL", "PLUS",
@@ -170,13 +170,21 @@ def t_error(t):
     print "Illegal character '%s'" % t.value[0]
 
 # creates a new lexer generator
-lexer_generator = lexer.LexerGenerator()
+lexer_generator = lexer_generator.LexerGenerator()
 
 # constructs the lexer
 lexer_generator.construct(locals())
 
 # sets the buffer in the lexer generator
 lexer_generator.set_buffer("\"asdasd\" 234 + . \"hdfgs\" #asdasd fhfgh\n")
+
+print parser_generator
+
+# creates a new parser generator
+parser_generator = parser_generator.ParserGenerator()
+
+# constructs the parser
+parser_generator.construct(locals())
 
 # loop indefinitely
 while True:

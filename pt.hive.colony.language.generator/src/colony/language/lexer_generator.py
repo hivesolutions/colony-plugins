@@ -85,6 +85,12 @@ class LexerGenerator:
     The lexer class.
     """
 
+    LEXER_PREFIX = "t_"
+    """ The lexer prefix value """
+
+    ERROR_TOKEN_VALUE = "t_error"
+    """ The error token value """
+
     strings_list = []
     """ The strings list """
 
@@ -143,15 +149,18 @@ class LexerGenerator:
             # retrieves the local type
             local_type = type(local_value)
 
+            # retrieves the local prefix
+            local_prefix = local[0:2]
+
             # in case the type of the local is string
-            if local_type is types.StringType:
+            if local_type is types.StringType and local_prefix == LexerGenerator.LEXER_PREFIX:
                 # adds the local value to the strings list
                 self.strings_list.append(local_value)
 
                 self.string_name_list.append(local.split("_")[1])
 
             # in case the type of the local is function
-            elif local_type is types.FunctionType and not local == "t_error":
+            elif local_type is types.FunctionType and local_prefix == LexerGenerator.LEXER_PREFIX and not local == LexerGenerator.ERROR_TOKEN_VALUE:
                 # adds the local value to the functions list
                 self.functions_list.append(local_value)
 
