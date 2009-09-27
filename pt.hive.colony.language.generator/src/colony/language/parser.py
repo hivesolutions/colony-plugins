@@ -48,3 +48,39 @@ class ParserGenerator:
         """
 
         pass
+
+    def construct(self, scope):
+        """
+        Constructs the parser for the given scope.
+
+        @type scope: Map
+        @param scope: The scope to be used in the parser construction.
+        """
+
+        pass
+
+    def get_lexer(self):
+        """
+        Retrieves the lexer.
+
+        @rtype: Lexer
+        @return: The lexer.
+        """
+
+        return self.lexer
+
+    def set_lexer(self, lexer):
+        """
+        Sets the lexer.
+
+        @type lexer: Lexer
+        @param lexer: The lexer.
+        """
+
+        self.lexer = lexer
+
+    def generate_table(self):
+        pass
+
+        # primeiro tenho de descobrir todos os simbolos que existem
+        # tenho de enumerar todas as regras tb que existem

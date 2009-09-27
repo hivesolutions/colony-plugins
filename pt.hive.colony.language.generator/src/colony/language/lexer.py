@@ -41,135 +41,6 @@ import re
 import types
 import copy
 
-# the token definitions
-tokens = ("NAME", "NUMBER", "STRING", "BOOL", "PLUS",
-          "MINUS", "TIMES", "DIVIDE", "POWER",
-          "EQUALS", "EQUALEQUAL", "GREATER",
-          "GREATEREQUAL", "LESS", "LESSEQUAL",
-          "NOT", "AND", "OR", "LPAREN", "RPAREN",
-          "LBRACK", "RBRACK", "FUNCTION", "RETURN",
-          "COLON", "COMA", "DOT", "IF", "ELSE", "ELIF",
-          "END", "NEWLINE", "WHILE", "FOR", "IN", "IMPORT",
-          "CLASS", "EXTENDS", "IMPLEMENTS", "INTERFACE",
-          "PLUGIN", "CAPABILITY", "ALLOWS", "PASS", "STATIC",
-          "GLOBAL", "SELECT", "ALL", "DISTINCT", "AS", "FROM",
-          "WHERE", "BETWEEN", "LIKE", "IS", "NULL", "ANY",
-          "SOME", "EXISTS")
-
-# the reserved keywords
-reserved = {
-    "not" : "NOT",
-    "and" : "AND",
-    "or" : "OR",
-    "True" : "BOOL",
-    "False" : "BOOL",
-    "function" : "FUNCTION",
-    "return" : "RETURN",
-    "if" : "IF",
-    "else" : "ELSE",
-    "elif" : "ELIF",
-    "end" : "END",
-    "while" : "WHILE",
-    "for" : "FOR",
-    "in" : "IN",
-    "import" : "IMPORT",
-    "class" : "CLASS",
-    "interface" : "INTERFACE",
-    "extends" : "EXTENDS",
-    "implements" : "IMPLEMENTS",
-    "plugin" : "PLUGIN",
-    "capability": "CAPABILITY",
-    "allows" : "ALLOWS",
-    "pass" : "PASS",
-    "static" : "STATIC",
-    "global" : "GLOBAL",
-    "select" : "SELECT",
-    "all" : "ALL",
-    "distinct" : "DISTINCT",
-    "as" : "AS",
-    "from" : "FROM",
-    "where" : "WHERE",
-    "between" : "BETWEEN",
-    "like" : "LIKE",
-    "is" : "IS",
-    "null" : "NULL",
-    "any" : "ANY",
-    "some" : "SOME",
-    "exists" : "EXISTS"
-}
-
-reserved_values = {
-    "True" : True,
-    "False" : False
-}
-
-# token definition
-t_PLUS = r"\+"
-t_MINUS = r"-"
-t_TIMES = r"\*"
-t_DIVIDE = r"/"
-t_POWER = r"\^"
-
-t_EQUALS = r"="
-t_GREATER = r">"
-t_GREATEREQUAL = r">="
-t_LESS = r"<"
-t_LESSEQUAL = r"<="
-
-t_LPAREN = r"\("
-t_RPAREN = r"\)"
-
-t_LBRACK = r"\["
-t_RBRACK = r"\]"
-
-t_COLON = r":"
-t_COMA = r","
-t_DOT = r"\."
-
-def t_NAME(t):
-    r"[a-zA-Z_][a-zA-Z_0-9]*"
-    t.type = reserved.get(t.value, "NAME")
-    t.value = reserved_values.get(t.value, t.value)
-    return t
-
-# number definition
-def t_NUMBER(t):
-    r"\d+"
-
-    try:
-        t.value = int(t.value)
-    except ValueError:
-        print "Integer value too large", t.value
-        t.value = 0
-
-    return t
-
-# string definition
-def t_STRING(t):
-    r"\"([^\\\n]|(\\.))*?\""
-
-    t.value = t.value[1:-1]
-
-    return t
-
-# the new line character
-def t_NEWLINE(t):
-    r"\n+"
-    t.lexer.lineno += t.value.count("\n")
-    return t
-
-# single line comments
-def t_comment(t):
-    r"\#[^\n]*\n+"
-    pass
-
-# ignored characters
-t_ignore = " "
-
-# other character
-def t_error(t):
-    print "Illegal character '%s'" % t.value[0]
-
 class Token:
     """
     The token class.
@@ -238,9 +109,8 @@ class LexerGenerator:
     words = []
     """ The words to be used """
 
-    current_base_index = 0;
-
     current_index = 0;
+    """ The current index of the lexer """
 
     def __init__(self):
         """
@@ -307,6 +177,13 @@ class LexerGenerator:
             self.function_regex_list.append(function_regex)
 
     def get_token(self):
+        """
+        Retrieves a token from the lexer.
+
+        @rtype: Token
+        @return: The token that has been retrieved.
+        """
+
         # creates a new token
         token = Token()
 
@@ -383,32 +260,29 @@ class LexerGenerator:
         # in case no valid token was found
         return None
 
+    def split_all(self):
+        """
+        Splits the current buffer into words.
+        """
+
+        self.words = self.buffer.split()
+
     def get_buffer(self):
+        """
+        Retrieves the buffer.
+
+        @rtype: String
+        @return: The buffer.
+        """
+
         return self.buffer
 
     def set_buffer(self, buffer):
+        """
+        Sets the buffer.
+
+        @type buffer: String
+        @param buffer: The buffer.
+        """
+
         self.buffer = buffer
-
-    def split_all(self):
-        self.words = self.buffer.split()
-
-# creates a new lexer generator
-lexer_generator = LexerGenerator()
-
-# constructs the lexer
-lexer_generator.construct(locals())
-
-# sets the buffer in the lexer generator
-lexer_generator.set_buffer("\"asdasd\" 234 + . \"hdfgs\" #asdasd fhfgh\n")
-
-# loop indefinitely
-while True:
-    # retrieves the token
-    token = lexer_generator.get_token()
-
-    # in case the token is invalid
-    if not token:
-        break
-
-    # prints the token
-    print token
