@@ -38,4 +38,13 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 class ParserGenerator:
-    pass
+    """
+    The parser generator class.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        pass
