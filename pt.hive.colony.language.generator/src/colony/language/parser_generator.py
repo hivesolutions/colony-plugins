@@ -128,10 +128,10 @@ class ParserGenerator:
             rule_name = function_doc_splitted[0].strip()
 
             # retrieves the rule value
-            rule_value = function_doc_splitted[2].strip()
+            rule_value = function_doc_splitted[1].strip()
 
             # splits the rule value
-            rule_value_splitted = rule_value.split("|")
+            rule_value_splitted = [rule_value_splitted.strip() for rule_value_splitted in rule_value.split("|")]
 
             if not rule_name in  self.rules_map:
                 self.rules_map[rule_name] = []

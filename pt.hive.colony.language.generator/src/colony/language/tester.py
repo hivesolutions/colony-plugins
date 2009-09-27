@@ -169,6 +169,41 @@ t_ignore = " "
 def t_error(t):
     print "Illegal character '%s'" % t.value[0]
 
+def p_program(t):
+    "program : statements"
+
+    print "program : statements"
+
+def p_statements_multiple(t):
+    "statements : statement NEWLINE statements"
+
+    print "statements : statement NEWLINE statements"
+
+def p_statement_expression(t):
+    "statement : NUMBER"
+
+    print "statement : NUMBER"
+
+def p_statement_expression(t):
+    "statement : expression"
+
+    print "statement : expression"
+
+def p_expression_parenthesis(t):
+    "expression : LPAREN expression RPAREN"
+
+    print "expression : LPAREN expression RPAREN"
+
+def p_expression_string(t):
+    "expression : STRING"
+
+    print "expression : STRING"
+
+def p_expression_bool(t):
+    "expression : BOOL"
+
+    print "expression : BOOL"
+
 # creates a new lexer generator
 lexer_generator = lexer_generator.LexerGenerator()
 
@@ -177,8 +212,6 @@ lexer_generator.construct(locals())
 
 # sets the buffer in the lexer generator
 lexer_generator.set_buffer("\"asdasd\" 234 + . \"hdfgs\" #asdasd fhfgh\n")
-
-print parser_generator
 
 # creates a new parser generator
 parser_generator = parser_generator.ParserGenerator()
