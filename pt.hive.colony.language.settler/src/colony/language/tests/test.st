@@ -52,11 +52,15 @@ end
 
 hello_world()
 print_counter(30)
-sum_result = sum_values(1, 2, 3)
-#print("sum: " + str(sum_result))
 
 # changes the global a variable
 test_global_a()
 
-# print the new a variable
+# prints the new a variable
 print(a)
+
+# sums the three values
+sum_result = sum_values(1, 2, 3)
+
+# prints the sum result
+print("sum: " + str(sum_result))
