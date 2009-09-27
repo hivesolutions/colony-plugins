@@ -170,39 +170,34 @@ def t_error(t):
     print "Illegal character '%s'" % t.value[0]
 
 def p_program(t):
-    "program : statements"
+    "S : E"
 
     print "program : statements"
 
 def p_statements_multiple(t):
-    "statements : statement NEWLINE statements"
+    "E : E * B"
 
     print "statements : statement NEWLINE statements"
 
-def p_statement_expression(t):
-    "statement : NUMBER"
+def p_statement_sum_expression(t):
+    "E : E + B"
 
     print "statement : NUMBER"
 
 def p_statement_expression(t):
-    "statement : expression"
+    "E : B"
 
     print "statement : expression"
 
 def p_expression_parenthesis(t):
-    "expression : LPAREN expression RPAREN"
+    "B : 0"
 
     print "expression : LPAREN expression RPAREN"
 
 def p_expression_string(t):
-    "expression : STRING"
+    "B : 1"
 
     print "expression : STRING"
-
-def p_expression_bool(t):
-    "expression : BOOL"
-
-    print "expression : BOOL"
 
 # creates a new lexer generator
 lexer_generator = lexer_generator.LexerGenerator()
@@ -219,14 +214,5 @@ parser_generator = parser_generator.ParserGenerator()
 # constructs the parser
 parser_generator.construct(locals())
 
-# loop indefinitely
-while True:
-    # retrieves the token
-    token = lexer_generator.get_token()
-
-    # in case the token is invalid
-    if not token:
-        break
-
-    # prints the token
-    print token
+# sets the lexer in the parser
+parser_generator.set_lexer(lexer_generator)
