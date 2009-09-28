@@ -536,6 +536,10 @@ class ParserGenerator:
         self.lexer = lexer
 
     def generate_table(self):
+        """
+        Generates the parsing table.
+        """
+
         # generates the structures
         self._generate_structures()
 
@@ -543,6 +547,10 @@ class ParserGenerator:
         self._generate_table()
 
     def _generate_table(self):
+        """
+        Generates the parsing table (auxiliary method).
+        """
+
         # generates the terminal map
         self._generate_terminal_map()
 
@@ -861,6 +869,7 @@ class ParserGenerator:
             # prints the item set string
             string_value += item_set_string + "\n\n"
 
+        # returns the string value
         return string_value
 
     def _get_transition_table_string(self):
@@ -905,4 +914,5 @@ class ParserGenerator:
             # adds a new line to the string value
             string_value += "\n"
 
+        # returns the string value
         return string_value
