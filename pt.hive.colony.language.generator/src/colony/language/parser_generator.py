@@ -717,8 +717,6 @@ class ParserGenerator:
             # sets the current rules list as the next rules list
             current_rules_list = next_rules_list
 
-
-
     def _generate_transition_table(self):
         """
         Generates the transition table.
