@@ -62,25 +62,87 @@ class ItemSet:
         self.item_set_id = item_set_id
         self.rules_list = []
 
-    def add_rule(self, rule):
+    def __eq__(self, item_set):
+        """
+        Returns if an object is the same as this one.
+
+        @type item_set: ItemSet
+        @param item_set: The item set to be compared.
+        @rtype: bool
+        @return: If the item set is the same as this one.
+        """
+
+        # in case the length of the rules lists is the same
+        if len(self.rules_list) == len(item_set.rules_list):
+            # iterates over all rules, token positions and closures in the rules list
+            for rule, token_position, closure in self.rules_list:
+                # unsets the valid flag
+                valid = False
+
+                # iterates over all the rules and token positions in the item set
+                # rules list
+                for second_rule, second_token_position, second_closure in item_set.rules_list:
+                    # in case the token positions and the rules are the same
+                    if token_position == second_token_position and rule == second_rule:
+                        # sets the valid flag
+                        valid = True
+
+                        # breaks the cycle
+                        break
+
+                # in case the valid flag is not set
+                if not valid:
+                    # returns false
+                    return False
+
+            # returns true
+            return True
+
+        # returns false
+        return False
+
+    def add_rule(self, rule, token_position, closure = False):
         """
         Adds a rule to the item set.
 
         @type rule: Rule
         @param rule: The rule to add to the item set.
+        @type token_position: int
+        @param token_position: The position of the token.
+        @type closure: bool
+        @param closure: If the rule is added as a closure.
         """
 
-        self.rules_list.append(rule)
+        # iterates over the rules list
+        for second_rule, second_token_position, second_closure in self.rules_list:
+            # in case the rules are the same
+            if rule == second_rule:
+                # returns immediately
+                return
 
-    def remove_rule(self, rule):
+        # creates the rule position tuple
+        rule_position_tuple = (rule, token_position, closure)
+
+        # add the rule position tuple to the rules list
+        self.rules_list.append(rule_position_tuple)
+
+    def remove_rule(self, rule, token_position, closure = False):
         """
         Removes a rule from the item set.
 
         @type rule: Rule
         @param rule: The rule to remove from the item set.
+        @type token_position: int
+        @param token_position: The position of the token.
+        @type closure: bool
+        @param closure: If the rule is removed as a closure.
         """
 
-        self.rules_list.remove(rule)
+        # creates the rule position tuple
+        rule_position_tuple = (rule, token_position, closure)
+
+        # removes the rule position tuple from the rules list
+        self.rules_list.remove(rule_position_tuple)
 
     def set_item_set_id(self, item_set_id):
         """
@@ -121,6 +183,31 @@ class ItemSet:
         """
 
         return self.rules_list
+
+    def _get_item_set_string(self):
+        """
+        Retrieves the item set as a friendly string.
+
+        @rtype: String
+        @return: The item set described as a friendly string.
+        """
+
+        # start the string value with the item set label
+        string_value = "item set " + str(self.item_set_id)
+
+        # iterates over all the rules in the rules list
+        for rule, token_position, closure in self.rules_list:
+            # adds a new line to string value
+            string_value += "\n"
+
+            # in case if of type closure
+            if closure:
+                # adds a plus sign to the string value
+                string_value += "+ "
+
+            string_value += rule._get_rule_string() + " (" + str(token_position) + ")"
+
+        return string_value
 
 class Rule:
     """
@@ -172,6 +259,24 @@ class Rule:
             self.rule_value,
             self.symbols_list
         )
+
+    def __eq__(self, rule):
+        """
+        Returns if an object is the same as this one.
+
+        @type rule: Rule
+        @param rule: The rule to be compared.
+        @rtype: bool
+        @return: If the rule is the same as this one.
+        """
+
+        # in case the rule name and the rule value are the same
+        if self.rule_name == rule.rule_name and self.rule_value == rule.rule_value:
+            # returns true
+            return True
+        else:
+            # returns false
+            return False
 
     def get_rule_id(self):
         """
@@ -253,6 +358,16 @@ class Rule:
 
         self.symbols_list = symbols_list
 
+    def _get_rule_string(self):
+        """
+        Retrieves the rule as a friendly string.
+
+        @rtype: String
+        @return: The rule described as a friendly string.
+        """
+
+        return self.rule_name + " -> " + self.rule_value
+
 class ParserGenerator:
     """
     The parser generator class.
@@ -261,8 +376,17 @@ class ParserGenerator:
     PARSER_PREFIX = "p_"
     """ The parser prefix value """
 
+    PROGRAM_FUNCTION = "p_program"
+    """ The parser program function value """
+
     current_rule_id = 0
     """ The current rule id """
+
+    program_function = None
+    """ The program function """
+
+    program_rule = None
+    """ The program rule """
 
     functions_list = []
     """ The functions list """
@@ -278,6 +402,9 @@ class ParserGenerator:
 
     symbols_map = {}
     """ The symbols map """
+
+    symbols_non_terminal_map = {}
+    """ The symbols non terminal map """
 
     symbols_terminal_map = {}
     """ The symbols terminal map """
@@ -322,6 +449,12 @@ class ParserGenerator:
                 # adds the local value to the functions list
                 self.functions_list.append(local_value)
 
+                # in case the local has the program function value
+                if local == ParserGenerator.PROGRAM_FUNCTION:
+                    # sets the program function
+                    self.program_function = local_value
+
+        # generates the table
         self.generate_table()
 
     def get_lexer(self):
@@ -357,47 +490,131 @@ class ParserGenerator:
                 self.symbols_terminal_map[symbol] = True
 
         # sets the current index
-        current_index = 0
         current_item_set_id = 0
 
+        # creates the item sets list
         item_sets_list = []
-        symbol_item_set_map = {}
 
-        # iterates over all the rules in the rules list
-        for rule in self.rules_list:
-            # retrieves the rule symbols list
-            rule_symbols_list = rule.get_symbols_list()
+        # creates the initial current rules list
+        current_rules_list = [(self.program_rule, -1)]
 
-            # retrieves the current symbol
-            current_symbol = rule_symbols_list[current_index]
+        # while there are items in the current rules list
+        while current_rules_list:
+            # creates the next rules list
+            next_rules_list = []
 
-            if len(rule_symbols_list) > current_index + 1:
-                # retrieves the next symbol
-                next_symbol = rule_symbols_list[current_index + 1]
-            # in case it's the final symbol
-            else:
-                # sets the end symbol
-                next_symbol = "$"
+            # creates the current item sets list
+            current_item_sets_list = []
 
-            # in case the symbol is not in the symbol item set map
-            if current_symbol in symbol_item_set_map:
-                # retrieves the item set
-                item_set = symbol_item_set_map[current_symbol]
-            else:
-                # creates a new item set
-                item_set = ItemSet(current_item_set_id)
+            # creates the symbol item set map
+            symbol_item_set_map = {}
 
-                # sets the item set in the symbol item set map
-                symbol_item_set_map[current_symbol] = item_set
+            # iterates over all the rules in the current rules list
+            for rule, current_token_position in current_rules_list:
+                #creates the extra rules list
+                exta_rules_list = []
 
-                # appends the item set to the item sets list
-                item_sets_list.append(item_set)
+                # retrieves the rule symbols list
+                rule_symbols_list = rule.get_symbols_list()
 
-                # increments the current item set id
-                current_item_set_id += 1
+                # retrieves the current symbol
+                current_symbol = "".join(rule_symbols_list[:current_token_position + 1])
 
-            # adds the rule to the item set
-            item_set.add_rule(rule)
+                if len(rule_symbols_list) > current_token_position + 1:
+                    # retrieves the next symbol
+                    next_symbol = rule_symbols_list[current_token_position + 1]
+
+                    # in case the next symbol is present
+                    # in the non terminals map
+                    if next_symbol in self.symbols_non_terminal_map:
+                        # retrieves the extra rules for the next symbol
+                        exta_rules_list = self._get_extra_rules(next_symbol)
+
+                    # creates the rule tuple
+                    rule_tuple = (rule, current_token_position + 1)
+
+                    # adds the rule tuple to the next rules list
+                    next_rules_list.append(rule_tuple)
+
+                # in case it's the final symbol
+                else:
+                    # sets the end symbol
+                    next_symbol = "$"
+
+                # in case the symbol is not in the symbol item set map
+                if current_symbol in symbol_item_set_map:
+                    # retrieves the item set
+                    item_set = symbol_item_set_map[current_symbol]
+                else:
+                    # creates a new item set
+                    item_set = ItemSet()
+
+                    # sets the item set in the symbol item set map
+                    symbol_item_set_map[current_symbol] = item_set
+
+                    # appends the item set to the current item sets list
+                    current_item_sets_list.append(item_set)
+
+                # adds the rule to the item set
+                item_set.add_rule(rule, current_token_position)
+
+                # iterates over all the extra rules
+                for extra_rule in exta_rules_list:
+                    # adds the extra rule to the item set
+                    item_set.add_rule(extra_rule, -1, True)
+
+                    # creates the extra rule tuple
+                    extra_rule_tuple = (extra_rule, 0)
+
+                    # adds the rule tuple to the next rules list
+                    next_rules_list.append(extra_rule_tuple)
+
+            # iterates over all the current item sets
+            for current_item_set in current_item_sets_list:
+                # sets the valid flag
+                valid = True
+
+                # in case the current item set is not
+                # contained in the item sets list
+                if not current_item_set in item_sets_list:
+                    # sets the item set id in the current item set
+                    current_item_set.set_item_set_id(current_item_set_id)
+
+                    # appends the current item set to the item sets list
+                    item_sets_list.append(current_item_set)
+
+                    # increments the current item set id
+                    current_item_set_id += 1
+
+            # sets the current rules list as the next rules list
+            current_rules_list = next_rules_list
+
+        # iterates over all the item sets in the item sets list
+        for item_set in item_sets_list:
+            # retrieves the item set string
+            item_set_string = item_set._get_item_set_string()
+
+            # prints the item set string
+            print item_set_string + "\n"
+
+    def _get_extra_rules(self, symbol):
+        # retrieves the extra rules for the next symbol
+        extra_rules_list = self.rules_map[symbol]
+
+        # iterates over all the extra rules
+        # in the extra rules list
+        for extra_rule in extra_rules_list:
+            # retrieves the symbols list for the extra rule
+            extra_rule_symbols_list = extra_rule.get_symbols_list()
+
+            first_symbol = extra_rule_symbols_list[0]
+
+            if first_symbol in self.symbols_non_terminal_map and not first_symbol == symbol:
+                # extends the extra rules list
+                extra_rules_list.extend(self._get_extra_rules(first_symbol))
+
+        # returns the extra rules list
+        return extra_rules_list
 
     def _generate_structures(self):
         """
@@ -430,6 +647,11 @@ class ParserGenerator:
             for rule_sub_value in rule_value_splitted:
                 # creates a new rule
                 rule = Rule(self.current_rule_id, rule_name, rule_sub_value)
+
+                # in case the current function is the program function
+                if function == self.program_function:
+                    # sets the program rule
+                    self.program_rule = rule
 
                 # adds the rule to the rules list
                 self.rules_list.append(rule)
