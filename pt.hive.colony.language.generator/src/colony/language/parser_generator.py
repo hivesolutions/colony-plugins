@@ -174,6 +174,16 @@ class ItemSet:
 
         self.rule_transition_item_set_map[rule] = item_set
 
+    def get_item_set_id(self):
+        """
+        Retrieves the item set id.
+
+        @rtype: int
+        @return: The item set id.
+        """
+
+        return self.item_set_id
+
     def set_item_set_id(self, item_set_id):
         """
         Sets the item set id.
@@ -184,15 +194,15 @@ class ItemSet:
 
         self.item_set_id = item_set_id
 
-    def get_item_set_id(self):
+    def get_rules_list(self):
         """
-        Retrieves the item set id.
+        Retrieves the rules list.
 
-        @rtype: int
-        @return: The item set id.
+        @rtype: List
+        @return: The rules list.
         """
 
-        return self.item_set_id
+        return self.rules_list
 
     def set_rules_list(self, rules_list):
         """
@@ -204,15 +214,25 @@ class ItemSet:
 
         self.rules_list = rules_list
 
-    def get_rules_list(self):
+    def get_rule_transition_item_set_map(self):
         """
-        Retrieves the rules list.
+        Retrieves the rule transition item set map.
 
-        @rtype: List
-        @return: The rules list.
+        @rtype: Dictionary
+        @return: The rule transition item set map.
         """
 
-        return self.rules_list
+        return self.rule_transition_item_set_map
+
+    def set_rule_transition_item_set_map(self, rule_transition_item_set_map):
+        """
+        Sets the rule transition item set map.
+
+        @type rule_transition_item_set_map: List
+        @param rule_transition_item_set_map: The rule transition item set map.
+        """
+
+        self.rule_transition_item_set_map = rule_transition_item_set_map
 
     def _get_item_set_string(self):
         """
@@ -694,6 +714,11 @@ class ParserGenerator:
 
                 for item_set_rule, item_set_token_position, item_set_closure in valid_item_set.get_rules_list():
                     if item_set_rule in previous_rules_map:
+                        # retrieves the previous item sets list
+                        # for the given item set rule
+                        previous_item_sets_list = previous_rules_map[item_set_rule]
+
+                        # iterates over all the previous item sets
                         for previous_item_set in previous_rules_map[item_set_rule]:
                             # sets the rule sets the transition item set for the rule
                             previous_item_set.set_rule_transition_item_set(item_set_rule, valid_item_set)
@@ -717,9 +742,12 @@ class ParserGenerator:
 
                     # iterates over the current item set rules list
                     for rule, token_position, closure in current_item_set_rules_list:
+                        # in case the rule is note defined in the previous rules map
                         if not rule in previous_rules_map:
+                            # creates an empty list
                             previous_rules_map[rule] = []
 
+                        # adds the current item set
                         previous_rules_map[rule].append(current_item_set)
 
                     # increments the current item set id
