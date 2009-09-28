@@ -462,6 +462,9 @@ class ParserGenerator:
     item_sets_list = {}
     """ The item sets list """
 
+    transition_table_map = {}
+    """ The transition table map """
+
     def __init__(self):
         """
         Constructor of the class.
@@ -475,6 +478,7 @@ class ParserGenerator:
         self.symbols_non_terminal_map = {}
         self.symbols_terminal_map = {}
         self.item_sets_list = []
+        self.transition_table_map = {}
 
     def construct(self, scope):
         """
@@ -539,81 +543,30 @@ class ParserGenerator:
         self._generate_table()
 
     def _generate_table(self):
-        for symbol in self.symbols_map:
-            if not symbol in self.symbols_non_terminal_map:
-                self.symbols_terminal_map[symbol] = True
+        # generates the terminal map
+        self._generate_terminal_map()
 
         # generates the item sets
         self._generate_item_sets()
 
-        # generates the transitions table
-        self._generate_transitions_table()
+        # generates the transition table
+        self._generate_transition_table()
 
-        # depois tenho de fazer a funcao para geracao da transition table
-        # a transition table tb e importante
+        # generates the action table
+        self._generate_action_table()
 
-        # depois ainda tenho de fazer outra funcao para as goto tables
-
-    def _generate_transitions_table(self):
+    def _generate_terminal_map(self):
         """
-        Generates the transitions table.
+        Generates the terminal map.
         """
 
-        # creates the transition table map
-        transition_table_map = {}
-
-        # iterates over the symbols map
-        for item_set_index in range(len(self.item_sets_list)):
-            transition_table_map[item_set_index] = {}
-
-        # start the index counter
-        index = 0
-
-        # iterates over all the item sets
-        for item_set in self.item_sets_list:
-            # retrieves the item set rules list
-            item_set_rules_list = item_set.get_rules_list()
-
-            for item_set_rule, item_set_token_position, item_set_closure in item_set_rules_list:
-                # retrieves the item set rule symbols list
-                item_set_rule_symbols_list = item_set_rule.get_symbols_list()
-
-                if len(item_set_rule_symbols_list) > item_set_token_position + 1:
-                    # retrieves the item set rule symbol
-                    item_set_rule_symbol = item_set_rule_symbols_list[item_set_token_position + 1]
-                else:
-                    # sets the end symbol
-                    item_set_rule_symbol = "$"
-
-                # retrieves the transition item set rule
-                rule_transition_item_set = item_set.get_rule_transition_item_set(item_set_rule)
-
-                # in case there is a rule transition item set defined
-                if rule_transition_item_set:
-                    transition_table_map[index][item_set_rule_symbol] = rule_transition_item_set.get_item_set_id()
-
-            # increments the index counter
-            index += 1
-
-        print "  ",
-
+        # iterates over all the symbols in the symbols map
         for symbol in self.symbols_map:
-            print symbol,
-
-        print ""
-
-        for index in range(len(transition_table_map)):
-            mapa = transition_table_map[index]
-
-            print str(index) + " ",
-
-            for symbol in self.symbols_map:
-                if symbol in mapa:
-                    print mapa[symbol],
-                else:
-                    print "#",
-
-            print ""
+            # in case the symbol is not present
+            # in the non terminal map
+            if not symbol in self.symbols_non_terminal_map:
+                # adds the symbol to the terminal map
+                self.symbols_terminal_map[symbol] = True
 
     def _generate_item_sets(self):
         """
@@ -756,13 +709,52 @@ class ParserGenerator:
             # sets the current rules list as the next rules list
             current_rules_list = next_rules_list
 
-        # iterates over all the item sets in the item sets list
-        for item_set in self.item_sets_list:
-            # retrieves the item set string
-            item_set_string = item_set._get_item_set_string()
 
-            # prints the item set string
-            print item_set_string + "\n"
+
+    def _generate_transition_table(self):
+        """
+        Generates the transition table.
+        """
+
+        # iterates over the symbols map
+        for item_set_index in range(len(self.item_sets_list)):
+            self.transition_table_map[item_set_index] = {}
+
+        # start the index counter
+        index = 0
+
+        # iterates over all the item sets
+        for item_set in self.item_sets_list:
+            # retrieves the item set rules list
+            item_set_rules_list = item_set.get_rules_list()
+
+            for item_set_rule, item_set_token_position, item_set_closure in item_set_rules_list:
+                # retrieves the item set rule symbols list
+                item_set_rule_symbols_list = item_set_rule.get_symbols_list()
+
+                if len(item_set_rule_symbols_list) > item_set_token_position + 1:
+                    # retrieves the item set rule symbol
+                    item_set_rule_symbol = item_set_rule_symbols_list[item_set_token_position + 1]
+                else:
+                    # sets the end symbol
+                    item_set_rule_symbol = "$"
+
+                # retrieves the transition item set rule
+                rule_transition_item_set = item_set.get_rule_transition_item_set(item_set_rule)
+
+                # in case there is a rule transition item set defined
+                if rule_transition_item_set:
+                    self.transition_table_map[index][item_set_rule_symbol] = rule_transition_item_set.get_item_set_id()
+
+            # increments the index counter
+            index += 1
+
+    def _generate_action_table(self):
+        """
+        Generates the action table.
+        """
+
+        pass
 
     def _get_extra_rules(self, symbol):
         # retrieves the extra rules for the next symbol
@@ -849,3 +841,68 @@ class ParserGenerator:
 
                 # increments the current rule id
                 self.current_rule_id += 1
+
+    def _get_item_sets_string(self):
+        """
+        Retrieves the item sets as a friendly string.
+
+        @rtype: String
+        @return: The item sets described as a friendly string.
+        """
+
+        # constructs the string value
+        string_value = str()
+
+        # iterates over all the item sets in the item sets list
+        for item_set in self.item_sets_list:
+            # retrieves the item set string
+            item_set_string = item_set._get_item_set_string()
+
+            # prints the item set string
+            string_value += item_set_string + "\n\n"
+
+        return string_value
+
+    def _get_transition_table_string(self):
+        """
+        Retrieves the transition table as a friendly string.
+
+        @rtype: String
+        @return: The transition table described as a friendly string.
+        """
+
+        # constructs the string value
+        string_value = str()
+
+        # adds some space to the string value
+        string_value +=  "  "
+
+        # iterates over all the symbols in the symbols map
+        for symbol in self.symbols_map:
+            # adds the symbol to the string value
+            string_value += symbol + " "
+
+        # adds a new line to the string value
+        string_value += "\n"
+
+        # iterates over the transitions size
+        for index in range(len(self.transition_table_map)):
+            # retrieves the symbols map for the transition
+            # with the given index
+            symbols_map = self.transition_table_map[index]
+
+            # adds the index to the string value
+            string_value += str(index) + " "
+
+            # iterates over all the symbols in the symbols map
+            for symbol in self.symbols_map:
+                # in case the symbol is defined
+                if symbol in symbols_map:
+                    string_value += str(symbols_map[symbol]) + " "
+                else:
+                    string_value += "# "
+
+            # adds a new line to the string value
+            string_value += "\n"
+
+        return string_value
