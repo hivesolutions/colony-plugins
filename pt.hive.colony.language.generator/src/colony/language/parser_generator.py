@@ -51,6 +51,9 @@ class ItemSet:
     rules_list = []
     """ The rules list """
 
+    rule_transition_item_set_map = {}
+    """ The rule transition item set map """
+
     def __init__(self, item_set_id = None):
         """
         Constructor of the class.
@@ -61,6 +64,7 @@ class ItemSet:
 
         self.item_set_id = item_set_id
         self.rules_list = []
+        self.rule_transition_item_set_map = {}
 
     def __eq__(self, item_set):
         """
@@ -81,9 +85,9 @@ class ItemSet:
 
                 # iterates over all the rules and token positions in the item set
                 # rules list
-                for second_rule, second_token_position, second_closure in item_set.rules_list:
+                for item_set_rule, item_set_token_position, item_set_closure in item_set.rules_list:
                     # in case the token positions and the rules are the same
-                    if token_position == second_token_position and rule == second_rule:
+                    if token_position == item_set_token_position and rule == item_set_rule:
                         # sets the valid flag
                         valid = True
 
@@ -114,10 +118,9 @@ class ItemSet:
         """
 
         # iterates over the rules list
-        for second_rule, second_token_position, second_closure in self.rules_list:
+        for item_set_rule, item_set_token_position, item_set_closure in self.rules_list:
             # in case the rules are the same
-            if rule == second_rule:
-                # returns immediately
+            if rule == item_set_rule:
                 return
 
         # creates the rule position tuple
@@ -143,6 +146,33 @@ class ItemSet:
 
         # removes the rule position tuple from the rules list
         self.rules_list.remove(rule_position_tuple)
+
+    def get_rule_transition_item_set(self, rule):
+        """
+        Retrieves the transition item for the given rule.
+
+        @param rule: Rule
+        @param rule: The rule to retrieve the transition item set.
+        @rtype: ItemSet
+        @return: The transition item set for the given rule.
+        """
+
+        if not rule in self.rule_transition_item_set_map:
+            return None
+
+        return self.rule_transition_item_set_map[rule]
+
+    def set_rule_transition_item_set(self, rule, item_set):
+        """
+        Sets the transition item set for the given rule.
+
+        @type rule: Rule
+        @param rule: The rule to set the transition item set.
+        @type item_set: ItemSet
+        @param item_set: The transition item set to set in the given rule.
+        """
+
+        self.rule_transition_item_set_map[rule] = item_set
 
     def set_item_set_id(self, item_set_id):
         """
@@ -209,7 +239,7 @@ class ItemSet:
 
         return string_value
 
-class Rule:
+class Rule(object):
     """
     The rule class.
     """
@@ -409,6 +439,9 @@ class ParserGenerator:
     symbols_terminal_map = {}
     """ The symbols terminal map """
 
+    item_sets_list = {}
+    """ The item sets list """
+
     def __init__(self):
         """
         Constructor of the class.
@@ -421,6 +454,7 @@ class ParserGenerator:
         self.symbols_map = {}
         self.symbols_non_terminal_map = {}
         self.symbols_terminal_map = {}
+        self.item_sets_list = []
 
     def construct(self, scope):
         """
@@ -489,14 +523,91 @@ class ParserGenerator:
             if not symbol in self.symbols_non_terminal_map:
                 self.symbols_terminal_map[symbol] = True
 
+        # generates the item sets
+        self._generate_item_sets()
+
+        # generates the transitions table
+        self._generate_transitions_table()
+
+        # depois tenho de fazer a funcao para geracao da transition table
+        # a transition table tb e importante
+
+        # depois ainda tenho de fazer outra funcao para as goto tables
+
+    def _generate_transitions_table(self):
+        """
+        Generates the transitions table.
+        """
+
+        # creates the transition table map
+        transition_table_map = {}
+
+        # iterates over the symbols map
+        for item_set_index in range(len(self.item_sets_list)):
+            transition_table_map[item_set_index] = {}
+
+        # start the index counter
+        index = 0
+
+        # iterates over all the item sets
+        for item_set in self.item_sets_list:
+            # retrieves the item set rules list
+            item_set_rules_list = item_set.get_rules_list()
+
+            for item_set_rule, item_set_token_position, item_set_closure in item_set_rules_list:
+                # retrieves the item set rule symbols list
+                item_set_rule_symbols_list = item_set_rule.get_symbols_list()
+
+                if len(item_set_rule_symbols_list) > item_set_token_position + 1:
+                    # retrieves the item set rule symbol
+                    item_set_rule_symbol = item_set_rule_symbols_list[item_set_token_position + 1]
+                else:
+                    # sets the end symbol
+                    item_set_rule_symbol = "$"
+
+                # retrieves the transition item set rule
+                rule_transition_item_set = item_set.get_rule_transition_item_set(item_set_rule)
+
+                # in case there is a rule transition item set defined
+                if rule_transition_item_set:
+                    transition_table_map[index][item_set_rule_symbol] = rule_transition_item_set.get_item_set_id()
+
+            # increments the index counter
+            index += 1
+
+        print "  ",
+
+        for symbol in self.symbols_map:
+            print symbol,
+
+        print ""
+
+        for index in range(len(transition_table_map)):
+            mapa = transition_table_map[index]
+
+            print str(index) + " ",
+
+            for symbol in self.symbols_map:
+                if symbol in mapa:
+                    print mapa[symbol],
+                else:
+                    print "#",
+
+            print ""
+
+    def _generate_item_sets(self):
+        """
+        Generates the item sets.
+        """
+
         # sets the current index
         current_item_set_id = 0
 
-        # creates the item sets list
-        item_sets_list = []
-
         # creates the initial current rules list
         current_rules_list = [(self.program_rule, -1)]
+
+        # creates the previous rules map
+        previous_rules_map = {}
 
         # while there are items in the current rules list
         while current_rules_list:
@@ -520,6 +631,7 @@ class ParserGenerator:
                 # retrieves the current symbol
                 current_symbol = "".join(rule_symbols_list[:current_token_position + 1])
 
+                # in case the current token position is not the final one
                 if len(rule_symbols_list) > current_token_position + 1:
                     # retrieves the next symbol
                     next_symbol = rule_symbols_list[current_token_position + 1]
@@ -571,17 +683,44 @@ class ParserGenerator:
 
             # iterates over all the current item sets
             for current_item_set in current_item_sets_list:
-                # sets the valid flag
-                valid = True
-
                 # in case the current item set is not
                 # contained in the item sets list
-                if not current_item_set in item_sets_list:
+                if not current_item_set in self.item_sets_list:
+                    valid_item_set = current_item_set
+                else:
+                    for item_set in self.item_sets_list:
+                        if current_item_set == item_set:
+                            valid_item_set = item_set
+
+                for item_set_rule, item_set_token_position, item_set_closure in valid_item_set.get_rules_list():
+                    if item_set_rule in previous_rules_map:
+                        for previous_item_set in previous_rules_map[item_set_rule]:
+                            # sets the rule sets the transition item set for the rule
+                            previous_item_set.set_rule_transition_item_set(item_set_rule, valid_item_set)
+
+            # clear the previous rules map
+            previous_rules_map.clear()
+
+            # iterates over all the current item sets
+            for current_item_set in current_item_sets_list:
+                # in case the current item set is not
+                # contained in the item sets list
+                if not current_item_set in self.item_sets_list:
                     # sets the item set id in the current item set
                     current_item_set.set_item_set_id(current_item_set_id)
 
                     # appends the current item set to the item sets list
-                    item_sets_list.append(current_item_set)
+                    self.item_sets_list.append(current_item_set)
+
+                    # retrieves the current item set rules list
+                    current_item_set_rules_list = current_item_set.get_rules_list()
+
+                    # iterates over the current item set rules list
+                    for rule, token_position, closure in current_item_set_rules_list:
+                        if not rule in previous_rules_map:
+                            previous_rules_map[rule] = []
+
+                        previous_rules_map[rule].append(current_item_set)
 
                     # increments the current item set id
                     current_item_set_id += 1
@@ -590,7 +729,7 @@ class ParserGenerator:
             current_rules_list = next_rules_list
 
         # iterates over all the item sets in the item sets list
-        for item_set in item_sets_list:
+        for item_set in self.item_sets_list:
             # retrieves the item set string
             item_set_string = item_set._get_item_set_string()
 
@@ -607,6 +746,7 @@ class ParserGenerator:
             # retrieves the symbols list for the extra rule
             extra_rule_symbols_list = extra_rule.get_symbols_list()
 
+            # retrieves the first symbol
             first_symbol = extra_rule_symbols_list[0]
 
             if first_symbol in self.symbols_non_terminal_map and not first_symbol == symbol:
