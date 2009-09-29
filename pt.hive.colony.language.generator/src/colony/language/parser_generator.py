@@ -429,6 +429,12 @@ class ParserGenerator:
     PROGRAM_FUNCTION = "p_program"
     """ The parser program function value """
 
+    SHIFT_OPERATION_VALUE = "S"
+    """ The shift operation value """
+
+    REDUCE_OPERATION_VALUE = "R"
+    """ The reduce operation value """
+
     current_rule_id = 0
     """ The current rule id """
 
@@ -465,6 +471,12 @@ class ParserGenerator:
     transition_table_map = {}
     """ The transition table map """
 
+    action_table_map = {}
+    """ The action table map """
+
+    goto_table_map = {}
+    """ The goto table map """
+
     def __init__(self):
         """
         Constructor of the class.
@@ -479,6 +491,8 @@ class ParserGenerator:
         self.symbols_terminal_map = {}
         self.item_sets_list = []
         self.transition_table_map = {}
+        self.action_table_map = {}
+        self.goto_table_map = {}
 
     def construct(self, scope):
         """
@@ -562,6 +576,9 @@ class ParserGenerator:
 
         # generates the action table
         self._generate_action_table()
+
+        # generates the goto table
+        self._generate_goto_table()
 
     def _generate_terminal_map(self):
         """
@@ -764,31 +781,88 @@ class ParserGenerator:
         Generates the action table.
         """
 
-        # creates the action table map
-        action_table = {}
+        # retrieves the item sets list length
+        item_sets_list_length = len(self.item_sets_list)
+
+        # iterates over the range of the item sets list length
+        for item_set_index in range(item_sets_list_length):
+            self.action_table_map[item_set_index] = {}
+
+        # iterates over the transition table map
+        for transition_table_map_index in self.transition_table_map:
+            # retrieves the transition table line
+            transition_table_line = self.transition_table_map[transition_table_map_index]
+
+            # retrieves the action table line
+            action_table_line = self.action_table_map[transition_table_map_index]
+
+            # iterates over the items in the transition table line
+            for item_set_rule_symbol in transition_table_line:
+                # in case the item set rule symbol is defined
+                # in the symbols terminal map
+                if item_set_rule_symbol in self.symbols_terminal_map:
+                    # creates the shift value
+                    shift_value = (transition_table_line[item_set_rule_symbol], ParserGenerator.SHIFT_OPERATION_VALUE)
+
+                    # adds the shift value to the action table line
+                    action_table_line[item_set_rule_symbol] = shift_value
+
+        # iterates over the action table map
+        for action_table_map_index in self.action_table_map:
+            # retrieves the action table line
+            action_table_line = self.action_table_map[action_table_map_index]
+
+            if not action_table_line.keys():
+                # retrieves the rule list
+                rules_list = self.item_sets_list[action_table_map_index].get_rules_list()
+
+                # retrieves the first rule tuple
+                first_rule_tuple = rules_list[0]
+
+                # retrieves the first rule
+                first_rule = first_rule_tuple[0]
+
+                # retrieves the rule id for the first rule
+                first_rule_id = first_rule.get_rule_id()
+
+                # iterates over all the terminal symbols
+                for symbol_terminal in self.symbols_terminal_map:
+                    # creates the reduce value
+                    reduce_value = (first_rule_id, ParserGenerator.REDUCE_OPERATION_VALUE)
+
+                    # adds the reduce value to the action table line
+                    action_table_line[symbol_terminal] = reduce_value
+
+    def _generate_goto_table(self):
+        """
+        Generates the goto table.
+        """
 
         # retrieves the item sets list length
         item_sets_list_length = len(self.item_sets_list)
 
         # iterates over the range of the item sets list length
         for item_set_index in range(item_sets_list_length):
-            action_table[item_set_index] = {}
+            self.goto_table_map[item_set_index] = {}
 
-        # iterates over all the non terminal symbols
-        for symbol_non_terminal in self.symbols_non_terminal_map:
-            action_table
-            pass
+        # iterates over the transition table map
+        for transition_table_map_index in self.transition_table_map:
+            # retrieves the transition table line
+            transition_table_line = self.transition_table_map[transition_table_map_index]
 
-        # tenho de iterar pela transition table
+            # retrieves the goto table line
+            goto_table_line = self.goto_table_map[transition_table_map_index]
 
-        # iterates over all the item sets
-        for item_set in self.item_sets_list:
-            pass
+            # iterates over the items in the transition table line
+            for item_set_rule_symbol in transition_table_line:
+                # in case the item set rule symbol is defined
+                # in the symbols non terminal map
+                if item_set_rule_symbol in self.symbols_non_terminal_map:
+                    # retrieves the value from the transition table line
+                    value = transition_table_line[item_set_rule_symbol]
 
-            # tenho os nao terminais aki
-            #
-
-        # tenho de gerar a acion
+                    # adds the value to the action table line
+                    goto_table_line[item_set_rule_symbol] = transition_table_line[item_set_rule_symbol]
 
     def _get_extra_rules(self, symbol):
         # retrieves the extra rules for the next symbol
@@ -876,6 +950,34 @@ class ParserGenerator:
                 # increments the current rule id
                 self.current_rule_id += 1
 
+    def _get_rules_string(self):
+        """
+        Retrieves the rules as a friendly string.
+
+        @rtype: String
+        @return: The rules described as a friendly string.
+        """
+
+        # constructs the string value
+        string_value = str()
+
+        # iterates over all the rules in the rules list
+        for rule in self.rules_list:
+            # retrieves the rule string
+            rule_string = rule._get_rule_string()
+
+            # retrieves the rule id
+            rule_id = rule.get_rule_id()
+
+            # adds the rule id label
+            string_value += "rule " + str(rule_id) + "\n"
+
+            # adds the rule string
+            string_value += rule_string + "\n\n"
+
+        # returns the string value
+        return string_value
+
     def _get_item_sets_string(self):
         """
         Retrieves the item sets as a friendly string.
@@ -892,7 +994,7 @@ class ParserGenerator:
             # retrieves the item set string
             item_set_string = item_set._get_item_set_string()
 
-            # prints the item set string
+            # adds the item set string
             string_value += item_set_string + "\n\n"
 
         # returns the string value
@@ -937,6 +1039,102 @@ class ParserGenerator:
                 # in case the symbol is defined
                 if symbol in symbols_map:
                     string_value += str(symbols_map[symbol]) + " "
+                else:
+                    string_value += "# "
+
+            # adds a new line to the string value
+            string_value += "\n"
+
+        # returns the string value
+        return string_value
+
+    def _get_action_table_string(self):
+        """
+        Retrieves the action table as a friendly string.
+
+        @rtype: String
+        @return: The action table described as a friendly string.
+        """
+
+        # constructs the string value
+        string_value = str()
+
+        # adds some space to the string value
+        string_value +=  "  "
+
+        # iterates over all the symbols in the symbols terminal map
+        for symbol_terminal in self.symbols_terminal_map:
+            # adds the symbol terminal to the string value
+            string_value += symbol_terminal + "  "
+
+        # adds a new line to the string value
+        string_value += "\n"
+
+        # retrieves the action table map length
+        action_table_map_length = len(self.action_table_map)
+
+        # iterates over the actions size
+        for index in range(action_table_map_length):
+            # retrieves the symbols map for the action
+            # with the given index
+            symbols_map = self.action_table_map[index]
+
+            # adds the index to the string value
+            string_value += str(index) + " "
+
+            # iterates over all the symbols in the symbols terminal map
+            for symbol_terminal in self.symbols_terminal_map:
+                # in case the symbol terminal is defined
+                if symbol_terminal in symbols_map:
+                    string_value += str(symbols_map[symbol_terminal][1]) + str(symbols_map[symbol_terminal][0]) + " "
+                else:
+                    string_value += "## "
+
+            # adds a new line to the string value
+            string_value += "\n"
+
+        # returns the string value
+        return string_value
+
+    def _get_goto_table_string(self):
+        """
+        Retrieves the goto table as a friendly string.
+
+        @rtype: String
+        @return: The goto table described as a friendly string.
+        """
+
+        # constructs the string value
+        string_value = str()
+
+        # adds some space to the string value
+        string_value +=  "  "
+
+        # iterates over all the symbols in the symbols non terminal map
+        for symbol_non_terminal in self.symbols_non_terminal_map:
+            # adds the symbol non terminal to the string value
+            string_value += symbol_non_terminal + " "
+
+        # adds a new line to the string value
+        string_value += "\n"
+
+        # retrieves the goto table map length
+        goto_table_map_length = len(self.goto_table_map)
+
+        # iterates over the goto size
+        for index in range(goto_table_map_length):
+            # retrieves the symbols map for the goto
+            # with the given index
+            symbols_map = self.goto_table_map[index]
+
+            # adds the index to the string value
+            string_value += str(index) + " "
+
+            # iterates over all the symbols in the symbols non terminal map
+            for symbol_non_terminal in self.symbols_non_terminal_map:
+                # in case the symbol non terminal is defined
+                if symbol_non_terminal in symbols_map:
+                    string_value += str(symbols_map[symbol_non_terminal]) + " "
                 else:
                     string_value += "# "
 

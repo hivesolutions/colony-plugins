@@ -217,8 +217,17 @@ parser_generator.construct(locals())
 # sets the lexer in the parser
 parser_generator.set_lexer(lexer_generator)
 
+# prints the rules string
+print parser_generator._get_rules_string()
+
 # prints the item sets string
 print parser_generator._get_item_sets_string()
 
 # prints the transition table string
 print parser_generator._get_transition_table_string()
+
+# prints the action table string
+print parser_generator._get_action_table_string()
+
+# prints the goto table string
+print parser_generator._get_goto_table_string()
