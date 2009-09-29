@@ -722,8 +722,11 @@ class ParserGenerator:
         Generates the transition table.
         """
 
-        # iterates over the symbols map
-        for item_set_index in range(len(self.item_sets_list)):
+        # retrieves the item sets list length
+        item_sets_list_length = len(self.item_sets_list)
+
+        # iterates over the range of the item sets list length
+        for item_set_index in range(item_sets_list_length):
             self.transition_table_map[item_set_index] = {}
 
         # start the index counter
@@ -734,6 +737,7 @@ class ParserGenerator:
             # retrieves the item set rules list
             item_set_rules_list = item_set.get_rules_list()
 
+            # iterates over all the item set rules
             for item_set_rule, item_set_token_position, item_set_closure in item_set_rules_list:
                 # retrieves the item set rule symbols list
                 item_set_rule_symbols_list = item_set_rule.get_symbols_list()
@@ -760,7 +764,31 @@ class ParserGenerator:
         Generates the action table.
         """
 
-        pass
+        # creates the action table map
+        action_table = {}
+
+        # retrieves the item sets list length
+        item_sets_list_length = len(self.item_sets_list)
+
+        # iterates over the range of the item sets list length
+        for item_set_index in range(item_sets_list_length):
+            action_table[item_set_index] = {}
+
+        # iterates over all the non terminal symbols
+        for symbol_non_terminal in self.symbols_non_terminal_map:
+            action_table
+            pass
+
+        # tenho de iterar pela transition table
+
+        # iterates over all the item sets
+        for item_set in self.item_sets_list:
+            pass
+
+            # tenho os nao terminais aki
+            #
+
+        # tenho de gerar a acion
 
     def _get_extra_rules(self, symbol):
         # retrieves the extra rules for the next symbol
@@ -892,8 +920,11 @@ class ParserGenerator:
         # adds a new line to the string value
         string_value += "\n"
 
+        # retrieves the transition table map length
+        transition_table_map_length = len(self.transition_table_map)
+
         # iterates over the transitions size
-        for index in range(len(self.transition_table_map)):
+        for index in range(transition_table_map_length):
             # retrieves the symbols map for the transition
             # with the given index
             symbols_map = self.transition_table_map[index]
