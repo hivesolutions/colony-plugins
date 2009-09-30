@@ -426,8 +426,14 @@ class ParserGenerator:
     PARSER_PREFIX = "p_"
     """ The parser prefix value """
 
+    PROGRAM_VALUE = "program"
+    """ The parser program value """
+
     PROGRAM_FUNCTION = "p_program"
     """ The parser program function value """
+
+    ERROR_FUNCTION = "p_error"
+    """ The parser error function value """
 
     SHIFT_OPERATION_VALUE = "S"
     """ The shift operation value """
@@ -435,11 +441,23 @@ class ParserGenerator:
     REDUCE_OPERATION_VALUE = "R"
     """ The reduce operation value """
 
+    ACCEPT_OPERATION_VALUE = "A"
+    """ the accept operation value """
+
     current_rule_id = 0
     """ The current rule id """
 
+    lexer = None
+    """ The lexer value """
+
+    buffer = "none"
+    """ The buffer value """
+
     program_function = None
     """ The program function """
+
+    error_function = None
+    """ The error function """
 
     program_rule = None
     """ The program rule """
@@ -465,6 +483,9 @@ class ParserGenerator:
     symbols_terminal_map = {}
     """ The symbols terminal map """
 
+    symbols_terminal_end_map = {}
+    """ The symbols terminal end map """
+
     item_sets_list = {}
     """ The item sets list """
 
@@ -489,10 +510,13 @@ class ParserGenerator:
         self.symbols_map = {}
         self.symbols_non_terminal_map = {}
         self.symbols_terminal_map = {}
+        self.symbols_terminal_end_map = {}
         self.item_sets_list = []
         self.transition_table_map = {}
         self.action_table_map = {}
         self.goto_table_map = {}
+
+        self.symbols_terminal_end_map["$"] = True
 
     def construct(self, scope):
         """
@@ -518,16 +542,32 @@ class ParserGenerator:
 
             # in case the type of the local is function
             if local_type is types.FunctionType and local_prefix == ParserGenerator.PARSER_PREFIX:
-                # adds the local value to the functions list
-                self.functions_list.append(local_value)
+                # in case the local has the error function value
+                if local == ParserGenerator.ERROR_FUNCTION:
+                    # sets the error function
+                    self.error_function = local_value
+                else:
+                    # adds the local value to the functions list
+                    self.functions_list.append(local_value)
 
-                # in case the local has the program function value
-                if local == ParserGenerator.PROGRAM_FUNCTION:
-                    # sets the program function
-                    self.program_function = local_value
+                    # in case the local has the program function value
+                    if local == ParserGenerator.PROGRAM_FUNCTION:
+                        # sets the program function
+                        self.program_function = local_value
 
         # generates the table
         self.generate_table()
+
+    def generate_table(self):
+        """
+        Generates the parsing table.
+        """
+
+        # generates the structures
+        self._generate_structures()
+
+        # generates the table
+        self._generate_table()
 
     def get_lexer(self):
         """
@@ -549,16 +589,30 @@ class ParserGenerator:
 
         self.lexer = lexer
 
-    def generate_table(self):
+    def get_buffer(self):
         """
-        Generates the parsing table.
+        Retrieves the buffer.
+
+        @rtype: String
+        @return: The buffer.
         """
 
-        # generates the structures
-        self._generate_structures()
+        return self.buffer
 
-        # generates the table
-        self._generate_table()
+    def set_buffer(self, buffer):
+        """
+        Sets the buffer.
+
+        @type buffer: String
+        @param buffer: The buffer.
+        """
+
+        # in case there is a lexer defined
+        if self.lexer:
+            # sets the current buffer in the lexer
+            self.lexer.set_buffer(buffer)
+
+        self.buffer = buffer
 
     def _generate_table(self):
         """
@@ -592,6 +646,9 @@ class ParserGenerator:
             if not symbol in self.symbols_non_terminal_map:
                 # adds the symbol to the terminal map
                 self.symbols_terminal_map[symbol] = True
+
+                # adds the symbol to the terminal end map
+                self.symbols_terminal_end_map[symbol] = True
 
     def _generate_item_sets(self):
         """
@@ -807,12 +864,28 @@ class ParserGenerator:
                     # adds the shift value to the action table line
                     action_table_line[item_set_rule_symbol] = shift_value
 
+        # iterates over all the item sets in the item sets list
+        for item_set in self.item_sets_list:
+            # retrieves the item set id
+            item_set_id = item_set.get_item_set_id()
+
+            # retrieves the action table line
+            action_table_line = self.action_table_map[item_set_id]
+
+            for item_set_rule, item_set_token_position, item_set_closure in item_set.get_rules_list():
+                if item_set_rule.get_rule_name() == ParserGenerator.PROGRAM_VALUE and len(item_set_rule.get_symbols_list()) == item_set_token_position + 1:
+                    # creates the accept value
+                    accept_value = (0, ParserGenerator.ACCEPT_OPERATION_VALUE)
+
+                    # adds the accept value to the action table line
+                    action_table_line["$"] = accept_value
+
         # iterates over the action table map
         for action_table_map_index in self.action_table_map:
             # retrieves the action table line
             action_table_line = self.action_table_map[action_table_map_index]
 
-            if not action_table_line.keys():
+            if not action_table_line.keys() :
                 # retrieves the rule list
                 rules_list = self.item_sets_list[action_table_map_index].get_rules_list()
 
@@ -826,7 +899,7 @@ class ParserGenerator:
                 first_rule_id = first_rule.get_rule_id()
 
                 # iterates over all the terminal symbols
-                for symbol_terminal in self.symbols_terminal_map:
+                for symbol_terminal in self.symbols_terminal_end_map:
                     # creates the reduce value
                     reduce_value = (first_rule_id, ParserGenerator.REDUCE_OPERATION_VALUE)
 
@@ -1063,7 +1136,7 @@ class ParserGenerator:
         string_value +=  "  "
 
         # iterates over all the symbols in the symbols terminal map
-        for symbol_terminal in self.symbols_terminal_map:
+        for symbol_terminal in self.symbols_terminal_end_map:
             # adds the symbol terminal to the string value
             string_value += symbol_terminal + "  "
 
@@ -1083,7 +1156,7 @@ class ParserGenerator:
             string_value += str(index) + " "
 
             # iterates over all the symbols in the symbols terminal map
-            for symbol_terminal in self.symbols_terminal_map:
+            for symbol_terminal in self.symbols_terminal_end_map:
                 # in case the symbol terminal is defined
                 if symbol_terminal in symbols_map:
                     string_value += str(symbols_map[symbol_terminal][1]) + str(symbols_map[symbol_terminal][0]) + " "
@@ -1143,3 +1216,104 @@ class ParserGenerator:
 
         # returns the string value
         return string_value
+
+    def get_token(self):
+        """
+        Retrieves a valid token from the lexer.
+
+        @rtype: Token
+        @return: The valid token that has been retrieved.
+        """
+
+        # unsets the valid flag
+        valid = False
+
+        # loops while is not valid
+        while not valid:
+            # retrieves the token
+            token = self.lexer.get_token()
+
+            # in case the token type is valid
+            if token == None or not token.type in ["ignore", "comment"]:
+                # sets the valid flag
+                valid = True
+
+        # returns the token
+        return token
+
+    def parse(self):
+        """
+        Parses the current buffer.
+        """
+
+        # creates the stack
+        stack = [0]
+
+        # retrieves the current token
+        current_token = self.get_token()
+
+        print current_token
+
+        # loop indefinitely
+        while True:
+            print stack
+
+            # retrieves the current state
+            current_state = stack[-1]
+
+            # retrieves the current action line
+            action_line = self.action_table_map[current_state]
+
+            if current_token:
+                token_type = current_token.type
+            else:
+                token_type = "$"
+
+            if token_type in action_line:
+                # retrieves the action value and type from the action table
+                action_value, action_type = action_line[token_type]
+            else:
+                # pops the stack value
+                stack.pop()
+
+                continue
+
+            if action_type == ParserGenerator.REDUCE_OPERATION_VALUE:
+                # writes the reduce to the screen
+                print "reduce " + str(action_value)
+
+                # pops the stack value
+                stack.pop()
+
+                # retrieves the rule name
+                rule_name = self.rules_list[action_value].get_rule_name()
+
+                # retrieves the current state
+                current_state = stack[-1]
+
+                # retrieves the current goto line
+                goto_line = self.goto_table_map[current_state]
+
+                # in case the rule name exists in the goto line
+                if rule_name in goto_line:
+                    # retrieves the goto value
+                    goto_value = goto_line[rule_name]
+
+                    # appends the goto table to the stack
+                    stack.append(goto_value)
+            elif action_type == ParserGenerator.SHIFT_OPERATION_VALUE:
+                # writes the shift to the screen
+                print "shift " + str(action_value)
+
+                # appends the current action value to the stack
+                stack.append(action_value)
+
+                # retrieves the next (current) token
+                current_token = self.get_token()
+
+                print current_token
+
+            elif action_type == ParserGenerator.ACCEPT_OPERATION_VALUE:
+                print "over"
+
+                break

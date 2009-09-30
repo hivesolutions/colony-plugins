@@ -37,44 +37,60 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import lexer_generator
-import parser_generator
+# token definition
+t_PLUS = r"\+"
+t_TIMES = r"\*"
 
-import examples.simples_example
-import examples.ply_example
+t_1 = r"1"
+t_0 = r"0"
 
-# creates a new lexer generator
-lexer_generator = lexer_generator.LexerGenerator()
+# the new line character
+def t_NEWLINE(t):
+    r"\n+"
+    t.lexer.lineno += t.value.count("\n")
+    return t
 
-# constructs the lexer
-lexer_generator.construct(examples.simples_example.example)
+# single line comments
+def t_comment(t):
+    r"\#[^\n]*\n+"
+    pass
 
-# creates a new parser generator
-parser_generator = parser_generator.ParserGenerator()
+# ignored characters
+t_ignore = " "
 
-# constructs the parser
-parser_generator.construct(examples.simples_example.example)
+# other character
+def t_error(t):
+    print "Illegal character '%s'" % t.value[0]
 
-# sets the lexer in the parser
-parser_generator.set_lexer(lexer_generator)
+def p_program(t):
+    "program : E"
 
-# prints the rules string
-print parser_generator._get_rules_string()
+    print "program : statements"
 
-# prints the item sets string
-print parser_generator._get_item_sets_string()
+def p_expression_multiply(t):
+    "E : E TIMES B"
 
-# prints the transition table string
-print parser_generator._get_transition_table_string()
+    print "E : E TIMES B"
 
-# prints the action table string
-print parser_generator._get_action_table_string()
+def p_expression_sum(t):
+    "E : E PLUS B"
 
-# prints the goto table string
-print parser_generator._get_goto_table_string()
+    print "E : E PLUS B"
 
-# sets the buffer in the parser generator
-parser_generator.set_buffer("1 + 1")
+def p_expression_value(t):
+    "E : B"
 
-# parses the current buffer
-parser_generator.parse()
+    print "statement : expression"
+
+def p_zero_terminal(t):
+    "B : 0"
+
+    print "B : 0"
+
+def p_one_terminal(t):
+    "B : 1"
+
+    print "B : 1"
+
+# sets the example
+example = locals()

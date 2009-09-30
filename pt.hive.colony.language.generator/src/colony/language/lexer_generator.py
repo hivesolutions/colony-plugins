@@ -160,11 +160,16 @@ class LexerGenerator:
                 self.string_name_list.append(local.split("_")[1])
 
             # in case the type of the local is function
-            elif local_type is types.FunctionType and local_prefix == LexerGenerator.LEXER_PREFIX and not local == LexerGenerator.ERROR_TOKEN_VALUE:
-                # adds the local value to the functions list
-                self.functions_list.append(local_value)
+            elif local_type is types.FunctionType and local_prefix == LexerGenerator.LEXER_PREFIX:
+                # in case the local has the error function value
+                if local == LexerGenerator.ERROR_TOKEN_VALUE:
+                    # sets the error function
+                    self.error_function = local_value
+                else:
+                    # adds the local value to the functions list
+                    self.functions_list.append(local)
 
-                self.function_name_list.append(local.split("_")[1])
+                    self.function_name_list.append(local.split("_")[1])
 
         # iterates over all the string in the string list
         for string in self.strings_list:
@@ -261,9 +266,10 @@ class LexerGenerator:
             # sets the token start index
             token.start_index = self.current_index
 
-            # calls the error token handler
-            t_error(token)
+            # calls the error function
+            self.error_function(token)
 
+            # raises the invalid token exception
             raise Exception("Invalid token")
 
         # in case no valid token was found
