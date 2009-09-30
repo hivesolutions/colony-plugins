@@ -58,6 +58,9 @@ class Token:
     end_index = None
     """ The end index of the token """
 
+    lexer = None
+    """ The token lexer """
+
     def __init__(self):
         """
         Constructor of the class.
@@ -167,8 +170,9 @@ class LexerGenerator:
                     self.error_function = local_value
                 else:
                     # adds the local value to the functions list
-                    self.functions_list.append(local)
+                    self.functions_list.append(local_value)
 
+                    # adds the function name to the function name list
                     self.function_name_list.append(local.split("_")[1])
 
         # iterates over all the string in the string list
@@ -224,6 +228,9 @@ class LexerGenerator:
                     # sets the token end index
                     token.end_index = buffer_match.end() - 1
 
+                    # sets the token lexer
+                    token.lexer = self
+
                     # sets the new current index
                     self.current_index = token.end_index + 1
 
@@ -248,6 +255,9 @@ class LexerGenerator:
                     # sets the token end index
                     token.end_index = buffer_match.end() - 1
 
+                    # sets the token lexer
+                    token.lexer = self
+
                     # calls the function with the token
                     function(token)
 
@@ -266,6 +276,9 @@ class LexerGenerator:
             # sets the token start index
             token.start_index = self.current_index
 
+            # sets the token lexer
+            token.lexer = self
+
             # calls the error function
             self.error_function(token)
 
@@ -274,6 +287,17 @@ class LexerGenerator:
 
         # in case no valid token was found
         return None
+
+    def skip(self, skip_size = 1):
+        """
+        Skips the given size in the buffer.
+
+        @type skip_size: int
+        @param skip_size: The size of the skip.
+        """
+
+        # sets the new current index
+        self.current_index += skip_size
 
     def split_all(self):
         """
