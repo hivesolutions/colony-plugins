@@ -65,32 +65,44 @@ def t_error(t):
 def p_program(t):
     "program : E"
 
-    print "program : statements"
+    print "program : " + str(t[1])
+
+    t[0] = t[1]
 
 def p_expression_multiply(t):
     "E : E TIMES B"
 
-    print "E : E TIMES B"
+    print "E : " + str(t[1]) + " TIMES " + str(t[3])
+
+    t[0] = t[1] * t[3]
 
 def p_expression_sum(t):
     "E : E PLUS B"
 
-    print "E : E PLUS B"
+    print "E : " + str(t[1]) + " PLUS " + str(t[3])
+
+    t[0] = t[1] + t[3]
 
 def p_expression_value(t):
     "E : B"
 
-    print "statement : expression"
+    print "E : " + str(t[1])
+
+    t[0] = t[1]
 
 def p_zero_terminal(t):
     "B : 0"
 
-    print "B : 0"
+    print "B : " + t[1]
+
+    t[0] = int(t[1])
 
 def p_one_terminal(t):
     "B : 1"
 
-    print "B : 1"
+    print "B : " + t[1]
+
+    t[0] = int(t[1])
 
 # sets the example
 example = locals()
