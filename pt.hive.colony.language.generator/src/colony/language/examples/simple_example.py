@@ -39,7 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 # token definition
 t_PLUS = r"\+"
+t_MINUS = r"\-"
 t_TIMES = r"\*"
+t_DIVIDE = r"\/"
 
 t_1 = r"1"
 t_0 = r"0"
@@ -69,19 +71,33 @@ def p_program(t):
 
     t[0] = t[1]
 
-def p_expression_multiply(t):
-    "E : E TIMES B"
-
-    print "E : " + str(t[1]) + " TIMES " + str(t[3])
-
-    t[0] = t[1] * t[3]
-
 def p_expression_sum(t):
     "E : E PLUS B"
 
     print "E : " + str(t[1]) + " PLUS " + str(t[3])
 
     t[0] = t[1] + t[3]
+
+def p_expression_subtraction(t):
+    "E : E MINUS B"
+
+    print "E : " + str(t[1]) + " MINUS " + str(t[3])
+
+    t[0] = t[1] - t[3]
+
+def p_expression_multiplication(t):
+    "E : E TIMES B"
+
+    print "E : " + str(t[1]) + " TIMES " + str(t[3])
+
+    t[0] = t[1] * t[3]
+
+def p_expression_division(t):
+    "E : E DIVIDE B"
+
+    print "E : " + str(t[1]) + " DIVIDE " + str(t[3])
+
+    t[0] = t[1] / t[3]
 
 def p_expression_value(t):
     "E : B"

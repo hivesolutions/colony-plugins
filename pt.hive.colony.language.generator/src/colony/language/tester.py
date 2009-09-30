@@ -40,11 +40,11 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import lexer_generator
 import parser_generator
 
-import examples.simples_example
+import examples.simple_example
 import examples.ply_example
 
 # sets the current valid example
-valid_example = examples.simples_example.example
+valid_example = examples.simple_example.example
 
 # creates a new lexer generator
 lexer_generator = lexer_generator.LexerGenerator()
