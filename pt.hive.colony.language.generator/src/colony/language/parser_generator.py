@@ -474,6 +474,9 @@ class ParserGenerator:
     rule_id_rule_map = {}
     """ The rule id rule map """
 
+    rule_function_map = {}
+    """ The rule function map """
+
     symbols_map = {}
     """ The symbols map """
 
@@ -507,6 +510,7 @@ class ParserGenerator:
         self.rules_list = []
         self.rules_map = {}
         self.rule_id_rule_map = {}
+        self.rule_function_map = {}
         self.symbols_map = {}
         self.symbols_non_terminal_map = {}
         self.symbols_terminal_map = {}
@@ -1008,6 +1012,9 @@ class ParserGenerator:
                 # sets the rule in the rule id rule map
                 self.rule_id_rule_map[self.current_rule_id] = rule
 
+                # sets the function in the rule function map
+                self.rule_function_map[rule] = function
+
                 # sets the rule name in the non terminal map
                 self.symbols_non_terminal_map[rule_name] = True
 
@@ -1287,11 +1294,16 @@ class ParserGenerator:
                 # writes the reduce to the screen
                 print "reduce " + str(action_value)
 
-                # pops the stack value
-                stack.pop()
+                # retrieves the reduce rule
+                reduce_rule = self.rules_list[action_value]
 
-                # retrieves the rule name
-                rule_name = self.rules_list[action_value].get_rule_name()
+                # retrieves the reduce rule symbols list
+                reduce_rule_symbols_list = reduce_rule.get_symbols_list()
+
+                # iterates over all the reduce rule symbols
+                for reduce_rule_symbol in reduce_rule_symbols_list:
+                    # pops a stack value
+                    stack.pop()
 
                 # retrieves the current state
                 current_state = stack[-1]
@@ -1299,13 +1311,23 @@ class ParserGenerator:
                 # retrieves the current goto line
                 goto_line = self.goto_table_map[current_state]
 
-                # in case the rule name exists in the goto line
-                if rule_name in goto_line:
+                # retrieves the reduce rule name
+                reduce_rule_name = reduce_rule.get_rule_name()
+
+                # in case the reduce rule name exists in the goto line
+                if reduce_rule_name in goto_line:
                     # retrieves the goto value
-                    goto_value = goto_line[rule_name]
+                    goto_value = goto_line[reduce_rule_name]
 
                     # appends the goto table to the stack
                     stack.append(goto_value)
+
+                # retrieves the reduce rule function
+                reduce_rule_function = self.rule_function_map[reduce_rule]
+
+                # calls the reduce rule function
+                reduce_rule_function([1, 2, 3])
+
             elif action_type == ParserGenerator.SHIFT_OPERATION_VALUE:
                 # writes the shift to the screen
                 print "shift " + str(action_value)

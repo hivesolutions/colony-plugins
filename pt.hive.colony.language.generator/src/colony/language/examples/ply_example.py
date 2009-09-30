@@ -56,7 +56,6 @@ t_NAME    = r'[a-zA-Z_][a-zA-Z0-9_]*'
 
 def t_NUMBER(t):
     r"\d+"
-    print "ola"
 
     try:
         t.value = int(t.value)
@@ -66,7 +65,7 @@ def t_NUMBER(t):
     return t
 
 # Ignored characters
-t_ignore = " \t"
+t_ignore = " "
 
 def t_newline(t):
     r'\n+'
@@ -91,25 +90,17 @@ def p_program(t):
     'program : statement'
     names[t[1]] = t[3]
 
+    print "complete"
+
 def p_statement_assign(t):
     'statement : NAME EQUALS expression'
-    names[t[1]] = t[3]
 
-def p_statement_expr(t):
-    'statement : expression'
-    print t[1]
+    print "assign"
 
 def p_expression_number(t):
     'expression : NUMBER'
-    t[0] = t[1]
 
-def p_expression_name(t):
-    'expression : NAME'
-    try:
-        t[0] = names[t[1]]
-    except LookupError:
-        print "Undefined name '%s'" % t[1]
-        t[0] = 0
+    print "numero"
 
 def p_error(t):
     print "Syntax error at '%s'" % t.value
