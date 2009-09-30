@@ -43,20 +43,20 @@ import parser_generator
 import examples.simples_example
 import examples.ply_example
 
+# sets the current valid example
+valid_example = examples.simples_example.example
+
 # creates a new lexer generator
 lexer_generator = lexer_generator.LexerGenerator()
-
-# constructs the lexer
-lexer_generator.construct(examples.simples_example.example)
 
 # creates a new parser generator
 parser_generator = parser_generator.ParserGenerator()
 
-# constructs the parser
-parser_generator.construct(examples.simples_example.example)
-
 # sets the lexer in the parser
 parser_generator.set_lexer(lexer_generator)
+
+# constructs the parser
+parser_generator.construct(valid_example)
 
 # prints the rules string
 print parser_generator._get_rules_string()

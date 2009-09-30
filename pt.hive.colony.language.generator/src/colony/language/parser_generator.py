@@ -526,6 +526,11 @@ class ParserGenerator:
         @param scope: The scope to be used in the parser construction.
         """
 
+        # in case the lexer is defined
+        if self.lexer:
+            # constructs the lexer
+            self.lexer.construct(scope)
+
         # retrieves the local values copy
         locals = copy.copy(scope)
 
