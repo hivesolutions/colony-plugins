@@ -48,7 +48,7 @@ import examples.shift_reduce_example
 import examples.simple_example
 
 # sets the current valid example
-valid_example = examples.reduce_reduce_example.example
+valid_example = examples.simple_example.example
 
 # creates a new lexer generator
 lexer_generator = lexer_generator.LexerGenerator()

@@ -40,6 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import copy
 import types
 
+import parser_generator_exceptions
+
 class ItemSet:
     """
     The item set class
@@ -844,6 +846,7 @@ class ParserGenerator:
         # creates the symbols non terminal map
         symbols_non_terminal_map = {}
 
+        # creates the reduce list
         reduce_list = []
 
         # iterates over all the non terminal token
@@ -879,17 +882,13 @@ class ParserGenerator:
 
                 if item_set_token_position + 1 >= rule_symbols_list_length:
                     if token in symbols_non_terminal_shift_list:
-                        print item_set._get_item_set_string()
-
-                        raise Exception("Shift reduce conflict")
+                        raise parser_generator_exceptions.ShiftReduceConflict("in verification", item_set)
 
                     symbols_non_terminal_reduce_list.append(token)
                     reduce_list.append(token)
                 else:
                     if token in symbols_non_terminal_reduce_list:
-                        print item_set._get_item_set_string()
-
-                        raise Exception("Shift reduce conflict")
+                        raise parser_generator_exceptions.ShiftReduceConflict("in verification", item_set)
 
                     symbols_non_terminal_shift_list.append(token)
 
@@ -899,9 +898,7 @@ class ParserGenerator:
                 # in case there is more than one reduction
                 # in the same item set
                 if reduce_list_length > 1:
-                    print item_set._get_item_set_string()
-
-                    raise Exception("Reduce reduce conflict")
+                    raise parser_generator_exceptions.ReduceReduceConflict("in verification", item_set)
 
     def _generate_transition_table(self):
         """
@@ -1204,7 +1201,7 @@ class ParserGenerator:
                 # retrieves the action value and type from the action table
                 action_value, action_type = action_line[token_type]
             else:
-                raise Exception("Parsing exception: no action defined for state: " + str(current_state) + " and input: " + token_type)
+                raise parser_generator_exceptions.InvalidState("no action defined for state: " + str(current_state) + " and input: " + token_type)
 
             if action_type == ParserGenerator.REDUCE_OPERATION_VALUE:
                 # writes the reduce to the screen
