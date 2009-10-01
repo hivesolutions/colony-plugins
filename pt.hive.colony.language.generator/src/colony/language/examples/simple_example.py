@@ -46,12 +46,6 @@ t_DIVIDE = r"\/"
 t_1 = r"1"
 t_0 = r"0"
 
-# the new line character
-def t_NEWLINE(t):
-    r"\n+"
-    t.lexer.lineno += t.value.count("\n")
-    return t
-
 # single line comments
 def t_comment(t):
     r"\#[^\n]*\n+"
