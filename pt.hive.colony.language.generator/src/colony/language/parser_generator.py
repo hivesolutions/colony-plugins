@@ -578,6 +578,14 @@ class ParserGenerator:
         # generates the table
         self._generate_table()
 
+    def parse(self):
+        """
+        Parses the current buffer.
+        """
+
+        # parses the current buffer
+        self._parse()
+
     def get_lexer(self):
         """
         Retrieves the lexer.
@@ -1035,6 +1043,144 @@ class ParserGenerator:
                 # increments the current rule id
                 self.current_rule_id += 1
 
+    def _get_token(self):
+        """
+        Retrieves a valid token from the lexer.
+
+        @rtype: Token
+        @return: The valid token that has been retrieved.
+        """
+
+        # unsets the valid flag
+        valid = False
+
+        # loops while is not valid
+        while not valid:
+            # retrieves the token
+            token = self.lexer.get_token()
+
+            # in case the token type is valid
+            if token == None or not token.type in ["ignore", "comment"]:
+                # sets the valid flag
+                valid = True
+
+        # returns the token
+        return token
+
+    def _parse(self):
+        """
+        Parses the current buffer.
+        """
+
+        # creates the stack
+        stack = [(0, 0)]
+
+        # retrieves the current token
+        current_token = self._get_token()
+
+        print current_token
+
+        # loop indefinitely
+        while True:
+            print stack
+
+            # retrieves the current state
+            current_state, current_value = stack[-1]
+
+            # retrieves the current action line
+            action_line = self.action_table_map[current_state]
+
+            # in case there is a valid token
+            if current_token:
+                # sets the token type as the current token type
+                token_type = current_token.type
+
+                # sets the token value as the current token value
+                token_value = current_token.value
+            else:
+                # sets the token type as end of string
+                token_type = "$"
+
+                # sets the token value as end of string
+                token_value = "$"
+
+            # in case the token type is defined in the action line
+            if token_type in action_line:
+                # retrieves the action value and type from the action table
+                action_value, action_type = action_line[token_type]
+
+            if action_type == ParserGenerator.REDUCE_OPERATION_VALUE:
+                # writes the reduce to the screen
+                print "reduce " + str(action_value)
+
+                # retrieves the reduce rule
+                reduce_rule = self.rules_list[action_value]
+
+                # retrieves the reduce rule symbols list
+                reduce_rule_symbols_list = reduce_rule.get_symbols_list()
+
+                # creates the arguments list
+                arguments_list = [None]
+
+                # iterates over all the reduce rule symbols
+                for reduce_rule_symbol in reduce_rule_symbols_list:
+                    # pops a stack value
+                    pop_state, pop_value = stack.pop()
+
+                    # appends the popped value to the arguments list
+                    arguments_list.append(pop_value)
+
+                # retrieves the reduce rule function
+                reduce_rule_function = self.rule_function_map[reduce_rule]
+
+                # calls the reduce rule function with the arguments list
+                reduce_rule_function(arguments_list)
+
+                # retrieves the call return value
+                return_value = arguments_list[0]
+
+                # retrieves the current state
+                current_state, current_value = stack[-1]
+
+                # retrieves the current goto line
+                goto_line = self.goto_table_map[current_state]
+
+                # retrieves the reduce rule name
+                reduce_rule_name = reduce_rule.get_rule_name()
+
+                # in case the reduce rule name exists in the goto line
+                if reduce_rule_name in goto_line:
+                    # retrieves the goto value
+                    goto_value = goto_line[reduce_rule_name]
+
+                    # creates the goto tuple with the goto value
+                    # and the return value
+                    goto_tuple = (goto_value, return_value)
+
+                    # appends the goto tuple to the stack
+                    stack.append(goto_tuple)
+
+            elif action_type == ParserGenerator.SHIFT_OPERATION_VALUE:
+                # writes the shift to the screen
+                print "shift " + str(action_value)
+
+                # creates the current tuple with the action value
+                # and the token value
+                current_tuple = (action_value, token_value)
+
+                # appends the current tuple to the stack
+                stack.append(current_tuple)
+
+                # retrieves the next (current) token
+                current_token = self._get_token()
+
+                print current_token
+
+            elif action_type == ParserGenerator.ACCEPT_OPERATION_VALUE:
+                print "over"
+
+                break
+
     def _get_rules_string(self):
         """
         Retrieves the rules as a friendly string.
@@ -1228,141 +1374,3 @@ class ParserGenerator:
 
         # returns the string value
         return string_value
-
-    def get_token(self):
-        """
-        Retrieves a valid token from the lexer.
-
-        @rtype: Token
-        @return: The valid token that has been retrieved.
-        """
-
-        # unsets the valid flag
-        valid = False
-
-        # loops while is not valid
-        while not valid:
-            # retrieves the token
-            token = self.lexer.get_token()
-
-            # in case the token type is valid
-            if token == None or not token.type in ["ignore", "comment"]:
-                # sets the valid flag
-                valid = True
-
-        # returns the token
-        return token
-
-    def parse(self):
-        """
-        Parses the current buffer.
-        """
-
-        # creates the stack
-        stack = [(0, 0)]
-
-        # retrieves the current token
-        current_token = self.get_token()
-
-        print current_token
-
-        # loop indefinitely
-        while True:
-            print stack
-
-            # retrieves the current state
-            current_state, current_value = stack[-1]
-
-            # retrieves the current action line
-            action_line = self.action_table_map[current_state]
-
-            # in case there is a valid token
-            if current_token:
-                # sets the token type as the current token type
-                token_type = current_token.type
-
-                # sets the token value as the current token value
-                token_value = current_token.value
-            else:
-                # sets the token type as end of string
-                token_type = "$"
-
-                # sets the token value as end of string
-                token_value = "$"
-
-            # in case the token type is defined in the action line
-            if token_type in action_line:
-                # retrieves the action value and type from the action table
-                action_value, action_type = action_line[token_type]
-
-            if action_type == ParserGenerator.REDUCE_OPERATION_VALUE:
-                # writes the reduce to the screen
-                print "reduce " + str(action_value)
-
-                # retrieves the reduce rule
-                reduce_rule = self.rules_list[action_value]
-
-                # retrieves the reduce rule symbols list
-                reduce_rule_symbols_list = reduce_rule.get_symbols_list()
-
-                # creates the arguments list
-                arguments_list = [None]
-
-                # iterates over all the reduce rule symbols
-                for reduce_rule_symbol in reduce_rule_symbols_list:
-                    # pops a stack value
-                    pop_state, pop_value = stack.pop()
-
-                    # appends the popped value to the arguments list
-                    arguments_list.append(pop_value)
-
-                # retrieves the reduce rule function
-                reduce_rule_function = self.rule_function_map[reduce_rule]
-
-                # calls the reduce rule function with the arguments list
-                reduce_rule_function(arguments_list)
-
-                # retrieves the call return value
-                return_value = arguments_list[0]
-
-                # retrieves the current state
-                current_state, current_value = stack[-1]
-
-                # retrieves the current goto line
-                goto_line = self.goto_table_map[current_state]
-
-                # retrieves the reduce rule name
-                reduce_rule_name = reduce_rule.get_rule_name()
-
-                # in case the reduce rule name exists in the goto line
-                if reduce_rule_name in goto_line:
-                    # retrieves the goto value
-                    goto_value = goto_line[reduce_rule_name]
-
-                    # creates the goto tuple with the goto value
-                    # and the return value
-                    goto_tuple = (goto_value, return_value)
-
-                    # appends the goto tuple to the stack
-                    stack.append(goto_tuple)
-
-            elif action_type == ParserGenerator.SHIFT_OPERATION_VALUE:
-                # writes the shift to the screen
-                print "shift " + str(action_value)
-
-                # creates the current tuple with the action value
-                # and the token value
-                current_tuple = (action_value, token_value)
-
-                # appends the current tuple to the stack
-                stack.append(current_tuple)
-
-                # retrieves the next (current) token
-                current_token = self.get_token()
-
-                print current_token
-
-            elif action_type == ParserGenerator.ACCEPT_OPERATION_VALUE:
-                print "over"
-
-                break
