@@ -123,6 +123,7 @@ class JavascriptManager:
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.browserplus/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.data_structure/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.business/plugins",
+                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.content.manager/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.dummy/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.gui.key_activators/plugins",
                                                self.workspace_base_path + "/pt.hive.colony.web.plugins.gui.main/plugins",
