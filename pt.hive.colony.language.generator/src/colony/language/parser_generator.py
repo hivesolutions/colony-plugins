@@ -119,8 +119,8 @@ class ItemSet:
 
         # iterates over the rules list
         for item_set_rule, item_set_token_position, item_set_closure in self.rules_list:
-            # in case the rules are the same
-            if rule == item_set_rule:
+            # in case the rules and the token position are the same
+            if rule == item_set_rule and token_position == item_set_token_position:
                 return
 
         # creates the rule position tuple
@@ -147,32 +147,42 @@ class ItemSet:
         # removes the rule position tuple from the rules list
         self.rules_list.remove(rule_position_tuple)
 
-    def get_rule_transition_item_set(self, rule):
+    def get_rule_transition_item_set(self, rule, token_position):
         """
         Retrieves the transition item for the given rule.
 
         @param rule: Rule
         @param rule: The rule to retrieve the transition item set.
+        @type token_position: int
+        @param token_position: The token position to retrieve the transition item set.
         @rtype: ItemSet
-        @return: The transition item set for the given rule.
+        @return: The transition item set for the given rule and token position.
         """
 
         if not rule in self.rule_transition_item_set_map:
             return None
 
-        return self.rule_transition_item_set_map[rule]
+        if not token_position in self.rule_transition_item_set_map[rule]:
+            return None
 
-    def set_rule_transition_item_set(self, rule, item_set):
+        return self.rule_transition_item_set_map[rule][token_position]
+
+    def set_rule_transition_item_set(self, rule, token_position, item_set):
         """
         Sets the transition item set for the given rule.
 
         @type rule: Rule
         @param rule: The rule to set the transition item set.
+        @type token_position: int
+        @param token_position: The token position to set in the transition item set.
         @type item_set: ItemSet
         @param item_set: The transition item set to set in the given rule.
         """
 
-        self.rule_transition_item_set_map[rule] = item_set
+        if not rule in self.rule_transition_item_set_map:
+            self.rule_transition_item_set_map[rule] = {}
+
+        self.rule_transition_item_set_map[rule][token_position] = item_set
 
     def get_item_set_id(self):
         """
@@ -700,11 +710,14 @@ class ParserGenerator:
                 # retrieves the rule symbols list
                 rule_symbols_list = rule.get_symbols_list()
 
+                # retrieves the rule symbols list length
+                rule_symbols_list_length = len(rule_symbols_list)
+
                 # retrieves the current symbol
                 current_symbol = "".join(rule_symbols_list[:current_token_position + 1])
 
                 # in case the current token position is not the final one
-                if len(rule_symbols_list) > current_token_position + 1:
+                if rule_symbols_list_length > current_token_position + 1:
                     # retrieves the next symbol
                     next_symbol = rule_symbols_list[current_token_position + 1]
 
@@ -713,12 +726,6 @@ class ParserGenerator:
                     if next_symbol in self.symbols_non_terminal_map:
                         # retrieves the extra rules for the next symbol
                         exta_rules_list = self._get_extra_rules(next_symbol)
-
-                    # creates the rule tuple
-                    rule_tuple = (rule, current_token_position + 1)
-
-                    # adds the rule tuple to the next rules list
-                    next_rules_list.append(rule_tuple)
 
                 # in case it's the final symbol
                 else:
@@ -747,12 +754,6 @@ class ParserGenerator:
                     # adds the extra rule to the item set
                     item_set.add_rule(extra_rule, -1, True)
 
-                    # creates the extra rule tuple
-                    extra_rule_tuple = (extra_rule, 0)
-
-                    # adds the rule tuple to the next rules list
-                    next_rules_list.append(extra_rule_tuple)
-
             # iterates over all the current item sets
             for current_item_set in current_item_sets_list:
                 # in case the current item set is not
@@ -772,13 +773,14 @@ class ParserGenerator:
 
                         # iterates over all the previous item sets
                         for previous_item_set in previous_rules_map[item_set_rule]:
-                            # sets the rule sets the transition item set for the rule
-                            previous_item_set.set_rule_transition_item_set(item_set_rule, valid_item_set)
+                            # sets the rule sets the transition item set for the rule and token position
+                            previous_item_set.set_rule_transition_item_set(item_set_rule, item_set_token_position, valid_item_set)
 
             # clear the previous rules map
             previous_rules_map.clear()
 
             # iterates over all the current item sets
+            # to remove duplicated item sets
             for current_item_set in current_item_sets_list:
                 # in case the current item set is not
                 # contained in the item sets list
@@ -792,6 +794,9 @@ class ParserGenerator:
                     # retrieves the current item set rules list
                     current_item_set_rules_list = current_item_set.get_rules_list()
 
+                    # retrieves the current item set rules list length
+                    current_item_set_rules_list_length = len(current_item_set_rules_list)
+
                     # iterates over the current item set rules list
                     for rule, token_position, closure in current_item_set_rules_list:
                         # in case the rule is note defined in the previous rules map
@@ -802,11 +807,79 @@ class ParserGenerator:
                         # adds the current item set
                         previous_rules_map[rule].append(current_item_set)
 
+                        # retrieves the rule symbols list
+                        rule_symbols_list = rule.get_symbols_list()
+
+                        # retrieves the rule symbols list length
+                        rule_symbols_list_length = len(rule_symbols_list)
+
+                        # in case the current token position is not the final one
+                        if rule_symbols_list_length > token_position + 1:
+                            # creates the rule tuple
+                            rule_tuple = (rule, token_position + 1)
+
+                            # adds the rule tuple to the next rules list
+                            next_rules_list.append(rule_tuple)
+
+                    # validates the current item set
+                    self._validate_item_set(current_item_set)
+
                     # increments the current item set id
                     current_item_set_id += 1
 
             # sets the current rules list as the next rules list
             current_rules_list = next_rules_list
+
+    def _validate_item_set(self, item_set):
+        """
+        Validates the given item set.
+
+        @type item_set: ItemSet
+        @param item_set: The item set to validate.
+        """
+
+        # retrieves the item set rules
+        item_set_rules = item_set.get_rules_list()
+
+        symbols_non_terminal_map = {}
+
+        for symbol_non_terminal in self.symbols_non_terminal_map:
+            symbols_non_terminal_map[symbol_non_terminal] = {}
+            symbols_non_terminal_map[symbol_non_terminal]["reduce"] = []
+            symbols_non_terminal_map[symbol_non_terminal]["shift"] = []
+
+        # iterates over all the item set rules
+        for item_set_rule, item_set_token_position, item_set_closure in item_set_rules:
+            # retrieves the rule name
+            rule_name = item_set_rule.get_rule_name()
+
+            # retrieves the rule symbols list
+            rule_symbols_list = item_set_rule.get_symbols_list()
+
+            # retrieves the rule symbols list length
+            rule_symbols_list_length = len(rule_symbols_list)
+
+            # in case the item set token position is valid
+            if item_set_token_position > -1:
+                # retrieves the token
+                token = rule_symbols_list[item_set_token_position]
+
+                t = symbols_non_terminal_map[rule_name]
+
+                if item_set_token_position + 1 >= rule_symbols_list_length:
+                    if token in t["shift"]:
+                        print item_set._get_item_set_string()
+
+                        raise Exception("Shift reduce conflict")
+
+                    t["reduce"].append(token)
+                else:
+                    if token in t["reduce"]:
+                        print item_set._get_item_set_string()
+
+                        raise Exception("Shift reduce conflict")
+
+                    t["shift"].append(token)
 
     def _generate_transition_table(self):
         """
@@ -841,7 +914,7 @@ class ParserGenerator:
                     item_set_rule_symbol = "$"
 
                 # retrieves the transition item set rule
-                rule_transition_item_set = item_set.get_rule_transition_item_set(item_set_rule)
+                rule_transition_item_set = item_set.get_rule_transition_item_set(item_set_rule, item_set_token_position + 1)
 
                 # in case there is a rule transition item set defined
                 if rule_transition_item_set:
@@ -1108,6 +1181,8 @@ class ParserGenerator:
             if token_type in action_line:
                 # retrieves the action value and type from the action table
                 action_value, action_type = action_line[token_type]
+            else:
+                raise Exception("Parsing exception: no action defined for state: " + str(current_state) + " and input: " + token_type)
 
             if action_type == ParserGenerator.REDUCE_OPERATION_VALUE:
                 # writes the reduce to the screen
