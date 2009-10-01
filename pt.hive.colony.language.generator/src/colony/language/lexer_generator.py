@@ -41,6 +41,8 @@ import re
 import types
 import copy
 
+import lexer_generator_exceptions
+
 class Token:
     """
     The token class.
@@ -120,6 +122,9 @@ class LexerGenerator:
 
     current_index = 0;
     """ The current index of the lexer """
+
+    error_function = None
+    """ The error function """
 
     def __init__(self):
         """
@@ -276,14 +281,19 @@ class LexerGenerator:
             # sets the token start index
             token.start_index = self.current_index
 
+            # sets the token end index
+            token.end_index = self.current_index
+
             # sets the token lexer
             token.lexer = self
 
-            # calls the error function
-            self.error_function(token)
-
-            # raises the invalid token exception
-            raise Exception("Invalid token")
+            # in case an error function is defined
+            if self.error_function:
+                # calls the error function
+                self.error_function(token)
+            else:
+                # raises the invalid token exception
+                raise lexer_generator_exceptions.InvalidToken("not scanned %s" % str(token))
 
         # in case no valid token was found
         return None

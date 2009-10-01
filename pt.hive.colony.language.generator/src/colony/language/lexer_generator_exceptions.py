@@ -37,85 +37,35 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-# token definition
-t_PLUS = r"\+"
-t_MINUS = r"\-"
-t_TIMES = r"\*"
-t_DIVIDE = r"\/"
+class LexerGeneratorException(Exception):
+    """
+    The lexer generator exception class.
+    """
 
-t_1 = r"1"
-t_0 = r"0"
-
-# single line comments
-def t_comment(t):
-    r"\#[^\n]*\n+"
     pass
 
-# ignored characters
-t_ignore = " "
+class InvalidToken(LexerGeneratorException):
+    """
+    The invalid state exception class.
+    """
 
-# other character
-def t_error(t):
-    print "Illegal character '%s'" % t.value[0]
+    def __init__(self, message):
+        """
+        Constructor of the class.
 
-    # skips the character
-    t.lexer.skip(1)
+        @type message: String
+        @param message: The message to be printed.
+        """
 
-def p_program(t):
-    "program : E"
+        LexerGeneratorException.__init__(self, message)
+        self.message = message
 
-    print "program : " + str(t[1])
+    def __str__(self):
+        """
+        Returns the string representation of the class.
 
-    t[0] = t[1]
+        @rtype: String
+        @return: The string representation of the class.
+        """
 
-def p_expression_sum(t):
-    "E : E PLUS B"
-
-    print "E : " + str(t[1]) + " PLUS " + str(t[3])
-
-    t[0] = t[1] + t[3]
-
-def p_expression_subtraction(t):
-    "E : E MINUS B"
-
-    print "E : " + str(t[1]) + " MINUS " + str(t[3])
-
-    t[0] = t[1] - t[3]
-
-def p_expression_multiplication(t):
-    "E : E TIMES B"
-
-    print "E : " + str(t[1]) + " TIMES " + str(t[3])
-
-    t[0] = t[1] * t[3]
-
-def p_expression_division(t):
-    "E : E DIVIDE B"
-
-    print "E : " + str(t[1]) + " DIVIDE " + str(t[3])
-
-    t[0] = t[1] / t[3]
-
-def p_expression_value(t):
-    "E : B"
-
-    print "E : " + str(t[1])
-
-    t[0] = t[1]
-
-def p_zero_terminal(t):
-    "B : 0"
-
-    print "B : " + t[1]
-
-    t[0] = int(t[1])
-
-def p_one_terminal(t):
-    "B : 1"
-
-    print "B : " + t[1]
-
-    t[0] = int(t[1])
-
-# sets the example
-example = locals()
+        return "Invalid token: %s" % self.message
