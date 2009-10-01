@@ -841,12 +841,16 @@ class ParserGenerator:
         # retrieves the item set rules
         item_set_rules = item_set.get_rules_list()
 
+        # creates the symbols non terminal map
         symbols_non_terminal_map = {}
 
+        reduce_list = []
+
+        # iterates over all the non terminal token
         for symbol_non_terminal in self.symbols_non_terminal_map:
             symbols_non_terminal_map[symbol_non_terminal] = {}
-            symbols_non_terminal_map[symbol_non_terminal]["reduce"] = []
-            symbols_non_terminal_map[symbol_non_terminal]["shift"] = []
+            symbols_non_terminal_map[symbol_non_terminal][ParserGenerator.REDUCE_OPERATION_VALUE] = []
+            symbols_non_terminal_map[symbol_non_terminal][ParserGenerator.SHIFT_OPERATION_VALUE] = []
 
         # iterates over all the item set rules
         for item_set_rule, item_set_token_position, item_set_closure in item_set_rules:
@@ -864,22 +868,40 @@ class ParserGenerator:
                 # retrieves the token
                 token = rule_symbols_list[item_set_token_position]
 
-                t = symbols_non_terminal_map[rule_name]
+                # retrieves the symbols non terminal line
+                symbols_non_terminal_line = symbols_non_terminal_map[rule_name]
+
+                # retrieves the symbols non terminal shift list
+                symbols_non_terminal_shift_list = symbols_non_terminal_line[ParserGenerator.SHIFT_OPERATION_VALUE]
+
+                # retrieves the symbols non terminal reduce list
+                symbols_non_terminal_reduce_list = symbols_non_terminal_line[ParserGenerator.REDUCE_OPERATION_VALUE]
 
                 if item_set_token_position + 1 >= rule_symbols_list_length:
-                    if token in t["shift"]:
+                    if token in symbols_non_terminal_shift_list:
                         print item_set._get_item_set_string()
 
                         raise Exception("Shift reduce conflict")
 
-                    t["reduce"].append(token)
+                    symbols_non_terminal_reduce_list.append(token)
+                    reduce_list.append(token)
                 else:
-                    if token in t["reduce"]:
+                    if token in symbols_non_terminal_reduce_list:
                         print item_set._get_item_set_string()
 
                         raise Exception("Shift reduce conflict")
 
-                    t["shift"].append(token)
+                    symbols_non_terminal_shift_list.append(token)
+
+                # retrieves the reduce list length
+                reduce_list_length = len(reduce_list)
+
+                # in case there is more than one reduction
+                # in the same item set
+                if reduce_list_length > 1:
+                    print item_set._get_item_set_string()
+
+                    raise Exception("Reduce reduce conflict")
 
     def _generate_transition_table(self):
         """

@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 # token definition
 t_a = r"a"
-t_b = r"b"
+t_a = r"b"
 
 # single line comments
 def t_comment(t):
@@ -54,29 +54,29 @@ def t_error(t):
     print "Illegal character '%s'" % t.value[0]
 
 def p_program(t):
-    "program : S"
+    "program : E"
 
-    print "program : S"
+    print "program : E"
 
-def p_expression_SX(t):
-    "S : S X"
+def p_expression_Aa(t):
+    "E : A a"
 
-    print "S : S X"
+    print "E : A a"
 
-def p_expression_X(t):
-    "S : X"
+def p_expression_Bb(t):
+    "E : B b"
 
-    print "S : X"
+    print "E : B b"
 
-def p_expression_a(t):
-    "X : a"
+def p_expression_a_1(t):
+    "A : a"
 
-    print "X : a"
+    print "A : a"
 
-def p_expression_b(t):
-    "X : b"
+def p_expression_a_2(t):
+    "B : a"
 
-    print "X : b"
+    print "B : a"
 
 # sets the example
 example = locals()

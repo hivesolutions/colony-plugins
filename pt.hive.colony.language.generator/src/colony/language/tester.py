@@ -43,11 +43,12 @@ import parser_generator
 import examples.bug_example
 import examples.extra_example
 import examples.ply_example
+import examples.reduce_reduce_example
 import examples.shift_reduce_example
 import examples.simple_example
 
 # sets the current valid example
-valid_example = examples.extra_example.example
+valid_example = examples.reduce_reduce_example.example
 
 # creates a new lexer generator
 lexer_generator = lexer_generator.LexerGenerator()
@@ -77,7 +78,7 @@ print parser_generator._get_action_table_string()
 print parser_generator._get_goto_table_string()
 
 # sets the buffer in the parser generator
-parser_generator.set_buffer("aaaaaab")
+parser_generator.set_buffer("1 + 1")
 
 # parses the current buffer
 parser_generator.parse()
