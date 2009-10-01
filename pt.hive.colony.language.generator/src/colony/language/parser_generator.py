@@ -851,8 +851,14 @@ class ParserGenerator:
 
         # iterates over all the non terminal token
         for symbol_non_terminal in self.symbols_non_terminal_map:
+            # creates the symbols non terminal map for the
+            # given non terminal symbol
             symbols_non_terminal_map[symbol_non_terminal] = {}
+
+            # creates the symbols non terminal symbol reduce list
             symbols_non_terminal_map[symbol_non_terminal][ParserGenerator.REDUCE_OPERATION_VALUE] = []
+
+            # creates the symbols non terminal symbol shift list
             symbols_non_terminal_map[symbol_non_terminal][ParserGenerator.SHIFT_OPERATION_VALUE] = []
 
         # iterates over all the item set rules
@@ -880,16 +886,27 @@ class ParserGenerator:
                 # retrieves the symbols non terminal reduce list
                 symbols_non_terminal_reduce_list = symbols_non_terminal_line[ParserGenerator.REDUCE_OPERATION_VALUE]
 
+                # in case it's the last token
                 if item_set_token_position + 1 >= rule_symbols_list_length:
+                    # in case the token already exists in the symbols
+                    # non terminal shift list
                     if token in symbols_non_terminal_shift_list:
+                        # raises a shift reduce conflict exception
                         raise parser_generator_exceptions.ShiftReduceConflict("in verification", item_set)
 
+                    # appends the token to the symbols non terminal reduce list
                     symbols_non_terminal_reduce_list.append(token)
+
+                    # appends the token to the reduce list
                     reduce_list.append(token)
                 else:
+                    # in case the token already exists in the symbols
+                    # non terminal reduce list
                     if token in symbols_non_terminal_reduce_list:
+                        # raises a shift reduce conflict exception
                         raise parser_generator_exceptions.ShiftReduceConflict("in verification", item_set)
 
+                    # appends the token to the symbols non terminal shift list
                     symbols_non_terminal_shift_list.append(token)
 
                 # retrieves the reduce list length
@@ -898,6 +915,7 @@ class ParserGenerator:
                 # in case there is more than one reduction
                 # in the same item set
                 if reduce_list_length > 1:
+                    # raises a reduce reduce conflict exception
                     raise parser_generator_exceptions.ReduceReduceConflict("in verification", item_set)
 
     def _generate_transition_table(self):
