@@ -37,49 +37,41 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import lexer_generator
-import parser_generator
+# token definition
+t_a = r"a"
+t_b = r"b"
 
-import examples.bug_example
-import examples.extra_example
-import examples.look_ahead_example
-import examples.ply_example
-import examples.reduce_reduce_example
-import examples.shift_reduce_example
-import examples.simple_example
+# single line comments
+def t_comment(t):
+    r"\#[^\n]*\n+"
+    pass
 
-# sets the current valid example
-valid_example = examples.simple_example.example
+# ignored characters
+t_ignore = " "
 
-# creates a new lexer generator
-lexer_generator = lexer_generator.LexerGenerator()
+# other character
+def t_error(t):
+    print "Illegal character '%s'" % t.value[0]
 
-# creates a new parser generator
-parser_generator = parser_generator.ParserGenerator()
+def p_program(t):
+    "program : S"
 
-# sets the lexer in the parser
-parser_generator.set_lexer(lexer_generator)
+    print "program : X"
 
-# constructs the parser
-parser_generator.construct(valid_example)
+def p_expression_XX(t):
+    "S : X X"
 
-# prints the rules string
-print parser_generator._get_rules_string()
+    print "X : X X"
 
-# prints the item sets string
-print parser_generator._get_item_sets_string()
+def p_expression_aX(t):
+    "X : a X"
 
-# prints the transition table string
-print parser_generator._get_transition_table_string()
+    print "X : a X"
 
-# prints the action table string
-print parser_generator._get_action_table_string()
+def p_expression_b(t):
+    "X : b"
 
-# prints the goto table string
-print parser_generator._get_goto_table_string()
+    print "X : b"
 
-# sets the buffer in the parser generator
-parser_generator.set_buffer("1 + 1")
-
-# parses the current buffer
-parser_generator.parse()
+# sets the example
+example = locals()

@@ -271,6 +271,36 @@ class ItemSet:
 
         return string_value
 
+class LookAheadItemSet(ItemSet):
+    """
+    The look ahead item set class.
+    """
+
+    def __init__(self, item_set_id = None):
+        """
+        Constructor of the class.
+
+        @type item_set_id: int
+        @param item_set_id: The item set id.
+        """
+
+        ItemSet.__init__(self, item_set_id)
+
+    def __eq__(self, item_set):
+        """
+        Returns if an object is the same as this one.
+
+        @type item_set: ItemSet
+        @param item_set: The item set to be compared.
+        @rtype: bool
+        @return: If the item set is the same as this one.
+        """
+
+        if not ItemSet.__eq__(self, item_set):
+            return False
+
+        return True
+
 class Rule(object):
     """
     The rule class.
@@ -435,6 +465,18 @@ class ParserGenerator:
     The parser generator class.
     """
 
+    LR0_PARSER_TYPE = "LR0"
+    """ The LR(0) parser type value """
+
+    LR1_PARSER_TYPE = "LR1"
+    """ The LR(1) parser type value """
+
+    LALR_PARSER_TYPE = "LALR"
+    """ The LALR parser type value """
+
+    DEFAULT_PARSER_TYPE = "LR0"
+    """ The default parser type """
+
     PARSER_PREFIX = "p_"
     """ The parser prefix value """
 
@@ -454,7 +496,10 @@ class ParserGenerator:
     """ The reduce operation value """
 
     ACCEPT_OPERATION_VALUE = "A"
-    """ the accept operation value """
+    """ The accept operation value """
+
+    parser_type = None
+    """ The parser type """
 
     current_rule_id = 0
     """ The current rule id """
@@ -513,10 +558,18 @@ class ParserGenerator:
     goto_table_map = {}
     """ The goto table map """
 
-    def __init__(self):
+    def __init__(self, parser_type = None):
         """
         Constructor of the class.
+
+        @type parser_type: String
+        @param parser_type: The parser type to be constructed.
         """
+
+        if not parser_type:
+            parser_type = ParserGenerator.DEFAULT_PARSER_TYPE
+
+        self.parser_type = parser_type
 
         self.functions_list = []
         self.rules_list = []
@@ -726,8 +779,20 @@ class ParserGenerator:
                     # in case the next symbol is present
                     # in the non terminals map
                     if next_symbol in self.symbols_non_terminal_map:
-                        # retrieves the extra rules for the next symbol
-                        exta_rules_list = self._get_extra_rules(next_symbol)
+                        # in case the parser is of type LR(1) or LALR
+                        if self.parser_type == ParserGenerator.LR1_PARSER_TYPE or self.parser_type == ParserGenerator.LALR_PARSER_TYPE:
+                            if rule_symbols_list_length > current_token_position + 2:
+                                # retrieves the ahead symbol
+                                ahead_symbol = rule_symbols_list[current_token_position + 2]
+                            else:
+                                # sets the ahead symbols as invalid
+                                ahead_symbol = None
+
+                            # retrieves the extra rules for the next symbol
+                            exta_rules_list = self._get_extra_rules_ahead(next_symbol, ahead_symbol)
+                        else:
+                            # retrieves the extra rules for the next symbol
+                            exta_rules_list = self._get_extra_rules(next_symbol)
 
                 # in case it's the final symbol
                 else:
@@ -761,13 +826,22 @@ class ParserGenerator:
                 # in case the current item set is not
                 # contained in the item sets list
                 if not current_item_set in self.item_sets_list:
+                    # sets the valid item set
                     valid_item_set = current_item_set
                 else:
+                    # iterates over all the item sets in
+                    # the item sets list
                     for item_set in self.item_sets_list:
+                        # in case the item set is the same
                         if current_item_set == item_set:
+                            # sets the valid item set
                             valid_item_set = item_set
 
-                for item_set_rule, item_set_token_position, item_set_closure in valid_item_set.get_rules_list():
+                # retrieves the valid item set rules list
+                valid_item_set_rules_list = valid_item_set.get_rules_list()
+
+                # iterates over all the rules in the valid item set rules list
+                for item_set_rule, item_set_token_position, item_set_closure in valid_item_set_rules_list:
                     if item_set_rule in previous_rules_map:
                         # retrieves the previous item sets list
                         # for the given item set rule
@@ -1065,6 +1139,15 @@ class ParserGenerator:
                     goto_table_line[item_set_rule_symbol] = transition_table_line[item_set_rule_symbol]
 
     def _get_extra_rules(self, symbol):
+        """
+        Retrieves the extra rules (closure) for the given symbol.
+
+        @type symbol: String
+        @param symbol: The symbol to retrieve the extra rules.
+        @rtype: List
+        @return: The extra rules for the given symbol.
+        """
+
         # retrieves the extra rules for the next symbol
         extra_rules_list = self.rules_map[symbol]
 
@@ -1077,12 +1160,106 @@ class ParserGenerator:
             # retrieves the first symbol
             first_symbol = extra_rule_symbols_list[0]
 
+            # in case the first symbol is a non terminal and is no the same as the symbol
             if first_symbol in self.symbols_non_terminal_map and not first_symbol == symbol:
+                # retrieves the first symbol extra rules
+                first_symbol_extra_rules = self._get_extra_rules(first_symbol)
+
                 # extends the extra rules list
-                extra_rules_list.extend(self._get_extra_rules(first_symbol))
+                extra_rules_list.extend(first_symbol_extra_rules)
 
         # returns the extra rules list
         return extra_rules_list
+
+    def _get_extra_rules_ahead(self, symbol, ahead_symbol = None, ahead_symbols_list = []):
+        """
+        Retrieves the extra with look-ahead rules (closure) for the given symbol.
+
+        @type symbol: String
+        @param symbol: The symbol to retrieve the extra rules.
+        @type ahead_symbol: String
+        @param ahead_symbol: The symbol after the base symbol to retrieve the extra rules.
+        @type ahead_symbols_list: List
+        @param ahead_symbols_list: The list of look ahead allowed symbols.
+        @rtype: List
+        @return: The extra rules for the given symbol.
+        """
+
+        # retrieves the extra rules for the next symbol
+        extra_rules_list = self.rules_map[symbol]
+
+        # in case there is an ahead symbol defined
+        if ahead_symbol:
+            # retrieves the next ahead symbols list
+            next_ahead_symbols_list = self._get_ahead_symbol_terminals(ahead_symbol)
+
+            # extends the ahead symbols list
+            # with the next ahead symbols list
+            ahead_symbols_list.extend(next_ahead_symbols_list)
+
+        # iterates over all the extra rules
+        # in the extra rules list
+        for extra_rule in extra_rules_list:
+            # retrieves the symbols list for the extra rule
+            extra_rule_symbols_list = extra_rule.get_symbols_list()
+
+            # retrieves the extra rule symbols list length
+            extra_rule_symbols_list_length = len(extra_rule_symbols_list)
+
+            # retrieves the first symbol
+            first_symbol = extra_rule_symbols_list[0]
+
+            # in case the length of the extra rule symbols list
+            # is greater than one
+            if extra_rule_symbols_list_length > 1:
+                # retrieves the second symbol
+                second_symbol = extra_rule_symbols_list[1]
+            else:
+                # sets the second symbol as invalid
+                second_symbol = None
+
+            # in case the first symbol is a non terminal and is no the same as the symbol
+            if first_symbol in self.symbols_non_terminal_map and not first_symbol == symbol:
+                # retrieves the first symbol extra rules
+                first_symbol_extra_rules = self._get_extra_rules_ahead(first_symbol, second_symbol, ahead_symbols_list)
+
+                # extends the extra rules list
+                extra_rules_list.extend(first_symbol_extra_rules)
+
+        # returns the extra rules list
+        return extra_rules_list
+
+    def _get_ahead_symbol_terminals(self, symbol):
+        # retrieves the rules for the symbol
+        rules_list = self.rules_map[symbol]
+
+        # creates the ahead symbols list
+        ahead_symbols_list = []
+
+        # iterates over the rules in the
+        # rules list
+        for rule in rules_list:
+            # retrieves the symbols list for the rule
+            rule_symbols_list = rule.get_symbols_list()
+
+            # retrieves the first symbol
+            first_symbol = rule_symbols_list[0]
+
+            # in case the first symbol is a terminal
+            if first_symbol in self.symbols_terminal_map:
+                # appends the first symbol to the
+                # ahead symbols list
+                ahead_symbols_list.append(first_symbol)
+            else:
+                # retrieves the next ahead symbols list
+                next_ahead_symbols_list = self._get_ahead_symbol_terminals(first_symbol)
+
+                # extends the ahead symbols list with the next ahead
+                # symbols list
+                ahead_symbols_list.extend(next_ahead_symbols_list)
+
+        # returns the ahead symbols list
+        return ahead_symbols_list
 
     def _generate_structures(self):
         """
