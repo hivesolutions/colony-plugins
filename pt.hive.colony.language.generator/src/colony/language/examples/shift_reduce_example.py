@@ -52,6 +52,9 @@ t_ignore = " "
 def t_error(t):
     print "Illegal character '%s'" % t.value[0]
 
+    # skips the character
+    t.lexer.skip(1)
+
 def p_program(t):
     "program : E"
 

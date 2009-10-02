@@ -271,36 +271,6 @@ class ItemSet:
 
         return string_value
 
-class LookAheadItemSet(ItemSet):
-    """
-    The look ahead item set class.
-    """
-
-    def __init__(self, item_set_id = None):
-        """
-        Constructor of the class.
-
-        @type item_set_id: int
-        @param item_set_id: The item set id.
-        """
-
-        ItemSet.__init__(self, item_set_id)
-
-    def __eq__(self, item_set):
-        """
-        Returns if an object is the same as this one.
-
-        @type item_set: ItemSet
-        @param item_set: The item set to be compared.
-        @rtype: bool
-        @return: If the item set is the same as this one.
-        """
-
-        if not ItemSet.__eq__(self, item_set):
-            return False
-
-        return True
-
 class Rule(object):
     """
     The rule class.
@@ -459,6 +429,123 @@ class Rule(object):
         """
 
         return self.rule_name + " -> " + self.rule_value
+
+class LookAheadRule(Rule):
+    """
+    The look ahead rule class.
+    """
+
+    def __init__(self, rule = None, ahead_symbols_list = []):
+        """
+        Constructor of the class.
+
+        @type rule: Rule
+        @param rule: The rule to be used in the look ahead rule construction.
+        """
+
+        # in case the rule is defined
+        if rule:
+            # retrieves the rule id
+            rule_id = rule.get_rule_id()
+
+            # retrieves the rule name
+            rule_name = rule.get_rule_name()
+
+            # retrieves the rule_value
+            rule_value = rule.get_rule_value()
+
+            Rule.__init__(self, rule_id, rule_name, rule_value)
+        else:
+            Rule.__init__(self)
+
+        self.set_ahead_symbols_list(ahead_symbols_list)
+
+    def __eq__(self, rule):
+        # in case the base comparator is invalid
+        if not Rule.__eq__(self, rule):
+            # returns false immediately
+            return False
+
+        # retrieves the length of the ahead symbols list
+        ahead_symbols_list_length = len(self.ahead_symbols_list)
+
+        # retrieves the rule ahead symbols list
+        rule_ahead_symbols_list = rule.get_ahead_symbols_list()
+
+        # retrieves the length of the rule ahead symbols list
+        rule_ahead_symbols_list_length = len(rule_ahead_symbols_list)
+
+        # in case the length of both symbols list is not the same
+        if not ahead_symbols_list_length == rule_ahead_symbols_list_length:
+            # returns false
+            return False
+
+        # iterates over the indexes of the ahead symbols
+        # list length
+        for index in range(ahead_symbols_list_length):
+            # retrieves the ahead symbol
+            ahead_symbol = self.ahead_symbols_list[index]
+
+            # retrieves the rule ahead symbol
+            rule_ahead_symbol = rule_ahead_symbols_list[index]
+
+            # in case the ahead symbol is not equal
+            # to the rule ahead symbol
+            if not ahead_symbol == rule_ahead_symbol:
+                # returns false
+                return False
+
+        # return true
+        return True
+
+    def get_ahead_symbols_list(self):
+        """
+        Retrieves the ahead symbols list.
+
+        @rtype: List
+        @return: The ahead symbols list.
+        """
+
+        return self.ahead_symbols_list
+
+    def set_ahead_symbols_list(self, ahead_symbols_list):
+        """
+        Sets the ahead symbols list.
+
+        @type ahead_symbols_list: List
+        @param ahead_symbols_list: The ahead symbols list.
+        """
+
+        if ahead_symbols_list:
+            self.ahead_symbols_list = ahead_symbols_list
+        else:
+            self.ahead_symbols_list = ["$"]
+
+    def _get_rule_string(self):
+        # retrieves the base rule string
+        base_rule_string = Rule._get_rule_string(self)
+
+        # adds a comma to the base rule string
+        base_rule_string += ", "
+
+        # sets the is first flag
+        is_first = True
+
+        # iterates over all the ahead symbols
+        for ahead_symbol in self.ahead_symbols_list:
+            # in case is the first item
+            if is_first:
+                # unsets the is first flag
+                is_first = False
+            else:
+                # adds the slash to the base rule string
+                base_rule_string += "/"
+
+            # appends the ahead symbol to the base rule string
+            base_rule_string += ahead_symbol
+
+        # returns the base rule string
+        return base_rule_string
 
 class ParserGenerator:
     """
@@ -650,6 +737,26 @@ class ParserGenerator:
 
         # parses the current buffer
         self._parse()
+
+    def get_parser_type(self):
+        """
+        Retrieves the parser type.
+
+        @rtype: String
+        @return: The parser type.
+        """
+
+        return self.parser_type
+
+    def set_parser_type(self, parser_type):
+        """
+        Sets the parser type.
+
+        @type parser_type: String
+        @param parser_type: The parser type.
+        """
+
+        self.parser_type = parser_type
 
     def get_lexer(self):
         """
@@ -1197,6 +1304,17 @@ class ParserGenerator:
             # with the next ahead symbols list
             ahead_symbols_list.extend(next_ahead_symbols_list)
 
+        # creates the extra look ahead list
+        extra_look_ahead_list = []
+
+        # iterates over the extra rules list
+        for extra_rule in extra_rules_list:
+            # creates the extra look ahead rule
+            extra_look_ahead_rule = LookAheadRule(extra_rule, copy.copy(ahead_symbols_list))
+
+            # appends the extra look ahead rule to the extra look ahead list
+            extra_look_ahead_list.append(extra_look_ahead_rule)
+
         # iterates over all the extra rules
         # in the extra rules list
         for extra_rule in extra_rules_list:
@@ -1223,11 +1341,11 @@ class ParserGenerator:
                 # retrieves the first symbol extra rules
                 first_symbol_extra_rules = self._get_extra_rules_ahead(first_symbol, second_symbol, ahead_symbols_list)
 
-                # extends the extra rules list
-                extra_rules_list.extend(first_symbol_extra_rules)
+                # extends the extra look ahead rules list
+                extra_look_ahead_list.extend(first_symbol_extra_rules)
 
-        # returns the extra rules list
-        return extra_rules_list
+        # returns the extra look ahead rules list
+        return extra_look_ahead_list
 
     def _get_ahead_symbol_terminals(self, symbol):
         # retrieves the rules for the symbol

@@ -49,13 +49,13 @@ import examples.shift_reduce_example
 import examples.simple_example
 
 # sets the current valid example
-valid_example = examples.simple_example.example
+valid_example = examples.look_ahead_example.example
 
 # creates a new lexer generator
 lexer_generator = lexer_generator.LexerGenerator()
 
 # creates a new parser generator
-parser_generator = parser_generator.ParserGenerator()
+parser_generator = parser_generator.ParserGenerator(parser_generator.ParserGenerator.LR1_PARSER_TYPE)
 
 # sets the lexer in the parser
 parser_generator.set_lexer(lexer_generator)
