@@ -1018,7 +1018,7 @@ class ParserGenerator:
                         previous_item_sets_list = previous_rules_map[item_set_rule]
 
                         # iterates over all the previous item sets
-                        for previous_item_set in previous_rules_map[item_set_rule]:
+                        for previous_item_set in previous_item_sets_list:
                             # sets the rule sets the transition item set for the rule and token position
                             previous_item_set.set_rule_transition_item_set(item_set_rule, item_set_token_position, valid_item_set)
 
