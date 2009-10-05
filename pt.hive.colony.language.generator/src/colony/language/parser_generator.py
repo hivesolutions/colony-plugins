@@ -982,8 +982,8 @@ class ParserGenerator:
                     # sets the end symbol
                     next_symbol = "$"
 
-                # in case the symbol is not in the symbol item set map
-                if current_symbol in symbol_item_set_map:
+                # in case the state identifier is in the symbol item set map
+                if state_identifier in symbol_item_set_map:
                     # retrieves the item set
                     item_set = symbol_item_set_map[state_identifier]
                 else:

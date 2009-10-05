@@ -37,50 +37,61 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import lexer_generator
-import parser_generator
+# token definition
+t_PLUS = r"\+"
 
-import examples.bug_example
-import examples.extra_example
-import examples.look_ahead_example
-import examples.ply_example
-import examples.reduce_reduce_example
-import examples.shift_reduce_example
-import examples.simple_example
-import examples.ultra_simple_example
+t_1 = r"1"
+t_0 = r"0"
 
-# sets the current valid example
-valid_example = examples.ultra_simple_example.example
+# single line comments
+def t_comment(t):
+    r"\#[^\n]*\n+"
+    pass
 
-# creates a new lexer generator
-lexer_generator = lexer_generator.LexerGenerator()
+# ignored characters
+t_ignore = " "
 
-# creates a new parser generator
-parser_generator = parser_generator.ParserGenerator(parser_generator.ParserGenerator.LR1_PARSER_TYPE)
+# other character
+def t_error(t):
+    print "Illegal character '%s'" % t.value[0]
 
-# sets the lexer in the parser
-parser_generator.set_lexer(lexer_generator)
+    # skips the character
+    t.lexer.skip(1)
 
-# constructs the parser
-parser_generator.construct(valid_example)
+def p_program(t):
+    "program : E"
 
-# prints the rules string
-print parser_generator._get_rules_string()
+    print "program : " + str(t[1])
 
-# prints the item sets string
-print parser_generator._get_item_sets_string()
+    t[0] = t[1]
 
-# prints the transition table string
-print parser_generator._get_transition_table_string()
+def p_expression_sum(t):
+    "E : E PLUS B"
 
-# prints the action table string
-print parser_generator._get_action_table_string()
+    print "E : " + str(t[1]) + " PLUS " + str(t[3])
 
-# prints the goto table string
-print parser_generator._get_goto_table_string()
+    t[0] = t[1] + t[3]
 
-# sets the buffer in the parser generator
-parser_generator.set_buffer("1 + 1")
+def p_expression_value(t):
+    "E : B"
 
-# parses the current buffer
-parser_generator.parse()
+    print "E : " + str(t[1])
+
+    t[0] = t[1]
+
+def p_zero_terminal(t):
+    "B : 0"
+
+    print "B : " + t[1]
+
+    t[0] = int(t[1])
+
+def p_one_terminal(t):
+    "B : 1"
+
+    print "B : " + t[1]
+
+    t[0] = int(t[1])
+
+# sets the example
+example = locals()
