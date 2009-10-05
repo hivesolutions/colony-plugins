@@ -271,7 +271,7 @@ class ItemSet:
 
         return string_value
 
-class Rule(object):
+class Rule:
     """
     The rule class.
     """
@@ -339,6 +339,16 @@ class Rule(object):
         else:
             # returns false
             return False
+
+    def __hash__(self):
+        """
+        Retrieves the hash value for the instance.
+
+        @rtype: int
+        @return: The hash value for the instance.
+        """
+
+        return self._get_rule_string().__hash__()
 
     def get_rule_id(self):
         """
@@ -673,6 +683,9 @@ class ParserGenerator:
     item_sets_list = {}
     """ The item sets list """
 
+    rules_item_sets_map = {}
+    """ The rules item sets map """
+
     transition_table_map = {}
     """ The transition table map """
 
@@ -705,6 +718,7 @@ class ParserGenerator:
         self.symbols_terminal_map = {}
         self.symbols_terminal_end_map = {}
         self.item_sets_list = []
+        self.rules_item_sets_map = {}
         self.transition_table_map = {}
         self.action_table_map = {}
         self.goto_table_map = {}
@@ -1013,6 +1027,11 @@ class ParserGenerator:
                 for item_set_rule, item_set_token_position, item_set_closure in valid_item_set_rules_list:
                     # in case the item set rule is defined in the previous rules map
                     if item_set_rule in previous_rules_map:
+                        # in case it's an item set closure
+                        if item_set_closure:
+                            # increments the item set token position
+                            item_set_token_position += 1
+
                         # retrieves the previous item sets list
                         # for the given item set rule
                         previous_item_sets_list = previous_rules_map[item_set_rule]
@@ -1052,6 +1071,14 @@ class ParserGenerator:
 
                         # adds the current item set
                         previous_rules_map[rule].append(current_item_set)
+
+                        # in case it's not a closure
+                        if not closure:
+                            # creates the rule tuple
+                            rule_tuple = (rule, token_position)
+
+                            # sets the current item set in the rules items sets map
+                            self.rules_item_sets_map[rule_tuple] = current_item_set
 
                         # retrieves the rule symbols list
                         rule_symbols_list = rule.get_symbols_list()
@@ -1159,9 +1186,6 @@ class ParserGenerator:
                 # in case there is more than one reduction
                 # in the same item set
                 if reduce_list_length > 1:
-                    # prints the item sets string
-                    print self._get_item_sets_string()
-
                     # raises a reduce reduce conflict exception
                     raise parser_generator_exceptions.ReduceReduceConflict("in verification", item_set)
 
@@ -1197,8 +1221,17 @@ class ParserGenerator:
                     # sets the end symbol
                     item_set_rule_symbol = "$"
 
-                # retrieves the transition item set rule
-                rule_transition_item_set = item_set.get_rule_transition_item_set(item_set_rule, item_set_token_position + 1)
+                # creates the rule tuple from the item set rule
+                rule_tuple = (item_set_rule, item_set_token_position + 1)
+
+                # in case the rule tuple is defined in the
+                # rules item sets map
+                if rule_tuple in self.rules_item_sets_map:
+                    # retrieves the transition item set rule
+                    rule_transition_item_set = self.rules_item_sets_map[rule_tuple]
+                else:
+                    # sets the rule transition item set to invalid
+                    rule_transition_item_set = None
 
                 # in case there is a rule transition item set defined
                 if rule_transition_item_set:
@@ -1277,7 +1310,8 @@ class ParserGenerator:
                     # creates the reduce value
                     reduce_value = (first_rule_id, ParserGenerator.REDUCE_OPERATION_VALUE)
 
-                    if symbol_terminal in first_rule.get_ahead_symbols_list():
+                    # in case the symbol exists in the ahead symbols list
+                    if not self.is_look_ahead_parser() or symbol_terminal in first_rule.get_ahead_symbols_list():
                         # adds the reduce value to the action table line
                         action_table_line[symbol_terminal] = reduce_value
 

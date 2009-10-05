@@ -79,7 +79,7 @@ print parser_generator._get_action_table_string()
 print parser_generator._get_goto_table_string()
 
 # sets the buffer in the parser generator
-parser_generator.set_buffer("1 + 1")
+parser_generator.set_buffer("ab")
 
 # parses the current buffer
 parser_generator.parse()
