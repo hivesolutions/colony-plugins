@@ -52,9 +52,17 @@ ENTITY_NAME_VALUE = "entity_name"
 
 EQUALS_VALUE = "="
 
+FIELDS_VALUE = "fields"
+
 FILE_PATH_VALUE = "file_path"
 
 OBJECT_ID_VALUE = "object_id"
+
+LOAD_OPTIONS_VALUE = "load_options"
+
+LOAD_ENTITIES_VALUE = "load_entities"
+
+INPUT_ATTRIBUTE_HANDLERS_VALUE = "input_attribute_handlers"
 
 LAZY_LOADED = "%lazy-loaded%"
 """ String used by the entity manager to indicate that an entity's relation is lazy loaded """
@@ -111,15 +119,15 @@ class IoAdapterEntityManager:
 
         try:
             # loads the intermediate structure entities' attributes
-            entity_object_id_entity_map, entity_object_id_intermediate_entity_object_id_map = self.load_attributes(intermediate_structure, entity_manager)
+            entity_object_id_entity_map, entity_object_id_intermediate_entity_object_id_map = self.load_attributes(intermediate_structure, entity_manager, options)
 
             # loads the intermediate structure entities' relations
-            self.load_relations(intermediate_structure, entity_manager, entity_object_id_entity_map, entity_object_id_intermediate_entity_object_id_map)
+            self.load_relations(intermediate_structure, entity_manager, options, entity_object_id_entity_map, entity_object_id_intermediate_entity_object_id_map)
         finally:
             # closes the database connection
             entity_manager.close_connection()
 
-    def load_attributes(self, intermediate_structure, entity_manager):
+    def load_attributes(self, intermediate_structure, entity_manager, options):
         """
         Loads the intermediate structure's entities' attributes with the entity manager.
 
@@ -128,6 +136,9 @@ class IoAdapterEntityManager:
         @type entity_manager: EntityManager
         @param entity_manager: Entity manager used to load the intermediate structure
         entities' attributes.
+        @type options: Dictionary
+        @param options: Options used to determine how to load data into
+        the provided intermediate structure.
         @rtype: List
         @return: List with a map associating the created entity object ids with the
         entities themselves
@@ -141,62 +152,88 @@ class IoAdapterEntityManager:
         # dictionary used to associate the created intermediate entity object ids with entity object ids
         entity_object_id_intermediate_entity_object_id_map = {}
 
+        # extracts the non-mandatory options
+        load_options = options.get(LOAD_OPTIONS_VALUE, {})
+        load_entity_name_attribute_names_map = load_options.get(LOAD_ENTITIES_VALUE, None)
+        input_attribute_handlers = options.get(INPUT_ATTRIBUTE_HANDLERS_VALUE, [])
+
+        # retrieves a list of available entity classes
+        entity_classes = entity_manager.entity_classes_list
+
+        # filters the entity classes to the specified entity names
+        if load_entity_name_attribute_names_map:
+            entity_class_names = load_entity_name_attribute_names_map.keys()
+            entity_classes = [entity_class for entity_class in entity_classes if entity_class.__name__ in entity_class_names]
+
         # retrieves all entities and stores their contents in the intermediate structure
-        for entity_class in entity_manager.entity_classes_list:
+        for entity_class in entity_classes:
 
-            # retrieves all entities of this type
-            entities = entity_manager._find_all(entity_class)
+            # retrieves the attributes names one wishes to retrieve for this entity
+            entity_class_name = entity_class.__name__
 
-            # creates intermediate entities for the retrieved entities and populates them with the entity's attributes
-            self.load_attributes_entities(intermediate_structure, entity_manager, entities, entity_object_id_entity_map, entity_object_id_intermediate_entity_object_id_map)
+            # retrieves all objects of the specified class
+            find_options = {FIELDS_VALUE : ["object_id"]}
+            entities = entity_manager._find_all_options(entity_class, find_options)
+
+            # retrieves the names of the attributes that must be loaded
+            attribute_names = []
+            if entity_class_name in load_entity_name_attribute_names_map:
+                attribute_names = load_entity_name_attribute_names_map[entity_class_name]
+
+            # initializes the find options
+            find_options = {}
+
+            # figures out which non relation attribute names must be loaded
+            non_relation_attribute_names = entity_manager.get_entity_class_non_relation_attribute_names(entity_class)
+            if attribute_names:
+                 non_relation_attribute_names = [non_relation_attribute_name for non_relation_attribute_name in non_relation_attribute_names if non_relation_attribute_name in attribute_names]
+
+            # sets the attributes that must be loaded in the find options
+            # in case they were specified
+            if attribute_names:
+                find_options[FIELDS_VALUE] = ["object_id"] + attribute_names
+
+            # figures out which relation attribute names must be loaded
+            relation_attribute_names = entity_manager.get_entity_class_relation_attribute_names(entity_class)
+            if attribute_names:
+                relation_attribute_names = [relation_attribute_name for relation_attribute_name in relation_attribute_names if relation_attribute_name in attribute_names]
+
+            # injects the relation attribute names that must be loaded
+            # in the find options, if there are any
+            if relation_attribute_names:
+                find_options[EAGER_LOADING_RELATIONS_VALUE] = {}
+                for relation_attribute_name in relation_attribute_names:
+                    find_options[EAGER_LOADING_RELATIONS_VALUE][relation_attribute_name] = {}
+
+            # creates an intermediate entity for each entity and populates it with the entity's attributes
+            for entity in entities:
+
+                # creates the intermediate entity and indexes it to the intermediate entity for use in the load relations step
+                intermediate_entity = intermediate_structure.create_entity(entity_class_name)
+                intermediate_entity_object_id = intermediate_entity.get_object_id()
+                entity_object_id_intermediate_entity_object_id_map[entity.object_id] = intermediate_entity_object_id
+
+                # retrieves the entity again but now fully loaded and indexes it by its object id for use in the load relations step
+                entity = entity_manager.find_options(entity_class, entity.object_id, find_options)
+                entity_object_id_entity_map[entity.object_id] = entity
+
+                # injects the entity class in the entity
+                # for later reference
+                setattr(entity, "entity_class", entity_class)
+
+                # copies the entity's attributes to the intermediate entity
+                for attribute_name in non_relation_attribute_names:
+                    attribute_value = getattr(entity, attribute_name)
+
+                    # passes the attribute value through the configured input attribute handlers
+                    for input_attribute_handler in input_attribute_handlers:
+                        attribute_value = input_attribute_handler(intermediate_structure, entity, attribute_value)
+
+                    intermediate_entity.set_attribute(attribute_name, attribute_value)
 
         return (entity_object_id_entity_map, entity_object_id_intermediate_entity_object_id_map)
 
-    def load_attributes_entities(self, intermediate_structure, entity_manager, entities, entity_object_id_entity_map, entity_object_id_intermediate_entity_object_id_map):
-        """
-        Loads the intermediate structure's intermediate entity attributes from the provided entities.
-
-        @type intermediate_structure: IntermediateStructure
-        @param intermediate_structure: Intermediate structure one wants to load.
-        @type entity_manager: EntityManager
-        @param entity_manager: Entity manager used to load the intermediate structure entities' attributes.
-        @type entities: List
-        @param entities: List of entities where to extract the intermediate entity attributes from.
-        @type entity_object_id_entity_map: Dictionary
-        @param entity_object_id_entity_map: Dictionary associating entities' object ids with the
-        entities themselves.
-        @type entity_object_id_intermediate_entity_object_id_map: Dictionary
-        @param entity_object_id_intermediate_entity_object_id_map: Dictionary associating entities'
-        object ids with intermediate entities' object ids.
-        """
-
-        # creates an intermediate entity for each entity and populates it with the entity's attributes
-        for entity in entities:
-            entity_class = entity.__class__
-            entity_name = entity_class.__name__
-
-            # creates the intermediate entity and indexes it to the intermediate entity for use in the load relations step
-            intermediate_entity = intermediate_structure.create_entity(entity_name)
-            intermediate_entity_object_id = intermediate_entity.get_object_id()
-            entity_object_id_intermediate_entity_object_id_map[entity.object_id] = intermediate_entity_object_id
-
-            # discovers which fields are lazy loaded relations and creates find options to retrieve the entity fully loaded
-            find_options = {EAGER_LOADING_RELATIONS_VALUE : {}}
-            relation_attribute_names = entity_manager.get_entity_class_relation_attribute_names(entity_class)
-            for attribute_name in relation_attribute_names:
-                find_options[EAGER_LOADING_RELATIONS_VALUE][attribute_name] = {}
-
-            # retrieves the entity again but now fully loaded and indexes it by its object id for use in the load relations step
-            entity = entity_manager.find_options(entity_class, entity.object_id, find_options)
-            entity_object_id_entity_map[entity.object_id] = entity
-
-            # copies the entity's attributes to the intermediate entity
-            non_relation_attribute_names = entity_manager.get_entity_class_non_relation_attribute_names(entity_class)
-            for attribute_name in non_relation_attribute_names:
-                attribute_value = getattr(entity, attribute_name)
-                intermediate_entity.set_attribute(attribute_name, attribute_value)
-
-    def load_relations(self, intermediate_structure, entity_manager, entity_object_id_entity_map, entity_object_id_intermediate_entity_object_id_map):
+    def load_relations(self, intermediate_structure, entity_manager, options, entity_object_id_entity_map, entity_object_id_intermediate_entity_object_id_map):
         """
         Loads the intermediate structure's entities' relations with the entity manager.
 
@@ -205,6 +242,9 @@ class IoAdapterEntityManager:
         @type entity_manager: EntityManager
         @param entity_manager: Entity manager used to load the intermediate structure
         entities' attributes.
+        @type options: Dictionary
+        @param options: Options used to determine how to load data into
+        the provided intermediate structure.
         @type entity_object_id_entity_map: Dictionary
         @param entity_object_id_entity_map: Map associating the object ids of the
         entities created in the load attributes step with the entities themselves.
@@ -214,81 +254,87 @@ class IoAdapterEntityManager:
         entities created in the load attributes step.
         """
 
+        # extracts the non-mandatory options
+        load_options = options.get(LOAD_OPTIONS_VALUE, {})
+        load_entity_name_attribute_names_map = load_options.get(LOAD_ENTITIES_VALUE, None)
+
         # retrieves the entity for each intermediate entity
         entities = entity_object_id_entity_map.values()
         for entity in entities:
+            entity_class = getattr(entity, "entity_class")
+            entity_class_name = entity_class.__name__
 
             # retrieves the correspondent intermediate entity created in the load attributes step
             intermediate_entity_object_id = entity_object_id_intermediate_entity_object_id_map[entity.object_id]
             intermediate_entity_index = self.get_intermediate_entity_index(intermediate_entity_object_id)
-            intermediate_entity = intermediate_structure.get_entity(intermediate_entity_index)
+            intermediate_entities = intermediate_structure.get_entities_by_index(intermediate_entity_index)
 
-            # iterates through the intermediate entity's relation attributes and creates a connection between the respective entity and the respective related entity
-            self.load_relations_relation_attributes(intermediate_structure, entity_manager, entity_object_id_intermediate_entity_object_id_map, entity, intermediate_entity)
+            # raises an exception in case more than one entity was
+            # found at the specified index
+            if len(intermediate_entities) > 1:
+                raise io_adapter_entity_manager_exceptions.IoAdapterEntityManagerUnexpectedNumberIntermediateEntities()
 
-    def load_relations_relation_attributes(self, intermediate_structure, entity_manager, entity_object_id_intermediate_entity_object_id_map, entity, intermediate_entity):
-        """
-        Loads the intermediate structure's entity relations for the specified intermediate entity.
+            # retrieves the associated intermediate entity
+            intermediate_entity = intermediate_entities[0]
 
-        @type intermediate_structure: IntermediateStructure
-        @param intermediate_structure: Intermediate structure one wants to load.
-        @type entity_manager: EntityManager
-        @param entity_manager: Entity manager used to load the intermediate structure entities' attributes.
-        @type entity_object_id_intermediate_entity_object_id_map: Dictionary
-        @param entity_object_id_intermediate_entity_object_id_map: Map associating the entity object ids with
-        the object ids of the correspondent intermediate entities created in the load attributes step.
-        @type entity: Entity
-        @param entity: Entity where to retrieve the the related entities from.
-        @type intermediate_entity: Entity
-        @param intermediate_entity: Intermediate entity one wants to load relations for.
-        """
+            # retrieves the names of the attributes that must be loaded
+            attribute_names = []
+            if entity_class_name in load_entity_name_attribute_names_map:
+                attribute_names = load_entity_name_attribute_names_map[entity_class_name]
 
-        # retrieves the associated entities and stores them in the intermediate entity they are related with
-        relation_attribute_names = entity_manager.get_entity_class_relation_attribute_names(entity.__class__)
-        for attribute_name in relation_attribute_names:
+            # figures out which relation attribute names must be loaded
+            relation_attribute_names = entity_manager.get_entity_class_relation_attribute_names(entity_class)
+            if attribute_names:
+                relation_attribute_names = [relation_attribute_name for relation_attribute_name in relation_attribute_names if relation_attribute_name in attribute_names]
 
-            # retrieves the intermediate entity's relation value
-            intermediate_entity_attribute_value = None
-            if intermediate_entity.has_attribute(attribute_name):
-                intermediate_entity_attribute_value = intermediate_entity.get_attribute(attribute_name)
+            # iterates through the intermediate entity's relation attributes and creates
+            # a connection between the respective entity and the respective related entity
+            for attribute_name in relation_attribute_names:
 
-            # retrieves the entities that are in the entity relation attribute
-            related_entity_or_entities = getattr(entity, attribute_name)
+                # retrieves the intermediate entity's relation value
+                intermediate_entity_attribute_value = None
+                if intermediate_entity.has_attribute(attribute_name):
+                    intermediate_entity_attribute_value = intermediate_entity.get_attribute(attribute_name)
 
-            # if entity relation is a "to many" relation
-            if type(related_entity_or_entities) == types.ListType:
-                related_entities = related_entity_or_entities
+                # retrieves the entities that are in the entity relation attribute
+                related_entity_or_entities = getattr(entity, attribute_name)
 
-                # converts the intermediate structure value to a "to many" relation in case it's not currently
-                if not type(intermediate_entity_attribute_value) == types.ListType:
-                    if not intermediate_entity_attribute_value:
-                        intermediate_entity_attribute_value = []
-                    else:
-                        intermediate_entity_attribute_value = [intermediate_entity_attribute_value]
+                # if entity relation is a "to many" relation
+                if type(related_entity_or_entities) == types.ListType:
+                    related_entities = related_entity_or_entities
 
-                # retrieves the intermediate entity associated with each related entity and adds it to the intermediate entity's relation attribute
-                for related_entity in related_entities:
-                    related_intermediate_entity_object_id = entity_object_id_intermediate_entity_object_id_map[related_entity.object_id]
-                    related_intermediate_entity_index = self.get_intermediate_entity_index(related_intermediate_entity_object_id)
-                    related_intermediate_entity = intermediate_structure.get_entity(related_intermediate_entity_index)
-                    intermediate_entity_attribute_value.append(related_intermediate_entity)
+                    # converts the intermediate structure value to a "to many" relation in case it's not currently
+                    if not type(intermediate_entity_attribute_value) == types.ListType:
+                        if not intermediate_entity_attribute_value:
+                            intermediate_entity_attribute_value = []
+                        else:
+                            intermediate_entity_attribute_value = [intermediate_entity_attribute_value]
 
-                # updates the intermediate entity's relation attribute with the retrieved related intermediate entities
-                intermediate_entity.set_attribute(attribute_name, intermediate_entity_attribute_value)
+                    # retrieves the intermediate entity associated with each related entity and adds it to the intermediate entity's relation attribute
+                    for related_entity in related_entities:
+                        related_intermediate_entity_object_id = entity_object_id_intermediate_entity_object_id_map[related_entity.object_id]
+                        related_intermediate_entity_index = self.get_intermediate_entity_index(related_intermediate_entity_object_id)
+                        related_intermediate_entities = intermediate_structure.get_entities_by_index(related_intermediate_entity_index)
+                        related_intermediate_entity = related_intermediate_entities[0]
+                        intermediate_entity_attribute_value.append(related_intermediate_entity)
 
-            elif related_entity_or_entities:
-                # if the entity relation is a "to one" relation
-                related_entity = related_entity_or_entities
-                related_intermediate_entity = None
+                    # updates the intermediate entity's relation attribute with the retrieved related intermediate entities
+                    intermediate_entity.set_attribute(attribute_name, intermediate_entity_attribute_value)
 
-                # retrieves the intermediate entity that corresponds to the related entity
-                if related_entity:
-                    related_intermediate_entity_object_id = entity_object_id_intermediate_entity_object_id_map[related_entity.object_id]
-                    related_intermediate_entity_index = self.get_intermediate_entity_index(related_intermediate_entity_object_id)
-                    related_intermediate_entity = intermediate_structure.get_entity(related_intermediate_entity_index)
+                elif related_entity_or_entities:
+                    # if the entity relation is a "to one" relation
+                    related_entity = related_entity_or_entities
+                    related_intermediate_entity = None
 
-                # updates the intermediate entity's relation attribute with the retrieved related intermediate entity
-                intermediate_entity.set_attribute(attribute_name, related_intermediate_entity)
+                    # retrieves the intermediate entity that corresponds to the related entity
+                    if related_entity:
+                        related_intermediate_entity_object_id = entity_object_id_intermediate_entity_object_id_map[related_entity.object_id]
+                        related_intermediate_entity_index = self.get_intermediate_entity_index(related_intermediate_entity_object_id)
+                        related_intermediate_entities = intermediate_structure.get_entities_by_index(related_intermediate_entity_index)
+                        related_intermediate_entity = related_intermediate_entities[0]
+
+                    # updates the intermediate entity's relation attribute with the retrieved related intermediate entity
+                    intermediate_entity.set_attribute(attribute_name, related_intermediate_entity)
 
     def save_intermediate_structure(self, intermediate_structure, options):
         """
@@ -517,7 +563,7 @@ class IoAdapterEntityManager:
         @param relation_attribute_name: Name of the relation attribute where the the retrieved related
         entities will be stored.
         @type entity: Entity
-        @param entity: Entity where to store the enties that correspond to the provided intermediate
+        @param entity: Entity where to store the entities that correspond to the provided intermediate
         related entities.
         """
 

@@ -95,3 +95,25 @@ class IoAdapterEntityManagerEntityClassNotFound(IoAdapterEntityManagerException)
         """
 
         return "Io Adapter Entity Manager entity class not found: %s" % self.message
+
+class IoAdapterEntityManagerUnexpectedNumberIntermediateEntities(IoAdapterEntityManagerException):
+    """
+    The io adapter entity manager unexpected number intermediate entities class.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        IoAdapterEntityManagerException.__init__(self)
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Io Adapter Entity Manager unexpected number intermediate entities"
