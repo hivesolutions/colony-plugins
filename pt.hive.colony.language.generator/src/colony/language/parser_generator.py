@@ -525,6 +525,28 @@ class LookAheadRule(Rule):
         # return true
         return True
 
+    def add_ahead_symbol(self, ahead_symbol):
+        """
+        Adds an ahead symbol to the ahead symbols list.
+
+        @type ahead_symbol: String
+        @param ahead_symbol: The ahead symbol to be added.
+        """
+
+        if not ahead_symbol in self.ahead_symbols_list:
+            self.ahead_symbols_list.append(ahead_symbol)
+
+    def remove_ahead_symbol(self, ahead_symbol):
+        """
+        Removes an ahead symbol from the ahead symbols list.
+
+        @type ahead_symbol: String
+        @param ahead_symbol: The ahead symbol to be removed.
+        """
+
+        if ahead_symbol in self.ahead_symbols_list:
+            self.ahead_symbols_list.remove(ahead_symbol)
+
     def get_rule(self):
         """
         Retrieves the base rule.
@@ -1449,6 +1471,11 @@ class ParserGenerator:
 
                 # extends the extra look ahead rules list
                 extra_look_ahead_list.extend(first_symbol_extra_rules)
+            elif first_symbol == symbol:
+                for extra_look_ahead in extra_look_ahead_list:
+                    # @todo review this temporary fix
+                    if not extra_look_ahead.get_rule() == extra_rule:
+                        extra_look_ahead.add_ahead_symbol(second_symbol)
 
         # returns the extra look ahead rules list
         return extra_look_ahead_list
