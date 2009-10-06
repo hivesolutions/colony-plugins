@@ -1488,8 +1488,11 @@ class ParserGenerator:
                 extra_look_ahead_closure_map[extra_rule] = first_symbol_extra_rules
             # in case the symbol is the same
             elif first_symbol == symbol:
+                # retrieves the ahead symbols from the second symbol
+                ahead_symbols = self._get_ahead_symbol_terminals(second_symbol)
+
                 # creates the symbol tuple
-                symbol_tuple = (symbol, second_symbol)
+                symbol_tuple = (symbol, ahead_symbols)
 
                 # appends the symbol tuple to the extra
                 # symbols list
@@ -1499,15 +1502,17 @@ class ParserGenerator:
         for extra_look_ahead in extra_look_ahead_list:
             # iterates over the symbol and the extra
             # symbol in the extra symbol list
-            for symbol, ahead_symbol in extra_symbols_list:
+            for symbol, ahead_symbols in extra_symbols_list:
                 # retrieves the extra look ahead rule name
                 extra_look_ahead_rule_name = extra_look_ahead.get_rule_name()
 
                 # in case the extra look ahead rule name is the same as the symbol
                 if extra_look_ahead_rule_name == symbol:
-                    # adds the ahead symbol as an ahead symbol to
-                    # the extra look ahead
-                    extra_look_ahead.add_ahead_symbol(ahead_symbol)
+                    # iterates over all the ahead symbols
+                    for ahead_symbol in ahead_symbols:
+                        # adds the ahead symbol as an ahead symbol to
+                        # the extra look ahead
+                        extra_look_ahead.add_ahead_symbol(ahead_symbol)
 
                     # retrieves the extra look ahead base rule
                     extra_look_ahead_rule = extra_look_ahead.get_rule()
@@ -1519,14 +1524,19 @@ class ParserGenerator:
 
                         # iterates over all the closure rules
                         for closure_rule in closure_rules_list:
-                            # adds the ahead symbol as an ahead symbol
-                            # to the closure rule
-                            closure_rule.add_ahead_symbol(ahead_symbol)
+                            # iterates over all the ahead symbols
+                            for ahead_symbol in ahead_symbols:
+                                # adds the ahead symbol as an ahead symbol
+                                # to the closure rule
+                                closure_rule.add_ahead_symbol(ahead_symbol)
 
         # returns the extra look ahead rules list
         return extra_look_ahead_list
 
     def _get_ahead_symbol_terminals(self, symbol):
+        if symbol in self.symbols_terminal_end_map:
+            return [symbol]
+
         # in case the symbol is not defined in the rules map
         if not symbol in self.rules_map:
             # returns an empty list

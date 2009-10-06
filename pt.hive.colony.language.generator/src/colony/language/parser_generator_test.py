@@ -166,14 +166,12 @@ class TestExtraExample(TestParser):
     The test extra example class.
     """
 
-    # TA A FALHAR COM LR1 !!!
-
-    #def parser_test(self):
-    #    # sets the buffer in the parser generator
-    #    self.parser_generator.set_buffer("ab")
+    def parser_test(self):
+        # sets the buffer in the parser generator
+        self.parser_generator.set_buffer("ab")
 
         # parses the current buffer
-        #self.parser_generator.parse()
+        self.parser_generator.parse()
 
     def get_example(self):
         return examples.extra_example.example
