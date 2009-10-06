@@ -1548,27 +1548,49 @@ class ParserGenerator:
                 # retrieves the first symbol extra rules
                 first_symbol_extra_rules = self._get_extra_rules_ahead(first_symbol, second_symbol, ahead_symbols_list)
 
-                final_list = []
-                add_list = []
+                # creates the final symbol extra rules list
+                final_symbol_extra_rules_list = []
 
+                # creates the adding symbol extra rules list
+                adding_symbol_extra_rules_list = []
+
+                # iterates over the first symbol extra rules
                 for first_symbol_extra_rule in first_symbol_extra_rules:
+
+                    # iterates over the extra look ahead list
                     for extra_look_ahead in extra_look_ahead_list:
-                        if first_symbol_extra_rule.get_rule() == extra_look_ahead.get_rule():
+                        # retrieves the first symbol extra rule base rule
+                        first_symbol_extra_rule_base_rule = first_symbol_extra_rule.get_rule()
+
+                        # retrieves the extra look ahead base rule
+                        extra_look_ahead_base_rule = extra_look_ahead.get_rule()
+
+                        # in case both the first symbol extra rule base rule and
+                        # the extra look ahead base rule are the same
+                        if first_symbol_extra_rule_base_rule == extra_look_ahead_base_rule:
+                            # retrieves the first symbol extra rule ahead symbols list
                             first_symbol_extra_rule_ahead_symbols_list = first_symbol_extra_rule.get_ahead_symbols_list()
 
+                            # iterates over the the first symbol extra rule ahead symbols list
                             for first_symbol_extra_rule_ahead_symbol in first_symbol_extra_rule_ahead_symbols_list:
+                                # adds the rule ahead symbol to the extra look ahead
                                 extra_look_ahead.add_ahead_symbol(first_symbol_extra_rule_ahead_symbol)
 
-                            final_list.append(extra_look_ahead)
+                            # adds the extra look ahead to the final symbol extra rules list
+                            final_symbol_extra_rules_list.append(extra_look_ahead)
                         else:
-                            final_list.append(first_symbol_extra_rule)
-                            add_list.append(first_symbol_extra_rule)
+                            # adds the first symbol extra rule to the final symbol extra rules list
+                            final_symbol_extra_rules_list.append(first_symbol_extra_rule)
 
-                extra_look_ahead_list.extend(add_list)
+                            # adds the first symbol extra rule to the adding symbol extra rules list
+                            adding_symbol_extra_rules_list.append(first_symbol_extra_rule)
+
+                # extends the extra look ahead list with the adding symbol
+                # extra rules list
+                extra_look_ahead_list.extend(adding_symbol_extra_rules_list)
 
                 # sets the first symbol extra rules as the closure for the extra rule
-                extra_look_ahead_closure_map[extra_rule] = final_list
-
+                extra_look_ahead_closure_map[extra_rule] = final_symbol_extra_rules_list
             # in case the symbol is the same
             elif first_symbol == symbol:
                 # retrieves the ahead symbols from the second symbol
