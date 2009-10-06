@@ -1166,10 +1166,7 @@ class ParserGenerator:
             rule_symbols_list_length = len(rule_symbols_list)
 
             # in case the item set token position is valid
-            if item_set_token_position > -1:
-                # retrieves the token
-                token = rule_symbols_list[item_set_token_position]
-
+            if item_set_token_position >= -1:
                 # retrieves the symbols non terminal line
                 symbols_non_terminal_line = symbols_non_terminal_map[rule_name]
 
@@ -1180,10 +1177,16 @@ class ParserGenerator:
                 symbols_non_terminal_reduce_list = symbols_non_terminal_line[ParserGenerator.REDUCE_OPERATION_VALUE]
 
                 # in case it's the last token
-                if item_set_token_position + 1 >= rule_symbols_list_length:
+                if item_set_token_position + 1 >= rule_symbols_list_length :
+                    # retrieves the token
+                    token = rule_symbols_list[item_set_token_position]
+
                     # in case the token already exists in the symbols
                     # non terminal shift list
                     if token in symbols_non_terminal_shift_list:
+                        # prints the item sets string
+                        print self._get_item_sets_string()
+
                         # raises a shift reduce conflict exception
                         raise parser_generator_exceptions.ShiftReduceConflict("in verification", item_set)
 
@@ -1193,9 +1196,15 @@ class ParserGenerator:
                     # appends the token to the reduce list
                     reduce_list.append(token)
                 else:
+                    # retrieves the token
+                    token = rule_symbols_list[item_set_token_position + 1]
+
                     # in case the token already exists in the symbols
                     # non terminal reduce list
                     if token in symbols_non_terminal_reduce_list:
+                        # prints the item sets string
+                        print self._get_item_sets_string()
+
                         # raises a shift reduce conflict exception
                         raise parser_generator_exceptions.ShiftReduceConflict("in verification", item_set)
 
