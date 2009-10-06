@@ -1257,7 +1257,13 @@ class ParserGenerator:
 
                 # in case there is a rule transition item set defined
                 if rule_transition_item_set:
-                    self.transition_table_map[index][item_set_rule_symbol] = rule_transition_item_set.get_item_set_id()
+                    # retrieves the transition table line
+                    transition_table_line = self.transition_table_map[index]
+
+                    # in case the item set rule symbol is not yet defined
+                    if not item_set_rule_symbol in transition_table_line:
+                        # sets the rule symbol in the transition table line
+                        transition_table_line[item_set_rule_symbol] = rule_transition_item_set.get_item_set_id()
 
             # increments the index counter
             index += 1
@@ -1435,6 +1441,12 @@ class ParserGenerator:
         # creates the extra look ahead list
         extra_look_ahead_list = []
 
+        # creates the extra symbols list
+        extra_symbols_list = []
+
+        # creates the extra look ahead closure map
+        extra_look_ahead_closure_map = {}
+
         # iterates over the extra rules list
         for extra_rule in extra_rules_list:
             # creates the extra look ahead rule
@@ -1471,14 +1483,55 @@ class ParserGenerator:
 
                 # extends the extra look ahead rules list
                 extra_look_ahead_list.extend(first_symbol_extra_rules)
+
+                # sets the first symbol extra rules as the closure for the extra rule
+                extra_look_ahead_closure_map[extra_rule] = first_symbol_extra_rules
+            # in case the symbol is the same
             elif first_symbol == symbol:
-                for extra_look_ahead in extra_look_ahead_list:
-                    extra_look_ahead.add_ahead_symbol(second_symbol)
+                # creates the symbol tuple
+                symbol_tuple = (symbol, second_symbol)
+
+                # appends the symbol tuple to the extra
+                # symbols list
+                extra_symbols_list.append(symbol_tuple)
+
+        # iterates over the extra look ahead list
+        for extra_look_ahead in extra_look_ahead_list:
+            # iterates over the symbol and the extra
+            # symbol in the extra symbol list
+            for symbol, ahead_symbol in extra_symbols_list:
+                # retrieves the extra look ahead rule name
+                extra_look_ahead_rule_name = extra_look_ahead.get_rule_name()
+
+                # in case the extra look ahead rule name is the same as the symbol
+                if extra_look_ahead_rule_name == symbol:
+                    # adds the ahead symbol as an ahead symbol to
+                    # the extra look ahead
+                    extra_look_ahead.add_ahead_symbol(ahead_symbol)
+
+                    # retrieves the extra look ahead base rule
+                    extra_look_ahead_rule = extra_look_ahead.get_rule()
+
+                    # in case the rule exists in the extra look ahead closure map
+                    if extra_look_ahead_rule in extra_look_ahead_closure_map:
+                        # retrieves the closure rules list
+                        closure_rules_list = extra_look_ahead_closure_map[extra_look_ahead_rule]
+
+                        # iterates over all the closure rules
+                        for closure_rule in closure_rules_list:
+                            # adds the ahead symbol as an ahead symbol
+                            # to the closure rule
+                            closure_rule.add_ahead_symbol(ahead_symbol)
 
         # returns the extra look ahead rules list
         return extra_look_ahead_list
 
     def _get_ahead_symbol_terminals(self, symbol):
+        # in case the symbol is not defined in the rules map
+        if not symbol in self.rules_map:
+            # returns an empty list
+            return []
+
         # retrieves the rules for the symbol
         rules_list = self.rules_map[symbol]
 
