@@ -50,7 +50,7 @@ import examples.simple_example
 import examples.ultra_simple_example
 
 # sets the current valid example
-valid_example = examples.ultra_simple_example.example
+valid_example = examples.look_ahead_example.example
 
 # creates a new lexer generator
 lexer_generator = lexer_generator.LexerGenerator()
@@ -80,7 +80,7 @@ print parser_generator._get_action_table_string()
 print parser_generator._get_goto_table_string()
 
 # sets the buffer in the parser generator
-parser_generator.set_buffer("1 + 1 + 1")
+parser_generator.set_buffer("aabab")
 
 # parses the current buffer
 parser_generator.parse()

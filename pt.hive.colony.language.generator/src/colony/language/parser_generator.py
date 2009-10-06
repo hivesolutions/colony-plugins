@@ -42,7 +42,7 @@ import types
 
 import parser_generator_exceptions
 
-class ItemSet:
+class ItemSet(object):
     """
     The item set class
     """
@@ -932,7 +932,7 @@ class ParserGenerator:
             self.program_rule = LookAheadRule(self.program_rule)
 
         # creates the initial current rules list
-        current_rules_list = [(self.program_rule, -1)]
+        current_rules_list = [(self.program_rule, -1, None)]
 
         # creates the previous rules map
         previous_rules_map = {}
@@ -949,7 +949,7 @@ class ParserGenerator:
             symbol_item_set_map = {}
 
             # iterates over all the rules in the current rules list
-            for rule, current_token_position in current_rules_list:
+            for rule, current_token_position, previous_item_set in current_rules_list:
                 #creates the extra rules list
                 exta_rules_list = []
 
@@ -965,7 +965,7 @@ class ParserGenerator:
                 # in case it's a look ahead parser
                 if self.is_look_ahead_parser():
                     # creates the state identifier of the state
-                    state_identifier = (current_symbol, "".join(rule.get_ahead_symbols_list()))
+                    state_identifier = (current_symbol, previous_item_set)
                 else:
                     # creates the state identifier of the state
                     state_identifier = current_symbol
@@ -1111,7 +1111,7 @@ class ParserGenerator:
                         # in case the current token position is not the final one
                         if rule_symbols_list_length > token_position + 1:
                             # creates the rule tuple
-                            rule_tuple = (rule, token_position + 1)
+                            rule_tuple = (rule, token_position + 1, current_item_set)
 
                             # adds the rule tuple to the next rules list
                             next_rules_list.append(rule_tuple)
@@ -1473,9 +1473,7 @@ class ParserGenerator:
                 extra_look_ahead_list.extend(first_symbol_extra_rules)
             elif first_symbol == symbol:
                 for extra_look_ahead in extra_look_ahead_list:
-                    # @todo review this temporary fix
-                    if not extra_look_ahead.get_rule() == extra_rule:
-                        extra_look_ahead.add_ahead_symbol(second_symbol)
+                    extra_look_ahead.add_ahead_symbol(second_symbol)
 
         # returns the extra look ahead rules list
         return extra_look_ahead_list
