@@ -3,7 +3,6 @@ from yappy.parser import *
 class ParseReg(Yappy):
      def __init__(self, no_table=0, table='tablereg'):
         grammar ="""
-        P -> statements {{ self.OrSemRule }} ;
         statements -> statement NEWLINE statements {{ self.OrSemRule }} ;
         statements-> statement NEWLINE {{ self.OrSemRule }} ;
         statement -> PASS {{ self.OrSemRule }} ;
