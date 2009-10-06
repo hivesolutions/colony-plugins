@@ -57,7 +57,7 @@ valid_example = examples.settler_example.example
 lexer_generator = lexer_generator.LexerGenerator()
 
 # creates a new parser generator
-parser_generator = parser_generator.ParserGenerator(parser_generator.ParserGenerator.LR1_PARSER_TYPE)
+parser_generator = parser_generator.ParserGenerator(parser_generator.ParserGenerator.LR0_PARSER_TYPE)
 
 # sets the lexer in the parser
 parser_generator.set_lexer(lexer_generator)
@@ -68,17 +68,6 @@ initial = time.time()
 
 # constructs the parser
 parser_generator.construct(valid_example)
-
-#import cProfile
-#cProfile.run("parser_generator.construct(valid_example)", 'fooprof')
-
-#import pstats
-#p = pstats.Stats('fooprof')
-#p.strip_dirs().sort_stats(-1).print_stats()
-
-final_time = time.time()
-
-print str(final_time - initial)
 
 # prints the rules string
 print parser_generator._get_rules_string()
@@ -100,3 +89,7 @@ parser_generator.set_buffer("if 1 : \n while 1 : \n pass \n end \n else : \n pas
 
 # parses the current buffer
 parser_generator.parse()
+
+final_time = time.time()
+
+print str(final_time - initial)
