@@ -123,11 +123,14 @@ class LexerGenerator:
     current_index = 0;
     """ The current index of the lexer """
 
-    error_function = None
-    """ The error function """
+    line_number = 0
+    """ The current line number """
 
     lineno = 0
-    """ The current line number """
+    """ The current line number (deprecated) """
+
+    error_function = None
+    """ The error function """
 
     def __init__(self):
         """
@@ -341,6 +344,46 @@ class LexerGenerator:
 
         # resets the current index
         self._reset_current_index()
+
+    def get_line_number(self):
+        """
+        Retrieves the current line number.
+
+        @rtype: int
+        @return: The current line number.
+        """
+
+        return self.line_number
+
+    def set_line_number(self, line_number):
+        """
+        Sets the current line number.
+
+        @type line_number: String
+        @param line_number: The current line number.
+        """
+
+        self.line_number = line_number
+
+    def get_error_function(self):
+        """
+        Retrieves the error function.
+
+        @rtype: Function
+        @return: The error function.
+        """
+
+        return self.error_function
+
+    def set_error_function(self, error_function):
+        """
+        Sets the error function.
+
+        @type error_function: Function
+        @param error_function: The error function.
+        """
+
+        self.error_function = error_function
 
     def _reset_current_index(self):
         """
