@@ -1329,10 +1329,27 @@ class ParserGenerator:
             # retrieves the action table line
             action_table_line = self.action_table_map[action_table_map_index]
 
-            if not action_table_line.keys():
-                # retrieves the rule list
-                rules_list = self.item_sets_list[action_table_map_index].get_rules_list()
+            # retrieves the rule list
+            rules_list = self.item_sets_list[action_table_map_index].get_rules_list()
 
+            # unsets the reduce valid flag
+            reduce_valid = False
+
+            # iterates over the rules in the rules list
+            for rule, token_position, closure in rules_list:
+                # retrieves the rule symbols list
+                rule_symbols_list = rule.get_symbols_list()
+
+                # retrieves the rule symbols list length
+                rule_symbols_list_length = len(rule_symbols_list)
+
+                # in case the token is in the last position
+                if token_position + 1 == rule_symbols_list_length:
+                    # sets the reduce valid flag
+                    reduce_valid = True
+
+            # in case the reduce valid flag is active
+            if reduce_valid:
                 # retrieves the first rule tuple
                 first_rule_tuple = rules_list[0]
 
@@ -1347,10 +1364,12 @@ class ParserGenerator:
                     # creates the reduce value
                     reduce_value = (first_rule_id, ParserGenerator.REDUCE_OPERATION_VALUE)
 
-                    # in case the symbol exists in the ahead symbols list
+                    # in case it's a look ahead parser or the terminal symbols exist in the ahead
+                    # symbols list
                     if not self.is_look_ahead_parser() or symbol_terminal in first_rule.get_ahead_symbols_list():
-                        # adds the reduce value to the action table line
-                        action_table_line[symbol_terminal] = reduce_value
+                        if not symbol_terminal in action_table_line:
+                            # adds the reduce value to the action table line
+                            action_table_line[symbol_terminal] = reduce_value
 
     def _generate_goto_table(self):
         """
