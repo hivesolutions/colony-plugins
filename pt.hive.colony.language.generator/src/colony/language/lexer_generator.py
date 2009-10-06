@@ -335,3 +335,13 @@ class LexerGenerator:
         """
 
         self.buffer = buffer
+
+        # resets the current index
+        self._reset_current_index()
+
+    def _reset_current_index(self):
+        """
+        Resets the current index.
+        """
+
+        self.current_index = 0
