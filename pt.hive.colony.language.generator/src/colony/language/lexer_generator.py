@@ -126,6 +126,9 @@ class LexerGenerator:
     error_function = None
     """ The error function """
 
+    lineno = 0
+    """ The current line number """
+
     def __init__(self):
         """
         Constructor of the class.
