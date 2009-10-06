@@ -45,19 +45,24 @@ import examples.extra_example
 import examples.look_ahead_example
 import examples.ply_example
 import examples.reduce_reduce_example
-import examples.settler_example
 import examples.shift_reduce_example
 import examples.simple_example
 import examples.ultra_simple_example
 
+import examples.settler.settler_example
+import examples.settler.settler_generation
+import examples.settler.settler_interpretation
+import examples.settler.settler_processing
+import examples.settler.settler_visitor
+
 # sets the current valid example
-valid_example = examples.settler_example.example
+valid_example = examples.settler.settler_example.example
 
 # creates a new lexer generator
 lexer_generator = lexer_generator.LexerGenerator()
 
 # creates a new parser generator
-parser_generator = parser_generator.ParserGenerator(parser_generator.ParserGenerator.LR0_PARSER_TYPE)
+parser_generator = parser_generator.ParserGenerator(parser_generator.ParserGenerator.LR1_PARSER_TYPE)
 
 # sets the lexer in the parser
 parser_generator.set_lexer(lexer_generator)
@@ -85,10 +90,10 @@ print parser_generator._get_action_table_string()
 print parser_generator._get_goto_table_string()
 
 # sets the buffer in the parser generator
-parser_generator.set_buffer("if 1 : \n while 1 : \n pass \n end \n else : \n pass \n end \n")
+parser_generator.set_buffer("import tobias \n if 1 : \n while 1 : \n pass \n end \n else : \n pass \n end \n")
 
-# parses the current buffer
-parser_generator.parse()
+# parses the current buffer and retrieves the result
+parse_result = parser_generator.parse()
 
 final_time = time.time()
 

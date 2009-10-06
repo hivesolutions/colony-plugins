@@ -433,7 +433,37 @@ def p_statement_plugin(t):
 
     t[0] = plugin_node
 
+def p_statement_capability(t):
+    "statement : capability"
 
+    # retrieves the plugin node
+    capability_node = t[1]
+
+    t[0] = capability_node
+
+def p_expression_plus(t):
+    "expression : expression PLUS expression"
+
+    # validates the expression
+    if not validate_expression_binary(t):
+        return False
+
+    # retrieves the first expression node
+    first_expression_node = t[1]
+
+    # retrieves the second expression node
+    second_expression_node = t[3]
+
+    # creates the summation expression node
+    summation_expression_node = settler_ast.SummationExpressionNode()
+
+    # sets the first expression node in the summation expression node
+    summation_expression_node.set_first_expression_node(first_expression_node)
+
+    # sets the second expression node in the summation expression node
+    summation_expression_node.set_second_expression_node(second_expression_node)
+
+    t[0] = summation_expression_node
 
 def p_expression_number(t):
     "expression : NUMBER"
@@ -554,6 +584,21 @@ def p_expression_import_single(t):
 
     t[0] = import_node
 
+def validate_expression_unary(t):
+    expression_node = t[2]
 
+    if expression_node == None:
+        return False
+
+    return True
+
+def validate_expression_binary(t):
+    first_expression_node = t[1]
+    second_expression_node = t[3]
+
+    if first_expression_node == None or second_expression_node == None:
+        return False
+
+    return True
 
 example = locals()

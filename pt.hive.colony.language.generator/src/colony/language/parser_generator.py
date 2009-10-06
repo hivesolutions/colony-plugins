@@ -1875,8 +1875,8 @@ class ParserGenerator:
                     # pops a stack value
                     pop_state, pop_value = stack.pop()
 
-                    # appends the popped value to the arguments list
-                    arguments_list.append(pop_value)
+                    # inserts the popped value into the arguments list
+                    arguments_list.insert(1, pop_value)
 
                 # retrieves the reduce rule function
                 reduce_rule_function = self.rule_function_map[reduce_rule]
