@@ -276,28 +276,49 @@ class LookAheadItemSet(ItemSet):
     The look ahead item set class.
     """
 
+    base_rule_map = {}
+    """ The base rule map """
+
+    def __init__(self, item_set_id = None):
+        """
+        Constructor of the class.
+
+        @type item_set_id: int
+        @param item_set_id: The item set id.
+        """
+
+        ItemSet.__init__(self, item_set_id)
+
+        self.base_rule_map = {}
+
     def add_rule(self, rule, token_position, closure = False):
-        # iterates over the rules list
-        for item_set_rule, item_set_token_position, item_set_closure in self.rules_list:
-            # retrieves the rule base rule
-            rule_base_rule = rule.get_rule()
+        # retrieves the rule base rule
+        rule_base_rule = rule.get_rule()
 
-            # retrieves the item set base rule
-            item_set_rule_base_rule = item_set_rule.get_rule()
+        # creates the base rule tuple
+        base_rule_tuple = (rule_base_rule, token_position)
 
-            # in case the base rules and the token position are the same
-            if rule_base_rule == item_set_rule_base_rule and token_position == item_set_token_position:
+        # in case the base rule tuple exists in the base rule map
+        if base_rule_tuple in self.base_rule_map:
+            # retrieves the item set rule and item set token position
+            item_set_rule, item_set_token_position = self.base_rule_map[base_rule_tuple]
 
-                # retrieves the rule ahead symbols list
-                rule_ahead_symbols_list = rule.get_ahead_symbols_list()
+            # retrieves the rule ahead symbols list
+            rule_ahead_symbols_list = rule.get_ahead_symbols_list()
 
-                # iterates over the ahead symbols list
-                for rule_ahead_symbol in rule_ahead_symbols_list:
-                    # adds the ahead symbol to the item set rule
-                    item_set_rule.add_ahead_symbol(rule_ahead_symbol)
+            # iterates over the rule ahead symbols list
+            for rule_ahead_symbol in rule_ahead_symbols_list:
+                # adds the ahead symbol to the item set rule
+                item_set_rule.add_ahead_symbol(rule_ahead_symbol)
 
-                # returns immediately
-                return
+            # returns immediately
+            return
+
+        # creates the rule tuple
+        rule_tuple = (rule, token_position)
+
+        # sets the rule tuple in the base rule map
+        self.base_rule_map[base_rule_tuple] = rule_tuple
 
         # calls the super
         ItemSet.add_rule(self, rule, token_position, closure)
@@ -318,6 +339,12 @@ class Rule:
 
     symbols_list = []
     """ The symbols list """
+
+    rule_string = None
+    """ The rule string value """
+
+    rule_string_hash = None
+    """ The rule string hash value """
 
     def __init__(self, rule_id = None, rule_name = "none", rule_value = "none"):
         """
@@ -379,7 +406,10 @@ class Rule:
         @return: The hash value for the instance.
         """
 
-        return self._get_rule_string().__hash__()
+        if not self.rule_string_hash:
+            self.rule_string_hash = self._get_rule_string().__hash__()
+
+        return self.rule_string_hash
 
     def get_rule_id(self):
         """
@@ -469,7 +499,10 @@ class Rule:
         @return: The rule described as a friendly string.
         """
 
-        return self.rule_name + " -> " + self.rule_value
+        if not self.rule_string:
+            self.rule_string = self.rule_name + " -> " + self.rule_value
+
+        return self.rule_string
 
 class LookAheadRule(Rule):
     """
@@ -481,6 +514,9 @@ class LookAheadRule(Rule):
 
     ahead_symbols_list = []
     """ The ahead symbols list """
+
+    ahead_symbols_map = {}
+    """ The ahead symbols map """
 
     def __init__(self, rule = None, ahead_symbols_list = []):
         """
@@ -506,6 +542,8 @@ class LookAheadRule(Rule):
             self.rule = rule
         else:
             Rule.__init__(self)
+
+        self.ahead_symbols_map = {}
 
         self.set_ahead_symbols_list(ahead_symbols_list)
 
@@ -564,8 +602,9 @@ class LookAheadRule(Rule):
         @param ahead_symbol: The ahead symbol to be added.
         """
 
-        if not ahead_symbol in self.ahead_symbols_list:
+        if not ahead_symbol in self.ahead_symbols_map:
             self.ahead_symbols_list.append(ahead_symbol)
+            self.ahead_symbols_map[ahead_symbol] = True
 
     def remove_ahead_symbol(self, ahead_symbol):
         """
@@ -620,6 +659,9 @@ class LookAheadRule(Rule):
             self.ahead_symbols_list = ahead_symbols_list
         else:
             self.ahead_symbols_list = ["$"]
+
+        for ahead_symbol in ahead_symbols_list:
+            self.ahead_symbols_map[ahead_symbol] = True
 
     def _get_rule_string(self):
         # retrieves the base rule string
