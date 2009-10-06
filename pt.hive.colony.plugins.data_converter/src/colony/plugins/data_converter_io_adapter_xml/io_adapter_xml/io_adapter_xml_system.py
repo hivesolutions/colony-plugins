@@ -44,11 +44,11 @@ BEAUTIFY_VALUE = "beautify"
 
 FILE_PATH_VALUE = "file_path"
 
+MANDATORY_TAGS_VALUE = "mandatory_tags"
+
 ROOT_ENTITY_NAME_VALUE = "root_entity_name"
 
 XML_START_TAG = "<?xml version=\"%s\" encoding=\"%s\"?>"
-
-XML_END_TAG = "</xml>"
 
 XML_NODE_TAG_FORMAT = "<%s>%s</%s>"
 
@@ -62,9 +62,11 @@ XML_VERSION_VALUE = "xml_version"
 
 XML_ENCODING_VALUE = "xml_encoding"
 
+ENTITY_TAG_ORDER_VALUE = "entity_tag_order"
+
 ENTITY_META_ATTRIBUTES_VALUE = "entity_meta_attributes"
 
-FIRST_IDENTATION_LEVEL = 1
+FIRST_IDENTATION_LEVEL = 0
 """ The number identations that are applied to the first entry level """
 
 IDENTATION_TOKEN = " "
@@ -155,18 +157,10 @@ class IoAdapterXml:
             xml_start_tag = xml_start_tag + "\n"
 
         # writes the xml file's start tag to the output file
-        output_file.write(xml_start_tag)
+        self.write_to_file(output_file, xml_start_tag, xml_encoding)
 
         # saves the root entity
         self.save_entity(intermediate_structure, options, output_file, root_entity, FIRST_IDENTATION_LEVEL)
-
-        # creates the entity's end tag, indenting and breaking the line in case beautification is enabled
-        xml_end_tag = XML_END_TAG
-        if beautify:
-            xml_end_tag = xml_end_tag + "\n"
-
-        # writes the xml file's end tag to the output file
-        output_file.write(xml_end_tag)
 
         # closes the xml file
         output_file.close()
@@ -175,6 +169,8 @@ class IoAdapterXml:
         # extracts the non-mandatory options
         entity_meta_attributes_map = options.get(ENTITY_META_ATTRIBUTES_VALUE, {})
         beautify = options.get(BEAUTIFY_VALUE, DEFAULT_BEAUTIFY_SETTING)
+        entity_tag_order_map = options.get(ENTITY_TAG_ORDER_VALUE, {})
+        xml_encoding = options.get(XML_ENCODING_VALUE, DEFAULT_XML_ENCODING)
 
         # retrieves the entity's name
         entity_name = entity.get_name()
@@ -192,13 +188,19 @@ class IoAdapterXml:
             entity_start_tag = IDENTATION_TOKEN * identation_level + entity_start_tag + "\n"
 
         # writes the entity start tag to the output file
-        output_file.write(entity_start_tag)
+        self.write_to_file(output_file, entity_start_tag, xml_encoding)
 
-        # writes the entity in the xml file
+        # retrieves the entity's attributes
         attribute_name_value_map = entity.get_attributes()
-        for attribute_name, attribute_value in attribute_name_value_map.items():
+        attribute_name_values = attribute_name_value_map.items()
 
-            # writes the entity's attribute to the xml file
+        # sorts the entity's attributes in case their order was specified
+        if entity_name in entity_tag_order_map:
+            sorted_entity_attribute_names = entity_tag_order_map[entity_name]
+            attribute_name_values.sort(lambda x, y: sorted_entity_attribute_names.index(x[0]) - sorted_entity_attribute_names.index(y[0]))
+
+        # writes the entity's attribute to the xml file
+        for attribute_name, attribute_value in attribute_name_values:
             if type(attribute_value) == types.ListType:
                 for attribute_value_entity in attribute_value:
                     self.save_entity_attribute(intermediate_structure, options, output_file, entity, attribute_name, attribute_value_entity, identation_level + 1)
@@ -211,25 +213,36 @@ class IoAdapterXml:
             entity_end_tag = IDENTATION_TOKEN * identation_level + entity_end_tag + "\n"
 
         # writes the entity's end tag to the output file
-        output_file.write(entity_end_tag)
+        self.write_to_file(output_file, entity_end_tag, xml_encoding)
 
     def save_entity_attribute(self, intermediate_structure, options, output_file, entity, attribute_name, attribute_value, identation_level):
         # extracts the non-mandatory options
         beautify = options.get(BEAUTIFY_VALUE, DEFAULT_BEAUTIFY_SETTING)
+        mandatory_tags = options.get(MANDATORY_TAGS_VALUE, [])
+        xml_encoding = options.get(XML_ENCODING_VALUE, DEFAULT_XML_ENCODING)
 
         # calls the save entity function again in case the attribute is an entity
         if type(attribute_value) == types.InstanceType:
             self.save_entity(intermediate_structure, options, output_file, attribute_value, identation_level)
         else:
+            attribute_tag = None
+
             # creates the entity's attribute tag
             if not attribute_value is None:
                 attribute_tag = XML_NODE_TAG_FORMAT % (attribute_name, attribute_value, attribute_name)
-            else:
+            elif attribute_name in mandatory_tags:
+                # creates and empty tag if the tag is mandatory
                 attribute_tag = XML_NODE_EMPTY_TAG_FORMAT % (attribute_name)
 
             # indents and breaks the line in case beautification is enabled
-            if beautify:
+            if attribute_tag and beautify:
                 attribute_tag = IDENTATION_TOKEN * identation_level + attribute_tag + "\n"
 
             # writes the attribute tag to the output file
-            output_file.write(attribute_tag)
+            if attribute_tag:
+                self.write_to_file(output_file, attribute_tag, xml_encoding)
+
+    def write_to_file(self, output_file, value, encoding):
+        # encodes the value to the specified xml encoding and writes it to the file
+        encoded_value = value.encode(encoding)
+        output_file.write(encoded_value)
