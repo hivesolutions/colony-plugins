@@ -882,7 +882,7 @@ class ParserGenerator:
         """
 
         # parses the current buffer
-        self._parse()
+        return self._parse()
 
     def get_parser_type(self):
         """
@@ -1928,6 +1928,15 @@ class ParserGenerator:
                 print "over"
 
                 break
+
+        # pops the stack top
+        stack_top = stack.pop()
+
+        # retrieves the top state and the top valu
+        top_state, top_value = stack_top
+
+        # returns the top value
+        return top_value
 
     def _get_rules_string(self):
         """
