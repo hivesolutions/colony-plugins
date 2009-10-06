@@ -45,12 +45,13 @@ import examples.extra_example
 import examples.look_ahead_example
 import examples.ply_example
 import examples.reduce_reduce_example
+import examples.settler_example
 import examples.shift_reduce_example
 import examples.simple_example
 import examples.ultra_simple_example
 
 # sets the current valid example
-valid_example = examples.extra_example.example
+valid_example = examples.settler_example.example
 
 # creates a new lexer generator
 lexer_generator = lexer_generator.LexerGenerator()
@@ -61,8 +62,23 @@ parser_generator = parser_generator.ParserGenerator(parser_generator.ParserGener
 # sets the lexer in the parser
 parser_generator.set_lexer(lexer_generator)
 
+import time
+
+initial = time.time()
+
 # constructs the parser
 parser_generator.construct(valid_example)
+
+#import cProfile
+#cProfile.run("parser_generator.construct(valid_example)", 'fooprof')
+
+#import pstats
+#p = pstats.Stats('fooprof')
+#p.strip_dirs().sort_stats(-1).print_stats()
+
+final_time = time.time()
+
+print str(final_time - initial)
 
 # prints the rules string
 print parser_generator._get_rules_string()
@@ -80,7 +96,7 @@ print parser_generator._get_action_table_string()
 print parser_generator._get_goto_table_string()
 
 # sets the buffer in the parser generator
-parser_generator.set_buffer("ab")
+parser_generator.set_buffer("if 1 : \n while 1 : \n pass \n end \n else : \n pass \n end \n")
 
 # parses the current buffer
 parser_generator.parse()

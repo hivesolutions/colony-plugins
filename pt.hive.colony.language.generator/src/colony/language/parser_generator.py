@@ -271,6 +271,37 @@ class ItemSet(object):
 
         return string_value
 
+class LookAheadItemSet(ItemSet):
+    """
+    The look ahead item set class.
+    """
+
+    def add_rule(self, rule, token_position, closure = False):
+        # iterates over the rules list
+        for item_set_rule, item_set_token_position, item_set_closure in self.rules_list:
+            # retrieves the rule base rule
+            rule_base_rule = rule.get_rule()
+
+            # retrieves the item set base rule
+            item_set_rule_base_rule = item_set_rule.get_rule()
+
+            # in case the base rules and the token position are the same
+            if rule_base_rule == item_set_rule_base_rule and token_position == item_set_token_position:
+
+                # retrieves the rule ahead symbols list
+                rule_ahead_symbols_list = rule.get_ahead_symbols_list()
+
+                # iterates over the ahead symbols list
+                for rule_ahead_symbol in rule_ahead_symbols_list:
+                    # adds the ahead symbol to the item set rule
+                    item_set_rule.add_ahead_symbol(rule_ahead_symbol)
+
+                # returns immediately
+                return
+
+        # calls the super
+        ItemSet.add_rule(self, rule, token_position, closure)
+
 class Rule:
     """
     The rule class.
@@ -1009,8 +1040,13 @@ class ParserGenerator:
                     # retrieves the item set
                     item_set = symbol_item_set_map[state_identifier]
                 else:
-                    # creates a new item set
-                    item_set = ItemSet()
+                    # in case it's a look ahead parser
+                    if self.is_look_ahead_parser():
+                        # creates a new look ahead item set
+                        item_set = LookAheadItemSet()
+                    else:
+                        # creates a new item set
+                        item_set = ItemSet()
 
                     # sets the item set in the symbol item set map
                     symbol_item_set_map[state_identifier] = item_set
@@ -1184,9 +1220,6 @@ class ParserGenerator:
                     # in case the token already exists in the symbols
                     # non terminal shift list
                     if token in symbols_non_terminal_shift_list:
-                        # prints the item sets string
-                        print self._get_item_sets_string()
-
                         # raises a shift reduce conflict exception
                         raise parser_generator_exceptions.ShiftReduceConflict("in verification", item_set)
 
@@ -1202,9 +1235,6 @@ class ParserGenerator:
                     # in case the token already exists in the symbols
                     # non terminal reduce list
                     if token in symbols_non_terminal_reduce_list:
-                        # prints the item sets string
-                        print self._get_item_sets_string()
-
                         # raises a shift reduce conflict exception
                         raise parser_generator_exceptions.ShiftReduceConflict("in verification", item_set)
 
@@ -1335,6 +1365,9 @@ class ParserGenerator:
             # unsets the reduce valid flag
             reduce_valid = False
 
+            # creates the reduce rule value
+            reduce_rule = None
+
             # iterates over the rules in the rules list
             for rule, token_position, closure in rules_list:
                 # retrieves the rule symbols list
@@ -1348,25 +1381,24 @@ class ParserGenerator:
                     # sets the reduce valid flag
                     reduce_valid = True
 
+                    # sets the reduce rule
+                    reduce_rule = rule
+
             # in case the reduce valid flag is active
             if reduce_valid:
-                # retrieves the first rule tuple
-                first_rule_tuple = rules_list[0]
-
-                # retrieves the first rule
-                first_rule = first_rule_tuple[0]
-
-                # retrieves the rule id for the first rule
-                first_rule_id = first_rule.get_rule_id()
+                # retrieves the rule id for the reduce rule
+                reduce_rule_id = reduce_rule.get_rule_id()
 
                 # iterates over all the terminal symbols
                 for symbol_terminal in self.symbols_terminal_end_map:
                     # creates the reduce value
-                    reduce_value = (first_rule_id, ParserGenerator.REDUCE_OPERATION_VALUE)
+                    reduce_value = (reduce_rule_id, ParserGenerator.REDUCE_OPERATION_VALUE)
 
                     # in case it's a look ahead parser or the terminal symbols exist in the ahead
                     # symbols list
-                    if not self.is_look_ahead_parser() or symbol_terminal in first_rule.get_ahead_symbols_list():
+                    if not self.is_look_ahead_parser() or symbol_terminal in reduce_rule.get_ahead_symbols_list():
+                        # in case there is no action defined for the
+                        # current symbol terminal (avoid overwrite)
                         if not symbol_terminal in action_table_line:
                             # adds the reduce value to the action table line
                             action_table_line[symbol_terminal] = reduce_value
@@ -1449,8 +1481,10 @@ class ParserGenerator:
         @return: The extra rules for the given symbol.
         """
 
-        # in case the ahead symbols list is not defined
-        if not ahead_symbols_list:
+        # in case the ahead symbols list is defined
+        if ahead_symbols_list:
+            ahead_symbols_list = copy.copy(ahead_symbols_list)
+        else:
             # creates a new ahead symbols list
             ahead_symbols_list = []
 
@@ -1462,9 +1496,14 @@ class ParserGenerator:
             # retrieves the next ahead symbols list
             next_ahead_symbols_list = self._get_ahead_symbol_terminals(ahead_symbol)
 
-            # extends the ahead symbols list
-            # with the next ahead symbols list
-            ahead_symbols_list.extend(next_ahead_symbols_list)
+            # iterates over all the next ahead symbols
+            for next_ahead_symbol in next_ahead_symbols_list:
+                # checks if the next ahead symbol does not exists
+                # in the ahead symbols list to avoid
+                # duplicated ahead symbols
+                if not next_ahead_symbol in ahead_symbols_list:
+                    # appends the next ahead symbol to the ahead symbols list
+                    ahead_symbols_list.append(next_ahead_symbol)
 
         # creates the extra look ahead list
         extra_look_ahead_list = []
@@ -1509,11 +1548,27 @@ class ParserGenerator:
                 # retrieves the first symbol extra rules
                 first_symbol_extra_rules = self._get_extra_rules_ahead(first_symbol, second_symbol, ahead_symbols_list)
 
-                # extends the extra look ahead rules list
-                extra_look_ahead_list.extend(first_symbol_extra_rules)
+                final_list = []
+                add_list = []
+
+                for first_symbol_extra_rule in first_symbol_extra_rules:
+                    for extra_look_ahead in extra_look_ahead_list:
+                        if first_symbol_extra_rule.get_rule() == extra_look_ahead.get_rule():
+                            first_symbol_extra_rule_ahead_symbols_list = first_symbol_extra_rule.get_ahead_symbols_list()
+
+                            for first_symbol_extra_rule_ahead_symbol in first_symbol_extra_rule_ahead_symbols_list:
+                                extra_look_ahead.add_ahead_symbol(first_symbol_extra_rule_ahead_symbol)
+
+                            final_list.append(extra_look_ahead)
+                        else:
+                            final_list.append(first_symbol_extra_rule)
+                            add_list.append(first_symbol_extra_rule)
+
+                extra_look_ahead_list.extend(add_list)
 
                 # sets the first symbol extra rules as the closure for the extra rule
-                extra_look_ahead_closure_map[extra_rule] = first_symbol_extra_rules
+                extra_look_ahead_closure_map[extra_rule] = final_list
+
             # in case the symbol is the same
             elif first_symbol == symbol:
                 # retrieves the ahead symbols from the second symbol
