@@ -69,28 +69,28 @@ def p_program(t):
     t[0] = t[1]
 
 def p_expression_sum(t):
-    "E : E PLUS B"
+    "E : E PLUS E"
 
     print "E : " + str(t[1]) + " PLUS " + str(t[3])
 
     t[0] = t[1] + t[3]
 
 def p_expression_subtraction(t):
-    "E : E MINUS B"
+    "E : E MINUS E"
 
     print "E : " + str(t[1]) + " MINUS " + str(t[3])
 
     t[0] = t[1] - t[3]
 
 def p_expression_multiplication(t):
-    "E : E TIMES B"
+    "E : E TIMES E"
 
     print "E : " + str(t[1]) + " TIMES " + str(t[3])
 
     t[0] = t[1] * t[3]
 
 def p_expression_division(t):
-    "E : E DIVIDE B"
+    "E : E DIVIDE E"
 
     print "E : " + str(t[1]) + " DIVIDE " + str(t[3])
 

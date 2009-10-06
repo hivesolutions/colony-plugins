@@ -59,7 +59,7 @@ def t_error(t):
 def p_program(t):
     "program : S"
 
-    print "program : X"
+    print "program : S"
 
 def p_expression_XX(t):
     "S : X X"
