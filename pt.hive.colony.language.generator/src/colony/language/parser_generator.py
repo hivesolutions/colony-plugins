@@ -1486,6 +1486,9 @@ class ParserGenerator:
         @return: The extra rules for the given symbol.
         """
 
+        # creates the symbols list
+        symbols_list = [symbol]
+
         # retrieves the extra rules for the next symbol
         extra_rules_list = self.rules_map[symbol]
 
@@ -1498,13 +1501,17 @@ class ParserGenerator:
             # retrieves the first symbol
             first_symbol = extra_rule_symbols_list[0]
 
-            # in case the first symbol is a non terminal and is no the same as the symbol
-            if first_symbol in self.symbols_non_terminal_map and not first_symbol == symbol:
+            # in case the first symbol is a non terminal and the first symbol is not contained
+            # in the symbols list
+            if first_symbol in self.symbols_non_terminal_map and not first_symbol in symbols_list:
                 # retrieves the first symbol extra rules
                 first_symbol_extra_rules = self._get_extra_rules(first_symbol)
 
                 # extends the extra rules list
                 extra_rules_list.extend(first_symbol_extra_rules)
+
+                # appends the first symbol to the symbols list
+                symbols_list.append(first_symbol)
 
         # returns the extra rules list
         return extra_rules_list
@@ -1529,6 +1536,9 @@ class ParserGenerator:
         else:
             # creates a new ahead symbols list
             ahead_symbols_list = []
+
+        # creates the symbols list
+        symbols_list = [symbol]
 
         # retrieves the extra rules for the next symbol
         extra_rules_list = self.rules_map[symbol]
@@ -1585,8 +1595,9 @@ class ParserGenerator:
                 # sets the second symbol as invalid
                 second_symbol = None
 
-            # in case the first symbol is a non terminal and is no the same as the symbol
-            if first_symbol in self.symbols_non_terminal_map and not first_symbol == symbol:
+            # in case the first symbol is a non terminal and and the first symbol is not contained
+            # in the symbols list
+            if first_symbol in self.symbols_non_terminal_map and not first_symbol in symbols_list:
                 # retrieves the first symbol extra rules
                 first_symbol_extra_rules = self._get_extra_rules_ahead(first_symbol, second_symbol, ahead_symbols_list)
 
@@ -1633,8 +1644,11 @@ class ParserGenerator:
 
                 # sets the first symbol extra rules as the closure for the extra rule
                 extra_look_ahead_closure_map[extra_rule] = final_symbol_extra_rules_list
-            # in case the symbol is the same
-            elif first_symbol == symbol:
+
+                # appends the first symbol to the symbols list
+                symbols_list.append(first_symbol)
+            # in case the first symbol is contained in the symbols list
+            elif first_symbol in symbols_list:
                 # retrieves the ahead symbols from the second symbol
                 ahead_symbols = self._get_ahead_symbol_terminals(second_symbol)
 
@@ -1855,6 +1869,7 @@ class ParserGenerator:
                 # retrieves the action value and type from the action table
                 action_value, action_type = action_line[token_type]
             else:
+                # raises an invalid state exception
                 raise parser_generator_exceptions.InvalidState("no action defined for state: " + str(current_state) + " and input: " + token_type)
 
             if action_type == ParserGenerator.REDUCE_OPERATION_VALUE:
@@ -1907,6 +1922,9 @@ class ParserGenerator:
 
                     # appends the goto tuple to the stack
                     stack.append(goto_tuple)
+                else:
+                    # raises an invalid state exception
+                    raise parser_generator_exceptions.InvalidState("no goto defined for state: " + str(current_state) + " and reduce rule: " + reduce_rule_name)
 
             elif action_type == ParserGenerator.SHIFT_OPERATION_VALUE:
                 # writes the shift to the screen
@@ -1926,6 +1944,39 @@ class ParserGenerator:
 
             elif action_type == ParserGenerator.ACCEPT_OPERATION_VALUE:
                 print "over"
+
+                # retrieves the accept rule
+                accept_rule = self.program_rule
+
+                # retrieves the accept rule symbols list
+                accept_rule_symbols_list = accept_rule.get_symbols_list()
+
+                # creates the arguments list
+                arguments_list = [None]
+
+                # iterates over all the accept rule symbols
+                for accept_rule_symbol in accept_rule_symbols_list:
+                    # pops a stack value
+                    pop_state, pop_value = stack.pop()
+
+                    # inserts the popped value into the arguments list
+                    arguments_list.insert(1, pop_value)
+
+                # retrieves the accept rule function
+                accept_rule_function = self.program_function
+
+                # calls the accept rule function with the arguments list
+                accept_rule_function(arguments_list)
+
+                # retrieves the call return value
+                return_value = arguments_list[0]
+
+                # creates the goto tuple with the goto value
+                # and the return value
+                goto_tuple = (-1, return_value)
+
+                # appends the goto tuple to the stack
+                stack.append(goto_tuple)
 
                 break
 

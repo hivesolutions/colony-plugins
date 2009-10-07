@@ -385,13 +385,13 @@ def p_statement_global(t):
 
     t[0] = global_node
 
-#def p_statement_expression(t):
+def p_statement_expression(t):
     "statement : expression"
 
     # retrieves the expression node
-#    expression_node = t[1]
+    expression_node = t[1]
 
-#    t[0] = expression_node
+    t[0] = expression_node
 
 def p_statement_import(t):
     "statement : import"
