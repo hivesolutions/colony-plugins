@@ -37,12 +37,17 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
 import sys
 import copy
 import types
+import logging
 import hashlib
 import cStringIO
 
+import os.path
+
+import logging_configuration
 import parser_generator_exceptions
 
 class ItemSet(object):
@@ -709,6 +714,9 @@ class ParserGenerator:
     DEFAULT_PARSER_TYPE = "LR0"
     """ The default parser type """
 
+    DEFAULT_DATA_FILE_NAME = "parser.dat"
+    """ The default data file name """
+
     PARSER_PREFIX = "p_"
     """ The parser prefix value """
 
@@ -832,7 +840,60 @@ class ParserGenerator:
 
         self.symbols_terminal_end_map["$"] = True
 
-    def construct_restore(self, scope, file = None):
+    def construct(self, scope, file_path = None, save_state = True):
+        """
+        Constructs the parser structures for the given scope.
+
+        @type scope: Dictionary
+        @param scope: The scope to be used in the parser construction.
+        @type file_path: String
+        @param file_path: The file path to be used in restore.
+        @type save_state: bool
+        @param save_state: The save state flag.
+        """
+
+        # in case the file path is not defined
+        if not file_path:
+            # sets the default data file name as the file path
+            file_path = ParserGenerator.DEFAULT_DATA_FILE_NAME
+
+        # in case the file path exists
+        if os.path.exists(file_path):
+            try:
+                # opens the file
+                file = open(file_path, "rb+")
+
+                # constructs or restores the parser generator state
+                self.construct_restore(scope, file, False)
+
+                # closes the file
+                file.close()
+
+                # opens the file
+                file = open(file_path, "wb")
+
+                # in case the save state flag is active
+                # and the file is valid
+                if save_state and file:
+                    # saves the state to the file
+                    self._save_state(file)
+
+                # closes the file
+                file.close()
+            except Exception, exception:
+                # prints the info message
+                logging.info("Problem while restoring state %s" % str(exception))
+
+                # constructs the parser generator and saves state
+                self._construct_save_file_path(scope, True, file_path, save_state)
+        else:
+            # prints the info message
+            logging.info("State file %s does not exists" % file_path)
+
+            # constructs the parser generator and saves state
+            self._construct_save_file_path(scope, True, file_path, save_state)
+
+    def construct_restore(self, scope, file = None, save_state = True):
         """
         Constructs or restores the parser state from file if possible.
 
@@ -842,12 +903,14 @@ class ParserGenerator:
         @param file: The file to be used in the parser state restore.
         @rtype: bool
         @return: If the parser state was successfully restored.
+        @type save_state: bool
+        @param save_state: The save state flag.
         """
 
         # in case the file is not defined
         if not file:
-            # constructs the parser generator
-            self.construct(scope, True)
+            # constructs the parser generator and saves state
+            self._construct_save(scope, True, file, save_state)
 
             # returns immediately
             return
@@ -857,9 +920,18 @@ class ParserGenerator:
             if not self.restore(scope, file):
                 # generates the table
                 self._generate_table()
-        except Exception, ex:
-            # constructs the parser generator
-            self.construct(scope, True)
+
+            # in case the save state flag is active
+            # and the file is valid
+            if save_state and file:
+                # saves the state to the file
+                self._save_state(file)
+        except Exception, exception:
+            # prints the info message
+            logging.info("Problem while restoring state %s" % str(exception))
+
+            # constructs the parser generator and saves state
+            self._construct_save_file_path(scope, True, ParserGenerator.DEFAULT_DATA_FILE_NAM, save_state)
 
     def restore(self, scope, file):
         """
@@ -877,7 +949,7 @@ class ParserGenerator:
         old_hash_value = self._unserialize_state(file)
 
         # constructs the parser generator for the given scope
-        self.construct(scope, False)
+        self._construct(scope, False)
 
         # retrieves the hash value
         hash_value = self._create_hash()
@@ -890,7 +962,63 @@ class ParserGenerator:
             # returns false
             return False
 
-    def construct(self, scope, generate_table = True):
+    def _construct_save_file_path(self, scope, generate_table = True, file_path = None, save_state = True):
+        """
+        Constructs the parser structures for the given scope, and saves the state.
+
+        @type scope: Dictionary
+        @param scope: The scope to be used in the parser construction.
+        @type generate_table: bool
+        @param generate_table: The generate table flag.
+        @type file_path: String
+        @param file_path: The file path of the file to be used in the state saving.
+        @type save_state: bool
+        @param save_state: The save state flag.
+        """
+
+        # opens the file
+        file = open(file_path, "wb+")
+
+        self._construct_save(scope, generate_table, file, save_state)
+
+        # closes the file
+        file.close()
+
+    def _construct_save(self, scope, generate_table = True, file = None, save_state = True):
+        """
+        Constructs the parser structures for the given scope, and saves the state.
+
+        @type scope: Dictionary
+        @param scope: The scope to be used in the parser construction.
+        @type generate_table: bool
+        @param generate_table: The generate table flag.
+        @type file: File
+        @param file: The file to be used in the state saving.
+        @type save_state: bool
+        @param save_state: The save state flag.
+        """
+
+        # constructs the parser generator
+        self._construct(scope, generate_table)
+
+        # in case the save state flag is active
+        # and the file is valid
+        if save_state and file:
+            # saves the state
+            self._save_state(file)
+
+    def _save_state(self, file):
+        """
+        Saves the state of the parser generator in the given file.
+
+        @type file: File
+        @param file: The file to the save the state of the parser generator.
+        """
+
+        # serializes the state
+        self._serialize_state(file)
+
+    def _construct(self, scope, generate_table = True):
         """
         Constructs the parser structures for the given scope.
 
@@ -1936,11 +2064,13 @@ class ParserGenerator:
         # retrieves the current token
         current_token = self._get_token()
 
-        print current_token
+        # prints the debug message
+        logging.debug("Current token: %s" % str(current_token))
 
         # loop indefinitely
         while True:
-            print stack
+            # prints the debug message
+            logging.debug("Current stack: %s" % str(stack))
 
             # retrieves the current state
             current_state, current_value = stack[-1]
@@ -1971,8 +2101,8 @@ class ParserGenerator:
                 raise parser_generator_exceptions.InvalidState("no action defined for state: " + str(current_state) + " and input: " + token_type)
 
             if action_type == ParserGenerator.REDUCE_OPERATION_VALUE:
-                # writes the reduce to the screen
-                print "reduce " + str(action_value)
+                # prints the debug message
+                logging.debug("Reduce action: %s" % str(action_value))
 
                 # retrieves the reduce rule
                 reduce_rule = self.rules_list[action_value]
@@ -2025,8 +2155,8 @@ class ParserGenerator:
                     raise parser_generator_exceptions.InvalidState("no goto defined for state: " + str(current_state) + " and reduce rule: " + reduce_rule_name)
 
             elif action_type == ParserGenerator.SHIFT_OPERATION_VALUE:
-                # writes the shift to the screen
-                print "shift " + str(action_value)
+                # prints the debug message
+                logging.debug("Shift action: %s" % str(action_value))
 
                 # creates the current tuple with the action value
                 # and the token value
@@ -2038,10 +2168,12 @@ class ParserGenerator:
                 # retrieves the next (current) token
                 current_token = self._get_token()
 
-                print current_token
+                # prints the debug message
+                logging.debug("Current token: %s" % str(current_token))
 
             elif action_type == ParserGenerator.ACCEPT_OPERATION_VALUE:
-                print "over"
+                # prints the debug message
+                logging.debug("Over action")
 
                 # retrieves the accept rule
                 accept_rule = self.program_rule
