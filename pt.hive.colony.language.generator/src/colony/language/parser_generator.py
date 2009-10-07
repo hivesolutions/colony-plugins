@@ -962,83 +962,6 @@ class ParserGenerator:
             # returns false
             return False
 
-    def _construct_save_file_path(self, scope, generate_table = True, file_path = None, save_state = True):
-        """
-        Constructs the parser structures for the given scope, and saves the state.
-
-        @type scope: Dictionary
-        @param scope: The scope to be used in the parser construction.
-        @type generate_table: bool
-        @param generate_table: The generate table flag.
-        @type file_path: String
-        @param file_path: The file path of the file to be used in the state saving.
-        @type save_state: bool
-        @param save_state: The save state flag.
-        """
-
-        # opens the file
-        file = open(file_path, "wb+")
-
-        self._construct_save(scope, generate_table, file, save_state)
-
-        # closes the file
-        file.close()
-
-    def _construct_save(self, scope, generate_table = True, file = None, save_state = True):
-        """
-        Constructs the parser structures for the given scope, and saves the state.
-
-        @type scope: Dictionary
-        @param scope: The scope to be used in the parser construction.
-        @type generate_table: bool
-        @param generate_table: The generate table flag.
-        @type file: File
-        @param file: The file to be used in the state saving.
-        @type save_state: bool
-        @param save_state: The save state flag.
-        """
-
-        # constructs the parser generator
-        self._construct(scope, generate_table)
-
-        # in case the save state flag is active
-        # and the file is valid
-        if save_state and file:
-            # saves the state
-            self._save_state(file)
-
-    def _save_state(self, file):
-        """
-        Saves the state of the parser generator in the given file.
-
-        @type file: File
-        @param file: The file to the save the state of the parser generator.
-        """
-
-        # serializes the state
-        self._serialize_state(file)
-
-    def _construct(self, scope, generate_table = True):
-        """
-        Constructs the parser structures for the given scope.
-
-        @type scope: Dictionary
-        @param scope: The scope to be used in the parser construction.
-        @type generate_table: bool
-        @param generate_table: The generate table flag.
-        """
-
-        # constructs the structures
-        self._construct_structures(scope)
-
-        # generates the structures
-        self._generate_structures()
-
-        # in case we should generate table
-        if generate_table:
-            # generates the table
-            self._generate_table()
-
     def parse(self):
         """
         Parses the current buffer.
@@ -1118,6 +1041,83 @@ class ParserGenerator:
             return True
         else:
             return False
+
+    def _construct_save_file_path(self, scope, generate_table = True, file_path = None, save_state = True):
+        """
+        Constructs the parser structures for the given scope, and saves the state.
+
+        @type scope: Dictionary
+        @param scope: The scope to be used in the parser construction.
+        @type generate_table: bool
+        @param generate_table: The generate table flag.
+        @type file_path: String
+        @param file_path: The file path of the file to be used in the state saving.
+        @type save_state: bool
+        @param save_state: The save state flag.
+        """
+
+        # opens the file
+        file = open(file_path, "wb+")
+
+        self._construct_save(scope, generate_table, file, save_state)
+
+        # closes the file
+        file.close()
+
+    def _construct_save(self, scope, generate_table = True, file = None, save_state = True):
+        """
+        Constructs the parser structures for the given scope, and saves the state.
+
+        @type scope: Dictionary
+        @param scope: The scope to be used in the parser construction.
+        @type generate_table: bool
+        @param generate_table: The generate table flag.
+        @type file: File
+        @param file: The file to be used in the state saving.
+        @type save_state: bool
+        @param save_state: The save state flag.
+        """
+
+        # constructs the parser generator
+        self._construct(scope, generate_table)
+
+        # in case the save state flag is active
+        # and the file is valid
+        if save_state and file:
+            # saves the state
+            self._save_state(file)
+
+    def _save_state(self, file):
+        """
+        Saves the state of the parser generator in the given file.
+
+        @type file: File
+        @param file: The file to the save the state of the parser generator.
+        """
+
+        # serializes the state
+        self._serialize_state(file)
+
+    def _construct(self, scope, generate_table = True):
+        """
+        Constructs the parser structures for the given scope.
+
+        @type scope: Dictionary
+        @param scope: The scope to be used in the parser construction.
+        @type generate_table: bool
+        @param generate_table: The generate table flag.
+        """
+
+        # constructs the structures
+        self._construct_structures(scope)
+
+        # generates the structures
+        self._generate_structures()
+
+        # in case we should generate table
+        if generate_table:
+            # generates the table
+            self._generate_table()
 
     def _construct_structures(self, scope):
         """
