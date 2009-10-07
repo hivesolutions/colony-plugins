@@ -148,7 +148,7 @@ class LexerGenerator:
         """
         Constructs the lexer for the given scope.
 
-        @type scope: Map
+        @type scope: Dictionary
         @param scope: The scope to be used in the lexer construction.
         """
 
