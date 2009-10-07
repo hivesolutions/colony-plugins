@@ -72,13 +72,23 @@ import time
 initial = time.time()
 
 # constructs the parser
-parser_generator.construct(valid_example)
+parser_generator._construct(valid_example)
 
 # prints the rules string
-print parser_generator._get_rules_string()
+rules_string = parser_generator._get_rules_string()
+
+rules_file = open("rules.txt", "wb+")
+
+rules_file.write(rules_string)
 
 # prints the item sets string
-print parser_generator._get_item_sets_string()
+item_sets_string = parser_generator._get_item_sets_string()
+
+item_sets_file = open("item_sets.txt", "wb+")
+
+item_sets_file.write(item_sets_string)
+
+item_sets_file.close()
 
 # prints the transition table string
 print parser_generator._get_transition_table_string()
@@ -89,11 +99,47 @@ print parser_generator._get_action_table_string()
 # prints the goto table string
 print parser_generator._get_goto_table_string()
 
+code = "a = 1 + 1"
+
 # sets the buffer in the parser generator
-parser_generator.set_buffer("import tobias \n if 1 : \n while 1 : \n pass \n end \n else : \n pass \n end \n")
+#parser_generator.set_buffer("import tobias \n if 1 : \n while 1 : \n pass \n end \n else : \n pass \n end \n")
+parser_generator.set_buffer(code)
 
 # parses the current buffer and retrieves the result
 parse_result = parser_generator.parse()
+
+global_interpretation_map = {}
+global_context_code_information = None
+
+# creates a code generation visitor
+code_generation_visitor = examples.settler.settler_generation.PythonCodeGenerationVisitor()
+
+# sets the visit mode as interactive
+code_generation_visitor.set_visit_mode("interactive")
+
+# in case there is a global context code information defined
+if global_context_code_information:
+    # sets the global context code information variables
+    code_generation_visitor.set_global_context_code_information_variables(global_context_code_information)
+
+# accepts the code generation visitor in post order
+parse_result.accept_post_order(code_generation_visitor)
+
+# retrieves the code object
+code_object = code_generation_visitor.get_code_object()
+
+# retrieves the global context code information
+global_context_code_information = code_generation_visitor.get_global_context_code_information()
+
+global_interpretation_map["global_context_code_information"] = global_context_code_information
+
+# evaluates the generated code object
+eval_result_value = eval(code_object, globals(), globals())
+
+# in case the result of the evaluation is not None
+if not eval_result_value == None:
+    # prints the result of the evaluation
+    print eval_result_value
 
 final_time = time.time()
 

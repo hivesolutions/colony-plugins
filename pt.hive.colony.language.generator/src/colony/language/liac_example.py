@@ -3,9 +3,12 @@ from yappy.parser import *
 class ParseReg(Yappy):
      def __init__(self, no_table=0, table='tablereg'):
         grammar ="""
-        statements -> statement NEWLINE statements {{ self.OrSemRule }} ;
-        statements-> statement NEWLINE {{ self.OrSemRule }} ;
-        statement -> PASS {{ self.OrSemRule }} ;
+        program -> statement {{ self.OrSemRule }} ;
+        statement -> expression {{ self.OrSemRule }} ;
+        expression -> NUMBER {{ self.OrSemRule }} ;
+        statement -> name_reference EQUALS expression {{ self.OrSemRule }} ;
+        expression -> expression PLUS expression {{ self.OrSemRule }} ;
+        name_reference -> NAME {{ self.OrSemRule }} ;
         """
         tokenize = [
         ("\s+",""),
