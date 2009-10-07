@@ -1035,13 +1035,8 @@ class ParserGenerator:
                 # retrieves the current symbol
                 current_symbol = "".join(rule_symbols_list[:current_token_position + 1])
 
-                # in case it's a look ahead parser
-                if self.is_look_ahead_parser():
-                    # creates the state identifier of the state
-                    state_identifier = (current_symbol, previous_item_set)
-                else:
-                    # creates the state identifier of the state
-                    state_identifier = current_symbol
+                # creates the state identifier of the state
+                state_identifier = (current_symbol, previous_item_set)
 
                 # in case the current token position is not the final one
                 if rule_symbols_list_length > current_token_position + 1:
