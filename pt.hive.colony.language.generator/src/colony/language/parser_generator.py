@@ -1720,8 +1720,13 @@ class ParserGenerator:
                 # retrieves the first symbol extra rules
                 first_symbol_extra_rules = self._get_extra_rules(first_symbol)
 
-                # extends the extra rules list
-                extra_rules_list.extend(first_symbol_extra_rules)
+                # iterates over all the symbols in the first symbol extra rules
+                for first_symbol_extra_rule in first_symbol_extra_rules:
+                    # in case the first symbol extra rule does not
+                    # exists in the extra rules list
+                    if not first_symbol_extra_rule in extra_rules_list:
+                        # adds the first symbol extra rule to the extra rules
+                        extra_rules_list.extend(first_symbol_extra_rules)
 
                 # appends the first symbol to the symbols list
                 symbols_list.append(first_symbol)
@@ -1850,11 +1855,13 @@ class ParserGenerator:
                             # adds the extra look ahead to the final symbol extra rules list
                             final_symbol_extra_rules_list.append(extra_look_ahead)
                         else:
-                            # adds the first symbol extra rule to the final symbol extra rules list
-                            final_symbol_extra_rules_list.append(first_symbol_extra_rule)
+                            # in case the first symbol extra rule is not defined in the both lists
+                            if not first_symbol_extra_rule in adding_symbol_extra_rules_list and not first_symbol_extra_rule in extra_look_ahead_list:
+                                # adds the first symbol extra rule to the final symbol extra rules list
+                                final_symbol_extra_rules_list.append(first_symbol_extra_rule)
 
-                            # adds the first symbol extra rule to the adding symbol extra rules list
-                            adding_symbol_extra_rules_list.append(first_symbol_extra_rule)
+                                # adds the first symbol extra rule to the adding symbol extra rules list
+                                adding_symbol_extra_rules_list.append(first_symbol_extra_rule)
 
                 # extends the extra look ahead list with the adding symbol
                 # extra rules list
