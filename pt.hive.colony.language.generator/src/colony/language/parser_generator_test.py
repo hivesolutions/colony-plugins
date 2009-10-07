@@ -81,7 +81,7 @@ class TestParser(unittest.TestCase):
         self.parser_generator.set_lexer(self.lexer_generator)
 
         # constructs the parser
-        self.parser_generator.construct(example)
+        self.parser_generator._construct(example)
 
         # calls the parser methods
         self.call_parser_methods()
@@ -109,7 +109,7 @@ class TestParser(unittest.TestCase):
         self.parser_generator.set_lexer(self.lexer_generator)
 
         # constructs the parser
-        self.parser_generator.construct(example)
+        self.parser_generator._construct(example)
 
         # calls the parser methods
         self.call_parser_methods()
