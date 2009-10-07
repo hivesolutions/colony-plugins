@@ -117,5 +117,10 @@ def p_one_terminal(t):
 
     t[0] = int(t[1])
 
+def p_expression_epslon(t):
+    "B : "
+
+    t[0] = 0
+
 # sets the example
 example = locals()

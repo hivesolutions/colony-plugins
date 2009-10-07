@@ -1255,9 +1255,14 @@ class ParserGenerator:
                 symbols_non_terminal_reduce_list = symbols_non_terminal_line[ParserGenerator.REDUCE_OPERATION_VALUE]
 
                 # in case it's the last token
-                if item_set_token_position + 1 >= rule_symbols_list_length :
-                    # retrieves the token
-                    token = rule_symbols_list[item_set_token_position]
+                if item_set_token_position + 1 >= rule_symbols_list_length:
+                    # in case it's not an epsilon transition
+                    if rule_symbols_list_length:
+                        # retrieves the token
+                        token = rule_symbols_list[item_set_token_position]
+                    # in case it's an epsilon transition
+                    else:
+                        token = "$"
 
                     # in case the token already exists in the symbols
                     # non terminal shift list
@@ -1498,6 +1503,14 @@ class ParserGenerator:
             # retrieves the symbols list for the extra rule
             extra_rule_symbols_list = extra_rule.get_symbols_list()
 
+            # retrieves the extra rule symbols list length
+            extra_rule_symbols_list_length = len(extra_rule_symbols_list)
+
+            # in case it's an epsilon transition
+            if not extra_rule_symbols_list_length:
+                # continues the loop
+                continue
+
             # retrieves the first symbol
             first_symbol = extra_rule_symbols_list[0]
 
@@ -1582,6 +1595,11 @@ class ParserGenerator:
 
             # retrieves the extra rule symbols list length
             extra_rule_symbols_list_length = len(extra_rule_symbols_list)
+
+            # in case it's an epsilon transition
+            if not extra_rule_symbols_list_length:
+                # continues the loop
+                continue
 
             # retrieves the first symbol
             first_symbol = extra_rule_symbols_list[0]
