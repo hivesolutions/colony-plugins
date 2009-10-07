@@ -44,6 +44,32 @@ class ParserGeneratorException(Exception):
 
     pass
 
+class InvalidStateFile(ParserGeneratorException):
+    """
+    The invalid state file exception class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        ParserGeneratorException.__init__(self, message)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Invalid State file: %s" % self.message
+
 class InvalidState(ParserGeneratorException):
     """
     The invalid state exception class.
