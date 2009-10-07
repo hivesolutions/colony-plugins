@@ -37,8 +37,11 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import sys
 import copy
 import types
+import hashlib
+import cStringIO
 
 import parser_generator_exceptions
 
@@ -727,6 +730,15 @@ class ParserGenerator:
     ACCEPT_OPERATION_VALUE = "A"
     """ The accept operation value """
 
+    ACTION_TABLE_VALUE = "action"
+    """ The action table value """
+
+    GOTO_TABLE_VALUE = "goto"
+    """ The goto table value """
+
+    HASH_VALUE = "hash"
+    """ The hash value """
+
     parser_type = None
     """ The parser type """
 
@@ -820,61 +832,84 @@ class ParserGenerator:
 
         self.symbols_terminal_end_map["$"] = True
 
-    def construct(self, scope):
+    def construct_restore(self, scope, file = None):
         """
-        Constructs the parser for the given scope.
+        Constructs or restores the parser state from file if possible.
 
-        @type scope: Map
+        @type scope: Dictionary
         @param scope: The scope to be used in the parser construction.
+        @type file: File
+        @param file: The file to be used in the parser state restore.
+        @rtype: bool
+        @return: If the parser state was successfully restored.
         """
 
-        # in case the lexer is defined
-        if self.lexer:
-            # constructs the lexer
-            self.lexer.construct(scope)
+        # in case the file is not defined
+        if not file:
+            # constructs the parser generator
+            self.construct(scope, True)
 
-        # retrieves the local values copy
-        locals = copy.copy(scope)
+            # returns immediately
+            return
 
-        # iterates over all the locals
-        for local in locals:
-            # retrieves the local value
-            local_value = locals[local]
+        try:
+            # in case the restore was not successful
+            if not self.restore(scope, file):
+                # generates the table
+                self._generate_table()
+        except Exception, ex:
+            # constructs the parser generator
+            self.construct(scope, True)
 
-            # retrieves the local type
-            local_type = type(local_value)
-
-            # retrieves the local prefix
-            local_prefix = local[0:2]
-
-            # in case the type of the local is function
-            if local_type is types.FunctionType and local_prefix == ParserGenerator.PARSER_PREFIX:
-                # in case the local has the error function value
-                if local == ParserGenerator.ERROR_FUNCTION:
-                    # sets the error function
-                    self.error_function = local_value
-                else:
-                    # adds the local value to the functions list
-                    self.functions_list.append(local_value)
-
-                    # in case the local has the program function value
-                    if local == ParserGenerator.PROGRAM_FUNCTION:
-                        # sets the program function
-                        self.program_function = local_value
-
-        # generates the table
-        self.generate_table()
-
-    def generate_table(self):
+    def restore(self, scope, file):
         """
-        Generates the parsing table.
+        Restores the parser state from file if possible.
+
+        @type scope: Dictionary
+        @param scope: The scope to be used in the parser construction.
+        @type file: File
+        @param file: The file to be used in the parser state restore.
+        @rtype: bool
+        @return: If the parser state was successfully restored.
         """
+
+        # unserializes the previous state and retrieves the previous hash value
+        old_hash_value = self._unserialize_state(file)
+
+        # constructs the parser generator for the given scope
+        self.construct(scope, False)
+
+        # retrieves the hash value
+        hash_value = self._create_hash()
+
+        # in case the has values are the same
+        if old_hash_value == hash_value:
+            # returns true
+            return True
+        else:
+            # returns false
+            return False
+
+    def construct(self, scope, generate_table = True):
+        """
+        Constructs the parser structures for the given scope.
+
+        @type scope: Dictionary
+        @param scope: The scope to be used in the parser construction.
+        @type generate_table: bool
+        @param generate_table: The generate table flag.
+        """
+
+        # constructs the structures
+        self._construct_structures(scope)
 
         # generates the structures
         self._generate_structures()
 
-        # generates the table
-        self._generate_table()
+        # in case we should generate table
+        if generate_table:
+            # generates the table
+            self._generate_table()
 
     def parse(self):
         """
@@ -956,9 +991,51 @@ class ParserGenerator:
         else:
             return False
 
+    def _construct_structures(self, scope):
+        """
+        Constructs the parser structures for the given scope.
+
+        @type scope: Dictionary
+        @param scope: The scope to be used in the parser construction.
+        """
+
+        # in case the lexer is defined
+        if self.lexer:
+            # constructs the lexer
+            self.lexer.construct(scope)
+
+        # retrieves the local values copy
+        locals = copy.copy(scope)
+
+        # iterates over all the locals
+        for local in locals:
+            # retrieves the local value
+            local_value = locals[local]
+
+            # retrieves the local type
+            local_type = type(local_value)
+
+            # retrieves the local prefix
+            local_prefix = local[0:2]
+
+            # in case the type of the local is function
+            if local_type is types.FunctionType and local_prefix == ParserGenerator.PARSER_PREFIX:
+                # in case the local has the error function value
+                if local == ParserGenerator.ERROR_FUNCTION:
+                    # sets the error function
+                    self.error_function = local_value
+                else:
+                    # adds the local value to the functions list
+                    self.functions_list.append(local_value)
+
+                    # in case the local has the program function value
+                    if local == ParserGenerator.PROGRAM_FUNCTION:
+                        # sets the program function
+                        self.program_function = local_value
+
     def _generate_table(self):
         """
-        Generates the parsing table (auxiliary method).
+        Generates the parsing table.
         """
 
         # generates the terminal map
@@ -2009,6 +2086,109 @@ class ParserGenerator:
 
         # returns the top value
         return top_value
+
+    def _serialize_state(self, file = sys.stdout):
+        """
+        Serializes the state to the given file.
+
+        @type file: File
+        @param file: The file to have the state serialized.
+        @rtype: String
+        @return: The hash value for the current parser.
+        """
+
+        # creates the hash value
+        hash_value = self._create_hash()
+
+        file.write(ParserGenerator.HASH_VALUE + " = ")
+        file.write("\"" + hash_value + "\"")
+        file.write("\n")
+        file.write(ParserGenerator.ACTION_TABLE_VALUE + " = ")
+        file.write(str(self.action_table_map))
+        file.write("\n")
+        file.write(ParserGenerator.GOTO_TABLE_VALUE + " = ")
+        file.write(str(self.goto_table_map))
+        file.write("\n")
+
+        # returns the hash value
+        return hash_value
+
+    def _unserialize_state(self, file):
+        """
+        Unserializes the state from the given file.
+
+        @type file: File
+        @param file: The file to have the state unserialized.
+        @rtype: String
+        @return: The hash value for the previous parser.
+        """
+
+        # retrieves the file contents
+        file_contents = file.read()
+
+        # creates the globals map
+        globals_map = {}
+
+        # creates the locals map
+        locals_map = {}
+
+        # executes the file contents
+        exec(file_contents, globals_map, locals_map)
+
+        # creates the hash value
+        hash_value = None
+
+        if ParserGenerator.HASH_VALUE in locals_map:
+            hash_value = locals_map[ParserGenerator.HASH_VALUE]
+        else:
+            raise parser_generator_exceptions.InvalidStateFile("no hash value defined in file")
+
+        if ParserGenerator.ACTION_TABLE_VALUE in locals_map:
+            self.action_table_map = locals_map[ParserGenerator.ACTION_TABLE_VALUE]
+        else:
+            raise parser_generator_exceptions.InvalidStateFile("no action table defined in file")
+
+        if ParserGenerator.GOTO_TABLE_VALUE in locals_map:
+            self.goto_table_map = locals_map[ParserGenerator.GOTO_TABLE_VALUE]
+        else:
+            raise parser_generator_exceptions.InvalidStateFile("no action table defined in file")
+
+        # returns the hash value
+        return hash_value
+
+    def _create_hash(self):
+        """
+        Creates the hash value for the current parser.
+
+        @rtype: String
+        @return: The hash value for the current parser.
+        """
+
+        # creates the buffer string
+        buffer_string = cStringIO.StringIO()
+
+        # iterates over all the rules in the rules list
+        for rule in self.rules_list:
+            # retrieves the rule hash string
+            rule_hash_string = str(rule.__hash__)
+
+            # writes the rule hash string to the buffer string
+            buffer_string.write(rule_hash_string)
+
+        # retrieves the buffer string value
+        buffer_string_value = buffer_string.getvalue()
+
+        # creates the md5 value
+        md5_value = hashlib.md5()
+
+        # updates the md5 value
+        md5_value.update(buffer_string_value)
+
+        # retrieves the md5 hash value
+        ms5_hash_value = md5_value.hexdigest()
+
+        # returns the md5 hash value
+        return ms5_hash_value
 
     def _get_rules_string(self):
         """
