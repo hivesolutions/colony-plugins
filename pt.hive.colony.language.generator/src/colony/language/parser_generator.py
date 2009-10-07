@@ -2175,6 +2175,9 @@ class ParserGenerator:
             # writes the rule hash string to the buffer string
             buffer_string.write(rule_hash_string)
 
+        # writes the parser type string to the buffer string
+        buffer_string.write(self.parser_type)
+
         # retrieves the buffer string value
         buffer_string_value = buffer_string.getvalue()
 
