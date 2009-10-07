@@ -1733,6 +1733,14 @@ class ParserGenerator:
             # retrieves the symbols list for the rule
             rule_symbols_list = rule.get_symbols_list()
 
+            # retrieves the rule symbols list length
+            rule_symbols_list_length = len(rule_symbols_list)
+
+            # in case it's an epsilon transition
+            if not rule_symbols_list_length:
+                # continues the loop
+                continue
+
             # retrieves the first symbol
             first_symbol = rule_symbols_list[0]
 
