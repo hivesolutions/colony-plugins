@@ -37,6 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import time
+import logging
+
 import lexer_generator
 import parser_generator
 
@@ -48,14 +51,13 @@ import examples.shift_reduce_example
 import examples.simple_example
 import examples.ultra_simple_example
 
-import examples.settler.settler_example
-import examples.settler.settler_generation
-import examples.settler.settler_interpretation
-import examples.settler.settler_processing
-import examples.settler.settler_visitor
+import logging_configuration
+
+# creates the initial time
+initial_time = time.time()
 
 # sets the current valid example
-valid_example = examples.settler.settler_example.example
+valid_example = examples.simple_example.example
 
 # creates a new lexer generator
 lexer_generator = lexer_generator.LexerGenerator()
@@ -66,81 +68,17 @@ parser_generator = parser_generator.ParserGenerator(parser_generator.ParserGener
 # sets the lexer in the parser
 parser_generator.set_lexer(lexer_generator)
 
-import time
-
-initial = time.time()
-
 # constructs the parser
 parser_generator._construct(valid_example)
 
-# prints the rules string
-rules_string = parser_generator._get_rules_string()
-
-rules_file = open("rules.txt", "wb+")
-
-rules_file.write(rules_string)
-
-# prints the item sets string
-item_sets_string = parser_generator._get_item_sets_string()
-
-item_sets_file = open("item_sets.txt", "wb+")
-
-item_sets_file.write(item_sets_string)
-
-item_sets_file.close()
-
-code = "function tobias():\n\
-print(\"ola\") \n\
-end\n\
-a = 5\n\
-while a > 0:\n\
-    tobias()\n\
-    a = a - 1\n\
-end\n"
-
-#ficheiro = open("files/bytecode_test.st", "r")
-#code = ficheiro.read()
-#ficheiro.close()
-
-# sets the buffer in the parser generator
-#parser_generator.set_buffer("import tobias \n if 1 : \n while 1 : \n pass \n end \n else : \n pass \n end \n")
-
 # parses the current buffer and retrieves the result
-parse_result = parser_generator.parse(code)
+parse_result = parser_generator.parse("1+1")
 
-global_interpretation_map = {}
-global_context_code_information = None
-
-# creates a code generation visitor
-code_generation_visitor = examples.settler.settler_generation.PythonCodeGenerationVisitor()
-
-# sets the visit mode as interactive
-code_generation_visitor.set_visit_mode("interactive")
-
-# in case there is a global context code information defined
-if global_context_code_information:
-    # sets the global context code information variables
-    code_generation_visitor.set_global_context_code_information_variables(global_context_code_information)
-
-# accepts the code generation visitor in post order
-parse_result.accept_post_order(code_generation_visitor)
-
-# retrieves the code object
-code_object = code_generation_visitor.get_code_object()
-
-# retrieves the global context code information
-global_context_code_information = code_generation_visitor.get_global_context_code_information()
-
-global_interpretation_map["global_context_code_information"] = global_context_code_information
-
-# evaluates the generated code object
-eval_result_value = eval(code_object, globals(), globals())
-
-# in case the result of the evaluation is not None
-if not eval_result_value == None:
-    # prints the result of the evaluation
-    print eval_result_value
-
+# creates the final time
 final_time = time.time()
 
-print str(final_time - initial)
+# calculates the difference time
+difference_time = final_time - initial_time
+
+# print the info message
+logging.info("Took: %ss" % str(difference_time))

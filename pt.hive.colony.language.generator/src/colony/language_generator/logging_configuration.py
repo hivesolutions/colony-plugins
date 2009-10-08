@@ -45,7 +45,7 @@ DEFAULT_LOGGING_FILENAME = None
 DEFAULT_LOGGING_FORMAT = "%(asctime)s %(levelname)s %(message)s"
 """ The default logging format """
 
-DEFAULT_LOGGING_LEVEL = logging.DEBUG
+DEFAULT_LOGGING_LEVEL = logging.WARNING
 """ The default logging level name """
 
 # sets the logging configuration
