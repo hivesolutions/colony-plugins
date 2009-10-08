@@ -137,7 +137,7 @@ class IoAdapterXml:
         beautify = options.get(BEAUTIFY_VALUE, DEFAULT_BEAUTIFY_SETTING)
 
         # opens the target xml file
-        output_file = open(file_path, "w")
+        output_file = open(file_path, "wb")
 
         # retrieves the root entity
         entities = intermediate_structure.get_entities_by_name(root_entity_name)
