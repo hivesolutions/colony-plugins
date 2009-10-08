@@ -931,7 +931,7 @@ class ParserGenerator:
             logging.info("Problem while restoring state %s" % str(exception))
 
             # constructs the parser generator and saves state
-            self._construct_save_file_path(scope, True, ParserGenerator.DEFAULT_DATA_FILE_NAM, save_state)
+            self._construct_save_file_path(scope, True, ParserGenerator.DEFAULT_DATA_FILE_NAME, save_state)
 
     def restore(self, scope, file):
         """
@@ -1226,6 +1226,9 @@ class ParserGenerator:
             # creates the symbol item set map
             symbol_item_set_map = {}
 
+            # creates the symbol item set previous map
+            symbol_item_set_previous_map = {}
+
             # iterates over all the rules in the current rules list
             for rule, current_token_position, previous_item_set in current_rules_list:
                 #creates the extra rules list
@@ -1240,8 +1243,21 @@ class ParserGenerator:
                 # retrieves the current symbol
                 current_symbol = "".join(rule_symbols_list[:current_token_position + 1])
 
-                # creates the state identifier of the state
+                # creates the identifier of the state
                 state_identifier = (current_symbol, previous_item_set)
+
+                # creates the previous identifier of the state
+                state_previous_identifier = None
+
+                # in case the current position has a valid previous token
+                if current_token_position > -1:
+                    # retrieves the previous symbol
+                    previous_symbol = rule_symbols_list[current_token_position]
+
+                    # in case the previous symbol is a non terminal
+                    if previous_symbol in self.symbols_non_terminal_map:
+                        # creates the state previous identifier
+                        state_previous_identifier = (previous_symbol, previous_item_set)
 
                 # in case the current token position is not the final one
                 if rule_symbols_list_length > current_token_position + 1:
@@ -1277,8 +1293,12 @@ class ParserGenerator:
                     # sets the end symbol
                     next_symbol = "$"
 
+                # in case the state previous identifier is in the symbol item set previous map
+                if state_previous_identifier in symbol_item_set_previous_map:
+                    # retrieves the item set
+                    item_set = symbol_item_set_previous_map[state_previous_identifier]
                 # in case the state identifier is in the symbol item set map
-                if state_identifier in symbol_item_set_map:
+                elif state_identifier in symbol_item_set_map:
                     # retrieves the item set
                     item_set = symbol_item_set_map[state_identifier]
                 else:
@@ -1289,6 +1309,11 @@ class ParserGenerator:
                     else:
                         # creates a new item set
                         item_set = ItemSet()
+
+                    # in case there is a previous state identifier defined
+                    if state_previous_identifier:
+                        # sets the item set in the symbol item set previous map
+                        symbol_item_set_previous_map[state_previous_identifier] = item_set
 
                     # sets the item set in the symbol item set map
                     symbol_item_set_map[state_identifier] = item_set
@@ -1492,8 +1517,8 @@ class ParserGenerator:
                 reduce_list_length = len(reduce_list)
 
                 # in case there is more than one reduction
-                # in the same item set
-                if reduce_list_length > 1:
+                # in the same item set and is not a look ahead parser
+                if reduce_list_length > 1 and not self.is_look_ahead_parser():
                     # raises a reduce reduce conflict exception
                     raise parser_generator_exceptions.ReduceReduceConflict("in verification", item_set)
 
@@ -1609,12 +1634,6 @@ class ParserGenerator:
             # retrieves the rule list
             rules_list = self.item_sets_list[action_table_map_index].get_rules_list()
 
-            # unsets the reduce valid flag
-            reduce_valid = False
-
-            # creates the reduce rule value
-            reduce_rule = None
-
             # iterates over the rules in the rules list
             for rule, token_position, closure in rules_list:
                 # retrieves the rule symbols list
@@ -1625,30 +1644,22 @@ class ParserGenerator:
 
                 # in case the token is in the last position
                 if token_position + 1 == rule_symbols_list_length:
-                    # sets the reduce valid flag
-                    reduce_valid = True
+                    # retrieves the rule id
+                    rule_id = rule.get_rule_id()
 
-                    # sets the reduce rule
-                    reduce_rule = rule
-
-            # in case the reduce valid flag is active
-            if reduce_valid:
-                # retrieves the rule id for the reduce rule
-                reduce_rule_id = reduce_rule.get_rule_id()
-
-                # iterates over all the terminal symbols
-                for symbol_terminal in self.symbols_terminal_end_map:
                     # creates the reduce value
-                    reduce_value = (reduce_rule_id, ParserGenerator.REDUCE_OPERATION_VALUE)
+                    reduce_value = (rule_id, ParserGenerator.REDUCE_OPERATION_VALUE)
 
-                    # in case it's a look ahead parser or the terminal symbols exist in the ahead
-                    # symbols list
-                    if not self.is_look_ahead_parser() or symbol_terminal in reduce_rule.get_ahead_symbols_list():
-                        # in case there is no action defined for the
-                        # current symbol terminal (avoid overwrite)
-                        if not symbol_terminal in action_table_line:
-                            # adds the reduce value to the action table line
-                            action_table_line[symbol_terminal] = reduce_value
+                    # iterates over all the terminal symbols
+                    for symbol_terminal in self.symbols_terminal_end_map:
+                        # in case it's a look ahead parser or the terminal symbols exist in the ahead
+                        # symbols list
+                        if not self.is_look_ahead_parser() or symbol_terminal in rule.get_ahead_symbols_list():
+                            # in case there is no action defined for the
+                            # current symbol terminal (avoid overwrite)
+                            if not symbol_terminal in action_table_line:
+                                # adds the reduce value to the action table line
+                                action_table_line[symbol_terminal] = reduce_value
 
     def _generate_goto_table(self):
         """
@@ -1764,7 +1775,7 @@ class ParserGenerator:
         # in case there is an ahead symbol defined
         if ahead_symbol:
             # retrieves the next ahead symbols list
-            next_ahead_symbols_list = self._get_ahead_symbol_terminals(ahead_symbol)
+            next_ahead_symbols_list = self._get_first_set(ahead_symbol)
 
             # iterates over all the next ahead symbols
             for next_ahead_symbol in next_ahead_symbols_list:
@@ -1875,7 +1886,7 @@ class ParserGenerator:
             # in case the first symbol is contained in the symbols list
             elif first_symbol in symbols_list:
                 # retrieves the ahead symbols from the second symbol
-                ahead_symbols = self._get_ahead_symbol_terminals(second_symbol)
+                ahead_symbols = self._get_first_set(second_symbol)
 
                 # creates the symbol tuple
                 symbol_tuple = (symbol, ahead_symbols)
@@ -1919,7 +1930,35 @@ class ParserGenerator:
         # returns the extra look ahead rules list
         return extra_look_ahead_list
 
-    def _get_ahead_symbol_terminals(self, symbol):
+    def _get_follow_set_item_set(self, item_set):
+        pass
+
+    def _get_follow_set_rule(self, rule, token_position):
+        """
+        Retrieves the follow set for the given rule and token position.
+
+        @type rule: Rule
+        @param rule: The rule to retrieve the follow set.
+        @type token_position: int
+        @param token_position: The token position to retrieves the follow set.
+        @rtype: List
+        @return: The follow set for the given rule and token position.
+        """
+
+        pass
+
+    def _get_first_set(self, symbol):
+        """
+        Retrieves the first set for the given rule and token position.
+
+        @type symbol: String
+        @param symbol: The symbol to retrieve the first set.
+        @rtype: List
+        @return: The first set for the given rule and token position.
+        """
+
+        # in case the symbol is define in the symbols terminal end map
+        # is a terminal
         if symbol in self.symbols_terminal_end_map:
             return [symbol]
 
@@ -1928,11 +1967,11 @@ class ParserGenerator:
             # returns an empty list
             return []
 
+        # creates the first set list
+        first_set_list = []
+
         # retrieves the rules for the symbol
         rules_list = self.rules_map[symbol]
-
-        # creates the ahead symbols list
-        ahead_symbols_list = []
 
         # iterates over the rules in the
         # rules list
@@ -1943,29 +1982,28 @@ class ParserGenerator:
             # retrieves the rule symbols list length
             rule_symbols_list_length = len(rule_symbols_list)
 
-            # in case it's an epsilon transition
-            if not rule_symbols_list_length:
-                # continues the loop
-                continue
+            # in case it's not an epsilon transition
+            if rule_symbols_list_length:
+                # retrieves the first symbol
+                first_symbol = rule_symbols_list[0]
 
-            # retrieves the first symbol
-            first_symbol = rule_symbols_list[0]
-
-            # in case the first symbol is a terminal
-            if first_symbol in self.symbols_terminal_map:
-                # appends the first symbol to the
-                # ahead symbols list
-                ahead_symbols_list.append(first_symbol)
+                # retrieves the next first set list
+                next_first_set_list = self._get_first_set(first_symbol)
             else:
-                # retrieves the next ahead symbols list
-                next_ahead_symbols_list = self._get_ahead_symbol_terminals(first_symbol)
+                # sets the empty symbol as the next first set list
+                next_first_set_list = ["$"]
 
-                # extends the ahead symbols list with the next ahead
-                # symbols list
-                ahead_symbols_list.extend(next_ahead_symbols_list)
+            # iterates over all the next first set items
+            for next_first_set_item in next_first_set_list:
+                # in case the next firts set item does not exists
+                # in the first set list
+                if not next_first_set_item in first_set_list:
+                    # adds the next first set item to the
+                    # first set list
+                    first_set_list.append(next_first_set_item)
 
-        # returns the ahead symbols list
-        return ahead_symbols_list
+        # returns the first set list
+        return first_set_list
 
     def _generate_structures(self):
         """
