@@ -576,10 +576,10 @@ class ContextCodeInformation:
                         self.add_variable(variable_name)
                         operation = "LOAD_GLOBAL"
                     else:
-                        raise settler_exceptions.SettlerSymbolNotFound("the symbol " + variable_name + " was not found")
+                        raise settler_exceptions.SettlerSymbolNotFound("the symbol '" + variable_name + "' was not found")
 
             if not operation in opcode.opmap:
-                raise settler_exceptions.SettlerInvalidOperation("the operation " + operation + " is invalid")
+                raise settler_exceptions.SettlerInvalidOperation("the operation '" + operation + "' is invalid")
 
             # retrieves the opcode value
             opcode_value = opcode.opmap[operation]
