@@ -37,6 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+# the token definitions
+tokens = ("a", "b")
+
 # token definition
 t_a = r"a"
 t_b = r"b"
