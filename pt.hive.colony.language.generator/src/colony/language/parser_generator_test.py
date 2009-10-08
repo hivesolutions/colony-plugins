@@ -47,7 +47,6 @@ import parser_generator_exceptions
 import examples.bug_example
 import examples.extra_example
 import examples.look_ahead_example
-import examples.ply_example
 import examples.reduce_reduce_example
 import examples.shift_reduce_example
 import examples.simple_example
