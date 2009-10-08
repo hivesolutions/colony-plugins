@@ -37,8 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import ply.lex
-
 # the token definitions
 tokens = ("NAME", "NUMBER", "STRING", "BOOL", "PLUS",
           "MINUS", "TIMES", "DIVIDE", "POWER",
@@ -154,6 +152,3 @@ t_ignore = " \t"
 def t_error(t):
     print "Illegal character '%s'" % t.value[0]
     t.lexer.skip(1)
-
-# creates the lexer
-ply.lex.lex()
