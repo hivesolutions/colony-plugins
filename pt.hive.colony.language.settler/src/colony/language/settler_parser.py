@@ -37,11 +37,26 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import sys
+
+sys.path.append("../../../../pt.hive.colony.language.generator/src/colony")
+
+import language_generator.parser_generator
+
 import ply.yacc
 
 import settler_ast
 
 from settler_lexer import *
+
+COLONY_PARSER_VALUE = "ply"
+""" The colony parser value """
+
+PLY_PARSER_VALUE = "colony"
+""" The ply parser value """
+
+PARSER_TYPE = COLONY_PARSER_VALUE
+""" The parser type """
 
 # parsing rules
 # precedence of operators
@@ -861,19 +876,19 @@ def p_expression_import_single(t):
     t[0] = import_node
 
 def p_expression_function(t):
-    "function : function_operators FUNCTION NAME LPAREN arguments RPAREN COLON NEWLINE statements END"
+    "function : FUNCTION NAME LPAREN arguments RPAREN COLON NEWLINE statements END"
 
     # retrieves the function operators node
-    function_operators_node = t[1]
+    function_operators_node = settler_ast.AstSequenceEndNode()
 
     # retrieves the function name value
-    function_name_value = t[3]
+    function_name_value = t[2]
 
     # retrieves the function arguments node
-    function_arguments_node = t[5]
+    function_arguments_node = t[4]
 
     # retrieves the statements node
-    statements_node = t[9]
+    statements_node = t[8]
 
     # creates the function node
     function_node = settler_ast.FunctionNode()
@@ -1422,8 +1437,15 @@ def validate_expression_binary(t):
 
     return True
 
-# creates the parser
-ply.yacc.yacc()
+if PARSER_TYPE == COLONY_PARSER_VALUE:
+    # creates a new parser generator
+    parser_generator = language_generator.parser_generator.ParserGenerator(language_generator.parser_generator.ParserGenerator.LR0_PARSER_TYPE, True, globals())
 
-# sets the settler parser
-parser = ply.yacc
+    # sets the colony settler parser
+    parser = parser_generator
+elif PARSER_TYPE == PLY_PARSER_VALUE:
+    # creates the parser
+    ply.yacc.yacc()
+
+    # sets the settler parser
+    parser = ply.yacc
