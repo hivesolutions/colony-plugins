@@ -40,7 +40,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import re
 import types
 import copy
+import logging
 
+import logging_configuration
 import lexer_generator_exceptions
 
 class Token:
@@ -96,6 +98,18 @@ class LexerGenerator:
     ERROR_TOKEN_VALUE = "t_error"
     """ The error token value """
 
+    IGNORE_TOKEN_VALUE = "t_ignore"
+    """ The ignore token value """
+
+    TOKENS_LIST_VALUE = "tokens"
+    """ The tokens list value """
+
+    BASE_TOKENS_LIST = ["comment", "ignore", "error"]
+    """ The base tokens list """
+
+    tokens_list = []
+    """ The tokens list """
+
     strings_list = []
     """ The strings list """
 
@@ -132,11 +146,15 @@ class LexerGenerator:
     error_function = None
     """ The error function """
 
+    ignore_value = ""
+    """ The ignore value """
+
     def __init__(self):
         """
         Constructor of the class.
         """
 
+        self.tokens_list = []
         self.strings_list = []
         self.string_regex_list = []
         self.string_name_list = []
@@ -155,8 +173,32 @@ class LexerGenerator:
         # retrieves the local values copy
         locals = copy.copy(scope)
 
-        # iterates over all the locals
-        for local in locals:
+        # in case the tokens list value is defined in locals
+        if LexerGenerator.TOKENS_LIST_VALUE in locals:
+            # retrieves the local tokens list
+            local_tokens_list = locals[LexerGenerator.TOKENS_LIST_VALUE]
+
+            # extends the tokens list with the local tokens list
+            self.tokens_list.extend(local_tokens_list)
+        else:
+            # raises an exception
+            raise Exception("Tokens list is not defined")
+
+        # extends the tokens list with the base tokens
+        self.tokens_list.extend(LexerGenerator.BASE_TOKENS_LIST)
+
+        # iterates over all the tokens in the tokens list
+        for token in self.tokens_list:
+            # creates the local value
+            local = LexerGenerator.LEXER_PREFIX + token
+
+            # in case the local value is not defined in locals
+            if not local in locals:
+                # prints the debug message
+                logging.debug("Token %s is not defined in locals" % token)
+
+                continue
+
             # retrieves the local value
             local_value = locals[local]
 
@@ -168,10 +210,15 @@ class LexerGenerator:
 
             # in case the type of the local is string
             if local_type is types.StringType and local_prefix == LexerGenerator.LEXER_PREFIX:
-                # adds the local value to the strings list
-                self.strings_list.append(local_value)
+                # in case the local has the ignore string value
+                if local == LexerGenerator.IGNORE_TOKEN_VALUE:
+                    # sets the ignore value
+                    self.ignore_value = local_value
+                else:
+                    # adds the local value to the strings list
+                    self.strings_list.append(local_value)
 
-                self.string_name_list.append(local.split("_")[1])
+                    self.string_name_list.append(local.split("_")[1])
 
             # in case the type of the local is function
             elif local_type is types.FunctionType and local_prefix == LexerGenerator.LEXER_PREFIX:
@@ -218,7 +265,18 @@ class LexerGenerator:
 
         # loop while the index is valid
         while self.current_index < len(self.buffer):
-            if self.buffer[self.current_index] == "":
+            # retrieves the current character
+            current_character = self.buffer[self.current_index]
+
+            # in case the current character is invalid
+            if current_character == "":
+                continue
+
+            # in case the current character is to be ignored
+            if current_character in self.ignore_value:
+                # increments the current index
+                self.current_index += 1;
+
                 continue
 
             for string_regex, string_name in zip(self.string_regex_list, self.string_name_list):
