@@ -50,7 +50,7 @@ INPUT_FILE_PATH_VALUE = "input_file_path"
 
 MANDATORY_TAGS_VALUE = "mandatory_tags"
 
-OUTPUT_FILE_PATH_VALUE = "input_file_path"
+OUTPUT_FILE_PATH_VALUE = "output_file_path"
 
 ROOT_ENTITY_NAME_VALUE = "root_entity_name"
 

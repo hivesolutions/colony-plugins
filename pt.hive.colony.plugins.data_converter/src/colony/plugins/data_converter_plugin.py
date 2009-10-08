@@ -164,8 +164,8 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
         @type option_name_value_map: Dictionary
         @param option_name_value_map: Dictionary with the conversion options.
 
-        @rtype: int
-        @return: The unique identifier assigned to the loaded configuration.
+        @rtype: DataConverterConfiguration
+        @return: The loaded data converter configuration.
         """
 
         return self.data_converter.load_configuration(configuration_plugin_id, option_name_value_map)

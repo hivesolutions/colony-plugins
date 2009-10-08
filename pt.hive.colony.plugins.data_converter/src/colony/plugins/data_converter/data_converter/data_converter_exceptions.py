@@ -96,6 +96,32 @@ class DataConverterConfigurationNotFound(DataConverterException):
 
         return "Data Converter configuration not found: %s" % self.message
 
+class DataConverterConfigurationOptionNotFound(DataConverterException):
+    """
+    The data converter configuration option not found class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        DataConverterException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Data Converter configuration option not found: %s" % self.message
+
 class DataConverterOperationNotImplemented(DataConverterException):
     """
     The data converter operation not implemented class.

@@ -48,6 +48,8 @@ EAGER_LOADING_RELATIONS_VALUE = "eager_loading_relations"
 
 ENTITY_MANAGER_ENGINE_VALUE = "entity_manager_engine"
 
+ENTITY_MANAGER_VALUE = "entity_manager"
+
 ENTITY_NAME_VALUE = "entity_name"
 
 EQUALS_VALUE = "="
@@ -105,23 +107,28 @@ class IoAdapterEntityManager:
         the provided intermediate structure.
         """
 
-        # extracts the mandatory options
-        entity_manager_engine = options[ENTITY_MANAGER_ENGINE_VALUE]
-        file_path = configuration.get_option(INPUT_FILE_PATH_VALUE)
+        # creates an entity manager instance in case an entity manager wasn't provided
+        entity_manager_provided = configuration.has_option(ENTITY_MANAGER_VALUE)
+        if not entity_manager_provided:
+            entity_manager_engine = configuration.get_option(ENTITY_MANAGER_ENGINE_VALUE)
+            file_path = configuration.get_option(INPUT_FILE_PATH_VALUE)
 
-        # raises and exception in case the specified file does not exist
-        if not os.path.exists(file_path):
-            raise io_adapter_entity_manager_exceptions.IoAdapterEntityManagerFileNotFound(file_path)
+            # raises and exception in case the specified file does not exist
+            if not os.path.exists(file_path):
+                raise io_adapter_entity_manager_exceptions.IoAdapterEntityManagerFileNotFound(file_path)
 
-        # retrieves the entity manager plugin
-        entity_manager_plugin = self.io_adapter_entity_manager_plugin.entity_manager_plugin
+            # retrieves the entity manager plugin
+            entity_manager_plugin = self.io_adapter_entity_manager_plugin.entity_manager_plugin
 
-        # initializes the entity manager
-        entity_manager = entity_manager_plugin.load_entity_manager(entity_manager_engine)
-        entity_manager.set_connection_parameters({FILE_PATH_VALUE : file_path, AUTOCOMMIT_VALUE : False})
+            # initializes the entity manager
+            entity_manager = entity_manager_plugin.load_entity_manager(entity_manager_engine)
+            entity_manager.set_connection_parameters({FILE_PATH_VALUE : file_path, AUTOCOMMIT_VALUE : False})
 
-        # loads the entity manager
-        entity_manager.load_entity_manager()
+            # loads the entity manager
+            entity_manager.load_entity_manager()
+        else:
+            # otherwise retrieves the provided entity manager
+            entity_manager = configuration.get_option(ENTITY_MANAGER_VALUE)
 
         try:
             # loads the intermediate structure entities' attributes
@@ -130,8 +137,10 @@ class IoAdapterEntityManager:
             # loads the intermediate structure entities' relations
             self.load_relations(intermediate_structure, entity_manager, options, entity_object_id_entity_map, entity_object_id_intermediate_entity_object_id_map)
         finally:
-            # closes the database connection
-            entity_manager.close_connection()
+            # closes the database connection in case it was
+            # created by the io adapter
+            if not entity_manager_provided:
+                entity_manager.close_connection()
 
     def load_attributes(self, intermediate_structure, entity_manager, options):
         """
@@ -355,19 +364,28 @@ class IoAdapterEntityManager:
         @param options: Options used to determine how to save the intermediate structure with the entity manager.
         """
 
-        # extracts the mandatory options
-        entity_manager_engine = options[ENTITY_MANAGER_ENGINE_VALUE]
-        file_path = configuration.get_option(OUTPUT_FILE_PATH_VALUE)
+        # creates an entity manager instance in case an entity manager wasn't provided
+        entity_manager_provided = configuration.has_option(ENTITY_MANAGER_VALUE)
+        if not entity_manager_provided:
+            entity_manager_engine = configuration.get_option(ENTITY_MANAGER_ENGINE_VALUE)
+            file_path = configuration.get_option(OUTPUT_FILE_PATH)
 
-        # retrieves the entity manager plugin
-        entity_manager_plugin = self.io_adapter_entity_manager_plugin.entity_manager_plugin
+            # raises and exception in case the specified file does not exist
+            if not os.path.exists(file_path):
+                raise io_adapter_entity_manager_exceptions.IoAdapterEntityManagerFileNotFound(file_path)
 
-        # initializes the entity manager
-        entity_manager = entity_manager_plugin.load_entity_manager(entity_manager_engine)
-        entity_manager.set_connection_parameters({FILE_PATH_VALUE : file_path, AUTOCOMMIT_VALUE : False})
+            # retrieves the entity manager plugin
+            entity_manager_plugin = self.io_adapter_entity_manager_plugin.entity_manager_plugin
 
-        # loads the entity manager
-        entity_manager.load_entity_manager()
+            # initializes the entity manager
+            entity_manager = entity_manager_plugin.load_entity_manager(entity_manager_engine)
+            entity_manager.set_connection_parameters({FILE_PATH_VALUE : file_path, AUTOCOMMIT_VALUE : False})
+
+            # loads the entity manager
+            entity_manager.load_entity_manager()
+        else:
+            # otherwise retrieves the provided entity manager
+            entity_manager = configuration.get_option(ENTITY_MANAGER_VALUE)
 
         try:
             # saves the intermediate structure entities' attributes
@@ -376,8 +394,10 @@ class IoAdapterEntityManager:
             # saves the intermediate structure entities' relations
             self.save_relations(intermediate_structure, entity_manager, entity_object_id_entity_map, intermediate_entity_object_id_entity_object_id_map)
         finally:
-            # closes the database connection
-            entity_manager.close_connection()
+            # closes the database connection in
+            # case it was created by the io adapter
+            if not entity_manager_provided:
+                entity_manager.close_connection()
 
     def save_attributes(self, intermediate_structure, entity_manager):
         """

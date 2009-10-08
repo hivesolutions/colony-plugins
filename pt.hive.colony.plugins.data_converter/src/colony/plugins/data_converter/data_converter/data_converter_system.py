@@ -264,8 +264,8 @@ class DataConverter:
         @type option_name_value_map: Dictionary
         @param option_name_value_map: Dictionary with the conversion options.
 
-        @rtype: int
-        @return: The unique identifier assigned to the loaded configuration.
+        @rtype: DataConverterConfiguration
+        @return: The loaded data converter configuration.
         """
 
         # raises an exception in case the specified configuration plugin is not found
@@ -303,7 +303,7 @@ class DataConverter:
         # indexes the loaded configuration and its plugin by the generated id
         self.loaded_configuration_id_configuration_map[loaded_configuration_id] = loaded_configuration
 
-        return loaded_configuration_id
+        return loaded_configuration
 
     def unload_configuration(self, configuration_id):
         """

@@ -665,11 +665,14 @@ class DataConverterConfiguration:
 
         return merged_entity_schema
 
+    def has_option(self, option_name):
+        return option_name in self.option_name_value_map
+
     def get_option(self, option_name):
         # raises an exception in case the specified option
         # doesn't exist
         if not option_name in self.option_name_value_map:
-            raise "Option not found"
+            raise data_converter_exceptions.DataConverterConfigurationOptionNotFound(option_name)
 
         # retrieves the value of the specified option
         option_value = self.option_name_value_map[option_name]
