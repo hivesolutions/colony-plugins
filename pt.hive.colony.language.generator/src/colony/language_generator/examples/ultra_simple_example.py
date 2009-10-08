@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import logging
+
 # the token definitions
 tokens = ("PLUS", "1", "0")
 
@@ -56,7 +58,7 @@ t_ignore = " "
 
 # other character
 def t_error(t):
-    print "Illegal character '%s'" % t.value[0]
+    logging.info("Illegal character '%s'" % t.value[0])
 
     # skips the character
     t.lexer.skip(1)
@@ -64,35 +66,35 @@ def t_error(t):
 def p_program(t):
     "program : E"
 
-    print "program : " + str(t[1])
+    logging.info("program : " + str(t[1]))
 
     t[0] = t[1]
 
 def p_expression_sum(t):
     "E : E PLUS B"
 
-    print "E : " + str(t[1]) + " PLUS " + str(t[3])
+    logging.info("E : " + str(t[1]) + " PLUS " + str(t[3]))
 
     t[0] = t[1] + t[3]
 
 def p_expression_value(t):
     "E : B"
 
-    print "E : " + str(t[1])
+    logging.info("E : " + str(t[1]))
 
     t[0] = t[1]
 
 def p_zero_terminal(t):
     "B : 0"
 
-    print "B : " + t[1]
+    logging.info("B : " + t[1])
 
     t[0] = int(t[1])
 
 def p_one_terminal(t):
     "B : 1"
 
-    print "B : " + t[1]
+    logging.info("B : " + t[1])
 
     t[0] = int(t[1])
 

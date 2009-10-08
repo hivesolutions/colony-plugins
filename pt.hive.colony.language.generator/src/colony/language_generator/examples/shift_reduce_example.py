@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import logging
+
 # the token definitions
 tokens = ("a")
 
@@ -53,7 +55,7 @@ t_ignore = " "
 
 # other character
 def t_error(t):
-    print "Illegal character '%s'" % t.value[0]
+    logging.info("Illegal character '%s'" % t.value[0])
 
     # skips the character
     t.lexer.skip(1)
@@ -61,17 +63,17 @@ def t_error(t):
 def p_program(t):
     "program : E"
 
-    print "program : E"
+    logging.info("program : E")
 
 def p_expression_aE(t):
     "E : a E"
 
-    print "E : a E"
+    logging.info("E : a E")
 
 def p_expression_a(t):
     "E : a"
 
-    print "E : a"
+    logging.info("E : a")
 
 # sets the example
 example = locals()
