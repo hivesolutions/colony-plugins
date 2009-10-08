@@ -37,14 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import sys
-
-sys.path.append("../../../../pt.hive.colony.language.generator/src/colony")
-
-import language_generator.parser_generator
-
-import ply.yacc
-
 import settler_ast
 
 from settler_lexer import *
@@ -57,6 +49,9 @@ PLY_PARSER_VALUE = "ply"
 
 PARSER_TYPE = COLONY_PARSER_VALUE
 """ The parser type """
+
+COLONY_GENERATOR_PATH = "../../../../pt.hive.colony.language.generator/src/colony"
+""" The colony generator path """
 
 # parsing rules
 # precedence of operators
@@ -1437,13 +1432,31 @@ def validate_expression_binary(t):
 
     return True
 
+# in case it's the colony parser type
 if PARSER_TYPE == COLONY_PARSER_VALUE:
+    # imports the sys package
+    import sys
+
+    # appends the colony language generator path
+    sys.path.append(COLONY_GENERATOR_PATH)
+
+    # imports the colony generator package
+    import language_generator.parser_generator
+
     # creates a new parser generator
     parser_generator = language_generator.parser_generator.ParserGenerator(language_generator.parser_generator.ParserGenerator.LR0_PARSER_TYPE, True, globals())
 
     # sets the colony settler parser
     parser = parser_generator
+# in case it's the ply parser type
 elif PARSER_TYPE == PLY_PARSER_VALUE:
+    # imports the ply packages
+    import ply.lex
+    import ply.yacc
+
+    # creates the lexer
+    ply.lex.lex()
+
     # creates the parser
     ply.yacc.yacc()
 
