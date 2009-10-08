@@ -47,6 +47,7 @@ import cStringIO
 
 import os.path
 
+import lexer_generator
 import logging_configuration
 import parser_generator_exceptions
 
@@ -810,12 +811,16 @@ class ParserGenerator:
     goto_table_map = {}
     """ The goto table map """
 
-    def __init__(self, parser_type = None):
+    def __init__(self, parser_type = None, create_lexer = False, scope = None):
         """
         Constructor of the class.
 
         @type parser_type: String
         @param parser_type: The parser type to be constructed.
+        @type create_lexer: bool
+        @param create_lexer: Defines if a lexer should be created.
+        @type scope: Dictionary
+        @param scope: The scope to be used in the parser construction.
         """
 
         if not parser_type:
@@ -839,6 +844,12 @@ class ParserGenerator:
         self.goto_table_map = {}
 
         self.symbols_terminal_end_map["$"] = True
+
+        if create_lexer:
+            self.lexer = lexer_generator.LexerGenerator()
+
+        if scope:
+            self._construct(scope)
 
     def construct(self, scope, file_path = None, save_state = True):
         """
