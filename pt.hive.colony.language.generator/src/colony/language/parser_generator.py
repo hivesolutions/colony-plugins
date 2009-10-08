@@ -962,10 +962,18 @@ class ParserGenerator:
             # returns false
             return False
 
-    def parse(self):
+    def parse(self, buffer):
         """
-        Parses the current buffer.
+        Parses the given buffer buffer.
+
+        @type buffer: String
+        @param buffer: The buffer to be parsed.
+        @rtype: Object
+        @return: The parse result object.
         """
+
+        # sets the buffer
+        self.set_buffer(buffer)
 
         # parses the current buffer
         return self._parse()

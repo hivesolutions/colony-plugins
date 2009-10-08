@@ -155,7 +155,7 @@ class TestBugExample(TestParser):
         self.parser_generator.set_buffer("ab")
 
         # parses the current buffer
-        self.parser_generator.parse()
+        self.parser_generator._parse()
 
     def get_example(self):
         return examples.bug_example.example
@@ -170,7 +170,7 @@ class TestExtraExample(TestParser):
         self.parser_generator.set_buffer("ab")
 
         # parses the current buffer
-        self.parser_generator.parse()
+        self.parser_generator._parse()
 
     def get_example(self):
         return examples.extra_example.example
@@ -185,14 +185,14 @@ class TestLookAheadExample(TestParser):
         self.parser_generator.set_buffer("aabaab")
 
         # parses the current buffer
-        self.parser_generator.parse()
+        self.parser_generator._parse()
 
     def parser_extra_test(self):
         # sets the buffer in the parser generator
         self.parser_generator.set_buffer("abb")
 
         # parses the current buffer
-        self.parser_generator.parse()
+        self.parser_generator._parse()
 
     def get_example(self):
         return examples.look_ahead_example.example
@@ -235,35 +235,35 @@ class TestSimpleExample(TestParser):
         self.parser_generator.set_buffer("1 + 1 + 1")
 
         # parses the current buffer
-        self.parser_generator.parse()
+        self.parser_generator._parse()
 
     def parser_subtraction_test(self):
         # sets the buffer in the parser generator
         self.parser_generator.set_buffer("1 - 1 - 1")
 
         # parses the current buffer
-        self.parser_generator.parse()
+        self.parser_generator._parse()
 
     def parser_multiplication_test(self):
         # sets the buffer in the parser generator
         self.parser_generator.set_buffer("1 * 1 * 1")
 
         # parses the current buffer
-        self.parser_generator.parse()
+        self.parser_generator._parse()
 
     def parser_division_test(self):
         # sets the buffer in the parser generator
         self.parser_generator.set_buffer("1 / 1 / 1")
 
         # parses the current buffer
-        self.parser_generator.parse()
+        self.parser_generator._parse()
 
     def parser_mixed_test(self):
         # sets the buffer in the parser generator
         self.parser_generator.set_buffer("1 + 1 - 1 * 1")
 
         # parses the current buffer
-        self.parser_generator.parse()
+        self.parser_generator._parse()
 
     def get_example(self):
         return examples.simple_example.example
@@ -278,7 +278,7 @@ class TestUltraSimpleExample(TestParser):
         self.parser_generator.set_buffer("1 + 1 + 1")
 
         # parses the current buffer
-        self.parser_generator.parse()
+        self.parser_generator._parse()
 
     def get_example(self):
         return examples.ultra_simple_example.example

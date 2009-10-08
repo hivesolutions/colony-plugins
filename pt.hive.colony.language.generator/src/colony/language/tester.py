@@ -43,7 +43,6 @@ import parser_generator
 import examples.bug_example
 import examples.extra_example
 import examples.look_ahead_example
-import examples.ply_example
 import examples.reduce_reduce_example
 import examples.shift_reduce_example
 import examples.simple_example
@@ -62,7 +61,7 @@ valid_example = examples.settler.settler_example.example
 lexer_generator = lexer_generator.LexerGenerator()
 
 # creates a new parser generator
-parser_generator = parser_generator.ParserGenerator(parser_generator.ParserGenerator.LR1_PARSER_TYPE)
+parser_generator = parser_generator.ParserGenerator(parser_generator.ParserGenerator.LR0_PARSER_TYPE)
 
 # sets the lexer in the parser
 parser_generator.set_lexer(lexer_generator)
@@ -90,23 +89,24 @@ item_sets_file.write(item_sets_string)
 
 item_sets_file.close()
 
-# prints the transition table string
-print parser_generator._get_transition_table_string()
+code = "function tobias():\n\
+print(\"ola\") \n\
+end\n\
+a = 5\n\
+while a > 0:\n\
+    tobias()\n\
+    a = a - 1\n\
+end\n"
 
-# prints the action table string
-print parser_generator._get_action_table_string()
-
-# prints the goto table string
-print parser_generator._get_goto_table_string()
-
-code = "a = 1 + 1"
+#ficheiro = open("files/bytecode_test.st", "r")
+#code = ficheiro.read()
+#ficheiro.close()
 
 # sets the buffer in the parser generator
 #parser_generator.set_buffer("import tobias \n if 1 : \n while 1 : \n pass \n end \n else : \n pass \n end \n")
-parser_generator.set_buffer(code)
 
 # parses the current buffer and retrieves the result
-parse_result = parser_generator.parse()
+parse_result = parser_generator.parse(code)
 
 global_interpretation_map = {}
 global_context_code_information = None
