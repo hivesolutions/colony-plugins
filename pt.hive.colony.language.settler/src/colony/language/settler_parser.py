@@ -49,10 +49,10 @@ import settler_ast
 
 from settler_lexer import *
 
-COLONY_PARSER_VALUE = "ply"
+COLONY_PARSER_VALUE = "colony"
 """ The colony parser value """
 
-PLY_PARSER_VALUE = "colony"
+PLY_PARSER_VALUE = "ply"
 """ The ply parser value """
 
 PARSER_TYPE = COLONY_PARSER_VALUE
