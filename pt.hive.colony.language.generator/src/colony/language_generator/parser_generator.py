@@ -2151,7 +2151,7 @@ class ParserGenerator:
                 action_value, action_type = action_line[token_type]
             else:
                 # raises an invalid state exception
-                raise parser_generator_exceptions.InvalidState("no action defined for state: " + str(current_state) + " and input: " + token_type)
+                raise parser_generator_exceptions.InvalidState("no action defined for state " + str(current_state) + " and input " + token_type)
 
             if action_type == ParserGenerator.REDUCE_OPERATION_VALUE:
                 # prints the debug message
@@ -2205,7 +2205,7 @@ class ParserGenerator:
                     stack.append(goto_tuple)
                 else:
                     # raises an invalid state exception
-                    raise parser_generator_exceptions.InvalidState("no goto defined for state: " + str(current_state) + " and reduce rule: " + reduce_rule_name)
+                    raise parser_generator_exceptions.InvalidState("no goto defined for state " + str(current_state) + " and reduce rule " + reduce_rule_name)
 
             elif action_type == ParserGenerator.SHIFT_OPERATION_VALUE:
                 # prints the debug message
