@@ -279,4 +279,4 @@ if __name__ == "__main__":
         interpret_file(file_path, interpretation, debug)
     else:
         # starts the interactive console
-        interactive_console(debug, interpretation)
+        interactive_console(interpretation, debug)
