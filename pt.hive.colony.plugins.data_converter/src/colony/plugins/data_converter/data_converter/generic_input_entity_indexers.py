@@ -47,7 +47,7 @@ EQUALS_VALUE = "="
 
 HANDLERS_VALUE = "handlers"
 
-def input_indexer_primary_key(data_converter, input_intermediate_structure, input_entity, arguments):
+def input_indexer_primary_key(data_converter, configuration, input_intermediate_structure, input_entity, arguments):
     # retrieves the mandatory options
     attribute_names = arguments[ATTRIBUTE_NAMES_VALUE]
 

@@ -86,11 +86,13 @@ class IoAdapterCsv:
 
         self.io_adapter_csv_plugin = io_adapter_csv_plugin
 
-    def load_intermediate_structure(self, intermediate_structure, options):
+    def load_intermediate_structure(self, configuration, intermediate_structure, options):
         """
         Populates the intermediate structure with data retrieved from the
         csv source specified in the options.
 
+        @type configuration: DataConverterConfiguration
+        @param configuration: The data converter configuration currently being used.
         @type intermediate_structure: IntermediateStructure
         @param intermediate_structure: Intermediate structure where to
         load the data into.
@@ -164,11 +166,13 @@ class IoAdapterCsv:
 
                     entity.set_attribute(attribute_name, attribute_value)
 
-    def save_intermediate_structure(self, intermediate_structure, options):
+    def save_intermediate_structure(self, configuration, intermediate_structure, options):
         """
         Saves the intermediate structure to a file in csv format at the location
         and with characteristics defined in the options.
 
+        @type configuration: DataConverterConfiguration
+        @param configuration: The data converter configuration currently being used.
         @type intermediate_structure: IntermediateStructure
         @param intermediate_structure: Intermediate structure one wants to save.
         @type options: Dictionary

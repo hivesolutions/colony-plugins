@@ -53,7 +53,7 @@ OUTPUT_ENTITY_OBJECT_ID_VALUE = "output_entity_object_id"
 
 WHERE_VALUE = "where"
 
-def output_indexer_created_output_entities(data_converter, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity, arguments):
+def output_indexer_created_output_entities(data_converter, configuration, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity, arguments):
     input_entity_object_id = input_entity.get_object_id()
     output_entity_name = output_entity.get_name()
 
@@ -63,7 +63,7 @@ def output_indexer_created_output_entities(data_converter, input_intermediate_st
 
     output_intermediate_structure.index_entity(output_entity, output_entity_index)
 
-def output_indexer_creator_input_entity(data_converter, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity, arguments):
+def output_indexer_creator_input_entity(data_converter, configuration, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity, arguments):
     output_entity_object_id = output_entity.get_object_id()
 
     # indexes the input entity by the created output entity

@@ -49,7 +49,7 @@ SEPARATOR_VALUE = "separator"
 
 SPACE_VALUE = " "
 
-def entity_handler_merge_input_attributes(data_converter, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity, arguments):
+def entity_handler_merge_input_attributes(data_converter, configuration, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity, arguments):
     # retrieves the mandatory options
     input_attribute_names = arguments[INPUT_ATTRIBUTE_NAMES_VALUE]
     separator = arguments[SEPARATOR_VALUE]
@@ -69,7 +69,7 @@ def entity_handler_merge_input_attributes(data_converter, input_intermediate_str
 
     return output_entity
 
-def entity_handler_capitalize_tokens(data_converter, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity, arguments):
+def entity_handler_capitalize_tokens(data_converter, configuration, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity, arguments):
     # retrieves the mandatory options
     output_attribute_names = arguments[OUTPUT_ATTRIBUTE_NAMES_VALUE]
     exclusion_list = arguments.get(EXCLUSION_LIST_VALUE, [])

@@ -162,6 +162,9 @@ class DataConverterConfiguration:
     configuration_item_id_enabled_map = {}
     """ Dictionary relating the unique identifier of a configuration item with a boolean indicating if its enabled or not """
 
+    option_name_value_map = {}
+    """ Dictionary associating an option's name with it's value """
+
     def __init__(self, configuration_plugin_id, configuration_id):
         self.configuration_plugin_id = configuration_plugin_id
         self.configuration_id = configuration_id
@@ -187,6 +190,7 @@ class DataConverterConfiguration:
         self.configuration_item_type_configuration_item_ids_map[INPUT_OUTPUT_ENTITY_MAPPING_VALUE] = []
         self.configuration_item_type_configuration_item_ids_map[OUTPUT_ATTRIBUTE_MAPPING_VALUE] = []
         self.configuration_item_type_configuration_item_ids_map[RELATION_MAPPING_VALUE] = []
+        self.option_name_value_map = {}
 
     def __str__(self):
         return self.configuration_plugin_id
@@ -661,8 +665,26 @@ class DataConverterConfiguration:
 
         return merged_entity_schema
 
-class OutputEntityMapping:
+    def get_option(self, option_name):
+        # raises an exception in case the specified option
+        # doesn't exist
+        if not option_name in self.option_name_value_map:
+            raise "Option not found"
 
+        # retrieves the value of the specified option
+        option_value = self.option_name_value_map[option_name]
+
+        return option_value
+
+    def set_option(self, option_name, option_value):
+        # stores the specified option
+        self.option_name_value_map[option_name] = option_value
+
+    def set_options(self, option_name_value_map):
+        # stores the provided options
+        self.option_name_value_map = option_name_value_map
+
+class OutputEntityMapping:
 
     data_converter_configuration = None
     """ The data converter configuration this output entity mapping belongs to """

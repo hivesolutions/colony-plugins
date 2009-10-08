@@ -51,6 +51,7 @@ list_configurations - lists the data converter configurations\n\
 list_loaded_configurations - lists the currently loaded configurations\n\
 load_configuration <configuration_plugin_id> - loads a conversion configuration from a plugin\n\
 unload_configuration <configuration_id> - unloads a conversion configuration\n\
+set_configuration_option <configuration_id> <option_name> <option_value> - sets an option in the conversion configuration\n\
 list_configuration_items <configuration_id> - lists all configuration items that are available in the current configuration\n\
 list_dependent_configuration_items <configuration_id> <configuration_item_id> - lists all configuration items that depend on the specified one\n\
 enable_configuration_item <configuration_id> <configuration_item_id> - enables the conversion of a certain configuration item\n\
@@ -80,6 +81,7 @@ class ConsoleDataConverter:
                 "list_loaded_configurations",
                 "load_configuration",
                 "unload_configuration",
+                "set_configuration_option",
                 "list_configuration_items",
                 "list_dependent_configuration_items",
                 "enable_configuration_item",
@@ -243,7 +245,7 @@ class ConsoleDataConverter:
         data_converter_configuration_plugin_id = args[0]
 
         # loads a new configuration instance from the specified configuration plugin
-        self.data_converter_plugin.load_configuration(data_converter_configuration_plugin_id)
+        self.data_converter_plugin.load_configuration(data_converter_configuration_plugin_id, {})
 
     def process_unload_configuration(self, args, output_method):
         # returns in case an invalid number of arguments was provided
@@ -256,6 +258,20 @@ class ConsoleDataConverter:
 
         # unloads a new configuration instance from the specified configuration plugin
         self.data_converter_plugin.unload_configuration(data_converter_configuration_id)
+
+    def process_set_configuration_option(self, args, output_method):
+        # returns in case an invalid number of arguments was provided
+        if len(args) < 1:
+            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
+            return
+
+        # retrieves the command parameters
+        data_converter_configuration_id = int(args[0])
+        option_name = args[1]
+        option_value = args[2]
+
+        # sets an option in the specified conversion configuration
+        self.data_converter_plugin.set_configuration_option(data_converter_configuration_id, option_name, option_value)
 
     def process_list_configuration_items(self, args, output_method):
         # returns in case an invalid number of arguments was provided

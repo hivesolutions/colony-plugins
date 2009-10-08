@@ -42,9 +42,15 @@ import os.path
 
 BEAUTIFY_VALUE = "beautify"
 
-FILE_PATH_VALUE = "file_path"
+ENTITY_META_ATTRIBUTES_VALUE = "entity_meta_attributes"
+
+ENTITY_TAG_ORDER_VALUE = "entity_tag_order"
+
+INPUT_FILE_PATH_VALUE = "input_file_path"
 
 MANDATORY_TAGS_VALUE = "mandatory_tags"
+
+OUTPUT_FILE_PATH_VALUE = "input_file_path"
 
 ROOT_ENTITY_NAME_VALUE = "root_entity_name"
 
@@ -61,10 +67,6 @@ XML_NODE_END_TAG_FORMAT = "</%s>"
 XML_VERSION_VALUE = "xml_version"
 
 XML_ENCODING_VALUE = "xml_encoding"
-
-ENTITY_TAG_ORDER_VALUE = "entity_tag_order"
-
-ENTITY_META_ATTRIBUTES_VALUE = "entity_meta_attributes"
 
 FIRST_IDENTATION_LEVEL = 0
 """ The number identations that are applied to the first entry level """
@@ -100,11 +102,13 @@ class IoAdapterXml:
 
         self.io_adapter_xml_plugin = io_adapter_xml_plugin
 
-    def load_intermediate_structure(self, intermediate_structure, options):
+    def load_intermediate_structure(self, configuration, intermediate_structure, options):
         """
         Populates the intermediate structure with data retrieved from the
         xml source specified in the options.
 
+        @type configuration: DataConverterConfiguration
+        @param configuration: The data converter configuration currently being used.
         @type intermediate_structure: IntermediateStructure
         @param intermediate_structure: Intermediate structure where to
         load the data into.
@@ -115,11 +119,13 @@ class IoAdapterXml:
 
         raise io_adapter_xml_exceptions.IoAdapterXmlMethodNotImplemented()
 
-    def save_intermediate_structure(self, intermediate_structure, options):
+    def save_intermediate_structure(self, configuration, intermediate_structure, options):
         """
         Saves the intermediate structure to a file in xml format at the location
         and with characteristics defined in the options.
 
+        @type configuration: DataConverterConfiguration
+        @param configuration: The data converter configuration currently being used.
         @type intermediate_structure: IntermediateStructure
         @param intermediate_structure: Intermediate structure one wants to save.
         @type options: Dictionary
@@ -128,8 +134,8 @@ class IoAdapterXml:
         """
 
         # extracts the mandatory options
-        file_path = options[FILE_PATH_VALUE]
         root_entity_name = options[ROOT_ENTITY_NAME_VALUE]
+        file_path = configuration.get_option(OUTPUT_FILE_PATH_VALUE)
 
         # extracts the non-mandatory options
         xml_version = options.get(XML_VERSION_VALUE, DEFAULT_XML_VERSION)

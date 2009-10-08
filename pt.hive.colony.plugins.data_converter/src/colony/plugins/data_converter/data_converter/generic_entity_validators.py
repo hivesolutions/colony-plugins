@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 ATTRIBUTES_VALUE = "attributes"
 
-def entity_validator_has_all_attributes(data_converter, input_intermediate_structure, input_entity, arguments):
+def entity_validator_has_all_attributes(data_converter, configuration, input_intermediate_structure, input_entity, arguments):
     """
     Validator used to verify if the input entity has all of the
     specified attributes.
@@ -70,7 +70,7 @@ def entity_validator_has_all_attributes(data_converter, input_intermediate_struc
 
     return True
 
-def entity_validator_has_any_attribute(data_converter, input_intermediate_structure, input_entity, arguments):
+def entity_validator_has_any_attribute(data_converter, configuration, input_intermediate_structure, input_entity, arguments):
     """
     Validator used to verify if the input entity has any of the
     specified attributes.
@@ -128,7 +128,7 @@ def entity_validator_has_all_attribute_values(data_converter, input_intermediate
 
     return True
 
-def entity_validator_has_all_different_attribute_values(data_converter, input_intermediate_structure, input_entity, arguments):
+def entity_validator_has_all_different_attribute_values(data_converter, configuration, input_intermediate_structure, input_entity, arguments):
     """
     Validator used to verify if the input entity has none of the
     specified attribute values.
@@ -159,7 +159,7 @@ def entity_validator_has_all_different_attribute_values(data_converter, input_in
 
     return True
 
-def entity_validator_has_all_attribute_values_in_list(data_converter, input_intermediate_structure, input_entity, arguments):
+def entity_validator_has_all_attribute_values_in_list(data_converter, configuration, input_intermediate_structure, input_entity, arguments):
     """
     Validator used to verify if the input entity has all of the
     specified attribute values.

@@ -105,11 +105,13 @@ class DataConverterIoAdapterEntityManagerPlugin(colony.plugins.plugin_system.Plu
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def load_intermediate_structure(self, intermediate_structure, options):
+    def load_intermediate_structure(self, configuration, intermediate_structure, options):
         """
         Populates the intermediate structure with data retrieved from the
         entity manager source specified in the options.
 
+        @type configuration: DataConverterConfiguration
+        @param configuration: The data converter configuration currently being used.
         @type intermediate_structure: IntermediateStructure
         @param intermediate_structure: Intermediate structure where to
         load the data into.
@@ -118,13 +120,15 @@ class DataConverterIoAdapterEntityManagerPlugin(colony.plugins.plugin_system.Plu
         provided intermediate structure.
         """
 
-        return self.io_adapter_entity_manager.load_intermediate_structure(intermediate_structure, options)
+        return self.io_adapter_entity_manager.load_intermediate_structure(configuration, intermediate_structure, options)
 
-    def save_intermediate_structure(self, intermediate_structure, options):
+    def save_intermediate_structure(self, configuration, intermediate_structure, options):
         """
         Saves the intermediate structure with the entity manager at the
         location and with characteristics defined in the options.
 
+        @type configuration: DataConverterConfiguration
+        @param configuration: The data converter configuration currently being used.
         @type intermediate_structure: IntermediateStructure
         @param intermediate_structure: Intermediate structure one wants to save.
         @type options: Dictionary
@@ -132,7 +136,7 @@ class DataConverterIoAdapterEntityManagerPlugin(colony.plugins.plugin_system.Plu
         structure with the entity manager.
         """
 
-        return self.io_adapter_entity_manager.save_intermediate_structure(intermediate_structure, options)
+        return self.io_adapter_entity_manager.save_intermediate_structure(configuration, intermediate_structure, options)
 
     def get_entity_manager_plugin(self):
         return self.entity_manager_plugin

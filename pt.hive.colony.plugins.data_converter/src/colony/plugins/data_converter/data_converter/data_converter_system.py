@@ -254,13 +254,18 @@ class DataConverter:
 
         return data_converter_configuration
 
-    def load_configuration(self, configuration_plugin_id):
+    def load_configuration(self, configuration_plugin_id, option_name_value_map):
         """
         Unique identifier for the data converter configuration one wants to load.
 
         @type configuration_plugin_id: String
         @param configuration_plugin_id: Unique identifier for the
         data converter plugin one wants to load the configuration from.
+        @type option_name_value_map: Dictionary
+        @param option_name_value_map: Dictionary with the conversion options.
+
+        @rtype: int
+        @return: The unique identifier assigned to the loaded configuration.
         """
 
         # raises an exception in case the specified configuration plugin is not found
@@ -292,8 +297,13 @@ class DataConverter:
         loaded_configuration.add_post_conversion_handlers(post_conversion_handlers)
         loaded_configuration.add_output_io_adapters_options(output_io_adapters_options)
 
+        # configures the loaded configuration with the provided options
+        loaded_configuration.set_options(option_name_value_map)
+
         # indexes the loaded configuration and its plugin by the generated id
         self.loaded_configuration_id_configuration_map[loaded_configuration_id] = loaded_configuration
+
+        return loaded_configuration_id
 
     def unload_configuration(self, configuration_id):
         """
@@ -310,6 +320,17 @@ class DataConverter:
 
         # removes the references to the specified configuration
         del self.loaded_configuration_id_configuration_map[configuration_id]
+
+    def set_configuration_option(self, configuration_id, option_name, option_value):
+        # raises an exception in case the specified configuration is not found
+        if not configuration_id in self.loaded_configuration_id_configuration_map:
+            raise data_converter_exceptions.DataConverterConfigurationNotFound(str(configuration_id))
+
+        # retrieves the specified configuration
+        loaded_configuration = self.loaded_configuration_id_configuration_map[configuration_id]
+
+        # sets the specified option in the configuration
+        loaded_configuration.set_option(option_name, option_value)
 
     def create_intermediate_structure(self, configuration_map):
         """
@@ -330,11 +351,13 @@ class DataConverter:
 
         return intermediate_structure_instance
 
-    def load_intermediate_structure(self, intermediate_structure, io_adapter_plugin_id, options):
+    def load_intermediate_structure(self, configuration, intermediate_structure, io_adapter_plugin_id, options):
         """
         Populates the intermediate structure with data retrieved from the source
         specified in the options.
 
+        @type configuration: DataConverterConfiguration
+        @param configuration: The data converter configuration currently being used.
         @type intermediate_structure: IntermediateStructure
         @param intermediate_structure: Intermediate structure where to load the data into.
         @type io_adapter_plugin_id: String
@@ -359,7 +382,7 @@ class DataConverter:
             raise data_converter_exceptions.DataConverterIoAdapterPluginNotFound(str(io_adapter_plugin_id))
 
         # redirects the load request to the specified input output adapter
-        input_adapter_plugin.load_intermediate_structure(intermediate_structure, options)
+        input_adapter_plugin.load_intermediate_structure(configuration, intermediate_structure, options)
 
         end_time = time.time()
         time_elapsed = end_time - start_time
@@ -368,11 +391,13 @@ class DataConverter:
 
         return intermediate_structure
 
-    def save_intermediate_structure(self, intermediate_structure, io_adapter_plugin_id, options):
+    def save_intermediate_structure(self, configuration, intermediate_structure, io_adapter_plugin_id, options):
         """
         Saves the intermediate structure to a file at the location and with characteristics
         defined in the options.
 
+        @type configuration: DataConverterConfiguration
+        @param configuration: The data converter configuration currently being used.
         @type intermediate_structure: IntermediateStructure
         @param intermediate_structure: Intermediate structure one wants to save.
         @type io_adapter_plugin_id: String
@@ -394,7 +419,7 @@ class DataConverter:
             raise data_converter_exceptions.DataConverterIoAdapterPluginNotFound(str(io_adapter_plugin_id))
 
         # redirects the save request to the specified input output adapter
-        output_adapter_plugin.save_intermediate_structure(intermediate_structure, options)
+        output_adapter_plugin.save_intermediate_structure(configuration, intermediate_structure, options)
 
         end_time = time.time()
         time_elapsed = end_time - start_time
@@ -443,7 +468,7 @@ class DataConverter:
             input_io_adapter_options[LOAD_OPTIONS_VALUE][LOAD_ENTITIES_VALUE] = loaded_configuration.get_enabled_input_dependencies()
 
             # loads the data to the input intermediate structure with the current io adapter
-            self.data_converter_plugin.load_intermediate_structure(input_intermediate_structure, input_io_adapter_plugin_id, input_io_adapter_options)
+            self.data_converter_plugin.load_intermediate_structure(loaded_configuration, input_intermediate_structure, input_io_adapter_plugin_id, input_io_adapter_options)
 
         # runs the input indexers on the loaded input intermediate structure
         self.index_input_intermediate_structure(loaded_configuration, input_intermediate_structure)
@@ -468,7 +493,7 @@ class DataConverter:
             output_io_adapter_plugin_id = output_io_adapter_options[IO_ADAPTER_PLUGIN_ID_VALUE]
 
             # saves data from the output intermediates structure with the current io adapter
-            self.data_converter_plugin.save_intermediate_structure(output_intermediate_structure, output_io_adapter_plugin_id, output_io_adapter_options)
+            self.data_converter_plugin.save_intermediate_structure(loaded_configuration, output_intermediate_structure, output_io_adapter_plugin_id, output_io_adapter_options)
 
         end_time = time.time()
         time_elapsed = end_time - start_time
@@ -505,7 +530,7 @@ class DataConverter:
                 for input_entity in input_entities:
 
                     # runs the input indexer on the input entity
-                    input_indexer_function(self, input_intermediate_structure, input_entity, input_indexer_arguments)
+                    input_indexer_function(self, configuration, input_intermediate_structure, input_entity, input_indexer_arguments)
 
     def convert_entities(self, configuration, input_intermediate_structure, output_intermediate_structure):
         """
@@ -557,7 +582,7 @@ class DataConverter:
         for input_entity in input_entities:
 
             # skips to the next input entity in case one of the specified validators fails
-            valid = self.is_input_entity_valid(input_intermediate_structure, input_entity, validators)
+            valid = self.is_input_entity_valid(configuration, input_intermediate_structure, input_entity, validators)
             if not valid:
                 continue
 
@@ -581,7 +606,7 @@ class DataConverter:
                     handler_function = self.entity_handler_name_handler_map[handler_function]
 
                 # runs the entity handler on the output entity
-                output_entity = handler_function(self, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity, handler_arguments)
+                output_entity = handler_function(self, configuration, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity, handler_arguments)
 
             # runs the output indexers associated with the output entity
             self.index_output_entity(configuration, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity)
@@ -609,7 +634,7 @@ class DataConverter:
                 output_indexer_function = self.output_indexer_name_output_indexer_map[output_indexer_function]
 
             # runs the output indexer on the input entity
-            output_indexer_function(self, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity, output_indexer_arguments)
+            output_indexer_function(self, configuration, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity, output_indexer_arguments)
 
     # @todo: comment this
     def convert_entities_output_attribute(self, configuration, input_intermediate_structure, output_intermediate_structure, output_entity_mapping, input_entity_mapping, input_output_entity_mapping, output_attribute_mapping, input_entity, output_entity):
@@ -634,7 +659,7 @@ class DataConverter:
             input_attribute_value = default_value
 
         # returns in case one of the specified validators fails
-        valid = self.is_input_attribute_value_valid(input_intermediate_structure, input_entity, input_attribute_value, validators)
+        valid = self.is_input_attribute_value_valid(configuration, input_intermediate_structure, input_entity, input_attribute_value, validators)
         if not valid:
             return
 
@@ -652,7 +677,7 @@ class DataConverter:
                 handler_function = self.attribute_handler_name_handler_map[handler_function]
 
             # replaces the output attribute value with the attribute handler's result
-            output_attribute_value = handler_function(self, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity, output_attribute_value, handler_arguments)
+            output_attribute_value = handler_function(self, configuration, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity, output_attribute_value, handler_arguments)
 
         # sets the post-processed input attribute value in the output entity
         output_entity.set_attribute(output_attribute_name, output_attribute_value)
@@ -699,7 +724,7 @@ class DataConverter:
                     connector_function = self.connector_name_connector_map[connector_function]
 
                 # retrieves the entities specified by each index and associates them with the output entity
-                related_entities = connector_function(self, input_intermediate_structure, output_intermediate_structure, output_entity, connector_arguments)
+                related_entities = connector_function(self, configuration, input_intermediate_structure, output_intermediate_structure, output_entity, connector_arguments)
                 for related_entity in related_entities:
 
                     # adds the related entity to every specified relation attribute in the entity
@@ -785,7 +810,7 @@ class DataConverter:
                 post_attribute_mapping_handler_function = self.post_attribute_mapping_handler_name_handler_map[post_attribute_mapping_handler_function]
 
             # executes the post attribute mapping handler
-            output_intermediate_structure = post_attribute_mapping_handler_function(self, input_intermediate_structure, output_intermediate_structure, post_attribute_mapping_handler_function_arguments)
+            output_intermediate_structure = post_attribute_mapping_handler_function(self, configuration, input_intermediate_structure, output_intermediate_structure, post_attribute_mapping_handler_function_arguments)
 
         end_time = time.time()
         time_elapsed = end_time - start_time
@@ -808,14 +833,14 @@ class DataConverter:
                 post_conversion_handler_function = self.post_conversion_handler_name_handler_map[post_conversion_handler_function]
 
             # executes the post conversion handler
-            output_intermediate_structure = post_conversion_handler_function(self, input_intermediate_structure, output_intermediate_structure, post_conversion_handler_function_arguments)
+            output_intermediate_structure = post_conversion_handler_function(self, configuration, input_intermediate_structure, output_intermediate_structure, post_conversion_handler_function_arguments)
 
         end_time = time.time()
         time_elapsed = end_time - start_time
 
         self.data_converter_plugin.info("Data conversion post-processing ended in %ds" % time_elapsed)
 
-    def is_input_entity_valid(self, input_intermediate_structure, input_entity, validators):
+    def is_input_entity_valid(self, configuration, input_intermediate_structure, input_entity, validators):
         # tests if all validators return true
         for validator in validators:
             validator_function = validator.get_function()
@@ -826,13 +851,13 @@ class DataConverter:
                 validator_function = self.entity_validator_name_validator_map[validator_function]
 
             # returns false in case one of the validators fails
-            valid = validator_function(self, input_intermediate_structure, input_entity, validator_arguments)
+            valid = validator_function(self, configuration, input_intermediate_structure, input_entity, validator_arguments)
             if not valid:
                 return False
 
         return True
 
-    def is_input_attribute_value_valid(self, input_intermediate_structure, input_entity, input_attribute_value, validators):
+    def is_input_attribute_value_valid(self, configuration, input_intermediate_structure, input_entity, input_attribute_value, validators):
         # tests the if all validators return true
         for validator in validators:
             validator_function = validator.get_function()
@@ -843,7 +868,7 @@ class DataConverter:
                 validator_function = self.attribute_validator_name_validator_map[validator_function]
 
             # returns false in case one of the validators fails
-            valid = validator_function(self, input_intermediate_structure, input_entity, input_attribute_value, validator_arguments)
+            valid = validator_function(self, configuration, input_intermediate_structure, input_entity, input_attribute_value, validator_arguments)
             if not valid:
                 return False
 

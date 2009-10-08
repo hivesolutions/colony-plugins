@@ -99,11 +99,13 @@ class DataConverterIoAdapterPicklePlugin(colony.plugins.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def load_intermediate_structure(self, intermediate_structure, options):
+    def load_intermediate_structure(self, configuration, intermediate_structure, options):
         """
         Populates the intermediate structure with data retrieved from the
         pickle source specified in the options.
 
+        @type configuration: DataConverterConfiguration
+        @param configuration: The data converter configuration currently being used.
         @type intermediate_structure: IntermediateStructure
         @param intermediate_structure: Intermediate structure where to
         load the data into.
@@ -112,13 +114,15 @@ class DataConverterIoAdapterPicklePlugin(colony.plugins.plugin_system.Plugin):
         provided intermediate structure.
         """
 
-        return self.io_adapter_pickle.load_intermediate_structure(intermediate_structure, options)
+        return self.io_adapter_pickle.load_intermediate_structure(configuration, intermediate_structure, options)
 
-    def save_intermediate_structure(self, intermediate_structure, options):
+    def save_intermediate_structure(self, configuration, intermediate_structure, options):
         """
         Saves the intermediate structure to a file in pickle format at the
         location and with characteristics defined in the options.
 
+        @type configuration: DataConverterConfiguration
+        @param configuration: The data converter configuration currently being used.
         @type intermediate_structure: IntermediateStructure
         @param intermediate_structure: Intermediate structure one wants to save.
         @type options: Dictionary
@@ -126,7 +130,7 @@ class DataConverterIoAdapterPicklePlugin(colony.plugins.plugin_system.Plugin):
         structure into pickle format.
         """
 
-        return self.io_adapter_pickle.save_intermediate_structure(intermediate_structure, options)
+        return self.io_adapter_pickle.save_intermediate_structure(configuration, intermediate_structure, options)
 
     def get_logger_plugin(self):
         return self.logger_plugin

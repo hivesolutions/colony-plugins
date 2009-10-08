@@ -89,11 +89,13 @@ class IoAdapterDbase:
 
         self.io_adapter_dbase_plugin = io_adapter_dbase_plugin
 
-    def load_intermediate_structure(self, intermediate_structure, options):
+    def load_intermediate_structure(self, configuration, intermediate_structure, options):
         """
         Populates the intermediate structure with data retrieved from the
         dbase source specified in the options.
 
+        @type configuration: DataConverterConfiguration
+        @param configuration: The data converter configuration currently being used.
         @type intermediate_structure: IntermediateStructure
         @param intermediate_structure: Intermediate structure where to load
         the data into.
@@ -243,11 +245,13 @@ class IoAdapterDbase:
                 for input_entity_handler in input_entity_handlers:
                     entity = input_entity_handler(intermediate_structure, entity)
 
-    def save_intermediate_structure(self, intermediate_structure, options):
+    def save_intermediate_structure(self, configuration, intermediate_structure, options):
         """
         Saves the intermediate structure to a file in dbase format at the location
         and with characteristics defined in the options.
 
+        @type configuration: DataConverterConfiguration
+        @param configuration: The data converter configuration currently being used.
         @type intermediate_structure: IntermediateStructure
         @param intermediate_structure: Intermediate structure one wants to save.
         @type options: Dictionary

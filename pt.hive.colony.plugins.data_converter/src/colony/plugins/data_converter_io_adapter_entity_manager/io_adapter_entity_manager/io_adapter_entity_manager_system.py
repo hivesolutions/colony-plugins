@@ -56,7 +56,11 @@ FIELDS_VALUE = "fields"
 
 FILE_PATH_VALUE = "file_path"
 
+INPUT_FILE_PATH_VALUE = "input_file_path"
+
 OBJECT_ID_VALUE = "object_id"
+
+OUTPUT_FILE_PATH_VALUE = "output_file_path"
 
 LOAD_OPTIONS_VALUE = "load_options"
 
@@ -86,11 +90,13 @@ class IoAdapterEntityManager:
 
         self.io_adapter_entity_manager_plugin = io_adapter_entity_manager_plugin
 
-    def load_intermediate_structure(self, intermediate_structure, options):
+    def load_intermediate_structure(self, configuration, intermediate_structure, options):
         """
         Populates the intermediate structure with data retrieved from the
         entity manager with the specified options.
 
+        @type configuration: DataConverterConfiguration
+        @param configuration: The data converter configuration currently being used.
         @type intermediate_structure: IntermediateStructure
         @param intermediate_structure: Intermediate structure where to
         load the data into.
@@ -100,8 +106,8 @@ class IoAdapterEntityManager:
         """
 
         # extracts the mandatory options
-        file_path = options[FILE_PATH_VALUE]
         entity_manager_engine = options[ENTITY_MANAGER_ENGINE_VALUE]
+        file_path = configuration.get_option(INPUT_FILE_PATH_VALUE)
 
         # raises and exception in case the specified file does not exist
         if not os.path.exists(file_path):
@@ -336,11 +342,13 @@ class IoAdapterEntityManager:
                     # updates the intermediate entity's relation attribute with the retrieved related intermediate entity
                     intermediate_entity.set_attribute(attribute_name, related_intermediate_entity)
 
-    def save_intermediate_structure(self, intermediate_structure, options):
+    def save_intermediate_structure(self, configuration, intermediate_structure, options):
         """
         Saves the intermediate structure with the entity manager at the location and with characteristics
         defined in the options.
 
+        @type configuration: DataConverterConfiguration
+        @param configuration: The data converter configuration currently being used.
         @type intermediate_structure: IntermediateStructure
         @param intermediate_structure: Intermediate structure one wants to save.
         @type options: Dictionary
@@ -348,8 +356,8 @@ class IoAdapterEntityManager:
         """
 
         # extracts the mandatory options
-        file_path = options[FILE_PATH_VALUE]
         entity_manager_engine = options[ENTITY_MANAGER_ENGINE_VALUE]
+        file_path = configuration.get_option(OUTPUT_FILE_PATH_VALUE)
 
         # retrieves the entity manager plugin
         entity_manager_plugin = self.io_adapter_entity_manager_plugin.entity_manager_plugin

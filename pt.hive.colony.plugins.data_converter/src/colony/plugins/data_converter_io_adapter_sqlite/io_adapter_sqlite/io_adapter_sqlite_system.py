@@ -43,31 +43,33 @@ import os.path
 
 import io_adapter_sqlite_exceptions
 
-NAME_VALUE = "name"
+ENTITY_OBJECT_ID_VALUE = "entity_object_id"
 
 EQUALS_VALUE = "="
 
-VARCHAR_VALUE = "varchar(255)"
-
-FILE_PATH_VALUE = "file_path"
-
-OBJECT_ID_VALUE = "object_id"
-
-RELATION_VALUE = "Relation"
-
-QUOTE_DOUBLE_VALUE = "''"
-
-ENTITY_OBJECT_ID_VALUE = "entity_object_id"
-
-RELATED_ENTITY_OBJECT_ID_VALUE = "related_entity_object_id"
+INPUT_ATTRIBUTE_HANDLERS_VALUE = "input_attribute_handlers"
 
 INPUT_ENTITY_HANDLERS_VALUE = "input_entity_handlers"
 
-INPUT_ATTRIBUTE_HANDLERS_VALUE = "input_attribute_handlers"
+INPUT_FILE_PATH_VALUE = "input_file_path"
+
+NAME_VALUE = "name"
+
+OBJECT_ID_VALUE = "object_id"
+
+OUTPUT_ATTRIBUTE_HANDLERS_VALUE = "output_attribute_handlers"
 
 OUTPUT_ENTITY_HANDLERS_VALUE = "output_entity_handlers"
 
-OUTPUT_ATTRIBUTE_HANDLERS_VALUE = "output_attribute_handlers"
+OUTPUT_FILE_PATH_VALUE = "output_file_path"
+
+QUOTE_DOUBLE_VALUE = "''"
+
+RELATION_VALUE = "Relation"
+
+RELATED_ENTITY_OBJECT_ID_VALUE = "related_entity_object_id"
+
+VARCHAR_VALUE = "varchar(255)"
 
 RELATION_COLUMN_NAMES = (ENTITY_OBJECT_ID_VALUE, RELATED_ENTITY_OBJECT_ID_VALUE)
 """ List with the names of the columns used to map relations in relation tables """
@@ -113,11 +115,13 @@ class IoAdapterSqlite:
         self.io_adapter_sqlite_plugin = io_adapter_sqlite_plugin
         self.connection_table_names_map = {}
 
-    def load_intermediate_structure(self, intermediate_structure, options):
+    def load_intermediate_structure(self, configuration, intermediate_structure, options):
         """
         Populates the intermediate structure with data retrieved from the entity
         manager with the specified options.
 
+        @type configuration: DataConverterConfiguration
+        @param configuration: The data converter configuration currently being used.
         @type intermediate_structure: IntermediateStructure
         @param intermediate_structure: Intermediate structure where to load the
         data into.
@@ -127,7 +131,7 @@ class IoAdapterSqlite:
         """
 
         # extracts the mandatory options
-        file_path = options[FILE_PATH_VALUE]
+        file_path = configuration.get_option(INPUT_FILE_PATH_VALUE)
 
         # raises and exception in case the specified file does not exist
         if not os.path.exists(file_path):
@@ -293,11 +297,13 @@ class IoAdapterSqlite:
                 entity_attribute_value = related_entity
             entity.set_attribute(relation_attribute_name, entity_attribute_value)
 
-    def save_intermediate_structure(self, intermediate_structure, options):
+    def save_intermediate_structure(self, configuration, intermediate_structure, options):
         """
         Saves the intermediate structure at the location and with the characteristics
         defined in the options.
 
+        @type configuration: DataConverterConfiguration
+        @param configuration: The data converter configuration currently being used.
         @type intermediate_structure: IntermediateStructure
         @param intermediate_structure: Intermediate structure one wants to save.
         @type options: Dictionary
@@ -306,7 +312,7 @@ class IoAdapterSqlite:
         """
 
         # extracts the mandatory options
-        file_path = options[FILE_PATH_VALUE]
+        file_path = configuration.get_option(OUTPUT_FILE_PATH_VALUE)
 
         # creates the sqlite connection
         connection = sqlite3.connect(file_path)

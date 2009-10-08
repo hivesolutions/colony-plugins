@@ -41,7 +41,7 @@ import types
 
 ENTITY_ATTRIBUTES_MAP_VALUE = "entity_attributes_map"
 
-def post_conversion_handler_calculate_totals(data_converter, input_intermediate_structure, output_intermediate_structure, arguments):
+def post_conversion_handler_calculate_totals(data_converter, configuration, input_intermediate_structure, output_intermediate_structure, arguments):
     # extracts the mandatory options
     entity_attributes_map = arguments[ENTITY_ATTRIBUTES_MAP_VALUE]
 
@@ -70,7 +70,7 @@ def post_conversion_handler_calculate_totals(data_converter, input_intermediate_
 
     return output_intermediate_structure
 
-def post_conversion_handler_copy_entity_attributes(data_converter, input_intermediate_structure, output_intermediate_structure, arguments):
+def post_conversion_handler_copy_entity_attributes(data_converter, configuration, input_intermediate_structure, output_intermediate_structure, arguments):
     # extracts the mandatory options
     entity_attributes_map = arguments[ENTITY_ATTRIBUTES_MAP_VALUE]
 

@@ -154,16 +154,21 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
 
         return self.data_converter.get_loaded_configuration(configuration_id)
 
-    def load_configuration(self, configuration_plugin_id):
+    def load_configuration(self, configuration_plugin_id, option_name_value_map):
         """
         Unique identifier for the data converter configuration one wants to load.
 
         @type configuration_plugin_id: String
         @param configuration_plugin_id: Unique identifier for the
         data converter plugin one wants to load the configuration from.
+        @type option_name_value_map: Dictionary
+        @param option_name_value_map: Dictionary with the conversion options.
+
+        @rtype: int
+        @return: The unique identifier assigned to the loaded configuration.
         """
 
-        self.data_converter.load_configuration(configuration_plugin_id)
+        return self.data_converter.load_configuration(configuration_plugin_id, option_name_value_map)
 
     def unload_configuration(self, configuration_id):
         """
@@ -175,6 +180,21 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
         """
 
         self.data_converter.unload_configuration(configuration_id)
+
+    def set_configuration_option(self, configuration_id, option_name, option_value):
+        """
+        Unique identifier for the data converter configuration one wants to unload.
+
+        @type configuration_id: int
+        @param configuration_id: Unique identifier for the data converter configuration
+        one wants to set an option in.
+        @type option_name: String
+        @param option_name: Name of the option one wants to set in the configuration.
+        @type option_value: int
+        @param option_value: Value for the option one wants to set in the configuration.
+        """
+
+        self.data_converter.set_configuration_option(configuration_id, option_name, option_value)
 
     def create_intermediate_structure(self, configuration_map):
         """
@@ -188,11 +208,13 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
 
         return self.data_converter.create_intermediate_structure(configuration_map)
 
-    def load_intermediate_structure(self, intermediate_structure, io_adapter_plugin_id, options):
+    def load_intermediate_structure(self, configuration, intermediate_structure, io_adapter_plugin_id, options):
         """
         Populates the intermediate structure with data retrieved from the source
         specified in the options.
 
+        @type configuration: DataConverterConfiguration
+        @param configuration: The data converter configuration currently being used.
         @type intermediate_structure: IntermediateStructure
         @param intermediate_structure: Intermediate structure where to load the data into.
         @type io_adapter_plugin_id: String
@@ -205,13 +227,15 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
         @return: The loaded intermediate structure.
         """
 
-        return self.data_converter.load_intermediate_structure(intermediate_structure, io_adapter_plugin_id, options)
+        return self.data_converter.load_intermediate_structure(configuration, intermediate_structure, io_adapter_plugin_id, options)
 
-    def save_intermediate_structure(self, intermediate_structure, io_adapter_plugin_id, options):
+    def save_intermediate_structure(self, configuration, intermediate_structure, io_adapter_plugin_id, options):
         """
         Saves the intermediate structure to a file in format at the location and
         with characteristics defined in the options.
 
+        @type configuration: DataConverterConfiguration
+        @param configuration: The data converter configuration currently being used.
         @type intermediate_structure: IntermediateStructure
         @param intermediate_structure: Intermediate structure one wants to save.
         @type io_adapter_plugin_id: String
@@ -221,7 +245,7 @@ class DataConverterPlugin(colony.plugins.plugin_system.Plugin):
         @param options: Options used to determine how to save the intermediate structure.
         """
 
-        self.data_converter.save_intermediate_structure(intermediate_structure, io_adapter_plugin_id, options)
+        self.data_converter.save_intermediate_structure(configuration, intermediate_structure, io_adapter_plugin_id, options)
 
     def convert_data(self, configuration_id):
         """

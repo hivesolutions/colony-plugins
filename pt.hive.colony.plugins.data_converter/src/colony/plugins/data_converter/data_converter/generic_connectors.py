@@ -87,7 +87,7 @@ WHERE_VALUE = "where"
 
 CREATOR = "%creator%"
 
-def connector_output_entities_created_by_input_entity(data_converter, input_intermediate_structure, output_intermediate_structure, output_entity, arguments):
+def connector_output_entities_created_by_input_entity(data_converter, configuration, input_intermediate_structure, output_intermediate_structure, output_entity, arguments):
     # extracts the mandatory options
     joins = arguments[JOINS_VALUE]
     output_entity_names = arguments[OUTPUT_ENTITY_NAMES_VALUE]
@@ -149,7 +149,7 @@ def connector_output_entities_created_by_input_entity(data_converter, input_inte
 
     return related_entities
 
-def connector_output_entities_created_by_creator_input_entity(data_converter, input_intermediate_structure, output_intermediate_structure, output_entity, arguments):
+def connector_output_entities_created_by_creator_input_entity(data_converter, configuration, input_intermediate_structure, output_intermediate_structure, output_entity, arguments):
     # extracts the mandatory options
     output_entity_names = arguments[OUTPUT_ENTITY_NAMES_VALUE]
 
@@ -180,7 +180,7 @@ def connector_output_entities_created_by_creator_input_entity(data_converter, in
 
     return related_entities
 
-def connector_output_entities_different_creator_input_entity(data_converter, input_intermediate_structure, output_intermediate_structure, output_entity, arguments):
+def connector_output_entities_different_creator_input_entity(data_converter, configuration, input_intermediate_structure, output_intermediate_structure, output_entity, arguments):
     # extracts the mandatory options
     input_entity_name = arguments[INPUT_ENTITY_NAME_VALUE]
     join_attributes = arguments[JOIN_ATTRIBUTES_VALUE]
@@ -222,7 +222,7 @@ def connector_output_entities_different_creator_input_entity(data_converter, inp
 
     return related_entities
 
-def connector_output_entities_created_by_input_entities(data_converter, input_intermediate_structure, output_intermediate_structure, output_entity, arguments):
+def connector_output_entities_created_by_input_entities(data_converter, configuration, input_intermediate_structure, output_intermediate_structure, output_entity, arguments):
     # extracts the mandatory options
     input_entity_name_output_entity_names_map = arguments[INPUT_OUTPUT_ENTITY_NAMES_VALUE]
 
@@ -259,7 +259,7 @@ def connector_output_entities_created_by_input_entities(data_converter, input_in
 
     return related_entities
 
-def connector_all_output_entities(data_converter, input_intermediate_structure, output_intermediate_structure, output_entity, arguments):
+def connector_all_output_entities(data_converter, configuration, input_intermediate_structure, output_intermediate_structure, output_entity, arguments):
     # extracts the mandatory options
     output_entity_names = arguments[OUTPUT_ENTITY_NAMES_VALUE]
 

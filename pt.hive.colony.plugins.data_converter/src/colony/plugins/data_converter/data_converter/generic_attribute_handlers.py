@@ -52,7 +52,7 @@ TOKEN_OFFSETS_VALUE = "token_offsets"
 
 VALUES_MAP_VALUE = "values_map"
 
-def attribute_handler_extract_tokens(data_converter, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity, output_attribute_value, arguments):
+def attribute_handler_extract_tokens(data_converter, configuration, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity, output_attribute_value, arguments):
     # extracts the mandatory options
     token_separator = arguments[TOKEN_SEPARATOR_VALUE]
     token_offsets = arguments[TOKEN_OFFSETS_VALUE]
@@ -66,27 +66,27 @@ def attribute_handler_extract_tokens(data_converter, input_intermediate_structur
 
     return output_attribute_value
 
-def attribute_handler_convert_string_to_lowercase(data_converter, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity, output_attribute_value, arguments):
+def attribute_handler_convert_string_to_lowercase(data_converter, configuration, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity, output_attribute_value, arguments):
     # converts the string to lowercase
     if output_attribute_value and type(output_attribute_value) in types.StringTypes:
         output_attribute_value = output_attribute_value.lower()
 
     return output_attribute_value
 
-def attribute_handler_get_current_date(data_converter, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity, output_attribute_value, arguments):
+def attribute_handler_get_current_date(data_converter, configuration, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity, output_attribute_value, arguments):
     # retrieves the current date and time
     current_datetime = datetime.datetime.now()
 
     return current_datetime
 
-def attribute_handler_capitalize_string(data_converter, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity, output_attribute_value, arguments):
+def attribute_handler_capitalize_string(data_converter, configuration, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity, output_attribute_value, arguments):
     # capitalizes the string
     if output_attribute_value and type(output_attribute_value) in types.StringTypes:
         output_attribute_value = output_attribute_value.capitalize()
 
     return output_attribute_value
 
-def attribute_handler_map_value(data_converter, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity, output_attribute_value, arguments):
+def attribute_handler_map_value(data_converter, configuration, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity, output_attribute_value, arguments):
     # retrieves the mandatory options
     values_map = arguments[VALUES_MAP_VALUE]
 
@@ -96,14 +96,14 @@ def attribute_handler_map_value(data_converter, input_intermediate_structure, in
 
     return output_attribute_value
 
-def attribute_handler_convert_to_string(data_converter, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity, output_attribute_value, arguments):
+def attribute_handler_convert_to_string(data_converter, configuration, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity, output_attribute_value, arguments):
     # converts the value to a string
     if not output_attribute_value is None:
         output_attribute_value = str(output_attribute_value)
 
     return output_attribute_value
 
-def attribute_handler_capitalize_tokens(data_converter, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity, output_attribute_value, arguments):
+def attribute_handler_capitalize_tokens(data_converter, configuration, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity, output_attribute_value, arguments):
     # retrieves the non-mandatory options
     exclusion_list = arguments.get(EXCLUSION_LIST_VALUE, [])
 
