@@ -2128,13 +2128,17 @@ class ParserGenerator:
         # retrieves the current token
         current_token = self._get_token()
 
-        # prints the debug message
-        logging.debug("Current token: %s" % str(current_token))
+        # in case the logging level is at least debug
+        if logging_configuration.DEFAULT_LOGGING_LEVEL <= logging.DEBUG:
+            # prints the debug message
+            logging.debug("Current token: %s" % str(current_token))
 
         # loop indefinitely
         while True:
-            # prints the debug message
-            logging.debug("Current stack: %s" % str(stack))
+            # in case the logging level is at least debug
+            if logging_configuration.DEFAULT_LOGGING_LEVEL <= logging.DEBUG:
+                # prints the debug message
+                logging.debug("Current stack: %s" % str(stack))
 
             # retrieves the current state
             current_state, current_value = stack[-1]
@@ -2165,8 +2169,10 @@ class ParserGenerator:
                 raise parser_generator_exceptions.InvalidState("no action defined for state " + str(current_state) + " and input " + token_type)
 
             if action_type == ParserGenerator.REDUCE_OPERATION_VALUE:
-                # prints the debug message
-                logging.debug("Reduce action: %s" % str(action_value))
+                # in case the logging level is at least debug
+                if logging_configuration.DEFAULT_LOGGING_LEVEL <= logging.DEBUG:
+                    # prints the debug message
+                    logging.debug("Reduce action: %s" % str(action_value))
 
                 # retrieves the reduce rule
                 reduce_rule = self.rules_list[action_value]
@@ -2219,8 +2225,10 @@ class ParserGenerator:
                     raise parser_generator_exceptions.InvalidState("no goto defined for state " + str(current_state) + " and reduce rule " + reduce_rule_name)
 
             elif action_type == ParserGenerator.SHIFT_OPERATION_VALUE:
-                # prints the debug message
-                logging.debug("Shift action: %s" % str(action_value))
+                # in case the logging level is at least debug
+                if logging_configuration.DEFAULT_LOGGING_LEVEL <= logging.DEBUG:
+                    # prints the debug message
+                    logging.debug("Shift action: %s" % str(action_value))
 
                 # creates the current tuple with the action value
                 # and the token value
@@ -2232,12 +2240,16 @@ class ParserGenerator:
                 # retrieves the next (current) token
                 current_token = self._get_token()
 
-                # prints the debug message
-                logging.debug("Current token: %s" % str(current_token))
+                # in case the logging level is at least debug
+                if logging_configuration.DEFAULT_LOGGING_LEVEL <= logging.DEBUG:
+                    # prints the debug message
+                    logging.debug("Current token: %s" % str(current_token))
 
             elif action_type == ParserGenerator.ACCEPT_OPERATION_VALUE:
-                # prints the debug message
-                logging.debug("Over action")
+                # in case the logging level is at least debug
+                if logging_configuration.DEFAULT_LOGGING_LEVEL <= logging.DEBUG:
+                    # prints the debug message
+                    logging.debug("Accept action")
 
                 # retrieves the accept rule
                 accept_rule = self.program_rule
@@ -2277,7 +2289,7 @@ class ParserGenerator:
         # pops the stack top
         stack_top = stack.pop()
 
-        # retrieves the top state and the top valu
+        # retrieves the top state and the top value
         top_state, top_value = stack_top
 
         # returns the top value
