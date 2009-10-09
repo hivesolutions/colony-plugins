@@ -107,6 +107,12 @@ class LexerGenerator:
     BASE_TOKENS_LIST = ["comment", "ignore", "error"]
     """ The base tokens list """
 
+    strings_regex = None
+    """ The strings regular expression """
+
+    functions_regex = None
+    """ The functions regular expression """
+
     tokens_list = []
     """ The tokens list """
 
@@ -241,6 +247,12 @@ class LexerGenerator:
             # appends the string regex to the string regex list
             self.string_regex_list.append(string_regex)
 
+        # creates the strings regex list
+        strings_regex_list = ["(" + string_regex + ")" for string_regex in self.strings_list]
+
+        # creates the strings regex
+        self.strings_regex = re.compile("|".join(strings_regex_list))
+
         # iterates over all the functions in the function list
         for function in self.functions_list:
             # retrieves the function doc
@@ -251,6 +263,12 @@ class LexerGenerator:
 
             # appends the function regex to the function regex list
             self.function_regex_list.append(function_regex)
+
+        # creates the function regex list
+        functions_regex_list = ["(" + function_regex.__doc__ + ")" for function_regex in self.functions_list]
+
+        # creates the function regex
+        self.functions_regex = re.compile("|".join(functions_regex_list))
 
     def get_token(self):
         """
@@ -279,62 +297,75 @@ class LexerGenerator:
 
                 continue
 
-            for string_regex, string_name in zip(self.string_regex_list, self.string_name_list):
-                # tries to match the buffer with the string regex
-                buffer_match = string_regex.match(self.buffer, self.current_index)
+            # tries to match the buffer with the strings regex
+            buffer_match = self.strings_regex.match(self.buffer, self.current_index)
 
-                # in case there was a buffer match
-                if buffer_match:
-                    # sets the token value
-                    token.value = buffer_match.group()
+            # in case there was a buffer match
+            if buffer_match:
+                # retrieves the buffer match last index
+                buffer_match_last_index = buffer_match.lastindex - 1
 
-                    # sets the token type
-                    token.type = string_name
+                # retrieves the string name
+                string_name = self.string_name_list[buffer_match_last_index]
 
-                    # sets the token start index
-                    token.start_index = self.current_index
+                # sets the token value
+                token.value = buffer_match.group()
 
-                    # sets the token end index
-                    token.end_index = buffer_match.end() - 1
+                # sets the token type
+                token.type = string_name
 
-                    # sets the token lexer
-                    token.lexer = self
+                # sets the token start index
+                token.start_index = self.current_index
 
-                    # sets the new current index
-                    self.current_index = token.end_index + 1
+                # sets the token end index
+                token.end_index = buffer_match.end() - 1
 
-                    # returns the token
-                    return token
+                # sets the token lexer
+                token.lexer = self
 
-            for function_regex, function_name, function in zip(self.function_regex_list, self.function_name_list, self.functions_list):
-                # tries to match the buffer with the function regex
-                buffer_match = function_regex.match(self.buffer, self.current_index)
+                # sets the new current index
+                self.current_index = token.end_index + 1
 
-                # in case there was a buffer match
-                if buffer_match:
-                    # sets the token value
-                    token.value =  buffer_match.group()
+                # returns the token
+                return token
 
-                    # sets the token type
-                    token.type = function_name
+            # tries to match the buffer with the functions regex
+            buffer_match = self.functions_regex.match(self.buffer, self.current_index)
 
-                    # sets the token start index
-                    token.start_index = self.current_index
+            # in case there was a buffer match
+            if buffer_match:
+                # retrieves the buffer match last index
+                buffer_match_last_index = buffer_match.lastindex - 1
 
-                    # sets the token end index
-                    token.end_index = buffer_match.end() - 1
+                # retrieves the function name
+                function_name = self.function_name_list[buffer_match_last_index]
 
-                    # sets the token lexer
-                    token.lexer = self
+                # retrieves the function
+                function = self.functions_list[buffer_match_last_index]
 
-                    # calls the function with the token
-                    function(token)
+                # sets the token value
+                token.value =  buffer_match.group()
 
-                    # sets the new current index
-                    self.current_index = token.end_index + 1
+                # sets the token type
+                token.type = function_name
 
-                    # returns the token
-                    return token
+                # sets the token start index
+                token.start_index = self.current_index
+
+                # sets the token end index
+                token.end_index = buffer_match.end() - 1
+
+                # sets the token lexer
+                token.lexer = self
+
+                # calls the function with the token
+                function(token)
+
+                # sets the new current index
+                self.current_index = token.end_index + 1
+
+                # returns the token
+                return token
 
             # sets the token value
             token.value = self.buffer[self.current_index:]
