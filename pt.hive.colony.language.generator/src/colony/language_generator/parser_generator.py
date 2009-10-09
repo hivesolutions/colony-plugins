@@ -715,6 +715,9 @@ class ParserGenerator:
     DEFAULT_PARSER_TYPE = "LR0"
     """ The default parser type """
 
+    DEFAULT_VALIDATION = False
+    """ The default validation """
+
     DEFAULT_DATA_FILE_NAME = "parser.dat"
     """ The default data file name """
 
@@ -747,6 +750,9 @@ class ParserGenerator:
 
     HASH_VALUE = "hash"
     """ The hash value """
+
+    IGNORE_TOKENS_MAP = {"comment" : True, "ignore" : True}
+    """ The ignore tokens list """
 
     parser_type = None
     """ The parser type """
@@ -811,7 +817,7 @@ class ParserGenerator:
     goto_table_map = {}
     """ The goto table map """
 
-    def __init__(self, parser_type = None, create_lexer = False, scope = None):
+    def __init__(self, parser_type = None, create_lexer = False, scope = None, validation = None):
         """
         Constructor of the class.
 
@@ -821,12 +827,18 @@ class ParserGenerator:
         @param create_lexer: Defines if a lexer should be created.
         @type scope: Dictionary
         @param scope: The scope to be used in the parser construction.
+        @type validation: bool
+        @param validation: Defines if the lexer tokens should be validated.
         """
 
         if not parser_type:
             parser_type = ParserGenerator.DEFAULT_PARSER_TYPE
 
+        if not validation:
+            validation = ParserGenerator.DEFAULT_VALIDATION
+
         self.parser_type = parser_type
+        self.validation = validation
 
         self.functions_list = []
         self.rules_list = []
@@ -2101,6 +2113,10 @@ class ParserGenerator:
         @return: The valid token that has been retrieved.
         """
 
+        # in case the there is no validation
+        if not self.validation:
+            return self.lexer.get_token()
+
         # unsets the valid flag
         valid = False
 
@@ -2110,7 +2126,7 @@ class ParserGenerator:
             token = self.lexer.get_token()
 
             # in case the token type is valid
-            if token == None or not token.type in ["ignore", "comment"]:
+            if token == None or not token.type in ParserGenerator.IGNORE_TOKENS_MAP:
                 # sets the valid flag
                 valid = True
 

@@ -92,6 +92,12 @@ class LexerGenerator:
     The lexer class.
     """
 
+    GROUPING_REGEX = r"(?<!\\)\((?!\?\:)"
+    """ The grouping regular expression """
+
+    GROUPING_SUBSTITUTION_VALUE = "(?:"
+    """ The grouping substitution value """
+
     LEXER_PREFIX = "t_"
     """ The lexer prefix value """
 
@@ -106,6 +112,9 @@ class LexerGenerator:
 
     BASE_TOKENS_LIST = ["comment", "ignore", "error"]
     """ The base tokens list """
+
+    ADVANCE_TOKENS_LIST = ["comment"]
+    """ The advance tokens list """
 
     strings_regex = None
     """ The strings regular expression """
@@ -175,6 +184,9 @@ class LexerGenerator:
         @type scope: Dictionary
         @param scope: The scope to be used in the lexer construction.
         """
+
+        # creates the grouping regex
+        grouping_regex = re.compile(LexerGenerator.GROUPING_REGEX)
 
         # retrieves the local values copy
         locals = copy.copy(scope)
@@ -248,7 +260,10 @@ class LexerGenerator:
             self.string_regex_list.append(string_regex)
 
         # creates the strings regex list
-        strings_regex_list = ["(" + string_regex + ")" for string_regex in self.strings_list]
+        strings_regex_list = [grouping_regex.sub(LexerGenerator.GROUPING_SUBSTITUTION_VALUE, string) for string in self.strings_list]
+
+        # creates the groups in the strings regex list
+        strings_regex_list = ["(" + string_regex + ")" for string_regex in strings_regex_list]
 
         # creates the strings regex
         self.strings_regex = re.compile("|".join(strings_regex_list))
@@ -264,8 +279,11 @@ class LexerGenerator:
             # appends the function regex to the function regex list
             self.function_regex_list.append(function_regex)
 
-        # creates the function regex list
-        functions_regex_list = ["(" + function_regex.__doc__ + ")" for function_regex in self.functions_list]
+        # creates the functions regex list
+        functions_regex_list = [grouping_regex.sub(LexerGenerator.GROUPING_SUBSTITUTION_VALUE, function.__doc__) for function in self.functions_list]
+
+        # creates the groups in the functions regex list
+        functions_regex_list = ["(" + function_regex + ")" for function_regex in functions_regex_list]
 
         # creates the function regex
         self.functions_regex = re.compile("|".join(functions_regex_list))
@@ -326,8 +344,13 @@ class LexerGenerator:
                 # sets the new current index
                 self.current_index = token.end_index + 1
 
-                # returns the token
-                return token
+                # in case the token is to be advanced
+                if string_name in LexerGenerator.ADVANCE_TOKENS_LIST:
+                    continue
+                # in case it's a valid token
+                else:
+                    # returns the token
+                    return token
 
             # tries to match the buffer with the functions regex
             buffer_match = self.functions_regex.match(self.buffer, self.current_index)
@@ -364,8 +387,13 @@ class LexerGenerator:
                 # sets the new current index
                 self.current_index = token.end_index + 1
 
-                # returns the token
-                return token
+                # in case the token is to be advanced
+                if function_name in LexerGenerator.ADVANCE_TOKENS_LIST:
+                    continue
+                # in case it's a valid token
+                else:
+                    # returns the token
+                    return token
 
             # sets the token value
             token.value = self.buffer[self.current_index:]
