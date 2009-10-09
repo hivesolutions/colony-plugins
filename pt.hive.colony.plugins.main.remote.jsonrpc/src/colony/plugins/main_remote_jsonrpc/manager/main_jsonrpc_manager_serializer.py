@@ -49,11 +49,15 @@ import cStringIO
 
 import main_jsonrpc_manager_exceptions
 
-EXCLUSION_LIST = ["__class__", "__delattr__", "__dict__", "__doc__", "__getattribute__", "__hash__",
-                  "__init__", "__module__", "__new__", "__reduce__", "__reduce_ex__", "__repr__",
-                  "__setattr__", "__str__", "__weakref__", "__format__", "__sizeof__", "__subclasshook__"]
+EXCLUSION_MAP = {"__class__" : True, "__delattr__" : True, "__dict__" : True, "__doc__" : True, "__getattribute__" : True, "__hash__" : True,
+                 "__init__" : True, "__module__" : True, "__new__" : True, "__reduce__" : True, "__reduce_ex__" : True, "__repr__" : True,
+                 "__setattr__" : True, "__str__" : True, "__weakref__" : True, "__format__" : True, "__sizeof__" : True, "__subclasshook__" : True}
 
-EXCLUSION_TYPES = [types.MethodType, types.FunctionType]
+EXCLUSION_TYPES = {types.MethodType : True, types.FunctionType : True}
+
+NUMBER_TYPES = {types.IntType : True, types.LongType: True, types.FloatType : True}
+
+SEQUENCE_TYPES = {types.TupleType : True, types.ListType : True, types.GeneratorType : True}
 
 char_replacements = {
         "\t" : "\\t",
@@ -124,17 +128,18 @@ def dump_parts_buffer(obj, string_buffer):
     elif obj_type is types.DictionaryType:
         string_buffer.write("{")
         is_first = True
-        for (key, value) in obj.items():
+        for key, value in obj.items():
             if is_first:
                 is_first = False
             else:
                 string_buffer.write(",")
-            string_buffer.write("\"" + string_escape_re.sub(escape_char, key) + "\":")
+            dump_parts_buffer(key, string_buffer)
+            string_buffer.write(":")
             dump_parts_buffer(value, string_buffer)
         string_buffer.write("}")
     elif obj_type in types.StringTypes:
         string_buffer.write("\"" + string_escape_re.sub(escape_char, obj) + "\"")
-    elif obj_type in [types.TupleType, types.ListType, types.GeneratorType]:
+    elif obj_type in SEQUENCE_TYPES:
         string_buffer.write("[")
         is_first = True
         for item in obj:
@@ -144,7 +149,7 @@ def dump_parts_buffer(obj, string_buffer):
                 string_buffer.write(",")
             dump_parts_buffer(item, string_buffer)
         string_buffer.write("]")
-    elif obj_type in [types.IntType, types.LongType, types.FloatType]:
+    elif obj_type in NUMBER_TYPES:
         string_buffer.write(str(obj))
     elif obj_type == datetime.datetime:
         obj_time_tuple = obj.timetuple()
@@ -153,14 +158,14 @@ def dump_parts_buffer(obj, string_buffer):
     elif obj_type is types.InstanceType or hasattr(obj, "__class__"):
         string_buffer.write("{")
         is_first = True
-        obj_items = [value for value in dir(obj) if not value in EXCLUSION_LIST and not type(getattr(obj, value)) in EXCLUSION_TYPES]
+        obj_items = [value for value in dir(obj) if not value in EXCLUSION_MAP and not type(getattr(obj, value)) in EXCLUSION_TYPES]
         for obj_item in obj_items:
+            obj_value = getattr(obj, obj_item)
             if is_first:
                 is_first = False
+                string_buffer.write("\"" + obj_item + "\"" + ":")
             else:
-                string_buffer.write(",")
-            obj_value = getattr(obj, obj_item)
-            string_buffer.write("\"" + obj_item + "\"" + ":")
+                string_buffer.write(",\"" + obj_item + "\"" + ":")
             dump_parts_buffer(obj_value, string_buffer)
         string_buffer.write("}")
     else:
@@ -184,18 +189,20 @@ def dump_parts(obj):
     elif obj_type is types.DictionaryType:
         yield "{"
         is_first = True
-        for (key, value) in obj.items():
+        for key, value in obj.items():
             if is_first:
                 is_first = False
+                for part in dump_parts(key):
+                    yield part + ":"
             else:
-                yield ","
-            yield "\"" + string_escape_re.sub(escape_char, key) + "\":"
+                for part in dump_parts(key):
+                    yield "," + part + ":"
             for part in dump_parts(value):
                 yield part
         yield "}"
     elif obj_type in types.StringTypes:
         yield "\"" + string_escape_re.sub(escape_char, obj) + "\""
-    elif obj_type in [types.TupleType, types.ListType, types.GeneratorType]:
+    elif obj_type in SEQUENCE_TYPES:
         yield "["
         is_first = True
         for item in obj:
@@ -206,7 +213,7 @@ def dump_parts(obj):
             for part in dump_parts(item):
                 yield part
         yield "]"
-    elif obj_type in [types.IntType, types.LongType, types.FloatType]:
+    elif obj_type in NUMBER_TYPES:
         yield unicode(obj)
     elif obj_type == datetime.datetime:
         obj_time_tuple = obj.timetuple()
@@ -215,14 +222,14 @@ def dump_parts(obj):
     elif obj_type is types.InstanceType or hasattr(obj, "__class__"):
         yield "{"
         is_first = True
-        obj_items = [value for value in dir(obj) if not value in EXCLUSION_LIST and not type(getattr(obj, value)) in EXCLUSION_TYPES]
+        obj_items = [value for value in dir(obj) if not value in EXCLUSION_MAP and not type(getattr(obj, value)) in EXCLUSION_TYPES]
         for obj_item in obj_items:
+            obj_value = getattr(obj, obj_item)
             if is_first:
                 is_first = False
+                yield "\"" + obj_item + "\"" + ":"
             else:
-                yield ","
-            obj_value = getattr(obj, obj_item)
-            yield "\"" + obj_item + "\"" + ":"
+                yield ",\"" + obj_item + "\"" + ":"
             for part in dump_parts(obj_value):
                 yield part
         yield "}"
