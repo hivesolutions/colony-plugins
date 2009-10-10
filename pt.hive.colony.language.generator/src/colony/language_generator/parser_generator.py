@@ -861,7 +861,7 @@ class ParserGenerator:
             self.lexer = lexer_generator.LexerGenerator()
 
         if scope:
-            self._construct(scope)
+            self.construct(scope)
 
     def construct(self, scope, file_path = None, save_state = True):
         """
