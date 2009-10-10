@@ -69,7 +69,7 @@ parser_generator = parser_generator.ParserGenerator(parser_generator.ParserGener
 parser_generator.set_lexer(lexer_generator)
 
 # constructs the parser
-parser_generator._construct(valid_example)
+parser_generator.construct(valid_example)
 
 # parses the current buffer and retrieves the result
 parse_result = parser_generator.parse("1+1")

@@ -882,33 +882,26 @@ class ParserGenerator:
 
         # in case the file path exists
         if os.path.exists(file_path):
-            try:
-                # opens the file
-                file = open(file_path, "rb+")
+            # opens the file
+            file = open(file_path, "rb+")
 
-                # constructs or restores the parser generator state
-                self.construct_restore(scope, file, False)
+            # constructs or restores the parser generator state
+            self.construct_restore(scope, file, False)
 
-                # closes the file
-                file.close()
+            # closes the file
+            file.close()
 
-                # opens the file
-                file = open(file_path, "wb")
+            # opens the file
+            file = open(file_path, "wb")
 
-                # in case the save state flag is active
-                # and the file is valid
-                if save_state and file:
-                    # saves the state to the file
-                    self._save_state(file)
+            # in case the save state flag is active
+            # and the file is valid
+            if save_state and file:
+                # saves the state to the file
+                self._save_state(file)
 
-                # closes the file
-                file.close()
-            except Exception, exception:
-                # prints the info message
-                logging.info("Problem while restoring state %s" % str(exception))
-
-                # constructs the parser generator and saves state
-                self._construct_save_file_path(scope, True, file_path, save_state)
+            # closes the file
+            file.close()
         else:
             # prints the info message
             logging.info("State file %s does not exists" % file_path)
@@ -938,23 +931,19 @@ class ParserGenerator:
             # returns immediately
             return
 
-        try:
-            # in case the restore was not successful
-            if not self.restore(scope, file):
-                # generates the table
-                self._generate_table()
-
-            # in case the save state flag is active
-            # and the file is valid
-            if save_state and file:
-                # saves the state to the file
-                self._save_state(file)
-        except Exception, exception:
+        # in case the restore was not successful
+        if self.restore(scope, file):
             # prints the info message
-            logging.info("Problem while restoring state %s" % str(exception))
+            logging.info("Previous state restored")
+        else:
+            # print the info message
+            logging.info("Previous state not restored (invalid)")
+
+            # resets the internal structures
+            self._reset_structures()
 
             # constructs the parser generator and saves state
-            self._construct_save_file_path(scope, True, ParserGenerator.DEFAULT_DATA_FILE_NAME, save_state)
+            self._construct_save(scope, True, file, save_state)
 
     def restore(self, scope, file):
         """
@@ -2416,6 +2405,32 @@ class ParserGenerator:
 
         # returns the md5 hash value
         return ms5_hash_value
+
+    def _reset_structures(self):
+        """
+        Resets the internal structures of the parser
+        generator.
+        """
+
+        self.current_rule_id = 0
+        self.program_function = None
+        self.error_function = None
+        self.program_rule = None
+        self.functions_list = []
+        self.rules_list = []
+        self.rules_map = {}
+        self.rule_id_rule_map = {}
+        self.rule_function_map = {}
+        self.symbols_map = {}
+        self.symbols_non_terminal_map = {}
+        self.symbols_terminal_map = {}
+        self.symbols_terminal_end_map = {}
+        self.item_sets_list = []
+        self.rules_item_sets_map = {}
+        self.transition_table_map = {}
+        self.action_table_map = {}
+        self.goto_table_map = {}
+        self.symbols_terminal_end_map["$"] = True
 
     def _get_rules_string(self):
         """
