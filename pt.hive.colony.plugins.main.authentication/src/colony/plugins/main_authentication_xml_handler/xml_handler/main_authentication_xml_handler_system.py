@@ -37,48 +37,30 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class MainAuthentication:
+class MainAuthenticationXmlHandler:
     """
-    The main authentication class.
+    The main authentication xml handler class.
     """
 
-    main_authentication_plugin = None
-    """ The main authentication plugin """
+    main_authentication_xml_handler_plugin = None
+    """ The main authentication xml handler plugin """
 
-    def __init__(self, main_authentication_plugin):
+    def __init__(self, main_authentication_xml_handler_plugin):
         """
         Constructor of the class.
 
-        @type main_authentication_plugin: MainAuthenticationPlugin
-        @param main_authentication_plugin: The main authentication plugin.
+        @type main_authentication_xml_handler_plugin: MainAuthenticationXmlHandlerPlugin
+        @param main_authentication_xml_handler_plugin: The main authentication xml handler plugin.
         """
 
-        self.main_authentication_plugin = main_authentication_plugin
+        self.main_authentication_xml_handler_plugin = main_authentication_xml_handler_plugin
 
-    def authenticate_user(self, username, password, arguments):
+    def handle_request(self, request):
         """
         Authenticates a user in the general service.
 
-        @type username: String
-        @param username: The username to be used in the authentication.
-        @type password: String
-        @param password: The password to be used in the authentication.
-        @type arguments: Dictionary
-        @param arguments: The arguments to be used in the authentication.
-        @rtype: Dictionary
-        @return: The authentication return value.
-        """
-
-        pass
-
-    def process_authentication_string(self, authentication_string):
-        """
-        Processes the given authentication string.
-
-        @type authentication_string: String
-        @param authentication_string: The string to be used for authentication.
-        @rtype: Dictionary
-        @return: The authentication return value.
+        @type request: AuthenticationRequest
+        @param request: The authentication request to be handled.
         """
 
         pass
