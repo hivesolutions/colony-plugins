@@ -69,3 +69,29 @@ class SimplePoolManagerPoolFull(SimplePoolManagerException):
         """
 
         return "Simple pool manager pool full: %s" % self.message
+
+class SimplePoolManagerInvalidItemConstructor(SimplePoolManagerException):
+    """
+    The simple pool manager invalid item constructor class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        SimplePoolManagerException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Simple pool manager invalid item constructor: %s" % self.message

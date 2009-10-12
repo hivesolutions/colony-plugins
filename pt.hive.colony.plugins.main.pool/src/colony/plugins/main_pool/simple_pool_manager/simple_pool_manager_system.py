@@ -180,7 +180,7 @@ class SimplePoolImplementation:
         """
 
         # in case the pool is "growable"
-        if self.growable():
+        if self._pool_growable():
             # adds the pool item to the pool items list
             self.pool_items_list.append(pool_item)
         else:
@@ -228,11 +228,9 @@ class SimplePoolImplementation:
 
         # iterates in the size range
         for index in range(size):
-            # in case the pool is growable
-            if self._pool_growable():
-                # creates the pool item and adds
-                # it to the pool
-                self._create_add_pool_item()
+            # creates the pool item and adds
+            # it to the pool
+            self._create_add_pool_item()
 
     def get_item_contructor_method(self):
         """
@@ -280,6 +278,11 @@ class SimplePoolImplementation:
         """
         Creates a pool item and adds it to the pool.
         """
+
+        # in case there is no item constructor method defined
+        if not self.item_constructor_method:
+            # raises an exception
+            raise simple_pool_manager_exceptions.SimplePoolManagerInvalidItemConstructor("no item constructor defined")
 
         # creates the pool item
         pool_item = self.item_constructor_method()
