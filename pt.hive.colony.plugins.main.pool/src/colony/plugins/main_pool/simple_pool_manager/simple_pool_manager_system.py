@@ -161,7 +161,100 @@ class SimplePoolImplementation:
         self.maximum_pool_size = maximum_pool_size
         self.logger = logger
 
-    def pool_growable(self):
+    def construct_pool(self):
+        """
+        Constructs the pool.
+        """
+
+        # iterates over the pool size range
+        for index in range(self.pool_size):
+            # creates and adds a pool item
+            self._create_add_pool_item()
+
+    def add_pool_item(self, pool_item):
+        """
+        Adds a pool item to the pool.
+
+        @type pool_item: Object
+        @param pool_item: The pool item to be added to the pool.
+        """
+
+        # in case the pool is "growable"
+        if self.growable():
+            # adds the pool item to the pool items list
+            self.pool_items_list.append(pool_item)
+        else:
+            # raises an exception
+            raise simple_pool_manager_exceptions.SimplePoolManagerPoolFull("can't grow the pool")
+
+    def get_pool_item(self):
+        """
+        Retrieves a pool item.
+        """
+
+        # in case there are no items
+        # in the pool items list
+        if not len(self.pool_items_list):
+            # grows the pool
+            self.grow_pool()
+
+        # retrieves the pool item
+        pool_item = self.pool_items_list.pop(_)
+
+        # returns the pool item
+        return pool_item
+
+    def release_pool_item(self, pool_item):
+        """
+        Releases the pool item, returning it to the pool.
+
+        @type pool_item: Object
+        @param pool_item: The pool item to be returned to the pool.
+        """
+
+        # adds the pool item to the pool items list
+        self.pool_items_list.append(pool_item)
+
+    def set_auto_release(self, pool_item, timeout):
+        pass
+
+    def grow_pool(self, size = 1):
+        """
+        Grows the pool by the given size.
+
+        @type size: int
+        @param size: The size to be used in the pool growth.
+        """
+
+        # iterates in the size range
+        for index in range(size):
+            # in case the pool is growable
+            if self._pool_growable():
+                # creates the pool item and adds
+                # it to the pool
+                self._create_add_pool_item()
+
+    def get_item_contructor_method(self):
+        """
+        Retrieves the item constructor method.
+
+        @rtype: Method
+        @return: The item constructor method.
+        """
+
+        return self.item_constructor_method
+
+    def set_item_constructor_method(self, item_constructor_method):
+        """
+        Sets the item constructor method.
+
+        @type item_constructor_method: Method
+        @param item_constructor_method: The item constructor method.
+        """
+
+        self.item_constructor_method = item_constructor_method
+
+    def _pool_growable(self):
         """
         Returns if the simple pool can grow or not.
 
@@ -183,23 +276,13 @@ class SimplePoolImplementation:
             else:
                 return False
 
-    def add_pool_item(self, pool_item):
-        if self.growable():
-            self.pool_items_list.append(pool_item)
-        else:
-            raise simple_pool_manager_exceptions.SimplePoolManagerPoolFull("can't grow the pool")
+    def _create_add_pool_item(self):
+        """
+        Creates a pool item and adds it to the pool.
+        """
 
-    def add_or_get_pool_item(self, pool_item):
-        pass
+        # creates the pool item
+        pool_item = self.item_constructor_method()
 
-    def set_item_constructor_method(self, item_constructor_method):
-        pass
-
-    def get_pool_item(self):
-        pass
-
-    def release_pool_item(self, pool_item):
-        pass
-
-    def set_auto_release(self, pool_item, timeout):
-        pass
+        # adds the pool item
+        self.add_pool_item(pool_item)
