@@ -140,6 +140,15 @@ class MainSoapManager:
         # flushes the request, sending the output to the client
         request.flush()
 
+        # in case there is an error defined
+        if error:
+            # returns false
+            return False
+        # in case there is no error defined
+        else:
+            # returns true
+            return True
+
     def is_active(self):
         # retrieves the plugin manager
         manager = self.main_soap_manager_plugin.manager

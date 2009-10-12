@@ -96,7 +96,7 @@ class MainXmlrpcManagerPlugin(colony.plugins.plugin_system.Plugin):
         return self.main_xmlrpc_manager.is_request_handler(request)
 
     def handle_request(self, request):
-        self.main_xmlrpc_manager.handle_request(request)
+        return self.main_xmlrpc_manager.handle_request(request)
 
     def is_active(self):
         return self.main_xmlrpc_manager.is_active()
