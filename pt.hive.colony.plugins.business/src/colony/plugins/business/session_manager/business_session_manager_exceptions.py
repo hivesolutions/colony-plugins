@@ -57,7 +57,7 @@ class InvalidSessionId(BusinessSessionManagerException):
         @param message: The message to be printed.
         """
 
-        SqliteEngineException.__init__(self)
+        BusinessSessionManagerException.__init__(self)
         self.message = message
 
     def __str__(self):
