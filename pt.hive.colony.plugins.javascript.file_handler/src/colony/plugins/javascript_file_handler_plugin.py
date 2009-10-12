@@ -101,7 +101,7 @@ class JavascriptFileHandlerPlugin(colony.plugins.plugin_system.Plugin):
         return self.javascript_file_handler.is_request_handler(request)
 
     def handle_request(self, request):
-        self.javascript_file_handler.handle_request(request)
+        return self.javascript_file_handler.handle_request(request)
 
     @colony.plugins.decorators.load_allowed_capability("javascript_handler")
     def javascript_handler_load_allowed(self, plugin, capability):

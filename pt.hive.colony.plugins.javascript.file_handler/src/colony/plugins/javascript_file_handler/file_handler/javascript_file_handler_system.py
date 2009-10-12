@@ -135,3 +135,6 @@ class JavascriptFileHandler:
 
         # flushes the request, sending the output to the client
         request.flush()
+
+        # returns true
+        return True
