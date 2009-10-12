@@ -63,6 +63,7 @@ class BusinessSessionManagerPlugin(colony.plugins.plugin_system.Plugin):
                     "pt.hive.colony.plugins.misc.random", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["business.session_manager.business_session_manager_exceptions", "business.session_manager.business_session_manager_system"]
 
     business_session_manager = None
 
