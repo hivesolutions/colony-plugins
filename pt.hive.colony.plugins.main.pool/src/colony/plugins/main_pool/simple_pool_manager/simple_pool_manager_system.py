@@ -136,6 +136,12 @@ class SimplePoolImplementation:
     busy_pool_items_list = []
     """ The list of all the busy items in the pool """
 
+    item_constructor_method = None
+    """ The item constructor method """
+
+    item_destructor_method = None
+    """ The item destructor method """
+
     def __init__(self, name = "none", description = "none", pool_size = DEFAULT_POOL_SIZE, scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM, maximum_pool_size = DEFAULT_MAXIMUM_POOL_SIZE, logger = None):
         """
         Constructor of the class
@@ -199,7 +205,7 @@ class SimplePoolImplementation:
             self.grow_pool()
 
         # retrieves the pool item
-        pool_item = self.pool_items_list.pop(_)
+        pool_item = self.pool_items_list.pop()
 
         # returns the pool item
         return pool_item
@@ -251,6 +257,26 @@ class SimplePoolImplementation:
         """
 
         self.item_constructor_method = item_constructor_method
+
+    def get_item_destructor_method(self):
+        """
+        Retrieves the item destructor method.
+
+        @rtype: Method
+        @return: The item destructor method.
+        """
+
+        return self.item_destructor_method
+
+    def set_item_destructor_method(self, item_destructor_method):
+        """
+        Sets the item destructor method.
+
+        @type item_destructor_method: Method
+        @param item_destructor_method: The item destructor method.
+        """
+
+        self.item_destructor_method = item_destructor_method
 
     def _pool_growable(self):
         """
