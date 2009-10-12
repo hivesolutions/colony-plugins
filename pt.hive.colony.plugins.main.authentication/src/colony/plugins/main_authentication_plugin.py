@@ -89,8 +89,8 @@ class MainAuthenticationPlugin(colony.plugins.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def authenticate_user(self, username, password, arguments):
-        return self.main_authentication.authenticate_user(username, password, arguments)
+    def authenticate_user(self, username, password, authentication_engine, arguments):
+        return self.main_authentication.authenticate_user(username, password, authentication_engine, arguments)
 
     def process_authentication_string(self, authentication_string):
         return self.main_authentication.process_authentication_string(authentication_string)

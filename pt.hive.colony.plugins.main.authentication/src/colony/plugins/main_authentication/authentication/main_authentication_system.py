@@ -55,7 +55,7 @@ class MainAuthentication:
 
         self.main_authentication_plugin = main_authentication_plugin
 
-    def authenticate_user(self, username, password, arguments):
+    def authenticate_user(self, username, password, authentication_engine, arguments):
         """
         Authenticates a user in the general service.
 
@@ -63,6 +63,8 @@ class MainAuthentication:
         @param username: The username to be used in the authentication.
         @type password: String
         @param password: The password to be used in the authentication.
+        @type authentication_engine: String
+        @param authentication_engine: The authentication engine to be used in the authentication.
         @type arguments: Dictionary
         @param arguments: The arguments to be used in the authentication.
         @rtype: Dictionary
