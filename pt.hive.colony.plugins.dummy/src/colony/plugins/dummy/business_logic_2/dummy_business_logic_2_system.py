@@ -75,8 +75,8 @@ class DummyBusinessLogic2:
         # creates the dummy session master
         dummy_session_master = business_session_manager_plugin.load_session_manager_master_entity_manager("dummy_session_2", "sqlite")
 
-        # starts the session manager pool
-        dummy_session_master.start_session_manager_pool("dummy_session_2")
+        # constructs the session manager pool
+        dummy_session_master.construct_session_manager_pool()
 
         # retrieves the entity manager
         entity_manager = dummy_session_master.entity_manager
