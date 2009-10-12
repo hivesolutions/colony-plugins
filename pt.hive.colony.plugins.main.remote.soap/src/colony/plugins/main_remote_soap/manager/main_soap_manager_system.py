@@ -117,15 +117,19 @@ class MainSoapManager:
             # in case the number of sent arguments is the expected
             if not number_parameters == rpc_method_number_arguments:
                 result = None
-                error = main_soap_manager_exceptions.InvalidNumberArguments("The number of sent arguments is " + str(number_parameters) + ", expected " + str(rpc_method_number_arguments))
+                error = main_soap_manager_exceptions.InvalidNumberArguments("the number of sent arguments is " + str(number_parameters) + ", expected " + str(rpc_method_number_arguments))
             else:
-                # calls the rpc method with the given arguments
-                result = rpc_method(*parameters)
-                error = None
+                try:
+                    # calls the rpc method with the given arguments
+                    result = rpc_method(*parameters)
+                    error = None
+                except Exception, exception:
+                    result = None
+                    error = exception
         # in case the method name is not valid
         else:
             result = None
-            error = main_soap_manager_exceptions.InvalidMethod("The method name " + method_name + " is not valid")
+            error = main_soap_manager_exceptions.InvalidMethod("the method name " + method_name + " is not valid")
 
         # serializes the result into soap
         result_request = self.translate_result(result, method_name, error)

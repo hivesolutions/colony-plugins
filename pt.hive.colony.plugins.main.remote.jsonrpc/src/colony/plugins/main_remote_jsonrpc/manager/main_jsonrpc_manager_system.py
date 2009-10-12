@@ -118,7 +118,7 @@ class MainJsonrpcManager:
             # in case the number of sent arguments is not the expected
             if not number_parameters == rpc_method_number_arguments:
                 result = None
-                error = main_jsonrpc_manager_exceptions.InvalidNumberArguments("The number of sent arguments is " + str(number_parameters) + ", expected " + str(rpc_method_number_arguments))
+                error = main_jsonrpc_manager_exceptions.InvalidNumberArguments("the number of sent arguments is " + str(number_parameters) + ", expected " + str(rpc_method_number_arguments))
             else:
                 try:
                     # calls the rpc method with the given arguments
@@ -147,7 +147,7 @@ class MainJsonrpcManager:
         # in case the method name is not valid
         else:
             result = None
-            error = main_jsonrpc_manager_exceptions.InvalidMethod("The method name " + method_name + " is not valid")
+            error = main_jsonrpc_manager_exceptions.InvalidMethod("the method name " + method_name + " is not valid")
 
         # serializes the result into json
         result_request = self.translate_result(result, error, id_)
