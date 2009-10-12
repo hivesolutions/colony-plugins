@@ -99,7 +99,7 @@ class MainJsonrpcManagerPlugin(colony.plugins.plugin_system.Plugin):
         return self.main_jsonrpc_manager.is_request_handler(request)
 
     def handle_request(self, request):
-        self.main_jsonrpc_manager.handle_request(request)
+        return self.main_jsonrpc_manager.handle_request(request)
 
     def is_active(self):
         return self.main_jsonrpc_manager.is_active()
