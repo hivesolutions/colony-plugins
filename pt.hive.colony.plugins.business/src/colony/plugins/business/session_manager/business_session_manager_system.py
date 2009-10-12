@@ -314,6 +314,9 @@ class SessionManager:
             # retrieves the business logic instance
             business_logic_instance = self.business_logic_instances_map[business_logic_instance_name]
 
+            # sets the session manager in the business logic instance
+            business_logic_instance.session_manager = self
+
             # sets the business logic as an attribute of the current instance
             setattr(self, business_logic_instance_name, business_logic_instance)
 

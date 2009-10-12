@@ -69,7 +69,7 @@ class MainAuthentication:
         @return: The authentication return value.
         """
 
-        pass
+        return "tobias"
 
     def process_authentication_string(self, authentication_string):
         """

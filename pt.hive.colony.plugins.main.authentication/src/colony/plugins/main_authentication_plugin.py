@@ -89,6 +89,12 @@ class MainAuthenticationPlugin(colony.plugins.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    def authenticate_user(self, username, password, arguments):
+        return self.main_authentication.authenticate_user(username, password, arguments)
+
+    def process_authentication_string(self, authentication_string):
+        return self.main_authentication.process_authentication_string(authentication_string)
+
     @colony.plugins.decorators.load_allowed_capability("authentication_handler")
     def authentication_handler_load_allowed(self, plugin, capability):
         self.authentication_handler_plugins.append(plugin)
@@ -96,9 +102,3 @@ class MainAuthenticationPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.unload_allowed_capability("authentication_handler")
     def authentication_handler_unload_allowed(self, plugin, capability):
         self.authentication_handler_plugins.remove(plugin)
-
-    def authenticate_user(self, username, password, arguments):
-        self.main_authentication.authenticate_user(username, password, arguments)
-
-    def process_authentication_string(self, authentication_string):
-        self.main_authentication.process_authentication_string(authentication_string)
