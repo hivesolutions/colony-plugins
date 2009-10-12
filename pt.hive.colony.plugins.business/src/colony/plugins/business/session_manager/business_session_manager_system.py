@@ -63,6 +63,15 @@ CALL_SESSION_METHOD_TYPE_VALUE = "call_session_method"
 SESSION_ID_VALUE = "session_id"
 """ The session id value """
 
+SESSION_CREATION_TIME_VALUE = "session_creation_time"
+""" The session creation time value """
+
+SESSION_TIMEOUT_TIME_VALUE = "session_timeout_time"
+""" The session timeout time value """
+
+SESSION_INFORMATION_MAP_VALUE = "session_properties"
+""" The session information map value """
+
 PARAMS_VALUE = "params"
 """ The params value """
 
@@ -545,7 +554,7 @@ class SessionManagerMaster(SessionManager):
 
         try:
             # tries to retrieve the session information
-            self._get_session_information(session_information)
+            session_information = self._get_session_information(session_information)
         except business_session_manager_exceptions.InvalidSessionId, exception:
             # creates a new persistent session
             session_information = self.create_persistent_session()
@@ -618,7 +627,16 @@ class SessionManagerMaster(SessionManager):
         first_parameter_map = {}
 
         # sets the session id value in the first parameter map
-        first_parameter_map[SESSION_ID_VALUE] = session_information.session_id
+        first_parameter_map[SESSION_ID_VALUE] = session_information.get_session_id()
+
+        # sets the session creation time value in the first parameter map
+        first_parameter_map[SESSION_CREATION_TIME_VALUE] = session_information.get_session_creation_time()
+
+        # sets the session timeout time value in the first parameter map
+        first_parameter_map[SESSION_TIMEOUT_TIME_VALUE] = session_information.get_session_timeout_time()
+
+        # sets the session information map value in the first parameter map
+        first_parameter_map[SESSION_INFORMATION_MAP_VALUE] = session_information.get_session_information_map()
 
         # creates the parameters list
         return_value[PARAMS_VALUE] = []
@@ -741,26 +759,6 @@ class SessionInformation:
 
         self.session_information_map = {}
 
-    def get_session_id(self):
-        """
-        Retrieves the session id.
-
-        @rtype: String
-        @return: The session id.
-        """
-
-        return self.session_id
-
-    def set_session_id(self, session_id):
-        """
-        Sets the session id.
-
-        @type session_id: String
-        @param session_id: The session id.
-        """
-
-        self.session_id = session_id
-
     def get_session_property(self, property_name):
         """
         Retrieves a session property for the given property name.
@@ -784,3 +782,83 @@ class SessionInformation:
         """
 
         self.session_information_map[property_name] = property_value
+
+    def get_session_id(self):
+        """
+        Retrieves the session id.
+
+        @rtype: String
+        @return: The session id.
+        """
+
+        return self.session_id
+
+    def set_session_id(self, session_id):
+        """
+        Sets the session id.
+
+        @type session_id: String
+        @param session_id: The session id.
+        """
+
+        self.session_id = session_id
+
+    def get_session_creation_time(self):
+        """
+        Retrieves the session creation time.
+
+        @rtype: String
+        @return: The session creation time.
+        """
+
+        return self.session_creation_time
+
+    def set_session_creation_time(self, session_creation_time):
+        """
+        Sets the session creation time.
+
+        @type session_creation_time: String
+        @param session_creation_time: The session creation time.
+        """
+
+        self.session_creation_time = session_creation_time
+
+    def get_session_timeout_time(self):
+        """
+        Retrieves the session creation time.
+
+        @rtype: String
+        @return: The session timeout time.
+        """
+
+        return self.session_timeout_time
+
+    def set_session_timeout_time(self, session_timeout_time):
+        """
+        Sets the session timeout time.
+
+        @type session_timeout_time: String
+        @param session_timeout_time: The session timeout time.
+        """
+
+        self.session_timeout_time = session_timeout_time
+
+    def get_session_information_map(self):
+        """
+        Retrieves the session information map.
+
+        @rtype: Dictionary
+        @return: The session information map.
+        """
+
+        return self.session_information_map
+
+    def set_session_information_map(self, session_information_map):
+        """
+        Sets the session information map.
+
+        @type session_information_map: Dictionary
+        @param session_information_map: The session information map.
+        """
+
+        self.session_information_map = session_information_map
