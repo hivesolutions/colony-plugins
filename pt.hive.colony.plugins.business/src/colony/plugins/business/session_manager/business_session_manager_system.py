@@ -212,6 +212,9 @@ class SessionManager:
     business_logic_class_methods_map = {}
     """ The map associating the business logic classes with their methods """
 
+    current_session_information = None
+    """ The current session information """
+
     def __init__(self, session_name, business_logic_classes_list, business_logic_classes_map, plugin_manager = None, entity_manager = None, random_plugin = None):
         self.session_name = session_name
         self.business_logic_classes_list = business_logic_classes_list
@@ -243,6 +246,11 @@ class SessionManager:
         pass
 
     def instantiate_business_logic(self):
+        """
+        Instantiates the business logic for the current
+        session name.
+        """
+
         # iterates over the business logic classes map
         for business_logic_class_name in self.business_logic_classes_map:
             # retrieves the business logic class
@@ -269,21 +277,38 @@ class SessionManager:
                 business_logic_class_methods_list.append(business_logic_class_method)
 
     def inject_entity_manager(self):
+        """
+        Injects the entity manager in all the business
+        logic classes.
+        """
+
         # iterates over all the business logic classes
         for business_logic_class in self.business_logic_classes_list:
+            # sets the entity manager in the business logic class
             business_logic_class.entity_manager = self.entity_manager
 
     def inject_plugin_manager(self):
+        """
+        Injects the plugin manager in all the business
+        logic classes.
+        """
+
         # iterates over all the business logic classes
         for business_logic_class in self.business_logic_classes_list:
+            # sets the plugin manager in the business logic class
             business_logic_class.plugin_manager = self.plugin_manager
 
     def inject_business_logic(self):
+        """
+        Injects the business logic in the current instance.
+        """
+
         # iterates over the business logic instance map
         for business_logic_instance_name in self.business_logic_instances_map:
             # retrieves the business logic instance
             business_logic_instance = self.business_logic_instances_map[business_logic_instance_name]
 
+            # sets the business logic as an attribute of the current instance
             setattr(self, business_logic_instance_name, business_logic_instance)
 
     def create_persistent_session(self):
@@ -315,6 +340,26 @@ class SessionManager:
 
         # returns the session information
         return session_information
+
+    def get_current_session_information(self):
+        """
+        Retrieves the current session information.
+
+        @rtype: SessionInformation
+        @return: The current session information.
+        """
+
+        return self.current_session_information
+
+    def set_current_session_information(self, current_session_information):
+        """
+        Sets the current session information.
+
+        @type current_session_information: SessionInformation
+        @param current_session_information: The current session information.
+        """
+
+        self.current_session_information = current_session_information
 
 class SessionManagerMaster(SessionManager):
     """
@@ -371,6 +416,7 @@ class SessionManagerMaster(SessionManager):
         Creates a session proxy for the session master.
         """
 
+        # creates a new session proxy
         self.session_proxy = SessionManagerProxy(self)
 
     def register_session_proxy(self, replace_proxy = False):
@@ -378,7 +424,9 @@ class SessionManagerMaster(SessionManager):
         Registers the session proxy in the session serializer.
         """
 
+        # iterates over all the business session serializer plugins
         for business_session_serializer_plugin in self.business_session_serializer_plugins:
+            # adds the session proxy to the business session serializer plugin
             business_session_serializer_plugin.add_session_proxy(self.session_proxy, replace_proxy)
 
     def unregister_session_proxy(self):
@@ -392,12 +440,21 @@ class SessionManagerMaster(SessionManager):
     def start_entity_manager_pool(self, engine_name, pool_size = POOL_SIZE, scheduling_algorithm = SCHEDULING_ALGORITHM, maximum_pool_size = MAX_POOL_SIZE):
         pass
 
-    def start_session_manager_pool(self, session_name, pool_size = POOL_SIZE, scheduling_algorithm = SCHEDULING_ALGORITHM, maximum_pool_size = MAX_POOL_SIZE):
-        # sets the session name
-        self.session_name = session_name
+    def construct_session_manager_pool(self, pool_size = POOL_SIZE, scheduling_algorithm = SCHEDULING_ALGORITHM, maximum_pool_size = MAX_POOL_SIZE):
+        """
+        Constructs the session manager pool, with the given pool size, scheduling algorithm
+        and maximum pool size.
+
+        @type pool_size: int
+        @param pool_size: The size of the pool to be constructed.
+        @type scheduling_algorithm: int
+        @param scheduling_algorithm: The scheduling algorithm to be used.
+        @type maximum_pool_size: int
+        @param maximum_pool_size: The maximum size of the pool to be constructed.
+        """
 
         # creates the session manager pool name
-        session_manager_pool_name = session_name + "/session_manager"
+        session_manager_pool_name = self.session_name + "/session_manager"
 
         # creates the session manager pool description
         session_manager_pool_description = session_manager_pool_name + "/description"
@@ -408,19 +465,39 @@ class SessionManagerMaster(SessionManager):
         # sets the item constructor for the session manager pool
         self.session_manager_pool.set_item_constructor_method(self.item_constructor_method)
 
+        # sets the item destructor for the session manager pool
+        self.session_manager_pool.set_item_destructor_method(self.item_destructor_method)
+
+        # constructs the pool
+        self.session_manager_pool.construct_pool()
+
     def item_constructor_method(self):
-        # tenho de criar um object do tipo session manager
-        # e dar um nome ao mesmo, ou nao !!!
-        # posso usar um contador local para manter o track do nome de cada uma dessas sessoes
-        # tenho de fazer get de um elemento do session manager para meter neste elemento
-        # dependendo do algoritmo pode ser 1-1 ou *-1 (sendo o ultimo para mim melhor)
+        """
+        The method used to construct session manager
+        instances for the pool.
 
-        return object()
+        @rtype: SessionManager
+        @return: The constructed session manager instance.
+        """
 
-    def stop_entity_manager_pool(self):
-        pass
+        # creates a new session manager
+        session_manager = SessionManager(self.session_name, self.business_logic_classes_list, self.business_logic_classes_map, self.plugin_manager, self.entity_manager, self.random_plugin)
 
-    def stop_session_manager_pool(self):
+        # start the session in the session manager
+        session_manager.start_session()
+
+        # returns the session manager
+        return session_manager
+
+    def item_destructor_method(self, session_manager):
+        """
+        The method used to destroy a session manager
+        instance from the pool.
+
+        @rtype: SessionManager
+        @return: The constructed session manager instance.
+        """
+
         pass
 
     def handle_create_persistent_session_request(self, session_information, session_request):
@@ -463,8 +540,17 @@ class SessionManagerMaster(SessionManager):
         @return: The return of the method call.
         """
 
+        # retrieves a session manager from the pool
+        session_manager = self.session_manager_pool.get_pool_item()
+
+        # retrieves the session information
+        session_information = self._get_session_information(session_information)
+
+        # sets the session information in the session manager as the current
+        session_manager.set_current_session_information(session_information)
+
         # retrieves the entity attribute from the instance
-        entity_attribute = getattr(self, session_request.session_entity)
+        entity_attribute = getattr(session_manager, session_request.session_entity)
 
         # retrieves the entity method attribute from the entity attribute
         entity_method_attribute = getattr(entity_attribute, session_request.session_method)
@@ -478,8 +564,31 @@ class SessionManagerMaster(SessionManager):
         # calls the entity method with the method arguments list
         return_value = entity_method_attribute(*session_method_arguments, **session_method_arguments_map)
 
+        # releases the session manager to the pool
+        self.session_manager_pool.release_pool_item(session_manager)
+
         # returns the method return value
         return return_value
+
+    def _get_session_information(self, session_information):
+        """
+        Retrieves the session information from the given session
+        information structure.
+
+        @type session_information: Dictionary
+        @param session_information: The session information structure to retrieve the session information.
+        @rtype: SessionInformation
+        @return: The retrieved session information.
+        """
+
+        # retrieves the session id
+        session_id = session_information.session_id
+
+        # retrieves the session information
+        session_information = self.session_information_registry.get_session_information(session_id)
+
+        # returns the session information
+        return session_information
 
 class SessionManagerProxy:
     """
@@ -531,9 +640,9 @@ class SessionInformationRegistry:
 
     def get_session_information(self, session_id):
         if not session_id in self.session_id_session_information_map:
-            raise business_session_manager_exceptions.InvalidSessionId("session id %s is invalid", session_id)
+            raise business_session_manager_exceptions.InvalidSessionId("session id %s is invalid" % session_id)
 
-        return session_id_session_information_map[session_id]
+        return self.session_id_session_information_map[session_id]
 
     def set_session_information(self, session_id, session_information):
         self.session_id_session_information_map[session_id] = session_information
@@ -565,6 +674,26 @@ class SessionInformation:
         self.session_timeout_time = session_timeout_time
 
         self.session_information_map = {}
+
+    def get_session_id(self):
+        """
+        Retrieves the session id.
+
+        @rtype: String
+        @return: The session id.
+        """
+
+        return self.session_id
+
+    def set_session_id(self, session_id):
+        """
+        Sets the session id.
+
+        @type session_id: String
+        @param session_id: The session id.
+        """
+
+        self.session_id = session_id
 
     def get_session_property(self, property_name):
         return self.session_information_map.get(property_name, None)
