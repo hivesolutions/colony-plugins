@@ -726,6 +726,13 @@ class SessionInformation:
     def __init__(self, session_id, session_creation_time, session_timeout_time):
         """
         Constructor of the class.
+
+        @type session_id: String
+        @param session_id: The session id.
+        @type session_creation_time: float
+        @param session_creation_time: The session creation time.
+        @type session_timeout_time: float
+        @param session_timeout_time: The session timeout time.
         """
 
         self.session_id = session_id
@@ -755,7 +762,25 @@ class SessionInformation:
         self.session_id = session_id
 
     def get_session_property(self, property_name):
+        """
+        Retrieves a session property for the given property name.
+
+        @type property_name: String
+        @param property_name: The property name to retrieve the property.
+        @rtype: Object
+        @return: The session property for the given property name.
+        """
+
         return self.session_information_map.get(property_name, None)
 
     def set_session_property(self, property_name, property_value):
+        """
+        Sets the session property for the given property name.
+
+        @type property_name: String
+        @param property_name: The property name for the property.
+        @type property_value: Object
+        @param property_value: The property value to set.
+        """
+
         self.session_information_map[property_name] = property_value
