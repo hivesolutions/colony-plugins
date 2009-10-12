@@ -37,6 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+HANDLER_NAME = "ldap"
+""" The handler name """
+
 class MainAuthenticationLdapHandler:
     """
     The main authentication ldap handler class.
@@ -54,6 +57,16 @@ class MainAuthenticationLdapHandler:
         """
 
         self.main_authentication_ldap_handler_plugin = main_authentication_ldap_handler_plugin
+
+    def get_handler_name(self):
+        """
+        Retrieves the handler name.
+
+        @rtype: String
+        @return: The handler name.
+        """
+
+        return HANDLER_NAME
 
     def handle_request(self, request):
         """

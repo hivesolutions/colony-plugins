@@ -39,15 +39,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.plugins.plugin_system
 
-class MainAuthenticationLdapHandlerPlugin(colony.plugins.plugin_system.Plugin):
+class MainAuthenticationEntityManagerHandlerPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Authentication Ldap Handler Main plugin.
+    The main class for the Authentication Entity Manager Handler Main plugin.
     """
 
-    id = "pt.hive.colony.plugins.main.authentication.ldap_handler"
-    name = "Authentication Ldap Handler Main Plugin"
-    short_name = "Authentication Ldap Handler Main"
-    description = "Authentication Ldap Handler Plugin"
+    id = "pt.hive.colony.plugins.main.authentication.entity_manager"
+    name = "Authentication Entity Manager Handler Main Plugin"
+    short_name = "Authentication Entity Manager Handler Main"
+    description = "Authentication Entity Manager Handler Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
@@ -58,13 +58,13 @@ class MainAuthenticationLdapHandlerPlugin(colony.plugins.plugin_system.Plugin):
     events_handled = []
     events_registrable = []
 
-    main_authentication_ldap_handler = None
+    main_authentication_entity_manager_handler = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
-        global main_authentication_ldap_handler
-        import main_authentication_ldap_handler.ldap_handler.main_authentication_ldap_handler_system
-        self.main_authentication_ldap_handler = main_authentication_ldap_handler.ldap_handler.main_authentication_ldap_handler_system.MainAuthenticationLdapHandler(self)
+        global main_authentication_entity_manager_handler
+        import main_authentication_entity_manager_handler.entity_manager_handler.main_authentication_entity_manager_handler_system
+        self.main_authentication_entity_manager_handler = main_authentication_entity_manager_handler.entity_manager_handler.main_authentication_entity_manager_handler_system.MainAuthenticationEntityManagerHandler(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -85,7 +85,7 @@ class MainAuthenticationLdapHandlerPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_handler_name(self):
-        return self.self.main_authentication_ldap_handler.get_handler_name()
+        return self.self.main_authentication_entity_manager_handler.get_handler_name()
 
     def handle_request(self, request):
-        self.main_authentication_ldap_handler.handle_request(request)
+        self.main_authentication_entity_manager_handler.handle_request(request)

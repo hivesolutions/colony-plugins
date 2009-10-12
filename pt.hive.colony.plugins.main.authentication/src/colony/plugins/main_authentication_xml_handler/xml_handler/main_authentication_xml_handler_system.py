@@ -37,6 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+HANDLER_NAME = "xml"
+""" The handler name """
+
 class MainAuthenticationXmlHandler:
     """
     The main authentication xml handler class.
@@ -54,6 +57,16 @@ class MainAuthenticationXmlHandler:
         """
 
         self.main_authentication_xml_handler_plugin = main_authentication_xml_handler_plugin
+
+    def get_handler_name(self):
+        """
+        Retrieves the handler name.
+
+        @rtype: String
+        @return: The handler name.
+        """
+
+        return HANDLER_NAME
 
     def handle_request(self, request):
         """
