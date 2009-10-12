@@ -78,25 +78,34 @@ class MainServiceHttpColonyHandler:
             # iterates over all the http python handler plugins
             for http_python_handler_plugin in self.main_service_http_colony_handler_plugin.http_python_handler_plugins:
                 if http_python_handler_plugin.id == plugin_handler_id:
-                    # handles the request by the http python handler plugin
-                    http_python_handler_plugin.handle_request(request)
+                    # handles the request by the http python handler plugin and
+                    # retrieves the return value
+                    return_value = http_python_handler_plugin.handle_request(request)
 
                     # in case no status code is defined
                     if not request.status_code:
-                        # sets the default request status code
-                        request.status_code = 200
-
+                        if return_value:
+                            # sets the default request status code
+                            request.status_code = 200
+                        else:
+                            # sets the default error request status code
+                            request.status_code = 500
                     return
         else:
             # iterates over all the http python handler plugins
             for http_python_handler_plugin in self.main_service_http_colony_handler_plugin.http_python_handler_plugins:
                 if http_python_handler_plugin.is_request_handler(request):
-                    # handles the request by the http python handler plugin
-                    http_python_handler_plugin.handle_request(request)
+                    # handles the request by the http python handler plugin and
+                    # retrieves the return value
+                    return_value = http_python_handler_plugin.handle_request(request)
 
                     # in case no status code is defined
                     if not request.status_code:
-                        # sets the default request status code
-                        request.status_code = 200
+                        if return_value:
+                            # sets the default request status code
+                            request.status_code = 200
+                        else:
+                            # sets the default error request status code
+                            request.status_code = 500
 
                     return

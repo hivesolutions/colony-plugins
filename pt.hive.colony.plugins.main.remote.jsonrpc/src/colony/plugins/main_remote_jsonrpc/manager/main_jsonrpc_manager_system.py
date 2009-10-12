@@ -37,6 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import sys
+import traceback
+import cStringIO
+
 import main_jsonrpc_manager_serializer
 import main_jsonrpc_manager_exceptions
 
@@ -116,9 +120,30 @@ class MainJsonrpcManager:
                 result = None
                 error = main_jsonrpc_manager_exceptions.InvalidNumberArguments("The number of sent arguments is " + str(number_parameters) + ", expected " + str(rpc_method_number_arguments))
             else:
-                # calls the rpc method with the given arguments
-                result = rpc_method(*parameters)
-                error = None
+                try:
+                    # calls the rpc method with the given arguments
+                    result = rpc_method(*parameters)
+                    error = None
+                except Exception, exception:
+                    result = None
+                    error = exception
+
+                    # creates the traceback buffer
+                    traceback_buffer = cStringIO.StringIO()
+
+                    # writes the traceback in the request
+                    formated_traceback = traceback.format_tb(sys.exc_traceback)
+
+                    # iterates over the traceback lines
+                    for formated_traceback_line in formated_traceback:
+                        # writes the traceback line to the traceback buffer
+                        traceback_buffer.write(formated_traceback_line)
+
+                    # retrieves the traceback value
+                    traceback_value = traceback_buffer.getvalue()
+
+                    # sets traceback value in the error
+                    error.traceback = traceback_value
         # in case the method name is not valid
         else:
             result = None
@@ -135,6 +160,15 @@ class MainJsonrpcManager:
 
         # flushes the request, sending the output to the client
         request.flush()
+
+        # in case there is an error defined
+        if error:
+            # returns false
+            return False
+        # in case there is no error defined
+        else:
+            # returns true
+            return True
 
     def is_active(self):
         # retrieves the plugin manager
@@ -291,7 +325,7 @@ class MainJsonrpcManager:
 
         # in case there is an error
         if not error == None:
-            error = {"name" : error.__class__.__name__, "message" : error.message}
+            error = {"name" : error.__class__.__name__, "message" : error.message, "traceback" : error.traceback}
             data = main_jsonrpc_manager_serializer.dumps({"result" : None, "id" : id_, "error" : error})
             return data
 
