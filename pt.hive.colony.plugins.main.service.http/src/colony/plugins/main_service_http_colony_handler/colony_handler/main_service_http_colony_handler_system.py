@@ -69,25 +69,34 @@ class MainServiceHttpColonyHandler:
         return HANDLER_NAME
 
     def handle_request(self, request):
+        # in case the plugin handler value is defined in
+        # the properties
         if PLUGIN_HANDLER_VALUE in request.properties:
+            # retrieves the plugin handler id for the plugin handler value
             plugin_handler_id = request.properties[PLUGIN_HANDLER_VALUE]
 
             # iterates over all the http python handler plugins
             for http_python_handler_plugin in self.main_service_http_colony_handler_plugin.http_python_handler_plugins:
                 if http_python_handler_plugin.id == plugin_handler_id:
+                    # handles the request by the http python handler plugin
                     http_python_handler_plugin.handle_request(request)
 
-                    # sets the request status code
-                    request.status_code = 200
+                    # in case no status code is defined
+                    if not request.status_code:
+                        # sets the default request status code
+                        request.status_code = 200
 
                     return
         else:
             # iterates over all the http python handler plugins
             for http_python_handler_plugin in self.main_service_http_colony_handler_plugin.http_python_handler_plugins:
                 if http_python_handler_plugin.is_request_handler(request):
+                    # handles the request by the http python handler plugin
                     http_python_handler_plugin.handle_request(request)
 
-                    # sets the request status code
-                    request.status_code = 200
+                    # in case no status code is defined
+                    if not request.status_code:
+                        # sets the default request status code
+                        request.status_code = 200
 
                     return
