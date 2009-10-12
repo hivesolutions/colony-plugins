@@ -206,6 +206,9 @@ class TemplateHandler:
         # interprets the file
         self.interpret_file(complete_path, request)
 
+        # returns true
+        return True
+
     def interpret_file(self, file_path, request):
         """
         Interprets the file with the given path in colony template.

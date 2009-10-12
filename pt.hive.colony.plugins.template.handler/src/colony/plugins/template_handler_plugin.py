@@ -96,7 +96,7 @@ class TemplateHandlerPlugin(colony.plugins.plugin_system.Plugin):
         return self.template_handler.is_request_handler(request)
 
     def handle_request(self, request):
-        self.template_handler.handle_request(request)
+        return self.template_handler.handle_request(request)
 
     @colony.plugins.decorators.load_allowed_capability("template_handler_extension")
     def template_handler_extension_load_allowed(self, plugin, capability):
