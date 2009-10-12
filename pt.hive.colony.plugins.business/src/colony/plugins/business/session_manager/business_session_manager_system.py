@@ -60,6 +60,12 @@ GET_SESSION_METHODS_TYPE_VALUE = "get_session_methods"
 CALL_SESSION_METHOD_TYPE_VALUE = "call_session_method"
 """ The call session method type value """
 
+SESSION_ID_VALUE = "session_id"
+""" The session id value """
+
+PARAMS_VALUE = "params"
+""" The params value """
+
 DEFAULT_PERSISTENT_SESSION_TIMEOUT = 86400
 """ The default persistent session timeout """
 
@@ -512,7 +518,15 @@ class SessionManagerMaster(SessionManager):
         @return: The created session information.
         """
 
-        return self.create_persistent_session()
+        # creates the persistent session and retrieves
+        # the session information
+        session_information = self.create_persistent_session()
+
+        # creates the return value
+        return_value = self._create_return_value({"session_information" : session_information}, session_information)
+
+        # returns the return value
+        return return_value
 
     def handle_get_session_methods_request(self, session_information, session_request):
         """
@@ -526,7 +540,18 @@ class SessionManagerMaster(SessionManager):
         @return: The list with all the session methods.
         """
 
-        return self.business_logic_class_methods_map
+        try:
+            # tries to retrieve the session information
+            self._get_session_information(session_information)
+        except business_session_manager_exceptions.InvalidSessionId, exception:
+            # creates a new persistent session
+            session_information = self.create_persistent_session()
+
+        # creates the return value
+        return_value = self._create_return_value({"session_methods" : self.business_logic_class_methods_map}, session_information)
+
+        # returns the return value
+        return return_value
 
     def handle_call_method_request(self, session_information, session_request):
         """
@@ -567,7 +592,38 @@ class SessionManagerMaster(SessionManager):
         # releases the session manager to the pool
         self.session_manager_pool.release_pool_item(session_manager)
 
-        # returns the method return value
+        # creates the return value
+        return_value = self._create_return_value({"return_value" : return_value}, session_information)
+
+        # returns the return value
+        return return_value
+
+    def _create_return_value(self, return_value, session_information):
+        """
+        Creates the return value from an original return value
+        and a session information.
+
+        @type return_value: Dictionary
+        @param return_value: The original return value.
+        @type session_information: SessionInformation
+        @param session_information: The session information to be used in the creation of the return value.
+        @rtype: Dictionary
+        @return: The created return value.
+        """
+
+        # creates the first parameter map
+        first_parameter_map = {}
+
+        # sets the session id value in the first parameter map
+        first_parameter_map[SESSION_ID_VALUE] = session_information.session_id
+
+        # creates the parameters list
+        return_value[PARAMS_VALUE] = []
+
+        # appends the first parameter to the parameters
+        return_value[PARAMS_VALUE].append(first_parameter_map)
+
+        # returns the return value
         return return_value
 
     def _get_session_information(self, session_information):
