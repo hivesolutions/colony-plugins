@@ -71,7 +71,37 @@ class MainAuthentication:
         @return: The authentication return value.
         """
 
-        return "tobias"
+        # creates the authentication request object
+        authentication_request = AuthenticationRequest()
+
+        # sets the username in the authentication request
+        authentication_request.set_username(username)
+
+        # sets the password in the authentication request
+        authentication_request.set_password(password)
+
+        # sets the authentication handler in the authentication request
+        authentication_request.set_authentication_handler(authentication_handler)
+
+        # sets the arguments in the authentication request
+        authentication_request.set_arguments(arguments)
+
+        # iterates over all the authentication handler plugins
+        for authentication_handler_plugin in self.main_authentication_plugin.authentication_handler_plugins:
+            # retrieves the authentication handler plugin handler name
+            authentication_handler_plugin_handler_name = authentication_handler_plugin.get_handler_name()
+
+            # in case the handler name is the same as the authentication
+            # handler value
+            if authentication_handler_plugin_handler_name == authentication_handler:
+                # handles the authentication request retrieving the return value
+                return_value = authentication_handler_plugin.handle_request(authentication_request)
+
+                # returns the return value
+                return return_value
+
+        # returns invalid value
+        return None
 
     def process_authentication_string(self, authentication_string):
         """
@@ -84,3 +114,130 @@ class MainAuthentication:
         """
 
         pass
+
+class AuthenticationRequest:
+    """
+    The authentication request class.
+    """
+
+    username = "none"
+    """ The username """
+
+    password = "none"
+    """ The password """
+
+    authentication_string = "none"
+    """ The authentication string """
+
+    authentication_handler = "none"
+    """ The authentication handler """
+
+    arguments = None
+    """ The request arguments """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        pass
+
+    def get_username(self):
+        """
+        Retrieves the username.
+
+        @rtype: String
+        @return: The username.
+        """
+
+        return self.username
+
+    def set_username(self, username):
+        """
+        Sets the username.
+
+        @type username: String
+        @rtype: The username.
+        """
+
+        self.username = username
+
+    def get_password(self):
+        """
+        Retrieves the password.
+
+        @rtype: String
+        @return: The password.
+        """
+
+        return self.password
+
+    def set_password(self, password):
+        """
+        Sets the password.
+
+        @type password: String
+        @param password: The password.
+        """
+
+        self.password = password
+
+    def get_authentication_string(self):
+        """
+        Retrieves the authentication string.
+
+        @rtype: String
+        @return: The authentication string.
+        """
+
+        return self.authentication_string
+
+    def set_authentication_string(self, authentication_string):
+        """
+        Sets the authentication string.
+
+        @type authentication_string: String
+        @param authentication_string: The authentication string.
+        """
+
+        self.authentication_string = authentication_string
+
+    def get_authentication_handler(self):
+        """
+        Retrieves the authentication handler.
+
+        @rtype: String
+        @return: The authentication handler.
+        """
+
+        return self.authentication_handler
+
+    def set_authentication_handler(self, authentication_handler):
+        """
+        Sets the authentication handler.
+
+        @type authentication_handler: String
+        @param authentication_handler: The authentication handler.
+        """
+
+        self.authentication_handler = authentication_handler
+
+    def set_arguments(self, arguments):
+        """
+        Sets the arguments.
+
+        @type arguments: Dictionary
+        @param arguments: The arguments.
+        """
+
+        self.arguments = arguments
+
+    def get_arguments(self):
+        """
+        Retrieves the arguments.
+
+        @rtype: Dictionary
+        @return: The arguments.
+        """
+
+        return self.arguments

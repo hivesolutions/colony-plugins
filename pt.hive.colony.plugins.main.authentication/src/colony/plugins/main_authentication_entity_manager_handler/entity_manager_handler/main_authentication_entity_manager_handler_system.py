@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import hashlib
+
 HANDLER_NAME = "entity_manager"
 """ The handler name """
 
@@ -76,4 +78,55 @@ class MainAuthenticationEntityManagerHandler:
         @param request: The authentication request to be handled.
         """
 
-        pass
+        # retrieves the request username
+        username = request.get_username()
+
+        # retrieves the request password
+        password = request.get_password()
+
+        # retrieves the request arguments
+        arguments = request.get_arguments()
+
+        # retrieves the entity manager
+        entity_manager = arguments["entity_manager"]
+
+        # retrieves the login entity name
+        login_entity_name = arguments["login_entity_name"]
+
+        # retrieves the password hash type
+        password_hash_type = arguments["password_hash_type"]
+
+        # @todo: put this to work with hash values
+        # creates a new password hash
+        password_hash = hashlib.new(password_hash_type)
+
+        # updates the password hash
+        password_hash.update(password)
+
+        # retrieves the password hash value
+        password_hash_value = password_hash.hexdigest()
+
+        # retrieves the login entity class
+        login_entity_class = entity_manager.get_entity_class(login_entity_name)
+
+        # creates the find options
+        find_options = {"filters" : [{"filter_type" : "equals",
+                              "filter_fields" : [{"field_name" : "username",
+                                                  "field_value" : username}]},
+                             {"filter_type" : "equals",
+                              "filter_fields" : [{"field_name" : "password_hash",
+                                                  "field_value" : password}]}]}
+
+        # finds all options in the entity manager
+        user_entities = entity_manager._find_all_options(login_entity_class, find_options)
+
+        # in case there are user entities defined
+        if user_entities:
+            # creates the return value
+            return_value = {"username" : username,
+                            "valid" : True}
+
+            # returns the return value
+            return return_value
+
+        return None

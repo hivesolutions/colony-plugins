@@ -85,7 +85,7 @@ class MainAuthenticationXmlHandlerPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_handler_name(self):
-        return self.self.main_authentication_ldap_handler.get_handler_name()
+        return self.main_authentication_ldap_handler.get_handler_name()
 
     def handle_request(self, request):
         main_authentication_xml_handler.handle_request(request)
