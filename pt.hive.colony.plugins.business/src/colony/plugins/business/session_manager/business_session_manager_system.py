@@ -69,7 +69,7 @@ SESSION_CREATION_TIME_VALUE = "session_creation_time"
 SESSION_TIMEOUT_TIME_VALUE = "session_timeout_time"
 """ The session timeout time value """
 
-SESSION_INFORMATION_MAP_VALUE = "session_properties"
+SESSION_INFORMATION_MAP_VALUE = "session_information_map"
 """ The session information map value """
 
 PARAMS_VALUE = "params"
