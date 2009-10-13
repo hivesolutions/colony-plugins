@@ -39,8 +39,19 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import hashlib
 
+import main_authentication_entity_manager_handler_exceptions
+
 HANDLER_NAME = "entity_manager"
 """ The handler name """
+
+ENTITY_MANAGER_VALUE = "entity_manager"
+""" The entity manager value """
+
+LOGIN_ENTITY_NAME_VALUE = "login_entity_name"
+""" The login entity name value """
+
+PASSWORD_HASH_TYPE_VALUE = "password_hash_type"
+""" The password hash type value """
 
 class MainAuthenticationEntityManagerHandler:
     """
@@ -87,24 +98,36 @@ class MainAuthenticationEntityManagerHandler:
         # retrieves the request arguments
         arguments = request.get_arguments()
 
+        # in case the entity manager in not defined in arguments
+        if not ENTITY_MANAGER_VALUE in arguments:
+            # raises an exception
+            raise main_authentication_entity_manager_handler_exceptions.MissingArgument(ENTITY_MANAGER_VALUE)
+
+        # in case the local entity name value in not defined in arguments
+        if not LOGIN_ENTITY_NAME_VALUE in arguments:
+            # raises an exception
+            raise main_authentication_entity_manager_handler_exceptions.MissingArgument(LOGIN_ENTITY_NAME_VALUE)
+
         # retrieves the entity manager
-        entity_manager = arguments["entity_manager"]
+        entity_manager = arguments[ENTITY_MANAGER_VALUE]
 
         # retrieves the login entity name
-        login_entity_name = arguments["login_entity_name"]
+        login_entity_name = arguments[LOGIN_ENTITY_NAME_VALUE]
 
         # retrieves the password hash type
-        password_hash_type = arguments["password_hash_type"]
+        password_hash_type = arguments.get(PASSWORD_HASH_TYPE_VALUE, None)
 
-        # @todo: put this to work with hash values
-        # creates a new password hash
-        password_hash = hashlib.new(password_hash_type)
+        # in case the hash type is defined
+        if password_hash_type:
+            # @todo: put this to work with hash values
+            # creates a new password hash
+            password_hash = hashlib.new(password_hash_type)
 
-        # updates the password hash
-        password_hash.update(password)
+            # updates the password hash
+            password_hash.update(password)
 
-        # retrieves the password hash value
-        password_hash_value = password_hash.hexdigest()
+            # retrieves the password hash value
+            password_hash_value = password_hash.hexdigest()
 
         # retrieves the login entity class
         login_entity_class = entity_manager.get_entity_class(login_entity_name)
