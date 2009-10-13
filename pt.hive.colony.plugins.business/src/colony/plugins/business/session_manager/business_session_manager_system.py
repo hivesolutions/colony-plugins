@@ -57,6 +57,12 @@ CREATE_PERSISTENT_SESSION_TYPE_VALUE = "create_persistent_session"
 GET_SESSION_METHODS_TYPE_VALUE = "get_session_methods"
 """ The get session methods type value """
 
+UPDATE_SESSION_INFORMATION_TYPE_VALUE = "update_session_information"
+""" The update session information type value """
+
+FLUSH_SESSION_INFORMATION_TYPE_VALUE = "flush_session_information"
+""" The flush session information type value """
+
 CALL_SESSION_METHOD_TYPE_VALUE = "call_session_method"
 """ The call session method type value """
 
@@ -526,8 +532,8 @@ class SessionManagerMaster(SessionManager):
         @param session_information: The session information object.
         @type session_request: SessionRequest
         @param session_request: The session request object.
-        @rtype: SessionInformation
-        @return: The created session information.
+        @rtype: Dictionary
+        @return: The return value.
         """
 
         # creates the persistent session and retrieves
@@ -548,8 +554,8 @@ class SessionManagerMaster(SessionManager):
         @param session_information: The session information object.
         @type session_request: SessionRequest
         @param session_request: The session request object.
-        @rtype: List
-        @return: The list with all the session methods.
+        @rtype: Dictionary
+        @return: The return value.
         """
 
         try:
@@ -565,6 +571,48 @@ class SessionManagerMaster(SessionManager):
         # returns the return value
         return return_value
 
+    def handle_update_session_information_request(self, session_information, session_request):
+        """
+        The handler for the update session information request.
+
+        @type session_information: SessionInformation
+        @param session_information: The session information object.
+        @type session_request: SessionRequest
+        @param session_request: The session request object.
+        @rtype: Dictionary
+        @return: The return value.
+        """
+
+        # retrieves the session information
+        session_information = self._get_session_information(session_information)
+
+        # creates the return value
+        return_value = self._create_return_value({"session_information" : session_information}, session_information)
+
+        # returns the return value
+        return return_value
+
+    def handle_flush_session_information_request(self, session_information, session_request):
+        """
+        The handler for the flush session information request.
+
+        @type session_information: SessionInformation
+        @param session_information: The session information object.
+        @type session_request: SessionRequest
+        @param session_request: The session request object.
+        @rtype: Dictionary
+        @return: The return value.
+        """
+
+        # retrieves the session information
+        session_information = self._get_session_information(session_information)
+
+        # creates the return value
+        return_value = self._create_return_value({"session_information" : session_information}, session_information)
+
+        # returns the return value
+        return return_value
+
     def handle_call_method_request(self, session_information, session_request):
         """
         The handler for the call method request.
@@ -573,8 +621,8 @@ class SessionManagerMaster(SessionManager):
         @param session_information: The session information object.
         @type session_request: SessionRequest
         @param session_request: The session request object.
-        @rtype: Object
-        @return: The return of the method call.
+        @rtype: Dictionary
+        @return: The return value.
         """
 
         # retrieves a session manager from the pool
@@ -697,6 +745,10 @@ class SessionManagerProxy:
             return self.session_manager.handle_create_persistent_session_request(session_information, session_request)
         elif session_request.session_request_type == GET_SESSION_METHODS_TYPE_VALUE:
             return self.session_manager.handle_get_session_methods_request(session_information, session_request)
+        elif session_request.session_request_type == UPDATE_SESSION_INFORMATION_TYPE_VALUE:
+            return self.session_manager.handle_update_session_information_request(session_information, session_request)
+        elif session_request.session_request_type == FLUSH_SESSION_INFORMATION_TYPE_VALUE:
+            return self.session_manager.handle_flush_session_information_request(session_information, session_request)
         elif session_request.session_request_type == CALL_SESSION_METHOD_TYPE_VALUE:
             return self.session_manager.handle_call_method_request(session_information, session_request)
 

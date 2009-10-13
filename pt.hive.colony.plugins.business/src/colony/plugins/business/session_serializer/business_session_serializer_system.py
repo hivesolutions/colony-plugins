@@ -51,6 +51,12 @@ CREATE_PERSISTENT_SESSION_TYPE_VALUE = "create_persistent_session"
 GET_SESSION_METHODS_TYPE_VALUE = "get_session_methods"
 """ The get session methods type value """
 
+UPDATE_SESSION_INFORMATION_TYPE_VALUE = "update_session_information"
+""" The update session information type value """
+
+FLUSH_SESSION_INFORMATION_TYPE_VALUE = "flush_session_information"
+""" The flush session information type value """
+
 CALL_SESSION_METHOD_TYPE_VALUE = "call_session_method"
 """ The call session method type value """
 
@@ -153,6 +159,52 @@ class BusinessSessionSerializer:
         # for handling
         return session_proxy.handle_request(session_information_structure, session_request_structure)
 
+    def update_session_information(self, session_information):
+        # prints the debug message
+        self.business_session_serializer_plugin.debug("Received session information update request")
+
+        # retrieves the session name
+        session_name = session_information[SESSION_NAME_VALUE]
+
+        # retrieves the session proxy
+        session_proxy = self.get_session_proxy(session_name)
+
+        # creates the session information entity
+        session_information_structure = SessionInformation()
+
+        # populates the session information entity from the session information map
+        session_information_structure.convert_from_map(session_information)
+
+        # creates the session request entity
+        session_request_structure = UpdateSessionInformationSessionRequest()
+
+        # send the session information and session request to the session proxy
+        # for handling
+        return session_proxy.handle_request(session_information_structure, session_request_structure)
+
+    def flush_session_information(self, session_information):
+        # prints the debug message
+        self.business_session_serializer_plugin.debug("Received session information flush request")
+
+        # retrieves the session name
+        session_name = session_information[SESSION_NAME_VALUE]
+
+        # retrieves the session proxy
+        session_proxy = self.get_session_proxy(session_name)
+
+        # creates the session information entity
+        session_information_structure = SessionInformation()
+
+        # populates the session information entity from the session information map
+        session_information_structure.convert_from_map(session_information)
+
+        # creates the session request entity
+        session_request_structure = FlushSessionInformationSessionRequest()
+
+        # send the session information and session request to the session proxy
+        # for handling
+        return session_proxy.handle_request(session_information_structure, session_request_structure)
+
     def call_session_method(self, session_information, session_entity, session_method, session_method_arguments, session_method_arguments_map):
         # prints the debug message
         self.business_session_serializer_plugin.debug("Received session method call request, session: %s, entity: %s, method: %s" % (str(session_information), session_entity, session_method))
@@ -232,6 +284,22 @@ class GetSessionMethodsSessionRequest(SessionRequest):
 
     def __init__(self):
         SessionRequest.__init__(self, GET_SESSION_METHODS_TYPE_VALUE)
+
+class UpdateSessionInformationSessionRequest(SessionRequest):
+    """
+    The update session information session request class.
+    """
+
+    def __init__(self):
+        SessionRequest.__init__(self, UPDATE_SESSION_INFORMATION_TYPE_VALUE)
+
+class FlushSessionInformationSessionRequest(SessionRequest):
+    """
+    The flush session information session request class.
+    """
+
+    def __init__(self):
+        SessionRequest.__init__(self, FLUSH_SESSION_INFORMATION_TYPE_VALUE)
 
 class CallSessionMethodSessionRequest(SessionRequest):
     """
