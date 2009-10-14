@@ -250,10 +250,14 @@ def loads(s):
             while(c in [" ", "\t", "\r", "\n"]):
                 c = chars.next()
             curr_char_is_next = False
+
+            # in case it's the beginning of a string
             if c == "\"":
                 value = ""
                 try:
                     c = chars.next()
+
+                    # iterates while the string is not finished
                     while c != "\"":
                         if c == "\\":
                             c = chars.next()
