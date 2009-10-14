@@ -46,6 +46,8 @@ def entity_validator_has_all_attributes(data_converter, configuration, input_int
 
     @type data_converter: DataConverter
     @param data_converter: The data converter.
+    @type configuration: DataConverterConfiguration
+    @param configuration: The data converter configuration being used.
     @type input_intermediate_structure: IntermediateStructure
     @param input_intermediate_structure: Intermediate structure
     where data is converted from.
@@ -77,6 +79,8 @@ def entity_validator_has_any_attribute(data_converter, configuration, input_inte
 
     @type data_converter: DataConverter
     @param data_converter: The data converter.
+    @type configuration: DataConverterConfiguration
+    @param configuration: The data converter configuration being used.
     @type input_intermediate_structure: IntermediateStructure
     @param input_intermediate_structure: Intermediate structure
     where data is converted from.
@@ -97,7 +101,7 @@ def entity_validator_has_any_attribute(data_converter, configuration, input_inte
 
     return bool(attribute_values)
 
-def entity_validator_has_all_attribute_values(data_converter, input_intermediate_structure, input_entity, arguments):
+def entity_validator_has_all_attribute_values(data_converter, configuration, input_intermediate_structure, input_entity, arguments):
     """
     Validator used to verify if the input entity has all of the
     specified attribute values.
@@ -166,6 +170,8 @@ def entity_validator_has_all_attribute_values_in_list(data_converter, configurat
 
     @type data_converter: DataConverter
     @param data_converter: The data converter.
+    @type configuration: DataConverterConfiguration
+    @param configuration: The data converter configuration being used.
     @type input_intermediate_structure: IntermediateStructure
     @param input_intermediate_structure: Intermediate structure
     where data is converted from.
