@@ -62,7 +62,8 @@ class MainAuthenticationLogicPlugin(colony.plugins.plugin_system.Plugin):
     events_handled = []
     events_registrable = []
     main_modules = ["main_authentication_logic.authentication_logic.main_authentication_logic_classes",
-                    "main_authentication_logic.authentication_logic.main_authentication_logic_system"]
+                    "main_authentication_logic.authentication_logic.main_authentication_logic_system",
+                    "main_authentication_logic.authentication_logic.main_authentication_logic_exceptions"]
 
     main_authentication_logic = None
 
