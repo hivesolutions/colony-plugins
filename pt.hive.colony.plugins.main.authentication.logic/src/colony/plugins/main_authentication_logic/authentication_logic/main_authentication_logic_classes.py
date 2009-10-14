@@ -37,6 +37,12 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import main_authentication_logic_exceptions
+
+ENTITY_MANAGER_VALUE = "entity_manager"
+
+USER_VALUE = "User"
+
 MAIN_AUTHENTICATION_PLUGIN_ID = "pt.hive.colony.plugins.main.authentication"
 """ The main authentication plugin id """
 
@@ -48,24 +54,20 @@ class AuthenticationLogic:
 
         # raises an exception in case the plugin was not found
         if not main_authentication_plugin:
-            # @todo: create exception class
-            raise Exception("Main authentication plugin not found")
+            raise main_authentication_logic_exceptions.MainAuthenticationLogicException("Main authentication plugin not found")
 
-        # in case the arguments are not defined
+        # creates the arguments map in case it is not defined
         if not arguments:
-            # creates the arguments map
             arguments = {}
 
         # sets the entity manager in the arguments map
         arguments["entity_manager"] = self.entity_manager
 
         # sets the login entity name in the arguments map
-        # @todo: put this as a constant
-        arguments["login_entity_name"] = "User"
+        arguments["login_entity_name"] = USER_VALUE
 
         # authenticates the user retrieving the authentication result
-        # @todo: put the entity_manager string as a constant
-        authentication_result = main_authentication_plugin.authenticate_user(username, password, "entity_manager", arguments)
+        authentication_result = main_authentication_plugin.authenticate_user(username, password, ENTITY_MANAGER_VALUE, arguments)
 
         # in case the authentication result was valid
         if authentication_result:
@@ -84,8 +86,7 @@ class AuthenticationLogic:
 
         # raises an exception in case the plugin was not found
         if not main_authentication_plugin:
-            # @todo: create exception class
-            raise Exception("Main authentication plugin not found")
+            raise main_authentication_logic_exceptions.MainAuthenticationLogicException("Main authentication plugin not found")
 
         # authenticates the user retrieving the authentication result
         authentication_result = main_authentication_plugin.process_authentication_string(authentication_string)
