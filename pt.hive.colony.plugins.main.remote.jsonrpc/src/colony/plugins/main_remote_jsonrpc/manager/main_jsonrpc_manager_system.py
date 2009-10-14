@@ -56,6 +56,21 @@ APACHE_CONTAINER = "apache"
 HANDLER_NAME = "jsonrpc"
 """ The handler name """
 
+PARSE_ERROR_CODE_VALUE = -32700
+""" The parse error code value """
+
+INVALID_REQUEST_CODE_VALUE = -32600
+""" The invalid request code value """
+
+METHOD_NOT_FOUND_CODE_VALUE = -32601
+""" The method not found code value """
+
+INVALID_PARAMS_CODE_VALUE = -32602
+""" The invalid params code value """
+
+INTERNAL_ERROR_CODE_VALUE = -32603
+""" The internal error code value """
+
 class MainJsonrpcManager:
 
     main_jsonrpc_manager_plugin = None
@@ -319,14 +334,14 @@ class MainJsonrpcManager:
 
         # in case there is an error
         if not error == None:
-            error = {"name" : error.__class__.__name__, "message" : error.message, "traceback" : error.traceback}
+            error = {"code" : INTERNAL_ERROR_CODE_VALUE, "message" : error.message, "data" : {"traceback" : error.traceback, "name" : error.__class__.__name__}}
             data = main_jsonrpc_manager_serializer.dumps({"result" : None, "id" : id_, "error" : error})
             return data
 
         try:
             data = main_jsonrpc_manager_serializer.dumps({"result" : result, "id" : id_, "error" : error})
         except main_jsonrpc_manager_exceptions.JsonEncodeException, exception:
-            error = {"name" : "JsonEncodeException", "message" : "Result Object Not Serializable"}
+            error = {"code" : INTERNAL_ERROR_CODE_VALUE, "message" : "Result Object Not Serializable", "data" : {"name" : "JsonEncodeException"}}
             data = main_jsonrpc_manager_serializer.dumps({"result" : None, "id" : id_, "error" : error})
 
         # returns the json data
