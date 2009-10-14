@@ -58,7 +58,9 @@ class MainAuthenticationLogicPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.business.entity_manager", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.business.helper", "1.0.0")]
+                    "pt.hive.colony.plugins.business.helper", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.main.authentication", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["main_authentication_logic.authentication_logic.main_authentication_logic_classes",
@@ -72,6 +74,9 @@ class MainAuthenticationLogicPlugin(colony.plugins.plugin_system.Plugin):
 
     business_helper_plugin = None
     """ The business helper plugin """
+
+    main_authentication_plugin = None
+    """ The main authentication plugin """
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -118,3 +123,10 @@ class MainAuthenticationLogicPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.business.helper")
     def set_business_helper_plugin(self, business_helper_plugin):
         self.business_helper_plugin = business_helper_plugin
+
+    def get_main_authentication_plugin(self):
+        return self.main_authentication_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.authentication")
+    def set_main_authentication_plugin(self, main_authentication_plugin):
+        self.main_authentication_plugin = main_authentication_plugin
