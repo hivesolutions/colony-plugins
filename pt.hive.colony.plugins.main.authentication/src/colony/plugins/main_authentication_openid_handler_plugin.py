@@ -88,4 +88,4 @@ class MainAuthenticationOpenidHandlerPlugin(colony.plugins.plugin_system.Plugin)
         return self.main_authentication_ldap_handler.get_handler_name()
 
     def handle_request(self, request):
-        main_authentication_openid_handler.handle_request(request)
+        return main_authentication_openid_handler.handle_request(request)

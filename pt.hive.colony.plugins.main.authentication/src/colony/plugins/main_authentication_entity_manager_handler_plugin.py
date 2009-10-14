@@ -88,4 +88,4 @@ class MainAuthenticationEntityManagerHandlerPlugin(colony.plugins.plugin_system.
         return self.main_authentication_entity_manager_handler.get_handler_name()
 
     def handle_request(self, request):
-        self.main_authentication_entity_manager_handler.handle_request(request)
+        return self.main_authentication_entity_manager_handler.handle_request(request)
