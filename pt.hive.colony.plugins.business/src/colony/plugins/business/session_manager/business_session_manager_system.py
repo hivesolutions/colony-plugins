@@ -604,8 +604,14 @@ class SessionManagerMaster(SessionManager):
         @return: The return value.
         """
 
+        # retrieves the session information map
+        session_information_map = session_information.session_information_map
+
         # retrieves the session information
         session_information = self._get_session_information(session_information)
+
+        # sets the session information map in the session information
+        session_information.set_session_information_map(session_information_map);
 
         # creates the return value
         return_value = self._create_return_value({"session_information" : session_information}, session_information)
