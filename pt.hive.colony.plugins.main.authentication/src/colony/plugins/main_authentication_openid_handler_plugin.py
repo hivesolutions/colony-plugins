@@ -85,7 +85,7 @@ class MainAuthenticationOpenidHandlerPlugin(colony.plugins.plugin_system.Plugin)
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_handler_name(self):
-        return self.main_authentication_ldap_handler.get_handler_name()
+        return self.main_authentication_openid_handler.get_handler_name()
 
     def handle_request(self, request):
         return main_authentication_openid_handler.handle_request(request)
