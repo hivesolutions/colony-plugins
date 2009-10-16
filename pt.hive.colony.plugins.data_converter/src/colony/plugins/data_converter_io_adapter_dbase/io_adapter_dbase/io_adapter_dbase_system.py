@@ -47,13 +47,13 @@ import dbfpy.dbf
 
 import io_adapter_dbase_exceptions
 
-DIRECTORY_PATHS_VALUE = "directory_paths"
-
 ENTITY_NAME_VALUE = "entity_name"
 
 ENTITY_NAMES_VALUE = "entity_names"
 
 INPUT_ATTRIBUTE_HANDLERS_VALUE = "input_attribute_handlers"
+
+INPUT_DIRECTORY_PATH_VALUE = "input_directory_path"
 
 INPUT_ENTITY_HANDLERS_VALUE = "input_entity_handlers"
 
@@ -105,15 +105,14 @@ class IoAdapterDbase:
         """
 
         # extracts the mandatory options
-        directory_paths = options[DIRECTORY_PATHS_VALUE]
+        directory_path = configuration.get_option(INPUT_DIRECTORY_PATH_VALUE)
 
         # raises an exception in case the specified directory does not exist
-        for directory_path in directory_paths:
-            if not os.path.exists(directory_path):
-                raise io_adapter_dbase_exceptions.IoAdapterDbaseDirectoryNotFound(directory_path)
+        if not os.path.exists(directory_path):
+            raise io_adapter_dbase_exceptions.IoAdapterDbaseDirectoryNotFound(directory_path)
 
         # indexes the dbase table names to their location
-        table_name_path_map = self.index_dbase_tables(directory_paths)
+        table_name_path_map = self.index_dbase_tables(directory_path)
 
         # copies every table to the intermediate structure
         self.load_intermediate_structure_tables(intermediate_structure, options, table_name_path_map)
@@ -261,13 +260,13 @@ class IoAdapterDbase:
 
         raise io_adapter_dbase_exceptions.IoAdapterDbaseMethodNotImplemented()
 
-    def index_dbase_tables(self, directory_paths):
+    def index_dbase_tables(self, directory_path):
         """
         Crawls the provided directories searching for dbase tables and indexing
         their names to their directory path.
 
-        @type directory_paths: List
-        @param directory_paths: List with directory paths where to search for tables.
+        @type directory_path: str
+        @param directory_path: Directory paths where to search for tables.
         @rtype: Dictionary
         @return: Map associating the names of the discovered dbase tables with the
         paths of the directories they are contained in.
@@ -276,15 +275,14 @@ class IoAdapterDbase:
         table_name_path_map = {}
 
         # indexes the paths to the tables discovered in the provided paths
-        for directory_path in directory_paths:
-            for root_path, directories, files in os.walk(directory_path, topdown = True):
-                for file_name in files:
+        for root_path, directories, files in os.walk(directory_path, topdown = True):
+            for file_name in files:
 
-                    # indexes the path in case the file has a dbase table extension
-                    extension_name = file_name[len(file_name) - 4:]
-                    if extension_name == DBASE_TABLE_FILE_EXTENSION:
-                        table_name = file_name[:-4]
-                        table_name_path_map[table_name] = root_path
+                # indexes the path in case the file has a dbase table extension
+                extension_name = file_name[len(file_name) - 4:]
+                if extension_name == DBASE_TABLE_FILE_EXTENSION:
+                    table_name = file_name[:-4]
+                    table_name_path_map[table_name] = root_path
 
         return table_name_path_map
 
