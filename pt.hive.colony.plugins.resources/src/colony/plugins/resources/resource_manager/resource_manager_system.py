@@ -135,16 +135,33 @@ class ResourceManager:
         # retrieves the resource list
         resource_list = resources_file_parser.get_value()
 
+        # creates the validation list
+        validation_list = [value for value in resource_list if value.__class__ == resource_manager_parser.Validation]
+
+        # iterates over all the validation in the validation
+        # list
+        for validation in validation_list:
+            # processes the validation
+             return_value = self.process_validation(validation)
+
+             # in case the return value is invalid
+             if not return_value:
+                 # returns immediately
+                 return
+
         # iterates over all the resources in the list
         for resource in resource_list:
-            # in case the resource is of type plugin configurations
-            if(resource.__class__ == resource_manager_parser.PluginConfiguration):
-                for resource_item in resource.resources_list:
-                    # processes the resource
-                    self.process_resource(resource_item, full_resources_path)
-            else:
-                # processes the resources
-                self.process_resource(resource, full_resources_path)
+            # in case the resource is not of type validation
+            if not resource.__class__ == resource_manager_parser.Validation:
+                # in case the resource is of type plugin configurations
+                if resource.__class__ == resource_manager_parser.PluginConfiguration:
+                    for resource_item in resource.resources_list:
+                        # processes the resource
+                        self.process_resource(resource_item, full_resources_path)
+                else:
+                    # processes the resources
+                    self.process_resource(resource, full_resources_path)
+
 
         # creates the plugin configuration list
         plugin_configuration_list = [value for value in resource_list if value.__class__ == resource_manager_parser.PluginConfiguration]
@@ -243,10 +260,13 @@ class ResourceManager:
             # sets the new resource data
             resource.data = resource.data.replace(match_group, variable_value)
 
+        # in case the resource type is integer
         if resource_type == "integer":
             resource.data = int(resource.data)
+        # in case the resource type is float
         elif resource_type == "float":
             resource.data = float(resource.data)
+        # in case the resource type is string
         elif resource_type == "string":
             resource.data = str(resource.data)
         elif resource_type in self.resource_parser_plugins_map:
@@ -260,6 +280,77 @@ class ResourceManager:
             return False
 
         return True
+
+    def process_validation(self, validation):
+        """
+        Processes the given validation retrieving the validation result.
+
+        @type validation: Validation
+        @param validation: The validation to be processed.
+        @rtype: bool
+        @return: The validation result.
+        """
+
+        # retrieves the validation expression
+        validation_expression = validation.expression
+
+        # processes the expression returning the value
+        return_value = self.process_expression(validation_expression)
+
+        # returns the return value
+        return return_value
+
+    def process_expression(self, expression):
+        """
+        Processes the given expression retrieving the expression result.
+
+        @type expression: Expression
+        @param expression: The expression to be processed.
+        @rtype: bool
+        @return: The expression result.
+        """
+
+        if expression.__class__ == resource_manager_parser.EqualsExpression:
+            return_value = self.process_equals_expression(expression)
+
+        return return_value
+
+    def process_equals_expression(self, equals_expression):
+        """
+        Processes the given equals expression retrieving the equals expression result.
+
+        @type equals_expression: EqualsExpression
+        @param equals_expression: The equals expression to be processed.
+        @rtype: bool
+        @return: The equals expression result.
+        """
+
+        equals_expression_first_operand = equals_expression.first_operand
+        equals_expression_second_operand = equals_expression.second_operand
+
+        equals_expression_first_operand_value = self.process_operand(equals_expression_first_operand)
+        equals_expression_second_operand_value = self.process_operand(equals_expression_second_operand)
+
+        # calculates the equals value
+        equals_value = equals_expression_first_operand_value == equals_expression_second_operand_value
+
+        # returns the equals value
+        return equals_value
+
+    def process_operand(self, operand):
+        """
+        Processes the given operand retrieving the value.
+
+        @type operand: Operand
+        @param operand: The operand to be processed.
+        @rtype: Object
+        @return: The operand value.
+        """
+
+        if operand.name:
+            return 1
+        elif operand.data:
+            return 1
 
     def register_resource(self, resource_namespace, resource_name, resource_type, resource_data):
         """

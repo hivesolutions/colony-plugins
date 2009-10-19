@@ -33,6 +33,18 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.hive.pt xsd/resources.xsd">
 
+    <!-- Validation expression -->
+    <validation>
+        <equals_expression>
+            <first_operand>
+                <name>$value{plugin_manager.layout_mode}</name>
+            </first_operand>
+            <second_operand>
+                <data>development</data>
+            </second_operand>
+        </equals_expression>
+    </validation>
+
     <!-- General configuration -->
     <resource>
         <namespace>system.path</namespace>
