@@ -130,7 +130,7 @@ class MainWindow(PyQt4.QtGui.QWidget):
         icon = PyQt4.QtGui.QIcon(plugin_path + "/main_web/web_view/resources/omni.png")
 
         # creates the base url value
-        base_url = PyQt4.QtCore.QUrl("http://localhost:8080/hive/main.html")
+        base_url = PyQt4.QtCore.QUrl("http://localhost:8080/colony_web/main.html")
 
         # creates the web view
         self.web_view = PyQt4.QtWebKit.QWebView()
