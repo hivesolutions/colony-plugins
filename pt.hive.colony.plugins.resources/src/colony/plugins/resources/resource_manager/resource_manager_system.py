@@ -328,7 +328,7 @@ class ResourceManager:
                 local_variable = getattr(local_variable, variable_name)
 
             # sets the new resource data
-            resource.data = resource.data.replace(match_group, global_variable)
+            resource.data = resource.data.replace(match_group, local_variable)
 
         # in case the resource type is integer
         if resource_type == "integer":
