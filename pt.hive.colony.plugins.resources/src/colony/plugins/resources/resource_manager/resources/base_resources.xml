@@ -37,9 +37,11 @@
     <validation>
         <equals_expression>
             <first_operand>
-                <name>$value{plugin_manager.layout_mode}</name>
+                <type>string</type>
+                <data>$local{plugin_manager.layout_mode}</data>
             </first_operand>
             <second_operand>
+                <type>string</type>
                 <data>development</data>
             </second_operand>
         </equals_expression>

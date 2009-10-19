@@ -57,6 +57,12 @@ RESOURCES_SUFIX_START_INDEX = -13
 ENVIRONMENT_VARIABLE_REGEX = "\$\{[a-zA-Z0-9_]*\}"
 """ The regular expression for the environment variable """
 
+GLOBAL_VARIABLE_REGEX = "\$global\{[a-zA-Z0-9_.]*\}"
+""" The regular expression for the global variable """
+
+LOCAL_VARIABLE_REGEX = "\$local\{[a-zA-Z0-9_.]*\}"
+""" The regular expression for the local variable """
+
 class ResourceManager:
     """
     Stores and indexes miscellaneous resources.
@@ -80,6 +86,15 @@ class ResourceManager:
     resource_parser_plugins_map = {}
     """ The resource parser plugins map """
 
+    environment_variable_regex = None
+    """ The environment variable regular expression used for regular expression match """
+
+    global_variable_regex = None
+    """ The global variable regular expression used for regular expression match """
+
+    local_variable_regex = None
+    """ The local variable regular expression used for regular expression match """
+
     def __init__(self, resource_manager_plugin):
         """
         Class constructor.
@@ -95,6 +110,15 @@ class ResourceManager:
         self.resource_type_resources_list_map = {}
         self.resource_parser_plugins_map = {}
         self.plugin_id_configuration_resources_list_map = {}
+
+        # compiles the environment variable regular expression
+        self.environment_variable_regex = re.compile(ENVIRONMENT_VARIABLE_REGEX)
+
+        # compiles the global variable regular expression
+        self.global_variable_regex = re.compile(GLOBAL_VARIABLE_REGEX)
+
+        # compiles the local variable regular expression
+        self.local_variable_regex = re.compile(LOCAL_VARIABLE_REGEX)
 
     def load_base_resources(self):
         """
@@ -240,11 +264,8 @@ class ResourceManager:
         # retrieves the resource type
         resource_type = resource.type
 
-        # compiles the environment variable regular expression
-        environment_variable_regex = re.compile(ENVIRONMENT_VARIABLE_REGEX)
-
         # retrieves the find iterator for the given regular expression
-        find_iterator = environment_variable_regex.finditer(resource.data)
+        find_iterator = self.environment_variable_regex.finditer(resource.data)
 
         # iterates over all the matches in the find iterator
         for match in find_iterator:
@@ -259,6 +280,55 @@ class ResourceManager:
 
             # sets the new resource data
             resource.data = resource.data.replace(match_group, variable_value)
+
+        # retrieves the find iterator for the given regular expression
+        find_iterator = self.global_variable_regex.finditer(resource.data)
+
+        # iterates over all the matches in the find iterator
+        for match in find_iterator:
+            # retrieves the match group
+            match_group = match.group()
+
+            # retrieves the variable name
+            variable_name = match_group[8:-1]
+
+            # splits the variable name
+            variable_name_splitted = variable_name.split(".")
+
+            # retrieves the global variable
+            global_variable = globals()[variable_name_splitted[0]]
+
+            for variable_name in variable_name_splitted[1:]:
+                global_variable = getattr(global_variable, variable_name)
+
+            # sets the new resource data
+            resource.data = resource.data.replace(match_group, global_variable)
+
+        # retrieves the find iterator for the given regular expression
+        find_iterator = self.local_variable_regex.finditer(resource.data)
+
+        # iterates over all the matches in the find iterator
+        for match in find_iterator:
+            # retrieves the match group
+            match_group = match.group()
+
+            # retrieves the variable name
+            variable_name = match_group[7:-1]
+
+            # splits the variable name
+            variable_name_splitted = variable_name.split(".")
+
+            # sets the plugin manager as local variable
+            plugin_manager = self.resource_manager_plugin.manager
+
+            # retrieves the local variable
+            local_variable = locals()[variable_name_splitted[0]]
+
+            for variable_name in variable_name_splitted[1:]:
+                local_variable = getattr(local_variable, variable_name)
+
+            # sets the new resource data
+            resource.data = resource.data.replace(match_group, global_variable)
 
         # in case the resource type is integer
         if resource_type == "integer":
@@ -347,10 +417,14 @@ class ResourceManager:
         @return: The operand value.
         """
 
-        if operand.name:
-            return 1
-        elif operand.data:
-            return 1
+        # parses the operand resource data
+        self.parse_resource_data(operand)
+
+        # retrieves the operand data
+        operand_data = operand.data
+
+        # returns the operand data
+        return operand_data
 
     def register_resource(self, resource_namespace, resource_name, resource_type, resource_data):
         """

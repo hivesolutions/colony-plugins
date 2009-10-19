@@ -230,8 +230,8 @@ class ResourcesFileParser(Parser):
     def parse_operand_element(self, operand_element, operand):
         node_name = operand_element.nodeName
 
-        if node_name == "name":
-            operand.name = self.parse_name(operand_element)
+        if node_name == "type":
+            operand.type = self.parse_type(operand_element)
         elif node_name == "data":
             operand.data = self.parse_data(operand_element)
 
@@ -355,24 +355,24 @@ class Operand:
     The operand class.
     """
 
-    name = "none"
-    """ The operand name """
+    type = "none"
+    """ The operand type """
 
     data = "none"
     """ The operand data """
 
-    def __init__(self, name = "none", data = "none"):
+    def __init__(self, type = "none", data = "none"):
         """
         Constructor of the class.
 
         @type name: String
-        @param name:  The operand name.
+        @param name:  The operand type.
         @type data: Expression
         @param data:  The operand data.
         """
 
-        self.name = name
-        self.name = data
+        self.type = type
+        self.data = data
 
 class EqualsExpression(BinaryExpression):
     """
