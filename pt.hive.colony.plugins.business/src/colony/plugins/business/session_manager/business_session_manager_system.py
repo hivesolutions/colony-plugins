@@ -385,19 +385,19 @@ class SessionManager:
 
         self.current_session_information = current_session_information
 
-    def get_business_logic_instance(self, business_logic_intance_name):
+    def get_business_logic_instance(self, business_logic_instance_name):
         """
         Retrieves the business logic instance for the given business
         logic instance name.
 
-        @type business_logic_intance_name: String
-        @param business_logic_intance_name: The business logic instance name.
+        @type business_logic_instance_name: String
+        @param business_logic_instance_name: The business logic instance name.
         @rtype: Object
         @return: The business logic instance for the given business logic instance name.
         """
 
         # retrieves the business logic instance
-        business_logic_instance = self.business_logic_instances_map[business_logic_intance_class_name]
+        business_logic_instance = self.business_logic_instances_map[business_logic_instance_name]
 
         # returns the business logic instance
         return business_logic_instance
