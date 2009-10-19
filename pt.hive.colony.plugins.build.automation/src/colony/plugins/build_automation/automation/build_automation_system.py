@@ -47,12 +47,16 @@ import build_automation_exceptions
 import build_automation_parser
 
 BASE_AUTOMATION_ID = "pt.hive.colony.plugins.build.automation.base"
+""" The build automation id """
 
 VARIABLE_REGEX = "\$\{[^\}]*\}"
+""" The regular expression for the variable """
 
 CALL_REGEX = "\$call\{(\$\{[^\}]*\}|[^\}])*\}"
+""" The regular expression for the call """
 
 EXCLUSION_LIST = ["__doc__", "__init__", "__module__"]
+""" The exclusion list """
 
 class BuildAutomation:
     """
@@ -74,6 +78,12 @@ class BuildAutomation:
     id_build_automation_item_plugin_map = {}
     """ The map with the build automation id associated with the loaded build automation item plugin """
 
+    variable_pattern = None
+    """ The variable pattern used for regular expression match """
+
+    call_pattern = None
+    """ The call pattern used for regular expression match """
+
     base_build_automation_structure = None
     """ the base build automation structure """
 
@@ -93,6 +103,12 @@ class BuildAutomation:
         self.loaded_build_automation_item_plugins_list = []
         self.build_automation_item_plugin_id_map = {}
         self.id_build_automation_item_plugin_map = {}
+
+        # compiles the variable regular expression generating the pattern
+        self.variable_pattern = re.compile(VARIABLE_REGEX)
+
+        # compiles the call regular expression generating the pattern
+        self.call_pattern = re.compile(CALL_REGEX)
 
     def load_build_automation_item_plugin(self, build_automation_item_plugin):
         # adds the build automation item plugin to the list of build automation item plugins
@@ -494,11 +510,8 @@ class BuildAutomation:
         @return: The string parsed in the given build automation context.
         """
 
-        # compiles the variable regular expression generating the pattern
-        variable_pattern = re.compile(VARIABLE_REGEX)
-
         # retrieves the variable match iterator
-        variable_match_iterator = variable_pattern.finditer(string)
+        variable_match_iterator = self.variable_pattern.finditer(string)
 
         # iterates using the variable match iterator
         for variable_match in variable_match_iterator:
@@ -523,11 +536,8 @@ class BuildAutomation:
             # replaces the value in the string
             string = string.replace(group, real_variable_value_parsed)
 
-        # compiles the call regular expression generating the pattern
-        call_pattern = re.compile(CALL_REGEX)
-
         # retrieves the call match iterator
-        call_match_iterator = call_pattern.finditer(string)
+        call_match_iterator = self.call_pattern.finditer(string)
 
         # iterates using the call match iterator
         for call_match in call_match_iterator:
