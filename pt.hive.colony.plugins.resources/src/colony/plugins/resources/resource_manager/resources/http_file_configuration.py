@@ -38,6 +38,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 configuration = {
-                 "default_path" : "C:\Program Files\Apache Software Foundation\Apache2.2\htdocs",
+                 "default_path" : ".",
                  "default_page" : "index.html"
              }

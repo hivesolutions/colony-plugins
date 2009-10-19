@@ -43,7 +43,14 @@ configuration = {
                  "default_handler" : "file",
                  "default_encoding" : None,
                  "contexts" : {
-                     "/hive/plugins" : {
+                     "/colony_web" : {
+                         "handler" : "file",
+                         "request_properties" : {
+                             "base_path" : "../../pt.hive.colony.web",
+                             "default_page" : "index.html"
+                         }
+                     },
+                     "/colony_web/plugins" : {
                          "handler" : "colony",
                          "request_properties" : {
                              "plugin_handler" : "pt.hive.colony.plugins.javascript.file_handler"

@@ -52,6 +52,24 @@
         <type>string</type>
         <data>C:/Program Files/IzPack/bin</data>
     </resource>
+    <resource>
+        <namespace>system.database.development</namespace>
+        <name>file_name</name>
+        <type>string</type>
+        <data>colony_development_database.db</data>
+    </resource>
+    <resource>
+        <namespace>system.database.test</namespace>
+        <name>file_name</name>
+        <type>string</type>
+        <data>colony_test_database.db</data>
+    </resource>
+        <resource>
+        <namespace>system.database.production</namespace>
+        <name>file_name</name>
+        <type>string</type>
+        <data>colony_production_database.db</data>
+    </resource>
 
     <!-- Distribution registry server management -->
     <resource>
