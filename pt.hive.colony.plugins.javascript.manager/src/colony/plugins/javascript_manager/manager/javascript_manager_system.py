@@ -354,7 +354,10 @@ class JavascriptManager:
         # iterates over the plugins ids list
         for plugin_id in plugin_id_list:
             # retrieves the file contents for the given plugin id
-            file_contents = self.get_plugin_file(plugin_id)
+            file_contents_decoded = self.get_plugin_file(plugin_id)
+
+            # converts the file contents to string
+            file_contents = file_contents_decoded.encode("Cp1252")
 
             # writes the file contents to the stream buffer
             stream_buffer.write(file_contents)
