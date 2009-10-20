@@ -681,7 +681,7 @@ class HttpClientServiceTask:
         # start the valid charset flag
         valid_charset = False
 
-        # in case the content type is not defined
+        # in case the content type is defined
         if "Content-Type" in request.headers_map:
             # retrieves the content type
             content_type = request.headers_map["Content-Type"]
