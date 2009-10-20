@@ -33,20 +33,6 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.hive.pt xsd/resources.xsd">
 
-    <!-- Validation expression -->
-    <validation>
-        <equals_expression>
-            <first_operand>
-                <type>string</type>
-                <data>$local{plugin_manager.layout_mode}</data>
-            </first_operand>
-            <second_operand>
-                <type>string</type>
-                <data>development</data>
-            </second_operand>
-        </equals_expression>
-    </validation>
-
     <!-- General configuration -->
     <resource>
         <namespace>system.path</namespace>
@@ -65,24 +51,6 @@
         <name>izpack_home</name>
         <type>string</type>
         <data>C:/Program Files/IzPack/bin</data>
-    </resource>
-    <resource>
-        <namespace>system.database.development</namespace>
-        <name>file_name</name>
-        <type>string</type>
-        <data>colony_development_database.db</data>
-    </resource>
-    <resource>
-        <namespace>system.database.test</namespace>
-        <name>file_name</name>
-        <type>string</type>
-        <data>colony_test_database.db</data>
-    </resource>
-        <resource>
-        <namespace>system.database.production</namespace>
-        <name>file_name</name>
-        <type>string</type>
-        <data>colony_production_database.db</data>
     </resource>
 
     <!-- Distribution registry server management -->

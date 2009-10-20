@@ -295,10 +295,19 @@ class ResourceManager:
             # splits the variable name
             variable_name_splitted = variable_name.split(".")
 
-            # retrieves the global variable
-            global_variable = globals()[variable_name_splitted[0]]
+            # retrieves the first variable name
+            first_variable_name = variable_name_splitted[0]
 
-            for variable_name in variable_name_splitted[1:]:
+            # retrieves the second variable names
+            second_variable_names = variable_name_splitted[1:]
+
+            # retrieves the global variable
+            global_variable = globals()[first_variable_name]
+
+            # iterates over all the variable names in the second
+            # variable names
+            for variable_name in second_variable_names:
+                # retrieves the global variable
                 global_variable = getattr(global_variable, variable_name)
 
             # sets the new resource data
@@ -321,10 +330,19 @@ class ResourceManager:
             # sets the plugin manager as local variable
             plugin_manager = self.resource_manager_plugin.manager
 
-            # retrieves the local variable
-            local_variable = locals()[variable_name_splitted[0]]
+            # retrieves the first variable name
+            first_variable_name = variable_name_splitted[0]
 
-            for variable_name in variable_name_splitted[1:]:
+            # retrieves the second variable names
+            second_variable_names = variable_name_splitted[1:]
+
+            # retrieves the local variable
+            local_variable = locals()[first_variable_name]
+
+            # iterates over all the variable names in the second
+            # variable names
+            for variable_name in second_variable_names:
+                # retrieves the local variable
                 local_variable = getattr(local_variable, variable_name)
 
             # sets the new resource data
