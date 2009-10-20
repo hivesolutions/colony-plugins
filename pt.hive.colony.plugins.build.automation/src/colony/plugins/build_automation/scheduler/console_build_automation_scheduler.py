@@ -137,15 +137,15 @@ class ConsoleBuildAutomationScheduler:
         recursion_strip = recursion.strip()
         recursion_split = recursion_strip.split(",")
 
+        if not len(recursion_split) == 5:
+            output_method(INVALID_RECURSION_MESSAGE)
+            return
+
         recursion_list = []
 
         for recursion_split_item in recursion_split:
             recursion_split_item_int = int(recursion_split_item)
             recursion_list.append(recursion_split_item_int)
-
-        if not len(recursion_split) == 5:
-            output_method(INVALID_RECURSION_MESSAGE)
-            return
 
         build_automation_scheduler.register_build_automation_plugin_id(plugin_id, date_time_value, recursion_list)
 
