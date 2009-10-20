@@ -110,7 +110,8 @@ class IoAdapterEntityManager:
         # creates an entity manager instance in case an entity manager wasn't provided
         entity_manager_provided = configuration.has_option(ENTITY_MANAGER_VALUE)
         if not entity_manager_provided:
-            entity_manager_engine = configuration.get_option(ENTITY_MANAGER_ENGINE_VALUE)
+            # retrieves the mandatory options
+            entity_manager_engine = options[ENTITY_MANAGER_ENGINE_VALUE]
             file_path = configuration.get_option(INPUT_FILE_PATH_VALUE)
 
             # raises and exception in case the specified file does not exist
@@ -367,12 +368,9 @@ class IoAdapterEntityManager:
         # creates an entity manager instance in case an entity manager wasn't provided
         entity_manager_provided = configuration.has_option(ENTITY_MANAGER_VALUE)
         if not entity_manager_provided:
-            entity_manager_engine = configuration.get_option(ENTITY_MANAGER_ENGINE_VALUE)
-            file_path = configuration.get_option(OUTPUT_FILE_PATH)
-
-            # raises and exception in case the specified file does not exist
-            if not os.path.exists(file_path):
-                raise io_adapter_entity_manager_exceptions.IoAdapterEntityManagerFileNotFound(file_path)
+            # retrieves the mandatory options
+            entity_manager_engine = options[ENTITY_MANAGER_ENGINE_VALUE]
+            file_path = configuration.get_option(OUTPUT_FILE_PATH_VALUE)
 
             # retrieves the entity manager plugin
             entity_manager_plugin = self.io_adapter_entity_manager_plugin.entity_manager_plugin

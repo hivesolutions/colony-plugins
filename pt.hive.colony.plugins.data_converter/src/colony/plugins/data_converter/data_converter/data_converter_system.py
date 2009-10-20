@@ -776,11 +776,9 @@ class DataConverter:
         """
 
         # retrieves the entity's relation attribute value
-        entity_relation_attribute_value = None
-        if entity.has_attribute(entity_relation_attribute_name):
-            entity_relation_attribute_value = entity.get_attribute(entity_relation_attribute_name)
+        entity_relation_attribute_value = entity.get_attribute(entity_relation_attribute_name)
 
-        # adds the related entity to the relation attribute value in case it is a "to many" relation
+        # removes the related entity to the relation attribute value in case it is a "to many" relation
         if type(entity_relation_attribute_value) == types.ListType:
             # removes the related entity
             entity_relation_attribute_value.remove(related_entity)
@@ -788,8 +786,8 @@ class DataConverter:
             # updates the entity's relation attribute
             entity.set_attribute(entity_relation_attribute_name, entity_relation_attribute_value)
         elif entity_relation_attribute_value == related_entity:
-            # removes the attribute
-            entity.remove_attribute(entity_relation_attribute_name)
+            # sets the relation attribute as none
+            entity.set_attribute(entity_relation_attribute_name, None)
         else:
             # otherwise raises an exception
             raise data_converter_exceptions.DataConverterEntityNotFoundException("related entity not found")

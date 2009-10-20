@@ -227,7 +227,6 @@ class IoAdapterDbase:
 
                 # sets each field as an entity attribute
                 for load_column_name in load_column_names:
-                    #print table_name + "." + load_column_name
                     column_name_index = column_names.index(load_column_name)
 
                     # retrieves the field value and passes it through the
