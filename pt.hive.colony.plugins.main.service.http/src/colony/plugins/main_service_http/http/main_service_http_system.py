@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import sys
+import types
 import socket
 import select
 import threading
@@ -126,6 +127,9 @@ CHUNKED_VALUE = "chunked"
 
 KEEP_ALIVE_VALUE = "Keep-Alive"
 """ The keep alive value """
+
+DEFAULT_CONTENT_TYPE_CHARSET_VALUE = "default_content_type_charset"
+""" The default content type charset value """
 
 class MainServiceHttp:
     """
@@ -416,6 +420,9 @@ class HttpClientServiceTask:
     encoding_handler = None
     """ The encoding handler """
 
+    content_type_charset = DEFAULT_CHARSET
+    """ The content type charset """
+
     def __init__(self, main_service_http_plugin, http_connection, http_address, encoding, service_configuration, encoding_handler):
         self.main_service_http_plugin = main_service_http_plugin
         self.http_connection = http_connection
@@ -423,6 +430,10 @@ class HttpClientServiceTask:
         self.encoding = encoding
         self.service_configuration = service_configuration
         self.encoding_handler = encoding_handler
+
+        if DEFAULT_CONTENT_TYPE_CHARSET_VALUE in service_configuration:
+            # sets the content type charset to be used in the responses
+            self.content_type_charset = self.service_configuration[DEFAULT_CONTENT_TYPE_CHARSET_VALUE]
 
     def start(self):
         # retrieves the http service handler plugins map
@@ -526,7 +537,7 @@ class HttpClientServiceTask:
         message = cStringIO.StringIO()
 
         # creates a request object
-        request = HttpRequest()
+        request = HttpRequest(self.content_type_charset)
 
         # creates the start line loaded flag
         start_line_loaded = False
@@ -977,10 +988,15 @@ class HttpRequest:
     chunk_handler = None
     """ The chunk handler """
 
+    content_type_charset = None
+    """ The content type charset """
+
     properties = {}
     """ The properties """
 
-    def __init__(self):
+    def __init__(self, content_type_charset = DEFAULT_CHARSET):
+        self.content_type_charset = content_type_charset
+
         self.attributes_map = {}
         self.headers_map = {}
         self.message_stream = cStringIO.StringIO()
@@ -1021,7 +1037,16 @@ class HttpRequest:
     def read(self):
         return self.received_message
 
-    def write(self, message):
+    def write(self, message, flush = 1):
+        # retrieves the message type
+        message_type = type(message)
+
+        # in case the message type is unicode
+        if message_type == types.UnicodeType:
+            # encodes the message with the defined content type charset
+            message = message.encode(self.content_type_charset)
+
+        # writes the message to the message stream
         self.message_stream.write(message)
 
     def flush(self):
@@ -1118,3 +1143,9 @@ class HttpRequest:
 
     def get_handler_path(self):
         return self.handler_path
+
+    def get_content_type_charset(self):
+        return self.content_type_charset
+
+    def set_content_type_charset(self, content_type_charset):
+        self.content_type_charset = content_type_charset
