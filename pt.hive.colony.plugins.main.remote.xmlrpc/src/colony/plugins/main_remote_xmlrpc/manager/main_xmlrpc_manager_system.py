@@ -60,6 +60,9 @@ APACHE_CONTAINER = "apache"
 HANDLER_NAME = "xmlrpc"
 """ The handler name """
 
+DEFAULT_ENCODER = "utf-8"
+""" The default encoder """
+
 class MainXmlrpcManager:
 
     main_xmlrpc_manager_plugin = None
@@ -274,7 +277,11 @@ class MainXmlrpcManager:
         """
 
         try:
-            request = xmlrpclib.loads(data)
+            # encodes the data with the default encoder
+            data_encoded = data.encode(DEFAULT_ENCODER)
+
+            # loads the encoded data
+            request = xmlrpclib.loads(data_encoded)
         except:
             raise main_xmlrpc_manager_exceptions.ServiceRequestNotTranslatable(data)
 
