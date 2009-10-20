@@ -341,8 +341,11 @@ class JavascriptManager:
         # closes the file
         file.close()
 
-        # returns the file contents
-        return file_contents
+        # decodes the file contents
+        file_contents_decoded = file_contents.decode("Cp1252")
+
+        # returns the file contents decoded
+        return file_contents_decoded
 
     def get_plugins_files(self, plugin_id_list):
         # creates the stream buffer
