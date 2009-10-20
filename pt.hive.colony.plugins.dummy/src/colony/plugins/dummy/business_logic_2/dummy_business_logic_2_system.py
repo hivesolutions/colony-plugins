@@ -72,11 +72,11 @@ class DummyBusinessLogic2:
         # retrieves the user home path value
         user_home_path = user_home_path_resource.data
 
-        # retrieves the database development file name resource
-        database_development_file_name_resource = resource_manager_plugin.get_resource("system.database.development.file_name")
+        # retrieves the database file name resource
+        database_file_name_resource = resource_manager_plugin.get_resource("system.database.file_name")
 
-        # retrieves the database development file name
-        database_development_file_name = database_development_file_name_resource.data
+        # retrieves the database file name
+        database_file_name = database_file_name_resource.data
 
         # creates the dummy session master
         dummy_session_master = business_session_manager_plugin.load_session_manager_master_entity_manager("dummy_session_2", "sqlite")
@@ -88,7 +88,7 @@ class DummyBusinessLogic2:
         entity_manager = dummy_session_master.entity_manager
 
         # sets the connection parameters for the entity manager
-        entity_manager.set_connection_parameters({"file_path" : user_home_path + "/" + database_development_file_name, "autocommit" : False})
+        entity_manager.set_connection_parameters({"file_path" : user_home_path + "/" + database_file_name, "autocommit" : False})
 
         # loads the entity manager
         entity_manager.load_entity_manager()

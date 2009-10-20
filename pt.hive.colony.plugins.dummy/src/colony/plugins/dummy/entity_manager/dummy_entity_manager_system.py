@@ -73,17 +73,17 @@ class DummyEntityManager:
         # retrieves the user home path value
         user_home_path = user_home_path_resource.data
 
-        # retrieves the database development file name resource
-        database_development_file_name_resource = resource_manager_plugin.get_resource("system.database.development.file_name")
+        # retrieves the database file name resource
+        database_file_name_resource = resource_manager_plugin.get_resource("system.database.file_name")
 
-        # retrieves the database development file name
-        database_development_file_name = database_development_file_name_resource.data
+        # retrieves the database file name
+        database_file_name = database_file_name_resource.data
 
         # creates a new entity manager with the sqlite engine
         entity_manager = business_entity_manager_plugin.load_entity_manager("sqlite")
 
         # sets the connection parameters for the entity manager
-        entity_manager.set_connection_parameters({"file_path" : user_home_path + "/" + database_development_file_name, "autocommit" : False})
+        entity_manager.set_connection_parameters({"file_path" : user_home_path + "/" + database_file_name, "autocommit" : False})
 
         # loads the entity manager
         entity_manager.load_entity_manager()
