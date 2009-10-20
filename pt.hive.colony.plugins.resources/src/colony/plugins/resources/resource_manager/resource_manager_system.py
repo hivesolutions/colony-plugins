@@ -89,7 +89,7 @@ class ResourceManager:
     resource_parser_plugins_map = {}
     """ The resource parser plugins map """
 
-    self.string_value_real_string_value_map = {}
+    string_value_real_string_value_map = {}
     """ The string value real string value map """
 
     environment_variable_regex = None
@@ -551,6 +551,9 @@ class ResourceManager:
                 self.resource_namespace_resources_list_map[current_namespace] = []
             self.resource_namespace_resources_list_map[current_namespace].append(resource)
 
+        # invalidates the real string value cache
+        self._invalidate_real_string_value_cache()
+
     def unregister_resource(self, resource_id):
         """
         Unregisters the resource with the given id from the resource manager.
@@ -572,6 +575,9 @@ class ResourceManager:
                     current_namespace += "."
                 current_namespace += namespace
                 self.resource_namespace_resources_list_map[current_namespace].remove(old_resource)
+
+        # invalidates the real string value cache
+        self._invalidate_real_string_value_cache()
 
     def is_resource_registered(self, resource_id):
         """
@@ -666,6 +672,17 @@ class ResourceManager:
         resource_parser_name = resource_parser_plugin.get_resource_parser_name()
 
         del self.resource_parser_plugins_map[resource_parser_name]
+
+    def _invalidate_real_string_value_cache(self):
+        """
+        Invalidates the real string value cache.
+        """
+
+        # in case the string value real string value map
+        # is not empty
+        if self.string_value_real_string_value_map:
+            # clears the string value real string value map
+            self.string_value_real_string_value_map.clear()
 
 class Resource:
     """
