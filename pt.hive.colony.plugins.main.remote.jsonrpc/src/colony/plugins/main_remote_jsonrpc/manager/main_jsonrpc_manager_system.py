@@ -167,11 +167,8 @@ class MainJsonrpcManager:
         # serializes the result into json
         result_request = self.translate_result(result, error, id_)
 
-        # encodes the result into utf-8
-        result_request_encoded = result_request.encode("utf-8")
-
         # writes the serialized result into the buffer
-        request.write(result_request_encoded)
+        request.write(result_request)
 
         # flushes the request, sending the output to the client
         request.flush()
