@@ -550,7 +550,7 @@ class IrcClientServiceTask:
         received_message_value = request.received_message
 
         # re-encodes the message value in the current default encoding
-        request.received_message = received_message_value.decode(content_type_charset).encode()
+        request.received_message = received_message_value.decode(content_type_charset)
 
     def retrieve_data(self, request_timeout = REQUEST_TIMEOUT, chunk_size = CHUNK_SIZE):
         try:
