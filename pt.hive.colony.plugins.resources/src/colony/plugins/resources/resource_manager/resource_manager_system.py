@@ -57,6 +57,9 @@ RESOURCES_SUFIX_START_INDEX = -13
 ENVIRONMENT_VARIABLE_REGEX = "\$\{[a-zA-Z0-9_]*\}"
 """ The regular expression for the environment variable """
 
+RESOURCE_VARIABLE_REGEX = "\$resource\{[a-zA-Z0-9_.]*\}"
+""" The regular expression for the resource variable """
+
 GLOBAL_VARIABLE_REGEX = "\$global\{[a-zA-Z0-9_.]*\}"
 """ The regular expression for the global variable """
 
@@ -86,8 +89,14 @@ class ResourceManager:
     resource_parser_plugins_map = {}
     """ The resource parser plugins map """
 
+    self.string_value_real_string_value_map = {}
+    """ The string value real string value map """
+
     environment_variable_regex = None
     """ The environment variable regular expression used for regular expression match """
+
+    resource_variable_regex = None
+    """ The resource variable regular expression used for regular expression match """
 
     global_variable_regex = None
     """ The global variable regular expression used for regular expression match """
@@ -110,9 +119,13 @@ class ResourceManager:
         self.resource_type_resources_list_map = {}
         self.resource_parser_plugins_map = {}
         self.plugin_id_configuration_resources_list_map = {}
+        self.string_value_real_string_value_map = {}
 
         # compiles the environment variable regular expression
         self.environment_variable_regex = re.compile(ENVIRONMENT_VARIABLE_REGEX)
+
+        # compiles the resource variable regular expression
+        self.resource_variable_regex = re.compile(RESOURCE_VARIABLE_REGEX)
 
         # compiles the global variable regular expression
         self.global_variable_regex = re.compile(GLOBAL_VARIABLE_REGEX)
@@ -185,7 +198,6 @@ class ResourceManager:
                 else:
                     # processes the resources
                     self.process_resource(resource, full_resources_path)
-
 
         # creates the plugin configuration list
         plugin_configuration_list = [value for value in resource_list if value.__class__ == resource_manager_parser.PluginConfiguration]
@@ -264,8 +276,54 @@ class ResourceManager:
         # retrieves the resource type
         resource_type = resource.type
 
+        # sets the resource data as the real string value
+        resource.data = self.get_real_string_value(resource.data)
+
+        # in case the resource type is integer
+        if resource_type == "integer":
+            resource.data = int(resource.data)
+        # in case the resource type is float
+        elif resource_type == "float":
+            resource.data = float(resource.data)
+        # in case the resource type is string
+        elif resource_type == "string":
+            resource.data = str(resource.data)
+        elif resource_type in self.resource_parser_plugins_map:
+            resource_parser_plugin = self.resource_parser_plugins_map[resource_type]
+            resource_parser_plugin.parse_resource(resource)
+        else:
+            # sets the parse resource data handler
+            resource.parse_resource_data = self.parse_resource_data
+
+            # returns in failure
+            return False
+
+        return True
+
+    def get_real_string_value(self, string_value):
+        """
+        Retrieves the real string value for the given string value,
+        substituting the variable in the string.
+
+        @type string_value: String
+        @param string_value: The string value to be converted.
+        @rtype: String
+        @return: The converted string.
+        """
+
+        # checks the string value in the string value real string value map
+        if string_value in self.string_value_real_string_value_map:
+            # retrieves the real string value
+            real_string_value = self.string_value_real_string_value_map[string_value]
+
+            # returns the real string value
+            return real_string_value
+
+        # starts the real string value
+        real_string_value = string_value
+
         # retrieves the find iterator for the given regular expression
-        find_iterator = self.environment_variable_regex.finditer(resource.data)
+        find_iterator = self.environment_variable_regex.finditer(real_string_value)
 
         # iterates over all the matches in the find iterator
         for match in find_iterator:
@@ -279,10 +337,30 @@ class ResourceManager:
             variable_value = os.environ.get(variable_name, "")
 
             # sets the new resource data
-            resource.data = resource.data.replace(match_group, variable_value)
+            real_string_value = real_string_value.replace(match_group, variable_value)
 
         # retrieves the find iterator for the given regular expression
-        find_iterator = self.global_variable_regex.finditer(resource.data)
+        find_iterator = self.resource_variable_regex.finditer(real_string_value)
+
+        # iterates over all the matches in the find iterator
+        for match in find_iterator:
+            # retrieves the match group
+            match_group = match.group()
+
+            # retrieves the variable name
+            variable_name = match_group[10:-1]
+
+            # retrieves the resource for the match
+            resource = self.get_resource(variable_name)
+
+            # retrieves the resource data
+            resource_data = resource.data
+
+            # sets the new real string value
+            real_string_value = real_string_value.replace(match_group, resource_data)
+
+        # retrieves the find iterator for the given regular expression
+        find_iterator = self.global_variable_regex.finditer(real_string_value)
 
         # iterates over all the matches in the find iterator
         for match in find_iterator:
@@ -310,11 +388,11 @@ class ResourceManager:
                 # retrieves the global variable
                 global_variable = getattr(global_variable, variable_name)
 
-            # sets the new resource data
-            resource.data = resource.data.replace(match_group, global_variable)
+            # sets the new real string value
+            real_string_value = real_string_value.replace(match_group, global_variable)
 
         # retrieves the find iterator for the given regular expression
-        find_iterator = self.local_variable_regex.finditer(resource.data)
+        find_iterator = self.local_variable_regex.finditer(real_string_value)
 
         # iterates over all the matches in the find iterator
         for match in find_iterator:
@@ -345,29 +423,14 @@ class ResourceManager:
                 # retrieves the local variable
                 local_variable = getattr(local_variable, variable_name)
 
-            # sets the new resource data
-            resource.data = resource.data.replace(match_group, local_variable)
+            # sets the new real string value
+            real_string_value = real_string_value.replace(match_group, local_variable)
 
-        # in case the resource type is integer
-        if resource_type == "integer":
-            resource.data = int(resource.data)
-        # in case the resource type is float
-        elif resource_type == "float":
-            resource.data = float(resource.data)
-        # in case the resource type is string
-        elif resource_type == "string":
-            resource.data = str(resource.data)
-        elif resource_type in self.resource_parser_plugins_map:
-            resource_parser_plugin = self.resource_parser_plugins_map[resource_type]
-            resource_parser_plugin.parse_resource(resource)
-        else:
-            # sets the parse resource data handler
-            resource.parse_resource_data = self.parse_resource_data
+        # sets the real string value in the string value real string value map
+        self.string_value_real_string_value_map[string_value] = real_string_value
 
-            # returns in failure
-            return False
-
-        return True
+        # returns the real string value
+        return real_string_value
 
     def process_validation(self, validation):
         """

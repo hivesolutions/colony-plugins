@@ -98,6 +98,9 @@ class MainServiceHttpFileHandler:
         # retrieves the handler path
         handler_path = request.get_handler_path()
 
+        # retrieves the real base directory
+        real_base_directory = self.main_service_http_file_handler_plugin.resource_manager_plugin.get_real_string_value(base_directory)
+
         # in case there is a valid handler path
         if handler_path:
             path = resource_path.replace(handler_path, "", 1)
@@ -118,7 +121,7 @@ class MainServiceHttpFileHandler:
             mime_type = None
 
         # creates the complete path
-        complete_path = base_directory + "/" + path
+        complete_path = real_base_directory + "/" + path
 
         # in case the paths does not exist
         if not os.path.exists(complete_path):

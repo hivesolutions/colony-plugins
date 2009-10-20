@@ -46,7 +46,7 @@ configuration = {
                      "/colony_web" : {
                          "handler" : "file",
                          "request_properties" : {
-                             "base_path" : "../../pt.hive.colony.web",
+                             "base_path" : "$resource{system.path.colony_web}/pt.hive.colony.web",
                              "default_page" : "index.html"
                          }
                      },
