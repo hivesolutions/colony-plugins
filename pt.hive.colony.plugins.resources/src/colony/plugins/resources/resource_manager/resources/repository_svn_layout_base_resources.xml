@@ -46,4 +46,42 @@
             </second_operand>
         </equals_expression>
     </validation>
+
+    <!-- General configuration -->
+    <resource>
+        <namespace>system.path</namespace>
+        <name>colony</name>
+        <type>string</type>
+        <data>../../</data>
+    </resource>
+    <resource>
+        <namespace>system.path</namespace>
+        <name>omni</name>
+        <type>string</type>
+        <data>../../../../pt.hive.omni/trunk</data>
+    </resource>
+    <resource>
+        <namespace>system.path</namespace>
+        <name>colony_web</name>
+        <type>string</type>
+        <data>../../../../pt.hive.colony.web/trunk</data>
+    </resource>
+    <resource>
+        <namespace>system.path</namespace>
+        <name>omni_web</name>
+        <type>string</type>
+        <data>../../../../pt.hive.omni.web/trunk</data>
+    </resource>
+    <resource>
+        <namespace>system.path</namespace>
+        <name>colony_web_ui</name>
+        <type>string</type>
+        <data>../../../../pt.hive.colony.web.ui/trunk</data>
+    </resource>
+    <resource>
+        <namespace>system.path</namespace>
+        <name>colony_demo</name>
+        <type>string</type>
+        <data>../../../../pt.hive.colony.demo/trunk</data>
+    </resource>
 </resources>
