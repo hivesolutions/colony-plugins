@@ -50,6 +50,9 @@ import javascript_manager_exceptions
 DEFAULT_INDEX_TIME = 10
 """ The default index time """
 
+DEFAULT_CHARSET = "Cp1252"
+""" The default charset """
+
 class JavascriptManager:
     """
     The javascript manager class.
@@ -360,7 +363,7 @@ class JavascriptManager:
         files_contents = stream_buffer.getvalue()
 
         # decodes the file contents
-        file_contents_decoded = files_contents.decode("Cp1252")
+        file_contents_decoded = files_contents.decode(DEFAULT_CHARSET)
 
         # returns the files contents decoded
         return file_contents_decoded
