@@ -341,11 +341,8 @@ class JavascriptManager:
         # closes the file
         file.close()
 
-        # decodes the file contents
-        file_contents_decoded = file_contents.decode("Cp1252")
-
-        # returns the file contents decoded
-        return file_contents_decoded
+        # returns the file contents
+        return file_contents
 
     def get_plugins_files(self, plugin_id_list):
         # creates the stream buffer
@@ -354,10 +351,7 @@ class JavascriptManager:
         # iterates over the plugins ids list
         for plugin_id in plugin_id_list:
             # retrieves the file contents for the given plugin id
-            file_contents_decoded = self.get_plugin_file(plugin_id)
-
-            # converts the file contents to string
-            file_contents = file_contents_decoded.encode("Cp1252")
+            file_contents = self.get_plugin_file(plugin_id)
 
             # writes the file contents to the stream buffer
             stream_buffer.write(file_contents)
@@ -365,8 +359,11 @@ class JavascriptManager:
         # retrieves the stream buffer contents
         files_contents = stream_buffer.getvalue()
 
-        # returns the files contents
-        return files_contents
+        # decodes the file contents
+        file_contents_decoded = files_contents.decode("Cp1252")
+
+        # returns the files contents decoded
+        return file_contents_decoded
 
     def get_plugin_payload(self, plugin_id):
         pass
