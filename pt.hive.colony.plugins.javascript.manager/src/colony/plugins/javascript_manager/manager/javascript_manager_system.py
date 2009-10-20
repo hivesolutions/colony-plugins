@@ -112,42 +112,69 @@ class JavascriptManager:
         # retrieves the workspace home path value
         workspace_home_path = workspace_home_path_resource.data
 
+        # retrieves the colony web path resource
+        colony_web_path_resource = resource_manager_plugin.get_resource("system.path.colony_web")
+
+        # retrieves the colony web path value
+        colony_web_path = colony_web_path_resource.data
+
+        # retrieves the omni web path resource
+        omni_web_path_resource = resource_manager_plugin.get_resource("system.path.omni_web")
+
+        # retrieves the omni web path value
+        omni_web_path = omni_web_path_resource.data
+
+        # retrieves the colony web ui path resource
+        colony_web_ui_path_resource = resource_manager_plugin.get_resource("system.path.colony_web_ui")
+
+        # retrieves the colony web ui path value
+        colony_web_ui_path = colony_web_ui_path_resource.data
+
+        # retrieves the colony demo path resource
+        colony_demo_path_resource = resource_manager_plugin.get_resource("system.path.omni_web")
+
+        # retrieves the colony demo path value
+        colony_demo_path = colony_demo_path_resource.data
+
+        # sets the workspace base path
+        omni_web_path = workspace_home_path
+
         # sets the workspace base path
         self.workspace_base_path = workspace_home_path
 
         # sets the plugin search directories list
-        self.plugin_search_directories_list = [self.workspace_base_path + "/pt.hive.colony.demo.web.plugins.todo_list/plugins",
-                                               self.workspace_base_path + "/pt.hive.colony.demo.web.plugins.twitter/plugins",
-                                               self.workspace_base_path + "/pt.hive.colony.demo.web.plugins.wiki/plugins",
-                                               self.workspace_base_path + "/pt.hive.colony.web/plugins",
-                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.browserplus/plugins",
-                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.data_structure/plugins",
-                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.business/plugins",
-                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.content.manager/plugins",
-                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.dummy/plugins",
-                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.gui.key_activators/plugins",
-                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.gui.login/plugins",
-                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.gui.main/plugins",
-                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.gui.perspective_manager/plugins",
-                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.gui.plugin_manager/plugins",
-                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.gui.search.manager/plugins",
-                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.misc/plugins",
-                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.mvc/plugins",
-                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.printing/plugins",
-                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.sorting/plugins",
-                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.tasks/plugins",
-                                               self.workspace_base_path + "/pt.hive.colony.web.plugins.ui/plugins",
-                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.consignments/plugins",
-                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.customers_suppliers/plugins",
-                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.human_resources/plugins",
-                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.inventory/plugins",
-                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.main/plugins",
-                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.misc/plugins",
-                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.pos/plugins",
-                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.purchases/plugins",
-                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.sales/plugins",
-                                               self.workspace_base_path + "/pt.hive.omni.web.plugins.gui.system/plugins",
-                                               self.workspace_base_path + "/pt.hive.colony.web.ui"]
+        self.plugin_search_directories_list = [colony_demo_path + "/pt.hive.colony.demo.web.plugins.todo_list/plugins",
+                                               colony_demo_path + "/pt.hive.colony.demo.web.plugins.twitter/plugins",
+                                               colony_demo_path + "/pt.hive.colony.demo.web.plugins.wiki/plugins",
+                                               colony_web_path + "/pt.hive.colony.web/plugins",
+                                               colony_web_path + "/pt.hive.colony.web.plugins.browserplus/plugins",
+                                               colony_web_path + "/pt.hive.colony.web.plugins.data_structure/plugins",
+                                               colony_web_path + "/pt.hive.colony.web.plugins.business/plugins",
+                                               colony_web_path + "/pt.hive.colony.web.plugins.content.manager/plugins",
+                                               colony_web_path + "/pt.hive.colony.web.plugins.dummy/plugins",
+                                               colony_web_path + "/pt.hive.colony.web.plugins.gui.key_activators/plugins",
+                                               colony_web_path + "/pt.hive.colony.web.plugins.gui.login/plugins",
+                                               colony_web_path + "/pt.hive.colony.web.plugins.gui.main/plugins",
+                                               colony_web_path + "/pt.hive.colony.web.plugins.gui.perspective_manager/plugins",
+                                               colony_web_path + "/pt.hive.colony.web.plugins.gui.plugin_manager/plugins",
+                                               colony_web_path + "/pt.hive.colony.web.plugins.gui.search.manager/plugins",
+                                               colony_web_path + "/pt.hive.colony.web.plugins.misc/plugins",
+                                               colony_web_path + "/pt.hive.colony.web.plugins.mvc/plugins",
+                                               colony_web_path + "/pt.hive.colony.web.plugins.printing/plugins",
+                                               colony_web_path + "/pt.hive.colony.web.plugins.sorting/plugins",
+                                               colony_web_path + "/pt.hive.colony.web.plugins.tasks/plugins",
+                                               colony_web_path + "/pt.hive.colony.web.plugins.ui/plugins",
+                                               omni_web_path + "/pt.hive.omni.web.plugins.gui.consignments/plugins",
+                                               omni_web_path + "/pt.hive.omni.web.plugins.gui.customers_suppliers/plugins",
+                                               omni_web_path + "/pt.hive.omni.web.plugins.gui.human_resources/plugins",
+                                               omni_web_path + "/pt.hive.omni.web.plugins.gui.inventory/plugins",
+                                               omni_web_path + "/pt.hive.omni.web.plugins.gui.main/plugins",
+                                               omni_web_path + "/pt.hive.omni.web.plugins.gui.misc/plugins",
+                                               omni_web_path + "/pt.hive.omni.web.plugins.gui.pos/plugins",
+                                               omni_web_path + "/pt.hive.omni.web.plugins.gui.purchases/plugins",
+                                               omni_web_path + "/pt.hive.omni.web.plugins.gui.sales/plugins",
+                                               omni_web_path + "/pt.hive.omni.web.plugins.gui.system/plugins",
+                                               colony_web_ui_path + "/pt.hive.colony.web.ui"]
 
     def start_auto_index_plugin_search_directories(self):
         self.auto_index_plugin_search_directories_flag = True
