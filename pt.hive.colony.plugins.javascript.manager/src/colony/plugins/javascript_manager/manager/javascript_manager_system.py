@@ -140,7 +140,7 @@ class JavascriptManager:
         colony_web_ui_real_path = os.path.realpath(colony_web_ui_path)
 
         # retrieves the colony demo path resource
-        colony_demo_path_resource = resource_manager_plugin.get_resource("system.path.omni_web")
+        colony_demo_path_resource = resource_manager_plugin.get_resource("system.path.colony_demo")
 
         # retrieves the colony demo path value
         colony_demo_path = colony_demo_path_resource.data
