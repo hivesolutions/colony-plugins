@@ -42,7 +42,7 @@ import types
 import sqlite3
 import datetime
 
-import string_buffer
+import string_buffer_util
 
 import business_sqlite_engine_exceptions
 
@@ -815,7 +815,7 @@ class BusinessSqliteEngine:
         entity_class_valid_attribute_values = self.get_entity_class_attribute_values(entity_class)
 
         # creates the query string buffer
-        query_string_buffer = string_buffer.StringBuffer()
+        query_string_buffer = string_buffer_util.StringBuffer()
 
         # creates the initial query string buffer
         query_string_buffer.write("insert into " + entity_class_name + "(")
