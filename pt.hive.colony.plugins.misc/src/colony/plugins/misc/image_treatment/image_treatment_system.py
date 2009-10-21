@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import cStringIO
-
 import PIL.Image
+
+import string_buffer_util
 
 class ImageTreatment:
     """
@@ -67,7 +67,7 @@ class ImageTreatment:
         image_resize = image.resize((width, height), PIL.Image.ANTIALIAS)
 
         # creates a new string buffer for the image
-        string_buffer = cStringIO.StringIO()
+        string_buffer = string_buffer_util.StringBuffer(True)
 
         # saves the image into the string buffer
         image_resize.save(string_buffer, "jpeg")
@@ -147,7 +147,7 @@ class ImageTreatment:
         new_image.paste(resized_image, ((width - resized_image_width) / 2, (height - resized_image_height) / 2))
 
         # creates a new string buffer for the image
-        string_buffer = cStringIO.StringIO()
+        string_buffer = string_buffer_util.StringBuffer()
 
         # saves the new image into the string buffer
         new_image.save(string_buffer, "png")
