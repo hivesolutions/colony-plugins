@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import cStringIO
-
 import xml.sax.saxutils
+
+import string_buffer_util
 
 import template_engine_ast
 import template_engine_exceptions
@@ -190,7 +190,7 @@ class Visitor:
         self.visit_childs = True
         self.visit_next = True
         self.global_map = {}
-        self.string_buffer = cStringIO.StringIO()
+        self.string_buffer = string_buffer_util.StringBuffer()
 
         self.update_node_method_map()
 
