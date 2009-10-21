@@ -39,7 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import sys
 import traceback
-import cStringIO
+
+import string_buffer
 
 import main_jsonrpc_manager_serializer
 import main_jsonrpc_manager_exceptions
@@ -144,7 +145,7 @@ class MainJsonrpcManager:
                     error = exception
 
                     # creates the traceback buffer
-                    traceback_buffer = cStringIO.StringIO()
+                    traceback_buffer = string_buffer.StringBuffer()
 
                     # writes the traceback in the request
                     formated_traceback = traceback.format_tb(sys.exc_traceback)
@@ -155,7 +156,7 @@ class MainJsonrpcManager:
                         traceback_buffer.write(formated_traceback_line)
 
                     # retrieves the traceback value
-                    traceback_value = traceback_buffer.getvalue()
+                    traceback_value = traceback_buffer.get_value()
 
                     # sets traceback value in the error
                     error.traceback = traceback_value

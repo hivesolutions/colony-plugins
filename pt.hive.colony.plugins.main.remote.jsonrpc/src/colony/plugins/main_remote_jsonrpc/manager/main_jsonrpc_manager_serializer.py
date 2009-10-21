@@ -45,7 +45,7 @@ import time
 import types
 import datetime
 
-import cStringIO
+import string_buffer
 
 import main_jsonrpc_manager_exceptions
 
@@ -96,13 +96,13 @@ def escape_char(match):
 
 def dumps_buffer(obj):
     # creates the string buffer
-    string_buffer = cStringIO.StringIO()
+    string_buffer = string_buffer.StringBuffer()
 
     # dumps the object parts to the string buffer
     dump_parts_buffer(obj, string_buffer)
 
     # retrieves the string value
-    string_value = string_buffer.getvalue()
+    string_value = string_buffer.get_value()
 
     # returns the string value
     return string_value
