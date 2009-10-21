@@ -40,7 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import zlib
 import time
 import struct
-import cStringIO
+
+import string_buffer_util
 
 DEFAULT_COMPRESSION_LEVEL = 3
 """ The default compression level """
@@ -65,7 +66,7 @@ class Gzip:
 
     def gzip_contents(self, contents_string):
         # creates a new string buffer
-        string_buffer = cStringIO.StringIO()
+        string_buffer = string_buffer_util.StringBuffer()
 
         # writes the magic header
         string_buffer.write("\037\213")
@@ -99,7 +100,7 @@ class Gzip:
         string_buffer.write(struct.pack("<L", contents_string_crc32))
 
         # retrieves the string value from the string buffer
-        string_value = string_buffer.getvalue()
+        string_value = string_buffer.get_value()
 
         # returns the string value
         return string_value
