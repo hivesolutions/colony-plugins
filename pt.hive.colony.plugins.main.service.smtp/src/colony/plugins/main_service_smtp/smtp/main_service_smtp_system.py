@@ -42,7 +42,8 @@ import socket
 import select
 import threading
 import traceback
-import cStringIO
+
+import string_buffer_util
 
 import main_service_smtp_exceptions
 
@@ -405,8 +406,8 @@ class SmtpClientServiceTask:
         @return: The request from the received message.
         """
 
-        # creates the string io for the message
-        message = cStringIO.StringIO()
+        # creates the string buffer for the message
+        message = string_buffer_util.StringBuffer()
 
         # creates a request object
         request = SmtpRequest()
@@ -420,11 +421,11 @@ class SmtpClientServiceTask:
             if data == "":
                 raise main_service_smtp_exceptions.SmtpInvalidDataException("empty data received")
 
-            # writes the data to the string io
+            # writes the data to the string buffer
             message.write(data)
 
-            # retrieves the message value from the string io
-            message_value = message.getvalue()
+            # retrieves the message value from the string buffer
+            message_value = message.get_value()
 
             # in case the session is in data transmission mode
             if session.data_transmission:
@@ -562,14 +563,14 @@ class SmtpRequest:
     session = None
     """ The session """
 
-    message_stream = cStringIO.StringIO()
+    message_stream = None
     """ The message stream """
 
     properties = {}
     """ The properties """
 
     def __init__(self):
-        self.message_stream = cStringIO.StringIO()
+        self.message_stream = string_buffer_util.StringBuffer()
         self.properties = {}
 
     def __repr__(self):
@@ -583,7 +584,7 @@ class SmtpRequest:
 
     def get_result(self):
         # retrieves the result string value
-        message = self.message_stream.getvalue()
+        message = self.message_stream.get_value()
 
         if self.response_messages:
             # initializes the return message
