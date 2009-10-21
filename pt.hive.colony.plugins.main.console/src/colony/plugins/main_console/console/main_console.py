@@ -96,6 +96,9 @@ class MainConsole:
             # writes the caret character
             sys.stdout.write(CARET + " ")
 
+            # flushes the standard output
+            sys.stdout.flush()
+
             # reads a line from the standard input (locks)
             line = sys.stdin.readline()
 
@@ -205,7 +208,11 @@ class MainConsole:
         if new_line:
             print text
         else:
+            # writes the text contents
             sys.stdout.write(text)
+
+            # flushes the standard output
+            sys.stdout.flush()
 
     def process_help(self, args, output_method):
         if len(args) < 1:
