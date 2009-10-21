@@ -141,6 +141,8 @@ class MainServiceHttpFileHandler:
         # retrieves the file size
         file_size = os.path.getsize(complete_path)
 
+        # in case the file size is bigger than
+        # the chunk file size limit
         if file_size > CHUNK_FILE_SIZE_LIMIT:
             # creates the chunk handler instance
             chunk_handler = ChunkHandler(file, file_size)
@@ -202,7 +204,7 @@ class ChunkHandler:
 
         # creates a new string buffer to used as a memory file
         # for the encoded file
-        file_contents_encoded_file_buffer = string_buffer_util.StringBuffer()
+        file_contents_encoded_file_buffer = string_buffer_util.StringBuffer(False)
 
         # writes the file contents encoded into the file contents
         # file buffer

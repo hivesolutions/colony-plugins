@@ -1066,6 +1066,7 @@ class HttpRequest:
         # retrieves the result string value
         message = self.message_stream.get_value()
 
+        # in case the request is encoded
         if self.encoded:
             if self.mediated:
                 self.mediated_handler.encode_file(self.encoding_handler, self.encoding_type)
