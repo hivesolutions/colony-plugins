@@ -44,7 +44,7 @@ import threading
 
 import os.path
 
-import string_buffer
+import string_buffer_util
 
 import javascript_manager_parser
 import javascript_manager_exceptions
@@ -351,7 +351,7 @@ class JavascriptManager:
 
     def get_plugins_files(self, plugin_id_list):
         # creates the stream buffer
-        stream_buffer = string_buffer.StringBuffer()
+        stream_buffer = string_buffer_util.StringBuffer()
 
         # iterates over the plugins ids list
         for plugin_id in plugin_id_list:
