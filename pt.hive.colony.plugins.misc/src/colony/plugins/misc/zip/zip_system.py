@@ -38,9 +38,10 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
-import cStringIO
-import zipfile
 import stat
+import zipfile
+
+import string_buffer_util
 
 BUFFER_LENGTH = 1024
 """ The length for the zip operation buffer """
@@ -75,6 +76,7 @@ class Zip:
 
         def length_sorter(string1, string2):
             return [-1, 1][len(string1) > len(string2)]
+
         zip_file = zipfile.ZipFile(file_path)
         name_list = zip_file.namelist()
         directories_list = []
@@ -117,6 +119,7 @@ class Zip:
 
         def length_sorter(string1, string2):
             return [-1, 1][len(string1) > len(string2)]
+
         zip_file = zipfile.ZipFile(file_path)
         name_list = zip_file.namelist()
         files_list = []
@@ -161,17 +164,44 @@ class Zip:
         @param root_directory_path: Full path to the place where the files will be extracted to.
         """
 
+        # opens the zip file for the given file path
         zip_file = zipfile.ZipFile(file_path)
+
+        # retrieves the file paths
         file_paths_list = self.get_file_paths(file_path)
+
+        # iterates over all the file names in the file paths list
         for file_name in file_paths_list:
+            # retrieves the complete file path of the file name
             full_path = os.path.join(root_directory_path, file_name)
+
+            # opens the file in write mode
             file = open(full_path, "wb")
-            buffer = cStringIO.StringIO(zip_file.read(file_name))
-            buffer_length = BUFFER_LENGTH
-            data = buffer.read(buffer_length)
+
+            # reads the zip file contents
+            zip_file_contents = zip_file.read(file_name)
+
+            # creates a new string buffer
+            string_buffer = string_buffer_util.StringBuffer(False)
+
+            # writes the zip file contents into the string buffer
+            string_buffer.write(zip_file_contents)
+
+            # seeks to the beginning of the buffer
+            string_buffer.seek(0)
+
+            # reads the data from the string buffer
+            data = string_buffer.read(BUFFER_LENGTH)
+
+            # iterates while there is data available
             while data:
+                # writes the data to the file
                 file.write(data)
-                data = buffer.read(buffer_length)
+
+                # reads the data from the string buffer
+                data = string_buffer.read(BUFFER_LENGTH)
+
+            # closes the file
             file.close()
 
     def zip(self, zip_file_path, input_directory, file_path_list = None):
