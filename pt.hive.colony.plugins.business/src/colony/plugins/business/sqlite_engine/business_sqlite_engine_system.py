@@ -883,7 +883,7 @@ class BusinessSqliteEngine:
         query_string_buffer.write(")")
 
         # retrieves the query string value
-        query_string_value = query_string_buffer.getvalue()
+        query_string_value = query_string_buffer.get_value()
 
         # returns the query string value
         return query_string_value
