@@ -55,6 +55,9 @@ APACHE_CONTAINER = "apache"
 HANDLER_NAME = "soap"
 """ The handler name """
 
+DEFAULT_ENCODER = "utf-8"
+""" The default encoder """
+
 class MainSoapManager:
 
     main_soap_manager_plugin = None
@@ -275,8 +278,12 @@ class MainSoapManager:
         """
 
         try:
-            (request, header, body, attrs) = soap_internal.main_soap_manager_parser.parseSOAPRPC(data, header = 1, body = 1, attrs = 1)
-        except:
+            # encodes the data with the default encoder
+            data_encoded = data.encode(DEFAULT_ENCODER)
+
+            # parses the encoded data
+            (request, header, body, attrs) = soap_internal.main_soap_manager_parser.parseSOAPRPC(data_encoded, header = 1, body = 1, attrs = 1)
+        except Exception, ex:
             raise main_soap_manager_exceptions.ServiceRequestNotTranslatable(data)
 
         # returns the translated request
