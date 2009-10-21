@@ -42,7 +42,8 @@ import socket
 import select
 import threading
 import traceback
-import cStringIO
+
+import string_buffer_util
 
 import main_service_xmpp_exceptions
 
@@ -403,8 +404,8 @@ class XmppClientServiceTask:
         @return: The request from the received message.
         """
 
-        # creates the string io for the message
-        message = cStringIO.StringIO()
+        # creates the string buffer for the message
+        message = string_buffer_util.StringBuffer()
 
         # creates a request object
         request = XmppRequest()
@@ -418,11 +419,11 @@ class XmppClientServiceTask:
             if data == "":
                 raise main_service_xmpp_exceptions.XmppInvalidDataException("empty data received")
 
-            # writes the data to the string io
+            # writes the data to the string buffer
             message.write(data)
 
-            # retrieves the message value from the string io
-            message_value = message.getvalue()
+            # retrieves the message value from the string buffer
+            message_value = message.get_value()
 
             # finds the end token index value
             end_token_index = message_value.find("version='1.0'>")
@@ -447,8 +448,8 @@ class XmppClientServiceTask:
         @return: The request from the received message.
         """
 
-        # creates the string io for the message
-        message = cStringIO.StringIO()
+        # creates the string buffer for the message
+        message = string_buffer_util.StringBuffer()
 
         # creates a request object
         request = XmppRequest()
@@ -462,11 +463,11 @@ class XmppClientServiceTask:
             if data == "":
                 raise main_service_xmpp_exceptions.XmppInvalidDataException("empty data received")
 
-            # writes the data to the string io
+            # writes the data to the string buffer
             message.write(data)
 
-            # retrieves the message value from the string io
-            message_value = message.getvalue()
+            # retrieves the message value from the string buffer
+            message_value = message.get_value()
 
             # in case the element type is not defined in the request
             if not request.element_type:
@@ -572,14 +573,14 @@ class XmppRequest:
     operation_type = "none"
     """ The operation type """
 
-    message_stream = cStringIO.StringIO()
+    message_stream = None
     """ The message stream """
 
     properties = {}
     """ The properties """
 
     def __init__(self):
-        self.message_stream = cStringIO.StringIO()
+        self.message_stream = string_buffer_util.StringBuffer()
         self.properties = {}
 
     def __repr__(self):
@@ -593,7 +594,7 @@ class XmppRequest:
 
     def get_result(self):
         # retrieves the result string value
-        message = self.message_stream.getvalue()
+        message = self.message_stream.get_value()
 
         # returns the return message
         return message
