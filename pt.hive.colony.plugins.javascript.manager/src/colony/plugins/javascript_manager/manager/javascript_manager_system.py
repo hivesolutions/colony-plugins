@@ -41,8 +41,10 @@ import os
 import time
 import stat
 import threading
-import cStringIO
+
 import os.path
+
+import string_buffer
 
 import javascript_manager_parser
 import javascript_manager_exceptions
@@ -349,7 +351,7 @@ class JavascriptManager:
 
     def get_plugins_files(self, plugin_id_list):
         # creates the stream buffer
-        stream_buffer = cStringIO.StringIO()
+        stream_buffer = string_buffer.StringBuffer()
 
         # iterates over the plugins ids list
         for plugin_id in plugin_id_list:
@@ -360,7 +362,7 @@ class JavascriptManager:
             stream_buffer.write(file_contents)
 
         # retrieves the stream buffer contents
-        files_contents = stream_buffer.getvalue()
+        files_contents = stream_buffer.get_value()
 
         # decodes the file contents
         file_contents_decoded = files_contents.decode(DEFAULT_CHARSET)
