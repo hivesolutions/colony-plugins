@@ -40,6 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import socket
 import select
 
+import string_buffer_util
+
 import main_service_irc_exceptions
 
 HOST_VALUE = ""
@@ -362,8 +364,8 @@ class IrcClientServiceTask:
         @return: The request from the received message.
         """
 
-        # creates the string io for the message
-        message = cStringIO.StringIO()
+        # creates the string buffer for the message
+        message = string_buffer_util.StringBuffer()
 
         # creates a request object
         request = IrcRequest()
@@ -389,11 +391,11 @@ class IrcClientServiceTask:
             if data == "":
                 raise main_service_irc_exceptions.IrcInvalidDataException("empty data received")
 
-            # writes the data to the string io
+            # writes the data to the string buffer
             message.write(data)
 
-            # retrieves the message value from the string io
-            message_value = message.getvalue()
+            # retrieves the message value from the string buffer
+            message_value = message.get_value()
 
             # in case the start line is not loaded
             if not start_line_loaded:
