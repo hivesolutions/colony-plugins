@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os.path
 
-import string_buffer
+import string_buffer_util
 
 import main_service_http_file_handler_exceptions
 
@@ -202,7 +202,7 @@ class ChunkHandler:
 
         # creates a new string buffer to used as a memory file
         # for the encoded file
-        file_contents_encoded_file_buffer = string_buffer.StringBuffer()
+        file_contents_encoded_file_buffer = string_buffer_util.StringBuffer()
 
         # writes the file contents encoded into the file contents
         # file buffer

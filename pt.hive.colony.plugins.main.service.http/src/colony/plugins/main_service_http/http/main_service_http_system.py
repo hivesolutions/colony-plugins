@@ -44,7 +44,7 @@ import select
 import threading
 import traceback
 
-import string_buffer
+import string_buffer_util
 
 import main_service_http_exceptions
 
@@ -535,7 +535,7 @@ class HttpClientServiceTask:
         """
 
         # creates the string buffer for the message
-        message = string_buffer.StringBuffer()
+        message = string_buffer_util.StringBuffer()
 
         # creates a request object
         request = HttpRequest(self.content_type_charset)
@@ -1000,7 +1000,7 @@ class HttpRequest:
 
         self.attributes_map = {}
         self.headers_map = {}
-        self.message_stream = string_buffer.StringBuffer()
+        self.message_stream = string_buffer_util.StringBuffer()
         self.properties = {}
 
     def __repr__(self):
@@ -1061,7 +1061,7 @@ class HttpRequest:
 
     def get_result(self):
         # retrieves the result stream
-        result = string_buffer.StringBuffer()
+        result = string_buffer_util.StringBuffer()
 
         # retrieves the result string value
         message = self.message_stream.get_value()
@@ -1109,7 +1109,7 @@ class HttpRequest:
         return self.message_stream.get_value()
 
     def set_message(self, message):
-        self.message_stream = string_buffer.StringBuffer()
+        self.message_stream = string_buffer_util.StringBuffer()
         self.message_stream.write(message)
 
     def set_encoding_handler(self, encoding_handler):
