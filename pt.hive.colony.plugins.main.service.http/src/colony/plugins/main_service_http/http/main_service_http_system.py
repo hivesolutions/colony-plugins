@@ -43,7 +43,8 @@ import socket
 import select
 import threading
 import traceback
-import cStringIO
+
+import string_buffer
 
 import main_service_http_exceptions
 
@@ -533,8 +534,8 @@ class HttpClientServiceTask:
         @return: The request from the received message.
         """
 
-        # creates the string io for the message
-        message = cStringIO.StringIO()
+        # creates the string buffer for the message
+        message = string_buffer.StringBuffer()
 
         # creates a request object
         request = HttpRequest(self.content_type_charset)
@@ -560,11 +561,11 @@ class HttpClientServiceTask:
             if data == "":
                 raise main_service_http_exceptions.HttpInvalidDataException("empty data received")
 
-            # writes the data to the string io
+            # writes the data to the string buffer
             message.write(data)
 
-            # retrieves the message value from the string io
-            message_value = message.getvalue()
+            # retrieves the message value from the string buffer
+            message_value = message.get_value()
 
             # in case the start line is not loaded
             if not start_line_loaded:
@@ -961,7 +962,7 @@ class HttpRequest:
     content_type = "none"
     """ The content type """
 
-    message_stream = cStringIO.StringIO()
+    message_stream = None
     """ The message stream """
 
     status_code = None
@@ -999,7 +1000,7 @@ class HttpRequest:
 
         self.attributes_map = {}
         self.headers_map = {}
-        self.message_stream = cStringIO.StringIO()
+        self.message_stream = string_buffer.StringBuffer()
         self.properties = {}
 
     def __repr__(self):
@@ -1060,10 +1061,10 @@ class HttpRequest:
 
     def get_result(self):
         # retrieves the result stream
-        result = cStringIO.StringIO()
+        result = string_buffer.StringBuffer()
 
         # retrieves the result string value
-        message = self.message_stream.getvalue()
+        message = self.message_stream.get_value()
 
         if self.encoded:
             if self.mediated:
@@ -1094,7 +1095,7 @@ class HttpRequest:
         result.write("\r\n")
         result.write(message)
 
-        result_value = result.getvalue()
+        result_value = result.get_value()
 
         return result_value
 
@@ -1105,10 +1106,10 @@ class HttpRequest:
         self.__setattribute__(attribute_name, attribute_value)
 
     def get_message(self):
-        return self.message_stream.getvalue()
+        return self.message_stream.get_value()
 
     def set_message(self, message):
-        self.message_stream = cStringIO.StringIO()
+        self.message_stream = string_buffer.StringBuffer()
         self.message_stream.write(message)
 
     def set_encoding_handler(self, encoding_handler):

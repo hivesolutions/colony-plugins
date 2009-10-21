@@ -37,8 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import cStringIO
 import os.path
+
+import string_buffer
 
 import main_service_http_file_handler_exceptions
 
@@ -201,7 +202,7 @@ class ChunkHandler:
 
         # creates a new string buffer to used as a memory file
         # for the encoded file
-        file_contents_encoded_file_buffer = cStringIO.StringIO()
+        file_contents_encoded_file_buffer = string_buffer.StringBuffer()
 
         # writes the file contents encoded into the file contents
         # file buffer
