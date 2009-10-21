@@ -45,7 +45,7 @@ import time
 import types
 import datetime
 
-import string_buffer
+import string_buffer_util
 
 import main_jsonrpc_manager_exceptions
 
@@ -96,7 +96,7 @@ def escape_char(match):
 
 def dumps_buffer(obj):
     # creates the string buffer
-    string_buffer = string_buffer.StringBuffer()
+    string_buffer = string_buffer_util.StringBuffer()
 
     # dumps the object parts to the string buffer
     dump_parts_buffer(obj, string_buffer)
