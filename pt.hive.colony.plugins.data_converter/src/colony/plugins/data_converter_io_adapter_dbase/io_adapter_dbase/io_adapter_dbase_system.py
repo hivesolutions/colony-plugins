@@ -40,7 +40,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import datetime
 import dbi
 import odbc
-import string
 import types
 import os.path
 import dbfpy.dbf
@@ -333,7 +332,7 @@ class IoAdapterDbase:
 
         # strips the string and converts it to null in case it is empty
         if type(attribute_value) in types.StringTypes:
-            attribute_value = string.strip(attribute_value)
+            attribute_value = attribute_value.strip()
 
             # returns None in case its an empty string
             if not attribute_value:
