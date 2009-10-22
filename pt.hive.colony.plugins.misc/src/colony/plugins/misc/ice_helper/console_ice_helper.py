@@ -37,7 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import string
 import getopt
 
 import colony.plugins.util
@@ -251,7 +250,7 @@ class ConsoleIceHelper:
         split_result = access_complete_class_name.split(".")
 
         # retrieves the module name
-        access_module_name = string.join(split_result[:-1], ".")
+        access_module_name = ".".join(split_result[:-1])
         # retrieves just the class name
         access_class_name = split_result[-1]
 
@@ -277,7 +276,7 @@ class ConsoleIceHelper:
         split_result = access_complete_class_name.split(".")
 
         # retrieves the module name
-        access_module_name = string.join(split_result[:-1], ".")
+        access_module_name = ".".join(split_result[:-1])
         # retrieves just the class name
         access_class_name = split_result[-1]
 

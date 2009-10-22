@@ -41,7 +41,6 @@ import os
 import sys
 import time
 import stat
-import string
 
 SLEEP_TIME_VALUE = 1
 """ The sleep time value """
@@ -103,7 +102,7 @@ class Autoloader:
                     modified_date = time.localtime(file_stat[stat.ST_MTIME])
                     mode = file_stat[stat.ST_MODE]
                     split = os.path.splitext(file_name)
-                    module_name = string.join(split[:-1], "")
+                    module_name = "".join(split[:-1])
                     extension_name = split[-1]
 
                     # in case it's not a directory and the extension of the file is .py (python file)
@@ -143,7 +142,7 @@ class Autoloader:
                 # removes all the modules in the remove list
                 for remove_item in remove_list:
                     split = os.path.splitext(remove_item)
-                    module_name = string.join(split[:-1], "")
+                    module_name = "".join(split[:-1])
                     self.unload_module(module_name)
                     del self.search_directories_information_map[search_directory][remove_item]
 

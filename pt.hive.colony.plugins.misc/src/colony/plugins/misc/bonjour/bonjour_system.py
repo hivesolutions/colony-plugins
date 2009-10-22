@@ -41,7 +41,6 @@ import os
 import sys
 import copy
 import time
-import string
 import select
 import threading
 
@@ -319,7 +318,7 @@ class Bonjour:
             service_full_name_sub_list = service_full_name_list[index:]
 
             # joins the sublist using the dot character as separator, creating the substring
-            value = string.join(service_full_name_sub_list, ".")
+            value = ".".join(service_full_name_sub_list)
 
             # in case the value is not contained in the registration type domain service map
             if not value in self.registration_type_domain_service_map:
@@ -370,7 +369,7 @@ class Bonjour:
             service_full_name_sub_list = service_full_name_list[index:]
 
             # joins the sublist using the dot character as separator, creating the substring
-            value = string.join(service_full_name_sub_list, ".")
+            value = ".".join(service_full_name_sub_list)
 
             # in case the value is contained in the registration type domain service map
             if value in self.registration_type_domain_service_map:
@@ -632,7 +631,7 @@ class Bonjour:
         @param registration_type: The registration type.
         @type domain: String
         @param domain: The domain.
-        @type user_data: String.
+        @type user_data: String
         @param user_data: The user data.
         """
 
