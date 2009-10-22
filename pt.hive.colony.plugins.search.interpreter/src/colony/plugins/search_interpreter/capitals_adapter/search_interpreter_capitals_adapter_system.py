@@ -38,7 +38,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import copy
-import string
 
 SEARCH_INTERPRETER_ADAPTER_TYPE = "capitals"
 
