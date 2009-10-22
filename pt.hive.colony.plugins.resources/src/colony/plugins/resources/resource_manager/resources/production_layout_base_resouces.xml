@@ -52,36 +52,36 @@
         <namespace>system.path</namespace>
         <name>colony</name>
         <type>string</type>
-        <data></data>
+        <data>../../</data>
     </resource>
     <resource>
         <namespace>system.path</namespace>
         <name>omni</name>
         <type>string</type>
-        <data></data>
+        <data>../../</data>
     </resource>
     <resource>
         <namespace>system.path</namespace>
         <name>colony_web</name>
         <type>string</type>
-        <data></data>
+        <data>../../</data>
     </resource>
     <resource>
         <namespace>system.path</namespace>
         <name>omni_web</name>
         <type>string</type>
-        <data></data>
+        <data>../../</data>
     </resource>
     <resource>
         <namespace>system.path</namespace>
         <name>colony_web_ui</name>
         <type>string</type>
-        <data></data>
+        <data>../../</data>
     </resource>
     <resource>
         <namespace>system.path</namespace>
         <name>colony_demo</name>
         <type>string</type>
-        <data></data>
+        <data>../../</data>
     </resource>
 </resources>
