@@ -48,8 +48,8 @@ if "username" in attributes_map:
 if "password" in attributes_map:
     password = attributes_map["password"]
 
-# retrieves the main login plugin
-main_login_plugin = plugin_manager.get_plugin_by_id("pt.hive.colony.plugins.main.login")
+# retrieves the main authentication plugin
+main_authentication_plugin = plugin_manager.get_plugin_by_id("pt.hive.colony.plugins.main.authentication")
 
-print main_login_plugin.validate_login(username, password)
+print main_authentication_plugin.authenticate_user(username, password, "dummy", {})
 ?>
