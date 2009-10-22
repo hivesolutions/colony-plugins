@@ -37,7 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import string
 import fpconst
 import xml.sax
 
@@ -236,7 +235,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
                 if href[0] != '#':
                     raise Error, "Non-local hrefs are not yet suppported."
                 if self._data != None and \
-                   string.join(self._data, "").strip() != '':
+                   "".join(self._data).strip() != '':
                     raise Error, "hrefs can't have data"
 
                 href = href[1:]
@@ -300,7 +299,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
 
                 if null:
                     if len(cur) or \
-                        (self._data != None and string.join(self._data, "").strip() != ''):
+                        (self._data != None and "".join(self._data).strip() != ''):
                         raise Error, "nils can't have data"
 
                     data = None
@@ -332,13 +331,13 @@ class SOAPParser(xml.sax.handler.ContentHandler):
                     rule = tuple(rule)
 
                 if callable(rule):
-                    data = rule(string.join(self._data, ""))
+                    data = rule("".join(self._data))
                 elif type(rule) == main_soap_manager_types.DictType:
                     data = main_soap_manager_types.structType(name = (ns, name), attrs = attrs)
                 elif rule[1][:9] == 'arrayType':
                     data = self.convertType(cur.contents, rule, attrs)
                 else:
-                    data = self.convertType(string.join(self._data, ""), rule, attrs)
+                    data = self.convertType("".join(self._data), rule, attrs)
 
                 break
 
@@ -362,7 +361,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
 
             if len(self._stack) == 3 and kind == None and \
                 len(cur) == 0 and \
-                (self._data == None or string.join(self._data, "").strip() == ''):
+                (self._data == None or "".join(self._data).strip() == ''):
                 data = main_soap_manager_types.structType(name = (ns, name), attrs = attrs)
                 break
 
@@ -387,7 +386,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
 
                 if kind != None:
                     try:
-                        data = self.convertType(string.join(self._data, ""), kind, attrs)
+                        data = self.convertType("".join(self._data), kind, attrs)
                     except main_soap_manager_errors.UnknownTypeError:
                         data = None
                 else:
@@ -397,7 +396,7 @@ class SOAPParser(xml.sax.handler.ContentHandler):
                     if self._data == None:
                         data = ''
                     else:
-                        data = string.join(self._data, "")
+                        data = "".join(self._data)
 
                     if len(attrs) == 0:
                         try: data = str(data)
