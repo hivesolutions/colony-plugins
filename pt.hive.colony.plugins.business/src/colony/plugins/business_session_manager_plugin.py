@@ -131,8 +131,7 @@ class BusinessSessionManagerPlugin(colony.plugins.plugin_system.Plugin):
 
     @colony.plugins.decorators.unload_allowed_capability("business_session_serializer")
     def business_session_serializer_unload_allowed(self, plugin, capability):
-        if plugin in self.business_session_serializer_plugins:
-            self.business_session_serializer_plugins.remove(plugin)
+        self.business_session_serializer_plugins.remove(plugin)
 
     @colony.plugins.decorators.unload_allowed_capability("business_logic")
     def business_logic_unload_allowed(self, plugin, capability):
