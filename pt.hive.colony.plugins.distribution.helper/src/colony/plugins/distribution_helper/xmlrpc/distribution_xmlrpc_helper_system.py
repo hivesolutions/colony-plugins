@@ -38,7 +38,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import types
-import string
 
 HELPER_NAME = "xmlrpc"
 """ The helper name """
@@ -246,7 +245,7 @@ def create_caller(method):
                 full_class_name_splitted = full_class_name.split(".")
 
                 # retrieves the module name
-                module_name = string.join(full_class_name_splitted[:-1], ".")
+                module_name = ".".join(full_class_name_splitted[:-1])
 
                 # the intermediate modules
                 intermediate_modules = full_class_name_splitted[1:-1]
