@@ -42,13 +42,13 @@ import colony.plugins.decorators
 
 class MainLocalizationTranslationManagerPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Main Localization Translation Manager plugin
+    The main class for the Localization Translation Manager Main plugin
     """
 
     id = "pt.hive.colony.plugins.main.localization.localization_translation_manager"
-    name = "Main Localization Translation Manager Plugin"
-    short_name = "Main Localization Translation Manager"
-    description = "Main Localization Translation Manager Plugin"
+    name = "Localization Translation Manager Main Plugin"
+    short_name = "Localization Translation Main Manager"
+    description = "Localization Translation Manager Main Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
