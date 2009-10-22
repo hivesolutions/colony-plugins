@@ -1,0 +1,10 @@
+{
+    "language" : "pt-PT",
+    "namespace" : "pt.hive.colony",
+    "bundle" : {
+        "colony" : ["colony"],
+        "hello" : ["olá"],
+        "file" : ["ficheiro"],
+        "help" : ["ajuda"]
+    }
+}
