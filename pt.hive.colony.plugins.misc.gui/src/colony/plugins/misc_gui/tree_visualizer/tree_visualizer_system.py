@@ -39,7 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import wx
 import re
-import string
 import wx.lib.customtreectrl
 
 #@todo: review and comment this file
@@ -186,7 +185,7 @@ class TreeVisualizerPanel(wx.Panel):
         if self.regex_mode:
             self.find_all_matches(search_string)
         else:
-            self.find_all_matches("[\\w|\\W]*" + escape_string(string.lower(search_string)) + "[\\w|\\W]*")
+            self.find_all_matches("[\\w|\\W]*" + escape_string(search_string.lower()) + "[\\w|\\W]*")
         if self.filter_mode:
             self.delete_nodes(self.delete_list)
         self.bold_nodes(self.match_list)
@@ -224,7 +223,7 @@ class TreeVisualizerPanel(wx.Panel):
             self.find_all_matches_aux(self.tree.GetNextSibling(node), regex)
             item_text = self.tree.GetItemText(node)
             if not self.regex_mode:
-                item_text = string.lower(item_text)
+                item_text = item_text.lower()
             if regex.match(item_text):
                 self.match_list.append(node)
                 parent_node = self.tree.GetItemParent(node)

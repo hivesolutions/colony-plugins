@@ -39,7 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import wx
 import re
-import string
 import wx.lib.customtreectrl
 
 import misc_gui.tree_visualizer.tree_visualizer_system
