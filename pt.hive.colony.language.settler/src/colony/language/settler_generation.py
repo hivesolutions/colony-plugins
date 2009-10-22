@@ -1378,7 +1378,7 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
                 name_reference = name_reference_node_item.name_reference
 
                 if first_visit:
-                    if is_complex and name_reference[0] in string.uppercase:
+                    if is_complex and name_reference[0] in string.ascii_uppercase:
                         # adds the operation to the list of operations
                         self.add_operation("LOAD", (name_reference, ))
                         # adds the operation to the list of operations
