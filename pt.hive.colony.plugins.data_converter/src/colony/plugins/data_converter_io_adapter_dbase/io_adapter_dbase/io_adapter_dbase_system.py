@@ -263,7 +263,7 @@ class IoAdapterDbase:
         Crawls the provided directories searching for dbase tables and indexing
         their names to their directory path.
 
-        @type directory_path: str
+        @type directory_path: String
         @param directory_path: Directory paths where to search for tables.
         @rtype: Dictionary
         @return: Map associating the names of the discovered dbase tables with the
