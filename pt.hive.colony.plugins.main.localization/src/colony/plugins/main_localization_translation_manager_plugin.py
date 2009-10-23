@@ -54,7 +54,7 @@ class MainLocalizationTranslationManagerPlugin(colony.plugins.plugin_system.Plug
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["localization_handler"]
-    capabilities_allowed = ["localization_translation_bundle"]
+    capabilities_allowed = ["localization_translation_bundle_handler", "localization_translation_bundle"]
     dependencies = []
     events_handled = []
     events_registrable = []
@@ -62,6 +62,7 @@ class MainLocalizationTranslationManagerPlugin(colony.plugins.plugin_system.Plug
 
     main_localization_translation_manager = None
 
+    localization_translation_bundle_handler_plugins = []
     localization_translation_bundle_plugins = []
 
     def load_plugin(self):
@@ -96,9 +97,17 @@ class MainLocalizationTranslationManagerPlugin(colony.plugins.plugin_system.Plug
     def get_locale_string(self, locale_string, locale_string_properties):
         return self.main_localization_translation_manager.get_locale_string(locale_string, locale_string_properties)
 
+    @colony.plugins.decorators.load_allowed_capability("localization_translation_bundle_handler")
+    def localization_translation_bundle_handler_load_allowed(self, plugin, capability):
+        self.localization_translation_bundle_handler_plugins.append(plugin)
+
     @colony.plugins.decorators.load_allowed_capability("localization_translation_bundle")
     def localization_translation_bundle_load_allowed(self, plugin, capability):
         self.localization_translation_bundle_plugins.append(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("localization_translation_bundle_handler")
+    def localization_translation_bundle_handler_unload_allowed(self, plugin, capability):
+        self.localization_translation_bundle_handler_plugins.remove(plugin)
 
     @colony.plugins.decorators.unload_allowed_capability("localization_translation_bundle")
     def localization_translation_bundle_unload_allowed(self, plugin, capability):
