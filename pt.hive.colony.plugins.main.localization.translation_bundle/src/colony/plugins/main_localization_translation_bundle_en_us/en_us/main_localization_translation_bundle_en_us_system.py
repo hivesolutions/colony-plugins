@@ -51,3 +51,12 @@ class MainLocalizationTranslationBundleEnUs:
         """
 
         self.main_localization_translation_bundle_en_us_plugin = main_localization_translation_bundle_en_us_plugin
+
+    def get_bundle(self):
+        return None
+
+    def get_bundle_path(self):
+        return None
+
+    def get_bundle_type(self):
+        return None
