@@ -85,11 +85,8 @@ class MainLocalizationTranslationBundleEnUsPlugin(colony.plugins.plugin_system.P
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def get_bundle(self):
-        return None
-
     def get_bundle_path(self):
-        return None
+        return self.main_localization_translation_bundle_en_us.get_bundle_path()
 
     def get_bundle_type(self):
-        return None
+        return self.main_localization_translation_bundle_en_us.get_bundle_type()

@@ -37,10 +37,22 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+RESOURCES_PATH = "main_localization_translation_bundle_en_us/en_us/resources"
+""" The resources path """
+
+BUNDLE_FILE_NAME = "localization_bundle_en_us.json"
+""" The bundle file name """
+
+BUNDLE_TYPE = "json"
+""" The bundle type """
+
 class MainLocalizationTranslationBundleEnUs:
     """
     The main localization translation bundle en us class.
     """
+
+    main_localization_translation_bundle_en_us_plugin = None
+    """ The main localization translation bundle en us plugin """
 
     def __init__(self, main_localization_translation_bundle_en_us_plugin):
         """
@@ -52,11 +64,8 @@ class MainLocalizationTranslationBundleEnUs:
 
         self.main_localization_translation_bundle_en_us_plugin = main_localization_translation_bundle_en_us_plugin
 
-    def get_bundle(self):
-        return None
-
     def get_bundle_path(self):
-        return None
+        return RESOURCES_PATH + "/" + BUNDLE_FILE_NAME
 
     def get_bundle_type(self):
-        return None
+        return BUNDLE_TYPE
