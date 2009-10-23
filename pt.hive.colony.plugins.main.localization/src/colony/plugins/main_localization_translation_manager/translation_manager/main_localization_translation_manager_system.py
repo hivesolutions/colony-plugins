@@ -42,6 +42,12 @@ class MainLocalizationTranslationManager:
     The main localization translation manager class.
     """
 
+    main_localization_translation_manager_plugin = None
+    """ The main localization translation manager plugin """
+
+    localization_translation_bundle_handler_name_localization_translation_bundle_handler_plugin_map = {}
+    """ The localization translation bundle handler name localization translation bundle handler plugin map """
+
     def __init__(self, main_localization_translation_manager_plugin):
         """
         Constructor of the class.
@@ -51,6 +57,34 @@ class MainLocalizationTranslationManager:
         """
 
         self.main_localization_translation_manager_plugin = main_localization_translation_manager_plugin
+
+        self.localization_translation_bundle_handler_name_localization_translation_bundle_handler_plugin_map = {}
+
+    def load_localization_translation_bundle_handler_plugin(self, localization_translation_bundle_handler_plugin):
+        # retrieves the localization translation bundle handler name
+        localization_translation_bundle_handler_name = localization_translation_bundle_handler_plugin.get_handler_name()
+
+        # sets the localization translation bundle handler plugin
+        self.localization_translation_bundle_handler_name_localization_translation_bundle_handler_plugin_map[localization_translation_bundle_handler_name] = localization_translation_bundle_handler_plugin
+
+        # generates the translation bundle
+        #translation_bundle = self.generate_translation_bundle(localization_translation_bundle_handler_plugin)
+
+    def unload_localization_translation_bundle_handler_plugin(self, localization_translation_bundle_handler_plugin):
+        pass
+
+    def generate_translation_bundle(self, localization_translation_bundle_plugin):
+        # retrieves the bundle path
+        bundle_path = localization_translation_bundle_plugin.get_bundle_path()
+
+        # retrieves the bundle type
+        bundle_type = localization_translation_bundle_plugin.get_bundle_type()
+
+        # creates the translation bundle
+        translation_bundle = TranslationBundle(bundle_path, bundle_type)
+
+        # returns the translation bundle
+        return translation_bundle
 
     def get_locale(self, locale_type, locale_properties):
         """
@@ -69,3 +103,59 @@ class MainLocalizationTranslationManager:
     def get_locale_string(self, locale_string, locale_string_properties):
 
         return None
+
+class TranslationBundle:
+    """
+    The translation bundle class.
+    """
+
+    bundle_path = "none"
+    """ The bundle path """
+
+    bundle_type = "none"
+    """ The bundle type """
+
+    def __init__(self, bundle_path = "none", bundle_type = "none"):
+        self.bundle_path = bundle_path
+        self.bundle_type = bundle_type
+
+    def get_bundle_path(self):
+        """
+        Retrieves the bundle path.
+
+        @rtype: String
+        @return: The bundle path.
+        """
+
+        return self.bundle_path
+
+    def set_bundle_path(self, bundle_path):
+        """
+        Sets the bundle path.
+
+        @type bundle_path: String
+        @param bundle_path: The bundle path.
+        """
+
+        self.bundle_path = bundle_path
+
+
+    def get_bundle_type(self):
+        """
+        Retrieves the bundle type.
+
+        @rtype: String
+        @return: The bundle type.
+        """
+
+        return self.bundle_type
+
+    def set_bundle_type(self, bundle_type):
+        """
+        Sets the bundle type.
+
+        @type bundle_path: String
+        @param bundle_path: The bundle type.
+        """
+
+        self.bundle_type = bundle_type

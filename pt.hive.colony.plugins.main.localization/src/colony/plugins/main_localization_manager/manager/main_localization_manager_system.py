@@ -42,6 +42,9 @@ class MainLocalizationManager:
     The main localization manager class.
     """
 
+    main_localization_manager_plugin = None
+    """ The main localization manager plugin """
+
     def __init__(self, main_localization_manager_plugin):
         """
         Constructor of the class.

@@ -37,10 +37,16 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+HANDLER_NAME = "json"
+""" The handler name """
+
 class MainLocalizationTranslationJsonBundleHandler:
     """
     The main localization translation json bundle handler class.
     """
+
+    main_localization_translation_json_bundle_handler_plugin = None
+    """ The main localization translation json bundle handler plugin """
 
     def __init__(self, main_localization_translation_json_bundle_handler_plugin):
         """
@@ -51,6 +57,9 @@ class MainLocalizationTranslationJsonBundleHandler:
         """
 
         self.main_localization_translation_json_bundle_handler_plugin = main_localization_translation_json_bundle_handler_plugin
+
+    def get_handler_name(self):
+        return HANDLER_NAME
 
     def handle_bundle(self, bundle):
         return None

@@ -85,5 +85,8 @@ class MainLocalizationTranslationJsonBundleHandlerPlugin(colony.plugins.plugin_s
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    def get_handler_name(self):
+        return self.main_localization_translation_json_bundle_handler.get_handler_name()
+
     def handle_bundle(self, bundle):
         return self.main_localization_translation_json_bundle_handler.handle_bundle(bundle)
