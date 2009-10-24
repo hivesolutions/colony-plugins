@@ -65,7 +65,17 @@ class MainLocalizationTranslationBundleEnUs:
         self.main_localization_translation_bundle_en_us_plugin = main_localization_translation_bundle_en_us_plugin
 
     def get_bundle_path(self):
-        return RESOURCES_PATH + "/" + BUNDLE_FILE_NAME
+        # retrieves the plugin manager
+        manager = self.main_localization_translation_bundle_en_us_plugin.manager
+
+        # retrieves the main localization translation bundle en us plugin path
+        main_localization_translation_bundle_en_us_plugin_path = manager.get_plugin_path_by_id(self.main_localization_translation_bundle_en_us_plugin.id)
+
+        # sets the main localization translation bundle en us plugin resources path
+        main_localization_translation_bundle_en_us_plugin_resources_path = main_localization_translation_bundle_en_us_plugin_path + "/" + RESOURCES_PATH + "/" + BUNDLE_FILE_NAME
+
+        # returns the main localization translation bundle en us plugin resources path
+        return main_localization_translation_bundle_en_us_plugin_resources_path
 
     def get_bundle_type(self):
         return BUNDLE_TYPE
