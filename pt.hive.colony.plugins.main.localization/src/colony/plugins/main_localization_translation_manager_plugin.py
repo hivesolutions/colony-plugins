@@ -105,6 +105,7 @@ class MainLocalizationTranslationManagerPlugin(colony.plugins.plugin_system.Plug
     @colony.plugins.decorators.load_allowed_capability("localization_translation_bundle")
     def localization_translation_bundle_load_allowed(self, plugin, capability):
         self.localization_translation_bundle_plugins.append(plugin)
+        self.main_localization_translation_manager.load_localization_translation_bundle_plugin(plugin)
 
     @colony.plugins.decorators.unload_allowed_capability("localization_translation_bundle_handler")
     def localization_translation_bundle_handler_unload_allowed(self, plugin, capability):
@@ -114,3 +115,4 @@ class MainLocalizationTranslationManagerPlugin(colony.plugins.plugin_system.Plug
     @colony.plugins.decorators.unload_allowed_capability("localization_translation_bundle")
     def localization_translation_bundle_unload_allowed(self, plugin, capability):
         self.localization_translation_bundle_plugins.remove(plugin)
+        self.main_localization_translation_manager.unload_localization_translation_bundle_plugin(plugin)

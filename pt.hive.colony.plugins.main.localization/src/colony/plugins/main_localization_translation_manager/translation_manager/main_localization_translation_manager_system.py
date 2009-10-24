@@ -48,6 +48,9 @@ class MainLocalizationTranslationManager:
     localization_translation_bundle_handler_name_localization_translation_bundle_handler_plugin_map = {}
     """ The localization translation bundle handler name localization translation bundle handler plugin map """
 
+    localization_translation_bundle_type_localization_translation_bundles_map = {}
+    """ The localization translation bundle type localization translation bundles map """
+
     def __init__(self, main_localization_translation_manager_plugin):
         """
         Constructor of the class.
@@ -67,11 +70,42 @@ class MainLocalizationTranslationManager:
         # sets the localization translation bundle handler plugin
         self.localization_translation_bundle_handler_name_localization_translation_bundle_handler_plugin_map[localization_translation_bundle_handler_name] = localization_translation_bundle_handler_plugin
 
+    def load_localization_translation_bundle_plugin(self, localization_translation_bundle_plugin):
         # generates the translation bundle
-        #translation_bundle = self.generate_translation_bundle(localization_translation_bundle_handler_plugin)
+        translation_bundle = self.generate_translation_bundle(localization_translation_bundle_plugin)
+
+        # retrieves the translation bundle type
+        translation_bundle_type = translation_bundle.get_bundle_type()
+
+        # in case the translation bundle type is not defined in the localization translation bundle type localization translation bundles map
+        if not translation_bundle_type in self.localization_translation_bundle_type_localization_translation_bundles_map:
+            self.localization_translation_bundle_type_localization_translation_bundles_map[translation_bundle_type] = []
+
+        # retrieves the localization translation bundles list for the translation bundle type
+        localization_translation_bundles_list = self.localization_translation_bundle_type_localization_translation_bundles_map[translation_bundle_type]
+
+        # adds the translation bundle to the localization translation bundles list
+        localization_translation_bundles_list.append(translation_bundle)
+
+        # loads the translation bundle
+        self.load_translation_bundle(translation_bundle)
 
     def unload_localization_translation_bundle_handler_plugin(self, localization_translation_bundle_handler_plugin):
         pass
+
+    def unload_localization_translation_bundle_plugin(self, localization_translation_bundle_plugin):
+        pass
+
+    def load_translation_bundle(self, translation_bundle):
+        # retrieves the translation bundle type
+        translation_bundle_type = translation_bundle.get_bundle_type()
+
+        # retrieves the localization translation bundle handler plugin
+        # for the given translation bundle type
+        localization_translation_bundle_handler_plugin = self.localization_translation_bundle_handler_name_localization_translation_bundle_handler_plugin_map[translation_bundle_type]
+
+        # handles the translation bundle
+        localization_translation_bundle_handler_plugin.handle_bundle(translation_bundle)
 
     def generate_translation_bundle(self, localization_translation_bundle_plugin):
         # retrieves the bundle path
