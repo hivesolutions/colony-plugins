@@ -72,7 +72,7 @@ class MainLocalizationTranslationManager:
 
     def load_localization_translation_bundle_plugin(self, localization_translation_bundle_plugin):
         # generates the translation bundle
-        translation_bundle = self.generate_translation_bundle(localization_translation_bundle_plugin)
+        translation_bundle = self._generate_translation_bundle(localization_translation_bundle_plugin)
 
         # retrieves the translation bundle type
         translation_bundle_type = translation_bundle.get_bundle_type()
@@ -96,30 +96,6 @@ class MainLocalizationTranslationManager:
     def unload_localization_translation_bundle_plugin(self, localization_translation_bundle_plugin):
         pass
 
-    def load_translation_bundle(self, translation_bundle):
-        # retrieves the translation bundle type
-        translation_bundle_type = translation_bundle.get_bundle_type()
-
-        # retrieves the localization translation bundle handler plugin
-        # for the given translation bundle type
-        localization_translation_bundle_handler_plugin = self.localization_translation_bundle_handler_name_localization_translation_bundle_handler_plugin_map[translation_bundle_type]
-
-        # handles the translation bundle
-        localization_translation_bundle_handler_plugin.handle_bundle(translation_bundle)
-
-    def generate_translation_bundle(self, localization_translation_bundle_plugin):
-        # retrieves the bundle path
-        bundle_path = localization_translation_bundle_plugin.get_bundle_path()
-
-        # retrieves the bundle type
-        bundle_type = localization_translation_bundle_plugin.get_bundle_type()
-
-        # creates the translation bundle
-        translation_bundle = TranslationBundle(bundle_path, bundle_type)
-
-        # returns the translation bundle
-        return translation_bundle
-
     def get_locale(self, locale_type, locale_properties):
         """
         Retrieves the locale for the given locale type and local properties.
@@ -134,9 +110,38 @@ class MainLocalizationTranslationManager:
 
         return None
 
-    def get_locale_string(self, locale_string, locale_string_properties):
+    def load_translation_bundle(self, translation_bundle):
+        # @todo: i have to put the lazy loading here
 
+        # loads the translation bundle
+        self._load_translation_bundle(translation_bundle)
+
+    def get_locale_string(self, locale_string, locale_string_properties):
         return None
+
+    def _generate_translation_bundle(self, localization_translation_bundle_plugin):
+        # retrieves the bundle path
+        bundle_path = localization_translation_bundle_plugin.get_bundle_path()
+
+        # retrieves the bundle type
+        bundle_type = localization_translation_bundle_plugin.get_bundle_type()
+
+        # creates the translation bundle
+        translation_bundle = TranslationBundle(bundle_path, bundle_type)
+
+        # returns the translation bundle
+        return translation_bundle
+
+    def _load_translation_bundle(self, translation_bundle):
+        # retrieves the translation bundle type
+        translation_bundle_type = translation_bundle.get_bundle_type()
+
+        # retrieves the localization translation bundle handler plugin
+        # for the given translation bundle type
+        localization_translation_bundle_handler_plugin = self.localization_translation_bundle_handler_name_localization_translation_bundle_handler_plugin_map[translation_bundle_type]
+
+        # handles the translation bundle
+        localization_translation_bundle_handler_plugin.handle_bundle(translation_bundle)
 
 class TranslationBundle:
     """
