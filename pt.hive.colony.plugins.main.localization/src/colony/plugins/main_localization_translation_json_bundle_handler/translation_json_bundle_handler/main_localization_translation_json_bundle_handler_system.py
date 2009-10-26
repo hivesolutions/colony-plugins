@@ -76,5 +76,14 @@ class MainLocalizationTranslationJsonBundleHandler:
         # closes the bundle file
         bundle_file.close()
 
-        # returns the bundle contents
-        return bundle_contents
+        # retrieves the bundle namespace
+        bundle_namespace = bundle_contents["namespace"]
+
+        # retrieves the bundle contents
+        bundle_contents = bundle_contents["bundle"]
+
+        # sets the bundle namespace
+        bundle.set_bundle_namespace(bundle_namespace)
+
+        # sets the bundle contents
+        bundle.set_bundle_contents(bundle_contents)

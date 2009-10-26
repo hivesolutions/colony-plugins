@@ -51,6 +51,9 @@ class MainLocalizationTranslationManager:
     localization_translation_bundle_type_localization_translation_bundles_map = {}
     """ The localization translation bundle type localization translation bundles map """
 
+    localization_translation_bundle_language_localization_translation_bundles_map = {}
+    """ The localization translation bundle language localization translation bundles map """
+
     def __init__(self, main_localization_translation_manager_plugin):
         """
         Constructor of the class.
@@ -62,6 +65,8 @@ class MainLocalizationTranslationManager:
         self.main_localization_translation_manager_plugin = main_localization_translation_manager_plugin
 
         self.localization_translation_bundle_handler_name_localization_translation_bundle_handler_plugin_map = {}
+        self.localization_translation_bundle_type_localization_translation_bundles_map = {}
+        self.localization_translation_bundle_language_localization_translation_bundles_map = {}
 
     def load_localization_translation_bundle_handler_plugin(self, localization_translation_bundle_handler_plugin):
         # retrieves the localization translation bundle handler name
@@ -77,12 +82,25 @@ class MainLocalizationTranslationManager:
         # retrieves the translation bundle type
         translation_bundle_type = translation_bundle.get_bundle_type()
 
+        # retrieves the translation bundle language
+        translation_bundle_language = translation_bundle.get_bundle_language()
+
         # in case the translation bundle type is not defined in the localization translation bundle type localization translation bundles map
         if not translation_bundle_type in self.localization_translation_bundle_type_localization_translation_bundles_map:
             self.localization_translation_bundle_type_localization_translation_bundles_map[translation_bundle_type] = []
 
         # retrieves the localization translation bundles list for the translation bundle type
         localization_translation_bundles_list = self.localization_translation_bundle_type_localization_translation_bundles_map[translation_bundle_type]
+
+        # adds the translation bundle to the localization translation bundles list
+        localization_translation_bundles_list.append(translation_bundle)
+
+        # in case the translation bundle type is not defined in the localization translation bundle language localization translation bundles map
+        if not translation_bundle_type in self.localization_translation_bundle_language_localization_translation_bundles_map:
+            self.localization_translation_bundle_language_localization_translation_bundles_map[translation_bundle_language] = []
+
+        # retrieves the localization translation bundles list for the translation bundle language
+        localization_translation_bundles_list = self.localization_translation_bundle_language_localization_translation_bundles_map[translation_bundle_language]
 
         # adds the translation bundle to the localization translation bundles list
         localization_translation_bundles_list.append(translation_bundle)
@@ -126,8 +144,11 @@ class MainLocalizationTranslationManager:
         # retrieves the bundle type
         bundle_type = localization_translation_bundle_plugin.get_bundle_type()
 
+        # retrieves the bundle language
+        bundle_language = localization_translation_bundle_plugin.get_bundle_language()
+
         # creates the translation bundle
-        translation_bundle = TranslationBundle(bundle_path, bundle_type)
+        translation_bundle = TranslationBundle(bundle_path, bundle_type, bundle_language)
 
         # returns the translation bundle
         return translation_bundle
@@ -154,9 +175,22 @@ class TranslationBundle:
     bundle_type = "none"
     """ The bundle type """
 
-    def __init__(self, bundle_path = "none", bundle_type = "none"):
+    bundle_language = "none"
+    """ The bundle language """
+
+    bundle_namespace = "none"
+    """ The bundle namespace """
+
+    bundle_contents = {}
+    """ The bundle contents """
+
+    def __init__(self, bundle_path = "none", bundle_type = "none", bundle_language = "none", bundle_namespace = "none"):
         self.bundle_path = bundle_path
         self.bundle_type = bundle_type
+        self.bundle_language = bundle_language
+        self.bundle_namespace = bundle_namespace
+
+        self.bundle_contents = {}
 
     def get_bundle_path(self):
         """
@@ -193,8 +227,68 @@ class TranslationBundle:
         """
         Sets the bundle type.
 
-        @type bundle_path: String
-        @param bundle_path: The bundle type.
+        @type bundle_type: String
+        @param bundle_type: The bundle type.
         """
 
         self.bundle_type = bundle_type
+
+    def get_bundle_language(self):
+        """
+        Retrieves the bundle language.
+
+        @rtype: String
+        @return: The bundle language.
+        """
+
+        return self.bundle_language
+
+    def set_bundle_language(self, bundle_language):
+        """
+        Sets the bundle language.
+
+        @type bundle_language: String
+        @param bundle_language: The bundle language.
+        """
+
+        self.bundle_language = bundle_language
+
+    def get_bundle_namespace(self):
+        """
+        Retrieves the bundle namespace.
+
+        @rtype: String
+        @return: The bundle namespace.
+        """
+
+        return self.bundle_namespace
+
+    def set_bundle_namespace(self, bundle_namespace):
+        """
+        Sets the bundle namespace.
+
+        @type bundle_namespace: String
+        @param bundle_namespace: The bundle namespace.
+        """
+
+        self.bundle_namespace = bundle_namespace
+
+    def get_bundle_contents(self):
+        """
+        Retrieves the bundle contents.
+
+        @rtype: String
+        @return: The bundle contents.
+        """
+
+        return self.bundle_contents
+
+    def set_bundle_contents(self, bundle_contents):
+        """
+        Sets the bundle contents.
+
+        @type bundle_contents: String
+        @param bundle_contents: The bundle contents.
+        """
+
+        self.bundle_contents = bundle_contents

@@ -90,3 +90,6 @@ class MainLocalizationTranslationBundleEnUsPlugin(colony.plugins.plugin_system.P
 
     def get_bundle_type(self):
         return self.main_localization_translation_bundle_en_us.get_bundle_type()
+
+    def get_bundle_language(self):
+        return self.main_localization_translation_bundle_en_us.get_bundle_language()
