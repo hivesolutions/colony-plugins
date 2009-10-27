@@ -1,10 +1,11 @@
 {
-    "language" : "en-US",
+    "locale_identifier" : "en-US",
     "namespace" : "pt.hive.colony",
     "bundle" : {
         "colony" : ["colony"],
         "hello" : ["hello"],
         "file" : ["file"],
-        "help" : ["help"]
+        "help" : ["help"],
+        "computer" : ["computer" , "{count} computers"]
     }
 }

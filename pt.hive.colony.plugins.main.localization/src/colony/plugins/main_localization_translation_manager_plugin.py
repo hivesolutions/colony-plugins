@@ -91,11 +91,11 @@ class MainLocalizationTranslationManagerPlugin(colony.plugins.plugin_system.Plug
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def get_locale(self, locale_type, locale_properties):
-        return self.main_localization_translation_manager.get_locale(locale_type, locale_properties)
+    def get_locale(self, locale_identifier, locale_type, locale_properties):
+        return self.main_localization_translation_manager.get_locale(locale_identifier, locale_type, locale_properties)
 
-    def get_locale_string(self, locale_string, locale_string_properties):
-        return self.main_localization_translation_manager.get_locale_string(locale_string, locale_string_properties)
+    def get_locale_string(self, locale_identifier, locale_string, locale_string_properties):
+        return self.main_localization_translation_manager.get_locale_string(locale_identifier, locale_string, locale_string_properties)
 
     @colony.plugins.decorators.load_allowed_capability("localization_translation_bundle_handler")
     def localization_translation_bundle_handler_load_allowed(self, plugin, capability):

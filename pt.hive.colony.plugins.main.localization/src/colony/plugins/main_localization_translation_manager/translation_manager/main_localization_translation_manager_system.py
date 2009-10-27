@@ -37,6 +37,11 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import re
+
+OPTIONS_REGEX = "(?<=\{)[a-zA-Z0-9_]*(?=\})"
+""" The options regular expression """
+
 class MainLocalizationTranslationManager:
     """
     The main localization translation manager class.
@@ -51,8 +56,14 @@ class MainLocalizationTranslationManager:
     localization_translation_bundle_type_localization_translation_bundles_map = {}
     """ The localization translation bundle type localization translation bundles map """
 
-    localization_translation_bundle_language_localization_translation_bundles_map = {}
-    """ The localization translation bundle language localization translation bundles map """
+    localization_translation_bundle_locale_identifier_localization_translation_bundles_map = {}
+    """ The localization translation bundle locale identifier localization translation bundles map """
+
+    localization_translation_bundle_locale_identifier_translation_map = {}
+    """ The localization translation bundle locale identifier translation map """
+
+    options_regex = None
+    """ The options regular expression """
 
     def __init__(self, main_localization_translation_manager_plugin):
         """
@@ -66,7 +77,11 @@ class MainLocalizationTranslationManager:
 
         self.localization_translation_bundle_handler_name_localization_translation_bundle_handler_plugin_map = {}
         self.localization_translation_bundle_type_localization_translation_bundles_map = {}
-        self.localization_translation_bundle_language_localization_translation_bundles_map = {}
+        self.localization_translation_bundle_locale_identifier_localization_translation_bundles_map = {}
+        self.localization_translation_bundle_locale_identifier_translation_map = {}
+
+        # compiles the options regular expression
+        self.options_regex = re.compile(OPTIONS_REGEX)
 
     def load_localization_translation_bundle_handler_plugin(self, localization_translation_bundle_handler_plugin):
         # retrieves the localization translation bundle handler name
@@ -82,8 +97,8 @@ class MainLocalizationTranslationManager:
         # retrieves the translation bundle type
         translation_bundle_type = translation_bundle.get_bundle_type()
 
-        # retrieves the translation bundle language
-        translation_bundle_language = translation_bundle.get_bundle_language()
+        # retrieves the translation bundle locale identifier
+        translation_bundle_locale_identifier = translation_bundle.get_bundle_locale_identifier()
 
         # in case the translation bundle type is not defined in the localization translation bundle type localization translation bundles map
         if not translation_bundle_type in self.localization_translation_bundle_type_localization_translation_bundles_map:
@@ -95,12 +110,12 @@ class MainLocalizationTranslationManager:
         # adds the translation bundle to the localization translation bundles list
         localization_translation_bundles_list.append(translation_bundle)
 
-        # in case the translation bundle type is not defined in the localization translation bundle language localization translation bundles map
-        if not translation_bundle_type in self.localization_translation_bundle_language_localization_translation_bundles_map:
-            self.localization_translation_bundle_language_localization_translation_bundles_map[translation_bundle_language] = []
+        # in case the translation bundle type is not defined in the localization translation bundle locale identifier localization translation bundles map
+        if not translation_bundle_type in self.localization_translation_bundle_locale_identifier_localization_translation_bundles_map:
+            self.localization_translation_bundle_locale_identifier_localization_translation_bundles_map[translation_bundle_locale_identifier] = []
 
-        # retrieves the localization translation bundles list for the translation bundle language
-        localization_translation_bundles_list = self.localization_translation_bundle_language_localization_translation_bundles_map[translation_bundle_language]
+        # retrieves the localization translation bundles list for the translation bundle locale identifier
+        localization_translation_bundles_list = self.localization_translation_bundle_locale_identifier_localization_translation_bundles_map[translation_bundle_locale_identifier]
 
         # adds the translation bundle to the localization translation bundles list
         localization_translation_bundles_list.append(translation_bundle)
@@ -114,10 +129,12 @@ class MainLocalizationTranslationManager:
     def unload_localization_translation_bundle_plugin(self, localization_translation_bundle_plugin):
         pass
 
-    def get_locale(self, locale_type, locale_properties):
+    def get_locale(self, locale_identifier, locale_type, locale_properties):
         """
-        Retrieves the locale for the given locale type and local properties.
+        Retrieves the locale for the given local identifier, locale type and local properties.
 
+        @type locale_identifier: String
+        @param locale_identifier: The identifier of the local to retrieve.
         @type locale_type: String
         @param locale_type: The type of the local to retrieve.
         @type locale_properties: Map
@@ -128,14 +145,36 @@ class MainLocalizationTranslationManager:
 
         return None
 
+    def get_locale_string(self, locale_identifier, locale_string, locale_string_properties):
+        if not locale_identifier in self.localization_translation_bundle_locale_identifier_translation_map:
+            # se tivesse noutro sitio fazia o loading (lazy loading aki)
+            return None
+
+        # retrieves the translation map
+        translation_map = self.localization_translation_bundle_locale_identifier_translation_map[locale_identifier]
+
+        if not locale_string in translation_map:
+            return None
+
+        # retrieves the translation item map
+        translation_item_map = translation_map[locale_string]
+
+        # creates the locale string properties string
+        locale_string_properties_string = "".join(locale_string_properties.keys())
+
+        if not locale_string_properties_string in translation_item_map:
+            return None
+
+        # retrieves the translation string for the given locale string properties string
+        translation_string = translation_item_map[locale_string_properties_string]
+
+        return translation_item_map[locale_string_properties_string]
+
     def load_translation_bundle(self, translation_bundle):
-        # @todo: i have to put the lazy loading here
+        # @todo: I have to put the lazy loading here
 
         # loads the translation bundle
         self._load_translation_bundle(translation_bundle)
-
-    def get_locale_string(self, locale_string, locale_string_properties):
-        return None
 
     def _generate_translation_bundle(self, localization_translation_bundle_plugin):
         # retrieves the bundle path
@@ -144,11 +183,11 @@ class MainLocalizationTranslationManager:
         # retrieves the bundle type
         bundle_type = localization_translation_bundle_plugin.get_bundle_type()
 
-        # retrieves the bundle language
-        bundle_language = localization_translation_bundle_plugin.get_bundle_language()
+        # retrieves the bundle locale identifier
+        bundle_locale_identifier = localization_translation_bundle_plugin.get_bundle_locale_identifier()
 
         # creates the translation bundle
-        translation_bundle = TranslationBundle(bundle_path, bundle_type, bundle_language)
+        translation_bundle = TranslationBundle(bundle_path, bundle_type, bundle_locale_identifier)
 
         # returns the translation bundle
         return translation_bundle
@@ -164,6 +203,43 @@ class MainLocalizationTranslationManager:
         # handles the translation bundle
         localization_translation_bundle_handler_plugin.handle_bundle(translation_bundle)
 
+        # retrieves the translation bundle locale identifier
+        translation_bundle_locale_identifier = translation_bundle.get_bundle_locale_identifier()
+
+        # retrieves the translation bundle contents
+        translation_bundle_contents = translation_bundle.get_bundle_contents()
+
+        # in case the translation bundle locale identifier is not defined in the localization
+        # translation bundle locale identifier translation map
+        if not translation_bundle_locale_identifier in self.localization_translation_bundle_locale_identifier_translation_map:
+            self.localization_translation_bundle_locale_identifier_translation_map[translation_bundle_locale_identifier] = {}
+
+        # retrieves the translation map
+        translation_map = self.localization_translation_bundle_locale_identifier_translation_map[translation_bundle_locale_identifier]
+
+        # iterates over the translation bundle contents
+        for translation_bundle_contents_key in translation_bundle_contents:
+            # in case the translation bundle contents key is not defined in the translation map
+            if not translation_bundle_contents_key in translation_map:
+                translation_map[translation_bundle_contents_key] = {}
+
+            # retrieves the translation bundle contents
+            translation_bundle_contents_map = translation_bundle_contents[translation_bundle_contents_key]
+
+            # retrieves the translation item map
+            translation_item_map = translation_map[translation_bundle_contents_key]
+
+            # iterates over all the all the translation bundle content items
+            for translation_bundle_content_item in translation_bundle_contents_map:
+                # retrieves the translation bundle content item arguments
+                translation_bundle_content_item_arguments = self.options_regex.findall(translation_bundle_content_item)
+
+                # creates the translation bundle content item string
+                translation_bundle_content_item_arguments_string = "".join(translation_bundle_content_item_arguments)
+
+                # sets the translation bundle content item in the translation item map
+                translation_item_map[translation_bundle_content_item_arguments_string] = translation_bundle_content_item
+
 class TranslationBundle:
     """
     The translation bundle class.
@@ -175,8 +251,8 @@ class TranslationBundle:
     bundle_type = "none"
     """ The bundle type """
 
-    bundle_language = "none"
-    """ The bundle language """
+    bundle_locale_identifier = "none"
+    """ The bundle locale identifier """
 
     bundle_namespace = "none"
     """ The bundle namespace """
@@ -184,10 +260,10 @@ class TranslationBundle:
     bundle_contents = {}
     """ The bundle contents """
 
-    def __init__(self, bundle_path = "none", bundle_type = "none", bundle_language = "none", bundle_namespace = "none"):
+    def __init__(self, bundle_path = "none", bundle_type = "none", bundle_locale_identifier = "none", bundle_namespace = "none"):
         self.bundle_path = bundle_path
         self.bundle_type = bundle_type
-        self.bundle_language = bundle_language
+        self.bundle_locale_identifier = bundle_locale_identifier
         self.bundle_namespace = bundle_namespace
 
         self.bundle_contents = {}
@@ -233,25 +309,25 @@ class TranslationBundle:
 
         self.bundle_type = bundle_type
 
-    def get_bundle_language(self):
+    def get_bundle_locale_identifier(self):
         """
-        Retrieves the bundle language.
+        Retrieves the bundle locale identifier.
 
         @rtype: String
-        @return: The bundle language.
+        @return: The bundle locale identifier.
         """
 
-        return self.bundle_language
+        return self.bundle_locale_identifier
 
-    def set_bundle_language(self, bundle_language):
+    def set_bundle_locale_identifier(self, bundle_locale_identifier):
         """
-        Sets the bundle language.
+        Sets the bundle locale identifier.
 
-        @type bundle_language: String
-        @param bundle_language: The bundle language.
+        @type bundle_locale_identifier: String
+        @param bundle_locale_identifier: The locale identifier.
         """
 
-        self.bundle_language = bundle_language
+        self.bundle_locale_identifier = bundle_locale_identifier
 
     def get_bundle_namespace(self):
         """

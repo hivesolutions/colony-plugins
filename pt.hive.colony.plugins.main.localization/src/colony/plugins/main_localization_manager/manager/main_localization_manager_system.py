@@ -55,10 +55,12 @@ class MainLocalizationManager:
 
         self.main_localization_manager_plugin = main_localization_manager_plugin
 
-    def get_locale(self, locale_type, locale_properties):
+    def get_locale(self, locale_identifier, locale_type, locale_properties):
         """
-        Retrieves the locale for the given locale type and local properties.
+        Retrieves the locale for the given local identifier, locale type and local properties.
 
+        @type locale_identifier: String
+        @param locale_identifier: The identifier of the local to retrieve.
         @type locale_type: String
         @param locale_type: The type of the local to retrieve.
         @type locale_properties: Map

@@ -46,8 +46,8 @@ BUNDLE_FILE_NAME = "localization_bundle_en_us.json"
 BUNDLE_TYPE = "json"
 """ The bundle type """
 
-BUNDLE_LANGUAGE = "en-US"
-""" The bundle language """
+BUNDLE_LOCALE_IDENTIFIER = "en-US"
+""" The bundle locale identifier """
 
 class MainLocalizationTranslationBundleEnUs:
     """
@@ -83,5 +83,5 @@ class MainLocalizationTranslationBundleEnUs:
     def get_bundle_type(self):
         return BUNDLE_TYPE
 
-    def get_bundle_language(self):
-        return BUNDLE_LANGUAGE
+    def get_bundle_locale_identifier(self):
+        return BUNDLE_LOCALE_IDENTIFIER
