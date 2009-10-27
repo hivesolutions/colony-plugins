@@ -185,6 +185,7 @@ class JavascriptManager:
                                                colony_web_real_path + "/pt.hive.colony.web.plugins.ui/plugins",
                                                omni_web_real_path + "/pt.hive.omni.web.plugins.gui.consignments/plugins",
                                                omni_web_real_path + "/pt.hive.omni.web.plugins.gui.customers_suppliers/plugins",
+                                               omni_web_real_path + "/pt.hive.omni.web.plugins.gui.general.address/plugins",
                                                omni_web_real_path + "/pt.hive.omni.web.plugins.gui.general.contact_information/plugins",
                                                omni_web_real_path + "/pt.hive.omni.web.plugins.gui.human_resources/plugins",
                                                omni_web_real_path + "/pt.hive.omni.web.plugins.gui.inventory/plugins",
