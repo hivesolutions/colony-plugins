@@ -166,9 +166,6 @@ class MainLocalizationTranslationManager:
         # splits the locale string
         locale_string_splitted = locale_string.split(".")
 
-        # retrieves the local string value from the locale string splitted
-        locale_string_value = locale_string_splitted[-1]
-
         # retrieves the local string namespace list from the locale string splitted
         locale_string_namespace_list = locale_string_splitted[:-1]
 
@@ -183,11 +180,11 @@ class MainLocalizationTranslationManager:
         # retrieves the translation map
         translation_map = self.localization_translation_bundle_locale_identifier_translation_map[locale_identifier]
 
-        if not locale_string_value in translation_map:
+        if not locale_string in translation_map:
             return None
 
         # retrieves the translation item map
-        translation_item_map = translation_map[locale_string_value]
+        translation_item_map = translation_map[locale_string]
 
         # creates the locale string properties string
         locale_string_properties_string = "".join(locale_string_properties.keys())
@@ -221,6 +218,9 @@ class MainLocalizationTranslationManager:
 
         # iterates over all the namespace items in the namespace list
         for namespace_item in namespace_list:
+            if not namespace_item in localization_translation_bundles_map:
+                return []
+
             # sets the current localization translation bundles map
             localization_translation_bundles_map = localization_translation_bundles_map[namespace_item]
 
@@ -284,6 +284,9 @@ class MainLocalizationTranslationManager:
         # retrieves the translation bundle locale identifier
         translation_bundle_locale_identifier = translation_bundle.get_bundle_locale_identifier()
 
+        # retrieves the translation bundle namespace
+        translation_bundle_namespace = translation_bundle.get_bundle_namespace()
+
         # retrieves the translation bundle contents
         translation_bundle_contents = translation_bundle.get_bundle_contents()
 
@@ -297,15 +300,19 @@ class MainLocalizationTranslationManager:
 
         # iterates over the translation bundle contents
         for translation_bundle_contents_key in translation_bundle_contents:
-            # in case the translation bundle contents key is not defined in the translation map
+            # creates the translation bundle contents full key
+            # prepending the translation bundle namespace
+            translation_bundle_contents_full_key = translation_bundle_namespace + "." + translation_bundle_contents_key
+
+            # in case the translation bundle contents full key is not defined in the translation map
             if not translation_bundle_contents_key in translation_map:
-                translation_map[translation_bundle_contents_key] = {}
+                translation_map[translation_bundle_contents_full_key] = {}
 
             # retrieves the translation bundle contents
             translation_bundle_contents_map = translation_bundle_contents[translation_bundle_contents_key]
 
             # retrieves the translation item map
-            translation_item_map = translation_map[translation_bundle_contents_key]
+            translation_item_map = translation_map[translation_bundle_contents_full_key]
 
             # iterates over all the all the translation bundle content items
             for translation_bundle_content_item in translation_bundle_contents_map:
