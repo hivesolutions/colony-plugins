@@ -224,6 +224,8 @@ class MainLocalizationTranslationManager:
             # sets the current localization translation bundles map
             localization_translation_bundles_map = localization_translation_bundles_map[namespace_item]
 
+        # in case the bundles value is not defined in the localization
+        # translation bundles map
         if not BUNDLES_VALUE in localization_translation_bundles_map:
             return []
 
