@@ -3,8 +3,9 @@
     "namespace" : "pt.hive.colony",
     "bundle" : {
         "colony" : ["colony"],
-        "hello" : ["ol·"],
+        "hello" : ["ol√°"],
         "file" : ["ficheiro"],
-        "help" : ["ajuda"]
+        "help" : ["ajuda"],
+        "computer" : ["computador" , "{count} computadores"]
     }
 }
