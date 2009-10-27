@@ -49,6 +49,9 @@ BUNDLE_TYPE = "json"
 BUNDLE_LOCALE_IDENTIFIER = "en-US"
 """ The bundle locale identifier """
 
+BUNDLE_NAMESPACE = "pt.hive.colony"
+""" The bundle namespace """
+
 class MainLocalizationTranslationBundleEnUs:
     """
     The main localization translation bundle en us class.
@@ -85,3 +88,6 @@ class MainLocalizationTranslationBundleEnUs:
 
     def get_bundle_locale_identifier(self):
         return BUNDLE_LOCALE_IDENTIFIER
+
+    def get_bundle_namespace(self):
+        return BUNDLE_NAMESPACE
