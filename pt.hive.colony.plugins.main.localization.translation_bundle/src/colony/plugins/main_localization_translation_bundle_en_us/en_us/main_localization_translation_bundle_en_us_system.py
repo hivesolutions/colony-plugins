@@ -46,7 +46,7 @@ BUNDLE_FILE_NAME = "localization_bundle_en_us.json"
 BUNDLE_TYPE = "json"
 """ The bundle type """
 
-BUNDLE_LANGUAGE = "en_US"
+BUNDLE_LANGUAGE = "en-US"
 """ The bundle language """
 
 class MainLocalizationTranslationBundleEnUs:
