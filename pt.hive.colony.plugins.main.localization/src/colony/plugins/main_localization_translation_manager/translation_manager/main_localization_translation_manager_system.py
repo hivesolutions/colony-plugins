@@ -198,6 +198,17 @@ class MainLocalizationTranslationManager:
         # retrieves the translation string for the given locale string properties string
         translation_string = translation_item_map[locale_string_properties_string]
 
+        # in case there are local string properties defined
+        if locale_string_properties:
+            # in case the format method is not defined in the translation string
+            # python interpreter older than 2.6
+            if not translation_string.format:
+                # sets the string format method
+                translation_string.format = self._string_format
+
+            # formats the translation string retrieving the real translation string
+            translation_string = translation_string.format(translation_string, **locale_string_properties)
+
         # returns the translation string
         return translation_string
 
@@ -306,6 +317,9 @@ class MainLocalizationTranslationManager:
 
                 # sets the translation bundle content item in the translation item map
                 translation_item_map[translation_bundle_content_item_arguments_string] = translation_bundle_content_item
+
+    def _string_format(self, format_string, *args, **kwargs):
+        pass
 
 class TranslationBundle:
     """
