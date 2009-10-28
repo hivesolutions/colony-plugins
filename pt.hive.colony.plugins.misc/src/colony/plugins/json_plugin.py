@@ -19,16 +19,16 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt> & Tiago Silva <tsilva@hive.pt>"
+__author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
 """ The version of the module """
 
-__revision__ = "$LastChangedRevision$"
+__revision__ = "$LastChangedRevision: 2688 $"
 """ The revision number of the module """
 
-__date__ = "$LastChangedDate$"
+__date__ = "$LastChangedDate: 2009-04-16 12:24:34 +0100 (qui, 16 Abr 2009) $"
 """ The last change date of the module """
 
 __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
@@ -39,39 +39,40 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.plugins.plugin_system
 
-class ZipPlugin(colony.plugins.plugin_system.Plugin):
+class JsonPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Zip plugin
+    The main class for the Json plugin
     """
 
-    id = "pt.hive.colony.plugins.misc.zip"
-    name = "Zip Plugin"
-    short_name = "Zip"
-    description = "A plugin to manage zip files"
+    id = "pt.hive.colony.plugins.misc.json"
+    name = "Json Plugin"
+    short_name = "Json"
+    description = "A plugin to serialize and unserialize json files"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["zip"]
+    capabilities = ["json"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["misc.json.json_exceptions", "misc.json.json_serializer", "misc.json.json_system"]
 
-    zip_system = None
+    json_system = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global misc
-        import misc.zip.zip_system
-        self.zip_system = misc.zip.zip_system.Zip(self)
+        import misc.json.json_system
+        self.json_system = misc.json.json_system.Json(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
-        self.zip_system = None
+        self.json_system = None
 
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
@@ -85,52 +86,11 @@ class ZipPlugin(colony.plugins.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def zip(self, zip_file_path, input_directory, file_path_list = None):
-        """
-        Compresses the contents of the provided directory into a zip file.
+    def dumps(self, json_string):
+        return self.json_system.dumps(json_string)
 
-        @type zip_file_path: String
-        @param zip_file_path: Full path to the zip file.
-        @type input_directory: String
-        @param input_directory: Full path to the directory one wants to compress.
-        @type file_path_list: List
-        @param file_path_list: List of relative file paths.
-        """
+    def loads(self, json_string):
+        return self.json_system.loads(json_string)
 
-        self.zip_system.zip(zip_file_path, input_directory, file_path_list)
-
-    def unzip(self, zip_file_path, output_directory):
-        """
-        Extracts a zip file to the specified directory.
-
-        @type file_path: String
-        @param zip_file_path: Full path to the zip file.
-        @type output_directory: String
-        @param output_directory: Full path to the directory where one wants to extract the zip file to.
-        """
-
-        self.zip_system.unzip(zip_file_path, output_directory)
-
-    def get_file_paths(self, file_path):
-        """
-        Returns a list with the paths to the files contained in the specified zip file.
-
-        @type path: String
-        @param path: Path to the zip file.
-        @rtype: List
-        @return: List of file paths.
-        """
-
-        return self.zip_system.get_file_paths(file_path)
-
-    def get_directory_paths(self, file_path):
-        """
-        Returns a list with the paths to the directories contained in the specified zip file.
-
-        @type path: String
-        @param path: Path to the zip file.
-        @rtype: List
-        @return: List of directory paths.
-        """
-
-        return self.zip_system.get_directory_paths(file_path)
+    def load_file(self, json_file):
+        return self.json_system.load_file(json_file)
