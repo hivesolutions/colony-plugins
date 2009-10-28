@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.plugins.plugin_system
+import colony.plugins.decorators
 
 class JsonResourceParserPlugin(colony.plugins.plugin_system.Plugin):
     """
@@ -54,12 +55,14 @@ class JsonResourceParserPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["resource_parser"]
     capabilities_allowed = []
-    dependencies = [colony.plugins.plugin_system.PackageDependency(
-                    "Python", "json", "2.6.x", "http://www.python.org")]
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.json", "1.0.0")]
     events_handled = []
     events_registrable = []
 
     json_resource_parser = None
+
+    json_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -82,6 +85,7 @@ class JsonResourceParserPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.resources.json_resource_parser", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -90,3 +94,10 @@ class JsonResourceParserPlugin(colony.plugins.plugin_system.Plugin):
 
     def parse_resource(self, resource):
         self.json_resource_parser.parse_resource(resource)
+
+    def get_json_plugin(self):
+        return self.json_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
+    def set_json_plugin(self, json_plugin):
+        self.json_plugin = json_plugin

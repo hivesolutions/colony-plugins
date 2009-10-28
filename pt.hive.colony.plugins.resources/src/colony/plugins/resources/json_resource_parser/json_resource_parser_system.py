@@ -37,8 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import json
-
 RESOURCE_PARSER_NAME = "json"
 """ The resource parser name """
 
@@ -64,6 +62,9 @@ class JsonResourceParser:
         return RESOURCE_PARSER_NAME
 
     def parse_resource(self, resource):
+        # retrieves the json plugin
+        json_plugin = self.json_resource_parser_plugin.json_plugin
+
         # retrieves the json file path
         json_file_path = resource.data
 
@@ -74,10 +75,10 @@ class JsonResourceParser:
         full_json_file_path = full_resources_path + "/" + json_file_path
 
         # opens the json file
-        json_file = open(full_json_file_path, "r")
+        json_file = open(full_json_file_path, "rb")
 
         # parses the json contents into the resource data
-        resource.data = json.load(json_file)
+        resource.data = json_plugin.load_file(json_file)
 
         # closes the json file
         json_file.close()
