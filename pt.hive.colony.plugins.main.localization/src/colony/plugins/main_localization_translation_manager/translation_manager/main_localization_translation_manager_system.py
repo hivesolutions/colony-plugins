@@ -191,8 +191,14 @@ class MainLocalizationTranslationManager:
         # retrieves the translation item map
         translation_item_map = translation_map[locale_string]
 
+        # retrieves the locale string properties keys
+        locale_string_properties_keys = locale_string_properties.keys()
+
+        # sorts the locale string properties keys
+        locale_string_properties_keys.sort()
+
         # creates the locale string properties string
-        locale_string_properties_string = "".join(locale_string_properties.keys())
+        locale_string_properties_string = "".join(locale_string_properties_keys)
 
         if not locale_string_properties_string in translation_item_map:
             return None
@@ -328,6 +334,9 @@ class MainLocalizationTranslationManager:
             for translation_bundle_content_item in translation_bundle_contents_map:
                 # retrieves the translation bundle content item arguments
                 translation_bundle_content_item_arguments = self.options_regex.findall(translation_bundle_content_item)
+
+                # sorts the translation bundle content item arguments
+                translation_bundle_content_item_arguments.sort()
 
                 # creates the translation bundle content item string
                 translation_bundle_content_item_arguments_string = "".join(translation_bundle_content_item_arguments)
