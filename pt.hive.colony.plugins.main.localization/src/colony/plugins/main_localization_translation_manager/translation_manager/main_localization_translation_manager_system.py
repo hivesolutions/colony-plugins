@@ -47,6 +47,12 @@ BUNDLES_VALUE = "bundles"
 FORMAT_VALUE = "format"
 """ The format value """
 
+LOCALE_STRING_VALUE = "locale_string"
+""" The locale string value """
+
+LOCALE_STRING_PROPERTIES_VALUE = "locale_string_properties"
+""" The locale string properties value """
+
 OPTIONS_REGEX = "(?<=\{)[a-zA-Z0-9_]*(?=\})"
 """ The options regular expression """
 
@@ -165,7 +171,17 @@ class MainLocalizationTranslationManager:
         @return: The locale for the given locale type and local properties.
         """
 
-        return None
+        # retrieves the locale string
+        locale_string = locale_properties[LOCALE_STRING_VALUE]
+
+        # retrieves the locale string properties
+        locale_string_properties = locale_properties[LOCALE_STRING_PROPERTIES_VALUE]
+
+        # retrieves the locale string for the given locale identifier, string and string properties
+        locale_string = self.get_locale_string(locale_identifier, locale_string, locale_string_properties)
+
+        # returns the locale string
+        return locale_string
 
     def get_locale_string(self, locale_identifier, locale_string, locale_string_properties):
         # splits the locale string
