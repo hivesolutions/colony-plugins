@@ -37,7 +37,14 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class JsonEncodeException(Exception):
+class JsonException(Exception):
+    """
+    The json exception class.
+    """
+
+    pass
+
+class JsonEncodeException(JsonException):
     """
     The json encode exception class.
     """
@@ -50,7 +57,7 @@ class JsonEncodeException(Exception):
         @param object: The object containing the encoding problems.
         """
 
-        Exception.__init__(self)
+        JsonException.__init__(self)
         self.object = object
 
     def __str__(self):
@@ -63,7 +70,7 @@ class JsonEncodeException(Exception):
 
         return "Object not encodeable: %s" % self.object
 
-class JsonDecodeException(Exception):
+class JsonDecodeException(JsonException):
     """
     The json decode exception class.
     """
@@ -76,7 +83,7 @@ class JsonDecodeException(Exception):
         @param message: The message to be printed.
         """
 
-        Exception.__init__(self)
+        JsonException.__init__(self)
         self.message = message
 
     def __str__(self):
