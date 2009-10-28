@@ -37,8 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import json
-
 HANDLER_NAME = "json"
 """ The handler name """
 
@@ -64,6 +62,9 @@ class MainLocalizationTranslationJsonBundleHandler:
         return HANDLER_NAME
 
     def handle_bundle(self, bundle):
+        # retrieves the json plugin
+        json_plugin = self.main_localization_translation_json_bundle_handler_plugin.json_plugin
+
         # retrieves the bundle path
         bundle_path = bundle.get_bundle_path()
 
@@ -71,7 +72,7 @@ class MainLocalizationTranslationJsonBundleHandler:
         bundle_file = open(bundle_path, "rb")
 
         # parses the json bundle file contents
-        bundle_contents = json.load(bundle_file)
+        bundle_contents = json_plugin.load_file(bundle_file)
 
         # closes the bundle file
         bundle_file.close()

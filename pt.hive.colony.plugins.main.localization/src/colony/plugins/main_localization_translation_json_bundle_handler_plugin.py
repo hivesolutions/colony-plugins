@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.plugins.plugin_system
+import colony.plugins.decorators
 
 class MainLocalizationTranslationJsonBundleHandlerPlugin(colony.plugins.plugin_system.Plugin):
     """
@@ -54,12 +55,15 @@ class MainLocalizationTranslationJsonBundleHandlerPlugin(colony.plugins.plugin_s
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["localization_translation_bundle_handler"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.json", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["main_localization_translation_json_bundle_handler.translation_json_bundle_handler.main_localization_translation_json_bundle_handler_system"]
 
     main_localization_translation_json_bundle_handler = None
+
+    json_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -82,6 +86,7 @@ class MainLocalizationTranslationJsonBundleHandlerPlugin(colony.plugins.plugin_s
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.main.localization.localization_translation_json_bundle_handler", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -90,3 +95,10 @@ class MainLocalizationTranslationJsonBundleHandlerPlugin(colony.plugins.plugin_s
 
     def handle_bundle(self, bundle):
         return self.main_localization_translation_json_bundle_handler.handle_bundle(bundle)
+
+    def get_json_plugin(self):
+        return self.json_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
+    def set_json_plugin(self, json_plugin):
+        self.json_plugin = json_plugin

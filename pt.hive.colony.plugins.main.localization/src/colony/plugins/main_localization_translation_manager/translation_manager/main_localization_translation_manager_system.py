@@ -39,8 +39,13 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import re
 
+import string_buffer_util
+
 BUNDLES_VALUE = "bundles"
 """ The bundles value """
+
+FORMAT_VALUE = "format"
+""" The format value """
 
 OPTIONS_REGEX = "(?<=\{)[a-zA-Z0-9_]*(?=\})"
 """ The options regular expression """
@@ -198,13 +203,16 @@ class MainLocalizationTranslationManager:
         # in case there are local string properties defined
         if locale_string_properties:
             # in case the format method is not defined in the translation string
-            # python interpreter older than 2.6
-            if not translation_string.format:
+            # python interpreter newer than 2.6
+            if hasattr(translation_string, FORMAT_VALUE):
                 # sets the string format method
-                translation_string.format = self._string_format
+                string_formater_method = translation_string.format
+            else:
+                # sets the string format method
+                string_formater_method = self._string_format
 
             # formats the translation string retrieving the real translation string
-            translation_string = translation_string.format(translation_string, **locale_string_properties)
+            translation_string = string_formater_method(translation_string, **locale_string_properties)
 
         # returns the translation string
         return translation_string
@@ -328,7 +336,62 @@ class MainLocalizationTranslationManager:
                 translation_item_map[translation_bundle_content_item_arguments_string] = translation_bundle_content_item
 
     def _string_format(self, format_string, *args, **kwargs):
-        pass
+        """
+        Formats a string according to the given format.
+
+        @type format_string: String
+        @param format_string: The string used in formating.
+        @rtype: String
+        @return: The formated string.
+        """
+
+        # retrieves the options find iterator
+        options_find_iterator = self.options_regex.finditer(format_string)
+
+        # creates a new string buffer
+        string_buffer = string_buffer_util.StringBuffer()
+
+        # sets the initial current index
+        current_index = 0
+
+        # iterates over all the option matches
+        # in the options find iterator
+        for option_match in options_find_iterator:
+            # retrieves the option start and end index
+            option_start_index, option_end_index = option_match.span()
+
+            # retrieves the option value from the option match
+            option_value = option_match.group(0)
+
+            # retrieves the previous part string
+            previous_part_string = format_string[current_index:option_start_index - 1]
+
+            # writes the previous part string to the string buffer
+            string_buffer.write(previous_part_string)
+
+            # retrieves the real option value
+            real_option_value = kwargs[option_value]
+
+            # converts the real option into string
+            real_option_value_string = unicode(real_option_value)
+
+            # writes the real option value string to the string buffer
+            string_buffer.write(real_option_value_string)
+
+            # sets the current index as the option end index plus one
+            current_index = option_end_index + 1
+
+        # retrieves the last part string
+        last_part_string = format_string[current_index:]
+
+        # writes the last part string to the string buffer
+        string_buffer.write(last_part_string)
+
+        # retrieves the string value
+        string_value = string_buffer.get_value()
+
+        # returns the string value
+        return string_value
 
 class TranslationBundle:
     """
