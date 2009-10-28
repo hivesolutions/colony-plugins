@@ -6,6 +6,6 @@
         "hello" : ["hello"],
         "file" : ["file"],
         "help" : ["help"],
-        "computer" : ["computer" , "{count} computers"]
+        "computer" : ["computer", "{count} computers"]
     }
 }
