@@ -545,7 +545,6 @@ class TranslationBundle:
 
         self.bundle_path = bundle_path
 
-
     def get_bundle_type(self):
         """
         Retrieves the bundle type.
