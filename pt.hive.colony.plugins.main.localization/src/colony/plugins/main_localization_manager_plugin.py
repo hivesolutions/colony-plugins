@@ -96,7 +96,9 @@ class MainLocalizationManagerPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.load_allowed_capability("localization_handler")
     def localization_handler_load_allowed(self, plugin, capability):
         self.localization_handler_plugins.append(plugin)
+        self.main_localization_manager.load_localization_handler_plugin(plugin)
 
     @colony.plugins.decorators.unload_allowed_capability("localization_handler")
     def localization_handler_unload_allowed(self, plugin, capability):
         self.localization_handler_plugins.remove(plugin)
+        self.main_localization_manager.unload_localization_handler_plugin(plugin)

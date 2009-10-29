@@ -45,6 +45,9 @@ class MainLocalizationManager:
     main_localization_manager_plugin = None
     """ The main localization manager plugin """
 
+    localization_handler_name_localization_handler_plugin_map = {}
+    """ The localization handler name localization handler plugin map """
+
     def __init__(self, main_localization_manager_plugin):
         """
         Constructor of the class.
@@ -54,6 +57,22 @@ class MainLocalizationManager:
         """
 
         self.main_localization_manager_plugin = main_localization_manager_plugin
+
+        self.localization_handler_name_localization_handler_plugin_map = {}
+
+    def load_localization_handler_plugin(self, localization_handler_plugin):
+        # retrieves the localization handler name
+        localization_handler_name = localization_handler_plugin.get_handler_name()
+
+        # sets the localization handler plugin
+        self.localization_handler_name_localization_handler_plugin_map[localization_handler_name] = localization_handler_plugin
+
+    def unload_localization_handler_plugin(self, localization_handler_plugin):
+        # retrieves the localization handler name
+        localization_handler_name = localization_handler_plugin.get_handler_name()
+
+        # unsets the localization handler plugin
+        del self.localization_handler_name_localization_handler_plugin_map[localization_handler_name]
 
     def get_locale(self, locale_identifier, locale_type, locale_properties):
         """
@@ -69,4 +88,15 @@ class MainLocalizationManager:
         @return: The locale for the given locale type and local properties.
         """
 
-        return None
+        # in case there is no localization handler plugin for the given locale type
+        if not locale_type in self.localization_handler_name_localization_handler_plugin_map:
+            return None
+
+        # retrieves the localization handler plugin for the given locale type
+        localization_handler_plugin = self.localization_handler_name_localization_handler_plugin_map[locale_type]
+
+        # calls the localization handler plugin to retrieve the locale value
+        locale_value = localization_handler_plugin.get_locale(locale_identifier, locale_type, locale_properties)
+
+        # returns the locale value
+        return locale_value

@@ -41,6 +41,9 @@ import re
 
 import string_buffer_util
 
+HANDLER_NAME = "translation"
+""" The handler name """
+
 BUNDLES_VALUE = "bundles"
 """ The bundles value """
 
@@ -156,6 +159,9 @@ class MainLocalizationTranslationManager:
 
     def unload_localization_translation_bundle_plugin(self, localization_translation_bundle_plugin):
         pass
+
+    def get_handler_name(self):
+        return HANDLER_NAME
 
     def get_locale(self, locale_identifier, locale_type, locale_properties):
         """

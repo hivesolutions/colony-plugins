@@ -91,6 +91,9 @@ class MainLocalizationTranslationManagerPlugin(colony.plugins.plugin_system.Plug
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    def get_handler_name(self):
+        return self.main_localization_translation_manager.get_handler_name()
+
     def get_locale(self, locale_identifier, locale_type, locale_properties):
         return self.main_localization_translation_manager.get_locale(locale_identifier, locale_type, locale_properties)
 
