@@ -44,6 +44,8 @@ import io_adapter_csv_exceptions
 
 DIRECTORY_PATHS_VALUE = "directory_paths"
 
+INPUT_DIRECTORY_PATH_VALUE = "input_directory_path"
+
 INPUT_ENTITY_HANDLERS_VALUE = "input_entity_handlers"
 
 INPUT_ATTRIBUTE_HANDLERS_VALUE = "input_attribute_handlers"
@@ -102,7 +104,8 @@ class IoAdapterCsv:
         """
 
         # extracts the mandatory options
-        directory_paths = options[DIRECTORY_PATHS_VALUE]
+        directory_path = configuration.get_option(INPUT_DIRECTORY_PATH_VALUE)
+        directory_paths = [directory_path]
 
         # extracts the non-mandatory options
         input_entity_handlers = options.get(INPUT_ENTITY_HANDLERS_VALUE, [])
@@ -129,9 +132,18 @@ class IoAdapterCsv:
             csv_header_tokens = [csv_header_token.strip() for csv_header_token in csv_header_tokens]
             csv_header_tokens = [csv_header_token[1:-1].strip() for csv_header_token in csv_header_tokens]
 
-            # retrieves the csv data tokens removing whitespaces and newline characters
+            # reads the csv file
             csv_file_data = csv_file.read()
+
+            # decodes the file data in case the input encoding was specified
+            if configuration.has_option("input_encoding"):
+                input_encoding = configuration.get_option("input_encoding")
+                csv_file_data = csv_file_data.decode(input_encoding)
+
+            # tokenizes the csv data
             csv_data_tokens = self.tokenize_csv_data(csv_file_data, token_separator, text_delimiter)
+
+            # closes the csv file
             csv_file.close()
 
             # iterates through the csv file tokens populating the specified entities

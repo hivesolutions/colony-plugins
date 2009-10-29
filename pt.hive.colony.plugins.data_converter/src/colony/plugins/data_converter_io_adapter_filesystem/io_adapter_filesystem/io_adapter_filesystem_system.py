@@ -120,11 +120,6 @@ class IoAdapterFilesystem:
             # creates the entity used to represent the file
             entity = intermediate_structure.create_entity(entity_name)
 
-            # retrieves the file data
-            file = open(file_path, FILE_BINARY_READ_MODE)
-            data = file.read()
-            file.close()
-
             # passes the data through the specified input attribute handlers
             for input_attribute_handler in input_attribute_handlers:
                 data = input_attribute_handler(intermediate_structure, entity, data)
@@ -141,7 +136,6 @@ class IoAdapterFilesystem:
             entity.set_attribute("name", file_name)
             entity.set_attribute("name_without_extension", file_name_without_extension)
             entity.set_attribute("extension", extension_name)
-            entity.set_attribute("data", data)
             entity.set_attribute("path", file_path)
             entity.set_attribute("size", file_size)
             entity.set_attribute("creation_time", creation_time)

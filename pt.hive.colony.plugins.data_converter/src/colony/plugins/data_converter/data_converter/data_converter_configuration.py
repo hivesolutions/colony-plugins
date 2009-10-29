@@ -51,7 +51,7 @@ ATTRIBUTE_MAPPING_VALUE = "attribute_mapping"
 
 CONNECTORS_VALUE = "connectors"
 
-DEFAULT_VALUE_VALUE = "default_value"
+ENTITY_MAPPING_VALUE = "entity_mapping"
 
 ENTITY_NAMES_VALUE = "entity_names"
 
@@ -67,7 +67,11 @@ INPUT_ENTITIES_VALUE = "input_entities"
 
 INPUT_ENTITY_MAPPING_VALUE = "InputEntityMapping"
 
+INPUT_NAME_VALUE = "input_name"
+
 INPUT_OUTPUT_ENTITY_MAPPING_VALUE = "InputOutputEntityMapping"
+
+INPUT_VALUE_VALUE = "input_value"
 
 LIST_TYPE_VALUE = "list_type"
 
@@ -75,13 +79,11 @@ NAME_VALUE = "name"
 
 OUTPUT_ATTRIBUTE_MAPPING_VALUE = "OutputAttributeMapping"
 
-OUTPUT_ATTRIBUTES_VALUE = "output_attributes"
-
-OUTPUT_ENTITIES_VALUE = "output_entities"
-
 OUTPUT_ENTITY_MAPPING_VALUE = "OutputEntityMapping"
 
 OUTPUT_DEPENDENCIES_VALUE = "output_dependencies"
+
+OUTPUT_NAME_VALUE = "output_name"
 
 RELATED_ENTITY_RELATION_ATTRIBUTE_NAMES_VALUE = "related_entity_relation_attribute_names"
 
@@ -293,7 +295,7 @@ class DataConverterConfiguration:
         configuration_item_class = None
 
         # retrieves the class for the specified configuration item type
-        if configuration_item_type ==  OUTPUT_ENTITY_MAPPING_VALUE:
+        if configuration_item_type == OUTPUT_ENTITY_MAPPING_VALUE:
             configuration_item_class = OutputEntityMapping
         elif configuration_item_type == INPUT_ENTITY_MAPPING_VALUE:
             configuration_item_class = InputEntityMapping
@@ -393,7 +395,7 @@ class DataConverterConfiguration:
     def add_attribute_mapping_output_entities(self, attribute_mapping_output_entities):
         # adds the specified entity mappings to this configuration
         for attribute_mapping_output_entity in attribute_mapping_output_entities:
-            output_entity_name = attribute_mapping_output_entity[NAME_VALUE]
+            output_entity_name = attribute_mapping_output_entity[OUTPUT_NAME_VALUE]
 
             # creates an output entity mapping configuration item in case one doesn't exist for entities with the current name
             if not output_entity_name in self.output_entity_name_output_entity_mapping_map:
@@ -407,7 +409,7 @@ class DataConverterConfiguration:
     def add_relation_mapping_entities(self, relation_mapping_entities):
         # adds the specified relation mappings to this configuration
         for relation_mapping_entity in relation_mapping_entities:
-            output_entity_name = relation_mapping_entity[NAME_VALUE]
+            output_entity_name = relation_mapping_entity[OUTPUT_NAME_VALUE]
 
             # raises an exception if no output entity mapping is defined for output entities with the current name
             if not output_entity_name in self.output_entity_name_output_entity_mapping_map:
@@ -723,7 +725,7 @@ class OutputEntityMapping:
 
     def add_configuration(self, configuration):
         # retrieves the mandatory configuration attributes
-        self.output_entity_name = configuration[NAME_VALUE]
+        self.output_entity_name = configuration[OUTPUT_NAME_VALUE]
 
         # retrieves the non-mandatory configuration attributes
         input_entity_mappings = configuration.get(INPUT_ENTITIES_VALUE, [])
@@ -731,7 +733,7 @@ class OutputEntityMapping:
 
         # adds the input entity mappings to the output entity mapping
         for input_entity_mapping in input_entity_mappings:
-            input_entity_name = input_entity_mapping[NAME_VALUE]
+            input_entity_name = input_entity_mapping[INPUT_NAME_VALUE]
 
             # creates a new input entity mapping in case one was not defined before for input entities of the specified name
             if not input_entity_name in self.input_entity_name_input_entity_mapping_map:
@@ -877,8 +879,8 @@ class InputEntityMapping:
 
     def add_configuration(self, configuration):
         # retrieves the mandatory configuration attributes
-        input_entity_name = configuration[NAME_VALUE]
-        input_output_entity_mappings = configuration[OUTPUT_ENTITIES_VALUE]
+        input_entity_name = configuration[INPUT_NAME_VALUE]
+        input_output_entity_mappings = configuration[ENTITY_MAPPING_VALUE]
 
         self.input_entity_name = input_entity_name
 
@@ -984,7 +986,7 @@ class InputOutputEntityMapping:
 
     def add_configuration(self, configuration):
         # retrieves the mandatory configuration attributes
-        output_attribute_mappings = configuration[OUTPUT_ATTRIBUTES_VALUE]
+        output_attribute_mappings = configuration[ATTRIBUTE_MAPPING_VALUE]
 
         # retrieves the non-mandatory configuration attributes
         validators = configuration.get(VALIDATORS_VALUE, [])
@@ -992,7 +994,7 @@ class InputOutputEntityMapping:
 
         # adds the output attribute mappings to this input output entity mapping
         for output_attribute_mapping in output_attribute_mappings:
-            output_attribute_name = output_attribute_mapping[NAME_VALUE]
+            output_attribute_name = output_attribute_mapping[OUTPUT_NAME_VALUE]
 
             # creates a new output attribute mapping in case one was not defined before for output attributes with the specified name
             if not output_attribute_name in self.output_attribute_name_output_attribute_mapping_map:
@@ -1170,11 +1172,11 @@ class OutputAttributeMapping:
 
     def add_configuration(self, configuration):
         # retrieves the non-mandatory options
-        name = configuration.get(NAME_VALUE, None)
+        name = configuration.get(OUTPUT_NAME_VALUE, None)
         validators = configuration.get(VALIDATORS_VALUE, [])
-        attribute_name = configuration.get(ATTRIBUTE_NAME_VALUE, None)
+        attribute_name = configuration.get(INPUT_NAME_VALUE, None)
         handlers = configuration.get(HANDLERS_VALUE, [])
-        default_value = configuration.get(DEFAULT_VALUE_VALUE, None)
+        default_value = configuration.get(INPUT_VALUE_VALUE, None)
 
         # raises an exception in case the output attribute name is being redefined
         if name and self.output_attribute_name:
