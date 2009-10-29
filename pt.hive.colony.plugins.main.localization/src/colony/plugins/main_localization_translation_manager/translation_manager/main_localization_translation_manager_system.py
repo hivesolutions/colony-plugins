@@ -70,6 +70,9 @@ class MainLocalizationTranslationManager:
     localization_translation_bundle_handler_name_localization_translation_bundle_handler_plugin_map = {}
     """ The localization translation bundle handler name localization translation bundle handler plugin map """
 
+    localization_translation_bundle_plugin_localization_translation_bundle_map = {}
+    """ The localization translation bundle plugin localization translation bundle map """
+
     localization_translation_bundle_type_localization_translation_bundles_map = {}
     """ The localization translation bundle type localization translation bundles map """
 
@@ -93,6 +96,7 @@ class MainLocalizationTranslationManager:
         self.main_localization_translation_manager_plugin = main_localization_translation_manager_plugin
 
         self.localization_translation_bundle_handler_name_localization_translation_bundle_handler_plugin_map = {}
+        self.localization_translation_bundle_plugin_localization_translation_bundle_map = {}
         self.localization_translation_bundle_type_localization_translation_bundles_map = {}
         self.localization_translation_bundle_locale_identifier_localization_translation_bundles_map = {}
         self.localization_translation_bundle_locale_identifier_translation_map = {}
@@ -120,6 +124,9 @@ class MainLocalizationTranslationManager:
         # retrieves the translation bundle namespace
         translation_bundle_namespace = translation_bundle.get_bundle_namespace()
 
+        # sets the translation bundle in the localization translation bundle plugin localization translation bundle map
+        self.localization_translation_bundle_plugin_localization_translation_bundle_map[localization_translation_bundle_plugin] = translation_bundle
+
         # in case the translation bundle type is not defined in the localization translation bundle type localization translation bundles map
         if not translation_bundle_type in self.localization_translation_bundle_type_localization_translation_bundles_map:
             self.localization_translation_bundle_type_localization_translation_bundles_map[translation_bundle_type] = []
@@ -140,25 +147,74 @@ class MainLocalizationTranslationManager:
         # splits the translation bundle namespace
         translation_bundle_namespace_splitted = translation_bundle_namespace.split(".")
 
+        # iterates over the namespace split parts
         for translation_bundle_namespace_split in translation_bundle_namespace_splitted:
+            # in case the current namespace split part is not defined
+            # in the localization translation bundles map
             if not translation_bundle_namespace_split in localization_translation_bundles_map:
+                # creates a new map in the localization translation budles map
                 localization_translation_bundles_map[translation_bundle_namespace_split] = {}
 
+            # sets the new localization translation bundles map
             localization_translation_bundles_map = localization_translation_bundles_map[translation_bundle_namespace_split]
 
+        # in case the bundles value item is not defined in the localization translation bundles map
         if not BUNDLES_VALUE in localization_translation_bundles_map:
+            # creates a new list for the bundles value in the
+            # localization translation bundles map
             localization_translation_bundles_map[BUNDLES_VALUE] = []
 
+        # retrieves the localization translation bundles list
         localization_translation_bundles_list = localization_translation_bundles_map[BUNDLES_VALUE]
 
         # adds the translation bundle to the localization translation bundles list
         localization_translation_bundles_list.append(translation_bundle)
 
     def unload_localization_translation_bundle_handler_plugin(self, localization_translation_bundle_handler_plugin):
-        pass
+        # retrieves the localization translation bundle handler name
+        localization_translation_bundle_handler_name = localization_translation_bundle_handler_plugin.get_handler_name()
+
+        # unsets the localization translation bundle handler plugin
+        del self.localization_translation_bundle_handler_name_localization_translation_bundle_handler_plugin_map[localization_translation_bundle_handler_name]
 
     def unload_localization_translation_bundle_plugin(self, localization_translation_bundle_plugin):
-        pass
+        # generates the translation bundle
+        translation_bundle = self.localization_translation_bundle_plugin_localization_translation_bundle_map[localization_translation_bundle_plugin]
+
+        # retrieves the translation bundle type
+        translation_bundle_type = translation_bundle.get_bundle_type()
+
+        # retrieves the translation bundle locale identifier
+        translation_bundle_locale_identifier = translation_bundle.get_bundle_locale_identifier()
+
+        # retrieves the translation bundle namespace
+        translation_bundle_namespace = translation_bundle.get_bundle_namespace()
+
+        # unsets the translation bundle in the localization translation bundle plugin localization translation bundle map
+        del self.localization_translation_bundle_plugin_localization_translation_bundle_map[localization_translation_bundle_plugin]
+
+        # retrieves the localization translation bundles list for the translation bundle type
+        localization_translation_bundles_list = self.localization_translation_bundle_type_localization_translation_bundles_map[translation_bundle_type]
+
+        # removes the translation bundle from the localization translation bundles list
+        localization_translation_bundles_list.remove(translation_bundle)
+
+        # retrieves the localization translation bundles map the translation bundle locale identifier
+        localization_translation_bundles_map = self.localization_translation_bundle_locale_identifier_localization_translation_bundles_map[translation_bundle_locale_identifier]
+
+        # splits the translation bundle namespace
+        translation_bundle_namespace_splitted = translation_bundle_namespace.split(".")
+
+        # iterates over the namespace split parts
+        for translation_bundle_namespace_split in translation_bundle_namespace_splitted:
+            # sets the new localization translation bundles map
+            localization_translation_bundles_map = localization_translation_bundles_map[translation_bundle_namespace_split]
+
+        # retrieves the localization translation bundles list
+        localization_translation_bundles_list = localization_translation_bundles_map[BUNDLES_VALUE]
+
+        # removes the translation bundle from the localization translation bundles list
+        localization_translation_bundles_list.remove(translation_bundle)
 
     def get_handler_name(self):
         return HANDLER_NAME
