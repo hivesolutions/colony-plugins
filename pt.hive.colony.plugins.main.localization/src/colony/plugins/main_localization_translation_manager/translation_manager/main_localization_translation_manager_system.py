@@ -252,17 +252,20 @@ class MainLocalizationTranslationManager:
         # retrieves the local string namespace list from the locale string splitted
         locale_string_namespace_list = locale_string_splitted[:-1]
 
-        # retrieves the translation bundles for the given
-        # locale identifier and locale string namespace list, this method assures the loading
+        # retrieves the translation bundles for the given locale identifier
+        # and locale string namespace list, this method assures the loading
         # of the bundles
         self.get_translation_bundles(locale_identifier, locale_string_namespace_list)
 
+        # in case the locale identifier id not defined in the localization translation bundle
+        # locale identifier translation map
         if not locale_identifier in self.localization_translation_bundle_locale_identifier_translation_map:
             return None
 
         # retrieves the translation map
         translation_map = self.localization_translation_bundle_locale_identifier_translation_map[locale_identifier]
 
+        # in case the locale string is not defined in the translation map
         if not locale_string in translation_map:
             return None
 
@@ -278,6 +281,8 @@ class MainLocalizationTranslationManager:
         # creates the locale string properties string
         locale_string_properties_string = "".join(locale_string_properties_keys)
 
+        # in case the locale sring properties string is not
+        # defined in the translation item map
         if not locale_string_properties_string in translation_item_map:
             return None
 
@@ -403,13 +408,13 @@ class MainLocalizationTranslationManager:
                 translation_map[translation_bundle_contents_full_key] = {}
 
             # retrieves the translation bundle contents
-            translation_bundle_contents_map = translation_bundle_contents[translation_bundle_contents_key]
+            translation_bundle_contents_list = translation_bundle_contents[translation_bundle_contents_key]
 
             # retrieves the translation item map
             translation_item_map = translation_map[translation_bundle_contents_full_key]
 
             # iterates over all the all the translation bundle content items
-            for translation_bundle_content_item in translation_bundle_contents_map:
+            for translation_bundle_content_item in translation_bundle_contents_list:
                 # retrieves the translation bundle content item arguments
                 translation_bundle_content_item_arguments = self.options_regex.findall(translation_bundle_content_item)
 
