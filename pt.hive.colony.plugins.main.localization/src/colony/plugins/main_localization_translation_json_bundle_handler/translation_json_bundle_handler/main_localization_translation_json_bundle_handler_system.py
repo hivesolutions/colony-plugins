@@ -78,7 +78,7 @@ class MainLocalizationTranslationJsonBundleHandler:
         bundle_file.close()
 
         # retrieves the bundle locale identifier
-        bundle_locale_identifier = bundle_contents["locale_indentifer"]
+        bundle_locale_identifier = bundle_contents["locale_identifier"]
 
         # retrieves the bundle namespace
         bundle_namespace = bundle_contents["namespace"]

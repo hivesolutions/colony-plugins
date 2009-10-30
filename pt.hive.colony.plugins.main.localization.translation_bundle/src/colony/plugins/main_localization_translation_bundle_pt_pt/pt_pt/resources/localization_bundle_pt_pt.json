@@ -1,5 +1,5 @@
 {
-    "locale_indentifer" : "pt-PT",
+    "locale_identifier" : "pt-PT",
     "namespace" : "pt.hive.colony",
     "bundle" : {
         "colony" : ["colony"],
