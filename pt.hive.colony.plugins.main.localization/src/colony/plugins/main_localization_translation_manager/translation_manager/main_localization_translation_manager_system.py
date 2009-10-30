@@ -178,7 +178,7 @@ class MainLocalizationTranslationManager:
         del self.localization_translation_bundle_handler_name_localization_translation_bundle_handler_plugin_map[localization_translation_bundle_handler_name]
 
     def unload_localization_translation_bundle_plugin(self, localization_translation_bundle_plugin):
-        # generates the translation bundle
+        # retrieves the translation bundle
         translation_bundle = self.localization_translation_bundle_plugin_localization_translation_bundle_map[localization_translation_bundle_plugin]
 
         # retrieves the translation bundle type
