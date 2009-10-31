@@ -54,7 +54,7 @@ class Guid:
 
     def __init__(self, guid_plugin):
         """
-        Class contructor.
+        Class constructor.
 
         @type guid_plugin: GuidPlugin
         @param guid_plugin:  The guid plugin.
