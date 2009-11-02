@@ -37,7 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os.path
+
 HANDLER_FILENAME = "none"
+""" The handler filename """
 
 FILE_MIME_TYPE_MAPPING = {"html" : "text/html", "txt" : "text/plain", "css" : "text/css",
                           "jpg" : "image/jpg", "png" : "image/png"}
@@ -48,6 +51,9 @@ DEFAULT_MIME_TYPE = "text/plain"
 
 DEFAULT_CHARSET = "Cp1252"
 """ The default charset """
+
+LONG_PATH_PREFIX = u"\\\\?\\"
+""" The windows long path prefix """
 
 class JavascriptFileHandler:
     """
@@ -101,6 +107,17 @@ class JavascriptFileHandler:
 
         # retrieves the full path for the file
         full_path = javascript_manager_plugin.get_file_full_path(relative_path)
+
+        # retrieves the current os name
+        os_name = os.name
+
+        # in case the current operative system is windows based
+        if os_name == "nt" or os_name == "dos":
+            # normalizes the full path
+            full_path = os.path.normpath(full_path);
+
+            # creates the full path in the windows mode
+            full_path = LONG_PATH_PREFIX + full_path
 
         # retrieves the file extension
         file_extension = full_path.split(".")[-1]
