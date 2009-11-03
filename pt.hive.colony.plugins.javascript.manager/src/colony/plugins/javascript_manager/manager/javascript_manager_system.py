@@ -194,6 +194,7 @@ class JavascriptManager:
                                                omni_web_real_path + "/pt.hive.omni.web.plugins.gui.general.customer/plugins",
                                                omni_web_real_path + "/pt.hive.omni.web.plugins.gui.general.employee/plugins",
                                                omni_web_real_path + "/pt.hive.omni.web.plugins.gui.general.person/plugins",
+                                               omni_web_real_path + "/pt.hive.omni.web.plugins.gui.general.purchase/plugins",
                                                omni_web_real_path + "/pt.hive.omni.web.plugins.gui.general.saft_pt/plugins",
                                                omni_web_real_path + "/pt.hive.omni.web.plugins.gui.general.sale/plugins",
                                                omni_web_real_path + "/pt.hive.omni.web.plugins.gui.general.supplier/plugins",
