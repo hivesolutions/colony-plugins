@@ -90,7 +90,7 @@ class MainXmlrpcManager:
 
     def handle_request(self, request):
         # sets the content type for the request
-        request.content_type = "text/plain;charset=utf-8"
+        request.content_type = "text/xml;charset=utf-8"
 
         # retrieves the post data
         post_data = request.read()
@@ -305,7 +305,7 @@ class MainXmlrpcManager:
         # in case there is an error
         if not error == None:
             error_fault = xmlrpclib.Fault(error.__class__.__name__, error.message)
-            data = xmlrpclib.dumps(error_fault, method_name, True)
+            data = xmlrpclib.dumps(error_fault, None, True)
             return data
 
         try:
@@ -330,13 +330,13 @@ class MainXmlrpcManager:
                 result.class_name = class_name
                 result.full_class_name = full_class_name
 
-            data = xmlrpclib.dumps(return_tuple, method_name, True, allow_none = True)
+            data = xmlrpclib.dumps(return_tuple, None, True, allow_none = True)
         except main_xmlrpc_manager_exceptions.XmlEncodeException, exception:
             error_fault = xmlrpclib.Fault("XmlEncodeException", "Result Object Not Serializable")
-            data = xmlrpclib.dumps(error_fault, method_name, True)
+            data = xmlrpclib.dumps(error_fault, None, True)
         except Exception, exception:
             error_fault = xmlrpclib.Fault("XmlEncodeException", "Result Object Not Serializable: " + exception.message)
-            data = xmlrpclib.dumps(error_fault, method_name, True)
+            data = xmlrpclib.dumps(error_fault, None, True)
 
         # returns the xml data
         return data
