@@ -682,10 +682,10 @@ class BusinessSqliteEngine:
         # executes the query creating the table
         self.execute_query(cursor, query_string_value)
 
-        # creates the query for the creation of the generator table
+        # creates the query for the selection of the generator table
         query_string_value = "select name, next_id from generator where name = \"" + name + "\""
 
-        # executes the query creating the table
+        # executes the query selecting the table
         self.execute_query(cursor, query_string_value)
 
         # selects the values from the cursor
