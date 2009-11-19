@@ -38,8 +38,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 configuration = {
-                 "default_socket_provider" : "normal",
-                 "default_port" : 80,
+                 "default_socket_provider" : "ssl",
+                 "default_port" : 443,
                  "default_handler" : "file",
                  "default_encoding" : None,
                  "default_content_type_charset" : "utf-8",
@@ -68,7 +68,7 @@ configuration = {
                      "/eclipse" : {
                          "handler" : "file",
                          "request_properties" : {
-                             "base_path" : "C:\Users\joamag\workspace\pt.hive.eclipse.plugins.site",
+                             "base_path" : "${WORKSPACE_HOME}/pt.hive.eclipse.plugins.site",
                              "default_page" : "site.xml"
                          }
                      }
