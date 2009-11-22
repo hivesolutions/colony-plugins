@@ -179,6 +179,7 @@ class JavascriptManager:
                                                colony_web_real_path + "/pt.hive.colony.web.plugins.gui.search.manager/plugins",
                                                colony_web_real_path + "/pt.hive.colony.web.plugins.main.localization/plugins",
                                                colony_web_real_path + "/pt.hive.colony.web.plugins.main.localization.translation_bundle/plugins",
+                                               colony_web_real_path + "/pt.hive.colony.web.plugins.main.test/plugins",
                                                colony_web_real_path + "/pt.hive.colony.web.plugins.misc/plugins",
                                                colony_web_real_path + "/pt.hive.colony.web.plugins.mvc/plugins",
                                                colony_web_real_path + "/pt.hive.colony.web.plugins.printing/plugins",
