@@ -40,7 +40,10 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import unittest
 
 COVERAGE_FILE_PATH = "coverage.figleaf"
+""" The coverage file path """
+
 TEST_METHOD_PREFIX = "test_"
+""" The test method prefix """
 
 class MainTest:
     """
