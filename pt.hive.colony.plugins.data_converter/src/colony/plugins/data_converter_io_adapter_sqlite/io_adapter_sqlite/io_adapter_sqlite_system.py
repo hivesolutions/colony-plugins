@@ -77,19 +77,19 @@ RELATION_COLUMN_NAMES = (ENTITY_OBJECT_ID_VALUE, RELATED_ENTITY_OBJECT_ID_VALUE)
 RELATION_TABLE_NAME_SEPARATOR = "__"
 """ Separator character used in the relation table name to separate the tokens """
 
-CREATE_TABLE_SQL_QUERY_TEMPLATE = "CREATE TABLE %s(%s);"
+CREATE_TABLE_SQL_QUERY_TEMPLATE = "create table %s(%s);"
 """ Query used to create a new table """
 
-INSERT_ROW_SQL_QUERY_TEMPLATE = "INSERT INTO %s(%s) VALUES(%s);"
+INSERT_ROW_SQL_QUERY_TEMPLATE = "insert into %s(%s) values(%s);"
 """ Query used to insert a new row """
 
-SELECT_TABLE_SQL_QUERY_TEMPLATE = "SELECT %s FROM %s;"
+SELECT_TABLE_SQL_QUERY_TEMPLATE = "select %s from %s;"
 """ Query used to retrieve a table's rows """
 
-SELECT_TABLE_INFO_SQL_QUERY_TEMPLATE = "PRAGMA table_info(%s);"
+SELECT_TABLE_INFO_SQL_QUERY_TEMPLATE = "pragma table_info(%s);"
 """ Query used to retrieve information about a database table """
 
-SELECT_TABLE_NAMES_SQL_QUERY = "SELECT name FROM sqlite_master;"
+SELECT_TABLE_NAMES_SQL_QUERY = "select name from sqlite_master;"
 """ Query used to retrieve the names of the tables that exist in the sqlite database """
 
 class IoAdapterSqlite:
@@ -730,7 +730,7 @@ class IoAdapterSqlite:
         field_values_sql_query = "".join([field_values_sql_query_template % field_value for field_value in escaped_field_values])[:-1]
 
         # replaces all none strings with a null constant in the field values part of the sql insert query
-        field_values_sql_query = field_values_sql_query.replace("'None'", "NULL")
+        field_values_sql_query = field_values_sql_query.replace("'None'", "null")
 
         # creates the sql insert query
         insert_row_sql_query = INSERT_ROW_SQL_QUERY_TEMPLATE % (table_name, column_names_sql_query, field_values_sql_query)
