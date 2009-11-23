@@ -2887,7 +2887,7 @@ class BusinessSqliteEngine:
             return None
 
         if attribute_date_type == "date":
-            return datetime.datetime.fromtimestamp(float(attribute_value))
+            return datetime.datetime.utcfromtimestamp(float(attribute_value))
 
         return attribute_value
 
