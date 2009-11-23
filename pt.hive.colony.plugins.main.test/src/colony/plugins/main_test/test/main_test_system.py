@@ -109,6 +109,20 @@ class MainTest:
         self.id_loaded_test_cases_map = {}
 
     def load_test_case(self, test_case, test_case_plugin, test_case_name = None):
+        """
+        Loads the given test case with the test case plugin referece an test
+        case name.
+
+        @type test_case: TestCase
+        @param test_case: The test case to be loaded.
+        @type test_case_plugin: Plugin
+        @param test_case_plugin: The test case plugin to be used as reference in
+        the test case load.
+        @type test_case_name: String
+        @param test_case_name: The test case name to be used in the test case
+        loading.
+        """
+
         # in case no test name is set
         if not test_case_name:
             # retrieves the test case name
@@ -147,6 +161,20 @@ class MainTest:
         self.current_id += 1
 
     def unload_test_case(self, test_case, test_case_plugin, test_case_name = None):
+        """
+        Unloads the given test case with the test case plugin referece an test
+        case name.
+
+        @type test_case: TestCase
+        @param test_case: The test case to be unloaded.
+        @type test_case_plugin: Plugin
+        @param test_case_plugin: The test case plugin to be used as reference in
+        the test case unload.
+        @type test_case_name: String
+        @param test_case_name: The test case name to be used in the test case
+        unloading.
+        """
+
         # in case no test name is set
         if not test_case_name:
             # retrieves the test case name
@@ -179,6 +207,14 @@ class MainTest:
             del self.id_loaded_test_cases_map[test_case_id]
 
     def load_test_case_plugin(self, test_case_plugin):
+        """
+        Loads the test case for the given plugin.
+
+        @type test_case_plugin: Plugin
+        @param test_case_plugin: The plugin that contains the test case to be
+        loaded.
+        """
+
         # retrieves the test case
         test_case = test_case_plugin.get_test_case()
 
@@ -186,6 +222,14 @@ class MainTest:
         self.load_test_case(test_case, test_case_plugin)
 
     def unload_test_case_plugin(self, test_case_plugin):
+        """
+        Unloads the test case for the given plugin.
+
+        @type test_case_plugin: Plugin
+        @param test_case_plugin: The plugin that contains the test case to be
+        unloaded.
+        """
+
         # retrieves the test case
         test_case = test_case_plugin.get_test_case()
 
@@ -193,6 +237,14 @@ class MainTest:
         self.unload_test_case(test_case, test_case_plugin)
 
     def load_test_case_bundle_plugin(self, test_case_bundle_plugin):
+        """
+        Loads the test case bundle for the given plugin.
+
+        @type test_case_bundle_plugin: Plugin
+        @param test_case_bundle_plugin: The plugin that contains the test case
+        bundle to be loaded.
+        """
+
         # retrieves the test case bundle
         test_case_bundle = test_case_bundle_plugin.get_test_case_bundle()
 
@@ -201,6 +253,14 @@ class MainTest:
             self.load_test_case(test_case, test_case_bundle_plugin)
 
     def unload_test_case_bundle_plugin(self, test_case_bundle_plugin):
+        """
+        Unloads the test case bundle for the given plugin.
+
+        @type test_case_bundle_plugin: Plugin
+        @param test_case_bundle_plugin: The plugin that contains the test case
+        bundle to be unloaded.
+        """
+
         # retrieves the test case bundle
         test_case_bundle = test_case_bundle_plugin.get_test_case_bundle()
 
@@ -209,6 +269,16 @@ class MainTest:
             self.unload_test_case(test_case, test_case_bundle_plugin)
 
     def load_plugin_test_case(self, plugin_test_case, plugin_test_case_plugin):
+        """
+        Loads the plugin test case for the given plugin test case plugin.
+
+        @type plugin_test_case: PluginTestcase
+        @param plugin_test_case: The plugin test case to be loaded.
+        @type plugin_test_case_plugin: Plugin
+        @param plugin_test_case_plugin: The plugin test case plugin to be used as
+        reference in the plugin test case load.
+        """
+
         # retrieves the test case form the plugin test case
         test_case = plugin_test_case.get_test_case()
 
@@ -229,6 +299,16 @@ class MainTest:
         self.load_test_case(test_case, plugin_test_case_plugin)
 
     def unload_plugin_test_case(self, plugin_test_case, plugin_test_case_plugin):
+        """
+        Unloads the plugin test case for the given plugin test case plugin.
+
+        @type plugin_test_case: PluginTestcase
+        @param plugin_test_case: The plugin test case to be unloaded.
+        @type plugin_test_case_plugin: Plugin
+        @param plugin_test_case_plugin: The plugin test case plugin to be used as
+        reference in the plugin test case unload.
+        """
+
         # retrieves the test case form the plugin test case
         test_case = plugin_test_case.get_test_case()
 
@@ -246,6 +326,14 @@ class MainTest:
         self.unload_test_case(test_case, plugin_test_case_plugin)
 
     def load_plugin_test_case_plugin(self, plugin_test_case_plugin):
+        """
+        Loads the plugin test case for the given plugin.
+
+        @type plugin_test_case_plugin: Plugin
+        @param plugin_test_case_plugin: The plugin that contains the plugin test
+        case to be loaded.
+        """
+
         # retrieves the plugin test case
         plugin_test_case = plugin_test_case_plugin.get_plugin_test_case()
 
@@ -253,6 +341,14 @@ class MainTest:
         self.load_plugin_test_case(plugin_test_case, plugin_test_case_plugin)
 
     def unload_plugin_test_case_plugin(self, plugin_test_case_plugin):
+        """
+        Unloads the plugin test case for the given plugin.
+
+        @type plugin_test_case_plugin: Plugin
+        @param plugin_test_case_plugin: The plugin that contains the plugin test
+        case to be unloaded.
+        """
+
         # retrieves the plugin test case
         plugin_test_case = plugin_test_case_plugin.get_plugin_test_case()
 
@@ -260,6 +356,14 @@ class MainTest:
         self.unload_plugin_test_case(plugin_test_case, plugin_test_case_plugin)
 
     def load_plugin_test_case_bundle_plugin(self, plugin_test_case_bundle_plugin):
+        """
+        Loads the plugin test case bundle for the given plugin.
+
+        @type plugin_test_case_bundle_plugin: Plugin
+        @param plugin_test_case_bundle_plugin: The plugin that contains the plugin test
+        case bundle to be loaded.
+        """
+
         # retrieves the plugin test case bundle
         plugin_test_case_bundle = plugin_test_case_bundle_plugin.get_plugin_test_case_bundle()
 
@@ -268,6 +372,14 @@ class MainTest:
             self.load_plugin_test_case(plugin_test_case, plugin_test_case_bundle_plugin)
 
     def unload_plugin_test_case_bundle_plugin(self, plugin_test_case_bundle_plugin):
+        """
+        Unloads the plugin test case bundle for the given plugin.
+
+        @type plugin_test_case_bundle_plugin: Plugin
+        @param plugin_test_case_bundle_plugin: The plugin that contains the plugin test
+        case bundle to be unloaded.
+        """
+
         # retrieves the plugin test case bundle
         plugin_test_case_bundle = plugin_test_case_bundle_plugin.get_plugin_test_case_bundle()
 
@@ -275,16 +387,53 @@ class MainTest:
         for plugin_test_case in plugin_test_case_bundle:
             self.unload_plugin_test_case(plugin_test_case, plugin_test_case_bundle_plugin)
 
-    def get_test_cases_by_name(self, test_case_name):
+    def get_test_cases_for_name(self, test_case_name):
+        """
+        Retrieves all the test cases for the given name.
+
+        @type test_case_name: String
+        @param test_case_name: The name of the test cases to be retrieved.
+        @rtype: List
+        @return: All the test cases for the given name.
+        """
+
         pass
 
-    def get_test_cases_by_names(self, test_case_names_list):
+    def get_test_cases_for_names(self, test_case_names_list):
+        """
+        Retrieves all the test cases for the given list of names.
+
+        @type test_case_names_list: List
+        @param test_case_names_list: The list of names of the test cases to be retrieved.
+        @rtype: List
+        @return: All the test cases for the given list of names.
+        """
+
         pass
 
     def get_all_test_cases(self):
+        """
+        Retrieves the list with all the test cases.
+
+        @rtype: List
+        @return: The list with all the test cases.
+        """
+
         return self.loaded_test_cases_list
 
     def get_all_test_cases_plugin(self, plugin_id, plugin_version):
+        """
+        Retrieves a list with all the test cases for the given plugin id and
+        version.
+
+        @type plugin_id: String.
+        @param plugin_id: The id of the plugin to retrieve the list of test cases.
+        @type plugin_version: String
+        @param plugin_version: The version of the plugin to retrieve the list of test cases.
+        @rtype: List
+        @return: A list with all the test cases for the given plugin id and version.
+        """
+
         # retrieves the plugin manager
         manager = self.main_test_plugin.manager
 
@@ -301,9 +450,25 @@ class MainTest:
         return plugin_test_cases
 
     def start_all_test(self, code_coverage = False):
+        """
+        Starts all the available tests.
+
+        @type code_coverage: bool
+        @param code_coverage: If a code coverage should be started.
+        """
+
         self.start_test(self.loaded_test_cases_list, code_coverage)
 
     def start_test(self, test_cases_list, code_coverage = False):
+        """
+        Starts the given test cases.
+
+        @type test_cases_list: List
+        @param test_cases_list: The list with the test cases to be started.
+        @type code_coverage: bool
+        @param code_coverage: If a code coverage should be started.
+        """
+
         # retrieves the code coverage plugin
         code_coverage_plugin = self.main_test_plugin.code_coverage_plugin
 
