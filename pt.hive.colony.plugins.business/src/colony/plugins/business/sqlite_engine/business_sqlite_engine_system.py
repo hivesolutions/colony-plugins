@@ -41,6 +41,7 @@ import time
 import types
 import sqlite3
 import datetime
+import calendar
 
 import string_buffer_util
 
@@ -2838,10 +2839,10 @@ class BusinessSqliteEngine:
                 # in case the attribute is given in the date time format
                 if type(attribute_value) == datetime.datetime:
                     # retrieves the date time tuple
-                    date_time_tuple = attribute_value.timetuple()
+                    date_time_tuple = attribute_value.utctimetuple()
 
                     # creates the date time timestamp
-                    date_time_timestamp = time.mktime(date_time_tuple)
+                    date_time_timestamp = calendar.timegm(date_time_tuple)
 
                     return str(date_time_timestamp)
                 elif type(attribute_value) == types.IntType:
@@ -2887,7 +2888,7 @@ class BusinessSqliteEngine:
             return None
 
         if attribute_date_type == "date":
-            return datetime.datetime.fromtimestamp(float(attribute_value))
+            return datetime.datetime.utcfromtimestamp(float(attribute_value))
 
         return attribute_value
 

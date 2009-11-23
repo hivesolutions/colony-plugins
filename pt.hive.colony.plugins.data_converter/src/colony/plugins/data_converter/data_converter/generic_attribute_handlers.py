@@ -75,7 +75,7 @@ def attribute_handler_convert_string_to_lowercase(data_converter, configuration,
 
 def attribute_handler_get_current_date(data_converter, configuration, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity, output_attribute_value, arguments):
     # retrieves the current date and time
-    current_datetime = datetime.datetime.now()
+    current_datetime = datetime.datetime.utcnow()
 
     return current_datetime
 

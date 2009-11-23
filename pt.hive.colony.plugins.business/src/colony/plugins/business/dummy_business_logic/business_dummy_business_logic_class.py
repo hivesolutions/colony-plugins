@@ -134,12 +134,12 @@ class DummyBusinessLogic:
         # sets the dummy entity bundle instance attributes
         dummy_entity_bundle_instance.name = "test"
         dummy_entity_bundle_instance.age = 25
-        dummy_entity_bundle_instance.local_date = datetime.datetime.now()
+        dummy_entity_bundle_instance.local_date = datetime.datetime.utcnow()
 
         # sets the dummy entity bundle instance attributes
         dummy_entity_bundle_instance_1.name = "test_1"
         dummy_entity_bundle_instance_1.age = 21
-        dummy_entity_bundle_instance_1.local_date = datetime.datetime.now()
+        dummy_entity_bundle_instance_1.local_date = datetime.datetime.utcnow()
 
         # sets the dummy entity bundle association instance attributes
         dummy_entity_bundle_association_instance.name = "test_association"

@@ -41,9 +41,9 @@ __credits__ = "Jan-Klaas Kollhof <keyjaque@yahoo.com>"
 """ The credits for the module """
 
 import re
-import time
 import types
 import datetime
+import calendar
 
 import string_buffer_util
 
@@ -152,8 +152,8 @@ def dump_parts_buffer(obj, string_buffer):
     elif obj_type in NUMBER_TYPES:
         string_buffer.write(str(obj))
     elif obj_type == datetime.datetime:
-        obj_time_tuple = obj.timetuple()
-        date_time_timestamp = time.mktime(obj_time_tuple)
+        obj_time_tuple = obj.utctimetuple()
+        date_time_timestamp = calendar.timegm(obj_time_tuple)
         string_buffer.write(str(date_time_timestamp))
     elif obj_type is types.InstanceType or hasattr(obj, "__class__"):
         string_buffer.write("{")
@@ -216,8 +216,8 @@ def dump_parts(obj):
     elif obj_type in NUMBER_TYPES:
         yield unicode(obj)
     elif obj_type == datetime.datetime:
-        obj_time_tuple = obj.timetuple()
-        date_time_timestamp = time.mktime(obj_time_tuple)
+        obj_time_tuple = obj.utctimetuple()
+        date_time_timestamp = calendar.timegm(obj_time_tuple)
         yield unicode(date_time_timestamp)
     elif obj_type is types.InstanceType or hasattr(obj, "__class__"):
         yield "{"
