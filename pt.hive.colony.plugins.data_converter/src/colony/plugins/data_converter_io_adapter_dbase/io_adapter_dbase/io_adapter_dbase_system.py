@@ -66,7 +66,7 @@ DBASE_TABLE_FILE_EXTENSION = ".dbf"
 ODBC_CONNECTION_STRING_TEMPLATE = "Driver={Microsoft Visual FoxPro Driver};SourceType=DBF;SourceDB=%s;Exclusive=No;Collate=Machine;NULL=YES;DELETED=YES;BACKGROUNDFETCH=NO;"
 """ Odbc dbase connection string template """
 
-SQL_TABLE_DUMP_QUERY_TEMPLATE = "SELECT * FROM %s;"
+SQL_TABLE_DUMP_QUERY_TEMPLATE = "select * from %s;"
 """ Template for an sql table dump query """
 
 class IoAdapterDbase:
