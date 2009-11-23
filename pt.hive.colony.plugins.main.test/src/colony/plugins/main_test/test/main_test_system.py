@@ -279,7 +279,7 @@ class MainTest:
         reference in the plugin test case load.
         """
 
-        # retrieves the test case form the plugin test case
+        # retrieves the test case from the plugin test case
         test_case = plugin_test_case.get_test_case()
 
         # adds the plugin test case to the list of plugin test cases
@@ -309,7 +309,7 @@ class MainTest:
         reference in the plugin test case unload.
         """
 
-        # retrieves the test case form the plugin test case
+        # retrieves the test case from the plugin test case
         test_case = plugin_test_case.get_test_case()
 
         if plugin_test_case in self.loaded_plugin_test_cases_list:
