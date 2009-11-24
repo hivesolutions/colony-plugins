@@ -262,7 +262,7 @@ class Visitor:
     def visit_statements_node(self, node):
         print "StatementsNode: " + str(node)
 
-    @_visit(javascript_documentation_ast.StatementNode)
+    @_visit(settler_ast.StatementNode)
     def visit_statement_node(self, node):
         print "StatementNode: " + str(node)
 
