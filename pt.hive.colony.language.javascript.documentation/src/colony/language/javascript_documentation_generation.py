@@ -59,15 +59,39 @@ class JavascriptDocumentationGenerationVisitor(javascript_documentation_visitor.
     documentation_project_node = None
     """ The documentation project node """
 
+    current_element_node_stack = []
+    """ The current element node stack """
+
+    current_comment_node = None
+    """ The current comment node """
+
     def __init__(self):
         javascript_documentation_visitor.Visitor.__init__(self)
 
+        # starts the current element node stack
+        self.current_element_node_stack = []
+
+        # creates a new documentation project node
         self.documentation_project_node = documentation.documentation_ast.ProjectNode()
 
     def get_documentation_project_node(self):
+        """
+        Retrieves the documentation project node.
+
+        @rtype: ProjectNode
+        @return: The documentation project node.
+        """
+
         return self.documentation_project_node
 
     def set_documentation_project_node(self, documentation_project_node):
+        """
+        Sets the documentation project node.
+
+        @type documentation_project_node: ProjectNode
+        @param documentation_project_node: The documentation project node.
+        """
+
         self.documentation_project_node = documentation_project_node
 
     @javascript_documentation_visitor._visit(javascript_documentation_ast.AstNode)
@@ -84,7 +108,10 @@ class JavascriptDocumentationGenerationVisitor(javascript_documentation_visitor.
 
     @javascript_documentation_visitor._visit(javascript_documentation_ast.ProgramNode)
     def visit_program_node(self, node):
-        pass
+        if self.visit_index == 0:
+            self.current_element_node_stack.append(self.documentation_project_node)
+        elif self.visit_index == 1:
+            self.current_element_node_stack.pop()
 
     @javascript_documentation_visitor._visit(javascript_documentation_ast.StatementsNode)
     def visit_statements_node(self, node):
@@ -96,7 +123,8 @@ class JavascriptDocumentationGenerationVisitor(javascript_documentation_visitor.
 
     @javascript_documentation_visitor._visit(javascript_documentation_ast.CommentNode)
     def visit_comment_node(self, node):
-        pass
+        # sets the current comment node
+        self.current_comment_node = node;
 
     @javascript_documentation_visitor._visit(javascript_documentation_ast.PassNode)
     def visit_pass_node(self, node):
@@ -244,7 +272,24 @@ class JavascriptDocumentationGenerationVisitor(javascript_documentation_visitor.
 
     @javascript_documentation_visitor._visit(javascript_documentation_ast.FunctionNode)
     def visit_function_node(self, node):
-        pass
+        if self.visit_index == 0:
+            # retrieves the current comment node
+            current_comment_node = self.current_comment_node
+
+            # creates a new function node
+            function_node = documentation.documentation_ast.FunctionNode()
+
+            # sets the name in the function node
+            function_node.set_name(node.function_name)
+
+            # sets the name in the function node
+            function_node.set_description(current_comment_node.comment_value)
+
+            self.current_element_node_stack[-1].add_child_node(function_node)
+
+            self.current_element_node_stack.append(function_node)
+        elif self.visit_index == 1:
+            self.current_element_node_stack.pop()
 
     @javascript_documentation_visitor._visit(javascript_documentation_ast.ArgumentsNode)
     def visit_arguments_node(self, node):

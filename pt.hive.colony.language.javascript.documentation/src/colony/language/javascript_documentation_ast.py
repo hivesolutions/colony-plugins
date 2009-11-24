@@ -96,6 +96,24 @@ class AstNode(object):
 
         visitor.visit(self)
 
+    def accept_double(self, visitor):
+        """
+        Accepts the visitor running the iteration logic, using double visiting.
+
+        @type visitor: Visitor
+        @param visitor: The visitor object.
+        """
+
+        visitor.visit_index = 0
+        visitor.visit(self)
+
+        if visitor.visit_childs:
+            for child_node in self.child_nodes:
+                child_node.accept_double(visitor)
+
+        visitor.visit_index = 1
+        visitor.visit(self)
+
     def set_value(self, value):
         """
         Sets the value value.
