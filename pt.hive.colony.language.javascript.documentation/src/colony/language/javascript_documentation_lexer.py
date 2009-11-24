@@ -48,7 +48,7 @@ tokens = ("NAME", "NUMBER", "STRING", "BOOL", "PLUS",
           "SEMICOLON", "IF", "ELSE", "NEWLINE", "WHILE",
           "FOR", "IN", "IMPORT", "CLASS", "EXTENDS",
           "IMPLEMENTS", "INTERFACE", "PLUGIN", "CAPABILITY",
-          "ALLOWS", "PASS", "STATIC", "GLOBAL")
+          "ALLOWS", "PASS", "STATIC", "GLOBAL", "COMMENT")
 
 # the reserved keywords
 reserved = {
@@ -142,13 +142,18 @@ def t_NEWLINE(t):
     t.lexer.lineno += t.value.count("\n")
     return t
 
+# multiple line comments
+def t_COMMENT(t):
+    r"/\*[^\0]*\*/"
+    return t
+
 # single line comments
 def t_comment(t):
-    r"\//[^\n]*\n+"
+    r"//[^\n]*\n+"
     pass
 
 # ignored characters
-t_ignore = " \t"
+t_ignore = " \t\r"
 
 # other character
 def t_error(t):

@@ -68,8 +68,27 @@ def p_program(t):
     t[0] = program_node
 
 def p_statements_multiple(t):
-    """statements : statement SEMICOLON statements
-                  | statement NEWLINE statements"""
+    "statements : statement SEMICOLON statements"
+
+    # retrieves the statement node
+    statement_node = t[1]
+
+    # retrieves the next statements node
+    next_statements_node = t[3]
+
+    # creates the statements node
+    statements_node = javascript_documentation_ast.StatementsNode()
+
+    # sets the statement node in the statements node
+    statements_node.set_statement_node(statement_node)
+
+    # sets the next node in the statements node
+    statements_node.set_next_node(next_statements_node)
+
+    t[0] = statements_node
+
+def p_statements_multiple_newline(t):
+    "statements : statement NEWLINE statements"
 
     # retrieves the statement node
     statement_node = t[1]
@@ -89,8 +108,7 @@ def p_statements_multiple(t):
     t[0] = statements_node
 
 def p_statements_single(t):
-    """statements : statement SEMICOLON
-                   | statement NEWLINE"""
+    "statements : statement SEMICOLON"
 
     # retrieves the statement node
     statement_node = t[1]
@@ -105,6 +123,28 @@ def p_statements_single(t):
     statements_node.set_next_node(None)
 
     t[0] = statements_node
+
+def p_statements_single_newline(t):
+    "statements : statement NEWLINE"
+
+    # retrieves the statement node
+    statement_node = t[1]
+
+    # creates the statements node
+    statements_node = javascript_documentation_ast.StatementsNode()
+
+    # sets the statement node in the statements node
+    statements_node.set_statement_node(statement_node)
+
+    # sets the next node in the statements node
+    statements_node.set_next_node(None)
+
+    t[0] = statements_node
+
+def p_statement_documentation(t):
+    "statement : COMMENT NEWLINE statement"
+
+    t[0] = None
 
 def p_statement_space(t):
     "statement : space"
