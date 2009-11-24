@@ -51,60 +51,18 @@ sys.path.append(COLONY_DOCUMENTATION_PATH)
 # imports the colony documentation
 import documentation.documentation_ast
 
-class JavascriptDocumentationGenerationVisitor:
+class JavascriptDocumentationGenerationVisitor(javascript_documentation_visitor.Visitor):
     """
-    The visitor class.
+    The javascript documentation generation visitor class.
     """
-
-    node_method_map = {}
-    """ The node method map """
-
-    visit_childs = True
-    """ The visit childs flag """
-
-    visit_next = True
-    """ The visit next flag """
 
     documentation_project_node = None
     """ The documentation project node """
 
     def __init__(self):
-        self.node_method_map = {}
-        self.visit_childs = True
-        self.visit_next = True
+        javascript_documentation_visitor.Visitor.__init__(self)
+
         self.documentation_project_node = documentation.documentation_ast.ProjectNode()
-
-        self.update_node_method_map()
-
-    def update_node_method_map(self):
-        # retrieves the class of the current instance
-        self_class = self.__class__
-
-        # retrieves the names of the elements for the current class
-        self_class_elements = dir(self_class)
-
-        # iterates over all the name of the elements
-        for self_class_element in self_class_elements:
-            # retrieves the real element value
-            self_class_real_element = getattr(self_class, self_class_element)
-
-            # in case the current class real element contains an ast node class reference
-            if hasattr(self_class_real_element, "ast_node_class"):
-                # retrieves the ast node class from the current class real element
-                ast_node_class = getattr(self_class_real_element, "ast_node_class")
-
-                self.node_method_map[ast_node_class] = self_class_real_element
-
-    @javascript_documentation_visitor.dispatch_visit()
-    def visit(self, node):
-        print "unrecognized element node of type " + node.__class__.__name__
-
-    def before_visit(self, node):
-        self.visit_childs = True
-        self.visit_next = True
-
-    def after_visit(self, node):
-        pass
 
     def get_documentation_project_node(self):
         return self.documentation_project_node
