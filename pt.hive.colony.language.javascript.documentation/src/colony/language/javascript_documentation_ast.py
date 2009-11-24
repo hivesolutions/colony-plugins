@@ -455,48 +455,6 @@ class AssignNode(StatementNode):
         self.expression_node = expression_node
         self.add_child_node(expression_node)
 
-    def accept(self, visitor):
-        """
-        Accepts the visitor running the iteration logic.
-
-        @type visitor: Visitor
-        @param visitor: The visitor object.
-        """
-
-        if not visitor.valid_context_type("assign", self):
-            return
-
-        visitor.push_current_context_type("assign", self)
-
-        visitor.visit(self)
-
-        if visitor.visit_childs:
-            for child_node in self.child_nodes:
-                child_node.accept(visitor)
-
-        visitor.pop_current_context_type(self)
-
-    def accept_post_order(self, visitor):
-        """
-        Accepts the visitor running the iteration logic, in post order.
-
-        @type visitor: Visitor
-        @param visitor: The visitor object.
-        """
-
-        if not visitor.valid_context_type("assign", self):
-            return
-
-        visitor.push_current_context_type("assign", self)
-
-        if visitor.visit_childs:
-            for child_node in self.child_nodes:
-                child_node.accept_post_order(visitor)
-
-        visitor.visit(self)
-
-        visitor.pop_current_context_type(self)
-
 class ReturnNode(StatementNode):
     """
     The return node class.
@@ -1478,69 +1436,6 @@ class FunctionNode(ExpressionNode):
 
         self.statements_node = statements_node
         self.add_child_node(statements_node)
-
-    def is_static(self):
-        """
-        Returns if the function is of type static or not.
-
-        @rtype: bool
-        @return: The result of the static type test.
-        """
-
-        if not self.function_operators_node.is_valid():
-            return False
-
-        # iterates over all the function operators nodes
-        for function_operators_node_item in self.function_operators_node:
-            # retrieves the function operator node
-            function_operator_node = function_operators_node_item.function_operator_node
-
-            if function_operator_node.function_operator_name == "static":
-                return True
-
-        return False
-
-    def accept(self, visitor):
-        """
-        Accepts the visitor running the iteration logic.
-
-        @type visitor: Visitor
-        @param visitor: The visitor object.
-        """
-
-        if not visitor.valid_context_type("function", self):
-            return
-
-        visitor.push_current_context_type("function", self)
-
-        visitor.visit(self)
-
-        if visitor.visit_childs:
-            for child_node in self.child_nodes:
-                child_node.accept(visitor)
-
-        visitor.pop_current_context_type(self)
-
-    def accept_post_order(self, visitor):
-        """
-        Accepts the visitor running the iteration logic, in post order.
-
-        @type visitor: Visitor
-        @param visitor: The visitor object.
-        """
-
-        if not visitor.valid_context_type("function", self):
-            return
-
-        visitor.push_current_context_type("function", self)
-
-        if visitor.visit_childs:
-            for child_node in self.child_nodes:
-                child_node.accept_post_order(visitor)
-
-        visitor.visit(self)
-
-        visitor.pop_current_context_type(self)
 
 class FunctionOperatorsNode(AstSequenceNode):
     """

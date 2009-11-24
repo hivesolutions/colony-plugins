@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import javascript_documentation_parser
 import javascript_documentation_visitor
+import javascript_documentation_generation
 
 # opens the javascript file
 javascript_file = open("test.js")
@@ -54,6 +55,8 @@ parse_result = javascript_documentation_parser.parser.parse(javascript_file_cont
 
 visitor = javascript_documentation_visitor.Visitor()
 
-parse_result.accept(visitor)
+generation_visitor = javascript_documentation_generation.JavascriptDocumentationGenerationVisitor()
 
-print parse_result
+parse_result.accept(generation_visitor)
+
+print generation_visitor.get_documentation_project_node()
