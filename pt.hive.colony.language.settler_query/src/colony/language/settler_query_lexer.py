@@ -162,7 +162,7 @@ def t_comment(t):
     pass
 
 # ignored characters
-t_ignore = " \t"
+t_ignore = " \t\r"
 
 # other character
 def t_error(t):
