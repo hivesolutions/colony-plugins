@@ -206,6 +206,9 @@ class DocumentationElementNode(AstNode):
     The documentation element node class.
     """
 
+    name = "none"
+    """ The name """
+
     description = "none"
     """ The description """
 
@@ -217,6 +220,16 @@ class DocumentationElementNode(AstNode):
 
     def __init__(self):
         AstNode.__init__(self)
+
+    def set_name(self, name):
+        """
+        Sets the name.
+
+        @type name: String
+        @param name: The name.
+        """
+
+        self.name = name
 
     def set_description(self, description):
         """
