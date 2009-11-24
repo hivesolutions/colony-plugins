@@ -37,7 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import settler_ast
+import javascript_documentation_ast
 
 def _visit(ast_node_class):
     """
@@ -242,234 +242,246 @@ class Visitor:
     def after_visit(self, node):
         pass
 
-    @_visit(settler_ast.AstNode)
+    @_visit(javascript_documentation_ast.AstNode)
     def visit_ast_node(self, node):
         print "AstNode: " + str(node)
 
-    @_visit(settler_ast.AstSequenceNode)
+    @_visit(javascript_documentation_ast.AstSequenceNode)
     def visit_ast_sequence_node(self, node):
         print "AstSequenceNode: " + str(node)
 
-    @_visit(settler_ast.RootNode)
+    @_visit(javascript_documentation_ast.RootNode)
     def visit_root_node(self, node):
         print "RootNode: " + str(node)
 
-    @_visit(settler_ast.ProgramNode)
+    @_visit(javascript_documentation_ast.ProgramNode)
     def visit_program_node(self, node):
         print "ProgramNode: " + str(node)
 
-    @_visit(settler_ast.StatementsNode)
+    @_visit(javascript_documentation_ast.StatementsNode)
     def visit_statements_node(self, node):
         print "StatementsNode: " + str(node)
 
-    @_visit(settler_ast.PassNode)
+    @_visit(javascript_documentation_ast.StatementNode)
+    def visit_statement_node(self, node):
+        print "StatementNode: " + str(node)
+
+    @_visit(javascript_documentation_ast.CommentNode)
+    def visit_comment_node(self, node):
+        print "CommentNode: " + str(node)
+
+    @_visit(javascript_documentation_ast.PassNode)
     def visit_pass_node(self, node):
         print "PassNode: " + str(node)
 
-    @_visit(settler_ast.AssignNode)
+    @_visit(javascript_documentation_ast.AssignNode)
     def visit_assign_node(self, node):
         print "AssignNode: " + str(node)
 
-    @_visit(settler_ast.ReturnNode)
+    @_visit(javascript_documentation_ast.ReturnNode)
     def visit_return_node(self, node):
         print "ReturnNode: " + str(node)
 
-    @_visit(settler_ast.GlobalNode)
+    @_visit(javascript_documentation_ast.GlobalNode)
     def visit_global_node(self, node):
         print "GlobalNode: " + str(node)
 
-    @_visit(settler_ast.IfConditionNode)
+    @_visit(javascript_documentation_ast.IfConditionNode)
     def visit_if_condition_node(self, node):
         print "IfConditionNode: " + str(node)
 
-    @_visit(settler_ast.ElseConditionNode)
+    @_visit(javascript_documentation_ast.ElseConditionNode)
     def visit_else_condition_node(self, node):
         print "ElseConditionNode: " + str(node)
 
-    @_visit(settler_ast.ElseIfConditionNode)
+    @_visit(javascript_documentation_ast.ElseIfConditionNode)
     def visit_else_if_condition_node(self, node):
         print "ElseIfConditionNode: " + str(node)
 
-    @_visit(settler_ast.WhileNode)
+    @_visit(javascript_documentation_ast.WhileNode)
     def visit_while_node(self, node):
         print "WhileNode: " + str(node)
 
-    @_visit(settler_ast.ForNode)
+    @_visit(javascript_documentation_ast.ForNode)
     def visit_for_node_node(self, node):
         print "ForNode: " + str(node)
 
-    @_visit(settler_ast.ExpressionNode)
+    @_visit(javascript_documentation_ast.ExpressionNode)
     def visit_expression_node(self, node):
         print "ExpressionNode: " + str(node)
 
-    @_visit(settler_ast.NumberExpressionNode)
+    @_visit(javascript_documentation_ast.NumberExpressionNode)
     def visit_num_expression_node(self, node):
         print "NumberExpressionNode: " + str(node)
 
-    @_visit(settler_ast.IntegerExpressionNode)
+    @_visit(javascript_documentation_ast.IntegerExpressionNode)
     def visit_integer_expression_node(self, node):
         print "IntegerExpressionNode: " + str(node)
 
-    @_visit(settler_ast.StringExpressionNode)
+    @_visit(javascript_documentation_ast.StringExpressionNode)
     def visit_string_expression_node(self, node):
         print "StringExpressionNode: " + str(node)
 
-    @_visit(settler_ast.BoolExpressionNode)
+    @_visit(javascript_documentation_ast.BoolExpressionNode)
     def visit_bool_expression_node(self, node):
         print "BoolExpressionNode: " + str(node)
 
-    @_visit(settler_ast.NameExpressionNode)
+    @_visit(javascript_documentation_ast.NameExpressionNode)
     def visit_name_expression_node(self, node):
         print "NameExpressionNode: " + str(node)
 
-    @_visit(settler_ast.ListExpressionNode)
+    @_visit(javascript_documentation_ast.ListExpressionNode)
     def visit_list_expression_node(self, node):
         print "ListExpressionNode: " + str(node)
 
-    @_visit(settler_ast.ListContentsNode)
+    @_visit(javascript_documentation_ast.ListContentsNode)
     def visit_list_contents_node(self, node):
         print "ListContentsNode: " + str(node)
 
-    @_visit(settler_ast.UnaryExpressionNode)
+    @_visit(javascript_documentation_ast.UnaryExpressionNode)
     def visit_unary_expression_node(self, node):
         print "UnaryExpressionNode: " + str(node)
 
-    @_visit(settler_ast.BinaryExpressionNode)
+    @_visit(javascript_documentation_ast.BinaryExpressionNode)
     def visit_binary_expression_node(self, node):
         print "BinaryExpressionNode: " + str(node)
 
-    @_visit(settler_ast.ArithmethicExpressionNode)
+    @_visit(javascript_documentation_ast.ArithmethicExpressionNode)
     def visit_arithmethic_expression_node(self, node):
         print "ArithmethicExpressionNode: " + str(node)
 
-    @_visit(settler_ast.SummationExpressionNode)
+    @_visit(javascript_documentation_ast.SummationExpressionNode)
     def visit_summation_expression_node(self, node):
         print "SummationExpressionNode: " + str(node)
 
-    @_visit(settler_ast.SubtractionExpressionNode)
+    @_visit(javascript_documentation_ast.SubtractionExpressionNode)
     def visit_subtraction_expression_node(self, node):
         print "SubtractionExpressionNode: " + str(node)
 
-    @_visit(settler_ast.MultiplicationExpressionNode)
+    @_visit(javascript_documentation_ast.MultiplicationExpressionNode)
     def visit_multiplication_expression_node(self, node):
         print "MultiplicationExpressionNode: " + str(node)
 
-    @_visit(settler_ast.DivisionExpressionNode)
+    @_visit(javascript_documentation_ast.DivisionExpressionNode)
     def visit_division_expression_node(self, node):
         print "DivisionExpressionNode: " + str(node)
 
-    @_visit(settler_ast.PowerExpressionNode)
+    @_visit(javascript_documentation_ast.PowerExpressionNode)
     def visit_power_expression_node(self, node):
         print "PowerExpressionNode: " + str(node)
 
-    @_visit(settler_ast.BooleanExpressionNode)
+    @_visit(javascript_documentation_ast.BooleanExpressionNode)
     def visit_boolean_expression_node(self, node):
         print "BooleanExpressionNode: " + str(node)
 
-    @_visit(settler_ast.EqualExpressionNode)
+    @_visit(javascript_documentation_ast.EqualExpressionNode)
     def visit_equal_expression_node(self, node):
         print "EqualExpressionNode: " + str(node)
 
-    @_visit(settler_ast.GreaterExpressionNode)
+    @_visit(javascript_documentation_ast.GreaterExpressionNode)
     def visit_greater_expression_node(self, node):
         print "GreaterExpressionNode: " + str(node)
 
-    @_visit(settler_ast.GreaterEqualExpressionNode)
+    @_visit(javascript_documentation_ast.GreaterEqualExpressionNode)
     def visit_greater_equal_expression_node(self, node):
         print "GreaterEqualExpressionNode: " + str(node)
 
-    @_visit(settler_ast.AndExpressionNode)
+    @_visit(javascript_documentation_ast.AndExpressionNode)
     def visit_and_expression_node(self, node):
         print "AndExpressionNode: " + str(node)
 
-    @_visit(settler_ast.OrExpressionNode)
+    @_visit(javascript_documentation_ast.OrExpressionNode)
     def visit_or_expression_node(self, node):
         print "OrExpressionNode: " + str(node)
 
-    @_visit(settler_ast.NotExpressionNode)
+    @_visit(javascript_documentation_ast.NotExpressionNode)
     def visit_not_expression_node(self, node):
         print "NotExpressionNode: " + str(node)
 
-    @_visit(settler_ast.ParenthesisExpressionNode)
+    @_visit(javascript_documentation_ast.ParenthesisExpressionNode)
     def visit_parenthesis_expression_node(self, node):
         print "ParenthesisExpressionNode: " + str(node)
 
-    @_visit(settler_ast.NegativeExpressionNode)
+    @_visit(javascript_documentation_ast.NegativeExpressionNode)
     def visit_negative_expression_node(self, node):
         print "NegativeExpressionNode: " + str(node)
 
-    @_visit(settler_ast.NameReferenceNode)
+    @_visit(javascript_documentation_ast.NameReferenceNode)
     def visit_name_reference_node(self, node):
         print "NameReferenceNode: " + str(node)
 
-    @_visit(settler_ast.ImportNode)
+    @_visit(javascript_documentation_ast.ImportNode)
     def visit_import_node(self, node):
         print "ImportNode: " + str(node)
 
-    @_visit(settler_ast.FunctionNode)
+    @_visit(javascript_documentation_ast.FunctionNode)
     def visit_function_node(self, node):
         print "FunctionNode: " + str(node)
 
-    @_visit(settler_ast.ArgumentsNode)
+    @_visit(javascript_documentation_ast.ArgumentsNode)
     def visit_arguments_node(self, node):
         print "ArgumentsNode: " + str(node)
 
-    @_visit(settler_ast.ArgumentNode)
+    @_visit(javascript_documentation_ast.ArgumentNode)
     def visit_argument_node(self, node):
         print "ArgumentNode: " + str(node)
 
-    @_visit(settler_ast.DefaultValueArgumentNode)
+    @_visit(javascript_documentation_ast.DefaultValueArgumentNode)
     def visit_default_argument_node(self, node):
         print "DefaultValueArgumentNode: " + str(node)
 
-    @_visit(settler_ast.FunctionCallNode)
+    @_visit(javascript_documentation_ast.FunctionCallNode)
     def visit_function_call_node(self, node):
         print "FunctionCallNode: " + str(node)
 
-    @_visit(settler_ast.ArgumentValuesNode)
+    @_visit(javascript_documentation_ast.ArgumentValuesNode)
     def visit_argument_values_node(self, node):
         print "ArgumentValuesNode: " + str(node)
 
-    @_visit(settler_ast.ArgumentValueNode)
+    @_visit(javascript_documentation_ast.ArgumentValueNode)
     def visit_argument_value_node(self, node):
         print "ArgumentValueNode: " + str(node)
 
-    @_visit(settler_ast.ClassNode)
+    @_visit(javascript_documentation_ast.ClassNode)
     def visit_class_node(self, node):
         print "ClassNode: " + str(node)
 
-    @_visit(settler_ast.ExtendsNode)
+    @_visit(javascript_documentation_ast.ExtendsNode)
     def visit_extends_node(self, node):
         print "ExtendsNode: " + str(node)
 
-    @_visit(settler_ast.ExtendsValuesNode)
+    @_visit(javascript_documentation_ast.ExtendsValuesNode)
     def visit_extends_values_node(self, node):
         print "ExtendsValuesNode: " + str(node)
 
-    @_visit(settler_ast.ImplementsNode)
+    @_visit(javascript_documentation_ast.ImplementsNode)
     def visit_implements_node(self, node):
         print "ImplementsNode: " + str(node)
 
-    @_visit(settler_ast.ImplementsValuesNode)
+    @_visit(javascript_documentation_ast.ImplementsValuesNode)
     def visit_implements_values_node(self, node):
         print "ImplementsValuesNode: " + str(node)
 
-    @_visit(settler_ast.InterfaceNode)
+    @_visit(javascript_documentation_ast.InterfaceNode)
     def visit_interface_node(self, node):
         print "InterfaceNode: " + str(node)
 
-    @_visit(settler_ast.PluginNode)
+    @_visit(javascript_documentation_ast.PluginNode)
     def visit_plugin_node(self, node):
         print "PluginNode: " + str(node)
 
-    @_visit(settler_ast.AllowsNode)
+    @_visit(javascript_documentation_ast.AllowsNode)
     def visit_allows_node(self, node):
         print "AllowsNode: " + str(node)
 
-    @_visit(settler_ast.AllowsValuesNode)
+    @_visit(javascript_documentation_ast.AllowsValuesNode)
     def visit_allows_values_node(self, node):
         print "AllowsValuesNode: " + str(node)
 
-    @_visit(settler_ast.CapabilityNode)
+    @_visit(javascript_documentation_ast.CapabilityNode)
     def visit_capability_node(self, node):
         print "CapabilityNode: " + str(node)
+
+    @_visit(javascript_documentation_ast.SpaceNode)
+    def visit_space_node(self, node):
+        print "SpaceNode: " + str(node)

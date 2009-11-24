@@ -141,10 +141,25 @@ def p_statements_single_newline(t):
 
     t[0] = statements_node
 
-def p_statement_documentation(t):
+def p_statement_comment(t):
     "statement : COMMENT NEWLINE statement"
 
-    t[0] = None
+    # retrieves the comment value
+    comment_value = t[1]
+
+    # retrieves the statement node
+    statement_node = t[3]
+
+    # creates the comment node
+    comment_node = javascript_documentation_ast.CommentNode()
+
+    # sets the comment value in the comment node
+    comment_node.set_comment_value(comment_value)
+
+    # sets the statement node in the comment node
+    comment_node.set_statement_node(statement_node)
+
+    t[0] = comment_node
 
 def p_statement_space(t):
     "statement : space"
@@ -330,7 +345,10 @@ def p_argument_simple(t):
 def p_space(t):
     "space : "
 
-    t[0] = None
+    # creates the space node
+    space_node = javascript_documentation_ast.SpaceNode()
+
+    t[0] = space_node
 
 # in case it's the colony parser type
 if PARSER_TYPE == COLONY_PARSER_VALUE:

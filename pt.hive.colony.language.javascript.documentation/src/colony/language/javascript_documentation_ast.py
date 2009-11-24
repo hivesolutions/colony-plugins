@@ -364,6 +364,45 @@ class StatementNode(AstNode):
 
         AstNode.__init__(self)
 
+class CommentNode(StatementNode):
+    """
+    The comment node class.
+    """
+
+    comment_value = "none"
+    """ The comment value """
+
+    statement_node = None
+    """ The statement node """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        StatementNode.__init__(self)
+
+    def set_comment_value(self, comment_value):
+        """
+        Sets the comment value.
+
+        @type comment_value: String
+        @param comment_value: The comment value.
+        """
+
+        self.comment_value = comment_value
+
+    def set_statement_node(self, statement_node):
+        """
+        Sets the statement node.
+
+        @type statement_node: StatementNode
+        @param statement_node: The statement node.
+        """
+
+        self.statement_node = statement_node
+        self.add_child_node(statement_node)
+
 class PassNode(StatementNode):
     """
     The pass node class.
@@ -2268,6 +2307,18 @@ class CapabilityNode(ExpressionNode):
 
         self.statements_node = statements_node
         self.add_child_node(statements_node)
+
+class SpaceNode(AstNode):
+    """
+    The space node class.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        AstNode.__init__(self)
 
 class AstSequenceNodeIterator:
     """
