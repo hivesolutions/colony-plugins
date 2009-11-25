@@ -356,8 +356,10 @@ class MainServiceHttp:
                 # inserts the new task descriptor into the http client thread pool
                 self.http_client_thread_pool.insert_task(task_descriptor)
 
+                # prints a debug message about the number of threads in pool
                 self.main_service_http_plugin.debug("Number of threads in pool: %d" % self.http_client_thread_pool.current_number_threads)
             except Exception, exception:
+                # prints an error message abour the problem accepting the connection
                 self.main_service_http_plugin.error("Error accepting connection: " + str(exception))
 
         # closes the http socket
@@ -451,6 +453,7 @@ class HttpClientServiceTask:
                 # retrieves the request
                 request = self.retrieve_request(request_timeout)
             except main_service_http_exceptions.MainServiceHttpException:
+                # prints a debug message about the connection closing
                 self.main_service_http_plugin.debug("Connection: %s closed" % str(self.http_address))
                 return
 
