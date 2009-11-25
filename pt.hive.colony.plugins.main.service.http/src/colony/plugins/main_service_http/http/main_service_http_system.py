@@ -230,7 +230,7 @@ class MainServiceHttp:
         @param port: The port to start the server.
         @type encoding: String
         @param encoding: The encoding to be used in the connection.
-        @type service_configuration: Map
+        @type service_configuration: Dictionary
         @param service_configuration: The service configuration map.
         """
 

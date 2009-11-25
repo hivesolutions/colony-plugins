@@ -194,7 +194,7 @@ class MainServiceXmpp:
         @param socket_provider: The name of the socket provider to be used.
         @type port: int
         @param port: The port to start the server.
-        @type service_configuration: Map
+        @type service_configuration: Dictionary
         @param service_configuration: The service configuration map.
         """
 
