@@ -86,7 +86,7 @@ class DistributionRegistry:
         @param type: The type.
         @type endpoints: List
         @param endpoints: The list of endpoints.
-        @type metadata: Map
+        @type metadata: Dictionary
         @param endpoints: The metadata map.
         """
 
