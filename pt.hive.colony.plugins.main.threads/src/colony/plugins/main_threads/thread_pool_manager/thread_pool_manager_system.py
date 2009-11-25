@@ -375,6 +375,7 @@ class ThreadPoolImplementation:
 
                         # destroys the defined number of threads
                         for n_thread_destroy in range(number_threads_destroy):
+                            # destroys a worker thread
                             self.destroy_worker_thread()
 
     def insert_task(self, task_descriptor, start_method_args = []):
