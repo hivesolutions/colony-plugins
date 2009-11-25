@@ -41,7 +41,7 @@ import colony.plugins.plugin_system
 
 class DownloaderPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Downloader plugin
+    The main class for the Downloader plugin.
     """
 
     id = "pt.hive.colony.plugins.misc.downloader"
