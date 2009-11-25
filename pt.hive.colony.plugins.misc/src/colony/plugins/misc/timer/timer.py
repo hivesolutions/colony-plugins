@@ -58,20 +58,42 @@ class Timer:
 
     def start(self):
         """
-        Starts the stopwatch
+        Starts the stopwatch.
+
+        @rtype: float
+        @return: The start timestamp.
         """
+
+        # retrieves the start timestamp
         self.start_timestamp = time.time()
+
+        # returns the start timestamp
         return self.start_timestamp
 
     def stop(self):
         """
-        Stops the stopwatch
+        Stops the stopwatch.
+
+        @rtype: float
+        @return: The stop timestamp.
         """
+
+        # retrieves the stop timestamp
         self.stop_timestamp = time.time()
+
+        # returns the stop timestamp
         return self.stop_timestamp
 
     def get_time_elapsed(self):
         """
-        Returns the time between when start() and stop() calls
+        Returns the time between when start() and stop() calls.
+
+        @rtype: float
+        @return: The time between when start() and stop() calls.
         """
-        return self.stop_timestamp - self.start_timestamp
+
+        # calculates the time elapsed
+        time_elapsed = self.stop_timestamp - self.start_timestamp
+
+        # returns the time elapsed
+        return time_elapsed

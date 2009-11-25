@@ -87,18 +87,30 @@ class TimerPlugin(colony.plugins.plugin_system.Plugin):
 
     def start(self):
         """
-        Starts the stopwatch
+        Starts the stopwatch.
+
+        @rtype: float
+        @return: The start timestamp.
         """
+
         return self.codebase.start()
 
     def stop(self):
         """
-        Stops the stopwatch
+        Stops the stopwatch.
+
+        @rtype: float
+        @return: The stop timestamp.
         """
+
         return self.codebase.stop()
 
     def get_time_elapsed(self):
         """
-        Returns the time between when start() and stop() calls
+        Returns the time between when start() and stop() calls.
+
+        @rtype: float
+        @return: The time between when start() and stop() calls.
         """
+
         return self.codebase.get_time_elapsed()
