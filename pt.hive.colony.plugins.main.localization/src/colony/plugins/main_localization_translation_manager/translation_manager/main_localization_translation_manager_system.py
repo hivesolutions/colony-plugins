@@ -227,7 +227,7 @@ class MainLocalizationTranslationManager:
         @param locale_identifier: The identifier of the local to retrieve.
         @type locale_type: String
         @param locale_type: The type of the local to retrieve.
-        @type locale_properties: Map
+        @type locale_properties: Dictionary
         @param locale_properties: The properties of the local to retrieve.
         @rtype: Object
         @return: The locale for the given locale type and local properties.
