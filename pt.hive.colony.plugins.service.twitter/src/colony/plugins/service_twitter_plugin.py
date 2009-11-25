@@ -73,9 +73,6 @@ class ServiceTwitterPlugin(colony.plugins.plugin_system.Plugin):
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
-        remote_client = self.create_remote_client({})
-        joamag_user = remote_client.get_user("joamag")
-        print joamag_user
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)

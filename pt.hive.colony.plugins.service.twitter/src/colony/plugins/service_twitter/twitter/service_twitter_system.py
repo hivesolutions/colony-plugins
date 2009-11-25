@@ -37,9 +37,14 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import base64
 import urllib2
+import urlparse
 
 import service_twitter_exceptions
+
+TWITTER_API_REALM_VALUE = "Twitter API"
+""" The twitter api realm value """
 
 class ServiceTwitter:
     """
@@ -81,11 +86,8 @@ class ServiceTwitter:
         # retrieves the encoding (if available)
         encoding = service_attributes.get("encoding", None)
 
-        # retrieves the request headers (if available)
-        request_headers = service_attributes.get("request_headers", None)
-
         # creates a new twitter client with the given options
-        twitter_client = TwitterClient(json_plugin, urllib2, username, password, encoding, request_headers)
+        twitter_client = TwitterClient(json_plugin, urllib2, username, password, encoding)
 
         # returns the twitter client
         return twitter_client
@@ -110,20 +112,45 @@ class TwitterClient:
     encoding = None
     """ The encoding used """
 
-    request_headers = None
+    request_headers = {}
     """ The request headers """
 
-    def __init__(self, json_plugin = None, http_client_plugin = None, username = None, password = None, encoding = None, request_headers = None):
+    def __init__(self, json_plugin = None, http_client_plugin = None, username = None, password = None, encoding = None):
         self.json_plugin = json_plugin
         self.http_client_plugin = http_client_plugin
         self.username = username
         self.password = password
         self.encoding = encoding
-        self.request_header = request_headers
+
+        self.request_header = {}
 
     def get_friends(self, user = None, page = None):
         # requires authentication
         self.require_authentication()
+
+        # in case the user is defined
+        if user:
+            retrieval_url = "http://twitter.com/statuses/friends/%s.json" % user
+        else:
+            retrieval_url = "http://twitter.com/statuses/friends.json"
+
+        # start the parameters map
+        parameters = {}
+
+        if page:
+            parameters["page"] = page
+
+        # fetches the retrieval url retrieving the json
+        json = self._fetch_url(retrieval_url)
+
+        # loads json retrieving the data
+        data =  self.json_plugin.loads(json)
+
+        # checks for twitter errors
+        self._check_twitter_errors(data)
+
+        # returns the data
+        return data
 
     def get_user(self, user):
         # sets the retrieval url
@@ -145,9 +172,43 @@ class TwitterClient:
         if not self.username or not self.password:
             raise service_twitter_exceptions.InvalidAuthentication("user not authenticated")
 
-    def _fetch_url(self, url):
+    def _add_authorization_header(self):
+        if self.username and self.password:
+            # constructs the basic authentication string
+            basic_authentication = base64.encodestring("%s:%s" % (self.username, self.password))[:-1]
+
+            # sets the request header authorization
+            self.request_headers["Authorization"] = "Basic %s" % basic_authentication
+
+    def _get_opener(self, url):
+        # in case the username and the password are defined
+        if self.username and self.password:
+            # adds the authorization header
+            self._add_authorization_header()
+
+            # creates the http basic auth handler
+            authentication_handler = urllib2.HTTPBasicAuthHandler()
+
+            # parses the url
+            scheme, net_localization, path, parameters, query, fragment = urlparse.urlparse(url)
+
+            # adds the password to the url structure
+            authentication_handler.add_password(TWITTER_API_REALM_VALUE, net_localization, self.username, self.password)
+
+            opener = urllib2.build_opener(authentication_handler)
+        else:
+            opener = urllib2.build_opener()
+
+        opener.addheaders = self.request_headers.items()
+
+        return opener
+
+    def _fetch_url(self, url, parameters):
+        # retrieves the opener for the given url
+        opener = self._get_opener(url)
+
         # opens the url
-        url_structure = urllib2.urlopen(url)
+        url_structure = opener.open(url)
 
         # reads the contents from the url structure
         contents = url_structure.read()
