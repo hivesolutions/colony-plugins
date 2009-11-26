@@ -132,7 +132,7 @@ class TwitterClient:
 
         self.request_header = {}
 
-    def open_oauth_request_token(self, oauth_consumer_key, oauth_consumer_secret, oauth_signature_method = "HMAC-SHA1", oauth_signature = None, oauth_timestamp = None, oauth_nonce = None, oauth_version = "1.0"):
+    def open_oauth_request_token(self, oauth_consumer_key, oauth_consumer_secret, oauth_signature_method = "HMAC-SHA1", oauth_signature = None, oauth_timestamp = None, oauth_nonce = None, oauth_version = "1.0", oauth_callback = None):
         # sets the retrieval url
         retrieval_url = "https://twitter.com/oauth/request_token"
 
@@ -159,6 +159,11 @@ class TwitterClient:
 
         # sets the version
         parameters["oauth_version"] = oauth_version
+
+        # in case callback is defined
+        if oauth_callback:
+            # sets the callback
+            parameters["oauth_callback"] = oauth_callback
 
         if oauth_signature:
             # sets the signature
