@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import base64
+import urllib
 import urllib2
 import urlparse
 
@@ -45,6 +46,9 @@ import service_twitter_exceptions
 
 TWITTER_API_REALM_VALUE = "Twitter API"
 """ The twitter api realm value """
+
+TWITTER_CHARACTER_LIMIT_VALUE = 140
+""" The twitter character limit value """
 
 class ServiceTwitter:
     """
@@ -124,9 +128,144 @@ class TwitterClient:
 
         self.request_header = {}
 
-    def get_friends(self, user = None, page = None):
+    def get_public_timeline(self, since_id = None):
+        # start the parameters map
+        parameters = {}
+
+        if since_id:
+            parameters["since_id"] = since_id
+
+        retrieval_url = "http://twitter.com/statuses/public_timeline.json"
+
+        # fetches the retrieval url with the given parameters retrieving the json
+        json = self._fetch_url(retrieval_url, parameters)
+
+        # loads json retrieving the data
+        data = self.json_plugin.loads(json)
+
+        # checks for twitter errors
+        self._check_twitter_errors(data)
+
+        # returns the data
+        return data
+
+    def get_home_timeline(self, since_id = None, max_id = None, count = None, page = None):
         # requires authentication
         self.require_authentication()
+
+        # start the parameters map
+        parameters = {}
+
+        if since_id:
+            parameters["since_id"] = since_id
+
+        if max_id:
+            parameters["max_id"] = max_id
+
+        if count:
+            parameters["count"] = count
+
+        if page:
+            parameters["page"] = page
+
+        retrieval_url = "http://twitter.com/statuses/home_timeline.json"
+
+        # fetches the retrieval url with the given parameters retrieving the json
+        json = self._fetch_url(retrieval_url, parameters)
+
+        # loads json retrieving the data
+        data = self.json_plugin.loads(json)
+
+        # checks for twitter errors
+        self._check_twitter_errors(data)
+
+        # returns the data
+        return data
+
+    def get_friends_timeline(self, since_id = None, max_id = None, count = None, page = None):
+        # requires authentication
+        self.require_authentication()
+
+        # start the parameters map
+        parameters = {}
+
+        if since_id:
+            parameters["since_id"] = since_id
+
+        if max_id:
+            parameters["max_id"] = max_id
+
+        if count:
+            parameters["count"] = count
+
+        if page:
+            parameters["page"] = page
+
+        retrieval_url = "http://twitter.com/statuses/friends_timeline.format"
+
+        # fetches the retrieval url with the given parameters retrieving the json
+        json = self._fetch_url(retrieval_url, parameters)
+
+        # loads json retrieving the data
+        data = self.json_plugin.loads(json)
+
+        # checks for twitter errors
+        self._check_twitter_errors(data)
+
+        # returns the data
+        return data
+
+    def get_user_timeline(self, user = None, since = None, since_id = None, count = None, page = None):
+        # start the parameters map
+        parameters = {}
+
+        if since:
+            parameters["since"] = since
+
+        if since_id:
+            parameters["since_id"] = since_id
+
+        if count:
+            parameters["count"] = count
+
+        if page:
+            parameters["page"] = count
+
+        if user:
+            retrieval_url = "http://twitter.com/statuses/user_timeline/%s.json" % user
+        else:
+            # requires authentication
+            self.require_authentication()
+
+            retrieval_url = "http://twitter.com/statuses/user_timeline.json"
+
+        # fetches the retrieval url with the given parameters retrieving the json
+        json = self._fetch_url(retrieval_url, parameters)
+
+        # loads json retrieving the data
+        data = self.json_plugin.loads(json)
+
+        # checks for twitter errors
+        self._check_twitter_errors(data)
+
+        # returns the data
+        return data
+
+    def get_friends(self, user = None, cursor = None, user_id = None, screen_name = None):
+        # requires authentication
+        self.require_authentication()
+
+        # start the parameters map
+        parameters = {}
+
+        if cursor:
+            parameters["cursor"] = cursor
+
+        if user_id:
+            parameters["user_id"] = user_id
+
+        if screen_name:
+            parameters["screen_name"] = screen_name
 
         # in case the user is defined
         if user:
@@ -134,17 +273,11 @@ class TwitterClient:
         else:
             retrieval_url = "http://twitter.com/statuses/friends.json"
 
-        # start the parameters map
-        parameters = {}
-
-        if page:
-            parameters["page"] = page
-
         # fetches the retrieval url retrieving the json
-        json = self._fetch_url(retrieval_url)
+        json = self._fetch_url(retrieval_url, parameters)
 
         # loads json retrieving the data
-        data =  self.json_plugin.loads(json)
+        data = self.json_plugin.loads(json)
 
         # checks for twitter errors
         self._check_twitter_errors(data)
@@ -158,6 +291,36 @@ class TwitterClient:
 
         # fetches the retrieval url retrieving the json
         json = self._fetch_url(retrieval_url)
+
+        # loads json retrieving the data
+        data = self.json_plugin.loads(json)
+
+        # checks for twitter errors
+        self._check_twitter_errors(data)
+
+        # returns the data
+        return data
+
+    def post_update(self, status, in_reply_to_status_id = None, lat = None, long = None):
+        # requires authentication
+        self.require_authentication()
+
+        # in case the length of the status message is greater than the twitter
+        # character limit value
+        if len(status) > TWITTER_CHARACTER_LIMIT_VALUE:
+            raise Exception("text must be less than or equal to %d characters" % TWITTER_CHARACTER_LIMIT_VALUE)
+
+        # sets the status in the post data
+        post_data = {"status" : status}
+
+        if in_reply_to_status_id:
+            post_data["in_reply_to_status_id"] = in_reply_to_status_id
+
+        # sets the retrieval url
+        retrieval_url = "http://twitter.com/statuses/update.json"
+
+        # fetches the retrieval url retrieving the json
+        json = self._fetch_url(retrieval_url, post_data = post_data)
 
         # loads json retrieving the data
         data = self.json_plugin.loads(json)
@@ -203,18 +366,49 @@ class TwitterClient:
 
         return opener
 
-    def _fetch_url(self, url, parameters):
+    def _fetch_url(self, url, parameters = {}, post_data = {}):
+        # builds the url
+        url = self._build_url(url, parameters)
+
+        # encodes the post data
+        encoded_post_data = self._encode_post_data(post_data)
+
         # retrieves the opener for the given url
         opener = self._get_opener(url)
 
-        # opens the url
-        url_structure = opener.open(url)
+        # opens the url with the given encoded post data
+        url_structure = opener.open(url, encoded_post_data)
 
         # reads the contents from the url structure
         contents = url_structure.read()
 
         # returns the contents
         return contents
+
+    def _build_url(self, url, parameters):
+        if parameters and len(parameters) > 0:
+            # retrieves the extra query
+            extra_query = self._encode_parameters(parameters)
+
+            # adds it to the url
+            url += "?" + extra_query
+
+        return url
+
+    def _encode_parameters(self, parameters):
+        if parameters is None:
+            return None
+        else:
+            return urllib.urlencode(dict([(parameter_key, self._encode(parameter_value)) for parameter_key, parameter_value in parameters.items() if parameter_value is not None]))
+
+    def _encode_post_data(self, post_data):
+        if post_data is None:
+            return None
+        else:
+            return urllib.urlencode(dict([(post_data_key, self._encode(post_data_value)) for post_data_key, post_data_value in post_data.items()]))
+
+    def _encode(self, string_value):
+        return unicode(string_value).encode("utf-8")
 
     def _check_twitter_errors(self, data):
         pass
