@@ -308,7 +308,7 @@ class TwitterClient:
         # in case the length of the status message is greater than the twitter
         # character limit value
         if len(status) > TWITTER_CHARACTER_LIMIT_VALUE:
-            raise Exception("text must be less than or equal to %d characters" % TWITTER_CHARACTER_LIMIT_VALUE)
+            raise service_twitter_exceptions.StatusUpdateProblem("text must be less than or equal to %d characters" % TWITTER_CHARACTER_LIMIT_VALUE)
 
         # sets the status in the post data
         post_data = {"status" : status}
