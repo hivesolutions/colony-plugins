@@ -396,16 +396,16 @@ class TwitterClient:
         return url
 
     def _encode_parameters(self, parameters):
-        if parameters is None:
-            return None
-        else:
+        if parameters:
             return urllib.urlencode(dict([(parameter_key, self._encode(parameter_value)) for parameter_key, parameter_value in parameters.items() if parameter_value is not None]))
+        else:
+            return None
 
     def _encode_post_data(self, post_data):
-        if post_data is None:
-            return None
-        else:
+        if post_data:
             return urllib.urlencode(dict([(post_data_key, self._encode(post_data_value)) for post_data_key, post_data_value in post_data.items()]))
+        else:
+            return None
 
     def _encode(self, string_value):
         return unicode(string_value).encode("utf-8")
