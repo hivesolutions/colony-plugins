@@ -37,9 +37,13 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import hmac
+import time
 import base64
+import random
 import urllib
 import urllib2
+import hashlib
 import urlparse
 
 import service_twitter_exceptions
@@ -127,6 +131,74 @@ class TwitterClient:
         self.encoding = encoding
 
         self.request_header = {}
+
+    def open_oauth_request_token(self, oauth_consumer_key, oauth_consumer_secret, oauth_signature_method = "HMAC-SHA1", oauth_signature = None, oauth_timestamp = None, oauth_nonce = None, oauth_version = "1.0"):
+        # sets the retrieval url
+        retrieval_url = "https://twitter.com/oauth/request_token"
+
+        if not oauth_timestamp:
+            oauth_timestamp = int(time.time())
+
+        if not oauth_nonce:
+            oauth_nonce = random.getrandbits(64)
+
+        # start the parameters map
+        parameters = {}
+
+        # sets the consumer key
+        parameters["oauth_consumer_key"] = oauth_consumer_key
+
+        # sets the signature method
+        parameters["oauth_signature_method"] = oauth_signature_method
+
+        # sets the timestamp
+        parameters["oauth_timestamp"] = oauth_timestamp
+
+        # sets the nonce
+        parameters["oauth_nonce"] = oauth_nonce
+
+        # sets the version
+        parameters["oauth_version"] = oauth_version
+
+        if oauth_signature:
+            # sets the signature
+            parameters["oauth_signature"] = oauth_signature
+        else:
+            # escapes the consumer secret
+            oauth_consumer_secret_escaped = "%s&" % self._escape_url(oauth_consumer_secret)
+
+            # creates the parameters tuple
+            parameters_tuple = ["%s=%s" % (self._escape_url(key), self._escape_url(parameters[key])) for key in sorted(parameters)]
+
+            # creates the message
+            message = "&".join(map(self._escape_url, ["GET", retrieval_url, "&".join(parameters_tuple)]))
+
+            # sets the signature
+            parameters["oauth_signature"] = hmac.new(oauth_consumer_secret_escaped, message, hashlib.sha1).digest().encode("base64")[:-1]
+
+        # fetches the retrieval url with the given parameters retrieving the json
+        result = self._fetch_url(retrieval_url, parameters)
+
+        # retrieves the values from the request
+        values = result.split("&")
+
+        # retrieves the values list
+        values_list = [value.split("=") for value in values]
+
+        # converts the values list into a map
+        values_map = dict(values_list)
+
+        # retrieves the oauth token from the values map
+        oauth_token = values_map["oauth_token"]
+
+        # creates the authentication parameters
+        authentication_parameters = {"oauth_token" : oauth_token}
+
+        # creates the authentication url from the authentication token
+        authentication_url = self._build_url("https://twitter.com/oauth/authorize", authentication_parameters)
+
+        # returns the authentication url
+        return authentication_url
 
     def get_public_timeline(self, since_id = None):
         # start the parameters map
@@ -409,6 +481,16 @@ class TwitterClient:
 
     def _encode(self, string_value):
         return unicode(string_value).encode("utf-8")
+
+    def _escape_url(self, url_text):
+        """
+        Escapes the given url text into a valid http get request string.
+
+        @rtype: String
+        @return: the given url text in a valid http get request string.
+        """
+
+        return urllib.quote(str(url_text), "")
 
     def _check_twitter_errors(self, data):
         pass
