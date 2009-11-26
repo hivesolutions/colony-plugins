@@ -42,7 +42,10 @@ import stat
 import time
 import types
 import threading
+
 import os.path
+
+import update_thread_util
 
 DEFAULT_UPDATING_TIME = 5
 """ The default updating time """
@@ -97,22 +100,32 @@ class JavascriptManagerAutoloader:
         self.auto_update_plugin_files()
 
     def stop_auto_update_plugin_files(self):
+        # unsets the auto update plugin files flag
         self.auto_update_plugin_files_flag = False
+
+        # in case the auto update plugin files timer is defined
         if self.auto_update_plugin_files_timer:
-            self.auto_update_plugin_files_timer.cancel()
+            # stops the auto update plugin files system
+            self.auto_update_plugin_files_timer.stop()
 
     def auto_update_plugin_files(self):
+        # in case the auto update plugin files flag is active
         if self.auto_update_plugin_files_flag:
-            # launches the auto update plugin files system
-            self.auto_update_plugin_files_timer = threading.Timer(DEFAULT_UPDATING_TIME, self.auto_update_plugin_files_handler, ())
+            # creates the auto update plugin files timer timer thread
+            self.auto_update_plugin_files_timer = update_thread_util.UpdateThread()
+
+            # sets the timout in the auto update plugin files timer timer thread
+            self.auto_update_plugin_files_timer.set_timeout(DEFAULT_UPDATING_TIME)
+
+            # sets the call method in the auto update plugin files timer timer thread
+            self.auto_update_plugin_files_timer.set_call_method(self.auto_update_plugin_files_handler)
+
+            # starts the auto update plugin files system
             self.auto_update_plugin_files_timer.start()
 
     def auto_update_plugin_files_handler(self):
         # updates the plugin files
         self.update_plugin_files()
-
-        # re-launches the auto update plugin files system
-        self.auto_update_plugin_files()
 
     def update_plugin_files(self):
         # prints debug message

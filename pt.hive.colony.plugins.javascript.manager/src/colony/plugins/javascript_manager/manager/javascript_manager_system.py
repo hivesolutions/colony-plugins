@@ -45,6 +45,7 @@ import threading
 import os.path
 
 import string_buffer_util
+import update_thread_util
 
 import javascript_manager_parser
 import javascript_manager_exceptions
@@ -220,22 +221,32 @@ class JavascriptManager:
         self.auto_index_plugin_search_directories()
 
     def stop_auto_index_plugin_search_directories(self):
+        # unsets the auto index plugin search directories flag
         self.auto_index_plugin_search_directories_flag = False
+
+        # in case the auto index plugin search directories timer thread is active
         if self.auto_index_plugin_search_directories_timer:
-            self.auto_index_plugin_search_directories_timer.cancel()
+            # stops the auto index plugin search directories system
+            self.auto_index_plugin_search_directories_timer.stop()
 
     def auto_index_plugin_search_directories(self):
+        # in case the auto index plugin search directories flag is active
         if self.auto_index_plugin_search_directories_flag:
-            # launches the auto index plugin search directories system
-            self.auto_index_plugin_search_directories_timer = threading.Timer(DEFAULT_INDEX_TIME, self.auto_index_plugin_search_directories_handler, ())
+            # creates the auto index plugin search directories timer thread
+            self.auto_index_plugin_search_directories_timer = update_thread_util.UpdateThread()
+
+            # sets the timout in the auto index plugin search directories timer thread
+            self.auto_index_plugin_search_directories_timer.set_timeout(DEFAULT_INDEX_TIME)
+
+            # sets the timout in the call method index plugin search directories timer thread
+            self.auto_index_plugin_search_directories_timer.set_call_method(self.auto_index_plugin_search_directories_handler)
+
+            # starts the auto index plugin search directories system
             self.auto_index_plugin_search_directories_timer.start()
 
     def auto_index_plugin_search_directories_handler(self):
         # indexes the plugin search directories
         self.index_plugin_search_directories()
-
-        # re-launches the auto index plugin search directories
-        self.auto_index_plugin_search_directories()
 
     def index_plugin_search_directories(self):
         # prints debug message
