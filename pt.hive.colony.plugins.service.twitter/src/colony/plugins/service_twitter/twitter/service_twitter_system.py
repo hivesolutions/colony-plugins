@@ -723,7 +723,7 @@ class TwitterClient:
         @return: The current authentication type being used.
         """
 
-        if self.oauth_structure.oauth_access_token:
+        if self.oauth_structure and self.oauth_structure.oauth_access_token:
             return OAUTH_AUTHENTICATION_TYPE
         elif self.username and self.password:
             return BASIC_AUTHENTICATION_TYPE
