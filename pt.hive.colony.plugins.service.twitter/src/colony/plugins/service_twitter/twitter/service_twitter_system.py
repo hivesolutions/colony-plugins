@@ -151,6 +151,23 @@ class TwitterClient:
     """ The oauth structure """
 
     def __init__(self, json_plugin = None, http_client_plugin = None, username = None, password = None, encoding = None, oauth_structure = None):
+        """
+        Constructor of the class.
+
+        @type json_plugin: JsonPlugin
+        @param json_plugin: The json plugin.
+        @type http_client_plugin: HttpClientPlugin
+        @param http_client_plugin: The http client plugin.
+        @type username: String
+        @param username: The username.
+        @type password: String
+        @param password: The password.
+        @type encoding: String
+        @param encoding: The encoding used.
+        @type oauth_structure: OauthStructure
+        @param oauth_structure: The oauth structure
+        """
+
         self.json_plugin = json_plugin
         self.http_client_plugin = http_client_plugin
         self.username = username
@@ -161,7 +178,32 @@ class TwitterClient:
         self.request_header = {}
 
     def generate_oauth_structure(self, oauth_consumer_key, oauth_consumer_secret, oauth_signature_method = DEFAULT_OAUTH_SIGNATURE_METHOD, oauth_signature = None, oauth_timestamp = None, oauth_nonce = None, oauth_version = DEFAULT_OAUTH_VERSION, oauth_callback = PIN_BASED_CALLBACK_VALUE, set_structure = True):
-        # constructures a new oauth structure
+        """
+        Generates a new oauth structure, for the given parameters.
+
+        @type oauth_consumer_key: String
+        @param oauth_consumer_key: The consumer key.
+        @type oauth_consumer_secret: String
+        @param oauth_consumer_secret: The consumer secret.
+        @type oauth_signature_method: String
+        @param oauth_signature_method: The signature method.
+        @type oauth_signature: String
+        @param oauth_signature: The signature.
+        @type oauth_timestamp: float
+        @param oauth_timestamp: The timestamp.
+        @type oauth_nonce: int
+        @param oauth_nonce: The nonce.
+        @type oauth_version: String
+        @param oauth_version: The version.
+        @type oauth_callback: Method
+        @param oauth_callback: The callback.
+        @type set_structure: bool
+        @param set_structure: The set structure flag (if the structure should be set in the client).
+        @rtype: OauthStructure
+        @return: The generated oauth structure.
+        """
+
+        # constructs a new oauth structure
         oauth_structure = OauthStructure(oauth_consumer_key, oauth_consumer_secret, oauth_signature_method, oauth_signature, oauth_timestamp, oauth_nonce, oauth_version, oauth_callback)
 
         # in case the structure is meant to be set
@@ -171,28 +213,6 @@ class TwitterClient:
 
         # returns the oauth structure
         return oauth_structure
-
-    def get_oauth_structure(self):
-        return self.oauth_structure
-
-    def set_oauth_structure(self, oauth_structure):
-        self.oauth_structure = oauth_structure
-
-    def _get_oauth_timestamp(self):
-        if self.oauth_structure.oauth_timestamp:
-            oauth_timestamp = self.oauth_structure.oauth_token
-        else:
-            oauth_timestamp = int(time.time())
-
-        return oauth_timestamp
-
-    def _get_oauth_nonce(self):
-        if self.oauth_structure.oauth_nonce:
-            oauth_nonce = self.oauth_structure.oauth_nonce
-        else:
-            oauth_nonce = random.getrandbits(64)
-
-        return oauth_nonce
 
     def open_oauth_request_token(self):
         # sets the retrieval url
@@ -578,6 +598,26 @@ class TwitterClient:
         if (not self.username or not self.password) and not self.oauth_structure.oauth_access_token:
             raise service_twitter_exceptions.InvalidAuthentication("user not authenticated")
 
+    def get_oauth_structure(self):
+        """
+        Retrieves the oauth structure.
+
+        @rtype: OauthStructure
+        @return: The oauth structure.
+        """
+
+        return self.oauth_structure
+
+    def set_oauth_structure(self, oauth_structure):
+        """
+        Sets the oauth structure.
+
+        @type oauth_structure: OauthStructure
+        @param: The oauth structure.
+        """
+
+        self.oauth_structure = oauth_structure
+
     def _add_authorization_header(self):
         if self.username and self.password:
             # constructs the basic authentication string
@@ -729,6 +769,36 @@ class TwitterClient:
             return BASIC_AUTHENTICATION_TYPE
 
         return None
+
+    def _get_oauth_timestamp(self):
+        """
+        Retrieves the real value for the oauth timestamp.
+
+        @rtype: float
+        @return: The real value for the oauth timestamp.
+        """
+
+        if self.oauth_structure.oauth_timestamp:
+            oauth_timestamp = self.oauth_structure.oauth_token
+        else:
+            oauth_timestamp = int(time.time())
+
+        return oauth_timestamp
+
+    def _get_oauth_nonce(self):
+        """
+        Retrieves the real value for the oauth nonce.
+
+        @rtype: int
+        @return: the real value for the oauth nonce.
+        """
+
+        if self.oauth_structure.oauth_nonce:
+            oauth_nonce = self.oauth_structure.oauth_nonce
+        else:
+            oauth_nonce = random.getrandbits(64)
+
+        return oauth_nonce
 
 class OauthStructure:
     """
