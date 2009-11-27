@@ -54,6 +54,18 @@ TWITTER_API_REALM_VALUE = "Twitter API"
 TWITTER_CHARACTER_LIMIT_VALUE = 140
 """ The twitter character limit value """
 
+OAUTH_AUTHENTICATION_TYPE = 1
+""" The oauth authentication type """
+
+BASIC_AUTHENTICATION_TYPE = 2
+""" The basic authentication type """
+
+DEFAULT_OAUTH_SIGNATURE_METHOD = "HMAC-SHA1"
+""" The default oauth signature method """
+
+DEFAULT_OAUTH_VERSION = "1.0"
+""" The default oauth version """
+
 class ServiceTwitter:
     """
     The service twitter class.
@@ -94,8 +106,11 @@ class ServiceTwitter:
         # retrieves the encoding (if available)
         encoding = service_attributes.get("encoding", None)
 
+        # retrieves the oauth structure (if available)
+        oauth_structure = service_attributes.get("oauth_structure", None)
+
         # creates a new twitter client with the given options
-        twitter_client = TwitterClient(json_plugin, urllib2, username, password, encoding)
+        twitter_client = TwitterClient(json_plugin, urllib2, username, password, encoding, oauth_structure)
 
         # returns the twitter client
         return twitter_client
@@ -123,33 +138,69 @@ class TwitterClient:
     request_headers = {}
     """ The request headers """
 
-    def __init__(self, json_plugin = None, http_client_plugin = None, username = None, password = None, encoding = None):
+    oauth_structure = None
+    """ The oauth structure """
+
+    def __init__(self, json_plugin = None, http_client_plugin = None, username = None, password = None, encoding = None, oauth_structure = None):
         self.json_plugin = json_plugin
         self.http_client_plugin = http_client_plugin
         self.username = username
         self.password = password
         self.encoding = encoding
+        self.oauth_structure = oauth_structure
 
         self.request_header = {}
 
-    def open_oauth_request_token(self, oauth_consumer_key, oauth_consumer_secret, oauth_signature_method = "HMAC-SHA1", oauth_signature = None, oauth_timestamp = None, oauth_nonce = None, oauth_version = "1.0", oauth_callback = None):
+    def generate_oauth_structure(self, oauth_consumer_key, oauth_consumer_secret, oauth_signature_method = DEFAULT_OAUTH_SIGNATURE_METHOD, oauth_signature = None, oauth_timestamp = None, oauth_nonce = None, oauth_version = DEFAULT_OAUTH_VERSION, oauth_callback = None, set_structure = True):
+        # constructures a new oauth structure
+        oauth_structure = OauthStructure(oauth_consumer_key, oauth_consumer_secret, oauth_signature_method, oauth_signature, oauth_timestamp, oauth_nonce, oauth_version, oauth_callback)
+
+        # in case the structure is meant to be set
+        if set_structure:
+            # sets the oauth structure
+            self.set_oauth_structure(oauth_structure)
+
+        # returns the oauth structure
+        return oauth_structure
+
+    def get_oauth_structure(self):
+        return self.oauth_structure
+
+    def set_oauth_structure(self, oauth_structure):
+        self.oauth_structure = oauth_structure
+
+    def _get_oauth_timestamp(self):
+        if self.oauth_structure.oauth_timestamp:
+            oauth_timestamp = self.oauth_structure.oauth_token
+        else:
+            oauth_timestamp = int(time.time())
+
+        return oauth_timestamp
+
+    def _get_oauth_nonce(self):
+        if self.oauth_structure.oauth_nonce:
+            oauth_nonce = self.oauth_structure.oauth_nonce
+        else:
+            oauth_nonce = random.getrandbits(64)
+
+        return oauth_nonce
+
+    def open_oauth_request_token(self):
         # sets the retrieval url
         retrieval_url = "https://twitter.com/oauth/request_token"
 
-        if not oauth_timestamp:
-            oauth_timestamp = int(time.time())
+        oauth_timestamp = self._get_oauth_timestamp()
 
-        if not oauth_nonce:
-            oauth_nonce = random.getrandbits(64)
+        oauth_nonce = self._get_oauth_nonce()
 
         # start the parameters map
         parameters = {}
 
         # sets the consumer key
-        parameters["oauth_consumer_key"] = oauth_consumer_key
+        parameters["oauth_consumer_key"] = self.oauth_structure.oauth_consumer_key
 
         # sets the signature method
-        parameters["oauth_signature_method"] = oauth_signature_method
+        parameters["oauth_signature_method"] = self.oauth_structure.oauth_signature_method
 
         # sets the timestamp
         parameters["oauth_timestamp"] = oauth_timestamp
@@ -158,19 +209,19 @@ class TwitterClient:
         parameters["oauth_nonce"] = oauth_nonce
 
         # sets the version
-        parameters["oauth_version"] = oauth_version
+        parameters["oauth_version"] = self.oauth_structure.oauth_version
 
         # in case callback is defined
-        if oauth_callback:
+        if self.oauth_structure.oauth_callback:
             # sets the callback
-            parameters["oauth_callback"] = oauth_callback
+            parameters["oauth_callback"] = self.oauth_structure.oauth_callback
 
-        if oauth_signature:
+        if self.oauth_structure.oauth_signature:
             # sets the signature
-            parameters["oauth_signature"] = oauth_signature
+            parameters["oauth_signature"] = self.oauth_structure.oauth_signature
         else:
             # escapes the consumer secret
-            oauth_consumer_secret_escaped = "%s&" % self._escape_url(oauth_consumer_secret)
+            oauth_consumer_secret_escaped = "%s&" % self._escape_url(self.oauth_structure.oauth_consumer_secret)
 
             # creates the parameters tuple
             parameters_tuple = ["%s=%s" % (self._escape_url(key), self._escape_url(parameters[key])) for key in sorted(parameters)]
@@ -194,16 +245,122 @@ class TwitterClient:
         values_map = dict(values_list)
 
         # retrieves the oauth token from the values map
-        oauth_token = values_map["oauth_token"]
+        self.oauth_structure.oauth_token = values_map["oauth_token"]
+
+        # retrieves the oauth token secret from the values map
+        self.oauth_structure.oauth_token_secret = values_map["oauth_token_secret"]
+
+        # returns the oauth structure
+        return self.oauth_structure
+
+    def get_oauth_authorize_url(self):
+        # sets the retrieval url
+        retrieval_url = "https://twitter.com/oauth/authorize"
+
+        # creates the parameters map
+        parameters = {}
 
         # creates the authentication parameters
-        authentication_parameters = {"oauth_token" : oauth_token}
+        authentication_parameters = {"oauth_token" : self.oauth_structure.oauth_token}
 
         # creates the authentication url from the authentication token
-        authentication_url = self._build_url("https://twitter.com/oauth/authorize", authentication_parameters)
+        authentication_url = self._build_url(retrieval_url, authentication_parameters)
 
         # returns the authentication url
         return authentication_url
+
+    def get_oauth_authenticate_url(self):
+        # sets the retrieval url
+        retrieval_url = "https://twitter.com/oauth/authenticate"
+
+        # creates the parameters map
+        parameters = {}
+
+        # creates the authentication parameters
+        authentication_parameters = {"oauth_token" : self.oauth_structure.oauth_token}
+
+        # creates the authentication url from the authentication token
+        authentication_url = self._build_url(retrieval_url, authentication_parameters)
+
+        # returns the authentication url
+        return authentication_url
+
+    def open_oauth_access_token(self):
+        # sets the retrieval url
+        retrieval_url = "https://twitter.com/oauth/access_token"
+
+        oauth_timestamp = self._get_oauth_timestamp()
+
+        oauth_nonce = self._get_oauth_nonce()
+
+        # start the parameters map
+        parameters = {}
+
+        # sets the token
+        parameters["oauth_token"] = self.oauth_structure.oauth_token
+
+        # sets the consumer key
+        parameters["oauth_consumer_key"] = self.oauth_structure.oauth_consumer_key
+
+        # sets the signature method
+        parameters["oauth_signature_method"] = self.oauth_structure.oauth_signature_method
+
+        # sets the timestamp
+        parameters["oauth_timestamp"] = oauth_timestamp
+
+        # sets the nonce
+        parameters["oauth_nonce"] = oauth_nonce
+
+        # sets the version
+        parameters["oauth_version"] = self.oauth_structure.oauth_version
+
+        # in case the verifier is defined
+        if self.oauth_structure.oauth_verifier:
+            # sets the verifier
+            parameters["oauth_verifier"] = self.oauth_structure.oauth_verifier
+
+        if self.oauth_structure.oauth_signature:
+            # sets the signature
+            parameters["oauth_signature"] = self.oauth_structure.oauth_signature
+        else:
+            # escapes the consumer secret
+            oauth_consumer_secret_escaped = "%s&%s" % (self._escape_url(self.oauth_structure.oauth_consumer_secret), self._escape_url(self.oauth_structure.oauth_token_secret))
+
+            # creates the parameters tuple
+            parameters_tuple = ["%s=%s" % (self._escape_url(key), self._escape_url(parameters[key])) for key in sorted(parameters)]
+
+            # creates the message
+            message = "&".join(map(self._escape_url, ["GET", retrieval_url, "&".join(parameters_tuple)]))
+
+            # sets the signature
+            parameters["oauth_signature"] = hmac.new(oauth_consumer_secret_escaped, message, hashlib.sha1).digest().encode("base64")[:-1]
+
+        # fetches the retrieval url with the given parameters retrieving the json
+        result = self._fetch_url(retrieval_url, parameters)
+
+        # retrieves the values from the request
+        values = result.split("&")
+
+        # retrieves the values list
+        values_list = [value.split("=") for value in values]
+
+        # converts the values list into a map
+        values_map = dict(values_list)
+
+        # retrieves the oauth access token from the values map
+        self.oauth_structure.oauth_access_token = values_map["oauth_token"]
+
+        # retrieves the oauth token secret from the values map
+        self.oauth_structure.oauth_token_secret = values_map["oauth_token_secret"]
+
+        # retrieves the user id from the values map
+        self.oauth_structure.user_id = values_map["user_id"]
+
+        # retrieves the screen name from the values map
+        self.oauth_structure.screen_name = values_map["screen_name"]
+
+        # returns the oauth structure
+        return self.oauth_structure
 
     def get_public_timeline(self, since_id = None):
         # start the parameters map
@@ -278,7 +435,7 @@ class TwitterClient:
         if page:
             parameters["page"] = page
 
-        retrieval_url = "http://twitter.com/statuses/friends_timeline.format"
+        retrieval_url = "http://twitter.com/statuses/friends_timeline.json"
 
         # fetches the retrieval url with the given parameters retrieving the json
         json = self._fetch_url(retrieval_url, parameters)
@@ -409,7 +566,7 @@ class TwitterClient:
         return data
 
     def require_authentication(self):
-        if not self.username or not self.password:
+        if (not self.username or not self.password) and not self.oauth_structure.oauth_access_token:
             raise service_twitter_exceptions.InvalidAuthentication("user not authenticated")
 
     def _add_authorization_header(self):
@@ -463,6 +620,13 @@ class TwitterClient:
         return contents
 
     def _build_url(self, url, parameters):
+        # retrieves the current authentication type
+        authentication_type = self._get_authentication_type()
+
+        # in case oauth is in use
+        if authentication_type == OAUTH_AUTHENTICATION_TYPE:
+            self._build_url_oauth(url, parameters)
+
         if parameters and len(parameters) > 0:
             # retrieves the extra query
             extra_query = self._encode_parameters(parameters)
@@ -471,6 +635,45 @@ class TwitterClient:
             url += "?" + extra_query
 
         return url
+
+    def _build_url_oauth(self, url, parameters):
+        oauth_timestamp = self._get_oauth_timestamp()
+
+        oauth_nonce = self._get_oauth_nonce()
+
+        # sets the token
+        parameters["oauth_token"] = self.oauth_structure.oauth_access_token
+
+        # sets the consumer key
+        parameters["oauth_consumer_key"] = self.oauth_structure.oauth_consumer_key
+
+        # sets the signature method
+        parameters["oauth_signature_method"] = self.oauth_structure.oauth_signature_method
+
+        # sets the timestamp
+        parameters["oauth_timestamp"] = oauth_timestamp
+
+        # sets the nonce
+        parameters["oauth_nonce"] = oauth_nonce
+
+        # sets the version
+        parameters["oauth_version"] = self.oauth_structure.oauth_version
+
+        if self.oauth_structure.oauth_signature:
+            # sets the signature
+            parameters["oauth_signature"] = self.oauth_structure.oauth_signature
+        else:
+            # escapes the consumer secret
+            oauth_consumer_secret_escaped = "%s&%s" % (self._escape_url(self.oauth_structure.oauth_consumer_secret), self._escape_url(self.oauth_structure.oauth_token_secret))
+
+            # creates the parameters tuple
+            parameters_tuple = ["%s=%s" % (self._escape_url(key), self._escape_url(parameters[key])) for key in sorted(parameters)]
+
+            # creates the message
+            message = "&".join(map(self._escape_url, ["GET", url, "&".join(parameters_tuple)]))
+
+            # sets the signature
+            parameters["oauth_signature"] = hmac.new(oauth_consumer_secret_escaped, message, hashlib.sha1).digest().encode("base64")[:-1]
 
     def _encode_parameters(self, parameters):
         if parameters:
@@ -499,3 +702,159 @@ class TwitterClient:
 
     def _check_twitter_errors(self, data):
         pass
+
+    def _get_authentication_type(self):
+        """
+        Retrieves the current authentication type being used.
+
+        @rtype: int
+        @return: The current authentication type being used.
+        """
+
+        if self.oauth_structure.oauth_access_token:
+            return OAUTH_AUTHENTICATION_TYPE
+        elif self.username and self.password:
+            return BASIC_AUTHENTICATION_TYPE
+
+        return None
+
+class OauthStructure:
+    """
+    The oauth structure class.
+    """
+
+    oauth_consumer_key = None
+    """ The consumer key """
+
+    oauth_consumer_secret = None
+    """ The consumer secret """
+
+    oauth_signature_method = DEFAULT_OAUTH_SIGNATURE_METHOD
+    """ The signature method """
+
+    oauth_signature = None
+    """ The signature """
+
+    oauth_timestamp = None
+    """ The timestamp """
+
+    oauth_nonce = None
+    """ The nonce """
+
+    oauth_version = DEFAULT_OAUTH_VERSION
+    """ The version """
+
+    oauth_callback = None
+    """ The callback """
+
+    oauth_token = None
+    """ The oauth token """
+
+    oauth_token_secret = None
+    """ The token secret """
+
+    oauth_verifier = None
+    """ The verififer """
+
+    oauth_access_token = None
+    """ The oauth access token """
+
+    user_id = None
+    """ The user id """
+
+    screen_name = None
+    """ The screen name """
+
+    def __init__(self, oauth_consumer_key, oauth_consumer_secret, oauth_signature_method = DEFAULT_OAUTH_SIGNATURE_METHOD, oauth_signature = None, oauth_timestamp = None, oauth_nonce = None, oauth_version = DEFAULT_OAUTH_VERSION, oauth_callback = None):
+        self.oauth_consumer_key = oauth_consumer_key
+        self.oauth_consumer_secret = oauth_consumer_secret
+        self.oauth_signature_method = oauth_signature_method
+        self.oauth_signature = oauth_signature
+        self.oauth_timestamp = oauth_timestamp
+        self.oauth_nonce = oauth_nonce
+        self.oauth_version = oauth_version
+        self.oauth_callback = oauth_callback
+
+    def get_oauth_consumer_key(self):
+        return self.oauth_consumer_key
+
+    def set_oauth_consumer_key(self, oauth_consumer_key):
+        self.oauth_consumer_key = oauth_consumer_key
+
+    def get_oauth_consumer_secret(self):
+        return self.oauth_consumer_secret
+
+    def set_consumer_secret(self, oauth_consumer_secret):
+        self.oauth_consumer_secret = oauth_consumer_secret
+
+    def get_oauth_signature_method(self):
+        return self.oauth_signature_method
+
+    def set_oauth_signature_method(self, oauth_signature_method):
+        self.oauth_signature_method = oauth_signature_method
+
+    def get_oauth_signature(self):
+        return self.oauth_signature
+
+    def set_oauth_signature(self, oauth_signature):
+        self.oauth_signature = oauth_signature
+
+    def get_oauth_timestamp(self):
+        return self.oauth_timestamp
+
+    def set_oauth_timestamp(self, oauth_timestamp):
+        self.oauth_timestamp = oauth_timestamp
+
+    def get_oauth_nonce(self):
+        return self.oauth_nonce
+
+    def set_oauth_nonce(self, oauth_nonce):
+        self.oauth_nonce = oauth_nonce
+
+    def get_oauth_version(self):
+        return self.oauth_version
+
+    def set_oauth_version(self, oauth_version):
+        self.oauth_version = oauth_version
+
+    def get_oauth_callback(self):
+        return self.oauth_callback
+
+    def set_oauth_callback(self, oauth_callback):
+        self.oauth_callback = oauth_callback
+
+    def get_oauth_token(self):
+        return self.oauth_token
+
+    def set_oauth_token(self, oauth_token):
+        self.oauth_token = oauth_token
+
+    def get_oauth_token_secret(self):
+        return self.oauth_token_secret
+
+    def set_oauth_token_secret(self, oauth_token_secret):
+        self.oauth_token_secret = oauth_token_secret
+
+    def get_oauth_verifier(self):
+        return self.oauth_verifier
+
+    def set_oauth_verifier(self, oauth_verifier):
+        self.oauth_verifier = oauth_verifier
+
+    def get_oauth_access_token(self):
+        return self.oauth_access_token
+
+    def set_oauth_access_token(self, oauth_access_token):
+        self.oauth_access_token = oauth_access_token
+
+    def get_user_id(self):
+        return self.user_id
+
+    def set_user_id(self, user_id):
+        self.user_id = user_id
+
+    def get_screen_name(self):
+        return self.screen_name
+
+    def set_screen_name(self, screen_name):
+        self.screen_name = screen_name
