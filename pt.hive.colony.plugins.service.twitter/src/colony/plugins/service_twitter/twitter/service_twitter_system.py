@@ -66,6 +66,12 @@ DEFAULT_OAUTH_SIGNATURE_METHOD = "HMAC-SHA1"
 DEFAULT_OAUTH_VERSION = "1.0"
 """ The default oauth version """
 
+GET_METHOD_VALUE = "GET"
+""" The get method value """
+
+POST_METHOD_VALUE = "POST"
+""" The post method value """
+
 class ServiceTwitter:
     """
     The service twitter class.
@@ -227,7 +233,7 @@ class TwitterClient:
             parameters_tuple = ["%s=%s" % (self._escape_url(key), self._escape_url(parameters[key])) for key in sorted(parameters)]
 
             # creates the message
-            message = "&".join(map(self._escape_url, ["GET", retrieval_url, "&".join(parameters_tuple)]))
+            message = "&".join(map(self._escape_url, [GET_METHOD_VALUE, retrieval_url, "&".join(parameters_tuple)]))
 
             # sets the signature
             parameters["oauth_signature"] = hmac.new(oauth_consumer_secret_escaped, message, hashlib.sha1).digest().encode("base64")[:-1]
@@ -330,7 +336,7 @@ class TwitterClient:
             parameters_tuple = ["%s=%s" % (self._escape_url(key), self._escape_url(parameters[key])) for key in sorted(parameters)]
 
             # creates the message
-            message = "&".join(map(self._escape_url, ["GET", retrieval_url, "&".join(parameters_tuple)]))
+            message = "&".join(map(self._escape_url, [GET_METHOD_VALUE, retrieval_url, "&".join(parameters_tuple)]))
 
             # sets the signature
             parameters["oauth_signature"] = hmac.new(oauth_consumer_secret_escaped, message, hashlib.sha1).digest().encode("base64")[:-1]
@@ -554,7 +560,7 @@ class TwitterClient:
         retrieval_url = "http://twitter.com/statuses/update.json"
 
         # fetches the retrieval url retrieving the json
-        json = self._fetch_url(retrieval_url, post_data = post_data)
+        json = self._fetch_url(retrieval_url, post_data = post_data, method = POST_METHOD_VALUE)
 
         # loads json retrieving the data
         data = self.json_plugin.loads(json)
@@ -600,7 +606,17 @@ class TwitterClient:
 
         return opener
 
-    def _fetch_url(self, url, parameters = {}, post_data = {}):
+    def _fetch_url(self, url, parameters = {}, post_data = {}, method = GET_METHOD_VALUE):
+        # retrieves the current authentication type
+        authentication_type = self._get_authentication_type()
+
+        # in case oauth is in use
+        if authentication_type == OAUTH_AUTHENTICATION_TYPE:
+            if method == GET_METHOD_VALUE:
+                self._build_oauth_arguments(url, parameters, method)
+            elif method == POST_METHOD_VALUE:
+                self._build_oauth_arguments(url, post_data, method)
+
         # builds the url
         url = self._build_url(url, parameters)
 
@@ -620,13 +636,6 @@ class TwitterClient:
         return contents
 
     def _build_url(self, url, parameters):
-        # retrieves the current authentication type
-        authentication_type = self._get_authentication_type()
-
-        # in case oauth is in use
-        if authentication_type == OAUTH_AUTHENTICATION_TYPE:
-            self._build_url_oauth(url, parameters)
-
         if parameters and len(parameters) > 0:
             # retrieves the extra query
             extra_query = self._encode_parameters(parameters)
@@ -636,7 +645,7 @@ class TwitterClient:
 
         return url
 
-    def _build_url_oauth(self, url, parameters):
+    def _build_oauth_arguments(self, url, parameters, method = GET_METHOD_VALUE):
         oauth_timestamp = self._get_oauth_timestamp()
 
         oauth_nonce = self._get_oauth_nonce()
@@ -670,7 +679,7 @@ class TwitterClient:
             parameters_tuple = ["%s=%s" % (self._escape_url(key), self._escape_url(parameters[key])) for key in sorted(parameters)]
 
             # creates the message
-            message = "&".join(map(self._escape_url, ["GET", url, "&".join(parameters_tuple)]))
+            message = "&".join(map(self._escape_url, [method, url, "&".join(parameters_tuple)]))
 
             # sets the signature
             parameters["oauth_signature"] = hmac.new(oauth_consumer_secret_escaped, message, hashlib.sha1).digest().encode("base64")[:-1]
