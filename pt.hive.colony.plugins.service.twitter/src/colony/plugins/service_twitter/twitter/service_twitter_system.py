@@ -72,6 +72,9 @@ GET_METHOD_VALUE = "GET"
 POST_METHOD_VALUE = "POST"
 """ The post method value """
 
+PIN_BASED_CALLBACK_VALUE = "oob"
+""" The pin based callback value """
+
 class ServiceTwitter:
     """
     The service twitter class.
@@ -157,7 +160,7 @@ class TwitterClient:
 
         self.request_header = {}
 
-    def generate_oauth_structure(self, oauth_consumer_key, oauth_consumer_secret, oauth_signature_method = DEFAULT_OAUTH_SIGNATURE_METHOD, oauth_signature = None, oauth_timestamp = None, oauth_nonce = None, oauth_version = DEFAULT_OAUTH_VERSION, oauth_callback = None, set_structure = True):
+    def generate_oauth_structure(self, oauth_consumer_key, oauth_consumer_secret, oauth_signature_method = DEFAULT_OAUTH_SIGNATURE_METHOD, oauth_signature = None, oauth_timestamp = None, oauth_nonce = None, oauth_version = DEFAULT_OAUTH_VERSION, oauth_callback = PIN_BASED_CALLBACK_VALUE, set_structure = True):
         # constructures a new oauth structure
         oauth_structure = OauthStructure(oauth_consumer_key, oauth_consumer_secret, oauth_signature_method, oauth_signature, oauth_timestamp, oauth_nonce, oauth_version, oauth_callback)
 
@@ -753,7 +756,7 @@ class OauthStructure:
     oauth_version = DEFAULT_OAUTH_VERSION
     """ The version """
 
-    oauth_callback = None
+    oauth_callback = PIN_BASED_CALLBACK_VALUE
     """ The callback """
 
     oauth_token = None
@@ -774,7 +777,7 @@ class OauthStructure:
     screen_name = None
     """ The screen name """
 
-    def __init__(self, oauth_consumer_key, oauth_consumer_secret, oauth_signature_method = DEFAULT_OAUTH_SIGNATURE_METHOD, oauth_signature = None, oauth_timestamp = None, oauth_nonce = None, oauth_version = DEFAULT_OAUTH_VERSION, oauth_callback = None):
+    def __init__(self, oauth_consumer_key, oauth_consumer_secret, oauth_signature_method = DEFAULT_OAUTH_SIGNATURE_METHOD, oauth_signature = None, oauth_timestamp = None, oauth_nonce = None, oauth_version = DEFAULT_OAUTH_VERSION, oauth_callback = PIN_BASED_CALLBACK_VALUE):
         self.oauth_consumer_key = oauth_consumer_key
         self.oauth_consumer_secret = oauth_consumer_secret
         self.oauth_signature_method = oauth_signature_method
