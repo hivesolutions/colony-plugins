@@ -218,8 +218,10 @@ class TwitterClient:
         # sets the retrieval url
         retrieval_url = "https://twitter.com/oauth/request_token"
 
+        # retrieves the timestamp
         oauth_timestamp = self._get_oauth_timestamp()
 
+        # retrieves the nonce
         oauth_nonce = self._get_oauth_nonce()
 
         # start the parameters map
@@ -282,44 +284,14 @@ class TwitterClient:
         # returns the oauth structure
         return self.oauth_structure
 
-    def get_oauth_authorize_url(self):
-        # sets the retrieval url
-        retrieval_url = "https://twitter.com/oauth/authorize"
-
-        # creates the parameters map
-        parameters = {}
-
-        # creates the authentication parameters
-        authentication_parameters = {"oauth_token" : self.oauth_structure.oauth_token}
-
-        # creates the authentication url from the authentication token
-        authentication_url = self._build_url(retrieval_url, authentication_parameters)
-
-        # returns the authentication url
-        return authentication_url
-
-    def get_oauth_authenticate_url(self):
-        # sets the retrieval url
-        retrieval_url = "https://twitter.com/oauth/authenticate"
-
-        # creates the parameters map
-        parameters = {}
-
-        # creates the authentication parameters
-        authentication_parameters = {"oauth_token" : self.oauth_structure.oauth_token}
-
-        # creates the authentication url from the authentication token
-        authentication_url = self._build_url(retrieval_url, authentication_parameters)
-
-        # returns the authentication url
-        return authentication_url
-
     def open_oauth_access_token(self):
         # sets the retrieval url
         retrieval_url = "https://twitter.com/oauth/access_token"
 
+        # retrieves the timestamp
         oauth_timestamp = self._get_oauth_timestamp()
 
+        # retrieves the nonce
         oauth_nonce = self._get_oauth_nonce()
 
         # start the parameters map
@@ -390,6 +362,38 @@ class TwitterClient:
 
         # returns the oauth structure
         return self.oauth_structure
+
+    def get_oauth_authorize_url(self):
+        # sets the retrieval url
+        retrieval_url = "https://twitter.com/oauth/authorize"
+
+        # creates the parameters map
+        parameters = {}
+
+        # creates the authentication parameters
+        authentication_parameters = {"oauth_token" : self.oauth_structure.oauth_token}
+
+        # creates the authentication url from the authentication token
+        authentication_url = self._build_url(retrieval_url, authentication_parameters)
+
+        # returns the authentication url
+        return authentication_url
+
+    def get_oauth_authenticate_url(self):
+        # sets the retrieval url
+        retrieval_url = "https://twitter.com/oauth/authenticate"
+
+        # creates the parameters map
+        parameters = {}
+
+        # creates the authentication parameters
+        authentication_parameters = {"oauth_token" : self.oauth_structure.oauth_token}
+
+        # creates the authentication url from the authentication token
+        authentication_url = self._build_url(retrieval_url, authentication_parameters)
+
+        # returns the authentication url
+        return authentication_url
 
     def get_public_timeline(self, since_id = None):
         # start the parameters map
@@ -689,8 +693,10 @@ class TwitterClient:
         return url
 
     def _build_oauth_arguments(self, url, parameters, method = GET_METHOD_VALUE):
+        # retrieves the timestamp
         oauth_timestamp = self._get_oauth_timestamp()
 
+        # retrieves the nonce
         oauth_nonce = self._get_oauth_nonce()
 
         # sets the token
@@ -848,6 +854,27 @@ class OauthStructure:
     """ The screen name """
 
     def __init__(self, oauth_consumer_key, oauth_consumer_secret, oauth_signature_method = DEFAULT_OAUTH_SIGNATURE_METHOD, oauth_signature = None, oauth_timestamp = None, oauth_nonce = None, oauth_version = DEFAULT_OAUTH_VERSION, oauth_callback = PIN_BASED_CALLBACK_VALUE):
+        """
+        Constructor of the class.
+
+        @type oauth_consumer_key: String
+        @param oauth_consumer_key: The consumer key.
+        @type oauth_consumer_secret: String
+        @param oauth_consumer_secret: The consumer secret.
+        @type oauth_signature_method: String
+        @param oauth_signature_method: The signature method.
+        @type oauth_signature: String
+        @param oauth_signature: The signature.
+        @type oauth_timestamp: float
+        @param oauth_timestamp: The timestamp.
+        @type oauth_nonce: int
+        @param oauth_nonce: The nonce.
+        @type oauth_version: String
+        @param oauth_version: The version.
+        @type oauth_callback: Method
+        @param oauth_callback: The callback.
+        """
+
         self.oauth_consumer_key = oauth_consumer_key
         self.oauth_consumer_secret = oauth_consumer_secret
         self.oauth_signature_method = oauth_signature_method
@@ -858,15 +885,43 @@ class OauthStructure:
         self.oauth_callback = oauth_callback
 
     def get_oauth_consumer_key(self):
+        """
+        Retrieves the consumer key.
+
+        @rtype: String
+        @return: The consumer key.
+        """
+
         return self.oauth_consumer_key
 
     def set_oauth_consumer_key(self, oauth_consumer_key):
+        """
+        Sets the consumer key.
+
+        @type oauth_consumer_key: String
+        @param oauth_consumer_key: The consumer key.
+        """
+
         self.oauth_consumer_key = oauth_consumer_key
 
     def get_oauth_consumer_secret(self):
+        """
+        Retrieves the consumer secret.
+
+        @rtype: String
+        @return: The consumer secret.
+        """
+
         return self.oauth_consumer_secret
 
     def set_consumer_secret(self, oauth_consumer_secret):
+        """
+        Sets the consumer secret.
+
+        @type: String
+        @param: The consumer secret.
+        """
+
         self.oauth_consumer_secret = oauth_consumer_secret
 
     def get_oauth_signature_method(self):
