@@ -738,7 +738,17 @@ class TwitterClient:
 
         return opener
 
-    def _fetch_url(self, url, parameters = {}, post_data = {}, method = GET_METHOD_VALUE):
+    def _fetch_url(self, url, parameters = None, post_data = None, method = GET_METHOD_VALUE):
+        # in case parameters is not defined
+        if not parameters:
+            # creates a new parameters map
+            parameters = {}
+
+        # in case post data is not defined
+        if not post_data:
+            # creates a new post data map
+            post_data = {}
+
         # retrieves the current authentication type
         authentication_type = self._get_authentication_type()
 
