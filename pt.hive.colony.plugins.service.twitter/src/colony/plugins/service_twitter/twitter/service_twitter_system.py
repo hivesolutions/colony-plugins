@@ -925,9 +925,23 @@ class OauthStructure:
         self.oauth_consumer_secret = oauth_consumer_secret
 
     def get_oauth_signature_method(self):
+        """
+        Retrieves the signature method.
+
+        @rtype: String
+        @return: The signature method.
+        """
+
         return self.oauth_signature_method
 
     def set_oauth_signature_method(self, oauth_signature_method):
+        """
+        Sets the signature method.
+
+        @type oauth_signature_method: String
+        @param oauth_signature_method: The signature method.
+        """
+
         self.oauth_signature_method = oauth_signature_method
 
     def get_oauth_signature(self):
