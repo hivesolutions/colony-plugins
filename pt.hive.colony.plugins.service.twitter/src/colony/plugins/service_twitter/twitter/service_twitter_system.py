@@ -215,6 +215,13 @@ class TwitterClient:
         return oauth_structure
 
     def open_oauth_request_token(self):
+        """
+        Opens the oauth request token.
+
+        @rtype: OauthStructure
+        @return: The current oauth structure.
+        """
+
         # sets the retrieval url
         retrieval_url = "https://twitter.com/oauth/request_token"
 
@@ -285,6 +292,13 @@ class TwitterClient:
         return self.oauth_structure
 
     def open_oauth_access_token(self):
+        """
+        Opens the oauth access token.
+
+        @rtype: OauthStructure
+        @return: The current oauth structure.
+        """
+
         # sets the retrieval url
         retrieval_url = "https://twitter.com/oauth/access_token"
 
@@ -364,6 +378,13 @@ class TwitterClient:
         return self.oauth_structure
 
     def get_oauth_authorize_url(self):
+        """
+        Retrieves the oauth authorize url.
+
+        @rtype: String
+        @return: The oauth authorize url.
+        """
+
         # sets the retrieval url
         retrieval_url = "https://twitter.com/oauth/authorize"
 
@@ -380,6 +401,13 @@ class TwitterClient:
         return authentication_url
 
     def get_oauth_authenticate_url(self):
+        """
+        Retrieves the oauth authenticate url.
+
+        @rtype: String
+        @return: The oauth authenticate url.
+        """
+
         # sets the retrieval url
         retrieval_url = "https://twitter.com/oauth/authenticate"
 
@@ -396,6 +424,15 @@ class TwitterClient:
         return authentication_url
 
     def get_public_timeline(self, since_id = None):
+        """
+        Retrieves the public timeline, since the given date id.
+
+        @type since_id: String
+        @param since_id: The date id from wich the timeline should be retrieved.
+        @rtype: Dictionary
+        @return: The public timeline, since the given date id.
+        """
+
         # start the parameters map
         parameters = {}
 
@@ -417,6 +454,22 @@ class TwitterClient:
         return data
 
     def get_home_timeline(self, since_id = None, max_id = None, count = None, page = None):
+        """
+        Retrieves the home timeline, since the given id, for the given maximum id, with the given count
+        and the given page.
+
+        @type since_id: String
+        @param since_id: The date id from wich the timeline should be retrieved.
+        @type max_id: String
+        @param max_id: The maximum date if from wich the timeline should be retrieved.
+        @type count: int
+        @param count: The number of records to be retrieved.
+        @type page: int
+        @param page: The page to be retrieved.
+        @rtype: Dictionary
+        @return: The home timeline, for the given arguments.
+        """
+
         # requires authentication
         self.require_authentication()
 
@@ -450,6 +503,22 @@ class TwitterClient:
         return data
 
     def get_friends_timeline(self, since_id = None, max_id = None, count = None, page = None):
+        """
+        Retrieves the friends timeline, since the given id, for the given maximum id, with the given count
+        and the given page.
+
+        @type since_id: String
+        @param since_id: The date id from wich the timeline should be retrieved.
+        @type max_id: String
+        @param max_id: The maximum date if from wich the timeline should be retrieved.
+        @type count: int
+        @param count: The number of records to be retrieved.
+        @type page: int
+        @param page: The page to be retrieved.
+        @rtype: Dictionary
+        @return: The friends timeline, for the given arguments.
+        """
+
         # requires authentication
         self.require_authentication()
 
@@ -483,6 +552,22 @@ class TwitterClient:
         return data
 
     def get_user_timeline(self, user = None, since = None, since_id = None, count = None, page = None):
+        """
+        Retrieves the user timeline, since the given id, for the given maximum id, with the given count
+        and the given page.
+
+        @type since_id: String
+        @param since_id: The date id from wich the timeline should be retrieved.
+        @type max_id: String
+        @param max_id: The maximum date if from wich the timeline should be retrieved.
+        @type count: int
+        @param count: The number of records to be retrieved.
+        @type page: int
+        @param page: The page to be retrieved.
+        @rtype: Dictionary
+        @return: The user timeline, for the given arguments.
+        """
+
         # start the parameters map
         parameters = {}
 
