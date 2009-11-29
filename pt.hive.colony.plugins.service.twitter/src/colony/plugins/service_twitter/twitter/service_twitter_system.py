@@ -945,67 +945,221 @@ class OauthStructure:
         self.oauth_signature_method = oauth_signature_method
 
     def get_oauth_signature(self):
+        """
+        Retrieves the signature.
+
+        @rtype: String
+        @return: The signature.
+        """
+
         return self.oauth_signature
 
     def set_oauth_signature(self, oauth_signature):
+        """
+        Sets the signature.
+
+        @type oauth_signature: String
+        @param oauth_signature: The signature.
+        """
+
         self.oauth_signature = oauth_signature
 
     def get_oauth_timestamp(self):
+        """
+        Retrieves the timestamp.
+
+        @rtype: float
+        @return: The timestamp.
+        """
+
         return self.oauth_timestamp
 
     def set_oauth_timestamp(self, oauth_timestamp):
+        """
+        Sets the timestamp.
+
+        @type oauth_timestamp: float
+        @param oauth_timestamp: The timestamp
+        """
+
         self.oauth_timestamp = oauth_timestamp
 
     def get_oauth_nonce(self):
+        """
+        Retrieves the nonce.
+
+        @rtype: int
+        @return: The nonce.
+        """
+
         return self.oauth_nonce
 
     def set_oauth_nonce(self, oauth_nonce):
+        """
+        Sets the nonce.
+
+        @type oauth_nonce: int
+        @param oauth_nonce: The nonce.
+        """
+
         self.oauth_nonce = oauth_nonce
 
     def get_oauth_version(self):
+        """
+        Retrieves the version.
+
+        @rtype: String
+        @return: The version.
+        """
+
         return self.oauth_version
 
     def set_oauth_version(self, oauth_version):
+        """
+        Sets the version.
+
+        @type oauth_version: String
+        @param oauth_version: The version.
+        """
+
         self.oauth_version = oauth_version
 
     def get_oauth_callback(self):
+        """
+        Retrieves the callback.
+
+        @rtype: String
+        @return: The callback.
+        """
+
         return self.oauth_callback
 
     def set_oauth_callback(self, oauth_callback):
+        """
+        Sets the callback.
+
+        @type oauth_callback: String
+        @param oauth_callback: The callback.
+        """
+
         self.oauth_callback = oauth_callback
 
     def get_oauth_token(self):
+        """
+        Retrieves the token.
+
+        @rtype: String
+        @return: The token.
+        """
+
         return self.oauth_token
 
     def set_oauth_token(self, oauth_token):
+        """
+        Sets the token.
+
+        @type oauth_token: String
+        @param oauth_token: The token.
+        """
+
         self.oauth_token = oauth_token
 
     def get_oauth_token_secret(self):
+        """
+        Retrieves the token secret.
+
+        @rtype: String
+        @return: The token secret.
+        """
+
         return self.oauth_token_secret
 
     def set_oauth_token_secret(self, oauth_token_secret):
+        """
+        Sets the token secret.
+
+        @type oauth_token_secret: String
+        @param oauth_token_secret: The token secret.
+        """
+
         self.oauth_token_secret = oauth_token_secret
 
     def get_oauth_verifier(self):
+        """
+        Retrieves the verifier.
+
+        @rtype: String
+        @return: The verifier.
+        """
+
         return self.oauth_verifier
 
     def set_oauth_verifier(self, oauth_verifier):
+        """
+        Sets the verifier.
+
+        @type oauth_verifier: String
+        @param oauth_verifier: The verifier.
+        """
+
         self.oauth_verifier = oauth_verifier
 
     def get_oauth_access_token(self):
+        """
+        Retrieves the access token.
+
+        @rtype: String
+        @return: The access token.
+        """
+
         return self.oauth_access_token
 
     def set_oauth_access_token(self, oauth_access_token):
+        """
+        Sets the access token.
+
+        @type oauth_access_token: String
+        @param oauth_access_token: The access token.
+        """
+
         self.oauth_access_token = oauth_access_token
 
     def get_user_id(self):
+        """
+        Retrieves the user id.
+
+        @rtype: String
+        @return: The user id.
+        """
+
         return self.user_id
 
     def set_user_id(self, user_id):
+        """
+        Sets the user id.
+
+        @type user_id: String
+        @param user_id: The user id.
+        """
+
         self.user_id = user_id
 
     def get_screen_name(self):
+        """
+        Retrieves the screen name.
+
+        @rtype: String
+        @return: The screen name.
+        """
+
         return self.screen_name
 
     def set_screen_name(self, screen_name):
+        """
+        Sets the screen name.
+
+        @type screen_name: String
+        @param screen_name: The screen name.
+        """
+
         self.screen_name = screen_name
