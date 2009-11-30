@@ -47,7 +47,7 @@ TEST_METHOD_PREFIX = "test_"
 
 class MainTest:
     """
-    The main test class
+    The main test class.
     """
 
     main_test_plugin = None
@@ -88,10 +88,10 @@ class MainTest:
 
     def __init__(self, main_test_plugin):
         """
-        Constructor of the class
+        Constructor of the class.
 
         @type main_test_plugin: MainTestPlugin
-        @param main_test_plugin: The main test plugin
+        @param main_test_plugin: The main test plugin.
         """
 
         self.main_test_plugin = main_test_plugin
