@@ -653,7 +653,7 @@ class TwitterClient:
         # returns the data
         return data
 
-    def get_user(self, user):
+    def get_user(self, user = None):
         """
         Retrieves the user information for the given user.
 
@@ -662,6 +662,11 @@ class TwitterClient:
         @rtype: Dictionary
         @return: The user information for the given user.
         """
+
+        # in case the user is not defined
+        if not user:
+            # sets the user as the current user
+            user = self._get_current_user()
 
         # sets the retrieval url
         retrieval_url = "http://twitter.com/users/show/%s.json" % user
@@ -1045,6 +1050,26 @@ class TwitterClient:
             oauth_nonce = random.getrandbits(64)
 
         return oauth_nonce
+
+    def _get_current_user(self):
+        """
+        Retrieves the current user.
+
+        @rtype: String
+        @return: The current user.
+        """
+
+        # retrieves the current authentication type
+        authentication_type = self._get_authentication_type()
+
+        # in case oauth is in use
+        if authentication_type == OAUTH_AUTHENTICATION_TYPE:
+            # returns the oauth structure screen name
+            return self.oauth_structure.screen_name
+        # in case basic authentication is in use
+        elif authentication_type == BASIC_AUTHENTICATION_TYPE:
+            # returns the username
+            return self.username
 
 class OauthStructure:
     """
