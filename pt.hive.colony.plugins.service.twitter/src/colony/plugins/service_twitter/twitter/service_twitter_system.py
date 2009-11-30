@@ -653,6 +653,56 @@ class TwitterClient:
         # returns the data
         return data
 
+    def get_followers(self, user = None, cursor = None, user_id = None, screen_name = None):
+        """
+        Retrieves the user followers, for the given user, with the given cursor,
+        for the given user id and screen name.
+
+        @type user: String
+        @param user: The user for wich the followers should be retrieved.
+        @type cursor: int
+        @param cursor: The current cursor for retrieval.
+        @type user_id: String
+        @param user_id: The user id for wich the followers should be retrieved.
+        @type screen_name: String
+        @param screen_name: The screen name for wich the followers should be retrieved.
+        @rtype: Dictionary
+        @return: The user followers, for the given arguments.
+        """
+
+        # requires authentication
+        self.require_authentication()
+
+        # start the parameters map
+        parameters = {}
+
+        if cursor:
+            parameters["cursor"] = cursor
+
+        if user_id:
+            parameters["user_id"] = user_id
+
+        if screen_name:
+            parameters["screen_name"] = screen_name
+
+        # in case the user is defined
+        if user:
+            retrieval_url = "http://twitter.com/statuses/followers/%s.json" % user
+        else:
+            retrieval_url = "http://twitter.com/statuses/followers.json"
+
+        # fetches the retrieval url retrieving the json
+        json = self._fetch_url(retrieval_url, parameters)
+
+        # loads json retrieving the data
+        data = self.json_plugin.loads(json)
+
+        # checks for twitter errors
+        self._check_twitter_errors(data)
+
+        # returns the data
+        return data
+
     def get_user(self, user = None):
         """
         Retrieves the user information for the given user.
