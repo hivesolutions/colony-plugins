@@ -736,37 +736,41 @@ class Namespace:
         else:
             self.list_value = []
 
-    #@todo: comment this
-    def __eq__(a, b):
-        list_value_a = a.list_value
-        list_value_b = b.list_value
+    def __eq__(self, namespace):
+        # retrieves the list value for self
+        list_value_self = self.list_value
 
-        if not list_value_a or not list_value_b:
+        # retrieves the list value for namespace
+        list_value_namespace = namespace.list_value
+
+        # in case some of the lists is invalid
+        if not list_value_self or not list_value_namespace:
+            # returns false
             return False
 
-        len_a = len(list_value_a)
-        len_b = len(list_value_b)
+        # retrieves the length of the list value for self
+        length_self = len(list_value_self)
 
-        if len_a != len_b:
+        # retrieves the length of the list value for namespace
+        length_namespace = len(list_value_namespace)
+
+        # in case the lengths for the list are different
+        if not length_self == length_namespace:
+            # returns false
             return False
 
-        for index in range(len_a):
-            if list_value_a[index] != list_value_b[index]:
+        # iterates over all the lists
+        for index in range(length_self):
+            # compares both values
+            if list_value_self[index] != list_value_namespace[index]:
+                # returns false
                 return False
 
+        # returns true
         return True
 
-    #@todo: comment this
-    def __ne__(a, b):
-        return not self.__eq__(a, b)
-
-    #@todo: comment this
-    def eq(a, b):
-        return self.__eq__(a, b)
-
-    #@todo: comment this
-    def ne(a, b):
-        return self.__neq__(a, b)
+    def __ne__(self, namespace):
+        return not self.__eq__(namespace)
 
     #@todo: comment this
     def is_sub_namespace(self, event):
