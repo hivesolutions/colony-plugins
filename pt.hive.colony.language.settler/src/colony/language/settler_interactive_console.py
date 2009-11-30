@@ -47,15 +47,25 @@ import settler_generation
 import settler_processing
 
 BRANDING_TEXT = "Settler 0.1 (Hive Solutions Lda. r1:Sep 19 2006)"
+""" The branding text value """
+
 VERSION_PRE_TEXT = "Python "
+""" The version pre text value """
+
 HELP_TEXT = "Type \"help\", \"copyright\", \"credits\" or \"license\" for more information."
+""" The help text value """
 
 CARRET = "[settler] >> "
+""" The carret text value """
+
 BLOCK_CARRET = "[settler] .. "
+""" The block carret value """
 
 NEW_BLOCK_CHARACTER = ":"
+""" The new block charcater value """
 
 EXIT_COMMAND = "exit()"
+""" The exit command value """
 
 def get_command_from_command_list(command_list):
     command_string = ""
