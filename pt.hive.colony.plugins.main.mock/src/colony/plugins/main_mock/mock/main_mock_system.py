@@ -56,9 +56,19 @@ class MainMock:
         self.main_mock_plugin = main_mock_plugin
 
     def generate_mockery(self):
+        """
+        Generates a new mockery.
+
+        @rtype: Mockery
+        @return: The generated mockery.
+        """
+
         return None
 
     def generate_mock(self, class_reference):
+        pass
+
+    def generate_expectation(self):
         pass
 
 class Mockery:
@@ -170,6 +180,7 @@ class Mock:
         return "<Mock '%s' '%s'>" % (hex(id(self)), self.mock_name)
 
     def __call__(self, *args, **kw):
+        MockCall()
         # @todo
         # tenho de manter aki o registo de tudo o que se passa em termos de chamada
         # tenho de poder fazer try catch se necessario
@@ -251,3 +262,43 @@ class MockCall:
         """
 
         return self.method_name
+
+    def set_method_arguments(self, method_arguments):
+        """
+        Sets the method arguments.
+
+        @type method_arguments: List
+        @param method_arguments: The method arguments.
+        """
+
+        self.method_arguments = method_arguments
+
+    def get_method_arguments(self):
+        """
+        Retrieves the method arguments.
+
+        @rtype: List
+        @return: The method arguments.
+        """
+
+        return self.method_arguments
+
+    def set_method_key_arguments(self, method_key_arguments):
+        """
+        Sets the method key arguments.
+
+        @type method_key_arguments: Dictionary
+        @param method_key_arguments: The method key arguments.
+        """
+
+        self.method_key_arguments = method_key_arguments
+
+    def get_method_key_arguments(self):
+        """
+        Retrieves the method key arguments.
+
+        @rtype: Dictionary
+        @return: The method key arguments.
+        """
+
+        return self.method_key_arguments
