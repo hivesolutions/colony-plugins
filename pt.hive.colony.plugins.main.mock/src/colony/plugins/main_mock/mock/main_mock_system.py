@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import exceptions
+
 import main_mock_exceptions
 
 class MainMock:
@@ -298,6 +300,60 @@ class ReturnExpectation(Expectation):
         # returns true
         return True
 
+class ExceptionExpectation(Expectation):
+    """
+    The exception expectation class.
+    """
+
+    exception_value = None
+    """ The exception value """
+
+    successful_calls = 0
+    """ The sucessfull calls count (the number of calls before expecting exception) """
+
+    call_count = 0
+    """ The number of calls made """
+
+    def __init__(self, exception_value = None, successful_calls = 0):
+        Expectation.__init__(self)
+        self.exception_value = exception_value
+        self.successful_calls = successful_calls
+
+    def verify_expectation(self, mock, mock_call, verification_state_map):
+        # increments the call count
+        self.call_count += 1
+
+        # calls the super object retrieving the result
+        result = Expectation.verify_expectation(self, mock, mock_call, verification_state_map)
+
+        # in case the result id false
+        if not result:
+            # returns false immediately
+            return False
+
+        # in case the call call is greater than the sucessfull calls
+        if self.call_count > self.successful_calls:
+            # retrieves the mock call method expection
+            mock_call_method_exception = mock_call.get_method_exception()
+
+            # in case the mock call method exception is not valid
+            if not mock_call_method_exception:
+                # returns false
+                return False
+
+            # in case the mock call method exception is not an exception
+            if not type(mock_call_method_exception) == exceptions.Exception:
+                # returns false
+                return False
+
+            # in case the call method exception value is not the expected
+            if not self.exception_value == mock_call_method_exception.__class__:
+                # returns false
+                return False
+
+        # returns true
+        return True
+
 class Mock:
     """
     The mock class used to encapsulate mock objects.
@@ -345,17 +401,24 @@ class Mock:
         return "<Mock '%s' '%s'>" % (hex(id(self)), self.mock_name)
 
     def __call__(self, *args, **kwargs):
-        # retrieves the mock return
-        mock_return = self._mock_return(*args, **kwargs)
+        # start the mock exception
+        mock_exception = None
+
+        try:
+            # retrieves the mock return
+            mock_return = self._mock_return(*args, **kwargs)
+        except Exception, exception:
+            # sets the mock exception
+            mock_exception = exception
+
+            # sets the return value
+            mock_return = None
 
         # creates a new mock call
-        mock_call = MockCall(self.mock_name, args, kwargs, mock_return)
+        mock_call = MockCall(self.mock_name, args, kwargs, mock_return, mock_exception)
 
         # adds the mock call to the mock calls list
         self.mock_calls_list.append(mock_call)
-
-        # prints the message
-        print mock_call
 
         # verifies the expectation for the current mock call
         self._verify_expectations(mock_call)
@@ -478,14 +541,18 @@ class MockCall:
     methid_key_arguments = {}
     """ The method key arguments """
 
-    method_return = {}
+    method_return = None
     """ The method return """
 
-    def __init__(self, method_name, method_arguments, method_key_arguments, method_return):
+    method_exception = None
+    """ The method exception """
+
+    def __init__(self, method_name, method_arguments, method_key_arguments, method_return, method_exception):
         self.method_name = method_name
         self.method_arguments = method_arguments
         self.method_key_arguments = method_key_arguments
         self.method_return = method_return
+        self.method_exception = method_exception
 
     def __repr__(self):
         # retrieves the various parts of the
@@ -579,3 +646,23 @@ class MockCall:
         """
 
         return self.method_return
+
+    def set_method_exception(self, method_exception):
+        """
+        Sets the method exception.
+
+        @type method_exception: Exception
+        @param method_exception: The method exception.
+        """
+
+        self.method_exception = method_exception
+
+    def get_method_exception(self):
+        """
+        Retrieves the method exception.
+
+        @rtype: Exception
+        @return: The method exception.
+        """
+
+        return self.method_exception
