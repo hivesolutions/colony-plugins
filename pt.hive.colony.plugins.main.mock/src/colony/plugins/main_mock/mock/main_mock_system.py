@@ -121,15 +121,29 @@ class Mockery:
         # returns the mock
         return mock
 
-    def generate_expectation(self):
+    def generate_expectation(self, expectation_type, expectation_key_arguments):
         """
         Generates a new expectation to be used.
 
+        @type expectation_type: String
+        @param expectation_type: The type of the expectation to be generated.
+        @type expectation_key_arguments: Dictionary
+        @param expectation_key_arguments: The expectation key aguments to be used.
         @rtype: Expectation
         @return: The generated expectation.
         """
 
-        pass
+        # retrieves the global variables
+        global_variables = globals()
+
+        # retrieves the expectation class from the global variables
+        expectation_class = global_variables[expectation_type]
+
+        # creates the expectation using the expectation key arguments
+        expectation = expectation_class(**expectation_key_arguments)
+
+        # returns the expectation
+        return expectation
 
 class Expectations:
     """
@@ -154,14 +168,23 @@ class Expectation:
     """
 
     def __init__(self):
+        """
+        Constructor of the class
+        """
+
         pass
 
-    def verify_expectation(self, mock):
+    def verify_expectation(self, mock, mock_call, verification_state_map):
         """
         Verifies the given expectation for the given mock.
 
         @type mock: Mock
         @param mock: The mock object to verify the expectation.
+        @type mock_call: MockCall
+        @param mock_call: The mock call to verify the expectation.
+        @type verification_state_map: Dictionary
+        @param verification_state_map: The verification state map that contains
+        the verification state.
         @rtype: bool
         @return: The result of the verification.
         """
@@ -173,39 +196,107 @@ class ParametersExpectation(Expectation):
     The parameters expectation class.
     """
 
-    def __init__(self):
-        Expectation.__init__(self)
+    method_arguments = []
+    """ The method arguments """
 
-    def verify_expectation(self, mock):
+    method_key_arguments = {}
+    """ The method key arguments """
+
+    def __init__(self, method_arguments = [], method_key_arguments = {}):
+        """
+        Constructor of the class
+
+        @type method_arguments: List
+        @param method_arguments: The list of expected method arguments.
+        @type method_key_arguments: Dictionary
+        @param method_key_arguments: The map of expected method key arguments.
+        """
+
+        Expectation.__init__(self)
+        self.method_arguments = method_arguments
+        self.method_key_arguments = method_key_arguments
+
+    def verify_expectation(self, mock, mock_call, verification_state_map):
         # calls the super object retrieving the result
-        result = Expectation.verify_expectation(self, mock)
+        result = Expectation.verify_expectation(self, mock, mock_call, verification_state_map)
 
         # in case the result id false
         if not result:
             # returns false immediately
             return False
 
-        pass
+        # retrieves the mock call method arguments
+        mock_call_method_arguments = mock_call.get_method_arguments()
 
-class ParametersExpectation(Expectation):
+        # retrieves the mock call method key arguments
+        mock_call_method_key_arguments = mock_call.get_method_key_arguments()
+
+        # in case the method arguments are not the same
+        if not self.method_arguments == mock_call_method_arguments:
+            # returns false
+            return False
+
+        # in case the method key arguments are not the same
+        if not self.method_key_arguments == mock_call_method_key_arguments:
+            # returns false
+            return False
+
+        # returns true
+        return True
+
+class ReturnExpectation(Expectation):
     """
-    The parameters expectation class.
+    The return expectation class.
     """
 
-    methodNamesList = []
-    """ The method names list """
+    return_value = None
+    """ The return value """
 
-    def __init__(self, methodNamesList):
+    returns_iterator_value = None
+    """ The returns iterator value """
+
+    returns_method_value = None
+    """ The returns method value """
+
+    def __init__(self, return_value = None, returns_iterator_value = None, returns_method_value = None):
         Expectation.__init__(self)
-        self.methodNamesList = methodNamesList
+        self.return_value = return_value
+        self.returns_iterator_value = returns_iterator_value
+        self.returns_method_value = returns_method_value
 
-class ParameterExpectation(Expectation):
-    """
-    The parameter expectation class.
-    """
+    def verify_expectation(self, mock, mock_call, verification_state_map):
+        # calls the super object retrieving the result
+        result = Expectation.verify_expectation(self, mock, mock_call, verification_state_map)
 
-    def __init__(self):
-        Expectation.__init__(self)
+        # in case the result id false
+        if not result:
+            # returns false immediately
+            return False
+
+        # retrieves the mock call method return
+        mock_call_method_return = mock_call.get_method_return()
+
+        # in case a return is defined
+        if self.return_value:
+            expected_return_value = self.mock_return
+        # in case a return iterator is defined
+        elif self.returns_iterator_value:
+            try:
+                # returns the current returns iterator
+                expected_return_value = self.returns_iterator_value.next()
+            except StopIteration:
+                raise main_mock_exceptions.InvalidReturnIteration("no more mock return values are present")
+        # in case return method is defined
+        elif self.returns_method_value:
+            # calls the mock returns method
+            expected_return_value = self.returns_method_value(*args, **kwargs)
+
+        # in case the call method return value is not the expected
+        if not expected_return_value == mock_call_method_return:
+            return False
+
+        # returns true
+        return True
 
 class Mock:
     """
@@ -233,6 +324,12 @@ class Mock:
     mock_calls_list = []
     """ The mock calls list """
 
+    expectations_list = []
+    """ The expectations list """
+
+    verification_state_map = {}
+    """ The verification state map """
+
     def __init__(self, mock_name = "anonymous", mock_return = None, mock_returns_iterator = None, mock_returns_method = None, mock_raises = None):
         self.mock_name = mock_name
         self.mock_return = mock_return
@@ -241,6 +338,8 @@ class Mock:
         self.mock_raises = mock_raises
         self.mock_attrs = {}
         self.mock_calls_list = []
+        self.expectations_list = []
+        self.verification_state_map = {}
 
     def __repr__(self):
         return "<Mock '%s' '%s'>" % (hex(id(self)), self.mock_name)
@@ -257,6 +356,9 @@ class Mock:
 
         # prints the message
         print mock_call
+
+        # verifies the expectation for the current mock call
+        self._verify_expectations(mock_call)
 
         # returns the mock return
         return mock_return
@@ -283,6 +385,55 @@ class Mock:
 
         # returns the mock attr
         return mock_attr
+
+    def add_expectation(self, expectation):
+        """
+        Adds an expectation to the expectations list.
+
+        @type expectation: Expectatation
+        @param expectation: The expectation to be added.
+        """
+
+        # adds the expectation to the expectations list
+        self.expectations_list.append(expectation)
+
+    def remove_expectation(self, expectation):
+        """
+        Adds an expectation from the expectations list.
+
+        @type expectation: Expectatation
+        @param expectation: The expectation to be removed.
+        """
+
+        # removes the expectation from the expectations list
+        self.expectations_list.remove(expectation)
+
+    def _reset_verification_state(self):
+        """
+        Resets the current verification state.
+        """
+
+        # clears the verification state map
+        self.verification_state_map.clear()
+
+    def _verify_expectations(self, mock_call):
+        """
+        Verifies expectations for the given mock call.
+
+        @type mock_call: MockCall
+        @param mock_call: The mock call to be used in verification.
+        """
+
+        # iterates over all the expectations
+        # in the expectations list
+        for expectation in self.expectations_list:
+            # verifies the current expectation
+            return_value = expectation.verify_expectation(self, mock_call, self.verification_state_map)
+
+            # in case the return value is false
+            if not return_value:
+                # raises an expectation failed exception
+                raise main_mock_exceptions.ExpectationFailed("problem verifying expectation x")
 
     def _mock_return(self, *args, **kwargs):
         """

@@ -53,11 +53,12 @@ class MainMockPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["mock"]
+    capabilities = ["startup", "mock"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["main_mock.mock.main_mock_system", "main_mock.mock.main_mock_exceptions"]
 
     main_mock = None
 
