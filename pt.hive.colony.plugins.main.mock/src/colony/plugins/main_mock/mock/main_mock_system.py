@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import types
 import exceptions
 
 import main_mock_exceptions
@@ -176,6 +177,9 @@ class Expectation:
 
         pass
 
+    def __repr__(self):
+        return self.__class__.__name__
+
     def verify_expectation(self, mock, mock_call, verification_state_map):
         """
         Verifies the given expectation for the given mock.
@@ -235,13 +239,13 @@ class ParametersExpectation(Expectation):
 
         # in case the method arguments are not the same
         if not self.method_arguments == mock_call_method_arguments:
-            # returns false
-            return False
+            # returns expectation result
+            return ExpectationResult(self.method_arguments, mock_call_method_arguments)
 
         # in case the method key arguments are not the same
         if not self.method_key_arguments == mock_call_method_key_arguments:
-            # returns false
-            return False
+            # returns expectation result
+            return ExpectationResult(self.method_key_arguments, mock_call_method_key_arguments)
 
         # returns true
         return True
@@ -295,7 +299,8 @@ class ReturnExpectation(Expectation):
 
         # in case the call method return value is not the expected
         if not expected_return_value == mock_call_method_return:
-            return False
+            # returns expectation result
+            return ExpectationResult(expected_return_value, mock_call_method_return)
 
         # returns true
         return True
@@ -336,23 +341,99 @@ class ExceptionExpectation(Expectation):
             # retrieves the mock call method expection
             mock_call_method_exception = mock_call.get_method_exception()
 
+            # retrieves the call method exception class
+            mock_call_method_exception_class = mock_call_method_exception.__class__
+
             # in case the mock call method exception is not valid
             if not mock_call_method_exception:
-                # returns false
-                return False
+                # sets the result as false
+                result = False
 
             # in case the mock call method exception is not an exception
             if not type(mock_call_method_exception) == exceptions.Exception:
-                # returns false
-                return False
+                # sets the result as false
+                result = False
 
             # in case the call method exception value is not the expected
-            if not self.exception_value == mock_call_method_exception.__class__:
-                # returns false
-                return False
+            if not self.exception_value == mock_call_method_exception_class:
+                # sets the result as false
+                result = False
+
+            # in case the result is invalid
+            if not result:
+                # returns expectation result
+                return ExpectationResult(self.exception_value, mock_call_method_exception_class)
 
         # returns true
         return True
+
+class ExpectationResult:
+    """
+    The expectation result class used to encapsulate mock expectation resuls.
+    """
+
+    expected_value = None
+    """ The expected value """
+
+    received_value = None
+    """ The received value """
+
+    def __init__(self, expected_value = None, received_value = None):
+        """
+        Constructor of the class.
+
+        @type expected_value: Object
+        @param expected_value: The expected value.
+        @type received_value: Object
+        @param received_value: The received value.
+        """
+
+        self.expected_value = expected_value
+        self.received_value = received_value
+
+    def __repr__(self):
+        return "Expected '%s' received '%s" % (self.expected_value, self.received_value)
+
+    def get_expected_value(self):
+        """
+        Retrieves the expected value.
+
+        @rtype: Object
+        @return: The expected value.
+        """
+
+        return self.expected_value
+
+    def set_expected_value(self, expected_value):
+        """
+        Sets the expected value.
+
+        @type expected_value: Object
+        @param expected_value: The expected value.
+        """
+
+        self.expected_value = expected_value
+
+
+    def get_received_value(self):
+        """
+        Retrieves the received value.
+
+        @rtype: Object
+        @return: The received value.
+        """
+
+        return self.received_value
+
+    def set_received_value(self, received_value):
+        """
+        Sets the received value.
+
+        @type received_value: Object
+        @param received_value: The expected value.
+        """
+
+        self.received_value = received_value
 
 class Mock:
     """
@@ -496,7 +577,10 @@ class Mock:
             # in case the return value is false
             if not return_value:
                 # raises an expectation failed exception
-                raise main_mock_exceptions.ExpectationFailed("problem verifying expectation x")
+                raise main_mock_exceptions.ExpectationFailed("problem verifying expectation %s" % expectation)
+            elif type(return_value) == types.InstanceType and return_value.__class__ == ExpectationResult:
+                # raises an expectation failed exception
+                raise main_mock_exceptions.ExpectationFailed("problem verifying expectation %s (%s)" % (expectation, return_value))
 
     def _mock_return(self, *args, **kwargs):
         """
