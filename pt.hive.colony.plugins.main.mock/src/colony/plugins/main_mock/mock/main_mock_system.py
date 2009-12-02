@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import main_mock_exceptions
+
 class MainMock:
     """
     The main mock class.
@@ -55,31 +57,78 @@ class MainMock:
 
         self.main_mock_plugin = main_mock_plugin
 
-    def generate_mockery(self):
+    def generate_mockery(self, mockery_name):
         """
-        Generates a new mockery.
+        Generates a new mockery with the given name.
 
+        @type mockery_name: MainMockPlugin
+        @param mockery_name: The name to be used in the mockery.
         @rtype: Mockery
         @return: The generated mockery.
         """
 
-        return None
+        # creates a new mock object for the given
+        # mockery name
+        mockery = Mockery(mockery_name)
 
-    def generate_mock(self, class_reference):
-        pass
-
-    def generate_expectation(self):
-        pass
+        # returns the mockery
+        return mockery
 
 class Mockery:
     """
     The mockery class used to manage mocks.
     """
 
-    def __init__(self):
-        pass
+    mockery_name = "none"
+    """ The mockery name """
+
+    def __init__(self, mockery_name):
+        """
+        Constructor of the class
+
+        @type mockery_name: MainMockPlugin
+        @param mockery_name: The name to be used in the mockery.
+        """
+
+        self.mockery_name = mockery_name
 
     def checking(self):
+        pass
+
+    def generate_mock(self, mock_name = "anonymous", mock_return = None, mock_returns_iterator = None, mock_returns_method = None, mock_raises = None):
+        """
+        Generates a new mock object with the given
+        mock name.
+
+        @type mock_name: String
+        @param mock_name: The name to be used in the mock.
+        @type mock_return: Object
+        @param mock_return: The return to be used in the mock.
+        @type mock_returns_iterator: Iterator
+        @param mock_returns_iterator: The returns iterator to be used in the mock.
+        @type mock_returns_method: Method
+        @param mock_returns_method: The returns method to be used in the mock.
+        @type mock_raises: Exception
+        @param mock_raises: The exception to be used in the mock.
+        @rtype: Mock
+        @return: The generated mock.
+        """
+
+        # creates a new mock object for the given
+        # mock name
+        mock = Mock(mock_name, mock_return, mock_returns_iterator, mock_returns_method, mock_raises)
+
+        # returns the mock
+        return mock
+
+    def generate_expectation(self):
+        """
+        Generates a new expectation to be used.
+
+        @rtype: Expectation
+        @return: The generated expectation.
+        """
+
         pass
 
 class Expectations:
@@ -163,66 +212,106 @@ class Mock:
     The mock class used to encapsulate mock objects.
     """
 
-    mock_name = None
+    mock_name = "anonymous"
     """ The mock name """
 
-    def __init__(self, name, returns = None, returns_iter = None, returns_func = None, raises = None):
-        self.mock_name = name
-        self.mock_returns = returns
-        if returns_iter is not None:
-            returns_iter = iter(returns_iter)
-        self.mock_returns_iter = returns_iter
-        self.mock_returns_func = returns_func
-        self.mock_raises = raises
+    mock_return = None
+    """ The mock return """
+
+    mock_returns_iterator = None
+    """ The mock returns iterator """
+
+    mock_returns_method = None
+    """ The mock returns method """
+
+    mock_raises = None
+    """ The mock raises """
+
+    mock_attrs = {}
+    """ The mock attrs """
+
+    mock_calls_list = []
+    """ The mock calls list """
+
+    def __init__(self, mock_name = "anonymous", mock_return = None, mock_returns_iterator = None, mock_returns_method = None, mock_raises = None):
+        self.mock_name = mock_name
+        self.mock_return = mock_return
+        self.mock_returns_iterator = mock_returns_iterator
+        self.mock_returns_method = mock_returns_method
+        self.mock_raises = mock_raises
         self.mock_attrs = {}
+        self.mock_calls_list = []
 
     def __repr__(self):
         return "<Mock '%s' '%s'>" % (hex(id(self)), self.mock_name)
 
-    def __call__(self, *args, **kw):
-        MockCall()
-        # @todo
-        # tenho de manter aki o registo de tudo o que se passa em termos de chamada
-        # tenho de poder fazer try catch se necessario
+    def __call__(self, *args, **kwargs):
+        # retrieves the mock return
+        mock_return = self._mock_return(*args, **kwargs)
 
-        # retrieves the various parts of the
-        parts = [repr(a) for a in args]
+        # creates a new mock call
+        mock_call = MockCall(self.mock_name, args, kwargs, mock_return)
 
-        # extends the parts fot the given kword items
-        parts.extend("%s=%r" % (items) for items in sorted(kw.items()))
-
-        # creates the message
-        message = "Called %s(%s)" % (self.mock_name, ', '.join(parts))
+        # adds the mock call to the mock calls list
+        self.mock_calls_list.append(mock_call)
 
         # prints the message
-        print message
+        print mock_call
 
         # returns the mock return
-        return self._mock_return(*args, **kw)
-
-    def _mock_return(self, *args, **kw):
-        if self.mock_raises is not None:
-            raise self.mock_raises
-        elif self.mock_returns is not None:
-            return self.mock_returns
-        elif self.mock_returns_iter is not None:
-            try:
-                return self.mock_returns_iter.next()
-            except StopIteration:
-                raise Exception("No more mock return values are present.")
-        elif self.mock_returns_func is not None:
-            return self.mock_returns_func(*args, **kw)
-        else:
-            return None
+        return mock_return
 
     def __getattr__(self, attr):
+        # in case the attr in no defined in the mock
+        # attrs map
         if attr not in self.mock_attrs:
+            # in case there is a mock name defined
             if self.mock_name:
-                new_name = self.mock_name + '.' + attr
+                # sets the new name as the mock name appended
+                # with the attr
+                new_name = self.mock_name + "." + attr
+            # otherwise
             else:
+                # sets the new name as the attr
                 new_name = attr
+
+            # creates a new mock with the new name
             self.mock_attrs[attr] = Mock(new_name)
-        return self.mock_attrs[attr]
+
+        # retrieves the mock attr from the mock attrs map
+        mock_attr = self.mock_attrs[attr]
+
+        # returns the mock attr
+        return mock_attr
+
+    def _mock_return(self, *args, **kwargs):
+        """
+        Retrieves the mock return value for the given arguments.
+
+        @rtype: Object
+        @return: The mock return value for the given arguments.
+        """
+
+        # in case a raising is defined
+        if self.mock_raises:
+            raise self.mock_raises
+        # in case a return is defined
+        elif self.mock_return:
+            return self.mock_return
+        # in case a return iterator is defined
+        elif self.mock_returns_iterator:
+            try:
+                # returns the current returns iterator
+                return self.mock_returns_iterator.next()
+            except StopIteration:
+                raise main_mock_exceptions.InvalidReturnIteration("no more mock return values are present")
+        # in case return method is defined
+        elif self.mock_returns_method:
+            # calls the mock returns method
+            return self.mock_returns_method(*args, **kwargs)
+
+        # returns none
+        return None
 
 class MockCall:
     """
@@ -238,10 +327,27 @@ class MockCall:
     methid_key_arguments = {}
     """ The method key arguments """
 
-    def __init__(self, method_name, method_arguments, method_key_arguments):
+    method_return = {}
+    """ The method return """
+
+    def __init__(self, method_name, method_arguments, method_key_arguments, method_return):
         self.method_name = method_name
         self.method_arguments = method_arguments
-        self.methid_key_arguments = method_key_arguments
+        self.method_key_arguments = method_key_arguments
+        self.method_return = method_return
+
+    def __repr__(self):
+        # retrieves the various parts of the
+        parts = [str(method_argument) for method_argument in self.method_arguments]
+
+        # extends the parts fot the given kword items
+        parts.extend("%s=%r" % method_key_argument_items for method_key_argument_items in sorted(self.method_key_arguments.items()))
+
+        # creates the message
+        message = "%s(%s) -> %s" % (self.method_name, ", ".join(parts), str(self.method_return))
+
+        # returns the message
+        return message
 
     def set_method_name(self, method_name):
         """
@@ -302,3 +408,23 @@ class MockCall:
         """
 
         return self.method_key_arguments
+
+    def set_method_return(self, method_return):
+        """
+        Sets the method return.
+
+        @type method_return: Object
+        @param method_return: The method return.
+        """
+
+        self.method_return = method_return
+
+    def get_method_return(self):
+        """
+        Retrieves the method return.
+
+        @rtype: Object
+        @return: The method return.
+        """
+
+        return self.method_return
