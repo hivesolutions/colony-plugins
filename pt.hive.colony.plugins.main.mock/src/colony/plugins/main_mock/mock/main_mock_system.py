@@ -148,6 +148,322 @@ class Mockery:
         # returns the expectation
         return expectation
 
+class Mock:
+    """
+    The mock class used to encapsulate mock objects.
+    """
+
+    mock_name = "anonymous"
+    """ The mock name """
+
+    mock_return = None
+    """ The mock return """
+
+    mock_returns_iterator = None
+    """ The mock returns iterator """
+
+    mock_returns_method = None
+    """ The mock returns method """
+
+    mock_raises = None
+    """ The mock raises """
+
+    mock_attrs = {}
+    """ The mock attrs """
+
+    mock_calls_list = []
+    """ The mock calls list """
+
+    expectations_list = []
+    """ The expectations list """
+
+    verification_state_map = {}
+    """ The verification state map """
+
+    def __init__(self, mock_name = "anonymous", mock_return = None, mock_returns_iterator = None, mock_returns_method = None, mock_raises = None):
+        self.mock_name = mock_name
+        self.mock_return = mock_return
+        self.mock_returns_iterator = mock_returns_iterator
+        self.mock_returns_method = mock_returns_method
+        self.mock_raises = mock_raises
+        self.mock_attrs = {}
+        self.mock_calls_list = []
+        self.expectations_list = []
+        self.verification_state_map = {}
+
+    def __repr__(self):
+        return "<Mock '%s' '%s'>" % (hex(id(self)), self.mock_name)
+
+    def __call__(self, *args, **kwargs):
+        # start the mock exception
+        mock_exception = None
+
+        try:
+            # retrieves the mock return
+            mock_return = self._mock_return(*args, **kwargs)
+        except Exception, exception:
+            # sets the mock exception
+            mock_exception = exception
+
+            # sets the return value
+            mock_return = None
+
+        # creates a new mock call
+        mock_call = MockCall(self.mock_name, args, kwargs, mock_return, mock_exception)
+
+        # adds the mock call to the mock calls list
+        self.mock_calls_list.append(mock_call)
+
+        # verifies the expectation for the current mock call
+        self._verify_expectations(mock_call)
+
+        # returns the mock return
+        return mock_return
+
+    def __getattr__(self, attr):
+        # in case the attr in no defined in the mock
+        # attrs map
+        if attr not in self.mock_attrs:
+            # in case there is a mock name defined
+            if self.mock_name:
+                # sets the new name as the mock name appended
+                # with the attr
+                new_name = self.mock_name + "." + attr
+            # otherwise
+            else:
+                # sets the new name as the attr
+                new_name = attr
+
+            # creates a new mock with the new name
+            self.mock_attrs[attr] = Mock(new_name)
+
+        # retrieves the mock attr from the mock attrs map
+        mock_attr = self.mock_attrs[attr]
+
+        # returns the mock attr
+        return mock_attr
+
+    def add_expectation(self, expectation):
+        """
+        Adds an expectation to the expectations list.
+
+        @type expectation: Expectatation
+        @param expectation: The expectation to be added.
+        """
+
+        # adds the expectation to the expectations list
+        self.expectations_list.append(expectation)
+
+    def remove_expectation(self, expectation):
+        """
+        Adds an expectation from the expectations list.
+
+        @type expectation: Expectatation
+        @param expectation: The expectation to be removed.
+        """
+
+        # removes the expectation from the expectations list
+        self.expectations_list.remove(expectation)
+
+    def _reset_verification_state(self):
+        """
+        Resets the current verification state.
+        """
+
+        # clears the verification state map
+        self.verification_state_map.clear()
+
+    def _verify_expectations(self, mock_call):
+        """
+        Verifies expectations for the given mock call.
+
+        @type mock_call: MockCall
+        @param mock_call: The mock call to be used in verification.
+        """
+
+        # iterates over all the expectations
+        # in the expectations list
+        for expectation in self.expectations_list:
+            # verifies the current expectation
+            return_value = expectation.verify_expectation(self, mock_call, self.verification_state_map)
+
+            # in case the return value is false
+            if not return_value:
+                # raises an expectation failed exception
+                raise main_mock_exceptions.ExpectationFailed("problem verifying expectation %s" % expectation)
+            elif type(return_value) == types.InstanceType and return_value.__class__ == ExpectationResult:
+                # raises an expectation failed exception
+                raise main_mock_exceptions.ExpectationFailed("problem verifying expectation %s (%s)" % (expectation, return_value))
+
+    def _mock_return(self, *args, **kwargs):
+        """
+        Retrieves the mock return value for the given arguments.
+
+        @rtype: Object
+        @return: The mock return value for the given arguments.
+        """
+
+        # in case a raising is defined
+        if self.mock_raises:
+            raise self.mock_raises
+        # in case a return is defined
+        elif self.mock_return:
+            return self.mock_return
+        # in case a return iterator is defined
+        elif self.mock_returns_iterator:
+            try:
+                # returns the current returns iterator
+                return self.mock_returns_iterator.next()
+            except StopIteration:
+                raise main_mock_exceptions.InvalidReturnIteration("no more mock return values are present")
+        # in case return method is defined
+        elif self.mock_returns_method:
+            # calls the mock returns method
+            return self.mock_returns_method(*args, **kwargs)
+
+        # returns none
+        return None
+
+class MockCall:
+    """
+    Class that represents a mock call.
+    """
+
+    method_name = None
+    """ The method name """
+
+    method_arguments = []
+    """ The method arguments """
+
+    methid_key_arguments = {}
+    """ The method key arguments """
+
+    method_return = None
+    """ The method return """
+
+    method_exception = None
+    """ The method exception """
+
+    def __init__(self, method_name, method_arguments, method_key_arguments, method_return, method_exception):
+        self.method_name = method_name
+        self.method_arguments = method_arguments
+        self.method_key_arguments = method_key_arguments
+        self.method_return = method_return
+        self.method_exception = method_exception
+
+    def __repr__(self):
+        # retrieves the various parts of the
+        parts = [str(method_argument) for method_argument in self.method_arguments]
+
+        # extends the parts fot the given kword items
+        parts.extend("%s=%r" % method_key_argument_items for method_key_argument_items in sorted(self.method_key_arguments.items()))
+
+        # creates the message
+        message = "%s(%s) -> %s" % (self.method_name, ", ".join(parts), str(self.method_return))
+
+        # returns the message
+        return message
+
+    def set_method_name(self, method_name):
+        """
+        Sets the method name.
+
+        @type method_name: String
+        @param method_name: The method name.
+        """
+
+        self.method_name = method_name
+
+    def get_method_name(self):
+        """
+        Retrieves the method name.
+
+        @rtype: String
+        @return: The method name.
+        """
+
+        return self.method_name
+
+    def set_method_arguments(self, method_arguments):
+        """
+        Sets the method arguments.
+
+        @type method_arguments: List
+        @param method_arguments: The method arguments.
+        """
+
+        self.method_arguments = method_arguments
+
+    def get_method_arguments(self):
+        """
+        Retrieves the method arguments.
+
+        @rtype: List
+        @return: The method arguments.
+        """
+
+        return self.method_arguments
+
+    def set_method_key_arguments(self, method_key_arguments):
+        """
+        Sets the method key arguments.
+
+        @type method_key_arguments: Dictionary
+        @param method_key_arguments: The method key arguments.
+        """
+
+        self.method_key_arguments = method_key_arguments
+
+    def get_method_key_arguments(self):
+        """
+        Retrieves the method key arguments.
+
+        @rtype: Dictionary
+        @return: The method key arguments.
+        """
+
+        return self.method_key_arguments
+
+    def set_method_return(self, method_return):
+        """
+        Sets the method return.
+
+        @type method_return: Object
+        @param method_return: The method return.
+        """
+
+        self.method_return = method_return
+
+    def get_method_return(self):
+        """
+        Retrieves the method return.
+
+        @rtype: Object
+        @return: The method return.
+        """
+
+        return self.method_return
+
+    def set_method_exception(self, method_exception):
+        """
+        Sets the method exception.
+
+        @type method_exception: Exception
+        @param method_exception: The method exception.
+        """
+
+        self.method_exception = method_exception
+
+    def get_method_exception(self):
+        """
+        Retrieves the method exception.
+
+        @rtype: Exception
+        @return: The method exception.
+        """
+
+        return self.method_exception
+
 class Expectations:
     """
     The expectations class used to control mock expectations.
@@ -474,319 +790,3 @@ class ExpectationResult:
         """
 
         self.received_value = received_value
-
-class Mock:
-    """
-    The mock class used to encapsulate mock objects.
-    """
-
-    mock_name = "anonymous"
-    """ The mock name """
-
-    mock_return = None
-    """ The mock return """
-
-    mock_returns_iterator = None
-    """ The mock returns iterator """
-
-    mock_returns_method = None
-    """ The mock returns method """
-
-    mock_raises = None
-    """ The mock raises """
-
-    mock_attrs = {}
-    """ The mock attrs """
-
-    mock_calls_list = []
-    """ The mock calls list """
-
-    expectations_list = []
-    """ The expectations list """
-
-    verification_state_map = {}
-    """ The verification state map """
-
-    def __init__(self, mock_name = "anonymous", mock_return = None, mock_returns_iterator = None, mock_returns_method = None, mock_raises = None):
-        self.mock_name = mock_name
-        self.mock_return = mock_return
-        self.mock_returns_iterator = mock_returns_iterator
-        self.mock_returns_method = mock_returns_method
-        self.mock_raises = mock_raises
-        self.mock_attrs = {}
-        self.mock_calls_list = []
-        self.expectations_list = []
-        self.verification_state_map = {}
-
-    def __repr__(self):
-        return "<Mock '%s' '%s'>" % (hex(id(self)), self.mock_name)
-
-    def __call__(self, *args, **kwargs):
-        # start the mock exception
-        mock_exception = None
-
-        try:
-            # retrieves the mock return
-            mock_return = self._mock_return(*args, **kwargs)
-        except Exception, exception:
-            # sets the mock exception
-            mock_exception = exception
-
-            # sets the return value
-            mock_return = None
-
-        # creates a new mock call
-        mock_call = MockCall(self.mock_name, args, kwargs, mock_return, mock_exception)
-
-        # adds the mock call to the mock calls list
-        self.mock_calls_list.append(mock_call)
-
-        # verifies the expectation for the current mock call
-        self._verify_expectations(mock_call)
-
-        # returns the mock return
-        return mock_return
-
-    def __getattr__(self, attr):
-        # in case the attr in no defined in the mock
-        # attrs map
-        if attr not in self.mock_attrs:
-            # in case there is a mock name defined
-            if self.mock_name:
-                # sets the new name as the mock name appended
-                # with the attr
-                new_name = self.mock_name + "." + attr
-            # otherwise
-            else:
-                # sets the new name as the attr
-                new_name = attr
-
-            # creates a new mock with the new name
-            self.mock_attrs[attr] = Mock(new_name)
-
-        # retrieves the mock attr from the mock attrs map
-        mock_attr = self.mock_attrs[attr]
-
-        # returns the mock attr
-        return mock_attr
-
-    def add_expectation(self, expectation):
-        """
-        Adds an expectation to the expectations list.
-
-        @type expectation: Expectatation
-        @param expectation: The expectation to be added.
-        """
-
-        # adds the expectation to the expectations list
-        self.expectations_list.append(expectation)
-
-    def remove_expectation(self, expectation):
-        """
-        Adds an expectation from the expectations list.
-
-        @type expectation: Expectatation
-        @param expectation: The expectation to be removed.
-        """
-
-        # removes the expectation from the expectations list
-        self.expectations_list.remove(expectation)
-
-    def _reset_verification_state(self):
-        """
-        Resets the current verification state.
-        """
-
-        # clears the verification state map
-        self.verification_state_map.clear()
-
-    def _verify_expectations(self, mock_call):
-        """
-        Verifies expectations for the given mock call.
-
-        @type mock_call: MockCall
-        @param mock_call: The mock call to be used in verification.
-        """
-
-        # iterates over all the expectations
-        # in the expectations list
-        for expectation in self.expectations_list:
-            # verifies the current expectation
-            return_value = expectation.verify_expectation(self, mock_call, self.verification_state_map)
-
-            # in case the return value is false
-            if not return_value:
-                # raises an expectation failed exception
-                raise main_mock_exceptions.ExpectationFailed("problem verifying expectation %s" % expectation)
-            elif type(return_value) == types.InstanceType and return_value.__class__ == ExpectationResult:
-                # raises an expectation failed exception
-                raise main_mock_exceptions.ExpectationFailed("problem verifying expectation %s (%s)" % (expectation, return_value))
-
-    def _mock_return(self, *args, **kwargs):
-        """
-        Retrieves the mock return value for the given arguments.
-
-        @rtype: Object
-        @return: The mock return value for the given arguments.
-        """
-
-        # in case a raising is defined
-        if self.mock_raises:
-            raise self.mock_raises
-        # in case a return is defined
-        elif self.mock_return:
-            return self.mock_return
-        # in case a return iterator is defined
-        elif self.mock_returns_iterator:
-            try:
-                # returns the current returns iterator
-                return self.mock_returns_iterator.next()
-            except StopIteration:
-                raise main_mock_exceptions.InvalidReturnIteration("no more mock return values are present")
-        # in case return method is defined
-        elif self.mock_returns_method:
-            # calls the mock returns method
-            return self.mock_returns_method(*args, **kwargs)
-
-        # returns none
-        return None
-
-class MockCall:
-    """
-    Class that represents a mock call.
-    """
-
-    method_name = None
-    """ The method name """
-
-    method_arguments = []
-    """ The method arguments """
-
-    methid_key_arguments = {}
-    """ The method key arguments """
-
-    method_return = None
-    """ The method return """
-
-    method_exception = None
-    """ The method exception """
-
-    def __init__(self, method_name, method_arguments, method_key_arguments, method_return, method_exception):
-        self.method_name = method_name
-        self.method_arguments = method_arguments
-        self.method_key_arguments = method_key_arguments
-        self.method_return = method_return
-        self.method_exception = method_exception
-
-    def __repr__(self):
-        # retrieves the various parts of the
-        parts = [str(method_argument) for method_argument in self.method_arguments]
-
-        # extends the parts fot the given kword items
-        parts.extend("%s=%r" % method_key_argument_items for method_key_argument_items in sorted(self.method_key_arguments.items()))
-
-        # creates the message
-        message = "%s(%s) -> %s" % (self.method_name, ", ".join(parts), str(self.method_return))
-
-        # returns the message
-        return message
-
-    def set_method_name(self, method_name):
-        """
-        Sets the method name.
-
-        @type method_name: String
-        @param method_name: The method name.
-        """
-
-        self.method_name = method_name
-
-    def get_method_name(self):
-        """
-        Retrieves the method name.
-
-        @rtype: String
-        @return: The method name.
-        """
-
-        return self.method_name
-
-    def set_method_arguments(self, method_arguments):
-        """
-        Sets the method arguments.
-
-        @type method_arguments: List
-        @param method_arguments: The method arguments.
-        """
-
-        self.method_arguments = method_arguments
-
-    def get_method_arguments(self):
-        """
-        Retrieves the method arguments.
-
-        @rtype: List
-        @return: The method arguments.
-        """
-
-        return self.method_arguments
-
-    def set_method_key_arguments(self, method_key_arguments):
-        """
-        Sets the method key arguments.
-
-        @type method_key_arguments: Dictionary
-        @param method_key_arguments: The method key arguments.
-        """
-
-        self.method_key_arguments = method_key_arguments
-
-    def get_method_key_arguments(self):
-        """
-        Retrieves the method key arguments.
-
-        @rtype: Dictionary
-        @return: The method key arguments.
-        """
-
-        return self.method_key_arguments
-
-    def set_method_return(self, method_return):
-        """
-        Sets the method return.
-
-        @type method_return: Object
-        @param method_return: The method return.
-        """
-
-        self.method_return = method_return
-
-    def get_method_return(self):
-        """
-        Retrieves the method return.
-
-        @rtype: Object
-        @return: The method return.
-        """
-
-        return self.method_return
-
-    def set_method_exception(self, method_exception):
-        """
-        Sets the method exception.
-
-        @type method_exception: Exception
-        @param method_exception: The method exception.
-        """
-
-        self.method_exception = method_exception
-
-    def get_method_exception(self):
-        """
-        Retrieves the method exception.
-
-        @rtype: Exception
-        @return: The method exception.
-        """
-
-        return self.method_exception
