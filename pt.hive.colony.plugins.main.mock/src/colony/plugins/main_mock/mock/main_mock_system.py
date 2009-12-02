@@ -345,6 +345,21 @@ class MockCall:
     """ The method exception """
 
     def __init__(self, method_name, method_arguments, method_key_arguments, method_return, method_exception):
+        """
+        Constructor of the class.
+
+        @type method_name: String
+        @param method_name: The method name.
+        @type method_arguments: List
+        @param method_arguments: The method arguments.
+        @type method_key_arguments: Dictionary
+        @param method_key_arguments: The method key arguments.
+        @type method_return: Object
+        @param method_return:  The method return.
+        @type method_exception: Exception
+        @param method_exception: The method exception.
+        """
+
         self.method_name = method_name
         self.method_arguments = method_arguments
         self.method_key_arguments = method_key_arguments
@@ -474,7 +489,7 @@ class Expectations:
 
     def __init__(self):
         """
-        Constructor of the class
+        Constructor of the class.
         """
 
         self.expectations_list = []
