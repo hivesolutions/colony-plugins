@@ -157,13 +157,53 @@ class Expectations:
     """ The expectation list """
 
     def __init__(self):
+        """
+        Constructor of the class
+        """
+
         self.expectations_list = []
 
     def add_expectation(self, expectation):
+        """
+        Adds an expectation to the expectations list.
+
+        @type expectation: Expectatation
+        @param expectation: The expectation to be added.
+        """
+
+        # adds the expectation to the expectations list
         self.expectations_list.append(expectation)
 
-    def remove_exception(self, exception):
+    def remove_expectation(self, expectation):
+        """
+        Adds an expectation from the expectations list.
+
+        @type expectation: Expectatation
+        @param expectation: The expectation to be removed.
+        """
+
+        # removes the expectation from the expectations list
         self.expectations_list.remove(expectation)
+
+    def get_expectations_list(self):
+        """
+        Retrieves the expectations list.
+
+        @rtype: List
+        @return: The expectations list.
+        """
+
+        return self.expectations_list
+
+    def set_expectations_list(self, expectations_list):
+        """
+        Sets the expectations list.
+
+        @type expectations_list: List
+        @param expectations_list: The expectations list.
+        """
+
+        self.expectations_list = expectations_list
 
 class Expectation:
     """
