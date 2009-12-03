@@ -236,7 +236,11 @@ class LexerGenerator:
                     # adds the local value to the strings list
                     self.strings_list.append(local_value)
 
-                    self.string_name_list.append(local.split("_")[1])
+                    # retrieves the string name
+                    string_name = "_".join(local.split("_")[1:])
+
+                    # adds the string name to the string name list
+                    self.string_name_list.append(string_name)
 
             # in case the type of the local is function
             elif local_type is types.FunctionType and local_prefix == LexerGenerator.LEXER_PREFIX:
@@ -248,8 +252,11 @@ class LexerGenerator:
                     # adds the local value to the functions list
                     self.functions_list.append(local_value)
 
+                    # retrieves the function name
+                    function_name = "_".join(local.split("_")[1:])
+
                     # adds the function name to the function name list
-                    self.function_name_list.append(local.split("_")[1])
+                    self.function_name_list.append(function_name)
 
         # iterates over all the string in the string list
         for string in self.strings_list:
