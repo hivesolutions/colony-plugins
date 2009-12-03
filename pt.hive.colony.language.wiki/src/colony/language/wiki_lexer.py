@@ -37,11 +37,16 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import re
+
+ESCAPE_REGEX = re.compile(r"%%(.*?)%%")
+""" The escape regex value """
+
 # the token definitions
 tokens = ("LPAREN", "RPAREN", "LBRACK", "RBRACK",
           "LBRACE", "RBRACE", "BOLD", "ITALIC",
           "UNDERLINE", "MONOSPACE", "TAG_INIT", "TAG_END",
-          "SPACE", "FORCED_NEWLINE", "NAME", "NEWLINE")
+          "SPACE", "FORCED_NEWLINE", "NAME_NO_FORMATTING", "NAME", "NEWLINE")
 
 # the reserved keywords
 reserved = {
@@ -72,16 +77,10 @@ t_SPACE = r"[ \t\r]+"
 
 t_FORCED_NEWLINE = r"\\\\"
 
-def t_NAME(t):
-    r"[a-zA-Z_0-9]+"
-    t.type = reserved.get(t.value, "NAME")
-    t.value = reserved_values.get(t.value, t.value)
-    return t
-
 # the new line character
 def t_NEWLINE(t):
     r"\n+"
-    # retrives the number of newline
+    # retrieves the number of newline
     newline_count = t.value.count("\n")
     t.lexer.lineno += newline_count
     t.value = newline_count
@@ -91,6 +90,18 @@ def t_NEWLINE(t):
 def t_comment(t):
     r"\#[^\n]*\n+"
     pass
+
+def t_NAME(t):
+    r"([^\\\n\# \t\r\%\*\/_\']|%%.*?%%)+"
+    # retrieves the current value
+    current_value = t.value
+
+    # retrieves the escape characters
+    current_value = ESCAPE_REGEX.sub("\g<1>", current_value)
+
+    t.type = reserved.get(t.value, "NAME")
+    t.value = reserved_values.get(current_value, current_value)
+    return t
 
 # ignored characters
 t_ignore = ""

@@ -145,58 +145,58 @@ def p_statements_single(t):
     t[0] = statements_node
 
 def p_statement_bolt(t):
-    "statement : BOLD statement BOLD"
+    "statement : BOLD statements BOLD"
 
-    # retrieves the statement node
-    statement_node = t[2]
+    # retrieves the statements node
+    statements_node = t[2]
 
     # creates the bold node
     bold_node = wiki_ast.BoldNode()
 
-    # sets the statement node in the bold node
-    bold_node.set_statement_node(statement_node)
+    # sets the statements node in the bold node
+    bold_node.set_statements_node(statements_node)
 
     t[0] = bold_node
 
 def p_statement_italic(t):
-    "statement : ITALIC statement ITALIC"
+    "statement : ITALIC statements ITALIC"
 
-    # retrieves the statement node
-    statement_node = t[2]
+    # retrieves the statements node
+    statements_node = t[2]
 
     # creates the italic node
     italic_node = wiki_ast.ItalicNode()
 
-    # sets the statement node in the italic node
-    italic_node.set_statement_node(statement_node)
+    # sets the statements node in the italic node
+    italic_node.set_statements_node(statements_node)
 
     t[0] = italic_node
 
 def p_statement_underline(t):
-    "statement : UNDERLINE statement UNDERLINE"
+    "statement : UNDERLINE statements UNDERLINE"
 
-    # retrieves the statement node
-    statement_node = t[2]
+    # retrieves the statements node
+    statements_node = t[2]
 
     # creates the underline node
     underline_node = wiki_ast.UnderlineNode()
 
-    # sets the statement node in the underline node
-    underline_node.set_statement_node(statement_node)
+    # sets the statements node in the underline node
+    underline_node.set_statements_node(statements_node)
 
     t[0] = underline_node
 
 def p_statement_monospace(t):
-    "statement : MONOSPACE statement MONOSPACE"
+    "statement : MONOSPACE statements MONOSPACE"
 
-    # retrieves the statement node
-    statement_node = t[2]
+    # retrieves the statements node
+    statements_node = t[2]
 
     # creates the monospace node
     monospace_node = wiki_ast.MonospaceNode()
 
-    # sets the statement node in the monospace node
-    monospace_node.set_statement_node(statement_node)
+    # sets the statements node in the monospace node
+    monospace_node.set_statements_node(statements_node)
 
     t[0] = monospace_node
 

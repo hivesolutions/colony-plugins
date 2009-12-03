@@ -50,6 +50,9 @@ wiki_file_contents = wiki_file.read()
 # closes the wiki file
 wiki_file.close()
 
+# strips the wiki file contents (to remove extra spaces and lines)
+wiki_file_contents = wiki_file_contents.strip()
+
 # parses the javascript file retrieving the result
 parse_result = wiki_parser.parser.parse(wiki_file_contents)
 

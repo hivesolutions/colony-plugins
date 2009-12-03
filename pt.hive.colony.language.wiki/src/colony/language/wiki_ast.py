@@ -407,8 +407,8 @@ class DecorationNode(StatementNode):
     The decoration node class.
     """
 
-    statement_node = None
-    """ The statement node """
+    statements_node = None
+    """ The statements node """
 
     def __init__(self):
         """
@@ -417,16 +417,16 @@ class DecorationNode(StatementNode):
 
         StatementNode.__init__(self)
 
-    def set_statement_node(self, statement_node):
+    def set_statements_node(self, statements_node):
         """
-        Sets the statement node.
+        Sets the statements node.
 
-        @type statement_node: StatementNode
-        @param statement_node: The statement node.
+        @type statements_node: StatementsNode
+        @param statements_node: The statements node.
         """
 
-        self.statement_node = statement_node
-        self.add_child_node(statement_node)
+        self.statements_node = statements_node
+        self.add_child_node(statements_node)
 
 class BoldNode(DecorationNode):
     """
