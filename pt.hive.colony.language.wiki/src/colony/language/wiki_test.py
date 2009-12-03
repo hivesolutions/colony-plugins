@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import wiki_parser
 import wiki_visitor
-#import wiki_html_generation
+import wiki_html_generation
 
 # opens the wiki file
 wiki_file = open("test.wiki")
@@ -55,8 +55,16 @@ parse_result = wiki_parser.parser.parse(wiki_file_contents)
 
 visitor = wiki_visitor.Visitor()
 
-#generation_visitor = javascript_documentation_generation.JavascriptDocumentationGenerationVisitor()
+generation_visitor = wiki_html_generation.HtmlGenerationVisitor()
 
 parse_result.accept(visitor)
+parse_result.accept_double(generation_visitor)
 
-#print generation_visitor.get_documentation_project_node()
+html_value = generation_visitor.get_string_buffer().getvalue()
+
+# opens the html file
+html_file = open("test.html", "w+")
+
+html_file.write(html_value)
+
+html_file.close()

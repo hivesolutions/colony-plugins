@@ -293,6 +293,26 @@ class AstSequenceNode(AstNode):
             if visitor.visit_next:
                 self.next_node.accept_post_order(visitor)
 
+    def accept_double(self, visitor):
+        """
+        Accepts the visitor running the iteration logic, using double visiting.
+
+        @type visitor: Visitor
+        @param visitor: The visitor object.
+        """
+
+        visitor.visit(self)
+
+        if visitor.visit_childs:
+            for child_node in self.child_nodes:
+                child_node.accept_double(visitor)
+
+        if self.next_node:
+            if visitor.visit_next:
+                self.next_node.accept_double(visitor)
+
+        visitor.visit(self)
+
 class AstSequenceEndNode(AstSequenceNode):
     """
     The ast sequence end node class.
