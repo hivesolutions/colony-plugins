@@ -45,6 +45,9 @@ import logging
 import logging_configuration
 import lexer_generator_exceptions
 
+DEFAULT_COMPILE_FLAGS = re.UNICODE
+""" The default compile flags """
+
 class Token:
     """
     The token class.
@@ -186,7 +189,7 @@ class LexerGenerator:
         """
 
         # creates the grouping regex
-        grouping_regex = re.compile(LexerGenerator.GROUPING_REGEX)
+        grouping_regex = re.compile(LexerGenerator.GROUPING_REGEX, DEFAULT_COMPILE_FLAGS)
 
         # retrieves the local values copy
         locals = copy.copy(scope)
@@ -261,7 +264,7 @@ class LexerGenerator:
         # iterates over all the string in the string list
         for string in self.strings_list:
             # compiles the string doc to retrieve the regex
-            string_regex = re.compile(string)
+            string_regex = re.compile(string, DEFAULT_COMPILE_FLAGS)
 
             # appends the string regex to the string regex list
             self.string_regex_list.append(string_regex)
@@ -273,7 +276,7 @@ class LexerGenerator:
         strings_regex_list = ["(" + string_regex + ")" for string_regex in strings_regex_list]
 
         # creates the strings regex
-        self.strings_regex = re.compile("|".join(strings_regex_list))
+        self.strings_regex = re.compile("|".join(strings_regex_list), DEFAULT_COMPILE_FLAGS)
 
         # iterates over all the functions in the function list
         for function in self.functions_list:
@@ -281,7 +284,7 @@ class LexerGenerator:
             function_doc = function.__doc__
 
             # compiles the function doc to retrieve the regex
-            function_regex = re.compile(function_doc)
+            function_regex = re.compile(function_doc, DEFAULT_COMPILE_FLAGS)
 
             # appends the function regex to the function regex list
             self.function_regex_list.append(function_regex)
@@ -293,7 +296,7 @@ class LexerGenerator:
         functions_regex_list = ["(" + function_regex + ")" for function_regex in functions_regex_list]
 
         # creates the function regex
-        self.functions_regex = re.compile("|".join(functions_regex_list))
+        self.functions_regex = re.compile("|".join(functions_regex_list), DEFAULT_COMPILE_FLAGS)
 
     def get_token(self):
         """
