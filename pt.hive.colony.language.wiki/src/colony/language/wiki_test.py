@@ -37,65 +37,26 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-# the token definitions
-tokens = ("LPAREN", "RPAREN", "LBRACK", "RBRACK",
-          "LBRACE", "RBRACE", "BOLD", "ITALIC",
-          "UNDERLINE", "MONOSPACE", "TAG_INIT", "TAG_END",
-          "SPACE", "FORCED_NEWLINE", "NAME", "NEWLINE")
+import wiki_parser
+import wiki_visitor
+#import wiki_html_generation
 
-# the reserved keywords
-reserved = {
-    "__" : "UNDERLINE"
-}
+# opens the wiki file
+wiki_file = open("test.wiki")
 
-reserved_values = {
-}
+# reads the wiki file contents
+wiki_file_contents = wiki_file.read()
 
-t_LPAREN = r"\("
-t_RPAREN = r"\)"
+# closes the wiki file
+wiki_file.close()
 
-t_LBRACK = r"\["
-t_RBRACK = r"\]"
+# parses the javascript file retrieving the result
+parse_result = wiki_parser.parser.parse(wiki_file_contents)
 
-t_LBRACE = r"\{"
-t_RBRACE = r"\}"
+visitor = wiki_visitor.Visitor()
 
-t_BOLD = r"\*\*"
-t_ITALIC = r"\/\/"
-t_UNDERLINE = r"__"
-t_MONOSPACE = r"\'\'"
+#generation_visitor = javascript_documentation_generation.JavascriptDocumentationGenerationVisitor()
 
-t_TAG_INIT = r"\<[a-zA-Z]+\>"
-t_TAG_END = r"\<\/[a-zA-Z]+\>"
+parse_result.accept(visitor)
 
-t_SPACE = r"[ \t\r]+"
-
-t_FORCED_NEWLINE = r"\\\\"
-
-def t_NAME(t):
-    r"[a-zA-Z_0-9]+"
-    t.type = reserved.get(t.value, "NAME")
-    t.value = reserved_values.get(t.value, t.value)
-    return t
-
-# the new line character
-def t_NEWLINE(t):
-    r"\n+"
-    # retrives the number of newline
-    newline_count = t.value.count("\n")
-    t.lexer.lineno += newline_count
-    t.value = newline_count
-    return t
-
-# single line comments
-def t_comment(t):
-    r"\#[^\n]*\n+"
-    pass
-
-# ignored characters
-t_ignore = ""
-
-# other character
-def t_error(t):
-    print "Illegal character '%s'" % t.value[0]
-    t.lexer.skip(1)
+#print generation_visitor.get_documentation_project_node()
