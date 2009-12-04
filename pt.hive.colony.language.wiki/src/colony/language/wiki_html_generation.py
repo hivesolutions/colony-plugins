@@ -45,6 +45,15 @@ import libs.string_buffer_util
 import wiki_ast
 import wiki_visitor
 
+DOCTYPE_HEADER_VALUE = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">"
+""" The doctype header value """
+
+META_HEADER_VALUE = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">"
+""" The meta header value """
+
+CSS_HEADER_VALUE = "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/main.css\" />"
+""" The css header value """
+
 class HtmlGenerationVisitor(wiki_visitor.Visitor):
     """
     The html generation visitor class.
@@ -96,7 +105,15 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
 
     @wiki_visitor._visit(wiki_ast.ProgramNode)
     def visit_program_node(self, node):
-        pass
+        if self.visit_index == 0:
+            self._write(DOCTYPE_HEADER_VALUE)
+            self._write("<head>")
+            self._write(META_HEADER_VALUE)
+            self._write(CSS_HEADER_VALUE)
+            self._write("</head>")
+            self._write("<body>")
+        elif self.visit_index == 1:
+            self._write("</body>")
 
     @wiki_visitor._visit(wiki_ast.StatementsNode)
     def visit_statements_node(self, node):

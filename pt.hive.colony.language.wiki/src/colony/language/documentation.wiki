@@ -20,3 +20,125 @@ An example MVC workflow in Colony could work like the following:
   * The Controller stores the data in the Local Model for later reference;
   * The Controller strips the data that will be shown in the graphical interface and sets it in the Presentation Model;
   * The Controller refreshes the View by looking for changed Presentation Model properties and updating the View accordingly.
+
+===== Module =====
+
+The Colony MVC Framework provides the means to build MVC Modules. MVC Modules encapsulate the underlying components (Models, View, Controller, Presentation Model), this encapsulation serves as a means of enforcing separation between the underlying code and the outside world, but also as deployment unit, as there is an MVC Manager that takes care of injecting modules into each other by looking at their requirements. Modules specify their requirements and features via dependencies and capabilities, just like Colony plugins do:
+
+==== Dependencies ====
+
+Dependencies identify specific Modules that a Module requires to be loaded and injected in it, in order to function correctly. If a Module depends on another Module, but that dependency doesn%%'%%t exist, or is not ready to be loaded for whatever reason (it may itself be missing a dependency), the Module will not load.
+
+==== Capabilities ====
+
+Capabilities identify what a Module provides, so that the Modules providing them are injected into the Modules that express an interest in these capabilities. If a Module is interested in a capability but there is none providing it, it will load correctly regardless. For example, one could design a Module that provided a login window, but wanted to make it extensible, allowing posterior third party implementations of different login methods. All this Module would have to do would be to specify the capability it is interested in ("login%%_%%method" for example), and at any point in time, a developer could implement a new Module with the "login%%_%%method" capability and the facade expected by this capability, and it would be injected into the login window, which would handle it accordingly, without the third party developer ever having to touch the original login window Module.
+
+The module should only access the Controller.
+
+===== Module components =====
+
+==== Model ====
+
+Typically an MVC Framework takes the existence of a single Model into account. In this traditional view, the purpose of the Model is to store data representations and business logic. Colony makes an effort to make development as unambiguous and straightforward as possible, and to achieve this, the model%%'%%s purpose had to be slightly reshaped into the following concepts:
+
+=== Local Model ===
+
+The Local Model is used to store any kind of data that is used throughout the code. One can think of it as the Module%%'%%s personal notebook. If it needs to store some information to retrieve later, in another function for example, that data should be stored here.
+
+The Local Model should never access another Module component under any circunstance.
+
+=== Remote Model ===
+
+Contains the Remote Model, which acts as a bridge to all communication between the Module%%'%%s components and it%%'%%s exterior. For example, functions that perform server-side calls should be stored here.
+
+The Remote Model should not access any other component. Its results should be returned via the provided callback functions.
+
+==== View ====
+
+The View stores all graphical objects and functions of a graphical nature, all kind of graphical library widgets and functions that act on them are stored here. The entire Module%%'%%s graphical interface is defined here, decoupled from all its logic. Colony%%'%%s interpretation of the View does not differ from the traditional pattern in any way.
+
+The View should not access any other Module component, its only means of communication should be via events, which can be handled by the Controller.
+
+==== Controller ====
+
+The Controller contains all the Module%%'%%s logic, everything that has any kind of decision making, branching or workflow nature is stored here. Colony%%'%%s interpretation of the Controller does not really differ from the traditional interpretation but it is probably stricter, as here, the controller should have absolutely all logic contained within it, instead of acting as a kind of routing mechanism as in some frameworks.
+
+The Controller should only be accessed via the Module%%'%%s facade and%%/%%or via events, it can however freely access any Module component except the Module itself (Models, View and Presentation Model).
+
+==== Presentation Model ====
+
+The Presentation Model represents the state of the View at any given time. It is mostly useful for providing a way of making graphical interfaces testable, since testing the Presentation Model%%'%%s contents should be exactly the same thing as testing the View regardless of the View%%'%%s current implementation, provided one can assume that the synchronization between the Presentation Model and the View is flawless.
+
+The Presentation Model doesn%%'%%t need to represent every single property contained in the View, but rather, it should have the required depth to keep track of all the View%%'%%s states. For example, if the View represented traffic lights by using three buttons that changed color when a light was turned on or off, instead of adding a lot of variables to the presentation model to represent the state of each particular button, one should instead use just one variable that stored which color was turned on at any given time. This is the only information needed for the controller to decide how to change the view to reflect this state.
+
+Everytime the View changes due to user interaction, the Presentation Model should be updated by the Controller to keep up with the changes, and everytime the Presentation Model is updated by Controller logic the View should be refreshed to reflect the Presentation Model%%'%%s new state.
+
+The Presentation Model should never interact with another Module component under any circunstance.
+
+===== The MVC Manager =====
+
+The MVC Manager is the "Model-View-Controller world" equivalent of the Plugin Manager, it keeps track of all the existing Modules and their state, it controls their lifecycle, and routes events between them. The existence of this manager is where the the Colony implementation truly differs from others, as an MVC component is viewed just as any other component that can effortlessly appear wherever it is required in the application due to the inversion of control provided by the MVC Manager.
+
+==== Module lifecycle ====
+
+When a Module class is added to the MVC Manager the singleton instance of that Module is created, but is kept unloaded.
+
+=== Loading process ===
+
+This process is triggered by explicitly invoking a Module%%'%%s load() method, or when it is injected as a dependency or as a capability provider.
+
+  * The Module%%'%%s dependencies are tested if they loaded or ready to be loaded (if their own dependencies exist);
+  * If one of the module%%'%%s dependencies is not loaded and not ready to be loaded, the Module%%'%%s loading process will stop here;
+  * The Module%%'%%s payload (Models, View, Controller, Presentation Model) is loaded, by invoking the load() method;
+  * The Module%%'%%s dependencies are loaded and injected, invoking the module%%'%%s depencencyInjected() method;
+  * The Module%%'%%s endLoad() method is invoked to signal that the module has finished loading;
+  * The Modules that provide the capabilities that are allowed by this Module are loaded, and in case the their loading process is successful, they are injected, invoking the receiver Module%%'%%s loadAllowed() method;
+  * The Module is injected into all loaded modules that allow the one or more of the Module%%'%%s capabilities. Their loadAllowed() method is invoked for each capability match (the Module can be injected twice into the same Module because it provides two allowed capabilities).
+
+=== Unloading process ===
+
+This process is triggered by explicitly invoking a Module%%'%%s unload() method, or when the module is being destroyed.
+
+  * Informs all the modules where this module was injected as a capability in that it is being unloading by invoking their unloadAllowed() method (the method can be invoked twice with the same module in case it was injected for  providing two different capabilities that were allowed by the receiver module);
+  * All Modules that depend on this one are unloaded;
+  * The Module%%'%%s payload is unloaded by invoking the unload() method.
+  * The Module%%'%%s endUnload() method is invoked to signal that it has finished unloading.
+
+=== Destruction process ===
+
+This process is triggered by explicitly invoking the destroyModule() method.
+
+  * The Module is unloaded;
+  * The Module instance is destroyed.
+
+==== Diffusion scopes ====
+
+Unlike plugins, a Module can have multiple instances. To keep track of the different Modules instances and their circle of influence, the concept of diffusion scope is used. All Modules have a singleton instance that is identified by having a "null" diffusion scope. Everytime that Module is replicated, it is assigned a new diffusion scope. Keeping track of a Module%%'%%s diffusion scope allows one to create copies of entire groups of Modules and make sure their actions do not influence one another. This feature is better explained with an example:
+
+Suppose one wanted to create an extensible calculator Module without the existence of diffusion scopes. The calculator Module could accept Modules that provided new operators, and it would work perfectly. However, one could want to create a copy of this Module in order to work with two calculators at any given time. Doing this would result in one of two things: either the same operator Modules would be injected into each calculator, or new copies of them would be injected into the new calculator. Either solution would be troublesome.
+
+If the same operators were injected, their behaviour would very probably be quite awkward, especially if the operators were stateful (like a memory function) as the same module would be interacting with two different modules at the same time.
+
+If new copies of the operators were injected, if they were reloaded afterwards, they would be correctly unloaded, but when loading again, they couldn%%'%%t be injected into the same module because there is no information that specifies that they belong together.
+
+With diffusion scopes, both groups of calculators and operators would be assigned a different diffusion scope, and this way they could easily act without interfering with one another. This concept is also pretty useful with events, as explained next.
+
+==== Events ====
+
+Events in the MVC world work just like in any other programming language or framework, handlers are registered for specific events, and these handlers are invoked when that event is fired. There is however one particular twist to take into account. Due to the replicable nature of the Module, one may want to address only particular instances of a Module when firing an event and%%/%%or listen for events from specific Module instances. For this purpose, when registering for and firing events, one can specify the desired event scope:
+
+=== Local Event ===
+
+A local event targets the specific Module instance. When firing a local event, only the Module firing it will be able to receive it, as long as it registered for a local event of that name. When no event type is defined, this one is used by default.
+
+=== Scope Event ===
+
+A scope event targets all Modules within the firing or registering module%%'%%s diffusion scope. When Module fires a scope event, all Modules within its diffusion scope will receive the event, as long as they have registered for an scope event of that name.
+
+=== Module Event ===
+
+A Module event targets all module instances of the Module firing the event, regardless of what diffusion scope they are in, as long as they have registered for a module event of that name.
+
+=== Global Event ===
+
+A global event targets every module in every diffusion scope, as long as they registered for a global event of that name. 
