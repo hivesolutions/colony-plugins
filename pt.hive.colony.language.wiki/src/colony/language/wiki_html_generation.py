@@ -62,11 +62,17 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
     string_buffer = None
     """ The string buffer """
 
+    paragraph_open = False
+    """ The paragraph open flag """
+
+    section_values_map = {}
+    """ The sections values map """
+
     def __init__(self):
         wiki_visitor.Visitor.__init__(self)
 
-        # starts the current element node stack
-        self.current_element_node_stack = []
+        # starts the section values map
+        self.section_values_map = {}
 
         # creates the string buffer
         self.string_buffer = libs.string_buffer_util.StringBuffer()
@@ -112,6 +118,7 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
             self._write(CSS_HEADER_VALUE)
             self._write("</head>")
             self._write("<body>")
+            self.open_paragraph()
         elif self.visit_index == 1:
             self._write("</body>")
 
@@ -154,9 +161,27 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
     @wiki_visitor._visit(wiki_ast.SectionNode)
     def visit_section_node(self, node):
         if self.visit_index == 0:
-            self._write("<h" + str(node.section_size) + ">")
+            if not node.section_size in self.section_values_map:
+                self.section_values_map[node.section_size] = 0
+
+            self.section_values_map[node.section_size] += 1
+
+            value = ""
+
+            for index in range(node.section_size):
+                if not index + 1 in self.section_values_map:
+                    self.section_values_map[index + 1] = 0
+
+                value += str(self.section_values_map[index + 1]) + "."
+
+            # closes the current paragraph
+            self.close_paragraph()
+            self._write("<h" + str(node.section_size) + ">" + value + " ")
         elif self.visit_index == 1:
             self._write("</h" + str(node.section_size) + ">")
+
+            # opens a new paragraph
+            self.open_paragraph()
 
     @wiki_visitor._visit(wiki_ast.NameNode)
     def visit_name_node(self, node):
@@ -166,7 +191,8 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
     @wiki_visitor._visit(wiki_ast.NewLineNode)
     def visit_new_line_node(self, node):
         if self.visit_index == 0:
-            self._write("<br/>")
+            self.close_paragraph()
+            self.open_paragraph()
 
     @wiki_visitor._visit(wiki_ast.SpaceNode)
     def visit_space_node(self, node):
@@ -240,3 +266,17 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
         """
 
         self.string_buffer.write(string_value)
+
+    def close_paragraph(self):
+        if not self.paragraph_open:
+            return
+
+        self._write("</p>")
+        self.paragraph_open = False
+
+    def open_paragraph(self):
+        if self.paragraph_open:
+            return
+
+        self._write("<p>")
+        self.paragraph_open = True

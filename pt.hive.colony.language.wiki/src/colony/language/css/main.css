@@ -37,5 +37,41 @@
  */
 
 body {
-    font-family: trebuchet ms;
+    font-family: "Lucida Grande", Verdana, Lucida, Helvetica, Arial, sans-serif;
+    color: #000000;
+    font-size: 90%;
+    font-size-adjust: none;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    line-height: normal;
+}
+
+p {
+    margin: 0 0 1em;
+}
+
+h1 {
+    font-size: 160%;
+    font-weight: bold;
+}
+
+h2 {
+    font-size: 150%;
+}
+
+h3 {
+    font-size: 130%;
+}
+
+h4 {
+    font-size: 100%;
+}
+
+h5 {
+    font-size: 80%;
+}
+
+ul {
+    line-height: 1.5em;
 }
