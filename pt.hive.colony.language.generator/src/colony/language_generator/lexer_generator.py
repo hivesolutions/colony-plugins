@@ -83,7 +83,7 @@ class Token:
         @return: The default representation of the class.
         """
 
-        return "<%s, %s, %i, %i>" % (
+        return "<%s, '%s', %i, %i>" % (
             self.type,
             self.value,
             self.start_index,
@@ -325,43 +325,6 @@ class LexerGenerator:
 
                 continue
 
-            # tries to match the buffer with the strings regex
-            buffer_match = self.strings_regex.match(self.buffer, self.current_index)
-
-            # in case there was a buffer match
-            if buffer_match:
-                # retrieves the buffer match last index
-                buffer_match_last_index = buffer_match.lastindex - 1
-
-                # retrieves the string name
-                string_name = self.string_name_list[buffer_match_last_index]
-
-                # sets the token value
-                token.value = buffer_match.group()
-
-                # sets the token type
-                token.type = string_name
-
-                # sets the token start index
-                token.start_index = self.current_index
-
-                # sets the token end index
-                token.end_index = buffer_match.end() - 1
-
-                # sets the token lexer
-                token.lexer = self
-
-                # sets the new current index
-                self.current_index = token.end_index + 1
-
-                # in case the token is to be advanced
-                if string_name in LexerGenerator.ADVANCE_TOKENS_LIST:
-                    continue
-                # in case it's a valid token
-                else:
-                    # returns the token
-                    return token
-
             # tries to match the buffer with the functions regex
             buffer_match = self.functions_regex.match(self.buffer, self.current_index)
 
@@ -399,6 +362,43 @@ class LexerGenerator:
 
                 # in case the token is to be advanced
                 if function_name in LexerGenerator.ADVANCE_TOKENS_LIST:
+                    continue
+                # in case it's a valid token
+                else:
+                    # returns the token
+                    return token
+
+            # tries to match the buffer with the strings regex
+            buffer_match = self.strings_regex.match(self.buffer, self.current_index)
+
+            # in case there was a buffer match
+            if buffer_match:
+                # retrieves the buffer match last index
+                buffer_match_last_index = buffer_match.lastindex - 1
+
+                # retrieves the string name
+                string_name = self.string_name_list[buffer_match_last_index]
+
+                # sets the token value
+                token.value = buffer_match.group()
+
+                # sets the token type
+                token.type = string_name
+
+                # sets the token start index
+                token.start_index = self.current_index
+
+                # sets the token end index
+                token.end_index = buffer_match.end() - 1
+
+                # sets the token lexer
+                token.lexer = self
+
+                # sets the new current index
+                self.current_index = token.end_index + 1
+
+                # in case the token is to be advanced
+                if string_name in LexerGenerator.ADVANCE_TOKENS_LIST:
                     continue
                 # in case it's a valid token
                 else:
