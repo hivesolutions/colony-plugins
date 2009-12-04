@@ -526,6 +526,18 @@ class NewLineNode(StatementNode):
 
         self.forced = forced
 
+class SpaceNode(StatementNode):
+    """
+    The space node class.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        StatementNode.__init__(self)
+
 class AstSequenceNodeIterator:
     """
     The ast sequence node iterator class.

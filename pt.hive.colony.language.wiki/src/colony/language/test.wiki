@@ -1,4 +1,4 @@
-Eu sou o tobias um tipo porreiro que veio da Alemanha \\
+Eu sou o //tobias// um **tipo** __porreiro__ que veio da Alemanha \\
 \\
 Ass: \\
 **João Magalhães** %%**%% hehe

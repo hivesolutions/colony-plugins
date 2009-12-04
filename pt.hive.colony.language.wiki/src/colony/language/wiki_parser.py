@@ -82,8 +82,20 @@ def p_statements_multiple(t):
     # sets the statement node in the statements node
     statements_node.set_statement_node(statement_node)
 
-    # sets the next node in the statements node
-    statements_node.set_next_node(next_statements_node)
+    # creates the space node
+    space_node = wiki_ast.SpaceNode()
+
+    # creates the statements aux node
+    statements_aux_node = wiki_ast.StatementsNode()
+
+    # sets the space node in the statements aux node
+    statements_aux_node.set_statement_node(space_node)
+
+    # sets the next node in the statements aux node
+    statements_aux_node.set_next_node(next_statements_node)
+
+    # sets the statements aux node in the statements node
+    statements_node.set_next_node(statements_aux_node)
 
     t[0] = statements_node
 
@@ -109,21 +121,21 @@ def p_statements_multiple_newline(t):
     if newline_value > 1:
         # creates the new line node
         new_line_node = wiki_ast.NewLineNode()
-
-        # creates the statements aux node
-        statements_aux_node = wiki_ast.StatementsNode()
-
-        # sets the new line node in the statements aux node
-        statements_aux_node.set_statement_node(new_line_node)
-
-        # sets the next node in the statements aux node
-        statements_aux_node.set_next_node(next_statements_node)
-
-        # sets the statements aux node in the statements node
-        statements_node.set_next_node(statements_aux_node)
     else:
-        # sets the next node in the statements node
-        statements_node.set_next_node(next_statements_node)
+        # creates the new line node
+        new_line_node = wiki_ast.SpaceNode()
+
+    # creates the statements aux node
+    statements_aux_node = wiki_ast.StatementsNode()
+
+    # sets the new line node in the statements aux node
+    statements_aux_node.set_statement_node(new_line_node)
+
+    # sets the next node in the statements aux node
+    statements_aux_node.set_next_node(next_statements_node)
+
+    # sets the statements aux node in the statements node
+    statements_node.set_next_node(statements_aux_node)
 
     t[0] = statements_node
 

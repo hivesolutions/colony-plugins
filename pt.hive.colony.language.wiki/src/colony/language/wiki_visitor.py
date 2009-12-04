@@ -265,3 +265,7 @@ class Visitor:
     @_visit(wiki_ast.NewLineNode)
     def visit_new_line_node(self, node):
         print "NewLineNode: " + str(node)
+
+    @_visit(wiki_ast.SpaceNode)
+    def visit_space_node(self, node):
+        print "SpaceNode: " + str(node)
