@@ -54,7 +54,7 @@ COLONY_GENERATOR_PATH = "../../../../pt.hive.colony.language.generator/src/colon
 """ The colony generator path """
 
 def p_program(t):
-    "program : statements"
+    "program : lines"
 
     # retrieves the statements node
     statements_node = t[1]
@@ -66,6 +66,115 @@ def p_program(t):
     program_node.set_statements_node(statements_node)
 
     t[0] = program_node
+
+def p_lines_multiple(t):
+    "lines : statements NEWLINE lines"
+
+    # retrieves the statement node
+    statement_node = t[1]
+
+    # retrieves the newline value
+    newline_value = t[2]
+
+    # retrieves the next statements node
+    next_statements_node = t[3]
+
+    # creates the statements node
+    statements_node = wiki_ast.StatementsNode()
+
+    # sets the statement node in the statements node
+    statements_node.set_statement_node(statement_node)
+
+    # in case the newline value is greater than one
+    if newline_value > 1:
+        # creates the new line node
+        new_line_node = wiki_ast.NewLineNode()
+    else:
+        # creates the new line node
+        new_line_node = wiki_ast.SpaceNode()
+
+    # creates the statements aux node
+    statements_aux_node = wiki_ast.StatementsNode()
+
+    # sets the new line node in the statements aux node
+    statements_aux_node.set_statement_node(new_line_node)
+
+    # sets the next node in the statements aux node
+    statements_aux_node.set_next_node(next_statements_node)
+
+    # sets the statements aux node in the statements node
+    statements_node.set_next_node(statements_aux_node)
+
+    t[0] = statements_node
+
+def p_lines_multiple_list(t):
+    "lines : LIST SPACE statements NEWLINE lines"
+
+    # retrieves the list value
+    list_value = t[1]
+
+    # retrieves the statement node
+    statement_node = t[3]
+
+    # retrieves the next statements node
+    next_statements_node = t[5]
+
+    # calculates the indentation value
+    indentation_value = list_value / 2
+
+    # creates the list node
+    list_node = wiki_ast.ListNode()
+
+    # sets the statement node in the list node
+    list_node.set_statements_node(statement_node)
+
+    # creates the statements node
+    statements_node = wiki_ast.StatementsNode()
+
+    # sets the list node in the statements node
+    statements_node.set_statement_node(list_node)
+
+    # sets the next statements node in the statements node
+    statements_node.set_next_node(next_statements_node)
+
+    t[0] = statements_node
+
+def p_lines_single(t):
+    "lines : statements"
+
+    # retrieves the statement node
+    statement_node = t[1]
+
+    # creates the statements node
+    statements_node = wiki_ast.StatementsNode()
+
+    # sets the statement node in the statements node
+    statements_node.set_statement_node(statement_node)
+
+    # sets the next node in the statements node
+    statements_node.set_next_node(None)
+
+    t[0] = statements_node
+
+def p_lines_single_list(t):
+    "lines : LIST SPACE statements"
+
+    # retrieves the list value
+    list_value = t[1]
+
+    # retrieves the statement node
+    statement_node = t[3]
+
+    # calculates the indentation value
+    indentation_value = list_value / 2
+
+    # creates the list node
+    list_node = wiki_ast.ListNode()
+
+    # sets the statement node in the list node
+    list_node.set_statements_node(statement_node)
+
+    t[0] = list_node
 
 def p_statements_multiple(t):
     "statements : statement SPACE statements"
@@ -100,16 +209,13 @@ def p_statements_multiple(t):
     t[0] = statements_node
 
 def p_statements_multiple_newline(t):
-    "statements : statement NEWLINE statements"
+    "statements : statement SPACE NEWLINE statements"
 
     # retrieves the statement node
     statement_node = t[1]
 
-    # retrieves the newline value
-    newline_value = t[2]
-
     # retrieves the next statements node
-    next_statements_node = t[3]
+    next_statements_node = t[4]
 
     # creates the statements node
     statements_node = wiki_ast.StatementsNode()
@@ -117,19 +223,14 @@ def p_statements_multiple_newline(t):
     # sets the statement node in the statements node
     statements_node.set_statement_node(statement_node)
 
-    # in case the newline value is greater than one
-    if newline_value > 1:
-        # creates the new line node
-        new_line_node = wiki_ast.NewLineNode()
-    else:
-        # creates the new line node
-        new_line_node = wiki_ast.SpaceNode()
+    # creates the space node
+    space_node = wiki_ast.SpaceNode()
 
     # creates the statements aux node
     statements_aux_node = wiki_ast.StatementsNode()
 
-    # sets the new line node in the statements aux node
-    statements_aux_node.set_statement_node(new_line_node)
+    # sets the space node in the statements aux node
+    statements_aux_node.set_statement_node(space_node)
 
     # sets the next node in the statements aux node
     statements_aux_node.set_next_node(next_statements_node)
@@ -212,6 +313,90 @@ def p_statement_monospace(t):
 
     t[0] = monospace_node
 
+def p_statement_section(t):
+    "statement : SECTION statements SECTION"
+
+    # retrieves the first section value
+    first_section_value = t[1]
+
+    # retrieves the statements node
+    statements_node = t[2]
+
+    # retrieves the second section value
+    second_section_value = t[3]
+
+    if not first_section_value == second_section_value:
+        raise Exception("Invalid number of equals")
+
+    section_size = 7 - first_section_value
+
+    # creates the section node
+    section_node = wiki_ast.SectionNode()
+
+    # sets the statements node in the section node
+    section_node.set_statements_node(statements_node)
+
+    # sets the section size in the section node
+    section_node.set_section_size(section_size)
+
+    t[0] = section_node
+
+def p_statement_section_space(t):
+    "statement : SECTION SPACE statements SECTION_END"
+
+    # retrieves the first section value
+    first_section_value = t[1]
+
+    # retrieves the statements node
+    statements_node = t[3]
+
+    # retrieves the second section value
+    second_section_value = t[4]
+
+    if not first_section_value == second_section_value:
+        raise Exception("Invalid number of equals")
+
+    section_size = 7 - first_section_value
+
+    # creates the section node
+    section_node = wiki_ast.SectionNode()
+
+    # sets the statements node in the section node
+    section_node.set_statements_node(statements_node)
+
+    # sets the section size in the section node
+    section_node.set_section_size(section_size)
+
+    t[0] = section_node
+
+def p_statement_section_no_initial_space(t):
+    "statement : SECTION statements SECTION_END"
+
+    # retrieves the first section value
+    first_section_value = t[1]
+
+    # retrieves the statements node
+    statements_node = t[2]
+
+    # retrieves the second section value
+    second_section_value = t[3]
+
+    if not first_section_value == second_section_value:
+        raise Exception("Invalid number of equals")
+
+    section_size = 7 - first_section_value
+
+    # creates the section node
+    section_node = wiki_ast.SectionNode()
+
+    # sets the statements node in the section node
+    section_node.set_statements_node(statements_node)
+
+    # sets the section size in the section node
+    section_node.set_section_size(section_size)
+
+    t[0] = section_node
+
 def p_statement_name(t):
     "statement : NAME"
 
@@ -236,6 +421,91 @@ def p_statement_newline_forced(t):
     new_line_node.set_forced(True)
 
     t[0] = new_line_node
+
+def p_statement_image(t):
+    "statement : LBRACE LBRACE NAME RBRACE RBRACE"
+
+    # retrieves the image source
+    image_source = t[3]
+
+    # creates the image node
+    image_node = wiki_ast.ImageNode()
+
+    # sets the image source in the image node
+    image_node.set_image_source(image_source)
+
+    t[0] = image_node
+
+def p_statement_image_size(t):
+    "statement : LBRACE LBRACE NAME EXCLAMATION NAME RBRACE RBRACE"
+
+    # retrieves the image source
+    image_source = t[3]
+
+    # retrieves the image size
+    image_size = t[5]
+
+    # splits the image size
+    image_size_splited = image_size.split("x")
+
+    # creates the image node
+    image_node = wiki_ast.ImageNode()
+
+    # sets the image source in the image node
+    image_node.set_image_source(image_source)
+
+    # sets the image size in the image node
+    image_node.set_image_size(image_size_splited)
+
+    t[0] = image_node
+
+def p_statement_external_link(t):
+    "statement : LBRACK LBRACK LINK_NAME RBRACK RBRACK"
+
+    # retrieves the link value
+    link_value = t[3]
+
+    # creates the external link node
+    external_link_node = wiki_ast.ExternalLinkNode()
+
+    # sets the link value in the external link node
+    external_link_node.set_link_value(link_value)
+
+    t[0] =  external_link_node
+
+def p_statement_external_link_description(t):
+    "statement : LBRACK LBRACK LINK_NAME PIPE statements RBRACK RBRACK"
+
+    # retrieves the link value
+    link_value = t[3]
+
+    # retrieves the statements node
+    statements_node = t[5]
+
+    # creates the external link node
+    external_link_node = wiki_ast.ExternalLinkNode()
+
+    # sets the link value in the external link node
+    external_link_node.set_link_value(link_value)
+
+    # sets the statements node in the external link node
+    external_link_node.set_statements_node(statements_node)
+
+    t[0] =  external_link_node
+
+def p_statement_external_link_auto(t):
+    "statement : LINK_NAME"
+
+    # retrieves the link value
+    link_value = t[1]
+
+    # creates the external link node
+    external_link_node = wiki_ast.ExternalLinkNode()
+
+    # sets the link value in the external link node
+    external_link_node.set_link_value(link_value)
+
+    t[0] =  external_link_node
 
 # in case it's the colony parser type
 if PARSER_TYPE == COLONY_PARSER_VALUE:

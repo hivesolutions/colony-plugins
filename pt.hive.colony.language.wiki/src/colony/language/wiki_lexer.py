@@ -44,13 +44,13 @@ ESCAPE_REGEX = re.compile(r"%%(.*?)%%")
 
 # the token definitions
 tokens = ("LPAREN", "RPAREN", "LBRACK", "RBRACK",
-          "LBRACE", "RBRACE", "BOLD", "ITALIC",
-          "UNDERLINE", "MONOSPACE", "TAG_INIT", "TAG_END",
-          "SPACE", "FORCED_NEWLINE", "NAME_NO_FORMATTING", "NAME", "NEWLINE")
+          "LBRACE", "RBRACE", "PIPE", "EXCLAMATION",
+          "BOLD", "ITALIC", "UNDERLINE", "MONOSPACE", "SECTION", "SECTION_END",
+          "TAG_INIT", "TAG_END", "SPACE", "FORCED_NEWLINE",
+          "NAME_NO_FORMATTING", "LIST", "LINK_NAME", "NAME", "NEWLINE")
 
 # the reserved keywords
 reserved = {
-    "__" : "UNDERLINE"
 }
 
 reserved_values = {
@@ -65,6 +65,10 @@ t_RBRACK = r"\]"
 t_LBRACE = r"\{"
 t_RBRACE = r"\}"
 
+t_PIPE = r"\|"
+
+t_EXCLAMATION = r"\?"
+
 t_BOLD = r"\*\*"
 t_ITALIC = r"\/\/"
 t_UNDERLINE = r"__"
@@ -76,6 +80,8 @@ t_TAG_END = r"\<\/[a-zA-Z]+\>"
 t_SPACE = r"[ \t\r]+"
 
 t_FORCED_NEWLINE = r"\\\\"
+
+section_open = None
 
 # the new line character
 def t_NEWLINE(t):
@@ -91,16 +97,47 @@ def t_comment(t):
     r"\#[^\n]*\n+"
     pass
 
+def t_SECTION(t):
+    r"=+"
+    global section_open
+
+    if section_open == "SECTION":
+        section_open = None
+    else:
+        section_open = "SECTION"
+
+    # retrieves the number of equals
+    equals_count = t.value.count("=")
+    t.value = equals_count
+    return t
+
+def t_SECTION_END(t):
+    r"[ ]+=+"
+    # retrieves the number of equals
+    equals_count = t.value.count("=")
+    t.value = equals_count
+    return t
+
+def t_LIST(t):
+    r"([ ]{2})+\*"
+    # retrieves the number of spaces
+    space_count = t.value.count(" ")
+    t.value = space_count
+    return t
+
+def t_LINK_NAME(t):
+    r"(http\:\/\/|www.)[^\\\n\# \t\r\|]+"
+    return t
+
 def t_NAME(t):
-    r"([^\\\n\# \t\r\%\*\/_\']|%%.*?%%)+"
+    r"([^\\\n\# \t\r\%\*\/_\'\{\}\?\[\]\|=]|%%.*?%%)+"
     # retrieves the current value
     current_value = t.value
 
     # retrieves the escape characters
     current_value = ESCAPE_REGEX.sub("\g<1>", current_value)
 
-    t.type = reserved.get(t.value, "NAME")
-    t.value = reserved_values.get(current_value, current_value)
+    t.value = current_value
     return t
 
 # ignored characters

@@ -40,6 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import sys
 import cStringIO
 
+import libs.string_buffer_util
+
 import wiki_ast
 import wiki_visitor
 
@@ -58,7 +60,7 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
         self.current_element_node_stack = []
 
         # creates the string buffer
-        self.string_buffer = cStringIO.StringIO()
+        self.string_buffer = libs.string_buffer_util.StringBuffer()
 
     def get_string_buffer(self):
         """
@@ -107,42 +109,117 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
     @wiki_visitor._visit(wiki_ast.BoldNode)
     def visit_bold_node(self, node):
         if self.visit_index == 0:
-            self.string_buffer.write("<b>")
+            self._write("<b>")
         elif self.visit_index == 1:
-            self.string_buffer.write("</b>")
+            self._write("</b>")
 
     @wiki_visitor._visit(wiki_ast.ItalicNode)
     def visit_italic_node(self, node):
         if self.visit_index == 0:
-            self.string_buffer.write("<i>")
+            self._write("<i>")
         elif self.visit_index == 1:
-            self.string_buffer.write("</i>")
+            self._write("</i>")
 
     @wiki_visitor._visit(wiki_ast.UnderlineNode)
     def visit_underline_node(self, node):
         if self.visit_index == 0:
-            self.string_buffer.write("<u>")
+            self._write("<u>")
         elif self.visit_index == 1:
-            self.string_buffer.write("</u>")
+            self._write("</u>")
 
     @wiki_visitor._visit(wiki_ast.MonospaceNode)
     def visit_monospace_node(self, node):
         if self.visit_index == 0:
-            self.string_buffer.write("<span class=\"monospace\">")
+            self._write("<span class=\"monospace\">")
         elif self.visit_index == 1:
-            self.string_buffer.write("</span>")
+            self._write("</span>")
+
+    @wiki_visitor._visit(wiki_ast.SectionNode)
+    def visit_section_node(self, node):
+        if self.visit_index == 0:
+            self._write("<h" + str(node.section_size) + ">")
+        elif self.visit_index == 1:
+            self._write("</h" + str(node.section_size) + ">")
 
     @wiki_visitor._visit(wiki_ast.NameNode)
     def visit_name_node(self, node):
         if self.visit_index == 0:
-            self.string_buffer.write(node.name_value)
+            self._write(node.name_value)
 
     @wiki_visitor._visit(wiki_ast.NewLineNode)
     def visit_new_line_node(self, node):
         if self.visit_index == 0:
-            self.string_buffer.write("</br>")
+            self._write("</br>")
 
     @wiki_visitor._visit(wiki_ast.SpaceNode)
     def visit_space_node(self, node):
         if self.visit_index == 0:
-            self.string_buffer.write(" ")
+            self._write(" ")
+
+    @wiki_visitor._visit(wiki_ast.ImageNode)
+    def visit_image_node(self, node):
+        if self.visit_index == 0:
+            self._write("<img src=\"" + node.image_source + "\"")
+
+            # in case the image size is valid
+            if node.image_size:
+                # retrieves the image size
+                image_size = node.image_size
+
+                # retrieves the image size length
+                image_size_length = len(image_size)
+
+                # retrieves the image width
+                image_width = node.image_size[0]
+
+                # appends the image width to the string buffer
+                self._write(" width=" + image_width)
+
+                # in case the image size length is greater than one
+                if image_size_length > 1:
+                    # retrieves the image height
+                    image_height = image_size[1]
+
+                    # appends the image height to the string buffer
+                    self._write(" height=" + image_height)
+
+            self._write(">")
+
+    @wiki_visitor._visit(wiki_ast.LinkNode)
+    def visit_link_node(self, node):
+        pass
+
+    @wiki_visitor._visit(wiki_ast.ExternalLinkNode)
+    def visit_external_link_node(self, node):
+        if self.visit_index == 0:
+            self._write("<a href=\"" + node.link_value + "\">")
+
+            # in case the statements node is not defined
+            if not node.statements_node:
+                self._write(node.link_value)
+        elif self.visit_index == 1:
+            self._write("</a>")
+
+    @wiki_visitor._visit(wiki_ast.ListNode)
+    def visit_list_node(self, node):
+        if self.visit_index == 0:
+            if self.string_buffer.get_last() == "</ul>":
+                self.string_buffer.rollback_last()
+            else:
+                self._write("<ul>")
+
+            self._write("<li>")
+        elif self.visit_index == 1:
+            self._write("</li>")
+            self._write("</ul>")
+
+    def _write(self, string_value):
+        """
+        Writes the given string value to the string buffer.
+
+        @type string_value: String
+        @param string_value: The string value to be written
+        to the string buffer.
+        """
+
+        self.string_buffer.write(string_value)

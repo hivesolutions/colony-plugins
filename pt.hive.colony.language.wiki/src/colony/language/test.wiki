@@ -1,4 +1,8 @@
 Eu sou o //tobias// um **tipo** __porreiro__ que veio da Alemanha \\
 \\
 Ass: \\
-**João Magalhães** %%**%% hehe
+**João Magalhães** %%**%% hehe [[http://www.sapo.pt|{{tobias.jpg?12x23}} a pois e //mas// em tugalandia]]
+  * tobias e matias
+  * matias e ra \\ beta
+==sdfsdf==
+sdfsdfsdf

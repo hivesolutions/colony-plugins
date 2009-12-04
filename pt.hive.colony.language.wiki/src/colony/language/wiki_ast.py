@@ -476,6 +476,31 @@ class MonospaceNode(DecorationNode):
 
         DecorationNode.__init__(self)
 
+class SectionNode(DecorationNode):
+    """
+    The section node class.
+    """
+
+    section_size = None
+    """ The section size """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        DecorationNode.__init__(self)
+
+    def set_section_size(self, section_size):
+        """
+        Sets the section size.
+
+        @type section_size: int
+        @param section_size: The section size.
+        """
+
+        self.section_size = section_size
+
 class NameNode(StatementNode):
     """
     The name node class.
@@ -537,6 +562,134 @@ class SpaceNode(StatementNode):
         """
 
         StatementNode.__init__(self)
+
+class ImageNode(StatementNode):
+    """
+    The image node class.
+    """
+
+    image_source = "none"
+    """ The image source """
+
+    image_size = None
+    """ The image size """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        StatementNode.__init__(self)
+
+    def set_image_source(self, image_source):
+        """
+        Sets the image source.
+
+        @type image_source: String
+        @param image_source: The image source.
+        """
+
+        self.image_source = image_source
+
+    def set_image_size(self, image_size):
+        """
+        Sets the image size.
+
+        @type image_size: List
+        @param image_size: The image size.
+        """
+
+        self.image_size = image_size
+
+class LinkNode(StatementNode):
+    """
+    The link node class.
+    """
+
+    link_value = "none"
+    """ The link value """
+
+    statements_node = None
+    """ The statements node """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        StatementNode.__init__(self)
+
+    def set_link_value(self, link_value):
+        """
+        Sets the link value.
+
+        @type link_value: String
+        @param link_value: The link value.
+        """
+
+        self.link_value = link_value
+
+    def set_statements_node(self, statements_node):
+        """
+        Sets the statements node.
+
+        @type statements_node: StatementsNode
+        @param statements_node: The statements node.
+        """
+
+        self.statements_node = statements_node
+        self.add_child_node(statements_node)
+
+class ExternalLinkNode(LinkNode):
+    """
+    The external link node.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        LinkNode.__init__(self)
+
+class ListNode(StatementNode):
+    """
+    The list node.
+    """
+
+    indentation_value = None
+    """ The indentation value """
+
+    statements_node = None
+    """ The statements node """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        StatementNode.__init__(self)
+
+    def set_indentation_value(self, indentation_value):
+        """
+        Sets the indentation value.
+
+        @type indentation_value: int
+        @param indentation_value: The indentation value
+        """
+
+        self.indentation_value = indentation_value
+
+    def set_statements_node(self, statements_node):
+        """
+        Sets the statements node.
+
+        @type statements_node: StatementsNode
+        @param statements_node: The statements node.
+        """
+
+        self.statements_node = statements_node
+        self.add_child_node(statements_node)
 
 class AstSequenceNodeIterator:
     """

@@ -258,6 +258,10 @@ class Visitor:
     def visit_monospace_node(self, node):
         print "MonospaceNode: " + str(node)
 
+    @_visit(wiki_ast.SectionNode)
+    def visit_section_node(self, node):
+        print "SectionNode: " + str(node)
+
     @_visit(wiki_ast.NameNode)
     def visit_name_node(self, node):
         print "NameNode: " + str(node)
@@ -269,3 +273,19 @@ class Visitor:
     @_visit(wiki_ast.SpaceNode)
     def visit_space_node(self, node):
         print "SpaceNode: " + str(node)
+
+    @_visit(wiki_ast.ImageNode)
+    def visit_image_node(self, node):
+        print "ImageNode: " + str(node)
+
+    @_visit(wiki_ast.LinkNode)
+    def visit_link_node(self, node):
+        print "LinkNode: " + str(node)
+
+    @_visit(wiki_ast.ExternalLinkNode)
+    def visit_external_link_node(self, node):
+        print "ExternalLinkNode: " + str(node)
+
+    @_visit(wiki_ast.ListNode)
+    def visit_list_node(self, node):
+        print "ListNode: " + str(node)

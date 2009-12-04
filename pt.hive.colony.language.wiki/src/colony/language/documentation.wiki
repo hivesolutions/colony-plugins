@@ -1,0 +1,22 @@
+====== Colony Web MVC Framework ======
+
+Colony does all it can to encourage well designed applications by providing all the necessary infrastructures to effortlessly separate application concerns. With the Plugin Framework, one can separate a large application into different plugins that are meaningful on their own, but when it comes to designing a plugin%%'%%s interior, the natural tendency may be to excessively intertwine the code at this level, especially when the plugin provides a graphical interface. To turn the design and implementation of these features into a straightforward process, one can use the Colony Web MVC plugin, which provides an MVC Framework.
+
+Model-View-Controller (MVC) is an architectural pattern used to isolate business logic from input and presentation, permitting independent development, testing and maintenance of each.
+
+An example MVC workflow in Colony could work like the following:
+
+
+Model-View-Controller (MVC) is an architectural pattern used to isolate business logic from input and presentation, permitting independent development, testing and maintenance of each.
+
+An example MVC workflow in Colony could work like the following:
+
+  * User clicks a button used to refresh data;
+  * The widget fires a "click" event;
+  * The widget%%'%%s event is caught by an event handler in the Controller;
+  * The event handler calls the appropriate logic in the Controller;
+  * The Controller calls the Remote Model to fetch data from the data source, providing a callback from the Controller to be invoked when the operation is finished;
+  * The Controller callback is invoked with the data;
+  * The Controller stores the data in the Local Model for later reference;
+  * The Controller strips the data that will be shown in the graphical interface and sets it in the Presentation Model;
+  * The Controller refreshes the View by looking for changed Presentation Model properties and updating the View accordingly.
