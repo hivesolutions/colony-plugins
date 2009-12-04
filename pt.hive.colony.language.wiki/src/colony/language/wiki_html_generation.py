@@ -166,7 +166,7 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
     @wiki_visitor._visit(wiki_ast.NewLineNode)
     def visit_new_line_node(self, node):
         if self.visit_index == 0:
-            self._write("</br>")
+            self._write("<br/>")
 
     @wiki_visitor._visit(wiki_ast.SpaceNode)
     def visit_space_node(self, node):
