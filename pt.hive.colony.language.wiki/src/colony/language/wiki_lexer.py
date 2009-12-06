@@ -44,10 +44,12 @@ ESCAPE_REGEX = re.compile(r"%%(.*?)%%")
 
 # the token definitions
 tokens = ("LPAREN", "RPAREN", "LBRACK", "RBRACK",
-          "LBRACE", "RBRACE", "PIPE", "EXCLAMATION",
-          "BOLD", "BOLD_END", "ITALIC", "ITALIC_END", "UNDERLINE", "UNDERLINE_END", "MONOSPACE", "MONOSPACE_END", "SECTION", "SECTION_END",
-          "TAG_INIT", "TAG_END", "SPACE", "FORCED_NEWLINE",
-          "NAME_NO_FORMATTING", "BULLET_LIST", "ORDERED_LIST", "LINK_NAME", "NAME", "NEWLINE")
+          "LBRACE", "RBRACE", "PIPE",
+          "BOLD", "BOLD_END", "ITALIC", "ITALIC_END",
+          "UNDERLINE", "UNDERLINE_END", "MONOSPACE", "MONOSPACE_END",
+          "SECTION", "SECTION_END", "TAG_INIT", "TAG_END",
+          "SPACE", "FORCED_NEWLINE", "NAME_NO_FORMATTING", "BULLET_LIST",
+          "ORDERED_LIST", "LINK_NAME", "NAME", "NEWLINE")
 
 # the reserved keywords
 reserved = {
@@ -66,8 +68,6 @@ t_LBRACE = r"\{"
 t_RBRACE = r"\}"
 
 t_PIPE = r"\|"
-
-t_EXCLAMATION = r"\?"
 
 t_TAG_INIT = r"\<[a-zA-Z]+\>"
 t_TAG_END = r"\<\/[a-zA-Z]+\>"
@@ -99,14 +99,13 @@ def t_comment(t):
 def t_BOLD(t):
     r"\*\*"
 
-    global states_map
-
     if states_map["BOLD"]:
         t.type = "BOLD_END"
-        states_map["BOLD"] = False
     else:
         t.type = "BOLD"
-        states_map["BOLD"] = True
+
+    # changes the bold state
+    change_state("BOLD")
 
     return t
 
@@ -115,10 +114,11 @@ def t_ITALIC(t):
 
     if states_map["ITALIC"]:
         t.type = "ITALIC_END"
-        states_map["ITALIC"] = False
     else:
         t.type = "ITALIC"
-        states_map["ITALIC"] = True
+
+    # changes the italic state
+    change_state("ITALIC")
 
     return t
 
@@ -127,10 +127,11 @@ def t_UNDERLINE(t):
 
     if states_map["UNDERLINE"]:
         t.type = "UNDERLINE_END"
-        states_map["UNDERLINE"] = False
     else:
         t.type = "UNDERLINE"
-        states_map["UNDERLINE"] = True
+
+    # changes the underline state
+    change_state("UNDERLINE")
 
     return t
 
@@ -139,10 +140,11 @@ def t_MONOSPACE(t):
 
     if states_map["MONOSPACE"]:
         t.type = "MONOSPACE_END"
-        states_map["MONOSPACE"] = False
     else:
         t.type = "MONOSPACE"
-        states_map["MONOSPACE"] = True
+
+    # changes the monospace state
+    change_state("MONOSPACE")
 
     return t
 
@@ -151,10 +153,11 @@ def t_SECTION(t):
 
     if states_map["SECTION"]:
         t.type = "SECTION_END"
-        states_map["SECTION"] = False
     else:
         t.type = "SECTION"
-        states_map["SECTION"] = True
+
+    # changes the section state
+    change_state("SECTION")
 
     # retrieves the number of equals
     equals_count = t.value.count("=")
@@ -180,7 +183,7 @@ def t_LINK_NAME(t):
     return t
 
 def t_NAME(t):
-    r"([^\\\n\# \t\r\%\*\/_\'\{\}\?\[\]\|=]|%%.*?%%)+"
+    r"([^\\\n\# \t\r\%\*\/_\'\{\}\[\]\|=]|[\*\/_\'][^\\\n\# \t\r\%\*\/_\'\{\}\[\]\|=]|[\*\/_\']$|%%.*?%%)+"
     # retrieves the current value
     current_value = t.value
 
@@ -197,3 +200,9 @@ t_ignore = ""
 def t_error(t):
     print "Illegal character '%s'" % t.value[0]
     t.lexer.skip(1)
+
+def change_state(state_name):
+    if states_map[state_name]:
+        states_map[state_name] = False
+    else:
+        states_map[state_name] = True

@@ -361,31 +361,26 @@ def p_statement_image(t):
     # creates the image node
     image_node = wiki_ast.ImageNode()
 
-    # sets the image source in the image node
-    image_node.set_image_source(image_source)
+    # splits the image source
+    image_source_splitted = image_source.split("?")
 
-    t[0] = image_node
+    # retrieves the image source splitted length
+    image_source_splitted_length = len(image_source_splitted)
 
-def p_statement_image_size(t):
-    "statement : LBRACE LBRACE NAME EXCLAMATION NAME RBRACE RBRACE"
+    # in case the image source splitted length is greater than one
+    if image_source_splitted_length > 1:
+        # retrieves the image source and image size
+        # from the image source splitted
+        image_source, image_size = image_source_splitted
 
-    # retrieves the image source
-    image_source = t[3]
+        # splits the image size
+        image_size_splited = image_size.split("x")
 
-    # retrieves the image size
-    image_size = t[5]
-
-    # splits the image size
-    image_size_splited = image_size.split("x")
-
-    # creates the image node
-    image_node = wiki_ast.ImageNode()
+        # sets the image size in the image node
+        image_node.set_image_size(image_size_splited)
 
     # sets the image source in the image node
     image_node.set_image_source(image_source)
-
-    # sets the image size in the image node
-    image_node.set_image_size(image_size_splited)
 
     t[0] = image_node
 
