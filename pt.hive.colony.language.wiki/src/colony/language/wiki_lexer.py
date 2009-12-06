@@ -61,12 +61,6 @@ reserved_values = {
 t_LPAREN = r"\("
 t_RPAREN = r"\)"
 
-t_LBRACK = r"\["
-t_RBRACK = r"\]"
-
-t_LBRACE = r"\{"
-t_RBRACE = r"\}"
-
 t_PIPE = r"\|"
 
 t_TAG_INIT = r"\<[a-zA-Z]+\>"
@@ -161,7 +155,7 @@ def t_MONOSPACE(t):
     return t
 
 def t_SECTION(t):
-    r"=+"
+    r"==+"
 
     # in case the current section state is valid
     if states_map["SECTION"]:
@@ -197,8 +191,32 @@ def t_LINK_NAME(t):
     r"(http\:\/\/|www.)[^\\\n\# \t\r\|]+"
     return t
 
+def t_LBRACK(t):
+    r"\[\["
+    return t
+
+def t_RBRACK(t):
+    r"\]\]"
+    return t
+
+def t_LBRACE(t):
+    r"\{\{"
+    return t
+
+def t_RBRACE(t):
+    r"\}\}"
+    return t
+
+def t_EXTENDED_NAME(t):
+    r"[\*\/_\'\{\}\[\]=]"
+
+    # sets the type as name
+    t.type = "NAME"
+
+    return t
+
 def t_NAME(t):
-    r"([^\\\n\# \t\r\%\*\/_\'\{\}\[\]\|=]|[\*\/_\'][^\\\n\# \t\r\%\*\/_\'\{\}\[\]\|=]|[\*\/_\']$|%%.*?%%)+"
+    r"([^\\\n\# \t\r\%\*\/_\'\{\}\[\]\|=]|[\*\/_\'\{\}\[\]=][^\\\n\# \t\r\%\*\/_\'\{\}\[\]\|=]|%%.*?%%)+"
     # retrieves the current value
     current_value = t.value
 

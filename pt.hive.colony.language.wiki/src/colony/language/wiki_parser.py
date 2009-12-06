@@ -353,10 +353,10 @@ def p_statement_newline_forced(t):
     t[0] = new_line_node
 
 def p_statement_image(t):
-    "statement : LBRACE LBRACE NAME RBRACE RBRACE"
+    "statement : LBRACE NAME RBRACE"
 
     # retrieves the image source
-    image_source = t[3]
+    image_source = t[2]
 
     # creates the image node
     image_node = wiki_ast.ImageNode()
@@ -385,10 +385,10 @@ def p_statement_image(t):
     t[0] = image_node
 
 def p_statement_external_link(t):
-    "statement : LBRACK LBRACK LINK_NAME RBRACK RBRACK"
+    "statement : LBRACK LINK_NAME RBRACK"
 
     # retrieves the link value
-    link_value = t[3]
+    link_value = t[2]
 
     # creates the external link node
     external_link_node = wiki_ast.ExternalLinkNode()
@@ -399,13 +399,13 @@ def p_statement_external_link(t):
     t[0] =  external_link_node
 
 def p_statement_external_link_description(t):
-    "statement : LBRACK LBRACK LINK_NAME PIPE statements RBRACK RBRACK"
+    "statement : LBRACK LINK_NAME PIPE statements RBRACK"
 
     # retrieves the link value
-    link_value = t[3]
+    link_value = t[2]
 
     # retrieves the statements node
-    statements_node = t[5]
+    statements_node = t[4]
 
     # creates the external link node
     external_link_node = wiki_ast.ExternalLinkNode()
