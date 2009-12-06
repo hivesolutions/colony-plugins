@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import re
+
 import wiki_ast
 
 from wiki_lexer import *
@@ -52,6 +54,18 @@ PARSER_TYPE = PLY_PARSER_VALUE
 
 COLONY_GENERATOR_PATH = "../../../../pt.hive.colony.language.generator/src/colony"
 """ The colony generator path """
+
+TAG_INIT_REGEX_VALUE = "\<[a-zA-Z_ ]+\>"
+""" The tag init regex value """
+
+TAG_END_REGEX_VALUE = "\<\/[a-zA-Z_ ]+\>"
+""" The tag end regex value """
+
+TAG_INIT_REGEX = re.compile(TAG_INIT_REGEX_VALUE)
+""" The tag init regex """
+
+TAG_END_REGEX = re.compile(TAG_END_REGEX_VALUE)
+""" The tag end regex """
 
 def p_program(t):
     "program : lines"
@@ -431,6 +445,38 @@ def p_statement_external_link_auto(t):
     external_link_node.set_link_value(link_value)
 
     t[0] =  external_link_node
+
+def p_statement_tag(t):
+    "statement : TAG"
+
+    # retrieves the tag
+    tag = t[1]
+
+    # retrieves the tag matches
+    tag_init_match = TAG_INIT_REGEX.search(tag)
+    tag_end_match = TAG_END_REGEX.search(tag)
+
+    # retrieves the tag positions
+    tag_init_match_start = tag_init_match.start()
+    tag_init_match_end = tag_init_match.end()
+    tag_end_match_start = tag_end_match.start()
+
+    # retrieves the tag name
+    tag_name = tag[tag_init_match_start + 1:tag_init_match_end - 1].strip()
+
+    # retrieves the contents
+    contents = tag[tag_init_match_end:tag_end_match_start]
+
+    # creates the tag node
+    tag_node = wiki_ast.TagNode()
+
+    # sets the tag name in the tag node
+    tag_node.set_tag_name(tag_name)
+
+    # sets the contents in the tag node
+    tag_node.set_contents(contents)
+
+    t[0] = tag_node
 
 # in case it's the colony parser type
 if PARSER_TYPE == COLONY_PARSER_VALUE:

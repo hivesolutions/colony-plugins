@@ -715,6 +715,44 @@ class OrderedListNode(ListNode):
 
         ListNode.__init__(self)
 
+class TagNode(StatementNode):
+    """
+    The tag node.
+    """
+
+    tag_name = None
+    """ The tag name """
+
+    contents = None
+    """ The contents """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        StatementNode.__init__(self)
+
+    def set_tag_name(self, tag_name):
+        """
+        Sets the statements node.
+
+        @type tag_name: String
+        @param tag_name: The tag name.
+        """
+
+        self.tag_name = tag_name
+
+    def set_contents(self, contents):
+        """
+        Sets the contents.
+
+        @type contents: String
+        @param contents: The contents.
+        """
+
+        self.contents = contents
+
 class AstSequenceNodeIterator:
     """
     The ast sequence node iterator class.

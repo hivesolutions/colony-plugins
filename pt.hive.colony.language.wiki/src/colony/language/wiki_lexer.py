@@ -43,11 +43,10 @@ ESCAPE_REGEX = re.compile(r"%%(.*?)%%")
 """ The escape regex value """
 
 # the token definitions
-tokens = ("LPAREN", "RPAREN", "LBRACK", "RBRACK",
-          "LBRACE", "RBRACE", "PIPE",
+tokens = ("LBRACK", "RBRACK", "LBRACE", "RBRACE", "PIPE",
           "BOLD", "BOLD_END", "ITALIC", "ITALIC_END",
           "UNDERLINE", "UNDERLINE_END", "MONOSPACE", "MONOSPACE_END",
-          "SECTION", "SECTION_END", "TAG_INIT", "TAG_END",
+          "SECTION", "SECTION_END", "TAG",
           "SPACE", "FORCED_NEWLINE", "BULLET_LIST",
           "ORDERED_LIST", "LINK_NAME", "NAME", "NEWLINE")
 
@@ -58,13 +57,7 @@ reserved = {
 reserved_values = {
 }
 
-t_LPAREN = r"\("
-t_RPAREN = r"\)"
-
 t_PIPE = r"\|"
-
-t_TAG_INIT = r"\<[a-zA-Z]+\>"
-t_TAG_END = r"\<\/[a-zA-Z]+\>"
 
 t_SPACE = r"[ \t\r]+"
 
@@ -205,6 +198,10 @@ def t_LBRACE(t):
 
 def t_RBRACE(t):
     r"\}\}"
+    return t
+
+def t_TAG(t):
+    r"\<[a-zA-Z_ ]+\>.*?\<\/[a-zA-Z_ ]+\>"
     return t
 
 def t_EXTENDED_NAME(t):
