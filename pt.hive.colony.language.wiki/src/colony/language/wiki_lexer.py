@@ -45,7 +45,7 @@ ESCAPE_REGEX = re.compile(r"%%(.*?)%%")
 # the token definitions
 tokens = ("LPAREN", "RPAREN", "LBRACK", "RBRACK",
           "LBRACE", "RBRACE", "PIPE", "EXCLAMATION",
-          "BOLD", "ITALIC", "UNDERLINE", "MONOSPACE", "SECTION", "SECTION_END",
+          "BOLD", "BOLD_END", "ITALIC", "ITALIC_END", "UNDERLINE", "UNDERLINE_END", "MONOSPACE", "MONOSPACE_END", "SECTION", "SECTION_END",
           "TAG_INIT", "TAG_END", "SPACE", "FORCED_NEWLINE",
           "NAME_NO_FORMATTING", "LIST", "LINK_NAME", "NAME", "NEWLINE")
 
@@ -69,11 +69,6 @@ t_PIPE = r"\|"
 
 t_EXCLAMATION = r"\?"
 
-t_BOLD = r"\*\*"
-t_ITALIC = r"\/\/"
-t_UNDERLINE = r"__"
-t_MONOSPACE = r"\'\'"
-
 t_TAG_INIT = r"\<[a-zA-Z]+\>"
 t_TAG_END = r"\<\/[a-zA-Z]+\>"
 
@@ -81,7 +76,11 @@ t_SPACE = r"[ \t\r]+"
 
 t_FORCED_NEWLINE = r"\\\\"
 
-section_open = None
+states_map = {"BOLD" : False,
+              "ITALIC" : False,
+              "UNDERLINE" : False,
+              "MONOSPACE" : False,
+              "SECTION" : False}
 
 # the new line character
 def t_NEWLINE(t):
@@ -97,22 +96,66 @@ def t_comment(t):
     r"\#[^\n]*\n+"
     pass
 
-def t_SECTION(t):
-    r"=+"
-    global section_open
+def t_BOLD(t):
+    r"\*\*"
 
-    if section_open == "SECTION":
-        section_open = None
+    global states_map
+
+    if states_map["BOLD"]:
+        t.type = "BOLD_END"
+        states_map["BOLD"] = False
     else:
-        section_open = "SECTION"
+        t.type = "BOLD"
+        states_map["BOLD"] = True
 
-    # retrieves the number of equals
-    equals_count = t.value.count("=")
-    t.value = equals_count
     return t
 
-def t_SECTION_END(t):
-    r"[ ]+=+"
+def t_ITALIC(t):
+    r"\/\/"
+
+    if states_map["ITALIC"]:
+        t.type = "ITALIC_END"
+        states_map["ITALIC"] = False
+    else:
+        t.type = "ITALIC"
+        states_map["ITALIC"] = True
+
+    return t
+
+def t_UNDERLINE(t):
+    r"__"
+
+    if states_map["UNDERLINE"]:
+        t.type = "UNDERLINE_END"
+        states_map["UNDERLINE"] = False
+    else:
+        t.type = "UNDERLINE"
+        states_map["UNDERLINE"] = True
+
+    return t
+
+def t_MONOSPACE(t):
+    r"\'\'"
+
+    if states_map["MONOSPACE"]:
+        t.type = "MONOSPACE_END"
+        states_map["MONOSPACE"] = False
+    else:
+        t.type = "MONOSPACE"
+        states_map["MONOSPACE"] = True
+
+    return t
+
+def t_SECTION(t):
+    r"=+"
+
+    if states_map["SECTION"]:
+        t.type = "SECTION_END"
+        states_map["SECTION"] = False
+    else:
+        t.type = "SECTION"
+        states_map["SECTION"] = True
+
     # retrieves the number of equals
     equals_count = t.value.count("=")
     t.value = equals_count

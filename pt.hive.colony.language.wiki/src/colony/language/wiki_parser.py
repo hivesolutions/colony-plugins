@@ -47,7 +47,7 @@ COLONY_PARSER_VALUE = "colony"
 PLY_PARSER_VALUE = "ply"
 """ The ply parser value """
 
-PARSER_TYPE = COLONY_PARSER_VALUE
+PARSER_TYPE = PLY_PARSER_VALUE
 """ The parser type """
 
 COLONY_GENERATOR_PATH = "../../../../pt.hive.colony.language.generator/src/colony"
@@ -177,13 +177,13 @@ def p_lines_single_list(t):
     t[0] = list_node
 
 def p_statements_multiple(t):
-    "statements : statement SPACE statements"
+    "statements : statement statements"
 
     # retrieves the statement node
     statement_node = t[1]
 
     # retrieves the next statements node
-    next_statements_node = t[3]
+    next_statements_node = t[2]
 
     # creates the statements node
     statements_node = wiki_ast.StatementsNode()
@@ -191,52 +191,8 @@ def p_statements_multiple(t):
     # sets the statement node in the statements node
     statements_node.set_statement_node(statement_node)
 
-    # creates the space node
-    space_node = wiki_ast.SpaceNode()
-
-    # creates the statements aux node
-    statements_aux_node = wiki_ast.StatementsNode()
-
-    # sets the space node in the statements aux node
-    statements_aux_node.set_statement_node(space_node)
-
-    # sets the next node in the statements aux node
-    statements_aux_node.set_next_node(next_statements_node)
-
-    # sets the statements aux node in the statements node
-    statements_node.set_next_node(statements_aux_node)
-
-    t[0] = statements_node
-
-def p_statements_multiple_newline(t):
-    "statements : statement SPACE NEWLINE statements"
-
-    # retrieves the statement node
-    statement_node = t[1]
-
-    # retrieves the next statements node
-    next_statements_node = t[4]
-
-    # creates the statements node
-    statements_node = wiki_ast.StatementsNode()
-
-    # sets the statement node in the statements node
-    statements_node.set_statement_node(statement_node)
-
-    # creates the space node
-    space_node = wiki_ast.SpaceNode()
-
-    # creates the statements aux node
-    statements_aux_node = wiki_ast.StatementsNode()
-
-    # sets the space node in the statements aux node
-    statements_aux_node.set_statement_node(space_node)
-
-    # sets the next node in the statements aux node
-    statements_aux_node.set_next_node(next_statements_node)
-
-    # sets the statements aux node in the statements node
-    statements_node.set_next_node(statements_aux_node)
+    # sets the next statements node in the statements node
+    statements_node.set_next_node(next_statements_node)
 
     t[0] = statements_node
 
@@ -258,7 +214,7 @@ def p_statements_single(t):
     t[0] = statements_node
 
 def p_statement_bolt(t):
-    "statement : BOLD statements BOLD"
+    "statement : BOLD statements BOLD_END"
 
     # retrieves the statements node
     statements_node = t[2]
@@ -272,7 +228,7 @@ def p_statement_bolt(t):
     t[0] = bold_node
 
 def p_statement_italic(t):
-    "statement : ITALIC statements ITALIC"
+    "statement : ITALIC statements ITALIC_END"
 
     # retrieves the statements node
     statements_node = t[2]
@@ -286,7 +242,7 @@ def p_statement_italic(t):
     t[0] = italic_node
 
 def p_statement_underline(t):
-    "statement : UNDERLINE statements UNDERLINE"
+    "statement : UNDERLINE statements UNDERLINE_END"
 
     # retrieves the statements node
     statements_node = t[2]
@@ -300,7 +256,7 @@ def p_statement_underline(t):
     t[0] = underline_node
 
 def p_statement_monospace(t):
-    "statement : MONOSPACE statements MONOSPACE"
+    "statement : MONOSPACE statements MONOSPACE_END"
 
     # retrieves the statements node
     statements_node = t[2]
@@ -314,62 +270,6 @@ def p_statement_monospace(t):
     t[0] = monospace_node
 
 def p_statement_section(t):
-    "statement : SECTION statements SECTION"
-
-    # retrieves the first section value
-    first_section_value = t[1]
-
-    # retrieves the statements node
-    statements_node = t[2]
-
-    # retrieves the second section value
-    second_section_value = t[3]
-
-    if not first_section_value == second_section_value:
-        raise Exception("Invalid number of equals")
-
-    section_size = 7 - first_section_value
-
-    # creates the section node
-    section_node = wiki_ast.SectionNode()
-
-    # sets the statements node in the section node
-    section_node.set_statements_node(statements_node)
-
-    # sets the section size in the section node
-    section_node.set_section_size(section_size)
-
-    t[0] = section_node
-
-def p_statement_section_space(t):
-    "statement : SECTION SPACE statements SECTION_END"
-
-    # retrieves the first section value
-    first_section_value = t[1]
-
-    # retrieves the statements node
-    statements_node = t[3]
-
-    # retrieves the second section value
-    second_section_value = t[4]
-
-    if not first_section_value == second_section_value:
-        raise Exception("Invalid number of equals")
-
-    section_size = 7 - first_section_value
-
-    # creates the section node
-    section_node = wiki_ast.SectionNode()
-
-    # sets the statements node in the section node
-    section_node.set_statements_node(statements_node)
-
-    # sets the section size in the section node
-    section_node.set_section_size(section_size)
-
-    t[0] = section_node
-
-def p_statement_section_no_initial_space(t):
     "statement : SECTION statements SECTION_END"
 
     # retrieves the first section value
@@ -396,6 +296,14 @@ def p_statement_section_no_initial_space(t):
     section_node.set_section_size(section_size)
 
     t[0] = section_node
+
+def p_statement_space(t):
+    "statement : SPACE"
+
+    # creates the space node
+    space_node = wiki_ast.SpaceNode()
+
+    t[0] = space_node
 
 def p_statement_name(t):
     "statement : NAME"

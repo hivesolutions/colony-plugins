@@ -7,7 +7,7 @@ Model-View-Controller (MVC) is an architectural pattern used to isolate business
 An example MVC workflow in Colony could work like the following:
 
   * User clicks a button used to refresh data;
-  * The widget ( **View** ) fires a "click" event;
+  * The widget (**View**) fires a "click" event;
   * The widget%%'%%s event is caught by an event handler in the Controller;
   * The event handler calls the appropriate logic in the Controller;
   * The **Controller** calls the Remote Model to fetch data from the data source, providing a callback from the Controller to be invoked when the operation is finished;

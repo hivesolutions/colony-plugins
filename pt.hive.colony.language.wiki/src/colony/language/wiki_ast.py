@@ -526,6 +526,18 @@ class NameNode(StatementNode):
 
         self.name_value = name_value
 
+class SpaceNode(StatementNode):
+    """
+    The space node class.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        StatementNode.__init__(self)
+
 class NewLineNode(StatementNode):
     """
     The new line node class.
@@ -550,18 +562,6 @@ class NewLineNode(StatementNode):
         """
 
         self.forced = forced
-
-class SpaceNode(StatementNode):
-    """
-    The space node class.
-    """
-
-    def __init__(self):
-        """
-        Constructor of the class.
-        """
-
-        StatementNode.__init__(self)
 
 class ImageNode(StatementNode):
     """
