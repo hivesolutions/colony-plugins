@@ -48,7 +48,7 @@ tokens = ("LPAREN", "RPAREN", "LBRACK", "RBRACK",
           "BOLD", "BOLD_END", "ITALIC", "ITALIC_END",
           "UNDERLINE", "UNDERLINE_END", "MONOSPACE", "MONOSPACE_END",
           "SECTION", "SECTION_END", "TAG_INIT", "TAG_END",
-          "SPACE", "FORCED_NEWLINE", "NAME_NO_FORMATTING", "BULLET_LIST",
+          "SPACE", "FORCED_NEWLINE", "BULLET_LIST",
           "ORDERED_LIST", "LINK_NAME", "NAME", "NEWLINE")
 
 # the reserved keywords
@@ -99,9 +99,12 @@ def t_comment(t):
 def t_BOLD(t):
     r"\*\*"
 
+    # in case the current bold state is valid
     if states_map["BOLD"]:
+        # sets the type as bold end
         t.type = "BOLD_END"
     else:
+        # sets the type as bold
         t.type = "BOLD"
 
     # changes the bold state
@@ -112,9 +115,12 @@ def t_BOLD(t):
 def t_ITALIC(t):
     r"\/\/"
 
+    # in case the current italic state is valid
     if states_map["ITALIC"]:
+        # sets the type as italic end
         t.type = "ITALIC_END"
     else:
+        # sets the type as italic
         t.type = "ITALIC"
 
     # changes the italic state
@@ -125,9 +131,12 @@ def t_ITALIC(t):
 def t_UNDERLINE(t):
     r"__"
 
+    # in case the current underline state is valid
     if states_map["UNDERLINE"]:
+        # sets the type as underline end
         t.type = "UNDERLINE_END"
     else:
+        # sets the type as underline
         t.type = "UNDERLINE"
 
     # changes the underline state
@@ -138,9 +147,12 @@ def t_UNDERLINE(t):
 def t_MONOSPACE(t):
     r"\'\'"
 
+    # in case the current monospace state is valid
     if states_map["MONOSPACE"]:
+        # sets the type as monospace end
         t.type = "MONOSPACE_END"
     else:
+        # sets the type as monospace end
         t.type = "MONOSPACE"
 
     # changes the monospace state
@@ -151,9 +163,12 @@ def t_MONOSPACE(t):
 def t_SECTION(t):
     r"=+"
 
+    # in case the current section state is valid
     if states_map["SECTION"]:
+        # sets the type as section end
         t.type = "SECTION_END"
     else:
+        # sets the type as section
         t.type = "SECTION"
 
     # changes the section state
@@ -202,6 +217,14 @@ def t_error(t):
     t.lexer.skip(1)
 
 def change_state(state_name):
+    """
+    Changes the current state (for the given state name),
+    in the states map.
+
+    @type state_name: String
+    @param state_name: The name of the state to be changed.
+    """
+
     if states_map[state_name]:
         states_map[state_name] = False
     else:
