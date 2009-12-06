@@ -149,7 +149,7 @@ def p_term_quoted(t):
     t[0] = quoted_node
 
 def p_error(t):
-    print "error " + str(t)
+    print "Syntax error at '%s'" % t
 
 # creates the parser
 ply.yacc.yacc()
