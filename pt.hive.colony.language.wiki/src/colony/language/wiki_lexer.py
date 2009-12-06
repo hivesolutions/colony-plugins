@@ -47,7 +47,7 @@ tokens = ("LPAREN", "RPAREN", "LBRACK", "RBRACK",
           "LBRACE", "RBRACE", "PIPE", "EXCLAMATION",
           "BOLD", "BOLD_END", "ITALIC", "ITALIC_END", "UNDERLINE", "UNDERLINE_END", "MONOSPACE", "MONOSPACE_END", "SECTION", "SECTION_END",
           "TAG_INIT", "TAG_END", "SPACE", "FORCED_NEWLINE",
-          "NAME_NO_FORMATTING", "LIST", "LINK_NAME", "NAME", "NEWLINE")
+          "NAME_NO_FORMATTING", "BULLET_LIST", "ORDERED_LIST", "LINK_NAME", "NAME", "NEWLINE")
 
 # the reserved keywords
 reserved = {
@@ -161,8 +161,15 @@ def t_SECTION(t):
     t.value = equals_count
     return t
 
-def t_LIST(t):
+def t_BULLET_LIST(t):
     r"([ ]{2})+\*"
+    # retrieves the number of spaces
+    space_count = t.value.count(" ")
+    t.value = space_count
+    return t
+
+def t_ORDERED_LIST(t):
+    r"([ ]{2})+\-"
     # retrieves the number of spaces
     space_count = t.value.count(" ")
     t.value = space_count

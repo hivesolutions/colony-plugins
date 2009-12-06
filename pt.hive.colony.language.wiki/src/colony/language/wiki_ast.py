@@ -691,6 +691,30 @@ class ListNode(StatementNode):
         self.statements_node = statements_node
         self.add_child_node(statements_node)
 
+class BulletListNode(ListNode):
+    """
+    The bullet list node.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        ListNode.__init__(self)
+
+class OrderedListNode(ListNode):
+    """
+    The ordered list node.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        ListNode.__init__(self)
+
 class AstSequenceNodeIterator:
     """
     The ast sequence node iterator class.

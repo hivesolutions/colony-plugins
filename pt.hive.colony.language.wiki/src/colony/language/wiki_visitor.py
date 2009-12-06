@@ -289,3 +289,11 @@ class Visitor:
     @_visit(wiki_ast.ListNode)
     def visit_list_node(self, node):
         print "ListNode: " + str(node)
+
+    @_visit(wiki_ast.BulletListNode)
+    def visit_bullet_list_node(self, node):
+        print "BulletListNode: " + str(node)
+
+    @_visit(wiki_ast.OrderedListNode)
+    def visit_ordered_list_node(self, node):
+        print "OrderedListNode: " + str(node)

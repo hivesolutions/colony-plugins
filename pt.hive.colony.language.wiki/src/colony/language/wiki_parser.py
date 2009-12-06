@@ -108,22 +108,16 @@ def p_lines_multiple(t):
     t[0] = statements_node
 
 def p_lines_multiple_list(t):
-    "lines : LIST SPACE statements NEWLINE lines"
+    "lines : list_item SPACE statements NEWLINE lines"
 
-    # retrieves the list value
-    list_value = t[1]
+    # retrieves the list node
+    list_node = t[1]
 
     # retrieves the statement node
     statement_node = t[3]
 
     # retrieves the next statements node
     next_statements_node = t[5]
-
-    # calculates the indentation value
-    indentation_value = list_value / 2
-
-    # creates the list node
-    list_node = wiki_ast.ListNode()
 
     # sets the statement node in the list node
     list_node.set_statements_node(statement_node)
@@ -157,22 +151,50 @@ def p_lines_single(t):
     t[0] = statements_node
 
 def p_lines_single_list(t):
-    "lines : LIST SPACE statements"
+    "lines : list_item SPACE statements"
 
-    # retrieves the list value
-    list_value = t[1]
+    # retrieves the list node
+    list_node = t[1]
 
     # retrieves the statement node
     statement_node = t[3]
+
+    # sets the statement node in the list node
+    list_node.set_statements_node(statement_node)
+
+    t[0] = list_node
+
+def p_list_item_bullet(t):
+    "list_item : BULLET_LIST"
+
+    # retrieves the list value
+    list_value = t[1]
 
     # calculates the indentation value
     indentation_value = list_value / 2
 
     # creates the list node
-    list_node = wiki_ast.ListNode()
+    list_node = wiki_ast.BulletListNode()
 
-    # sets the statement node in the list node
-    list_node.set_statements_node(statement_node)
+    # sets the identation value in the list node
+    list_node.set_indentation_value(indentation_value)
+
+    t[0] = list_node
+
+def p_list_item_ordered(t):
+    "list_item : ORDERED_LIST"
+
+    # retrieves the list value
+    list_value = t[1]
+
+    # calculates the indentation value
+    indentation_value = list_value / 2
+
+    # creates the list node
+    list_node = wiki_ast.OrderedListNode()
+
+    # sets the identation value in the list node
+    list_node.set_indentation_value(indentation_value)
 
     t[0] = list_node
 

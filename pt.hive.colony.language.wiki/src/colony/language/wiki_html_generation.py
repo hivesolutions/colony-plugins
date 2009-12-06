@@ -245,6 +245,10 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
 
     @wiki_visitor._visit(wiki_ast.ListNode)
     def visit_list_node(self, node):
+        pass
+
+    @wiki_visitor._visit(wiki_ast.BulletListNode)
+    def visit_bullet_list_node(self, node):
         if self.visit_index == 0:
             if self.string_buffer.get_last() == "</ul>":
                 self.string_buffer.rollback_last()
@@ -255,6 +259,19 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
         elif self.visit_index == 1:
             self._write("</li>")
             self._write("</ul>")
+
+    @wiki_visitor._visit(wiki_ast.OrderedListNode)
+    def visit_ordered_list_node(self, node):
+        if self.visit_index == 0:
+            if self.string_buffer.get_last() == "</ol>":
+                self.string_buffer.rollback_last()
+            else:
+                self._write("<ol>")
+
+            self._write("<li>")
+        elif self.visit_index == 1:
+            self._write("</li>")
+            self._write("</ol>")
 
     def _write(self, string_value):
         """
