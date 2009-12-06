@@ -21,7 +21,7 @@
 */
 
 /*
- __author__    = João Magalhães <joamag@hive.pt> & Tiago Silva <tsilva@hive.pt> & Luís Martinho <lmartinho@hive.pt>
+ __author__    = João Magalhães <joamag@hive.pt>
  __version__   = 1.0.0
  __revision__  = $LastChangedRevision: 5971 $
  __date__      = $LastChangedDate: 2009-10-30 05:40:10 +0000 (sex, 30 Out 2009) $
@@ -30,7 +30,7 @@
 */
 
 /**
- * @fileoverview This file contains some initial CSS styles for the environment loading phase.
+ * @fileoverview This file contains some initial CSS styles for the environment.
  *
  * @author João Magalhães <joamag@hive.pt>
  * @version 1.0.0
@@ -78,4 +78,13 @@ ul {
 
 ol {
     line-height: 1.5em;
+}
+
+.code {
+    background-color: #f7f9fa;
+    border: 1px dashed #8CACBB;
+    color: #000000;
+    font-size: 120%;
+    overflow: auto;
+    padding: 0.5em;
 }

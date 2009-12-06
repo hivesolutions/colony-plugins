@@ -297,3 +297,7 @@ class Visitor:
     @_visit(wiki_ast.OrderedListNode)
     def visit_ordered_list_node(self, node):
         print "OrderedListNode: " + str(node)
+
+    @_visit(wiki_ast.TagNode)
+    def visit_tag_node(self, node):
+        print "TagNode: " + str(node)

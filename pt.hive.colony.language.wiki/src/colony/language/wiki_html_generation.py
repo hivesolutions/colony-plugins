@@ -282,6 +282,14 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
             self._write("</li>")
             self._write("</ol>")
 
+    @wiki_visitor._visit(wiki_ast.TagNode)
+    def visit_tag_node(self, node):
+        if self.visit_index == 0:
+            self._write("<div class=\"code\">")
+            self._write(node.contents)
+        elif self.visit_index == 1:
+            self._write("</div>")
+
     def _write(self, string_value):
         """
         Writes the given string value to the string buffer.
