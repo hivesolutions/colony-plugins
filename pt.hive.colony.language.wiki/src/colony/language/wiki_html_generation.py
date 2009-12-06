@@ -54,6 +54,9 @@ META_HEADER_VALUE = "<meta http-equiv=\"Content-Type\" content=\"text/html; char
 CSS_HEADER_VALUE = "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/main.css\" />"
 """ The css header value """
 
+RECURSION_LIMIT = 1000000
+""" The recursion limit """
+
 class HtmlGenerationVisitor(wiki_visitor.Visitor):
     """
     The html generation visitor class.
@@ -67,6 +70,9 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
 
     section_values_map = {}
     """ The sections values map """
+
+    previous_recursion_limit = None
+    """ The previous recursion limit value """
 
     def __init__(self):
         wiki_visitor.Visitor.__init__(self)
@@ -112,6 +118,8 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
     @wiki_visitor._visit(wiki_ast.ProgramNode)
     def visit_program_node(self, node):
         if self.visit_index == 0:
+            self.previous_recursion_limit = sys.getrecursionlimit()
+            sys.setrecursionlimit(RECURSION_LIMIT)
             self._write(DOCTYPE_HEADER_VALUE)
             self._write("<head>")
             self._write(META_HEADER_VALUE)
@@ -120,6 +128,7 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
             self._write("<body>")
             self.open_paragraph()
         elif self.visit_index == 1:
+            sys.setrecursionlimit(self.previous_recursion_limit)
             self._write("</body>")
 
     @wiki_visitor._visit(wiki_ast.StatementsNode)
@@ -284,16 +293,24 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
 
         self.string_buffer.write(string_value)
 
-    def close_paragraph(self):
-        if not self.paragraph_open:
-            return
-
-        self._write("</p>")
-        self.paragraph_open = False
-
     def open_paragraph(self):
+        """
+        Opens the paragraph.
+        """
+
         if self.paragraph_open:
             return
 
         self._write("<p>")
         self.paragraph_open = True
+
+    def close_paragraph(self):
+        """
+        Closes the paragraph.
+        """
+
+        if not self.paragraph_open:
+            return
+
+        self._write("</p>")
+        self.paragraph_open = False
