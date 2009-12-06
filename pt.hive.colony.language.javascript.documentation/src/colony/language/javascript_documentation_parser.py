@@ -350,6 +350,9 @@ def p_space(t):
 
     t[0] = space_node
 
+def p_error(t):
+    print "Syntax error at '%s'" % t
+
 # in case it's the colony parser type
 if PARSER_TYPE == COLONY_PARSER_VALUE:
     # imports the sys package
