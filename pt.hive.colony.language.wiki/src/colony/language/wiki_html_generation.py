@@ -285,13 +285,13 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
     @wiki_visitor._visit(wiki_ast.TagNode)
     def visit_tag_node(self, node):
         if self.visit_index == 0:
-            import extensions.wiki_code
+            import extensions.wiki_code_extension
 
-            # creates a new wiki code generator
-            wiki_code_generator = extensions.wiki_code.WikiCodeGenerator()
+            # creates a new wiki code extension
+            wiki_code_extension = extensions.wiki_code_extension.WikiCodeExtension()
 
             # generates the html for the given tag node
-            html = wiki_code_generator.generate_html(node)
+            html = wiki_code_extension.generate_html(node)
 
             # writes the html to the buffer
             self._write(html)
