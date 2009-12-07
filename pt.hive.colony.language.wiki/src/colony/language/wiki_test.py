@@ -42,7 +42,7 @@ import wiki_visitor
 import wiki_html_generation
 
 # opens the wiki file
-wiki_file = open("documentation.wiki")
+wiki_file = open("examples/documentation.wiki")
 
 # reads the wiki file contents
 wiki_file_contents = wiki_file.read()
