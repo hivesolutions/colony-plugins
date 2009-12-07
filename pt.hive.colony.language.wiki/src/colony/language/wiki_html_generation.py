@@ -285,10 +285,16 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
     @wiki_visitor._visit(wiki_ast.TagNode)
     def visit_tag_node(self, node):
         if self.visit_index == 0:
-            self._write("<div class=\"code\">")
-            self._write(node.contents)
-        elif self.visit_index == 1:
-            self._write("</div>")
+            import extensions.wiki_code
+
+            # creates a new wiki code generator
+            wiki_code_generator = extensions.wiki_code.WikiCodeGenerator()
+
+            # generates the html for the given tag node
+            html = wiki_code_generator.generate_html(node)
+
+            # writes the html to the buffer
+            self._write(html)
 
     def _write(self, string_value):
         """

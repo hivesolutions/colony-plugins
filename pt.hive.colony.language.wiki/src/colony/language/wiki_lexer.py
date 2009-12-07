@@ -201,7 +201,7 @@ def t_RBRACE(t):
     return t
 
 def t_TAG(t):
-    r"\<[a-zA-Z_ ]+\>.*?\<\/[a-zA-Z_ ]+\>"
+    r"\<[a-zA-Z_ ]+\>[^\%]*?\<\/[a-zA-Z_ ]+\>"
     return t
 
 def t_EXTENDED_NAME(t):

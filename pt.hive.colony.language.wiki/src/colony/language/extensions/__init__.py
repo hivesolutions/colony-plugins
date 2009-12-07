@@ -19,16 +19,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt>"
-""" The author(s) of the module """
-
 __version__ = "1.0.0"
 """ The version of the module """
 
 __revision__ = "$LastChangedRevision: 72 $"
 """ The revision number of the module """
 
-__date__ = "$LastChangedDate: 2008-10-21 23:29:54 +0100 (Ter, 21 Out 2008) $"
+__date__ = "$LastChangedDate: 2008-10-21 23:29:54 +0100 (Tue, 21 Oct 2008) $"
 """ The last change date of the module """
 
 __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
@@ -36,38 +33,3 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
-
-import wiki_parser
-import wiki_visitor
-import wiki_html_generation
-
-# opens the wiki file
-wiki_file = open("documentation.wiki")
-
-# reads the wiki file contents
-wiki_file_contents = wiki_file.read()
-
-# closes the wiki file
-wiki_file.close()
-
-# strips the wiki file contents (to remove extra spaces and lines)
-wiki_file_contents = wiki_file_contents.strip()
-
-# parses the javascript file retrieving the result
-parse_result = wiki_parser.parser.parse(wiki_file_contents)
-
-visitor = wiki_visitor.Visitor()
-
-generation_visitor = wiki_html_generation.HtmlGenerationVisitor()
-
-parse_result.accept(visitor)
-parse_result.accept_double(generation_visitor)
-
-html_value = generation_visitor.get_string_buffer().getvalue()
-
-# opens the html file
-html_file = open("test.html", "w+")
-
-html_file.write(html_value)
-
-html_file.close()
