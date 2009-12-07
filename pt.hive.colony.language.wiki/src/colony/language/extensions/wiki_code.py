@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import ply
 
-from python_lexer import *
+from settler_lexer import *
 
 CLASS_DEFINITION = {"CLASS" : "kw4",
                     "FUNCTION" : "kw4",
