@@ -50,7 +50,7 @@ import update_thread_util
 import javascript_manager_parser
 import javascript_manager_exceptions
 
-DEFAULT_INDEX_TIME = 10
+DEFAULT_INDEX_TIME = 5
 """ The default index time """
 
 DEFAULT_CHARSET = "Cp1252"
