@@ -41,7 +41,7 @@ import ply
 
 import wiki_extension
 
-from settler_lexer import *
+from wiki_code.extensions.settler_lexer import *
 
 GENERATOR_TYPE = "code"
 """ The generator type """

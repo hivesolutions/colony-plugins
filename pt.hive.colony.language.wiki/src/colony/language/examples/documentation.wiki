@@ -33,6 +33,18 @@ class Matias:
         return d + 1
     end
 end
+class Matias:
+    function tobias(self, c):
+        print("ola")
+        a = 3
+        b = a * 5
+    end
+    # The main documentation function,
+    # that should be used only some times
+    function matias(self, m, d):
+        return d + 1
+    end
+end
 </code>
 
 #This is just a comment

@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import sys
+import time
 import cStringIO
 
 import libs.string_buffer_util
@@ -61,6 +62,12 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
     """
     The html generation visitor class.
     """
+
+    start_time = None
+    """ The start time value """
+
+    end_time = None
+    """ The end time value """
 
     string_buffer = None
     """ The string buffer """
@@ -118,17 +125,53 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
     @wiki_visitor._visit(wiki_ast.ProgramNode)
     def visit_program_node(self, node):
         if self.visit_index == 0:
+            # retrieves the current recursion limit and saves it
             self.previous_recursion_limit = sys.getrecursionlimit()
+
+            # sets the new recursion limit
             sys.setrecursionlimit(RECURSION_LIMIT)
+
+            # writes the doc type header
             self._write(DOCTYPE_HEADER_VALUE)
+
+            # writes the head
             self._write("<head>")
+
+            # writes the meta header value
             self._write(META_HEADER_VALUE)
+
+            # writes the css header value
             self._write(CSS_HEADER_VALUE)
+
+            # writes the head end
             self._write("</head>")
+
+            # writes the body
             self._write("<body>")
+
+            # opens a paragraph
             self.open_paragraph()
+
+            # in case the start time is not defined
+            if not self.start_time:
+                # sets the start time
+                self.start_time = time.time()
         elif self.visit_index == 1:
+            # sets the end time
+            self.end_time = time.time()
+
+            # calculates the delta time
+            delta_time = self.end_time - self.start_time
+
+            # rounds the delta time
+            delta_time_rounded = round(delta_time, 2)
+
+            # sets the previous recursion limit
             sys.setrecursionlimit(self.previous_recursion_limit)
+
+            self._write("<div class=\"footer\">")
+            self._write("Document generated be colony framework in %s seconds" % str(delta_time_rounded))
+            self._write("</div>")
             self._write("</body>")
 
     @wiki_visitor._visit(wiki_ast.StatementsNode)
