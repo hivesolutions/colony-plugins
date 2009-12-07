@@ -143,7 +143,7 @@ def t_NEWLINE(t):
 # single line comments
 def t_comment(t):
     r"\#[^\n]*\n+"
-    pass
+    t.lexer.lineno += t.value.count("\n")
 
 # ignored characters
 t_ignore = " \t"
