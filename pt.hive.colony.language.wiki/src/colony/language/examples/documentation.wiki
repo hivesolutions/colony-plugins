@@ -20,15 +20,22 @@ An example MVC workflow in Colony could work like the following:
 
 The Colony MVC Framework provides the means to build MVC Modules. MVC Modules encapsulate the underlying components (Models, View, Controller, Presentation Model), this encapsulation serves as a means of enforcing separation between the underlying code and the outside world, but also as deployment unit, as there is an MVC Manager that takes care of injecting modules into each other by looking at their requirements. Modules specify their requirements and features via dependencies and capabilities, just like Colony plugins do:
 
-<code>
+<code settler>
 class Matias:
-    function tobias:
+    function tobias(self, c):
         print("ola")
         a = 3
         b = a * 5
     end
+    # The main documentation function,
+    # that should be used only some times
+    function matias(self, m, d):
+        return d + 1
+    end
 end
 </code>
+
+#This is just a comment
 
 ==== Dependencies ====
 

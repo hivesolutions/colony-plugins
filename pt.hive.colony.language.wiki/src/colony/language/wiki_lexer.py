@@ -78,11 +78,6 @@ def t_NEWLINE(t):
     t.value = newline_count
     return t
 
-# single line comments
-def t_comment(t):
-    r"\#[^\n]*\n+"
-    pass
-
 def t_BOLD(t):
     r"\*\*"
 
@@ -222,6 +217,11 @@ def t_NAME(t):
 
     t.value = current_value
     return t
+
+# single line comments
+def t_comment(t):
+    r"\#[^\n]*\n+"
+    t.lexer.lineno += t.value.count("\n")
 
 # ignored characters
 t_ignore = ""

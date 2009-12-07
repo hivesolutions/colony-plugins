@@ -46,16 +46,18 @@ from settler_lexer import *
 GENERATOR_TYPE = "code"
 """ The generator type """
 
-CLASS_DEFINITION = {"CLASS" : "kw4",
-                    "FUNCTION" : "kw4",
-                    "IF" : "kw4",
-                    "ELSE" : "kw4",
-                    "ELIF" : "kw4",
-                    "END" : "kw4",
-                    "PASS" : "kw4",
+CLASS_DEFINITION = {"CLASS" : "kw5",
+                    "FUNCTION" : "kw5",
+                    "IF" : "kw5",
+                    "ELSE" : "kw5",
+                    "ELIF" : "kw5",
+                    "END" : "kw5",
+                    "PASS" : "kw5",
+                    "RETURN" : "kw5",
                     "NAME" : "kw2",
                     "STRING" : "st0",
-                    "NUMBER" : "kw6"}
+                    "NUMBER" : "kw6",
+                    "COMMENT" : "kw4"}
 """ The class definition map """
 
 class WikiCodeExtension(wiki_extension.WikiExtension):
@@ -173,7 +175,7 @@ class WikiCodeExtension(wiki_extension.WikiExtension):
         # writes the end div code tag
         string_buffer.write("</div>")
 
-        # retrieves the string balue
+        # retrieves the string value
         string_value = string_buffer.get_value()
 
         # returns the string value
