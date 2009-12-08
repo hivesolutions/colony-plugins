@@ -47,8 +47,11 @@ import os.path
 
 import update_thread_util
 
-DEFAULT_UPDATING_TIME = 5
+DEFAULT_UPDATING_TIME = 3
 """ The default updating time """
+
+DEFAULT_LIMIT_COUNTER = 10
+""" The default limit counter """
 
 class JavascriptManagerAutoloader:
     """
@@ -69,6 +72,9 @@ class JavascriptManagerAutoloader:
 
     auto_update_plugin_files_timer = None
     """ The auto update plugin files timer """
+
+    auto_update_plugin_files_timeout_counter = 0
+    """ The auto update plugin files timeout counter """
 
     plugin_id_modified_date_map = {}
     """ The map that relates the plugin id with it's modification date """
@@ -114,7 +120,7 @@ class JavascriptManagerAutoloader:
             # creates the auto update plugin files timer timer thread
             self.auto_update_plugin_files_timer = update_thread_util.UpdateThread()
 
-            # sets the timout in the auto update plugin files timer timer thread
+            # sets the timeout in the auto update plugin files timer timer thread
             self.auto_update_plugin_files_timer.set_timeout(DEFAULT_UPDATING_TIME)
 
             # sets the call method in the auto update plugin files timer timer thread
@@ -124,8 +130,16 @@ class JavascriptManagerAutoloader:
             self.auto_update_plugin_files_timer.start()
 
     def auto_update_plugin_files_handler(self):
-        # updates the plugin files
-        self.update_plugin_files()
+        # in case the auto update plugin files timeout counter is zero
+        if self.auto_update_plugin_files_timeout_counter == 0:
+            # updates the plugin files
+            self.update_plugin_files()
+
+            # resets the auto update plugin files timeout counter
+            self.auto_update_plugin_files_timeout_counter = DEFAULT_LIMIT_COUNTER
+
+        # decrements the auto update plugin files timeout counter
+        self.auto_update_plugin_files_timeout_counter -= 1
 
     def update_plugin_files(self):
         # prints debug message

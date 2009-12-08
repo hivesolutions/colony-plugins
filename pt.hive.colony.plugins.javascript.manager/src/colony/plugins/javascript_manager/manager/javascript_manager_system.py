@@ -50,8 +50,11 @@ import update_thread_util
 import javascript_manager_parser
 import javascript_manager_exceptions
 
-DEFAULT_INDEX_TIME = 5
+DEFAULT_INDEX_TIME = 3
 """ The default index time """
+
+DEFAULT_LIMIT_COUNTER = 10
+""" The default limit counter """
 
 DEFAULT_CHARSET = "Cp1252"
 """ The default charset """
@@ -74,10 +77,13 @@ class JavascriptManager:
     """ The javascript manager last update timestamp """
 
     auto_index_plugin_search_directories_flag = None
-    """ The auto index plugin seach directories flag """
+    """ The auto index plugin search directories flag """
 
     auto_index_plugin_search_directories_timer = None
-    """ The auto index plugin seach directories timer """
+    """ The auto index plugin search directories timer """
+
+    auto_index_plugin_search_directories_timeout_counter = 0
+    """ The auto index plugin search directories timeout counter """
 
     plugin_search_directories_list = []
     """ The plugin search directories list """
@@ -107,6 +113,8 @@ class JavascriptManager:
         self.plugin_descriptors_list = []
         self.plugin_id_plugin_descriptor_map = {}
         self.plugin_search_directories_map = {}
+
+        self.timeout_counter = 0
 
     def set_plugin_search_directories(self):
         # retrieves the resource manager plugin
@@ -235,18 +243,26 @@ class JavascriptManager:
             # creates the auto index plugin search directories timer thread
             self.auto_index_plugin_search_directories_timer = update_thread_util.UpdateThread()
 
-            # sets the timout in the auto index plugin search directories timer thread
+            # sets the timeout in the auto index plugin search directories timer thread
             self.auto_index_plugin_search_directories_timer.set_timeout(DEFAULT_INDEX_TIME)
 
-            # sets the timout in the call method index plugin search directories timer thread
+            # sets the timeout in the call method index plugin search directories timer thread
             self.auto_index_plugin_search_directories_timer.set_call_method(self.auto_index_plugin_search_directories_handler)
 
             # starts the auto index plugin search directories system
             self.auto_index_plugin_search_directories_timer.start()
 
     def auto_index_plugin_search_directories_handler(self):
-        # indexes the plugin search directories
-        self.index_plugin_search_directories()
+        # in case the auto index plugin search directories timeout counter is zero
+        if self.auto_index_plugin_search_directories_timeout_counter == 0:
+            # indexes the plugin search directories
+            self.index_plugin_search_directories()
+
+            # resets the auto index plugin search directories timeout counter
+            self.auto_index_plugin_search_directories_timeout_counter = DEFAULT_LIMIT_COUNTER
+
+        # decrements the auto index plugin search directories timeout counter
+        self.auto_index_plugin_search_directories_timeout_counter -= 1
 
     def index_plugin_search_directories(self):
         # prints debug message
