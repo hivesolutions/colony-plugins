@@ -106,7 +106,7 @@ class ResourceManager:
 
     def __init__(self, resource_manager_plugin):
         """
-        Class constructor.
+        Constructor of the class.
 
         @type resource_manager_plugin: Plugin
         @param resource_manager_plugin: The resource manager plugin.
