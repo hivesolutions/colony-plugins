@@ -241,11 +241,15 @@ class MainConsole:
             console_command_plugin_console_extension_name = console_command_plugin.get_console_extension_name()
 
             output_method(console_command_plugin_current_id_str, False)
-            for x in range(COLUMN_SPACING - len(console_command_plugin_current_id_str)):
+
+            for _index in range(COLUMN_SPACING - len(console_command_plugin_current_id_str)):
                 output_method(" ", False)
+
             output_method(console_command_plugin_console_extension_name, False)
-            for x in range(NAME_COLUMN_SPACING - len(console_command_plugin_console_extension_name)):
+
+            for _index in range(NAME_COLUMN_SPACING - len(console_command_plugin_console_extension_name)):
                 output_method(" ", False)
+
             output_method(console_command_plugin.id + "\n", False)
 
     def process_show(self, args, output_method):
@@ -262,7 +266,7 @@ class MainConsole:
 
             output_method(TABLE_TOP_TEXT)
             output_method(plugin_instance_current_id_str, False)
-            for x in range(COLUMN_SPACING - len(plugin_instance_current_id_str)):
+            for _index in range(COLUMN_SPACING - len(plugin_instance_current_id_str)):
                 output_method(" ", False)
             if plugin_instance.is_loaded():
                 output_method("ACTIVE" + "      ", False)
@@ -281,7 +285,7 @@ class MainConsole:
             plugin_instance_current_id_str = str(plugin_instance_current_id)
 
             output_method(plugin_instance_current_id_str, False)
-            for x in range(COLUMN_SPACING - len(plugin_instance_current_id_str)):
+            for _index in range(COLUMN_SPACING - len(plugin_instance_current_id_str)):
                 output_method(" ", False)
             if plugin_instance.is_loaded():
                 output_method("ACTIVE" + "      ", False)
