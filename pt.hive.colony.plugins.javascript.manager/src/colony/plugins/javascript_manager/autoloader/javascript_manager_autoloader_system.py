@@ -160,133 +160,134 @@ class JavascriptManagerAutoloader:
         # acquires the plugin search directories lock
         plugin_search_directories_lock.acquire()
 
-        # retrieves the plugin search directories map
-        plugin_search_directories_map = javascript_manager_plugin.get_plugin_search_directories_map()
+        try:
+            # retrieves the plugin search directories map
+            plugin_search_directories_map = javascript_manager_plugin.get_plugin_search_directories_map()
 
-        # retrieves the plugin descriptor parser
-        plugin_descriptor_parser_class = javascript_manager_plugin.get_plugin_descriptor_parser()
+            # retrieves the plugin descriptor parser
+            plugin_descriptor_parser_class = javascript_manager_plugin.get_plugin_descriptor_parser()
 
-        # the list of available plugin ids list
-        available_plugin_id_list = []
+            # the list of available plugin ids list
+            available_plugin_id_list = []
 
-        # iterates over all the items in the plugin search directories map
-        for plugin_search_directory_item_file_name, plugin_search_directory_item_full_path in plugin_search_directories_map.items():
-            # in case the plugin search directory item exists
-            if not type(plugin_search_directory_item_full_path) == types.DictionaryType and os.path.exists(plugin_search_directory_item_full_path):
-                # retrieves the file stat value
-                file_stat = os.stat(plugin_search_directory_item_full_path)
+            # iterates over all the items in the plugin search directories map
+            for plugin_search_directory_item_file_name, plugin_search_directory_item_full_path in plugin_search_directories_map.items():
+                # in case the plugin search directory item exists
+                if not type(plugin_search_directory_item_full_path) == types.DictionaryType and os.path.exists(plugin_search_directory_item_full_path):
+                    # retrieves the file stat value
+                    file_stat = os.stat(plugin_search_directory_item_full_path)
 
-                # retrieves the file last modification time
-                modified_date = time.localtime(file_stat[stat.ST_MTIME])
+                    # retrieves the file last modification time
+                    modified_date = time.localtime(file_stat[stat.ST_MTIME])
 
-                # retrieves the file mode
-                mode = file_stat[stat.ST_MODE]
+                    # retrieves the file mode
+                    mode = file_stat[stat.ST_MODE]
 
-                # splits the file name
-                split = os.path.splitext(plugin_search_directory_item_file_name)
+                    # splits the file name
+                    split = os.path.splitext(plugin_search_directory_item_file_name)
 
-                # retrieves the extension name
-                extension_name = split[-1]
+                    # retrieves the extension name
+                    extension_name = split[-1]
 
-                # in case it's not a directory and the extension of the file is .xml (xml file)
-                if not stat.S_ISDIR(mode) and extension_name == ".xml":
-                    # creates the plugin descriptor parser for the xml file
-                    plugin_descriptor_parser = plugin_descriptor_parser_class(plugin_search_directory_item_full_path)
+                    # in case it's not a directory and the extension of the file is .xml (xml file)
+                    if not stat.S_ISDIR(mode) and extension_name == ".xml":
+                        # creates the plugin descriptor parser for the xml file
+                        plugin_descriptor_parser = plugin_descriptor_parser_class(plugin_search_directory_item_full_path)
 
-                    # parses the xml files
-                    plugin_descriptor_parser.parse()
+                        # parses the xml files
+                        plugin_descriptor_parser.parse()
 
-                    # retrieves the plugin descriptor resultant of the parsing
-                    plugin_descriptor = plugin_descriptor_parser.get_value()
+                        # retrieves the plugin descriptor resultant of the parsing
+                        plugin_descriptor = plugin_descriptor_parser.get_value()
 
-                    # retrieves the plugin id from the plugin descriptor
-                    plugin_id = plugin_descriptor.id;
+                        # retrieves the plugin id from the plugin descriptor
+                        plugin_id = plugin_descriptor.id;
 
-                    # in case it is an updated version of the plugin
-                    if plugin_id in self.plugin_id_file_modified_date_map:
-                        # retrieves the current file modified date
-                        current_file_modified_date = self.plugin_id_file_modified_date_map[plugin_id]
+                        # in case it is an updated version of the plugin
+                        if plugin_id in self.plugin_id_file_modified_date_map:
+                            # retrieves the current file modified date
+                            current_file_modified_date = self.plugin_id_file_modified_date_map[plugin_id]
 
-                        # in case the modified date is greater that the current file modified date
-                        if modified_date > current_file_modified_date:
+                            # in case the modified date is greater that the current file modified date
+                            if modified_date > current_file_modified_date:
+                                # prints a log message
+                                self.javascript_manager_autoloader_plugin.debug("Javascript plugin %s updated" % plugin_id)
+
+                                # sets the modified date in the plugin id modified date map
+                                self.plugin_id_modified_date_map[plugin_id] = time.localtime()
+
+                                # sets the modified date in the plugin id file emodified date map
+                                self.plugin_id_file_modified_date_map[plugin_id] = modified_date
+                        elif plugin_id in javascript_manager.plugin_id_plugin_descriptor_map:
                             # prints a log message
-                            self.javascript_manager_autoloader_plugin.debug("Javascript plugin %s updated" % plugin_id)
+                            self.javascript_manager_autoloader_plugin.debug("Javascript plugin %s inserted in autoloading structures" % plugin_id)
 
                             # sets the modified date in the plugin id modified date map
-                            self.plugin_id_modified_date_map[plugin_id] = time.localtime()
+                            self.plugin_id_modified_date_map[plugin_id] = time.localtime(javascript_manager.javascript_manager_last_update_timestamp)
 
                             # sets the modified date in the plugin id file emodified date map
                             self.plugin_id_file_modified_date_map[plugin_id] = modified_date
-                    elif plugin_id in javascript_manager.plugin_id_plugin_descriptor_map:
-                        # prints a log message
-                        self.javascript_manager_autoloader_plugin.debug("Javascript plugin %s inserted in autoloading structures" % plugin_id)
+                        else:
+                            # prints a log message
+                            self.javascript_manager_autoloader_plugin.debug("Javascript plugin %s added" % plugin_id)
 
-                        # sets the modified date in the plugin id modified date map
-                        self.plugin_id_modified_date_map[plugin_id] = time.localtime(javascript_manager.javascript_manager_last_update_timestamp)
+                            # adds the plugin descriptor to the list of plugin descriptors
+                            # in the javascript manager
+                            javascript_manager.plugin_descriptors_list.append(plugin_descriptor)
 
-                        # sets the modified date in the plugin id file emodified date map
-                        self.plugin_id_file_modified_date_map[plugin_id] = modified_date
-                    else:
-                        # prints a log message
-                        self.javascript_manager_autoloader_plugin.debug("Javascript plugin %s added" % plugin_id)
+                            # sets the plugin descriptor in the plugin id plugin descriptor map
+                            javascript_manager.plugin_id_plugin_descriptor_map[plugin_id] = plugin_descriptor
 
-                        # adds the plugin descriptor to the list of plugin descriptors
-                        # in the javascript manager
-                        javascript_manager.plugin_descriptors_list.append(plugin_descriptor)
+                            # sets the modified date in the plugin id modified date map
+                            self.plugin_id_modified_date_map[plugin_id] = time.localtime(javascript_manager.javascript_manager_last_update_timestamp)
 
-                        # sets the plugin descriptor in the plugin id plugin descriptor map
-                        javascript_manager.plugin_id_plugin_descriptor_map[plugin_id] = plugin_descriptor
+                            # sets the modified date in the plugin id file emodified date map
+                            self.plugin_id_file_modified_date_map[plugin_id] = modified_date
 
-                        # sets the modified date in the plugin id modified date map
-                        self.plugin_id_modified_date_map[plugin_id] = time.localtime(javascript_manager.javascript_manager_last_update_timestamp)
+                            # in case the plugin id exists in the plugin id removal date map
+                            if plugin_id in self.plugin_id_removal_date_map:
+                                # unsets the plugin id in the plugin id removal date map
+                                del self.plugin_id_removal_date_map[plugin_id]
 
-                        # sets the modified date in the plugin id file emodified date map
-                        self.plugin_id_file_modified_date_map[plugin_id] = modified_date
+                        # adds the plugin id to the list of available plugins
+                        available_plugin_id_list.append(plugin_id)
 
-                        # in case the plugin id exists in the plugin id removal date map
-                        if plugin_id in self.plugin_id_removal_date_map:
-                            # unsets the plugin id in the plugin id removal date map
-                            del self.plugin_id_removal_date_map[plugin_id]
+            # retrieves the list of not available plugin id
+            not_available_plugin_id_list = [plugin_id for plugin_id in self.plugin_id_modified_date_map if not plugin_id in available_plugin_id_list]
 
-                    # adds the plugin id to the list of available plugins
-                    available_plugin_id_list.append(plugin_id)
+            # iterates over all the not available plugin id
+            # to remove the plugins from the javascript manager
+            for not_available_plugin_id in not_available_plugin_id_list:
+                # prints a log message
+                self.javascript_manager_autoloader_plugin.debug("Javascript plugin %s removed" % not_available_plugin_id)
 
-        # retrieves the list of not available plugin id
-        not_available_plugin_id_list = [plugin_id for plugin_id in self.plugin_id_modified_date_map if not plugin_id in available_plugin_id_list]
+                # retrieves the not available plugin descriptor
+                not_available_plugin_descritor = javascript_manager.plugin_id_plugin_descriptor_map[not_available_plugin_id]
 
-        # iterates over all the not available plugin id
-        # to remove the plugins from the javascript manager
-        for not_available_plugin_id in not_available_plugin_id_list:
-            # prints a log message
-            self.javascript_manager_autoloader_plugin.debug("Javascript plugin %s removed" % not_available_plugin_id)
+                # removes the plugin descriptor to the list of plugin descriptors
+                # in the javascript manager
+                javascript_manager.plugin_descriptors_list.remove(not_available_plugin_descritor)
 
-            # retrieves the not available plugin descriptor
-            not_available_plugin_descritor = javascript_manager.plugin_id_plugin_descriptor_map[not_available_plugin_id]
+                # unsets the plugin descriptor in the plugin id plugin descriptor map
+                del javascript_manager.plugin_id_plugin_descriptor_map[not_available_plugin_id]
 
-            # removes the plugin descriptor to the list of plugin descriptors
-            # in the javascript manager
-            javascript_manager.plugin_descriptors_list.remove(not_available_plugin_descritor)
+                # unsets the modified date in the plugin id modified date map
+                del self.plugin_id_modified_date_map[not_available_plugin_id]
 
-            # unsets the plugin descriptor in the plugin id plugin descriptor map
-            del javascript_manager.plugin_id_plugin_descriptor_map[not_available_plugin_id]
+                # unsets the modified date in the plugin id file modified date map
+                del self.plugin_id_file_modified_date_map[not_available_plugin_id]
 
-            # unsets the modified date in the plugin id modified date map
-            del self.plugin_id_modified_date_map[not_available_plugin_id]
+                # sets the removal date in the plugin id removal date map
+                self.plugin_id_removal_date_map[not_available_plugin_id] = time.localtime()
 
-            # unsets the modified date in the plugin id file modified date map
-            del self.plugin_id_file_modified_date_map[not_available_plugin_id]
+            # updates the timestamp with the javascript manager timestamp
+            self.javascript_manager_last_update_timestamp = javascript_manager.javascript_manager_last_update_timestamp
+        finally:
+            # releases the plugin search directories lock
+            plugin_search_directories_lock.release()
 
-            # sets the removal date in the plugin id removal date map
-            self.plugin_id_removal_date_map[not_available_plugin_id] = time.localtime()
-
-        # updates the timestamp with the javascript manager timestamp
-        self.javascript_manager_last_update_timestamp = javascript_manager.javascript_manager_last_update_timestamp
-
-        # releases the plugin search directories lock
-        plugin_search_directories_lock.release()
-
-        # releases the update plugin lock
-        self.update_plugin_lock.release()
+            # releases the update plugin lock
+            self.update_plugin_lock.release()
 
         # prints debug message
         self.javascript_manager_autoloader_plugin.debug("Ending update of plugin files")
@@ -301,25 +302,26 @@ class JavascriptManagerAutoloader:
         # acquires the update plugin lock
         self.update_plugin_lock.acquire()
 
-        # retrieves the current timestamp
-        current_timestamp = self.javascript_manager_last_update_timestamp
+        try:
+            # retrieves the current timestamp
+            current_timestamp = self.javascript_manager_last_update_timestamp
 
-        # in case it's the first call (timestamp is 0), ignore the request
-        if timestamp == 0:
-            # sets the updated plugins list as empty (initialization)
-            updated_plugins = []
+            # in case it's the first call (timestamp is 0), ignore the request
+            if timestamp == 0:
+                # sets the updated plugins list as empty (initialization)
+                updated_plugins = []
 
-            # sets the removed plugins list as empty (initialization)
-            removed_plugins = []
-        else:
-            # retrieves the list of updated plugins since the timestamp
-            updated_plugins = self.get_updated_plugins_from_local_timestamp(local_timestamp)
+                # sets the removed plugins list as empty (initialization)
+                removed_plugins = []
+            else:
+                # retrieves the list of updated plugins since the timestamp
+                updated_plugins = self.get_updated_plugins_from_local_timestamp(local_timestamp)
 
-            # retrieves the list of removed plugins since the timestamp
-            removed_plugins = self.get_removed_plugins_from_local_timestamp(local_timestamp)
-
-        # releases the update plugin lock
-        self.update_plugin_lock.release()
+                # retrieves the list of removed plugins since the timestamp
+                removed_plugins = self.get_removed_plugins_from_local_timestamp(local_timestamp)
+        finally:
+            # releases the update plugin lock
+            self.update_plugin_lock.release()
 
         # creates the status map for the response
         status_map = {"timestamp" : current_timestamp,

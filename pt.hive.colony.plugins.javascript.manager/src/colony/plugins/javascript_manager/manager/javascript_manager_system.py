@@ -271,29 +271,30 @@ class JavascriptManager:
         # acquires the plugin search directories lock
         self.plugin_search_directories_lock.acquire()
 
-        # creates the current plugin search directories map
-        current_plugin_search_directories_map = {}
+        try:
+            # creates the current plugin search directories map
+            current_plugin_search_directories_map = {}
 
-        # iterates over all the search directories
-        for plugin_search_directory in self.plugin_search_directories_list:
-            # indexes the current search directory
-            self.index_plugin_search_directory(plugin_search_directory, current_plugin_search_directories_map)
+            # iterates over all the search directories
+            for plugin_search_directory in self.plugin_search_directories_list:
+                # indexes the current search directory
+                self.index_plugin_search_directory(plugin_search_directory, current_plugin_search_directories_map)
 
-        # retrieves the old plugin search directories map (for latter removal)
-        old_plugin_search_directories_map = self.plugin_search_directories_map
+            # retrieves the old plugin search directories map (for latter removal)
+            old_plugin_search_directories_map = self.plugin_search_directories_map
 
-        # sets the current plugin search directories map as the
-        # plugin search directories map
-        self.plugin_search_directories_map = current_plugin_search_directories_map
+            # sets the current plugin search directories map as the
+            # plugin search directories map
+            self.plugin_search_directories_map = current_plugin_search_directories_map
 
-        # deletes the old plugin search directories map
-        del old_plugin_search_directories_map
+            # deletes the old plugin search directories map
+            del old_plugin_search_directories_map
 
-        # creates a new timestamp for the update
-        self.javascript_manager_last_update_timestamp = time.time()
-
-        # releases the plugin search directories lock
-        self.plugin_search_directories_lock.release()
+            # creates a new timestamp for the update
+            self.javascript_manager_last_update_timestamp = time.time()
+        finally:
+            # releases the plugin search directories lock
+            self.plugin_search_directories_lock.release()
 
         # prints debug message
         self.javascript_manager_plugin.debug("Ending index of plugin search directories")
