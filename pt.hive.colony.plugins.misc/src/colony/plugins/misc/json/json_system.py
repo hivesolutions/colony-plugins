@@ -52,7 +52,7 @@ class Json:
 
     def __init__(self, json_plugin):
         """
-        Class constructor.
+        Constructor of the class.
 
         @type json_plugin: JsonPlugin
         @param json_plugin: The json plugin.

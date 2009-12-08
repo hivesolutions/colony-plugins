@@ -41,7 +41,7 @@ import colony.plugins.plugin_system
 
 class AutoloaderPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Autoloader plugin
+    The main class for the Autoloader plugin.
     """
 
     id = "pt.hive.colony.plugins.misc.autoloader"

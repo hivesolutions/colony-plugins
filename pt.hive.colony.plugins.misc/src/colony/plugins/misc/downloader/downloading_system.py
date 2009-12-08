@@ -53,7 +53,7 @@ class Downloader:
 
     def __init__(self, downloader_plugin):
         """
-        Class constructor.
+        Constructor of the class.
 
         @type downloader_plugin: DownloaderPlugin
         @param downloader_plugin: The downloader plugin.

@@ -51,12 +51,19 @@ class Autoloader:
     """
 
     autoloader_plugin = None
+    """ The autoloader plugin """
+
     manager = None
+    """ The plugin manager """
 
     continue_flag = True
+    """ The continue flag that controls the autoloading system """
 
     search_directories = []
+    """ The search directories list """
+
     search_directories_information_map = {}
+    """ The search directories information map """
 
     def __init__(self, autoloader_plugin):
         """
@@ -69,7 +76,6 @@ class Autoloader:
         self.autoloader_plugin = autoloader_plugin
         self.manager = autoloader_plugin.manager
 
-        self.continue_flag = True
         self.search_directories = []
 
     def load_autoloader(self):

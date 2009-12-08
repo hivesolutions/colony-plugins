@@ -38,15 +38,25 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
-import stat
 import wx
+import stat
 
-#@todo: review and comment this file
 class BitmapLoader:
+    """
+    Bitmap loader class.
+    """
 
     bitmap_loader_plugin = None
+    """ The bitmap loader plugin """
 
     def __init__(self, bitmap_loader_plugin):
+        """
+        Constructor of the class.
+
+        @type bitmap_loader_plugin: BitmapLoaderPlugin
+        @param bitmap_loader_plugin: The bitmap loader plugin.
+        """
+
         self.bitmap_loader_plugin = bitmap_loader_plugin
 
     def load_icons(self, path, bitmaps_dic, icons_dic):

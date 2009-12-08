@@ -56,7 +56,7 @@ class Gzip:
 
     def __init__(self, parent_plugin):
         """
-        Class constructor.
+        Constructor of the class.
 
         @type parent_plugin: Plugin
         @param parent_plugin: Plugin that owns this class instance.
