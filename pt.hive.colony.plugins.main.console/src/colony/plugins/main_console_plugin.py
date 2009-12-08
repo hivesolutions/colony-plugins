@@ -41,7 +41,7 @@ import colony.plugins.plugin_system
 
 class MainConsolePlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Console Main plugin
+    The main class for the Console Main plugin.
     """
 
     id = "pt.hive.colony.plugins.main.console"
@@ -68,7 +68,7 @@ class MainConsolePlugin(colony.plugins.plugin_system.Plugin):
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
-        console_command_plugins = []
+        self.console_command_plugins = []
         global main_console
         import main_console.console.main_console
         import main_console.console.main_console_test

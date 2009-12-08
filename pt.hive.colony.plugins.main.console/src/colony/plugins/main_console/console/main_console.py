@@ -152,10 +152,10 @@ class MainConsole:
 
     def get_default_output_method(self):
         """
-        Retrieves the default output method
+        Retrieves the default output method.
 
         @rtype: Method
-        @return: The default output method for console
+        @return: The default output method for console.
         """
 
         return self.write
@@ -184,12 +184,12 @@ class MainConsole:
 
     def split_command_line_arguments(self, command_line):
         """
-        Separates the various command line arguments per space or per quotes
+        Separates the various command line arguments per space or per quotes.
 
         @type command_line: String
-        @param command_line: The command line string
+        @param command_line: The command line string.
         @rtype: List
-        @return: The list containing the various command line arguments
+        @return: The list containing the various command line arguments.
         """
 
         # compiles the command line regular expression generating the pattern
