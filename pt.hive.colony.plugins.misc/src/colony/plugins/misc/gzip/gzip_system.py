@@ -51,18 +51,18 @@ class Gzip:
     Provides functions to interact with gzip files.
     """
 
-    parent_plugin = None
-    """ Plugin that owns this class instance """
+    gzip_plugin = None
+    """ The gzip plugin """
 
-    def __init__(self, parent_plugin):
+    def __init__(self, gzip_plugin):
         """
         Constructor of the class.
 
-        @type parent_plugin: Plugin
-        @param parent_plugin: Plugin that owns this class instance.
+        @type gzip_plugin: GzipPlugin
+        @param gzip_plugin: The gzip plugin.
         """
 
-        self.parent_plugin = parent_plugin
+        self.gzip_plugin = gzip_plugin
 
     def gzip_contents(self, contents_string):
         # creates a new string buffer

@@ -51,18 +51,18 @@ class Zip:
     Provides functions to interact with zip files.
     """
 
-    parent_plugin = None
-    """ Plugin that owns this class instance """
+    zip_plugin = None
+    """ The zip plugin """
 
-    def __init__(self, parent_plugin):
+    def __init__(self, zip_plugin):
         """
         Constructor of the class.
 
-        @type parent_plugin: Plugin
-        @param parent_plugin: Plugin that owns this class instance.
+        @type zip_plugin: ZipPlugin
+        @param zip_plugin: The zip plugin.
         """
 
-        self.parent_plugin = parent_plugin
+        self.zip_plugin = zip_plugin
 
     def get_directory_paths(self, file_path):
         """
