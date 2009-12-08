@@ -80,7 +80,7 @@ class IoAdapterCsv:
 
     def __init__(self, io_adapter_csv_plugin):
         """
-        Class constructor.
+        Constructor of the class.
 
         @type io_adapter_csv_plugin: IoAdapterCsvPlugin
         @param io_adapter_csv_plugin: Input output adapter csv plugin.

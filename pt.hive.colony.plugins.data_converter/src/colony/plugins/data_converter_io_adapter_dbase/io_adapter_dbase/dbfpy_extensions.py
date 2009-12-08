@@ -47,7 +47,7 @@ class DbfpyExtensions:
 
     def __init__(self, io_adapter_dbase_plugin):
         """
-        Class constructor.
+        Constructor of the class.
 
         @type io_adapter_dbase_plugin: IoAdapterDbasePlugin
         @param io_adapter_dbase_plugin: Input output adapter dbase plugin.

@@ -64,7 +64,7 @@ class IoAdapterFilesystem:
 
     def __init__(self, io_adapter_filesystem_plugin):
         """
-        Class constructor.
+        Constructor of the class.
 
         @type io_adapter_filesystem_plugin: IoAdapterFilesystemPlugin
         @param io_adapter_filesystem_plugin: Input output adapter filesystem plugin.

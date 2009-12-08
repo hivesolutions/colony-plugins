@@ -106,7 +106,7 @@ class IoAdapterSqlite:
 
     def __init__(self, io_adapter_sqlite_plugin):
         """
-        Class constructor.
+        Constructor of the class.
 
         @type io_adapter_sqlite_plugin: IoAdapterSqlite
         @param io_adapter_sqlite_plugin: Input output adapter sqlite plugin.

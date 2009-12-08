@@ -128,7 +128,7 @@ class DataConverter:
 
     def __init__(self, data_converter_plugin):
         """
-        Class constructor.
+        Constructor of the class.
 
         @type data_converter_plugin: DataConverterPlugin
         @param data_converter_plugin: Data converter plugin.

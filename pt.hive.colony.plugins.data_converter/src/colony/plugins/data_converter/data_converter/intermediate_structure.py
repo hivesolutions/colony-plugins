@@ -73,7 +73,7 @@ class IntermediateStructure:
 
     def __init__(self):
         """
-        Class constructor.
+        Constructor of the class.
         """
 
         self.next_object_id = 1
@@ -325,7 +325,7 @@ class Entity:
 
     def __init__(self, intermediate_structure, object_id, name):
         """
-        Class constructor.
+        Constructor of the class.
 
         @type intermediate_structure: DataConverter
         @param intermediate_structure: The intermediate structure the entity belongs to.

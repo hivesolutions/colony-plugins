@@ -94,7 +94,7 @@ class IoAdapterXml:
 
     def __init__(self, io_adapter_xml_plugin):
         """
-        Class constructor.
+        Constructor of the class.
 
         @type io_adapter_xml_plugin: IoAdapterXmlPlugin
         @param io_adapter_xml_plugin: Input output adapter xml plugin.

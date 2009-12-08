@@ -54,7 +54,7 @@ class IoAdapterPickle:
 
     def __init__(self, io_adapter_pickle_plugin):
         """
-        Class constructor.
+        Constructor of the class.
 
         @type io_adapter_pickle_plugin: IoAdapterPickle
         @param io_adapter_pickle_plugin: Input output adapter pickle plugin.

@@ -84,7 +84,7 @@ class IoAdapterEntityManager:
 
     def __init__(self, io_adapter_entity_manager_plugin):
         """
-        Class constructor.
+        Constructor of the class.
 
         @type io_adapter_entity_manager_plugin: IoAdapterEntityManager
         @param io_adapter_entity_manager_plugin: Input output adapter entity_manager plugin.
