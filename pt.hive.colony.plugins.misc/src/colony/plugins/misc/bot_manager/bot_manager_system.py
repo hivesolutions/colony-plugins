@@ -52,40 +52,29 @@ bot_manager_list_engines                                              - lists th
 bot_manager_list_outputs                                              - lists the available output plugins for the bots"
 """ The help text """
 
-class Bot:
-    bot_id = None
-    bot_engine_plugin = None
-    bot_input_plugin = None
-    bot_output_plugin = None
-
-    def __init__(self, bot_id, bot_engine_plugin, bot_input_plugin, bot_output_plugin):
-        self.bot_id = bot_id
-        self.bot_engine_plugin = bot_engine_plugin
-        self.bot_input_plugin = bot_input_plugin
-        self.bot_output_plugin = bot_output_plugin
-        self.start()
-
-    def start(self):
-        self.bot_input_plugin.register_message_handler(self.bot_id, self.handle_incoming_message)
-
-    def stop(self):
-        print "Stop called for " + self.bot_id
-        self.bot_input_plugin.register_message_handler(self.bot_id, None)
-
-    def handle_incoming_message(self, sender_id, message):
-        response_message = self.bot_engine_plugin.respond(message)
-        print response_message
-        self.bot_output_plugin.send(self.bot_id, sender_id, response_message)
-
-#@todo: comment this class
 class BotManager:
+    """
+    The bot manager class.
+    """
+
+    bot_manager_plugin = None
+    """ The bot manager plugin """
 
     commands = ["bot_manager_list_bots", "bot_manager_start_bot", "bot_manager_stop_bot", "bot_manager_list_inputs", "bot_manager_list_outputs", "bot_manager_list_engines"]
+    """ The commands list """
 
     bots_map = {}
+    """ The bots map """
 
-    def __init__(self, parent_plugin):
-        self.parent_plugin = parent_plugin
+    def __init__(self, bot_manager_plugin):
+        """
+        Constructor of the class.
+
+        @type bot_manager_plugin: BotManagerPlugin
+        @param bot_manager_plugin: The bot manager plugin.
+        """
+
+        self.bot_manager_plugin = bot_manager_plugin
         self.bots_map = {}
 
     def get_console_extension_name(self):
@@ -109,14 +98,14 @@ class BotManager:
             bot_engine_id = args[1]
             bot_input_id = args[2]
             bot_output_id = args[3]
-            condition = bot_engine_id in self.parent_plugin.bot_engine_plugins
-            condition = condition and bot_input_id in self.parent_plugin.bot_input_plugins
-            condition = condition and bot_output_id in self.parent_plugin.bot_output_plugins
+            condition = bot_engine_id in self.bot_manager_plugin.bot_engine_plugins
+            condition = condition and bot_input_id in self.bot_manager_plugin.bot_input_plugins
+            condition = condition and bot_output_id in self.bot_manager_plugin.bot_output_plugins
             condition = condition and not bot_id in self.bots_map
             if condition:
-                bot_engine_plugin = self.parent_plugin.bot_engine_plugins[bot_engine_id]
-                bot_input_plugin = self.parent_plugin.bot_input_plugins[bot_input_id]
-                bot_output_plugin = self.parent_plugin.bot_output_plugins[bot_output_id]
+                bot_engine_plugin = self.bot_manager_plugin.bot_engine_plugins[bot_engine_id]
+                bot_input_plugin = self.bot_manager_plugin.bot_input_plugins[bot_input_id]
+                bot_output_plugin = self.bot_manager_plugin.bot_output_plugins[bot_output_id]
                 self.bots_map[bot_id] = Bot(bot_id, bot_engine_plugin, bot_input_plugin, bot_output_plugin)
         else:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
@@ -136,13 +125,62 @@ class BotManager:
             output_method("* " + bot_id)
 
     def process_bot_manager_list_inputs(self, args, output_method):
-        for bot_input_plugin in self.parent_plugin.bot_input_plugins:
+        for bot_input_plugin in self.bot_manager_plugin.bot_input_plugins:
             output_method(bot_input_plugin)
 
     def process_bot_manager_list_engines(self, args, output_method):
-        for bot_engine_plugin in self.parent_plugin.bot_engine_plugins:
+        for bot_engine_plugin in self.bot_manager_plugin.bot_engine_plugins:
             output_method(bot_engine_plugin)
 
     def process_bot_manager_list_outputs(self, args, output_method):
-        for bot_output_plugin in self.parent_plugin.bot_output_plugins:
+        for bot_output_plugin in self.bot_manager_plugin.bot_output_plugins:
             output_method(bot_output_plugin)
+
+class Bot:
+    """
+    The bot class.
+    """
+
+    bot_id = None
+    """ The bot id """
+
+    bot_engine_plugin = None
+    """ The bot engine plugin """
+
+    bot_input_plugin = None
+    """ The bot input plugin """
+
+    bot_output_plugin = None
+    """ The bot output plugin """
+
+    def __init__(self, bot_id, bot_engine_plugin, bot_input_plugin, bot_output_plugin):
+        """
+        Constructor fo the class.
+
+        @type bot_id: int
+        @param bot_id: The bot id.
+        @type bot_engine_plugin: BotEnginePlugin
+        @param bot_engine_plugin: The bot engine plugin.
+        @type bot_input_plugin: BotInputPlugin
+        @param bot_input_plugin: The bot input plugin.
+        @type bot_output_plugin: BotOuputPlugin
+        @param bot_output_plugin: The bot output plugin.
+        """
+
+        self.bot_id = bot_id
+        self.bot_engine_plugin = bot_engine_plugin
+        self.bot_input_plugin = bot_input_plugin
+        self.bot_output_plugin = bot_output_plugin
+        self.start()
+
+    def start(self):
+        self.bot_input_plugin.register_message_handler(self.bot_id, self.handle_incoming_message)
+
+    def stop(self):
+        print "Stop called for " + self.bot_id
+        self.bot_input_plugin.register_message_handler(self.bot_id, None)
+
+    def handle_incoming_message(self, sender_id, message):
+        response_message = self.bot_engine_plugin.respond(message)
+        print response_message
+        self.bot_output_plugin.send(self.bot_id, sender_id, response_message)

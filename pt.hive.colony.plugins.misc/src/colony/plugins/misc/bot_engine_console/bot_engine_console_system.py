@@ -37,19 +37,30 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-#@todo: comment this file
 class BotEngineConsole:
+    """
+    The bot engine console class.
+    """
 
-    parent_plugin = None
+    bot_engine_console_plugin = None
+    """ The bot engine console plugin """
 
     message_plugin = None
+    """ The message plugin """
 
-    def __init__(self, parent_plugin):
-        self.parent_plugin = parent_plugin
+    def __init__(self, bot_engine_console_plugin):
+        """
+        Constructor of the class.
+
+        @type bot_engine_console_plugin: BotEngineConsolePlugin
+        @param bot_engine_console_plugin: The bot engine console plugin.
+        """
+
+        self.bot_engine_console_plugin = bot_engine_console_plugin
 
     def respond(self, message):
         self.message_buffer = ""
-        self.parent_plugin.console_plugin.process_command_line(message, self.output_method)
+        self.bot_engine_console_plugin.console_plugin.process_command_line(message, self.output_method)
         return self.message_buffer
 
     def output_method(self, text, new_line = True):

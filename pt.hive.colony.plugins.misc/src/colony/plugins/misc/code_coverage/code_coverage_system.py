@@ -40,10 +40,21 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import figleaf
 
 class CodeCoverage:
+    """
+    The code coverage class.
+    """
 
     code_coverage_plugin = None
+    """ The code coverage plugin """
 
     def __init__(self, code_coverage_plugin):
+        """
+        Constructor of the class.
+
+        @type code_coverage_plugin: CodeCoveragePlugin
+        @param code_coverage_plugin: The code coverage plugin.
+        """
+
         self.code_coverage_plugin = code_coverage_plugin
 
     def start_code_coverage(self):
