@@ -42,7 +42,7 @@ import colony.plugins.plugin_system
 #@todo: comment this class
 class StockQuoteWebServiceClientPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Stock Quote Web Service Client Plugin
+    The main class for the Stock Quote Web Service Client Plugin.
     """
 
     id = "pt.hive.colony.plugins.misc.stock_quote_webservice_client"

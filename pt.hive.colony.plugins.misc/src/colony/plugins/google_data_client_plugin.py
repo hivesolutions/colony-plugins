@@ -41,7 +41,7 @@ import colony.plugins.plugin_system
 
 class GoogleDataClientPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Google Data Client plugin
+    The main class for the Google Data Client plugin.
     """
 
     id = "pt.hive.colony.plugins.misc.google_data_client"

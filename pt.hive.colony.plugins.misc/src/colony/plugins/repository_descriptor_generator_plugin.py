@@ -41,7 +41,7 @@ import colony.plugins.plugin_system
 
 class RepositoryDescriptorGeneratorPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Repository Descriptor Generator plugin
+    The main class for the Repository Descriptor Generator plugin.
     """
 
     id = "pt.hive.colony.plugins.misc.repository_descriptor_generator"

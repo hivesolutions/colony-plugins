@@ -42,7 +42,7 @@ import colony.plugins.decorators
 
 class IceServiceManagerPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Ice Service Manager plugin
+    The main class for the Ice Service Manager plugin.
     """
 
     id = "pt.hive.colony.plugins.misc.ice_service_manager"

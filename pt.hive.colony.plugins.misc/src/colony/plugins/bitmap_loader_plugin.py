@@ -41,7 +41,7 @@ import colony.plugins.plugin_system
 
 class BitmapLoaderPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Bitmap Loader plugin
+    The main class for the Bitmap Loader plugin.
     """
 
     id = "pt.hive.colony.plugins.misc.bitmap_loader"

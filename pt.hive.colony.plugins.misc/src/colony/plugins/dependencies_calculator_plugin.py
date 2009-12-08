@@ -41,7 +41,7 @@ import colony.plugins.plugin_system
 
 class DependenciesCalculationPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Dependencies Calculator plugin
+    The main class for the Dependencies Calculator plugin.
     """
 
     id = "pt.hive.colony.plugins.misc.dependencies_calculator"

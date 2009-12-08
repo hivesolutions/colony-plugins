@@ -41,7 +41,7 @@ import colony.plugins.plugin_system
 
 class IceHelperPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Ice Helper plugin
+    The main class for the Ice Helper plugin.
     """
 
     id = "pt.hive.colony.plugins.misc.ice_helper"

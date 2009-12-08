@@ -41,7 +41,7 @@ import colony.plugins.plugin_system
 
 class CommandExecutionPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Command Execution plugin
+    The main class for the Command Execution plugin.
     """
 
     id = "pt.hive.colony.plugins.misc.command_execution"

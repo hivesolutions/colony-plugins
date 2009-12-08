@@ -42,7 +42,7 @@ import colony.plugins.plugin_system
 #@todo: comment this class
 class BotManagerPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Bot Manager plugin
+    The main class for the Bot Manager plugin.
     """
 
     id = "pt.hive.colony.plugins.misc.bot_manager"

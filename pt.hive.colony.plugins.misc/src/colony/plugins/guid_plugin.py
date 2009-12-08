@@ -41,7 +41,7 @@ import colony.plugins.plugin_system
 
 class GuidPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Guid plugin
+    The main class for the Guid plugin.
     """
 
     id = "pt.hive.colony.plugins.misc.guid"

@@ -41,7 +41,7 @@ import colony.plugins.plugin_system
 
 class CodeCoveragePlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Code Coverage plugin
+    The main class for the Code Coverage plugin.
     """
 
     id = "pt.hive.colony.plugins.misc.code_coverage"

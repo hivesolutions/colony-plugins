@@ -42,7 +42,7 @@ import colony.plugins.decorators
 
 class SchedulerPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Scheduler plugin
+    The main class for the Scheduler plugin.
     """
 
     id = "pt.hive.colony.plugins.misc.scheduler"

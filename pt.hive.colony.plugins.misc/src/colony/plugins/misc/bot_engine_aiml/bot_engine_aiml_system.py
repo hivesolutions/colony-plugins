@@ -53,12 +53,16 @@ bot_engine_aiml_send <message>     - sends a message to the AIML bot engine"
 
 #@todo: comment this file
 class BotEngineAIML:
+    """
+    The bot engine AIML class.
+    """
 
     parent_plugin = None
 
     commands = ["bot_engine_aiml_load_brain", "bot_engine_aiml_teach_brain", "bot_engine_aiml_send"]
 
     aiml_engine = None
+    """ The aiml engine """
 
     def __init__(self, parent_plugin):
         self.parent_plugin = parent_plugin

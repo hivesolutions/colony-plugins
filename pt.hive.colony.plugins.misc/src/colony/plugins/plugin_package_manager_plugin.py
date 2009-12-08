@@ -41,7 +41,7 @@ import colony.plugins.plugin_system
 
 class PluginPackageManagerPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Plugin Package Manager plugin
+    The main class for the Plugin Package Manager plugin.
     """
 
     id = "pt.hive.colony.plugins.misc.plugin_package_manager"

@@ -42,7 +42,7 @@ import colony.plugins.decorators
 
 class SvnPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Svn plugin
+    The main class for the Svn plugin.
     """
 
     id = "pt.hive.colony.plugins.misc.svn"

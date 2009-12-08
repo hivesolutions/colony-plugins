@@ -41,7 +41,7 @@ import colony.plugins.plugin_system
 
 class ExecutionEnvironmentPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Execution Environment plugin
+    The main class for the Execution Environment plugin.
     """
 
     id = "pt.hive.colony.plugins.misc.execution_environment"

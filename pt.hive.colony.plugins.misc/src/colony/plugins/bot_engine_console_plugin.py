@@ -41,7 +41,7 @@ import colony.plugins.plugin_system
 
 class BotEngineConsolePlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Bot Engine Console plugin
+    The main class for the Bot Engine Console plugin.
     """
 
     id = "pt.hive.colony.plugins.misc.bot_engine_console"

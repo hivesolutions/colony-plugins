@@ -41,7 +41,7 @@ import colony.plugins.plugin_system
 
 class TimerPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Timer plugin
+    The main class for the Timer plugin.
     """
 
     id = "pt.hive.colony.plugins.misc.timer"

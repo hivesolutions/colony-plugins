@@ -41,7 +41,7 @@ import colony.plugins.plugin_system
 
 class JabberIceServicePlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Jabber Ice Service plugin
+    The main class for the Jabber Ice Service plugin.
     """
 
     id = "pt.hive.colony.plugins.misc.jabber_ice_service"

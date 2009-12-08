@@ -41,7 +41,7 @@ import colony.plugins.plugin_system
 
 class JsonPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Json plugin
+    The main class for the Json plugin.
     """
 
     id = "pt.hive.colony.plugins.misc.json"

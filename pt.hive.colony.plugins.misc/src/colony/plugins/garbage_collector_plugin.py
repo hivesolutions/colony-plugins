@@ -41,7 +41,7 @@ import colony.plugins.plugin_system
 
 class GarbageCollectorPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Garbage Collector plugin
+    The main class for the Garbage Collector plugin.
     """
 
     id = "pt.hive.colony.plugins.misc.garbage_collector"

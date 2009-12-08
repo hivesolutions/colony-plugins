@@ -41,7 +41,7 @@ import colony.plugins.plugin_system
 
 class BotEngineAIMLPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Bot Engine AIML plugin
+    The main class for the Bot Engine AIML plugin.
     """
 
     id = "pt.hive.colony.plugins.misc.bot_engine_aiml"

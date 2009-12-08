@@ -41,7 +41,7 @@ import colony.plugins.plugin_system
 
 class ZipPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Zip plugin
+    The main class for the Zip plugin.
     """
 
     id = "pt.hive.colony.plugins.misc.zip"
