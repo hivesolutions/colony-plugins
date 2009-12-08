@@ -68,11 +68,11 @@ XML_VERSION_VALUE = "xml_version"
 
 XML_ENCODING_VALUE = "xml_encoding"
 
-FIRST_IDENTATION_LEVEL = 0
-""" The number identations that are applied to the first entry level """
+FIRST_INDENTATION_LEVEL = 0
+""" The number indentations that are applied to the first entry level """
 
-IDENTATION_TOKEN = " "
-""" The token that will be used to apply an identation """
+INDENTATION_TOKEN = " "
+""" The token that will be used to apply an indentation """
 
 DEFAULT_BEAUTIFY_SETTING = False
 """ Boolean indicating if the output xml file should be beautified """
@@ -166,12 +166,12 @@ class IoAdapterXml:
         self.write_to_file(output_file, xml_start_tag, xml_encoding)
 
         # saves the root entity
-        self.save_entity(intermediate_structure, options, output_file, root_entity, FIRST_IDENTATION_LEVEL)
+        self.save_entity(intermediate_structure, options, output_file, root_entity, FIRST_INDENTATION_LEVEL)
 
         # closes the xml file
         output_file.close()
 
-    def save_entity(self, intermediate_structure, options, output_file, entity, identation_level):
+    def save_entity(self, intermediate_structure, options, output_file, entity, indentation_level):
         # extracts the non-mandatory options
         entity_meta_attributes_map = options.get(ENTITY_META_ATTRIBUTES_VALUE, {})
         beautify = options.get(BEAUTIFY_VALUE, DEFAULT_BEAUTIFY_SETTING)
@@ -191,7 +191,7 @@ class IoAdapterXml:
         # creates the entity's start tag, indenting and breaking the line in case beautification is enabled
         entity_start_tag = XML_NODE_START_TAG_FORMAT % (entity_name, entity_meta_attributes)
         if beautify:
-            entity_start_tag = IDENTATION_TOKEN * identation_level + entity_start_tag + "\n"
+            entity_start_tag = INDENTATION_TOKEN * indentation_level + entity_start_tag + "\n"
 
         # writes the entity start tag to the output file
         self.write_to_file(output_file, entity_start_tag, xml_encoding)
@@ -209,19 +209,19 @@ class IoAdapterXml:
         for attribute_name, attribute_value in attribute_name_values:
             if type(attribute_value) == types.ListType:
                 for attribute_value_entity in attribute_value:
-                    self.save_entity_attribute(intermediate_structure, options, output_file, entity, attribute_name, attribute_value_entity, identation_level + 1)
+                    self.save_entity_attribute(intermediate_structure, options, output_file, entity, attribute_name, attribute_value_entity, indentation_level + 1)
             else:
-                self.save_entity_attribute(intermediate_structure, options, output_file, entity, attribute_name, attribute_value, identation_level + 1)
+                self.save_entity_attribute(intermediate_structure, options, output_file, entity, attribute_name, attribute_value, indentation_level + 1)
 
         # creates the entity's end tag, indenting and breaking the line in case beautification is enabled
         entity_end_tag = XML_NODE_END_TAG_FORMAT % entity_name
         if beautify:
-            entity_end_tag = IDENTATION_TOKEN * identation_level + entity_end_tag + "\n"
+            entity_end_tag = INDENTATION_TOKEN * indentation_level + entity_end_tag + "\n"
 
         # writes the entity's end tag to the output file
         self.write_to_file(output_file, entity_end_tag, xml_encoding)
 
-    def save_entity_attribute(self, intermediate_structure, options, output_file, entity, attribute_name, attribute_value, identation_level):
+    def save_entity_attribute(self, intermediate_structure, options, output_file, entity, attribute_name, attribute_value, indentation_level):
         # extracts the non-mandatory options
         beautify = options.get(BEAUTIFY_VALUE, DEFAULT_BEAUTIFY_SETTING)
         mandatory_tags = options.get(MANDATORY_TAGS_VALUE, [])
@@ -229,7 +229,7 @@ class IoAdapterXml:
 
         # calls the save entity function again in case the attribute is an entity
         if type(attribute_value) == types.InstanceType:
-            self.save_entity(intermediate_structure, options, output_file, attribute_value, identation_level)
+            self.save_entity(intermediate_structure, options, output_file, attribute_value, indentation_level)
         else:
             attribute_tag = None
 
@@ -242,7 +242,7 @@ class IoAdapterXml:
 
             # indents and breaks the line in case beautification is enabled
             if attribute_tag and beautify:
-                attribute_tag = IDENTATION_TOKEN * identation_level + attribute_tag + "\n"
+                attribute_tag = INDENTATION_TOKEN * indentation_level + attribute_tag + "\n"
 
             # writes the attribute tag to the output file
             if attribute_tag:
