@@ -37,46 +37,35 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import wiki_parser
-import wiki_visitor
-import wiki_extension_system
-import wiki_html_generation
+class WikiException(Exception):
+    """
+    The wiki exception class.
+    """
 
-# opens the wiki file
-wiki_file = open("examples/documentation.wiki")
+    pass
 
-# reads the wiki file contents
-wiki_file_contents = wiki_file.read()
+class InvalidTagName(WikiException):
+    """
+    The invalid tag name class.
+    """
 
-# closes the wiki file
-wiki_file.close()
+    def __init__(self, message):
+        """
+        Constructor of the class.
 
-# strips the wiki file contents (to remove extra spaces and lines)
-wiki_file_contents = wiki_file_contents.strip()
+        @type message: String
+        @param message: The message to be printed.
+        """
 
-# parses the javascript file retrieving the result
-parse_result = wiki_parser.parser.parse(wiki_file_contents)
+        SettlerException.__init__(self)
+        self.message = message
 
-# creates a new extension manager
-extension_manager = wiki_extension_system.ExtensionManager(["./extensions"])
-extension_manager.start_logger()
-extension_manager.load_system()
+    def __str__(self):
+        """
+        Returns the string representation of the class.
 
-visitor = wiki_visitor.Visitor()
+        @rtype: String
+        @return: The string representation of the class.
+        """
 
-generation_visitor = wiki_html_generation.HtmlGenerationVisitor()
-generation_visitor.set_extension_manager(extension_manager)
-
-parse_result.accept(visitor)
-parse_result.accept_double(generation_visitor)
-
-html_value = generation_visitor.get_string_buffer().getvalue()
-
-# opens the html file
-html_file = open("test.html", "w+")
-
-# writes the html value to the html file
-html_file.write(html_value)
-
-# closes the html file
-html_file.close()
+        return "Invalid tag name: %s" % self.message

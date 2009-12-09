@@ -190,7 +190,7 @@ def p_list_item_bullet(t):
     # creates the list node
     list_node = wiki_ast.BulletListNode()
 
-    # sets the identation value in the list node
+    # sets the indentation value in the list node
     list_node.set_indentation_value(indentation_value)
 
     t[0] = list_node
@@ -207,7 +207,7 @@ def p_list_item_ordered(t):
     # creates the list node
     list_node = wiki_ast.OrderedListNode()
 
-    # sets the identation value in the list node
+    # sets the indentation value in the list node
     list_node.set_indentation_value(indentation_value)
 
     t[0] = list_node

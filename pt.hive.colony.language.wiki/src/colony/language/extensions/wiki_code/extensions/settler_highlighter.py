@@ -60,7 +60,7 @@ class WikiCodeGenerator:
 
     def __init__(self):
         """
-        The class constructor.
+        Constructor of the class.
         """
 
         pass

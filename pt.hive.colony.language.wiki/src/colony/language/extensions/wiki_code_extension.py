@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import ply
 
-import wiki_extension
+import wiki_extension_system
 
 from wiki_code.extensions.settler_lexer import *
 
@@ -60,23 +60,34 @@ CLASS_DEFINITION = {"CLASS" : "kw5",
                     "COMMENT" : "kw4"}
 """ The class definition map """
 
-class WikiCodeExtension(wiki_extension.WikiExtension):
+class WikiCodeExtension(wiki_extension_system.WikiExtension):
     """
     The wiki code extension class.
     """
 
-    extension_id = "pt.hive.colony.language.wiki.extensions.code"
+    id = "pt.hive.colony.language.wiki.extensions.code"
     """ The extension id """
 
-    extension_version = "1.0.0"
-    """ The extension version """
+    name = "Code Generation Plugin"
+    """ The name of the extension """
 
-    def __init__(self):
-        """
-        The class constructor.
-        """
+    short_name = "Code Generation"
+    """ The short name of the extension """
 
-        pass
+    description = "Extension for code highlighting generation"
+    """ The description of the extension """
+
+    version = "1.0.0"
+    """ The version of the extension """
+
+    capabilities = ["generator"]
+    """ The capabilities of the extension """
+
+    capabilities_allowed = []
+    """ The capabilities allowed by the extension """
+
+    dependencies = []
+    """ The dependencies of the extension """
 
     def get_generator_type(self):
         """

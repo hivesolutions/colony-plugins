@@ -45,6 +45,7 @@ import libs.string_buffer_util
 
 import wiki_ast
 import wiki_visitor
+import wiki_exceptions
 
 DOCTYPE_HEADER_VALUE = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">"
 """ The doctype header value """
@@ -71,6 +72,9 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
 
     string_buffer = None
     """ The string buffer """
+
+    extension_manager = None
+    """ The extension manager """
 
     paragraph_open = False
     """ The paragraph open flag """
@@ -109,6 +113,26 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
         """
 
         self.string_buffer = string_buffer
+
+    def get_extension_manager(self):
+        """
+        Retrieves the extension manager.
+
+        @rtype: ExtensionManager
+        @return: The extension manager.
+        """
+
+        return self.extension_manager
+
+    def set_extension_manager(self, extension_manager):
+        """
+        Sets the string buffer.
+
+        @type extension_manager: ExtensionManager
+        @param extension_manager: The extension manager.
+        """
+
+        self.extension_manager = extension_manager
 
     @wiki_visitor._visit(wiki_ast.AstNode)
     def visit_ast_node(self, node):
@@ -328,16 +352,34 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
     @wiki_visitor._visit(wiki_ast.TagNode)
     def visit_tag_node(self, node):
         if self.visit_index == 0:
-            import extensions.wiki_code_extension
+            # retrieves the generator extensions
+            generator_extensions = self.extension_manager.get_extensions_by_capability("generator")
 
-            # creates a new wiki code extension
-            wiki_code_extension = extensions.wiki_code_extension.WikiCodeExtension()
+            # splits the node tag name
+            node_tag_name_splitted = node.tag_name.split()
 
-            # generates the html for the given tag node
-            html = wiki_code_extension.generate_html(node)
+            # retrieves the node tag name splitted length
+            node_tag_name_splitted_length = len(node_tag_name_splitted)
 
-            # writes the html to the buffer
-            self._write(html)
+            # in case the length of the node tag name
+            # splitted is less than one
+            if node_tag_name_splitted_length < 1:
+                # raisers the invalid tag name exception
+                wiki_exceptions.InvalidTagName("tag name is not valid: " + node.tag_name)
+
+            # retrieves the node tag value
+            node_tag_value = node_tag_name_splitted[0]
+
+            # retrieves the generator extensions for the given tag
+            tag_generator_extensions = [extension for extension in generator_extensions if extension.get_generator_type() == node_tag_value]
+
+            # iterates over all the tag generator extensions
+            for tag_generator_extension in tag_generator_extensions:
+                # generates the html for the given tag node
+                html = tag_generator_extension.generate_html(node)
+
+                # writes the html to the buffer
+                self._write(html)
 
     def _write(self, string_value):
         """
