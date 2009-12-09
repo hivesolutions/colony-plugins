@@ -99,5 +99,28 @@ class EmailPlugin(colony.plugins.plugin_system.Plugin):
     def get_help(self):
         return self.console_email.get_help()
 
-    def send_email(self, email_sender, email_receiver, name_sender, name_receiver, subject, containts, smtp_server, smtp_login, smtp_password):
-        self.email.send_email(email_sender, email_receiver, name_sender, name_receiver, subject, containts, smtp_server, smtp_login, smtp_password)
+    def send_email(self, email_sender, email_receiver, name_sender, name_receiver, subject, contents, smtp_server, smtp_login, smtp_password):
+        """
+        Sends an email for the given configuration.
+
+        @type email_sender: String
+        @param email_sender: The sender of the email.
+        @type email_receiver: String
+        @param email_receiver: The receiver of the email.
+        @type name_sender: String
+        @param name_sender: The name of the sender.
+        @type name_receiver: String
+        @param name_receiver: The name of the receiver.
+        @type subject: String
+        @param subject: The subject of the email.
+        @type contents: String
+        @param contents: The contents of the email.
+        @type smtp_server: String
+        @param smtp_server: The smtp server to be used when sending the email.
+        @type smtp_login: String
+        @param smtp_login: The login to be used in the server authentication.
+        @type smtp_password: String
+        @param smtp_password: The password to be used in the server authentication.
+        """
+
+        self.email.send_email(email_sender, email_receiver, name_sender, name_receiver, subject, contents, smtp_server, smtp_login, smtp_password)

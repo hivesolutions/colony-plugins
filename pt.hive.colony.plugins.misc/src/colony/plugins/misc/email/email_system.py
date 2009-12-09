@@ -40,6 +40,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import base64
 import smtplib
 
+DEFAULT_SMTP_SERVER = "smtp_server"
+""" The default smtp server """
+
 HEADER_TEMPLATE = "From: (%s) %s\n\
 To: (%s) %s\n\
 Subject: %s\n"
@@ -63,9 +66,40 @@ class Email:
 
         self.email_plugin = email_plugin
 
-    def send_email(self, email_sender = "none", email_receiver = "none", name_sender = "none", name_receiver = "none", subject = "none", containts = "none", smtp_server = "none", smtp_login = "none", smtp_password = "none"):
+    def send_email(self, email_sender = "none", email_receiver = "none", name_sender = "none", name_receiver = "none", subject = "none", contents = "none", smtp_server = "none", smtp_login = "none", smtp_password = "none"):
+        """
+        Sends an email for the given configuration.
+
+        @type email_sender: String
+        @param email_sender: The sender of the email.
+        @type email_receiver: String
+        @param email_receiver: The receiver of the email.
+        @type name_sender: String
+        @param name_sender: The name of the sender.
+        @type name_receiver: String
+        @param name_receiver: The name of the receiver.
+        @type subject: String
+        @param subject: The subject of the email.
+        @type contents: String
+        @param contents: The contents of the email.
+        @type smtp_server: String
+        @param smtp_server: The smtp server to be used when sending the email.
+        @type smtp_login: String
+        @param smtp_login: The login to be used in the server authentication.
+        @type smtp_password: String
+        @param smtp_password: The password to be used in the server authentication.
+        """
+
+        # retrieves the service configuration
+        service_configuration = self.email_plugin.get_configuration_property("server_configuration").get_data()
+
+        # in case the smtp server is not defined
+        if not smtp_server:
+            # retrieves the smtp server from configuration
+            smtp_server = service_configuration.get("smtp_server", DEFAULT_SMTP_SERVER)
+
         # establishes the connection with the smtp server
-        server = smtplib.SMTP("hive.pt")
+        server = smtplib.SMTP(smtp_server)
 
         # in case there is a login and a password defined
         if not smtp_login == "none" and not smtp_password == "none":
@@ -75,12 +109,20 @@ class Email:
             # encodes the passphrase into base 64
             base64_passphrase = base64.b64encode(passphrase)
 
+            # sets the authentication method
             server.docmd("AUTH PLAIN")
+
+            # sets the passphrase
             server.docmd(base64_passphrase)
 
+        # creates the header from the header template
         header = HEADER_TEMPLATE % (name_sender, email_sender, name_receiver, email_receiver, subject)
 
-        final_containts = header + containts
+        # creates the final contents
+        final_contents = header + contents
 
-        server.sendmail(email_sender, email_receiver, final_containts)
+        # sends the mail
+        server.sendmail(email_sender, email_receiver, final_contents)
+
+        # quits the server
         server.quit()
