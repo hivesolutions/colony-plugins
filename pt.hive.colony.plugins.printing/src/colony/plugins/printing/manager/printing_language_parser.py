@@ -88,7 +88,7 @@ class PrintingLanguageParser(Parser):
     """ The file path """
 
     string = None
-    """ The string containts """
+    """ The string contents """
 
     printing_document = None
     """ The printing document """
