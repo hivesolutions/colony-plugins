@@ -37,10 +37,12 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import libs.extension_system
+
 import wiki_parser
 import wiki_visitor
-import wiki_extension_system
 import wiki_html_generation
+import wiki_extension_system
 
 # opens the wiki file
 wiki_file = open("examples/documentation.wiki")
@@ -58,7 +60,7 @@ wiki_file_contents = wiki_file_contents.strip()
 parse_result = wiki_parser.parser.parse(wiki_file_contents)
 
 # creates a new extension manager
-extension_manager = wiki_extension_system.ExtensionManager(["./extensions"])
+extension_manager = libs.extension_system.ExtensionManager(["./extensions"])
 extension_manager.set_extension_class(wiki_extension_system.WikiExtension)
 extension_manager.start_logger()
 extension_manager.load_system()
