@@ -41,11 +41,23 @@ import sys
 import re
 
 COMMAND_EXCEPTION_MESSAGE = "there was an exception"
+""" The command exception message """
+
 INVALID_COMMAND_MESSAGE = "invalid command"
+""" The invalid command message """
+
 INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
+""" The invalid number arguments message """
+
 INVALID_PLUGIN_ID_MESSAGE = "invalid plugin id"
+""" The invalid plugin id message """
+
 ERROR_IN_HCS_SCRIPT = "there is an error in the hcs script"
+""" The error in hcs script message """
+
 CARET = ">>"
+""" The caret to be used in the console display """
+
 HELP_TEXT = "### PLUGIN SYSTEM HELP ###\n\
 help [extension-id] - shows this message or the referred console extension help message\n\
 helpall             - shows the help message of all the loaded console extensions\n\
@@ -60,10 +72,19 @@ load <plugin-id>    - loads a plugin\n\
 unload <plugin-id>  - unloads a plugin\n\
 exec <file-path>    - executes the given hcs script\n\
 exit                - exits the system"
+""" The help text """
+
 TABLE_TOP_TEXT = "ID      STATUS      PLUGIN ID"
+""" The table top text """
+
 EXTENSION_TABLE_TOP_TEXT = "ID      NAME                        PLUGIN ID"
+""" The extension table top text """
+
 COLUMN_SPACING = 8
+""" The column spacing """
+
 NAME_COLUMN_SPACING = 28
+""" The name column spacing """
 
 COMMAND_LINE_REGEX = "\"[^\"]*\"|[^ \s]+"
 """ The regular expression to retrieve the command line arguments """
@@ -71,23 +92,41 @@ COMMAND_LINE_REGEX = "\"[^\"]*\"|[^ \s]+"
 ID_REGEX = "[0-9]+"
 """ The regular expression to retrieve the id of the plugin """
 
-#@todo: review and comment this file
 class MainConsole:
-
-    commands = ["help", "helpall", "extensions", "show", "showall", "info", "infoall", "add", "remove", "load", "unload", "exec", "exit"]
+    """
+    The main console class.
+    """
 
     main_console_plugin = None
+    """ The main console plugin """
+
+    commands = ["help", "helpall", "extensions", "show", "showall", "info", "infoall", "add", "remove", "load", "unload", "exec", "exit"]
+    """ The commands list """
+
     manager = None
+    """ The plugin manager """
 
     continue_flag = True
+    """ The continue flag, used to control the shutdown of the plugin """
 
     def __init__(self, main_console_plugin):
+        """
+        Constructor of the class.
+
+        @type main_console_plugin: MainConsolePlugin
+        @param main_console_plugin: The main console plugin.
+        """
+
         self.main_console_plugin = main_console_plugin
         self.manager = main_console_plugin.manager
 
         self.continue_flag = True
 
     def load_console(self):
+        """
+        Loads the console system.
+        """
+
         # notifies the ready semaphore
         self.main_console_plugin.release_ready_semaphore()
 
@@ -110,12 +149,30 @@ class MainConsole:
             self.process_command_line(line)
 
     def unload_console(self):
+        """
+        Unloads the console system.
+        """
+
         self.continue_flag = False
 
     def process_command_line(self, command_line, output_method = None):
+        """
+        Processes the given command line, with the given output method.
+
+        @type command_line: String
+        @param command_line: The command line to be processed.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @rtype: bool
+        @return: If the processing of the command line was successful.
+        """
+
+        # in case there is no output method defined
         if not output_method:
+            # uses the write function as the output method
             output_method = self.write
 
+        # splits the command line arguments
         line_split = self.split_command_line_arguments(command_line)
 
         # in case the line is not empty
@@ -205,7 +262,19 @@ class MainConsole:
         return line_split
 
     def write(self, text, new_line = True):
+        """
+        Writes the given text to the standard output,
+        may use a newline or not.
+
+        @type text: String
+        @param text: The text to be written to the standard output.
+        @type new_line: bool
+        @param new_line: If the text should be suffixed with a newline.
+        """
+
+        # in case a newline should be appended
         if new_line:
+            # prints the text
             print text
         else:
             # writes the text contents
@@ -215,6 +284,16 @@ class MainConsole:
             sys.stdout.flush()
 
     def process_help(self, args, output_method):
+        """
+        Processes the help command, with the given
+        arguments and output method.
+
+        @type args: List
+        @param args: The arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        """
+
         if len(args) < 1:
             output_method(HELP_TEXT)
         else:
@@ -226,12 +305,32 @@ class MainConsole:
                     output_method(console_command_plugin.get_help())
 
     def process_helpall(self, args, output_method):
+        """
+        Processes the help all command, with the given
+        arguments and output method.
+
+        @type args: List
+        @param args: The arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        """
+
         output_method(HELP_TEXT)
 
         for console_command_plugin in self.main_console_plugin.console_command_plugins:
             output_method(console_command_plugin.get_help())
 
     def process_extensions(self, args, output_method):
+        """
+        Processes the extensions command, with the given
+        arguments and output method.
+
+        @type args: List
+        @param args: The arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        """
+
         output_method(EXTENSION_TABLE_TOP_TEXT)
 
         for console_command_plugin in self.main_console_plugin.console_command_plugins:
@@ -253,6 +352,16 @@ class MainConsole:
             output_method(console_command_plugin.id + "\n", False)
 
     def process_show(self, args, output_method):
+        """
+        Processes the show command, with the given
+        arguments and output method.
+
+        @type args: List
+        @param args: The arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        """
+
         if len(args) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
@@ -277,6 +386,16 @@ class MainConsole:
             output_method(INVALID_PLUGIN_ID_MESSAGE)
 
     def process_showall(self, args, output_method):
+        """
+        Processes the show all command, with the given
+        arguments and output method.
+
+        @type args: List
+        @param args: The arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        """
+
         output_method(TABLE_TOP_TEXT)
 
         for plugin_instance in self.manager.plugin_instances:
@@ -294,6 +413,16 @@ class MainConsole:
             output_method(plugin_instance.id + "\n", False)
 
     def process_info(self, args, output_method):
+        """
+        Processes the info command, with the given
+        arguments and output method.
+
+        @type args: List
+        @param args: The arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        """
+
         if len(args) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
@@ -307,10 +436,30 @@ class MainConsole:
             output_method(INVALID_PLUGIN_ID_MESSAGE)
 
     def process_infoall(self, args, output_method):
+        """
+        Processes the info all command, with the given
+        arguments and output method.
+
+        @type args: List
+        @param args: The arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        """
+
         for plugin in self.manager.plugin_instances:
             self.print_plugin_info(plugin, output_method)
 
     def process_add(self, args, output_method):
+        """
+        Processes the add command, with the given
+        arguments and output method.
+
+        @type args: List
+        @param args: The arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        """
+
         if len(args) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
@@ -318,6 +467,16 @@ class MainConsole:
         plugin_id = self.get_plugin_id(args[0])
 
     def process_remove(self, args, output_method):
+        """
+        Processes the remove command, with the given
+        arguments and output method.
+
+        @type args: List
+        @param args: The arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        """
+
         if len(args) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
@@ -330,6 +489,16 @@ class MainConsole:
             output_method(INVALID_PLUGIN_ID_MESSAGE)
 
     def process_load(self, args, output_method):
+        """
+        Processes the load command, with the given
+        arguments and output method.
+
+        @type args: List
+        @param args: The arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        """
+
         if len(args) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
@@ -342,6 +511,16 @@ class MainConsole:
             output_method(INVALID_PLUGIN_ID_MESSAGE)
 
     def process_unload(self, args, output_method):
+        """
+        Processes the unload command, with the given
+        arguments and output method.
+
+        @type args: List
+        @param args: The arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        """
+
         if len(args) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
@@ -354,6 +533,16 @@ class MainConsole:
             output_method(INVALID_PLUGIN_ID_MESSAGE)
 
     def process_exec(self, args, output_method):
+        """
+        Processes the exec command, with the given
+        arguments and output method.
+
+        @type args: List
+        @param args: The arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        """
+
         if len(args) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
@@ -380,9 +569,29 @@ class MainConsole:
         file.close()
 
     def process_exit(self, args, output_method):
+        """
+        Processes the exit command, with the given
+        arguments and output method.
+
+        @type args: List
+        @param args: The arguments for the processing.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        """
+
         self.manager.unload_system()
 
     def print_plugin_info(self, plugin, output_method):
+        """
+        Prints the plugin information for the given plugin using
+        the given output method.
+
+        @type plugin: Plugin
+        @param plugin: The plugin to have the information printed.
+        @type output_method: Method
+        @param output_method: The output method to be used in the information printing.
+        """
+
         output_method("id:                   " + plugin.id)
         output_method("name:                 " + plugin.name)
         output_method("sort name:            " + plugin.description)
@@ -395,6 +604,15 @@ class MainConsole:
         output_method("events registrable:   " + str(plugin.events_registrable))
 
     def get_plugin_id(self, id):
+        """
+        Retrieves the plugin id for the given internal id.
+
+        @type id: String
+        @param id: The internal id to retrieves the plugin id.
+        @rtype: String
+        @return: The plugin id for the given internal id.
+        """
+
         plugin_id = None
         valid = False
 
@@ -414,4 +632,5 @@ class MainConsole:
         else:
             plugin_id = id
 
+        # returns the plugin id
         return plugin_id

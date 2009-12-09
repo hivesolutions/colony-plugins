@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.plugins.plugin_system
+import colony.plugins.decorators
 
 class MainConsolePlugin(colony.plugins.plugin_system.Plugin):
     """
@@ -96,29 +97,65 @@ class MainConsolePlugin(colony.plugins.plugin_system.Plugin):
         # notifies the ready semaphore
         self.release_ready_semaphore()
 
+    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.main.console", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-        if capability == "console_command_extension":
-            self.console_command_plugins.append(plugin)
-
+    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.main.console", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
-
-        if capability == "console_command_extension":
-            self.console_command_plugins.remove(plugin)
 
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def process_command_line(self, command_line, output_method):
+        """
+        Processes the given command line, with the given output method.
+
+        @type command_line: String
+        @param command_line: The command line to be processed.
+        @type output_method: Method
+        @param output_method: The output method to be used in the processing.
+        @rtype: bool
+        @return: If the processing of the command line was successful.
+        """
+
         self.console.process_command_line(command_line, output_method)
 
     def get_default_output_method(self):
+        """
+        Retrieves the default output method.
+
+        @rtype: Method
+        @return: The default output method for console.
+        """
+
         return self.console.get_default_output_method()
 
     def get_test_case(self):
+        """
+        Retrieves the test case.
+
+        @rtype: TestCase
+        @return: The test case.
+        """
+
         return self.console_test_case_class
 
     def get_build_automation_file_path(self):
+        """
+        Retrieves the build automation file path.
+
+        @rtype: String
+        @return: The build automation file path.
+        """
+
         return self.console.get_build_automation_file_path()
+
+    @colony.plugins.decorators.load_allowed_capability("console_command_extension")
+    def console_command_extension_load_allowed(self, plugin, capability):
+        self.console_command_plugins.append(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("console_command_extension")
+    def console_command_extension_unload_allowed(self, plugin, capability):
+        self.console_command_plugins.remove(plugin)

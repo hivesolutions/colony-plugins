@@ -42,11 +42,22 @@ import unittest
 import main_console
 
 class MainConsoleTestCase(unittest.TestCase):
+    """
+    The main console test case class.
+    """
 
     def setUp(self):
         self.main_console = main_console.MainConsole(MainConsoleTestCase.plugin)
 
     def test_process_command_line(self):
+        """
+        Tests the process command line using one of the commands.
+        """
+
         import sys
+
+        # processes the html command to the standard output
         return_value = self.main_console.process_command_line("help", sys.stdout.write)
+
+        # assets the return value
         self.assertEqual(return_value, True)
