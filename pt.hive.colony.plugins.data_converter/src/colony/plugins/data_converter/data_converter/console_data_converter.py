@@ -62,20 +62,30 @@ convert_data <configuration_id> - migrates data from one medium and schema to an
 """ The help text """
 
 COLUMN_SPACING = 4
+""" The column spacing """
 
 ACTIVE_VALUE = "ACTIVE"
+""" The active value """
 
 INACTIVE_VALUE = "INACTIVE"
+""" The inactive value """
 
 ID_COLUMN_HEADER = "ID"
+""" The id column header """
 
 ENABLED_COLUMN_HEADER = "ENABLED"
+""" The enabled column header """
 
 TYPE_COLUMN_HEADER = "TYPE"
+""" The type column header """
 
 DESCRIPTION_COLUMN_HEADER = "DESCRIPTION"
+""" The description column header """
 
 class ConsoleDataConverter:
+    """
+    The console data converter class.
+    """
 
     commands = ["list_configurations",
                 "list_loaded_configurations",
@@ -89,10 +99,19 @@ class ConsoleDataConverter:
                 "disable_configuration_item",
                 "disable_all_configuration_items",
                 "convert_data"]
+    """ The commands list """
 
     data_converter_plugin = None
+    """ The data converter plugin """
 
-    def __init__(self, data_converter_plugin = None):
+    def __init__(self, data_converter_plugin):
+        """
+        Constructor of the class.
+
+        @type data_converter_plugin: DataConverterPlugin
+        @param data_converter_plugin: The data converter plugin.
+        """
+
         self.data_converter_plugin = data_converter_plugin
 
     def get_console_extension_name(self):
