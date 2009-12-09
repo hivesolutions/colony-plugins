@@ -7,6 +7,8 @@ By the end of this tutorial you should be able to:
     * Create extension points in a Colony plugin.
     * Create plugins that use another's extension points to add new features.
 
+<warning>Please take care of the main things tha't should be seen.</warning>
+
 For tradition's sake (as nauseating as it may be) let's dive into Colony by creating an Hello World application. However, ours will have a particular twist, for it will be modular from the very beginning. Follow these steps to have a very basic Hello World plugin running right of the bat:
     * Go to ''pt.hive.colony.plugins.configuration.startup/src/colony/plugins/configuration_startup/startup/resources/startup_configuration.xml'' and set the load attribute for ''pt.hive.colony.plugins.main.console'' as true and all others as false.
     * Create a new python project called ''pt.hive.colony.demo.plugins.hello_world''.

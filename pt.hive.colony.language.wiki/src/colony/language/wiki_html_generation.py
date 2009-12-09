@@ -347,7 +347,9 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
                 self._write("<ol>")
 
             self._write("<li>")
+            self._write("<div>")
         elif self.visit_index == 1:
+            self._write("</div>")
             self._write("</li>")
             self._write("</ol>")
 

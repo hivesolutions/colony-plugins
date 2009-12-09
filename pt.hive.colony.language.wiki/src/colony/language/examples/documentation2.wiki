@@ -1,0 +1,605 @@
+====== Colony Web MVC Framework ======
+
+Colony does all it can to encourage well designed applications by providing all the necessary infrastructures to effortlessly separate application concerns. 
+With the Plugin Framework, one can separate a large application into different plugins that are meaningful on their own, but when it comes to designing a plugin's interior, the natural tendency may be to excessively intertwine the code at this level, especially when the plugin provides a graphical interface.
+To turn the design and implementation of these features into a straightforward process, one can use the Colony Web MVC plugin, which provides an MVC Framework.
+
+Model-View-Controller (MVC) is an architectural pattern used to isolate business logic from input and presentation, permitting independent development, testing and maintenance of each.
+
+An example MVC workflow in Colony could work like the following:
+
+  - User clicks a button used to refresh data.
+  - The widget fires a "click" event.
+  - The widget's event is caught by an event handler in the Controller.
+  - The event handler calls the appropriate logic in the Controller.
+  - The Controller calls the Remote Model to fetch data from the data source, providing a callback from the Controller to be invoked when the operation is finished.
+  - The Controller callback is invoked with the data.
+  - The Controller stores the data in the Local Model for later reference.
+  - The Controller strips the data that will be shown in the graphical interface and sets it in the Presentation Model.
+  - The Controller refreshes the View by looking for changed Presentation Model properties and updating the View accordingly.
+
+===== Module =====
+
+The Colony MVC Framework provides the means to build MVC Modules. 
+MVC Modules encapsulate the underlying components (Models, View, Controller, Presentation Model), this encapsulation serves as a means of enforcing separation between the underlying code and the outside world, but also as deployment unit, as there is an MVC Manager that takes care of injecting modules into each other by looking at their requirements. 
+Modules specify their requirements and features via dependencies and capabilities, just like Colony plugins do:
+
+==== Dependencies ====
+
+Dependencies identify specific Modules that a Module requires to be loaded and injected in it, in order to function correctly. 
+If a Module depends on another Module, but that dependency doesn't exist, or is not ready to be loaded for whatever reason (it may itself be missing a dependency), the Module will not load.
+
+==== Capabilities ====
+
+Capabilities identify what a Module provides, so that the Modules providing them are injected into the Modules that express an interest in these capabilities. 
+If a Module is interested in a capability but there is none providing it, it will load correctly regardless.
+For example, one could design a Module that provided a login window, but wanted to make it extensible, allowing posterior third party implementations of different login methods. 
+All this Module would have to do would be to specify the capability it is interested in (''login_method'' for example), and at any point in time, a developer could implement a new Module with the ''login_method'' capability and the facade expected by this capability, and it would be injected into the login window, which would handle it accordingly, without the third party developer ever having to touch the original login window Module.
+
+The module should only access the Controller.
+
+===== Module components =====
+
+==== Model ====
+
+Typically an MVC Framework takes the existence of a single Model into account. 
+In this traditional view, the purpose of the Model is to store data representations and business logic.
+Colony makes an effort to make development as unambiguous and straightforward as possible, and to achieve this, the model's purpose had to be slightly reshaped into the following concepts:
+
+=== Local Model ===
+
+The Local Model is used to store any kind of data that is used throughout the code. 
+One can think of it as the Module's personal notebook. 
+If it needs to store some information to retrieve later, in another function for example, that data should be stored here.
+
+The Local Model should never access another Module component under any circunstance.
+
+=== Remote Model ===
+
+Contains the Remote Model, which acts as a bridge to all communication between the Module's components and it's exterior.
+For example, functions that perform server-side calls should be stored here.
+
+The Remote Model should not access any other component. 
+Its results should be returned via the provided callback functions.
+
+==== View ====
+
+The View stores all graphical objects and functions of a graphical nature, all kind of graphical library widgets and functions that act on them are stored here. 
+The entire Module's graphical interface is defined here, decoupled from all its logic. 
+Colony's interpretation of the View does not differ from the traditional pattern in any way.
+
+The View should not access any other Module component, its only means of communication should be via events, which can be handled by the Controller.
+
+==== Controller ====
+
+The Controller contains all the Module's logic, everything that has any kind of decision making, branching or workflow nature is stored here. 
+Colony's interpretation of the Controller does not really differ from the traditional interpretation but it is probably stricter, as here, the controller should have absolutely all logic contained within it, instead of acting as a kind of routing mechanism as in some frameworks.
+
+The Controller should only be accessed via the Module's facade and/or via events, it can however freely access any Module component except the Module itself (Models, View and Presentation Model).
+
+==== Presentation Model ====
+
+The Presentation Model represents the state of the View at any given time. 
+It is mostly useful for providing a way of making graphical interfaces testable, since testing the Presentation Model's contents should be exactly the same thing as testing the View regardless of the View's current implementation, provided one can assume that the synchronization between the Presentation Model and the View is flawless.
+
+The Presentation Model doesn't need to represent every single property contained in the View, but rather, it should have the required depth to keep track of all the View's states. 
+For example, if the View represented traffic lights by using three buttons that changed color when a light was turned on or off, instead of adding a lot of variables to the presentation model to represent the state of each particular button, one should instead use just one variable that stored which color was turned on at any given time. 
+This is the only information needed for the controller to decide how to change the view to reflect this state.
+
+Everytime the View changes due to user interaction, the Presentation Model should be updated by the Controller to keep up with the changes, and everytime the Presentation Model is updated by Controller logic the View should be refreshed to reflect the Presentation Model's new state.
+
+The Presentation Model should never interact with another Module component under any circunstance.
+
+===== The MVC Manager =====
+
+The MVC Manager is the "Model-View-Controller world" equivalent of the Plugin Manager, it keeps track of all the existing Modules and their state, it controls their lifecycle, and routes events between them. 
+The existence of this manager is where the the Colony implementation truly differs from others, as an MVC component is viewed just as any other component that can effortlessly appear wherever it is required in the application due to the inversion of control provided by the MVC Manager.
+
+==== Module lifecycle ====
+
+When a Module class is added to the MVC Manager the singleton instance of that Module is created, but is kept unloaded.
+
+=== Loading process ===
+
+This process is triggered by explicitly invoking a Module's ''load'' method, or when it is injected as a dependency or as a capability provider.
+
+  - The Module's dependencies are tested if they loaded or ready to be loaded (if their own dependencies exist).
+  - If one of the module's dependencies is not loaded and not ready to be loaded, the Module's loading process will stop here.
+  - The Module's payload (Models, View, Controller, Presentation Model) is loaded, by invoking the ''load'' method.
+  - The Module's dependencies are loaded and injected, invoking the module's depencencyInjected() method.
+  - The Module's ''endLoad'' method is invoked to signal that the module has finished loading.
+  - The Modules that provide the capabilities that are allowed by this Module are loaded, and in case the their loading process is successful, they are injected, invoking the receiver Module's ''loadAllowed'' method.
+  - The Module is injected into all loaded modules that allow one or more of the Module's capabilities. 
+Their ''loadAllowed'' method is invoked for each capability match (the Module can be injected twice into the same Module because it provides two allowed capabilities).
+
+=== Unloading process ===
+
+This process is triggered by explicitly invoking a Module's ''unload'' method, or when the module is being destroyed.
+
+  - Informs all the modules where this module was injected as a capability in, that it is being unloaded by invoking their ''unloadAllowed'' method (the method can be invoked twice with the same module in case it was injected for providing two different capabilities that were allowed by the receiver module).
+  - All Modules that depend on this one are unloaded.
+  - The Module's payload is unloaded by invoking the ''unload'' method.
+  - The Module's ''endUnload'' method is invoked to signal that it has finished unloading.
+
+=== Destruction process ===
+
+This process is triggered by explicitly invoking the ''destroyModule'' method.
+
+  - The Module is unloaded.
+  - The Module instance is destroyed.
+
+==== Diffusion scopes ====
+
+Unlike plugins, a Module can have multiple instances. 
+To keep track of the different Modules instances and their circle of influence, the concept of diffusion scope is used. 
+All Modules have a singleton instance that is identified by having a ''null'' diffusion scope. 
+Everytime that Module is replicated, it is assigned a new diffusion scope. 
+Keeping track of a Module's diffusion scope allows one to create copies of entire groups of Modules and make sure their actions do not influence one another. 
+This feature is better explained with an example:
+
+Suppose one wanted to create an extensible calculator Module without the existence of diffusion scopes. 
+The calculator Module could accept Modules that provided new operators, and it would work perfectly. However, one could want to create a copy of this Module in order to work with two calculators at any given time. 
+Doing this would result in one of two things: either the same operator Modules would be injected into each calculator, or new copies of them would be injected into the new calculator. 
+Either solution would be troublesome.
+
+If the same operators were injected, their behaviour would very probably be quite awkward, especially if the operators were stateful (like a memory function) as the same module would be interacting with two different modules at the same time.
+
+If new copies of the operators were injected, if they were reloaded afterwards, they would be correctly unloaded, but when loading again, they couldn't be injected into the same module because there is no information that specifies that they belong together.
+
+With diffusion scopes, both groups of calculators and operators would be assigned a different diffusion scope, and this way they could easily act without interfering with one another. 
+This concept is also pretty useful with events, as explained next.
+
+==== Events ====
+
+Events in the MVC world work just like in any other programming language or framework, handlers are registered for specific events, and these handlers are invoked when that event is fired. 
+There is however one particular twist to take into account. 
+Due to the replicable nature of the Module, one may want to address only particular instances of a Module when firing an event and/or listen for events from specific Module instances. 
+For this purpose, when registering for and firing events, one can specify the desired event scope:
+
+=== Local Event ===
+
+A local event targets the specific Module instance. 
+When firing a local event, only the Module firing it will be able to receive it, as long as it registered for a local event of that name. 
+When no event type is defined, this one is used by default.
+
+=== Scope Event ===
+
+A scope event targets all Modules within the firing or registering module's diffusion scope. 
+When Module fires a scope event, all Modules within its diffusion scope will receive the event, as long as they have registered for an scope event of that name.
+
+=== Module Event ===
+
+A Module event targets all module instances of the Module firing the event, regardless of what diffusion scope they are in, as long as they have registered for a module event of that name.
+
+=== Global Event ===
+
+A global event targets every module in every diffusion scope, as long as they registered for a global event of that name. 
+
+===== Module structure =====
+
+==== Description attributes ====
+
+The minimum Module must at least have its ''id'' and ''version'' (there must be no more than one Module with the same pair of these attributes):
+
+<code javascript>
+"some.random.namespace.dummy_module".namespace();
+ 
+some.random.namespace.dummy_module.DummyModule = Class.create(pt.hive.colony.web.plugins.mvc.AbstractModule, {
+    id : "some.random.namespace.dummy_module",
+});
+</code>
+
+We can also add some more information about the Module by adding its name, a short version of its name, a description, and its author:
+
+<code javascript>
+"some.random.namespace.dummy_module".namespace();
+ 
+some.random.namespace.dummy_module.DummyModule = Class.create(pt.hive.colony.web.plugins.mvc.AbstractModule, {
+    id : "some.random.namespace.dummy_module",
+    name : "Dummy module",
+    shortName : "Dummy module",
+    description : "Purposeless dummy module",
+    version : "1.0.0",
+    author : "Hive Solutions Lda. <development@hive.pt>"
+});
+</code>
+
+Miscellaneous meta-description attributes can be added to the ''attributes'' variable. 
+These attributes impose no changes to the Module's lifecycle, as they are meant to be used as reference for whoever is consuming the Module's services:
+
+<code javascript>
+"some.random.namespace.dummy_module".namespace();
+ 
+some.random.namespace.dummy_module.DummyModule = Class.create(pt.hive.colony.web.plugins.mvc.AbstractModule, {
+    id : "some.random.namespace.dummy_module",
+    version : "1.0.0",
+    attributes : {attribute : "attribute_value"}
+});
+</code>
+
+==== Lifecycle methods ====
+
+In order to introduce logic at each point of the Module's lifecycle we can inherit methods from the ''pt.hive.colony.web.plugins.mvc.AbstractModule'' class:
+
+<code javascript>
+"some.random.namespace.dummy_module".namespace();
+ 
+some.random.namespace.dummy_module.DummyModule = Class.create(pt.hive.colony.web.plugins.mvc.AbstractModule, {
+    id : "some.random.namespace.dummy_module",
+    version : "1.0.0",
+    load : function($super) {
+        $super();
+    },
+    endLoad : function($super) {
+        $super();
+    },
+    unload : function($super) {
+        $super();
+    },
+    endUnload : function($super) {
+        $super();
+    },
+    loadAllowed : function($super, module, capability) {
+        $super(module, capability);
+    },
+    unloadAllowed : function($super, module, capability) {
+        $super(module, capability);
+    },
+    dependencyInjected : function($super, module) {
+        $super(module);
+    }
+});
+</code>
+
+The following lifecycle methods can be inherited:
+
+    * ''load'': invoked when a Module starts loading.
+    * ''endLoad'': invoked when a Module's dependencies have been injected.
+    * ''unload'': invoked when the Module starts unloading.
+    * ''endUnload'': invoked when the Module's capabilities have been uninjected.
+    * ''loadAllowed'': invoked when a Module is being injected as a capability.
+    * ''unloadAllowed'': invoked when a capability provider Plugin is being uninjected.
+    * ''dependencyInjected'': invoked when a Module dependency is injected.
+
+==== Capabilities ====
+
+The capabilities a Module provides can be specified by defining its ''capabilities'' variable, and the capabilities it allows via the ''capabilitiesAllowed'' variable:
+
+<code javascript>
+"some.random.namespace.dummy_module".namespace();
+ 
+some.random.namespace.dummy_module.DummyModule = Class.create(pt.hive.colony.web.plugins.mvc.AbstractModule, {
+    id : "some.random.namespace.dummy_module",
+    version : "1.0.0",
+    capabilities : ["dummy_capability"],
+    capabilitiesAllowed : ["dummy_allowed_capability"],
+    loadAllowed : function($super, module, capability) {
+        $super(module, capability);
+    },
+    unloadAllowed : function($super, module, capability) {
+        $super(module, capability);
+    }
+});
+</code>
+
+Due to the Module's replicable nature, when defining the capabilities that are allowed for the Module, one can define their diffusion scope as well, by putting the capability's name in a list, whose second argument is the diffusion scope:
+
+<code javascript>
+"some.random.namespace.dummy_module".namespace();
+ 
+some.random.namespace.dummy_module.DummyModule = Class.create(pt.hive.colony.web.plugins.mvc.AbstractModule, {
+    id : "some.random.namespace.dummy_module",
+    version : "1.0.0",
+    capabilitiesAllowed : [["dummy_allowed_capability", pt.hive.colony.web.plugins.mvc.AbstractModule.prototype.SINGLETON_DIFFUSION_SCOPE]]
+});
+</code>
+
+By default, when the diffusion scope is ommited, by defining the capability as a string instead of a list, the same diffusion scope as the Module is used, meaning that the provider Modules from the same diffusion scope will be injected, and new instances will be created for that scope in case none exist. 
+The following constants can be used to define the diffusion scope one wants the capability providers to come from:
+
+    * Singleton diffusion scope: ''pt.hive.colony.web.plugins.mvc.AbstractModule.prototype.SINGLETON_DIFFUSION_SCOPE''
+    * Same diffusion scope: ''pt.hive.colony.web.plugins.mvc.AbstractModule.prototype.SAME_DIFFUSION_SCOPE''
+    * New diffusion scope: ''pt.hive.colony.web.plugins.mvc.AbstractModule.prototype.NEW_DIFFUSION_SCOPE''
+
+==== Dependencies ====
+
+The Module can require certain Modules to exist and to be loadable for itself to be loadable. 
+The dependencies the Module requires is are defined in the “dependencies” variable, which expects a list of “pt.hive.colony.web.plugins.mvc.ModuleDependency” objects specifying each Module dependency:
+
+<code javascript>
+"some.random.namespace.dummy_module".namespace();
+ 
+some.random.namespace.dummy_module.DummyModule = Class.create(pt.hive.colony.web.plugins.mvc.AbstractModule, {
+    id : "some.random.namespace.dummy_module",
+    version : "1.0.0",
+    dependencies : [new pt.hive.colony.web.plugins.mvc.ModuleDependency("some.random.namespace.dummy_module_dependency", "1.0.0")],
+    dependencyInjected : function($super, module) {
+        $super(module);
+    }
+});
+</code>
+
+Due to the Module's replicable nature, when defining the dependencies that are required by the Module, one can define their diffusion scope as well, by inserting the diffusion scope as one of the ''pt.hive.colony.web.plugins.mvc.ModuleDependency'' object's arguments:
+
+<code javascript>
+"some.random.namespace.dummy_module".namespace();
+ 
+some.random.namespace.dummy_module.DummyModule = Class.create(pt.hive.colony.web.plugins.mvc.AbstractModule, {
+    id : "some.random.namespace.dummy_module",
+    version : "1.0.0",
+    dependencies : [new pt.hive.colony.web.plugins.mvc.ModuleDependency("some.random.namespace.dummy_module_dependency", "1.0.0", pt.hive.colony.web.plugins.mvc.AbstractModule.prototype.SAME_DIFFUSION_SCOPE)],
+    dependencyInjected : function($super, module) {
+        $super(module);
+    }
+});
+</code>
+
+By default, when the diffusion scope is ommited, the singleton diffusion scope is used, meaning that the instance of the dependency Module that is in the ''null'' diffusion scope will be injected.
+The following constants can be used to define the diffusion scope one wants the dependencies to come from:
+
+    * Singleton diffusion scope: ''pt.hive.colony.web.plugins.mvc.AbstractModule.prototype.SINGLETON_DIFFUSION_SCOPE''
+    * Same diffusion scope: ''pt.hive.colony.web.plugins.mvc.AbstractModule.prototype.SAME_DIFFUSION_SCOPE''
+    * New diffusion scope: ''pt.hive.colony.web.plugins.mvc.AbstractModule.prototype.NEW_DIFFUSION_SCOPE''
+
+==== Models ====
+
+The Module can have multiple Models, which can be defined in the Module's ''modelClasses'' variable, which expects a map associating the Model's name with it's class:
+
+<code javascript>
+"some.random.namespace.dummy_module".namespace();
+ 
+some.random.namespace.dummy_module.DummyModule = Class.create(pt.hive.colony.web.plugins.mvc.AbstractModule, {
+    id : "some.random.namespace.dummy_module",
+    version : "1.0.0",
+    initialize : function($super, manager) {
+        $super(manager);
+ 
+        // defines the module's underlying components
+        var moduleNamespace = some.random.namespace.dummy_module;
+        this.modelClasses = {
+            local : moduleNamespace.DummyLocalModel,
+            remote : moduleNamespace.DummyRemoteModel
+        };
+    }
+});
+</code>
+
+==== View ====
+
+The Module's View can be defined in the ''viewClass'' variable, which expects the View's class:
+
+<code javascript>
+"some.random.namespace.dummy_module".namespace();
+ 
+some.random.namespace.dummy_module.DummyModule = Class.create(pt.hive.colony.web.plugins.mvc.AbstractModule, {
+    id : "some.random.namespace.dummy_module",
+    version : "1.0.0",
+    initialize : function($super, manager) {
+        $super(manager);
+ 
+        // defines the module's underlying components
+        var moduleNamespace = some.random.namespace.dummy_module;
+        this.viewClass = moduleNamespace.DummyView;
+    }
+});
+</code>
+
+==== Controller ====
+
+The Module's Controller can be defined in the ''controllerClass'' variable, which expects the Controller's class:
+
+<code javascript>
+"some.random.namespace.dummy_module".namespace();
+ 
+some.random.namespace.dummy_module.DummyModule = Class.create(pt.hive.colony.web.plugins.mvc.AbstractModule, {
+    id : "some.random.namespace.dummy_module",
+    version : "1.0.0",
+    initialize : function($super, manager) {
+        $super(manager);
+ 
+        // defines the module's underlying components
+        var moduleNamespace = some.random.namespace.dummy_module;
+        this.controllerClass = moduleNamespace.DummyController;
+    }
+});
+</code>
+
+==== Presentation model ====
+
+The Module's Presentation model can be defined in the ''presentationModelClass'' variable, which expects the Presentation Model's class:
+
+<code javascript>
+"some.random.namespace.dummy_module".namespace();
+ 
+some.random.namespace.dummy_module.DummyModule = Class.create(pt.hive.colony.web.plugins.mvc.AbstractModule, {
+    id : "some.random.namespace.dummy_module",
+    version : "1.0.0",
+    initialize : function($super, manager) {
+        $super(manager);
+ 
+        // defines the module's underlying components
+        var moduleNamespace = some.random.namespace.dummy_module;
+        this.presentationModelClass = moduleNamespace.DummyPresentationModel;
+    }
+});
+</code>
+
+===== Module features =====
+
+The following is a description of the features provided by each component that constitutes the Module. 
+From anywhere the in the Module the following getter methods can be invoked to retrieve the desired Module component.
+
+    * ''getModule()'': Retrieves the Module instance.
+    * ''getModels()'': Retrieves the Model instances.
+    * ''getModel("model_name")'': Retrieves the specified Model instance.
+    * ''getView()'': Retrieves the View instance.
+    * ''getController()'': Retrieves the Controller instance.
+    * ''getPresentationModel()'': Retrieves the Presentation model instance.
+
+==== Models ====
+
+Models provide no relevant features whatsoever, they are clean slates that can be used by the developer however he desires. 
+It is however strongly advised to follow all recommendations in the style guides.
+
+==== View ====
+
+The View provides a ''fireEvent'' method which is meant to be used to redirect graphical user interface library events to the controller. The method expects the event's name and a map with the desired event arguments:
+
+<code javascript>
+this.fireEvent("event_name", {dummyValue : "dummy_value"});
+</code>
+
+==== Controller ====
+
+All Controller instances inherit methods that allow registering for and firing events.
+
+To register for an event, one can use the ''registerForEvent'' method, which is used to define the handler that will be used to handle a certain event. 
+The method expects the event's name, its handler, and the handler's scope as arguments:
+
+<code javascript>
+this.registerForEvent("event_name", this.onEventName, this);
+</code>
+
+To unregister from an event, the opposite ''unregisterForEvent'' method can be used, which defines the handler that will be unregistered for a certain event. 
+The method expects the event's name, the handler one wants to unregister, and the handler's scope as arguments:
+
+<code javascript>
+this.unregisterForEvent("event_name", this.onEventName, this);
+</code>
+
+To fire an event, either the ''fireEvent'' or ''setEvent'' methods can be used. The ''fireEvent'' is completely straightforward, as it fires an event which carries with in a set of arguments. The method expects the event's name and a map with the desired event arguments:
+
+<code javascript>
+this.fireEvent("dummy_event_name", {dummyValue : "dummy_value"});
+</code>
+
+The "setEvent" method is more peculiar, as it not only fires a regular event just like ''fireEvent'', but has a "sticky" nature to it, in the sense that all handlers that register for that event in the future will immediately receive that event with the event arguments specified at the time "setEvent" was invoked. 
+The provided event arguments will have a ''set'' boolean flag set to true injected into them, in order for the receiving end to be able to identify the nature of that event. 
+The method expects the event's name and a map with the desired event arguments:
+
+<code javascript>
+this.setEvent("dummy_event_name", {dummyValue : "dummy_value"});
+</code>
+
+To reverse the "sticky" effects of the ''setEvent'' method one can invoke the ''unsetEvent'' method, which will stop that event from being fired when a new handler is registered for it.
+Invoking this method will fire the event once again, this time with the provided event arguments having a ''set'' boolean flag set to false injected into them, in order for the receiving end to be able to identify the nature of that event. 
+The method expects the event's name and a map with the desired event arguments:
+
+<code javascript>
+this.unsetEvent("dummy_event_name", {dummyValue : "dummy_value"});
+</code>
+
+All the previously described methods can accept the desired event type as its last argument. 
+Event types are related with diffusion scopes, and are used to specify the event's target firing and listening range. For example, one could register an handler for a certain event of scope type, which meant that when any module within the same scope fired an event of the same nature, it would be handled by the previously registered handler:
+
+<code javascript>
+this.registerForEvent("event_name", this.onEventName, pt.hive.colony.web.plugins.mvc.AbstractController.prototype.SCOPE_EVENT);
+</code>
+
+<code javascript>
+this.fireEvent("event_name", {dummyValue : "dummy_value"}, pt.hive.colony.web.plugins.mvc.AbstractController.prototype.SCOPE_EVENT);
+</code>
+
+When no event type is specified, the local event type is used, meaning that it will listen to or fire to, the exact same Module instance where the operation was performed.
+The following constants can be used to define the event's firing and listening range:
+
+  * Local event: ''pt.hive.colony.web.plugins.mvc.AbstractController.prototype.LOCAL_EVENT''
+  * Scope event: ''pt.hive.colony.web.plugins.mvc.AbstractController.prototype.SCOPE_EVENT''
+  * Module event: ''pt.hive.colony.web.plugins.mvc.AbstractController.prototype.MODULE_EVENT''
+  * Global event: ''pt.hive.colony.web.plugins.mvc.AbstractController.prototype.GLOBAL_EVENT''
+
+==== Presentation model ====
+
+The Presentation model provides the necessary methods to define properties, retrieve their values, and control their state. Typical usage of the Presentation model involves initializing it with a property map, using the ''createProperties'' method:
+
+<code javascript>
+this.createProperties({dummy : "dummy_value"});
+</code>
+
+From then on, it is possible to access these values and set the property values:
+
+<code javascript>
+// retrieves the presentation model
+var presentationModel = this.getPresentationModel();
+
+// retrieves the dummy property
+var dummyProperty = presentationModel.getProperty("dummy");
+
+// retrieves the dummy property's current value
+var dummyPropertyValue = dummyProperty.getValue();
+
+// sets a new value in the dummy property
+dummyProperty.setValue("new_dummy_value");
+</code>
+
+When a value is set in the property it will be internally marked as changed, even when the first definition is being done with ''createProperties''. To figure out if a property was changed one can use the property's ''isChanged'' method, and to mark it as not changed anymore, use the ''commit'' method.
+
+<code javascript>
+// retrieves the presentation model
+var presentationModel = this.getPresentationModel();
+
+// retrieves the dummy property
+var dummyProperty = presentationModel.getProperty("dummy");
+
+// figures out if the property was changed
+var changed = dummyProperty.isChanged();
+
+// marks the property as not changed
+dummyProperty.commit();
+</code>
+
+Presentation model properties are hierarchical, which means a property can have other properties contained within itself. An additional level of nesting in the property definition map while using the ''createProperties'' method, creates sub-properties:
+
+<code javascript>
+this.createProperties({dummy : {nested_dummy : "nested_dummy"}});
+</code>
+
+These properties can be accessed in pretty much the same way:
+
+<code javascript>
+// retrieves the presentation model
+var presentationModel = this.getPresentationModel();
+
+// retrieves the dummy property
+var dummyProperty = presentationModel.getProperty("dummy");
+
+// retrieves the dummy nested dummy property
+var dummyNestedDummyProperty = dummyProperty.getProperty("nestedDummy");
+
+// retrieves the dummy nested dummy property's value
+var dummyNestedDummyPropertyValue = dummyNestedDummyProperty.getValue();
+</code>
+
+It is also possible to store a list of properties in a property by using the following ''propertyList'' attribute in the property definition map when using the ''createProperties'' method:
+
+<code javascript>
+this.createProperties({dummy : {propertyList : [{nested_dummy : "nested_dummy"}]}});
+</code>
+
+These properties can be accessed with the ''getPropertyList'' method:
+
+<code javascript>
+// retrieves the presentation model
+var presentationModel = this.getPresentationModel();
+
+// retrieves the dummy property
+var dummyProperty = presentationModel.getProperty("dummy");
+
+// retrieves the dummy property's property list
+var dummyPropertyList = dummyProperty.getPropertyList();
+
+// retrieves the dummy nested dummy property
+var dummyNestedDummyProperty = dummyPropertyList[0];
+
+// retrieves the dummy nested dummy property's value
+var dummyNestedDummyPropertyValue = dummyNestedDummyProperty.getValue();
+</code>
+
+Properties can also be validated by binding validation handlers to each property by defining the ''startValue'' and ''validationHandler'' attributes when defining a property in the property definition map when using the ''createProperties'' method:
+
+<code javascript>
+this.createProperties({dummy : {startValue : null,
+                                validationHandlerFunction: this.dummyValidationHandler}});
+</code>
+
+@todo: add remaining logic,

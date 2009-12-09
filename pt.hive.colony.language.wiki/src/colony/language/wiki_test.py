@@ -45,7 +45,7 @@ import wiki_html_generation
 import wiki_extension_system
 
 # opens the wiki file
-wiki_file = open("examples/documentation.wiki")
+wiki_file = open("examples/documentation2.wiki")
 
 # reads the wiki file contents
 wiki_file_contents = wiki_file.read()
