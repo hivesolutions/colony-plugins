@@ -58,7 +58,7 @@ class ConsoleAutoloader:
     autoloader_plugin = None
     """ The autoloader plugin """
 
-    def __init__(self, autoloader_plugin = None):
+    def __init__(self, autoloader_plugin):
         """
         Constructor of the class.
 

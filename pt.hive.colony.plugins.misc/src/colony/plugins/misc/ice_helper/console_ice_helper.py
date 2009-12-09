@@ -91,7 +91,7 @@ class ConsoleIceHelper:
 
     locator_name = None
 
-    def __init__(self, ice_helper_plugin = None):
+    def __init__(self, ice_helper_plugin):
         """
         Constructor of the class.
 

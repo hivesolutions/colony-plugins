@@ -62,7 +62,7 @@ class ConsoleDownloader:
     commands = ["download", "testdownload"]
     """ The commands list """
 
-    def __init__(self, downloader_plugin = None):
+    def __init__(self, downloader_plugin):
         """
         Constructor of the class.
 

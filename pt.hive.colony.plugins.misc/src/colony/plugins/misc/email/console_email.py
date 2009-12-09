@@ -58,7 +58,7 @@ class ConsoleEmail:
     commands = ["sendemail"]
     """ The commands list """
 
-    def __init__(self, email_plugin = None):
+    def __init__(self, email_plugin):
         """
         Constructor of the class.
 

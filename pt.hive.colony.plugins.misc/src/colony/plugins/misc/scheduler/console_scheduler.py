@@ -61,7 +61,7 @@ class ConsoleScheduler:
     commands = ["show_all_scheduler"]
     """ The commands list """
 
-    def __init__(self, scheduler_plugin = None):
+    def __init__(self, scheduler_plugin):
         """
         Constructor of the class.
 
