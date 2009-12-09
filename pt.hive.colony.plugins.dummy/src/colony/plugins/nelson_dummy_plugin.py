@@ -97,18 +97,18 @@ class NelsonDummyPlugin(colony.plugins.plugin_system.Plugin):
         return "nelson_dummy"
 
     def get_all_commands(self):
-        return ["getalltranslationengines", "translate"]
+        return ["get_all_translation_engines", "translate"]
 
     def get_handler_command(self, command):
-        if command == "getalltranslationengines":
-            return self.handler_getalltranslationengines
+        if command == "get_all_translation_engines":
+            return self.handler_get_all_translation_engines
         elif command == "translate":
             return self.handler_translate
 
     def get_help(self):
         return HELP_TEXT
 
-    def handler_getalltranslationengines(self, args, output_method):
+    def handler_get_all_translation_engines(self, args, output_method):
         for translation_engine_plugin in self.translation_engine_plugins:
             dictionary_name = translation_engine_plugin.get_dictionary_name()
             output_method(dictionary_name)
