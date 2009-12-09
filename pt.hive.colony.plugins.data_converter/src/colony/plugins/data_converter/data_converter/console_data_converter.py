@@ -87,6 +87,9 @@ class ConsoleDataConverter:
     The console data converter class.
     """
 
+    data_converter_plugin = None
+    """ The data converter plugin """
+
     commands = ["list_configurations",
                 "list_loaded_configurations",
                 "load_configuration",
@@ -100,9 +103,6 @@ class ConsoleDataConverter:
                 "disable_all_configuration_items",
                 "convert_data"]
     """ The commands list """
-
-    data_converter_plugin = None
-    """ The data converter plugin """
 
     def __init__(self, data_converter_plugin):
         """
