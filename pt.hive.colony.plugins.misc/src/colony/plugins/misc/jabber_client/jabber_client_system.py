@@ -76,6 +76,7 @@ class JabberClient:
     list_clients_output_method = None
     start_semaphore = None
     event_semaphore = None
+    clients_semaphore = None
     clients = {}
     message_handlers = {}
     unloading = False
@@ -90,8 +91,9 @@ class JabberClient:
 
         self.jabber_client_plugin = jabber_client_plugin
         self.clients = {}
-        self.start_semaphore = threading.Semaphore(0)
+        self.start_semaphore = threading.Semaphore()
         self.event_semaphore = threading.Semaphore()
+        self.clients_semaphore = threading.Semaphore()
         self.send_sender_jabber_id = []
         self.send_receiver_jabber_id = []
         self.send_message = []
@@ -104,11 +106,11 @@ class JabberClient:
 
     def unload(self):
         self.unloading = True
-        if not self.loop:
-            self.start_semaphore.release()
         self.loop = False
+        self.clients_semaphore.acquire()
         for jabber_id in self.clients:
             self.clients[jabber_id].disconnect()
+        self.clients_semaphore.release()
 
     def register_message_handler(self, jabber_id, handler):
         if not jabber_id in self.message_handlers:
@@ -182,8 +184,11 @@ class JabberClient:
                 message = self.send_message[0]
                 self.send(sender_jabber_id, receiver_jabber_id, message)
                 self.clear_send_parameters()
+            self.clients_semaphore.acquire()
             for jabber_id in self.clients:
                 self.clients[jabber_id].Process(1)
+            self.clients_semaphore.release()
+        self.start_semaphore.release()
 
     def get_jabber_id(self, username, password, hostname, resource):
         jabber_id = username + "@" + hostname
@@ -208,10 +213,12 @@ class JabberClient:
         return False
 
     def disconnect(self, jabber_id):
+        self.clients_semaphore.acquire()
         if jabber_id in self.clients:
             self.clients[jabber_id].disconnect()
             del self.clients[jabber_id]
             del self.message_handlers[jabber_id]
+        self.clients_semaphore.release()
 
     def send(self, sender_jabber_id, receiver_jabber_id, message):
         if sender_jabber_id in self.clients:
