@@ -49,9 +49,9 @@ INVALID_TEST_ID_MESSAGE = "invalid test id"
 """ The invalid test id message """
 
 HELP_TEXT = "### UNIT TESTING HELP ###\n\
-starttest <unit-testid> - starts a unit test\n\
-startalltest            - starts all the unit tests\n\
-showalltest             - shows all the unit tests"
+start_test <unit-testid>  - starts a unit test\n\
+start_all_test            - starts all the unit tests\n\
+show_all_test             - shows all the unit tests"
 """ The help text """
 
 TABLE_TOP_TEXT = "ID      TEST CASE NAME                PLUGIN ID"
@@ -66,14 +66,25 @@ SECOND_COLUMN_SPACING = 30
 ID_REGEX = "[0-9]+"
 """ The regular expression to retrieve the id of the test case """
 
-#@todo: review and comment this file
 class ConsoleTest:
-
-    commands = ["starttest", "startalltest", "showalltest"]
+    """
+    The console test class.
+    """
 
     main_test_plugin = None
+    """ The main test plugin """
+
+    commands = ["start_test", "start_all_test", "show_all_test"]
+    """ The commands list """
 
     def __init__(self, main_test_plugin):
+        """
+        Constructor of the class.
+
+        @type main_test_plugin: MainTestPlugin
+        @param main_test_plugin: The main test plugin.
+        """
+
         self.main_test_plugin = main_test_plugin
 
     def get_console_extension_name(self):
@@ -91,7 +102,7 @@ class ConsoleTest:
     def get_help(self):
         return HELP_TEXT
 
-    def process_starttest(self, args, output_method):
+    def process_start_test(self, args, output_method):
         if len(args) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
@@ -111,11 +122,11 @@ class ConsoleTest:
         else:
             output_method("invalid test case id")
 
-    def process_startalltest(self, args, output_method):
+    def process_start_all_test(self, args, output_method):
         output_method("starting all test cases")
         self.main_test_plugin.main_test.start_all_test()
 
-    def process_showalltest(self, args, output_method):
+    def process_show_all_test(self, args, output_method):
         # prints the table top text
         output_method(TABLE_TOP_TEXT)
 
