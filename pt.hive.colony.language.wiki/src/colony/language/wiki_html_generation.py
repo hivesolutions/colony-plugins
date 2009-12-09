@@ -230,9 +230,9 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
     @wiki_visitor._visit(wiki_ast.MonospaceNode)
     def visit_monospace_node(self, node):
         if self.visit_index == 0:
-            self._write("<span class=\"monospace\">")
+            self._write("<code>")
         elif self.visit_index == 1:
-            self._write("</span>")
+            self._write("</code>")
 
     @wiki_visitor._visit(wiki_ast.SectionNode)
     def visit_section_node(self, node):
@@ -332,7 +332,9 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
                 self._write("<ul>")
 
             self._write("<li>")
+            self._write("<div>")
         elif self.visit_index == 1:
+            self._write("</div>")
             self._write("</li>")
             self._write("</ul>")
 

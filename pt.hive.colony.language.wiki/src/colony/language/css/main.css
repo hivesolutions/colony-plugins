@@ -48,7 +48,7 @@ body {
 }
 
 p {
-    margin: 0 0 1em;
+    margin: 1.0em 0.0em 1.0em 0.0em;
 }
 
 h1 {
@@ -73,11 +73,18 @@ h5 {
 }
 
 ul {
+    color: #638c9c;
     line-height: 1.5em;
+    list-style-image: none;
+    list-style-type: square;
 }
 
 ol {
     line-height: 1.5em;
+}
+
+li > div  {
+    color: #000000;
 }
 
 .footer {
@@ -92,6 +99,7 @@ ol {
     font-size: 120%;
     overflow: auto;
     padding: 0.5em;
+    margin: 0.5em 0.0em 0.5em 0.0em;
 }
 
 .code .br0 {
