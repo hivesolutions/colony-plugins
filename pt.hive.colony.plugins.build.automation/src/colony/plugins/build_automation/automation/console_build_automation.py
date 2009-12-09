@@ -47,7 +47,7 @@ INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 
 HELP_TEXT = "### BUILD AUTOMATION HELP ###\n\
 run_automation <plugin-id> [plugin-version] - runs the build automation in the plugin with the given id and version\n\
-showall_automation                          - shows all the build automations"
+show_all_automation                         - shows all the build automations"
 """ The help text """
 
 TABLE_TOP_TEXT = "ID      BUILD AUTOMATION ID"
@@ -64,10 +64,11 @@ class ConsoleBuildAutomation:
     The console build automation class.
     """
 
-    commands = ["run_automation", "showall_automation"]
-
     build_automation_plugin = None
     """ The build automation plugin """
+
+    commands = ["run_automation", "show_all_automation"]
+    """ The commands list """
 
     def __init__(self, build_automation_plugin):
         """
@@ -108,7 +109,7 @@ class ConsoleBuildAutomation:
         # runs the automation for the plugin
         self.build_automation_plugin.build_automation.run_automation_plugin_id_version(real_plugin_id)
 
-    def process_showall_automation(self, args, output_method):
+    def process_show_all_automation(self, args, output_method):
         # prints the table top text
         output_method(TABLE_TOP_TEXT)
 

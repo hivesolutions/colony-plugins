@@ -53,7 +53,7 @@ INVALID_RECURSION_MESSAGE = "invalid recursion value"
 
 HELP_TEXT = "### BUILD AUTOMATION SCHEDULER HELP ###\n\
 schedule_automation <plugin-id> <date-time> <recursion> [plugin-version] - schedules the given automation\n\
-showall_automation_scheduler - shows all the scheduled build automations"
+show_all_automation_scheduler                                            - shows all the scheduled build automations"
 """ The help text """
 
 TABLE_TOP_TEXT = "ID      DATE_TIME      RECURSION      BUILD AUTOMATION ID"
@@ -73,10 +73,11 @@ class ConsoleBuildAutomationScheduler:
     The console build automation scheduler class.
     """
 
-    commands = ["schedule_automation", "showall_automation_scheduler"]
-
     build_automation_scheduler_plugin = None
     """ The build automation scheduler plugin """
+
+    commands = ["schedule_automation", "show_all_automation_scheduler"]
+    """ The commands list """
 
     def __init__(self, build_automation_scheduler_plugin):
         """
@@ -149,7 +150,7 @@ class ConsoleBuildAutomationScheduler:
 
         build_automation_scheduler.register_build_automation_plugin_id(plugin_id, date_time_value, recursion_list)
 
-    def process_showall_automation_scheduler(self, args, output_method):
+    def process_show_all_automation_scheduler(self, args, output_method):
         # prints the table top text
         output_method(TABLE_TOP_TEXT)
 
