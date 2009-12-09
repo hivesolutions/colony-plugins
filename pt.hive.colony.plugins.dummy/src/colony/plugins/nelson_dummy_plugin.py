@@ -40,7 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.plugins.plugin_system
 
 HELP_TEXT = "### NELSON DUMMY PLUGIN HELP ###\n\
-getalltranslationengines           - lists all the available translation engines\n\
+get_translation_engines            - lists all the available translation engines\n\
 translate <dictionary-name> <word> - translates a word for the given dictionary name"
 
 class NelsonDummyPlugin(colony.plugins.plugin_system.Plugin):
@@ -97,20 +97,24 @@ class NelsonDummyPlugin(colony.plugins.plugin_system.Plugin):
         return "nelson_dummy"
 
     def get_all_commands(self):
-        return ["get_all_translation_engines", "translate"]
+        return ["get_translation_engines", "translate"]
 
     def get_handler_command(self, command):
-        if command == "get_all_translation_engines":
-            return self.handler_get_all_translation_engines
+        if command == "get_translation_engines":
+            return self.handler_get_translation_engines
         elif command == "translate":
             return self.handler_translate
 
     def get_help(self):
         return HELP_TEXT
 
-    def handler_get_all_translation_engines(self, args, output_method):
+    def handler_get_translation_engines(self, args, output_method):
+        # iterates over all the translation engine plugins
         for translation_engine_plugin in self.translation_engine_plugins:
+            # retrieves the dictionary name
             dictionary_name = translation_engine_plugin.get_dictionary_name()
+
+            # prints the dictionary name
             output_method(dictionary_name)
 
     def handler_translate(self, args, output_method):
