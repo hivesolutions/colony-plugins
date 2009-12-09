@@ -153,18 +153,21 @@ class WikiCodeExtension(wiki_extension_system.WikiExtension):
             # writes the start code tag
             string_buffer.write("<code>")
 
-            current_lex_pos = 0
-            current_lex_line = 1
+            # sets the initial current position
+            current_position = 0
+
+            # sets the initial current line
+            current_line = 1
 
             for token in tokens_list:
                 # unpacks the token tuple
                 token_type, token_value, token_position, token_end_position, token_line, token_class = token
 
                 # retrieves the line delta value
-                line_delta = token_line - current_lex_line
+                line_delta = token_line - current_line
 
                 # retrieves the position delta
-                position_delta = token_position - current_lex_pos
+                position_delta = token_position - current_position
 
                 # in case the line delta is bigger than zero
                 if line_delta > 0:
@@ -174,8 +177,11 @@ class WikiCodeExtension(wiki_extension_system.WikiExtension):
                 for index in range(position_delta):
                     string_buffer.write("&nbsp;")
 
-                current_lex_pos = token_end_position
-                current_lex_line = token_line
+                # sets the current position
+                current_position = token_end_position
+
+                # sets the current line
+                current_line = token_line
 
                 # in case the token class is defined
                 if token_class:
