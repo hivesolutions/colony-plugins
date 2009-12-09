@@ -602,15 +602,26 @@ class MainFrame(wx.Frame):
         return self.tab_container_panel
 
 class ProgressInformationFrame(wx.Frame):
+    """
+    The progress information frame class.
+    """
 
     FRAME_STYLE = wx.CAPTION | wx.FRAME_FLOAT_ON_PARENT | wx.RESIZE_BORDER | wx.PD_AUTO_HIDE | wx.PD_APP_MODAL
+    """ The frame style """
+
     MIN_WIDTH = 480
+    """ The frame minimum width """
+
     MIN_HEIGHT = 240
+    """ The frame minimum height """
 
     progress_information_plugin = None
-    panel_loaded = False
+    """ The progress information plugin """
 
-    def __init__(self, parent, id, title, progress_information_plugin = None):
+    panel_loaded = False
+    """ The panel loaded flag """
+
+    def __init__(self, parent, id, title, progress_information_plugin):
         wx.Frame.__init__(self, parent, id, title, style = ProgressInformationFrame.FRAME_STYLE)
 
         # sets the minimum size for the window
