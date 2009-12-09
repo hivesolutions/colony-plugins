@@ -41,14 +41,29 @@ import gdata.docs.service
 import gdata.youtube
 import gdata.youtube.service
 
-#@todo: comment this class
 class GoogleDataClient:
+    """
+    The google data client class.
+    """
+
+    google_data_client_plugin = None
+    """ The google data client plugin """
 
     youtube_service = None
-    docs_service = None
+    """ The youtube service """
 
-    def __init__(self, parent_plugin):
-        self.parent_plugin = parent_plugin
+    docs_service = None
+    """ The docs service """
+
+    def __init__(self, google_data_client_plugin):
+        """
+        Constructor of the class.
+
+        @type google_data_client_plugin: GoogleDataClientPlugin
+        @param google_data_client_plugin: The google data client plugin.
+        """
+
+        self.google_data_client_plugin = google_data_client_plugin
 
     def connect(self, username, password):
         """

@@ -43,12 +43,24 @@ import wx.lib.customtreectrl
 
 import misc_gui.tree_visualizer.tree_visualizer_system
 
-#@todo: review and comment this class
 class PluginManagerPanel(misc_gui.tree_visualizer.tree_visualizer_system.TreeVisualizerPanel):
+    """
+    The plugin manager panel class.
+    """
 
     plugin_nodes_map = {}
+    """ The plugin nodes map """
 
     def __init__(self, parent, parent_plugin):
+        """
+        Constructor of the class.
+
+        @type parent: Object
+        @param parent: The parent component
+        @type parent_plugin: Plugin
+        @param parent_plugin: The parent plugin.
+        """
+
         misc_gui.tree_visualizer.tree_visualizer_system.TreeVisualizerPanel.__init__(self, parent, parent_plugin)
         self.tree.Bind(wx.lib.customtreectrl.EVT_TREE_ITEM_HYPERLINK, self.on_hyperlink)
         self.tree.Bind(wx.lib.customtreectrl.EVT_TREE_ITEM_CHECKED, self.on_checked)
@@ -179,6 +191,7 @@ class PluginManagerPanel(misc_gui.tree_visualizer.tree_visualizer_system.TreeVis
                 return 1
             return -1
 
+        # constructs the plugin nodes map
         self.plugin_nodes_map = {}
 
         # retrieves the list of plugins

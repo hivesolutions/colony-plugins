@@ -39,7 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.plugins.plugin_system
 
-#@todo: comment this class
 class JabberClientPlugin(colony.plugins.plugin_system.Plugin):
     """
     The main class for the Jabber Client plugin.

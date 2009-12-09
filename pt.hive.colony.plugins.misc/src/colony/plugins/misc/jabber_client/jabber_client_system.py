@@ -53,10 +53,16 @@ jabber_send <sender_jabber_id> <receiver_jabber_id> <message> - sends a message 
 jabber_list_clients                                           - retrieves a list of the currently connected clients"
 """ The help text """
 
-#@todo: comment this class
 class JabberClient:
+    """
+    The jabber client class.
+    """
+
+    jabber_client_plugin = None
+    """ The jabber client plugin """
 
     commands = ["jabber_connect", "jabber_disconnect", "jabber_send", "jabber_list_clients"]
+    """ The commands list """
 
     loop = None
     connect_jabber_id = None
@@ -74,8 +80,15 @@ class JabberClient:
     message_handlers = {}
     unloading = False
 
-    def __init__(self, parent_plugin):
-        self.parent_plugin = parent_plugin
+    def __init__(self, jabber_client_plugin):
+        """
+        Constructor of the class.
+
+        @type jabber_client_plugin: JabberClientPlugin
+        @param jabber_client_plugin: The jabber client plugin.
+        """
+
+        self.jabber_client_plugin = jabber_client_plugin
         self.clients = {}
         self.start_semaphore = threading.Semaphore(0)
         self.event_semaphore = threading.Semaphore()
@@ -224,7 +237,7 @@ class JabberClient:
         if len(args) >= 2:
             jabber_id = args[0]
             password = args[1]
-            self.parent_plugin.connect(jabber_id, password)
+            self.connect(jabber_id, password)
         else:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
 
@@ -233,14 +246,14 @@ class JabberClient:
             sender_jabber_id = args[0]
             receiver_jabber_id = args[1]
             message = args[2]
-            self.parent_plugin.send(sender_jabber_id, receiver_jabber_id, message)
+            self.send(sender_jabber_id, receiver_jabber_id, message)
         else:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
 
     def process_jabber_disconnect(self, args, output_method):
         if len(args) >= 1:
             jabber_id = args[0]
-            self.parent_plugin.disconnect(jabber_id)
+            self.disconnect(jabber_id)
         else:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
 

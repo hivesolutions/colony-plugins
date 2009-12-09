@@ -39,15 +39,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.plugins.plugin_system
 
-class BotEngineAIMLPlugin(colony.plugins.plugin_system.Plugin):
+class BotEngineAimlPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Bot Engine AIML plugin.
+    The main class for the Bot Engine Aiml plugin.
     """
 
     id = "pt.hive.colony.plugins.misc.bot_engine_aiml"
-    name = "Bot Engine AIML Plugin"
-    short_name = "Bot Engine AIML"
-    description = "Bot Engine AIML Plugin"
+    name = "Bot Engine Aiml Plugin"
+    short_name = "Bot Engine Aiml"
+    description = "Bot Engine Aiml Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
@@ -66,7 +66,7 @@ class BotEngineAIMLPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global misc
         import misc.bot_engine_aiml.bot_engine_aiml_system
-        self.bot_engine_aiml = misc.bot_engine_aiml.bot_engine_aiml_system.BotEngineAIML(self)
+        self.bot_engine_aiml = misc.bot_engine_aiml.bot_engine_aiml_system.BotEngineAiml(self)
         self.bot_engine_aiml.load_brain("c:\\alice.brn")
 
     def end_load_plugin(self):

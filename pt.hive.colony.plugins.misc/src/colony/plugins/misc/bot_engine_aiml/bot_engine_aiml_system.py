@@ -46,26 +46,34 @@ INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 """ The invalid number of arguments message """
 
 HELP_TEXT = "### AIML BOT ENGINE HELP ###\n\
-bot_engine_aiml_load_brain <path>  - loads a PyAIML brain into the AIML bot engine\n\
-bot_engine_aiml_teach_brain <path> - teaches an AIML file to the AIML bot engine\n\
-bot_engine_aiml_send <message>     - sends a message to the AIML bot engine"
+bot_engine_aiml_load_brain <path>  - loads a PyAIML brain into the aiml bot engine\n\
+bot_engine_aiml_teach_brain <path> - teaches an aiml file to the aiml bot engine\n\
+bot_engine_aiml_send <message>     - sends a message to the aiml bot engine"
 """ The help text """
 
-#@todo: comment this file
-class BotEngineAIML:
+class BotEngineAiml:
     """
-    The bot engine AIML class.
+    The bot engine aiml class.
     """
 
-    parent_plugin = None
+    bot_engine_aiml_plugin = None
+    """ The bot engine aiml plugin """
 
     commands = ["bot_engine_aiml_load_brain", "bot_engine_aiml_teach_brain", "bot_engine_aiml_send"]
+    """ The commands list """
 
     aiml_engine = None
     """ The aiml engine """
 
-    def __init__(self, parent_plugin):
-        self.parent_plugin = parent_plugin
+    def __init__(self, bot_engine_aiml_plugin):
+        """
+        Constructor of the class.
+
+        @type bot_engine_aiml_plugin: BotEngineAimlPlugin
+        @param bot_engine_aiml_plugin: The bot engine aiml plugin.
+        """
+
+        self.bot_engine_aiml_plugin = bot_engine_aiml_plugin
         self.aiml_engine = aiml.Kernel()
 
     def load_brain(self, brain_path):

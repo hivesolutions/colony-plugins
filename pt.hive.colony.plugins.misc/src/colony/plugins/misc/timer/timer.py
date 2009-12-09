@@ -44,17 +44,24 @@ class Timer:
     Provides time monitoring functions
     """
 
+    timer_plugin = None
+    """ The timmer plugin """
+
     start_timestamp = 0
     """ Timestamp of when the start() method was invoked """
 
     stop_timestamp = 0
     """ Timestamp of when the stop() method was invoked """
 
-    parent_plugin = None
-    """ Reference to the plugin that owns this code """
+    def __init__(self, timer_plugin):
+        """
+        Constructor of the class.
 
-    def __init__(self, parent_plugin):
-        self.parent_plugin = parent_plugin
+        @type timer_plugin: TimerPlugin
+        @param timer_plugin: The timer plugin.
+        """
+
+        self.timer_plugin = timer_plugin
 
     def start(self):
         """

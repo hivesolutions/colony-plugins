@@ -41,18 +41,13 @@ import wx
 import re
 import wx.lib.customtreectrl
 
-#@todo: review and comment this file
-
-def escape_string(raw_string):
-    new_string = ""
-    special_characters = [".", "^", "$", "*", "+", "?", "{", "[", "]", "\\", "|", "(", ")"]
-    for character in raw_string:
-        if character in special_characters:
-            new_string += "\\"
-        new_string += character
-    return new_string
-
 class TreeVisualizerPanel(wx.Panel):
+    """
+    The tree visualizer panel class.
+    """
+
+    parent_plugin = None
+    """ The parent plugin """
 
     filter_mode = False
     regex_mode = False
@@ -63,6 +58,15 @@ class TreeVisualizerPanel(wx.Panel):
     delete_list = []
 
     def __init__(self, parent, parent_plugin):
+        """
+        Constructor of the class.
+
+        @type parent: Object
+        @param parent: The parent component.
+        @type parent_plugin: Plugin
+        @param parent_plugin: The parent plugin.
+        """
+
         self.parent_plugin = parent_plugin
         self.node_list = []
         self.match_list = []
@@ -263,3 +267,12 @@ class TreeVisualizerPanel(wx.Panel):
 
     def refresh_tree(self):
         pass
+
+def escape_string(raw_string):
+    new_string = ""
+    special_characters = [".", "^", "$", "*", "+", "?", "{", "[", "]", "\\", "|", "(", ")"]
+    for character in raw_string:
+        if character in special_characters:
+            new_string += "\\"
+        new_string += character
+    return new_string
