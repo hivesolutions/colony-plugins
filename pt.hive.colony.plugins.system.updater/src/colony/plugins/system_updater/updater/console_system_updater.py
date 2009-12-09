@@ -44,20 +44,32 @@ INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 """ The invalid number of arguments message """
 
 HELP_TEXT = "### SYSTEM UPDATER HELP ###\n\
-listrepositories                              - lists the current available repositories\n\
-listrepositorypackages <repository-name>      - lists the packages for the given repository\n\
-listrepositoryplugins <repository-name>       - lists the plugins for the given repository\n\
-installpackage <package-id> [package-version] - installs the package with the given id and version\n\
-installplugin <plugin-id> [plugin-version]    - installs the plugin with the given id and version"
+list_repositories                               - lists the current available repositories\n\
+list_repository_packages <repository-name>      - lists the packages for the given repository\n\
+list_repository_plugins <repository-name>       - lists the plugins for the given repository\n\
+install_package <package-id> [package-version]  - installs the package with the given id and version\n\
+install_plugin <plugin-id> [plugin-version]     - installs the plugin with the given id and version"
 """ The help text """
 
 class ConsoleSystemUpdater:
-
-    commands = ["listrepositories", "listrepositorypackages", "listrepositoryplugins", "installpackage", "installplugin"]
+    """
+    The console system updater class.
+    """
 
     system_updater_plugin = None
+    """ The system updater plugin """
 
-    def __init__(self, system_updater_plugin = None):
+    commands = ["list_repositories", "list_repository_packages", "list_repository_plugins", "install_package", "install_plugin"]
+    """ The commands list """
+
+    def __init__(self, system_updater_plugin):
+        """
+        Constructor of the class.
+
+        @type system_updater_plugin: SystemUpdaterPlugin
+        @param system_updater_plugin: The system updater plugin.
+        """
+
         self.system_updater_plugin = system_updater_plugin
 
     def get_console_extension_name(self):
@@ -75,14 +87,14 @@ class ConsoleSystemUpdater:
     def get_help(self):
         return HELP_TEXT
 
-    def process_listrepositories(self, args, output_method):
+    def process_list_repositories(self, args, output_method):
 
         repositories_list = self.system_updater_plugin.system_updater.get_repositories()
 
         for repository in repositories_list:
             self.print_repository_info(repository, output_method)
 
-    def process_listrepositorypackages(self, args, output_method):
+    def process_list_repository_packages(self, args, output_method):
         if len(args) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
@@ -94,7 +106,7 @@ class ConsoleSystemUpdater:
         for package_information in package_information_list:
             self.print_package_info(package_information, output_method)
 
-    def process_listrepositoryplugins(self, args, output_method):
+    def process_list_repository_plugins(self, args, output_method):
         if len(args) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
@@ -106,7 +118,7 @@ class ConsoleSystemUpdater:
         for plugin_information in plugin_information_list:
             self.print_plugin_info(plugin_information, output_method)
 
-    def process_installpackage(self, args, output_method):
+    def process_install_package(self, args, output_method):
         if len(args) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
@@ -119,7 +131,7 @@ class ConsoleSystemUpdater:
             package_version = args[1]
             self.system_updater_plugin.system_updater.install_package(package_identifier, package_version)
 
-    def process_installplugin(self, args, output_method):
+    def process_install_plugin(self, args, output_method):
         if len(args) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
