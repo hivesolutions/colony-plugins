@@ -57,10 +57,11 @@ class ConsolePrintingManager:
     The console printing manager class.
     """
 
-    commands = ["print_test", "print_test_image", "print_printing_language"]
-
     printing_manager_plugin = None
     """ The printing manager plugin """
+
+    commands = ["print_test", "print_test_image", "print_printing_language"]
+    """ The commands list """
 
     def __init__(self, printing_manager_plugin):
         """
