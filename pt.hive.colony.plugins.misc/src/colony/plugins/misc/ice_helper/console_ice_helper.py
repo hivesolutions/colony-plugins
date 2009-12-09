@@ -77,16 +77,28 @@ ICE_NODE_PARSING_VALUES = ["ice_grid_node_path=", "ice_grid_instance_name=", "ic
 """ The ice node parsing values """
 
 class ConsoleIceHelper:
-
-    commands = ["loadice", "createregistry", "killregistry", "createnode", "killnode", "createupdateapplication", "createcommunicator", "createaccess", "createaccesstype", "createregistryaccess", "createadminaccess", "callaccess", "showapplicationinfo"]
+    """
+    The console ice helper class.
+    """
 
     ice_helper_plugin = None
+    """ The ice helper plugin """
+
+    commands = ["loadice", "createregistry", "killregistry", "createnode", "killnode", "createupdateapplication", "createcommunicator", "createaccess", "createaccesstype", "createregistryaccess", "createadminaccess", "callaccess", "showapplicationinfo"]
+    """ The commands list """
 
     communicator = None
 
     locator_name = None
 
     def __init__(self, ice_helper_plugin = None):
+        """
+        Constructor of the class.
+
+        @type ice_helper_plugin: IceHelperPlugin
+        @param ice_helper_plugin: The ice helper plugin.
+        """
+
         self.ice_helper_plugin = ice_helper_plugin
 
     def get_console_extension_name(self):
@@ -332,10 +344,21 @@ class ConsoleIceHelper:
         output_method(str(application_options))
 
 class IceOptionParser:
+    """
+    The ice option parser class.
+    """
 
     values = []
+    """ The values to be parsed """
 
     def __init__(self, values = []):
+        """
+        Constructor of the class.
+
+        @type values: List
+        @param values: The values to be parsed.
+        """
+
         self.values = values
 
     def parse(self, properties, options):

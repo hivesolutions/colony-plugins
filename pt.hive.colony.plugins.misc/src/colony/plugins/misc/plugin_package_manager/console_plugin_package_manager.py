@@ -44,12 +44,24 @@ HELP_TEXT = "### PLUGIN PACKAGE MANAGER HELP ###\n"
 """ The help text """
 
 class ConsolePluginPackageManager:
-
-    commands = []
+    """
+    The console plugin package manager plugin.
+    """
 
     plugin_package_manager_plugin = None
+    """ The plugin package manager plugin """
 
-    def __init__(self, plugin_package_manager_plugin = None):
+    commands = []
+    """ The commands list """
+
+    def __init__(self, plugin_package_manager_plugin):
+        """
+        Constructor of the class.
+
+        @type plugin_package_manager_plugin: PluginPackageManagerPlugin
+        @param plugin_package_manager_plugin: The plugin package manager plugin.
+        """
+
         self.plugin_package_manager_plugin = plugin_package_manager_plugin
 
     def get_console_extension_name(self):

@@ -43,6 +43,7 @@ import time
 import threading
 
 MAX_COUNTER = 0xfffffffe
+""" The max counter value """
 
 class Guid:
     """
@@ -82,10 +83,10 @@ class Guid:
 
     def generate_guid(self):
         """
-        Generates a guid (unique in space and time) number
+        Generates a guid (unique in space and time) number.
 
         @rtype: String
-        @return: The unique guid
+        @return: The unique guid.
         """
 
         # acquires the lock, only one guid at the same time

@@ -70,6 +70,13 @@ class ExecutionEnvironment:
         self.execution_environment_plugin = execution_environment_plugin
 
     def get_operative_system(self):
+        """
+        Retrieves the current operative system, described as a string.
+
+        @rtype: String
+        @return: The current operative system, described as a string.
+        """
+
         # retrieves the os name
         os_name = os.name
 

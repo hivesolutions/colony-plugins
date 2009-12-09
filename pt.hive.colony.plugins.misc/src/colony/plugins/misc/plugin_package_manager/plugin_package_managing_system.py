@@ -38,8 +38,19 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 class PluginPackageManager:
+    """
+    The plugin package manager class.
+    """
 
     plugin_package_manager_plugin = None
+    """ The plugin package manager plugin """
 
     def __init__(self, plugin_package_manager_plugin):
+        """
+        Constructor of the class.
+
+        @type plugin_package_manager_plugin: PluginPackageManagerPlugin
+        @param plugin_package_manager_plugin: The plugin package manager plugin.
+        """
+
         self.plugin_package_manager_plugin = plugin_package_manager_plugin

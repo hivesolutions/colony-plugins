@@ -61,7 +61,7 @@ class Random:
         Constructor of the class.
 
         @type random_plugin: RandomPlugin
-        @param random_plugin:  The guid plugin.
+        @param random_plugin:  The random plugin.
         """
 
         self.random_plugin = random_plugin

@@ -99,6 +99,9 @@ class Svn:
         self.svn_client.svn_get_login_callback(realm, username, may_save)
 
 class SvnClient:
+    """
+    The svn client class.
+    """
 
     svn_client = None
     """ The pysvn client """

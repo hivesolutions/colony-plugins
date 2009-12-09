@@ -44,7 +44,10 @@ import datetime
 import threading
 
 METHOD_CALL_TYPE = "method_call"
+""" The method call type """
+
 CONSOLE_COMMAND_TYPE = "console_command"
+""" The console command type """
 
 class Scheduler:
     """
@@ -323,23 +326,45 @@ class Scheduler:
         return absolute_timestamp
 
 class SchedulerTask:
+    """
+    The scheduler task class.
+    """
 
     task_type = "none"
+    """ The task type """
+
     task_arguments = {}
+    """ The task arguments map """
 
     def __init__(self, task_type, task_arguments = {}):
         self.task_type = task_type
         self.task_arguments = task_arguments
 
 class SchedulerItem:
+    """
+    The scheduler item class.
+    """
 
     item_id = "none"
+    """ The item id """
+
     task_method = None
+    """ The task method """
+
     task_method_arguments = None
+    """ The task method arguments """
+
     absolute_time = None
+    """ The absolute time """
+
     recursion_list = None
+    """ The recursion list """
+
     current_event = None
+    """ The current event """
+
     canceled = False
+    """ The canceled flag """
 
     def __init__(self, item_id, task_method, task_method_arguments, absolute_time, recursion_list = None, current_event = None, canceled = False):
         self.item_id = item_id

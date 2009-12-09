@@ -85,4 +85,11 @@ class ExecutionEnvironmentPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_operative_system(self):
+        """
+        Retrieves the current operative system, described as a string.
+
+        @rtype: String
+        @return: The current operative system, described as a string.
+        """
+
         return self.execution_environment.get_operative_system()

@@ -47,18 +47,29 @@ INVALID_ADDRESS_MESSAGE = "invalid address"
 """ The invalid address message """
 
 HELP_TEXT = "### PLUGIN DOWNLOADER HELP ###\n\
-plugindownload <plugin-id> [plugin-version]     - starts the download of the plugin\n\
-plugintestdownload <plugin-id> [plugin-version] - test the download of the plugin"
+plugin_download <plugin-id> [plugin-version]      - starts the download of the plugin\n\
+plugin_test_download <plugin-id> [plugin-version] - test the download of the plugin"
 """ The help text """
 
-#@todo: review and comment this file
 class ConsolePluginDownloader:
-
-    commands = ["plugindownload", "plugintestdownload"]
+    """
+    The console plugin downloader clas.
+    """
 
     plugin_downloader_plugin = None
+    """ The plugin downloader plugin """
 
-    def __init__(self, plugin_downloader_plugin = None):
+    commands = ["plugin_download", "plugin_test_download"]
+    """ The commands list """
+
+    def __init__(self, plugin_downloader_plugin):
+        """
+        Constructor of the class.
+
+        @type plugin_downloader_plugin: PluginDownloaderPlugin
+        @param plugin_downloader_plugin: The plugin downloader plugin.
+        """
+
         self.plugin_downloader_plugin = plugin_downloader_plugin
 
     def get_console_extension_name(self):
@@ -76,7 +87,7 @@ class ConsolePluginDownloader:
     def get_help(self):
         return HELP_TEXT
 
-    def process_plugindownload(self, args, output_method):
+    def process_plugin_download(self, args, output_method):
         if len(args) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
@@ -89,5 +100,5 @@ class ConsolePluginDownloader:
             plugin_version = args[1]
             self.plugin_downloader_plugin.plugin_downloader.download_plugin(plugin_identifier, plugin_version)
 
-    def process_plugintestdownload(self, args, output_method):
+    def process_plugin_test_download(self, args, output_method):
         pass

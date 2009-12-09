@@ -37,12 +37,22 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-#@todo: review and comment this file
 class DependenciesCalculator:
+    """
+    The dependencies calculator class.
+    """
 
     dependencies_calculator_plugin = None
+    """ The dependencies calculator plugin """
 
     def __init__(self, dependencies_calculator_plugin):
+        """
+        Constructor of the class.
+
+        @type dependencies_calculator_plugin: DependenciesCalculatorPlugin
+        @param dependencies_calculator_plugin: The dependencies calculator plugin.
+        """
+
         self.dependencies_calculator_plugin = dependencies_calculator_plugin
 
     def generate_graph(self, plugin_list):
@@ -101,13 +111,16 @@ class PluginGraphGenerator:
         return self.graph
 
 class Graph:
+    """
+    The graph class, representing the graph structure.
+    """
 
-    # constants for node qualification
     MARK_WHITE = 1
     MARK_BLACK = 2
     MARK_GREY = 3
 
     nodes_list = []
+    """ The nodes list """
 
     def __init__(self):
         self.nodes_list = []
@@ -142,16 +155,29 @@ class Graph:
         for node in self.nodes_list:
             del node.mark
 
-    # @todo melhorar o print deste grafo
+    # @todo: improve the print of this graph
     def print_graph(self):
         for node in self.nodes_list:
             print node.value.id
 
 class GraphNode:
+    """
+    The graph node class, representing the a graph node.
+    """
 
     value = None
+    """ The value of the graph node """
+
     connected_nodes_list = []
+    """ The list of connected nodes """
 
     def __init__(self, value = None):
+        """
+        Constructor of the class.
+
+        @type value: Object
+        @param value: The value of the graph node.
+        """
+
         self.value = value
         self.connected_nodes_list = []

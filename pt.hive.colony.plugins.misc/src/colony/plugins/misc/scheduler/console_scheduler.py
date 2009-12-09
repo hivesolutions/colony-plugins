@@ -44,7 +44,7 @@ INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 """ The invalid number of arguments message """
 
 HELP_TEXT = "### SCHEDULER HELP ###\n\
-showallscheduler - shows all the scheduled tasks"
+show_all_scheduler - shows all the scheduled tasks"
 """ The help text """
 
 TABLE_TOP_TEXT = "ID      TASK            TIME      RECURSIVITY"
@@ -55,10 +55,11 @@ class ConsoleScheduler:
     The console scheduler class.
     """
 
-    commands = ["showallscheduler"]
-
     scheduler_plugin = None
     """ The scheduler plugin """
+
+    commands = ["show_all_scheduler"]
+    """ The commands list """
 
     def __init__(self, scheduler_plugin = None):
         """
@@ -85,7 +86,7 @@ class ConsoleScheduler:
     def get_help(self):
         return HELP_TEXT
 
-    def process_showallscheduler(self, args, output_method):
+    def process_show_all_scheduler(self, args, output_method):
         # prints the table top text
         output_method(TABLE_TOP_TEXT)
 

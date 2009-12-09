@@ -48,12 +48,24 @@ rungarbagecollector - runs the python garbage collector"
 """ The help text """
 
 class ConsoleGarbageCollector:
-
-    commands = ["rungarbagecollector"]
+    """
+    The console garbage collector.
+    """
 
     garbage_collector_plugin = None
+    """ The garbage collector plugin """
 
-    def __init__(self, garbage_collector_plugin = None):
+    commands = ["rungarbagecollector"]
+    """ The commands list """
+
+    def __init__(self, garbage_collector_plugin):
+        """
+        Constructor of the class.
+
+        @type garbage_collector_plugin: GarbageCollectorPlugin
+        @param garbage_collector_plugin: The garbage collector plugin.
+        """
+
         self.garbage_collector_plugin = garbage_collector_plugin
 
     def get_console_extension_name(self):
@@ -72,7 +84,6 @@ class ConsoleGarbageCollector:
         return HELP_TEXT
 
     def process_rungarbagecollector(self, args, output_method):
-
         output_method("running garbage collector")
 
         self.garbage_collector_plugin.garbage_collector.run_garbage_collector()

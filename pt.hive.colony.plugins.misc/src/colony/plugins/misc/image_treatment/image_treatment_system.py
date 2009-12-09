@@ -52,7 +52,7 @@ class ImageTreatment:
 
     def __init__(self, image_treatment_plugin):
         """
-        Constructor of the class
+        Constructor of the class.
 
         @type image_treatment_plugin: ImageTreatmentPlugin
         @param image_treatment_plugin: The image treatment plugin.

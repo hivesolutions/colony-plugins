@@ -38,13 +38,27 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 class IceServiceManager:
+    """
+    The ice service manager class.
+    """
 
     ice_service_manager_plugin = None
+    """ The ice service manager plugin """
 
     ice_service_descriptors_list = []
+    """ The ice service descriptors list """
+
     service_name_ice_service_descriptor_map = {}
+    """ The service name ice service descriptor map """
 
     def __init__(self, ice_service_manager_plugin):
+        """
+        Constructor of the class
+
+        @type ice_service_manager_plugin: IceServiceManagerPlugin
+        @param ice_service_manager_plugin: The ice service manager plugin.
+        """
+
         self.ice_service_manager_plugin = ice_service_manager_plugin
 
         self.ice_service_descriptors_list = []
@@ -75,10 +89,10 @@ class IceServiceManager:
 
     def start_service(self, ice_service_name):
         """
-        Starts an ice service with the given name
+        Starts an ice service with the given name.
 
         @type ice_service_name: String
-        @param ice_service_name: The name of the service to be started
+        @param ice_service_name: The name of the service to be started.
         """
 
         # in case the service is not registered
@@ -135,13 +149,36 @@ class IceServiceManager:
         pass
 
 class IceServiceDescriptor:
+    """
+    The ice service descriptor class.
+    """
 
     name = "none"
+    """ The name of the service """
+
     description = "none"
+    """ The description of the service """
+
     server_file_path = None
+    """ The server file path of the service """
+
     access_objects_list = []
+    """ The access objects list """
 
     def __init__(self, name = "none", description = "none", server_file_path = None, access_objects_list = []):
+        """
+        Constructor of the class.
+
+        @type name: String
+        @param name: The name of the service.
+        @type description: String
+        @param description: The description of the service.
+        @type server_file_path: String
+        @param server_file_path: The server file path of the service.
+        @type access_objects_list: List
+        @param access_objects_list: The access objects list.
+        """
+
         self.name = name
         self.description = description
         self.server_file_path = server_file_path

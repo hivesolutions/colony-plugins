@@ -52,10 +52,11 @@ class ConsoleEmail:
     The console email class.
     """
 
-    commands = ["sendemail"]
-
     email_plugin = None
     """ The email plugin """
+
+    commands = ["sendemail"]
+    """ The commands list """
 
     def __init__(self, email_plugin = None):
         """

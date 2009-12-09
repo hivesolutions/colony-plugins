@@ -263,8 +263,12 @@ class JabberClient:
             output_method("* " + jabber_id)
 
 class MessageHandler:
+    """
+    The manager handler class.
+    """
 
     handler = None
+    """ The handler """
 
     def handle_incoming_message(self, connection, event):
         type = event.getType()

@@ -143,7 +143,7 @@ class Downloader:
         except urllib2.URLError, error:
             self.downloader_plugin.error("Error downloading file: " + address + ", server not available")
 
-    def get_file_name_url(url):
+    def get_file_name_url(self, url):
         """
         Retrieves the file name for the given url.
 

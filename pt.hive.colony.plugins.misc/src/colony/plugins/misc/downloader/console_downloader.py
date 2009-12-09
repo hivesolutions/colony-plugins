@@ -51,14 +51,25 @@ download <file-address>     - starts the download of the file\n\
 testdownload <file-address> - test the download of the file"
 """ The help text """
 
-#@todo: review and comment this file
 class ConsoleDownloader:
-
-    commands = ["download", "testdownload"]
+    """
+    The console downloader class.
+    """
 
     downloader_plugin = None
+    """ The downloader plugin """
+
+    commands = ["download", "testdownload"]
+    """ The commands list """
 
     def __init__(self, downloader_plugin = None):
+        """
+        Constructor of the class.
+
+        @type downloader_plugin: DownloaderPlugin
+        @param downloader_plugin: The downloader plugin.
+        """
+
         self.downloader_plugin = downloader_plugin
 
     def get_console_extension_name(self):

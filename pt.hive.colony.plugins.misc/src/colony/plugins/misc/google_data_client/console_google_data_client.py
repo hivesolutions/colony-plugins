@@ -47,18 +47,29 @@ INVALID_OPERATION_MESSAGE = "invalid operation"
 """ The invalid operation message """
 
 HELP_TEXT = "### GOOGLE DATA CLIENT HELP ###\n\
-googleconnect <username> <password>     - connects to the google data services\n\
-googleyoutube <operation> [arguments..] - uses one of the google services"
+google_connect <username> <password>     - connects to the google data services\n\
+google_youtube <operation> [arguments..] - uses one of the google services"
 """ The help text """
 
-#@todo: review and comment this file
 class ConsoleGoogleDataClient:
-
-    commands = ["googleconnect", "googleyoutube"]
+    """
+    The console google data client class.
+    """
 
     google_data_client_plugin = None
+    """ The google data client plugin """
 
-    def __init__(self, google_data_client_plugin = None):
+    commands = ["google_connect", "google_youtube"]
+    """ The commands list """
+
+    def __init__(self, google_data_client_plugin):
+        """
+        Constructor of the class.
+
+        @type google_data_client_plugin: GoogleDataClientPlugin
+        @param google_data_client_plugin: The google data client plugin.
+        """
+
         self.google_data_client_plugin = google_data_client_plugin
 
     def get_console_extension_name(self):
@@ -76,7 +87,7 @@ class ConsoleGoogleDataClient:
     def get_help(self):
         return HELP_TEXT
 
-    def process_googleconnect(self, args, output_method):
+    def process_google_connect(self, args, output_method):
         if len(args) < 2:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
@@ -86,7 +97,7 @@ class ConsoleGoogleDataClient:
 
         self.google_data_client_plugin.google_data_client.connect(google_username, google_password)
 
-    def process_googleyoutube(self, args, output_method):
+    def process_google_youtube(self, args, output_method):
         if len(args) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return

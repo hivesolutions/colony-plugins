@@ -40,15 +40,19 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import jabber_ice_service_ice_server
 
 class JabberIceService:
+    """
+    The jabber ice service class.
+    """
 
     jabber_ice_service_plugin = None
+    """ The jabber ice service plugin """
 
     def __init__(self, jabber_ice_service_plugin):
         """
-        Constructor of the class
+        Constructor of the class.
 
         @type jabber_ice_service_plugin: Plugin
-        @param jabber_ice_service_plugin: The jabber ice service plugin
+        @param jabber_ice_service_plugin: The jabber ice service plugin.
         """
 
         self.jabber_ice_service_plugin = jabber_ice_service_plugin

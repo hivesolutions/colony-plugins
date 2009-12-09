@@ -82,6 +82,7 @@ if __name__ == "__main__":
             # waits for the adapter shutdown
             self.communicator().waitForShutdown()
 
+            # returns zero
             return 0
 
     ice_server = JabberIceServiceIceServer()
@@ -89,10 +90,10 @@ if __name__ == "__main__":
 
 def get_server_path():
     """
-    Retrieves the path to the ice server file
+    Retrieves the path to the ice server file.
 
     @rtype: String
-    @return: The path to the ice server file
+    @return: The path to the ice server file.
     """
 
     return os.path.abspath(__file__)

@@ -50,12 +50,24 @@ stopiceservice <service-name>  - stops an ice service with the given service nam
 """ The help text """
 
 class ConsoleIceServiceManager:
-
-    commands = ["listiceservices", "starticeservice", "stopiceservice"]
+    """
+    The console ice service manager class.
+    """
 
     ice_service_manager_plugin = None
+    """ The ice service manager plugin """
+
+    commands = ["listiceservices", "starticeservice", "stopiceservice"]
+    """ The commands list """
 
     def __init__(self, ice_service_manager_plugin):
+        """
+        Constructor of the class.
+
+        @type ice_service_manager_plugin: IceServiceManagerPlugin
+        @param ice_service_manager_plugin: The ice service manager plugin.
+        """
+
         self.ice_service_manager_plugin = ice_service_manager_plugin
 
     def get_console_extension_name(self):

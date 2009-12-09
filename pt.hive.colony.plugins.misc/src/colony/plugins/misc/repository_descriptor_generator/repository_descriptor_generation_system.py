@@ -40,12 +40,24 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import xml.dom.minidom
 
 PROTOTYPE_CONVERTER_TYPE = "prototype_converter"
+""" The prototype converter type """
 
 class RepositoryDescriptorGenerator:
+    """
+    The repository descriptor generator class.
+    """
 
     repository_descriptor_generator_plugin = None
+    """ The repository descriptor generator plugin """
 
     def __init__(self, repository_descriptor_generator_plugin):
+        """
+        Constructor of the class.
+
+        @type repository_descriptor_generator_plugin: RepositoryDescriptorPlugin
+        @param repository_descriptor_generator_plugin: The repository descriptor generator plugin
+        """
+
         self.repository_descriptor_generator_plugin = repository_descriptor_generator_plugin
 
     def generate_repository_descriptor(self, repository_name = "none", repository_description = "none"):

@@ -41,16 +41,28 @@ CONSOLE_EXTENSION_NAME = "repository_descriptor"
 """ The console extension name """
 
 HELP_TEXT = "### REPOSITORY DESCRIPTOR GENERATOR HELP ###\n\
-generaterepositorydescriptor <file-path> [repository-name] [repository-description] - generates a repository descriptor with the available plugins"
+generate_repository_descriptor <file-path> [repository-name] [repository-description] - generates a repository descriptor with the available plugins"
 """ The help text """
 
 class ConsoleRepositoryDescriptorGenerator:
-
-    commands = ["generaterepositorydescriptor"]
+    """
+    The console repository descriptor generator class.
+    """
 
     repository_descriptor_generator_plugin = None
+    """ The repository descriptor generator plugin """
 
-    def __init__(self, repository_descriptor_generator_plugin = None):
+    commands = ["generate_repository_descriptor"]
+    """ The commands list """
+
+    def __init__(self, repository_descriptor_generator_plugin):
+        """
+        Constructor of the class.
+
+        @type repository_descriptor_generator_plugin: RepositoryDescriptorGeneratorPlugin
+        @param repository_descriptor_generator_plugin: The repository descriptor generator plugin.
+        """
+
         self.repository_descriptor_generator_plugin = repository_descriptor_generator_plugin
 
     def get_console_extension_name(self):
@@ -68,7 +80,7 @@ class ConsoleRepositoryDescriptorGenerator:
     def get_help(self):
         return HELP_TEXT
 
-    def process_generaterepositorydescriptor(self, args, output_method):
+    def process_generate_repository_descriptor(self, args, output_method):
         if len(args) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return

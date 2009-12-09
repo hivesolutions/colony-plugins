@@ -65,7 +65,7 @@ class IceHelper:
 
     def unload(self):
         """
-        Unloads the ice subsystem "killing" all the ice grid nodes and registries
+        Unloads the ice subsystem "killing" all the ice grid nodes and registries.
         """
 
         # in case there are no available registry
@@ -129,10 +129,10 @@ class IceHelper:
 
     def create_registry(self, start_options):
         """
-        Creates an ice grid registry with the given start options
+        Creates an ice grid registry with the given start options.
 
         @type start_options: Dictionary
-        @param start_options: The start options for the ice grid registry creation
+        @param start_options: The start options for the ice grid registry creation.
         """
 
         ice_grid_registry_path = "C:/Programs/Ice-3.2.1/bin/icegridregistry.exe"
@@ -275,10 +275,10 @@ class IceHelper:
 
     def create_node(self, start_options):
         """
-        Creates an ice grid node with the given start options
+        Creates an ice grid node with the given start options.
 
         @type start_options: Dictionary
-        @param start_options: The start options for the ice grid node creation
+        @param start_options: The start options for the ice grid node creation.
         """
 
         ice_grid_node_path = "C:/Programs/Ice-3.2.1/bin/icegridnode.exe"

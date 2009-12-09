@@ -40,10 +40,21 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import gc
 
 class GarbageCollector:
+    """
+    The garbage collector class.
+    """
 
     garbage_collector_plugin = None
+    """ The garbage collector plugin """
 
-    def __init__(self, garbage_collector_plugin = None):
+    def __init__(self, garbage_collector_plugin):
+        """
+        Constructor of the class.
+
+        @type garbage_collector_plugin: GarbageCollectorPlugin
+        @param garbage_collector_plugin: The garbage collector plugin.
+        """
+
         self.garbage_collector_plugin = garbage_collector_plugin
 
     def run_garbage_collector(self):

@@ -43,6 +43,7 @@ import smtplib
 HEADER_TEMPLATE = "From: (%s) %s\n\
 To: (%s) %s\n\
 Subject: %s\n"
+""" The header template to be used in email messages """
 
 class Email:
     """
