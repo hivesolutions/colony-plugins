@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import wx
 
-ROOT_NAME = "Data Conversion Plugins"
+ROOT_NAME = "Visualization Plugins"
 """ The root name """
 
 class PluginTree(wx.TreeCtrl):
