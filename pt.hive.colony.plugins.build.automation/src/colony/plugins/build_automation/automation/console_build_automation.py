@@ -69,7 +69,7 @@ class ConsoleBuildAutomation:
     build_automation_plugin = None
     """ The build automation plugin """
 
-    def __init__(self, build_automation_plugin = None):
+    def __init__(self, build_automation_plugin):
         """
         Constructor of the class.
 
