@@ -39,26 +39,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import ply
 
+import libs.string_buffer_util
+
+import wiki_exceptions
 import wiki_extension_system
 
-from wiki_code.extensions.settler_lexer import *
+import wiki_code.wiki_code_extension_system
 
 GENERATOR_TYPE = "code"
 """ The generator type """
-
-CLASS_DEFINITION = {"CLASS" : "kw5",
-                    "FUNCTION" : "kw5",
-                    "IF" : "kw5",
-                    "ELSE" : "kw5",
-                    "ELIF" : "kw5",
-                    "END" : "kw5",
-                    "PASS" : "kw5",
-                    "RETURN" : "kw5",
-                    "NAME" : "kw2",
-                    "STRING" : "st0",
-                    "NUMBER" : "kw6",
-                    "COMMENT" : "kw4"}
-""" The class definition map """
 
 class WikiCodeExtension(wiki_extension_system.WikiExtension):
     """
@@ -89,6 +78,25 @@ class WikiCodeExtension(wiki_extension_system.WikiExtension):
     dependencies = []
     """ The dependencies of the extension """
 
+    extension_manager = None
+    """ The extension manager """
+
+    def __init__(self, manager = None):
+        """
+        Constructor of the class.
+
+        @type manager: ExtensionManager
+        @param manager: The parent extension manager.
+        """
+
+        wiki_extension_system.WikiExtension.__init__(self, manager)
+
+        # creates a new extension manager
+        self.extension_manager = wiki_extension_system.ExtensionManager(["./extensions/wiki_code/extensions"])
+        self.extension_manager.set_extension_class(wiki_code.wiki_code_extension_system.WikiCodeExtension)
+        self.extension_manager.start_logger()
+        self.extension_manager.load_system()
+
     def get_generator_type(self):
         """
         Retrieves the generator type.
@@ -107,94 +115,84 @@ class WikiCodeExtension(wiki_extension_system.WikiExtension):
         @return: The generated html code.
         """
 
-        import libs.string_buffer_util
+        # retrieves the tag contents
+        contents = tag_node.contents
 
         # creates the string buffer
         string_buffer = libs.string_buffer_util.StringBuffer()
 
-        # retrieves the tag contents
-        contents = tag_node.contents
+        # retrieves the code highlighting extensions
+        code_highlighting_extensions = self.extension_manager.get_extensions_by_capability("code_highlighting")
 
-        # strips the contents
-        contents_stripped = contents.strip()
+        # splits the node tag name
+        node_tag_name_splitted = tag_node.tag_name.split()
 
-        # creates the lexer
-        ply.lex.lex()
+        # retrieves the node tag name splitted length
+        node_tag_name_splitted_length = len(node_tag_name_splitted)
 
-        # sets the python lexer
-        lexer = ply.lex.lexer
+        # in case the length of the node tag name
+        # splitted is less than two
+        if node_tag_name_splitted_length < 2:
+            # raisers the invalid tag name exception
+            wiki_exceptions.InvalidTagName("tag name is not valid: " + node.tag_name)
 
-        # sets the input in the lexer
-        lexer.input(contents_stripped)
+        # retrieves the node tag language value
+        node_tag_language_value = node_tag_name_splitted[1]
 
-        # retrieves the current token from the lexer
-        token = lexer.token()
+        # retrieves the code highlighting extensions for the given tag
+        tag_code_highlighting_extensions = [extension for extension in code_highlighting_extensions if extension.get_highlighter_type() == node_tag_language_value]
 
-        # writes the start div code tag
-        string_buffer.write("<div class=\"code\">")
+        # iterates over all the tag code highlighting extensions
+        for tag_code_highlighting_extension in tag_code_highlighting_extensions:
+            # retrieves the tokens list
+            tokens_list = tag_code_highlighting_extension.get_tokens_list(contents)
 
-        # writes the start code tag
-        string_buffer.write("<code>")
+            # writes the start div code tag
+            string_buffer.write("<div class=\"code\">")
 
-        current_lex_pos = 0
-        current_lex_line = 1
+            # writes the start code tag
+            string_buffer.write("<code>")
 
-        # while there is a valid token
-        while token:
-            # prints the token
-            print token
+            current_lex_pos = 0
+            current_lex_line = 1
 
-            # retrieves the token type
-            token_type = token.type
+            for token in tokens_list:
+                # unpacks the token tuple
+                token_type, token_value, token_position, token_end_position, token_line, token_class = token
 
-            # retrieves the token class for the given token type
-            token_class = CLASS_DEFINITION.get(token_type, None)
+                # retrieves the line delta value
+                line_delta = token_line - current_lex_line
 
-            # retrieves the line delta value
-            line_delta = token.lineno - current_lex_line
+                # retrieves the position delta
+                position_delta = token_position - current_lex_pos
 
-            # retrieves the position delta
-            position_delta = token.lexpos - current_lex_pos
+                # in case the line delta is bigger than zero
+                if line_delta > 0:
+                    for index in range(line_delta):
+                        string_buffer.write("<br/>")
 
-            if line_delta > 0:
-                for index in range(line_delta):
-                    string_buffer.write("<br/>")
+                for index in range(position_delta):
+                    string_buffer.write("&nbsp;")
 
-            for index in range(position_delta):
-                string_buffer.write("&nbsp;")
+                current_lex_pos = token_end_position
+                current_lex_line = token_line
 
-            if hasattr(token, "lexer"):
-                current_lex_pos = token.lexer.lexpos
-            else:
-                current_lex_pos = token.lexpos + 1
-            current_lex_line = token.lineno
+                # in case the token class is defined
+                if token_class:
+                    string_buffer.write("<span class=\"" + token_class + "\">")
+                    string_buffer.write(str(token_value))
+                    string_buffer.write("</span>")
+                else:
+                    string_buffer.write(str(token_value))
 
-            # in case the token class is defined
-            if token_class:
-                string_buffer.write("<span class=\"" + token_class + "\">")
-                string_buffer.write(str(self._get_real_value(token)))
-                string_buffer.write("</span>")
-            else:
-                string_buffer.write(str(self._get_real_value(token)))
+            # writes the end code tag
+            string_buffer.write("</code>")
 
-            # retrieves the token
-            token = lexer.token()
-
-        # writes the end code tag
-        string_buffer.write("</code>")
-
-        # writes the end div code tag
-        string_buffer.write("</div>")
+            # writes the end div code tag
+            string_buffer.write("</div>")
 
         # retrieves the string value
         string_value = string_buffer.get_value()
 
         # returns the string value
         return string_value
-
-    def _get_real_value(self, token):
-        if token.type == "STRING":
-            return "\"" + token.value + "\""
-
-        # returns the token value
-        return token.value

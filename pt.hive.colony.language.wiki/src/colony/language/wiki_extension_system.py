@@ -79,6 +79,13 @@ class Extension(object):
     """ The parent extension manager """
 
     def __init__(self, manager = None):
+        """
+        Constructor of the class.
+
+        @type manager: ExtensionManager
+        @param manager: The parent extension manager.
+        """
+
         self.manager = manager
 
 class WikiExtension(Extension):
@@ -92,6 +99,9 @@ class ExtensionManager:
     """
     The extension manager class.
     """
+
+    extension_class = Extension
+    """ The extension class """
 
     logger = None
     """ The logger used """
@@ -149,6 +159,26 @@ class ExtensionManager:
         self.extension_dirs_map = {}
         self.capabilities_extension_instances_map = {}
         self.capabilities_sub_capabilities_map = {}
+
+    def get_extension_class(self):
+        """
+        Retrieves the extension class.
+
+        @rtype: Class
+        @return: The extension class.
+        """
+
+        return self.extension_class
+
+    def set_extension_class(self, extension_class):
+        """
+        Sets the extension class.
+
+        @type extension_class: Class
+        @param extension_class: The extension class.
+        """
+
+        self.extension_class = extension_class
 
     def start_logger(self, logger = logging):
         """
@@ -282,7 +312,7 @@ class ExtensionManager:
         """
 
         # retrieves all the extension classes available
-        extension_classes = self.get_all_extension_classes()
+        extension_classes = self.get_all_extension_classes(self.extension_class)
 
         # iterates over all the available extension classes
         for extension in extension_classes:
