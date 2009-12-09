@@ -47,8 +47,8 @@ INVALID_ADDRESS_MESSAGE = "invalid address"
 """ The invalid address message """
 
 HELP_TEXT = "### DOWNLOADER HELP ###\n\
-download <file-address>     - starts the download of the file\n\
-testdownload <file-address> - test the download of the file"
+download <file-address>      - starts the download of the file\n\
+test_download <file-address> - test the download of the file"
 """ The help text """
 
 class ConsoleDownloader:
@@ -59,7 +59,7 @@ class ConsoleDownloader:
     downloader_plugin = None
     """ The downloader plugin """
 
-    commands = ["download", "testdownload"]
+    commands = ["download", "test_download"]
     """ The commands list """
 
     def __init__(self, downloader_plugin):
@@ -98,7 +98,7 @@ class ConsoleDownloader:
 
         self.downloader_plugin.downloader.download_package(file_path)
 
-    def process_testdownload(self, args, output_method):
+    def process_test_download(self, args, output_method):
         if len(args) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return

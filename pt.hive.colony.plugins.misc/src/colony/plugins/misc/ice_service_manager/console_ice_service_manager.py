@@ -44,9 +44,9 @@ INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 """ The invalid number of arguments message """
 
 HELP_TEXT = "### ICE SERVICE MANAGER HELP ###\n\
-listiceservices                - lists all the available ice services\n\
-starticeservice <service-name> - starts an ice service with the given service name\n\
-stopiceservice <service-name>  - stops an ice service with the given service name"
+list_ice_services                - lists all the available ice services\n\
+start_ice_service <service-name> - starts an ice service with the given service name\n\
+stop_ice_service <service-name>  - stops an ice service with the given service name"
 """ The help text """
 
 class ConsoleIceServiceManager:
@@ -57,7 +57,7 @@ class ConsoleIceServiceManager:
     ice_service_manager_plugin = None
     """ The ice service manager plugin """
 
-    commands = ["listiceservices", "starticeservice", "stopiceservice"]
+    commands = ["list_ice_services", "start_ice_service", "stop_ice_service"]
     """ The commands list """
 
     def __init__(self, ice_service_manager_plugin):
@@ -85,13 +85,13 @@ class ConsoleIceServiceManager:
     def get_help(self):
         return HELP_TEXT
 
-    def process_listiceservices(self, args, output_method):
+    def process_list_ice_services(self, args, output_method):
         ice_service_descriptors = self.ice_service_manager_plugin.ice_service_manager.get_registered_ice_service_descriptors()
 
         for ice_service_descriptor in ice_service_descriptors:
             self.print_ice_service_descriptor(ice_service_descriptor, output_method)
 
-    def process_starticeservice(self, args, output_method):
+    def process_start_ice_service(self, args, output_method):
         if len(args) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
@@ -100,7 +100,7 @@ class ConsoleIceServiceManager:
 
         self.ice_service_manager_plugin.ice_service_manager.start_service(ice_service_name)
 
-    def process_stopiceservice(self, args, output_method):
+    def process_stop_ice_service(self, args, output_method):
         if len(args) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return

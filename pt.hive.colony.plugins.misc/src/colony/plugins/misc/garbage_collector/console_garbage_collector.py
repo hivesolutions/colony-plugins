@@ -44,7 +44,7 @@ INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 """ The invalid number of arguments message """
 
 HELP_TEXT = "### GARBAGE COLLECTOR HELP ###\n\
-rungarbagecollector - runs the python garbage collector"
+run_garbage_collector - runs the python garbage collector"
 """ The help text """
 
 class ConsoleGarbageCollector:
@@ -55,7 +55,7 @@ class ConsoleGarbageCollector:
     garbage_collector_plugin = None
     """ The garbage collector plugin """
 
-    commands = ["rungarbagecollector"]
+    commands = ["run_garbage_collector"]
     """ The commands list """
 
     def __init__(self, garbage_collector_plugin):
@@ -83,7 +83,7 @@ class ConsoleGarbageCollector:
     def get_help(self):
         return HELP_TEXT
 
-    def process_rungarbagecollector(self, args, output_method):
+    def process_run_garbage_collector(self, args, output_method):
         output_method("running garbage collector")
 
         self.garbage_collector_plugin.garbage_collector.run_garbage_collector()

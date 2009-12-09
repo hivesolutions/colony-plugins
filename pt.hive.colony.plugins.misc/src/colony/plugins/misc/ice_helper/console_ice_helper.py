@@ -48,19 +48,19 @@ INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 """ The invalid number of arguments message """
 
 HELP_TEXT = "### ICE HELPER HELP ###\n\
-loadice <file-path>                                                   - starts the loading of the file\n\
-createregistry <registry-name> [registry-replica-name] [properties..] - creates a new ice grid registry with the given name, replica name and properties\n\
-killregistry <registry-name> [registry-replica-name]                  - kills the registry with the given name and replica name\n\
-createnode <registry-name> <node-name> [properties..]                 - creates a new ice grid node in the registry with the given name and with the given name and properties\n\
-killnode <registry-name> <node-name>                                  - kills the node in the registry with the given name with the given name\n\
-createupdateapplication <application-name>                            - creates or updates an application with the given name\n\
-createcommunicator <locator-name> [locator-endpoint]                  - creates a communicator with the given name and endpoint\n\
-createaccess <access-class-name> <access-name>                        - creates an access object for the given class and access name\n\
-createaccesstype <access-class-name> <access-type>                    - creates an access object for the given class and access type\n\
-createregistryaccess                                                  - creates a registry access object to control the ice grid\n\
-createadminaccess <username> <password>                               - creates an admin access object to administrate the ice grid\n\
-callaccess <method-name> [arguments..]                                - calls a method with the given name with the given arguments\n\
-showapplicationinfo <application-name>                                - shows information about the the application with the given name"
+load_ice <file-path>                                                    - starts the loading of the file\n\
+create_registry <registry-name> [registry-replica-name] [properties..]  - creates a new ice grid registry with the given name, replica name and properties\n\
+kill_registry <registry-name> [registry-replica-name]                   - kills the registry with the given name and replica name\n\
+create_node <registry-name> <node-name> [properties..]                  - creates a new ice grid node in the registry with the given name and with the given name and properties\n\
+kill_node <registry-name> <node-name>                                   - kills the node in the registry with the given name with the given name\n\
+create_update_application <application-name>                            - creates or updates an application with the given name\n\
+create_communicator <locator-name> [locator-endpoint]                   - creates a communicator with the given name and endpoint\n\
+createa_access <access-class-name> <access-name>                        - creates an access object for the given class and access name\n\
+create_access_type <access-class-name> <access-type>                    - creates an access object for the given class and access type\n\
+create_registry_access                                                  - creates a registry access object to control the ice grid\n\
+create_admin_access <username> <password>                               - creates an admin access object to administrate the ice grid\n\
+call_access <method-name> [arguments..]                                 - calls a method with the given name with the given arguments\n\
+show_application_info <application-name>                                - shows information about the the application with the given name"
 """ The help text """
 
 ICE_REGISTRY_PARSING_VALUES = ["ice_grid_registry_path=", "ice_grid_instance_name=", "ice_grid_default_locator=",
@@ -84,7 +84,7 @@ class ConsoleIceHelper:
     ice_helper_plugin = None
     """ The ice helper plugin """
 
-    commands = ["loadice", "createregistry", "killregistry", "createnode", "killnode", "createupdateapplication", "createcommunicator", "createaccess", "createaccesstype", "createregistryaccess", "createadminaccess", "callaccess", "showapplicationinfo"]
+    commands = ["load_ice", "create_registry", "kill_registry", "create_node", "kill_node", "create_update_application", "create_communicator", "create_access", "create_access_type", "create_registry_access", "create_admin_access", "call_access", "show_application_info"]
     """ The commands list """
 
     communicator = None
@@ -116,7 +116,7 @@ class ConsoleIceHelper:
     def get_help(self):
         return HELP_TEXT
 
-    def process_loadice(self, args, output_method):
+    def process_load_ice(self, args, output_method):
         if len(args) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
@@ -127,7 +127,7 @@ class ConsoleIceHelper:
 
         self.ice_helper_plugin.ice_helper.load_ice_file(file_path)
 
-    def process_createregistry(self, args, output_method):
+    def process_create_registry(self, args, output_method):
         if len(args) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
@@ -165,7 +165,7 @@ class ConsoleIceHelper:
 
         self.ice_helper_plugin.ice_helper.create_registry(start_options)
 
-    def process_killregistry(self, args, output_method):
+    def process_kill_registry(self, args, output_method):
         if len(args) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
@@ -180,7 +180,7 @@ class ConsoleIceHelper:
 
         self.ice_helper_plugin.ice_helper.kill_registry(self.access, registry_name)
 
-    def process_createnode(self, args, output_method):
+    def process_create_node(self, args, output_method):
         if len(args) < 2:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
@@ -208,7 +208,7 @@ class ConsoleIceHelper:
 
         self.ice_helper_plugin.ice_helper.create_node(start_options)
 
-    def process_killnode(self, args, output_method):
+    def process_kill_node(self, args, output_method):
         if len(args) < 2:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
@@ -220,7 +220,7 @@ class ConsoleIceHelper:
 
         self.ice_helper_plugin.ice_helper.kill_node(self.access, registry_name, node_name)
 
-    def process_createupdateapplication(self, args, output_method):
+    def process_create_update_application(self, args, output_method):
         if len(args) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
@@ -234,7 +234,7 @@ class ConsoleIceHelper:
 
         self.ice_helper_plugin.ice_helper.create_update_application(self.access, application_name, application_options)
 
-    def process_createcommunicator(self, args, output_method):
+    def process_create_communicator(self, args, output_method):
         if len(args) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
@@ -250,7 +250,7 @@ class ConsoleIceHelper:
         self.communicator = self.ice_helper_plugin.ice_helper.create_communicator(locator_name, locator_endpoint)
         self.locator_name = locator_name
 
-    def process_createaccess(self, args, output_method):
+    def process_create_access(self, args, output_method):
         if len(args) < 2:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
@@ -276,7 +276,7 @@ class ConsoleIceHelper:
 
         self.access = self.ice_helper_plugin.ice_helper.create_access(self.communicator, access_class, access_name)
 
-    def process_createaccesstype(self, args, output_method):
+    def process_create_access_type(self, args, output_method):
         if len(args) < 2:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
@@ -302,12 +302,12 @@ class ConsoleIceHelper:
 
         self.access = self.ice_helper_plugin.ice_helper.create_access_access_type(self.communicator, self.locator_name, access_class, access_type)
 
-    def process_createregistryaccess(self, args, output_method):
+    def process_create_registry_access(self, args, output_method):
         output_method("creating new registry object")
 
         self.access = self.ice_helper_plugin.ice_helper.create_registry_access(self.communicator, self.locator_name)
 
-    def process_createadminaccess(self, args, output_method):
+    def process_create_admin_access(self, args, output_method):
         if len(args) < 2:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
@@ -319,7 +319,7 @@ class ConsoleIceHelper:
 
         self.access = self.ice_helper_plugin.ice_helper.create_admin_access(self.communicator, self.access, username, password)
 
-    def process_callaccess(self, args, output_method):
+    def process_call_access(self, args, output_method):
         if len(args) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
@@ -333,7 +333,7 @@ class ConsoleIceHelper:
 
         self.ice_helper_plugin.ice_helper.call_access(access_method, access_method_arguments)
 
-    def process_showapplicationinfo(self, args, output_method):
+    def process_show_application_info(self, args, output_method):
         if len(args) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return

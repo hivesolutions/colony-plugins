@@ -44,19 +44,19 @@ INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 """ The invalid number of arguments message """
 
 HELP_TEXT = "### AUTOLOADER HELP ###\n\
-configautoloader <config-option> - configures the autoloader"
+config_autoloader <config-option> - configures the autoloader"
 """ The help text """
 
-#@todo: review and comment this file
 class ConsoleAutoloader:
     """
     The console autoloader class.
     """
 
-    commands = ["configautoloader"]
-
     autoloader_plugin = None
     """ The autoloader plugin """
+
+    commands = ["config_autoloader"]
+    """ The commands list """
 
     def __init__(self, autoloader_plugin):
         """
@@ -83,7 +83,7 @@ class ConsoleAutoloader:
     def get_help(self):
         return HELP_TEXT
 
-    def process_configautoloader(self, args, output_method):
+    def process_config_autoloader(self, args, output_method):
         if len(args) < 1:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return

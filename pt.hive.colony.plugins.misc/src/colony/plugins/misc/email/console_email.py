@@ -44,7 +44,7 @@ INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 """ The invalid number of arguments message """
 
 HELP_TEXT = "### EMAIL HELP ###\n\
-sendemail <destiny-address> - sends an email with the given contains to the defined destiny"
+send_email <destiny-address> - sends an email with the given contains to the defined destiny"
 """ The help text """
 
 class ConsoleEmail:
@@ -55,7 +55,7 @@ class ConsoleEmail:
     email_plugin = None
     """ The email plugin """
 
-    commands = ["sendemail"]
+    commands = ["send_email"]
     """ The commands list """
 
     def __init__(self, email_plugin):
@@ -83,5 +83,5 @@ class ConsoleEmail:
     def get_help(self):
         return HELP_TEXT
 
-    def process_sendemail(self, args, output_method):
+    def process_send_email(self, args, output_method):
         pass
