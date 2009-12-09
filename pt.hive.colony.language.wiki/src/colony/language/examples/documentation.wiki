@@ -47,6 +47,20 @@ class Matias:
 end
 </code>
 
+
+<code python>
+class Matias:
+    def tobias(self, c):
+        print("ola")
+        a = 3
+        b = a * 5
+
+    # The main documentation function,
+    # that should be used only some times
+    def matias(self, m, d):
+        return d + 1
+</code>
+
 #This is just a comment
 
 ==== Dependencies ====
