@@ -397,7 +397,7 @@ class MainFrame(wx.Frame):
             "This one is targeted to everyone.\n",
             350, wx.ClientDC(self))
         info.WebSite = ("http://www.hive.pt", "Hive Solutions Lda. <development@hive.pt>")
-        info.Developers = ["Joao Magalhaes", "Tiago Silva"]
+        info.Developers = ["Joao Magalhaes <joamag@hive.pt>", "Tiago Silva <tsilva@hive.pt>", "Luís Martinho <lmartinho@hive.pt>"]
         info.License = wx.lib.wordwrap.wordwrap("GNU General Public License (GPL), Version 3", 500, wx.ClientDC(self))
         info.SetIcon(self.icons_32x32_map["omni"])
 
@@ -725,14 +725,14 @@ class MainApplication(wx.App):
 
     def is_loaded(self):
         """
-        Returns the current state of the application
+        Returns the current state of the application.
         """
 
         return not isinstance(self.main_frame, wx._core._wxPyDeadObject)
 
     def unload(self):
         """
-        Unloads the application from memory
+        Unloads the application from memory.
         """
 
         logger = self.main_gui_plugin.manager.get_plugin_by_id("pt.hive.colony.plugins.main.log")

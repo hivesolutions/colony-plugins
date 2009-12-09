@@ -42,7 +42,7 @@ import colony.plugins.decorators
 
 class MainGuiManagerPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Gui Main plugin
+    The main class for the Gui Main plugin.
     """
 
     id = "pt.hive.colony.plugins.main.gui"

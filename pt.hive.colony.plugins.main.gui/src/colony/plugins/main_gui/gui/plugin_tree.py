@@ -40,17 +40,23 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import wx
 
 ROOT_NAME = "Data Conversion Plugins"
+""" The root name """
 
-#@todo: review and comment this file
 class PluginTree(wx.TreeCtrl):
+    """
+    The plugin tree class.
+    """
 
     tab_counter = 0
+    """ The tab counter value """
 
     root = None
+    """ The root reference """
 
     tree_icon_map = {}
+    """ The tree icon map """
 
-    def __init__(self, parent, id, pos, size=wx.Size, style=wx.TR_DEFAULT_STYLE | wx.NO_BORDER):
+    def __init__(self, parent, id, pos, size = wx.Size, style = wx.TR_DEFAULT_STYLE | wx.NO_BORDER):
         wx.TreeCtrl.__init__(self, parent, id, pos, size, style)
 
         self.tree_icon_map = {}

@@ -39,19 +39,33 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import wx
 
-#@todo: review and comment this file
 class TabContainerPanel(wx.Panel):
+    """
+    The tab container panel class
+    """
 
     def __init__(self, parent, image_list = []):
+        """
+        Constructor of the class.
+
+        @type parent: Object
+        @param parent: The parent component.
+        @type image_list: List
+        @param image_list: The list of images to be used.
+        """
+
         wx.Panel.__init__(self, parent, size = (970, 720))
 
         main_sizer = wx.BoxSizer(wx.VERTICAL)
         self.SetSizer(main_sizer)
 
-        self.book = wx.Notebook(self, wx.ID_ANY, style=wx.CLIP_CHILDREN)
+        # creates a new notebook
+        self.book = wx.Notebook(self, wx.ID_ANY, style = wx.CLIP_CHILDREN)
 
+        # creates a new wx image list
         wx_image_list = wx.ImageList(10, 10)
 
+        # iterates over all the images in the image list
         for image in image_list:
             wx_image_list.Add(image)
 
