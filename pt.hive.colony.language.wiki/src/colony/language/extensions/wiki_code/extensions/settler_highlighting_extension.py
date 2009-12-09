@@ -41,13 +41,13 @@ import ply
 
 import wiki_code.wiki_code_extension_system
 
-from python_highlighter.python_lexer import *
+from settler_highlighting.settler_lexer import *
 
-HIGHLIGHTER_TYPE = "python"
-""" The highlighter type """
+HIGHLIGHTING_TYPE = "settler"
+""" The highlighting type """
 
 CLASS_DEFINITION = {"CLASS" : "kw5",
-                    "DEF" : "kw5",
+                    "FUNCTION" : "kw5",
                     "IF" : "kw5",
                     "ELSE" : "kw5",
                     "ELIF" : "kw5",
@@ -60,21 +60,21 @@ CLASS_DEFINITION = {"CLASS" : "kw5",
                     "COMMENT" : "kw4"}
 """ The class definition map """
 
-class PythonHighlighterExtension(wiki_code.wiki_code_extension_system.WikiCodeExtension):
+class SettlerHighlightingExtension(wiki_code.wiki_code_extension_system.WikiCodeExtension):
     """
-    The python highlighter extension class.
+    The settler highlighting extension class.
     """
 
-    id = "pt.hive.colony.language.wiki.code.extensions.python_highlighter"
+    id = "pt.hive.colony.language.wiki.code.extensions.settler_highlighting"
     """ The extension id """
 
-    name = "Python Highlighter Code Plugin"
+    name = "Settler Highlighting Code Plugin"
     """ The name of the extension """
 
-    short_name = "Python Highlighter Code"
+    short_name = "Settler Highlighting Code"
     """ The short name of the extension """
 
-    description = "Extension for python code highlighting"
+    description = "Extension for settler code highlighting"
     """ The description of the extension """
 
     version = "1.0.0"
@@ -89,15 +89,15 @@ class PythonHighlighterExtension(wiki_code.wiki_code_extension_system.WikiCodeEx
     dependencies = []
     """ The dependencies of the extension """
 
-    def get_highlighter_type(self):
+    def get_highlighting_type(self):
         """
-        Retrieves the highlighter type.
+        Retrieves the highlighting type.
 
         @rtype: String
-        @return: The highlighter type.
+        @return: The highlighting type.
         """
 
-        return HIGHLIGHTER_TYPE
+        return HIGHLIGHTING_TYPE
 
     def get_tokens_list(self, contents):
         # starts the tokens list

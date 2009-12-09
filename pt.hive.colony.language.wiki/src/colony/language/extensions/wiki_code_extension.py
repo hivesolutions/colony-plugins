@@ -141,7 +141,33 @@ class WikiCodeExtension(wiki_extension_system.WikiExtension):
         node_tag_language_value = node_tag_name_splitted[1]
 
         # retrieves the code highlighting extensions for the given tag
-        tag_code_highlighting_extensions = [extension for extension in code_highlighting_extensions if extension.get_highlighter_type() == node_tag_language_value]
+        tag_code_highlighting_extensions = [extension for extension in code_highlighting_extensions if extension.get_highlighting_type() == node_tag_language_value]
+
+        # in case there are no highlighting extension for the given tag
+        if not tag_code_highlighting_extensions:
+            # writes the start div code tag
+            string_buffer.write("<div class=\"code\">")
+
+            # writes the start code tag
+            string_buffer.write("<code>")
+
+            # strips the contents
+            contents_stripped = contents.strip()
+
+            # replaces the spaces in the contents
+            contents_replaced = contents_stripped.replace(" ", "&nbsp;")
+
+            # replaces the newlines in the contents
+            contents_replaced = contents_replaced.replace("\n", "<br/>")
+
+            # writes the replaced contents
+            string_buffer.write(contents_replaced)
+
+            # writes the end code tag
+            string_buffer.write("</code>")
+
+            # writes the end div code tag
+            string_buffer.write("</div>")
 
         # iterates over all the tag code highlighting extensions
         for tag_code_highlighting_extension in tag_code_highlighting_extensions:
@@ -160,6 +186,7 @@ class WikiCodeExtension(wiki_extension_system.WikiExtension):
             # sets the initial current line
             current_line = 1
 
+            # iterates over the tokens list
             for token in tokens_list:
                 # unpacks the token tuple
                 token_type, token_value, token_position, token_end_position, token_line, token_class = token

@@ -1,182 +1,435 @@
-====== Colony Web MVC Framework ======
+====== Colony Hello World Tutorial ======
 
-Colony does all it can to encourage well designed applications by providing all the necessary infrastructures to effortlessly separate application concerns. With the Plugin Framework, one can separate a large application into different plugins that are meaningful on their own, but when it comes to designing a plugin's interior, the natural tendency may be to excessively intertwine the code at this level, especially when the plugin provides a graphical interface. To turn the design and implementation of these features into a straightforward process, one can use the Colony Web MVC plugin, which provides an MVC Framework.
+This tutorial will help you dive straight into Colony by developing a basic, but already extensible Colony plugin. 
 
-Model-View-Controller (MVC) is an architectural pattern used to isolate business logic from input and presentation, permitting independent development, testing and maintenance of each.
+By the end of this tutorial you should be able to:
+    * Create a Colony plugin.
+    * Create extension points in a Colony plugin.
+    * Create plugins that use another's extension points to add new features.
 
-An example MVC workflow in Colony could work like the following:
+For tradition's sake (as nauseating as it may be) let's dive into Colony by creating an Hello World application. However, ours will have a particular twist, for it will be modular from the very beginning. Follow these steps to have a very basic Hello World plugin running right of the bat:
+    * Go to ''pt.hive.colony.plugins.configuration.startup/src/colony/plugins/configuration_startup/startup/resources/startup_configuration.xml'' and set the load attribute for ''pt.hive.colony.plugins.main.console'' as true and all others as false.
+    * Create a new python project called ''pt.hive.colony.demo.plugins.hello_world''.
+    * Add the following string to the ''plugin_path_list'' variable in ''pt.hive.colony/src/colony_configuration.py'': ''%colony_demo_prefix_path%/pt.hive.colony.demo.plugins.hello_world/src/colony/plugins''.
+    * Create a project file within the following structure: ''src/colony/plugins/hello_world_plugin.py''
+<code python>
+import colony.plugins.plugin_system
 
-  - User clicks a button used to refresh data;
-  - The widget (**View**) fires a "click" event;
-  - The widget's event is caught by an event handler in the Controller;
-  - The event handler calls the appropriate logic in the Controller;
-  - The **Controller** calls the Remote Model to fetch data from the data source, providing a callback from the Controller to be invoked when the operation is finished;
-  - The **Controller** callback is invoked with the data;
-  - The **Controller** stores the data in the Local Model for later reference;
-  - The **Controller** strips the data that will be shown in the graphical interface and sets it in the Presentation Model;
-  - The **Controller** refreshes the View by looking for changed Presentation Model properties and updating the View accordingly.
+class HelloWorldPlugin(colony.plugins.plugin_system.Plugin):
 
-===== Module =====
+    id = "pt.hive.colony.demo.plugins.hello_world"
+    name = "Hello World Plugin"
+    version = "1.0.0"
+    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    capabilities = []
+    capabilities_allowed = []
+    dependencies = []
 
-The Colony MVC Framework provides the means to build MVC Modules. MVC Modules encapsulate the underlying components (Models, View, Controller, Presentation Model), this encapsulation serves as a means of enforcing separation between the underlying code and the outside world, but also as deployment unit, as there is an MVC Manager that takes care of injecting modules into each other by looking at their requirements. Modules specify their requirements and features via dependencies and capabilities, just like Colony plugins do:
-
-<code settler>
-class Matias:
-    function tobias(self, c):
-        print("ola")
-        a = 3
-        b = a * 5
-    end
-    # The main documentation function,
-    # that should be used only some times
-    function matias(self, m, d):
-        return d + 1
-    end
-end
-class Matias:
-    function tobias(self, c):
-        print("ola")
-        a = 3
-        b = a * 5
-    end
-    # The main documentation function,
-    # that should be used only some times
-    function matias(self, m, d):
-        return d + 1
-    end
-end
+    def load_plugin(self):
+        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        print "Hello World"
 </code>
 
+There you have it, you have just created your first Colony plugin. Yes... for real! You can now run Colony and type ''showall'' to list all the plugins and their current state and look for a plugin named ''pt.hive.colony.demo.plugins.hello_world''. You will probably find something along these lines:
+
+<code txt>
+ID      STATUS      PLUGIN ID
+0       INACTIVE    pt.hive.colony.demo.plugins.hello_world
+...
+</code>
+
+You can notice that the plugin is currently inactive, so try to load it by typing ''load 0'' (or whatever ID the plugin has). Provided everything went well, you will see the following output in the console:
+
+<code txt>
+Hello world
+</code>
+
+You have just loaded a plugin during runtime without having to restart the platform, in Colony you can load and unload plugins all the time without ever having to restart it, provided the plugins are correctly implemented. Let's have a look at ''showall'' again:
+
+<code txt>
+ID      STATUS      PLUGIN ID
+0       ACTIVE      pt.hive.colony.demo.plugins.hello_world
+...
+</code>
+
+The plugin is now active, you can unload it and load it whenever you want. Let's try unloading it by typing ''unload 0'' (or whatever ID the plugin has), and then ''showall'' again:
+
+<code txt>
+ID      STATUS      PLUGIN ID
+0       INACTIVE    pt.hive.colony.demo.plugins.hello_world
+...
+</code>
+
+Now type ''load 0'' (or whatever ID the plugin has) just once more:
+
+<code txt>
+Hello world
+</code>
+
+This plugin is modular in the context of the whole platform, as it can be loaded and unloaded at any time. However, we still haven't built any kind of modularity into our own plugin, so let's try expanding the Hello World plugin to support more languages. 
+
+We want to design an Hello World plugin that will say Hello World in whatever language we specify, by allowing us to add new languages in the future, without ever having to modify its original code. In order to achieve this, it would be helpful to first have a way of easily issuing commands to the plugin. We will, for that purpose, extend Colony's command console, which is, like everything else, modular, to have a new command that allows us to interact with the Hello World plugin. There is no need to understand this step at this point in the learning curve, just follow the instructions by the letter and you'll be fine:
+
+    * Create an empty project file within the following structure: ''src/colony/plugins/hello_world/%%__init__%%.py''
+    * Create a project file within the following structure: ''src/colony/plugins/hello_world/console_hello_world.py''
 
 <code python>
-class Matias:
-    def tobias(self, c):
-        print("ola")
-        a = 3
-        b = a * 5
+CONSOLE_EXTENSION_NAME = "hello_world"
+""" The console extension name """
 
-    # The main documentation function,
-    # that should be used only some times
-    def matias(self, m, d):
-        return d + 1
+INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
+""" The invalid number of arguments message """
+
+HELP_TEXT = "### HELLO WORLD HELP ###\n\
+say_hello_world [language] - says hello world in the specified language"
+""" The help text """
+
+class ConsoleHelloWorld:
+  
+    commands = ["say_hello_world"]
+    """ List of available commands """
+
+    hello_world_plugin = None
+    """ The hello world plugin """
+
+    def __init__(self, hello_world_plugin = None):
+        self.hello_world_plugin = hello_world_plugin
+
+    def get_console_extension_name(self):
+        return CONSOLE_EXTENSION_NAME
+
+    def get_all_commands(self):
+        return self.commands
+
+    def get_handler_command(self, command):
+        if command in self.commands:
+            method_name = "process_" + command
+            attribute = getattr(self, method_name)
+            return attribute
+
+    def get_help(self):
+        return HELP_TEXT
+
+    def process_say_hello_world(self, args, output_method):
+        if len(args) < 1:
+            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
+            return
+
+        # invokes the say hello world command
+        self.hello_world_plugin.say_hello_world(args[0])
+</code>
+  * Update the ''hello_world_plugin.py'' file with this one:
+
+<code python>
+import colony.plugins.plugin_system
+
+class HelloWorldPlugin(colony.plugins.plugin_system.Plugin):
+    
+    id = "pt.hive.colony.demo.plugins.hello_world"
+    name = "Hello World Plugin"
+    version = "1.0.0"
+    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    capabilities = ["console_command_extension"]
+    capabilities_allowed = []
+    dependencies = []
+
+    console_hello_world = None
+    """ The hello world console commands """
+    
+    def load_plugin(self):
+        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        global hello_world
+        import hello_world.console_hello_world
+        self.console_hello_world = hello_world.console_hello_world.ConsoleHelloWorld(self)
+        
+    def get_console_extension_name(self):
+        return self.console_hello_world.get_console_extension_name()
+
+    def get_all_commands(self):
+        return self.console_hello_world.get_all_commands()
+
+    def get_handler_command(self, command):
+        return self.console_hello_world.get_handler_command(command)
+
+    def get_help(self):
+        return self.console_hello_world.get_help()
+    
+    def say_hello_world(self, language):
+        print "Hello world"
 </code>
 
-#This is just a comment
+Restart Colony and try typing ''extensions''. A list of command line extensions should appear:
 
-==== Dependencies ====
+<code txt>
+ID      NAME                        PLUGIN ID
+0       hello_world                 pt.hive.colony.demo.plugins.hello_world
+...
+</code>
 
-Dependencies identify specific Modules that a Module requires to be loaded and injected in it, in order to function correctly. If a Module depends on another Module, but that dependency doesn't exist, or is not ready to be loaded for whatever reason (it may itself be missing a dependency), the Module will not load.
+If the output was similar, then the console command extension we have added was correctly detected. Try typing ''help hello_world'' to get instructions on the commands provided by the Hello World plugin:
 
-==== Capabilities ====
+<code txt>
+hello_world [language] - says hello world in the specified language
+</code>
 
-Capabilities identify what a Module provides, so that the Modules providing them are injected into the Modules that express an interest in these capabilities. If a Module is interested in a capability but there is none providing it, it will load correctly regardless. For example, one could design a Module that provided a login window, but wanted to make it extensible, allowing posterior third party implementations of different login methods. All this Module would have to do would be to specify the capability it is interested in ("login_method" for example), and at any point in time, a developer could implement a new Module with the "login_method" capability and the facade expected by this capability, and it would be injected into the login window, which would handle it accordingly, without the third party developer ever having to touch the original login window Module.
+Try typing the command ''say_hello_world english'':
 
-The module should only access the Controller.
+<code txt>
+Hello world
+</code>
 
-===== Module components =====
+You have just accessed your plugin via the command line by making it offer a capability that is allowed by the Colony command console. Now it's time to truly make the Hello World plugin extensible by adding the ability to extend it with new language plugins. The first thing we will do, just to keep the code clean, is to move the say_hello_world() code to a backend file, the plugin files should never contain logic, they should be as simple as possible, containing only description attributes and facade methods essentially. To perform this separation follow these steps:
 
-==== Model ====
+    * Create a project file within the following structure: ''src/colony/plugins/hello_world/hello_world_system.py''
 
-Typically an MVC Framework takes the existence of a single Model into account. In this traditional view, the purpose of the Model is to store data representations and business logic. Colony makes an effort to make development as unambiguous and straightforward as possible, and to achieve this, the model's purpose had to be slightly reshaped into the following concepts:
+<code python>
+class HelloWorld:
+    
+    hello_world_plugin = None
+    """ The hello world plugin """
 
-=== Local Model ===
+    def __init__(self, hello_world_plugin):
+        self.hello_world_plugin = hello_world_plugin
+        
+    def say_hello_world(self, language):
+        print "Hello world"
+</code>
 
-The Local Model is used to store any kind of data that is used throughout the code. One can think of it as the Module's personal notebook. If it needs to store some information to retrieve later, in another function for example, that data should be stored here.
+    * Update ''hello_world_plugin.py'' with the following code:
 
-The Local Model should never access another Module component under any circunstance.
+<code python>
+import colony.plugins.plugin_system
 
-=== Remote Model ===
+class HelloWorldPlugin(colony.plugins.plugin_system.Plugin):
+    
+    id = "pt.hive.colony.demo.plugins.hello_world"
+    name = "Hello World Plugin"
+    version = "1.0.0"
+    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    capabilities = ["console_command_extension"]
+    capabilities_allowed = []
+    dependencies = []
+    
+    hello_world = None
+    """ The hello world plugin's backend """
 
-Contains the Remote Model, which acts as a bridge to all communication between the Module's components and it's exterior. For example, functions that perform server-side calls should be stored here.
+    console_hello_world = None
+    """ The hello world console commands """
+    
+    def load_plugin(self):
+        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        global hello_world
+        import hello_world.hello_world_system
+        import hello_world.console_hello_world
+        self.hello_world = hello_world.hello_world_system.HelloWorld(self)
+        self.console_hello_world = hello_world.console_hello_world.ConsoleHelloWorld(self)
+        
+    def get_console_extension_name(self):
+        return self.console_hello_world.get_console_extension_name()
 
-The Remote Model should not access any other component. Its results should be returned via the provided callback functions.
+    def get_all_commands(self):
+        return self.console_hello_world.get_all_commands()
 
-==== View ====
+    def get_handler_command(self, command):
+        return self.console_hello_world.get_handler_command(command)
 
-The View stores all graphical objects and functions of a graphical nature, all kind of graphical library widgets and functions that act on them are stored here. The entire Module's graphical interface is defined here, decoupled from all its logic. Colony's interpretation of the View does not differ from the traditional pattern in any way.
+    def get_help(self):
+        return self.console_hello_world.get_help()
+    
+    def say_hello_world(self, language):
+        self.hello_world.say_hello_world(language)
+</code>
 
-The View should not access any other Module component, its only means of communication should be via events, which can be handled by the Controller.
+Now we need to tell that our plugin accepts new languages. For that, we will add a new allowed capability to the Hello World plugin. From then on, any new plugin that provides that capability will be injected into the Hello World plugin. By defining this capability we are also defining a kind of contract, we are expecting the plugins that provide this capability to have certain methods, and any plugin that declares itself as having this capability will have the responsibility of implementing them. What we will require from a language plugin is basically something that tells us what language that plugin is for, and something to translate our sentence into that language, so let's state that from now on, any plugin that has the capability ''hello_world.language'' must have the get_language() and the translate(sentence) methods, and build our plugin accordingly:
+    * Update ''hello_world_plugin.py'' to handle the ''hello_world.language'' capability:
+<code python>
+import colony.plugins.plugin_system
+import colony.plugins.decorators
 
-==== Controller ====
+class HelloWorldPlugin(colony.plugins.plugin_system.Plugin):
+    
+    id = "pt.hive.colony.demo.plugins.hello_world"
+    name = "Hello World Plugin"
+    version = "1.0.0"
+    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    capabilities = ["console_command_extension"]
+    capabilities_allowed = ["hello_world.language"]
+    dependencies = []
+    
+    hello_world_language_plugins = []
+    """ The injected hello world language plugins """
+    
+    hello_world = None
+    """ The hello world plugin's backend """
 
-The Controller contains all the Module's logic, everything that has any kind of decision making, branching or workflow nature is stored here. Colony's interpretation of the Controller does not really differ from the traditional interpretation but it is probably stricter, as here, the controller should have absolutely all logic contained within it, instead of acting as a kind of routing mechanism as in some frameworks.
+    console_hello_world = None
+    """ The hello world console commands """
+    
+    def load_plugin(self):
+        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        global hello_world
+        import hello_world.hello_world_system
+        import hello_world.console_hello_world
+        self.hello_world = hello_world.hello_world_system.HelloWorld(self)
+        self.console_hello_world = hello_world.console_hello_world.ConsoleHelloWorld(self)
+        
+    @colony.plugins.decorators.load_allowed("pt.hive.colony.demo.plugins.hello_world", "1.0.0")
+    def load_allowed(self, plugin, capability):
+        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-The Controller should only be accessed via the Module's facade and/or via events, it can however freely access any Module component except the Module itself (Models, View and Presentation Model).
+    @colony.plugins.decorators.unload_allowed("pt.hive.colony.demo.plugins.hello_world", "1.0.0")
+    def unload_allowed(self, plugin, capability):
+        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-==== Presentation Model ====
+    def get_console_extension_name(self):
+        return self.console_hello_world.get_console_extension_name()
 
-The Presentation Model represents the state of the View at any given time. It is mostly useful for providing a way of making graphical interfaces testable, since testing the Presentation Model's contents should be exactly the same thing as testing the View regardless of the View's current implementation, provided one can assume that the synchronization between the Presentation Model and the View is flawless.
+    def get_all_commands(self):
+        return self.console_hello_world.get_all_commands()
 
-The Presentation Model doesn't need to represent every single property contained in the View, but rather, it should have the required depth to keep track of all the View's states. For example, if the View represented traffic lights by using three buttons that changed color when a light was turned on or off, instead of adding a lot of variables to the presentation model to represent the state of each particular button, one should instead use just one variable that stored which color was turned on at any given time. This is the only information needed for the controller to decide how to change the view to reflect this state.
+    def get_handler_command(self, command):
+        return self.console_hello_world.get_handler_command(command)
 
-Everytime the View changes due to user interaction, the Presentation Model should be updated by the Controller to keep up with the changes, and everytime the Presentation Model is updated by Controller logic the View should be refreshed to reflect the Presentation Model's new state.
+    def get_help(self):
+        return self.console_hello_world.get_help()
+    
+    def say_hello_world(self, language):
+        self.hello_world.say_hello_world(language)
 
-The Presentation Model should never interact with another Module component under any circunstance.
+    @colony.plugins.decorators.load_allowed_capability("hello_world.language")
+    def hello_world_language_load_allowed(self, plugin, capability):
+        self.hello_world_language_plugins.append(plugin)
+        self.hello_world.add_language_plugin(plugin)
 
-===== The MVC Manager =====
+    @colony.plugins.decorators.unload_allowed_capability("hello_world.language")
+    def hello_world_language_unload_allowed(self, plugin, capability):
+        self.hello_world_language_plugins.remove(plugin)
+        self.hello_world.remove_language_plugin(plugin)
+</code>
+    * Update ''hello_world_system.py'' to use the language plugins:
+<code python>
+HELLO_WORLD_VALUE = "Hello world"
 
-The MVC Manager is the "Model-View-Controller world" equivalent of the Plugin Manager, it keeps track of all the existing Modules and their state, it controls their lifecycle, and routes events between them. The existence of this manager is where the the Colony implementation truly differs from others, as an MVC component is viewed just as any other component that can effortlessly appear wherever it is required in the application due to the inversion of control provided by the MVC Manager.
+class HelloWorld:
+    
+    hello_world_plugin = None
+    """ The hello world plugin """
+    
+    language_plugin_map = {}
+    """ Map associating a language with its plugin """
+    
+    def __init__(self, hello_world_plugin):
+        self.hello_world_plugin = hello_world_plugin
+        self.language_plugin_map = {}
+    
+    def add_language_plugin(self, language_plugin):
+        language = language_plugin.get_language()
+        self.language_plugin_map[language] = language_plugin
+        
+    def remove_language_plugin(self, language_plugin):
+        language = language_plugin.get_language()
+        del self.language_plugin_map[language]
+        
+    def say_hello_world(self, language):
+        # returns in case no language plugin was found
+        if not language in self.language_plugin_map:
+            print "I don't know how to say Hello World in " +  language
+            return
+        
+        # retrieves the plugin
+        language_plugin = self.language_plugin_map[language]
+        
+        # translates hello world to the specified language
+        hello_world = language_plugin.translate(HELLO_WORLD_VALUE)
+        
+        # prints hello world in the specified language
+        print hello_world
+</code>
+    
+The Hello World is now officially extensible. From this point onward, it shouldn't be necessary to touch the Hello World plugin's code ever again. To add a new language we will need to create a new plugin for that purpose. Meanwhile, let's try restarting Colony and typing ''say_hello_world english'' to make sure everything is still running correctly:
 
-==== Module lifecycle ====
+<code txt>
+I don't know how to say Hello world in english
+</code>
 
-When a Module class is added to the MVC Manager the singleton instance of that Module is created, but is kept unloaded.
+Despite the paradox uttered by the plugin, it should be running fine in case this was the output. Let's now teach the Hello World plugin how to say Hello World in Portuguese by creating a new Hello World Portuguese Language plugin:
 
-=== Loading process ===
+    * Create a project file within the following structure: ''src/colony/plugins/hello_world_portuguese_language_plugin.py''
 
-This process is triggered by explicitly invoking a Module's load() method, or when it is injected as a dependency or as a capability provider.
+<code python>
+import colony.plugins.plugin_system
 
-  * The Module's dependencies are tested if they loaded or ready to be loaded (if their own dependencies exist);
-  * If one of the module's dependencies is not loaded and not ready to be loaded, the Module's loading process will stop here;
-  * The Module's payload (Models, View, Controller, Presentation Model) is loaded, by invoking the load() method;
-  * The Module's dependencies are loaded and injected, invoking the module's depencencyInjected() method;
-  * The Module's endLoad() method is invoked to signal that the module has finished loading;
-  * The Modules that provide the capabilities that are allowed by this Module are loaded, and in case the their loading process is successful, they are injected, invoking the receiver Module's loadAllowed() method;
-  * The Module is injected into all loaded modules that allow the one or more of the Module's capabilities. Their loadAllowed() method is invoked for each capability match (the Module can be injected twice into the same Module because it provides two allowed capabilities).
+PORTUGUESE_VALUE = "portuguese"
 
-=== Unloading process ===
+PORTUGUESE_LANGUAGE_HELLO_WORLD = "Ola mundo"
 
-This process is triggered by explicitly invoking a Module's unload() method, or when the module is being destroyed.
+class HelloWorldPortugueseLanguagePlugin(colony.plugins.plugin_system.Plugin):
+    
+    id = "pt.hive.colony.demo.plugins.hello_world.language.portuguese"
+    name = "Hello World Portuguese Language Plugin"
+    version = "1.0.0"
+    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    capabilities = ["hello_world.language.portuguese"]
+    capabilities_allowed = []
+    dependencies = []
+        
+    def get_language(self):
+        return PORTUGUESE_VALUE
+        
+    def translate(self, sentence):
+        return PORTUGUESE_LANGUAGE_HELLO_WORLD
+</code>
 
-  * Informs all the modules where this module was injected as a capability in that it is being unloading by invoking their unloadAllowed() method (the method can be invoked twice with the same module in case it was injected for  providing two different capabilities that were allowed by the receiver module);
-  * All Modules that depend on this one are unloaded;
-  * The Module's payload is unloaded by invoking the unload() method.
-  * The Module's endUnload() method is invoked to signal that it has finished unloading.
+Easy does it, the Hello World plugin should now be able to say Hello World in Portuguese. Restart Colony and try typing ''say_hello_world portuguese'':
 
-=== Destruction process ===
+<code txt>
+Ola mundo
+</code>
 
-This process is triggered by explicitly invoking the destroyModule() method.
+Voilá, or should I say, perfeito. The language plugin is pretty much straightforward, the only difference from the first the plugin we created in this tutorial is that this one has a ''hello_world.language.portuguese'' capability, which means that it will be injected into all loaded plugins that allow the ''hello_world'', ''hello_world.language'' or ''hello_world.language.portuguese'' capabilities, and that it has to have the methods expected by each of these capabilities, in this case: get_language() and translate(sentence).
 
-  * The Module is unloaded;
-  * The Module instance is destroyed.
+For the next step we will also need a Hello World English Language plugin. Go ahead and create that one on your own, it will be pretty easy. Afterwards, try typing ''showall'' and looking for our plugins:
 
-==== Diffusion scopes ====
+<code txt>
+ID      STATUS      PLUGIN ID
+0       ACTIVE      pt.hive.colony.demo.plugins.hello_world
+1       ACTIVE      pt.hive.colony.demo.plugins.hello_world.language.portuguese
+2       ACTIVE      pt.hive.colony.demo.plugins.hello_world.language.english
+...
+</code>
 
-Unlike plugins, a Module can have multiple instances. To keep track of the different Modules instances and their circle of influence, the concept of diffusion scope is used. All Modules have a singleton instance that is identified by having a "null" diffusion scope. Everytime that Module is replicated, it is assigned a new diffusion scope. Keeping track of a Module's diffusion scope allows one to create copies of entire groups of Modules and make sure their actions do not influence one another. This feature is better explained with an example:
+The language plugins have automatically loaded because they provide capabilities that are allowed by the Hello World plugin (''hello_world.language''), for this reason, they were loaded and injected in the Hello World plugin as providers of that capability. Try typing ''say_hello_world english'':
 
-Suppose one wanted to create an extensible calculator Module without the existence of diffusion scopes. The calculator Module could accept Modules that provided new operators, and it would work perfectly. However, one could want to create a copy of this Module in order to work with two calculators at any given time. Doing this would result in one of two things: either the same operator Modules would be injected into each calculator, or new copies of them would be injected into the new calculator. Either solution would be troublesome.
+<code txt>
+Hello world
+</code>
 
-If the same operators were injected, their behaviour would very probably be quite awkward, especially if the operators were stateful (like a memory function) as the same module would be interacting with two different modules at the same time.
+It worked as expected, now unload the Hello World English Language plugin by typing ''unload 2'' (or whatever ID the Hello World English Language plugin has), and then type "showall":
 
-If new copies of the operators were injected, if they were reloaded afterwards, they would be correctly unloaded, but when loading again, they couldn't be injected into the same module because there is no information that specifies that they belong together.
+<code txt>
+ID      STATUS      PLUGIN ID
+0       ACTIVE      pt.hive.colony.demo.plugins.hello_world
+1       ACTIVE      pt.hive.colony.demo.plugins.hello_world.language.portuguese
+2       INACTIVE    pt.hive.colony.demo.plugins.hello_world.language.english
+...
+</code>
 
-With diffusion scopes, both groups of calculators and operators would be assigned a different diffusion scope, and this way they could easily act without interfering with one another. This concept is also pretty useful with events, as explained next.
+Try typing ''say_hello_world english'' again:
 
-==== Events ====
+<code txt>
+I don't know how to say Hello World in english
+</code>
 
-Events in the MVC world work just like in any other programming language or framework, handlers are registered for specific events, and these handlers are invoked when that event is fired. There is however one particular twist to take into account. Due to the replicable nature of the Module, one may want to address only particular instances of a Module when firing an event and/or listen for events from specific Module instances. For this purpose, when registering for and firing events, one can specify the desired event scope:
+Since the Hello World English Language plugin is unloaded the Hello World plugin doesn't know how to translate the sentence anymore. Type ''say_hello_world portuguese'':
 
-=== Local Event ===
+<code txt>
+Ola mundo
+</code>
 
-A local event targets the specific Module instance. When firing a local event, only the Module firing it will be able to receive it, as long as it registered for a local event of that name. When no event type is defined, this one is used by default.
+Since the Hello World Portuguese Language plugin is still loaded the Hello World plugin can still say Hello World in Portuguese. If you type ''load 2'' and ''say_hello_world english'' the results will be as expected:
 
-=== Scope Event ===
+<code txt>
+Hello world
+</code>
 
-A scope event targets all Modules within the firing or registering module's diffusion scope. When Module fires a scope event, all Modules within its diffusion scope will receive the event, as long as they have registered for an scope event of that name.
-
-=== Module Event ===
-
-A Module event targets all module instances of the Module firing the event, regardless of what diffusion scope they are in, as long as they have registered for a module event of that name.
-
-=== Global Event ===
-
-A global event targets every module in every diffusion scope, as long as they registered for a global event of that name. 
+There you have it, you have created your very own extensible Colony plugin. The concepts are pretty simple, there are some details here and there that you will learn along the way, but as far as building modular applications with Colony from scratch, they won't detour much from the concepts illustrated in this tutorial. From now on the remaining learning curve will consist mainly of learning how to use the base Colony plugins, so you don't have to write everything from scratch.
