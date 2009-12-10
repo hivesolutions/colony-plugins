@@ -216,14 +216,8 @@ class WikiCodeExtension(wiki_extension_system.WikiExtension):
 
                 # in case the type of the token value is string
                 if type(token_value) == types.StringType:
-                    # strips the token value
-                    token_value = token_value.strip()
-
-                    # replaces the newlines in the token value
-                    token_value = token_value.replace("\n", "<br/>")
-
-                    # replaces the spaces in the token value
-                    token_value = token_value.replace(" ", "&nbsp;")
+                    # escapes the token value
+                    token_value = self.escape_string_value(token_value)
 
                 # in case the token class is defined
                 if token_class:
@@ -241,6 +235,34 @@ class WikiCodeExtension(wiki_extension_system.WikiExtension):
 
         # retrieves the string value
         string_value = string_buffer.get_value()
+
+        # returns the string value
+        return string_value
+
+    def escape_string_value(self, string_value):
+        """
+        Escapes the given string value.
+
+        @type string_value: String
+        @param string_value: The string value to be escaped.
+        @rtype: String
+        @return: The escaped string value.
+        """
+
+        # strips the string value
+        string_value = string_value.strip()
+
+        # replaces the newlines in the string value
+        string_value = string_value.replace("\n", "<br/>")
+
+        # replaces the spaces in the string value
+        string_value = string_value.replace(" ", "&nbsp;")
+
+        # replaces the less than characters in the string value
+        string_value = string_value.replace("<", "&lt;")
+
+        # replaces the greater than characters in the string value
+        string_value = string_value.replace(">", "&gt;")
 
         # returns the string value
         return string_value

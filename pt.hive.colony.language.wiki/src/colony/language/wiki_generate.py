@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 import sys
+import time
 import getopt
 import logging
 
@@ -56,6 +57,9 @@ DEFAULT_TARGET_PATH = "generated"
 
 WIKI_EXTENSIONS = ("wiki", "wik")
 """ The valid wiki extensions list """
+
+BASE_FILES = {"css/main.css" : "/css"}
+""" The base files """
 
 class WikiGenerator:
     """
@@ -107,6 +111,9 @@ class WikiGenerator:
 
         # walks the file path
         os.path.walk(file_path, self.generate_wiki_file, (full_target_path,))
+
+        # copies the base files
+        self._copy_base_files(full_target_path)
 
     def generate_wiki_file(self, args, file_path, names):
         """
@@ -179,6 +186,62 @@ class WikiGenerator:
                 # closes the html file
                 html_file.close()
 
+    def _copy_base_files(self, target_path):
+        """
+        Copies the base files to the given target path.
+
+        @type target_path: String
+        @param target_path: The target path.
+        """
+
+        # iterates over all the base files
+        for base_file_path in BASE_FILES:
+            # retrieves the base target path
+            base_target_path = BASE_FILES[base_file_path]
+
+            # copes the base file to the target path
+            self._copy_files((base_file_path,), target_path + base_target_path)
+
+    def _copy_files(self, file_paths, target_path):
+        """
+        Copies the files in the given file path to the target path.
+
+        @type file_paths: List
+        @param file_paths: The file paths of the files to be copied.
+        @type target_path: String
+        @param target_path: The target path for the file copy.
+        """
+
+        # in case the target path does not exist
+        if not os.path.exists(target_path):
+            # creates the directory
+            os.mkdir(target_path)
+
+        # iterates over all the file paths
+        for file_path in file_paths:
+            # retrieves the file name
+            file_name = os.path.basename(file_path)
+
+            target_full_path = target_path + "/" + file_name
+
+            # opens the file for reading
+            file = open(file_path, "rb")
+
+            # reads the file contents
+            file_contents = file.read()
+
+            # closes the file
+            file.close()
+
+            # opens the target file for writing
+            target_file = open(target_full_path, "wb+")
+
+            # writes the file contents to the target file
+            target_file.write(file_contents)
+
+            # closes the target file
+            target_file.close()
+
 if __name__ == "__main__":
     # starts the verbose flag as false
     verbose = False
@@ -209,5 +272,19 @@ if __name__ == "__main__":
     # creates the wiki generator
     wiki_generator = WikiGenerator()
 
+    # retrieves the start time
+    start_time = time.time()
+
     # generates the wiki
     wiki_generator.generate_wiki(file_path, target_path, verbose, debug)
+
+    # retrieves the end time
+    end_time = time.time()
+
+    # calculates the time difference
+    time_difference = end_time - start_time
+
+    # rounds the time difference
+    time_difference_rounded = round(time_difference, 2)
+
+    logging.error("Processing took: %s secconds" % time_difference_rounded)
