@@ -58,7 +58,8 @@ DEFAULT_TARGET_PATH = "generated"
 WIKI_EXTENSIONS = ("wiki", "wik")
 """ The valid wiki extensions list """
 
-BASE_FILES = {"css/main.css" : "/css"}
+BASE_FILES = {"resources/css/main.css" : "/css",
+              "resources/images/logo_omni.gif" : "/images"}
 """ The base files """
 
 class WikiGenerator:

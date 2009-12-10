@@ -230,6 +230,9 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
 
             self._write("<div class=\"footer\">")
             self._write("Document generated be colony framework in %s seconds" % str(delta_time_rounded))
+            self._write("<div class=\"logo_image\">")
+            self._write("<img src=\"images/logo_omni.gif\"/>")
+            self._write("</div>")
             self._write("</div>")
             self._write("</body>")
 
