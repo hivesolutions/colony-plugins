@@ -69,6 +69,18 @@ states_map = {"BOLD" : False,
               "MONOSPACE" : False,
               "SECTION" : False}
 
+def t_NAME_ESCAPED(t):
+    r"%%.*?%%"
+    # retrieves the current value
+    current_value = t.value
+
+    # retrieves the escape characters
+    current_value = ESCAPE_REGEX.sub("\g<1>", current_value)
+
+    t.type = "NAME"
+    t.value = current_value
+    return t
+
 # the new line character
 def t_NEWLINE(t):
     r"\n+"
@@ -200,7 +212,7 @@ def t_TAG(t):
     return t
 
 def t_EXTENDED_NAME(t):
-    r"[\*\/_\'\{\}\[\]=]"
+    r"[\%\*\/_\'\{\}\[\]=]"
 
     # sets the type as name
     t.type = "NAME"
@@ -208,7 +220,7 @@ def t_EXTENDED_NAME(t):
     return t
 
 def t_NAME(t):
-    r"([^\\\n\# \t\r\%\*\/_\'\{\}\[\]\|=]|[\*\/_\'\{\}\[\]=][^\\\n\# \t\r\%\*\/_\'\{\}\[\]\|=]|%%.*?%%)+"
+    r"([^\\\n\# \t\r\%\*\/_\'\{\}\[\]\|=]|[\%\*\/_\'\{\}\[\]=][^\\\n\# \t\r\%\*\/_\'\{\}\[\]\|=]|%%.*?%%)+"
     # retrieves the current value
     current_value = t.value
 
