@@ -378,14 +378,14 @@ class LexerGenerator:
                 # calls the function with the token
                 function(token)
 
-                # updates the lexer position
-                self.lexpos = token.end_index
+                # sets the new current index
+                self.current_index = token.end_index + 1
 
                 # updates the line number
                 self.line_number = self.lineno
 
-                # sets the new current index
-                self.current_index = token.end_index + 1
+                # updates the lexer position
+                self.lexpos = self.current_index
 
                 # in case the token is to be advanced
                 if function_name in LexerGenerator.ADVANCE_TOKENS_LIST:
@@ -427,14 +427,14 @@ class LexerGenerator:
                 # sets the token lexer
                 token.lexer = self
 
+                # sets the new current index
+                self.current_index = token.end_index + 1
+
                 # updates the lexer position
-                self.lexpos = token.end_index
+                self.lexpos = self.current_index
 
                 # updates the line number
                 self.line_number = self.lineno
-
-                # sets the new current index
-                self.current_index = token.end_index + 1
 
                 # in case the token is to be advanced
                 if string_name in LexerGenerator.ADVANCE_TOKENS_LIST:
@@ -457,7 +457,7 @@ class LexerGenerator:
             token.end_index = self.current_index
 
             # sets the lexer position
-            token.lexpos = token.start_index
+            token.lexpos = self.current_index
 
             # sets the token lexer
             token.lexer = self
