@@ -57,7 +57,7 @@ class InvalidTagName(WikiException):
         @param message: The message to be printed.
         """
 
-        SettlerException.__init__(self)
+        WikiException.__init__(self)
         self.message = message
 
     def __str__(self):

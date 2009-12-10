@@ -359,8 +359,11 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
             # retrieves the generator extensions
             generator_extensions = self.extension_manager.get_extensions_by_capability("generator")
 
+            # retrieves the tag name
+            node_tag_name = node.tag_name
+
             # splits the node tag name
-            node_tag_name_splitted = node.tag_name.split()
+            node_tag_name_splitted = node_tag_name.split()
 
             # retrieves the node tag name splitted length
             node_tag_name_splitted_length = len(node_tag_name_splitted)
@@ -369,7 +372,7 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
             # splitted is less than one
             if node_tag_name_splitted_length < 1:
                 # raisers the invalid tag name exception
-                wiki_exceptions.InvalidTagName("tag name is not valid: " + node.tag_name)
+                raise wiki_exceptions.InvalidTagName("tag name is not valid: " + node_tag_name)
 
             # retrieves the node tag value
             node_tag_value = node_tag_name_splitted[0]

@@ -123,8 +123,11 @@ class WikiCodeExtension(wiki_extension_system.WikiExtension):
         # retrieves the code highlighting extensions
         code_highlighting_extensions = self.extension_manager.get_extensions_by_capability("code_highlighting")
 
+        # retrieves the tag name
+        node_tag_name = tag_node.tag_name
+
         # splits the node tag name
-        node_tag_name_splitted = tag_node.tag_name.split()
+        node_tag_name_splitted = node_tag_name.split()
 
         # retrieves the node tag name splitted length
         node_tag_name_splitted_length = len(node_tag_name_splitted)
@@ -133,7 +136,7 @@ class WikiCodeExtension(wiki_extension_system.WikiExtension):
         # splitted is less than two
         if node_tag_name_splitted_length < 2:
             # raisers the invalid tag name exception
-            wiki_exceptions.InvalidTagName("tag name is not valid: " + node.tag_name)
+            raise wiki_exceptions.InvalidTagName("tag name is not valid: " + node_tag_name)
 
         # retrieves the node tag language value
         node_tag_language_value = node_tag_name_splitted[1]
