@@ -52,7 +52,6 @@ class JabberClientPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    #"bot_output",
     capabilities = ["main", "jabber_client", "bot_input", "bot_output", "console_command_extension"]
     capabilities_allowed = ["jabber_client"]
     dependencies = [colony.plugins.plugin_system.PackageDependency(
