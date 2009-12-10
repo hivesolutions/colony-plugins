@@ -37,11 +37,20 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import ply
+import sys
 
 import wiki_code.wiki_code_extension_system
 
 from settler_highlighting.settler_lexer import *
+
+COLONY_GENERATOR_PATH = "../../../../pt.hive.colony.language.generator/src/colony"
+""" The colony generator path """
+
+# appends the colony language generator path
+sys.path.append(COLONY_GENERATOR_PATH)
+
+# imports the colony generator package
+import language_generator.lexer_generator
 
 HIGHLIGHTING_TYPE = "settler"
 """ The highlighting type """
@@ -107,11 +116,11 @@ class SettlerHighlightingExtension(wiki_code.wiki_code_extension_system.WikiCode
         # strips the contents
         contents_stripped = contents.strip()
 
-        # creates the lexer
-        ply.lex.lex()
+        # creates a new lexer
+        lexer = language_generator.lexer_generator.LexerGenerator()
 
-        # sets the python lexer
-        lexer = ply.lex.lexer
+        # constructs the lexer
+        lexer.construct(globals())
 
         # sets the input in the lexer
         lexer.input(contents_stripped)
