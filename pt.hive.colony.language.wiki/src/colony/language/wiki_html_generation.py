@@ -82,6 +82,9 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
     paragraph_open = False
     """ The paragraph open flag """
 
+    current_section_string = "none"
+    """ The current section string """
+
     section_values_map = {}
     """ The sections values map """
 
@@ -266,48 +269,51 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
     @wiki_visitor._visit(wiki_ast.SectionNode)
     def visit_section_node(self, node):
         if self.visit_index == 0:
+            # retrieves the node section size
+            node_section_size = node.section_size
+
+            # in case the section size is not available in
+            # the section values map
+            if not node.section_size in self.section_values_map:
+                # creates the section size in the section values map
+                self.section_values_map[node_section_size] = 0
+
+            # increments the section values map
+            self.section_values_map[node_section_size] += 1
+
+            # creates the value
+            string_value = str()
+
+            # iterates over all the index in the section size range
+            for index in range(node_section_size):
+                # calculates the next index
+                next_index = index + 1
+
+                # in case the next index does not exists
+                # in the section values map
+                if not next_index in self.section_values_map:
+                    # creates the section size in the section values map
+                    self.section_values_map[next_index] = 0
+
+                # retrieves the next value from the section values map
+                next_value = self.section_values_map[next_index]
+
+                # adds the next value to the string value
+                string_value += str(next_value) + "."
+
+            # sets the current section string
+            self.current_section_string = string_value
+
+            # closes the current paragraph
+            self.close_paragraph()
+
+            self._write("<h" + str(node.section_size) + " id=\"" + self.current_section_string + "\">")
+
             # in case the auto numbered sections is valid
             if self.configuration_map.get(AUTO_NUMBERED_SECTIONS_VALUE, False):
-                # retrieves the node section size
-                node_section_size = node.section_size
-
-                # in case the section size is not available in
-                # the section values map
-                if not node.section_size in self.section_values_map:
-                    # creates the section size in the section values map
-                    self.section_values_map[node_section_size] = 0
-
-                # increments the section values map
-                self.section_values_map[node_section_size] += 1
-
-                # creates the value
-                string_value = str()
-
-                # iterates over all the index in the section size range
-                for index in range(node_section_size):
-                    # calculates the next index
-                    next_index = index + 1
-
-                    # in case the next index does not exists
-                    # in the section values map
-                    if not next_index in self.section_values_map:
-                        # creates the section size in the section values map
-                        self.section_values_map[next_index] = 0
-
-                    # retrieves the next value from the section values map
-                    next_value = self.section_values_map[next_index]
-
-                    # adds the next value to the string value
-                    string_value += str(next_value) + "."
-
-                # closes the current paragraph
-                self.close_paragraph()
-                self._write("<h" + str(node.section_size) + ">" + string_value)
-            else:
-                # closes the current paragraph
-                self.close_paragraph()
-                self._write("<h" + str(node.section_size) + ">")
+                self._write(self.current_section_string)
         elif self.visit_index == 1:
+            self._write("<a class=\"headerlink\" title=\"Permalink to this headline\" href=\"#" + self.current_section_string + "\">¶</a>")
             self._write("</h" + str(node.section_size) + ">")
 
             # opens a new paragraph

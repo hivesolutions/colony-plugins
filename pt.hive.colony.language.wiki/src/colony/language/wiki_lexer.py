@@ -83,7 +83,7 @@ def t_NAME_ESCAPED(t):
 
 # the new line character
 def t_NEWLINE(t):
-    r"\n+"
+    r"(\r?\n)+"
     # retrieves the number of newline
     newline_count = t.value.count("\n")
     t.lexer.lineno += newline_count

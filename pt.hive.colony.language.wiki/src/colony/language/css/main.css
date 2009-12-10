@@ -60,6 +60,7 @@ h1, h2, h3, h4, h5 {
 h1, h2, h3 {
     background-color: #f2f2f2;
     border-bottom: 1px solid #cccccc;
+    padding: 6px 0px 3px 5px;
 }
 
 h1 {
@@ -99,6 +100,38 @@ ol {
 li > div {
     color: #000000;
     font-weight: normal;
+}
+
+a {
+    color: #355F7c;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+a.headerlink {
+    color: #c60f0f;
+    font-size: 0.8em;
+    margin: 0em -0.3em;
+    padding: 0px 4px;
+    text-decoration: none;
+    visibility: hidden;
+}
+
+a.headerlink:hover {
+    background-color: #c60f0f;
+    color: white;
+    text-decoration: none;
+}
+
+h1:hover > a.headerlink,
+h2:hover > a.headerlink,
+h3:hover > a.headerlink,
+h4:hover > a.headerlink,
+h5:hover > a.headerlink {
+    visibility: visible;
 }
 
 .footer {
