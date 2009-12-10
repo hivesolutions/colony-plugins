@@ -65,10 +65,14 @@ extension_manager.set_extension_class(wiki_extension_system.WikiExtension)
 extension_manager.start_logger()
 extension_manager.load_system()
 
+# creates the configuration map
+configuration_map = {"AUTO_NUMBERED_SECTIONS" : True}
+
 visitor = wiki_visitor.Visitor()
 
 generation_visitor = wiki_html_generation.HtmlGenerationVisitor()
 generation_visitor.set_extension_manager(extension_manager)
+generation_visitor.set_configuration_map(configuration_map)
 
 parse_result.accept(visitor)
 parse_result.accept_double(generation_visitor)
