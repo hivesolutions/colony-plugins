@@ -62,6 +62,9 @@ RECURSION_LIMIT = 1000000
 AUTO_NUMBERED_SECTIONS_VALUE = "AUTO_NUMBERED_SECTIONS"
 """ The auto numbered sections value """
 
+AVAILABLE_TAG_NAMES = ("del",)
+""" The available tag names """
+
 class HtmlGenerationVisitor(wiki_visitor.Visitor):
     """
     The html generation visitor class.
@@ -427,37 +430,47 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
     @wiki_visitor._visit(wiki_ast.TagNode)
     def visit_tag_node(self, node):
         if self.visit_index == 0:
-            # retrieves the generator extensions
-            generator_extensions = self.extension_manager.get_extensions_by_capability("generator")
-
             # retrieves the tag name
             node_tag_name = node.tag_name
 
-            # splits the node tag name
-            node_tag_name_splitted = node_tag_name.split()
+            # retrieves the tag contents
+            node_tag_contents = node.contents
 
-            # retrieves the node tag name splitted length
-            node_tag_name_splitted_length = len(node_tag_name_splitted)
+            # in case the node tag name is in
+            # the available tag names
+            if node_tag_name in AVAILABLE_TAG_NAMES:
+                self._write("<" + node_tag_name + ">")
+                self._write(node_tag_contents)
+                self._write("</" + node_tag_name + ">")
+            else:
+                # retrieves the generator extensions
+                generator_extensions = self.extension_manager.get_extensions_by_capability("generator")
 
-            # in case the length of the node tag name
-            # splitted is less than one
-            if node_tag_name_splitted_length < 1:
-                # raisers the invalid tag name exception
-                raise wiki_exceptions.InvalidTagName("tag name is not valid: " + node_tag_name)
+                # splits the node tag name
+                node_tag_name_splitted = node_tag_name.split()
 
-            # retrieves the node tag value
-            node_tag_value = node_tag_name_splitted[0]
+                # retrieves the node tag name splitted length
+                node_tag_name_splitted_length = len(node_tag_name_splitted)
 
-            # retrieves the generator extensions for the given tag
-            tag_generator_extensions = [extension for extension in generator_extensions if extension.get_generator_type() == node_tag_value]
+                # in case the length of the node tag name
+                # splitted is less than one
+                if node_tag_name_splitted_length < 1:
+                    # raisers the invalid tag name exception
+                    raise wiki_exceptions.InvalidTagName("tag name is not valid: " + node_tag_name)
 
-            # iterates over all the tag generator extensions
-            for tag_generator_extension in tag_generator_extensions:
-                # generates the html for the given tag node
-                html = tag_generator_extension.generate_html(node)
+                # retrieves the node tag value
+                node_tag_value = node_tag_name_splitted[0]
 
-                # writes the html to the buffer
-                self._write(html)
+                # retrieves the generator extensions for the given tag
+                tag_generator_extensions = [extension for extension in generator_extensions if extension.get_generator_type() == node_tag_value]
+
+                # iterates over all the tag generator extensions
+                for tag_generator_extension in tag_generator_extensions:
+                    # generates the html for the given tag node
+                    html = tag_generator_extension.generate_html(node)
+
+                    # writes the html to the buffer
+                    self._write(html)
 
     def _write(self, string_value):
         """
