@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import sys
 import getopt
+import logging
 
 import os.path
 
@@ -50,74 +51,114 @@ import wiki_visitor
 import wiki_html_generation
 import wiki_extension_system
 
-def generate_wiki(file_path, verbose, debug):
-    """
-    Generates the wiki structure for the given file path,
-    and options.
+WIKI_EXTENSIONS = ("wiki", "wik")
+""" The valid wiki extensions list """
 
-    @type file_path: String
-    @param file_path:  The file path to generate the wiki structure.
-    @type verbose: bool
-    @param verbose: If the log is going to be of type verbose.
-    @type debug: bool
-    @param debug: If the log is going to be of type debug.
+class WikiGenerator:
+    """
+    The wiki generator class.
     """
 
-    # walks the file path
-    os.path.walk(file_path, generate_wiki_file, None)
+    extension_manager = None
+    """ The extension manager """
 
-def generate_wiki_file(args, file_path, names):
-    # creates a new extension manager
-    extension_manager = libs.extension_system.ExtensionManager(["./extensions"])
-    extension_manager.set_extension_class(wiki_extension_system.WikiExtension)
-    extension_manager.start_logger()
-    extension_manager.load_system()
+    configuration_map = {}
+    """ The configuration map """
 
-    # creates the configuration map
-    configuration_map = {"AUTO_NUMBERED_SECTIONS" : True}
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
 
-    for name in names:
-        if name.split(".")[-1] == "wiki":
-            partial_name = "".join(name.split(".")[:-1])
+        # creates a new extension manager
+        self.extension_manager = libs.extension_system.ExtensionManager(["./extensions"])
+        self.extension_manager.set_extension_class(wiki_extension_system.WikiExtension)
+        self.extension_manager.start_logger()
+        self.extension_manager.load_system()
 
-            full_partial_name = file_path + "/" + partial_name
+        # creates the configuration map
+        self.configuration_map = {"AUTO_NUMBERED_SECTIONS" : True}
 
-            full_file_path = file_path + "/" + name
+    def generate_wiki(self, file_path, verbose, debug):
+        """
+        Generates the wiki structure for the given file path,
+        and options.
 
-            print "processing: %s" % full_file_path
+        @type file_path: String
+        @param file_path:  The file path to generate the wiki structure.
+        @type verbose: bool
+        @param verbose: If the log is going to be of type verbose.
+        @type debug: bool
+        @param debug: If the log is going to be of type debug.
+        """
 
-            # opens the wiki file
-            wiki_file = open(full_file_path)
+        # walks the file path
+        os.path.walk(file_path, self.generate_wiki_file, None)
 
-            # reads the wiki file contents
-            wiki_file_contents = wiki_file.read()
+    def generate_wiki_file(self, args, file_path, names):
+        """
+        Generates the wiki for the given file and arguments.
 
-            # closes the wiki file
-            wiki_file.close()
+        @type args: List
+        @param args:  The arguments for the generation.
+        @type file_path: String
+        @param file_path: The file path for the generation.
+        @type names: List
+        @param names: The list of name for the current file path.
+        """
 
-            # strips the wiki file contents (to remove extra spaces and lines)
-            wiki_file_contents = wiki_file_contents.strip()
+        # iterates over all the names
+        for name in names:
+            # retrieves the name extension
+            name_extension = name.split(".")[-1]
 
-            # parses the javascript file retrieving the result
-            parse_result = wiki_parser.parser.parse(wiki_file_contents)
+            # in case the name extension is valid
+            if name_extension in WIKI_EXTENSIONS:
+                # creates the full file name
+                full_file_path = file_path + "/" + name
 
-            generation_visitor = wiki_html_generation.HtmlGenerationVisitor()
-            generation_visitor.set_extension_manager(extension_manager)
-            generation_visitor.set_configuration_map(configuration_map)
+                # retrieves the partial name
+                partial_name = "".join(name.split(".")[:-1])
 
-            parse_result.accept_double(generation_visitor)
+                # creates the full partial name
+                full_partial_name = file_path + "/" + partial_name
 
-            # retrieves the html value
-            html_value = generation_visitor.get_string_buffer().getvalue()
+                # prints an info message
+                logging.error("Processing: %s" % full_file_path)
 
-            # opens the html file
-            html_file = open(full_partial_name + ".html", "w+")
+                # opens the wiki file
+                wiki_file = open(full_file_path)
 
-            # writes the html value to the html file
-            html_file.write(html_value)
+                # reads the wiki file contents
+                wiki_file_contents = wiki_file.read()
 
-            # closes the html file
-            html_file.close()
+                # closes the wiki file
+                wiki_file.close()
+
+                # strips the wiki file contents (to remove extra spaces and lines)
+                wiki_file_contents = wiki_file_contents.strip()
+
+                # parses the javascript file retrieving the result
+                parse_result = wiki_parser.parser.parse(wiki_file_contents)
+
+                # creates the generator visitor
+                generation_visitor = wiki_html_generation.HtmlGenerationVisitor()
+                generation_visitor.set_extension_manager(self.extension_manager)
+                generation_visitor.set_configuration_map(self.configuration_map)
+
+                parse_result.accept_double(generation_visitor)
+
+                # retrieves the html value
+                html_value = generation_visitor.get_string_buffer().getvalue()
+
+                # opens the html file
+                html_file = open(full_partial_name + ".html", "w+")
+
+                # writes the html value to the html file
+                html_file.write(html_value)
+
+                # closes the html file
+                html_file.close()
 
 if __name__ == "__main__":
     # starts the verbose flag as false
@@ -141,5 +182,8 @@ if __name__ == "__main__":
         elif option in ("-f", "--file"):
             file_path = value
 
+    # creates the wiki generator
+    wiki_generator = WikiGenerator()
+
     # generates the wiki
-    generate_wiki(file_path, verbose, debug)
+    wiki_generator.generate_wiki(file_path, verbose, debug)
