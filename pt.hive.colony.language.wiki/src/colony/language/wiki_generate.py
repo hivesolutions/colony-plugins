@@ -51,6 +51,9 @@ import wiki_visitor
 import wiki_html_generation
 import wiki_extension_system
 
+DEFAULT_TARGET_PATH = "generated"
+""" The default target path """
+
 WIKI_EXTENSIONS = ("wiki", "wik")
 """ The valid wiki extensions list """
 
@@ -79,21 +82,31 @@ class WikiGenerator:
         # creates the configuration map
         self.configuration_map = {"AUTO_NUMBERED_SECTIONS" : True}
 
-    def generate_wiki(self, file_path, verbose, debug):
+    def generate_wiki(self, file_path, target_path, verbose, debug):
         """
         Generates the wiki structure for the given file path,
         and options.
 
         @type file_path: String
         @param file_path:  The file path to generate the wiki structure.
+        @type target_path: String
+        @param target_path:  The target path for the wiki generation.
         @type verbose: bool
         @param verbose: If the log is going to be of type verbose.
         @type debug: bool
         @param debug: If the log is going to be of type debug.
         """
 
+        # creates the full target path
+        full_target_path = file_path + "/" + target_path
+
+        # in case the target directory does not exist
+        if not os.path.exists(full_target_path):
+            # creates the directory
+            os.mkdir(full_target_path)
+
         # walks the file path
-        os.path.walk(file_path, self.generate_wiki_file, None)
+        os.path.walk(file_path, self.generate_wiki_file, (full_target_path,))
 
     def generate_wiki_file(self, args, file_path, names):
         """
@@ -106,6 +119,9 @@ class WikiGenerator:
         @type names: List
         @param names: The list of name for the current file path.
         """
+
+        # retrieves the full target path from the args
+        full_target_path, = args
 
         # iterates over all the names
         for name in names:
@@ -123,8 +139,8 @@ class WikiGenerator:
                 # retrieves the partial name
                 partial_name = "".join(name_splitted[:-1])
 
-                # creates the full partial name
-                full_partial_name = file_path + "/" + partial_name
+                # creates the full target name
+                full_target_name = full_target_path + "/" + partial_name
 
                 # prints an info message
                 logging.error("Processing: %s" % full_file_path)
@@ -155,7 +171,7 @@ class WikiGenerator:
                 html_value = generation_visitor.get_string_buffer().getvalue()
 
                 # opens the html file
-                html_file = open(full_partial_name + ".html", "w+")
+                html_file = open(full_target_name + ".html", "w+")
 
                 # writes the html value to the html file
                 html_file.write(html_value)
@@ -173,8 +189,11 @@ if __name__ == "__main__":
     # start the file path value as None
     file_path = None
 
+    # start the target path as None
+    target_path = DEFAULT_TARGET_PATH
+
     # retrieves the argument options
-    opts, args = getopt.getopt(sys.argv[1:], "vdf:", ["verbose", "debug", "file="])
+    opts, args = getopt.getopt(sys.argv[1:], "vdf:t:", ["verbose", "debug", "file=", "target="])
 
     # iterates over all the given options
     for option, value in opts:
@@ -184,9 +203,11 @@ if __name__ == "__main__":
             debug = True
         elif option in ("-f", "--file"):
             file_path = value
+        elif option in ("-y", "--target"):
+            target_path = value
 
     # creates the wiki generator
     wiki_generator = WikiGenerator()
 
     # generates the wiki
-    wiki_generator.generate_wiki(file_path, verbose, debug)
+    wiki_generator.generate_wiki(file_path, target_path, verbose, debug)
