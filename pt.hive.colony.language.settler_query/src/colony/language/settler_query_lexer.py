@@ -152,7 +152,7 @@ def t_STRING(t):
 
 # the new line character
 def t_NEWLINE(t):
-    r"\n+"
+    r"(\r?\n)+"
     t.lexer.lineno += t.value.count("\n")
     return t
 
