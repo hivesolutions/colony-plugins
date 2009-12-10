@@ -144,7 +144,7 @@ def t_NUMBER(t):
 
 # string definition
 def t_STRING(t):
-    r"\"([^\\\n]|(\\.))*?\""
+    r"\"([^\\\n]|(\\.)|\\n\\\n)*?\""
 
     t.value = t.value[1:-1]
 
