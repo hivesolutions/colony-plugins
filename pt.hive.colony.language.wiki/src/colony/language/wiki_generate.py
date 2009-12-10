@@ -109,8 +109,11 @@ class WikiGenerator:
 
         # iterates over all the names
         for name in names:
+            # splits the name
+            name_splitted = name.split(".")
+
             # retrieves the name extension
-            name_extension = name.split(".")[-1]
+            name_extension = name_splitted[-1]
 
             # in case the name extension is valid
             if name_extension in WIKI_EXTENSIONS:
@@ -118,7 +121,7 @@ class WikiGenerator:
                 full_file_path = file_path + "/" + name
 
                 # retrieves the partial name
-                partial_name = "".join(name.split(".")[:-1])
+                partial_name = "".join(name_splitted[:-1])
 
                 # creates the full partial name
                 full_partial_name = file_path + "/" + partial_name
