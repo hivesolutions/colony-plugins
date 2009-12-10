@@ -147,7 +147,7 @@ def t_MULTI_LINE_COMMENT(t):
 
 # string definition
 def t_STRING(t):
-    r"\"([^\\\n]|(\\.)|\\n\\\n)*?\""
+    r"\"([^\\\n]|(\\.)|\\n\\\r*\n)*?\""
 
     t.value = t.value[1:-1]
 
@@ -155,7 +155,7 @@ def t_STRING(t):
 
 # string quotes definition
 def t_STRING_QUOTES(t):
-    r"\'([^\\\n]|(\\.)|\\n\\\n)*?\'"
+    r"\'([^\\\n]|(\\.)|\\n\\\r*\n)*?\'"
 
     t.type = "STRING"
     t.value = t.value[1:-1]
