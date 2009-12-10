@@ -252,17 +252,17 @@ class WikiCodeExtension(wiki_extension_system.WikiExtension):
         # strips the string value
         string_value = string_value.strip()
 
-        # replaces the newlines in the string value
-        string_value = string_value.replace("\n", "<br/>")
-
-        # replaces the spaces in the string value
-        string_value = string_value.replace(" ", "&nbsp;")
-
         # replaces the less than characters in the string value
         string_value = string_value.replace("<", "&lt;")
 
         # replaces the greater than characters in the string value
         string_value = string_value.replace(">", "&gt;")
+
+        # replaces the newlines in the string value
+        string_value = string_value.replace("\n", "<br/>")
+
+        # replaces the spaces in the string value
+        string_value = string_value.replace(" ", "&nbsp;")
 
         # returns the string value
         return string_value
