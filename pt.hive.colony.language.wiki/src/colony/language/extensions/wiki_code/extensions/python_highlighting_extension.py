@@ -56,6 +56,7 @@ CLASS_DEFINITION = {"CLASS" : "kw5",
                     "RETURN" : "kw5",
                     "IMPORT" : "kw5",
                     "NAME" : "kw2",
+                    "DECORATOR_NAME" : "kw1",
                     "STRING" : "st0",
                     "NUMBER" : "kw6",
                     "COMMENT" : "kw4"}
@@ -155,8 +156,15 @@ class PythonHighlightingExtension(wiki_code.wiki_code_extension_system.WikiCodeE
         return tokens_list
 
     def _get_real_value(self, token):
-        if token.type == "STRING":
-            return "\"" + token.value + "\""
+        # retrieves the token type
+        token_type = token.type
+
+        # retrieves the token value
+        token_value = token.value
+
+        # in case the token type is string
+        if token_type == "STRING":
+            return "\"" + token_value + "\""
 
         # returns the token value
-        return token.value
+        return token_value

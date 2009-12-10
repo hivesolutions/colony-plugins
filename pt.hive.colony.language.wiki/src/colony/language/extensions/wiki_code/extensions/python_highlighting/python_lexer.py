@@ -38,12 +38,12 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 # the token definitions
-tokens = ("NAME", "NUMBER", "STRING", "BOOL", "PLUS",
-          "MINUS", "TIMES", "DIVIDE", "POWER",
+tokens = ("NAME", "DECORATOR_NAME", "NUMBER", "STRING", "BOOL",
+          "PLUS", "MINUS", "TIMES", "DIVIDE", "POWER",
           "EQUALS", "EQUALEQUAL", "GREATER",
           "GREATEREQUAL", "LESS", "LESSEQUAL",
           "NOT", "AND", "OR", "LPAREN", "RPAREN",
-          "LBRACK", "RBRACK", "DEF", "RETURN",
+          "LBRACK", "RBRACK", "LBRACE", "RBRACE", "DEF", "RETURN",
           "COLON", "COMA", "DOT", "IF", "ELSE", "ELIF",
           "END", "NEWLINE", "WHILE", "FOR", "IN", "IMPORT",
           "CLASS", "EXTENDS", "IMPLEMENTS", "INTERFACE",
@@ -104,6 +104,9 @@ t_RPAREN = r"\)"
 t_LBRACK = r"\["
 t_RBRACK = r"\]"
 
+t_LBRACE = r"\{"
+t_RBRACE = r"\}"
+
 t_COLON = r":"
 t_COMA = r","
 t_DOT = r"\."
@@ -112,6 +115,10 @@ def t_NAME(t):
     r"[a-zA-Z_][a-zA-Z_0-9]*"
     t.type = reserved.get(t.value, "NAME")
     t.value = reserved_values.get(t.value, t.value)
+    return t
+
+def t_DECORATOR_NAME(t):
+    r"\@[a-zA-Z_.][a-zA-Z_0-9.]+"
     return t
 
 # number definition
@@ -128,7 +135,7 @@ def t_NUMBER(t):
 
 # string definition
 def t_STRING(t):
-    r"\"([^\\\n]|(\\.))*?\""
+    r"\"([^\\\n]|(\\.)|\\n\\\n)*?\""
 
     t.value = t.value[1:-1]
 

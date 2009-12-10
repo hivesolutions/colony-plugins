@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import types
+
 import libs.string_buffer_util
 import libs.extension_system
 
@@ -211,6 +213,14 @@ class WikiCodeExtension(wiki_extension_system.WikiExtension):
 
                 # sets the current line
                 current_line = token_line
+
+                # in case the type of the token value is string
+                if type(token_value) == types.StringType:
+                    # strips the token value
+                    token_value = token_value.strip()
+
+                    # replaces the newlines in the token value
+                    token_value = token_value.replace("\n", "<br/>")
 
                 # in case the token class is defined
                 if token_class:
