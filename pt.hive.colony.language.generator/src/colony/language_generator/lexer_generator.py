@@ -59,11 +59,20 @@ class Token:
     value = None
     """ The value of the token """
 
+    line_number = None
+    """ The current line number """
+
+    lineno = None
+    """ The current line number (deprecated) """
+
     start_index = None
     """ The start index of the token """
 
     end_index = None
     """ The end index of the token """
+
+    lexpos = None
+    """ The current lexer position (deprecated) """
 
     lexer = None
     """ The token lexer """
@@ -160,6 +169,12 @@ class LexerGenerator:
 
     lineno = 0
     """ The current line number (deprecated) """
+
+    lexer_position = 0
+    """ The current lexer position """
+
+    lexpos = 0
+    """ The current lexer position (deprecated) """
 
     error_function = None
     """ The error function """
@@ -351,11 +366,23 @@ class LexerGenerator:
                 # sets the token end index
                 token.end_index = buffer_match.end() - 1
 
+                # sets the lexer position
+                token.lexpos = token.start_index
+
+                # sets the lexer line number
+                token.lineno = self.line_number
+
                 # sets the token lexer
                 token.lexer = self
 
                 # calls the function with the token
                 function(token)
+
+                # updates the lexer position
+                self.lexpos = token.end_index
+
+                # updates the line number
+                self.line_number = self.lineno
 
                 # sets the new current index
                 self.current_index = token.end_index + 1
@@ -391,8 +418,20 @@ class LexerGenerator:
                 # sets the token end index
                 token.end_index = buffer_match.end() - 1
 
+                # sets the lexer position
+                token.lexpos = token.start_index
+
+                # sets the lexer line number
+                token.lineno = self.line_number
+
                 # sets the token lexer
                 token.lexer = self
+
+                # updates the lexer position
+                self.lexpos = token.end_index
+
+                # updates the line number
+                self.line_number = self.lineno
 
                 # sets the new current index
                 self.current_index = token.end_index + 1
@@ -416,6 +455,9 @@ class LexerGenerator:
 
             # sets the token end index
             token.end_index = self.current_index
+
+            # sets the lexer position
+            token.lexpos = token.start_index
 
             # sets the token lexer
             token.lexer = self
@@ -511,6 +553,26 @@ class LexerGenerator:
         """
 
         self.error_function = error_function
+
+    def token(self):
+        """
+        Retrieves a token from the lexer (deprecated).
+
+        @rtype: Token
+        @return: The token that has been retrieved.
+        """
+
+        return self.get_token()
+
+    def input(self, buffer):
+        """
+        Sets the buffer (deprecated).
+
+        @type buffer: String
+        @param buffer: The buffer.
+        """
+
+        self.set_buffer(buffer)
 
     def _reset_current_index(self):
         """
