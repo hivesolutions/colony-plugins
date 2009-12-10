@@ -38,13 +38,14 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 # the token definitions
-tokens = ("NAME", "DECORATOR_NAME", "NUMBER", "STRING", "BOOL",
+tokens = ("MULTI_LINE_COMMENT", "NAME", "DECORATOR_NAME",
+          "NUMBER", "STRING", "STRING_QUOTES", "BOOL",
           "PLUS", "MINUS", "TIMES", "DIVIDE", "POWER",
           "EQUALS", "EQUALEQUAL", "GREATER",
           "GREATEREQUAL", "LESS", "LESSEQUAL",
           "NOT", "AND", "OR", "LPAREN", "RPAREN",
           "LBRACK", "RBRACK", "LBRACE", "RBRACE", "DEF", "RETURN",
-          "COLON", "COMA", "DOT", "IF", "ELSE", "ELIF",
+          "COLON", "SEMI_COLON", "COMA", "DOT", "IF", "ELSE", "ELIF",
           "END", "NEWLINE", "WHILE", "FOR", "IN", "IMPORT",
           "CLASS", "EXTENDS", "IMPLEMENTS", "INTERFACE",
           "PLUGIN", "CAPABILITY", "ALLOWS", "PASS", "STATIC",
@@ -108,6 +109,7 @@ t_LBRACE = r"\{"
 t_RBRACE = r"\}"
 
 t_COLON = r":"
+t_SEMI_COLON = r";"
 t_COMA = r","
 t_DOT = r"\."
 
@@ -133,10 +135,29 @@ def t_NUMBER(t):
 
     return t
 
+def t_MULTI_LINE_COMMENT(t):
+    r"\"{3}(.|\n)*?\"{3}"
+    # increments the line number
+    #t.lexer.lineno += t.value.count("\n")
+
+    # sets the token type
+    t.type = "COMMENT"
+
+    return t
+
 # string definition
 def t_STRING(t):
     r"\"([^\\\n]|(\\.)|\\n\\\n)*?\""
 
+    t.value = t.value[1:-1]
+
+    return t
+
+# string quotes definition
+def t_STRING_QUOTES(t):
+    r"\'([^\\\n]|(\\.)|\\n\\\n)*?\'"
+
+    t.type = "STRING"
     t.value = t.value[1:-1]
 
     return t
@@ -149,7 +170,7 @@ def t_NEWLINE(t):
 
 # single line comments
 def t_COMMENT(t):
-    r"\#[^\n]*\n+"
+    r"\#[^\n]*\n*"
     t.lexer.lineno += 1
     return t
 

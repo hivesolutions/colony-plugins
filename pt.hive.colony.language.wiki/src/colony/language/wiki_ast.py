@@ -652,6 +652,18 @@ class ExternalLinkNode(LinkNode):
 
         LinkNode.__init__(self)
 
+class InternalLinkNode(LinkNode):
+    """
+    The internal link node.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        LinkNode.__init__(self)
+
 class ListNode(StatementNode):
     """
     The list node.

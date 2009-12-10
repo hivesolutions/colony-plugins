@@ -286,6 +286,10 @@ class Visitor:
     def visit_external_link_node(self, node):
         print "ExternalLinkNode: " + str(node)
 
+    @_visit(wiki_ast.InternalLinkNode)
+    def visit_internal_link_node(self, node):
+        print "InternalLinkNode: " + str(node)
+
     @_visit(wiki_ast.ListNode)
     def visit_list_node(self, node):
         print "ListNode: " + str(node)

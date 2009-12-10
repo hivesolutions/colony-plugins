@@ -222,6 +222,9 @@ class WikiCodeExtension(wiki_extension_system.WikiExtension):
                     # replaces the newlines in the token value
                     token_value = token_value.replace("\n", "<br/>")
 
+                    # replaces the spaces in the token value
+                    token_value = token_value.replace(" ", "&nbsp;")
+
                 # in case the token class is defined
                 if token_class:
                     string_buffer.write("<span class=\"" + token_class + "\">")

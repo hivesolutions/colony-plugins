@@ -446,6 +446,40 @@ def p_statement_external_link_auto(t):
 
     t[0] =  external_link_node
 
+def p_statement_internal_link(t):
+    "statement : LBRACK NAME RBRACK"
+
+    # retrieves the link value
+    link_value = t[2]
+
+    # creates the internal link node
+    internal_link_node = wiki_ast.InternalLinkNode()
+
+    # sets the link value in the internal link node
+    internal_link_node.set_link_value(link_value)
+
+    t[0] =  internal_link_node
+
+def p_statement_internal_link_description(t):
+    "statement : LBRACK NAME PIPE statements RBRACK"
+
+    # retrieves the link value
+    link_value = t[2]
+
+    # retrieves the statements node
+    statements_node = t[4]
+
+    # creates the internal link node
+    internal_link_node = wiki_ast.InternalLinkNode()
+
+    # sets the link value in the internal link node
+    internal_link_node.set_link_value(link_value)
+
+    # sets the statements node in the internal link node
+    internal_link_node.set_statements_node(statements_node)
+
+    t[0] =  internal_link_node
+
 def p_statement_tag(t):
     "statement : TAG"
 

@@ -188,7 +188,7 @@ def t_ORDERED_LIST(t):
     return t
 
 def t_LINK_NAME(t):
-    r"(http\:\/\/|www.)[^\\\n\# \t\r\|]+"
+    r"(http\:\/\/|www.)([^\\\n\# \t\r\%\*\/_\'\{\}\[\]\|=]|[\%\*\/_\'\{\}\[\]=][^\\\n\# \t\r\%\*\/_\'\{\}\[\]\|=])+"
     return t
 
 def t_LBRACK(t):

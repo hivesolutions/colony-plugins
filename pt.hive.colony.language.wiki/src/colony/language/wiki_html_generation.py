@@ -373,6 +373,17 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
         elif self.visit_index == 1:
             self._write("</a>")
 
+    @wiki_visitor._visit(wiki_ast.InternalLinkNode)
+    def visit_internal_link_node(self, node):
+        if self.visit_index == 0:
+            self._write("<a href=\"" + node.link_value + ".html\">")
+
+            # in case the statements node is not defined
+            if not node.statements_node:
+                self._write(node.link_value)
+        elif self.visit_index == 1:
+            self._write("</a>")
+
     @wiki_visitor._visit(wiki_ast.ListNode)
     def visit_list_node(self, node):
         pass
