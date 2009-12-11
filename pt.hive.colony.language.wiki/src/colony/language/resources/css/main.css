@@ -146,29 +146,27 @@ h5:hover > a.headerlink {
 }
 
 .warning {
-    -moz-border-radius: 12px;
-    -webkit-border-radius: 12px;
     background: #ffffcc url(../images/warning.png) no-repeat scroll 2.0em 0.65em;
     height: 1.8em;
-    padding-top: 1.8em;
-    padding-bottom: 1.2em;
+    padding: 1.8em 6.0em 1.2em 6.0em;
     border: 1px solid #eeee66;
     font-size: 90%;
     font-weight: bold;
     text-align: center;
+    -moz-border-radius: 12px;
+    -webkit-border-radius: 12px;
 }
 
 .error {
-    -moz-border-radius: 12px;
-    -webkit-border-radius: 12px;
     background: #ffbece url(../images/error.png) no-repeat scroll 2.0em 0.65em;
     height: 1.8em;
-    padding-top: 1.8em;
-    padding-bottom: 1.2em;
+    padding: 1.8em 6.0em 1.2em 6.0em;
     border: 1px solid #ff4c76;
     font-size: 90%;
     font-weight: bold;
     text-align: center;
+    -moz-border-radius: 12px;
+    -webkit-border-radius: 12px;
 }
 
 .monospace {
