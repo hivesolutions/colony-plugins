@@ -146,21 +146,26 @@ h5:hover > a.headerlink {
 }
 
 .warning {
-    background-color: #ffffcc;
+    -moz-border-radius: 12px;
+    -webkit-border-radius: 12px;
+    background: #ffffcc url(../images/warning.png) no-repeat scroll 2.0em 0.65em;
+    height: 1.8em;
+    padding-top: 1.8em;
+    padding-bottom: 1.2em;
     border: 1px solid #eeee66;
-    margin-bottom: 1.5em;
-    margin-top: 1.5m;
-    padding: 1em;
     font-size: 90%;
     font-weight: bold;
     text-align: center;
 }
 
-.warning {
-    background: #ffffcc url(../images/warning.png) no-repeat scroll 2.0em 0.65em;
+.error {
+    -moz-border-radius: 12px;
+    -webkit-border-radius: 12px;
+    background: #ffbece url(../images/error.png) no-repeat scroll 2.0em 0.65em;
     height: 1.8em;
     padding-top: 1.8em;
-    border: 1px solid #eeee66;
+    padding-bottom: 1.2em;
+    border: 1px solid #ff4c76;
     font-size: 90%;
     font-weight: bold;
     text-align: center;

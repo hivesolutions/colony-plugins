@@ -41,27 +41,27 @@ import libs.string_buffer_util
 
 import wiki_extension_system
 
-GENERATOR_TYPE = "warning"
+GENERATOR_TYPE = "error"
 """ The generator type """
 
 CONFIGURATION_MAP = {"generate_footer" : False, "simple_parse" : True}
 """ The configuration map """
 
-class WikiWarningExtension(wiki_extension_system.WikiExtension):
+class WikiErrorExtension(wiki_extension_system.WikiExtension):
     """
-    The wiki warning extension class.
+    The wiki error extension class.
     """
 
-    id = "pt.hive.colony.language.wiki.extensions.warning"
+    id = "pt.hive.colony.language.wiki.extensions.error"
     """ The extension id """
 
-    name = "Warning Generation Plugin"
+    name = "Error Generation Plugin"
     """ The name of the extension """
 
-    short_name = "Warning Generation"
+    short_name = "Error Generation"
     """ The short name of the extension """
 
-    description = "Extension for warning generation"
+    description = "Extension for error generation"
     """ The description of the extension """
 
     version = "1.0.0"
@@ -107,8 +107,8 @@ class WikiWarningExtension(wiki_extension_system.WikiExtension):
         # creates the string buffer
         string_buffer = libs.string_buffer_util.StringBuffer()
 
-        # writes the start div warning tag
-        string_buffer.write("<div class=\"warning\">")
+        # writes the start div error tag
+        string_buffer.write("<div class=\"error\">")
 
         # strips the contents
         contents_stripped = contents.strip()

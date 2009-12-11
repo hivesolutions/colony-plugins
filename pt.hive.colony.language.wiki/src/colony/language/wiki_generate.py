@@ -61,7 +61,8 @@ WIKI_EXTENSIONS = ("wiki", "wik")
 BASE_FILES = {"resources/css/main.css" : "/css",
               "resources/images/logo_omni.gif" : "/images",
               "resources/images/link_icon.gif" : "/images",
-              "resources/images/warning.png" : "/images"}
+              "resources/images/warning.png" : "/images",
+              "resources/images/error.png" : "/images"}
 """ The base files """
 
 class WikiGenerator:
