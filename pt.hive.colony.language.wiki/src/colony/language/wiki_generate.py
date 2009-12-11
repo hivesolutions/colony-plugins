@@ -171,13 +171,18 @@ class WikiGenerator:
 
                 # creates the generator visitor
                 generation_visitor = wiki_html_generation.HtmlGenerationVisitor()
+                generation_visitor.set_parser(wiki_parser.parser)
                 generation_visitor.set_extension_manager(self.extension_manager)
                 generation_visitor.set_configuration_map(self.configuration_map)
 
+                # accepts the double visit
                 parse_result.accept_double(generation_visitor)
 
-                # retrieves the html value
-                html_value = generation_visitor.get_string_buffer().getvalue()
+                # retrieves the string buffer from the generation visitor
+                string_buffer = generation_visitor.get_string_buffer()
+
+                # retrieves the html value from the string buffer
+                html_value = string_buffer.getvalue()
 
                 # opens the html file
                 html_file = open(full_target_name + ".html", "w+")

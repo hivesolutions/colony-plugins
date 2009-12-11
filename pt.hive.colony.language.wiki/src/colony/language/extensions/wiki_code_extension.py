@@ -108,10 +108,14 @@ class WikiCodeExtension(wiki_extension_system.WikiExtension):
 
         return GENERATOR_TYPE
 
-    def generate_html(self, tag_node):
+    def generate_html(self, tag_node, visitor):
         """
         Generates the html code for the given tag node.
 
+        @type tag_node: TagNode
+        @param tag_node: The tag node to be processed.
+        @type visitor: Visitor
+        @param visitor: The requester visitor.
         @rtype: String
         @return: The generated html code.
         """

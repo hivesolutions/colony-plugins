@@ -59,7 +59,13 @@ CSS_HEADER_VALUE = "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/main.c
 RECURSION_LIMIT = 1000000
 """ The recursion limit """
 
-AUTO_NUMBERED_SECTIONS_VALUE = "AUTO_NUMBERED_SECTIONS"
+SIMPLE_PARSE_VALUE = "simple_parse"
+""" The simple parse value """
+
+GENERATE_FOOTER_VALUE = "generate_footer"
+""" The generate footer value """
+
+AUTO_NUMBERED_SECTIONS_VALUE = "auto_numbered_sections"
 """ The auto numbered sections value """
 
 AVAILABLE_TAG_NAMES = ("del",)
@@ -108,6 +114,54 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
 
         # starts the configuration map
         self.configuration_map = {}
+
+    def new_parse(self, contents, configuration_map, string_buffer = None):
+        # in case the string buffer is not defined
+        if not string_buffer:
+            # sets the string buffer
+            string_buffer = self.string_buffer
+
+        # parses the contents retrieving the parse result
+        parse_result = self.parser.parse(contents)
+
+        # clones the visitor
+        cloned_visitor = self.clone()
+
+        # sets the string buffer in the cloned visitor
+        cloned_visitor.set_string_buffer(string_buffer)
+
+        # retrieves the configuration map
+        cloned_configuration_map = cloned_visitor.get_configuration_map()
+
+        # iterates over all the configuration keys in the configuration map
+        for configuration_key in configuration_map:
+            # retrieves the configuration value for the configuration key
+            configuration_value = configuration_map[configuration_key]
+
+            # sets the configuration property in the cloned configuration map
+            cloned_configuration_map[configuration_key] = configuration_value
+
+        # accepts the double visit
+        parse_result.accept_double(cloned_visitor)
+
+    def clone(self):
+        """
+        Clones the visitor.
+
+        @rtype: Visitor
+        @return: The cloned visitor.
+        """
+
+        # clones the current visitor
+        cloned_visitor = wiki_visitor.Visitor.clone(self)
+
+        # sets the visitor attributes in the cloned visitor
+        cloned_visitor.set_string_buffer(self.string_buffer)
+        cloned_visitor.set_extension_manager(self.extension_manager)
+        cloned_visitor.set_configuration_map(self.configuration_map)
+
+        # returns the cloned visitor
+        return cloned_visitor
 
     def get_string_buffer(self):
         """
@@ -190,26 +244,28 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
             # sets the new recursion limit
             sys.setrecursionlimit(RECURSION_LIMIT)
 
-            # writes the doc type header
-            self._write(DOCTYPE_HEADER_VALUE)
+            # in case the simple parse is not valid
+            if not self.configuration_map.get(SIMPLE_PARSE_VALUE, False):
+                # writes the doc type header
+                self._write(DOCTYPE_HEADER_VALUE)
 
-            # writes the head
-            self._write("<head>")
+                # writes the head
+                self._write("<head>")
 
-            # writes the meta header value
-            self._write(META_HEADER_VALUE)
+                # writes the meta header value
+                self._write(META_HEADER_VALUE)
 
-            # writes the css header value
-            self._write(CSS_HEADER_VALUE)
+                # writes the css header value
+                self._write(CSS_HEADER_VALUE)
 
-            # writes the head end
-            self._write("</head>")
+                # writes the head end
+                self._write("</head>")
 
-            # writes the body
-            self._write("<body>")
+                # writes the body
+                self._write("<body>")
 
-            # opens a paragraph
-            self.open_paragraph()
+                # opens a paragraph
+                self.open_paragraph()
 
             # in case the start time is not defined
             if not self.start_time:
@@ -228,13 +284,17 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
             # sets the previous recursion limit
             sys.setrecursionlimit(self.previous_recursion_limit)
 
-            self._write("<div class=\"footer\">")
-            self._write("Document generated be colony framework in %s seconds" % str(delta_time_rounded))
-            self._write("<div class=\"logo_image\">")
-            self._write("<img src=\"images/logo_omni.gif\"/>")
-            self._write("</div>")
-            self._write("</div>")
-            self._write("</body>")
+            # in case the generate footer is valid
+            if self.configuration_map.get(GENERATE_FOOTER_VALUE, False):
+                self._write("<div class=\"footer\">")
+                self._write("Document generated be colony framework in %s seconds" % str(delta_time_rounded))
+                self._write("<div class=\"logo_image\">")
+                self._write("<img src=\"images/logo_omni.gif\"/>")
+                self._write("</div>")
+                self._write("</div>")
+            # in case the simple parse is not valid
+            if not self.configuration_map.get(SIMPLE_PARSE_VALUE, False):
+                self._write("</body>")
 
     @wiki_visitor._visit(wiki_ast.StatementsNode)
     def visit_statements_node(self, node):
@@ -268,7 +328,7 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
     @wiki_visitor._visit(wiki_ast.MonospaceNode)
     def visit_monospace_node(self, node):
         if self.visit_index == 0:
-            self._write("<code>")
+            self._write("<code class=\"monospace\">")
         elif self.visit_index == 1:
             self._write("</code>")
 
@@ -470,7 +530,7 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
                 # iterates over all the tag generator extensions
                 for tag_generator_extension in tag_generator_extensions:
                     # generates the html for the given tag node
-                    html = tag_generator_extension.generate_html(node)
+                    html = tag_generator_extension.generate_html(node, self)
 
                     # writes the html to the buffer
                     self._write(html)

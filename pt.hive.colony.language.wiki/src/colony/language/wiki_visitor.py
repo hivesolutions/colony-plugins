@@ -176,6 +176,9 @@ class Visitor:
     visit_index = 0
     """ The visit index, for multiple visits """
 
+    parser = None
+    """ The parser """
+
     def __init__(self):
         self.node_method_map = {}
         self.visit_childs = True
@@ -202,6 +205,40 @@ class Visitor:
                 ast_node_class = getattr(self_class_real_element, "ast_node_class")
 
                 self.node_method_map[ast_node_class] = self_class_real_element
+
+    def get_parser(self):
+        """
+        Retrieves the parser.
+
+        @rtype: Parser
+        @return: The parser.
+        """
+
+        return self.parser
+
+    def set_parser(self, parser):
+        """
+        Sets the parser.
+
+        @type parser: Parser
+        @param parser: The parser.
+        """
+
+        self.parser = parser
+
+    def clone(self):
+        """
+        Clones the visitor.
+
+        @rtype: Visitor
+        @return: The cloned visitor.
+        """
+
+        # clones the current visitor
+        cloned_visitor = self.__class__()
+
+        # returns the cloned visitor
+        return cloned_visitor
 
     @dispatch_visit()
     def visit(self, node):

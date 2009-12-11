@@ -41,24 +41,27 @@ import libs.string_buffer_util
 
 import wiki_extension_system
 
-GENERATOR_TYPE = "warning"
+GENERATOR_TYPE = "key_value"
 """ The generator type """
 
-class WikiWarningExtension(wiki_extension_system.WikiExtension):
+CONFIGURATION_MAP = {"generate_footer" : False, "simple_parse" : True}
+""" The configuration map """
+
+class WikiKeyValueExtension(wiki_extension_system.WikiExtension):
     """
-    The wiki warning extension class.
+    The wiki key value extension class.
     """
 
-    id = "pt.hive.colony.language.wiki.extensions.warning"
+    id = "pt.hive.colony.language.wiki.extensions.key_value"
     """ The extension id """
 
-    name = "Warning Generation Plugin"
+    name = "Key Value Generation Plugin"
     """ The name of the extension """
 
-    short_name = "Warning Generation"
+    short_name = "Key Value Generation"
     """ The short name of the extension """
 
-    description = "Extension for warning generation"
+    description = "Extension for key value generation"
     """ The description of the extension """
 
     version = "1.0.0"
@@ -104,16 +107,42 @@ class WikiWarningExtension(wiki_extension_system.WikiExtension):
         # creates the string buffer
         string_buffer = libs.string_buffer_util.StringBuffer()
 
-        # writes the start div warning tag
-        string_buffer.write("<div class=\"warning\">")
+        # writes the start div key value tag
+        string_buffer.write("<div class=\"key-value\">")
 
-        # escapes the contents
-        contents_replaced = self.escape_string_value(contents)
+        # writes the start table key value tag
+        string_buffer.write("<table>")
 
-        # writes the replaced contents
-        string_buffer.write(contents_replaced)
+        # splits the contents in the newline
+        contents_splitted = contents.split("\n")
 
-        # writes the end div warning tag
+        # iterates over all the splitted content
+        for content in contents_splitted:
+            splitted_values = content.split("---")
+
+            splitted_values_length = len(splitted_values)
+
+            if splitted_values_length == 2:
+
+                key_value, value_value = splitted_values
+
+                string_buffer.write("<tr>")
+                string_buffer.write("<td class=\"key-cell\">")
+                string_buffer.write("<span class=\"key\">")
+                visitor.new_parse(key_value, CONFIGURATION_MAP, string_buffer)
+                string_buffer.write("</span>")
+                string_buffer.write("</td>")
+                string_buffer.write("<td class=\"value-cell\">")
+                string_buffer.write("<span class=\"value\">")
+                visitor.new_parse(value_value, CONFIGURATION_MAP, string_buffer)
+                string_buffer.write("</span>")
+                string_buffer.write("</td>")
+                string_buffer.write("</tr>")
+
+        # writes the start table key value tag
+        string_buffer.write("</table>")
+
+        # writes the end div code tag
         string_buffer.write("</div>")
 
         # retrieves the string value
