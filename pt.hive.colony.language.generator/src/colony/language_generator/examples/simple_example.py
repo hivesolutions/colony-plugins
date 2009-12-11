@@ -46,7 +46,7 @@ tokens = ("PLUS", "MINUS", "TIMES", "DIVIDE", "1", "0")
 t_PLUS = r"\+"
 t_MINUS = r"\-"
 t_TIMES = r"\*"
-t_DIVIDE = r"\/"
+t_DIVIDE = r"/"
 
 t_1 = r"1"
 t_0 = r"0"
