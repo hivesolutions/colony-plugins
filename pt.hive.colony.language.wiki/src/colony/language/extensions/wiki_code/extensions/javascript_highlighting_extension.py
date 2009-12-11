@@ -58,8 +58,6 @@ HIGHLIGHTING_TYPE = "javascript"
 CLASS_DEFINITION = {"FUNCTION" : "kw5",
                     "IF" : "kw5",
                     "ELSE" : "kw5",
-                    "ELIF" : "kw5",
-                    "END" : "kw5",
                     "VAR" : "kw5",
                     "RETURN" : "kw5",
                     "NAME" : "kw2",

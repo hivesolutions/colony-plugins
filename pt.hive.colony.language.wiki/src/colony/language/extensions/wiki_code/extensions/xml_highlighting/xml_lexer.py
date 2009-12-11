@@ -38,101 +38,42 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 # the token definitions
-tokens = ("MULTI_LINE_COMMENT", "COMMENT", "NAME", "NUMBER",
-          "STRING", "STRING_QUOTES", "BOOL", "PLUS",
-          "MINUS", "TIMES", "DIVIDE", "POWER",
-          "EQUALS", "EQUALEQUAL", "GREATER",
-          "GREATEREQUAL", "LESS", "LESSEQUAL",
-          "NOT", "AND", "OR", "LPAREN", "RPAREN",
-          "LBRACK", "RBRACK", "LBRACE", "RBRACE",
-          "FUNCTION", "RETURN", "COLON", "SEMI_COLON", "COMA",
-          "DOT", "IF", "ELSE", "ELIF", "END", "NEWLINE",
-          "WHILE", "FOR", "IN", "VAR")
+tokens = ("TAG_INIT", "TAG_END", "CDATA", "COMMENT",
+          "NAME", "STRING", "NEWLINE", "EQUALS")
 
 # the reserved keywords
 reserved = {
-    "true" : "BOOL",
-    "false" : "BOOL",
-    "function" : "FUNCTION",
-    "return" : "RETURN",
-    "if" : "IF",
-    "else" : "ELSE",
-    "end" : "END",
-    "while" : "WHILE",
-    "for" : "FOR",
-    "in" : "IN",
-    "var" : "VAR"
 }
 
 reserved_values = {
-    "True" : True,
-    "False" : False
 }
 
-# logic operators
-t_NOT = r"!"
-t_AND = r"&&"
-t_OR = r"\|\|"
-
 # token definition
-t_PLUS = r"\+"
-t_MINUS = r"-"
-t_TIMES = r"\*"
-t_DIVIDE = r"/"
-t_POWER = r"\^"
 t_EQUALS = r"="
 
-t_EQUALEQUAL = r"=="
-t_GREATER = r">"
-t_GREATEREQUAL = r">="
-t_LESS = r"<"
-t_LESSEQUAL = r"<="
-
-t_LPAREN = r"\("
-t_RPAREN = r"\)"
-
-t_LBRACK = r"\["
-t_RBRACK = r"\]"
-
-t_LBRACE = r"\{"
-t_RBRACE = r"\}"
-
-t_COLON = r":"
-t_SEMI_COLON = r";"
-t_COMA = r","
-t_DOT = r"\."
-
 def t_TAG_INIT(t):
-    r"\<[a-zA-Z_ ]+\>"
+    r"\<[^\!]+?\>"
     return t
 
 def t_TAG_END(t):
-    r"\</[a-zA-Z_ ]+\>"
+    r"\</[^\!]+?\>"
     return t
 
-def t_MULTI_LINE_COMMENT(t):
-    r"/\*(.|\n)*?\*/"
+def t_CDATA(t):
+    r"\<\!\[CDATA\[(.|\n)*?\]\]\>"
+    return t
+
+def t_COMMENT(t):
+    r"<!--(.|\n)*?-->"
     # sets the token type
     t.type = "COMMENT"
 
     return t
 
 def t_NAME(t):
-    r"[a-zA-Z_\$][a-zA-Z_\$0-9]*"
+    r"[a-zA-Z_\$\.0-9][a-zA-Z_\$\.0-9]*"
     t.type = reserved.get(t.value, "NAME")
     t.value = reserved_values.get(t.value, t.value)
-    return t
-
-# number definition
-def t_NUMBER(t):
-    r"\d+"
-
-    try:
-        t.value = int(t.value)
-    except ValueError:
-        print "Integer value too large", t.value
-        t.value = 0
-
     return t
 
 # string definition
@@ -143,17 +84,16 @@ def t_STRING(t):
 
     return t
 
-# single line comments
-def t_COMMENT(t):
-    r"//[^\n]*\n*"
-
-    t.lexer.lineno += 1
+# the new line character
+def t_NEWLINE(t):
+    r"(\r?\n)+"
+    t.lexer.lineno += t.value.count("\n")
     return t
 
 # ignored characters
-t_ignore = " \t\r\n"
+t_ignore = " \t\r"
 
 # other character
 def t_error(t):
-    print "Illegal character javascript '%s'" % t.value[0]
+    print "Illegal character '%s'" % t.value[0]
     t.lexer.skip(1)

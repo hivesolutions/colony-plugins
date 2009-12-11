@@ -65,8 +65,8 @@ reserved = {
 }
 
 reserved_values = {
-    "True" : True,
-    "False" : False
+    "true" : True,
+    "false" : False
 }
 
 # logic operators
@@ -162,5 +162,5 @@ t_ignore = " \t\r"
 
 # other character
 def t_error(t):
-    print "Illegal character javascript '%s'" % t.value[0]
+    print "Illegal character '%s'" % t.value[0]
     t.lexer.skip(1)
