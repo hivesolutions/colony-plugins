@@ -154,14 +154,8 @@ class WikiCodeExtension(wiki_extension_system.WikiExtension):
             # writes the start code tag
             string_buffer.write("<code>")
 
-            # strips the contents
-            contents_stripped = contents.strip()
-
-            # replaces the spaces in the contents
-            contents_replaced = contents_stripped.replace(" ", "&nbsp;")
-
-            # replaces the newlines in the contents
-            contents_replaced = contents_replaced.replace("\n", "<br/>")
+            # escapes the contents
+            contents_replaced = self.escape_string_value(contents)
 
             # writes the replaced contents
             string_buffer.write(contents_replaced)
