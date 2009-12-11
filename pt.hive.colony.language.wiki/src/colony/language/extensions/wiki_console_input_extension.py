@@ -41,27 +41,27 @@ import libs.string_buffer_util
 
 import wiki_extension_system
 
-GENERATOR_TYPE = "error"
+GENERATOR_TYPE = "console_input"
 """ The generator type """
 
 CONFIGURATION_MAP = {"generate_footer" : False, "simple_parse" : True}
 """ The configuration map """
 
-class WikiErrorExtension(wiki_extension_system.WikiExtension):
+class WikiConsoleInputExtension(wiki_extension_system.WikiExtension):
     """
-    The wiki error extension class.
+    The wiki console input extension class.
     """
 
-    id = "pt.hive.colony.language.wiki.extensions.error"
+    id = "pt.hive.colony.language.wiki.extensions.console_input"
     """ The extension id """
 
-    name = "Error Generation Plugin"
+    name = "Console Input Generation Plugin"
     """ The name of the extension """
 
-    short_name = "Error Generation"
+    short_name = "Console Input Generation"
     """ The short name of the extension """
 
-    description = "Extension for error generation"
+    description = "Extension for console input generation"
     """ The description of the extension """
 
     version = "1.0.0"
@@ -107,8 +107,8 @@ class WikiErrorExtension(wiki_extension_system.WikiExtension):
         # creates the string buffer
         string_buffer = libs.string_buffer_util.StringBuffer()
 
-        # writes the start div error tag
-        string_buffer.write("<div class=\"error\">")
+        # writes the start div console input tag
+        string_buffer.write("<div class=\"console_input\">")
 
         # strips the contents
         contents_stripped = contents.strip()
@@ -116,7 +116,7 @@ class WikiErrorExtension(wiki_extension_system.WikiExtension):
         # processes a new parse in the contents
         visitor.new_parse(contents_stripped, CONFIGURATION_MAP, string_buffer)
 
-        # writes the end div error tag
+        # writes the end div console input tag
         string_buffer.write("</div>")
 
         # retrieves the string value
