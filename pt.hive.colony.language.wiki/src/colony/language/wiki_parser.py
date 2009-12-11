@@ -58,7 +58,7 @@ COLONY_GENERATOR_PATH = "../../../../pt.hive.colony.language.generator/src/colon
 TAG_INIT_REGEX_VALUE = "\<[a-zA-Z_ ]+\>"
 """ The tag init regex value """
 
-TAG_END_REGEX_VALUE = "\<\/[a-zA-Z_ ]+\>"
+TAG_END_REGEX_VALUE = "\<\/[a-zA-Z_ ]+\>$"
 """ The tag end regex value """
 
 TAG_INIT_REGEX = re.compile(TAG_INIT_REGEX_VALUE)

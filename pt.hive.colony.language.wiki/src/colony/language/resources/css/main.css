@@ -111,6 +111,11 @@ a:hover {
     text-decoration: underline;
 }
 
+a.external {
+    background: transparent url(../images/link_icon.gif) no-repeat scroll 0 1px;
+    padding: 1px 0px 1px 18px;
+}
+
 a.headerlink {
     color: #c60f0f;
     font-size: 0.8em;

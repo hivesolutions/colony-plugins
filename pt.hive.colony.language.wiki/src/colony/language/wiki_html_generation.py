@@ -377,7 +377,7 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
     @wiki_visitor._visit(wiki_ast.ExternalLinkNode)
     def visit_external_link_node(self, node):
         if self.visit_index == 0:
-            self._write("<a href=\"" + node.link_value + "\">")
+            self._write("<a class=\"external\" href=\"" + node.link_value + "\">")
 
             # in case the statements node is not defined
             if not node.statements_node:
@@ -388,7 +388,7 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
     @wiki_visitor._visit(wiki_ast.InternalLinkNode)
     def visit_internal_link_node(self, node):
         if self.visit_index == 0:
-            self._write("<a href=\"" + node.link_value + ".html\">")
+            self._write("<a class=\"internal\" href=\"" + node.link_value + ".html\">")
 
             # in case the statements node is not defined
             if not node.statements_node:
