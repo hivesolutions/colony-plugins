@@ -144,12 +144,12 @@ def t_NEWLINE(t):
 
 # multiple line comments
 def t_COMMENT(t):
-    r"/\*[^\0]*\*/"
+    r"/\*(.|\n)*?\*/"
     return t
 
 # single line comments
 def t_comment(t):
-    r"//[^\n]*\n+"
+    r"//[^\n]*\n*"
     t.lexer.lineno += t.value.count("\n")
 
 # ignored characters
