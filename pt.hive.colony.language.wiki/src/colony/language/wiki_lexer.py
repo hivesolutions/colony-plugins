@@ -107,7 +107,7 @@ def t_BOLD(t):
     return t
 
 def t_ITALIC(t):
-    r"\/\/"
+    r"//"
 
     # in case the current italic state is valid
     if states_map["ITALIC"]:
@@ -188,7 +188,7 @@ def t_ORDERED_LIST(t):
     return t
 
 def t_LINK_NAME(t):
-    r"(http\:\/\/|www.)([^\\\n\# \t\r\%\*\/_\'\{\}\[\]\|=]|[\%\*\/_\'\{\}\[\]=][^\\\n\# \t\r\%\*\/_\'\{\}\[\]\|=])+"
+    r"(http\://|www.)([^\\\n\# \t\r\%\*/_\'\{\}\[\]\|=]|[\%\*/_\'\{\}\[\]=][^\\\n\# \t\r\%\*/_\'\{\}\[\]\|=])+"
     return t
 
 def t_LBRACK(t):
@@ -208,11 +208,11 @@ def t_RBRACE(t):
     return t
 
 def t_TAG(t):
-    r"\<[a-zA-Z_ ]+\>[^\%]*?\<\/[a-zA-Z_ ]+\>"
+    r"\<[a-zA-Z_ ]+\>[^\%]*?\</[a-zA-Z_ ]+\>"
     return t
 
 def t_EXTENDED_NAME(t):
-    r"[\%\*\/_\'\{\}\[\]=]"
+    r"[\%\*/_\'\{\}\[\]=]"
 
     # sets the type as name
     t.type = "NAME"
@@ -220,7 +220,7 @@ def t_EXTENDED_NAME(t):
     return t
 
 def t_NAME(t):
-    r"([^\\\n\# \t\r\%\*\/_\'\{\}\[\]\|=]|[\%\*\/_\'\{\}\[\]=][^\\\n\# \t\r\%\*\/_\'\{\}\[\]\|=]|%%.*?%%)+"
+    r"([^\\\n\# \t\r\%\*/_\'\{\}\[\]\|=]|[\%\*/_\'\{\}\[\]=][^\\\n\# \t\r\%\*/_\'\{\}\[\]\|=]|%%.*?%%)+"
     # retrieves the current value
     current_value = t.value
 

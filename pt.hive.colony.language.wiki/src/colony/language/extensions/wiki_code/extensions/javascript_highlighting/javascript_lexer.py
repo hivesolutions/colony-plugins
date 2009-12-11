@@ -38,52 +38,41 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 # the token definitions
-tokens = ("MULTI_LINE_COMMENT", "NAME", "DECORATOR_NAME",
-          "NUMBER", "STRING", "STRING_QUOTES", "BOOL",
-          "PLUS", "MINUS", "TIMES", "DIVIDE", "POWER",
+tokens = ("MULTI_LINE_COMMENT", "COMMENT", "NAME", "NUMBER",
+          "STRING", "STRING_QUOTES", "BOOL", "PLUS",
+          "MINUS", "TIMES", "DIVIDE", "POWER",
           "EQUALS", "EQUALEQUAL", "GREATER",
           "GREATEREQUAL", "LESS", "LESSEQUAL",
           "NOT", "AND", "OR", "LPAREN", "RPAREN",
-          "LBRACK", "RBRACK", "LBRACE", "RBRACE", "DEF", "RETURN",
-          "COLON", "SEMI_COLON", "COMA", "DOT", "IF", "ELSE", "ELIF",
-          "END", "NEWLINE", "WHILE", "FOR", "IN", "IMPORT",
-          "CLASS", "EXTENDS", "IMPLEMENTS", "INTERFACE",
-          "PLUGIN", "CAPABILITY", "ALLOWS", "PASS", "STATIC",
-          "GLOBAL", "COMMENT")
+          "LBRACK", "RBRACK", "LBRACE", "RBRACE",
+          "FUNCTION", "RETURN", "COLON", "SEMI_COLON", "COMA",
+          "DOT", "IF", "ELSE", "ELIF", "END", "NEWLINE",
+          "WHILE", "FOR", "IN", "VAR")
 
 # the reserved keywords
 reserved = {
-    "not" : "NOT",
-    "and" : "AND",
-    "or" : "OR",
-    "True" : "BOOL",
-    "False" : "BOOL",
-    "def" : "DEF",
+    "true" : "BOOL",
+    "false" : "BOOL",
+    "function" : "FUNCTION",
     "return" : "RETURN",
     "if" : "IF",
     "else" : "ELSE",
-    "elif" : "ELIF",
     "end" : "END",
     "while" : "WHILE",
     "for" : "FOR",
     "in" : "IN",
-    "import" : "IMPORT",
-    "class" : "CLASS",
-    "interface" : "INTERFACE",
-    "extends" : "EXTENDS",
-    "implements" : "IMPLEMENTS",
-    "plugin" : "PLUGIN",
-    "capability": "CAPABILITY",
-    "allows" : "ALLOWS",
-    "pass" : "PASS",
-    "static" : "STATIC",
-    "global" : "GLOBAL"
+    "var" : "VAR"
 }
 
 reserved_values = {
     "True" : True,
     "False" : False
 }
+
+# logic operators
+t_NOT = r"!"
+t_AND = r"&&"
+t_OR = r"\|\|"
 
 # token definition
 t_PLUS = r"\+"
@@ -113,14 +102,17 @@ t_SEMI_COLON = r";"
 t_COMA = r","
 t_DOT = r"\."
 
-def t_NAME(t):
-    r"[a-zA-Z_][a-zA-Z_0-9]*"
-    t.type = reserved.get(t.value, "NAME")
-    t.value = reserved_values.get(t.value, t.value)
+def t_MULTI_LINE_COMMENT(t):
+    r"/\*(.|\n)*?\*/"
+    # sets the token type
+    t.type = "COMMENT"
+
     return t
 
-def t_DECORATOR_NAME(t):
-    r"\@[a-zA-Z_.][a-zA-Z_0-9.]+"
+def t_NAME(t):
+    r"[a-zA-Z_\$][a-zA-Z_\$0-9]*"
+    t.type = reserved.get(t.value, "NAME")
+    t.value = reserved_values.get(t.value, t.value)
     return t
 
 # number definition
@@ -135,13 +127,6 @@ def t_NUMBER(t):
 
     return t
 
-def t_MULTI_LINE_COMMENT(t):
-    r"\"{3}(.|\n)*?\"{3}"
-    # sets the token type
-    t.type = "COMMENT"
-
-    return t
-
 # string definition
 def t_STRING(t):
     r"\"([^\\\n]|(\\.)|\\n\\\r?\n)*?\""
@@ -152,7 +137,7 @@ def t_STRING(t):
 
 # string quotes definition
 def t_STRING_QUOTES(t):
-    r"\'([^\\\n]|(\\.)|\\n\\\r?\n)*?\'"
+    r"\'([^\\\n]|(\\.)|\\n\\\r*\n)*?\'"
 
     t.type = "STRING"
     t.value = t.value[1:-1]
@@ -167,7 +152,8 @@ def t_NEWLINE(t):
 
 # single line comments
 def t_COMMENT(t):
-    r"\#[^\n]*\n*"
+    r"//[^\n]*\n*"
+
     t.lexer.lineno += 1
     return t
 
@@ -176,5 +162,5 @@ t_ignore = " \t\r"
 
 # other character
 def t_error(t):
-    print "Illegal character '%s'" % t.value[0]
+    print "Illegal character javascript '%s'" % t.value[0]
     t.lexer.skip(1)
