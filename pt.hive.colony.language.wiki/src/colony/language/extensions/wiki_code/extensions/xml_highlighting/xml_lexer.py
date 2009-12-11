@@ -38,7 +38,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 # the token definitions
-tokens = ("TAG_INIT", "TAG_END", "CDATA", "COMMENT",
+tokens = ("XML", "CDATA", "TAG_INIT", "TAG_END",
+          "TAG_END_END", "ATTRIBUTION", "COMMENT",
           "NAME", "STRING", "NEWLINE", "EQUALS")
 
 # the reserved keywords
@@ -51,16 +52,28 @@ reserved_values = {
 # token definition
 t_EQUALS = r"="
 
-def t_TAG_INIT(t):
-    r"\<[^\!]+?\>"
-    return t
-
-def t_TAG_END(t):
-    r"\</[^\!]+?\>"
+def t_XML(t):
+    r"\<\?xml(.|\n)*?\?\>"
     return t
 
 def t_CDATA(t):
     r"\<\!\[CDATA\[(.|\n)*?\]\]\>"
+    return t
+
+def t_TAG_INIT(t):
+    r"\<[^\!\?\> ]+"
+    return t
+
+def t_TAG_END(t):
+    r"\>"
+    return t
+
+def t_TAG_END_END(t):
+    r"/\>"
+    return t
+
+def t_ATTRIBUTION(t):
+    r"[a-zA-Z_\$\.0-9][a-zA-Z_\$\.\:0-9]*="
     return t
 
 def t_COMMENT(t):

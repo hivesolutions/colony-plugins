@@ -57,7 +57,9 @@ HIGHLIGHTING_TYPE = "xml"
 
 CLASS_DEFINITION = {"TAG_END" : "kw5",
                     "TAG_INIT" : "kw5",
+                    "XML" : "kw3",
                     "CDATA" : "kw4",
+                    "ATTRIBUTION" : "kw4",
                     "NAME" : "kw2",
                     "STRING" : "st0",
                     "NUMBER" : "kw6",
