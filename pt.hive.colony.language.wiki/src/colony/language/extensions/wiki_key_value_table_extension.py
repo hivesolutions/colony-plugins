@@ -41,6 +41,9 @@ import libs.string_buffer_util
 
 import wiki_extension_system
 
+SEPARATOR_VALUE = "---"
+""" The separator value """
+
 GENERATOR_TYPE = "key_value"
 """ The generator type """
 
@@ -118,12 +121,15 @@ class WikiKeyValueExtension(wiki_extension_system.WikiExtension):
 
         # iterates over all the splitted content
         for content in contents_splitted:
-            splitted_values = content.split("---")
+            # splits the content around the separator
+            splitted_values = content.split(SEPARATOR_VALUE)
 
+            # retrieves the splitted values length
             splitted_values_length = len(splitted_values)
 
+            # in case the length is valid
             if splitted_values_length == 2:
-
+                # retrieves the key value and the value value
                 key_value, value_value = splitted_values
 
                 string_buffer.write("<tr>")
@@ -147,34 +153,6 @@ class WikiKeyValueExtension(wiki_extension_system.WikiExtension):
 
         # retrieves the string value
         string_value = string_buffer.get_value()
-
-        # returns the string value
-        return string_value
-
-    def escape_string_value(self, string_value):
-        """
-        Escapes the given string value.
-
-        @type string_value: String
-        @param string_value: The string value to be escaped.
-        @rtype: String
-        @return: The escaped string value.
-        """
-
-        # strips the string value
-        string_value = string_value.strip()
-
-        # replaces the less than characters in the string value
-        string_value = string_value.replace("<", "&lt;")
-
-        # replaces the greater than characters in the string value
-        string_value = string_value.replace(">", "&gt;")
-
-        # replaces the newlines in the string value
-        string_value = string_value.replace("\n", "<br/>")
-
-        # replaces the spaces in the string value
-        string_value = string_value.replace(" ", "&nbsp;")
 
         # returns the string value
         return string_value

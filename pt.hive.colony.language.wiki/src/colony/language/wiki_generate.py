@@ -86,7 +86,7 @@ class WikiGenerator:
         self.extension_manager.load_system()
 
         # creates the configuration map
-        self.configuration_map = {"AUTO_NUMBERED_SECTIONS" : True}
+        self.configuration_map = {"auto_numbered_sections" : True, "generate_footer" : True}
 
     def generate_wiki(self, file_path, target_path, verbose, debug):
         """

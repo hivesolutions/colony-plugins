@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import sys
 import time
+import copy
 import cStringIO
 
 import libs.string_buffer_util
@@ -155,10 +156,13 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
         # clones the current visitor
         cloned_visitor = wiki_visitor.Visitor.clone(self)
 
+        # cones the configuration map
+        clone_configuration_map = copy.copy(self.configuration_map)
+
         # sets the visitor attributes in the cloned visitor
         cloned_visitor.set_string_buffer(self.string_buffer)
         cloned_visitor.set_extension_manager(self.extension_manager)
-        cloned_visitor.set_configuration_map(self.configuration_map)
+        cloned_visitor.set_configuration_map(clone_configuration_map)
 
         # returns the cloned visitor
         return cloned_visitor
@@ -567,3 +571,31 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
 
         self._write("</p>")
         self.paragraph_open = False
+
+    def escape_string_value(self, string_value):
+        """
+        Escapes the given string value.
+
+        @type string_value: String
+        @param string_value: The string value to be escaped.
+        @rtype: String
+        @return: The escaped string value.
+        """
+
+        # strips the string value
+        string_value = string_value.strip()
+
+        # replaces the less than characters in the string value
+        string_value = string_value.replace("<", "&lt;")
+
+        # replaces the greater than characters in the string value
+        string_value = string_value.replace(">", "&gt;")
+
+        # replaces the newlines in the string value
+        string_value = string_value.replace("\n", "<br/>")
+
+        # replaces the spaces in the string value
+        string_value = string_value.replace(" ", "&nbsp;")
+
+        # returns the string value
+        return string_value

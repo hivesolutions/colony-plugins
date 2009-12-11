@@ -108,7 +108,7 @@ class WikiWarningExtension(wiki_extension_system.WikiExtension):
         string_buffer.write("<div class=\"warning\">")
 
         # escapes the contents
-        contents_replaced = self.escape_string_value(contents)
+        contents_replaced = visitor.escape_string_value(contents)
 
         # writes the replaced contents
         string_buffer.write(contents_replaced)
@@ -118,34 +118,6 @@ class WikiWarningExtension(wiki_extension_system.WikiExtension):
 
         # retrieves the string value
         string_value = string_buffer.get_value()
-
-        # returns the string value
-        return string_value
-
-    def escape_string_value(self, string_value):
-        """
-        Escapes the given string value.
-
-        @type string_value: String
-        @param string_value: The string value to be escaped.
-        @rtype: String
-        @return: The escaped string value.
-        """
-
-        # strips the string value
-        string_value = string_value.strip()
-
-        # replaces the less than characters in the string value
-        string_value = string_value.replace("<", "&lt;")
-
-        # replaces the greater than characters in the string value
-        string_value = string_value.replace(">", "&gt;")
-
-        # replaces the newlines in the string value
-        string_value = string_value.replace("\n", "<br/>")
-
-        # replaces the spaces in the string value
-        string_value = string_value.replace(" ", "&nbsp;")
 
         # returns the string value
         return string_value
