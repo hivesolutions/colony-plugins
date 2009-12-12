@@ -268,6 +268,9 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
                 # writes the body
                 self._write("<body>")
 
+                # writes the wiki contents
+                self._write("<div id=\"wiki-contents\">")
+
                 # opens a paragraph
                 self.open_paragraph()
 
@@ -290,10 +293,12 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
 
             # in case the generate footer is valid
             if self.configuration_map.get(GENERATE_FOOTER_VALUE, False):
+                self._write("</div>")
                 self._write("<div class=\"footer\">")
-                self._write("Document generated be colony framework in %s seconds" % str(delta_time_rounded))
+                self._write("Document generated be colony framework in %s seconds<br/>" % str(delta_time_rounded))
+                self._write("Copyright Hive Solutions Lda. distributed under Creative Commons License")
                 self._write("<div class=\"logo_image\">")
-                self._write("<img src=\"images/logo_omni.gif\"/>")
+                #self._write("<img src=\"images/logo_omni.gif\"/>")
                 self._write("</div>")
                 self._write("</div>")
             # in case the simple parse is not valid

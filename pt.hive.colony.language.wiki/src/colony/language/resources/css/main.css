@@ -37,8 +37,9 @@
  */
 
 body {
-    font-family: "Lucida Grande", Verdana, Lucida, Helvetica, Arial, sans-serif;
     color: #000000;
+    margin: 0px 0px 0px 0px;
+    font-family: "Lucida Grande", Verdana, Lucida, Helvetica, Arial, sans-serif;
     font-size: 90%;
     font-size-adjust: none;
     font-style: normal;
@@ -47,9 +48,14 @@ body {
     line-height: normal;
 }
 
+#wiki-contents {
+    width: 70%;
+    margin: 0px auto 10px auto;
+}
+
 p {
     margin: 1.0em 0.0em 1.0em 0.0em;
-    line-height: 130%;
+    line-height: 1.5em;
 }
 
 h1, h2, h3, h4, h5 {
@@ -109,7 +115,7 @@ a {
 }
 
 a:hover {
-    text-decoration: underline;
+    border-bottom: 1px dashed #355F7C;
 }
 
 a.external {
@@ -141,32 +147,24 @@ h5:hover > a.headerlink {
 }
 
 .footer {
+    background-color: #F2F2F2;
+    color: #999999;
+    padding-bottom: 12px;
+    padding-top: 12px;
     font-size: 60%;
     text-align: center;
 }
 
 .warning {
-    background: #ffffcc url(../images/warning.png) no-repeat scroll 2.0em 0.65em;
-    height: 1.8em;
-    padding: 1.8em 6.0em 1.2em 6.0em;
-    border: 1px solid #eeee66;
-    font-size: 90%;
-    font-weight: bold;
-    text-align: center;
-    -moz-border-radius: 12px;
-    -webkit-border-radius: 12px;
+    background: #fff9D8 url(../images/warning_note.gif) no-repeat scroll 0px 0px;
+    padding: 18px 52px 18px 52px;
+    line-height: 1.5em;
 }
 
 .error {
-    background: #ffbece url(../images/error.png) no-repeat scroll 2.0em 0.65em;
-    height: 1.8em;
-    padding: 1.8em 6.0em 1.2em 6.0em;
-    border: 1px solid #ff4c76;
-    font-size: 90%;
-    font-weight: bold;
-    text-align: center;
-    -moz-border-radius: 12px;
-    -webkit-border-radius: 12px;
+    background:#f9d9d8 url(../images/error_note.gif) no-repeat scroll left top;
+    padding: 18px 52px 18px 52px;
+    line-height: 1.5em;
 }
 
 .monospace {
@@ -176,13 +174,10 @@ h5:hover > a.headerlink {
 }
 
 .code {
-    background-color: #f7f9fa;
-    border: 1px dashed #8cacbb;
-    color: #000000;
+    background: #eeeeee url(../images/code_note.gif) no-repeat scroll 0px 0px;
+    padding: 18px 52px 18px 52px;
     font-size: 120%;
     overflow: auto;
-    padding: 0.5em;
-    margin: 0.5em 0.0em 0.5em 0.0em;
 }
 
 .code .br0 {
@@ -279,10 +274,9 @@ h5:hover > a.headerlink {
 }
 
 .key-value {
+    background: #d5e9f6 url(../images/info_note.gif) no-repeat scroll left top;
+    padding: 18px 52px 18px 52px;
     color: #333333;
-    background-color: #fffef6;
-    border: 1px dashed #a0a168;
-    padding: 5px 20px 10px 20px;
 }
 
 .key-value .key-cell {
@@ -294,7 +288,7 @@ h5:hover > a.headerlink {
     border-top-width: 5px;
     margin-top: 5px;
     padding: 10px 15px 0px 15px;
-    border-left: 1px dashed #cccccc;
+    border-left: 1px dashed #666666;
 }
 
 .key-value .key {
