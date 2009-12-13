@@ -296,7 +296,7 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
                 self._write("</div>")
                 self._write("<div class=\"footer\">")
                 self._write("Document generated be colony framework in %s seconds<br/>" % str(delta_time_rounded))
-                self._write("Copyright Hive Solutions Lda. distributed under Creative Commons License")
+                self._write("Copyright Hive Solutions Lda. distributed under <a href=\"http://creativecommons.org/licenses/by-nc-sa/3.0\"> Creative Commons License</a>")
                 self._write("<div class=\"logo_image\">")
                 #self._write("<img src=\"images/logo_omni.gif\"/>")
                 self._write("</div>")
