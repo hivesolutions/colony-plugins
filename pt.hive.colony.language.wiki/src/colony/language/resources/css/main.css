@@ -191,6 +191,12 @@ h5:hover > a.headerlink {
     padding: 18px 52px 18px 52px;
     line-height: 1.5em;
     font-style: italic;
+    text-shadow: 1px 1px #cccccc;
+}
+
+.quote .author {
+    text-align: right;
+    letter-spacing: 0.075em;
 }
 
 .warning {

@@ -532,10 +532,6 @@ def p_statement_tag(t):
             # retrieves the attribute string value
             attribute_value = match.group("string_value")
 
-        print tag_attributes_string
-        if attribute_value:
-            print attribute_value
-
         # sets the attribute in the attributes map
         attributes_map[attribute_name] = attribute_value
 

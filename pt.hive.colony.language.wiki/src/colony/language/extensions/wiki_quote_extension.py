@@ -104,16 +104,29 @@ class WikiQuoteExtension(wiki_extension_system.WikiExtension):
         # retrieves the tag contents
         contents = tag_node.contents
 
+        # retrieves the tag attributes map
+        attributes_map = tag_node.attributes_map
+
+        # retrieves the author
+        author = attributes_map.get("author", None)
+
         # creates the string buffer
         string_buffer = libs.string_buffer_util.StringBuffer()
 
-        # writes the start div header tag
+        # writes the start div quote tag
         string_buffer.write("<div class=\"quote\">")
 
         # processes a new parse in the contents
         visitor.new_parse(contents, CONFIGURATION_MAP, string_buffer)
 
-        # writes the end div header tag
+        # in case the author is defined
+        if author:
+            # writes the start p quote tag
+            string_buffer.write("<div class=\"author\">")
+            string_buffer.write(author)
+            string_buffer.write("</div>")
+
+        # writes the end div quote tag
         string_buffer.write("</div>")
 
         # retrieves the string value
