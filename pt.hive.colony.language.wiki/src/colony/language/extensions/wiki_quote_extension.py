@@ -41,27 +41,27 @@ import libs.string_buffer_util
 
 import wiki_extension_system
 
-GENERATOR_TYPE = "warning"
+GENERATOR_TYPE = "quote"
 """ The generator type """
 
 CONFIGURATION_MAP = {"generate_footer" : False, "simple_parse" : True}
 """ The configuration map """
 
-class WikiWarningExtension(wiki_extension_system.WikiExtension):
+class WikiQuoteExtension(wiki_extension_system.WikiExtension):
     """
-    The wiki warning extension class.
+    The wiki quote extension class.
     """
 
-    id = "pt.hive.colony.language.wiki.extensions.warning"
+    id = "pt.hive.colony.language.wiki.extensions.quote"
     """ The extension id """
 
-    name = "Warning Generation Plugin"
+    name = "Quote Generation Plugin"
     """ The name of the extension """
 
-    short_name = "Warning Generation"
+    short_name = "Quote Generation"
     """ The short name of the extension """
 
-    description = "Extension for warning generation"
+    description = "Extension for quote generation"
     """ The description of the extension """
 
     version = "1.0.0"
@@ -107,13 +107,13 @@ class WikiWarningExtension(wiki_extension_system.WikiExtension):
         # creates the string buffer
         string_buffer = libs.string_buffer_util.StringBuffer()
 
-        # writes the start div warning tag
-        string_buffer.write("<div class=\"warning\">")
+        # writes the start div header tag
+        string_buffer.write("<div class=\"quote\">")
 
         # processes a new parse in the contents
         visitor.new_parse(contents, CONFIGURATION_MAP, string_buffer)
 
-        # writes the end div warning tag
+        # writes the end div header tag
         string_buffer.write("</div>")
 
         # retrieves the string value

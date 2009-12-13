@@ -110,11 +110,8 @@ class WikiConsoleInputExtension(wiki_extension_system.WikiExtension):
         # writes the start div console input tag
         string_buffer.write("<div class=\"console_input\">")
 
-        # strips the contents
-        contents_stripped = contents.strip()
-
         # processes a new parse in the contents
-        visitor.new_parse(contents_stripped, CONFIGURATION_MAP, string_buffer)
+        visitor.new_parse(contents, CONFIGURATION_MAP, string_buffer)
 
         # writes the end div console input tag
         string_buffer.write("</div>")

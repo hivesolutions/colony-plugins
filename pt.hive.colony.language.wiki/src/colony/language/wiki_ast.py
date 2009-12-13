@@ -763,7 +763,50 @@ class TagNode(StatementNode):
         @param contents: The contents.
         """
 
-        self.contents = contents
+        # strips the contents
+        contents_stripped = self._strip_contents(contents)
+
+        self.contents = contents_stripped
+
+    def _strip_contents(self, contents):
+        """
+        Strips the given contents according to the tag specification.
+
+        @type contents: String
+        @param contents: The contents to be stripped.
+        @rtype: String
+        @return: The stripped contents.
+        """
+
+        # starts the index
+        index = 0
+
+        # start the temporary index
+        index_temporary = 0;
+
+        # iterates over the contents
+        for content in contents:
+            # in case the content is a space
+            if content in (" ", "\r"):
+                pass
+            # in case the content is a newline
+            elif content == "\n":
+                index = index_temporary
+            # in case the content is a chracter other than a space
+            elif not content == " ":
+                break
+
+            # increments the temporary index
+            index_temporary += 1
+
+        # retrieves the left stripped contents
+        contents_left_stripped = contents[index + 1:]
+
+        # strips the contents
+        contents_stripped = contents_left_stripped.rstrip()
+
+        # returns the stripped contents
+        return contents_stripped
 
 class AstSequenceNodeIterator:
     """

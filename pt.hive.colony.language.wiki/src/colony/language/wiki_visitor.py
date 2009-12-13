@@ -237,6 +237,9 @@ class Visitor:
         # clones the current visitor
         cloned_visitor = self.__class__()
 
+        # sets the visitor attributes in the cloned visitor
+        cloned_visitor.set_parser(self.parser)
+
         # returns the cloned visitor
         return cloned_visitor
 
