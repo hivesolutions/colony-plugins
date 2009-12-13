@@ -738,12 +738,17 @@ class TagNode(StatementNode):
     contents = None
     """ The contents """
 
+    attributes_map = {}
+    """ The attributes map """
+
     def __init__(self):
         """
         Constructor of the class.
         """
 
         StatementNode.__init__(self)
+
+        self.attributes_map = {}
 
     def set_tag_name(self, tag_name):
         """
@@ -768,6 +773,16 @@ class TagNode(StatementNode):
 
         self.contents = contents_stripped
 
+    def set_attributes_map(self, attributes_map):
+        """
+        Sets the attributes map.
+
+        @type attributes_map: Dictionary
+        @param attributes_map: The attributes map.
+        """
+
+        self.attributes_map = attributes_map
+
     def _strip_contents(self, contents):
         """
         Strips the given contents according to the tag specification.
@@ -786,21 +801,21 @@ class TagNode(StatementNode):
 
         # iterates over the contents
         for content in contents:
+            # increments the temporary index
+            index_temporary += 1
+
             # in case the content is a space
             if content in (" ", "\r"):
                 pass
             # in case the content is a newline
             elif content == "\n":
                 index = index_temporary
-            # in case the content is a chracter other than a space
+            # in case the content is a character other than a space
             elif not content == " ":
                 break
 
-            # increments the temporary index
-            index_temporary += 1
-
         # retrieves the left stripped contents
-        contents_left_stripped = contents[index + 1:]
+        contents_left_stripped = contents[index:]
 
         # strips the contents
         contents_stripped = contents_left_stripped.rstrip()

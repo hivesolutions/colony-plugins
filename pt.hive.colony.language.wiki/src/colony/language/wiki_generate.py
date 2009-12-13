@@ -61,6 +61,7 @@ WIKI_EXTENSIONS = ("wiki", "wik")
 BASE_FILES = {"resources/css/main.css" : "/css",
               "resources/images/logo_omni.gif" : "/images",
               "resources/images/link_icon.gif" : "/images",
+              "resources/images/quote.png" : "/images",
               "resources/images/warning_note.gif" : "/images",
               "resources/images/error_note.gif" : "/images",
               "resources/images/info_note.gif" : "/images",

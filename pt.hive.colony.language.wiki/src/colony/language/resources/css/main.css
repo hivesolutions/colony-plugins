@@ -186,6 +186,13 @@ h5:hover > a.headerlink {
     font-size: 11pt;
 }
 
+.quote {
+    background: #d5e9f6 url(../images/info_note.gif) no-repeat scroll left top;
+    padding: 18px 52px 18px 52px;
+    line-height: 1.5em;
+    font-style: italic;
+}
+
 .warning {
     background: #fff9D8 url(../images/warning_note.gif) no-repeat scroll 0px 0px;
     padding: 18px 52px 18px 52px;

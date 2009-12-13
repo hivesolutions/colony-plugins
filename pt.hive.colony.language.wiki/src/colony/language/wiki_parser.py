@@ -55,17 +55,23 @@ PARSER_TYPE = PLY_PARSER_VALUE
 COLONY_GENERATOR_PATH = "../../../../pt.hive.colony.language.generator/src/colony"
 """ The colony generator path """
 
-TAG_INIT_REGEX_VALUE = "\<[a-zA-Z_ ]+\>"
+TAG_INIT_REGEX_VALUE = "\<[a-zA-Z0-9_ =\"]+\>"
 """ The tag init regex value """
 
 TAG_END_REGEX_VALUE = "\<\/[a-zA-Z_ ]+\>$"
 """ The tag end regex value """
+
+TAG_ATTRIBUTES_REGEX_VALUE = "(?P<name>[a-zA-Z_\$\.0-9]+)(\=(((?P<value>[a-zA-Z_\$\.0-9])+)|(\"(?P<string_value>([^\\\n]|(\\.)|\\n\\\r?\n)*?)\")))?"
+""" The tag attributes regex value """
 
 TAG_INIT_REGEX = re.compile(TAG_INIT_REGEX_VALUE)
 """ The tag init regex """
 
 TAG_END_REGEX = re.compile(TAG_END_REGEX_VALUE)
 """ The tag end regex """
+
+TAG_ATTRIBUTES_REGEX = re.compile(TAG_ATTRIBUTES_REGEX_VALUE)
+""" The tag attributes regex """
 
 def p_program(t):
     "program : lines"
@@ -495,8 +501,43 @@ def p_statement_tag(t):
     tag_init_match_end = tag_init_match.end()
     tag_end_match_start = tag_end_match.start()
 
+    # retrieves the tag value
+    tag_value = tag[tag_init_match_start + 1:tag_init_match_end - 1].strip()
+
+    # partitions the tag value
+    tag_value_partitioned = tag_value.partition(" ")
+
     # retrieves the tag name
-    tag_name = tag[tag_init_match_start + 1:tag_init_match_end - 1].strip()
+    tag_name = tag_value_partitioned[0]
+
+    # retrieves the tag attributes string
+    tag_attributes_string = tag_value_partitioned[2]
+
+    # search for matches in the tag
+    matches_list = TAG_ATTRIBUTES_REGEX.finditer(tag_attributes_string)
+
+    # starts the attributes map
+    attributes_map = {}
+
+    # iterates over all the matches in the matches list
+    for match in matches_list:
+        # retrieves the attribute name
+        attribute_name = match.group("name")
+
+        # retrieves the attribute value
+        attribute_value = match.group("value")
+
+        # in case the attribute value is not valid
+        if not attribute_value:
+            # retrieves the attribute string value
+            attribute_value = match.group("string_value")
+
+        print tag_attributes_string
+        if attribute_value:
+            print attribute_value
+
+        # sets the attribute in the attributes map
+        attributes_map[attribute_name] = attribute_value
 
     # retrieves the contents
     contents = tag[tag_init_match_end:tag_end_match_start]
@@ -509,6 +550,9 @@ def p_statement_tag(t):
 
     # sets the contents in the tag node
     tag_node.set_contents(contents)
+
+    # sets the attributes map in the tag node
+    tag_node.set_attributes_map(attributes_map)
 
     t[0] = tag_node
 

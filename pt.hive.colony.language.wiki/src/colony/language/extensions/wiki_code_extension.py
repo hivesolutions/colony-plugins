@@ -132,20 +132,20 @@ class WikiCodeExtension(wiki_extension_system.WikiExtension):
         # retrieves the tag name
         node_tag_name = tag_node.tag_name
 
-        # splits the node tag name
-        node_tag_name_splitted = node_tag_name.split()
+        # retrieves the tag attributes map
+        node_attributes_map = tag_node.attributes_map
 
-        # retrieves the node tag name splitted length
-        node_tag_name_splitted_length = len(node_tag_name_splitted)
+        # retrieves the tag attributes map keys
+        node_attributes_map_keys = node_attributes_map.keys()
 
-        # in case the length of the node tag name
-        # splitted is less than two
-        if node_tag_name_splitted_length < 2:
+        # in case the number of keys in the tag attributes map
+        # is less than one
+        if node_attributes_map_keys < 1:
             # raisers the invalid tag name exception
             raise wiki_exceptions.InvalidTagName("tag name is not valid: " + node_tag_name)
 
         # retrieves the node tag language value
-        node_tag_language_value = node_tag_name_splitted[1]
+        node_tag_language_value = node_attributes_map_keys[0]
 
         # retrieves the code highlighting extensions for the given tag
         tag_code_highlighting_extensions = [extension for extension in code_highlighting_extensions if extension.get_highlighting_type() == node_tag_language_value]

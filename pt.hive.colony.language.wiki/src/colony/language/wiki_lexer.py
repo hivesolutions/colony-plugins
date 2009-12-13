@@ -208,7 +208,7 @@ def t_RBRACE(t):
     return t
 
 def t_TAG(t):
-    r"\<(?P<tag>[a-zA-Z_]+)[a-zA-Z_ ]*\>[^\%]*?\</(?P=tag)\>"
+    r"\<(?P<tag>[a-zA-Z_]+)[a-zA-Z0-9_ =\"]*\>[^\%]*?\</(?P=tag)\>"
     return t
 
 def t_EXTENDED_NAME(t):
