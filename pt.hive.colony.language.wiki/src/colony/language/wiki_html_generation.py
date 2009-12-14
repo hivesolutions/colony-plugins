@@ -284,7 +284,7 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
                 self._write("<ul>")
                 self._write("<li class=\"menu\"><a href=\"documentation_index.html\">Home</a></li>")
                 self._write("<li class=\"menu menu-index\"><a id=\"index-opener\" href=\"#\" onclick=\"guideMenu(); return false;\">Index</a><div id=\"index\" style=\"display: none;\"></div></li>")
-                self._write("<li class=\"menu\">Contribute</li>")
+                self._write("<li class=\"menu\"><a href=\"documentation_how_can_i_help.html\">Contribute</a></li>")
                 self._write("<li class=\"menu\">Credits</li>")
                 self._write("</ul")
                 self._write("</div")
