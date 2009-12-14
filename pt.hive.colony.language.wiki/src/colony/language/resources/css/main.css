@@ -148,13 +148,13 @@ h5:hover > a.headerlink {
 
 #wiki-header {
     background-color: #214c8f;
-    height: 100px;
+    height: 110px;
 }
 
 #wiki-header .wiki-header-contents {
     width: 70%;
     margin: 0px auto 10px auto;
-    padding-top: 12px;
+    padding-top: 22px;
 }
 
 .wiki-header-contents .logo-image {
@@ -212,20 +212,18 @@ h5:hover > a.headerlink {
 }
 
 .highlight {
-    background-color: #d5e9f6;
-    padding: 2.0em 2.0em 1.0em 2.0em;
+    background: #d5e9f6;
+    padding: 18px 22px 14px 22px;
     color: #333333;
 }
 
 .highlight b {
     font-size: 16pt;
-    text-shadow: 2px 2px #DDDDDD;
 }
 
 .highlight P {
     font-size: 13pt;
     margin-top: 0.6em;
-    text-shadow: 1px 1px #DDDDDD;
 }
 
 .highlight ul {
@@ -243,7 +241,7 @@ h5:hover > a.headerlink {
 }
 
 .quote {
-    background: #e5e5e5 url(../images/quote_note.gif) no-repeat scroll left top;
+    background: #e5e5e5 url(../images/quote_note.gif) no-repeat scroll 0px 0px;
     padding: 18px 52px 18px 52px;
     line-height: 1.5em;
     font-style: italic;
@@ -270,7 +268,7 @@ h5:hover > a.headerlink {
 }
 
 .error {
-    background:#f9d9d8 url(../images/error_note.gif) no-repeat scroll left top;
+    background:#f9d9d8 url(../images/error_note.gif) no-repeat scroll 0px 0px;
     padding: 18px 52px 18px 52px;
     line-height: 1.5em;
 }
