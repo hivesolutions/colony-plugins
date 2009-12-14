@@ -157,6 +157,30 @@ h5:hover > a.headerlink {
     padding-top: 12px;
 }
 
+.wiki-header-contents .logo-image {
+    float: left;
+}
+
+.wiki-header-contents .menu-contents {
+    float: right;
+    margin-top: 26px;
+}
+
+.menu-contents .menu {
+    color: #ffffff;
+    font-size: 110%;
+    margin-right: 28px;
+    text-shadow: 1px 1px #333333;
+}
+
+.menu-contents .menu a {
+    color: #ffffff;
+}
+
+.menu-contents .menu a:hover {
+    border-bottom: 1px dashed #ffffff;
+}
+
 #wiki-footer {
     background-color: #f2f2f2;
     color: #999999;

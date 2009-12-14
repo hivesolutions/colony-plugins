@@ -60,6 +60,7 @@ WIKI_EXTENSIONS = ("wiki", "wik")
 
 BASE_FILES = {"resources/css/main.css" : "/css",
               "resources/images/link_icon.gif" : "/images",
+              "resources/images/colony_logo.png" : "/images",
               "resources/images/powered_by_colony.png" : "/images",
               "resources/images/separator.png" : "/images",
               "resources/images/quote.png" : "/images",
