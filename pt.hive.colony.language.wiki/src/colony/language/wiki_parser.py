@@ -55,22 +55,22 @@ PARSER_TYPE = PLY_PARSER_VALUE
 COLONY_GENERATOR_PATH = "../../../../pt.hive.colony.language.generator/src/colony"
 """ The colony generator path """
 
-TAG_INIT_REGEX_VALUE = "\<[a-zA-Z0-9_ =\"]+\>"
+TAG_INIT_REGEX_VALUE = "\<[\w =\"]+\>"
 """ The tag init regex value """
 
-TAG_END_REGEX_VALUE = "\<\/[a-zA-Z_ ]+\>$"
+TAG_END_REGEX_VALUE = "\<\/[\w ]+\>$"
 """ The tag end regex value """
 
-TAG_ATTRIBUTES_REGEX_VALUE = "(?P<name>[a-zA-Z_\$\.0-9]+)(\=(((?P<value>[a-zA-Z_\$\.0-9])+)|(\"(?P<string_value>([^\\\n]|(\\.)|\\n\\\r?\n)*?)\")))?"
+TAG_ATTRIBUTES_REGEX_VALUE = "(?P<name>[\w\$\.]+)(\=(((?P<value>[\w\$\.])+)|(\"(?P<string_value>([^\\\n]|(\\.)|\\n\\\r?\n)*?)\")))?"
 """ The tag attributes regex value """
 
-TAG_INIT_REGEX = re.compile(TAG_INIT_REGEX_VALUE)
+TAG_INIT_REGEX = re.compile(TAG_INIT_REGEX_VALUE, re.UNICODE)
 """ The tag init regex """
 
-TAG_END_REGEX = re.compile(TAG_END_REGEX_VALUE)
+TAG_END_REGEX = re.compile(TAG_END_REGEX_VALUE, re.UNICODE)
 """ The tag end regex """
 
-TAG_ATTRIBUTES_REGEX = re.compile(TAG_ATTRIBUTES_REGEX_VALUE)
+TAG_ATTRIBUTES_REGEX = re.compile(TAG_ATTRIBUTES_REGEX_VALUE, re.UNICODE)
 """ The tag attributes regex """
 
 def p_program(t):
@@ -578,7 +578,7 @@ elif PARSER_TYPE == PLY_PARSER_VALUE:
     import ply.yacc
 
     # creates the lexer
-    ply.lex.lex()
+    ply.lex.lex(reflags = re.UNICODE)
 
     # creates the parser
     ply.yacc.yacc()

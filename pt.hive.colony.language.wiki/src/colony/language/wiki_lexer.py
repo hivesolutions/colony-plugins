@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import re
 
-ESCAPE_REGEX = re.compile(r"%%(.*?)%%")
+ESCAPE_REGEX = re.compile(r"%%(.*?)%%", re.UNICODE)
 """ The escape regex value """
 
 # the token definitions
@@ -208,7 +208,7 @@ def t_RBRACE(t):
     return t
 
 def t_TAG(t):
-    r"\<(?P<tag>[a-zA-Z_]+)[a-zA-Z0-9_ =\"]*\>[^\%]*?\</(?P=tag)\>"
+    r"\<(?P<tag>[\w]+)[\w =\"]*\>[^\%]*?\</(?P=tag)\>"
     return t
 
 def t_EXTENDED_NAME(t):
