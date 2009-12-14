@@ -57,6 +57,9 @@ META_HEADER_VALUE = "<meta http-equiv=\"Content-Type\" content=\"text/html; char
 CSS_HEADER_VALUE = "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/main.css\" />"
 """ The css header value """
 
+JS_HEADER_VALUE = "<script type=\"text/javascript\" src=\"js/main.js\"></script>"
+""" The js header value """
+
 RECURSION_LIMIT = 1000000
 """ The recursion limit """
 
@@ -262,6 +265,9 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
                 # writes the css header value
                 self._write(CSS_HEADER_VALUE)
 
+                # writes the js header value
+                self._write(JS_HEADER_VALUE)
+
                 # writes the head end
                 self._write("</head>")
 
@@ -277,7 +283,7 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
                 self._write("<div class=\"menu-contents\">")
                 self._write("<ul>")
                 self._write("<li class=\"menu\"><a href=\"documentation_index.html\">Home</a></li>")
-                self._write("<li class=\"menu menu-index\">Index<div id=\"index\"></div></li>")
+                self._write("<li class=\"menu menu-index\"><a id=\"index-opener\" href=\"#\" onclick=\"guideMenu(); return false;\">Index</a><div id=\"index\" style=\"display: none;\"></div></li>")
                 self._write("<li class=\"menu\">Contribute</li>")
                 self._write("<li class=\"menu\">Credits</li>")
                 self._write("</ul")

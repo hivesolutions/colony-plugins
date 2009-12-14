@@ -23,3 +23,11 @@
 // __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
 // __license__   = General Public License (GPL), Version 3
 // __credits__   = Michael Clark <michael@jabsorb.org>
+
+guideMenu = function() {
+    if (document.getElementById("index").style.display == "none") {
+        document.getElementById("index").style.display = "block";
+    } else {
+        document.getElementById("index").style.display = "none";
+    }
+}

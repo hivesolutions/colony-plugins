@@ -201,6 +201,11 @@ h5:hover > a.headerlink {
     border-bottom: 1px dashed #ffffff;
 }
 
+#index-opener {
+    position: relative;
+    z-index: 15;
+}
+
 #index {
     background-color: #385e9a;
     position: absolute;
@@ -210,6 +215,7 @@ h5:hover > a.headerlink {
     right: 0em;
     padding: 2.0em 2.0em 1.5em 1.5em;
     opacity: 0.98;
+    z-index: 10;
     -moz-border-radius: 1em;
     -webkit-border-radius: 1em;
     -moz-box-shadow: 0.25em 0.25em 1em rgba(0.0, 0.0, 0.0, 0.25);

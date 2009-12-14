@@ -59,6 +59,7 @@ WIKI_EXTENSIONS = ("wiki", "wik")
 """ The valid wiki extensions list """
 
 BASE_FILES = {"resources/css/main.css" : "/css",
+              "resources/js/main.js" : "/js",
               "resources/images/link_icon.gif" : "/images",
               "resources/images/colony_logo.png" : "/images",
               "resources/images/powered_by_colony.png" : "/images",
