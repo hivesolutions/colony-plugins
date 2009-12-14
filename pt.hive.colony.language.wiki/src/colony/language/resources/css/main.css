@@ -199,6 +199,15 @@ h5:hover > a.headerlink {
     letter-spacing: 0.075em;
 }
 
+.command {
+    background-color: #eeeeee;
+    padding: 4px 4px 4px 4px;
+    color: #20435C;
+    font-family: monospace;
+    font-size: 110%;
+    font-weight: bold;
+}
+
 .warning {
     background: #fff9D8 url(../images/warning_note.gif) no-repeat scroll 0px 0px;
     padding: 18px 52px 18px 52px;
