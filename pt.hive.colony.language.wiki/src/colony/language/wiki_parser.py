@@ -55,10 +55,10 @@ PARSER_TYPE = PLY_PARSER_VALUE
 COLONY_GENERATOR_PATH = "../../../../pt.hive.colony.language.generator/src/colony"
 """ The colony generator path """
 
-TAG_INIT_REGEX_VALUE = "\<[\w =\"]+\>"
+TAG_INIT_REGEX_VALUE = "\<[^\%]+?\>"
 """ The tag init regex value """
 
-TAG_END_REGEX_VALUE = "\<\/[\w ]+\>$"
+TAG_END_REGEX_VALUE = "\<\/[^\%]+?\>$"
 """ The tag end regex value """
 
 TAG_ATTRIBUTES_REGEX_VALUE = "(?P<name>[\w\$\.]+)(\=(((?P<value>[\w\$\.])+)|(\"(?P<string_value>([^\\\n]|(\\.)|\\n\\\r?\n)*?)\")))?"

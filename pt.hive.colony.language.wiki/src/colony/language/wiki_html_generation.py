@@ -312,7 +312,7 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
                 self._write("<div id=\"wiki-footer\">")
                 self._write("<div class=\"wiki-footer-contents\">")
                 self._write("<div class=\"logo-image\">")
-                self._write("<img src=\"images/powered_by_colony.png\"/>")
+                self._write("<a href=\"http://getcolony.com\"><img src=\"images/powered_by_colony.png\"/></a>")
                 self._write("</div>")
                 self._write("<div class=\"separator\">")
                 self._write("<img src=\"images/separator.png\"/>")

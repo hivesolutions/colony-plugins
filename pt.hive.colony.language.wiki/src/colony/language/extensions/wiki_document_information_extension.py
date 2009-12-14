@@ -41,27 +41,27 @@ import libs.string_buffer_util
 
 import wiki_extension_system
 
-GENERATOR_TYPE = "author"
+GENERATOR_TYPE = "document_information"
 """ The generator type """
 
 CONFIGURATION_MAP = {"generate_footer" : False, "simple_parse" : True}
 """ The configuration map """
 
-class WikiAuthorExtension(wiki_extension_system.WikiExtension):
+class WikiDocumentInformationExtension(wiki_extension_system.WikiExtension):
     """
-    The wiki author extension class.
+    The wiki document information extension class.
     """
 
-    id = "pt.hive.colony.language.wiki.extensions.author"
+    id = "pt.hive.colony.language.wiki.extensions.document_information"
     """ The extension id """
 
-    name = "Author Generation Plugin"
+    name = "Document Information Generation Plugin"
     """ The name of the extension """
 
-    short_name = "Author Generation"
+    short_name = "Document Information Generation"
     """ The short name of the extension """
 
-    description = "Extension for author generation"
+    description = "Extension for Document Information generation"
     """ The description of the extension """
 
     version = "1.0.0"
@@ -104,16 +104,37 @@ class WikiAuthorExtension(wiki_extension_system.WikiExtension):
         # retrieves the tag contents
         contents = tag_node.contents
 
+        # retrieves the tag attributes map
+        attributes_map = tag_node.attributes_map
+
         # creates the string buffer
         string_buffer = libs.string_buffer_util.StringBuffer()
 
-        # writes the start div author tag
-        string_buffer.write("<div class=\"author\">")
+        # writes the start div document information tag
+        string_buffer.write("<div class=\"document-information\">")
 
-        # processes a new parse in the contents
-        visitor.new_parse(contents, CONFIGURATION_MAP, string_buffer)
+        # writes the start table document information tag
+        string_buffer.write("<table>")
 
-        # writes the end div author tag
+        # iterates over all the key and values of the attributes map
+        for key_value, value_value in attributes_map.items():
+                string_buffer.write("<tr>")
+                string_buffer.write("<td class=\"key-cell\">")
+                string_buffer.write("<span class=\"key\">")
+                visitor.new_parse(key_value, CONFIGURATION_MAP, string_buffer)
+                string_buffer.write("</span>")
+                string_buffer.write("</td>")
+                string_buffer.write("<td class=\"value-cell\">")
+                string_buffer.write("<span class=\"value\">")
+                visitor.new_parse(value_value, CONFIGURATION_MAP, string_buffer)
+                string_buffer.write("</span>")
+                string_buffer.write("</td>")
+                string_buffer.write("</tr>")
+
+        # writes the end table document information tag
+        string_buffer.write("</table>")
+
+        # writes the end div document information tag
         string_buffer.write("</div>")
 
         # retrieves the string value

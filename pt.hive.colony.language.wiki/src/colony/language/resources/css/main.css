@@ -201,6 +201,14 @@ h5:hover > a.headerlink {
     margin-right: 12px;
 }
 
+.wiki-footer-contents .logo-image img {
+    border: none;
+}
+
+.wiki-footer-contents .logo-image a:hover {
+    border-bottom: none;
+}
+
 .wiki-footer-contents .separator {
     float: left;
 }
@@ -411,4 +419,33 @@ h5:hover > a.headerlink {
 .key-value .value {
     font-style: italic;
     font-size: 95%;
+}
+
+.document-information {
+    background: #e5e5e5 url(../images/document_information_note.gif) no-repeat scroll left top;
+    padding: 18px 52px 18px 52px;
+    color: #333333;
+}
+
+.document-information .key-cell {
+    text-align: right;
+    padding: 10px 10px 0px 15px;
+}
+
+.document-information .value-cell {
+    border-top-width: 5px;
+    margin-top: 5px;
+    padding: 10px 15px 0px 10px;
+}
+
+.document-information .key {
+    color: #20435c;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.document-information .value {
+    font-size: 95%;
+    font-weight: bold;
 }
