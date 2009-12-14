@@ -146,13 +146,45 @@ h5:hover > a.headerlink {
     visibility: visible;
 }
 
-.footer {
+#wiki-header {
+    background-color: #214c8f;
+    height: 100px;
+}
+
+#wiki-header .wiki-header-contents {
+    width: 70%;
+    margin: 0px auto 10px auto;
+    padding-top: 12px;
+}
+
+#wiki-footer {
     background-color: #f2f2f2;
     color: #999999;
-    padding-bottom: 12px;
-    padding-top: 12px;
     font-size: 60%;
-    text-align: center;
+}
+
+#wiki-footer .wiki-footer-contents {
+    width: 70%;
+    height: 38px;
+    margin: 0px auto 0px auto;
+    padding-top: 12px;
+    padding-bootom: 12px;
+}
+
+.wiki-footer-contents .logo-image {
+    float: left;
+    margin-top: 4px;
+    margin-right: 12px;
+}
+
+.wiki-footer-contents .separator {
+    float: left;
+}
+
+.wiki-footer-contents .text-contents {
+    float: left;
+    margin-top: 4px;
+    margin-left: 12px;
 }
 
 .highlight {
@@ -187,11 +219,10 @@ h5:hover > a.headerlink {
 }
 
 .quote {
-    background: #d5e9f6 url(../images/info_note.gif) no-repeat scroll left top;
+    background: #e5e5e5 url(../images/quote_note.gif) no-repeat scroll left top;
     padding: 18px 52px 18px 52px;
     line-height: 1.5em;
     font-style: italic;
-    text-shadow: 1px 1px #cccccc;
 }
 
 .quote .author {
