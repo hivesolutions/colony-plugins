@@ -166,11 +166,31 @@ h5:hover > a.headerlink {
     margin-top: 26px;
 }
 
+.menu-contents ul {
+    float: right;
+    margin: 0px 0px 0px 0px;
+    padding: 0px 0px 0px 0px;
+    list-style-type: disc;
+}
+
+.menu-contents li {
+    display: inline;
+    position: relative;
+}
+
 .menu-contents .menu {
     color: #ffffff;
     font-size: 110%;
-    margin-right: 28px;
+    padding: 0.5em 0.0em 0.5em 0.0em;
+    margin-left: 1.0em;
     text-shadow: 1px 1px #333333;
+}
+
+.menu-contents .menu-index {
+    background-color: #385e9a;
+    padding: 0.5em 1.5em 0.5em 1.5em;
+    -moz-border-radius: 1em;
+    -webkit-border-radius: 1em;
 }
 
 .menu-contents .menu a {
@@ -179,6 +199,20 @@ h5:hover > a.headerlink {
 
 .menu-contents .menu a:hover {
     border-bottom: 1px dashed #ffffff;
+}
+
+#index {
+    background-color: #385e9a;
+    position: absolute;
+    height: 240px;
+    width: 27em;
+    top: 0em;
+    right: 0em;
+    padding: 2.0em 2.0em 1.5em 1.5em;
+    opacity: 0.98;
+    -moz-border-radius: 1em;
+    -webkit-border-radius: 1em;
+    -moz-box-shadow: 0.25em 0.25em 1em rgba(0.0, 0.0, 0.0, 0.25);
 }
 
 #wiki-footer {
