@@ -50,6 +50,7 @@ body {
 
 #wiki-contents {
     width: 70%;
+    min-width: 800px;
     margin: 0px auto 10px auto;
 }
 
@@ -171,6 +172,7 @@ h5:hover > a.headerlink {
 
 #wiki-header .wiki-header-contents {
     width: 70%;
+    min-width: 800px;
     margin: 0px auto 10px auto;
     padding-top: 12px;
 }
@@ -207,7 +209,6 @@ h5:hover > a.headerlink {
 
 .menu-contents .menu {
     color: #ffffff;
-    font-size: 110%;
     padding: 0.5em 0.0em 0.5em 0.0em;
     margin-left: 1.0em;
     text-shadow: 1px 1px #333333;
