@@ -100,6 +100,9 @@ INDEX_MAP = {"Introduction" : {"order" : ["What is Colony?", "What Can I Build W
                         "items" : {}}}
 """ The index map """
 
+INDEX_PAGE = "documentation_index.html"
+""" The index page """
+
 class HtmlGenerationVisitor(wiki_visitor.Visitor):
     """
     The html generation visitor class.
@@ -303,11 +306,13 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
                 self._write("<div id=\"wiki-header\">")
                 self._write("<div class=\"wiki-header-contents\">")
                 self._write("<div class=\"logo-image\">")
+                self._write("<a href=\"" + INDEX_PAGE + "\">")
                 self._write("<img src=\"images/colony_logo.png\"/>")
+                self._write("</a>")
                 self._write("</div")
                 self._write("<div class=\"menu-contents\">")
                 self._write("<ul>")
-                self._write("<li class=\"menu\"><a href=\"documentation_index.html\">Home</a></li>")
+                self._write("<li class=\"menu\"><a href=\"" + INDEX_PAGE + "\">Home</a></li>")
                 self._write("<li class=\"menu menu-index\"><a id=\"index-opener\" href=\"#\" onclick=\"guideMenu(); return false;\">Index</a>")
 
                 # generates the menu index
