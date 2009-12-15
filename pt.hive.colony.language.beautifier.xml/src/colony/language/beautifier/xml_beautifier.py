@@ -37,6 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+if __name__ == "__main__":
+    pass
+
 # 1. vou sacando nos (do lexer)
 # 2. quando me sai um no do tipos single deixo na mesma linha
 # 3. quando me sai um no do tipo non single imprimo dou newline dou indentacao e depois dou novo newline e imprimo o fecho
