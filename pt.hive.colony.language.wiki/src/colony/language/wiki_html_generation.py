@@ -315,7 +315,7 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
 
                 self._write("</li>")
                 self._write("<li class=\"menu\"><a href=\"documentation_how_can_i_help.html\">Contribute</a></li>")
-                self._write("<li class=\"menu\">Credits</li>")
+                self._write("<li class=\"menu\"><a href=\"documentation_credits.html\">Credits</a></li>")
                 self._write("</ul")
                 self._write("</div")
                 self._write("</div>")
@@ -690,4 +690,4 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
                 self._write("<dd><a href=\"" + index_value_value + "\">" + index_value_key + "</a></dd>")
 
         self._write("</dl>")
-        selg._write("</div>")
+        self._write("</div>")
