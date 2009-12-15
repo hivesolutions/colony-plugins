@@ -49,58 +49,8 @@ reserved = {
 reserved_values = {
 }
 
-# token definition
-t_EQUALS = r"="
-
-def t_XML(t):
-    r"\<\?xml(.|\n)*?\?\>"
-    return t
-
-def t_CDATA(t):
-    r"\<\!\[CDATA\[(.|\n)*?\]\]\>"
-    return t
-
-def t_TAG_INIT(t):
-    r"\<[^\!\?\> ]+"
-    return t
-
-def t_TAG_END(t):
-    r"\>"
-    return t
-
-def t_TAG_END_END(t):
-    r"/\>"
-    return t
-
-def t_ATTRIBUTION(t):
-    r"[a-zA-Z_\$\.0-9][a-zA-Z_\$\.\:0-9]*="
-    return t
-
-def t_COMMENT(t):
-    r"<!--(.|\n)*?-->"
-    # sets the token type
-    t.type = "COMMENT"
-
-    return t
-
-def t_NAME(t):
-    r"[a-zA-Z0-9_\$\.]+"
-    t.type = reserved.get(t.value, "NAME")
-    t.value = reserved_values.get(t.value, t.value)
-    return t
-
-# string definition
-def t_STRING(t):
-    r"\"([^\\\n]|(\\.)|\\n\\\r?\n)*?\""
-
-    t.value = t.value[1:-1]
-
-    return t
-
-# the new line character
-def t_NEWLINE(t):
-    r"(\r?\n)+"
-    t.lexer.lineno += t.value.count("\n")
+def t_TAG(t):
+    r"\<(?P<tag>[\w]+)([^/]*?[^/])?\>[^\0]*?\</(?P=tag)\>"
     return t
 
 # ignored characters

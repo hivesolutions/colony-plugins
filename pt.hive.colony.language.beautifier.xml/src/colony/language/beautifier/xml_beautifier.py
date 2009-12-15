@@ -37,8 +37,40 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import re
+
+DOUBLE_TAG_REGEX_VALUE = "\<(?P<tag>[\w]+)([^\/]|\/[^\>])*?\>[^\0]*?\<\/(?P=tag)\>"
+""" The double tag regex value """
+
+DOUBLE_TAG_REGEX = re.compile(DOUBLE_TAG_REGEX_VALUE)
+""" The double tag regex """
+
 if __name__ == "__main__":
-    pass
+    # opens the xml file
+    xml_file = open("xml_demo_file.xml")
+
+    # reads the file contents
+    xml_file_contents = xml_file.read()
+
+    # closes the xml file
+    xml_file.close()
+
+    xml_file_contents = xml_file_contents.strip()
+
+    # retrieves the xml file contents length
+    xml_file_contents_length = len(xml_file_contents)
+
+    current_index = 0
+
+    # loop while the index is valid
+    while current_index < xml_file_contents_length:
+        # tries to match the xml file contents with the functions regex
+        buffer_match = DOUBLE_TAG_REGEX.match(xml_file_contents, current_index)
+
+        print buffer_match.group()
+
+        # sets the new current index
+        current_index = buffer_match.end()
 
 # 1. vou sacando nos (do lexer)
 # 2. quando me sai um no do tipos single deixo na mesma linha
