@@ -324,8 +324,11 @@ class LexerGenerator:
         # creates a new token
         token = Token()
 
+        # retrieves the buffer length
+        buffer_length = len(self.buffer)
+
         # loop while the index is valid
-        while self.current_index < len(self.buffer):
+        while self.current_index < buffer_length:
             # retrieves the current character
             current_character = self.buffer[self.current_index]
 
