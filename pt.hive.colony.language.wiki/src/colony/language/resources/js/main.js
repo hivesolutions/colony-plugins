@@ -25,9 +25,11 @@
 // __credits__   = Michael Clark <michael@jabsorb.org>
 
 guideMenu = function() {
-    if (document.getElementById("index").style.display == "none") {
-        document.getElementById("index").style.display = "block";
+    if (document.getElementById("index").style.opacity == "0") {
+        document.getElementById("index").style.opacity = "0.98";
+        document.getElementById("index").style.visibility = "visible"
     } else {
-        document.getElementById("index").style.display = "none";
+        document.getElementById("index").style.opacity = "0";
+        document.getElementById("index").style.visibility = "hidden"
     }
 }

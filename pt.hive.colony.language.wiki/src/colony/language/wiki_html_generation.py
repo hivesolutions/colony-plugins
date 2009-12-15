@@ -75,6 +75,31 @@ AUTO_NUMBERED_SECTIONS_VALUE = "auto_numbered_sections"
 AVAILABLE_TAG_NAMES = ("del",)
 """ The available tag names """
 
+INDEX_KEYS_LIST = ("Introduction", "Tutorials", "Standards & Practices", "Design documents", "How-tos", "Demos")
+""" The index keys list """
+
+INDEX_MAP = {"Introduction" : {"order" : ["What is Colony?", "What Can I Build With Colony?", "How Can I Get Started?", "How Can I Help?", "Frequently Asked Questions"],
+                               "items" : {"What is Colony?" : "documentation_what_is_colony.html",
+                                          "What Can I Build With Colony?" : "documentation_what_can_i_build_with_colony.html",
+                                          "How Can I Get Started?" : "documentation_how_can_i_get_started.html",
+                                          "How Can I Help?" : "documentation_how_can_i_help.html",
+                                          "Frequently Asked Questions" : "documentation_frequently_asked_questions.html"}},
+             "Tutorials" : {"order" : ["Colony Hello World Tutorial", "Colony Web Hello World Tutorial", "Colony Web MVC Hello World Tutorial"],
+                            "items" : {"Colony Hello World Tutorial" : "documentation_tutorial_colony_hello_world.html",
+                                       "Colony Web Hello World Tutorial" : "documentation_tutorial_colony_web_hello_world.html",
+                                       "Colony Web MVC Hello World Tutorial" : "documentation_tutorial_colony_web_mvc_hello_world.html"}},
+             "Standards & Practices" : {"order" : ["Colony Style Guide"],
+                                        "items" :  {"Colony Style Guide" : "documentation_colony_style_guide.html"}},
+             "Design documents" : {"order" : ["Colony Plugin Framework", "Colony Web Plugin Framework", "Colony Web MVC Framework"],
+                                   "items" : {"Colony Plugin Framework" : "documentation_colony_plugin_framework.html",
+                                              "Colony Web Plugin Framework" : "documentation_colony_web_plugin_framework.html",
+                                              "Colony Web MVC Framework" : "documentation_colony_web_mvc_framework.html"}},
+             "How-tos" : {"order" : [],
+                          "items" : {}},
+             "Demos" : {"order" : [],
+                        "items" : {}}}
+""" The index map """
+
 class HtmlGenerationVisitor(wiki_visitor.Visitor):
     """
     The html generation visitor class.
@@ -283,7 +308,12 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
                 self._write("<div class=\"menu-contents\">")
                 self._write("<ul>")
                 self._write("<li class=\"menu\"><a href=\"documentation_index.html\">Home</a></li>")
-                self._write("<li class=\"menu menu-index\"><a id=\"index-opener\" href=\"#\" onclick=\"guideMenu(); return false;\">Index</a><div id=\"index\" style=\"display: none;\"></div></li>")
+                self._write("<li class=\"menu menu-index\"><a id=\"index-opener\" href=\"#\" onclick=\"guideMenu(); return false;\">Index</a>")
+
+                # generates the menu index
+                self._generate_menu_index()
+
+                self._write("</li>")
                 self._write("<li class=\"menu\"><a href=\"documentation_how_can_i_help.html\">Contribute</a></li>")
                 self._write("<li class=\"menu\">Credits</li>")
                 self._write("</ul")
@@ -634,3 +664,30 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
 
         # returns the string value
         return string_value
+
+    def _generate_menu_index(self):
+        """
+        Generates the menu index.
+        """
+
+        self._write("<div id=\"index\" style=\"opacity: 0.0;visibility: hidden;\">")
+        self._write("<hr/>")
+        self._write("<dl>")
+
+        for index_key in INDEX_KEYS_LIST:
+            self._write("<dt>" + index_key + "</dt>")
+            index_value = INDEX_MAP[index_key]
+
+            # retrieves the index value order list
+            index_value_order_list = index_value.get("order", [])
+
+            # retrieves the index valu items map
+            index_value_items_map = index_value.get("items", {})
+
+            for index_value_key in index_value_order_list:
+                index_value_value = index_value_items_map[index_value_key]
+
+                self._write("<dd><a href=\"" + index_value_value + "\">" + index_value_key + "</a></dd>")
+
+        self._write("</dl>")
+        selg._write("</div>")

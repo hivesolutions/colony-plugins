@@ -95,13 +95,11 @@ ul {
     line-height: 175%;
     list-style-image: none;
     list-style-type: square;
-    font-weight: bold;
 }
 
 ol {
     color: #20435c;
     line-height: 175%;
-    font-weight: bold;
 }
 
 li > div {
@@ -148,13 +146,13 @@ h5:hover > a.headerlink {
 
 #wiki-header {
     background-color: #214c8f;
-    height: 110px;
+    height: 90px;
 }
 
 #wiki-header .wiki-header-contents {
     width: 70%;
     margin: 0px auto 10px auto;
-    padding-top: 22px;
+    padding-top: 12px;
 }
 
 .wiki-header-contents .logo-image {
@@ -163,7 +161,8 @@ h5:hover > a.headerlink {
 
 .wiki-header-contents .menu-contents {
     float: right;
-    margin-top: 26px;
+    margin-top: 22px;
+    margin-right: 22px;
 }
 
 .menu-contents ul {
@@ -209,16 +208,46 @@ h5:hover > a.headerlink {
 #index {
     background-color: #385e9a;
     position: absolute;
-    height: 240px;
-    width: 27em;
+    width: 14em;
     top: 0em;
     right: 0em;
-    padding: 2.0em 2.0em 1.5em 1.5em;
-    opacity: 0.98;
+    padding: 1.5em 1.5em 1.5em 1.5em;
     z-index: 10;
     -moz-border-radius: 1em;
     -webkit-border-radius: 1em;
-    -moz-box-shadow: 0.25em 0.25em 1em rgba(0.0, 0.0, 0.0, 0.25);
+    -moz-box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.25);
+    -webkit-box-shadow: rgba(0, 0, 0, 0.25) 0.25em 0.25em 1em;
+    -webkit-transition: opacity 0.2s linear;
+}
+
+#index hr {
+    background: #7a94bc none repeat scroll 0 0;
+    height: 1px;
+    border: medium none;
+    color: #7a94bc;
+    display: block;
+}
+
+#index dl {
+    margin: 0.75em 0.0em 0.0em 0.0em;
+    padding: 0px 0px 0px 0px;
+}
+
+#index dt {
+    margin-top: 0.5em;
+    color: #7a94bc;
+    font-size: 80%;
+    font-weight: bold;
+    text-align: right;
+    text-shadow: none;
+}
+
+#index dd {
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+    font-size: 70%;
+    text-align: right;
+    text-shadow: none;
 }
 
 #wiki-footer {
