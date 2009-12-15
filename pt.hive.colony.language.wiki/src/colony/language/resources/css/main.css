@@ -168,6 +168,8 @@ h5:hover > a.headerlink {
 #wiki-header {
     background-color: #214c8f;
     height: 90px;
+    -moz-box-shadow: -2px -4px 25px #222222;
+    -webkit-box-shadow: -2px -4px 25px #222222;
 }
 
 #wiki-header .wiki-header-contents {
