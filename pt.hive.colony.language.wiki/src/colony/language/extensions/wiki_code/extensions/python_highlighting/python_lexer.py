@@ -41,7 +41,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 tokens = ("MULTI_LINE_COMMENT", "NAME", "DECORATOR_NAME",
           "NUMBER", "STRING", "STRING_QUOTES", "BOOL",
           "PLUS", "MINUS", "TIMES", "DIVIDE", "POWER",
-          "EQUALS", "EQUALEQUAL", "GREATER",
+          "EQUALS", "EQUALEQUAL", "NOTEQUAL", "GREATER",
           "GREATEREQUAL", "LESS", "LESSEQUAL",
           "NOT", "AND", "OR", "LPAREN", "RPAREN",
           "LBRACK", "RBRACK", "LBRACE", "RBRACE", "DEF", "RETURN",
@@ -94,6 +94,7 @@ t_POWER = r"\^"
 t_EQUALS = r"="
 
 t_EQUALEQUAL = r"=="
+t_NOTEQUAL = r"!="
 t_GREATER = r">"
 t_GREATEREQUAL = r">="
 t_LESS = r"<"

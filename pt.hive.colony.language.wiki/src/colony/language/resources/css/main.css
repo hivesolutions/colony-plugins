@@ -102,6 +102,26 @@ ol {
     line-height: 175%;
 }
 
+li.indentation-1 {
+    margin-left: 0em;
+}
+
+li.indentation-2 {
+    margin-left: 2em;
+}
+
+li.indentation-3 {
+    margin-left: 4em;
+}
+
+li.indentation-4 {
+    margin-left: 6em;
+}
+
+li.indentation-5 {
+    margin-left: 8em;
+}
+
 li > div {
     color: #000000;
     font-weight: normal;

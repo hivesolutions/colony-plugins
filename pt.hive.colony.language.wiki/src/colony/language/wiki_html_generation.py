@@ -447,6 +447,7 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
             # closes the current paragraph
             self.close_paragraph()
 
+            # writes the header value no the string value
             self._write("<h" + str(node.section_size) + " id=\"" + self.current_section_string + "\">")
 
             # in case the auto numbered sections is valid
@@ -542,7 +543,7 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
             else:
                 self._write("<ul>")
 
-            self._write("<li>")
+            self._write("<li class=\"indentation-" + str(node.indentation_value) + "\">")
             self._write("<div>")
         elif self.visit_index == 1:
             self._write("</div>")
@@ -557,7 +558,7 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
             else:
                 self._write("<ol>")
 
-            self._write("<li>")
+            self._write("<li class=\"indentation-" + str(node.indentation_value) + "\">")
             self._write("<div>")
         elif self.visit_index == 1:
             self._write("</div>")
