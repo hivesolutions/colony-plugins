@@ -47,11 +47,38 @@ DIAGRAM_TYPE = "block"
 ROW_SPLITTER_VALUE = "/"
 """ The value for the row splitter string """
 
+BLOCK_REGEX_VALUE = "\[([\w, ]*)(\{[\w,\:,\; ]*\})*\]+"
+""" The block regex value """
+
+OPTIONS_REGEX_VALUE = "\{(.*)\}"
+""" The options regex value """
+
+CLASS_REGEX_VALUE = "class *: *(\w*);?"
+""" The class regex value """
+
+COLSPAN_REGEX_VALUE = ".*colspan *: *(.*);?"
+""" The colspan regex value """
+
+BLOCK_REGEX = re.compile(BLOCK_REGEX_VALUE, re.UNICODE)
+""" The block regex """
+
+OPTIONS_REGEX = re.compile(OPTIONS_REGEX_VALUE, re.UNICODE)
+""" The options regex """
+
+CLASS_REGEX = re.compile(CLASS_REGEX_VALUE, re.UNICODE)
+""" The class regex """
+
+COLSPAN_REGEX = re.compile(COLSPAN_REGEX_VALUE, re.UNICODE)
+""" The colspan regex """
+
 ROW_WIDTH = 100.0
 """ The percent value of the width taken up by each row """
 
 ROW_HEIGHT = 11.0
 """ The percent value of the height taken up by each row """
+
+PERCENTAGE_FACTOR = 100
+""" The percentage factor """
 
 HORIZONTAL_SPACING  = 1.0
 """ The horizontal spacing between blocks """
@@ -64,6 +91,9 @@ SHADOW_DELTA_X = 0.5
 
 SHADOW_DELTA_Y = 0.5
 """ The y delta to apply to the drop shadow """
+
+TEXT_PADDING = 2
+""" The padding in percentage to apply to the text """
 
 class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagramExtension):
     """
@@ -117,18 +147,6 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
         # initializes the baseline y
         baseline_y = VERTICAL_SPACING
 
-        # creates the block regular expression
-        block_regular_expression = re.compile("\[([\w, ]*)(\{[\w,\:,\; ]*\})*\]+")
-
-        # options regular expression
-        options_regular_expression = re.compile("\{(.*)\}")
-
-        # class regular expression
-        class_regular_expression = re.compile("class *: *(\w*);?")
-
-        # colspan regular expression
-        colspan_regular_expression = re.compile(".*colspan *: *(.*);?")
-
         # the block matrix
         blocks = []
 
@@ -140,7 +158,7 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
             # initializes the list of row blocks
             row_blocks = []
 
-            block_regular_expression_matches = block_regular_expression.finditer(row)
+            block_regular_expression_matches = BLOCK_REGEX.finditer(row)
 
             for block_regular_expression_match in block_regular_expression_matches:
                 block_name =  block_regular_expression_match.group(1)
@@ -150,19 +168,19 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
                 colspan = None
 
                 if block_options_string:
-                    options_regular_expression_match = options_regular_expression.match(block_options_string)
+                    options_regular_expression_match = OPTIONS_REGEX.match(block_options_string)
 
-                    if not options_regular_expression:
+                    if not options_regular_expression_match:
                         raise
 
                     options_string = options_regular_expression_match.group(1)
 
                     if options_string:
-                        class_regular_expression_match = class_regular_expression.match(options_string)
+                        class_regular_expression_match = CLASS_REGEX.match(options_string)
                         if class_regular_expression_match:
                             style_class = class_regular_expression_match.group(1)
 
-                        colspan_regular_expression_match = colspan_regular_expression.match(options_string)
+                        colspan_regular_expression_match = COLSPAN_REGEX.match(options_string)
                         if colspan_regular_expression_match:
                             colspan = colspan_regular_expression_match.group(1)
 
@@ -231,7 +249,7 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
                 block_width = float(colspan) * min_block_width
 
                 # converts the fraction to percentage
-                block_width = (block_width / ROW_WIDTH) * 100
+                block_width = (block_width / ROW_WIDTH) * PERCENTAGE_FACTOR
 
                 # determines the height for the current block
                 block_height = ROW_HEIGHT
@@ -263,7 +281,7 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
         text_x = x + (width / 2)
 
         # calculates the text y
-        text_y = y + (height / 2) + 1
+        text_y = y + (height / 2) + TEXT_PADDING
 
         # calculates the shadow x
         shadow_x = x + SHADOW_DELTA_X
