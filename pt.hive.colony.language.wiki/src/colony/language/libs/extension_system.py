@@ -274,7 +274,7 @@ class ExtensionManager:
         """
 
         # retrieves the logger
-        logger = logging.getLogger(DEFAULT_LOGGER + str(self.uid))
+        logger = logging.getLogger(DEFAULT_LOGGER + self.uid)
 
         # sets the logger level
         logger.setLevel(log_level)
