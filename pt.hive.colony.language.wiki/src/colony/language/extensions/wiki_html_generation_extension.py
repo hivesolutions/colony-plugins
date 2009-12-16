@@ -42,11 +42,10 @@ import sys
 
 import os.path
 
-import libs.extension_system
-
 import wiki_parser
-import wiki_html_generation.wiki_html_generation
 import wiki_extension_system
+
+import wiki_html_generation.wiki_html_generation
 
 GENERATION_TYPE = "html"
 """ The generation type """
