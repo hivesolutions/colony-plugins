@@ -147,7 +147,7 @@ if __name__ == "__main__":
     start_time = time.time()
 
     # generates the wiki
-    wiki_generator.generate_wiki(file_path, target_path, verbose, debug)
+    wiki_generator.generate_wiki(file_path, target_path)
 
     # retrieves the end time
     end_time = time.time()
