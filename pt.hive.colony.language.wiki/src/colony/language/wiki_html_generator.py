@@ -40,7 +40,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import sys
 import time
-import getopt
 import logging
 
 import os.path
@@ -49,14 +48,9 @@ import libs.extension_system
 
 import wiki_parser
 import wiki_visitor
+import wiki_generator
 import wiki_html_generation
 import wiki_extension_system
-
-DEFAULT_LOGGER_NAME = "wiki_generate"
-""" The default logger name """
-
-DEFAULT_TARGET_PATH = "generated"
-""" The default target path """
 
 WIKI_EXTENSIONS = ("wiki", "wik")
 """ The valid wiki extensions list """
@@ -76,9 +70,9 @@ BASE_FILES = {"resources/css/main.css" : "/css",
               "resources/images/code_note.gif" : "/images"}
 """ The base files """
 
-class WikiGenerator:
+class WikiHtmlGenerator(wiki_generator.WikiGenerator):
     """
-    The wiki generator class.
+    The wiki html generator class.
     """
 
     extension_manager = None
@@ -90,13 +84,12 @@ class WikiGenerator:
     configuration_map = {}
     """ The configuration map """
 
-    logger = None
-    """ The logger """
-
-    def __init__(self):
+    def __init__(self, logger = logging):
         """
         Constructor of the class.
         """
+
+        wiki_generator.WikiGenerator.__init__(self, logger)
 
         # creates a new extension manager
         self.extension_manager = libs.extension_system.ExtensionManager(["./extensions"])
@@ -106,9 +99,6 @@ class WikiGenerator:
 
         # creates the configuration map
         self.configuration_map = {"auto_numbered_sections" : True, "generate_footer" : True}
-
-        # sets the logger
-        self.logger = _get_logger()
 
         self.extra_resources_paths_list = []
 
@@ -179,7 +169,7 @@ class WikiGenerator:
                 full_target_name = full_target_path + "/" + partial_name
 
                 # prints an info message
-                logger.info("Processing: %s" % full_file_path)
+                self.logger.info("Processing: %s" % full_file_path)
 
                 # opens the wiki file
                 wiki_file = open(full_file_path)
@@ -298,96 +288,3 @@ class WikiGenerator:
 
             # closes the target file
             target_file.close()
-
-def _start_logger(verbose = False, debug = False):
-    """
-    Starts the logger for the given parameters.
-
-    @type verbose: bool
-    @param verbose: If the log is going to be of type verbose.
-    @type debug: bool
-    @param debug: If the log is going to be of type debug.
-    @rtype: Logger
-    @return: The logger.
-    """
-
-    # retrieves the logger
-    logger = logging.getLogger(DEFAULT_LOGGER_NAME)
-
-    # in case debug is active
-    if debug:
-        # sets the logger level to debug
-        logger.setLevel(logging.DEBUG)
-
-    # in case verbose is active
-    if verbose:
-        # sets the logger level to info
-        logger.setLevel(logging.INFO)
-
-    # returns the logger
-    return logger
-
-def _get_logger():
-    """
-    Retrieves the logger.
-
-    @rtype: Logger
-    @return: The logger.
-    """
-
-    # retrieves the logger
-    logger = logging.getLogger(DEFAULT_LOGGER_NAME)
-
-    # returns the logger
-    return logger
-
-if __name__ == "__main__":
-    # starts the verbose flag as false
-    verbose = False
-
-    # starts the debug flag as false
-    debug = False
-
-    # start the file path value as None
-    file_path = None
-
-    # start the target path as None
-    target_path = DEFAULT_TARGET_PATH
-
-    # retrieves the argument options
-    opts, args = getopt.getopt(sys.argv[1:], "vdf:t:", ["verbose", "debug", "file=", "target="])
-
-    # iterates over all the given options
-    for option, value in opts:
-        if option in ("-v", "--verbose"):
-            verbose = True
-        elif option in ("-d", "--debug"):
-            debug = True
-        elif option in ("-f", "--file"):
-            file_path = value
-        elif option in ("-y", "--target"):
-            target_path = value
-
-    # starts the logger for the given parameters
-    logger = _start_logger(verbose, debug)
-
-    # creates the wiki generator
-    wiki_generator = WikiGenerator()
-
-    # retrieves the start time
-    start_time = time.time()
-
-    # generates the wiki
-    wiki_generator.generate_wiki(file_path, target_path, verbose, debug)
-
-    # retrieves the end time
-    end_time = time.time()
-
-    # calculates the time difference
-    time_difference = end_time - start_time
-
-    # rounds the time difference
-    time_difference_rounded = round(time_difference, 2)
-
-    # prints an info message
-    logger.info("Processing took: %s seconds" % time_difference_rounded)
