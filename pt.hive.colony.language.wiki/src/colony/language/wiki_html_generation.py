@@ -48,6 +48,9 @@ import wiki_ast
 import wiki_visitor
 import wiki_exceptions
 
+DEFAULT_RESOURCES_PATH = "resources"
+""" The default resources path """
+
 DOCTYPE_HEADER_VALUE = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:svg=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">"
 """ The doctype header value """
 
@@ -550,8 +553,11 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
 
             self._write("/>")
 
+            # creates the resource path
+            resource_path = DEFAULT_RESOURCES_PATH + "/" + node.image_source
+
             # adds the image resource to the resources paths list
-            self.resources_paths_list.append(node.image_source)
+            self.resources_paths_list.append(resource_path)
 
     @wiki_visitor._visit(wiki_ast.LinkNode)
     def visit_link_node(self, node):
