@@ -78,9 +78,6 @@ def t_ATTRIBUTION(t):
 
 def t_COMMENT(t):
     r"<!--(.|\n)*?-->"
-    # sets the token type
-    t.type = "COMMENT"
-
     return t
 
 def t_NAME(t):
