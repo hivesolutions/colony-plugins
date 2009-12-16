@@ -797,7 +797,7 @@ class TagNode(StatementNode):
         index = 0
 
         # start the temporary index
-        index_temporary = 0;
+        index_temporary = 0
 
         # iterates over the contents
         for content in contents:
