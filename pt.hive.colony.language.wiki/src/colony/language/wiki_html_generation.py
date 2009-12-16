@@ -72,6 +72,9 @@ GENERATE_FOOTER_VALUE = "generate_footer"
 AUTO_NUMBERED_SECTIONS_VALUE = "auto_numbered_sections"
 """ The auto numbered sections value """
 
+ESCAPE_NAME_VALUE = "escape_name"
+""" The escape name value """
+
 AVAILABLE_TAG_NAMES = ("del",)
 """ The available tag names """
 
@@ -471,10 +474,15 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
     @wiki_visitor._visit(wiki_ast.NameNode)
     def visit_name_node(self, node):
         if self.visit_index == 0:
-            # escapes the name value
-            name_value_replaced = self.escape_string_value(node.name_value)
+            # retrieves the name value
+            name_value = node.name_value
 
-            self._write(name_value_replaced)
+            # in case the name value is to be escaped
+            if self.configuration_map.get(ESCAPE_NAME_VALUE, True):
+                # escapes the name value
+                name_value = self.escape_string_value(node.name_value)
+
+            self._write(name_value)
 
     @wiki_visitor._visit(wiki_ast.NewLineNode)
     def visit_new_line_node(self, node):
@@ -667,6 +675,9 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
         # strips the string value
         string_value = string_value.strip()
 
+        # replaces the ands in the string value
+        string_value = string_value.replace("&", "&amp;")
+
         # replaces the less than characters in the string value
         string_value = string_value.replace("<", "&lt;")
 
@@ -678,9 +689,6 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
 
         # replaces the spaces in the string value
         string_value = string_value.replace(" ", "&nbsp;")
-
-        # replaces the ands in the string value
-        string_value = string_value.replace("&", "&amp;")
 
         # returns the string value
         return string_value
