@@ -122,8 +122,8 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
         # options regular expression
         options_regular_expression = re.compile("\{(.*)\}")
 
-        # bg regular expression
-        bg_regular_expression = re.compile("bg:(\w*);*")
+        # class regular expression
+        class_regular_expression = re.compile("class:(\w*);*")
 
         # colspan regular expression
         colspan_regular_expression = re.compile("colspan:(.*);*")
@@ -145,7 +145,7 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
                 block_name =  block_regular_expression_match.group(1)
                 block_options_string = block_regular_expression_match.group(2)
 
-                bg = None
+                style_class = None
                 colspan = None
 
                 if block_options_string:
@@ -157,15 +157,15 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
                     options_string = options_regular_expression_match.group(1)
 
                     if options_string:
-                        bg_regular_expression_match = bg_regular_expression.match(options_string)
-                        if bg_regular_expression_match:
-                            bg = bg_regular_expression_match.group(1)
+                        class_regular_expression_match = class_regular_expression.match(options_string)
+                        if class_regular_expression_match:
+                            style_class = class_regular_expression_match.group(1)
 
                         colspan_regular_expression_match = colspan_regular_expression.match(options_string)
                         if colspan_regular_expression_match:
                             colspan = colspan_regular_expression_match.group(1)
 
-                    options = {"bg" : bg,
+                    options = {"class" : style_class,
                                "colspan": colspan}
                 else:
                     options = None
@@ -216,10 +216,10 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
             row_block_title, row_block_options = row_block
 
             if row_block_options:
-                style = row_block_options["bg"]
+                style_class = row_block_options["class"]
                 colspan = row_block_options["colspan"]
             else:
-                style = "dark"
+                style_class = None
                 colspan = None
 
             if colspan:
@@ -243,7 +243,7 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
 
             if row_block_title and not row_block_title == "":
                 # generates the block
-                block_graphics_elements = self.get_block_graphics_elements(baseline_x, baseline_y, block_width, block_height, row_block_title, {"style" : style})
+                block_graphics_elements = self.get_block_graphics_elements(baseline_x, baseline_y, block_width, block_height, row_block_title, {"class" : style_class})
 
                 # appends the generated block graphics elements to the row graphics elements
                 row_graphics_elements.extend(block_graphics_elements)
@@ -271,43 +271,16 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
         shadow_y = y + SHADOW_DELTA_Y
 
         # retrieves the block style from the options
-        style = options["style"]
-
-        # determines the font size
-        font_size = "1.0em"
-
-        # determines the color according to the style
-        # @todo: extract styles to css
-        if style == "white":
-            rect_fill_color = "#f1f2f1"
-            text_fill_color = "#424242"
-        elif style == "dark":
-            rect_fill_color = "#424242"
-            text_fill_color = "#f1f2f1"
-        elif style == "orange":
-            rect_fill_color = "orange"
-            text_fill_color = "black"
-        elif style == "blue":
-            rect_fill_color = "#417dd6"
-            text_fill_color = "white"
-        elif style == "beige":
-            rect_fill_color = "#feffd7"
-            text_fill_color = "black"
-        else:
-            rect_fill_color = "#feffd7"
-            text_fill_color = "black"
+        style_class = options["class"]
 
         # draws the block shadow rectangle
-        shadow_rect = self.create_rectangle(shadow_x, shadow_y, width, height, {"fill" : "grey", "filter" : "url(#shadow-filter)"})
+        shadow_rect = self.create_rectangle(shadow_x, shadow_y, width, height, {"class" : "shadow"})
 
         # draws the block rectangle
-        rect = self.create_rectangle(x, y, width, height, {"fill" : rect_fill_color, "stroke_width" : "0.5", "stroke" : "rgb(42,42,42)"})
+        rect = self.create_rectangle(x, y, width, height, {"class" : style_class})
 
         # draws the block text
-        text = self.create_text(text_x, text_y, title, {"font_family" : "Verdana",
-                                                        "font_size" : font_size,
-                                                        "fill" : text_fill_color,
-                                                        "text_anchor" : "middle"})
+        text = self.create_text(text_x, text_y, title, {"class" : style_class})
 
         # adds the shadow rectangle to the block graphics elements
         block_graphics_elements.append(shadow_rect)

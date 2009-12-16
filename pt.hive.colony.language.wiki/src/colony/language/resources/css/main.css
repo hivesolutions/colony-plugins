@@ -557,3 +557,78 @@ h5:hover > a.headerlink {
     font-size: 95%;
     font-weight: bold;
 }
+
+.diagram {
+    font-family: Verdana;
+    font-size: 1.0em;
+}
+
+.diagram .block-diagram {
+    fill: #424242;
+}
+
+.diagram .block-diagram .shadow {
+    fill: grey;
+}
+
+.diagram .block-diagram text {
+    text-anchor: middle;
+    fill: white;
+}
+
+.diagram .block-diagram .dark {
+    fill: #424242;
+}
+
+.diagram .block-diagram text.dark {
+    fill: white;
+}
+
+.diagram .block-diagram .white {
+    fill: #f1f2f1;
+}
+
+.diagram .block-diagram text.white {
+    fill: #424242;
+}
+
+.diagram .block-diagram .dark {
+    fill: #424242;
+}
+
+.diagram .block-diagram text.dark {
+    fill: #f1f2f1;
+}
+
+.diagram .block-diagram .orange {
+    fill: orange;
+}
+
+.diagram .block-diagram text.orange {
+    fill: black;
+}
+
+.diagram .block-diagram .dark {
+    fill: #424242;
+}
+
+.diagram .block-diagram text.dark {
+    fill: #f1f2f1;
+}
+
+.diagram .block-diagram .blue {
+    fill: #417dd6;
+    color: white;
+}
+
+.diagram .block-diagram text.blue {
+    fill: white;
+}
+
+.diagram .block-diagram .beige {
+    fill: #feffd7;
+}
+
+.diagram .block-diagram text.beige {
+    fill: black;
+}

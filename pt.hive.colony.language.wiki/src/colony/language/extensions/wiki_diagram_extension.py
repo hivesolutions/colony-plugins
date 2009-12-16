@@ -135,10 +135,10 @@ class WikiDiagramExtension(wiki_extension_system.WikiExtension):
         node_attributes_map_keys = node_attributes_map.keys()
 
         # retrieves the type
-        node_tag_type = node_attributes_map.get("type", "none")
+        diagram_type = node_attributes_map.get("type", "none")
 
         # in case the diagram type is not specified
-        if not node_tag_type:
+        if not diagram_type:
             # raisers the invalid tag name exception
             raise wiki_exceptions.InvalidTagName("tag name is not valid: " + node_tag_name)
 
@@ -146,7 +146,7 @@ class WikiDiagramExtension(wiki_extension_system.WikiExtension):
         node_tag_title = node_attributes_map.get("title", "none")
 
         # retrieves the diagram extensions for the given tag
-        node_tag_diagram_extensions = [extension for extension in diagram_extensions if extension.get_diagram_type() == node_tag_type]
+        node_tag_diagram_extensions = [extension for extension in diagram_extensions if extension.get_diagram_type() == diagram_type]
 
         # writes the start div diagram tag
         string_buffer.write("<div class=\"diagram\" style=\"display: block;\">")
@@ -156,8 +156,6 @@ class WikiDiagramExtension(wiki_extension_system.WikiExtension):
 
         # generates the diagrams using the available extensions
         for node_tag_diagram_extension in node_tag_diagram_extensions:
-            #string_buffer.write(node_tag_diagram_extension.generate_diagram(contents))
-
             # retrieves the tokens list
             graphics_elements = node_tag_diagram_extension.get_graphics_elements(contents)
 
@@ -167,8 +165,11 @@ class WikiDiagramExtension(wiki_extension_system.WikiExtension):
             # sets the visitor in the vector graphics
             vector_graphics.set_visitor(visitor)
 
+            # diagram type style class
+            diagram_type_style_class = "{0}-diagram".format(diagram_type)
+
             # starts the graphics
-            open_graphics_string = vector_graphics.open_graphics({"width" : 600, "height" : 300})
+            open_graphics_string = vector_graphics.open_graphics({"class" : diagram_type_style_class, "width" : 600, "height" : 300})
 
             # writes the open graphics tag
             string_buffer.write(open_graphics_string)
@@ -239,11 +240,14 @@ class ScalableVectorGraphics(AbstractVectorGraphics):
         # retrieves the height attribute
         height = graphics_attributes["height"]
 
+        # retrieves the class attribute
+        style_class = graphics_attributes["class"]
+
         if self.graphics_open:
             return
 
         # creates the string value for the open graphics
-        string_value = "<svg:svg version=\"1.1\" baseProfile=\"full\" width=\"{0}px\" height=\"{1}px\">".format(width, height)
+        string_value = "<svg:svg class=\"{0}\" version=\"1.1\" baseProfile=\"full\" width=\"{1}px\" height=\"{2}px\">".format(style_class, width, height)
 
         # signals the graphics tag is open
         self.graphics_open = True
@@ -279,8 +283,11 @@ class ScalableVectorGraphics(AbstractVectorGraphics):
         height = graphics_attributes["height"]
         options = graphics_attributes["options"]
 
+        # retrieves the style class
+        style_class = options.get("class", "")
+
         # @todo: build the element string gradually
-        rectangle_element_string = "<svg:rect x=\"{0}%\" y=\"{1}%\" width=\"{2}%\" height=\"{3}%\" fill=\"{4}\" stroke=\"{5}\" stroke-width=\"{6}\"/>".format(x, y, width, height, options.get("fill", ""), options.get("stroke", ""), options.get("stroke_width", ""))
+        rectangle_element_string = "<svg:rect class=\"{0}\" x=\"{1}%\" y=\"{2}%\" width=\"{3}%\" height=\"{4}%\"/>".format(style_class, x, y, width, height)
 
         return rectangle_element_string
 
@@ -291,8 +298,11 @@ class ScalableVectorGraphics(AbstractVectorGraphics):
         escaped_text = self.visitor.escape_string_value(text)
         options = graphics_attributes["options"]
 
+        # retrieves the style class
+        style_class = options.get("class", "")
+
         # @todo: build the element string gradually
-        text_element_string = "<svg:text x=\"{0}%\" y=\"{1}%\" font-family=\"{2}\" font-size=\"{3}\" fill=\"{4}\" text-anchor=\"{5}\">{6}</svg:text>".format(x, y, options.get("font_family", ""), options.get("font_size", ""), options.get("fill", ""), options.get("text_anchor", ""), escaped_text)
+        text_element_string = "<svg:text class=\"{0}\" x=\"{1}%\" y=\"{2}%\">{3}</svg:text>".format(style_class, x, y, escaped_text)
 
         return text_element_string
 
