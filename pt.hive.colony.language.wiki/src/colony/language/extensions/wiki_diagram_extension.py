@@ -91,7 +91,7 @@ class WikiDiagramExtension(wiki_extension_system.WikiExtension):
         @param logger: The extension manager logger.
         """
 
-        wiki_extension_system.WikiExtension.__init__(self, manager)
+        wiki_extension_system.WikiExtension.__init__(self, manager, logger)
 
         # creates a new extension manager
         self.extension_manager = libs.extension_system.ExtensionManager(["./extensions/wiki_diagram/extensions"])
