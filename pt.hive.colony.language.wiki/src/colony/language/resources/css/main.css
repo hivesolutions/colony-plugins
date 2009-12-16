@@ -399,6 +399,7 @@ h5:hover > a.headerlink {
     background: #eeeeee url(../images/code_note.gif) no-repeat scroll 0px 0px;
     padding: 18px 52px 18px 52px;
     font-size: 120%;
+    line-height: 100%;
     overflow: auto;
 }
 
