@@ -84,6 +84,9 @@ class WikiGenerator:
     extension_manager = None
     """ The extension manager """
 
+    extra_resources_paths_list = []
+    """ The extra resources paths list """
+
     configuration_map = {}
     """ The configuration map """
 
@@ -106,6 +109,8 @@ class WikiGenerator:
 
         # sets the logger
         self.logger = _get_logger()
+
+        self.extra_resources_paths_list = []
 
     def generate_wiki(self, file_path, target_path, verbose, debug):
         """
@@ -135,6 +140,9 @@ class WikiGenerator:
 
         # copies the base files
         self._copy_base_files(full_target_path)
+
+        # copies the extra files
+        self._copy_extra_files(file_path, full_target_path)
 
     def generate_wiki_file(self, args, file_path, names):
         """
@@ -200,6 +208,12 @@ class WikiGenerator:
                 # retrieves the string buffer from the generation visitor
                 string_buffer = generation_visitor.get_string_buffer()
 
+                # retrieves the resources paths list
+                resources_paths_list = generation_visitor.get_resources_paths_list()
+
+                # extends the extra resources paths list with the resources paths list
+                self.extra_resources_paths_list.extend(resources_paths_list)
+
                 # retrieves the html value from the string buffer
                 html_value = string_buffer.getvalue()
 
@@ -225,8 +239,24 @@ class WikiGenerator:
             # retrieves the base target path
             base_target_path = BASE_FILES[base_file_path]
 
-            # copes the base file to the target path
+            # copies the base file to the target path
             self._copy_files((base_file_path,), target_path + base_target_path)
+
+    def _copy_extra_files(self, base_path, target_path):
+        """
+        Copies the extra files to the given target path.
+
+        @type base_path: String
+        @param base_path: The base path.
+        @type target_path: String
+        @param target_path: The target path.
+        """
+
+        # generates the full extra resources paths list
+        full_extra_resources_paths_list = [base_path + "/" + extra_resources_path for extra_resources_path in self.extra_resources_paths_list]
+
+        # copies the extra files to the target path
+        self._copy_files(full_extra_resources_paths_list, target_path)
 
     def _copy_files(self, file_paths, target_path):
         """

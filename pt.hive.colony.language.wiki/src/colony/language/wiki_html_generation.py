@@ -129,6 +129,9 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
     current_section_string = "none"
     """ The current section string """
 
+    resources_paths_list = []
+    """ The resources paths list """
+
     section_values_map = {}
     """ The sections values map """
 
@@ -143,6 +146,9 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
 
         # creates the string buffer
         self.string_buffer = libs.string_buffer_util.StringBuffer()
+
+        # start the resources paths list
+        self.resources_paths_list = []
 
         # starts the section values map
         self.section_values_map = {}
@@ -240,6 +246,26 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
         """
 
         self.extension_manager = extension_manager
+
+    def get_resources_paths_list(self):
+        """
+        Retrieves the configuration map.
+
+        @rtype: List
+        @return: The resources paths list.
+        """
+
+        return self.resources_paths_list
+
+    def set_resources_paths_list(self, resources_paths_list):
+        """
+        Sets the resources paths list.
+
+        @type resources_paths_list: List
+        @param resources_paths_list: The resources paths list.
+        """
+
+        self.resources_paths_list = resources_paths_list
 
     def get_configuration_map(self):
         """
@@ -524,6 +550,9 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
 
             self._write("/>")
 
+            # adds the image resource to the resources paths list
+            self.resources_paths_list.append(node.image_source)
+
     @wiki_visitor._visit(wiki_ast.LinkNode)
     def visit_link_node(self, node):
         pass
@@ -702,6 +731,7 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
         self._write("<hr/>")
         self._write("<dl>")
 
+        # iterates over all the index keys in the index keys list
         for index_key in INDEX_KEYS_LIST:
             self._write("<dt>" + index_key + "</dt>")
             index_value = INDEX_MAP[index_key]
