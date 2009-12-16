@@ -195,7 +195,7 @@ class WikiGenerator:
                 html_value = string_buffer.getvalue()
 
                 # opens the html file
-                html_file = open(full_target_name + ".html", "w+")
+                html_file = open(full_target_name + ".xhtml", "w+")
 
                 # writes the html value to the html file
                 html_file.write(html_value)
@@ -304,4 +304,4 @@ if __name__ == "__main__":
     # rounds the time difference
     time_difference_rounded = round(time_difference, 2)
 
-    logging.error("Processing took: %s secconds" % time_difference_rounded)
+    logging.error("Processing took: %s seconds" % time_difference_rounded)

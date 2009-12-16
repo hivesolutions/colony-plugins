@@ -48,10 +48,10 @@ import wiki_ast
 import wiki_visitor
 import wiki_exceptions
 
-DOCTYPE_HEADER_VALUE = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">"
+DOCTYPE_HEADER_VALUE = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:svg=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">"
 """ The doctype header value """
 
-META_HEADER_VALUE = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">"
+META_HEADER_VALUE = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />"
 """ The meta header value """
 
 CSS_HEADER_VALUE = "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/main.css\" />"
@@ -75,7 +75,7 @@ AUTO_NUMBERED_SECTIONS_VALUE = "auto_numbered_sections"
 AVAILABLE_TAG_NAMES = ("del",)
 """ The available tag names """
 
-INDEX_KEYS_LIST = ("Introduction", "Tutorials", "Standards & Practices", "Design documents", "How-tos", "Demos")
+INDEX_KEYS_LIST = ("Introduction", "Tutorials", "Standards &amp; Practices", "Design documents", "How-tos", "Demos")
 """ The index keys list """
 
 INDEX_MAP = {"Introduction" : {"order" : ["What is Colony?", "What Can I Build With Colony?", "How Can I Get Started?", "How Can I Help?", "Frequently Asked Questions"],
@@ -88,7 +88,7 @@ INDEX_MAP = {"Introduction" : {"order" : ["What is Colony?", "What Can I Build W
                             "items" : {"Colony Hello World Tutorial" : "documentation_tutorial_colony_hello_world.html",
                                        "Colony Web Hello World Tutorial" : "documentation_tutorial_colony_web_hello_world.html",
                                        "Colony Web MVC Hello World Tutorial" : "documentation_tutorial_colony_web_mvc_hello_world.html"}},
-             "Standards & Practices" : {"order" : ["Colony Style Guide"],
+             "Standards &amp; Practices" : {"order" : ["Colony Style Guide"],
                                         "items" :  {"Colony Style Guide" : "documentation_colony_style_guide.html"}},
              "Design documents" : {"order" : ["Colony Plugin Framework", "Colony Web Plugin Framework", "Colony Web MVC Framework"],
                                    "items" : {"Colony Plugin Framework" : "documentation_colony_plugin_framework.html",
@@ -309,7 +309,7 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
                 self._write("<a href=\"" + INDEX_PAGE + "\">")
                 self._write("<img src=\"images/colony_logo.png\"/>")
                 self._write("</a>")
-                self._write("</div")
+                self._write("</div>")
                 self._write("<div class=\"menu-contents\">")
                 self._write("<ul>")
                 self._write("<li class=\"menu\"><a href=\"" + INDEX_PAGE + "\">Home</a></li>")
@@ -321,8 +321,8 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
                 self._write("</li>")
                 self._write("<li class=\"menu\"><a href=\"documentation_how_can_i_help.html\">Contribute</a></li>")
                 self._write("<li class=\"menu\"><a href=\"documentation_credits.html\">Credits</a></li>")
-                self._write("</ul")
-                self._write("</div")
+                self._write("</ul>")
+                self._write("</div>")
                 self._write("</div>")
                 self._write("</div>")
 
@@ -369,6 +369,9 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
             # in case the simple parse is not valid
             if not self.configuration_map.get(SIMPLE_PARSE_VALUE, False):
                 self._write("</body>")
+
+                # closes the html
+                self._write("</html>")
 
     @wiki_visitor._visit(wiki_ast.StatementsNode)
     def visit_statements_node(self, node):
