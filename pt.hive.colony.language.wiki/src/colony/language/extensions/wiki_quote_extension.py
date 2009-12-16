@@ -121,9 +121,9 @@ class WikiQuoteExtension(wiki_extension_system.WikiExtension):
 
         # in case the author is defined
         if author:
-            # writes the start p quote tag
+            # writes the start div author tag
             string_buffer.write("<div class=\"author\">")
-            string_buffer.write(author)
+            string_buffer.write("- " + author)
             string_buffer.write("</div>")
 
         # writes the end div quote tag

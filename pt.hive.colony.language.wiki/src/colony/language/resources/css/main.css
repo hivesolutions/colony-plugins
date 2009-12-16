@@ -356,12 +356,16 @@ h5:hover > a.headerlink {
     background: #e5e5e5 url(../images/quote_note.gif) no-repeat scroll 0px 0px;
     padding: 18px 52px 18px 52px;
     line-height: 1.5em;
+    font-family: "Hoefler Text", Constantia, Cambria, Georgia, serif;
+    font-size: 115%;
     font-style: italic;
 }
 
 .quote .author {
     text-align: right;
     letter-spacing: 0.075em;
+    font-size: 90%;
+    font-weight: bold;
 }
 
 .command {
