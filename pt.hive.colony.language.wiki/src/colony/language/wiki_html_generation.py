@@ -79,28 +79,28 @@ INDEX_KEYS_LIST = ("Introduction", "Tutorials", "Standards &amp; Practices", "De
 """ The index keys list """
 
 INDEX_MAP = {"Introduction" : {"order" : ["What is Colony?", "What Can I Build With Colony?", "How Can I Get Started?", "How Can I Help?", "Frequently Asked Questions"],
-                               "items" : {"What is Colony?" : "documentation_what_is_colony.html",
-                                          "What Can I Build With Colony?" : "documentation_what_can_i_build_with_colony.html",
-                                          "How Can I Get Started?" : "documentation_how_can_i_get_started.html",
-                                          "How Can I Help?" : "documentation_how_can_i_help.html",
-                                          "Frequently Asked Questions" : "documentation_frequently_asked_questions.html"}},
+                               "items" : {"What is Colony?" : "documentation_what_is_colony.xhtml",
+                                          "What Can I Build With Colony?" : "documentation_what_can_i_build_with_colony.xhtml",
+                                          "How Can I Get Started?" : "documentation_how_can_i_get_started.xhtml",
+                                          "How Can I Help?" : "documentation_how_can_i_help.xhtml",
+                                          "Frequently Asked Questions" : "documentation_frequently_asked_questions.xhtml"}},
              "Tutorials" : {"order" : ["Colony Hello World Tutorial", "Colony Web Hello World Tutorial", "Colony Web MVC Hello World Tutorial"],
-                            "items" : {"Colony Hello World Tutorial" : "documentation_tutorial_colony_hello_world.html",
-                                       "Colony Web Hello World Tutorial" : "documentation_tutorial_colony_web_hello_world.html",
-                                       "Colony Web MVC Hello World Tutorial" : "documentation_tutorial_colony_web_mvc_hello_world.html"}},
+                            "items" : {"Colony Hello World Tutorial" : "documentation_tutorial_colony_hello_world.xhtml",
+                                       "Colony Web Hello World Tutorial" : "documentation_tutorial_colony_web_hello_world.xhtml",
+                                       "Colony Web MVC Hello World Tutorial" : "documentation_tutorial_colony_web_mvc_hello_world.xhtml"}},
              "Standards &amp; Practices" : {"order" : ["Colony Style Guide"],
-                                        "items" :  {"Colony Style Guide" : "documentation_colony_style_guide.html"}},
+                                        "items" :  {"Colony Style Guide" : "documentation_colony_style_guide.xhtml"}},
              "Design documents" : {"order" : ["Colony Plugin Framework", "Colony Web Plugin Framework", "Colony Web MVC Framework"],
-                                   "items" : {"Colony Plugin Framework" : "documentation_colony_plugin_framework.html",
-                                              "Colony Web Plugin Framework" : "documentation_colony_web_plugin_framework.html",
-                                              "Colony Web MVC Framework" : "documentation_colony_web_mvc_framework.html"}},
+                                   "items" : {"Colony Plugin Framework" : "documentation_colony_plugin_framework.xhtml",
+                                              "Colony Web Plugin Framework" : "documentation_colony_web_plugin_framework.xhtml",
+                                              "Colony Web MVC Framework" : "documentation_colony_web_mvc_framework.xhtml"}},
              "How-tos" : {"order" : [],
                           "items" : {}},
              "Demos" : {"order" : [],
                         "items" : {}}}
 """ The index map """
 
-INDEX_PAGE = "documentation_index.html"
+INDEX_PAGE = "documentation_index.xhtml"
 """ The index page """
 
 class HtmlGenerationVisitor(wiki_visitor.Visitor):
@@ -319,8 +319,8 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
                 self._generate_menu_index()
 
                 self._write("</li>")
-                self._write("<li class=\"menu\"><a href=\"documentation_how_can_i_help.html\">Contribute</a></li>")
-                self._write("<li class=\"menu\"><a href=\"documentation_credits.html\">Credits</a></li>")
+                self._write("<li class=\"menu\"><a href=\"documentation_how_can_i_help.xhtml\">Contribute</a></li>")
+                self._write("<li class=\"menu\"><a href=\"documentation_credits.xhtml\">Credits</a></li>")
                 self._write("</ul>")
                 self._write("</div>")
                 self._write("</div>")
@@ -471,7 +471,10 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
     @wiki_visitor._visit(wiki_ast.NameNode)
     def visit_name_node(self, node):
         if self.visit_index == 0:
-            self._write(node.name_value)
+            # escapes the name value
+            name_value_replaced = self.escape_string_value(node.name_value)
+
+            self._write(name_value_replaced)
 
     @wiki_visitor._visit(wiki_ast.NewLineNode)
     def visit_new_line_node(self, node):
@@ -531,7 +534,7 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
     @wiki_visitor._visit(wiki_ast.InternalLinkNode)
     def visit_internal_link_node(self, node):
         if self.visit_index == 0:
-            self._write("<a class=\"internal\" href=\"" + node.link_value + ".html\">")
+            self._write("<a class=\"internal\" href=\"" + node.link_value + ".xhtml\">")
 
             # in case the statements node is not defined
             if not node.statements_node:
@@ -675,6 +678,9 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
 
         # replaces the spaces in the string value
         string_value = string_value.replace(" ", "&nbsp;")
+
+        # replaces the ands in the string value
+        string_value = string_value.replace("&", "&amp;")
 
         # returns the string value
         return string_value
