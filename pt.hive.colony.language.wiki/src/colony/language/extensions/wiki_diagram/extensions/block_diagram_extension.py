@@ -39,12 +39,13 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import re
 
-import libs.string_buffer_util
-
 import wiki_diagram.wiki_diagram_extension_system
 
 DIAGRAM_TYPE = "block"
 """ The diagram type """
+
+ROW_SPLITTER_VALUE = "/"
+""" The value for the row splitter string """
 
 ROW_WIDTH = 100.0
 """ The percent value of the width taken up by each row """
@@ -117,22 +118,22 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
         baseline_y = VERTICAL_SPACING
 
         # creates the block regular expression
-        block_regular_expression = re.compile("\[([\w, ]*)(\{[\w,\:,\;]*\})*\]+")
+        block_regular_expression = re.compile("\[([\w, ]*)(\{[\w,\:,\; ]*\})*\]+")
 
         # options regular expression
         options_regular_expression = re.compile("\{(.*)\}")
 
         # class regular expression
-        class_regular_expression = re.compile("class:(\w*);*")
+        class_regular_expression = re.compile("class *: *(\w*);?")
 
         # colspan regular expression
-        colspan_regular_expression = re.compile("colspan:(.*);*")
+        colspan_regular_expression = re.compile(".*colspan *: *(.*);?")
 
         # the block matrix
         blocks = []
 
         # retrieves the rows by splitting by comma
-        rows = contents.split(",")
+        rows = contents.split(ROW_SPLITTER_VALUE)
 
         # for each row
         for row in rows:

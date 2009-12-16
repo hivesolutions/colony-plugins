@@ -166,7 +166,7 @@ class WikiDiagramExtension(wiki_extension_system.WikiExtension):
             vector_graphics.set_visitor(visitor)
 
             # diagram type style class
-            diagram_type_style_class = "{0}-diagram".format(diagram_type)
+            diagram_type_style_class = diagram_type + "-diagram"
 
             # starts the graphics
             open_graphics_string = vector_graphics.open_graphics({"class" : diagram_type_style_class, "width" : 600, "height" : 300})
@@ -247,7 +247,7 @@ class ScalableVectorGraphics(AbstractVectorGraphics):
             return
 
         # creates the string value for the open graphics
-        string_value = "<svg:svg class=\"{0}\" version=\"1.1\" baseProfile=\"full\" width=\"{1}px\" height=\"{2}px\">".format(style_class, width, height)
+        string_value = "<svg:svg class=\"%s\" version=\"1.1\" baseProfile=\"full\" width=\"%f px\" height=\"%f px\">" % (style_class, width, height)
 
         # signals the graphics tag is open
         self.graphics_open = True
@@ -287,7 +287,7 @@ class ScalableVectorGraphics(AbstractVectorGraphics):
         style_class = options.get("class", "")
 
         # @todo: build the element string gradually
-        rectangle_element_string = "<svg:rect class=\"{0}\" x=\"{1}%\" y=\"{2}%\" width=\"{3}%\" height=\"{4}%\"/>".format(style_class, x, y, width, height)
+        rectangle_element_string = "<svg:rect class=\"%s\" x=\"%f\" y=\"%f\" width=\"%f\" height=\"%f\"/>" % (style_class, x, y, width, height)
 
         return rectangle_element_string
 
@@ -302,7 +302,7 @@ class ScalableVectorGraphics(AbstractVectorGraphics):
         style_class = options.get("class", "")
 
         # @todo: build the element string gradually
-        text_element_string = "<svg:text class=\"{0}\" x=\"{1}%\" y=\"{2}%\">{3}</svg:text>".format(style_class, x, y, escaped_text)
+        text_element_string = "<svg:text class=\"{%s}\" x=\"{%f} \" y=\"{%f}\">{%s}</svg:text>" % (style_class, x, y, escaped_text)
 
         return text_element_string
 
