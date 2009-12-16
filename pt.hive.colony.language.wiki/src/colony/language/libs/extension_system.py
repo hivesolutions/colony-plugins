@@ -43,6 +43,8 @@ import stat
 import inspect
 import logging
 
+import util
+
 DEFAULT_LOGGER = "default_messages"
 """ The default logger name """
 
@@ -181,6 +183,9 @@ class ExtensionManager:
     extension_class = Extension
     """ The extension class """
 
+    uid = None
+    """ The unique identification """
+
     logger = None
     """ The logger used """
 
@@ -226,6 +231,8 @@ class ExtensionManager:
     def __init__(self, extension_paths = None):
         self.extension_paths = extension_paths
 
+        self.uid = util.get_timestamp_uid()
+
         self.refered_modules = []
         self.loaded_extensions = []
         self.loaded_extensions_map = {}
@@ -267,7 +274,7 @@ class ExtensionManager:
         """
 
         # retrieves the logger
-        logger = logging.getLogger(DEFAULT_LOGGER)
+        logger = logging.getLogger(DEFAULT_LOGGER + str(self.uid))
 
         # sets the logger level
         logger.setLevel(log_level)
