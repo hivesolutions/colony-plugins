@@ -38,51 +38,79 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
-import logging
 
 import os.path
 
 import wiki_parser
-import wiki_generator
+import wiki_extension_system
+
+GENERATION_TYPE = "ast"
+""" The generation type """
 
 WIKI_EXTENSIONS = ("wiki", "wik")
 """ The valid wiki extensions list """
 
-class WikiAstGenerator(wiki_generator.WikiGenerator):
+class WikiAstGenerator(wiki_extension_system.WikiExtension):
     """
     The wiki ast generator class.
     """
 
-    parse_results_list = []
-    """ The parse results list """
+    id = "pt.hive.colony.language.wiki.extensions.ast_generation"
+    """ The extension id """
 
-    configuration_map = {}
-    """ The configuration map """
+    name = "Ast Documentation Generation Plugin"
+    """ The name of the extension """
 
-    def __init__(self, logger = logging):
+    short_name = "Ast Documentation Generation"
+    """ The short name of the extension """
+
+    description = "Extension for ast documentation generation"
+    """ The description of the extension """
+
+    version = "1.0.0"
+    """ The version of the extension """
+
+    capabilities = ["generation"]
+    """ The capabilities of the extension """
+
+    capabilities_allowed = []
+    """ The capabilities allowed by the extension """
+
+    dependencies = []
+    """ The dependencies of the extension """
+
+    def get_generation_type(self):
         """
-        Constructor of the class.
+        Retrieves the generation type.
+
+        @rtype: String
+        @return: The generation type.
         """
 
-        wiki_generator.WikiGenerator.__init__(self, logger)
+        return GENERATION_TYPE
 
-        # creates the parse results list
-        self.parse_results_list = []
-
-        # creates the configuration map
-        self.configuration_map = {}
-
-    def generate_wiki(self, file_path):
+    def generate_wiki(self, properties):
         """
         Generates the wiki structure for the given file path,
         and options.
 
-        @type file_path: String
-        @param file_path:  The file path to generate the wiki structure.
+        @type properties: Dictionary
+        @param properties:  The properties for wiki generation.
+        @rtype: Object
+        @return: The result of the wiki generation.
         """
 
+        # retrieves the file path
+        file_path = properties.get("file_path", None)
+
+        # creates the parse results list
+        parse_results_list = []
+
         # walks the file path
-        os.path.walk(file_path, self.generate_wiki_file, None)
+        os.path.walk(file_path, self.generate_wiki_file, (parse_results_list,))
+
+        # returns the parse results list
+        return parse_results_list
 
     def generate_wiki_file(self, args, file_path, names):
         """
@@ -96,8 +124,8 @@ class WikiAstGenerator(wiki_generator.WikiGenerator):
         @param names: The list of name for the current file path.
         """
 
-        # retrieves the full target path from the args
-        full_target_path, = args
+        # retrieves the parse results list from the args
+        parse_results_list, = args
 
         # iterates over all the names
         for name in names:
@@ -115,11 +143,8 @@ class WikiAstGenerator(wiki_generator.WikiGenerator):
                 # retrieves the partial name
                 partial_name = "".join(name_splitted[:-1])
 
-                # creates the full target name
-                full_target_name = full_target_path + "/" + partial_name
-
                 # prints an info message
-                self.logger.info("Processing: %s" % full_file_path)
+                self.info("Processing in ast: %s" % full_file_path)
 
                 # opens the wiki file
                 wiki_file = open(full_file_path)
@@ -137,4 +162,4 @@ class WikiAstGenerator(wiki_generator.WikiGenerator):
                 parse_result = wiki_parser.parser.parse(wiki_file_contents)
 
                 # adds the parse result to the parse results list
-                self.parse_results_list.append(parse_result)
+                parse_results_list.append(parse_result)

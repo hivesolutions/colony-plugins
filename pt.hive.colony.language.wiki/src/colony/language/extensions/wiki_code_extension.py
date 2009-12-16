@@ -82,15 +82,17 @@ class WikiCodeExtension(wiki_extension_system.WikiExtension):
     extension_manager = None
     """ The extension manager """
 
-    def __init__(self, manager = None):
+    def __init__(self, manager = None, logger = None):
         """
         Constructor of the class.
 
         @type manager: ExtensionManager
         @param manager: The parent extension manager.
+        @type logger: Logger
+        @param logger: The extension manager logger.
         """
 
-        wiki_extension_system.WikiExtension.__init__(self, manager)
+        wiki_extension_system.WikiExtension.__init__(self, manager, logger)
 
         # creates a new extension manager
         self.extension_manager = libs.extension_system.ExtensionManager(["./extensions/wiki_code/extensions"])

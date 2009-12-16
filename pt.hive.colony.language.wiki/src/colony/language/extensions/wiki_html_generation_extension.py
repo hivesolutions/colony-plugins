@@ -39,16 +39,17 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 import sys
-import logging
 
 import os.path
 
 import libs.extension_system
 
 import wiki_parser
-import wiki_generator
-import wiki_html_generation
+import wiki_html_generation.wiki_html_generation
 import wiki_extension_system
+
+GENERATION_TYPE = "html"
+""" The generation type """
 
 WIKI_EXTENSIONS = ("wiki", "wik")
 """ The valid wiki extensions list """
@@ -68,48 +69,67 @@ BASE_FILES = {"resources/css/main.css" : "/css",
               "resources/images/code_note.gif" : "/images"}
 """ The base files """
 
-class WikiHtmlGenerator(wiki_generator.WikiGenerator):
+DEFAULT_CONFIGURATION_MAP = {"auto_numbered_sections" : True, "generate_footer" : True}
+""" The default configuration map """
+
+class WikiHtmlGenerator(wiki_extension_system.WikiExtension):
     """
     The wiki html generator class.
     """
 
-    extension_manager = None
-    """ The extension manager """
+    id = "pt.hive.colony.language.wiki.extensions.html_generation"
+    """ The extension id """
 
-    extra_resources_paths_list = []
-    """ The extra resources paths list """
+    name = "Html Documentation Generation Plugin"
+    """ The name of the extension """
 
-    configuration_map = {}
-    """ The configuration map """
+    short_name = "Html Documentation Generation"
+    """ The short name of the extension """
 
-    def __init__(self, logger = logging):
+    description = "Extension for html documentation generation"
+    """ The description of the extension """
+
+    version = "1.0.0"
+    """ The version of the extension """
+
+    capabilities = ["generation"]
+    """ The capabilities of the extension """
+
+    capabilities_allowed = []
+    """ The capabilities allowed by the extension """
+
+    dependencies = []
+    """ The dependencies of the extension """
+
+    def get_generation_type(self):
         """
-        Constructor of the class.
+        Retrieves the generation type.
+
+        @rtype: String
+        @return: The generation type.
         """
 
-        wiki_generator.WikiGenerator.__init__(self, logger)
+        return GENERATION_TYPE
 
-        # creates a new extension manager
-        self.extension_manager = libs.extension_system.ExtensionManager(["./extensions"])
-        self.extension_manager.set_extension_class(wiki_extension_system.WikiExtension)
-        self.extension_manager.start_logger()
-        self.extension_manager.load_system()
-
-        # creates the configuration map
-        self.configuration_map = {"auto_numbered_sections" : True, "generate_footer" : True}
-
-        self.extra_resources_paths_list = []
-
-    def generate_wiki(self, file_path, target_path):
+    def generate_wiki(self, properties):
         """
         Generates the wiki structure for the given file path,
         and options.
 
-        @type file_path: String
-        @param file_path:  The file path to generate the wiki structure.
-        @type target_path: String
-        @param target_path:  The target path for the wiki generation.
+        @type properties: Dictionary
+        @param properties:  The properties for wiki generation.
+        @rtype: Object
+        @return: The result of the wiki generation.
         """
+
+        # retrieves the file path
+        file_path = properties.get("file_path", None)
+
+        # retrieves the target path
+        target_path = properties.get("target_path", None)
+
+        # creates the extra resources paths list
+        extra_resources_paths_list = []
 
         # creates the full target path
         full_target_path = file_path + "/" + target_path
@@ -120,13 +140,13 @@ class WikiHtmlGenerator(wiki_generator.WikiGenerator):
             os.mkdir(full_target_path)
 
         # walks the file path
-        os.path.walk(file_path, self.generate_wiki_file, (full_target_path,))
+        os.path.walk(file_path, self.generate_wiki_file, (full_target_path, extra_resources_paths_list))
 
         # copies the base files
         self._copy_base_files(full_target_path)
 
         # copies the extra files
-        self._copy_extra_files(file_path, full_target_path)
+        self._copy_extra_files(file_path, full_target_path, extra_resources_paths_list)
 
     def generate_wiki_file(self, args, file_path, names):
         """
@@ -140,8 +160,8 @@ class WikiHtmlGenerator(wiki_generator.WikiGenerator):
         @param names: The list of name for the current file path.
         """
 
-        # retrieves the full target path from the args
-        full_target_path, = args
+        # retrieves the full target path and the extra resources paths list from the args
+        full_target_path, extra_resources_paths_list = args
 
         # iterates over all the names
         for name in names:
@@ -163,7 +183,7 @@ class WikiHtmlGenerator(wiki_generator.WikiGenerator):
                 full_target_name = full_target_path + "/" + partial_name
 
                 # prints an info message
-                self.logger.info("Processing: %s" % full_file_path)
+                self.info("Processing in html: %s" % full_file_path)
 
                 # opens the wiki file
                 wiki_file = open(full_file_path)
@@ -181,10 +201,10 @@ class WikiHtmlGenerator(wiki_generator.WikiGenerator):
                 parse_result = wiki_parser.parser.parse(wiki_file_contents)
 
                 # creates the generator visitor
-                generation_visitor = wiki_html_generation.HtmlGenerationVisitor()
+                generation_visitor = wiki_html_generation.wiki_html_generation.HtmlGenerationVisitor()
                 generation_visitor.set_parser(wiki_parser.parser)
-                generation_visitor.set_extension_manager(self.extension_manager)
-                generation_visitor.set_configuration_map(self.configuration_map)
+                generation_visitor.set_extension_manager(self.manager)
+                generation_visitor.set_configuration_map(DEFAULT_CONFIGURATION_MAP)
 
                 # accepts the double visit
                 parse_result.accept_double(generation_visitor)
@@ -196,7 +216,7 @@ class WikiHtmlGenerator(wiki_generator.WikiGenerator):
                 resources_paths_list = generation_visitor.get_resources_paths_list()
 
                 # extends the extra resources paths list with the resources paths list
-                self.extra_resources_paths_list.extend(resources_paths_list)
+                extra_resources_paths_list.extend(resources_paths_list)
 
                 # retrieves the html value from the string buffer
                 html_value = string_buffer.getvalue()
@@ -226,7 +246,7 @@ class WikiHtmlGenerator(wiki_generator.WikiGenerator):
             # copies the base file to the target path
             self._copy_files((base_file_path,), target_path + base_target_path)
 
-    def _copy_extra_files(self, base_path, target_path):
+    def _copy_extra_files(self, base_path, target_path, extra_resources_paths_list):
         """
         Copies the extra files to the given target path.
 
@@ -234,10 +254,12 @@ class WikiHtmlGenerator(wiki_generator.WikiGenerator):
         @param base_path: The base path.
         @type target_path: String
         @param target_path: The target path.
+        @type extra_resources_paths_list: List
+        @param extra_resources_paths_list: The extra resources paths list.
         """
 
         # generates the full extra resources paths list
-        full_extra_resources_paths_list = [base_path + "/" + extra_resources_path for extra_resources_path in self.extra_resources_paths_list]
+        full_extra_resources_paths_list = [base_path + "/" + extra_resources_path for extra_resources_path in extra_resources_paths_list]
 
         # copies the extra files to the target path
         self._copy_files(full_extra_resources_paths_list, target_path)

@@ -42,76 +42,15 @@ import time
 import getopt
 import logging
 
-import wiki_html_generator
+import libs.extension_system
+
+import wiki_extension_system
 
 USAGE_MESSAGE = "wiki_generator --file=file_path [--target=target_path] [-v] [-d]"
 """ The usage message """
 
-DEFAULT_LOGGER_NAME = "wiki_generate"
-""" The default logger name """
-
 DEFAULT_TARGET_PATH = "generated"
 """ The default target path """
-
-class WikiGenerator:
-    """
-    Thw wiki generator class.
-    """
-
-    logger = None
-    """ The logger """
-
-    def __init__(self, logger = logging):
-        """
-        Constructor of the class.
-
-        @type logger: Logger
-        @param logger: The logger.
-        """
-
-        self.logger = logger
-
-def _start_logger(verbose = False, debug = False):
-    """
-    Starts the logger for the given parameters.
-
-    @type verbose: bool
-    @param verbose: If the log is going to be of type verbose.
-    @type debug: bool
-    @param debug: If the log is going to be of type debug.
-    @rtype: Logger
-    @return: The logger.
-    """
-
-    # retrieves the logger
-    logger = logging.getLogger(DEFAULT_LOGGER_NAME)
-
-    # in case debug is active
-    if debug:
-        # sets the logger level to debug
-        logger.setLevel(logging.DEBUG)
-
-    # in case verbose is active
-    if verbose:
-        # sets the logger level to info
-        logger.setLevel(logging.INFO)
-
-    # returns the logger
-    return logger
-
-def _get_logger():
-    """
-    Retrieves the logger.
-
-    @rtype: Logger
-    @return: The logger.
-    """
-
-    # retrieves the logger
-    logger = logging.getLogger(DEFAULT_LOGGER_NAME)
-
-    # returns the logger
-    return logger
 
 if __name__ == "__main__":
     # starts the verbose flag as false
@@ -146,17 +85,32 @@ if __name__ == "__main__":
         print "Usage: " + USAGE_MESSAGE
         sys.exit(2)
 
-    # starts the logger for the given parameters
-    logger = _start_logger(verbose, debug)
+    if debug:
+        log_level = logging.DEBUG
+    elif verbose:
+        log_level = logging.INFO
+    else:
+        log_level = logging.WARN
 
-    # creates the wiki generator
-    wiki_generator = wiki_html_generator.WikiHtmlGenerator(logger)
+    # creates a new extension manager
+    extension_manager = libs.extension_system.ExtensionManager(["./extensions"])
+    extension_manager.set_extension_class(wiki_extension_system.WikiExtension)
+    extension_manager.start_logger(log_level)
+    extension_manager.load_system()
+
+    # retrieves the generation extensions
+    generation_extensions = extension_manager.get_extensions_by_capability("generation")
+
+    # creates the properties map
+    properties = {"file_path" : file_path, "target_path" : target_path}
 
     # retrieves the start time
     start_time = time.time()
 
-    # generates the wiki
-    wiki_generator.generate_wiki(file_path, target_path)
+    # iterates over all the generation extensions
+    for generation_extension in generation_extensions:
+        # generates the wiki for the given properties
+        generation_extension.generate_wiki(properties)
 
     # retrieves the end time
     end_time = time.time()
@@ -168,4 +122,4 @@ if __name__ == "__main__":
     time_difference_rounded = round(time_difference, 2)
 
     # prints an info message
-    logger.info("Processing took: %s seconds" % time_difference_rounded)
+    extension_manager.logger.info("Processing took: %s seconds" % time_difference_rounded)

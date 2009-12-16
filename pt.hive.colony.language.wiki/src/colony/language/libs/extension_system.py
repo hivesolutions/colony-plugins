@@ -43,6 +43,15 @@ import stat
 import inspect
 import logging
 
+DEFAULT_LOGGER = "default_messages"
+""" The default logger name """
+
+DEFAULT_LOGGING_LEVEL = logging.WARN
+""" The default logging level """
+
+DEFAULT_LOGGING_FORMAT = "%(asctime)s %(levelname)s %(message)s"
+""" The default logging format """
+
 class Extension(object):
     """
     The extension class.
@@ -78,15 +87,91 @@ class Extension(object):
     manager = None
     """ The parent extension manager """
 
-    def __init__(self, manager = None):
+    def __init__(self, manager = None, logger = None):
         """
         Constructor of the class.
 
         @type manager: ExtensionManager
         @param manager: The parent extension manager.
+        @type logger: Logger
+        @param logger: The extension manager logger.
         """
 
         self.manager = manager
+        self.logger = logger
+
+    def debug(self, message):
+        """
+        Adds the given debug message to the logger.
+
+        @type message: String
+        @param message: The debug message to be added to the logger.
+        """
+
+        logger_message = self.format_logger_message(message)
+        self.logger.debug(logger_message)
+
+    def info(self, message):
+        """
+        Adds the given info message to the logger.
+
+        @type message: String
+        @param message: The info message to be added to the logger.
+        """
+
+        logger_message = self.format_logger_message(message)
+        self.logger.info(logger_message)
+
+    def warning(self, message):
+        """
+        Adds the given warning message to the logger.
+
+        @type message: String
+        @param message: The warning message to be added to the logger.
+        """
+
+        logger_message = self.format_logger_message(message)
+        self.logger.warning(logger_message)
+
+    def error(self, message):
+        """
+        Adds the given error message to the logger.
+
+        @type message: String
+        @param message: The error message to be added to the logger.
+        """
+
+        logger_message = self.format_logger_message(message)
+        self.logger.error(logger_message)
+
+    def critical(self, message):
+        """
+        Adds the given critical message to the logger.
+
+        @type message: String
+        @param message: The critical message to be added to the logger.
+        """
+
+        logger_message = self.format_logger_message(message)
+        self.logger.critical(logger_message)
+
+    def format_logger_message(self, message):
+        """
+        Formats the given message into a logging message.
+
+        @type message: String
+        @param message: The message to be formated into logging message.
+        @rtype: String
+        @return: The formated logging message.
+        """
+
+        # the default formatting message
+        formatting_message = "[" + self.id + "] "
+
+        # appends the formatting message to the logging message
+        logger_message =  formatting_message + message
+
+        return logger_message
 
 class ExtensionManager:
     """
@@ -173,7 +258,7 @@ class ExtensionManager:
 
         self.extension_class = extension_class
 
-    def start_logger(self, logger = logging):
+    def start_logger(self, log_level = DEFAULT_LOGGING_LEVEL):
         """
         Starts the logging system with the given logger.
 
@@ -181,6 +266,25 @@ class ExtensionManager:
         @param logger: The logger object to be used.
         """
 
+        # retrieves the logger
+        logger = logging.getLogger(DEFAULT_LOGGER)
+
+        # sets the logger level
+        logger.setLevel(log_level)
+
+        # creates the stream handler
+        stream_handler = logging.StreamHandler()
+
+        # creates the logging formatter
+        formatter = logging.Formatter(DEFAULT_LOGGING_FORMAT)
+
+        # sets the formatter in the stream handler
+        stream_handler.setFormatter(formatter)
+
+        # adds the stream handler to the logger
+        logger.addHandler(stream_handler)
+
+        # sets the logger
         self.logger = logger
 
     def load_system(self):
@@ -332,7 +436,7 @@ class ExtensionManager:
         extension_description = extension.description
 
         # instantiates the extension to create the singleton extension instance
-        extension_instance = extension(self)
+        extension_instance = extension(self, self.logger)
 
         # retrieves the path to the extension file
         extension_path = inspect.getfile(extension)

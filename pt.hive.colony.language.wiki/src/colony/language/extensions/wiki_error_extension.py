@@ -76,9 +76,6 @@ class WikiErrorExtension(wiki_extension_system.WikiExtension):
     dependencies = []
     """ The dependencies of the extension """
 
-    extension_manager = None
-    """ The extension manager """
-
     def get_generator_type(self):
         """
         Retrieves the generator type.
