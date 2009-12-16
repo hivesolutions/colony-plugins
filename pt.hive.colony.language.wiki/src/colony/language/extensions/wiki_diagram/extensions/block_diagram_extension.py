@@ -100,7 +100,7 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
     The block diagram extension class.
     """
 
-    id = "pt.hive.colony.language.wiki.extensions.diagram.block"
+    id = "pt.hive.colony.language.wiki.diagram.extensions.block_diagram"
     """ The extension id """
 
     name = "Block Diagram Extension"
