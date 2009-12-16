@@ -40,7 +40,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import sys
 import time
 import getopt
-import logging
 
 import libs.extension_system
 
@@ -84,6 +83,8 @@ if __name__ == "__main__":
         print "File Path not defined"
         print "Usage: " + USAGE_MESSAGE
         sys.exit(2)
+
+    import logging
 
     if debug:
         log_level = logging.DEBUG
