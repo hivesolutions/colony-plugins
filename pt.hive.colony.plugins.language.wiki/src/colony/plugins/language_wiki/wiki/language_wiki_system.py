@@ -54,3 +54,6 @@ class LanguageWiki:
         """
 
         self.language_wiki_plugin = language_wiki_plugin
+
+    def generate(self, engine_name, engine_properties):
+        pass
