@@ -44,6 +44,9 @@ import logging
 
 import wiki_html_generator
 
+USAGE_MESSAGE = "wiki_generator --file=file_path [--target=target_path] [-v] [-d]"
+""" The usage message """
+
 DEFAULT_LOGGER_NAME = "wiki_generate"
 """ The default logger name """
 
@@ -136,6 +139,12 @@ if __name__ == "__main__":
             file_path = value
         elif option in ("-y", "--target"):
             target_path = value
+
+    # in case the file path is not defined
+    if not file_path:
+        print "File Path not defined"
+        print "Usage: " + USAGE_MESSAGE
+        sys.exit(2)
 
     # starts the logger for the given parameters
     logger = _start_logger(verbose, debug)
