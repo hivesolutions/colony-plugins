@@ -349,6 +349,9 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
             # sets the previous recursion limit
             sys.setrecursionlimit(self.previous_recursion_limit)
 
+            # closes the paragraph
+            self.close_paragraph()
+
             # in case the generate footer is valid
             if self.configuration_map.get(GENERATE_FOOTER_VALUE, False):
                 self._write("</div>")
@@ -366,8 +369,10 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
                 self._write("</div>")
                 self._write("</div>")
                 self._write("</div>")
+
             # in case the simple parse is not valid
             if not self.configuration_map.get(SIMPLE_PARSE_VALUE, False):
+                # closes the body
                 self._write("</body>")
 
                 # closes the html
