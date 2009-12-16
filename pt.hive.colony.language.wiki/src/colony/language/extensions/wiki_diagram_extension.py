@@ -46,6 +46,12 @@ import wiki_diagram.wiki_diagram_extension_system
 GENERATOR_TYPE = "diagram"
 """ The generator type """
 
+DEFAULT_WIDTH_VALUE = 600
+""" The default width value """
+
+DEFAULT_HEIGHT_VALUE = 300
+""" The default height value """
+
 class WikiDiagramExtension(wiki_extension_system.WikiExtension):
     """
     The wiki diagram extension class.
@@ -151,9 +157,6 @@ class WikiDiagramExtension(wiki_extension_system.WikiExtension):
         # writes the start div diagram tag
         string_buffer.write("<div class=\"diagram\" style=\"display: block;\">")
 
-        # writes the title
-        string_buffer.write("<h1>" + node_tag_title + "</h1>")
-
         # generates the diagrams using the available extensions
         for node_tag_diagram_extension in node_tag_diagram_extensions:
             # retrieves the tokens list
@@ -169,7 +172,7 @@ class WikiDiagramExtension(wiki_extension_system.WikiExtension):
             diagram_type_style_class = diagram_type + "-diagram"
 
             # starts the graphics
-            open_graphics_string = vector_graphics.open_graphics({"class" : diagram_type_style_class, "width" : 600, "height" : 300})
+            open_graphics_string = vector_graphics.open_graphics({"class" : diagram_type_style_class, "width" : DEFAULT_WIDTH_VALUE, "height" : DEFAULT_HEIGHT_VALUE})
 
             # writes the open graphics tag
             string_buffer.write(open_graphics_string)
