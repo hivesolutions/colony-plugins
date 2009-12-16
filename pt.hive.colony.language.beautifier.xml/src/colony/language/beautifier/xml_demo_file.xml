@@ -1,11 +1,10 @@
-<plugin xmlns="http://www.hive.pt"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.hive.pt ../xsd/plugin.xsd">
+<plugin xmlns="http://www.hive.pt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.hive.pt ../xsd/plugin.xsd">
     <id>pt.hive.omni.web.plugins.gui.consignments</id>
     <name>Consignments plugin</name>
     <short_name>Consignments</short_name>
     <description>Plugin with the consignment manager features</description>
-    <version>1.0.0</version>
+    <version><matias/><tobias/><rabeta>asdas<tobi>asdasf<sdf></sdf></tobi></rabeta>
+    </version>
     <author>Hive Solutions Lda. <![CDATA[<development@hive.pt>]]></author>
     <main_class>pt.hive.omni.web.plugins.ConsignmentsPlugin</main_class>
     <main_file>consignments_plugin.js</main_file>

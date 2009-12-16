@@ -37,44 +37,161 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import re
+import sys
 
-DOUBLE_TAG_REGEX_VALUE = "\<(?P<tag>[\w]+)([^\/]|\/[^\>])*?\>[^\0]*?\<\/(?P=tag)\>"
-""" The double tag regex value """
+from xml_lexer import *
 
-DOUBLE_TAG_REGEX = re.compile(DOUBLE_TAG_REGEX_VALUE)
-""" The double tag regex """
+COLONY_GENERATOR_PATH = "../../../../../pt.hive.colony.language.generator/src/colony"
+""" The colony generator path """
+
+# appends the colony language generator path
+sys.path.append(COLONY_GENERATOR_PATH)
+
+# imports the colony generator package
+import language_generator.lexer_generator
+
+TAG_INIT_VALUE = "TAG_INIT"
+""" The tag init value """
+
+TAG_END_VALUE = "TAG_END"
+""" The tag end value """
+
+TAG_SIMPLE_VALUE = "TAG_SIMPLE"
+""" The tag simple value """
+
+class XmlBeautifier:
+    """
+    The xml beautifier class.
+    """
+
+    input_file_buffer = None
+    """ The input file buffer """
+
+    output_file_buffer = None
+    """ The output file buffer """
+
+    def __init__(self, input_file_buffer = None, output_file_buffer = None):
+        self.input_file_buffer = input_file_buffer
+        self.output_file_buffer = output_file_buffer
+
+    def beautify(self):
+        # reads the file contents
+        xml_file_contents = self.input_file_buffer.read()
+
+        # strips the xml file contents
+        xml_file_contents = xml_file_contents.strip()
+
+        # creates a new lexer
+        lexer = language_generator.lexer_generator.LexerGenerator()
+
+        # constructs the lexer
+        lexer.construct(globals())
+
+        # sets the input in the lexer
+        lexer.input(xml_file_contents)
+
+        # retrieves the current token from the lexer
+        token = lexer.token()
+
+        # start the indentation index
+        indentation_index = 0;
+
+        # start the initial flag
+        initial_flag = True
+
+        # starts the previous tag value
+        previous_tag = None
+
+        # while there is a valid token
+        while token:
+            # retrieves the token type
+            token_type = token.type
+
+            # retrieve the token value
+            token_value = token.value
+
+            # in case the current token type is tag init
+            if token_type == TAG_INIT_VALUE:
+                # writes a newline
+                self._write_newline(initial_flag, indentation_index)
+
+                # writes the token value
+                self.output_file_buffer.write(token_value)
+
+                # sets the previous tag value
+                previous_tag = TAG_INIT_VALUE
+
+                # increments the indentation index
+                indentation_index += 1
+            # in case the current token type is tag end
+            elif token_type == TAG_END_VALUE:
+                # decrements the indentation index
+                indentation_index -= 1
+
+                # in case the previous tag is a tag end
+                if previous_tag == TAG_END_VALUE:
+                    # writes a newline
+                    self._write_newline(initial_flag, indentation_index)
+
+                # writes the token value
+                self.output_file_buffer.write(token_value)
+
+                # sets the previous tag value
+                previous_tag = TAG_END_VALUE
+            # in case the current token type is tag simple
+            elif token_type == TAG_SIMPLE_VALUE:
+                # writes the token value
+                self.output_file_buffer.write(token_value)
+
+                # sets the previous tag value
+                previous_tag = TAG_END_VALUE
+            else:
+                # writes the token value
+                self.output_file_buffer.write(token_value)
+
+            # in case the initial flag is set
+            if initial_flag:
+                # unsets the initial flag
+                initial_flag = False
+
+            # retrieves the token
+            token = lexer.token()
+
+    def set_input_file_buffer(self, input_file_buffer):
+        self.input_file_buffer = input_file_buffer
+
+    def get_input_file_bufferr(self):
+        return self.input_file_buffer
+
+    def set_output_file_buffer(self, output_file_buffer):
+        self.output_file_buffer = output_file_buffer
+
+    def get_output_file_buffer(self):
+        return self.output_file_buffer
+
+    def _write_newline(self, initial_flag, indentation_index):
+        # in case the initial flag is not set
+        if not initial_flag:
+            self.output_file_buffer.write("\n")
+
+        for index in range(indentation_index):
+            self.output_file_buffer.write("    ")
 
 if __name__ == "__main__":
-    # opens the xml file
-    xml_file = open("xml_demo_file.xml")
+    # opens the input file
+    input_file = open("xml_demo_file.xml")
 
-    # reads the file contents
-    xml_file_contents = xml_file.read()
+    # opens the output file
+    output_file = open("xml_out_file.xml", "wb+")
 
-    # closes the xml file
-    xml_file.close()
+    # creates the xml beautifier
+    xml_beautifier = XmlBeautifier(input_file, output_file)
 
-    xml_file_contents = xml_file_contents.strip()
+    # beautifies the xml
+    xml_beautifier.beautify()
 
-    # retrieves the xml file contents length
-    xml_file_contents_length = len(xml_file_contents)
+    # closes the input file
+    input_file.close()
 
-    current_index = 0
-
-    # loop while the index is valid
-    while current_index < xml_file_contents_length:
-        # tries to match the xml file contents with the functions regex
-        buffer_match = DOUBLE_TAG_REGEX.match(xml_file_contents, current_index)
-
-        print buffer_match.group()
-
-        # sets the new current index
-        current_index = buffer_match.end()
-
-# 1. vou sacando nos (do lexer)
-# 2. quando me sai um no do tipos single deixo na mesma linha
-# 3. quando me sai um no do tipo non single imprimo dou newline dou indentacao e depois dou novo newline e imprimo o fecho
-
-
-# tenho de fazer uma re para uma tag
+    # closes the output file
+    output_file.close()

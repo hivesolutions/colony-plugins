@@ -38,9 +38,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 # the token definitions
-tokens = ("XML", "CDATA", "TAG_INIT", "TAG_END",
-          "TAG_END_END", "ATTRIBUTION", "COMMENT",
-          "NAME", "STRING", "NEWLINE", "EQUALS")
+tokens = ("XML", "DOCTYPE", "CDATA", "TAG_SIMPLE",
+          "TAG_INIT", "TAG_END", "COMMENT", "NAME",
+          "STRING")
 
 # the reserved keywords
 reserved = {
@@ -49,12 +49,49 @@ reserved = {
 reserved_values = {
 }
 
-def t_TAG(t):
-    r"\<(?P<tag>[\w]+)([^/]*?[^/])?\>[^\0]*?\</(?P=tag)\>"
+def t_XML(t):
+    r"\<\?xml(.|\n)*?\?\>"
     return t
 
+def t_DOCTYPE(t):
+    r"\<\!DOCTYPE (.|\n)*?\>"
+    return t
+
+def t_CDATA(t):
+    r"\<\!\[CDATA\[(.|\n)*?\]\]\>"
+    return t
+
+def t_TAG_SIMPLE(t):
+    r"\<[^/]([^\0\>]*?[^/])?/\>"
+    return t
+
+def t_TAG_INIT(t):
+    r"\<[\w]+?([^\0\>]*?[^/])?\>"
+    return t
+
+def t_TAG_END(t):
+    r"\</[\w]+?([^/\>]*?[^/])?\>"
+    return t
+
+def t_COMMENT(t):
+    r"<!--(.|\n)*?-->"
+    return t
+
+def t_NAME(t):
+    r"[^\<]+"
+    t.type = reserved.get(t.value, "NAME")
+    t.value = reserved_values.get(t.value, t.value)
+    return t
+
+# string definition
+def t_STRING(t):
+    r"\"([^\\\n]|(\\.)|\\n\\\r?\n)*?\""
+
+    t.value = t.value[1:-1]
+
+    return t
 # ignored characters
-t_ignore = " \t\r"
+t_ignore = " \t\r\n"
 
 # other character
 def t_error(t):
