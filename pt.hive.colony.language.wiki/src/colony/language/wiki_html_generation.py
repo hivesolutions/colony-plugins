@@ -522,7 +522,7 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
                     # appends the image height to the string buffer
                     self._write(" height=" + image_height)
 
-            self._write(">")
+            self._write("/>")
 
     @wiki_visitor._visit(wiki_ast.LinkNode)
     def visit_link_node(self, node):

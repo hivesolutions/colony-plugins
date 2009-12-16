@@ -248,6 +248,7 @@ class WikiGenerator:
             # retrieves the file name
             file_name = os.path.basename(file_path)
 
+            # creates the target full path
             target_full_path = target_path + "/" + file_name
 
             # opens the file for reading
