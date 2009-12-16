@@ -39,7 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 import sys
-import time
 import logging
 
 import os.path
@@ -47,7 +46,6 @@ import os.path
 import libs.extension_system
 
 import wiki_parser
-import wiki_visitor
 import wiki_generator
 import wiki_html_generation
 import wiki_extension_system
