@@ -247,7 +247,7 @@ class ScalableVectorGraphics(AbstractVectorGraphics):
             return
 
         # creates the string value for the open graphics
-        string_value = "<svg:svg class=\"%s\" version=\"1.1\" baseProfile=\"full\" width=\"%f px\" height=\"%f px\">" % (style_class, width, height)
+        string_value = "<svg:svg class=\"%s\" version=\"1.1\" baseProfile=\"full\" width=\"%fpx\" height=\"%fpx\">" % (style_class, width, height)
 
         # signals the graphics tag is open
         self.graphics_open = True
@@ -287,7 +287,7 @@ class ScalableVectorGraphics(AbstractVectorGraphics):
         style_class = options.get("class", "")
 
         # @todo: build the element string gradually
-        rectangle_element_string = "<svg:rect class=\"%s\" x=\"%f\" y=\"%f\" width=\"%f\" height=\"%f\"/>" % (style_class, x, y, width, height)
+        rectangle_element_string = "<svg:rect class=\"%s\" x=\"%.1f%%\" y=\"%.1f%%\" width=\"%.1f%%\" height=\"%.1f%%\"/>" % (style_class, x, y, width, height)
 
         return rectangle_element_string
 
@@ -302,7 +302,7 @@ class ScalableVectorGraphics(AbstractVectorGraphics):
         style_class = options.get("class", "")
 
         # @todo: build the element string gradually
-        text_element_string = "<svg:text class=\"{%s}\" x=\"{%f} \" y=\"{%f}\">{%s}</svg:text>" % (style_class, x, y, escaped_text)
+        text_element_string = "<svg:text class=\"%s\" x=\"%.1f%%\" y=\"%.1f%%\">%s</svg:text>" % (style_class, x, y, escaped_text)
 
         return text_element_string
 
