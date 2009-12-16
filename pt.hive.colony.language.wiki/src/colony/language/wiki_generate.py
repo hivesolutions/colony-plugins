@@ -52,6 +52,9 @@ import wiki_visitor
 import wiki_html_generation
 import wiki_extension_system
 
+DEFAULT_LOGGER_NAME = "wiki_generate"
+""" The default logger name """
+
 DEFAULT_TARGET_PATH = "generated"
 """ The default target path """
 
@@ -84,6 +87,9 @@ class WikiGenerator:
     configuration_map = {}
     """ The configuration map """
 
+    logger = None
+    """ The logger """
+
     def __init__(self):
         """
         Constructor of the class.
@@ -97,6 +103,9 @@ class WikiGenerator:
 
         # creates the configuration map
         self.configuration_map = {"auto_numbered_sections" : True, "generate_footer" : True}
+
+        # sets the logger
+        self.logger = _get_logger()
 
     def generate_wiki(self, file_path, target_path, verbose, debug):
         """
@@ -162,7 +171,7 @@ class WikiGenerator:
                 full_target_name = full_target_path + "/" + partial_name
 
                 # prints an info message
-                logging.error("Processing: %s" % full_file_path)
+                logger.info("Processing: %s" % full_file_path)
 
                 # opens the wiki file
                 wiki_file = open(full_file_path)
@@ -259,6 +268,48 @@ class WikiGenerator:
             # closes the target file
             target_file.close()
 
+def _start_logger(verbose = False, debug = False):
+    """
+    Starts the logger for the given parameters.
+
+    @type verbose: bool
+    @param verbose: If the log is going to be of type verbose.
+    @type debug: bool
+    @param debug: If the log is going to be of type debug.
+    @rtype: Logger
+    @return: The logger.
+    """
+
+    # retrieves the logger
+    logger = logging.getLogger(DEFAULT_LOGGER_NAME)
+
+    # in case debug is active
+    if debug:
+        # sets the logger level to debug
+        logger.setLevel(logging.DEBUG)
+
+    # in case verbose is active
+    if verbose:
+        # sets the logger level to info
+        logger.setLevel(logging.INFO)
+
+    # returns the logger
+    return logger
+
+def _get_logger():
+    """
+    Retrieves the logger.
+
+    @rtype: Logger
+    @return: The logger.
+    """
+
+    # retrieves the logger
+    logger = logging.getLogger(DEFAULT_LOGGER_NAME)
+
+    # returns the logger
+    return logger
+
 if __name__ == "__main__":
     # starts the verbose flag as false
     verbose = False
@@ -286,6 +337,9 @@ if __name__ == "__main__":
         elif option in ("-y", "--target"):
             target_path = value
 
+    # starts the logger for the given parameters
+    logger = _start_logger(verbose, debug)
+
     # creates the wiki generator
     wiki_generator = WikiGenerator()
 
@@ -304,4 +358,5 @@ if __name__ == "__main__":
     # rounds the time difference
     time_difference_rounded = round(time_difference, 2)
 
-    logging.error("Processing took: %s seconds" % time_difference_rounded)
+    # prints an info message
+    logger.info("Processing took: %s seconds" % time_difference_rounded)
