@@ -72,19 +72,13 @@ class WikiAstGenerator(wiki_generator.WikiGenerator):
         # creates the configuration map
         self.configuration_map = {}
 
-    def generate_wiki(self):
+    def generate_wiki(self, file_path):
         """
         Generates the wiki structure for the given file path,
         and options.
 
         @type file_path: String
         @param file_path:  The file path to generate the wiki structure.
-        @type target_path: String
-        @param target_path:  The target path for the wiki generation.
-        @type verbose: bool
-        @param verbose: If the log is going to be of type verbose.
-        @type debug: bool
-        @param debug: If the log is going to be of type debug.
         """
 
         # walks the file path
