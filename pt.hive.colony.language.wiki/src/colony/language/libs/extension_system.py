@@ -276,6 +276,9 @@ class ExtensionManager:
         # retrieves the logger
         logger = logging.getLogger(DEFAULT_LOGGER + self.uid)
 
+        # sets the logger to avoid propagation
+        logger.propagate = 0
+
         # sets the logger level
         logger.setLevel(log_level)
 
