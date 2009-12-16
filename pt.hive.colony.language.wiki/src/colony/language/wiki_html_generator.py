@@ -100,7 +100,7 @@ class WikiHtmlGenerator(wiki_generator.WikiGenerator):
 
         self.extra_resources_paths_list = []
 
-    def generate_wiki(self, file_path, target_path, verbose, debug):
+    def generate_wiki(self, file_path, target_path):
         """
         Generates the wiki structure for the given file path,
         and options.
@@ -109,10 +109,6 @@ class WikiHtmlGenerator(wiki_generator.WikiGenerator):
         @param file_path:  The file path to generate the wiki structure.
         @type target_path: String
         @param target_path:  The target path for the wiki generation.
-        @type verbose: bool
-        @param verbose: If the log is going to be of type verbose.
-        @type debug: bool
-        @param debug: If the log is going to be of type debug.
         """
 
         # creates the full target path
