@@ -22,7 +22,6 @@
 // __date__      = $LastChangedDate: 2008-10-26 20:43:25 +0000 (dom, 26 Out 2008) $
 // __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
 // __license__   = General Public License (GPL), Version 3
-// __credits__   = Michael Clark <michael@jabsorb.org>
 
 guideMenu = function() {
     if (document.getElementById("index").style.opacity == "0") {
