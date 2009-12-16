@@ -50,6 +50,12 @@ sys.path.append(COLONY_GENERATOR_PATH)
 # imports the colony generator package
 import language_generator.lexer_generator
 
+USAGE_MESSAGE = "xml_beautifier input_file_path [output_file_path]"
+""" The usage message """
+
+DEFAULT_OUTPUT_FILE_PATH = "out.xml"
+""" The default output file path """
+
 TAG_INIT_VALUE = "TAG_INIT"
 """ The tag init value """
 
@@ -58,6 +64,9 @@ TAG_END_VALUE = "TAG_END"
 
 TAG_SIMPLE_VALUE = "TAG_SIMPLE"
 """ The tag simple value """
+
+INDENTATION_TOKEN = "    "
+""" The indentation token """
 
 class XmlBeautifier:
     """
@@ -75,6 +84,11 @@ class XmlBeautifier:
         self.output_file_buffer = output_file_buffer
 
     def beautify(self):
+        """
+        Beautifies the contents of the current input file buffer.
+        Writes the result to the output buffer.
+        """
+
         # reads the file contents
         xml_file_contents = self.input_file_buffer.read()
 
@@ -158,31 +172,85 @@ class XmlBeautifier:
             token = lexer.token()
 
     def set_input_file_buffer(self, input_file_buffer):
+        """
+        Sets the input file buffer.
+
+        @type input_file_buffer: File
+        @param input_file_buffer: The input file buffer.
+        """
+
         self.input_file_buffer = input_file_buffer
 
-    def get_input_file_bufferr(self):
+    def get_input_file_buffer(self):
+        """
+        Retrieves the input file buffer.
+
+        @rtype: File
+        @return: The input file buffer.
+        """
+
         return self.input_file_buffer
 
     def set_output_file_buffer(self, output_file_buffer):
+        """
+        Sets the output file buffer.
+
+        @type output_file_buffer: File
+        @param output_file_buffer: The output file buffer.
+        """
+
         self.output_file_buffer = output_file_buffer
 
     def get_output_file_buffer(self):
+        """
+        Retrieves the output file buffer.
+
+        @rtype: File
+        @return: The output file buffer.
+        """
+
         return self.output_file_buffer
 
     def _write_newline(self, initial_flag, indentation_index):
+        """
+        Writes a newline for the current xml status.
+
+        @type initial_flag: bool
+        @param initial_flag: The flag indicating if it's the initial token.
+        @type indentation_index: int
+        @param indentation_index: The current indentation index to be used.
+        """
+
         # in case the initial flag is not set
         if not initial_flag:
             self.output_file_buffer.write("\n")
 
         for index in range(indentation_index):
-            self.output_file_buffer.write("    ")
+            self.output_file_buffer.write(INDENTATION_TOKEN)
 
 if __name__ == "__main__":
+    # in case the number of arguments is invalid
+    if len(sys.argv) < 2:
+        print "Invalid number of arguments"
+        print "Usage: " + USAGE_MESSAGE
+        sys.exit(2)
+
+    # retrieves the input file path
+    input_file_path = sys.argv[1]
+
+    # in case the number of arguments is greater than two
+    if len(sys.argv) > 2:
+        # retrieves the output file path
+        output_file_path = sys.argv[2]
+    else:
+        # sets the default output file path
+        output_file_path = DEFAULT_OUTPUT_FILE_PATH
+
     # opens the input file
-    input_file = open("xml_demo_file.xml")
+    input_file = open(input_file_path)
 
     # opens the output file
-    output_file = open("xml_out_file.xml", "wb+")
+    output_file = open(output_file_path, "wb+")
 
     # creates the xml beautifier
     xml_beautifier = XmlBeautifier(input_file, output_file)
