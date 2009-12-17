@@ -150,6 +150,18 @@ class WikiDiagramExtension(wiki_extension_system.WikiExtension):
         # retrieves the title
         node_tag_title = node_attributes_map.get("title", "none")
 
+        # retrieves the width
+        node_tag_width = node_attributes_map.get("width", DEFAULT_WIDTH_VALUE)
+
+        # retrieves the height
+        node_tag_height = node_attributes_map.get("height", DEFAULT_HEIGHT_VALUE)
+
+        # converts the width
+        width = float(node_tag_width)
+
+        # converts the height
+        height = float(node_tag_height)
+
         # retrieves the diagram extensions for the given tag
         node_tag_diagram_extensions = [extension for extension in diagram_extensions if extension.get_diagram_type() == diagram_type]
 
@@ -171,7 +183,7 @@ class WikiDiagramExtension(wiki_extension_system.WikiExtension):
             diagram_type_style_class = diagram_type + "-diagram"
 
             # starts the graphics
-            open_graphics_string = vector_graphics.open_graphics({"class" : diagram_type_style_class, "width" : DEFAULT_WIDTH_VALUE, "height" : DEFAULT_HEIGHT_VALUE})
+            open_graphics_string = vector_graphics.open_graphics({"class" : diagram_type_style_class, "width" : width, "height" : height})
 
             # writes the open graphics tag
             string_buffer.write(open_graphics_string)
