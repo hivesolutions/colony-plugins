@@ -65,12 +65,20 @@ class RevisionControlBazaarAdapter:
         # sets the bazaar adapter plugin
         self.revision_control_bazaar_adapter_plugin = revision_control_bazaar_adapter_plugin
 
-    def update(self, resource_identifiers, revision_identifier):
+    def create_revision_control_reference(self, revision_control_parameters):
+        pass
+
+    def update(self, revision_control_reference, resource_identifiers, revision_identifier):
+        # retrieves the first resource identifier
+        resource_identifier = resource_identifiers[0]
+
         # creates the update command
         update_command = bzrlib.builtins.cmd_update()
 
         # runs the update command
-        update_command.run()
+        return_revision_identifier = update_command.run(resource_identifier)
+
+        return return_revision_identifier
 
     def get_adapter_name(self):
         return ADAPTER_NAME

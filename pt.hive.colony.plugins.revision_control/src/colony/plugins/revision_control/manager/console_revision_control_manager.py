@@ -44,32 +44,11 @@ INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 """ The invalid number of arguments message """
 
 HELP_TEXT = "### REVISION CONTROL MANAGER HELP ###\n\
-list_adapters - list the revision control adapters available\n\
+list_revision_control_adapters - list the revision control adapters available\n\
 checkout <adapter_name> <source> <destination>\n\
 update <adapter_name>  <resource_identifier> <revision_identifier>\n\
-commit <adapter_name> <resource_identifier>\n"
+commit <adapter_name> <resource_identifier> <commit_message>"
 """ The help text """
-
-COLUMN_SPACING = 4
-""" The column spacing """
-
-ACTIVE_VALUE = "ACTIVE"
-""" The active value """
-
-INACTIVE_VALUE = "INACTIVE"
-""" The inactive value """
-
-ID_COLUMN_HEADER = "ID"
-""" The id column header """
-
-ENABLED_COLUMN_HEADER = "ENABLED"
-""" The enabled column header """
-
-TYPE_COLUMN_HEADER = "TYPE"
-""" The type column header """
-
-DESCRIPTION_COLUMN_HEADER = "DESCRIPTION"
-""" The description column header """
 
 class ConsoleRevisionControlManager:
     """
@@ -117,8 +96,11 @@ class ConsoleRevisionControlManager:
         # builds a string with all the adapter names
         output_string = "".join([adapter_name + "\n" for adapter_name in adapter_names])
 
+        # removes the trailing newline
+        stripped_output_string = output_string.strip()
+
         # outputs a list of available revision control adapters
-        output_method(output_string)
+        output_method(stripped_output_string)
 
     def process_checkout(self, args, output_method):
         # returns in case an invalid number of arguments was provided
@@ -149,8 +131,8 @@ class ConsoleRevisionControlManager:
         # retrieves the adapter name
         adapter_name = args[0]
 
-        # retrieves the resource identifiers
-        resource_identifiers = [args[1]]
+        # retrieves the resource identifier
+        resource_identifier = args[1]
 
         if len(args) > 2:
             # retrieves the revision identifier
@@ -158,11 +140,65 @@ class ConsoleRevisionControlManager:
         else:
             revision_identifier = None
 
-        # uses the revision control manager plugin to perform the update
-        update_result = self.revision_control_manager_plugin.update(adapter_name, resource_identifiers, revision_identifier)
+        # creates the resource identifiers list
+        resource_identifiers = [resource_identifier]
 
-        # outputs the result
-        output_method(update_result)
+        # creates a revision control manager to use on the resource
+        revision_control_manager = self.load_revision_control_manager(adapter_name, resource_identifier)
+
+        try:
+            # uses the revision control manager to perform the update
+            return_revision_identifier = revision_control_manager.update(resource_identifiers, revision_identifier)
+
+            if return_revision_identifier:
+                # outputs the result
+                output_method("successfully updated to revision " + return_revision_identifier)
+            else:
+                output_method("successfully updated")
+        except Exception, exception:
+            # outputs the result
+            output_method("problem updating resources: " + str(exception))
 
     def process_commit(self, args, output_method):
-        pass
+        # returns in case an invalid number of arguments was provided
+        if len(args) < 3:
+            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
+            return
+
+        # retrieves the adapter name
+        adapter_name = args[0]
+
+        # retrieves the resource identifier
+        resource_identifier = args[1]
+
+        # retrieves the commit message
+        commit_message = args[2]
+
+        # creates the resource identifiers list
+        resource_identifiers = [resource_identifier]
+
+        # creates a revision control manager to use on the resource
+        revision_control_manager = self.load_revision_control_manager(adapter_name, resource_identifier)
+
+        try:
+            # uses the revision control manager to perform the commit
+            return_revision_identifier = revision_control_manager.commit(resource_identifiers, commit_message)
+
+            if return_revision_identifier:
+                # outputs the result
+                output_method("successfully committed revision " + return_revision_identifier)
+            else:
+                output_method("successfully committed")
+        except Exception, exception:
+            # outputs the result
+            output_method("problem committing resources: " + str(exception))
+
+    def load_revision_control_manager(self, adapter_name, resource_identifier):
+        # creates the revision control parameters
+        revision_control_parameters = {"repository_path" : resource_identifier}
+
+        # loads a new revision control manager for the specified adapter name
+        revision_control_manager = self.revision_control_manager_plugin.load_revision_control_manager(adapter_name, revision_control_parameters)
+
+        # returns the creates revision control manager
+        return revision_control_manager

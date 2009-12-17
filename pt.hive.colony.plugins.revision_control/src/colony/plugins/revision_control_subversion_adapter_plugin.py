@@ -86,8 +86,14 @@ class RevisionControlSubversionAdapterPlugin(colony.plugins.plugin_system.Plugin
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def update(self, resource_identifiers, revision_identifier):
-        return self.revision_control_subversion_adapter.update(resource_identifiers, revision_identifier)
+    def create_revision_control_reference(self, revision_control_parameters):
+        return self.revision_control_subversion_adapter.create_revision_control_reference(revision_control_parameters)
+
+    def update(self, revision_control_reference, resource_identifiers, revision_identifier):
+        return self.revision_control_subversion_adapter.update(revision_control_reference, resource_identifiers, revision_identifier)
+
+    def commit(self, revision_control_reference, resource_identifiers, commit_message):
+        return self.revision_control_subversion_adapter.commit(revision_control_reference, resource_identifiers, commit_message)
 
     def get_adapter_name(self):
         return self.revision_control_subversion_adapter.get_adapter_name()

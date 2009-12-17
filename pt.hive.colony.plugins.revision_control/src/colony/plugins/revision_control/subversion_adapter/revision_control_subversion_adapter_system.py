@@ -53,9 +53,6 @@ class RevisionControlSubversionAdapter:
     revision_control_subversion_adapter_plugin = None
     """ The revision control subversion adapter plugin """
 
-    subversion_client = None
-    """ The subversion client object """
-
     def __init__(self, revision_control_subversion_adapter_plugin):
         """
         Constructor of the class.
@@ -67,10 +64,14 @@ class RevisionControlSubversionAdapter:
         # sets the subversion adapter plugin
         self.revision_control_subversion_adapter_plugin = revision_control_subversion_adapter_plugin
 
+    def create_revision_control_reference(self, revision_control_parameters):
         # initializes the subversion client
-        self.subversion_client = pysvn.Client()
+        client = pysvn.Client()
 
-    def update(self, resource_identifiers, revision_identifier):
+        # returns the svn client as the revision control reference
+        return client
+
+    def update(self, revision_control_reference, resource_identifiers, revision_identifier):
         # retrieves the first resource identifier
         resource_identifier = resource_identifiers[0]
 
@@ -83,9 +84,24 @@ class RevisionControlSubversionAdapter:
             revision = pysvn.Revision(pysvn.opt_revision_kind.head)
 
         # performs the update
-        update_result = self.subversion_client.update(resource_identifier, True, revision)
+        result_revisions = revision_control_reference.update(resource_identifier, True, revision)
 
-        return update_result
+        # retrieves the first of the returned revisions
+        result_revision = result_revisions[0]
+
+        # retrieves the revision identifier
+        result_revision_identifier = str(result_revision.number)
+
+        return result_revision_identifier
+
+    def commit(self, revision_control_reference, resource_identifiers, commit_message):
+        # retrieves the result revisions
+        result_revision = revision_control_reference.checkin(resource_identifiers, commit_message)
+
+        # retrieves the revision identifier
+        result_revision_identifier = str(result_revision.number)
+
+        return result_revision_identifier
 
     def get_adapter_name(self):
         return ADAPTER_NAME

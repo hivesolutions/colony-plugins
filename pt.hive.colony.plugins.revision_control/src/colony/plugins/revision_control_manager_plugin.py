@@ -93,9 +93,6 @@ class RevisionControlManagerPlugin(colony.plugins.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def load_revision_control_manager(self, adapter_name, revision_control_parameters):
-        return self.revision_control_manager.load_revision_control_manager(adapter_name, revision_control_parameters)
-
     def get_console_extension_name(self):
         return self.console_revision_control_manager.get_console_extension_name()
 
@@ -108,8 +105,8 @@ class RevisionControlManagerPlugin(colony.plugins.plugin_system.Plugin):
     def get_help(self):
         return self.console_revision_control_manager.get_help()
 
-    def update(self, adapter_name, resource_identifier, revision_identifier):
-        return self.revision_control_manager.update(adapter_name, resource_identifier, revision_identifier)
+    def load_revision_control_manager(self, adapter_name, revision_control_parameters):
+        return self.revision_control_manager.load_revision_control_manager(adapter_name, revision_control_parameters)
 
     @colony.plugins.decorators.load_allowed_capability("revision_control.adapter")
     def revision_control_manager_adapter_load_allowed(self, plugin, capability):

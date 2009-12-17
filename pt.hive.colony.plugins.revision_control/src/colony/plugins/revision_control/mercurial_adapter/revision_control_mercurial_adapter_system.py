@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os.path
+
 import mercurial
 import mercurial.hg
 import mercurial.commands
@@ -73,16 +74,23 @@ class RevisionControlMercurialAdapter:
         # initializes the mercurial user interface
         self.mercurial_user_interface = mercurial.ui.ui()
 
-    def update(self, resource_identifiers, revision_identifier):
+    def create_revision_control_reference(self, revision_control_parameters):
+        # retrieves the repository path parameter
+        repository_path_parameter = revision_control_parameters["repository_path"]
+
+        # retrieves the repository
+        repository = self.get_repository(repository_path_parameter)
+
+        # returns the repository as the revision control reference
+        return repository
+
+    def update(self, revision_control_reference, resource_identifiers, revision_identifier):
         # retrieves the first resource identifier
         resource_identifier = resource_identifiers[0]
 
-        # retrieves the repository
-        repository = self.get_repository(resource_identifier)
-
         if revision_identifier:
             # retrieves the change context for the specified identifier
-            change_context = repository[revision_identifier]
+            change_context = revision_control_reference[revision_identifier]
 
             # retrieves the node
             node = change_context.node()
@@ -91,7 +99,32 @@ class RevisionControlMercurialAdapter:
             node = None
 
         # updates the working directory to node
-        mercurial.hg.update(repository, node)
+        mercurial.hg.update(revision_control_reference, node)
+
+        # retrieves the change context for the working directory
+        working_directory_change_context = revision_control_reference[None]
+
+        # retrieves the revision node
+        working_directory_node = working_directory_change_context.node()
+
+        return working_directory_node
+
+    def commit(self, revision_control_reference, resource_identifiers, commit_message):
+        # for all the specified resource identifiers
+        for resource_identifier in resource_identifiers:
+            # retrieves the match for the resource identifier in the file system
+            match = mercurial.cmd_util.match(revision_control_reference, resource_identifier)
+
+            # commits the retrieved match
+            revision_control_reference.commit(commit_message, None, None, match, None, None)
+
+        # retrieves the change context for the working directory
+        working_directory_change_context = revision_control_reference[None]
+
+        # retrieves the revision node
+        working_directory_node = working_directory_change_context.node()
+
+        return working_directory_node
 
     def get_repository(self, path):
         # finds the repository path

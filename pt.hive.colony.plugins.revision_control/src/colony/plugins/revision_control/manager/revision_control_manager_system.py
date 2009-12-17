@@ -68,14 +68,7 @@ class RevisionControlManager:
         """
 
         # retrieve the first revision control manager adapter for the specified adapter name
-        for revision_control_adapter_plugin in self.revision_control_manager_plugin.revision_control_adapter_plugins:
-            # retrieves the adapter name for the current plugin
-            revision_control_adapter_plugin_adapter_name = revision_control_adapter_plugin.get_adapter_name()
-
-            # in case the adapter plugin has the specified adapter name
-            if revision_control_adapter_plugin_adapter_name == adapter_name:
-                # uses the adapter plugin as the relevant copy
-                break
+        revision_control_adapter_plugin  = self.get_revision_control_adapter_plugin(adapter_name)
 
         # creates the revision control adapter using the retrieved adapter plugin
         revision_control_adapter = RevisionControlAdapter(revision_control_adapter_plugin)
@@ -96,11 +89,6 @@ class RevisionControlManager:
             if revision_control_adapter_plugin_adapter_name == adapter_name:
                 # uses the adapter plugin as the relevant copy
                 return revision_control_adapter_plugin
-
-    def update(self, adapter_name, resource_identifier, revision_identifier):
-        revision_control_adapter_plugin = self.get_revision_control_adapter_plugin(adapter_name)
-
-        return revision_control_adapter_plugin.update(resource_identifier, revision_identifier)
 
 class RevisionControlAdapter:
 
@@ -138,6 +126,16 @@ class RevisionControlAdapter:
         # creates the revision control reference using the configured plugin
         self._revision_control_reference = self.revision_control_adapter_plugin.create_revision_control_reference(revision_control_parameters)
 
+    def update(self, resource_identifiers, revision_identifier):
+        """
+        Update working directory.
+        """
+
+        if not type(resource_identifiers) == types.ListType:
+            resource_identifiers = [resource_identifiers]
+
+        return self.revision_control_adapter_plugin.update(self._revision_control_reference, resource_identifiers, revision_identifier)
+
     def commit(self, resource_identifiers, commit_message):
         """
         Commit the specified files or all outstanding changes.
@@ -146,14 +144,14 @@ class RevisionControlAdapter:
         if not type(resource_identifiers) == types.ListType:
             resource_identifiers = [resource_identifiers]
 
-        self.revision_control_adapter_plugin.commit(self._revision_control_reference, resource_identifiers, commit_message)
+        return self.revision_control_adapter_plugin.commit(self._revision_control_reference, resource_identifiers, commit_message)
 
     def log(self):
         """
         Show revision history of entire repository or files.
         """
 
-        self.revision_control_adapter_plugin.log(self._revision_control_reference)
+        return self.revision_control_adapter_plugin.log(self._revision_control_reference)
 
     def status(self, resource_identifiers = None):
         """
@@ -167,16 +165,6 @@ class RevisionControlAdapter:
 
         return status
 
-    def update(self, resource_identifiers = None, revision = None):
-        """
-        Update working directory.
-        """
-
-        if not type(resource_identifiers) == types.ListType:
-            resource_identifiers = [resource_identifiers]
-
-        self.revision_control_adapter_plugin.update(self._revision_control_reference, resource_identifiers, revision)
-
     def mark_resolved(self, resource_identifiers):
         """
         Marks the specified resources as having the existing conflicts resolved.
@@ -185,7 +173,7 @@ class RevisionControlAdapter:
         if not type(resource_identifiers) == types.ListType:
             resource_identifiers = [resource_identifiers]
 
-        self.revision_control_adapter_plugin.mark_resolved(self._revision_control_reference, resource_identifiers)
+        return self.revision_control_adapter_plugin.mark_resolved(self._revision_control_reference, resource_identifiers)
 
     def get_revision(self):
         return self.revision_control_adapter_plugin.get_revision(self._revision_control_reference)
