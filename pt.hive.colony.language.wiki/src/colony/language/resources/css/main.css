@@ -427,12 +427,35 @@ h5:hover > a.headerlink {
 }
 
 .checkbox li {
-    background: transparent url(../images/tick_icon.png) no-repeat scroll 0px 5px;
+    background: transparent url(../images/tick_icon.png) no-repeat scroll 0px 4px;
     margin-left: -2em;
     padding-left: 30px;
 }
 
 .checkbox li > div {
+    font-weight: bold;
+}
+
+.resources {
+    background: #e6e6e6 url(../images/resources_note.gif) no-repeat scroll 0px 0px;
+    padding: 18px 52px 18px 52px;
+    line-height: 1.5em;
+}
+
+.resources ul {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    line-height: 200%;
+    list-style-type: none;
+}
+
+.resources li {
+    background: transparent url(../images/arrow_icon.png) no-repeat scroll 2px 7px;
+    margin-left: -2em;
+    padding-left: 30px;
+}
+
+.resources li > div {
     font-weight: bold;
 }
 
