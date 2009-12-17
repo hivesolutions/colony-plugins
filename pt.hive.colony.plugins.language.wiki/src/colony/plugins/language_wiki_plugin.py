@@ -69,6 +69,7 @@ class LanguageWikiPlugin(colony.plugins.plugin_system.Plugin):
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        self.language_wiki.generate("ast", {"file_path" : "../../../../pt.hive.colony.documentation.technical"})
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)

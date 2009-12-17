@@ -37,6 +37,17 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import sys
+
+COLONY_LANGUAGE_WIKI_PATH = "../../pt.hive.colony.language.wiki/src/colony"
+""" The colony language wiki path """
+
+# appends the colony language wiki path
+sys.path.append(COLONY_LANGUAGE_WIKI_PATH)
+
+# imports the colony language wiki package
+import language.wiki_generator
+
 class LanguageWiki:
     """
     The language wiki class.
@@ -56,4 +67,17 @@ class LanguageWiki:
         self.language_wiki_plugin = language_wiki_plugin
 
     def generate(self, engine_name, engine_properties):
-        pass
+        # creates a new wiki generator
+        wiki_generator = language.wiki_generator.WikiGenerator()
+
+        # starts the logger in the wiki generator
+        wiki_generator.start_logger()
+
+        # sets the generation engine in the wiki generator
+        wiki_generator.set_generation_engine(engine_name)
+
+        # sets the generation properties in the wiki generator
+        wiki_generator.set_generation_properties(engine_properties)
+
+        # processes the wiki generator
+        wiki_generator.process()
