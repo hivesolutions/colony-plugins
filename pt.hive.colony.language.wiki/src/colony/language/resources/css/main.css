@@ -168,8 +168,6 @@ h5:hover > a.headerlink {
 .image {
     background: #e6e6e6 url(../images/image_note.gif) no-repeat scroll 0px 0px;
     overflow: auto;
-    margin-left: auto;
-    margin-right: auto;
     padding: 1.2em 1.2em 0.6em 3.2em;
     text-align: center;
 }
@@ -188,7 +186,7 @@ h5:hover > a.headerlink {
 
 .image p {
     font-size: 90%;
-    margin: 6px 0px 6px 0px;
+    margin: 10px 0px 6px 0px;
 }
 
 #wiki-header {
@@ -413,6 +411,13 @@ h5:hover > a.headerlink {
     line-height: 1.5em;
 }
 
+.video {
+    background: #e6e6e6 url(../images/image_note.gif) no-repeat scroll 0px 0px;
+    overflow: auto;
+    padding: 1.2em 1.2em 0.6em 3.2em;
+    text-align: center;
+}
+
 .checkbox {
     background: #eaf2dd url(../images/checkbox_note.gif) no-repeat scroll 0px 0px;
     padding: 18px 52px 18px 52px;
@@ -450,7 +455,7 @@ h5:hover > a.headerlink {
 }
 
 .resources li {
-    background: transparent url(../images/arrow_icon.png) no-repeat scroll 2px 7px;
+    background: transparent url(../images/arrow_icon.png) no-repeat scroll 6px 7px;
     margin-left: -2em;
     padding-left: 30px;
 }
