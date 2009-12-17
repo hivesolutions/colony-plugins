@@ -54,7 +54,8 @@ class RevisionControlBazaarAdapterPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["revision_control.adapter"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PackageDependency(
+                    "Bazaar Lib", "bzrlib", "2.0.3.x", "http://bazaar.canonical.com")]
     events_handled = []
     events_registrable = []
     main_modules = ["revision_control.bazaar_adapter.revision_control_bazaar_adapter_system"]
