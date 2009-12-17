@@ -126,32 +126,26 @@ class RevisionControlAdapter:
         # creates the revision control reference using the configured plugin
         self._revision_control_reference = self.revision_control_adapter_plugin.create_revision_control_reference(revision_control_parameters)
 
-    def update(self, resource_identifiers, revision_identifier):
+    def update(self, resource_identifiers, revision):
         """
         Update working directory.
         """
 
-        if not type(resource_identifiers) == types.ListType:
-            resource_identifiers = [resource_identifiers]
-
-        return self.revision_control_adapter_plugin.update(self._revision_control_reference, resource_identifiers, revision_identifier)
+        return self.revision_control_adapter_plugin.update(self._revision_control_reference, resource_identifiers, revision)
 
     def commit(self, resource_identifiers, commit_message):
         """
         Commit the specified files or all outstanding changes.
         """
 
-        if not type(resource_identifiers) == types.ListType:
-            resource_identifiers = [resource_identifiers]
+        return self.revision_control_adapter_plugin.commit(self._revision_control_reference, resource_identifiers)
 
-        return self.revision_control_adapter_plugin.commit(self._revision_control_reference, resource_identifiers, commit_message)
-
-    def log(self):
+    def log(self, resource_identifiers, start_revision, end_revision):
         """
         Show revision history of entire repository or files.
         """
 
-        return self.revision_control_adapter_plugin.log(self._revision_control_reference)
+        return self.revision_control_adapter_plugin.log(self._revision_control_reference, resource_identifiers, start_revision, end_revision)
 
     def status(self, resource_identifiers = None):
         """
