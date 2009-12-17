@@ -345,7 +345,7 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
                 self._write("<div class=\"menu-contents\">")
                 self._write("<ul>")
                 self._write("<li class=\"menu\"><a href=\"" + INDEX_PAGE + "\">Home</a></li>")
-                self._write("<li class=\"menu menu-index\"><a id=\"index-opener\" href=\"#\" onclick=\"guideMenu(); return false;\">Index</a>")
+                self._write("<li class=\"menu menu-index\"><a id=\"index-opener\" href=\"#\" onclick=\"switchMenu(); return false;\">Index</a>")
 
                 # generates the menu index
                 self._generate_menu_index()

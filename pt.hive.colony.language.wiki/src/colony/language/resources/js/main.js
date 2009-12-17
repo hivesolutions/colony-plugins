@@ -23,12 +23,28 @@
 // __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
 // __license__   = General Public License (GPL), Version 3
 
-guideMenu = function() {
-    if (document.getElementById("index").style.opacity == "0") {
-        document.getElementById("index").style.opacity = "0.98";
-        document.getElementById("index").style.visibility = "visible"
+/**
+ * Switches the menu state.
+ */
+switchMenu = function() {
+    // retrieves the index element
+    var indexElement = document.getElementById("index");
+
+    // retrieves the index element style
+    var indexElementStyle = indexElement.style;
+
+    // in case the opacity of the index element is zero
+    if (indexElementStyle.opacity == "0") {
+        // sets the opacity of the index element
+        indexElementStyle.opacity = "0.98";
+
+        // sets the visibility of the index element
+        indexElementStyle.visibility = "visible";
     } else {
-        document.getElementById("index").style.opacity = "0";
-        document.getElementById("index").style.visibility = "hidden"
+        // sets the opacity of the index element
+        indexElementStyle.opacity = "0";
+
+        // sets the visibility of the index element
+        indexElementStyle.visibility = "hidden";
     }
 }
