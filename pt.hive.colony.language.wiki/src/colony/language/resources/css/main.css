@@ -630,7 +630,8 @@ h5:hover > a.headerlink {
 }
 
 .diagram {
-    font-family: Verdana;
+    background: #e5e5e5 url(../images/diagram_note.gif) no-repeat scroll left top;
+    padding: 18px 52px 18px 52px;
     font-size: 1.0em;
 }
 

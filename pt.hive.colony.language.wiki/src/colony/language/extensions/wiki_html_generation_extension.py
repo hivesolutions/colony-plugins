@@ -72,7 +72,8 @@ BASE_FILES = {"resources/css/main.css" : "/css",
               "resources/images/code_note.gif" : "/images",
               "resources/images/image_note.gif" : "/images",
               "resources/images/checkbox_note.gif" : "/images",
-              "resources/images/resources_note.gif" : "/images"}
+              "resources/images/resources_note.gif" : "/images",
+              "resources/images/diagram_note.gif" : "/images"}
 """ The base files """
 
 DEFAULT_CONFIGURATION_MAP = {"auto_numbered_sections" : True, "generate_footer" : True}
