@@ -404,6 +404,44 @@ def p_statement_image(t):
 
     t[0] = image_node
 
+def p_statement_image_description(t):
+    "statement : LBRACE NAME PIPE statements RBRACE"
+
+    # retrieves the image source
+    image_source = t[2]
+
+    # retrieves the statements node
+    statements_node = t[4]
+
+    # creates the image node
+    image_node = wiki_ast.ImageNode()
+
+    # splits the image source
+    image_source_splitted = image_source.split("?")
+
+    # retrieves the image source splitted length
+    image_source_splitted_length = len(image_source_splitted)
+
+    # in case the image source splitted length is greater than one
+    if image_source_splitted_length > 1:
+        # retrieves the image source and image size
+        # from the image source splitted
+        image_source, image_size = image_source_splitted
+
+        # splits the image size
+        image_size_splited = image_size.split("x")
+
+        # sets the image size in the image node
+        image_node.set_image_size(image_size_splited)
+
+    # sets the image source in the image node
+    image_node.set_image_source(image_source)
+
+    # sets the statements node in the image node
+    image_node.set_statements_node(statements_node)
+
+    t[0] = image_node
+
 def p_statement_external_link(t):
     "statement : LBRACK LINK_NAME RBRACK"
 

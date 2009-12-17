@@ -165,6 +165,32 @@ h5:hover > a.headerlink {
     visibility: visible;
 }
 
+.image {
+    background: #e6e6e6 url(../images/image_note.gif) no-repeat scroll 0px 0px;
+    overflow: auto;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 1.2em 1.2em 0.6em 3.2em;
+    text-align: center;
+}
+
+.image img {
+    -moz-box-shadow: 0.25em 0.25em 2em rgba(0, 0, 0, 0.35);
+    -webkit-box-shadow: rgba(0, 0, 0, 0.35) 0.25em 0.25em 2em;
+}
+
+.image .image-id {
+    color: #20435c;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.image p {
+    font-size: 90%;
+    margin: 6px 0px 6px 0px;
+}
+
 #wiki-header {
     background: transparent url(../images/header.png) repeat-x;
     height: 95px;

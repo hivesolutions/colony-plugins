@@ -69,6 +69,7 @@ BASE_FILES = {"resources/css/main.css" : "/css",
               "resources/images/info_note.gif" : "/images",
               "resources/images/quote_note.gif" : "/images",
               "resources/images/code_note.gif" : "/images",
+              "resources/images/image_note.gif" : "/images",
               "resources/images/checkbox_note.gif" : "/images"}
 """ The base files """
 

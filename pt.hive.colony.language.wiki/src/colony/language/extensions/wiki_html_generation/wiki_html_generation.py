@@ -109,6 +109,9 @@ INDEX_MAP = {"Introduction" : {"order" : ["What is Colony?", "What Can I Build W
 INDEX_PAGE = "documentation_index.xhtml"
 """ The index page """
 
+BASE_LEVEL_VALUE = 0
+""" The base level value """
+
 class HtmlGenerationVisitor(wiki_visitor.Visitor):
     """
     The html generation visitor class.
@@ -138,6 +141,9 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
     section_values_map = {}
     """ The sections values map """
 
+    image_values_map = {}
+    """ The image values map """
+
     configuration_map = {}
     """ The configuration map """
 
@@ -155,6 +161,9 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
 
         # starts the section values map
         self.section_values_map = {}
+
+        # start the image values map
+        self.image_values_map = {}
 
         # starts the configuration map
         self.configuration_map = {}
@@ -488,13 +497,13 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
             self.close_paragraph()
 
             # writes the header value no the string value
-            self._write("<h" + str(node.section_size) + " id=\"" + self.current_section_string + "\">")
+            self._write("<h" + str(node.section_size) + " id=\"section-" + self.current_section_string + "\">")
 
             # in case the auto numbered sections is valid
             if self.configuration_map.get(AUTO_NUMBERED_SECTIONS_VALUE, False):
                 self._write(self.current_section_string)
         elif self.visit_index == 1:
-            self._write("<a class=\"headerlink\" title=\"Permalink to this headline\" href=\"#" + self.current_section_string + "\">¶</a>")
+            self._write("<a class=\"headerlink\" title=\"Permalink to this headline\" href=\"#section-" + self.current_section_string + "\">¶</a>")
             self._write("</h" + str(node.section_size) + ">")
 
             # opens a new paragraph
@@ -527,6 +536,22 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
     @wiki_visitor._visit(wiki_ast.ImageNode)
     def visit_image_node(self, node):
         if self.visit_index == 0:
+            # in case the base vale is not available in
+            # the image values map
+            if not BASE_LEVEL_VALUE in self.image_values_map:
+                # creates the base value in the image values map
+                 self.image_values_map[BASE_LEVEL_VALUE] = 0
+
+            # increments the image values map
+            self.image_values_map[BASE_LEVEL_VALUE] += 1
+
+            # retrieves the current image value
+            current_image_value = self.image_values_map[BASE_LEVEL_VALUE]
+
+            # converts the current image value to string
+            current_image_string = str(current_image_value)
+
+            self._write("<div id=\"image-" + current_image_string + "\" class=\"image\">")
             self._write("<img src=\"" + node.image_source + "\"")
 
             # in case the image size is valid
@@ -553,11 +578,22 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
 
             self._write("/>")
 
+            self._write("<p>")
+
+            self._write("<span class=\"image-id\">Figure " + current_image_string + "</span>")
+
+            # in case the statements node is defined
+            if node.statements_node:
+                self._write(" - ")
+
             # creates the resource path
             resource_path = DEFAULT_RESOURCES_PATH + "/" + node.image_source
 
             # adds the image resource to the resources paths list
             self.resources_paths_list.append(resource_path)
+        elif self.visit_index == 1:
+            self._write("</p>")
+            self._write("</div>")
 
     @wiki_visitor._visit(wiki_ast.LinkNode)
     def visit_link_node(self, node):

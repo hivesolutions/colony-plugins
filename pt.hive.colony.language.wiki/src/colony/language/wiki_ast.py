@@ -574,6 +574,9 @@ class ImageNode(StatementNode):
     image_size = None
     """ The image size """
 
+    statements_node = None
+    """ The statements node """
+
     def __init__(self):
         """
         Constructor of the class.
@@ -600,6 +603,17 @@ class ImageNode(StatementNode):
         """
 
         self.image_size = image_size
+
+    def set_statements_node(self, statements_node):
+        """
+        Sets the statements node.
+
+        @type statements_node: StatementsNode
+        @param statements_node: The statements node.
+        """
+
+        self.statements_node = statements_node
+        self.add_child_node(statements_node)
 
 class LinkNode(StatementNode):
     """
