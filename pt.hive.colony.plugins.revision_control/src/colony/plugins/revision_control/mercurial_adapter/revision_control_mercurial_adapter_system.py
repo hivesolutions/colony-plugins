@@ -45,9 +45,13 @@ import mercurial.commands
 import mercurial.merge
 
 ADAPTER_NAME = "hg"
+""" The name for the revision control adapter """
 
 MERCURIAL_RESOLVED_STATE_VALUE = "r"
 """ The state signaling a conflict has been resolved """
+
+REVISION_RANGE_SEPARATOR = ":"
+""" The separator for revisions in revision ranges """
 
 class RevisionControlMercurialAdapter:
     """
@@ -84,13 +88,13 @@ class RevisionControlMercurialAdapter:
         # returns the repository as the revision control reference
         return repository
 
-    def update(self, revision_control_reference, resource_identifiers, revision_identifier):
+    def update(self, revision_control_reference, resource_identifiers, revision):
         # retrieves the first resource identifier
         resource_identifier = resource_identifiers[0]
 
-        if revision_identifier:
+        if revision:
             # retrieves the change context for the specified identifier
-            change_context = revision_control_reference[revision_identifier]
+            change_context = revision_control_reference[revision]
 
             # retrieves the node
             node = change_context.node()
@@ -102,12 +106,12 @@ class RevisionControlMercurialAdapter:
         mercurial.hg.update(revision_control_reference, node)
 
         # retrieves the change context for the working directory
-        working_directory_change_context = revision_control_reference[None]
+        update_change_context = revision_control_reference[None]
 
         # retrieves the revision node
-        working_directory_node = working_directory_change_context.node()
+        update_node = update_change_context.node()
 
-        return working_directory_node
+        return update_node
 
     def commit(self, revision_control_reference, resource_identifiers, commit_message):
         # for all the specified resource identifiers
@@ -125,6 +129,15 @@ class RevisionControlMercurialAdapter:
         working_directory_node = working_directory_change_context.node()
 
         return working_directory_node
+
+    def log(self, revision_control_reference, resource_identifiers, start_revision, end_revision):
+        # retrieves the change contexts for the specified revisions from the repository
+        change_contexts = [revision_control_reference[change_id] for change_id in revision_control_reference]
+
+        # adapts the change context to log entries
+        log_entries = self.adapt_change_contexts(change_contexts)
+
+        return log_entries
 
     def get_repository(self, path):
         # finds the repository path
@@ -149,3 +162,29 @@ class RevisionControlMercurialAdapter:
 
     def get_adapter_name(self):
         return ADAPTER_NAME
+
+    def adapt_change_contexts(self, change_contexts):
+        # adpats the mercurial change contexts to the standard revision control manager log entries
+        log_entries = [self.adapt_change_context(change_context) for change_context in change_contexts]
+
+        # returns the adapted log entries
+        return log_entries
+
+    def adapt_change_context(self, change_context):
+        # retrieves the log entry fields
+        author = change_context.user()
+        date = change_context.date()[0]
+        message = change_context.description()
+        revision_number = change_context.rev()
+        revision_node = str(change_context)
+
+        # retrieves the revision_string
+        revision_string = str(revision_number) + ":" + revision_node
+
+        # creates the log entry
+        log_entry = {"author" : author,
+                     "date" : date,
+                     "message" : message,
+                     "revision" : revision_string}
+
+        return log_entry

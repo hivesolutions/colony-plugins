@@ -71,37 +71,108 @@ class RevisionControlSubversionAdapter:
         # returns the svn client as the revision control reference
         return client
 
-    def update(self, revision_control_reference, resource_identifiers, revision_identifier):
+    def update(self, revision_control_reference, resource_identifiers, revision):
         # retrieves the first resource identifier
         resource_identifier = resource_identifiers[0]
 
         # in case a revision is specified
-        if revision_identifier:
+        if revision:
             # creates the subversion revision
-            revision = pysvn.Revision(DEFAULT_REVISION_KIND, revision_identifier)
+            subversion_revision = pysvn.Revision(DEFAULT_REVISION_KIND, revision)
         else:
             # updates to the head revision
-            revision = pysvn.Revision(pysvn.opt_revision_kind.head)
+            subversion_revision = pysvn.Revision(pysvn.opt_revision_kind.head)
 
         # performs the update
-        result_revisions = revision_control_reference.update(resource_identifier, True, revision)
+        update_subversion_revisions = revision_control_reference.update(resource_identifier, True, revision)
 
         # retrieves the first of the returned revisions
-        result_revision = result_revisions[0]
+        update_subversion_revision = update_subversion_revisions[0]
 
         # retrieves the revision identifier
-        result_revision_identifier = str(result_revision.number)
+        update_revision = str(update_subversion_revision.number)
 
-        return result_revision_identifier
+        return update_revision
 
     def commit(self, revision_control_reference, resource_identifiers, commit_message):
         # retrieves the result revisions
-        result_revision = revision_control_reference.checkin(resource_identifiers, commit_message)
+        commit_subversion_revision = revision_control_reference.checkin(resource_identifiers, commit_message)
 
         # retrieves the revision identifier
-        result_revision_identifier = str(result_revision.number)
+        commit_revision = str(commit_subversion_revision.number)
 
-        return result_revision_identifier
+        return commit_revision
+
+    def log(self, revision_control_reference, resource_identifiers, start_revision, end_revision):
+        # the list of log messages to retrieve
+        log_messages = []
+
+        # the revision in which to start the log
+        if start_revision:
+            start_subversion_revision = pysvn.Revision(DEFAULT_REVISION_KIND, start_revision)
+        else:
+            start_subversion_revision = pysvn.Revision(pysvn.opt_revision_kind.head)
+
+        # the revision in which to end the log
+        if end_revision:
+            end_subversion_revision = pysvn.Revision(DEFAULT_REVISION_KIND, end_revision)
+        else:
+            end_subversion_revision = pysvn.Revision(pysvn.opt_revision_kind.number, 0)
+
+        # indicates if the changed_paths dictionary should be filled with a list of changed paths
+        discover_changed_paths = False
+
+        # if strict_node_history is set, log entries will not cross copies
+        strict_node_history = True
+
+        # the maximum number of log messages: 0 means all
+        limit = 0
+
+        # in case url_or_path no longer exists in the repos of WC, peg_revision can be specified with a revision where it did exist
+        peg_revision = pysvn.Revision(pysvn.opt_revision_kind.unspecified)
+
+        # not documented
+        include_merged_revisions = False
+
+        # revprops is a list of strings that name the revprops to be returned.
+        revprops = None
+
+        for resource_identifier in resource_identifiers:
+            # retrieves the log messages for the specified parameters
+            resource_log_messages = revision_control_reference.log(resource_identifier, start_subversion_revision, end_subversion_revision, discover_changed_paths, strict_node_history, limit, peg_revision, include_merged_revisions, revprops)
+
+            # extends the log messages list with the retrieved log messages
+            log_messages.extend(resource_log_messages)
+
+        # convert the log messages to the standard revision control manager format
+        log_entries = self.adapt_log_messages(log_messages)
+
+        return log_entries
 
     def get_adapter_name(self):
         return ADAPTER_NAME
+
+    def adapt_log_messages(self, log_messages):
+        # adapts the subversion log messages to the standard revision control manager log entries
+        log_entries = [self.adapt_log_message(log_message) for log_message in log_messages]
+
+        # returns the adapted log entries
+        return log_entries
+
+    def adapt_log_message(self, log_entry):
+        # retrieves the log entry fields
+        author = log_entry["author"]
+        date = log_entry["date"]
+        message = log_entry["message"]
+        revision = log_entry["revision"]
+
+        # retrieves the revision number
+        revision_number_string = str(revision.number)
+
+        # creates the log entry
+        log_entry = {"author" : author,
+                     "date" : date,
+                     "message" : message,
+                     "revision" : revision_number_string}
+
+        return log_entry
