@@ -89,8 +89,8 @@ class RevisionControlBazaarAdapterPlugin(colony.plugins.plugin_system.Plugin):
     def create_revision_control_reference(self, revision_control_parameters):
         return self.revision_control_bazaar_adapter.create_revision_control_reference(revision_control_parameters)
 
-    def update(self, revision_control_reference, resource_identifiers, revision_identifier):
-        return self.revision_control_bazaar_adapter.update(revision_control_reference, resource_identifiers, revision_identifier)
+    def update(self, revision_control_reference, resource_identifiers, revision):
+        return self.revision_control_bazaar_adapter.update(revision_control_reference, resource_identifiers, revision)
 
     def get_adapter_name(self):
         return self.revision_control_bazaar_adapter.get_adapter_name()

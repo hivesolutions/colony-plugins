@@ -68,7 +68,7 @@ class RevisionControlBazaarAdapter:
     def create_revision_control_reference(self, revision_control_parameters):
         pass
 
-    def update(self, revision_control_reference, resource_identifiers, revision_identifier):
+    def update(self, revision_control_reference, resource_identifiers, revision):
         # retrieves the first resource identifier
         resource_identifier = resource_identifiers[0]
 
@@ -76,9 +76,9 @@ class RevisionControlBazaarAdapter:
         update_command = bzrlib.builtins.cmd_update()
 
         # runs the update command
-        return_revision_identifier = update_command.run(resource_identifier)
+        update_revision = update_command.run(resource_identifier)
 
-        return return_revision_identifier
+        return update_revision
 
     def get_adapter_name(self):
         return ADAPTER_NAME
