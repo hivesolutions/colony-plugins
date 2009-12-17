@@ -55,7 +55,10 @@ WIKI_EXTENSIONS = ("wiki", "wik")
 
 BASE_FILES = {"resources/css/main.css" : "/css",
               "resources/js/main.js" : "/js",
-              "resources/images/link_icon.gif" : "/images",
+              "resources/images/link_icon.png" : "/images",
+              "resources/images/console_icon.png" : "/images",
+              "resources/images/header.png" : "/images",
+              "resources/images/tick_icon.png" : "/images",
               "resources/images/colony_logo.png" : "/images",
               "resources/images/powered_by_colony.png" : "/images",
               "resources/images/separator.png" : "/images",
@@ -65,7 +68,8 @@ BASE_FILES = {"resources/css/main.css" : "/css",
               "resources/images/error_note.gif" : "/images",
               "resources/images/info_note.gif" : "/images",
               "resources/images/quote_note.gif" : "/images",
-              "resources/images/code_note.gif" : "/images"}
+              "resources/images/code_note.gif" : "/images",
+              "resources/images/checkbox_note.gif" : "/images"}
 """ The base files """
 
 DEFAULT_CONFIGURATION_MAP = {"auto_numbered_sections" : True, "generate_footer" : True}

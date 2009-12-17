@@ -138,8 +138,8 @@ a:hover {
 }
 
 a.external {
-    background: transparent url(../images/link_icon.gif) no-repeat scroll 0 1px;
-    padding: 1px 0px 1px 18px;
+    background: transparent url(../images/link_icon.png) no-repeat scroll 0 2px;
+    padding: 1px 0px 1px 20px;
 }
 
 a.headerlink {
@@ -166,10 +166,8 @@ h5:hover > a.headerlink {
 }
 
 #wiki-header {
-    background-color: #214c8f;
-    height: 90px;
-    -moz-box-shadow: -2px -4px 25px #222222;
-    -webkit-box-shadow: -2px -4px 25px #222222;
+    background: transparent url(../images/header.png) repeat-x;
+    height: 95px;
 }
 
 #wiki-header .wiki-header-contents {
@@ -193,7 +191,7 @@ h5:hover > a.headerlink {
 
 .wiki-header-contents .menu-contents {
     float: right;
-    margin-top: 22px;
+    margin-top: 16px;
     margin-right: 22px;
 }
 
@@ -369,8 +367,8 @@ h5:hover > a.headerlink {
 }
 
 .command {
-    background-color: #eeeeee;
-    padding: 4px 4px 4px 4px;
+    background: #eeeeee url(../images/console_icon.png) no-repeat scroll 6px 5px;
+    padding: 4px 8px 4px 28px;
     color: #20435C;
     font-family: monospace;
     font-size: 110%;
@@ -384,9 +382,32 @@ h5:hover > a.headerlink {
 }
 
 .error {
-    background:#f9d9d8 url(../images/error_note.gif) no-repeat scroll 0px 0px;
+    background: #f9d9d8 url(../images/error_note.gif) no-repeat scroll 0px 0px;
     padding: 18px 52px 18px 52px;
     line-height: 1.5em;
+}
+
+.checkbox {
+    background: #eaf2dd url(../images/checkbox_note.gif) no-repeat scroll 0px 0px;
+    padding: 18px 52px 18px 52px;
+    line-height: 1.5em;
+}
+
+.checkbox ul {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    line-height: 200%;
+    list-style-type: none;
+}
+
+.checkbox li {
+    background: transparent url(../images/tick_icon.png) no-repeat scroll 0px 5px;
+    margin-left: -2em;
+    padding-left: 30px;
+}
+
+.checkbox li > div {
+    font-weight: bold;
 }
 
 .monospace {
