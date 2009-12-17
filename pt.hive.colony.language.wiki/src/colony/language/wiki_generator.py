@@ -40,12 +40,13 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import sys
 import time
 import getopt
+import logging
 
 import libs.extension_system
 
 import wiki_extension_system
 
-USAGE_MESSAGE = "wiki_generator --file=file_path [--target=target_path] [-v] [-d]"
+USAGE_MESSAGE = "wiki_generator --file=file_path [--target=target_path] [--generation=generation_engine] [-v] [-d]"
 """ The usage message """
 
 DEFAULT_TARGET_PATH = "generated"
@@ -61,11 +62,14 @@ if __name__ == "__main__":
     # start the file path value as None
     file_path = None
 
-    # start the target path as None
+    # start the target path as the default target path
     target_path = DEFAULT_TARGET_PATH
 
+    # start the generation as None
+    generation = None
+
     # retrieves the argument options
-    opts, args = getopt.getopt(sys.argv[1:], "vdf:t:", ["verbose", "debug", "file=", "target="])
+    opts, args = getopt.getopt(sys.argv[1:], "vdf:t:", ["verbose", "debug", "file=", "target=", "generation="])
 
     # iterates over all the given options
     for option, value in opts:
@@ -77,14 +81,14 @@ if __name__ == "__main__":
             file_path = value
         elif option in ("-y", "--target"):
             target_path = value
+        elif option in ("-g", "--generation"):
+            generation = value
 
     # in case the file path is not defined
     if not file_path:
         print "File Path not defined"
         print "Usage: " + USAGE_MESSAGE
         sys.exit(2)
-
-    import logging
 
     if debug:
         log_level = logging.DEBUG
@@ -101,6 +105,11 @@ if __name__ == "__main__":
 
     # retrieves the generation extensions
     generation_extensions = extension_manager.get_extensions_by_capability("generation")
+
+    # in case generation is defined
+    if generation:
+        # filters the generation extensions to retrieve just the demanded ones
+        generation_extensions = [generation_extension for generation_extension in generation_extensions if generation_extension.get_generation_type() == generation]
 
     # creates the properties map
     properties = {"file_path" : file_path, "target_path" : target_path}
