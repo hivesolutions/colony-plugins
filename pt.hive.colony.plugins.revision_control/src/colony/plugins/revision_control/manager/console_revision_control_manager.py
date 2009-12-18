@@ -166,7 +166,7 @@ class ConsoleRevisionControlManager:
 
             if update_revision:
                 # outputs the result
-                output_method("successfully updated to revision " + update_revision)
+                output_method("successfully updated to revision " + str(update_revision))
             else:
                 output_method("successfully updated")
         except Exception, exception:
@@ -198,11 +198,13 @@ class ConsoleRevisionControlManager:
             # uses the revision control manager to perform the commit
             commit_revision = revision_control_manager.commit(resource_identifiers, commit_message)
 
+            # in case a valid revision was created
             if commit_revision:
                 # outputs the result
                 output_method("successfully committed revision " + str(commit_revision))
             else:
-                output_method("successfully committed")
+                # otherwise indicates nothing is available to commit
+                output_method("nothing to commit")
         except Exception, exception:
             # outputs the result
             output_method("problem committing resources: " + str(exception))
