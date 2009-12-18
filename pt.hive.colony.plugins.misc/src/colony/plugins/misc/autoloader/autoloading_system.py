@@ -100,8 +100,8 @@ class Autoloader:
             for search_directory in self.search_directories:
                 # in case the search directory does not exists
                 if not os.path.exists(search_directory):
-                    # prints an info message
-                    self.autoloader_plugin.info("Search directory '%s' does not exist in the current filesystem" % (search_directory))
+                    # prints a debug message
+                    self.autoloader_plugin.debug("Search directory '%s' does not exist in the current filesystem" % (search_directory))
 
                     # passes iteration
                     continue
@@ -125,8 +125,8 @@ class Autoloader:
 
                     # in case the search directory does not exists
                     if not os.path.exists(full_path):
-                        # prints an info message
-                        self.autoloader_plugin.info("Path '%s' does not exist in the current filesystem" % (search_directory))
+                        # prints a debug message
+                        self.autoloader_plugin.debug("Path '%s' does not exist in the current filesystem" % (search_directory))
 
                         # passes iteration
                         continue
