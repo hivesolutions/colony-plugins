@@ -52,6 +52,9 @@ BASE_ADDRESS = "http://vimeo.com/moogaloop.swf"
 VALID_DOMAIN_NAMES = ("www.vimeo.com", "vimeo.com")
 """ The valid domain names """
 
+VALID_OPTIONS_LIST = ("server", "show_title", "show_byline", "show_portrait", "color", "fullscreen")
+""" The valid options list """
+
 class VimeoVideoExtension(wiki_video.wiki_video_extension_system.WikiVideoExtension):
     """
     The vimeo video extension class.
@@ -92,6 +95,18 @@ class VimeoVideoExtension(wiki_video.wiki_video_extension_system.WikiVideoExtens
         return VIDEO_TYPE
 
     def get_video_url(self, url, options):
+        """
+        Retrieves the video url for the given url structure,
+        and options.
+
+        @type url: Url
+        @param url: The base url.
+        @type options: Dictionary
+        @param options: The map with the options.
+        @rtype: String
+        @return: The video url for the given url structure, and options.
+        """
+
         # in case the url is not valid
         if not self._validate_url(url):
             # returns immediately
@@ -108,6 +123,16 @@ class VimeoVideoExtension(wiki_video.wiki_video_extension_system.WikiVideoExtens
 
         # adds the video id option to the url
         url.add_option("clip_id", video_id)
+
+        # iterates over all the valid options
+        for valid_option in VALID_OPTIONS_LIST:
+            # in case the valid option exists in the options
+            if valid_option in options:
+                # retrieves the valid option value
+                valid_option_value = options[valid_option]
+
+                # adds the option to the url
+                url.add_option(valid_option, valid_option_value)
 
         # builds the url
         http_url = url.build_url()

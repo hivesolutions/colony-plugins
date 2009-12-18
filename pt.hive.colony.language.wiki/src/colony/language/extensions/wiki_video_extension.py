@@ -47,6 +47,12 @@ import wiki_video.wiki_video_extension_system
 GENERATOR_TYPE = "video"
 """ The generator type """
 
+DEFAULT_WIDTH = 445
+""" The default width """
+
+DEFAULT_HEIGHT = 364
+""" The default width """
+
 class WikiVideoExtension(wiki_extension_system.WikiExtension):
     """
     The wiki video extension class.
@@ -150,11 +156,20 @@ class WikiVideoExtension(wiki_extension_system.WikiExtension):
 
             # in case the video url is valid
             if video_url:
-                string_buffer.write("<object width=\"425\" height=\"344\">")
+                # escapes the video url
+                escaped_video_url = visitor.escape_string_value(video_url)
+
+                # retrieves the width
+                width = attributes_map.get("width", DEFAULT_WIDTH)
+
+                # retrieves the height
+                height = attributes_map.get("height", DEFAULT_HEIGHT)
+
+                string_buffer.write("<object width=\"" + str(width) +"\" height=\"" + str(height) + "\">")
                 string_buffer.write("<param name=\"allowFullScreen\" value=\"true\"></param>")
                 string_buffer.write("<param name=\"allowscriptaccess\" value=\"always\"></param>")
-                string_buffer.write("<param name=\"movie\" value=\"" + video_url + "\"></param>")
-                string_buffer.write("<embed src=\"" + video_url + "\" type=\"application/x-shockwave-flash\" wmode=\"transparent\" allowscriptaccess=\"always\" allowfullscreen=\"true\" width=\"425\" height=\"344\"></embed>")
+                string_buffer.write("<param name=\"movie\" value=\"" + escaped_video_url + "\"></param>")
+                string_buffer.write("<embed src=\"" + escaped_video_url + "\" type=\"application/x-shockwave-flash\" wmode=\"transparent\" allowscriptaccess=\"always\" allowfullscreen=\"true\" width=\"" + str(width) +"\" height=\"" + str(height) +"\"></embed>")
                 string_buffer.write("</object>")
 
         # writes the end div video tag
