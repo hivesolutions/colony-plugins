@@ -81,6 +81,11 @@ class Autoloader:
         self.search_directories = []
 
     def load_autoloader(self):
+        """
+        Loads the autoloader starting all the necessary structures
+        and setting the update time.
+        """
+
         # iterates over all the plugin manager paths
         for plugin_path in self.manager.plugin_paths:
             # adds the search path
@@ -91,12 +96,17 @@ class Autoloader:
 
         # while the flag is active
         while self.continue_flag:
+            # iterates over all the search directories
             for search_directory in self.search_directories:
                 # in case the search directory does not exists
                 if not os.path.exists(search_directory):
-                    # passes iteration
-                    pass
+                    # prints an info message
+                    self.autoloader_plugin.info("Search directory '%s' does not exist in the current filesystem" % (search_directory))
 
+                    # passes iteration
+                    continue
+
+                # iterates over all the search directories in the search directories information map
                 if search_directory in self.search_directories_information_map:
                     for file_name in self.search_directories_information_map[search_directory]:
                         self.search_directories_information_map[search_directory][file_name].exists = False
@@ -110,12 +120,25 @@ class Autoloader:
 
                 # for all the files in the directory
                 for file_name in dir_list:
+                    # constructs the full path from the seach directory and the file name
                     full_path = search_directory + "/" + file_name
+
+                    # retrieves the file stat
                     file_stat = os.stat(full_path)
+
+                    # retrieves the modified date
                     modified_date = time.localtime(file_stat[stat.ST_MTIME])
+
+                    # retrieves the mode
                     mode = file_stat[stat.ST_MODE]
+
+                    # splits the file name
                     split = os.path.splitext(file_name)
+
+                    # retrieves the module name
                     module_name = "".join(split[:-1])
+
+                    # retrieves the extension name
                     extension_name = split[-1]
 
                     # in case it's not a directory and the extension of the file is .py (python file)
@@ -233,10 +256,26 @@ class FileInformation:
     """
 
     filename = "none"
+    """ The file name """
+
     file_properties = None
+    """ The file properties """
+
     exists = False
+    """ The exists flag """
 
     def __init__(self, filename = "none", file_properties = None, exists = False):
+        """
+        Constructor of the class.
+
+        @type filename: String
+        @param filename: The file name.
+        @type file_properties: FileProperties
+        @param file_properties: The file properties.
+        @type exists: bool
+        @param exists: The exists flag.
+        """
+
         self.filename = filename
         self.file_properties = file_properties
         self.exists = exists
@@ -247,6 +286,14 @@ class FileProperties:
     """
 
     modified_date = None
+    """ The modified date """
 
     def __init__(self, modified_date = None):
+        """
+        Constructor of the class.
+
+        @type modified_date: Tuple
+        @param modified_date: The modified date time tuple.
+        """
+
         self.modified_date = modified_date
