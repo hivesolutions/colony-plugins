@@ -39,6 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import sys
 
+import libs.url_parser
+
 import wiki_video.wiki_video_extension_system
 
 VIDEO_TYPE = "vimeo"
@@ -46,6 +48,9 @@ VIDEO_TYPE = "vimeo"
 
 BASE_ADDRESS = "http://vimeo.com/moogaloop.swf"
 """ The base address """
+
+VALID_DOMAIN_NAMES = ("www.vimeo.com", "vimeo.com")
+""" The valid domain names """
 
 class VimeoVideoExtension(wiki_video.wiki_video_extension_system.WikiVideoExtension):
     """
@@ -87,18 +92,68 @@ class VimeoVideoExtension(wiki_video.wiki_video_extension_system.WikiVideoExtens
         return VIDEO_TYPE
 
     def get_video_url(self, url, options):
-        pass
+        # in case the url is not valid
+        if not self._validate_url(url):
+            # returns immediately
+            return
 
-    def get_video_id(self, url):
-        # splits the url
-        url_splitted = url.split("/")
+        # retrieves the video id
+        video_id = self._get_video_id(url)
 
-        # retrieves the url splitted length
-        url_splitted_length = len(url_splitted)
+        # creates a new url
+        url = libs.url_parser.Url()
 
-        if url_splitted_length == 4:
-            if url_splitted[2] == "www.vimeo.com":
-                return BASE_ADDRESS + "?clip_id=7079800"
-        elif url_splitted_length == 2:
-            if url_splitted[0] == "www.vimeo.com":
-                return BASE_ADDRESS + "?clip_id=7079800"
+        # parses the base address
+        url.parse_url(BASE_ADDRESS)
+
+        # adds the video id option to the url
+        url.add_option("clip_id", video_id)
+
+        # builds the url
+        http_url = url.build_url()
+
+        # returns the url
+        return http_url
+
+    def _get_video_id(self, url):
+        """
+        Retrieves the video id for the given url.
+
+        @type url: Url
+        @param url: The url to retrieve the video id.
+        @rtype: int
+        @return: The video id for the given url.
+        """
+
+        # retrieves the url options map
+        url_options_map = url.get_options_map()
+
+        # retrieves the url resource reference list map
+        resource_reference_list = url.get_resource_reference_list()
+
+        # retrieves the video id from the option or from the resource reference
+        video_id = url_options_map.get("clip_id", resource_reference_list[-1])
+
+        # returns the video id
+        return video_id
+
+    def _validate_url(self, url):
+        """
+        Validates the given url.
+
+        @type url: Url
+        @param url: The url to be validated.
+        @rtype: bool
+        @return: The result of the validation.
+        """
+
+        # retrieves the url base name
+        url_base_name = url.get_base_name()
+
+        # in case the url base name is valid
+        if url_base_name in VALID_DOMAIN_NAMES:
+            # returns true
+            return True
+
+        # returns false
+        return False

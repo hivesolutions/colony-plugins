@@ -39,13 +39,18 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import sys
 
+import libs.url_parser
+
 import wiki_video.wiki_video_extension_system
 
 VIDEO_TYPE = "youtube"
 """ The highlighting type """
 
-BASE_ADDRESS = "http://www.youtube.com/v/"
+BASE_ADDRESS = "http://www.youtube.com/v"
 """ The base address """
+
+VALID_DOMAIN_NAMES = ("www.youtube.com", "youtube.com")
+""" The valid domain names """
 
 class YoutubeVideoExtension(wiki_video.wiki_video_extension_system.WikiVideoExtension):
     """
@@ -87,25 +92,68 @@ class YoutubeVideoExtension(wiki_video.wiki_video_extension_system.WikiVideoExte
         return VIDEO_TYPE
 
     def get_video_url(self, url, options):
-        pass
+        # in case the url is not valid
+        if not self._validate_url(url):
+            # returns immediately
+            return
+
+        # retrieves the video id
+        video_id = self._get_video_id(url)
+
+        # creates a new url
+        url = libs.url_parser.Url()
+
+        # parses the base address
+        url.parse_url(BASE_ADDRESS)
+
+        # adds the video id option to the url
+        url.add_resource_reference_item(video_id)
+
+        # builds the url
+        http_url = url.build_url()
+
+        # returns the url
+        return http_url
 
     def _get_video_id(self, url):
-        #http://www.youtube.com/watch?v=67OYoGDha0U&feature=player_embedded
-        watch_index = url.find("watch?")
-        if not watch_index == -1:
-            # splits the url
-            url_splitted = url.split("?")
+        """
+        Retrieves the video id for the given url.
 
-            # TENHO DE GENERALIZAR A EXTRACCAO DE ARGUMENTOS DE UM URL
+        @type url: Url
+        @param url: The url to retrieve the video id.
+        @rtype: int
+        @return: The video id for the given url.
+        """
 
-            url_splitted = url_splitted.split("&")
+        # retrieves the url options map
+        url_options_map = url.get_options_map()
 
-        # retrieves the url splitted length
-        url_splitted_length = len(url_splitted)
+        # retrieves the url resource reference list map
+        resource_reference_list = url.get_resource_reference_list()
 
-        if url_splitted_length == 4:
-            if url_splitted[2] == "www.youtube.com":
-                return BASE_ADDRESS + "?clip_id=7079800"
-        elif url_splitted_length == 2:
-            if url_splitted[0] == "www.youtube.com":
-                return BASE_ADDRESS + "?clip_id=7079800"
+        # retrieves the video id from the option or from the resource reference
+        video_id = url_options_map.get("v", resource_reference_list[-1])
+
+        # returns the video id
+        return video_id
+
+    def _validate_url(self, url):
+        """
+        Validates the given url.
+
+        @type url: Url
+        @param url: The url to be validated.
+        @rtype: bool
+        @return: The result of the validation.
+        """
+
+        # retrieves the url base name
+        url_base_name = url.get_base_name()
+
+        # in case the url base name is valid
+        if url_base_name in VALID_DOMAIN_NAMES:
+            # returns true
+            return True
+
+        # returns false
+        return False

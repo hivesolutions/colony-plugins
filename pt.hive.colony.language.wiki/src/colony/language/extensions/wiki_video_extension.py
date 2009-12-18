@@ -37,15 +37,15 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import libs.url_parser
 import libs.string_buffer_util
 
 import wiki_extension_system
 
+import wiki_video.wiki_video_extension_system
+
 GENERATOR_TYPE = "video"
 """ The generator type """
-
-CONFIGURATION_MAP = {"generate_footer" : False, "simple_parse" : True}
-""" The configuration map """
 
 class WikiVideoExtension(wiki_extension_system.WikiExtension):
     """
@@ -76,6 +76,33 @@ class WikiVideoExtension(wiki_extension_system.WikiExtension):
     dependencies = []
     """ The dependencies of the extension """
 
+    extension_manager = None
+    """ The extension manager """
+
+    url_parser = None
+    """ The url parser """
+
+    def __init__(self, manager = None, logger = None):
+        """
+        Constructor of the class.
+
+        @type manager: ExtensionManager
+        @param manager: The parent extension manager.
+        @type logger: Logger
+        @param logger: The extension manager logger.
+        """
+
+        wiki_extension_system.WikiExtension.__init__(self, manager, logger)
+
+        # creates a new extension manager
+        self.extension_manager = libs.extension_system.ExtensionManager(["./extensions/wiki_video/extensions"])
+        self.extension_manager.set_extension_class(wiki_video.wiki_video_extension_system.WikiVideoExtension)
+        self.extension_manager.start_logger()
+        self.extension_manager.load_system()
+
+        # creates the url parser
+        self.url_parser = libs.url_parser.UrlParser()
+
     def get_generator_type(self):
         """
         Retrieves the generator type.
@@ -101,20 +128,34 @@ class WikiVideoExtension(wiki_extension_system.WikiExtension):
         # retrieves the tag contents
         contents = tag_node.contents
 
+        # retrieves the tag attributes map
+        attributes_map = tag_node.attributes_map
+
         # creates the string buffer
         string_buffer = libs.string_buffer_util.StringBuffer()
+
+        # parses the url
+        url = self.url_parser.parse_url(contents)
+
+        # retrieves the video extensions
+        video_extensions = self.extension_manager.get_extensions_by_capability("video")
 
         # writes the start div video tag
         string_buffer.write("<div class=\"video\">")
 
-        DEFAULT_RESOLUTIONS = {"vimeo" : (400, 225), "youtube" : (425, 344)}
+        # iterates over all the video extensions
+        for video_extension in video_extensions:
+            # retrieves the video url
+            video_url = video_extension.get_video_url(url, attributes_map)
 
-        string_buffer.write("<object width=\"425\" height=\"344\">")
-        string_buffer.write("<param name=\"allowFullScreen\" value=\"true\"></param>")
-        string_buffer.write("<param name=\"allowscriptaccess\" value=\"always\"></param>")
-        string_buffer.write("<param name=\"movie\" value=\"" + contents + "\"></param>")
-        string_buffer.write("<embed src=\"" + contents + "\" type=\"application/x-shockwave-flash\" wmode=\"transparent\" allowscriptaccess=\"always\" allowfullscreen=\"true\" width=\"425\" height=\"344\"></embed>")
-        string_buffer.write("</object>")
+            # in case the video url is valid
+            if video_url:
+                string_buffer.write("<object width=\"425\" height=\"344\">")
+                string_buffer.write("<param name=\"allowFullScreen\" value=\"true\"></param>")
+                string_buffer.write("<param name=\"allowscriptaccess\" value=\"always\"></param>")
+                string_buffer.write("<param name=\"movie\" value=\"" + video_url + "\"></param>")
+                string_buffer.write("<embed src=\"" + video_url + "\" type=\"application/x-shockwave-flash\" wmode=\"transparent\" allowscriptaccess=\"always\" allowfullscreen=\"true\" width=\"425\" height=\"344\"></embed>")
+                string_buffer.write("</object>")
 
         # writes the end div video tag
         string_buffer.write("</div>")
