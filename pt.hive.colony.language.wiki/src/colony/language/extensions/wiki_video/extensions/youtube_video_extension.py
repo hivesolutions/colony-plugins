@@ -52,7 +52,7 @@ BASE_ADDRESS = "http://www.youtube.com/v"
 VALID_DOMAIN_NAMES = ("www.youtube.com", "youtube.com")
 """ The valid domain names """
 
-VALID_OPTIONS_LIST = ("hl", "hd", "fs", "border", "color1", "color2")
+VALID_OPTIONS_LIST = ("hl", "hd", "fs", "rel", "border", "showinfo", "color1", "color2")
 """ The valid options list """
 
 class YoutubeVideoExtension(wiki_video.wiki_video_extension_system.WikiVideoExtension):
