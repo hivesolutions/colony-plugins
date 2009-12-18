@@ -42,6 +42,8 @@ import sys
 import time
 import stat
 
+import os.path
+
 SLEEP_TIME_VALUE = 1
 """ The sleep time value """
 
@@ -90,6 +92,11 @@ class Autoloader:
         # while the flag is active
         while self.continue_flag:
             for search_directory in self.search_directories:
+                # in case the search directory does not exists
+                if not os.path.exists(search_directory):
+                    # passes iteration
+                    pass
+
                 if search_directory in self.search_directories_information_map:
                     for file_name in self.search_directories_information_map[search_directory]:
                         self.search_directories_information_map[search_directory][file_name].exists = False
