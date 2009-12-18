@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import bzrlib
+import bzrlib.workingtree
 import bzrlib.builtins
 
 ADAPTER_NAME = "bzr"
@@ -66,19 +67,134 @@ class RevisionControlBazaarAdapter:
         self.revision_control_bazaar_adapter_plugin = revision_control_bazaar_adapter_plugin
 
     def create_revision_control_reference(self, revision_control_parameters):
-        pass
+        # retrieves the repository path parameter
+        repository_path_parameter = revision_control_parameters["repository_path"]
+
+        # creates the appropriate working tree
+        working_tree = bzrlib.workingtree.WorkingTree.open(repository_path_parameter)
+
+        # returns the working tree as the revision control reference
+        return working_tree
 
     def update(self, revision_control_reference, resource_identifiers, revision):
-        # retrieves the first resource identifier
-        resource_identifier = resource_identifiers[0]
+        # updates the whole working tree
+        revision_control_reference.update()
 
-        # creates the update command
-        update_command = bzrlib.builtins.cmd_update()
+        # retrieves the last revision identifier
+        last_revision_identifier = revision_control_reference.last_revision()
 
-        # runs the update command
-        update_revision = update_command.run(resource_identifier)
+        # creates the standard revision
+        update_revision = self.create_revision(revision_control_reference, last_revision_identifier)
 
+        # returns the revision after the update
         return update_revision
+
+    def commit(self, revision_control_reference, resource_identifiers, commit_message):
+        # retrieves the delta from the basis tree
+        delta = revision_control_reference.changes_from(revision_control_reference.basis_tree())
+
+        # in case no changes exist
+        if not delta.has_changed():
+            return None
+
+        # commits the whole working tree
+        commit_revision_identifier = revision_control_reference.commit(commit_message)
+
+        # creates the standard revision
+        commit_revision = self.create_revision(revision_control_reference, commit_revision_identifier)
+
+        # returns the revision after the commit
+        return commit_revision
+
+    def create_revision(self, revision_control_reference, revision_identifier):
+        # creates the revision object
+        revision = Revision()
+
+        # splits the revision attributes in the revision identifier
+        revision_attributes = revision_identifier.split('-')
+
+        # retrieves the attributes
+        author = revision_attributes[0]
+        date  = revision_attributes[1]
+        identifier = revision_attributes[2]
+
+        # retrieves the revision number from the working tree branch
+        number = revision_control_reference.branch.revision_id_to_revno(revision_identifier)
+
+        # sets the attributes in the revision
+        revision.set_identifier(identifier)
+        revision.set_number(number)
+        revision.set_date(date)
+        revision.set_author(author)
+        revision.set_message("<commit message goes here>")
+
+        return revision
 
     def get_adapter_name(self):
         return ADAPTER_NAME
+
+class Revision:
+    """
+    The generic revision for revision control management.
+    """
+
+    identifier = None
+    """ The revision identifier """
+
+    number = None
+    """ The revision number """
+
+    date = None
+    """ The revision date """
+
+    author = "none"
+    """ The revision author """
+
+    message = None
+    """ The revision message """
+
+    def get_identifier(self):
+        return self.identifier
+
+    def set_identifier(self, identifier):
+        self.identifier = identifier
+
+    def get_number(self):
+        return self.number
+
+    def set_number(self, number):
+        self.number = number
+
+    def get_date(self, date):
+        return self.date
+
+    def set_date(self, date):
+        self.date = date
+
+    def get_author(self):
+        return self.author
+
+    def set_author(self, author):
+        self.author = author
+
+    def get_message(self):
+        return self.message
+
+    def set_message(self, message):
+        self.message = message
+
+    def __str__(self):
+        # retrieves the revision number
+        revision_number = self.get_number()
+
+        # retrieves the revision identifier
+        revision_identifier = self.get_identifier()
+
+        # builds the revision_string
+        if revision_number:
+            revision_string = "%d:%s" % (revision_number, revision_identifier)
+        else:
+            revision_string = revision_identifier
+
+        # returns the revision string
+        return revision_string
