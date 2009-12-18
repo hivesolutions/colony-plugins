@@ -145,34 +145,87 @@ class RevisionControlSubversionAdapter:
             log_messages.extend(resource_log_messages)
 
         # convert the log messages to the standard revision control manager format
-        log_entries = self.adapt_log_messages(log_messages)
+        revisions = self.adapt_log_messages(log_messages)
 
-        return log_entries
+        return revisions
 
     def get_adapter_name(self):
         return ADAPTER_NAME
 
     def adapt_log_messages(self, log_messages):
         # adapts the subversion log messages to the standard revision control manager log entries
-        log_entries = [self.adapt_log_message(log_message) for log_message in log_messages]
+        revisions = [self.adapt_log_message(log_message) for log_message in log_messages]
 
         # returns the adapted log entries
-        return log_entries
+        return revisions
 
     def adapt_log_message(self, log_entry):
         # retrieves the log entry fields
         author = log_entry["author"]
         date = log_entry["date"]
         message = log_entry["message"]
-        revision = log_entry["revision"]
+        subversion_revision = log_entry["revision"]
 
-        # retrieves the revision number
-        revision_number_string = str(revision.number)
+        # creates the revision
+        revision = SubversionRevision(subversion_revision)
 
-        # creates the log entry
-        log_entry = {"author" : author,
-                     "date" : date,
-                     "message" : message,
-                     "revision" : revision_number_string}
+        # sets the author in the revision
+        revision.set_author(author)
 
-        return log_entry
+        # sets the date in the revision
+        revision.set_date(date)
+
+        # sets the message in the revision
+        revision.set_message(message)
+
+        # returns the assembled revision
+        return revision
+
+class SubversionRevision:
+    _subversion_revision = None
+    """ The adapted subversion revision """
+
+    date = None
+    """ The revision date """
+
+    author = "none"
+    """ The revision author """
+
+    message = None
+    """ The revision message """
+
+    def __init__(self, subversion_revision):
+        # sets the adapted subversion revision
+        self._subversion_revision = subversion_revision
+
+    def get_identifier(self):
+        # retrieves the revision identifier from the subversion revision's string representation
+        revision_identifier = str(self._subversion_revision)
+
+        # returns the retrieved revision identifier
+        return revision_identifier
+
+    def get_number(self):
+        return self._subversion_revision.number
+
+    def get_date(self):
+        return self.date
+
+    def set_date(self, date):
+        self.date = date
+
+    def get_author(self):
+        return self.author
+
+    def set_author(self, author):
+        self.author = author
+
+    def get_message(self):
+        return self.message
+
+    def set_message(self, message):
+        self.message = message
+
+    def __str__(self):
+        # uses the subversion revision number as the string representation
+        return str(self._subversion_revision.number)
