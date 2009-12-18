@@ -138,7 +138,7 @@ class RevisionControlAdapter:
         Commit the specified files or all outstanding changes.
         """
 
-        return self.revision_control_adapter_plugin.commit(self._revision_control_reference, resource_identifiers)
+        return self.revision_control_adapter_plugin.commit(self._revision_control_reference, resource_identifiers, commit_message)
 
     def log(self, resource_identifiers, start_revision, end_revision):
         """
@@ -147,27 +147,25 @@ class RevisionControlAdapter:
 
         return self.revision_control_adapter_plugin.log(self._revision_control_reference, resource_identifiers, start_revision, end_revision)
 
-    def status(self, resource_identifiers = None):
+    def status(self, resource_identifiers):
         """
-        Show changed files in the working directory.
-        """
-
-        if not type(resource_identifiers) == types.ListType:
-            resource_identifiers = [resource_identifiers]
-
-        status = self.revision_control_adapter_plugin.status(self._revision_control_reference, resource_identifiers)
-
-        return status
-
-    def mark_resolved(self, resource_identifiers):
-        """
-        Marks the specified resources as having the existing conflicts resolved.
+        Retrieves the status of the provided resource identifiers.
         """
 
-        if not type(resource_identifiers) == types.ListType:
-            resource_identifiers = [resource_identifiers]
+        return self.revision_control_adapter_plugin.status(self._revision_control_reference, resource_identifiers)
 
-        return self.revision_control_adapter_plugin.mark_resolved(self._revision_control_reference, resource_identifiers)
+class Revision:
+    number = None
+    identifier = None
 
-    def get_revision(self):
-        return self.revision_control_adapter_plugin.get_revision(self._revision_control_reference)
+    def get_number(self):
+        return self.number
+
+    def set_number(self, number):
+        self.number = number
+
+    def get_identifier(self):
+        return self.identifier
+
+    def set_identifier(self, identifier):
+        self.identifier = identifier

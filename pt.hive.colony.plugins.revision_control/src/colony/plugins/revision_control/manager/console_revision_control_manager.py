@@ -51,6 +51,7 @@ checkout <adapter_name> <source> <destination>                                  
 update <adapter_name>  <resource_identifier> <revision>                         - updates a resource to a specified revision\n\
 commit <adapter_name> <resource_identifier> <commit_message>                    - commits the changes in the resource with the specified message\n\
 log <adapter_name> <resource_identifier> [start_revision=HEAD] [end_revision=0] - lists the change sets for the specified resource identifier between the specified revisions\n\
+status <adapter_name> <resource_identifier>                                     - lists the pending changes in the current revision\n\
 log_date <adapter_name> <resource_identifier> [date]                            - lists all the change sets for the specified resource identifier matching the date specification"
 """ The help text """
 
@@ -73,7 +74,8 @@ class ConsoleRevisionControlManager:
                 "update",
                 "commit",
                 "log",
-                "log_name"]
+                "log_name",
+                "status"]
     """ The commands list """
 
     def __init__(self, revision_control_manager_plugin):
@@ -198,7 +200,7 @@ class ConsoleRevisionControlManager:
 
             if commit_revision:
                 # outputs the result
-                output_method("successfully committed revision " + commit_revision)
+                output_method("successfully committed revision " + str(commit_revision))
             else:
                 output_method("successfully committed")
         except Exception, exception:
@@ -206,13 +208,13 @@ class ConsoleRevisionControlManager:
             output_method("problem committing resources: " + str(exception))
 
     def process_log(self, args, output_method):
-        # returns in case an invalid number of arguments was provided
-        if len(args) < 2:
-            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
-            return
-
         # determines the number of arguments
         number_arguments = len(args)
+
+        # returns in case an invalid number of arguments was provided
+        if number_arguments < 2:
+            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
+            return
 
         # retrieves the adapter name
         adapter_name = args[0]
@@ -251,6 +253,34 @@ class ConsoleRevisionControlManager:
             # outputs the result
             output_method("problem retrieving change set log: " + str(exception))
 
+    def process_status(self, args, output_method):
+        # returns in case an invalid number of arguments was provided
+        if len(args) < 2:
+            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
+            return
+
+        # retrieves the adapter name
+        adapter_name = args[0]
+
+        # retrieves the resource identifier
+        resource_identifier = args[1]
+
+        # creates a revision control manager to use on the resource
+        revision_control_manager = self.load_revision_control_manager(adapter_name, resource_identifier)
+
+        # creates the resource identifiers list
+        resource_identifiers = [resource_identifier]
+
+        try:
+            # uses the revision control manager to perform the commit
+            status = revision_control_manager.status(resource_identifiers)
+
+            # outputs the result
+            self.output_status(status, output_method)
+        except Exception, exception:
+            # outputs the result
+            output_method("problem retrieving status: " + str(exception))
+
     def load_revision_control_manager(self, adapter_name, resource_identifier):
         # creates the revision control parameters
         revision_control_parameters = {"repository_path" : resource_identifier}
@@ -265,10 +295,10 @@ class ConsoleRevisionControlManager:
         # for all the log results
         for log_entry in log_entries:
             # retrieves the log entry fields
-            log_entry_author = log_entry["author"]
-            log_entry_date = log_entry["date"]
-            log_entry_message = log_entry["message"]
-            log_entry_revision = log_entry["revision"]
+            log_entry_author = log_entry.get_author()
+            log_entry_date = log_entry.get_date()
+            log_entry_message = log_entry.get_message()
+            log_entry_revision = str(log_entry)
 
             # creates a date time
             date_time = self.get_date_time_from_timestamp(log_entry_date)
@@ -284,6 +314,20 @@ class ConsoleRevisionControlManager:
             output_method("author:      " + log_entry_author)
             output_method("date:        " + date_time_string)
             output_method("summary:     " + log_entry_message)
+
+    def output_status(self, status, output_method):
+        status_string_list = ["M", "A", "R", "D", "U", "I", "C"]
+
+        for status_type_index in range(len(status)):
+            # retrieves the resources for the current status type
+            status_type_resource_identifiers = status[status_type_index]
+
+            # retrieves the string for the current status type
+            status_string = status_string_list[status_type_index]
+
+            # for all the resources of the current status type
+            for resource_identifier in status_type_resource_identifiers:
+                output_method(status_string + "        " + resource_identifier)
 
     def get_date_time_from_timestamp(self, timestamp):
         # creates a datetime object from the timestamp with no associated tzinfo
