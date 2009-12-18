@@ -41,8 +41,9 @@ import os.path
 
 import mercurial
 import mercurial.hg
-import mercurial.commands
 import mercurial.merge
+import mercurial.cmdutil
+import mercurial.commands
 
 ADAPTER_NAME = "hg"
 """ The name for the revision control adapter """
@@ -114,30 +115,36 @@ class RevisionControlMercurialAdapter:
         return update_node
 
     def commit(self, revision_control_reference, resource_identifiers, commit_message):
-        # for all the specified resource identifiers
-        for resource_identifier in resource_identifiers:
-            # retrieves the match for the resource identifier in the file system
-            match = mercurial.cmd_util.match(revision_control_reference, resource_identifier)
+        # retrieves the match for the resource identifier in the file system
+        match = mercurial.cmdutil.match(revision_control_reference, resource_identifiers)
 
-            # commits the retrieved match
-            revision_control_reference.commit(commit_message, None, None, match, None, None)
+        # commits the retrieved match
+        a = revision_control_reference.commit(commit_message, None, None, match, None, None)
+
+        print a
 
         # retrieves the change context for the working directory
         working_directory_change_context = revision_control_reference[None]
 
         # retrieves the revision node
-        working_directory_node = working_directory_change_context.node()
+        commit_revision = self.adapt_change_context(working_directory_change_context)
 
-        return working_directory_node
+        return commit_revision
 
     def log(self, revision_control_reference, resource_identifiers, start_revision, end_revision):
         # retrieves the change contexts for the specified revisions from the repository
         change_contexts = [revision_control_reference[change_id] for change_id in revision_control_reference]
 
-        # adapts the change context to log entries
-        log_entries = self.adapt_change_contexts(change_contexts)
+        # adapts the change context to revisions
+        revisions = self.adapt_change_contexts(change_contexts)
 
-        return log_entries
+        return revisions
+
+    def status(self, revision_control_reference, resource_identifiers):
+        # retrieves the working directory status
+        status = revision_control_reference.status()
+
+        return status
 
     def get_repository(self, path):
         # finds the repository path
@@ -164,27 +171,77 @@ class RevisionControlMercurialAdapter:
         return ADAPTER_NAME
 
     def adapt_change_contexts(self, change_contexts):
-        # adpats the mercurial change contexts to the standard revision control manager log entries
-        log_entries = [self.adapt_change_context(change_context) for change_context in change_contexts]
+        # adapts the mercurial change contexts to the standard revision control manager revisions
+        revisions = [self.adapt_change_context(change_context) for change_context in change_contexts]
 
         # returns the adapted log entries
-        return log_entries
+        return revisions
 
     def adapt_change_context(self, change_context):
-        # retrieves the log entry fields
-        author = change_context.user()
-        date = change_context.date()[0]
-        message = change_context.description()
-        revision_number = change_context.rev()
-        revision_node = str(change_context)
+        # creates the revision object from the change context
+        revision = MercurialRevision(change_context)
 
-        # retrieves the revision_string
-        revision_string = str(revision_number) + ":" + revision_node
+        # returns the revision objects
+        return revision
 
-        # creates the log entry
-        log_entry = {"author" : author,
-                     "date" : date,
-                     "message" : message,
-                     "revision" : revision_string}
+class MercurialRevision:
+    _mercurial_change_context = None
+    """ The adapted mercurial change context """
 
-        return log_entry
+    def __init__(self, mercurial_change_context):
+        # sets the adapted mercurial change context
+        self._mercurial_change_context = mercurial_change_context
+
+    def get_identifier(self):
+        # retrieves the revision identifier
+        identifier = str(self._mercurial_change_context)
+
+        # returns the retrieved identifier
+        return identifier
+
+    def get_number(self):
+        # retrieves the revision number from the change context
+        number = self._mercurial_change_context.rev()
+
+        # returns the retrieved number
+        return number
+
+    def get_date(self):
+        # retrieves the mercurial change context date tuple
+        mercurial_change_context_date_tuple = self._mercurial_change_context.date()
+
+        # retrieves the timestamp from the tuple
+        date = mercurial_change_context_date_tuple[0]
+
+        # returns the date
+        return date
+
+    def get_author(self):
+        # retrieves the author from the change context
+        author = self._mercurial_change_context.user()
+
+        # returns the author
+        return author
+
+    def get_message(self):
+        # retrieves the message from the change context
+        message = self._mercurial_change_context.description()
+
+        # returns the message
+        return message
+
+    def __str__(self):
+        # retrieves the revision number
+        revision_number = self.get_number()
+
+        # retrieves the revision identifier
+        revision_identifier = self.get_identifier()
+
+        # builds the revision_string
+        if revision_number:
+            revision_string = "%d:%s" % (revision_number, revision_identifier)
+        else:
+            revision_string = revision_identifier
+
+        # returns the revision string
+        return revision_string
