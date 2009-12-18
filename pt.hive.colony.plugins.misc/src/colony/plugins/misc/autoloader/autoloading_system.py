@@ -123,6 +123,14 @@ class Autoloader:
                     # constructs the full path from the seach directory and the file name
                     full_path = search_directory + "/" + file_name
 
+                    # in case the search directory does not exists
+                    if not os.path.exists(full_path):
+                        # prints an info message
+                        self.autoloader_plugin.info("Path '%s' does not exist in the current filesystem" % (search_directory))
+
+                        # passes iteration
+                        continue
+
                     # retrieves the file stat
                     file_stat = os.stat(full_path)
 
