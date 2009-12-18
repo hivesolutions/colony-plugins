@@ -119,15 +119,13 @@ class RevisionControlMercurialAdapter:
         match = mercurial.cmdutil.match(revision_control_reference, resource_identifiers)
 
         # commits the retrieved match
-        a = revision_control_reference.commit(commit_message, None, None, match, None, None)
-
-        print a
+        commit_change_context_node = revision_control_reference.commit(commit_message, None, None, match, None, None)
 
         # retrieves the change context for the working directory
-        working_directory_change_context = revision_control_reference[None]
+        commit_change_context = revision_control_reference[commit_change_context_node]
 
         # retrieves the revision node
-        commit_revision = self.adapt_change_context(working_directory_change_context)
+        commit_revision = self.adapt_change_context(commit_change_context)
 
         return commit_revision
 
