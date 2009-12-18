@@ -75,6 +75,9 @@ GENERATE_FOOTER_VALUE = "generate_footer"
 AUTO_NUMBERED_SECTIONS_VALUE = "auto_numbered_sections"
 """ The auto numbered sections value """
 
+MAXIMUM_SECTIONS_VALUE = 5
+""" The maximum sections value """
+
 ESCAPE_NAME_VALUE = "escape_name"
 """ The escape name value """
 
@@ -489,6 +492,11 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
 
                 # adds the next value to the string value
                 string_value += str(next_value) + "."
+
+            # iterates over all the next section values
+            for index in range(node_section_size + 1, MAXIMUM_SECTIONS_VALUE):
+                # resets the section size in the section values map
+                self.section_values_map[index] = 0
 
             # sets the current section string
             self.current_section_string = string_value
