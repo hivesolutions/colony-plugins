@@ -509,7 +509,7 @@ class HttpClientServiceTask:
 
             except Exception, exception:
                 # prints info message about exception
-                self.main_service_http_plugin.info("There was an exception handling the request: " + exception.message)
+                self.main_service_http_plugin.info("There was an exception handling the request: " + str(exception.message))
 
                 # sends the exception
                 self.send_exception(request, exception)

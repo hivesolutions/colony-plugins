@@ -109,3 +109,6 @@ class MainServiceHttpColonyHandler:
                             request.status_code = 500
 
                     return
+
+        # raises the request not handled exception
+        raise main_service_http_colony_handler_exceptions.RequestNotHandled("no python handler plugin could handle the request")
