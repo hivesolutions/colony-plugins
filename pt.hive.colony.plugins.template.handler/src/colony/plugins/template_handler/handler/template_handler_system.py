@@ -105,6 +105,7 @@ class TemplateHandler:
         # retrieves the file extension from the filename
         file_name_extension = request.filename.split(".")[-1]
 
+        # in case the file name extension is valid
         if file_name_extension == TEMPLATE_FILE_EXENSION:
             return True
         else:
@@ -130,7 +131,7 @@ class TemplateHandler:
         template_handler_extension_plugins = self.template_handler_plugin.template_handler_extension_plugins
 
         # sets the default base directory
-        base_directory = "C:/Program Files/Apache Software Foundation/Apache2.2/htdocs"
+        base_directory = ""
 
         # retrieves the request file name
         request_filename = request.uri
@@ -195,8 +196,8 @@ class TemplateHandler:
                     # writes the file contents
                     request.write(file_contents)
 
-                    # returns the call (the file is readed)
-                    return
+                    # returns the call (the file is read)
+                    return True
 
         # in case the paths does not exist
         if not os.path.exists(complete_path):
