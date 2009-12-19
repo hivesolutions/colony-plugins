@@ -96,6 +96,9 @@ DEFAULT_PORT = 8080
 DEFAULT_CHARSET = "utf-8"
 """ The default charset """
 
+DEFAULT_VALUE = "default"
+""" The default value """
+
 STATUS_CODE_VALUES = {200 : "OK", 207 : "Multi-Status",
                       301 : "Moved permanently", 302 : "Found", 303 : "See Other",
                       403 : "Forbidden", 404 : "Not Found",
@@ -761,37 +764,45 @@ class HttpClientServiceTask:
         @param exception: The exception to be sent.
         """
 
-        # sets the request content type
-        request.content_type = "text/plain"
+        # retrieves the service configuration
+        service_configuration = self.main_service_http_plugin.get_configuration_property("server_configuration").get_data()
 
-        # checks if the exception contains a status code
-        if hasattr(exception, "status_code"):
-            # sets the status code in the request
-            request.status_code = exception.status_code
-        # in case there is no status code defined in the exception
-        else:
-            # sets the internal server error status code
-            request.status_code = 500
+        # retrieves the preferred error handlers list
+        preferred_error_handlers_list = service_configuration.get("preferred_error_handlers", DEFAULT_VALUE)
 
-        # retrieves the value for the status code
-        status_code_value = STATUS_CODE_VALUES[request.status_code]
+        # retrieves the http service error handler plugins
+        http_service_error_handler_plugins = self.main_service_http_plugin.http_service_error_handler_plugins
 
-        # writes the header message in the message
-        request.write("colony web server - " + str(request.status_code) + " " + status_code_value + "\n")
+        # iterates over all the preferred error handlers
+        for preferred_error_handler in preferred_error_handlers_list:
+            # in case the preferred error handler is the default one
+            if preferred_error_handler == DEFAULT_VALUE:
+                # handles the error with the default error handler
+                self.default_error_handler(request, exception)
 
-        # writes the exception message
-        request.write("error: '" + str(exception) + "'\n")
+                # breaks the loop
+                break
+            else:
+                # unsets the valid flag
+                valid = False
 
-        # writes the traceback message in the request
-        request.write("traceback:\n")
+                # iterates over all the http service error handler plugins
+                for http_service_error_handler_plugin in http_service_error_handler_plugins:
+                    # checks if the plugin id is the same as the preferred error handler
+                    if http_service_error_handler_plugin.id == preferred_error_handler:
+                        # calls the handle error in the http service error handler plugin
+                        http_service_error_handler_plugin.handle_error(request, exception)
 
-        # writes the traceback in the request
-        formated_traceback = traceback.format_tb(sys.exc_traceback)
+                        # sets the valid flag
+                        valid = True
 
-        # iterates over the traceback lines
-        for formated_traceback_line in formated_traceback:
-            # writes the traceback line in the request
-            request.write(formated_traceback_line)
+                        # breaks the loop
+                        break
+
+                # in case the valid flag is set
+                if valid:
+                    # breaks the loop
+                    break
 
         # sends the request to the client (response)
         self.send_request(request)
@@ -933,6 +944,48 @@ class HttpClientServiceTask:
                 return False
         else:
             return False
+
+    def default_error_handler(self, request, error):
+        """
+        The default error handler for exception sending.
+
+        @type request: HttpRequest
+        @param request: The request to send the error.
+        @type exception: Exception
+        @param exception: The error to be sent.
+        """
+
+        # sets the request content type
+        request.content_type = "text/plain"
+
+        # checks if the error contains a status code
+        if hasattr(error, "status_code"):
+            # sets the status code in the request
+            request.status_code = error.status_code
+        # in case there is no status code defined in the error
+        else:
+            # sets the internal server error status code
+            request.status_code = 500
+
+        # retrieves the value for the status code
+        status_code_value = STATUS_CODE_VALUES[request.status_code]
+
+        # writes the header message in the message
+        request.write("colony web server - " + str(request.status_code) + " " + status_code_value + "\n")
+
+        # writes the error message
+        request.write("error: '" + str(error) + "'\n")
+
+        # writes the traceback message in the request
+        request.write("traceback:\n")
+
+        # writes the traceback in the request
+        formated_traceback = traceback.format_tb(sys.exc_traceback)
+
+        # iterates over the traceback lines
+        for formated_traceback_line in formated_traceback:
+            # writes the traceback line in the request
+            request.write(formated_traceback_line)
 
 class HttpRequest:
     """
