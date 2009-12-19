@@ -788,8 +788,11 @@ class HttpClientServiceTask:
 
                 # iterates over all the http service error handler plugins
                 for http_service_error_handler_plugin in http_service_error_handler_plugins:
-                    # checks if the plugin id is the same as the preferred error handler
-                    if http_service_error_handler_plugin.id == preferred_error_handler:
+                    # retrieves the http service error handler plugin error handler name
+                    http_service_error_handler_plugin_error_handler_name = http_service_error_handler_plugin.get_error_handler_name()
+
+                    # checks if the plugin is the same as the preferred error handler
+                    if http_service_error_handler_plugin_error_handler_name == preferred_error_handler:
                         # calls the handle error in the http service error handler plugin
                         http_service_error_handler_plugin.handle_error(request, exception)
 
