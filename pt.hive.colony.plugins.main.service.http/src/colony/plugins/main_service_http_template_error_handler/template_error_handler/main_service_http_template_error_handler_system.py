@@ -40,11 +40,20 @@ __license__ = "GNU General Public License (GPL), Version 3"
 ERROR_HANDLER_NAME = "template"
 """ The error handler name """
 
+XHTML_MIME_TYPE = "application/xhtml+xml"
+""" The xhtml mime type """
+
 TEMPLATE_ERROR_HANDLER_RESOURCES_PATH = "main_service_http_template_error_handler/template_error_handler/resources"
 """ The template error handler resources path """
 
 HTTP_SERVICE_ERROR_XHTML_TEMPLATE_FILE_NAME = "http_service_error.xhtml"
 """ The http service error xhtml template file name """
+
+STATUS_CODE_VALUES = {200 : "OK", 207 : "Multi-Status",
+                      301 : "Moved permanently", 302 : "Found", 303 : "See Other",
+                      403 : "Forbidden", 404 : "Not Found",
+                      500 : "Internal Server Error"}
+""" The status code values map """
 
 class MainServiceHttpTemplateErrorHandler:
     """
@@ -73,11 +82,14 @@ class MainServiceHttpTemplateErrorHandler:
 
         # checks if the error contains a status code
         if hasattr(error, "status_code"):
-            # sets the status code in the request
-            request.status_code = error.status_code
+            # sets the error code
+            error_code = error.status_code
         else:
-            # sets the internal server error status code
-            request.status_code = 500
+            # sets the internal server error error code
+            error_code = 500
+
+        # retrieves the error description
+        error_description = STATUS_CODE_VALUES.get(error_code, "No description")
 
         # retrieves the plugin manager
         plugin_manager = self.main_service_http_template_error_handler_plugin.manager
@@ -94,11 +106,23 @@ class MainServiceHttpTemplateErrorHandler:
         # parses the template file path
         template_file = template_engine_manager_plugin.parse_file_path(template_file_path)
 
+        # assigns the error code to the template file
+        template_file.assign("error_code", error_code)
+
+        # assigns the error description to the template file
+        template_file.assign("error_description", error_description)
+
         # processes the template file
         processed_template_file = template_file.process()
 
         # decodes the processed template file into a unicode object
         processed_template_file_decoded = processed_template_file.decode("Cp1252")
+
+        # sets the request content type
+        request.content_type = XHTML_MIME_TYPE
+
+        # sets the status code in the request
+        request.status_code = error_code
 
         # writes the processed template file encoded to the request
         request.write(processed_template_file_decoded)
