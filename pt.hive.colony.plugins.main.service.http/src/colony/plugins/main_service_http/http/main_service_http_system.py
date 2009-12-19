@@ -359,7 +359,7 @@ class MainServiceHttp:
                 # prints a debug message about the number of threads in pool
                 self.main_service_http_plugin.debug("Number of threads in pool: %d" % self.http_client_thread_pool.current_number_threads)
             except Exception, exception:
-                # prints an error message abour the problem accepting the connection
+                # prints an error message about the problem accepting the connection
                 self.main_service_http_plugin.error("Error accepting connection: " + str(exception))
 
         # closes the http socket
@@ -509,7 +509,7 @@ class HttpClientServiceTask:
 
             except Exception, exception:
                 # prints info message about exception
-                self.main_service_http_plugin.info("There was an exception handling the request: " + str(exception.message))
+                self.main_service_http_plugin.info("There was an exception handling the request: " + str(exception))
 
                 # sends the exception
                 self.send_exception(request, exception)
