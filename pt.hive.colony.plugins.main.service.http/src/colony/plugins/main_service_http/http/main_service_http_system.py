@@ -467,12 +467,19 @@ class HttpClientServiceTask:
                 # retrieves the service configuration contexts
                 service_configuration_contexts = self.service_configuration["contexts"]
 
+                # retrieves the service configuration contexts resolution order
+                service_configuration_contexts_resolution_order = service_configuration_contexts.get("resolution_order", service_configuration_contexts.keys())
+
                 # starts the request handled
                 request_handled = False
 
                 # iterates over the service configuration context names
-                for service_configuration_context_name, service_configuration_context in service_configuration_contexts.items():
+                for service_configuration_context_name in service_configuration_contexts_resolution_order:
+                    # in case the path is found in the request path
                     if request.path.find(service_configuration_context_name) == 0:
+                        # retrieves the service configuration context
+                        service_configuration_context = service_configuration_contexts[service_configuration_context_name]
+
                         # sets the request properties
                         request.properties = service_configuration_context.get("request_properties", {})
 
@@ -764,11 +771,8 @@ class HttpClientServiceTask:
         @param exception: The exception to be sent.
         """
 
-        # retrieves the service configuration
-        service_configuration = self.main_service_http_plugin.get_configuration_property("server_configuration").get_data()
-
         # retrieves the preferred error handlers list
-        preferred_error_handlers_list = service_configuration.get("preferred_error_handlers", DEFAULT_VALUE)
+        preferred_error_handlers_list = self.service_configuration.get("preferred_error_handlers", DEFAULT_VALUE)
 
         # retrieves the http service error handler plugins
         http_service_error_handler_plugins = self.main_service_http_plugin.http_service_error_handler_plugins
