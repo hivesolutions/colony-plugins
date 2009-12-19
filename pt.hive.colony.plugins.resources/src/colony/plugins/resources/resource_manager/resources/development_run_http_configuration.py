@@ -43,6 +43,7 @@ configuration = {
                  "default_handler" : "file",
                  "default_encoding" : None,
                  "default_content_type_charset" : "utf-8",
+                 "preferred_error_handlers" : ["pt.hive.colony.plugins.main.service.http.template_error_handler", "default"],
                  "contexts" : {
                      "/colony_web" : {
                          "handler" : "file",
