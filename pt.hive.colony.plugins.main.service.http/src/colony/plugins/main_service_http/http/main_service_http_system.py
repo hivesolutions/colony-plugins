@@ -790,6 +790,7 @@ class HttpClientServiceTask:
 
         # iterates over the traceback lines
         for formated_traceback_line in formated_traceback:
+            # writes the traceback line in the request
             request.write(formated_traceback_line)
 
         # sends the request to the client (response)
