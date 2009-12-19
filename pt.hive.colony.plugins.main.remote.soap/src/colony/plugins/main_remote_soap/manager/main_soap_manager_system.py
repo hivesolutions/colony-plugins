@@ -283,7 +283,7 @@ class MainSoapManager:
 
             # parses the encoded data
             (request, header, body, attrs) = soap_internal.main_soap_manager_parser.parseSOAPRPC(data_encoded, header = 1, body = 1, attrs = 1)
-        except Exception, ex:
+        except Exception, exception:
             raise main_soap_manager_exceptions.ServiceRequestNotTranslatable(data)
 
         # returns the translated request

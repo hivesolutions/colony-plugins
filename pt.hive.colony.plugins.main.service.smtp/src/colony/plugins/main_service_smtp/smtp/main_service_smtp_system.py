@@ -280,8 +280,8 @@ class MainServiceSmtp:
                 self.smtp_client_thread_pool.insert_task(task_descriptor)
 
                 self.main_service_smtp_plugin.debug("Number of threads in pool: %d" % self.smtp_client_thread_pool.current_number_threads)
-            except Exception, ex:
-                print ex
+            except Exception, exception:
+                print exception
                 self.main_service_smtp_plugin.error("Error accepting connection")
 
         # closes the smtp socket

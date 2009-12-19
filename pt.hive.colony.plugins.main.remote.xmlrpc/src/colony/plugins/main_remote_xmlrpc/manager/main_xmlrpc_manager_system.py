@@ -335,7 +335,7 @@ class MainXmlrpcManager:
             error_fault = xmlrpclib.Fault("XmlEncodeException", "Result Object Not Serializable")
             data = xmlrpclib.dumps(error_fault, None, True)
         except Exception, exception:
-            error_fault = xmlrpclib.Fault("XmlEncodeException", "Result Object Not Serializable: " + exception.message)
+            error_fault = xmlrpclib.Fault("XmlEncodeException", "Result Object Not Serializable: " + str(exception))
             data = xmlrpclib.dumps(error_fault, None, True)
 
         # returns the xml data
