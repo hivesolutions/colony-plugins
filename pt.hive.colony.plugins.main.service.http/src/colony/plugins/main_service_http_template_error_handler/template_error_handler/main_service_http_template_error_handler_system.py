@@ -37,7 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import sys
 import time
+import traceback
 
 ERROR_HANDLER_NAME = "template"
 """ The error handler name """
@@ -102,6 +104,9 @@ class MainServiceHttpTemplateErrorHandler:
         # rounds the delta time
         delta_time_rounded = round(delta_time, 2)
 
+        # retrieves the formated traceback
+        formated_traceback = traceback.format_tb(sys.exc_traceback)
+
         # retrieves the error description
         error_description = STATUS_CODE_VALUES.get(error_code, "No description")
 
@@ -128,6 +133,9 @@ class MainServiceHttpTemplateErrorHandler:
 
         # assigns the delta time to the template file
         template_file.assign("delta_time", delta_time_rounded)
+
+        # assigns the traceback to the template file
+        template_file.assign("traceback", formated_traceback)
 
         # processes the template file
         processed_template_file = template_file.process()

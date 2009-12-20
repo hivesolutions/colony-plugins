@@ -411,6 +411,10 @@ h5:hover > a.headerlink {
     line-height: 1.5em;
 }
 
+.error .traceback {
+    font-family: monospace;
+}
+
 .video {
     background: #e6e6e6 url(../images/image_note.gif) no-repeat scroll 0px 0px;
     overflow: auto;
