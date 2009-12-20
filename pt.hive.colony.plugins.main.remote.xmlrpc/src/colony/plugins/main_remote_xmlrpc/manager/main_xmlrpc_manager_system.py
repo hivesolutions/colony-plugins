@@ -64,13 +64,27 @@ DEFAULT_ENCODER = "utf-8"
 """ The default encoder """
 
 class MainXmlrpcManager:
+    """
+    The main xml rpc manager class.
+    """
 
     main_xmlrpc_manager_plugin = None
+    """ The main xml rpc manager plugin """
 
     service_methods = []
+    """ The service methods list """
+
     service_methods_map = {}
+    """ The service mthods map """
 
     def __init__(self, main_xmlrpc_manager_plugin):
+        """
+        Constructor of the class.
+
+        @type main_xmlrpc_manager_plugin: MainXmlrpcManagerPlugin
+        @param main_xmlrpc_manager_plugin: The main xml rpc manager plugin.
+        """
+
         self.main_xmlrpc_manager_plugin = main_xmlrpc_manager_plugin
 
         self.service_objects = []
