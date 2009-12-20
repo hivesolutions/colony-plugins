@@ -42,7 +42,7 @@ import colony.plugins.decorators
 
 class MainSoapManagerPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Soap Manager Main plugin
+    The main class for the Soap Manager Main plugin.
     """
 
     id = "pt.hive.colony.plugins.main.remote.soap.manager"
