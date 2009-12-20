@@ -186,7 +186,7 @@ class MainConsole:
                 try:
                     attribute(arguments, output_method)
                 except Exception, exception:
-                    output_method(COMMAND_EXCEPTION_MESSAGE + ": " + exception.message)
+                    output_method(COMMAND_EXCEPTION_MESSAGE + ": " + str(exception))
                     self.main_console_plugin.log_stack_trace()
                     return False
                 valid = True
@@ -197,7 +197,7 @@ class MainConsole:
                         try:
                             attribute(arguments, output_method)
                         except Exception, exception:
-                            output_method(COMMAND_EXCEPTION_MESSAGE + ": " + exception.message)
+                            output_method(COMMAND_EXCEPTION_MESSAGE + ": " + str(exception))
                             self.main_console_plugin.log_stack_trace()
                             return False
                         valid = True
