@@ -42,7 +42,7 @@ import colony.plugins.decorators
 
 class MainPyroManagerPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Pyro Manager Main plugin
+    The main class for the Pyro Manager Main plugin.
     """
 
     id = "pt.hive.colony.plugins.main.remote.pyro.manager"
