@@ -116,7 +116,7 @@ class MainServiceHttpTemplateErrorHandler:
         processed_template_file = template_file.process()
 
         # decodes the processed template file into a unicode object
-        processed_template_file_decoded = processed_template_file.decode("Cp1252")
+        processed_template_file_decoded = processed_template_file.decode("utf-8")
 
         # sets the request content type
         request.content_type = XHTML_MIME_TYPE
