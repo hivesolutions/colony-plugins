@@ -591,9 +591,20 @@ class HttpClientServiceTask:
                     # retrieves the start line
                     start_line = message_value[:start_line_index]
 
-                    # splits the start line to retrieve the operation type the path
-                    # and the protocol version
-                    operation_type, path, protocol_version = start_line.split(" ")
+                    # splits the start line in spaces
+                    start_line_splitted = start_line.split(" ")
+
+                    # retrieves the start line splitted length
+                    start_line_splitted_length = len(start_line_splitted)
+
+                    # in case the length of the splitted line is not three
+                    if not start_line_splitted_length == 3:
+                        # raises the http invalid data exception
+                        raise main_service_http_exceptions.HttpInvalidDataException("invalid data received: " + start_line)
+
+                    # retrieve the operation type the path and the protocol version
+                    # from the start line splitted
+                    operation_type, path, protocol_version = start_line_splitted
 
                     # sets the request  operation type
                     request.set_operation_type(operation_type)
@@ -1098,9 +1109,28 @@ class HttpRequest:
 
         # iterates over all the attribute fields
         for attribute_field in attribute_fields_list:
-            # retrieves the attribute name and the attribute value,
-            # splitting the string in the equals operator
-            attribute_name, attribute_value = attribute_field.split("=")
+            # splits the attribute field in the equals operator
+            attribute_field_splitted = attribute_field.split("=")
+
+            # retrieves the attribute field splitted length
+            attribute_field_splitted_length = len(attribute_field_splitted)
+
+            # in case the attribute field splitted length is invalid
+            if attribute_field_splitted_length == 0 or attribute_field_splitted_length > 2:
+                continue
+
+            # in case the attribute field splitted length is two
+            if attribute_field_splitted_length == 2:
+                # retrieves the attribute name and the attribute value,
+                # from the attribute field splitted
+                attribute_name, attribute_value = attribute_field_splitted
+            # in case the attribute field splitted length is one
+            elif attribute_field_splitted_length == 1:
+                # retrieves the attribute name, from the attribute field splitted
+                attribute_name, = attribute_field_splitted
+
+                # sets the attribute value to none
+                attribute_value = None
 
             # sets the attribute value
             self.__setattribute__(attribute_name, attribute_value)
