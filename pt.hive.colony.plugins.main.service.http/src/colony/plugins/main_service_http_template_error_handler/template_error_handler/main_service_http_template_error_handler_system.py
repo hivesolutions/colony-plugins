@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import time
+
 ERROR_HANDLER_NAME = "template"
 """ The error handler name """
 
@@ -88,6 +90,18 @@ class MainServiceHttpTemplateErrorHandler:
             # sets the internal server error error code
             error_code = 500
 
+        # retrieves the initial time
+        start_time = request.request_time
+
+        # retrieves the end time
+        end_time = time.time()
+
+        # calculates the delta time
+        delta_time = end_time - start_time
+
+        # rounds the delta time
+        delta_time_rounded = round(delta_time, 2)
+
         # retrieves the error description
         error_description = STATUS_CODE_VALUES.get(error_code, "No description")
 
@@ -111,6 +125,9 @@ class MainServiceHttpTemplateErrorHandler:
 
         # assigns the error description to the template file
         template_file.assign("error_description", error_description)
+
+        # assigns the delta time to the template file
+        template_file.assign("delta_time", delta_time_rounded)
 
         # processes the template file
         processed_template_file = template_file.process()

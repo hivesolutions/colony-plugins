@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import sys
+import time
 import types
 import socket
 import select
@@ -1056,11 +1057,16 @@ class HttpRequest:
     content_type_charset = None
     """ The content type charset """
 
+    request_time = None
+    """ The time when the request started """
+
     properties = {}
     """ The properties """
 
     def __init__(self, content_type_charset = DEFAULT_CHARSET):
         self.content_type_charset = content_type_charset
+
+        self.request_time = time.time()
 
         self.attributes_map = {}
         self.headers_map = {}
