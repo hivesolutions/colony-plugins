@@ -73,13 +73,27 @@ INTERNAL_ERROR_CODE_VALUE = -32603
 """ The internal error code value """
 
 class MainJsonrpcManager:
+    """
+    The main json rpc manager class.
+    """
 
     main_jsonrpc_manager_plugin = None
+    """ The main json rpc manager plugin """
 
     service_methods = []
+    """ The service methods list """
+
     service_methods_map = {}
+    """ The service mthods map """
 
     def __init__(self, main_jsonrpc_manager_plugin):
+        """
+        Constructor of the class.
+
+        @type main_jsonrpc_manager_plugin: MainJsonrpcManagerPlugin
+        @param main_jsonrpc_manager_plugin: The main json rpc manager plugin.
+        """
+
         self.main_jsonrpc_manager_plugin = main_jsonrpc_manager_plugin
 
         self.service_objects = []
