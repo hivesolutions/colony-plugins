@@ -42,7 +42,7 @@ import colony.plugins.decorators
 
 class MainXmlrpcManagerPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Xmlrpc Manager Main plugin
+    The main class for the Xmlrpc Manager Main plugin.
     """
 
     id = "pt.hive.colony.plugins.main.remote.xmlrpc.manager"
