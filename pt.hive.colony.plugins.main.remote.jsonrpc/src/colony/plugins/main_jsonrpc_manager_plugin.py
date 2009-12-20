@@ -42,7 +42,7 @@ import colony.plugins.decorators
 
 class MainJsonrpcManagerPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Jsonrpc Manager Main plugin
+    The main class for the Jsonrpc Manager Main plugin.
     """
 
     id = "pt.hive.colony.plugins.main.remote.jsonrpc.manager"
