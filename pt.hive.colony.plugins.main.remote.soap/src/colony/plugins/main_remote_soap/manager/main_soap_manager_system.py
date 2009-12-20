@@ -59,13 +59,27 @@ DEFAULT_ENCODER = "utf-8"
 """ The default encoder """
 
 class MainSoapManager:
+    """
+    The main soap manager class.
+    """
 
     main_soap_manager_plugin = None
+    """ The main soap manager plugin """
 
     service_methods = []
+    """ The service methods list """
+
     service_methods_map = {}
+    """ The service methods map """
 
     def __init__(self, main_soap_manager_plugin):
+        """
+        Constructor of the class.
+
+        @type main_soap_manager_plugin: MainSoapManagerPlugin
+        @param main_soap_manager_plugin: The main soap manager plugin.
+        """
+
         self.main_soap_manager_plugin = main_soap_manager_plugin
 
         self.service_objects = []
