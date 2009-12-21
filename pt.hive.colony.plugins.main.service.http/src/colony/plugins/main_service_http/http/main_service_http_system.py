@@ -779,8 +779,8 @@ class HttpClientServiceTask:
             raise main_service_http_exceptions.RequestClosed("invalid socket")
 
         if selected_values == ([], [], []):
-             self.http_connection.close()
-             raise main_service_http_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
+            self.http_connection.close()
+            raise main_service_http_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
         try:
             # receives the data in chunks
             data = self.http_connection.recv(chunk_size)
