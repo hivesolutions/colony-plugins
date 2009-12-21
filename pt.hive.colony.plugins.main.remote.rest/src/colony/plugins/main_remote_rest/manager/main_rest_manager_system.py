@@ -54,7 +54,7 @@ class MainRestManager:
     """ The service methods list """
 
     service_methods_map = {}
-    """ The service mthods map """
+    """ The service methods map """
 
     def __init__(self, main_rest_manager_plugin):
         """
