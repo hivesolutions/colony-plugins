@@ -89,6 +89,17 @@ class MainServiceHttpFileHandler:
         # retrieves the handler configuration
         handler_configuration = self.main_service_http_file_handler_plugin.get_configuration_property("handler_configuration").get_data()
 
+        # retrieves the handler configuration property
+        handler_configuration_property = self.main_service_http_file_handler_plugin.get_configuration_property("handler_configuration")
+
+        # in case the handler configuration property is defined
+        if handler_configuration_property:
+            # retrieves the handler configuration
+            handler_configuration = handler_configuration_property.get_data()
+        else:
+            # sets the handler configuration as an empty map
+            handler_configuration = {}
+
         # retrieves the default path
         default_path = handler_configuration.get("default_path", "/")
 

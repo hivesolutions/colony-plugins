@@ -106,6 +106,9 @@ STATUS_CODE_VALUES = {200 : "OK", 207 : "Multi-Status",
                       500 : "Internal Server Error"}
 """ The status code values map """
 
+DEFAULT_STATUS_CODE_VALUE = "Invalid"
+""" The default status code value """
+
 CONTENT_TYPE_VALUE = "Content-Type"
 """ The content type value """
 
@@ -193,8 +196,16 @@ class MainServiceHttp:
         # retrieves the encoding value
         encoding = parameters.get("encoding", None)
 
-        # retrieves the service configuration
-        service_configuration = self.main_service_http_plugin.get_configuration_property("server_configuration").get_data()
+        # retrieves the service configuration property
+        service_configuration_property = self.main_service_http_plugin.get_configuration_property("server_configuration")
+
+        # in case the service configuration property is defined
+        if service_configuration_property:
+            # retrieves the service configuration
+            service_configuration = service_configuration_property.get_data()
+        else:
+            # sets the service configuration as an empty map
+            service_configuration = {}
 
         # retrieves the socket provider configuration value
         socket_provider = service_configuration.get("default_socket_provider", socket_provider)
@@ -466,7 +477,7 @@ class HttpClientServiceTask:
                 self.main_service_http_plugin.debug("Handling request: %s" % str(request))
 
                 # retrieves the service configuration contexts
-                service_configuration_contexts = self.service_configuration["contexts"]
+                service_configuration_contexts = self.service_configuration.get("contexts", {})
 
                 # retrieves the service configuration contexts resolution order
                 service_configuration_contexts_resolution_order = service_configuration_contexts.get("resolution_order", service_configuration_contexts.keys())
@@ -488,7 +499,7 @@ class HttpClientServiceTask:
                         request.handler_path = service_configuration_context_name
 
                         # retrieves the handler name
-                        handler_name = service_configuration_context["handler"]
+                        handler_name = service_configuration_context.get("handler", None)
 
                         # sets the request handled flag
                         request_handled = True
@@ -499,10 +510,15 @@ class HttpClientServiceTask:
                 # in case the request was not already handled
                 if not request_handled:
                     # retrieves the default handler name
-                    handler_name = self.service_configuration["default_handler"]
+                    handler_name = self.service_configuration.get("default_handler", None)
 
                     # sets the handler path
                     request.handler_path = None
+
+                # in case no handler name is defined
+                if not handler_name:
+                    # raises an http no handler exception
+                    raise main_service_http_exceptions.HttpNoHandlerException("no handler defined for current request")
 
                 # handles the request by the request handler
                 http_service_handler_plugins_map[handler_name].handle_request(request)
@@ -784,7 +800,7 @@ class HttpClientServiceTask:
         """
 
         # retrieves the preferred error handlers list
-        preferred_error_handlers_list = self.service_configuration.get("preferred_error_handlers", DEFAULT_VALUE)
+        preferred_error_handlers_list = self.service_configuration.get("preferred_error_handlers", (DEFAULT_VALUE,))
 
         # retrieves the http service error handler plugins
         http_service_error_handler_plugins = self.main_service_http_plugin.http_service_error_handler_plugins
@@ -987,7 +1003,7 @@ class HttpClientServiceTask:
             request.status_code = 500
 
         # retrieves the value for the status code
-        status_code_value = STATUS_CODE_VALUES[request.status_code]
+        status_code_value = STATUS_CODE_VALUES.get(request.status_code, DEFAULT_STATUS_CODE_VALUE)
 
         # writes the header message in the message
         request.write("colony web server - " + str(request.status_code) + " " + status_code_value + "\n")
@@ -1186,7 +1202,8 @@ class HttpRequest:
         else:
             content_length = len(message)
 
-        status_code_value = STATUS_CODE_VALUES[self.status_code]
+        # retrieves the status code value
+        status_code_value = STATUS_CODE_VALUES.get(self.status_code, DEFAULT_STATUS_CODE_VALUE)
 
         result.write(self.protocol_version + " " + str(self.status_code) + " " + status_code_value + "\r\n")
         if self.content_type:
@@ -1223,13 +1240,13 @@ class HttpRequest:
         self.encoding_handler = encoding_handler
 
     def get_encoding_handler(self):
-        return encoding_handler
+        return self.encoding_handler
 
     def set_encoding_name(self, encoding_name):
         self.encoding_name = encoding_name
 
     def get_encoding_name(self):
-        return encoding_name
+        return self.encoding_name
 
     def set_operation_type(self, operation_type):
         self.operation_type = operation_type
