@@ -52,7 +52,8 @@ class MainServiceNormalSocketProviderPlugin(colony.plugins.plugin_system.Plugin)
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
+                 colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
+                 colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
     capabilities = ["socket_provider"]
     capabilities_allowed = []
     dependencies = []
