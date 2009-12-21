@@ -95,6 +95,9 @@ class MainServiceHttpFileHandler:
         # retrieves the default page
         default_page = handler_configuration.get("default_page", "index.html")
 
+        # retrieves the default relative paths
+        relative_paths = handler_configuration.get("relative_paths", False)
+
         # sets the base directory for file search
         base_directory = request.properties.get("base_path", default_path)
 
@@ -102,7 +105,7 @@ class MainServiceHttpFileHandler:
         default_page = request.properties.get("default_page", default_page)
 
         # retrieves the relative paths
-        relative_paths = handler_configuration.get("relative_paths", False)
+        relative_paths = request.properties.get("relative_paths", relative_paths)
 
         # retrieves the requested resource path
         resource_path = request.get_resource_path()
