@@ -509,8 +509,8 @@ class XmppClientServiceTask:
             raise main_service_xmpp_exceptions.RequestClosed("invalid socket")
 
         if selected_values == ([], [], []):
-             self.xmpp_connection.close()
-             raise main_service_xmpp_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
+            self.xmpp_connection.close()
+            raise main_service_xmpp_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
         try:
             # receives the data in chunks
             data = self.xmpp_connection.recv(chunk_size)
@@ -536,7 +536,7 @@ class XmppClientServiceTask:
         request.write("traceback:\n")
 
         # retrieves the execution information
-        type, value, traceback_list = sys.exc_info()
+        _type, _value, traceback_list = sys.exc_info()
 
         # in case the traceback list is valid
         if traceback_list:
@@ -666,9 +666,6 @@ class XmppSession:
 
     def set_closed(self, closed):
         self.closed = closed
-
-    def set_data_transmission(self, data_transmission):
-        self.data_transmission = data_transmission
 
     def get_properties(self):
         return self.properties
