@@ -38,7 +38,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.plugins.plugin_system
-import colony.plugins.decorators
 
 class MainServiceSmtpDatabaseSessionHandlerPlugin(colony.plugins.plugin_system.Plugin):
     """
@@ -92,4 +91,4 @@ class MainServiceSmtpDatabaseSessionHandlerPlugin(colony.plugins.plugin_system.P
         return self.main_service_smtp_database_sesion_handler.get_handler_name()
 
     def handle_session(self, session):
-        self.main_service_smtp_database_sesion_handler.handle_request(request)
+        self.main_service_smtp_database_sesion_handler.handle_session(session)
