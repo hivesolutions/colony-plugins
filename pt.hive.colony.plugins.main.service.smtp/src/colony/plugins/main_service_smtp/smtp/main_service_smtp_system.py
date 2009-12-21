@@ -513,8 +513,14 @@ class SmtpClientServiceTask:
         # writes the traceback message in the request
         request.write("traceback:\n")
 
-        # writes the traceback in the request
-        formated_traceback = traceback.format_tb(sys.exc_traceback)
+        # retrieves the execution information
+        type, value, traceback_list = sys.exc_info()
+
+        # in case the traceback is valid
+        if traceback:
+            formated_traceback = traceback.format_tb(traceback_list)
+        else:
+            formated_traceback = ()
 
         # iterates over the traceback lines
         for formated_traceback_line in formated_traceback:
