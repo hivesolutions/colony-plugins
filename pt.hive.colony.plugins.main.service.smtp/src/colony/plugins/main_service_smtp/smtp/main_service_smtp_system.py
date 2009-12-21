@@ -481,8 +481,8 @@ class SmtpClientServiceTask:
             raise main_service_smtp_exceptions.RequestClosed("invalid socket")
 
         if selected_values == ([], [], []):
-             self.smtp_connection.close()
-             raise main_service_smtp_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
+            self.smtp_connection.close()
+            raise main_service_smtp_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
         try:
             # receives the data in chunks
             data = self.smtp_connection.recv(chunk_size)
@@ -514,7 +514,7 @@ class SmtpClientServiceTask:
         request.write("traceback:\n")
 
         # retrieves the execution information
-        type, value, traceback_list = sys.exc_info()
+        _type, _value, traceback_list = sys.exc_info()
 
         # in case the traceback list is valid
         if traceback_list:
@@ -642,7 +642,7 @@ class SmtpRequest:
         self.response_message = response_message
 
     def get_response_messages(self):
-        return seld.response_messages
+        return self.response_messages
 
     def set_response_messages(self, response_messages):
         self.response_messages = response_messages
@@ -708,9 +708,6 @@ class SmtpSession:
 
     def set_closed(self, closed):
         self.closed = closed
-
-    def set_data_transmission(self, data_transmission):
-        self.data_transmission = data_transmission
 
     def get_properties(self):
         return self.properties
