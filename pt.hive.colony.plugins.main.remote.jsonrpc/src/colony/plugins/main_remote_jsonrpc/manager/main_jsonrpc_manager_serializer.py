@@ -345,4 +345,4 @@ def loads(s):
                 else:
                     return value
     except StopIteration:
-         raise main_jsonrpc_manager_exceptions.JsonDecodeException("Unexpected end of Json source")
+        raise main_jsonrpc_manager_exceptions.JsonDecodeException("Unexpected end of Json source")
