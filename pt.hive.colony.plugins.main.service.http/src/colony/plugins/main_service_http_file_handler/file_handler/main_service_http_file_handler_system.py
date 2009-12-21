@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import re
+
 import os.path
 
 import string_buffer_util
@@ -55,6 +57,12 @@ CHUNK_SIZE = 1024
 FILE_MIME_TYPE_MAPPING = {"html" : "text/html", "txt" : "text/plain", "js" : "text/javascript",
                           "css" : "text/css", "jpg" : "image/jpg", "png" : "image/png"}
 """ The map that relates the file extension and the associated mime type """
+
+RELATIVE_PATHS_REGEX_VALUE = "^\.\.|\/\.\.\/|\\\.\.\\|\.\.$"
+""" The relative paths regex value """
+
+RELATIVE_PATHS_REGEX = re.compile(RELATIVE_PATHS_REGEX_VALUE)
+""" The relative paths regex """
 
 class MainServiceHttpFileHandler:
     """
@@ -93,6 +101,9 @@ class MainServiceHttpFileHandler:
         # sets the default page
         default_page = request.properties.get("default_page", default_page)
 
+        # retrieves the relative paths
+        relative_paths = handler_configuration.get("relative_paths", False)
+
         # retrieves the requested resource path
         resource_path = request.get_resource_path()
 
@@ -101,6 +112,11 @@ class MainServiceHttpFileHandler:
 
         # retrieves the real base directory
         real_base_directory = self.main_service_http_file_handler_plugin.resource_manager_plugin.get_real_string_value(base_directory)
+
+        # in case the relative paths are disabled
+        if not relative_paths:
+            # escapes the resource path in the relatives paths
+            resource_path = self._escape_relative_paths(resource_path)
 
         # in case there is a valid handler path
         if handler_path:
@@ -161,6 +177,22 @@ class MainServiceHttpFileHandler:
 
             # writes the file contents
             request.write(file_contents)
+
+    def _escape_relative_paths(self, path):
+        """
+        Escapes the relative path values in the given path.
+
+        @type path: String
+        @param path: The path to be escaped.
+        @rtype: String
+        @return: The escaped path.
+        """
+
+        # escapes the paths in the relative paths value
+        escaped_path = RELATIVE_PATHS_REGEX.sub("", path)
+
+        # returns the escaped path
+        return escaped_path
 
 class ChunkHandler:
     """
