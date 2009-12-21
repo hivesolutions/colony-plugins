@@ -61,5 +61,11 @@
             <version>1.0.0</version>
             <load>true</load>
         </plugin>
+        <plugin>
+            <name>Resource Manager plugin</name>
+            <id>pt.hive.colony.plugins.resources.resource_manager</id>
+            <version>1.0.0</version>
+            <load>true</load>
+        </plugin>
     </plugins>
 </startup_configuration>
