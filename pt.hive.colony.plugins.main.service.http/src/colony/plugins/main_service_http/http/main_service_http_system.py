@@ -459,7 +459,7 @@ class HttpClientServiceTask:
             except main_service_http_exceptions.MainServiceHttpException:
                 # prints a debug message about the connection closing
                 self.main_service_http_plugin.debug("Connection: %s closed" % str(self.http_address))
-                return
+                break
 
             try:
                 # prints debug message about request
