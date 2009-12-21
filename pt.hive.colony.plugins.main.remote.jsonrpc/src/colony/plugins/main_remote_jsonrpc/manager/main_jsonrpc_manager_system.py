@@ -162,7 +162,7 @@ class MainJsonrpcManager:
                     traceback_buffer = string_buffer_util.StringBuffer()
 
                     # retrieves the execution information
-                    type, value, traceback_list = sys.exc_info()
+                    _type, _value, traceback_list = sys.exc_info()
 
                     # in case the traceback list is valid
                     if traceback_list:
@@ -358,7 +358,7 @@ class MainJsonrpcManager:
 
         try:
             data = main_jsonrpc_manager_serializer.dumps({"result" : result, "id" : id_, "error" : error})
-        except main_jsonrpc_manager_exceptions.JsonEncodeException, exception:
+        except main_jsonrpc_manager_exceptions.JsonEncodeException:
             error = {"code" : INTERNAL_ERROR_CODE_VALUE, "message" : "Result Object Not Serializable", "data" : {"name" : "JsonEncodeException"}}
             data = main_jsonrpc_manager_serializer.dumps({"result" : None, "id" : id_, "error" : error})
 
