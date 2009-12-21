@@ -39,5 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 configuration = {
                  "default_path" : "$resource{system.path.colony_web}/pt.hive.colony.web",
-                 "default_page" : "redirect.html"
+                 "default_page" : "redirect.html",
+                 "relative_paths" : False
              }
