@@ -42,7 +42,8 @@ class MainAuthenticationEntityManagerHandlerException(Exception):
     The main authentication entity manager handler exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class MissingArgument(MainAuthenticationEntityManagerHandlerException):
     """

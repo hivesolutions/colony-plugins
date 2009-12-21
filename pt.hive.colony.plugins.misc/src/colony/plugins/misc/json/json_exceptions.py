@@ -42,7 +42,8 @@ class JsonException(Exception):
     The json exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class JsonEncodeException(JsonException):
     """

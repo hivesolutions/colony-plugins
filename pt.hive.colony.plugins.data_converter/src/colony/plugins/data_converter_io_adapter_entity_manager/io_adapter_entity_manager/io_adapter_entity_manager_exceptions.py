@@ -42,7 +42,8 @@ class IoAdapterEntityManagerException(Exception):
     The io adapter entity manager exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class IoAdapterEntityManagerMandatoryOptionNotFound(IoAdapterEntityManagerException):
     """

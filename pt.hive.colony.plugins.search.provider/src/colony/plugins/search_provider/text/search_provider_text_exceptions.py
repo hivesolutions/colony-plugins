@@ -42,7 +42,8 @@ class SearchProviderTextException(Exception):
     The search provider text exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class MissingProperty(SearchProviderTextException):
     """

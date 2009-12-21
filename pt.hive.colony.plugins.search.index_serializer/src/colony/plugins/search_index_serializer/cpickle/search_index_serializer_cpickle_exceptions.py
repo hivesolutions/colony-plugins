@@ -42,7 +42,8 @@ class SearchIndexSerializerCpickleException(Exception):
     The search index serializer cpickle exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class MissingProperty(SearchIndexSerializerCpickleException):
     """

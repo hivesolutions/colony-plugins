@@ -42,7 +42,8 @@ class MainServiceHttpException(Exception):
     The main service http exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class EncodingNotFound(MainServiceHttpException):
     """

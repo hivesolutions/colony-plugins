@@ -42,7 +42,8 @@ class SearchScorerException(Exception):
     The search scorer exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class MissingProperty(SearchScorerException):
     """

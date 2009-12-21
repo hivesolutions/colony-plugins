@@ -42,7 +42,8 @@ class SearchIndexerException(Exception):
     The search indexer exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class MissingProperty(SearchIndexerException):
     """

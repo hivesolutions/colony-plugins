@@ -42,7 +42,8 @@ class BonjourException(Exception):
     The bonjour exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class BonjourServiceNotRegistrable(BonjourException):
     """

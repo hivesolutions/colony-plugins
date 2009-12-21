@@ -42,6 +42,9 @@ def MessagingManagerException(Exception):
     The messaging manager exception class.
     """
 
+    message = None
+    """ The exception's message """
+
     def __init__(self, message):
         """
         Constructor of the class.

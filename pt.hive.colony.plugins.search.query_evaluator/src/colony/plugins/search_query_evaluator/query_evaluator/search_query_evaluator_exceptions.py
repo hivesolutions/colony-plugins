@@ -42,7 +42,8 @@ class SearchQueryEvaluatorException(Exception):
     The search exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class MissingProperty(SearchQueryEvaluatorException):
     """

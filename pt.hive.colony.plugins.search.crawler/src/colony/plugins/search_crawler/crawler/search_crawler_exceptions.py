@@ -42,7 +42,9 @@ class SearchCrawlerException(Exception):
     The search crawler exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
+
 
 class MissingProperty(SearchCrawlerException):
     """

@@ -42,7 +42,8 @@ class SearchIndexPersistenceFileSystemAdapterException(Exception):
     The search index persistence file system adapter exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class MissingProperty(SearchIndexPersistenceFileSystemAdapterException):
     """

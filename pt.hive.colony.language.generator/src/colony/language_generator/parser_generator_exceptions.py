@@ -42,7 +42,8 @@ class ParserGeneratorException(Exception):
     The parser generator exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class InvalidStateFile(ParserGeneratorException):
     """

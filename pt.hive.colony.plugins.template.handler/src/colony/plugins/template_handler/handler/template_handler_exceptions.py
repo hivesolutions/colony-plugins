@@ -42,7 +42,8 @@ class TemplateHandlerException(Exception):
     The template handler exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class FileNotFoundException(TemplateHandlerException):
     """

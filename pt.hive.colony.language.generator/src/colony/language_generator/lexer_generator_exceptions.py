@@ -42,7 +42,8 @@ class LexerGeneratorException(Exception):
     The lexer generator exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class InvalidToken(LexerGeneratorException):
     """

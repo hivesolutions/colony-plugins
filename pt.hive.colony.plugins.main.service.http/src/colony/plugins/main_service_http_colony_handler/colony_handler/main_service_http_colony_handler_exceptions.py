@@ -42,7 +42,8 @@ class MainServiceHttpColonyHandlerException(Exception):
     The main service http colony handler exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class RequestNotHandled(MainServiceHttpColonyHandlerException):
     """

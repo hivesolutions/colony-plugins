@@ -42,7 +42,8 @@ class TemplateEngineException(Exception):
     The template engine exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class InvalidBooleanValue(TemplateEngineException):
     """

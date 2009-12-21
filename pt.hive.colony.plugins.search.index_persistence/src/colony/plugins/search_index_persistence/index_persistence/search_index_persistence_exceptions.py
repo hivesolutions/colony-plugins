@@ -42,7 +42,8 @@ class SearchIndexPersistenceException(Exception):
     The search index persistence exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class MissingProperty(SearchIndexPersistenceException):
     """

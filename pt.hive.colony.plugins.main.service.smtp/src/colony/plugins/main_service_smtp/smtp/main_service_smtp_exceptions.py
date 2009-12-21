@@ -42,7 +42,8 @@ class MainServiceSmtpException(Exception):
     The main service smtp exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class SocketProviderNotFound(MainServiceSmtpException):
     """

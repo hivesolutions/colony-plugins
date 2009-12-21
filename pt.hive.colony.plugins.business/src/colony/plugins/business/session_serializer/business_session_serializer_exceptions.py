@@ -42,7 +42,8 @@ class SessionSerializerException(Exception):
     The session serializer exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class SessionSerializerProxyNotFound(SessionSerializerException):
     """

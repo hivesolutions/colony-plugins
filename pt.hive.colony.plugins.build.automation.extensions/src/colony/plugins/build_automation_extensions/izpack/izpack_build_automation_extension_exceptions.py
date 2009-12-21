@@ -42,6 +42,9 @@ class IzpackBuildAutomationExtensionException(Exception):
     The izpack build automation extension exception class.
     """
 
+    message = None
+    """ The exception's message """
+
     def __init__(self, message):
         """
         Constructor of the class.

@@ -42,6 +42,9 @@ class InvalidFileNameException(Exception):
     The invalid file name exception class.
     """
 
+    message = None
+    """ The exception's message """
+
     def __init__(self, message):
         """
         Constructor of the class.

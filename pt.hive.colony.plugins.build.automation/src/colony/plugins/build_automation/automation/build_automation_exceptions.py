@@ -42,6 +42,9 @@ class BuildAutomationException(Exception):
     The build automation exception class.
     """
 
+    message = None
+    """ The exception's message """
+
     def __init__(self, message):
         """
         Constructor of the class.

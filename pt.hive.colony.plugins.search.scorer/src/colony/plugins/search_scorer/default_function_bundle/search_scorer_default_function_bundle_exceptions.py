@@ -42,7 +42,8 @@ class SearchScorerDefaultFunctionBundleException(Exception):
     The search scorer default function bundle exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class MissingProperty(SearchScorerDefaultFunctionBundleException):
     """

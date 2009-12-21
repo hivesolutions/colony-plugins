@@ -39,5 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 class InvalidPluginException(Exception):
 
+    message = None
+    """ The exception's message """
+
     def __init__(self, message):
         Exception.__init__(self, message)
+        self.message = message

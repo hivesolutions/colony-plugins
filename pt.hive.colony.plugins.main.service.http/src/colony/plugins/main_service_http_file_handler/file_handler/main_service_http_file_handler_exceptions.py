@@ -42,7 +42,8 @@ class MainServiceHttpFileHandlerException(Exception):
     The main service http file handler exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class FileNotFoundException(MainServiceHttpFileHandlerException):
     """

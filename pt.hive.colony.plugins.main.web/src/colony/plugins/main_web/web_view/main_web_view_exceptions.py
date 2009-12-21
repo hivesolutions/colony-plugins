@@ -42,7 +42,8 @@ class MainWebViewException(Exception):
     The main web view exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class MainWebViewInvalidWindow(MainWebViewException):
     """

@@ -42,7 +42,8 @@ class IoAdapterFilesystemException(Exception):
     The io adapter filesystem exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class IoAdapterFilesystemMethodNotImplemented(IoAdapterFilesystemException):
     """

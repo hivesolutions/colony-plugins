@@ -42,7 +42,8 @@ class IoAdapterPickleException(Exception):
     The io adapter pickle exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class IoAdapterPickleMandatoryOptionNotFound(IoAdapterPickleException):
     """

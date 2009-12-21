@@ -42,7 +42,8 @@ class MainServiceIrcException(Exception):
     The main service irc exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class SocketProviderNotFound(MainServiceIrcException):
     """

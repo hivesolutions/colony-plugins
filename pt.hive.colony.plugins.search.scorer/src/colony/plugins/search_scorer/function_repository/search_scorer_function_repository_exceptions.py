@@ -42,7 +42,8 @@ class SearchScorerFunctionRepositoryException(Exception):
     The search scorer function repository exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class MissingProperty(SearchScorerFunctionRepositoryException):
     """

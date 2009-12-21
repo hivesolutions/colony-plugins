@@ -81,7 +81,8 @@ class PrintingWin32Exception(Exception):
     The printing win32 exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class InvalidContextInformationName(PrintingWin32Exception):
     """

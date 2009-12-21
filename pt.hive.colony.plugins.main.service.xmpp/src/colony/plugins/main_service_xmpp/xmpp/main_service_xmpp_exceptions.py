@@ -42,7 +42,8 @@ class MainServiceXmppException(Exception):
     The main service xmpp exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class SocketProviderNotFound(MainServiceXmppException):
     """

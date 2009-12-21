@@ -42,7 +42,8 @@ class SqliteEngineException(Exception):
     The sqlite engine exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class MissingProperty(SqliteEngineException):
     """

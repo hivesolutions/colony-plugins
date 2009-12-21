@@ -42,7 +42,8 @@ class IoAdapterXmlException(Exception):
     The io adapter xml exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class IoAdapterXmlMethodNotImplemented(IoAdapterXmlException):
     """

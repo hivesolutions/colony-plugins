@@ -42,7 +42,8 @@ class MainServiceTelnetException(Exception):
     The main service telnet exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class SocketProviderNotFound(MainServiceTelnetException):
     """

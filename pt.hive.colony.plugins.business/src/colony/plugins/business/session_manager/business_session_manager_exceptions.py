@@ -42,7 +42,8 @@ class BusinessSessionManagerException(Exception):
     The business session manager exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class InvalidSessionId(BusinessSessionManagerException):
     """

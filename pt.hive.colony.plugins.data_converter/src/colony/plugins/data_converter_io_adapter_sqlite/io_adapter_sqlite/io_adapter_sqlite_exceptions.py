@@ -42,7 +42,8 @@ class IoAdapterSqliteException(Exception):
     The io adapter sqlite exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class IoAdapterSqliteMandatoryOptionNotFound(IoAdapterSqliteException):
     """

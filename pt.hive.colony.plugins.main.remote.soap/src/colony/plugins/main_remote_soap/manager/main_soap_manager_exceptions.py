@@ -42,7 +42,8 @@ class ServiceException(Exception):
     The service exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class ServiceRequestNotTranslatable(ServiceException):
     """

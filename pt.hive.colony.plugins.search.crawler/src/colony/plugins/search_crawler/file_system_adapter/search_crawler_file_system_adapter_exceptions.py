@@ -42,7 +42,8 @@ class SearchCrawlerFileSystemAdapterException(Exception):
     The search crawler file system adapter exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class MissingProperty(SearchCrawlerFileSystemAdapterException):
     """

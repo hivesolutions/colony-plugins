@@ -42,7 +42,8 @@ class SearchSorterException(Exception):
     The search sorter exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class MissingProperty(SearchSorterException):
     """

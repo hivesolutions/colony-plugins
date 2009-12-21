@@ -42,7 +42,8 @@ class ServiceTwitterException(Exception):
     The service twitter exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class InvalidAuthentication(ServiceTwitterException):
     """

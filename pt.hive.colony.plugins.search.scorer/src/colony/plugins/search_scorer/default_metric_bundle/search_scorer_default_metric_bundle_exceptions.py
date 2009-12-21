@@ -42,7 +42,8 @@ class SearchScorerDefaultMetricBundleException(Exception):
     The search scorer default metric bundle exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class MissingProperty(SearchScorerDefaultMetricBundleException):
     """

@@ -42,7 +42,8 @@ class SearchIndexRepositoryException(Exception):
     The search index repository exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class InvalidSearchIndexIdentifier(SearchIndexRepositoryException):
     """

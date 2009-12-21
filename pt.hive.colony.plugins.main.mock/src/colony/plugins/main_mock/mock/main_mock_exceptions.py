@@ -42,7 +42,8 @@ class MainMockException(Exception):
     The main mock exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class InvalidReturnIteration(MainMockException):
     """

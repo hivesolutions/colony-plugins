@@ -42,7 +42,8 @@ class SearchIndexSerializerShelveException(Exception):
     The search index serializer shelve exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class MissingProperty(SearchIndexSerializerShelveException):
     """

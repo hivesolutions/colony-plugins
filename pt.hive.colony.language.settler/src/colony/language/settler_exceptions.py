@@ -42,7 +42,8 @@ class SettlerException(Exception):
     The settler exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class SettlerSymbolNotFound(SettlerException):
     """

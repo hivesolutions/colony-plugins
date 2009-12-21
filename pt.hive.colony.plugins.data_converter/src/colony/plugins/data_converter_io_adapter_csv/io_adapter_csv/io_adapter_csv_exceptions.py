@@ -42,7 +42,8 @@ class IoAdapterCsvException(Exception):
     The io adapter csv exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class IoAdapterCsvMethodNotImplemented(IoAdapterCsvException):
     """

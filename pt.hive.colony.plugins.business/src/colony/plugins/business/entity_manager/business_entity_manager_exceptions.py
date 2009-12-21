@@ -42,7 +42,8 @@ class EntityManagerException(Exception):
     The entity manager exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class EntityManagerEngineNotFound(EntityManagerException):
     """

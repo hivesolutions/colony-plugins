@@ -42,7 +42,8 @@ class MysqlEngineException(Exception):
     The mysql engine exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class MissingProperty(MysqlEngineException):
     """

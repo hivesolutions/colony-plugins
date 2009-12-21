@@ -42,7 +42,8 @@ class DataConverterException(Exception):
     The data converter exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class DataConverterConfigurationPluginNotFound(DataConverterException):
     """

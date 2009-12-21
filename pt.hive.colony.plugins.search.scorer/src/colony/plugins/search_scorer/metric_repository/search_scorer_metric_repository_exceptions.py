@@ -42,7 +42,8 @@ class SearchScorerMetricRepositoryException(Exception):
     The search scorer metric repository exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class MissingProperty(SearchScorerMetricRepositoryException):
     """

@@ -42,7 +42,8 @@ class IoAdapterDbaseException(Exception):
     The io adapter dbase exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class IoAdapterDbaseMandatoryOptionNotFound(IoAdapterDbaseException):
     """

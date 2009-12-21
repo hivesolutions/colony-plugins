@@ -42,7 +42,8 @@ class SimplePoolManagerException(Exception):
     The simple pool manager exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class SimplePoolManagerPoolFull(SimplePoolManagerException):
     """
