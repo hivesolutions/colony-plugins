@@ -37,8 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import sys
 import socket
 import select
+import traceback
 
 import string_buffer_util
 
@@ -568,8 +570,8 @@ class IrcClientServiceTask:
             raise main_service_irc_exceptions.RequestClosed("invalid socket")
 
         if selected_values == ([], [], []):
-             self.irc_connection.close()
-             raise main_service_irc_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
+            self.irc_connection.close()
+            raise main_service_irc_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
         try:
             # receives the data in chunks
             data = self.irc_connection.recv(chunk_size)
@@ -613,7 +615,7 @@ class IrcClientServiceTask:
         request.write("traceback:\n")
 
         # retrieves the execution information
-        type, value, traceback_list = sys.exc_info()
+        _type, _value, traceback_list = sys.exc_info()
 
         # in case the traceback list is valid
         if traceback_list:
@@ -648,8 +650,6 @@ class IrcClientServiceTask:
             self.send_request_simple(request)
 
     def send_request_simple(self, request):
-        message = request.get_message()
-
         # retrieves the result value
         result_value = request.get_result()
 
