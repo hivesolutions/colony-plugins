@@ -59,6 +59,12 @@ STATUS_CODE_VALUES = {200 : "OK", 207 : "Multi-Status",
                       500 : "Internal Server Error"}
 """ The status code values map """
 
+STATUS_CODE_IMAGES = {200 : "none", 207 : "none",
+                      301 : "none", 302 : "none", 303 : "none",
+                      403 : "logo_question_mark", 404 : "logo_question_mark",
+                      500 : "logo_thunder"}
+""" The status code images map """
+
 class MainServiceHttpTemplateErrorHandler:
     """
     The main service http gzip encoding class.
@@ -116,6 +122,9 @@ class MainServiceHttpTemplateErrorHandler:
         # retrieves the error description
         error_description = STATUS_CODE_VALUES.get(error_code, "No description")
 
+        # retrieves the error image
+        error_image = STATUS_CODE_IMAGES.get(error_code, "none")
+
         # retrieves the plugin manager
         plugin_manager = self.main_service_http_template_error_handler_plugin.manager
 
@@ -136,6 +145,9 @@ class MainServiceHttpTemplateErrorHandler:
 
         # assigns the error description to the template file
         template_file.assign("error_description", error_description)
+
+        # assigns the error image to the template file
+        template_file.assign("error_image", error_image)
 
         # assigns the delta time to the template file
         template_file.assign("delta_time", delta_time_rounded)
