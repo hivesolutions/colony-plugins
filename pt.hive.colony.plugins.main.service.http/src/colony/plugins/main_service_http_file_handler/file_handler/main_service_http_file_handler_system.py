@@ -179,7 +179,7 @@ class MainServiceHttpFileHandler:
             file.close()
 
             # writes the file contents
-            request.write(file_contents)
+            request.write(file_contents, 1, False)
 
     def _escape_relative_paths(self, path):
         """

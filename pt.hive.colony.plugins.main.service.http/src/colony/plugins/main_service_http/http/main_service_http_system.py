@@ -1144,12 +1144,12 @@ class HttpRequest:
     def read(self):
         return self.received_message
 
-    def write(self, message, flush = 1):
+    def write(self, message, flush = 1, encode = True):
         # retrieves the message type
         message_type = type(message)
 
         # in case the message type is unicode
-        if message_type == types.UnicodeType:
+        if message_type == types.UnicodeType and encode:
             # encodes the message with the defined content type charset
             message = message.encode(self.content_type_charset)
 
