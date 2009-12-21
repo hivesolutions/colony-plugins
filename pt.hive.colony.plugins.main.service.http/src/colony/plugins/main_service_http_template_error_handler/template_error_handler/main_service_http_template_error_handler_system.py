@@ -104,8 +104,14 @@ class MainServiceHttpTemplateErrorHandler:
         # rounds the delta time
         delta_time_rounded = round(delta_time, 2)
 
-        # retrieves the formated traceback
-        formated_traceback = traceback.format_tb(sys.exc_traceback)
+        # retrieves the execution information
+        type, value, traceback_list = sys.exc_info()
+
+        # in case the traceback is valid
+        if traceback:
+            formated_traceback = traceback.format_tb(traceback_list)
+        else:
+            formated_traceback = ()
 
         # retrieves the error description
         error_description = STATUS_CODE_VALUES.get(error_code, "No description")
