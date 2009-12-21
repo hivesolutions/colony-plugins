@@ -862,8 +862,6 @@ class HttpClientServiceTask:
             self.send_request_simple(request)
 
     def send_request_simple(self, request):
-        message = request.get_message()
-
         # retrieves the result value
         result_value = request.get_result()
 
@@ -1015,7 +1013,7 @@ class HttpClientServiceTask:
         request.write("traceback:\n")
 
         # retrieves the execution information
-        type, value, traceback_list = sys.exc_info()
+        _type, _value, traceback_list = sys.exc_info()
 
         # in case the traceback list is valid
         if traceback_list:

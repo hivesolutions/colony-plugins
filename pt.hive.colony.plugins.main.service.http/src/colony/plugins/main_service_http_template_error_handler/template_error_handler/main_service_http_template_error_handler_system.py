@@ -111,7 +111,7 @@ class MainServiceHttpTemplateErrorHandler:
         delta_time_rounded = round(delta_time, 2)
 
         # retrieves the execution information
-        type, value, traceback_list = sys.exc_info()
+        _type, _value, traceback_list = sys.exc_info()
 
         # in case the traceback list is valid
         if traceback_list:
