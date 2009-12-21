@@ -412,7 +412,7 @@ h5:hover > a.headerlink {
 }
 
 .video {
-    background: #e6e6e6 url(../images/image_note.gif) no-repeat scroll 0px 0px;
+    background: #e6e6e6 url(../images/video_note.gif) no-repeat scroll 0px 0px;
     overflow: auto;
     padding: 1.2em 1.2em 0.6em 3.2em;
     text-align: center;
