@@ -429,8 +429,8 @@ class TelnetClientServiceTask:
             raise main_service_telnet_exceptions.RequestClosed("invalid socket")
 
         if selected_values == ([], [], []):
-             self.telnet_connection.close()
-             raise main_service_telnet_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
+            self.telnet_connection.close()
+            raise main_service_telnet_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
         try:
             # receives the data in chunks
             data = self.telnet_connection.recv(chunk_size)
@@ -456,7 +456,7 @@ class TelnetClientServiceTask:
         request.write("traceback:\n")
 
         # retrieves the execution information
-        type, value, traceback_list = sys.exc_info()
+        _type, _value, traceback_list = sys.exc_info()
 
         # in case the traceback list is valid
         if traceback_list:
