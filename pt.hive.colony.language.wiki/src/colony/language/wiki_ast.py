@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import re
+
 class AstNode(object):
     """
     The ast node class.
@@ -659,12 +661,74 @@ class ExternalLinkNode(LinkNode):
     The external link node.
     """
 
+    BASE_NAME_REGEX = re.compile("(\w+\:\/\/)?(?P<base_name>[^\:\/\?#]+)")
+    """ The base name regex """
+
+    SPECIAL_BASE_NAMES = ("wikipedia",)
+    """ The special base names """
+
+    base_name_match = None
+    """ The base name match """
+
+    special_names = None
+    """ The special names """
+
     def __init__(self):
         """
         Constructor of the class.
         """
 
         LinkNode.__init__(self)
+
+    def get_special_names(self):
+        """
+        Retrieves the special names list running the process
+        only if necessary.
+
+        @rtype: List
+        @return: The special names list.
+        """
+
+        # in case the special names are not defined
+        if self.special_names == None:
+            # retrieves the base name match
+            base_name_match = self._get_base_name_match()
+
+            # in case there was a valid base name match
+            if base_name_match:
+                # retrieves the base name from the matches
+                base_name = base_name_match.group("base_name")
+
+                # in case base name is valid
+                if base_name:
+                    # retrieves the special names
+                    self.special_names = [special_name for special_name in ExternalLinkNode.SPECIAL_BASE_NAMES if not base_name.find(special_name) == -1]
+                else:
+                    # sets the special names as empty
+                    self.special_names = ()
+            else:
+                # sets the special names as empty
+                self.special_names = ()
+
+        # returns the special names
+        return self.special_names
+
+    def _get_base_name_match(self):
+        """
+        Retrieves the base name match object, running the regular expression match
+        only if necessary.
+
+        @rtype: Match
+        @return: The base name match.
+        """
+
+        # in case the base name match is not set
+        if not self.base_name_match:
+            # tries to retrieve a match in the base name
+            self.base_name_match = ExternalLinkNode.BASE_NAME_REGEX.match(self.link_value)
+
+        # returns the base name match
+        return self.base_name_match
 
 class InternalLinkNode(LinkNode):
     """

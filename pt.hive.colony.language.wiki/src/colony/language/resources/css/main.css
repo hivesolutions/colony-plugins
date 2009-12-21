@@ -142,6 +142,10 @@ a.external {
     padding: 1px 0px 1px 20px;
 }
 
+a.external.wikipedia {
+    background-image: url(../images/wikipedia_icon.png);
+}
+
 a.headerlink {
     color: #c60f0f;
     font-size: 750;

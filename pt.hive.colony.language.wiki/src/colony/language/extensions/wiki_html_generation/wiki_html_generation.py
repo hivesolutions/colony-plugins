@@ -610,7 +610,16 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
     @wiki_visitor._visit(wiki_ast.ExternalLinkNode)
     def visit_external_link_node(self, node):
         if self.visit_index == 0:
-            self._write("<a class=\"external\" href=\"" + node.link_value + "\">")
+            # retrieves the special names
+            special_names = node.get_special_names()
+
+            self._write("<a class=\"external")
+
+            # iterates over all the special names
+            for special_name in special_names:
+                self._write(" " + special_name)
+
+            self._write("\" href=\"" + node.link_value + "\">")
 
             # in case the statements node is not defined
             if not node.statements_node:

@@ -88,8 +88,11 @@ class UrlParser:
         # retrieves the options
         options = url_match.group("options")
 
+        # retrieves the location
+        location = url_match.group("location")
+
         # creates the url object
-        url = Url(protocol, base_name, port, resource_reference, options)
+        url = Url(protocol, base_name, port, resource_reference, options, location)
 
         # generates the resource reference list
         url._generate_resource_reference_list()
@@ -126,7 +129,10 @@ class Url:
     options_map = {}
     """ The options map """
 
-    def __init__(self, protocol = DEFAULT_PROTOCOL_VALUE, base_name = None, port = DEFAULT_PORT_VALUE, resource_reference = None, options = None):
+    location = None
+    """ The location """
+
+    def __init__(self, protocol = DEFAULT_PROTOCOL_VALUE, base_name = None, port = DEFAULT_PORT_VALUE, resource_reference = None, options = None, location = None):
         """
         Constructor of the class.
 
@@ -140,6 +146,8 @@ class Url:
         @param resource_reference: The resource reference.
         @type options: String
         @param options: The options.
+        @type location: String
+        @param location: The location.
         """
 
         self.protocol = protocol
@@ -147,6 +155,7 @@ class Url:
         self.port = port
         self.resource_reference = resource_reference
         self.options = options
+        self.location = location
 
         self.resource_reference_list = []
         self.options_map = {}
@@ -209,6 +218,9 @@ class Url:
         # retrieves the options
         options = url_match.group("options")
 
+        # retrieves the location
+        location = url_match.group("location")
+
         # in case the protocol is valid
         if protocol:
             # sets the protocol
@@ -239,6 +251,11 @@ class Url:
 
             # generates the options map
             self._generate_options_map()
+
+        # in case location is valid
+        if location:
+            # sets the location
+            self.location = location
 
     def add_resource_reference_item(self, resource_reference_item):
         """
@@ -425,6 +442,26 @@ class Url:
         """
 
         self.options_map = options_map
+
+    def get_location(self):
+        """
+        Retrieves the location.
+
+        @rtype: String
+        @return: The location.
+        """
+
+        return self.location
+
+    def set_location(self, location):
+        """
+        Sets the location.
+
+        @type location: String
+        @param location: The location.
+        """
+
+        self.location = location
 
     def _generate_resource_reference(self):
         """
