@@ -53,7 +53,8 @@ class MainServiceHttpFileHandlerPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
+                 colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
+                 colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
     capabilities = ["http_service_handler"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
