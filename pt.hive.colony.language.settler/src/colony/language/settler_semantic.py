@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import settler_ast
 import settler_visitor
 
 class SemanticVisitor(settler_visitor.Visitor):
@@ -53,122 +54,122 @@ class SemanticVisitor(settler_visitor.Visitor):
     def set_processing_structure(self, processing_structure):
         self.processing_structure = processing_structure
 
-    @_visit(settler_ast.AstNode)
+    @settler_visitor._visit(settler_ast.AstNode)
     def visit_ast_node(self, node):
         print "AstNode: " + str(node)
 
-    @_visit(settler_ast.AstSequenceNode)
+    @settler_visitor._visit(settler_ast.AstSequenceNode)
     def visit_ast_sequence_node(self, node):
         print "AstSequenceNode: " + str(node)
 
-    @_visit(settler_ast.RootNode)
+    @settler_visitor._visit(settler_ast.RootNode)
     def visit_root_node(self, node):
         print "RootNode: " + str(node)
 
-    @_visit(settler_ast.AssignNode)
+    @settler_visitor._visit(settler_ast.AssignNode)
     def visit_assign_node(self, node):
         print "AssignNode: " + str(node)
 
-    @_visit(settler_ast.ExpressionNode)
+    @settler_visitor._visit(settler_ast.ExpressionNode)
     def visit_expression_node(self, node):
         print "ExpressionNode: " + str(node)
 
-    @_visit(settler_ast.NumberExpressionNode)
+    @settler_visitor._visit(settler_ast.NumberExpressionNode)
     def visit_number_expression_node(self, node):
         print "NumberExpressionNode: " + str(node)
 
-    @_visit(settler_ast.IntegerExpressionNode)
+    @settler_visitor._visit(settler_ast.IntegerExpressionNode)
     def visit_integer_expression_node(self, node):
         print "IntegerExpressionNode: " + str(node)
 
-    @_visit(settler_ast.BoolExpressionNode)
+    @settler_visitor._visit(settler_ast.BoolExpressionNode)
     def visit_bool_expression_node(self, node):
         print "BoolExpressionNode: " + str(node)
 
-    @_visit(settler_ast.NameExpressionNode)
+    @settler_visitor._visit(settler_ast.NameExpressionNode)
     def visit_name_expression_node(self, node):
         print "NameExpressionNode: " + str(node)
 
-    @_visit(settler_ast.UnaryExpressionNode)
+    @settler_visitor._visit(settler_ast.UnaryExpressionNode)
     def visit_unary_expression_node(self, node):
         print "UnaryExpressionNode: " + str(node)
 
-    @_visit(settler_ast.BinaryExpressionNode)
+    @settler_visitor._visit(settler_ast.BinaryExpressionNode)
     def visit_binary_expression_node(self, node):
         print "BinaryExpressionNode: " + str(node)
 
-    @_visit(settler_ast.ArithmethicExpressionNode)
+    @settler_visitor._visit(settler_ast.ArithmethicExpressionNode)
     def visit_arithmethic_expression_node(self, node):
         print "ArithmethicExpressionNode: " + str(node)
 
-    @_visit(settler_ast.SummationExpressionNode)
+    @settler_visitor._visit(settler_ast.SummationExpressionNode)
     def visit_summation_expression_node(self, node):
         print "SummationExpressionNode: " + str(node)
 
-    @_visit(settler_ast.SubtractionExpressionNode)
+    @settler_visitor._visit(settler_ast.SubtractionExpressionNode)
     def visit_subtraction_expression_node(self, node):
         print "SubtractionExpressionNode: " + str(node)
 
-    @_visit(settler_ast.MultiplicationExpressionNode)
+    @settler_visitor._visit(settler_ast.MultiplicationExpressionNode)
     def visit_multiplication_expression_node(self, node):
         print "MultiplicationExpressionNode: " + str(node)
 
-    @_visit(settler_ast.DivisionExpressionNode)
+    @settler_visitor._visit(settler_ast.DivisionExpressionNode)
     def visit_division_expression_node(self, node):
         print "DivisionExpressionNode: " + str(node)
 
-    @_visit(settler_ast.PowerExpressionNode)
+    @settler_visitor._visit(settler_ast.PowerExpressionNode)
     def visit_power_expression_node(self, node):
         print "PowerExpressionNode: " + str(node)
 
-    @_visit(settler_ast.BooleanExpressionNode)
+    @settler_visitor._visit(settler_ast.BooleanExpressionNode)
     def visit_boolean_expression_node(self, node):
         print "BooleanExpressionNode: " + str(node)
 
-    @_visit(settler_ast.EqualExpressionNode)
+    @settler_visitor._visit(settler_ast.EqualExpressionNode)
     def visit_equal_expression_node(self, node):
         print "EqualExpressionNode: " + str(node)
 
-    @_visit(settler_ast.GreaterExpressionNode)
+    @settler_visitor._visit(settler_ast.GreaterExpressionNode)
     def visit_greater_expression_node(self, node):
         print "GreaterExpressionNode: " + str(node)
 
-    @_visit(settler_ast.GreaterEqualExpressionNode)
+    @settler_visitor._visit(settler_ast.GreaterEqualExpressionNode)
     def visit_greater_equal_expression_node(self, node):
         print "GreaterEqualExpressionNode: " + str(node)
 
-    @_visit(settler_ast.AndExpressionNode)
+    @settler_visitor._visit(settler_ast.AndExpressionNode)
     def visit_and_expression_node(self, node):
         print "AndExpressionNode: " + str(node)
 
-    @_visit(settler_ast.OrExpressionNode)
+    @settler_visitor._visit(settler_ast.OrExpressionNode)
     def visit_or_expression_node(self, node):
         print "OrExpressionNode: " + str(node)
 
-    @_visit(settler_ast.NotExpressionNode)
+    @settler_visitor._visit(settler_ast.NotExpressionNode)
     def visit_not_expression_node(self, node):
         print "NotExpressionNode: " + str(node)
 
-    @_visit(settler_ast.ParenthesisExpressionNode)
+    @settler_visitor._visit(settler_ast.ParenthesisExpressionNode)
     def visit_parenthesis_expression_node(self, node):
         print "ParenthesisExpressionNode: " + str(node)
 
-    @_visit(settler_ast.NegativeExpressionNode)
+    @settler_visitor._visit(settler_ast.NegativeExpressionNode)
     def visit_negative_expression_node(self, node):
         print "NegativeExpressionNode: " + str(node)
 
-    @_visit(settler_ast.FunctionNode)
+    @settler_visitor._visit(settler_ast.FunctionNode)
     def visit_function_node(self, node):
         print "FunctionNode: " + str(node)
 
-    @_visit(settler_ast.ArgumentsNode)
+    @settler_visitor._visit(settler_ast.ArgumentsNode)
     def visit_arguments_node(self, node):
         print "ArgumentsNode: " + str(node)
 
-    @_visit(settler_ast.ArgumentNode)
+    @settler_visitor._visit(settler_ast.ArgumentNode)
     def visit_argument_node(self, node):
         print "ArgumentNode: " + str(node)
 
-    @_visit(settler_ast.DefaultValueArgumentNode)
+    @settler_visitor._visit(settler_ast.DefaultValueArgumentNode)
     def visit_default_argument_node(self, node):
         print "DefaultValueArgumentNode: " + str(node)

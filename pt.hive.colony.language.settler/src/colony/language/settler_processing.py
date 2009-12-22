@@ -117,6 +117,6 @@ class ProcessingStructure:
         self.current_context_stack.append(context)
 
     def push_current_context_local(self, context):
-        real_context = context + ":" + str(self.current_id)
+        _real_context = context + ":" + str(self.current_id)
         self.current_id += 1
         self.current_context_stack.append(context)

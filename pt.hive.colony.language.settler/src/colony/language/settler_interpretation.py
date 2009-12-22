@@ -39,7 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import settler_ast
 import settler_visitor
-import settler_processing
 
 EXECUTION_TYPE = "execution"
 CONDITIONAL_TYPE = "conditional"
@@ -62,6 +61,7 @@ CONDITIONAL_CONTEXT_TYPES = ["if_condition", "else_condition"]
 LOOP_CONTEXT_TYPES = ["while", "for"]
 CALL_CONTEXT_TYPES = ["function_call"]
 DECLARATION_CONTEXT_TYPES = ["function"]
+RETURN_CONTEXT_TYPES = ["return"]
 
 context_type_ast_node_map = {"boolean_expression" : [settler_ast.AndExpressionNode, settler_ast.OrExpressionNode],
                              "if_condition" : [settler_ast.IfConditionNode],

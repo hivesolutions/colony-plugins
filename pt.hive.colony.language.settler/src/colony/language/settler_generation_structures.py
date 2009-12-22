@@ -311,7 +311,7 @@ class ContextCodeInformation:
         @return: The result of the removal (if successful or not).
         """
 
-        if not self.remove_variable(variable_name):
+        if not self.remove_variable(global_name):
             return False
 
         if not global_name in self.global_names_list:

@@ -42,7 +42,6 @@ import time
 import marshal
 import copy
 import string
-import mmap
 
 import settler_ast
 import settler_visitor
@@ -1125,7 +1124,7 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
             failure_deferred_value.calculation_value = 1
         else:
             deferred_tuple = self.peek_boolean_stack_value()
-            next_success_deferred_value, next_failure_deferred_value = deferred_tuple
+            _next_success_deferred_value, next_failure_deferred_value = deferred_tuple
 
             # decrements the operations stack level (virtual)
             self.decrement_operations_stack_level_virtual()
@@ -1204,7 +1203,7 @@ class PythonCodeGenerationVisitor(settler_visitor.Visitor):
             failure_deferred_value.calculation_value = 1
         else:
             deferred_tuple = self.peek_boolean_stack_value()
-            next_success_deferred_value, next_failure_deferred_value = deferred_tuple
+            next_success_deferred_value, _next_failure_deferred_value = deferred_tuple
 
             # decrements the operations stack level (virtual)
             self.decrement_operations_stack_level_virtual()

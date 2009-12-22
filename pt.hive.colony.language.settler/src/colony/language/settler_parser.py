@@ -1256,7 +1256,7 @@ def p_implements_values_single(t):
     implements_values_node = settler_ast.ImplementsValuesNode()
 
     # sets the implements values name in the implements values node
-    implements_values_node.set_implements_values_name(implements_values_node)
+    implements_values_node.set_implements_values_name(implements_values_name)
 
     # sets the next node in the implements values node
     implements_values_node.set_next_node(None)
@@ -1431,6 +1431,24 @@ def validate_expression_binary(t):
         return False
 
     return True
+
+class DummyParser:
+    """
+    The dummy parser class.
+    """
+
+    def parse(self, value):
+        """
+        The dummy parser method.
+
+        @type value: String
+        @param value: The value to be parsed.
+        """
+
+        pass
+
+# creates the dummy parser
+parser = DummyParser()
 
 # in case it's the colony parser type
 if PARSER_TYPE == COLONY_PARSER_VALUE:
