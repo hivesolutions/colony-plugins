@@ -132,7 +132,7 @@ class ConsoleBuildAutomation:
 
             output_method(build_automation_id_str, False)
 
-            for x in range(COLUMN_SPACING - len(build_automation_id_str)):
+            for _index in range(COLUMN_SPACING - len(build_automation_id_str)):
                 output_method(" ", False)
 
             output_method(build_automation_item_plugin_id, True)

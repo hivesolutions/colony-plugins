@@ -122,7 +122,7 @@ class ConsoleBuildAutomationScheduler:
         recursion = args[2]
 
         if len(args) > 3:
-             plugin_version = args[3]
+            plugin_version = args[3]
 
         # retrieves the date time length
         date_time_len = len(date_time)
