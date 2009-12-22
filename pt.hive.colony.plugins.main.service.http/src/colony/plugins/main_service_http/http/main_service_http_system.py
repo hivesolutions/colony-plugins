@@ -1124,8 +1124,11 @@ class HttpRequest:
         if path_splitted_length < 2:
             return
 
+        # retrieves the arguments from the path splitted
+        arguments = path_splitted[1]
+
         # retrieves the attribute fields list
-        attribute_fields_list = path_splitted[1].split("&")
+        attribute_fields_list = arguments.split("&")
 
         # iterates over all the attribute fields
         for attribute_field in attribute_fields_list:
