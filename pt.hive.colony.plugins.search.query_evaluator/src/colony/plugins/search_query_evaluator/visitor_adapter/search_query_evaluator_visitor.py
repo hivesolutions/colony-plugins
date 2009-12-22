@@ -386,7 +386,7 @@ class IndexSearchVisitor:
                 for word_id, word_information_map in biggest_operand[document_id][HITS_VALUE].items():
                     smallest_operand[document_id][HITS_VALUE][word_id] = word_information_map
             else:
-               document_id_removal_list.append(document_id)
+                document_id_removal_list.append(document_id)
 
         for document_id_removal_list_item in document_id_removal_list:
             del smallest_operand[document_id_removal_list_item]
@@ -408,7 +408,7 @@ class IndexSearchVisitor:
 
             # the word hits map contains the information for each document containing the current word
             # for each document containing the word
-            for document_id, document_information_map in word_hits.items():
+            for _document_id, document_information_map in word_hits.items():
                 # retrieves the word document hits
                 word_document_hits = document_information_map[HITS_VALUE]
 
@@ -459,7 +459,6 @@ class IndexSearchVisitor:
 
         # iterates over all the common documents, to determine the ones that contain the quoted words in sequence
         for document in current_document_intersection:
-            term_value_hit_lists = []
             sortable_hit_items = []
 
             # iterates over all the quoted words to create the sortable hit items list,
