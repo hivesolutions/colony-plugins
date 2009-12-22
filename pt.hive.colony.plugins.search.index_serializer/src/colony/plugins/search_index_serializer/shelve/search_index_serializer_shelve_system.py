@@ -121,7 +121,7 @@ class SearchIndexSerializerShelve:
 
     def load_index(self, properties):
         if not FILE_PATH_VALUE in properties:
-            raise search_index_serializer_cpickle_exceptions.MissingProperty(FILE_PATH_VALUE)
+            raise search_index_serializer_shelve_exceptions.MissingProperty(FILE_PATH_VALUE)
 
         # retrieves the file path
         file_path = properties[FILE_PATH_VALUE]
