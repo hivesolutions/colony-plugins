@@ -84,7 +84,7 @@ class RevisionControlSubversionAdapter:
             subversion_revision = pysvn.Revision(pysvn.opt_revision_kind.head)
 
         # performs the update
-        update_subversion_revisions = revision_control_reference.update(resource_identifier, True, revision)
+        update_subversion_revisions = revision_control_reference.update(resource_identifier, True, subversion_revision)
 
         # retrieves the first of the returned revisions
         update_subversion_revision = update_subversion_revisions[0]
