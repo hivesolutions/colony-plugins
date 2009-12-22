@@ -39,11 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os.path
 
-import mercurial
 import mercurial.hg
-import mercurial.merge
+import mercurial.ui
 import mercurial.cmdutil
-import mercurial.commands
 
 ADAPTER_NAME = "hg"
 """ The name for the revision control adapter """
@@ -90,9 +88,6 @@ class RevisionControlMercurialAdapter:
         return repository
 
     def update(self, revision_control_reference, resource_identifiers, revision):
-        # retrieves the first resource identifier
-        resource_identifier = resource_identifiers[0]
-
         if revision:
             # retrieves the change context for the specified identifier
             change_context = revision_control_reference[revision]
