@@ -100,7 +100,7 @@ class MainRestManager:
 
     def is_request_handler(self, request):
         # retrieves the request filename
-        request_filename = request.filename
+        request_filename = request.uri
 
         # in case the handler base filename is in the start of the request filename
         if request_filename.find(HANDLER_BASE_FILENAME) == 0:
@@ -113,7 +113,7 @@ class MainRestManager:
         request.content_type = "text/plain"
 
         # retrieves the request filename
-        request_filename = request.filename
+        request_filename = request.uri
 
         # retrieves the handler base filename length
         handler_base_filename_length = len(HANDLER_BASE_FILENAME)
