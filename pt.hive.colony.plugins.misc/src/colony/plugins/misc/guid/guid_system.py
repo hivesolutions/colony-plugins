@@ -128,5 +128,5 @@ class Guid:
             # releases the lock, more guid can be generated now
             self.lock.release()
 
-make_hexadecimal_ip = lambda ip: "".join(["%04x" % long(i) for i in ip.split(".")])
+make_hexadecimal_ip = lambda ip: "".join(["%04x" % long(index) for index in ip.split(".")])
 """ Makes an hexadecimal IP from a decimal dot-separated ip (eg: 127.0.0.1) """
