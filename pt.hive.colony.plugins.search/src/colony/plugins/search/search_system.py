@@ -115,9 +115,7 @@ class Search:
         # retrieves the search indexer plugin
         search_indexer_plugin = self.search_plugin.search_indexer_plugin
 
-        # retrieves the type of index
-        index_type = properties[TYPE_VALUE]
-
+        # starts timing the crawl
         crawling_start_time = time.time()
 
         # retrieves the tokens list
@@ -129,8 +127,8 @@ class Search:
 
         tokens_processing_start_time = time.time()
 
-        # processes the tokens list (modifying it) and retrieves the used interpreter adapters list
-        used_interpreter_adapter_list = search_interpreter_plugin.process_tokens_list(tokens_list, properties)
+        # processes the tokens list (modifying it)
+        search_interpreter_plugin.process_tokens_list(tokens_list, properties)
 
         tokens_processing_end_time = time.time()
         tokens_processing_duration = tokens_processing_end_time - tokens_processing_start_time
