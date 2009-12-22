@@ -37,9 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import bzrlib
 import bzrlib.workingtree
-import bzrlib.builtins
 
 ADAPTER_NAME = "bzr"
 """ The name for the bazaar revision control adapter """
