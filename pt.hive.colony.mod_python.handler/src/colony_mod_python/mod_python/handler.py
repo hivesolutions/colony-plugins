@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import sys
+import types
 
 import mod_python.apache
 
@@ -46,6 +47,9 @@ CONTAINER_NAME = "apache"
 
 MOD_PYTHON_PLUGIN_ID = "pt.hive.colony.plugins.main.mod_python"
 """ The mod python plugin id """
+
+DEFAULT_CONTENT_ENCODING = "utf-8"
+""" The default content encoding """
 
 plugin_manager = None
 """ The plugin manager """
@@ -64,6 +68,9 @@ class PluginManagerHandler:
     local_port = None
     """ The local port for the request """
 
+    _old_write = None
+    """ The old write method """
+
     def __init__(self, req):
         """
         Constructor of the class.
@@ -77,6 +84,10 @@ class PluginManagerHandler:
 
         # processes the request
         self._process_request(req)
+
+        # changes the write method
+        self._old_write = req.write
+        req.write = self._write
 
     def handle_request(self, data):
         """
@@ -158,6 +169,33 @@ class PluginManagerHandler:
 
         # retrieves the plugin manager, setting the variable
         plugin_manager = main.plugin_manager
+
+    def _write(self, message):
+        """
+        The request write wrapper to allow encoding.
+
+        @type message: String
+        @param message: The message to be written in the buffer.
+        """
+
+        # retrieves the message type
+        message_type = type(message)
+
+        # in case the message type is unicode
+        if message_type == types.UnicodeType:
+            # checks the request content encoding
+            if self.req.content_encoding:
+                # sets the content encoding defined in the request
+                content_encoding = self.req.content_encoding
+            else:
+                # sets the content encoding as the default one
+                content_encoding = DEFAULT_CONTENT_ENCODING
+
+            # encodes the message with the defined content type charset
+            message = message.encode(content_encoding)
+
+        # calls the old write method
+        self._old_write(message)
 
     def _process_request(self, req):
         """
