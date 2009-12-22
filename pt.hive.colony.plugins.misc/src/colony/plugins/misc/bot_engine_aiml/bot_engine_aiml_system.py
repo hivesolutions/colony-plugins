@@ -38,6 +38,10 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import aiml
+import os.path
+
+BRAIN_FILE_PATH = "../resources/bot.brn"
+""" The path to the aiml brain """
 
 CONSOLE_EXTENSION_NAME = "bot_engine_aiml"
 """ The console extension name """
@@ -75,6 +79,8 @@ class BotEngineAiml:
 
         self.bot_engine_aiml_plugin = bot_engine_aiml_plugin
         self.aiml_engine = aiml.Kernel()
+        brain_file_path = os.path.join(os.path.dirname(__file__), BRAIN_FILE_PATH)
+        self.load_brain(brain_file_path)
 
     def load_brain(self, brain_path):
         self.aiml_engine.loadBrain(brain_path)

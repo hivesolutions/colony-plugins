@@ -67,7 +67,6 @@ class BotEngineAimlPlugin(colony.plugins.plugin_system.Plugin):
         global misc
         import misc.bot_engine_aiml.bot_engine_aiml_system
         self.bot_engine_aiml = misc.bot_engine_aiml.bot_engine_aiml_system.BotEngineAiml(self)
-        self.bot_engine_aiml.load_brain("c:\\alice.brn")
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
