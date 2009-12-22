@@ -110,6 +110,9 @@ class MainServiceHttpTemplateErrorHandler:
         # rounds the delta time
         delta_time_rounded = round(delta_time, 2)
 
+        # retrieves the error string
+        error_string = str(error) + " (" + error.__class__.__name__ + ")"
+
         # retrieves the execution information
         _type, _value, traceback_list = sys.exc_info()
 
@@ -151,6 +154,9 @@ class MainServiceHttpTemplateErrorHandler:
 
         # assigns the delta time to the template file
         template_file.assign("delta_time", delta_time_rounded)
+
+        # assigns the error to the template file
+        template_file.assign("error", error_string)
 
         # assigns the traceback to the template file
         template_file.assign("traceback", formated_traceback)

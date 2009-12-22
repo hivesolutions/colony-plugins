@@ -17,14 +17,24 @@
 			<p>
 				<div class="highlight">
 					<img class="error-image" src="/template_error_handler/images/${out_none value=error_image xml_escape=True /}.png"/>
-					<div class="error-text" tyle="float: left; margin-left: 18px;"><b>There was a problem in colony web server...</b>
-					<p>Error ${out_none value=error_code xml_escape=True /} - ${out_none value=error_description xml_escape=True /}</p></div>
+					<div class="error-text" tyle="float: left; margin-left: 18px;">
+						<b>There was a problem in colony web server...</b>
+						<p>Error ${out_none value=error_code xml_escape=True /} - ${out_none value=error_description xml_escape=True /}</p>
+					</div>
 				</div>
 				<p></p>
 				<div class="error">
-					<b>Traceback</b>
+					<p class="description-header">
+						<b>Description</b>
+					</p>
+					<p class="description">
+						${out_none value=error /}
+					</p>
+					<p class="traceback-header">
+						<b>Traceback</b>
+					</p>
 					${foreach item=traceback_line from=traceback}
-						<p class="traceback">${out_none value=traceback_line /}</p>
+					<p class="traceback">${out_none value=traceback_line /}</p>
 					${/foreach}
 				</div>
 			</p>

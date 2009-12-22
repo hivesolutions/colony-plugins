@@ -311,6 +311,18 @@ h5:hover > a.headerlink {
     line-height: 1.5em;
 }
 
+.error .description-header {
+    margin-top: 0.0em;
+}
+
+.error .traceback-header {
+    margin-top: 1.5em;
+}
+
+.error .description {
+    font-family: monospace;
+}
+
 .error .traceback {
     font-family: monospace;
 }
