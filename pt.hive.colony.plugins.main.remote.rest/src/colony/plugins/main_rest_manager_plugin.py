@@ -53,11 +53,12 @@ class MainRestManagerPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["rest_manager", "rpc_handler"]
+    capabilities = ["rest_manager", "http_python_handler", "rpc_handler"]
     capabilities_allowed = ["rpc_service"]
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["main_remote_rest.manager.main_rest_manager_system", "main_remote_rest.manager.main_rest_manager_exceptions"]
 
     main_rest_manager = None
 
@@ -89,6 +90,12 @@ class MainRestManagerPlugin(colony.plugins.plugin_system.Plugin):
 
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    def is_request_handler(self, request):
+        return self.main_rest_manager.is_request_handler(request)
+
+    def handle_request(self, request):
+        return self.main_rest_manager.handle_request(request)
 
     def is_active(self):
         return self.main_rest_manager.is_active()
