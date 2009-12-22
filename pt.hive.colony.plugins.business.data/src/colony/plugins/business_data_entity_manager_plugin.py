@@ -65,7 +65,6 @@ class BusinessDataEntityManagerPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global business
         import business.entity_manager.business_entity_manager_system
-        import business.entity_manager.business_entity_manager_decorators
         self.business_entity_manager = business.entity_manager.business_entity_manager_system.BusinessEntityManager(self)
 
     def end_load_plugin(self):
