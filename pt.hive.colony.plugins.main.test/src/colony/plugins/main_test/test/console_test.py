@@ -110,9 +110,6 @@ class ConsoleTest:
         # retrieve the test case id
         test_case_id = args[0]
 
-        # retrieves the main test instance
-        main_test = self.main_test_plugin.main_test
-
         # retrieves the test cases for the given test case id
         test_cases = self.get_test_cases(test_case_id)
 
