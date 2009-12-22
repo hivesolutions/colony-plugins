@@ -47,6 +47,11 @@ SEARCH_INDEX_SERIALIZER_TYPE = "shelve"
 FILE_PATH_VALUE = "file_path"
 """ The file path value """
 
+FORWARD_INDEX_MAP_SUFFIX = ".forward_index.map"
+""" The suffix to apply to the forward index map """
+
+INVERTED_INDEX_MAP_SUFFIX = ".inverted_index.map"
+
 class SearchIndexSerializerShelve:
     """
     The search index serializer shelve class.
@@ -75,23 +80,29 @@ class SearchIndexSerializerShelve:
         # retrieves the file path
         file_path = properties[FILE_PATH_VALUE]
 
+        # retrieves the forward index map file path
+        forward_index_map_file_path = file_path + FORWARD_INDEX_MAP_SUFFIX
+
+        # retrieves the inverted index map file path
+        inverted_index_map_file_path = file_path + INVERTED_INDEX_MAP_SUFFIX
+
         # creates the forward index map
-        forward_index_map = shelve.open("C:/tobias/forward_index_map.index", writeback = False)
+        forward_index_map = shelve.open(forward_index_map_file_path, writeback=False)
 
         # creates the inverted index map
-        inverted_index_map = shelve.open("C:/tobias/inverted_index_map.index", writeback = False)
+        inverted_index_map = shelve.open(inverted_index_map_file_path, writeback=False)
 
         # creates the properties
-        properties = shelve.open("C:/tobias/properties.index", writeback = False)
+        properties = shelve.open(file_path, writeback=False)
 
         # retrieves the original forward index map
-        forward_index_map_original =  search_index.forward_index_map
+        forward_index_map_original = search_index.forward_index_map
 
         # retrieves the original inverted index map
-        inverted_index_map_original =  search_index.inverted_index_map
+        inverted_index_map_original = search_index.inverted_index_map
 
         # retrieves the original properties
-        properties_original =  search_index.properties
+        properties_original = search_index.properties
 
         # iterates over all forward index map original keys to copy the content
         for forward_index_map_original_key in forward_index_map_original:
@@ -126,14 +137,20 @@ class SearchIndexSerializerShelve:
         # retrieves the file path
         file_path = properties[FILE_PATH_VALUE]
 
+        # retrieves the forward index map file path
+        forward_index_map_file_path = file_path + FORWARD_INDEX_MAP_SUFFIX
+
+        # retrieves the inverted index map file path
+        inverted_index_map_file_path = file_path + INVERTED_INDEX_MAP_SUFFIX
+
         # creates the forward index map
-        forward_index_map = shelve.open("C:/tobias/forward_index_map.index", writeback = True)
+        forward_index_map = shelve.open(forward_index_map_file_path, writeback=True)
 
         # creates the inverted index map
-        inverted_index_map = shelve.open("C:/tobias/inverted_index_map.index", writeback = True)
+        inverted_index_map = shelve.open(inverted_index_map_file_path, writeback=True)
 
         # creates the properties
-        properties = shelve.open("C:/tobias/properties.index", writeback = True)
+        properties = shelve.open(file_path, writeback=True)
 
         # creates the search index object
         search_index = SearchIndex()
