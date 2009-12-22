@@ -37,8 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import search_scorer_default_metric_bundle_exceptions
-
 TERM_FREQUENCY_SCORER_METRIC_IDENTIFIER = "term_frequency_scorer_metric"
 """ The term frequency metric identifier """
 
@@ -219,8 +217,8 @@ class TermFrequencyScorerMetric(DefaultBundleMetric):
             # gather the relevant metrics for the search results from the index
             for search_result in search_results:
                 # get the document hits in the search result, to retrieve all the hit words
-                document_id = search_result[DOCUMENT_ID_VALUE]
                 document_hits = search_result[HITS_VALUE]
+
                 # loops over all the document hit words, getting the word level metric from the index
                 for word_id, word_information_map in document_hits.items():
                     word_information_map = inverted_index_map[word_id]
@@ -243,13 +241,18 @@ class TermFrequencyScorerMetric(DefaultBundleMetric):
 
         # for each word in the index
         for word_id, word_information_map in inverted_index_map.items():
-
+            # retrieves the hit list for the current word
             word_hit_list = word_information_map[HITS_VALUE]
 
-            # count the word's hits, in each document where it appears
+            # initializes the count for the current word
             count = 0
+
+            # count the word's hits, in each document where it appears
             for _document_id, word_document_information_map in word_hit_list.items():
+                # retrieves the hit list for the word document information map
                 word_document_hit_list = word_document_information_map[HITS_VALUE]
+
+                # updates the count with the number of hits
                 count += len(word_document_hit_list)
 
             # increment the count for the word, with the count from all the documents
@@ -280,10 +283,7 @@ class DocumentHitsScorerMetric(DefaultBundleMetric):
 
         # check if the metric has been computed for the specified index
         if DOCUMENT_HITS_SCORER_METRIC_IDENTIFIER in search_index.metrics and search_index.metrics[DOCUMENT_HITS_SCORER_METRIC_IDENTIFIER]:
-            # retrieves the forward index map
-            forward_index_map = search_index.forward_index_map
-
-            # gather the relevant metrics for the search results from the index
+            # gather the relevant metrics for the search results from the search results
             for search_result in search_results:
                 # get the document id
                 document_id = search_result[DOCUMENT_ID_VALUE]
@@ -464,7 +464,7 @@ class HitDistanceToTopScorerMetric(DefaultBundleMetric):
         metric_values = {}
 
         # check if the metric has been computed for the specified index
-        if WORD_DOCUMENT_FREQUENCY_SCORER_METRIC_IDENTIFIER in search_index.metrics and search_index.metrics[WORD_DOCUMENT_FREQUENCY_SCORER_METRIC_IDENTIFIER]:
+        if self.identifier in search_index.metrics and search_index.metrics[self.identifier]:
             # retrieves the forward index map
             forward_index_map = search_index.forward_index_map
 
@@ -474,10 +474,10 @@ class HitDistanceToTopScorerMetric(DefaultBundleMetric):
                 document_hits = search_result[HITS_VALUE]
                 for word_id, word_information_map in document_hits.items():
                     word_hits = word_information_map[HITS_VALUE]
-                    for hit_id, hit_information_map in word_hits.items():
+                    for hit_id in word_hits:
                         hit_metrics = forward_index_map[document_id][HITS_VALUE][word_id][HITS_VALUE][hit_id][METRICS_VALUE]
-                        hit_distance_to_top = hit_metrics[HIT_DISTANCE_TO_TOP_SCORER_METRIC_IDENTIFIER]
-                        metric_values[document_id][word_id][hit_id] = term_frequency
+                        hit_distance_to_top = hit_metrics[self.identifier]
+                        metric_values[document_id][word_id][hit_id] = hit_distance_to_top
         else:
             # compute the metric
             metric_values = self.compute_for_index(search_index, properties)

@@ -297,7 +297,7 @@ class SearchScorer:
                 # for each word in the document hits
                 for word_id, word_information_map in document_hits.items():
                     # get the word document hits
-                    word_document_hits = word_information_map[HITS]
+                    word_document_hits = word_information_map[HITS_VALUE]
 
                     # get the hit level metrics for the current document and current word
                     document_word_metrics_values = document_metrics_values[word_id]

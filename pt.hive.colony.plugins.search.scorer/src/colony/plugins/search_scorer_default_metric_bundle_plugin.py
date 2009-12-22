@@ -58,6 +58,7 @@ class SearchScorerDefaultMetricBundlePlugin(colony.plugins.plugin_system.Plugin)
                     "pt.hive.colony.plugins.search.scorer.metric_repository", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["search_scorer.default_metric_bundle.search_scorer_default_metric_bundle_system"]
 
     search_scorer_default_metric_bundle = None
 

@@ -37,8 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import search_scorer_default_function_bundle_exceptions
-
 WORD_DOCUMENT_FREQUENCY_SCORER_METRIC_IDENTIFIER = "word_document_frequency_scorer_metric"
 """ The identifier for the word document frequency metric """
 
@@ -257,10 +255,21 @@ class TermFrequencyFunction(DefaultBundleFunction):
 
             average_word_frequency = 0
             word_count = 0
-            for word_id, word_information_map in search_result_hits.items():
+            for word_id in search_result_hits:
+                # retrieves the word information map for the current word
+                word_information_map = search_result_hits[word_id]
+
+                # retrieves the hits for the word
                 hits = word_information_map[HITS_VALUE]
-                average_word_frequency = ((average_word_frequency * word_count) + len(hits)) / (word_count + 1)
+
+                # updates the word count
                 word_count += 1
+
+                # counts the hits
+                number_hits = len(hits)
+
+                # updates the average word frequency
+                average_word_frequency = ((average_word_frequency * (word_count - 1)) + number_hits) / word_count
 
             # store the computed average frequency as the computed value for the current search result
             computed_values.append(average_word_frequency)
@@ -291,7 +300,6 @@ class WordFrequencyFunction(DefaultBundleFunction):
         self.required_metrics_identifiers = [WORD_DOCUMENT_FREQUENCY_SCORER_METRIC_IDENTIFIER]
 
     def compute(self, search_results, properties):
-
         # the list of computed values for each search result
         computed_values = []
 
@@ -299,13 +307,28 @@ class WordFrequencyFunction(DefaultBundleFunction):
             # for each search result, compute the average word frequency in each document for the words in the query
             search_result_hits = search_result[HITS_VALUE]
 
+            # initializes the average word frequency
             average_word_frequency = 0
+
+            # initializes the word count
             word_count = 0
-            for word_id, word_information_map in search_result_hits.items():
+
+            # for each word in the query
+            for word_id in search_result_hits:
+                # retrieves the word information map for the current word
+                word_information_map = search_result_hits[word_id]
+
+                # retrieves the word level metrics
                 word_metrics = word_information_map[METRICS_VALUE]
+
+                # retrieves the word frequency in the document
                 word_document_frequency = word_metrics[WORD_DOCUMENT_FREQUENCY_SCORER_METRIC_IDENTIFIER]
-                average_word_frequency = ((average_word_frequency * word_count) + word_document_frequency) / (word_count + 1)
+
+                # updates the word count
                 word_count += 1
+
+                # updates the average word frequency
+                average_word_frequency = ((average_word_frequency * (word_count - 1)) + word_document_frequency) / word_count
 
             # store the computed average frequency as the computed value for the current search result
             computed_values.append(average_word_frequency)
@@ -335,7 +358,6 @@ class DocumentLocationFunction(DefaultBundleFunction):
         self.sort_order = ASCENDING_SORT_ORDER
 
     def compute(self, search_results, properties):
-
         # the list of computed values for each search result
         computed_values = []
 
@@ -343,13 +365,31 @@ class DocumentLocationFunction(DefaultBundleFunction):
             # for each search result, compute the average word frequency in each document for the words in the query
             search_result_hits = search_result[HITS_VALUE]
 
+            # initializes the average documentation location
             average_document_location = 0
+
+            # initializes the word count
             word_count = 0
-            for word_id, word_information_map in search_result_hits.items():
+
+            # for each word in the query
+            for word_id in search_result_hits:
+                # retrieves the word information map for the word
+                word_information_map = search_result_hits[word_id]
+
+                # retrieves the hits for the word
                 word_hits = word_information_map[HITS_VALUE]
-                word_document_location = word_hits[0]["position"]
-                average_document_location = ((average_document_location * word_count) + word_document_location) / (word_count + 1)
+
+                # retrieves the first hit
+                first_word_hit = word_hits[0]
+
+                # retrieves the location of the first hit
+                word_document_location = first_word_hit[POSITION_VALUE]
+
+                # updates the word count
                 word_count += 1
+
+                # updates the average
+                average_document_location = ((average_document_location * (word_count - 1)) + word_document_location) / word_count
 
             # store the computed average frequency as the computed value for the current search result
             computed_values.append(average_document_location)
@@ -393,7 +433,7 @@ class WordDistanceFunction(DefaultBundleFunction):
             search_result_hits_items = search_result_hits.items()
 
             # pick a the first word to use as pivot for the distance computation
-            pivot_word_id, pivot_word_information_map = search_result_hits_items[0]
+            _pivot_word_id, pivot_word_information_map = search_result_hits_items[0]
             pivot_word_hits = pivot_word_information_map[HITS_VALUE]
 
             # get the remaining words to compare with the pivot
