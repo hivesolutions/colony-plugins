@@ -139,7 +139,10 @@ class RevisionControlSubversionAdapter:
 
         for resource_identifier in resource_identifiers:
             # retrieves the log messages for the specified parameters
-            resource_log_messages = revision_control_reference.log(resource_identifier, start_subversion_revision, end_subversion_revision, discover_changed_paths, strict_node_history, limit, peg_revision, include_merged_revisions, revprops)
+            resource_log_messages = revision_control_reference.log(resource_identifier, end_subversion_revision, start_subversion_revision, discover_changed_paths, strict_node_history, limit, peg_revision, include_merged_revisions, revprops)
+
+            # reverse the order of the obtained messages
+            resource_log_messages.reverse()
 
             # extends the log messages list with the retrieved log messages
             log_messages.extend(resource_log_messages)
