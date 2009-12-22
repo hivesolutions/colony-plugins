@@ -1073,7 +1073,7 @@ class BusinessSqliteEngine:
                         target_attribute_value = getattr(object_value, join_attribute_name_field)
 
                         # creates the initial query string value
-                        query_string_value = "insert into " + join_table_field + "(" + attribute_column_name_field + ", " +\
+                        query_string_value = "insert into " + join_table_field + "(" + attribute_column_name_field + ", " + \
                                              join_attribute_column_name_field + ") values("
 
                         # retrieves the id attribute sqlite string value
