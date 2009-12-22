@@ -557,14 +557,8 @@ class BusinessSqliteEngine:
         # creates the cursor for the given connection
         cursor = database_connection.cursor()
 
-        # retrieves the entity class name
-        entity_class_name = entity_class.__name__
-
         # retrieves the entity class valid indirect attribute names
         entity_class_valid_indirect_attribute_names = self.get_entity_class_indirect_attribute_names(entity_class)
-
-        # retrieves the entity class valid indirect attribute values
-        entity_class_valid_indirect_attribute_values = self.get_entity_class_indirect_attribute_values(entity_class)
 
         # iterates over all the entity class valid indirect attribute names
         for entity_class_valid_indirect_attribute_name in entity_class_valid_indirect_attribute_names:
@@ -890,9 +884,6 @@ class BusinessSqliteEngine:
         return query_string_value
 
     def generate_id(self, connection, entity):
-        # retrieves the database connection from the connection object
-        database_connection = connection.database_connection
-
         # retrieves the entity class for the entity
         entity_class = entity.__class__
 
@@ -964,9 +955,6 @@ class BusinessSqliteEngine:
         # retrieves all the valid attribute values
         entity_valid_indirect_attribute_values = self.get_entity_indirect_attribute_values(entity)
 
-        # retrieves all the class valid attribute values
-        entity_class_valid_indirect_attribute_values = self.get_entity_class_indirect_attribute_values(entity_class)
-
         # creates the initial index value
         index = 0
 
@@ -977,9 +965,6 @@ class BusinessSqliteEngine:
 
             # in case the entity valid indirect attribute value is not lazy loaded
             if not entity_valid_indirect_attribute_value == "%lazy-loaded%":
-                # retrieves the entity class valid indirect attribute value
-                entity_class_valid_indirect_attribute_value = entity_class_valid_indirect_attribute_values[index]
-
                 # retrieves the relation attributes for the given attribute name in the given entity class
                 relation_attributes = self.get_relation_attributes(entity_class, entity_valid_indirect_attribute_name)
 
@@ -1608,9 +1593,6 @@ class BusinessSqliteEngine:
                         # retrieves the target entity field
                         target_entity_field = relation_attributes[TARGET_ENTITY_FIELD]
 
-                        # retrieves the target entity name field
-                        target_entity_name_field = relation_attributes[TARGET_ENTITY_NAME_FIELD]
-
                         # retrieves the join attribute column name field
                         join_attribute_column_name_field = relation_attributes[JOIN_ATTRIBUTE_COLUMN_NAME_FIELD]
 
@@ -1915,16 +1897,16 @@ class BusinessSqliteEngine:
                         query_string_value += filter_field_name + " like "
 
                         if like_filter_type in ["left", "both"]:
-                             query_string_value += "\"%"
+                            query_string_value += "\"%"
                         else:
-                             query_string_value += "\""
+                            query_string_value += "\""
 
                         query_string_value += filter_field_value_string
 
                         if like_filter_type in ["right", "both"]:
-                             query_string_value += "%\""
+                            query_string_value += "%\""
                         else:
-                             query_string_value += "\""
+                            query_string_value += "\""
 
                 # in case the filter is of type greater
                 elif filter_type == "greater":
@@ -2258,12 +2240,12 @@ class BusinessSqliteEngine:
 
         return entity_class_non_relation_attribute_names
 
-    def get_entity_non_relation_attribute_names(self, entity_class):
+    def get_entity_non_relation_attribute_names(self, entity):
         """
         Retrieves a list with the names of all the non relational attributes from the given entity instance.
 
-        @type entity_class: Object
-        @param entity_class: The entity instance.
+        @type entity: Object
+        @param entity: The entity instance.
         @rtype: List
         @return: The list with the names of all the non relational attributes from the given entity instance.
         """
@@ -2638,9 +2620,6 @@ class BusinessSqliteEngine:
             # retrieves the join attribute name field
             join_attribute_name_field = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
 
-            # retrieves the mapped by field
-            mapped_by_field = relation_attributes.get(MAPPED_BY_FIELD, entity_class)
-
             # retrieves the optional field
             optional_field = relation_attributes.get(OPTIONAL_FIELD, DEFAULT_OPTIONAL_FIELD_VALUE)
 
@@ -2680,12 +2659,6 @@ class BusinessSqliteEngine:
         if attribute_value_data_type == RELATION_DATA_TYPE:
             # retrieves the relation attributes
             relation_attributes = self.get_relation_attributes(entity_class, relation_attribute_name)
-
-            # retrieves the relation attribute relation type
-            relation_attribute_relation_type = relation_attributes[RELATION_TYPE_FIELD]
-
-            # retrieves the relation attribute relation type
-            relation_attribute_relation_type = relation_attributes[RELATION_TYPE_FIELD]
 
             # retrieves the entity class join attribute
             entity_class_join_attribute = relation_attributes[JOIN_ATTRIBUTE_FIELD]
@@ -2866,7 +2839,7 @@ class BusinessSqliteEngine:
         escaped_text_value = text_value.replace("\"", "\"\"")
 
         # escapes the quote values
-        escaped_text_value = text_value.replace("'", "''")
+        escaped_text_value = escaped_text_value.replace("'", "''")
 
         # returns the escaped text value
         return escaped_text_value

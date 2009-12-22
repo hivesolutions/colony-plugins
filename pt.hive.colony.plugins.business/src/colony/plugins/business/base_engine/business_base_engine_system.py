@@ -85,9 +85,6 @@ class BaseConnectionManager:
     def create_transaction(self, connection, transaction_name, previous_value = None):
         pass
 
-    def create_transaction(self, connection, transaction_name, previous_value = None):
-        pass
-
     def commit_transaction(self, connection, transaction_name, previous_value = None):
         pass
 

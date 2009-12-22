@@ -578,7 +578,7 @@ class SessionManagerMaster(SessionManager):
         try:
             # tries to retrieve the session information
             session_information = self._get_session_information(session_information)
-        except business_session_manager_exceptions.InvalidSessionId, exception:
+        except business_session_manager_exceptions.InvalidSessionId:
             # creates a new persistent session
             session_information = self.create_persistent_session()
 
