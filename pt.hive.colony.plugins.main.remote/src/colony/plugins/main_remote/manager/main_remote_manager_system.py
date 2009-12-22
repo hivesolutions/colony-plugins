@@ -74,4 +74,5 @@ class MainRemoteManager:
             if rpc_handler_plugin.is_active():
                 available_rpc_handlers.append(rpc_handler_plugin)
 
+        # returns the available rpc handlers list
         return available_rpc_handlers
