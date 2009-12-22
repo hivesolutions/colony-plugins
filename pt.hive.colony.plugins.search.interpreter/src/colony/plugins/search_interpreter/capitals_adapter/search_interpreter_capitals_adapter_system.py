@@ -63,9 +63,9 @@ class SearchInterpreterCapitalsAdapter:
         return SEARCH_INTERPRETER_ADAPTER_TYPE
 
     def process_tokens_list(self, tokens_list, properties):
-
+        # iterates over the tokens list
         for tokens_list_item in tokens_list:
-            words_list, words_metadata_list, file_information_map = tokens_list_item
+            words_list, words_metadata_list, _file_information_map = tokens_list_item
 
             index = 0
 
