@@ -48,5 +48,10 @@ DEFAULT_LOGGING_FORMAT = "%(asctime)s %(levelname)s %(message)s"
 DEFAULT_LOGGING_LEVEL = logging.WARNING
 """ The default logging level name """
 
-# sets the logging configuration
-logging.basicConfig(filename = DEFAULT_LOGGING_FILENAME, format = DEFAULT_LOGGING_FORMAT, level = DEFAULT_LOGGING_LEVEL)
+def setup_logging():
+    """
+    Setups the logging sub-system.
+    """
+
+    # sets the logging configuration
+    logging.basicConfig(filename = DEFAULT_LOGGING_FILENAME, format = DEFAULT_LOGGING_FORMAT, level = DEFAULT_LOGGING_LEVEL)

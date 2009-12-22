@@ -37,7 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import os
 import sys
 import copy
 import types
@@ -50,6 +49,9 @@ import os.path
 import lexer_generator
 import logging_configuration
 import parser_generator_exceptions
+
+# setups the logger
+logging_configuration.setup_logging()
 
 class ItemSet(object):
     """
@@ -90,13 +92,13 @@ class ItemSet(object):
         # in case the length of the rules lists is the same
         if len(self.rules_list) == len(item_set.rules_list):
             # iterates over all rules, token positions and closures in the rules list
-            for rule, token_position, closure in self.rules_list:
+            for rule, token_position, _closure in self.rules_list:
                 # unsets the valid flag
                 valid = False
 
                 # iterates over all the rules and token positions in the item set
                 # rules list
-                for item_set_rule, item_set_token_position, item_set_closure in item_set.rules_list:
+                for item_set_rule, item_set_token_position, _item_set_closure in item_set.rules_list:
                     # in case the token positions and the rules are the same
                     if token_position == item_set_token_position and rule == item_set_rule:
                         # sets the valid flag
@@ -129,7 +131,7 @@ class ItemSet(object):
         """
 
         # iterates over the rules list
-        for item_set_rule, item_set_token_position, item_set_closure in self.rules_list:
+        for item_set_rule, item_set_token_position, _item_set_closure in self.rules_list:
             # in case the rules and the token position are the same
             if rule == item_set_rule and token_position == item_set_token_position:
                 return
@@ -310,7 +312,7 @@ class LookAheadItemSet(ItemSet):
         # in case the base rule tuple exists in the base rule map
         if base_rule_tuple in self.base_rule_map:
             # retrieves the item set rule and item set token position
-            item_set_rule, item_set_token_position = self.base_rule_map[base_rule_tuple]
+            item_set_rule, _item_set_token_position = self.base_rule_map[base_rule_tuple]
 
             # retrieves the rule ahead symbols list
             rule_ahead_symbols_list = rule.get_ahead_symbols_list()
@@ -1404,9 +1406,6 @@ class ParserGenerator:
                     # retrieves the current item set rules list
                     current_item_set_rules_list = current_item_set.get_rules_list()
 
-                    # retrieves the current item set rules list length
-                    current_item_set_rules_list_length = len(current_item_set_rules_list)
-
                     # iterates over the current item set rules list
                     for rule, token_position, closure in current_item_set_rules_list:
                         # in case the rule is not defined in the previous rules map
@@ -1478,7 +1477,7 @@ class ParserGenerator:
             symbols_non_terminal_map[symbol_non_terminal][ParserGenerator.SHIFT_OPERATION_VALUE] = []
 
         # iterates over all the item set rules
-        for item_set_rule, item_set_token_position, item_set_closure in item_set_rules:
+        for item_set_rule, item_set_token_position, _item_set_closure in item_set_rules:
             # retrieves the rule name
             rule_name = item_set_rule.get_rule_name()
 
@@ -1563,7 +1562,7 @@ class ParserGenerator:
             item_set_rules_list = item_set.get_rules_list()
 
             # iterates over all the item set rules
-            for item_set_rule, item_set_token_position, item_set_closure in item_set_rules_list:
+            for item_set_rule, item_set_token_position, _item_set_closure in item_set_rules_list:
                 # retrieves the item set rule symbols list
                 item_set_rule_symbols_list = item_set_rule.get_symbols_list()
 
@@ -1638,7 +1637,7 @@ class ParserGenerator:
             # retrieves the action table line
             action_table_line = self.action_table_map[item_set_id]
 
-            for item_set_rule, item_set_token_position, item_set_closure in item_set.get_rules_list():
+            for item_set_rule, item_set_token_position, _item_set_closure in item_set.get_rules_list():
                 if item_set_rule.get_rule_name() == ParserGenerator.PROGRAM_VALUE and len(item_set_rule.get_symbols_list()) == item_set_token_position + 1:
                     # creates the accept value
                     accept_value = (0, ParserGenerator.ACCEPT_OPERATION_VALUE)
@@ -1655,7 +1654,7 @@ class ParserGenerator:
             rules_list = self.item_sets_list[action_table_map_index].get_rules_list()
 
             # iterates over the rules in the rules list
-            for rule, token_position, closure in rules_list:
+            for rule, token_position, _closure in rules_list:
                 # retrieves the rule symbols list
                 rule_symbols_list = rule.get_symbols_list()
 
@@ -1710,7 +1709,7 @@ class ParserGenerator:
                     value = transition_table_line[item_set_rule_symbol]
 
                     # adds the value to the action table line
-                    goto_table_line[item_set_rule_symbol] = transition_table_line[item_set_rule_symbol]
+                    goto_table_line[item_set_rule_symbol] = value
 
     def _get_extra_rules(self, symbol):
         """
@@ -2146,7 +2145,7 @@ class ParserGenerator:
                 logging.debug("Current stack: %s" % str(stack))
 
             # retrieves the current state
-            current_state, current_value = stack[-1]
+            current_state, _current_value = stack[-1]
 
             # retrieves the current action line
             action_line = self.action_table_map[current_state]
@@ -2189,9 +2188,9 @@ class ParserGenerator:
                 arguments_list = [None]
 
                 # iterates over all the reduce rule symbols
-                for reduce_rule_symbol in reduce_rule_symbols_list:
+                for _reduce_rule_symbol in reduce_rule_symbols_list:
                     # pops a stack value
-                    pop_state, pop_value = stack.pop()
+                    _pop_state, pop_value = stack.pop()
 
                     # inserts the popped value into the arguments list
                     arguments_list.insert(1, pop_value)
@@ -2206,7 +2205,7 @@ class ParserGenerator:
                 return_value = arguments_list[0]
 
                 # retrieves the current state
-                current_state, current_value = stack[-1]
+                current_state, _current_value = stack[-1]
 
                 # retrieves the current goto line
                 goto_line = self.goto_table_map[current_state]
@@ -2266,9 +2265,9 @@ class ParserGenerator:
                 arguments_list = [None]
 
                 # iterates over all the accept rule symbols
-                for accept_rule_symbol in accept_rule_symbols_list:
+                for _accept_rule_symbol in accept_rule_symbols_list:
                     # pops a stack value
-                    pop_state, pop_value = stack.pop()
+                    _pop_state, pop_value = stack.pop()
 
                     # inserts the popped value into the arguments list
                     arguments_list.insert(1, pop_value)
@@ -2295,7 +2294,7 @@ class ParserGenerator:
         stack_top = stack.pop()
 
         # retrieves the top state and the top value
-        top_state, top_value = stack_top
+        _top_state, top_value = stack_top
 
         # returns the top value
         return top_value

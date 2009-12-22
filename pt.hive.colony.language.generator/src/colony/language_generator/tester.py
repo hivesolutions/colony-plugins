@@ -43,15 +43,7 @@ import logging
 import lexer_generator
 import parser_generator
 
-import examples.bug_example
-import examples.extra_example
-import examples.look_ahead_example
-import examples.reduce_reduce_example
-import examples.shift_reduce_example
 import examples.simple_example
-import examples.ultra_simple_example
-
-import logging_configuration
 
 # creates the initial time
 initial_time = time.time()

@@ -48,6 +48,9 @@ import lexer_generator_exceptions
 DEFAULT_COMPILE_FLAGS = re.UNICODE
 """ The default compile flags """
 
+# setups the logger
+logging_configuration.setup_logging()
+
 class Token:
     """
     The token class.
