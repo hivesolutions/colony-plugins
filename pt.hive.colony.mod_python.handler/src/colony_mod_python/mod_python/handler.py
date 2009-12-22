@@ -75,6 +75,9 @@ class PluginManagerHandler:
         self.req = req
         self.local_address, self.local_port = req.connection.local_addr
 
+        # processes the request
+        self._process_request(req)
+
     def handle_request(self, data):
         """
         Handles the requested data.
@@ -155,6 +158,56 @@ class PluginManagerHandler:
 
         # retrieves the plugin manager, setting the variable
         plugin_manager = main.plugin_manager
+
+    def _process_request(self, req):
+        """
+        Processes the request object.
+
+        @type req: HttpRequest
+        @param req: The http request sent by the mod_python.
+        """
+
+        # creates the attributes map in the request
+        req.attributes_map = {}
+
+        # retrieves the arguments from the path splitted
+        arguments = req.args
+
+        # in case the arguments are not defined
+        if not arguments:
+            # returns immediately
+            return
+
+        # retrieves the attribute fields list
+        attribute_fields_list = arguments.split("&")
+
+        # iterates over all the attribute fields
+        for attribute_field in attribute_fields_list:
+            # splits the attribute field in the equals operator
+            attribute_field_splitted = attribute_field.split("=")
+
+            # retrieves the attribute field splitted length
+            attribute_field_splitted_length = len(attribute_field_splitted)
+
+            # in case the attribute field splitted length is invalid
+            if attribute_field_splitted_length == 0 or attribute_field_splitted_length > 2:
+                continue
+
+            # in case the attribute field splitted length is two
+            if attribute_field_splitted_length == 2:
+                # retrieves the attribute name and the attribute value,
+                # from the attribute field splitted
+                attribute_name, attribute_value = attribute_field_splitted
+            # in case the attribute field splitted length is one
+            elif attribute_field_splitted_length == 1:
+                # retrieves the attribute name, from the attribute field splitted
+                attribute_name, = attribute_field_splitted
+
+                # sets the attribute value to none
+                attribute_value = None
+
+            # sets the attribute value
+            req.attributes_map[attribute_name] = attribute_value
 
 def handler(req):
     """
