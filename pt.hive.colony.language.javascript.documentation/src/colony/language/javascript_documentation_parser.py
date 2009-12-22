@@ -353,6 +353,24 @@ def p_space(t):
 def p_error(t):
     print "Syntax error at '%s'" % t
 
+class DummyParser:
+    """
+    The dummy parser class.
+    """
+
+    def parse(self, value):
+        """
+        The dummy parser method.
+
+        @type value: String
+        @param value: The value to be parsed.
+        """
+
+        pass
+
+# creates the dummy parser
+parser = DummyParser()
+
 # in case it's the colony parser type
 if PARSER_TYPE == COLONY_PARSER_VALUE:
     # imports the sys package
