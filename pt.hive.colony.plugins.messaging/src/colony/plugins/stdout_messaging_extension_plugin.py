@@ -38,7 +38,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.plugins.plugin_system
-import colony.plugins.decorators
 
 class StdoutMessagingExtensionPlugin(colony.plugins.plugin_system.Plugin):
     """
