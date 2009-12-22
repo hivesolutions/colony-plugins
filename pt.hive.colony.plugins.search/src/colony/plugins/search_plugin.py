@@ -76,6 +76,7 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
 
     events_handled = []
     events_registrable = []
+    main_modules = ["search.search_system", "search.search_exceptions", "search.search_test"]
 
     search = None
 
