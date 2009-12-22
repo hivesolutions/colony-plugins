@@ -82,7 +82,7 @@ class SearchProviderText:
             return False
 
         if FILE_EXTENSIONS_VALUE in properties:
-           file_extensions = properties[FILE_EXTENSIONS_VALUE]
+            file_extensions = properties[FILE_EXTENSIONS_VALUE]
         else:
             file_extensions = DEFAULT_FILE_EXTENSIONS
 
