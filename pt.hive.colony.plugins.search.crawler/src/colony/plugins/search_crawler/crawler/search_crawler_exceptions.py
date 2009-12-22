@@ -59,7 +59,7 @@ class MissingProperty(SearchCrawlerException):
         @param message: The message to be printed.
         """
 
-        SearchCrawlerFileSystemException.__init__(self)
+        SearchCrawlerException.__init__(self)
         self.message = message
 
     def __str__(self):
