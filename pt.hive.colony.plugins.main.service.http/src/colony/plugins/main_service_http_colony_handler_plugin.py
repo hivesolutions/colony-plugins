@@ -60,6 +60,7 @@ class MainServiceHttpColonyHandlerPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["main_service_http_colony_handler.colony_handler.main_service_http_colony_handler_system", "main_service_http_colony_handler.colony_handler.main_service_http_colony_handler_exceptions"]
 
     main_service_http_colony_handler = None
 

@@ -60,6 +60,7 @@ class MainServiceHttpGzipEncodingPlugin(colony.plugins.plugin_system.Plugin):
                     "pt.hive.colony.plugins.misc.gzip", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["main_service_http_gzip_encoding.gzip_encoding.main_service_http_gzip_encoding_system"]
 
     main_service_http_gzip_encoding = None
 
