@@ -84,7 +84,7 @@ class DummyPluginAux1(colony.plugins.plugin_system.Plugin):
         # retrieves the task descriptor class
         task_descriptor_class = self.thread_pool_manager_plugin.get_thread_task_descriptor_class()
 
-        for i in range(1):
+        for _index in range(1):
             self.task_descriptor = task_descriptor_class(start_method = self.start_print_running_thread_pool,
                                                          stop_method = self.stop_print_running_thread_pool,
                                                          pause_method = self.pause_print_running_thread_pool,

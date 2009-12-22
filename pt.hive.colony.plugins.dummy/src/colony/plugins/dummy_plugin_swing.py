@@ -38,7 +38,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.plugins.plugin_system
-import colony.plugins.decorators
 
 class DummyPluginSwind(colony.plugins.plugin_system.Plugin):
     """
@@ -90,4 +89,4 @@ class DummyPluginSwind(colony.plugins.plugin_system.Plugin):
         print "unloading dummy swing allowed..."
 
     def dependency_injected(self, plugin):
-       colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)

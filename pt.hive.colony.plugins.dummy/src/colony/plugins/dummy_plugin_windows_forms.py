@@ -105,11 +105,9 @@ class DummyPluginWindowsForms(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.load_allowed_capability("dummy_windows_forms_label")
     def dummy_windows_forms_label_load_allowed(self, plugin, capability):
         label = plugin.get_label()
-        form = self.dummy_windows_forms.get_form()
         self.dummy_windows_forms.add_label(label)
 
     @colony.plugins.decorators.unload_allowed_capability("dummy_windows_forms_label")
     def dummy_windows_forms_label_unload_allowed(self, plugin, capability):
         label = plugin.get_label()
-        form = self.dummy_windows_forms.get_form()
         self.dummy_windows_forms.remove_label(label)
