@@ -110,6 +110,6 @@ class MockItemSorterPlugin(colony.plugins.plugin_system.Plugin):
         @return: The ordered sequence of values.
         """
 
-        intermed = [(getattr(sequence[i], attribute), i, sequence[i]) for i in xrange(len(sequence))]
+        intermed = [(getattr(sequence[index], attribute), index, sequence[index]) for index in xrange(len(sequence))]
         intermed.sort()
         return [tuple[-1] for tuple in intermed]
