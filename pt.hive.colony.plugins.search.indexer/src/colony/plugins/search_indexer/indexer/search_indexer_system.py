@@ -278,7 +278,7 @@ class SearchIndexer:
             # in case this is the first metric with this level,
             # inserts a new map for the level
             if scorer_metric_level not in metrics_values_level_map:
-                 metrics_values_level_map[scorer_metric_level] = {}
+                metrics_values_level_map[scorer_metric_level] = {}
 
             # retrieves the metrics for the specified level
             metrics_values_map = metrics_values_level_map[scorer_metric_level]
@@ -399,7 +399,7 @@ class SearchIndexer:
         # checks if all the requested metrics are available
         for metric_identifier in metrics_identifiers:
             if not metric_identifier in available_metrics_identifiers:
-                 raise search_indexer_exceptions.MissingMetric(metric_identifier)
+                raise search_indexer_exceptions.MissingMetric(metric_identifier)
 
         # retrieves the required metrics from the metrics repository
         scorer_metrics = search_scorer_metric_repository_plugin.get_metrics(metrics_identifiers)
