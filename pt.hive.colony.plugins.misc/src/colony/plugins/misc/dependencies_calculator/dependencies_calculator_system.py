@@ -152,7 +152,9 @@ class Graph:
         return False
 
     def clean_nodes(self):
+        # iterates over all the nodes in the nodes list
         for node in self.nodes_list:
+            # deletes the node mark
             del node.mark
 
     # @todo: improve the print of this graph

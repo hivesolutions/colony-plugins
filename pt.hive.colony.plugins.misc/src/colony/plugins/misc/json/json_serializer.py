@@ -345,4 +345,4 @@ def loads(s):
                 else:
                     return value
     except StopIteration:
-         raise json_exceptions.JsonDecodeException("Unexpected end of Json source")
+        raise json_exceptions.JsonDecodeException("Unexpected end of Json source")

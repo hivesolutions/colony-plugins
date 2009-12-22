@@ -40,6 +40,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 CONSOLE_EXTENSION_NAME = "repository_descriptor"
 """ The console extension name """
 
+INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
+""" The invalid number of arguments message """
+
 HELP_TEXT = "### REPOSITORY DESCRIPTOR GENERATOR HELP ###\n\
 generate_repository_descriptor <file-path> [repository-name] [repository-description] - generates a repository descriptor with the available plugins"
 """ The help text """

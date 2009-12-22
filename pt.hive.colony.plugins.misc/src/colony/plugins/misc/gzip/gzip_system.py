@@ -93,9 +93,6 @@ class Gzip:
         # computes the contents string crc 32
         contents_string_crc32 = zlib.crc32(contents_string)
 
-        # computes the crc 32 lower values
-        unsigned_contents_string_crc32 = contents_string_crc32 & 0xFFFFFFFFL
-
         # writes the crd 32 lower values
         string_buffer.write(struct.pack("<L", contents_string_crc32))
 
