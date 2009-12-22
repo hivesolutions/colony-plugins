@@ -157,7 +157,7 @@ class DistributionBonjourClient:
         """
 
         # retrieves the first and second references from the service reference string
-        first_reference, second_reference = bonjour_service_reference_string.split("._colony._tcp.local.")
+        first_reference, _second_reference = bonjour_service_reference_string.split("._colony._tcp.local.")
 
         # splits the first reference
         first_reference_splitted = first_reference.split(".")
