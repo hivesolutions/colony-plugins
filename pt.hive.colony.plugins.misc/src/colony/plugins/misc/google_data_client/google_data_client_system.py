@@ -38,7 +38,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import gdata.docs.service
-import gdata.youtube
 import gdata.youtube.service
 
 class GoogleDataClient:
@@ -79,63 +78,97 @@ class GoogleDataClient:
         self.connect_google_docs(username, password)
 
     def connect_youtube(self, username, password):
-        if not self.youtube_service:
-            self.youtube_service = gdata.youtube.service.YouTubeService()
+        # creates a youtube service
+        self.youtube_service = gdata.youtube.service.YouTubeService()
 
     def connect_google_docs(self, username, password):
-        if not self.docs_service:
-            self.docs_service = gdata.docs.service.DocsService()
-            self.docs_service.ClientLogin(username, password)
+        # creates a docs service
+        self.docs_service = gdata.docs.service.DocsService()
+
+        # authenticates the docs service
+        self.docs_service.ClientLogin(username, password)
 
     def google_docs_get_document_list(self):
-        documents_feed = client.GetDocumentListFeed()
-        document_title_list = []
-        for document_entry in documents_feed.entry:
-            document_title_list.append(document_entry.title.text)
+        # retrieves the document titles
+        documents_feed = self.docs_service.GetDocumentListFeed()
+
+        # collects the document titles
+        document_title_list = [document_entry.title.text for document_entry in documents_feed.entry]
+
         return document_title_list
 
     def youtube_get_entry(self, id):
+        # returns the specified youtube entry
         return self.youtube_service.GetYouTubeVideoEntry(video_id = id)
 
     def youtube_get_video_title(self, id):
+        # retrieves the specified youtube entry
         entry = self.youtube_get_entry(id)
+
+        # returns the youtube entry's title
         return entry.media.title.text
 
     def youtube_get_video_publish_date(self, id):
+        # retrieves the specified youtube entry
         entry = self.youtube_get_entry(id)
+
+        # returns the youtube entry's publish date
         return entry.published.text
 
     def youtube_get_video_description(self, id):
+        # retrieves the specified youtube entry
         entry = self.youtube_get_entry(id)
+
+        # returns the youtube entry's description
         return entry.media.description.text
 
     def youtube_get_video_category(self, id):
+        # retrieves the specified youtube entry
         entry = self.youtube_get_entry(id)
+
+        # returns the youtube entry's category
         return entry.media.category[0].text
 
     def youtube_get_video_tags(self, id):
+        # retrieves the specified youtube entry
         entry = self.youtube_get_entry(id)
+
+        # returns the youtube entry's tags
         return entry.media.keywords.text
 
     def youtube_get_video_watch_page(self, id):
+        # retrieves the specified youtube entry
         entry = self.youtube_get_entry(id)
+
+        # returns the youtube entry's watch page url
         return entry.media.player.url
 
     def youtube_get_video_duration(self, id):
+        # retrieves the specified youtube entry
         entry = self.youtube_get_entry(id)
+
+        # returns the youtube entry's video duration
         return entry.media.duration.seconds
 
     def youtube_get_video_view_count(self, id):
+        # retrieves the specified youtube entry
         entry = self.youtube_get_entry(id)
+
+        # returns the youtube entry's view count
         return entry.statistics.view_count
 
     def youtube_get_video_rating(self, id):
+        # retrieves the specified youtube entry
         entry = self.youtube_get_entry(id)
+
+        # returns the youtube entry's average rating
         return entry.rating.average
 
     def youtube_get_video_thumbnail_url(self, id):
+        # retrieves the specified youtube entry
         entry = self.youtube_get_entry(id)
-        thumbnails = []
-        for thumbnail in entry.media.thumbnail:
-            thumbnails.append(thumbnail)
+
+        # collects the youtube entry's thumbnails
+        thumbnails = [thumbnail for thumbnail in entry.media.thumbnail]
+
         return thumbnails
