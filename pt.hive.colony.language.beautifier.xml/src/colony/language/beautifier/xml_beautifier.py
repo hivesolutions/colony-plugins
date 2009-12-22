@@ -225,7 +225,7 @@ class XmlBeautifier:
         if not initial_flag:
             self.output_file_buffer.write("\n")
 
-        for index in range(indentation_index):
+        for _index in range(indentation_index):
             self.output_file_buffer.write(INDENTATION_TOKEN)
 
 if __name__ == "__main__":
