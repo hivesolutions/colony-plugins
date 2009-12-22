@@ -388,9 +388,6 @@ class TwitterClient:
         # sets the retrieval url
         retrieval_url = "https://twitter.com/oauth/authorize"
 
-        # creates the parameters map
-        parameters = {}
-
         # creates the authentication parameters
         authentication_parameters = {"oauth_token" : self.oauth_structure.oauth_token}
 
@@ -410,9 +407,6 @@ class TwitterClient:
 
         # sets the retrieval url
         retrieval_url = "https://twitter.com/oauth/authenticate"
-
-        # creates the parameters map
-        parameters = {}
 
         # creates the authentication parameters
         authentication_parameters = {"oauth_token" : self.oauth_structure.oauth_token}
@@ -837,7 +831,7 @@ class TwitterClient:
             authentication_handler = urllib2.HTTPBasicAuthHandler()
 
             # parses the url
-            scheme, net_localization, path, parameters, query, fragment = urlparse.urlparse(url)
+            _scheme, net_localization, _path, _parameters, _query, _fragment = urlparse.urlparse(url)
 
             # adds the password to the url structure
             authentication_handler.add_password(TWITTER_API_REALM_VALUE, net_localization, self.username, self.password)
