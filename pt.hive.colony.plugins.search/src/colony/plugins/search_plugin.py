@@ -37,8 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import colony.plugins.decorators
 import colony.plugins.plugin_system
+import colony.plugins.decorators
 
 class SearchPlugin(colony.plugins.plugin_system.Plugin):
     """
