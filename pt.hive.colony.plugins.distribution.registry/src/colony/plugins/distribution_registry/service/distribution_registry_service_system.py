@@ -70,9 +70,6 @@ class DistributionRegistryService:
     def get_rpc_methods_alias(self):
         return {}
 
-    def get_all_registry_entries(self):
-        return []
-
     def register_entry(self, hostname, name, type, endpoints, metadata):
         # retrieves the distribution registry plugin
         distribution_registry_plugin = self.distribution_registry_service_plugin.distribution_registry_plugin
