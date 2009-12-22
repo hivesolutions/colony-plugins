@@ -103,7 +103,7 @@ class TemplateHandler:
         template_handler_extension_plugins = self.template_handler_plugin.template_handler_extension_plugins
 
         # retrieves the file extension from the filename
-        file_name_extension = request.filename.split(".")[-1]
+        file_name_extension = request.uri.split(".")[-1]
 
         # in case the file name extension is valid
         if file_name_extension == TEMPLATE_FILE_EXENSION:
@@ -175,7 +175,7 @@ class TemplateHandler:
                         break;
 
                 # retrieves the file extension from the filename
-                file_name_extension = request.filename.split(".")[-1]
+                file_name_extension = request.uri.split(".")[-1]
 
                 # in case the file extension is of type template
                 if file_name_extension == TEMPLATE_FILE_EXENSION:
