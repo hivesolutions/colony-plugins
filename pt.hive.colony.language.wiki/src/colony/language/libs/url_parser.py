@@ -492,7 +492,7 @@ class Url:
         Generates the resource reference list.
         """
 
-       # is case the resource reference is invalid
+        # is case the resource reference is invalid
         if not self.resource_reference:
             # returns immediately
             return
