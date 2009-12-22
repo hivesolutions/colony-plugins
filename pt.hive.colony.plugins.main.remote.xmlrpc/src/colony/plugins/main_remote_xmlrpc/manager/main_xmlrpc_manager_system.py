@@ -97,6 +97,7 @@ class MainXmlrpcManager:
         # retrieves the simple filename from the complete path filename
         simple_filename = request.filename.split("/")[-1]
 
+        # compares the simple file name with the handler file name
         if simple_filename == HANDLER_FILENAME:
             return True
         else:
