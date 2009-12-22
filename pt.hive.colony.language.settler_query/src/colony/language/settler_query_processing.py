@@ -66,13 +66,13 @@ class ProcessingStructure:
 
     def get_symbol_value(self, context, name):
         if not context in self.symbols_table:
-            raise settler_exceptions.SettlerSymbolNotFound("symbol " + name + " not found in context " + context)
+            raise settler_query_exceptions.SettlerQuerySymbolNotFound("symbol " + name + " not found in context " + context)
 
         # retrieves the context symbols table
         context_symbols_table = self.symbols_table[context]
 
         if not name in context_symbols_table:
-            raise settler_exceptions.SettlerSymbolNotFound("symbol " + name + " not found in context " + context)
+            raise settler_query_exceptions.SettlerQuerySymbolNotFound("symbol " + name + " not found in context " + context)
 
         # retrieves the symbol value
         value = context_symbols_table[name]
@@ -91,7 +91,7 @@ class ProcessingStructure:
             current_context = self.get_current_context()
 
             return self.get_symbol_value(current_context, name)
-        except settler_exceptions.SettlerSymbolNotFound:
+        except settler_query_exceptions.SettlerQuerySymbolNotFound:
             pass
 
         return self.get_symbol_value(GLOBAL_CONTEXT_NAME, name)
@@ -117,6 +117,6 @@ class ProcessingStructure:
         self.current_context_stack.append(context)
 
     def push_current_context_local(self, context):
-        real_context = context + ":" + str(self.current_id)
+        _real_context = context + ":" + str(self.current_id)
         self.current_id += 1
         self.current_context_stack.append(context)

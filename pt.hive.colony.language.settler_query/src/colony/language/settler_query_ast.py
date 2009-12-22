@@ -1605,3 +1605,56 @@ class SubqueryNode(AstNode):
 
         self.entity_expression_node = entity_expression_node
         self.add_child_node(entity_expression_node)
+
+class AstSequenceNodeIterator:
+    """
+    The ast sequence node iterator class.
+    """
+
+    ast_sequence_node = None
+    """ The ast sequence node """
+
+    def __init__(self, ast_sequence_node):
+        """
+        Constructor of the class.
+
+        @type ast_sequence_node: AstSequenceNode
+        @param ast_sequence_node: The ast sequence node for the iterator.
+        """
+
+        self.ast_sequence_node = ast_sequence_node
+
+    def __iter__(self):
+        """
+        Returns the iterator object for sequence iteration.
+
+        @rtype: AstSequenceNodeIterator
+        @return: The iterator object for sequence iteration.
+        """
+
+        return self
+
+    def next(self):
+        """
+        Retrieves the next ast sequence node.
+
+        @rtype: AstSequenceNode
+        @return: The next ast sequence node.
+        """
+
+        # retrieves the current ast sequence node
+        current_ast_sequence_node = self.ast_sequence_node
+
+        # in case the current ast sequence node is None or an ast sequence end node
+        if current_ast_sequence_node == None or current_ast_sequence_node.__class__ == AstSequenceEndNode:
+            # breaks the iteration
+            raise StopIteration()
+
+        # retrieves the next ast sequence node
+        next_ast_sequence_node = self.ast_sequence_node.next_node
+
+        # sets the next ast sequence node as the new ast sequence node
+        self.ast_sequence_node = next_ast_sequence_node
+
+        # returns the current ast sequence node
+        return current_ast_sequence_node

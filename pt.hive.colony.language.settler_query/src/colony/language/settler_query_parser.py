@@ -802,6 +802,24 @@ def p_subquery(t):
 def p_error(t):
     print "Syntax error at '%s'" % t
 
+class DummyParser:
+    """
+    The dummy parser class.
+    """
+
+    def parse(self, value):
+        """
+        The dummy parser method.
+
+        @type value: String
+        @param value: The value to be parsed.
+        """
+
+        pass
+
+# creates the dummy parser
+parser = DummyParser()
+
 # creates the parser
 ply.yacc.yacc()
 

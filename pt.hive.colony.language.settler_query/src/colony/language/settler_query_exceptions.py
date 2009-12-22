@@ -36,3 +36,89 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
+
+class SettlerQueryException(Exception):
+    """
+    The settler query exception class.
+    """
+
+    message = None
+    """ The exception's message """
+
+class SettlerQuerySymbolNotFound(SettlerQueryException):
+    """
+    The settler query symbol not found class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        SettlerQueryException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Symbol not found: %s" % self.message
+
+class SettlerQueryInvalidNumberOfArguments(SettlerQueryException):
+    """
+    The settler query invalid number of arguments class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        SettlerQueryException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Invalid number of arguments: %s" % self.message
+
+class SettlerQueryInvalidOperation(SettlerQueryException):
+    """
+    The settler query invalid operation class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        SettlerQueryException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Invalid operation: %s" % self.message
