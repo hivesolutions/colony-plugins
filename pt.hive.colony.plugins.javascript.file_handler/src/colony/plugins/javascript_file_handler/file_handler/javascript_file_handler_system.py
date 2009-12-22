@@ -78,7 +78,7 @@ class JavascriptFileHandler:
 
     def is_request_handler(self, request):
         # retrieves the simple filename from the complete path filename
-        simple_filename = request.filename.split("/")[-1]
+        simple_filename = request.uri.split("/")[-1]
 
         if simple_filename == HANDLER_FILENAME:
             return True
