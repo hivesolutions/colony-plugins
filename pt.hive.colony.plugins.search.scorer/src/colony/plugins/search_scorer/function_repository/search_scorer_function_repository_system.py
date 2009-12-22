@@ -89,7 +89,7 @@ class SearchScorerFunctionRepository:
 
         # removes all the functions made available by the plugin
         # (since no duplicates are allowed, the plugin is assumed to be the single provider of the function)
-        for function_identifier, function in scorer_functions_map.items():
+        for function_identifier in scorer_functions_map:
             del self.functions_map[function_identifier]
 
     def get_function_identifiers(self):

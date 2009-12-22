@@ -248,7 +248,7 @@ class TermFrequencyScorerMetric(DefaultBundleMetric):
 
             # count the word's hits, in each document where it appears
             count = 0
-            for document_id, word_document_information_map in word_hit_list.items():
+            for _document_id, word_document_information_map in word_hit_list.items():
                 word_document_hit_list = word_document_information_map[HITS_VALUE]
                 count += len(word_document_hit_list)
 
@@ -317,7 +317,7 @@ class DocumentHitsScorerMetric(DefaultBundleMetric):
 
             # for each word in the document
             document_hit_count = 0
-            for word_id, word_information_map in document_hits.items():
+            for _word_id, word_information_map in document_hits.items():
 
                 document_word_hits = word_information_map[HITS_VALUE]
 
@@ -361,7 +361,7 @@ class WordDocumentFrequencyScorerMetric(DefaultBundleMetric):
             for search_result in search_results:
                 document_id = search_result[DOCUMENT_ID_VALUE]
                 document_hits = search_result[HITS_VALUE]
-                for word_id, word_information_map in document_hits.items():
+                for word_id in document_hits:
                     word_metrics = forward_index_map[document_id][HITS_VALUE][word_id][METRICS_VALUE]
                     term_frequency = word_metrics[WORD_DOCUMENT_FREQUENCY_SCORER_METRIC_IDENTIFIER]
 

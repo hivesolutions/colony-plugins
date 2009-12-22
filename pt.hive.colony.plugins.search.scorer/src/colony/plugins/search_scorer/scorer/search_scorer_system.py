@@ -196,7 +196,7 @@ class SearchScorer:
             # in case this is the first metric with this level,
             # inserts a new map for the level
             if scorer_metric_level not in metrics_values_level_map:
-                 metrics_values_level_map[scorer_metric_level] = {}
+                metrics_values_level_map[scorer_metric_level] = {}
 
             # retrieves the metrics for the specified level
             metrics_values_map = metrics_values_level_map[scorer_metric_level]
@@ -296,7 +296,6 @@ class SearchScorer:
 
                 # for each word in the document hits
                 for word_id, word_information_map in document_hits.items():
-
                     # get the word document hits
                     word_document_hits = word_information_map[HITS]
 

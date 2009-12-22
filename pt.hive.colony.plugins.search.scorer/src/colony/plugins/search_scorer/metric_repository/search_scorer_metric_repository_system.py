@@ -87,7 +87,7 @@ class SearchScorerMetricRepository:
 
         # removes all the metrics made available by the plugin
         # (since no duplicates are allowed, the plugin is assumed to be the single provider of the metric)
-        for metric_identifier, metric in scorer_metrics_map.items():
+        for metric_identifier in scorer_metrics_map:
             del self.metrics_map[metric_identifier]
 
     def get_metric_identifiers(self):
