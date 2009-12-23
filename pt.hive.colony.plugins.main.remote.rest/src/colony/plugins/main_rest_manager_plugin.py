@@ -42,7 +42,7 @@ import colony.plugins.decorators
 
 class MainRestManagerPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Rest Manager Main plugin
+    The main class for the Rest Manager Main plugin.
     """
 
     id = "pt.hive.colony.plugins.main.remote.rest.manager"
@@ -54,7 +54,7 @@ class MainRestManagerPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["rest_manager", "http_python_handler", "rpc_handler"]
-    capabilities_allowed = ["rpc_service"]
+    capabilities_allowed = ["rpc_service", "rest_encoder"]
     dependencies = []
     events_handled = []
     events_registrable = []
@@ -63,6 +63,7 @@ class MainRestManagerPlugin(colony.plugins.plugin_system.Plugin):
     main_rest_manager = None
 
     rpc_service_plugins = []
+    rest_encoder_plugins = []
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -114,7 +115,15 @@ class MainRestManagerPlugin(colony.plugins.plugin_system.Plugin):
         self.rpc_service_plugins.append(plugin)
         self.main_rest_manager.update_service_methods(plugin)
 
+    @colony.plugins.decorators.load_allowed_capability("rest_encoder")
+    def rest_encoder_capability_load_allowed(self, plugin, capability):
+        self.rest_encoder_plugins.append(plugin)
+
     @colony.plugins.decorators.unload_allowed_capability("rpc_service")
     def rpc_servicer_capability_unload_allowed(self, plugin, capability):
         self.rpc_service_plugins.remove(plugin)
         self.main_rest_manager.update_service_methods()
+
+    @colony.plugins.decorators.unload_allowed_capability("rest_encoder")
+    def rest_encoder_capability_unload_allowed(self, plugin, capability):
+        self.rest_encoder_plugins.remove(plugin)

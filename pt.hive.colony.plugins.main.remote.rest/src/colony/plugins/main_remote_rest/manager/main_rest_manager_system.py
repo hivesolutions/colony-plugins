@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import re
+import urllib
 
 import main_rest_manager_exceptions
 
@@ -127,70 +128,76 @@ class MainRestManager:
         if not resource_path_splitted[0] == "services":
             return False
 
-        # retrieves the post data
-        post_data = request.read()
+        # retrieves the midle path name
+        middle_path_name = resource_path_splitted[1:-1]
 
-        base_value = resource_path_splitted[1:-1] + [resource_path_splitted[ -1].split(".")[0]]
+        # retrieves the last path name
+        last_path_name = resource_path_splitted[-1]
 
-        method_name = ".".join(base_value)
+        # splits the last path name
+        last_path_name_splitted = last_path_name.split(".")
 
-        print method_name
+        # retrieves the last path name splitted length
+        last_path_name_splitted_length = len(last_path_name_splitted)
 
-        parameters = []
+        # sets the default last path initial extension
+        last_path_initial_extension = None
 
-#        # the translated request
-#        translated_request = self.translate_request(post_data)
-#
-#        # retrieves the parameters and method name of the request
-#        parameters, method_name = translated_request
-#
-#        # in case there is a list methods request
-        if method_name == LIST_METHODS_NAME and parameters == []:
+        # in case there is an extension defined
+        if last_path_name_splitted_length == 2:
+            # retrieves the last path initial name and extension
+            last_path_initial_name, last_path_initial_extension = last_path_name_splitted
+        # in case there is no extension defined
+        elif last_path_name_splitted_length == 1:
+            # retrieves the last path initial name
+            last_path_initial_name, = last_path_name_splitted
+        else:
+            raise main_rest_manager_exceptions.BadServiceRequest("invalid value last path name value %s: " + last_path_name_splitted)
+
+        # retrieves the method name list
+        method_name_list = middle_path_name + [last_path_initial_name]
+
+        # creates the real method name, joining the method name parts
+        method_name = ".".join(method_name_list)
+
+        # in case there is a list methods request
+        if method_name == LIST_METHODS_NAME:
             result = self.service_methods
-            error = None
         # tries to call the requested method
         elif method_name in self.service_methods_map:
             # retrieves the rpc method
             rpc_method = self.service_methods_map[method_name]
 
+            # creates the arguments map
             arguments_map = {}
 
-            for var_name in rpc_method.func_code.co_varnames:
-                if var_name in request.attributes_map:
-                    arguments_map[var_name] = request.attributes_map[var_name]
+            # iterates over all the variable names in the function
+            # variables
+            for variable_name in rpc_method.func_code.co_varnames:
+                if variable_name in request.attributes_map:
+                    # retrieves the variable value from the attributes map
+                    variable_value = request.attributes_map[variable_name]
 
+                    # unquotes the variable value
+                    variable_value = urllib.unquote(variable_value)
+
+                    # sets the variable value in the arguments map
+                    arguments_map[variable_name] = variable_value
+
+            # calls the rpc method with the arguments map
             result = rpc_method(**arguments_map)
-
-            # retrieves the number of arguments for the rpc method
-            #rpc_method_number_arguments = rpc_method.func_code.co_argcount - 1
-#
-#            # retrieves the number of parameters sent
-#            number_parameters = len(parameters)
-#
-#            # in case the number of sent arguments is the expected
-#            if not number_parameters == rpc_method_number_arguments:
-#                result = None
-#                error = main_rest_manager_exceptions.InvalidNumberArguments("the number of sent arguments is " + str(number_parameters) + ", expected " + str(rpc_method_number_arguments))
-#            else:
-#                try:
-#                    # calls the rpc method with the given arguments
-#                    result = rpc_method(*parameters)
-#                    error = None
-#                except Exception, exception:
-#                    result = None
-#                    error = exception
-#        # in case the method name is not valid
+        # in case the method name is not valid
         else:
-            result = None
             raise main_rest_manager_exceptions.InvalidMethod("the method name " + method_name + " is not valid")
-#
-#        # serializes the result into xml
-#        result_request = self.translate_result(result, method_name, error)
-#
-#        # writes the serialized result into the buffer
-#        request.write(result_request)
 
-        request.write(str(result))
+        # retrieves the encoder name
+        encoder_name = last_path_initial_extension
+
+        # serializes the result for the given encoder name
+        result_translated = self.translate_result(result, encoder_name)
+
+        # writes the result translated
+        request.write(result_translated)
 
         # flushes the request, sending the output to the client
         request.flush()
@@ -328,67 +335,34 @@ class MainRestManager:
         @return: The translated python request
         """
 
-#        try:
-#            # encodes the data with the default encoder
-#            data_encoded = data.encode(DEFAULT_ENCODER)
-#
-#            # loads the encoded data
-#            request = xmlrpclib.loads(data_encoded)
-#        except:
-#            raise main_xmlrpc_manager_exceptions.ServiceRequestNotTranslatable(data)
-
         # returns the translated request
         return data
 
-    def translate_result(self, result, method_name, error):
+    def translate_result(self, result, encoder_name = None):
         """
-        Translates the given python result into xml data
+        Translates the given python result into the encoding defined.
 
         @type result: Any
         @param result: The python result to be translated into xml data
         @type method_name: String
-        @param method_name: The name of the remotely called method
-        @type error: Error
-        @param error: The error for the current request
+        @param method_name: The name of the encoder to be used.
         @rtype: String
-        @return: The translated xml data
+        @return: The translated data
         """
 
-        # in case there is an error
-#        if not error == None:
-#            error_fault = xmlrpclib.Fault(error.__class__.__name__, error.message)
-#            data = xmlrpclib.dumps(error_fault, None, True)
-#            return data
-#
-#        try:
-#            # in case the result is not None serializes the result
-#            if result != None:
-#                return_tuple = tuple([result])
-#            # otherwise it must be converted to a valid xml-rpc data type (bool)
-#            else:
-#                return_tuple = tuple([True])
-#
-#            # in case the result is an instance
-#            if type(result) == types.InstanceType:
-#                # retrieves the class name
-#                class_name = result.__class__.__name__
-#
-#                # retrieves the module name
-#                module_name = result.__module__
-#
-#                # retrieves the full class name
-#                full_class_name = module_name + "." + class_name
-#
-#                result.class_name = class_name
-#                result.full_class_name = full_class_name
-#
-#            data = xmlrpclib.dumps(return_tuple, None, True, allow_none = True)
-#        except main_xmlrpc_manager_exceptions.XmlEncodeException, exception:
-#            error_fault = xmlrpclib.Fault("XmlEncodeException", "Result Object Not Serializable")
-#            data = xmlrpclib.dumps(error_fault, None, True)
-#        except Exception, exception:
-#            error_fault = xmlrpclib.Fault("XmlEncodeException", "Result Object Not Serializable: " + str(exception))
-#            data = xmlrpclib.dumps(error_fault, None, True)
+        # retrieves the rest encoder plugins
+        rest_encoder_plugins = self.main_rest_manager_plugin.rest_encoder_plugins
 
-        # returns the translated result
-        return result
+        # in case the encoder name is defined
+        if encoder_name:
+            # iterates over all the rest encoder plugins
+            for rest_encoder_plugin in rest_encoder_plugins:
+                if rest_encoder_plugin.get_encoder_name() == encoder_name:
+                    result_encoded = rest_encoder_plugin.encode_value(result)
+                    break
+        else:
+            # retrieves the result encoded with the default encoder
+            result_encoded = str(result)
+
+        # returns the encoded result
+        return result_encoded
