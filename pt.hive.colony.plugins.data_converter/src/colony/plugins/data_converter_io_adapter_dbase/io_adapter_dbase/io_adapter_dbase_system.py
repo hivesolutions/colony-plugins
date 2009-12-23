@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import datetime
 import dbi
 import odbc
 import types
+import datetime
 import os.path
 import dbfpy.dbf
 
@@ -273,10 +273,12 @@ class IoAdapterDbase:
         table_name_path_map = {}
 
         # indexes the paths to the tables discovered in the provided paths
-        for root_path, directories, files in os.walk(directory_path, topdown = True):
-            for file_name in files:
+        for walk_tuple in os.walk(directory_path, topdown = True):
+            root_path = walk_tuple[0]
+            files = walk_tuple[2]
 
-                # indexes the path in case the file has a dbase table extension
+            # indexes the path in case the file has a dbase table extension
+            for file_name in files:
                 extension_name = file_name[len(file_name) - 4:]
                 if extension_name == DBASE_TABLE_FILE_EXTENSION:
                     table_name = file_name[:-4]

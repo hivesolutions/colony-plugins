@@ -158,6 +158,7 @@ class IoAdapterCsv:
                 # creates a new entity in case the cursor is aligned with the
                 # first header token
                 if csv_header_token_index == 0:
+                    entity = intermediate_structure.create_entity(entity_name)
 
                     # passes the previous entity through the specified input entity handlers
                     if not first_pass:
@@ -165,7 +166,6 @@ class IoAdapterCsv:
                             entity = input_entity_handler(intermediate_structure, entity)
 
                     first_pass = False
-                    entity = intermediate_structure.create_entity(entity_name)
 
                 # sets the pair as an entity attribute in case the csv header token is not empty
                 if csv_header_token:

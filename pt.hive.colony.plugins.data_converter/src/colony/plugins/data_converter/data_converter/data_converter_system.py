@@ -790,7 +790,7 @@ class DataConverter:
             entity.set_attribute(entity_relation_attribute_name, None)
         else:
             # otherwise raises an exception
-            raise data_converter_exceptions.DataConverterEntityNotFoundException("related entity not found")
+            raise data_converter_exceptions.DataConverterEntityNotFound("related entity not found")
 
     def execute_post_attribute_mapping_handlers(self, configuration, input_intermediate_structure, output_intermediate_structure):
         self.data_converter_plugin.info("Data conversion attribute mapping post-processing started")

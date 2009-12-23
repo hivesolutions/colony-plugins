@@ -38,7 +38,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import types
-import os.path
+
+import io_adapter_xml_exceptions
 
 BEAUTIFY_VALUE = "beautify"
 
@@ -151,7 +152,7 @@ class IoAdapterXml:
         # throws an exception in case more than one
         # root entity was retrieved
         if len(entities) > 1:
-            raise data_converter_io_adapter_xml.IoAdapterXmlUnexpectedNumberRootEntities()
+            raise io_adapter_xml_exceptions.IoAdapterXmlUnexpectedNumberRootEntities()
 
         # retrieves the root entity from the list
         # of retrieved entities

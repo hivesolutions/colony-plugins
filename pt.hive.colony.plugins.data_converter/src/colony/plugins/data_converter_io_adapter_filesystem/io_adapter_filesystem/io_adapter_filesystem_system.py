@@ -120,10 +120,6 @@ class IoAdapterFilesystem:
             # creates the entity used to represent the file
             entity = intermediate_structure.create_entity(entity_name)
 
-            # passes the data through the specified input attribute handlers
-            for input_attribute_handler in input_attribute_handlers:
-                data = input_attribute_handler(intermediate_structure, entity, data)
-
             # retrieves file statistics
             file_name = os.path.basename(file_path)
             file_name_without_extension, extension_name = os.path.splitext(file_name)
@@ -141,6 +137,13 @@ class IoAdapterFilesystem:
             entity.set_attribute("creation_time", creation_time)
             entity.set_attribute("last_change_time", last_change_time)
             entity.set_attribute("last_access_time", last_access_time)
+
+            # passes the data through the specified input attribute handlers
+            attribute_name_value_map = entity.get_attributes()
+            attribute_values = attribute_name_value_map.values()
+            for attribute_value in attribute_values:
+                for input_attribute_handler in input_attribute_handlers:
+                    attribute_value = input_attribute_handler(intermediate_structure, entity, attribute_value)
 
             # passes the entity through the specified input entity handlers
             for input_entity_handler in input_entity_handlers:

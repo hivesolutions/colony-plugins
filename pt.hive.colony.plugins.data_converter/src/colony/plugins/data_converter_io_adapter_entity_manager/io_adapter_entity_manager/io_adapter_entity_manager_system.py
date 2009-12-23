@@ -202,7 +202,7 @@ class IoAdapterEntityManager:
             # figures out which non relation attribute names must be loaded
             non_relation_attribute_names = entity_manager.get_entity_class_non_relation_attribute_names(entity_class)
             if attribute_names:
-                 non_relation_attribute_names = [non_relation_attribute_name for non_relation_attribute_name in non_relation_attribute_names if non_relation_attribute_name in attribute_names]
+                non_relation_attribute_names = [non_relation_attribute_name for non_relation_attribute_name in non_relation_attribute_names if non_relation_attribute_name in attribute_names]
 
             # sets the attributes that must be loaded in the find options
             # in case they were specified
