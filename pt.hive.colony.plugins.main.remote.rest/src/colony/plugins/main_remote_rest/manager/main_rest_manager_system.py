@@ -359,10 +359,13 @@ class MainRestManager:
             for rest_encoder_plugin in rest_encoder_plugins:
                 if rest_encoder_plugin.get_encoder_name() == encoder_name:
                     result_encoded = rest_encoder_plugin.encode_value(result)
-                    break
+                    return result_encoded
+
+            # raises the invalid encoder exception
+            raise main_rest_manager_exceptions.InvalidEncoder("the " + encoder_name + " encoder is invalid")
         else:
             # retrieves the result encoded with the default encoder
             result_encoded = str(result)
 
-        # returns the encoded result
-        return result_encoded
+            # returns the encoded result
+            return result_encoded
