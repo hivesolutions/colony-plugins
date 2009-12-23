@@ -69,24 +69,30 @@ class WebDatabaseAdministration:
         entity_manager = self._get_entity_manager()
 
         # retrieves the request
-        request = rest_request.request
+        request = rest_request.get_request()
 
         # retrieves the rest path list
-        rest_path_list = rest_request.rest_path_list
+        path_list = rest_request.get_path_list()
+
+        # retrieves the rest encoder plugins
+        rest_encoder_plugins = rest_request.get_rest_encoder_plugins()
+
+        # retrieves the rest encoder name
+        encoder_name = rest_request.get_encoder_name()
 
         # retrieves the rest path list length
-        rest_path_list_length = len(rest_request.rest_path_list)
+        path_list_length = len(path_list)
 
         # retrieves the entity name
-        entity_name = rest_request.rest_path_list[0]
+        entity_name = path_list[0]
 
         # creates the filter fields list
         filter_fields_list = []
 
         # in case the rest path list length is two
-        if rest_path_list_length == 2:
+        if path_list_length == 2:
             # retrieves the entity id
-            entity_id = rest_path_list[1]
+            entity_id = path_list[1]
 
             # creates the filter field
             filter_field = {"field_name" : "object_id", "field_value" : entity_id}
@@ -131,14 +137,11 @@ class WebDatabaseAdministration:
         # retrieves the entity objects for the given filter
         entity_objects = entity_manager._find_all_options(entity_class, options_map)
 
-        # retrieves the rest encoder plugins
-        rest_encoder_plugins = rest_request.rest_encoder_plugins
-
         # in case the encoder name is defined
-        if rest_request.encoder_name:
+        if encoder_name:
             # iterates over all the rest encoder plugins
             for rest_encoder_plugin in rest_encoder_plugins:
-                if rest_encoder_plugin.get_encoder_name() == rest_request.encoder_name:
+                if rest_encoder_plugin.get_encoder_name() == encoder_name:
                     # retrieves the content type from the rest encoder plugin
                     content_type = rest_encoder_plugin.get_content_type()
 
@@ -152,10 +155,10 @@ class WebDatabaseAdministration:
             result_encoded = str(entity_objects)
 
         # sets the content type for the rest request
-        rest_request.content_type = content_type
+        rest_request.set_content_type(content_type)
 
         # sets the content type for the rest request
-        rest_request.result_translated = result_encoded
+        rest_request.set_result_translated(result_encoded)
 
         # flushes the rest request
         rest_request.flush()
