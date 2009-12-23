@@ -152,6 +152,13 @@ class RevisionControlAdapter:
 
         return self.revision_control_adapter_plugin.status(self._revision_control_reference, resource_identifiers)
 
+    def diff(self, resource_identifiers, revision_1, revision_2):
+        """
+        Retrieves the diff between the specified revisions for the specified resources.
+        """
+
+        return self.revision_control_adapter_plugin.diff(self._revision_control_reference, resource_identifiers, revision_1, revision_2)
+
 class Revision:
     number = None
     identifier = None
