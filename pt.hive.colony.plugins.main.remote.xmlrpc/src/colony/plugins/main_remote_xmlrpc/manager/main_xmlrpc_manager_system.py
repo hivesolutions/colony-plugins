@@ -283,12 +283,12 @@ class MainXmlrpcManager:
 
     def translate_request(self, data):
         """
-        Translates the given xml data data into a python request
+        Translates the given xml data data into a python request.
 
         @type data: String
-        @param data: The xml data to be translated into a python request
+        @param data: The xml data to be translated into a python request.
         @rtype: Any
-        @return: The translated python request
+        @return: The translated python request.
         """
 
         try:
@@ -305,16 +305,16 @@ class MainXmlrpcManager:
 
     def translate_result(self, result, method_name, error):
         """
-        Translates the given python result into xml data
+        Translates the given python result into xml data.
 
         @type result: Any
-        @param result: The python result to be translated into xml data
+        @param result: The python result to be translated into xml data.
         @type method_name: String
-        @param method_name: The name of the remotely called method
+        @param method_name: The name of the remotely called method.
         @type error: Error
-        @param error: The error for the current request
+        @param error: The error for the current request.
         @rtype: String
-        @return: The translated xml data
+        @return: The translated xml data.
         """
 
         # in case there is an error
