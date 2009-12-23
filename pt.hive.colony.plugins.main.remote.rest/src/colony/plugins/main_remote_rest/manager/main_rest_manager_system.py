@@ -37,7 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import re
 import urllib
 
 import main_rest_manager_exceptions
@@ -59,15 +58,6 @@ APACHE_CONTAINER = "apache"
 
 HANDLER_NAME = "rest"
 """ The handler name """
-
-DEFAULT_ENCODER = "utf-8"
-""" The default encoder """
-
-URL_REGEX_VALUE = "(?P<protocol>\w+\:\/\/)?(?P<base_name>[^\:\/\?#]+)(?P<port>\:\d+)?(?P<resource_reference>(\/[^\?#]+)*)\/?(\?(?P<options>([^#])*))?(?P<location>#(.*))?"
-""" The url regex value """
-
-URL_REGEX = re.compile(URL_REGEX_VALUE)
-""" The url regex """
 
 class MainRestManager:
     """
@@ -110,6 +100,9 @@ class MainRestManager:
             return False
 
     def handle_request(self, request):
+        # retrieves the rest encoder plugins
+        rest_encoder_plugins = self.main_rest_manager_plugin.rest_encoder_plugins
+
         # retrieves the request filename
         request_filename = request.uri
 
@@ -122,8 +115,8 @@ class MainRestManager:
         # splits the resource path
         resource_path_splitted = resource_path.split("/")
 
-        if not resource_path_splitted[0] == "services":
-            return False
+        # retrieves the rest resource name
+        resource_name = resource_path_splitted[0]
 
         # retrieves the midle path name
         middle_path_name = resource_path_splitted[1:-1]
@@ -151,11 +144,53 @@ class MainRestManager:
         else:
             raise main_rest_manager_exceptions.BadServiceRequest("invalid value last path name value %s: " + last_path_name_splitted)
 
-        # retrieves the method name list
-        method_name_list = middle_path_name + [last_path_initial_name]
+        # retrieves the encoder name
+        encoder_name = last_path_initial_extension
 
-        # creates the real method name, joining the method name parts
-        method_name = ".".join(method_name_list)
+        # constructs the rest path list
+        path_list = middle_path_name + [last_path_initial_name]
+
+        # creates the rest request
+        rest_request = RestRequest(request)
+
+        # sets the resource name in the rest request
+        rest_request.set_resource_name(resource_name)
+
+        # sets the path list in the rest request
+        rest_request.set_path_list(path_list)
+
+        # sets the encoder name in the rest request
+        rest_request.set_encoder_name(encoder_name)
+
+        # sets the rest encoder plugins in the rest request
+        rest_request.set_rest_encoder_plugins(rest_encoder_plugins)
+
+        # in case the request is meant to be handled by services
+        if resource_name == "services":
+            return self.handle_rest_request_services(rest_request)
+        else:
+            # retrieves the rest service plugins
+            rest_service_plugins = self.main_rest_manager_plugin.rest_service_plugins
+
+            for rest_service_plugin in rest_service_plugins:
+                if rest_service_plugin.id == "pt.hive.colony.plugins.web.database_administration":
+                    return rest_service_plugin.handle_rest_request(rest_request)
+
+        # returns true
+        return True
+
+    def handle_rest_request_services(self, rest_request):
+        # retrieves the request
+        request = rest_request.get_request()
+
+        # retrieves the rest path list
+        path_list = rest_request.get_path_list()
+
+        # retrieves the rest encoder name
+        encoder_name = rest_request.get_encoder_name()
+
+        # creates the real method name, joining the rest path list
+        method_name = ".".join(path_list)
 
         # in case there is a list methods request
         if method_name == LIST_METHODS_NAME:
@@ -187,21 +222,18 @@ class MainRestManager:
         else:
             raise main_rest_manager_exceptions.InvalidMethod("the method name " + method_name + " is not valid")
 
-        # retrieves the encoder name
-        encoder_name = last_path_initial_extension
-
         # serializes the result for the given encoder name retrieving the content type
         # and the translated result
         content_type, result_translated = self.translate_result(result, encoder_name)
 
-        # sets the content type for the request
-        request.content_type = content_type
+        # sets the content type for the rest request
+        rest_request.set_content_type(content_type)
 
-        # writes the result translated
-        request.write(result_translated)
+        # sets the content type for the rest request
+        rest_request.set_result_translated(result_translated)
 
-        # flushes the request, sending the output to the client
-        request.flush()
+        # flushes the rest request
+        rest_request.flush()
 
         # returns true
         return True
@@ -388,5 +420,208 @@ class RestRequest:
     request = None
     """ The associated request """
 
+    resource_name = None
+    """ The resource name """
+
+    path_list = None
+    """ The path list """
+
+    encoder_name = None
+    """ The encoder name """
+
+    content_type = None
+    """ The content type """
+
+    result_translated = None
+    """ The translated result """
+
+    rest_encoder_plugins = []
+    """ The rest encoder plugins """
+
+    rest_encoder_plugins_map = []
+    """ The rest encoder plugins map """
+
     def __init__(self, request):
-        pass
+        """
+        Constructor of the class.
+
+        @type request: Request
+        @param request: The associated request.
+        """
+
+        self.request = request
+
+    def flush(self):
+        """
+        Flushes the rest request buffer.
+        """
+
+        # sets the content type for the request
+        self.request.content_type = self.content_type
+
+        # writes the result translated
+        self.request.write(self.result_translated)
+
+        # flushes the request, sending the output to the client
+        self.request.flush()
+
+    def get_request(self):
+        """
+        Retrieves the associated request.
+
+        @rtype: Request
+        @return: The associated request.
+        """
+
+        return self.request
+
+    def set_request(self, request):
+        """
+        Sets the associated request.
+
+        @type request: Request
+        @param request: The associated request.
+        """
+
+        self.request = request
+
+    def get_resource_name(self):
+        """
+        Retrieves the resource name.
+
+        @rtype: String
+        @return: The resource name.
+        """
+
+        return self.resource_name
+
+    def set_resource_name(self, resource_name):
+        """
+        Sets the resource name.
+
+        @type resource_name: String
+        @param resource_name: The resource name.
+        """
+
+        self.resource_name = resource_name
+
+    def get_path_list(self):
+        """
+        Retrieves the path list.
+
+        @rtype: List
+        @return: The path list.
+        """
+
+        return self.path_list
+
+    def set_path_list(self, path_list):
+        """
+        Sets the path list.
+
+        @type path_list: String
+        @param path_list: The path list.
+        """
+
+        self.path_list = path_list
+
+    def get_encoder_name(self):
+        """
+        Retrieves the encoder name.
+
+        @rtype: String
+        @return: The encoder name.
+        """
+
+        return self.encoder_name
+
+    def set_encoder_name(self, encoder_name):
+        """
+        Sets the encoder name.
+
+        @type encoder_name: String
+        @param encoder_name: The encoder name.
+        """
+
+        self.encoder_name = encoder_name
+
+    def get_content_type(self):
+        """
+        Retrieves the content type.
+
+        @rtype: String
+        @return: The content type.
+        """
+
+        return self.content_type
+
+    def set_content_type(self, content_type):
+        """
+        Sets the content type.
+
+        @type content_type: String
+        @param content_type: The content type.
+        """
+
+        self.content_type = content_type
+
+    def get_result_translated(self):
+        """
+        Retrieves the result translated.
+
+        @rtype: String
+        @return: The result translated.
+        """
+
+        return self.result_translated
+
+    def set_result_translated(self, result_translated):
+        """
+        Sets the result translated.
+
+        @type result_translated: String
+        @param result_translated: The result translated.
+        """
+
+        self.result_translated = result_translated
+
+
+    def get_rest_encoder_plugins(self):
+        """
+        Retrieves the rest encoder plugins.
+
+        @rtype: List
+        @return: The rest encoder plugins.
+        """
+
+        return self.rest_encoder_plugins
+
+    def set_rest_encoder_plugins(self, rest_encoder_plugins):
+        """
+        Sets the rest encoder plugins.
+
+        @type rest_encoder_plugins: List
+        @param rest_encoder_plugins: The rest encoder plugins.
+        """
+
+        self.rest_encoder_plugins = rest_encoder_plugins
+
+    def get_rest_encoder_plugins_map(self):
+        """
+        Retrieves the rest encoder plugins map.
+
+        @rtype: Dictionary
+        @return: The rest encoder plugins map.
+        """
+
+        return self.set_rest_encoder_plugins_map
+
+    def set_rest_encoder_plugins_map(self, set_rest_encoder_plugins_map):
+        """
+        Sets the rest encoder plugins.
+
+        @type set_rest_encoder_plugins_map: Dictionary
+        @param set_rest_encoder_plugins_map: The rest encoder plugins map.
+        """
+
+        self.set_rest_encoder_plugins_map = set_rest_encoder_plugins_map
