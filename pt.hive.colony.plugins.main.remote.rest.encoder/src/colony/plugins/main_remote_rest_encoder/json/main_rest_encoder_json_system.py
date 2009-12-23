@@ -40,6 +40,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 ENCODER_NAME = "json"
 """ The encoder name """
 
+CONTENT_TYPE = "application/json"
+""" The content type """
+
 class MainRestEncoderJson:
     """
     The main rest encoder json class.
@@ -67,6 +70,16 @@ class MainRestEncoderJson:
         """
 
         return ENCODER_NAME
+
+    def get_content_type(self):
+        """
+        Retrieves the content type.
+
+        @rtype: String
+        @return: The content type.
+        """
+
+        return CONTENT_TYPE
 
     def encode_value(self, value):
         """

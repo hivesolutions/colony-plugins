@@ -42,6 +42,9 @@ import xmlrpclib
 ENCODER_NAME = "xml"
 """ The encoder name """
 
+CONTENT_TYPE = "text/xml"
+""" The content type """
+
 class MainRestEncoderXml:
     """
     The main rest encoder xml class.
@@ -69,6 +72,16 @@ class MainRestEncoderXml:
         """
 
         return ENCODER_NAME
+
+    def get_content_type(self):
+        """
+        Retrieves the content type.
+
+        @rtype: String
+        @return: The content type.
+        """
+
+        return CONTENT_TYPE
 
     def encode_value(self, value):
         """

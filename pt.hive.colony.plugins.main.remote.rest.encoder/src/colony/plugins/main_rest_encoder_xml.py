@@ -95,6 +95,16 @@ class MainRestEncoderXmlPlugin(colony.plugins.plugin_system.Plugin):
 
         return self.main_rest_encoder_xml.get_encoder_name()
 
+    def get_content_type(self):
+        """
+        Retrieves the content type.
+
+        @rtype: String
+        @return: The content type.
+        """
+
+        return self.main_rest_encoder_xml.get_content_type()
+
     def encode_value(self, value):
         """
         Encodes the given value.
