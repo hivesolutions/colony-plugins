@@ -151,10 +151,6 @@ class EurekaEngineTestCase(unittest.TestCase):
 class EurekaEnginePluginTestCase:
 
     @staticmethod
-    def get_related_class():
-        return pt.hive.colony.plugins.EurekaEnginePlugin
-
-    @staticmethod
     def get_test_case():
         return EurekaEngineTestCase
 

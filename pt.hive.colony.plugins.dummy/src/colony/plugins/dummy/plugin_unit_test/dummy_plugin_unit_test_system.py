@@ -74,10 +74,6 @@ class DummyTest(unittest.TestCase):
 class DummyPluginTestCase:
 
     @staticmethod
-    def get_related_class():
-        return DummyPluginUnitTest
-
-    @staticmethod
     def get_test_case():
         return DummyTest
 

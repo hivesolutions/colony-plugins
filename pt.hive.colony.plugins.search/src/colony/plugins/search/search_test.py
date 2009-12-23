@@ -779,10 +779,6 @@ class SearchTestCase(unittest.TestCase):
 class SearchPluginTestCase:
 
     @staticmethod
-    def get_related_class():
-        return pt.hive.colony.plugins.SearchPlugin
-
-    @staticmethod
     def get_test_case():
         return SearchTestCase
 

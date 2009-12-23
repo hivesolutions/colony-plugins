@@ -237,10 +237,6 @@ class DataConverterTestCase(unittest.TestCase):
 class DataConverterTestPluginTestCase:
 
     @staticmethod
-    def get_related_class():
-        return pt.hive.colony.plugins.DataConverterPlugin
-
-    @staticmethod
     def get_test_case():
         return DataConverterTestCase
 
