@@ -320,12 +320,12 @@ class MainJsonrpcManager:
 
     def translate_request(self, data):
         """
-        Translates the given json data data into a python request
+        Translates the given json data data into a python request.
 
         @type data: String
-        @param data: The json data to be translated into a python request
+        @param data: The json data to be translated into a python request.
         @rtype: Any
-        @return: The translated python request
+        @return: The translated python request.
         """
 
         try:
@@ -338,16 +338,16 @@ class MainJsonrpcManager:
 
     def translate_result(self, result, error, id_):
         """
-        Translates the given python result into json data
+        Translates the given python result into json data.
 
         @type result: Any
-        @param result: The python result to be translated into json data
+        @param result: The python result to be translated into json data.
         @type error: Error
-        @param error: The error for the current request
+        @param error: The error for the current request.
         @type id_: int
-        @param id_: The id of the request and result
+        @param id_: The id of the request and result.
         @rtype: String
-        @return: The translated json data
+        @return: The translated json data.
         """
 
         # in case there is an error
