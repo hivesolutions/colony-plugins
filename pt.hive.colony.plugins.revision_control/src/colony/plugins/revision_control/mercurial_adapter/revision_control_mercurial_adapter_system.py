@@ -41,6 +41,7 @@ import os.path
 
 import mercurial.hg
 import mercurial.ui
+import mercurial.patch
 import mercurial.cmdutil
 
 ADAPTER_NAME = "hg"
@@ -125,8 +126,35 @@ class RevisionControlMercurialAdapter:
         return commit_revision
 
     def log(self, revision_control_reference, resource_identifiers, start_revision, end_revision):
-        # retrieves the change contexts for the specified revisions from the repository
-        change_contexts = [revision_control_reference[change_id] for change_id in revision_control_reference]
+        # an omitted first index defaults to zero
+        if start_revision == None:
+            start_revision = 0
+        else:
+            # @todo: find a better way to test for int compatible string
+            try:
+                start_revision = int(start_revision)
+            except ValueError:
+                start_revision = revision_control_reference[start_revision].rev()
+
+        # an omitted second index defaults to the size of the repository being sliced.
+        if end_revision == None:
+            end_revision = len(revision_control_reference)
+        else:
+            # @todo: find a better way to test for int compatible string
+            try:
+                end_revision = int(end_revision)
+            except ValueError:
+                end_revision = revision_control_reference[end_revision].rev()
+
+        # initializes the change context list
+        change_contexts = []
+
+        for revision_number in range(start_revision, end_revision + 1):
+            # retrieves the change context for the current revision number
+            change_context = revision_control_reference[revision_number]
+
+            # appends the the current change context
+            change_contexts.append(change_context)
 
         # adapts the change context to revisions
         revisions = self.adapt_change_contexts(change_contexts)
@@ -138,6 +166,22 @@ class RevisionControlMercurialAdapter:
         status = revision_control_reference.status()
 
         return status
+
+    def diff(self, revision_control_reference, resource_identifiers, revision_1, revision_2):
+        # initializes the options map
+        options = {}
+
+        # creates a match object for the specified resource if any
+        match = mercurial.cmdutil.match(revision_control_reference, resource_identifiers, options)
+
+        # diffs the specified revisions
+        diff_iterator = mercurial.patch.diff(revision_control_reference, revision_1, revision_2, match,  None)
+
+        # retrieves the list of diffs from the iterator
+        diffs = list(diff_iterator)
+
+        # retrieves the computed diffs
+        return diffs
 
     def get_repository(self, path):
         # finds the repository path

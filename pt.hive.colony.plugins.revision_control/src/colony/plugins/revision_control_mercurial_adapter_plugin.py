@@ -101,5 +101,8 @@ class RevisionControlMercurialAdapterPlugin(colony.plugins.plugin_system.Plugin)
     def status(self, revision_control_reference, resource_identifiers):
         return self.revision_control_mercurial_adapter.status(revision_control_reference, resource_identifiers)
 
+    def diff(self, revision_control_reference, resource_identifiers, revision_1, revision_2):
+        return self.revision_control_mercurial_adapter.diff(revision_control_reference, resource_identifiers, revision_1, revision_2)
+
     def get_adapter_name(self):
         return self.revision_control_mercurial_adapter.get_adapter_name()
