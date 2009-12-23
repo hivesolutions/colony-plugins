@@ -75,7 +75,7 @@ class MainRestManager:
     """
 
     main_rest_manager_plugin = None
-    """ The main xml rpc manager plugin """
+    """ The main rest manager plugin """
 
     service_methods = []
     """ The service methods list """
@@ -235,7 +235,7 @@ class MainRestManager:
             self.service_methods_map = {}
 
             # retrieves the updated rpc service plugins
-            updated_rpc_service_plugins = self.main_xmlrpc_manager_plugin.rpc_service_plugins
+            updated_rpc_service_plugins = self.main_rest_manager_plugin.rpc_service_plugins
 
         for rpc_service_plugin in updated_rpc_service_plugins:
             # retrieves all the method names for the current rpc service
@@ -327,10 +327,10 @@ class MainRestManager:
 
     def translate_request(self, data):
         """
-        Translates the given xml data data into a python request
+        Translates the given encoded data data into a python request
 
         @type data: String
-        @param data: The xml data to be translated into a python request
+        @param data: The encoded data to be translated into a python request
         @rtype: Any
         @return: The translated python request
         """
@@ -343,7 +343,7 @@ class MainRestManager:
         Translates the given python result into the encoding defined.
 
         @type result: Any
-        @param result: The python result to be translated into xml data
+        @param result: The python result to be translated into encoded data
         @type method_name: String
         @param method_name: The name of the encoder to be used.
         @rtype: String
