@@ -54,7 +54,7 @@ class MainRestManagerPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["rest_manager", "http_python_handler", "rpc_handler"]
-    capabilities_allowed = ["rpc_service", "rest_encoder"]
+    capabilities_allowed = ["rest_encoder", "rest_service", "rpc_service"]
     dependencies = []
     events_handled = []
     events_registrable = []
@@ -62,8 +62,9 @@ class MainRestManagerPlugin(colony.plugins.plugin_system.Plugin):
 
     main_rest_manager = None
 
-    rpc_service_plugins = []
     rest_encoder_plugins = []
+    rest_service_plugins = []
+    rpc_service_plugins = []
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -76,7 +77,6 @@ class MainRestManagerPlugin(colony.plugins.plugin_system.Plugin):
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
-        self.main_rest_manager.deactivate_server()
 
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
@@ -110,20 +110,28 @@ class MainRestManagerPlugin(colony.plugins.plugin_system.Plugin):
     def get_handler_properties(self):
         return self.main_rest_manager.get_handler_properties()
 
+    @colony.plugins.decorators.load_allowed_capability("rest_encoder")
+    def rest_encoder_capability_load_allowed(self, plugin, capability):
+        self.rest_encoder_plugins.append(plugin)
+
+    @colony.plugins.decorators.load_allowed_capability("rest_service")
+    def rest_service_capability_load_allowed(self, plugin, capability):
+        self.rest_service_plugins.append(plugin)
+
     @colony.plugins.decorators.load_allowed_capability("rpc_service")
     def rpc_service_capability_load_allowed(self, plugin, capability):
         self.rpc_service_plugins.append(plugin)
         self.main_rest_manager.update_service_methods(plugin)
 
-    @colony.plugins.decorators.load_allowed_capability("rest_encoder")
-    def rest_encoder_capability_load_allowed(self, plugin, capability):
-        self.rest_encoder_plugins.append(plugin)
+    @colony.plugins.decorators.unload_allowed_capability("rest_encoder")
+    def rest_encoder_capability_unload_allowed(self, plugin, capability):
+        self.rest_encoder_plugins.remove(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("rest_service")
+    def rest_service_capability_unload_allowed(self, plugin, capability):
+        self.rest_service_plugins.remove(plugin)
 
     @colony.plugins.decorators.unload_allowed_capability("rpc_service")
     def rpc_servicer_capability_unload_allowed(self, plugin, capability):
         self.rpc_service_plugins.remove(plugin)
         self.main_rest_manager.update_service_methods()
-
-    @colony.plugins.decorators.unload_allowed_capability("rest_encoder")
-    def rest_encoder_capability_unload_allowed(self, plugin, capability):
-        self.rest_encoder_plugins.remove(plugin)
