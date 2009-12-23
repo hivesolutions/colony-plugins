@@ -38,6 +38,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import bzrlib.workingtree
+import bzrlib.diff
+
+import string_buffer_util
 
 ADAPTER_NAME = "bzr"
 """ The name for the bazaar revision control adapter """
@@ -103,6 +106,26 @@ class RevisionControlBazaarAdapter:
 
         # returns the revision after the commit
         return commit_revision
+
+    def diff(self, revision_control_reference, resource_identifiers, revision_1, revision_2):
+        # creates the string buffer for the diffs
+        diffs_string_buffer = string_buffer_util.StringBuffer()
+
+        # retrieves the revision control reference basis tree
+        revision_control_reference_basis_tree = revision_control_reference.basis_tree()
+
+        # retrieves the diffs
+        bzrlib.diff.show_diff_trees(revision_control_reference_basis_tree, revision_control_reference, diffs_string_buffer, ["file"])
+
+        # retrieves the diffs string
+        diffs_string = diffs_string_buffer.get_value()
+
+        # retrieves the diffs list
+        # @todo: parse this properly
+        diffs = diffs_string.split("\n")
+
+        # returns the computed diffs
+        return diffs
 
     def create_revision(self, revision_control_reference, revision_identifier):
         # creates the revision object

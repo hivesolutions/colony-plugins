@@ -95,5 +95,8 @@ class RevisionControlBazaarAdapterPlugin(colony.plugins.plugin_system.Plugin):
     def commit(self, revision_control_reference, resource_identifiers, commit_message):
         return self.revision_control_bazaar_adapter.commit(revision_control_reference, resource_identifiers, commit_message)
 
+    def diff(self, revision_control_reference, resource_identifiers, revision_1, revision_2):
+        return self.revision_control_bazaar_adapter.diff(revision_control_reference, resource_identifiers, revision_1, revision_2)
+
     def get_adapter_name(self):
         return self.revision_control_bazaar_adapter.get_adapter_name()
