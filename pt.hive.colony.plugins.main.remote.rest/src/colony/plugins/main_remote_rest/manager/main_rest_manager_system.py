@@ -110,9 +110,6 @@ class MainRestManager:
             return False
 
     def handle_request(self, request):
-        # sets the content type for the request
-        request.content_type = "text/plain"
-
         # retrieves the request filename
         request_filename = request.uri
 
@@ -193,8 +190,12 @@ class MainRestManager:
         # retrieves the encoder name
         encoder_name = last_path_initial_extension
 
-        # serializes the result for the given encoder name
-        result_translated = self.translate_result(result, encoder_name)
+        # serializes the result for the given encoder name retrieving the content type
+        # and the translated result
+        content_type, result_translated = self.translate_result(result, encoder_name)
+
+        # sets the content type for the request
+        request.content_type = content_type
 
         # writes the result translated
         request.write(result_translated)
@@ -327,12 +328,12 @@ class MainRestManager:
 
     def translate_request(self, data):
         """
-        Translates the given encoded data data into a python request
+        Translates the given encoded data data into a python request.
 
         @type data: String
-        @param data: The encoded data to be translated into a python request
+        @param data: The encoded data to be translated into a python request.
         @rtype: Any
-        @return: The translated python request
+        @return: The translated python request.
         """
 
         # returns the translated request
@@ -343,11 +344,11 @@ class MainRestManager:
         Translates the given python result into the encoding defined.
 
         @type result: Any
-        @param result: The python result to be translated into encoded data
+        @param result: The python result to be translated into encoded data.
         @type method_name: String
         @param method_name: The name of the encoder to be used.
-        @rtype: String
-        @return: The translated data
+        @rtype: Tuple
+        @return: The content type and the translated data.
         """
 
         # retrieves the rest encoder plugins
@@ -358,14 +359,34 @@ class MainRestManager:
             # iterates over all the rest encoder plugins
             for rest_encoder_plugin in rest_encoder_plugins:
                 if rest_encoder_plugin.get_encoder_name() == encoder_name:
+                    # retrieves the content type from the rest encoder plugin
+                    content_type = rest_encoder_plugin.get_content_type()
+
+                    # calls the the encoder plugin to encode the result
                     result_encoded = rest_encoder_plugin.encode_value(result)
-                    return result_encoded
+
+                    # returns the content type and the encoded result
+                    return content_type, result_encoded
 
             # raises the invalid encoder exception
             raise main_rest_manager_exceptions.InvalidEncoder("the " + encoder_name + " encoder is invalid")
         else:
+            # sets the default content type
+            content_type = "text/plain"
+
             # retrieves the result encoded with the default encoder
             result_encoded = str(result)
 
-            # returns the encoded result
-            return result_encoded
+            # returns the content type and the encoded result
+            return content_type, result_encoded
+
+class RestRequest:
+    """
+    The rest request class.
+    """
+
+    request = None
+    """ The associated request """
+
+    def __init__(self, request):
+        pass
