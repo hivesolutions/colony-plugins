@@ -76,7 +76,6 @@ class MainRestEncoderJsonPlugin(colony.plugins.plugin_system.Plugin):
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
-        self.main_rest_manager.deactivate_server()
 
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
