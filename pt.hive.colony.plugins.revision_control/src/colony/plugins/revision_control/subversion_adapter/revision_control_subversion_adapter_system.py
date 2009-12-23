@@ -108,13 +108,13 @@ class RevisionControlSubversionAdapter:
         log_messages = []
 
         # the revision in which to start the log
-        if start_revision:
+        if not start_revision == None:
             start_subversion_revision = pysvn.Revision(DEFAULT_REVISION_KIND, start_revision)
         else:
             start_subversion_revision = pysvn.Revision(pysvn.opt_revision_kind.head)
 
         # the revision in which to end the log
-        if end_revision:
+        if not end_revision == None:
             end_subversion_revision = pysvn.Revision(DEFAULT_REVISION_KIND, end_revision)
         else:
             end_subversion_revision = pysvn.Revision(pysvn.opt_revision_kind.number, 0)
@@ -151,6 +151,33 @@ class RevisionControlSubversionAdapter:
         revisions = self.adapt_log_messages(log_messages)
 
         return revisions
+
+    def diff(self, revision_control_reference, resource_identifiers, revision_1, revision_2):
+        tmp_path = "/tmp"
+        url_or_path = resource_identifiers[0]
+        url_or_path_2 = url_or_path
+
+        # the first revision
+        if not revision_1 == None:
+            subversion_revision_1 = pysvn.Revision(DEFAULT_REVISION_KIND, revision_1)
+        else:
+            subversion_revision_1 = pysvn.Revision(pysvn.opt_revision_kind.base)
+
+        # the revision in which to end the log
+        if not revision_2 == None:
+            subversion_revision_2 = pysvn.Revision(DEFAULT_REVISION_KIND, revision_2)
+        else:
+            subversion_revision_2 = pysvn.Revision(pysvn.opt_revision_kind.working)
+
+        # processes the diff
+        diff_string = revision_control_reference.diff(tmp_path, url_or_path, subversion_revision_1, url_or_path_2, subversion_revision_2)
+
+        # splits the diffs in the single diff string
+        # @todo: split in a smarter fashion
+        diffs = diff_string.split("\n")
+
+        # returns the computed diff
+        return diffs
 
     def get_adapter_name(self):
         return ADAPTER_NAME
