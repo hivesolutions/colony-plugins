@@ -46,13 +46,14 @@ INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 """ The invalid number of arguments message """
 
 HELP_TEXT = "### REVISION CONTROL MANAGER HELP ###\n\
-list_revision_control_adapters                                                  - lists the names of the revision control adapters available\n\
-checkout <adapter_name> <source> <destination>                                  - checks out the <source> to the <destination>\n\
-update <adapter_name>  <resource_identifier> <revision>                         - updates a resource to a specified revision\n\
-commit <adapter_name> <resource_identifier> <commit_message>                    - commits the changes in the resource with the specified message\n\
-log <adapter_name> <resource_identifier> [start_revision=HEAD] [end_revision=0] - lists the change sets for the specified resource identifier between the specified revisions\n\
-status <adapter_name> <resource_identifier>                                     - lists the pending changes in the current revision\n\
-log_date <adapter_name> <resource_identifier> [date]                            - lists all the change sets for the specified resource identifier matching the date specification"
+list_revision_control_adapters                                                   - lists the names of the revision control adapters available\n\
+checkout <adapter_name> <source> <destination>                                   - checks out the <source> to the <destination>\n\
+update <adapter_name>  <resource_identifier> <revision>                          - updates a resource to a specified revision\n\
+commit <adapter_name> <resource_identifier> <commit_message>                     - commits the changes in the resource with the specified message\n\
+log <adapter_name> <resource_identifier> [start_revision=0] [end_revision=#HEAD]  - lists the change sets for the specified resource identifier between the specified revisions\n\
+status <adapter_name> <resource_identifier>                                      - lists the pending changes in the current revision\n\
+diff <adapter_name> <resource_identifier> [start_revision=#HEAD.parent] [end_revision=#HEAD] - compares the contents of the specified revisions\n\
+log_date <adapter_name> <resource_identifier> [date]                             - lists all the change sets for the specified resource identifier matching the date specification"
 """ The help text """
 
 DATE_FORMAT = "%Y/%m/%d"
@@ -75,7 +76,8 @@ class ConsoleRevisionControlManager:
                 "commit",
                 "log",
                 "log_name",
-                "status"]
+                "status",
+                "diff"]
     """ The commands list """
 
     def __init__(self, revision_control_manager_plugin):
@@ -117,22 +119,6 @@ class ConsoleRevisionControlManager:
         output_method(stripped_output_string)
 
     def process_checkout(self, args, output_method):
-        # returns in case an invalid number of arguments was provided
-        if len(args) < 3:
-            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
-            return
-
-        # retrieves the adapter name
-        adapter_name = args[0]
-
-        # retrieves the source
-        source = args[1]
-
-        # retrieves the destination
-        destination = args[2]
-
-        # @todo: use the revision control manager plugin to checkout
-
         # outputs the retrieved configurations
         output_method("not implemented")
 
@@ -246,9 +232,6 @@ class ConsoleRevisionControlManager:
             # uses the revision control manager to perform the commit
             log_entries = revision_control_manager.log(resource_identifiers, start_revision, end_revision)
 
-            # outputs the result
-            output_method("showing all change sets for \"%s\"" % resource_identifier)
-
             # outputs the log entries
             self.output_log_entries(log_entries, output_method)
         except Exception, exception:
@@ -274,7 +257,7 @@ class ConsoleRevisionControlManager:
         resource_identifiers = [resource_identifier]
 
         try:
-            # uses the revision control manager to perform the commit
+            # uses the revision control manager to check the status
             status = revision_control_manager.status(resource_identifiers)
 
             # outputs the result
@@ -282,6 +265,49 @@ class ConsoleRevisionControlManager:
         except Exception, exception:
             # outputs the result
             output_method("problem retrieving status: " + str(exception))
+
+    def process_diff(self, args, output_method):
+        # returns in case an invalid number of arguments was provided
+        if len(args) < 2:
+            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
+            return
+
+        # retrieves the adapter name
+        adapter_name = args[0]
+
+        # number of arguments
+        number_arguments = len(args)
+
+        # retrieves the resource identifier
+        resource_identifier = args[1]
+
+        # retrieves the first revision
+        if number_arguments > 2:
+            revision_1 = args[2]
+        else:
+            revision_1 = None
+
+        # retrieves the second revision
+        if number_arguments > 3:
+            revision_2 = args[3]
+        else:
+            revision_2 = None
+
+        # creates the resource identifiers list
+        resource_identifiers = [resource_identifier]
+
+        # creates a revision control manager to use on the resource
+        revision_control_manager = self.load_revision_control_manager(adapter_name, resource_identifier)
+
+        try:
+            # uses the revision control manager to perform the diff
+            diffs = revision_control_manager.diff(resource_identifiers, revision_1, revision_2)
+
+            # outputs the result
+            self.output_diffs(diffs, output_method)
+        except Exception, exception:
+            # outputs the result
+            output_method("problem computing diff: " + str(exception))
 
     def load_revision_control_manager(self, adapter_name, resource_identifier):
         # creates the revision control parameters
@@ -330,6 +356,10 @@ class ConsoleRevisionControlManager:
             # for all the resources of the current status type
             for resource_identifier in status_type_resource_identifiers:
                 output_method(status_string + "        " + resource_identifier)
+
+    def output_diffs(self, diffs, output_method):
+        for diff in diffs:
+            output_method(diff)
 
     def get_date_time_from_timestamp(self, timestamp):
         # creates a datetime object from the timestamp with no associated tzinfo
