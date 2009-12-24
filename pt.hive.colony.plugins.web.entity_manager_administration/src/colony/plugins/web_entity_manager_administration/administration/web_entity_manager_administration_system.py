@@ -46,7 +46,7 @@ class WebEntityManagerAdministration:
     """
 
     web_entity_manager_administration_plugin = None
-    """ The web entity_manager administration plugin """
+    """ The web entity manager administration plugin """
 
     entity_manager = None
     """ The entity manager reference """
