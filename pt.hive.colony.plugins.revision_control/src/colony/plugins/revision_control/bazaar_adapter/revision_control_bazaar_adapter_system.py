@@ -37,8 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import bzrlib.workingtree
 import bzrlib.diff
+import bzrlib.workingtree
+import bzrlib.revisionspec
 
 import string_buffer_util
 
@@ -108,14 +109,33 @@ class RevisionControlBazaarAdapter:
         return commit_revision
 
     def diff(self, revision_control_reference, resource_identifiers, revision_1, revision_2):
+        # the list of bazaar revision specs
+        bazaar_revision_specs = []
+
+        # retrieves the first revision spec
+        if not revision_1 == None:
+            # creates the first bazaar revision spec
+            bazaar_revision_spec_1 = bzrlib.revisionspec.RevisionSpec.from_string(revision_1)
+
+            # appends the spec to the list of bazaar revision specs
+            bazaar_revision_specs.append(bazaar_revision_spec_1)
+
+        # retrieves the second revision spec
+        if not revision_2 == None:
+            # creates the second bazaar revision spec
+            bazaar_revision_spec_2 = bzrlib.revisionspec.RevisionSpec.from_string(revision_2)
+
+            # appends the spec to the list of bazaar revision specs
+            bazaar_revision_specs.append(bazaar_revision_spec_2)
+
+        # retrieves the tree to diff
+        old_tree, new_tree, specific_files, _extra_trees  = bzrlib.diff._get_trees_to_diff(resource_identifiers, bazaar_revision_specs, None, None, True)
+
         # creates the string buffer for the diffs
         diffs_string_buffer = string_buffer_util.StringBuffer()
 
-        # retrieves the revision control reference basis tree
-        revision_control_reference_basis_tree = revision_control_reference.basis_tree()
-
         # retrieves the diffs
-        bzrlib.diff.show_diff_trees(revision_control_reference_basis_tree, revision_control_reference, diffs_string_buffer, ["file"])
+        bzrlib.diff.show_diff_trees(old_tree, new_tree, diffs_string_buffer, specific_files)
 
         # retrieves the diffs string
         diffs_string = diffs_string_buffer.get_value()
