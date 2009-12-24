@@ -173,7 +173,7 @@ class MainRestManager:
             rest_service_plugins = self.main_rest_manager_plugin.rest_service_plugins
 
             for rest_service_plugin in rest_service_plugins:
-                if rest_service_plugin.id == "pt.hive.colony.plugins.web.database_administration":
+                if rest_service_plugin.id == "pt.hive.colony.plugins.web.entity_manager_administration":
                     return rest_service_plugin.handle_rest_request(rest_request)
 
         # returns true
