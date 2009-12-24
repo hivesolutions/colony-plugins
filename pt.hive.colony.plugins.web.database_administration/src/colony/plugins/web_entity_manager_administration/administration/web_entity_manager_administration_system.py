@@ -40,26 +40,26 @@ __license__ = "GNU General Public License (GPL), Version 3"
 DEFAULT_NUMBER_RECORDS = 30
 """ The default number records """
 
-class WebDatabaseAdministration:
+class WebEntityManagerAdministration:
     """
-    The web database administration class.
+    The web entity manager administration class.
     """
 
-    web_database_administration_plugin = None
-    """ The web database administration plugin """
+    web_entity_manager_administration_plugin = None
+    """ The web entity_manager administration plugin """
 
     entity_manager = None
     """ The entity manager reference """
 
-    def __init__(self, web_database_administration_plugin):
+    def __init__(self, web_entity_manager_administration_plugin):
         """
         Constructor of the class.
 
-        @type web_database_administration_plugin: WebDatabaseAdministrationPlugin
-        @param web_database_administration_plugin: The web database administration plugin.
+        @type web_entity_manager_administration_plugin: WebEntityManagerAdministrationPlugin
+        @param web_entity_manager_administration_plugin: The web entity manager administration plugin.
         """
 
-        self.web_database_administration_plugin = web_database_administration_plugin
+        self.web_entity_manager_administration_plugin = web_entity_manager_administration_plugin
 
     def get_routes(self):
         pass
@@ -176,10 +176,10 @@ class WebDatabaseAdministration:
         # in case the entity manager is not defined
         if not self.entity_manager:
             # retrieves the resource manager plugin
-            resource_manager_plugin = self.web_database_administration_plugin.resource_manager_plugin
+            resource_manager_plugin = self.web_entity_manager_administration_plugin.resource_manager_plugin
 
             # retrieves the business entity manager plugin
-            business_entity_manager_plugin = self.web_database_administration_plugin.business_entity_manager_plugin
+            business_entity_manager_plugin = self.web_entity_manager_administration_plugin.business_entity_manager_plugin
 
             # retrieves the user home path resource
             user_home_path_resource = resource_manager_plugin.get_resource("system.path.user_home")
