@@ -100,8 +100,8 @@ class WebEntityManagerAdministration:
             # adds the filter field to the filter fields list
             filter_fields_list.append(filter_field)
 
-        # treats the entity name
-        entity_name_treated = entity_name.capitalize()[:-1]
+        # treats the entity name converting it to camel case
+        entity_name_treated = self._treat_entity_name(entity_name)
 
         # retrieves the entity class
         entity_class = entity_manager.get_entity_class(entity_name_treated)
@@ -204,3 +204,36 @@ class WebEntityManagerAdministration:
 
         # returns the entity manager
         return self.entity_manager
+
+    def _treat_entity_name(self, entity_name):
+        """
+        Treats the entity name, converting it to camel case.
+
+        @type entity_name: String
+        @param entity_name: The entity name to be treated.
+        @rtype: String
+        @return: The treated entity name.
+        """
+
+        # retrieves the entity name in singular
+        entity_name_singular = entity_name[:-1]
+
+        # splits the entity name
+        entity_name_splitted = entity_name_singular.split("_")
+
+        # creates the entity name treated list
+        entity_name_treated_list = []
+
+        # iterates over all the entity name splitted
+        for entity_name_part in entity_name_splitted:
+            # capitalizes the entity name part
+            entity_name_part_capitalized = entity_name_part.capitalize()
+
+            # appends the entity name part capitalized
+            entity_name_treated_list.append(entity_name_part_capitalized)
+
+        # joins the entity name treated list to form the entity name treated
+        entity_name_treated = "".join(entity_name_treated_list)
+
+        # returns the entity name treated
+        return entity_name_treated
