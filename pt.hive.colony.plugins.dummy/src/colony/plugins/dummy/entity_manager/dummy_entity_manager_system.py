@@ -154,8 +154,8 @@ class DummyEntityManager:
         except Exception, exception:
             print "error saving: " + str(exception)
 
-        # retrieves the dummy entity bundle class with tes_name key
-        value = entity_manager.find(dummy_entity_bundle_class, "test_name")
+        # retrieves the dummy entity bundle class with test_name key
+        entity_manager.find(dummy_entity_bundle_class, "test_name")
 
         # commits the transaction
         entity_manager.commit_transaction("test_transaction")
