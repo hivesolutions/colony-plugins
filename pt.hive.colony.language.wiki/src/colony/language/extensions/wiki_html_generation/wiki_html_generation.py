@@ -548,7 +548,7 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
             # the image values map
             if not BASE_LEVEL_VALUE in self.image_values_map:
                 # creates the base value in the image values map
-                 self.image_values_map[BASE_LEVEL_VALUE] = 0
+                self.image_values_map[BASE_LEVEL_VALUE] = 0
 
             # increments the image values map
             self.image_values_map[BASE_LEVEL_VALUE] += 1
