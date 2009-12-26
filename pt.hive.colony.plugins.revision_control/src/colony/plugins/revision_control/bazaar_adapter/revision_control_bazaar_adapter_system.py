@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import bzrlib.diff
+import bzrlib.bzrdir
 import bzrlib.workingtree
 import bzrlib.revisionspec
 
@@ -72,8 +73,11 @@ class RevisionControlBazaarAdapter:
         # retrieves the repository path parameter
         repository_path_parameter = revision_control_parameters["repository_path"]
 
+        # retrieves the bazaar dir containing the specified path
+        bzr_dir, _unicode_path = bzrlib.bzrdir.BzrDir.open_containing(repository_path_parameter)
+
         # creates the appropriate working tree
-        working_tree = bzrlib.workingtree.WorkingTree.open(repository_path_parameter)
+        working_tree = bzr_dir.open_workingtree()
 
         # returns the working tree as the revision control reference
         return working_tree
