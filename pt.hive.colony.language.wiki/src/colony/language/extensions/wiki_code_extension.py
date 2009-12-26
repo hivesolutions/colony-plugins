@@ -192,7 +192,7 @@ class WikiCodeExtension(wiki_extension_system.WikiExtension):
             # iterates over the tokens list
             for token in tokens_list:
                 # unpacks the token tuple
-                token_type, token_value, token_position, token_end_position, token_line, token_class = token
+                _token_type, token_value, token_position, token_end_position, token_line, token_class = token
 
                 # retrieves the line delta value
                 line_delta = token_line - current_line
@@ -202,10 +202,10 @@ class WikiCodeExtension(wiki_extension_system.WikiExtension):
 
                 # in case the line delta is bigger than zero
                 if line_delta > 0:
-                    for index in range(line_delta):
+                    for _index in range(line_delta):
                         string_buffer.write("<br/>")
 
-                for index in range(position_delta):
+                for _index in range(position_delta):
                     string_buffer.write("&nbsp;")
 
                 # sets the current position
