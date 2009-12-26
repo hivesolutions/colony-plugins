@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import libs.string_buffer_util
 
+import wiki_exceptions
 import wiki_extension_system
 
 import wiki_diagram.wiki_diagram_extension_system
