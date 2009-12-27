@@ -272,11 +272,10 @@ class IoAdapterSqlite:
         """
 
         # extracts information about the relation table from its name
-        entity_name, relation_attribute_name, related_entity_name, relation_value = table_name.split(RELATION_TABLE_NAME_SEPARATOR)
+        _entity_name, relation_attribute_name, _related_entity_name, _relation_value = table_name.split(RELATION_TABLE_NAME_SEPARATOR)
 
         # creates an intermediate entity for each row and populates it with the row's fields
         for row in rows:
-
             # retrieves the entities' object ids
             entity_object_id = row[0]
             entity_object_id = int(entity_object_id)
