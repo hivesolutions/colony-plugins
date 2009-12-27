@@ -40,7 +40,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import sys
 import time
 import copy
-import cStringIO
 
 import libs.string_buffer_util
 
