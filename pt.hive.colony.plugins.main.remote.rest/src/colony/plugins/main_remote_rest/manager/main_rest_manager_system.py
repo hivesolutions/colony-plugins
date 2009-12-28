@@ -213,18 +213,20 @@ class MainRestManager:
             # retrieves the resource path match
             resource_path_match = self.matching_regex.match(resource_path)
 
-            # retrieves the groups map from the resource path match
-            groups_map = resource_path_match.groupdict()
+            # in case there is a valid resource path match
+            if resource_path_match:
+                # retrieves the groups map from the resource path match
+                groups_map = resource_path_match.groupdict()
 
-            # iterates over all the group items
-            for group_name, group_value in groups_map.items():
-                # in case the group value is valid
-                if group_value:
-                    # retrieves the rest service plugin
-                    rest_service_plugin = self.plugin_id_undotted_plugin_map[group_name]
+                # iterates over all the group items
+                for group_name, group_value in groups_map.items():
+                    # in case the group value is valid
+                    if group_value:
+                        # retrieves the rest service plugin
+                        rest_service_plugin = self.plugin_id_undotted_plugin_map[group_name]
 
-                    # handles the rest request to the rest servicxe plugin
-                    return rest_service_plugin.handle_rest_request(rest_request)
+                        # handles the rest request to the rest servicxe plugin
+                        return rest_service_plugin.handle_rest_request(rest_request)
 
             # raises the rest request not handled exception
             raise main_rest_manager_exceptions.RestRequestNotHandled("no rest service plugin could handle the request")
