@@ -57,6 +57,9 @@ APACHE_CONTAINER = "apache"
 HANDLER_NAME = "jsonrpc"
 """ The handler name """
 
+HANDLER_PORT = 80
+""" The handler port """
+
 PARSE_ERROR_CODE_VALUE = -32700
 """ The parse error code value """
 
@@ -198,6 +201,13 @@ class MainJsonrpcManager:
         return True
 
     def is_active(self):
+        """
+        Tests if the service is active.
+
+        @rtype: bool
+        @return: If the service is active.
+        """
+
         # retrieves the plugin manager
         manager = self.main_jsonrpc_manager_plugin.manager
 
@@ -208,12 +218,33 @@ class MainJsonrpcManager:
             return False
 
     def get_handler_name(self):
+        """
+        Retrieves the handler name.
+
+        @rtype: String
+        @return: The handler name.
+        """
+
         return HANDLER_NAME
 
     def get_handler_port(self):
-        return 80
+        """
+        Retrieves the handler port.
+
+        @rtype: int
+        @return: The handler port.
+        """
+
+        return HANDLER_PORT
 
     def get_handler_properties(self):
+        """
+        Retrieves the handler properties.
+
+        @rtype: Dictionary
+        @return: The handler properties.
+        """
+
         return {}
 
     def update_service_methods(self, updated_rpc_service_plugin = None):
