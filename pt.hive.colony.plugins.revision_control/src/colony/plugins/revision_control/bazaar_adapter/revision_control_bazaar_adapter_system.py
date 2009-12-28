@@ -39,8 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import bzrlib.diff
 import bzrlib.bzrdir
-import bzrlib.workingtree
 import bzrlib.revisionspec
+import bzrlib.builtins
 
 import string_buffer_util
 
@@ -133,7 +133,7 @@ class RevisionControlBazaarAdapter:
             bazaar_revision_specs.append(bazaar_revision_spec_2)
 
         # retrieves the tree to diff
-        old_tree, new_tree, specific_files, _extra_trees  = bzrlib.diff._get_trees_to_diff(resource_identifiers, bazaar_revision_specs, None, None, True)
+        old_tree, new_tree, specific_files, _extra_trees = bzrlib.diff._get_trees_to_diff(resource_identifiers, bazaar_revision_specs, None, None, True)
 
         # creates the string buffer for the diffs
         diffs_string_buffer = string_buffer_util.StringBuffer()
@@ -150,6 +150,70 @@ class RevisionControlBazaarAdapter:
 
         # returns the computed diffs
         return diffs
+
+    def get_resources_revision(self, revision_control_reference, resource_identifiers, revision):
+        # retrieves the first revision spec
+        if not revision == None:
+            # creates the bazaar revision spec
+            bazaar_revision_spec = bzrlib.revisionspec.RevisionSpec.from_string(revision)
+        else:
+            # otherwise the bazaar revision spec is none
+            bazaar_revision_spec = None
+
+        # creates the resources revision list
+        resources_revision = []
+
+        # for each specified resource
+        for filename in resource_identifiers:
+            # opens the containing tree or branch
+            tree, branch, relpath = bzrlib.bzrdir.BzrDir.open_containing_tree_or_branch(filename)
+
+            # locks the branch for read
+            branch.lock_read()
+
+            try:
+                if tree is None:
+                    # retrieves the basis tree for the branch
+                    tree = branch.basis_tree()
+
+                if bazaar_revision_spec:
+                    # retrieves the revision tree
+                    rev_tree = bzrlib.builtins._get_one_revision_tree('cat', [bazaar_revision_spec], branch=branch)
+                else:
+                    rev_tree = revision_control_reference
+
+                # retrieves the old file id
+                old_file_id = rev_tree.path2id(relpath)
+
+                # retrieves the current file id
+                current_file_id = tree.path2id(relpath)
+                found = False
+                if current_file_id is not None:
+                    # then try with the actual file id
+                    try:
+                        content = rev_tree.get_file_text(current_file_id)
+                        found = True
+                    except bzrlib.errors.NoSuchId:
+                        # the actual file id didn't exist at that time
+                        pass
+                if not found and old_file_id is not None:
+                    # finally tries with the old file id
+                    content = rev_tree.get_file_text(old_file_id)
+                    found = True
+                if not found:
+                    # can't be found anywhere
+                    raise bzrlib.errors.BzrCommandError(
+                        "%r is not present in revision %s" % (
+                            filename, rev_tree.get_revision_id()))
+
+                # appends the resource contents to the resources revision list
+                resources_revision.append(content)
+            finally:
+                # always unlocks the branch
+                branch.unlock()
+
+        # returns the resources revision list
+        return resources_revision
 
     def create_revision(self, revision_control_reference, revision_identifier):
         # creates the revision object
