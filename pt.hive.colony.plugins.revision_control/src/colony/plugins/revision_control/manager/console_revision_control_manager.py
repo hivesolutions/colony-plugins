@@ -50,9 +50,10 @@ list_revision_control_adapters                                                  
 checkout <adapter_name> <source> <destination>                                   - checks out the <source> to the <destination>\n\
 update <adapter_name>  <resource_identifier> <revision>                          - updates a resource to a specified revision\n\
 commit <adapter_name> <resource_identifier> <commit_message>                     - commits the changes in the resource with the specified message\n\
-log <adapter_name> <resource_identifier> [start_revision=0] [end_revision=#HEAD]  - lists the change sets for the specified resource identifier between the specified revisions\n\
+log <adapter_name> <resource_identifier> [start_revision=0] [end_revision=#HEAD] - lists the change sets for the specified resource identifier between the specified revisions\n\
 status <adapter_name> <resource_identifier>                                      - lists the pending changes in the current revision\n\
 diff <adapter_name> <resource_identifier> [start_revision=#HEAD.parent] [end_revision=#HEAD] - compares the contents of the specified revisions\n\
+get_resource_revision <adapter_name> <resource_identifier> [revision]            - retrieves the content of the resource in the specified revision\n\
 log_date <adapter_name> <resource_identifier> [date]                             - lists all the change sets for the specified resource identifier matching the date specification"
 """ The help text """
 
@@ -77,7 +78,8 @@ class ConsoleRevisionControlManager:
                 "log",
                 "log_name",
                 "status",
-                "diff"]
+                "diff",
+                "get_resource_revision"]
     """ The commands list """
 
     def __init__(self, revision_control_manager_plugin):
@@ -275,11 +277,11 @@ class ConsoleRevisionControlManager:
         # retrieves the adapter name
         adapter_name = args[0]
 
-        # number of arguments
-        number_arguments = len(args)
-
         # retrieves the resource identifier
         resource_identifier = args[1]
+
+        # number of arguments
+        number_arguments = len(args)
 
         # retrieves the first revision
         if number_arguments > 2:
@@ -308,6 +310,48 @@ class ConsoleRevisionControlManager:
         except Exception, exception:
             # outputs the result
             output_method("problem computing diff: " + str(exception))
+
+    def process_get_resource_revision(self, args, output_method):
+        # returns in case an invalid number of arguments was provided
+        if len(args) < 2:
+            output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
+            return
+
+        # retrieves the adapter name
+        adapter_name = args[0]
+
+        # retrieves the resource identifier
+        resource_identifier = args[1]
+
+        # number of arguments
+        number_arguments = len(args)
+
+        # retrieves the first revision
+        if number_arguments > 2:
+            revision = args[2]
+        else:
+            revision = None
+
+        # creates the resource identifiers list
+        resource_identifiers = [resource_identifier]
+
+        # creates a revision control manager to use on the resource
+        revision_control_manager = self.load_revision_control_manager(adapter_name, resource_identifier)
+
+        try:
+            # uses the revision control manager to perform the cat
+            resources_revision = revision_control_manager.get_resources_revision(resource_identifiers, revision)
+
+            # outputs the result
+            for resource_revision in resources_revision:
+                output_method(resource_revision)
+        except Exception, exception:
+            if not revision:
+                # outputs the result
+                output_method("problem retrieving the resource's content: " + str(exception))
+            else:
+                # outputs the result
+                output_method("problem retrieving the resource's content for revision " + revision + ": " + str(exception))
 
     def load_revision_control_manager(self, adapter_name, resource_identifier):
         # creates the revision control parameters
