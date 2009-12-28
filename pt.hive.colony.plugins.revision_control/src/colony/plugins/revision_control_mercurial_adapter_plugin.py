@@ -104,5 +104,8 @@ class RevisionControlMercurialAdapterPlugin(colony.plugins.plugin_system.Plugin)
     def diff(self, revision_control_reference, resource_identifiers, revision_1, revision_2):
         return self.revision_control_mercurial_adapter.diff(revision_control_reference, resource_identifiers, revision_1, revision_2)
 
+    def get_resources_revision(self, revision_control_reference, resource_identifier, revision):
+        return self.revision_control_mercurial_adapter.get_resources_revision(revision_control_reference, resource_identifier, revision)
+
     def get_adapter_name(self):
         return self.revision_control_mercurial_adapter.get_adapter_name()

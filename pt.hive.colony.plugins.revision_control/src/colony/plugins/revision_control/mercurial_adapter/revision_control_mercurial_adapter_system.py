@@ -183,6 +183,42 @@ class RevisionControlMercurialAdapter:
         # retrieves the computed diffs
         return diffs
 
+    def get_resources_revision(self, revision_control_reference, resource_identifier, revision):
+        # an omitted second index defaults to the size of the repository being sliced.
+        if not revision == None:
+            # @todo: find a better way to test for int compatible string
+            try:
+                revision = int(revision)
+            except ValueError:
+                revision = revision_control_reference[revision].rev()
+
+
+        # retrieves the change context for the specified revision
+        change_context = revision_control_reference[revision]
+
+        # initializes the options map
+        options = {}
+
+        # creates a match object for the specified resource if any
+        match = mercurial.cmdutil.match(revision_control_reference, resource_identifier, options)
+
+        # initializes the return list
+        resources_revision = []
+
+        # for each path in the change context within match
+        for absolute_path in change_context.walk(match):
+            # retrieves the file context for the current match
+            file_context = change_context[absolute_path]
+
+            # retrieves the data contents of the file context
+            data = file_context.data()
+
+            # appends the file data to the resources revision list
+            resources_revision.append(data)
+
+        # returns the list of resource contents for the specified revision
+        return resources_revision
+
     def get_repository(self, path):
         # finds the repository path
         repository_path = self.find_repository_path(path)
