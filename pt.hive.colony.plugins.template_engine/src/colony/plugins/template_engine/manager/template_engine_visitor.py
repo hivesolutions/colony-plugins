@@ -383,6 +383,7 @@ class Visitor:
         elif attribute_operator_literal_value == "lt":
             result = attribute_item_value < attribute_value_value
 
+        # in case the result is valid
         if result:
             if self.visit_childs:
                 for node_child_node in node.child_nodes:
