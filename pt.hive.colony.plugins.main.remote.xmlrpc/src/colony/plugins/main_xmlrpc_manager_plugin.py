@@ -100,15 +100,43 @@ class MainXmlrpcManagerPlugin(colony.plugins.plugin_system.Plugin):
         return self.main_xmlrpc_manager.handle_request(request)
 
     def is_active(self):
+        """
+        Tests if the service is active.
+
+        @rtype: bool
+        @return: If the service is active.
+        """
+
         return self.main_xmlrpc_manager.is_active()
 
     def get_handler_name(self):
+        """
+        Retrieves the handler name.
+
+        @rtype: String
+        @return: The handler name.
+        """
+
         return self.main_xmlrpc_manager.get_handler_name()
 
     def get_handler_port(self):
+        """
+        Retrieves the handler port.
+
+        @rtype: int
+        @return: The handler port.
+        """
+
         return self.main_xmlrpc_manager.get_handler_port()
 
     def get_handler_properties(self):
+        """
+        Retrieves the handler properties.
+
+        @rtype: Dictionary
+        @return: The handler properties.
+        """
+
         return self.main_xmlrpc_manager.get_handler_properties()
 
     @colony.plugins.decorators.load_allowed_capability("rpc_service")

@@ -60,6 +60,9 @@ APACHE_CONTAINER = "apache"
 HANDLER_NAME = "xmlrpc"
 """ The handler name """
 
+HANDLER_PORT = 80
+""" The handler port """
+
 DEFAULT_ENCODER = "utf-8"
 """ The default encoder """
 
@@ -161,6 +164,13 @@ class MainXmlrpcManager:
         return True
 
     def is_active(self):
+        """
+        Tests if the service is active.
+
+        @rtype: bool
+        @return: If the service is active.
+        """
+
         # retrieves the plugin manager
         manager = self.main_xmlrpc_manager_plugin.manager
 
@@ -171,12 +181,33 @@ class MainXmlrpcManager:
             return False
 
     def get_handler_name(self):
+        """
+        Retrieves the handler name.
+
+        @rtype: String
+        @return: The handler name.
+        """
+
         return HANDLER_NAME
 
     def get_handler_port(self):
-        return 80
+        """
+        Retrieves the handler port.
+
+        @rtype: int
+        @return: The handler port.
+        """
+
+        return HANDLER_PORT
 
     def get_handler_properties(self):
+        """
+        Retrieves the handler properties.
+
+        @rtype: Dictionary
+        @return: The handler properties.
+        """
+
         return {"handler_base_filename" : HANDLER_BASE_FILENAME, "handler_extension" : HANDLER_EXTENSION}
 
     def update_service_methods(self, updated_rpc_service_plugin = None):
