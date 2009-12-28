@@ -102,9 +102,25 @@ class MainRestManager:
         self.service_methods_map = {}
 
     def get_handler_filename(self):
+        """
+        Retrieves the handler filename.
+
+        @rtype: String
+        @return: The handler filename.
+        """
+
         return HANDLER_FILENAME
 
     def is_request_handler(self, request):
+        """
+        Retrieves if it's an handler for the given request.
+
+        @type request: Request
+        @param request: The request to be used in the test.
+        @rtype: bool
+        @return: If it's an handler for the given request.
+        """
+
         # retrieves the request filename
         request_filename = request.uri
 
@@ -115,6 +131,15 @@ class MainRestManager:
             return False
 
     def handle_request(self, request):
+        """
+        Handles the given request.
+
+        @type request: Request
+        @param request: The request to be handled.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
         # retrieves the rest encoder plugins
         rest_encoder_plugins = self.main_rest_manager_plugin.rest_encoder_plugins
 
@@ -208,6 +233,15 @@ class MainRestManager:
         return True
 
     def handle_rest_request_services(self, rest_request):
+        """
+        Handles the rest request meant for services.
+
+        @type rest_request: RestRequest
+        @param rest_request: The rest request to be handled.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
         # retrieves the request
         request = rest_request.get_request()
 
@@ -737,7 +771,6 @@ class RestRequest:
         """
 
         self.result_translated = result_translated
-
 
     def get_rest_encoder_plugins(self):
         """
