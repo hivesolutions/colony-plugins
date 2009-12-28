@@ -56,7 +56,25 @@ class WebAdministration:
         self.web_administration_plugin = web_administration_plugin
 
     def get_routes(self):
+        """
+        Retrieves the list of regular expressions to be used as route,
+        to the rest service.
+
+        @rtype: List
+        @return: The list of regular expressions to be used as route,
+        to the rest service.
+        """
+
         return []
 
     def handle_rest_request(self, rest_request):
+        """
+        Handles the given rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The rest request to be handled.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
         pass
