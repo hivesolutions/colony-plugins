@@ -282,6 +282,7 @@ class MainRestManager:
             result = rpc_method(**arguments_map)
         # in case the method name is not valid
         else:
+            # raises the invalid method exception
             raise main_rest_manager_exceptions.InvalidMethod("the method name " + method_name + " is not valid")
 
         # serializes the result for the given encoder name retrieving the content type
