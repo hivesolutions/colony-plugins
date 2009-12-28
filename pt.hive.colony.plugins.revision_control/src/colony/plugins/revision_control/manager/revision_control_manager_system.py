@@ -159,6 +159,14 @@ class RevisionControlAdapter:
 
         return self.revision_control_adapter_plugin.diff(self._revision_control_reference, resource_identifiers, revision_1, revision_2)
 
+    def get_resources_revision(self, resource_identifiers, revision):
+        """
+        Retrieves the content of the specified resources in the specified revision.
+        """
+
+        return self.revision_control_adapter_plugin.get_resources_revision(self._revision_control_reference, resource_identifiers, revision)
+
+
 class Revision:
     number = None
     identifier = None
