@@ -179,6 +179,27 @@ class RevisionControlSubversionAdapter:
         # returns the computed diff
         return diffs
 
+    def get_resources_revision(self, revision_control_reference, resource_identifiers, revision):
+        # the revision in which to end the log
+        if not revision == None:
+            subversion_revision = pysvn.Revision(DEFAULT_REVISION_KIND, revision)
+        else:
+            subversion_revision = pysvn.Revision(pysvn.opt_revision_kind.working)
+
+        # initializes the resources revision list
+        resources_revision = []
+
+        # initializes the resources revisions list
+        for url_or_path in resource_identifiers:
+            # retrieves the file contents
+            file_text = revision_control_reference.cat(url_or_path, subversion_revision)
+
+            # appends the file contents to the resources revision list
+            resources_revision.append(file_text)
+
+        # returns the retrieves resources revision list
+        return resources_revision
+
     def get_adapter_name(self):
         return ADAPTER_NAME
 

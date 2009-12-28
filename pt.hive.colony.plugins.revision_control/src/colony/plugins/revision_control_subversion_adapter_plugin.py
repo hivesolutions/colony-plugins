@@ -101,5 +101,8 @@ class RevisionControlSubversionAdapterPlugin(colony.plugins.plugin_system.Plugin
     def diff(self, revision_control_reference, resource_identifiers, revision_1, revision_2):
         return self.revision_control_subversion_adapter.diff(revision_control_reference, resource_identifiers, revision_1, revision_2)
 
+    def get_resources_revision(self, revision_control_reference, resource_identifiers, revision):
+        return self.revision_control_subversion_adapter.get_resources_revision(revision_control_reference, resource_identifiers, revision)
+
     def get_adapter_name(self):
         return self.revision_control_subversion_adapter.get_adapter_name()
