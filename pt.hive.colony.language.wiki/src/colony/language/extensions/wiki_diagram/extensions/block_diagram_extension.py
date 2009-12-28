@@ -71,10 +71,10 @@ CLASS_REGEX = re.compile(CLASS_REGEX_VALUE, re.UNICODE)
 COLSPAN_REGEX = re.compile(COLSPAN_REGEX_VALUE, re.UNICODE)
 """ The colspan regex """
 
-ROW_WIDTH = 100.0
+ROW_WIDTH = 100
 """ The percent value of the width taken up by each row """
 
-ROW_HEIGHT = 11.0
+ROW_HEIGHT = 7.0
 """ The percent value of the height taken up by each row """
 
 PERCENTAGE_FACTOR = 100
@@ -83,7 +83,7 @@ PERCENTAGE_FACTOR = 100
 HORIZONTAL_SPACING  = 1.0
 """ The horizontal spacing between blocks """
 
-VERTICAL_SPACING = 2.0
+VERTICAL_SPACING = 1.0
 """ The vertical spacing between blocks """
 
 SHADOW_DELTA_X = 0.5
@@ -92,7 +92,7 @@ SHADOW_DELTA_X = 0.5
 SHADOW_DELTA_Y = 0.5
 """ The y delta to apply to the drop shadow """
 
-TEXT_PADDING = 2
+TEXT_PADDING = 1
 """ The padding in percentage to apply to the text """
 
 class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagramExtension):
@@ -199,6 +199,7 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
             if len(row_blocks) > max_columns:
                 max_columns = len(row_blocks)
 
+            # appends the row of blocks to the overall blocks matrix
             blocks.append(row_blocks)
 
         for row_blocks in blocks:
@@ -211,7 +212,11 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
             # updates the baseline for the next rows
             baseline_y += ROW_HEIGHT + VERTICAL_SPACING
 
-        return graphics_elements
+        # creates the view port size
+        viewport_size = (ROW_WIDTH, baseline_y)
+
+        # returns the graphics elements and the viewport size
+        return graphics_elements, viewport_size
 
     def get_row_graphics_elements(self, row_blocks, max_columns, baseline_x, baseline_y):
         # initializes the row graphics elements

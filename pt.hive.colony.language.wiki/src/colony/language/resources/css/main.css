@@ -641,7 +641,8 @@ h5:hover > a.headerlink {
 .diagram {
     background: #e5e5e5 url(../images/diagram_note.gif) no-repeat scroll left top;
     padding: 18px 52px 18px 52px;
-    font-size: 1.0em;
+    font-size: 0.2em;
+    text-align: center;
 }
 
 .diagram .block-diagram {
@@ -698,12 +699,11 @@ h5:hover > a.headerlink {
 }
 
 .diagram .block-diagram .blue {
-    fill: #417dd6;
-    color: white;
+    fill: #d5e9f6;
 }
 
 .diagram .block-diagram text.blue {
-    fill: white;
+    fill: #333333;
 }
 
 .diagram .block-diagram .beige {
@@ -712,4 +712,20 @@ h5:hover > a.headerlink {
 
 .diagram .block-diagram text.beige {
     fill: black;
+}
+
+.diagram .block-diagram .green {
+    fill: #a9ca74;
+}
+
+.diagram .block-diagram text.green {
+    fill: #000000;
+}
+
+.diagram .block-diagram .yellow {
+    fill: #f6e595;
+}
+
+.diagram .block-diagram text.yellow {
+    fill: #000000;
 }

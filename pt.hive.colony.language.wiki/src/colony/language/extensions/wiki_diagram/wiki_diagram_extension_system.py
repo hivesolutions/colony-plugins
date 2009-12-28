@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import libs.extension_system
+import libs.string_buffer_util
 
 class WikiDiagramExtension(libs.extension_system.Extension):
     """
@@ -81,6 +82,15 @@ class ScalableVectorGraphics(AbstractVectorGraphics):
         Opens the graphics.
         """
 
+        # initializes the string buffer
+        string_buffer = libs.string_buffer_util.StringBuffer()
+
+        # retrieves the view box width
+        view_box_width = graphics_attributes["view_box_width"]
+
+        # retrieves the view box height
+        view_box_height = graphics_attributes["view_box_height"]
+
         # retrieves the width attribute
         width = graphics_attributes["width"]
 
@@ -93,8 +103,28 @@ class ScalableVectorGraphics(AbstractVectorGraphics):
         if self.graphics_open:
             return
 
-        # creates the string value for the open graphics
-        string_value = "<svg:svg class=\"%s\" version=\"1.1\" baseProfile=\"full\" width=\"%fpx\" height=\"%fpx\">" % (style_class, width, height)
+        # starts the svg open tag
+        string_buffer.write("<svg:svg version=\"1.1\" baseProfile=\"full\"")
+
+        # adds the style class
+        string_buffer.write(" class=\"%s\"" % style_class)
+
+        # adds the view box specification
+        string_buffer.write(" viewBox=\"0 0 %f %f\"" % (view_box_width, view_box_height))
+
+        # adds the width specification
+        if not width == None:
+            string_buffer.write(" width=\"%s\"" % width)
+
+        # adds the height specification
+        if not height == None:
+            string_buffer.write(" height=\"%s\"" % height)
+
+        # finishes the svn open tag
+        string_buffer.write(">")
+
+        # retrieves the string value from the string buffer
+        string_value = string_buffer.get_value()
 
         # signals the graphics tag is open
         self.graphics_open = True
@@ -134,7 +164,7 @@ class ScalableVectorGraphics(AbstractVectorGraphics):
         style_class = options.get("class", "")
 
         # create the rectangle element
-        rectangle_element_string = "<svg:rect class=\"%s\" x=\"%.1f%%\" y=\"%.1f%%\" width=\"%.1f%%\" height=\"%.1f%%\"/>" % (style_class, x, y, width, height)
+        rectangle_element_string = "<svg:rect class=\"%s\" x=\"%.1f\" y=\"%.1f\" width=\"%.1f\" height=\"%.1f\"/>" % (style_class, x, y, width, height)
 
         return rectangle_element_string
 
@@ -149,7 +179,7 @@ class ScalableVectorGraphics(AbstractVectorGraphics):
         style_class = options.get("class", "")
 
         # create the text element
-        text_element_string = "<svg:text class=\"%s\" x=\"%.1f%%\" y=\"%.1f%%\">%s</svg:text>" % (style_class, x, y, escaped_text)
+        text_element_string = "<svg:text class=\"%s\" x=\"%.1f\" y=\"%.1f\">%s</svg:text>" % (style_class, x, y, escaped_text)
 
         return text_element_string
 

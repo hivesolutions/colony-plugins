@@ -47,10 +47,10 @@ import wiki_diagram.wiki_diagram_extension_system
 GENERATOR_TYPE = "diagram"
 """ The generator type """
 
-DEFAULT_WIDTH_VALUE = 600
+DEFAULT_WIDTH_VALUE = "500px"
 """ The default width value """
 
-DEFAULT_HEIGHT_VALUE = 300
+DEFAULT_HEIGHT_VALUE = None
 """ The default height value """
 
 class WikiDiagramExtension(wiki_extension_system.WikiExtension):
@@ -157,12 +157,6 @@ class WikiDiagramExtension(wiki_extension_system.WikiExtension):
         # retrieves the height
         node_tag_height = node_attributes_map.get("height", DEFAULT_HEIGHT_VALUE)
 
-        # converts the width
-        width = float(node_tag_width)
-
-        # converts the height
-        height = float(node_tag_height)
-
         # retrieves the diagram extensions for the given tag
         node_tag_diagram_extensions = [extension for extension in diagram_extensions if extension.get_diagram_type() == diagram_type]
 
@@ -172,7 +166,10 @@ class WikiDiagramExtension(wiki_extension_system.WikiExtension):
         # generates the diagrams using the available extensions
         for node_tag_diagram_extension in node_tag_diagram_extensions:
             # retrieves the tokens list
-            graphics_elements = node_tag_diagram_extension.get_graphics_elements(contents)
+            graphics_elements, viewport_size = node_tag_diagram_extension.get_graphics_elements(contents)
+
+            # unpacks the view box dimensions
+            view_box_width, view_box_height = viewport_size
 
             # creates the vector graphics support
             vector_graphics = wiki_diagram.wiki_diagram_extension_system.ScalableVectorGraphics()
@@ -184,7 +181,7 @@ class WikiDiagramExtension(wiki_extension_system.WikiExtension):
             diagram_type_style_class = diagram_type + "-diagram"
 
             # starts the graphics
-            open_graphics_string = vector_graphics.open_graphics({"class" : diagram_type_style_class, "width" : width, "height" : height})
+            open_graphics_string = vector_graphics.open_graphics({"class" : diagram_type_style_class, "width" : node_tag_width, "height" : node_tag_height, "view_box_width" : view_box_width, "view_box_height" : view_box_height})
 
             # writes the open graphics tag
             string_buffer.write(open_graphics_string)
