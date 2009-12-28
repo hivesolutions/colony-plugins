@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.plugins.plugin_system
 
-class DummyPluginSwind(colony.plugins.plugin_system.Plugin):
+class DummyPluginSwing(colony.plugins.plugin_system.Plugin):
     """
     The main class for the Dummy Swing plugin.
     """
