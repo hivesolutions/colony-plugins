@@ -164,7 +164,6 @@ def dispatch_visit():
     # returns the created decorator
     return decorator
 
-
 class Visitor:
     """
     The visitor class.
@@ -264,6 +263,13 @@ class Visitor:
         getattr(self, "process_" + name)(node)
 
     def process_out(self, node):
+        """
+        Processes the out node.
+
+        @type node: SingleNode
+        @param node: The single node to be processed as out.
+        """
+
         attributes_map = node.get_attributes_map()
         attribute_value = attributes_map["value"]
         attribute_value_value = self.get_value(attribute_value)
@@ -287,6 +293,13 @@ class Visitor:
         self.string_buffer.write(attribute_value_value)
 
     def process_out_none(self, node):
+        """
+        Processes the out none node.
+
+        @type node: SingleNode
+        @param node: The single node to be processed as out none.
+        """
+
         attributes_map = node.get_attributes_map()
         attribute_value = attributes_map["value"]
         attribute_value_value = self.get_value(attribute_value)
@@ -305,6 +318,13 @@ class Visitor:
             self.string_buffer.write(attribute_value_value)
 
     def process_var(self, node):
+        """
+        Processes the var node.
+
+        @type node: SingleNode
+        @param node: The single node to be processed as var.
+        """
+
         attributes_map = node.get_attributes_map()
         attribute_item = attributes_map["item"]
         attribute_item_literal_value = self.get_literal_value(attribute_item)
@@ -314,6 +334,13 @@ class Visitor:
         self.global_map[attribute_item_literal_value] = attribute_value_value
 
     def process_foreach(self, node):
+        """
+        Processes the foreach node.
+
+        @type node: SingleNode
+        @param node: The single node to be processed as foreach.
+        """
+
         attributes_map = node.get_attributes_map()
         attribute_from = attributes_map["from"]
         attribute_from_value = self.get_value(attribute_from)
@@ -328,6 +355,13 @@ class Visitor:
                     node_child_node.accept(self)
 
     def process_if(self, node):
+        """
+        Processes the if node.
+
+        @type node: SingleNode
+        @param node: The single node to be processed as if.
+        """
+
         attributes_map = node.get_attributes_map()
         attribute_item = attributes_map["item"]
         attribute_item_value = self.get_value(attribute_item)
@@ -353,6 +387,16 @@ class Visitor:
             if self.visit_childs:
                 for node_child_node in node.child_nodes:
                     node_child_node.accept(self)
+
+    def process_include(self, node):
+        """
+        Processes the include node.
+
+        @type node: SingleNode
+        @param node: The single node to be processed as include.
+        """
+
+        pass
 
     def get_value(self, attribute_value):
         # in case the attribute value is of type variable
