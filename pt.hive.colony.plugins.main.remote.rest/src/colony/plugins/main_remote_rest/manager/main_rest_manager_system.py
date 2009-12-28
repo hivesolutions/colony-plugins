@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import re
 import urllib
 
 import main_rest_manager_exceptions
@@ -59,6 +60,9 @@ APACHE_CONTAINER = "apache"
 HANDLER_NAME = "rest"
 """ The handler name """
 
+HANDLER_PORT = 80
+""" The handler port """
+
 class MainRestManager:
     """
     The main rest manager class.
@@ -66,6 +70,15 @@ class MainRestManager:
 
     main_rest_manager_plugin = None
     """ The main rest manager plugin """
+
+    matching_regex = None
+    """ The matching regex to be used in route mathcing """
+
+    rest_service_routes_map = {}
+    """ The rest service routes map """
+
+    plugin_id_undotted_plugin_map = {}
+    """ The plugin id undotted plugin map """
 
     service_methods = []
     """ The service methods list """
@@ -83,6 +96,8 @@ class MainRestManager:
 
         self.main_rest_manager_plugin = main_rest_manager_plugin
 
+        self.rest_service_routes_map = {}
+        self.plugin_id_undotted_plugin_map = {}
         self.service_objects = []
         self.service_methods_map = {}
 
@@ -167,14 +182,27 @@ class MainRestManager:
 
         # in case the request is meant to be handled by services
         if resource_name == "services":
+            # handles the request with the services request handler
             return self.handle_rest_request_services(rest_request)
         else:
-            # retrieves the rest service plugins
-            rest_service_plugins = self.main_rest_manager_plugin.rest_service_plugins
+            # retrieves the resource path match
+            resource_path_match = self.matching_regex.match(resource_path)
 
-            for rest_service_plugin in rest_service_plugins:
-                if rest_service_plugin.id == "pt.hive.colony.plugins.web.entity_manager_administration":
+            # retrieves the groups map from the resource path match
+            groups_map = resource_path_match.groupdict()
+
+            # iterates over all the group items
+            for group_name, group_value in groups_map.items():
+                # in case the group value is valid
+                if group_value:
+                    # retrieves the rest service plugin
+                    rest_service_plugin = self.plugin_id_undotted_plugin_map[group_name]
+
+                    # handles the rest request to the rest servicxe plugin
                     return rest_service_plugin.handle_rest_request(rest_request)
+
+            # raises the rest request not handled exception
+            raise main_rest_manager_exceptions.RestRequestNotHandled("no rest service plugin could handle the request")
 
         # returns true
         return True
@@ -239,6 +267,13 @@ class MainRestManager:
         return True
 
     def is_active(self):
+        """
+        Tests if the service is active.
+
+        @rtype: bool
+        @return: If the service is active.
+        """
+
         # retrieves the plugin manager
         manager = self.main_rest_manager_plugin.manager
 
@@ -249,13 +284,85 @@ class MainRestManager:
             return False
 
     def get_handler_name(self):
+        """
+        Retrieves the handler name.
+
+        @rtype: String
+        @return: The handler name.
+        """
+
+        # returns the handler name
         return HANDLER_NAME
 
     def get_handler_port(self):
-        return 80
+        """
+        Retrieves the handler port.
+
+        @rtype: int
+        @return: The handler port.
+        """
+
+        # returns the handler port
+        return HANDLER_PORT
 
     def get_handler_properties(self):
+        """
+        Retrieves the handler properties.
+
+        @rtype: Dictionary
+        @return: The handler properties.
+        """
+
         return {"handler_base_filename" : HANDLER_BASE_FILENAME, "handler_extension" : HANDLER_EXTENSION}
+
+    def load_rest_service_plugin(self, rest_service_plugin):
+        """
+        Loads the rest service plugin, in the rest manager.
+
+        @type rest_service_plugin: Plugin
+        @param rest_service_plugin: The rest service plugin to be loaded.
+        """
+
+        # retrieves the rest service plugin id
+        rest_service_plugin_id = rest_service_plugin.id
+
+        # remove all the dots from the rest service plugin id
+        rest_service_plugin_id_undotted = rest_service_plugin_id.replace(".", "")
+
+        # retrieves the rest service plugin routes
+        routes_list = rest_service_plugin.get_routes()
+
+        # initializes the rest service plugin id routes list
+        self.rest_service_routes_map[rest_service_plugin_id_undotted] = routes_list
+
+        # sets the rest service plugin in the plugin id undotted plugin map
+        self.plugin_id_undotted_plugin_map[rest_service_plugin_id_undotted] = rest_service_plugin
+
+        # updates the matching regex
+        self._update_matching_regex()
+
+    def unload_rest_service_plugin(self, rest_service_plugin):
+        """
+        Unloads the rest service plugin, from the rest manager.
+
+        @type rest_service_plugin: Plugin
+        @param rest_service_plugin: The rest service plugin to be unloaded.
+        """
+
+        # retrieves the rest service plugin id
+        rest_service_plugin_id = rest_service_plugin.id
+
+        # remove all the dots from the rest service plugin id
+        rest_service_plugin_id_undotted = rest_service_plugin_id.replace(".", "")
+
+        # deletes the route list for the plugin
+        del self.rest_service_routes_map[rest_service_plugin_id_undotted]
+
+        # deletes the rest service plugin from the plugin id undotted plugin map
+        del self.plugin_id_undotted_plugin_map[rest_service_plugin_id_undotted]
+
+        # updates the matching regex
+        self._update_matching_regex()
 
     def update_service_methods(self, updated_rpc_service_plugin = None):
         if updated_rpc_service_plugin:
@@ -411,6 +518,52 @@ class MainRestManager:
 
             # returns the content type and the encoded result
             return content_type, result_encoded
+
+    def _update_matching_regex(self):
+        """
+        Updates the matching regex.
+        """
+
+        # starts the matching regex value
+        matching_regex_value = r""
+
+        # sets the is first plugin flag
+        is_first_plugin = True
+
+        # iterates over all the items in the rest service routes map
+        for rest_service_plugin_id_undotted, routes_list in self.rest_service_routes_map.items():
+            # in case it's the first plugin
+            if is_first_plugin:
+                # unsets the is first plugin flag
+                is_first_plugin = False
+            else:
+                # adds the or operand to the matching regex value
+                matching_regex_value += "|"
+
+            # adds the group name part of the regex to the matching regex value
+            matching_regex_value += "(?P<" + rest_service_plugin_id_undotted + ">"
+
+            # sets the is first flag
+            is_first = True
+
+            # iterates over all the routes in the routes list
+            for route in routes_list:
+                # in case it's the first route
+                if is_first:
+                    # unsets the is first flag
+                    is_first = False
+                else:
+                    # adds the or operand to the matching regex value
+                    matching_regex_value += "|"
+
+                # adds the route to the matching regex value
+                matching_regex_value += route
+
+            # closes the matching regex value group
+            matching_regex_value += ")"
+
+        # compiles the matching regex value
+        self.matching_regex = re.compile(matching_regex_value)
 
 class RestRequest:
     """
