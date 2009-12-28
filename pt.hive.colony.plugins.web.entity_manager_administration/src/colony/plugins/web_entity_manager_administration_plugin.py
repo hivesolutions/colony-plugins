@@ -94,21 +94,67 @@ class WebEntityManagerAdministrationPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_routes(self):
-        pass
+        """
+        Retrieves the list of regular expressions to be used as route,
+        to the rest service.
+
+        @rtype: List
+        @return: The list of regular expressions to be used as route,
+        to the rest service.
+        """
+
+        return self.web_entity_manager_administration.get_routes()
 
     def handle_rest_request(self, rest_request):
+        """
+        Handles the given rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The rest request to be handled.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
         return self.web_entity_manager_administration.handle_rest_request(rest_request)
 
     def get_resource_manager_plugin(self):
+        """
+        Retrieves the resource manager plugin.
+
+        @rtype: ResourceManagerPlugin
+        @return: The resource manager plugin.
+        """
+
         return self.resource_manager_plugin
 
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.resources.resource_manager")
     def set_resource_manager_plugin(self, resource_manager_plugin):
+        """
+        Sets the resource manager plugin.
+
+        @type resource_manager_plugin: ResourceManagerPlugin.
+        @param resource_manager_plugin: The resource manager plugin.
+        """
+
         self.resource_manager_plugin = resource_manager_plugin
 
     def get_business_entity_manager_plugin(self):
+        """
+        Retrieves the business entity manager plugin.
+
+        @rtype: BusinessEntityManagerPlugin
+        @return: The business entity manager plugin.
+        """
+
         return self.business_entity_manager_plugin
 
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.business.entity_manager")
     def set_business_entity_manager_plugin(self, business_entity_manager_plugin):
+        """
+        Sets the business entity manager plugin.
+
+        @type business_entity_manager_plugin: BusinessEntityManagerPlugin
+        @param business_entity_manager_plugin: The business entity manager plugin.
+        """
+
         self.business_entity_manager_plugin = business_entity_manager_plugin

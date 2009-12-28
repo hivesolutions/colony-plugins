@@ -62,9 +62,27 @@ class WebEntityManagerAdministration:
         self.web_entity_manager_administration_plugin = web_entity_manager_administration_plugin
 
     def get_routes(self):
-        pass
+        """
+        Retrieves the list of regular expressions to be used as route,
+        to the rest service.
+
+        @rtype: List
+        @return: The list of regular expressions to be used as route,
+        to the rest service.
+        """
+
+        return [r"^entity_manager/.*$"]
 
     def handle_rest_request(self, rest_request):
+        """
+        Handles the given rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The rest request to be handled.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
         # retrieves the entity manager
         entity_manager = self._get_entity_manager()
 
@@ -163,6 +181,7 @@ class WebEntityManagerAdministration:
         # flushes the rest request
         rest_request.flush()
 
+        # returns true
         return True
 
     def _get_entity_manager(self):
