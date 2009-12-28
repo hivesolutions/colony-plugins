@@ -45,7 +45,7 @@ configuration = {
                  "default_content_type_charset" : "utf-8",
                  "preferred_error_handlers" : ["template", "default"],
                  "contexts" : {
-                     "resolution_order" : ["/colony_web/plugins", "/colony_web", "/colony_manager", "/colony_mod_python", "/template_error_handler", "/docs", "/eclipse"],
+                     "resolution_order" : ["/colony_web/plugins", "/colony_web", "/colony_manager", "/colony_mod_python", "/template_error_handler", "/docs", "/eclipse", "/cgi-scripts"],
                      "/colony_web" : {
                          "handler" : "file",
                          "request_properties" : {
@@ -86,6 +86,10 @@ configuration = {
                              "base_path" : "${WORKSPACE_HOME}/pt.hive.eclipse.plugins.site",
                              "default_page" : "site.xml"
                          }
+                     },
+                     "/cgi-scripts" : {
+                         "handler" : "cgi",
+                         "request_properties" : {}
                      }
                  }
              }
