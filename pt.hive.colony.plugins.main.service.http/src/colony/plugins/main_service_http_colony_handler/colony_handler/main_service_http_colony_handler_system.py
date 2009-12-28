@@ -64,6 +64,13 @@ class MainServiceHttpColonyHandler:
         self.main_service_http_colony_handler_plugin = main_service_http_colony_handler_plugin
 
     def get_handler_name(self):
+        """
+        Retrieves the handler name.
+
+        @rtype: String
+        @return: The handler name.
+        """
+
         return HANDLER_NAME
 
     def handle_request(self, request):

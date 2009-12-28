@@ -38,17 +38,16 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.plugins.plugin_system
-import colony.plugins.decorators
 
-class MainServiceHttpColonyHandlerPlugin(colony.plugins.plugin_system.Plugin):
+class MainServiceHttpCgiHandlerPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Http Service Main Colony Handler plugin.
+    The main class for the Http Service Main Cgi Handler plugin.
     """
 
-    id = "pt.hive.colony.plugins.main.service.http.colony_handler"
-    name = "Http Service Main Colony Handler Plugin"
-    short_name = "Http Service Main Colony Handler"
-    description = "The plugin that offers the http service colony handler"
+    id = "pt.hive.colony.plugins.main.service.http.cgi_handler"
+    name = "Http Service Main Cgi Handler Plugin"
+    short_name = "Http Service Main Cgi Handler"
+    description = "The plugin that offers the http service cgi handler"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
@@ -56,21 +55,19 @@ class MainServiceHttpColonyHandlerPlugin(colony.plugins.plugin_system.Plugin):
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
     capabilities = ["http_service_handler"]
-    capabilities_allowed = ["http_python_handler"]
+    capabilities_allowed = []
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["main_service_http_colony_handler.colony_handler.main_service_http_colony_handler_system", "main_service_http_colony_handler.colony_handler.main_service_http_colony_handler_exceptions"]
+    main_modules = ["main_service_http_cgi_handler.cgi_handler.main_service_http_cgi_handler_system", "main_service_http_cgi_handler.cgi_handler.main_service_http_cgi_handler_exceptions"]
 
-    main_service_http_colony_handler = None
-
-    http_python_handler_plugins = []
+    main_service_http_cgi_handler = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
-        global main_service_http_colony_handler
-        import main_service_http_colony_handler.colony_handler.main_service_http_colony_handler_system
-        self.main_service_http_colony_handler = main_service_http_colony_handler.colony_handler.main_service_http_colony_handler_system.MainServiceHttpColonyHandler(self)
+        global main_service_http_cgi_handler
+        import main_service_http_cgi_handler.cgi_handler.main_service_http_cgi_handler_system
+        self.main_service_http_cgi_handler = main_service_http_cgi_handler.cgi_handler.main_service_http_cgi_handler_system.MainServiceHttpCgiHandler(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -81,11 +78,9 @@ class MainServiceHttpColonyHandlerPlugin(colony.plugins.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.main.service.http.colony_handler", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.main.service.http.colony_handler", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
@@ -100,15 +95,7 @@ class MainServiceHttpColonyHandlerPlugin(colony.plugins.plugin_system.Plugin):
         @return: The handler name.
         """
 
-        return self.main_service_http_colony_handler.get_handler_name()
+        return self.main_service_http_cgi_handler.get_handler_name()
 
     def handle_request(self, request):
-        return self.main_service_http_colony_handler.handle_request(request)
-
-    @colony.plugins.decorators.load_allowed_capability("http_python_handler")
-    def http_python_handler_capability_load_allowed(self, plugin, capability):
-        self.http_python_handler_plugins.append(plugin)
-
-    @colony.plugins.decorators.unload_allowed_capability("http_python_handler")
-    def http_python_handler_capability_unload_allowed(self, plugin, capability):
-        self.http_python_handler_plugins.remove(plugin)
+        return self.main_service_http_cgi_handler.handle_request(request)
