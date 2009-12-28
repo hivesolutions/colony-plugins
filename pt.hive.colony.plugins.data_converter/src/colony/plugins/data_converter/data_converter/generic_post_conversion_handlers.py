@@ -47,11 +47,11 @@ def post_conversion_handler_calculate_totals(data_converter, configuration, inpu
 
     # sums the attribute values of entities in a entity's relation attribute and sets the
     # total in another entity attribute
-    for entity_name_relation_name, attributes_map in entity_attributes_map.iteritems():
+    for entity_name_relation_name, attributes_map in entity_attributes_map.items():
         entity_name, relation_name = entity_name_relation_name
 
         # sums the attributes of each defined relation attribute's contents
-        for attribute_name, related_attribute_name in attributes_map.iteritems():
+        for attribute_name, related_attribute_name in attributes_map.items():
 
             # sums the attributes for every output entity of the specified name
             output_entities = output_intermediate_structure.get_entities_by_name(entity_name)

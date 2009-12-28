@@ -51,7 +51,6 @@ import generic_connectors
 import generic_input_entity_indexers
 import generic_output_entity_indexers
 import generic_post_attribute_mapping_handlers
-import generic_post_relation_mapping_handlers
 import generic_post_conversion_handlers
 
 IO_ADAPTER_PLUGIN_ID_VALUE = "io_adapter_plugin_id"
@@ -108,9 +107,6 @@ class DataConverter:
     post_attribute_mapping_handler_name_handler_map = {}
     """ Dictionary associating the name of a post attribute mapping handler with the handler itself """
 
-    post_relation_mapping_handler_name_handler_map = {}
-    """ Dictionary associating the name of a post relation mapping handler with the handler itself """
-
     post_conversion_handler_name_handler_map = {}
     """ Dictionary associating the name of a post conversion handler with the handler itself """
 
@@ -143,7 +139,6 @@ class DataConverter:
         self.attribute_handler_name_handler_map = {}
         self.connector_name_connector_map = {}
         self.post_attribute_mapping_handler_name_handler_map = {}
-        self.post_relation_mapping_handler_name_handler_map = {}
         self.post_conversion_handler_name_handler_map = {}
         self.input_indexer_name_input_indexer_map = {}
         self.output_indexer_name_output_indexer_map = {}
@@ -202,12 +197,6 @@ class DataConverter:
         for post_attribute_mapping_handler_name in post_attribute_mapping_handler_names:
             post_attribute_mapping_handler = getattr(generic_post_attribute_mapping_handlers, post_attribute_mapping_handler_name)
             self.post_attribute_mapping_handler_name_handler_map[post_attribute_mapping_handler_name] = post_attribute_mapping_handler
-
-        # adds the generic post relation mapping handlers to the list of post relation mapping handlers
-        post_relation_mapping_handler_names = [post_relation_mapping_handler_name for post_relation_mapping_handler_name in dir(generic_post_relation_mapping_handlers) if type(getattr(generic_post_relation_mapping_handlers, post_relation_mapping_handler_name)) == types.FunctionType]
-        for post_relation_mapping_handler_name in post_relation_mapping_handler_names:
-            post_relation_mapping_handler = getattr(generic_post_relation_mapping_handlers, post_relation_mapping_handler_name)
-            self.post_relation_mapping_handler_name_handler_map[post_relation_mapping_handler_name] = post_relation_mapping_handler
 
         # adds the generic post conversion handlers to the list of post conversion handlers
         post_conversion_handler_names = [post_conversion_handler_name for post_conversion_handler_name in dir(generic_post_conversion_handlers) if type(getattr(generic_post_conversion_handlers, post_conversion_handler_name)) == types.FunctionType]
