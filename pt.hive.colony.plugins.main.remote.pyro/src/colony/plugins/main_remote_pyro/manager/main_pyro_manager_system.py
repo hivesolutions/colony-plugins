@@ -88,27 +88,55 @@ class MainPyroManager:
         self.create_pyro_daemon()
 
     def is_active(self):
+        """
+        Tests if the service is active.
+
+        @rtype: bool
+        @return: If the service is active.
+        """
+
         return True
 
     def get_handler_name(self):
+        """
+        Retrieves the handler name.
+
+        @rtype: String
+        @return: The handler name.
+        """
+
         return HANDLER_NAME
 
     def get_handler_port(self):
+        """
+        Retrieves the handler port.
+
+        @rtype: int
+        @return: The handler port.
+        """
+
         return self.base_remote_uri.port
 
     def get_handler_properties(self):
+        """
+        Retrieves the handler properties.
+
+        @rtype: Dictionary
+        @return: The handler properties.
+        """
+
         return {"object_id" : self.base_remote_uri.objectID}
 
     def activate_server(self):
         """
-        Activates the server.
+        Activates the server, running the bootstrap.
         """
 
         self.pyro_daemon.requestLoop()
 
     def deactivate_server(self):
         """
-        Deactivates the server.
+        Deactivates the server, stopping the bootstrap.
         """
 
         self.pyro_daemon.shutdown()

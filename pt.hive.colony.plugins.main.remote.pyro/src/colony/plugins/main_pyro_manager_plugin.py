@@ -106,19 +106,58 @@ class MainPyroManagerPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def is_active(self):
+        """
+        Tests if the service is active.
+
+        @rtype: bool
+        @return: If the service is active.
+        """
+
         return self.main_pyro_manager.is_active()
 
     def get_handler_name(self):
+        """
+        Retrieves the handler name.
+
+        @rtype: String
+        @return: The handler name.
+        """
+
         return self.main_pyro_manager.get_handler_name()
 
     def get_handler_port(self):
+        """
+        Retrieves the handler port.
+
+        @rtype: int
+        @return: The handler port.
+        """
+
         return self.main_pyro_manager.get_handler_port()
 
     def get_handler_properties(self):
+        """
+        Retrieves the handler properties.
+
+        @rtype: Dictionary
+        @return: The handler properties.
+        """
+
         return self.main_pyro_manager.get_handler_properties()
 
     def activate_server(self):
+        """
+        Activates the server, running the bootstrap.
+        """
+
         self.main_pyro_manager.activate_server()
+
+    def deactivate_server(self):
+        """
+        Deactivates the server, stopping the bootstrap.
+        """
+
+        self.main_pyro_manager.deactivate_server()
 
     @colony.plugins.decorators.load_allowed_capability("rpc_service")
     def rpc_service_capability_load_allowed(self, plugin, capability):
