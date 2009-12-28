@@ -56,7 +56,7 @@ class WebAdministration:
         self.web_administration_plugin = web_administration_plugin
 
     def get_routes(self):
-        pass
+        return []
 
     def handle_rest_request(self, rest_request):
         pass

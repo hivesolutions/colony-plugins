@@ -91,14 +91,46 @@ class WebAdministrationPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_routes(self):
-        pass
+        """
+        Retrieves the list of regular expressions to be used as route,
+        to the rest service.
+
+        @rtype: List
+        @return: The list of regular expressions to be used as route,
+        to the rest service.
+        """
+
+        return self.web_administration.get_routes()
 
     def handle_rest_request(self, rest_request):
-        return self.web_database_administration.handle_rest_request(rest_request)
+        """
+        Handles the given rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The rest request to be handled.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
+        return self.web_administration.handle_rest_request(rest_request)
 
     def get_template_engine_manager_plugin(self):
+        """
+        Retrieves the template engine manager plugin.
+
+        @rtype: TemplateEngineManagerPlugin
+        @return: The template engine manager plugin.
+        """
+
         return self.template_engine_manager_plugin
 
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.template_engine.manager")
     def set_template_engine_manager_plugin(self, template_engine_manager_plugin):
+        """
+        Sets the template engine manager plugin.
+
+        @type template_engine_manager_plugin: TemplateEngineManagerPlugin
+        @param template_engine_manager_plugin: The template engine manager plugin.
+        """
+
         self.template_engine_manager_plugin = template_engine_manager_plugin
