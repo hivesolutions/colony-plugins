@@ -47,7 +47,7 @@ import main_service_http_cgi_handler_exceptions
 HANDLER_NAME = "cgi"
 """ The handler name """
 
-CONTENT_TYPE_VALUE = "Content-type"
+CONTENT_TYPE_HEADER_VALUE = "Content-type"
 """ The content type value """
 
 STATUS_VALUE = "Status"
@@ -58,6 +58,51 @@ GATEWAY_INTERFACE_VALUE = "CGI/1.0"
 
 DEFAULT_CONTENT_TYPE = "text/plain"
 """ The default content type """
+
+SERVER_SOFTWARE_VALUE = "SERVER_SOFTWARE"
+""" The server software value """
+
+SERVER_NAME_VALUE = "SERVER_NAME"
+""" The server name value """
+
+GATEWAY_INTERFACE_VALUE = "GATEWAY_INTERFACE"
+""" The gateway interface value """
+
+SERVER_PROTOCOL_VALUE = "SERVER_PROTOCOL"
+""" The server protocol value """
+
+SERVER_PORT_VALUE = "SERVER_PORT"
+""" The server port value """
+
+REQUEST_METHOD_VALUE = "REQUEST_METHOD"
+""" The request method value """
+
+PATH_INFO_VALUE = "PATH_INFO"
+""" The path info value """
+
+PATH_TRANSLATED_VALUE = "PATH_TRANSLATED"
+""" The path translated value """
+
+SCRIPT_NAME_VALUE = "SCRIPT_NAME"
+""" The script name value """
+
+QUERY_STRING_VALUE = "QUERY_STRING"
+""" The query string value """
+
+REMOTE_HOST_VALUE = "REMOTE_HOST"
+""" The remote host value """
+
+REMOTE_ADDR_VALUE = "REMOTE_ADDR"
+""" The remote addr value """
+
+CONTENT_TYPE_VALUE = "CONTENT_TYPE"
+""" The content type value """
+
+CONTENT_LENGTH_VALUE = "CONTENT_LENGTH"
+""" The content length value """
+
+PYTHONPATH_VALUE = "PYTHONPATH"
+""" The pythonpath value """
 
 DEFAULT_APPLICATION_CONTENT_TYPE = "application/x-www-form-urlencoded"
 """ The default application content type """
@@ -173,23 +218,24 @@ class MainServiceHttpCgiHandler:
             # retrieves the environment map
             environment_map = os.environ
 
-            environment_map["SERVER_SOFTWARE"] = SERVER_IDENTIFIER
-            environment_map["SERVER_NAME"] = ""
-            environment_map["GATEWAY_INTERFACE"] = GATEWAY_INTERFACE_VALUE
-            environment_map["SERVER_PROTOCOL"] = request_protocol_version
-            environment_map["SERVER_PORT"] = str(request_port)
-            environment_map["REQUEST_METHOD"] = request_operation_type
-            environment_map["PATH_INFO"] = request_filename
-            environment_map["PATH_TRANSLATED"] = request_filename
-            environment_map["SCRIPT_NAME"] = request_filename
-            environment_map["QUERY_STRING"] = request_arguments
-            environment_map["REMOTE_HOST"] = client_http_address
-            environment_map["REMOTE_ADDR"] = client_http_address
-            environment_map["CONTENT_TYPE"] = DEFAULT_APPLICATION_CONTENT_TYPE
-            environment_map["CONTENT_LENGTH"] = str(request_contents_length)
+            # sets the cgi properties in the environment map
+            environment_map[SERVER_SOFTWARE_VALUE] = SERVER_IDENTIFIER
+            environment_map[SERVER_NAME_VALUE] = ""
+            environment_map[GATEWAY_INTERFACE_VALUE] = GATEWAY_INTERFACE_VALUE
+            environment_map[SERVER_PROTOCOL_VALUE] = request_protocol_version
+            environment_map[SERVER_PORT_VALUE] = str(request_port)
+            environment_map[REQUEST_METHOD_VALUE] = request_operation_type
+            environment_map[PATH_INFO_VALUE] = request_filename
+            environment_map[PATH_TRANSLATED_VALUE] = request_filename
+            environment_map[SCRIPT_NAME_VALUE] = request_filename
+            environment_map[QUERY_STRING_VALUE] = request_arguments
+            environment_map[REMOTE_HOST_VALUE] = client_http_address
+            environment_map[REMOTE_ADDR_VALUE] = client_http_address
+            environment_map[CONTENT_TYPE_VALUE] = DEFAULT_APPLICATION_CONTENT_TYPE
+            environment_map[CONTENT_LENGTH_VALUE] = str(request_contents_length)
 
             # resets the python path to avoid collisions
-            environment_map["PYTHONPATH"] = ""
+            environment_map[PYTHONPATH_VALUE] = ""
 
             # iterates over all the environment values and keys
             for environment_key, environment_value in environment_map.items():
@@ -206,6 +252,9 @@ class MainServiceHttpCgiHandler:
 
             # retrieves the standard output data and the standard error data
             stdout_data, stderr_data = process.communicate(request_contents)
+
+            # replaces the extra carriage returns, normalizing the data
+            stdout_data = stdout_data.replace("\r\r\n", "\r\n")
 
             # in case there is contents in the standard error data
             if not stderr_data == "":
@@ -252,7 +301,7 @@ class MainServiceHttpCgiHandler:
                 raise main_service_http_cgi_handler_exceptions.InvalidCgiHeader("problem parsing the cgi header")
 
             # retrieves the content type
-            content_type = headers_map.get(CONTENT_TYPE_VALUE, DEFAULT_CONTENT_TYPE)
+            content_type = headers_map.get(CONTENT_TYPE_HEADER_VALUE, DEFAULT_CONTENT_TYPE)
 
             # retrieves the status
             status = headers_map.get(STATUS_VALUE, DEFAULT_STATUS)
