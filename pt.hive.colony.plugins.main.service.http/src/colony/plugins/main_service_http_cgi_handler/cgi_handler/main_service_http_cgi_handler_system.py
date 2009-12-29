@@ -55,6 +55,9 @@ STATUS_VALUE = "Status"
 DEFAULT_CONTENT_TYPE = "text/plain"
 """ The default content type """
 
+DEFAULT_APPLICATION_CONTENT_TYPE = "application/x-www-form-urlencoded"
+""" The default application content type """
+
 DEFAULT_STATUS = 200
 """ The default status """
 
@@ -63,6 +66,9 @@ DEFAULT_PATH = "~/cgi-bin"
 
 WINDOWS_CONTENT_HANDLERS_MAP = {"py" : "python.exe"}
 """ The windows content handlers map """
+
+GATEWAY_INTERFACE_VALUE = "CGI/1.0"
+""" The gateway interface value """
 
 class MainServiceHttpCgiHandler:
     """
@@ -135,7 +141,7 @@ class MainServiceHttpCgiHandler:
 
             environment_map["SERVER_SOFTWARE"] = "colony_http"
             environment_map["SERVER_NAME"] = "localhost"
-            environment_map["GATEWAY_INTERFACE"] = "CGI/1.0"
+            environment_map["GATEWAY_INTERFACE"] = GATEWAY_INTERFACE_VALUE
             environment_map["SERVER_PROTOCOL"] = "HTTP/1.1"
             environment_map["SERVER_PORT"] = "80"
             environment_map["REQUEST_METHOD"] = request.operation_type
@@ -145,7 +151,7 @@ class MainServiceHttpCgiHandler:
             environment_map["QUERY_STRING"] = ""
             environment_map["REMOTE_HOST"] = "localhost"
             environment_map["REMOTE_ADDR"] = "127.0.0.1"
-            environment_map["CONTENT_TYPE"] = "application/x-www-form-urlencoded"
+            environment_map["CONTENT_TYPE"] = DEFAULT_APPLICATION_CONTENT_TYPE
             environment_map["CONTENT_LENGTH"] = str(request_contents_length)
 
             # resets the python path to avoid collisions
@@ -172,36 +178,44 @@ class MainServiceHttpCgiHandler:
                 # raises the cgi script error exception
                 raise main_service_http_cgi_handler_exceptions.CgiScriptError(stderr_data)
 
-            # splits the standard output data
-            stdout_data_splitted = stdout_data.split("\r\n\r\n")
+            try:
+                # splits the standard output data
+                stdout_data_splitted = stdout_data.split("\r\n\r\n")
 
-            # retrieves the header string from the first part
-            # of the standard output data
-            header_string = stdout_data_splitted[0]
+                # retrieves the header string from the first part
+                # of the standard output data
+                header_string = stdout_data_splitted[0]
 
-            # retrieves the contents joining the second part
-            # of the splitted standard output data
-            contents = "".join(stdout_data_splitted[1:])
+                # retrieves the contents joining the second part
+                # of the splitted standard output data
+                contents = "".join(stdout_data_splitted[1:])
+            except:
+                # raises the invalid cgi data exception
+                raise main_service_http_cgi_handler_exceptions.InvalidCgiData("problem parsing the cgi data")
 
-            # splits the header string retrieving the headers list
-            headers_list = header_string.split("\r\n")
+            try:
+                # splits the header string retrieving the headers list
+                headers_list = header_string.split("\r\n")
 
-            # creates the headers map
-            headers_map = {}
+                # creates the headers map
+                headers_map = {}
 
-            # iterates over all the headers in the headers list
-            for header in headers_list:
-                # retrieves the header name and value spliting the header
-                header_name, header_value = header.split(":")
+                # iterates over all the headers in the headers list
+                for header in headers_list:
+                    # retrieves the header name and value spliting the header
+                    header_name, header_value = header.split(":")
 
-                # strips the header name
-                header_name_stripped = header_name.strip()
+                    # strips the header name
+                    header_name_stripped = header_name.strip()
 
-                # strips the header value
-                header_value_stripped = header_value.strip()
+                    # strips the header value
+                    header_value_stripped = header_value.strip()
 
-                # sets the header value in the headers map
-                headers_map[header_name_stripped] = header_value_stripped
+                    # sets the header value in the headers map
+                    headers_map[header_name_stripped] = header_value_stripped
+            except:
+                # raises the invalid cgi header exception
+                raise main_service_http_cgi_handler_exceptions.InvalidCgiHeader("problem parsing the cgi header")
 
             # retrieves the content type
             content_type = headers_map.get(CONTENT_TYPE_VALUE, DEFAULT_CONTENT_TYPE)
