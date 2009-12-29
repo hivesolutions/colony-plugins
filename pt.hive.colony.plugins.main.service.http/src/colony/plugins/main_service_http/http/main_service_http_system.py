@@ -569,7 +569,7 @@ class HttpClientServiceTask:
         message = string_buffer_util.StringBuffer()
 
         # creates a request object
-        request = HttpRequest(self.content_type_charset)
+        request = HttpRequest(self, self.content_type_charset)
 
         # creates the start line loaded flag
         start_line_loaded = False
@@ -1033,6 +1033,9 @@ class HttpRequest:
     The http request class.
     """
 
+    http_client_service_task = None
+    """ The http client service task """
+
     operation_type = "none"
     """ The operation type """
 
@@ -1044,6 +1047,9 @@ class HttpRequest:
 
     handler_path = "none"
     """ The handler path """
+
+    arguments = "none"
+    """ The arguments """
 
     protocol_version = "none"
     """ The protocol version """
@@ -1096,7 +1102,8 @@ class HttpRequest:
     properties = {}
     """ The properties """
 
-    def __init__(self, content_type_charset = DEFAULT_CHARSET):
+    def __init__(self, http_client_service_task = None, content_type_charset = DEFAULT_CHARSET):
+        self.http_client_service_task = http_client_service_task
         self.content_type_charset = content_type_charset
 
         self.request_time = time.time()
@@ -1127,10 +1134,10 @@ class HttpRequest:
             return
 
         # retrieves the arguments from the path splitted
-        arguments = path_splitted[1]
+        self.arguments = path_splitted[1]
 
         # retrieves the attribute fields list
-        attribute_fields_list = arguments.split("&")
+        attribute_fields_list = self.arguments.split("&")
 
         # iterates over all the attribute fields
         for attribute_field in attribute_fields_list:
@@ -1271,6 +1278,9 @@ class HttpRequest:
 
     def get_handler_path(self):
         return self.handler_path
+
+    def get_arguments(self):
+        return self.arguments
 
     def get_content_type_charset(self):
         return self.content_type_charset

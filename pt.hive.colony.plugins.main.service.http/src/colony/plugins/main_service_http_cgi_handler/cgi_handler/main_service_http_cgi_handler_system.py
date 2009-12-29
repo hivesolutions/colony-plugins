@@ -108,6 +108,24 @@ class MainServiceHttpCgiHandler:
         # retrieves the request file name
         request_filename = request.filename
 
+        # retrieves the request http client service task
+        request_http_client_service_task = request.http_client_service_task
+
+        # retrieves the request operation type
+        request_operation_type = request.operation_type
+
+        # retrieves the request protocol version
+        request_protocol_version = request.protocol_version
+
+        # retrieves the request arguments
+        request_arguments = request.arguments
+
+        # retrieves the request http address
+        request_http_address = request_http_client_service_task.http_address
+
+        # retrieves the client hostname and port
+        client_http_address, _client_http_port = request_http_address
+
         # retrieves the operative system name
         os_name = os.name
 
@@ -142,15 +160,15 @@ class MainServiceHttpCgiHandler:
             environment_map["SERVER_SOFTWARE"] = "colony_http"
             environment_map["SERVER_NAME"] = "localhost"
             environment_map["GATEWAY_INTERFACE"] = GATEWAY_INTERFACE_VALUE
-            environment_map["SERVER_PROTOCOL"] = "HTTP/1.1"
+            environment_map["SERVER_PROTOCOL"] = "HTTP/" + request_protocol_version
             environment_map["SERVER_PORT"] = "80"
-            environment_map["REQUEST_METHOD"] = request.operation_type
-            environment_map["PATH_INFO"] = ""
-            environment_map["PATH_TRANSLATED"] = ""
-            environment_map["SCRIPT_NAME"] = "test"
-            environment_map["QUERY_STRING"] = ""
-            environment_map["REMOTE_HOST"] = "localhost"
-            environment_map["REMOTE_ADDR"] = "127.0.0.1"
+            environment_map["REQUEST_METHOD"] = request_operation_type
+            environment_map["PATH_INFO"] = request_filename
+            environment_map["PATH_TRANSLATED"] = request_filename
+            environment_map["SCRIPT_NAME"] = request_filename
+            environment_map["QUERY_STRING"] = request_arguments
+            environment_map["REMOTE_HOST"] = client_http_address
+            environment_map["REMOTE_ADDR"] = client_http_address
             environment_map["CONTENT_TYPE"] = DEFAULT_APPLICATION_CONTENT_TYPE
             environment_map["CONTENT_LENGTH"] = str(request_contents_length)
 
