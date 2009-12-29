@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
+import types
 import subprocess
 
 import main_service_http_cgi_handler_exceptions
@@ -93,28 +94,38 @@ class MainServiceHttpCgiHandler:
         request_contents_length = len(request_contents)
 
         # retrieves the environment map
-        enviroment_map = os.environ
+        environment_map = os.environ
 
-        enviroment_map["SERVER_SOFTWARE"] = "colony_http"
-        enviroment_map["SERVER_NAME"] = "localhost"
-        enviroment_map["GATEWAY_INTERFACE"] = "CGI/1.0"
-        enviroment_map["SERVER_PROTOCOL"] = "HTTP/1.1"
-        enviroment_map["SERVER_PORT"] = "80"
-        enviroment_map["REQUEST_METHOD"] = request.operation_type
-        enviroment_map["PATH_INFO"] = ""
-        enviroment_map["PATH_TRANSLATED"] = ""
-        enviroment_map["SCRIPT_NAME"] = "test"
-        enviroment_map["QUERY_STRING"] = ""
-        enviroment_map["REMOTE_HOST"] = "localhost"
-        enviroment_map["REMOTE_ADDR"] = "127.0.0.1"
-        enviroment_map["CONTENT_TYPE"] = "application/x-www-form-urlencoded"
-        enviroment_map["CONTENT_LENGTH"] = str(request_contents_length)
+        environment_map["SERVER_SOFTWARE"] = "colony_http"
+        environment_map["SERVER_NAME"] = "localhost"
+        environment_map["GATEWAY_INTERFACE"] = "CGI/1.0"
+        environment_map["SERVER_PROTOCOL"] = "HTTP/1.1"
+        environment_map["SERVER_PORT"] = "80"
+        environment_map["REQUEST_METHOD"] = request.operation_type
+        environment_map["PATH_INFO"] = ""
+        environment_map["PATH_TRANSLATED"] = ""
+        environment_map["SCRIPT_NAME"] = "test"
+        environment_map["QUERY_STRING"] = ""
+        environment_map["REMOTE_HOST"] = "localhost"
+        environment_map["REMOTE_ADDR"] = "127.0.0.1"
+        environment_map["CONTENT_TYPE"] = "application/x-www-form-urlencoded"
+        environment_map["CONTENT_LENGTH"] = str(request_contents_length)
+
+        # iterates over all the environment values and keys
+        for environment_key, environment_value in environment_map.items():
+            # retrieves the environment value type
+            environment_value_type = type(environment_value)
+
+            # in case the environment value type is not string
+            if not environment_value_type == types.StringType:
+                # sets the string value in the environment map
+                environment_map[environment_key] = str(environment_value)
 
         # creates the process
-        process = subprocess.Popen("C:/Programs/Python26/python.exe c:/script.cgi", stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, shell = True, env = enviroment_map)
+        process = subprocess.Popen("C:/Programs/Python26/python.exe c:/script.cgi", stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, shell = True, env = environment_map)
 
         # retrieves the standard output data and the standard error data
-        stdout_data, _stderr_data =  process.communicate(request_contents)
+        stdout_data, _stderr_data = process.communicate(request_contents)
 
         # splits the standard output data
         stdout_data_splitted = stdout_data.split("\r\n\r\n")
