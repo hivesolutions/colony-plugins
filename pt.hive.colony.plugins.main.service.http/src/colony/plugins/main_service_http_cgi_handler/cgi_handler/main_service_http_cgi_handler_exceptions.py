@@ -70,3 +70,29 @@ class RequestNotHandled(MainServiceHttpCgiHandlerException):
         """
 
         return "Request Not handled: %s" % self.message
+
+class CgiScriptError(MainServiceHttpCgiHandlerException):
+    """
+    The cgi script error class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        MainServiceHttpCgiHandlerException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Cgi script error: %s" % self.message

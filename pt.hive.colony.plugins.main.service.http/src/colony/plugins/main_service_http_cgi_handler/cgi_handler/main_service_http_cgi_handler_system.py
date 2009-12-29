@@ -58,6 +58,12 @@ DEFAULT_CONTENT_TYPE = "text/plain"
 DEFAULT_STATUS = 200
 """ The default status """
 
+DEFAULT_PATH = "~/cgi-bin"
+""" The default path """
+
+WINDOWS_CONTENT_HANDLERS_MAP = {"py" : "python.exe"}
+""" The windows content handlers map """
+
 class MainServiceHttpCgiHandler:
     """
     The main service http cgi handler class.
@@ -93,85 +99,127 @@ class MainServiceHttpCgiHandler:
         # retrieves the request contents length
         request_contents_length = len(request_contents)
 
-        # retrieves the environment map
-        environment_map = os.environ
+        # retrieves the request file name
+        request_filename = request.filename
 
-        environment_map["SERVER_SOFTWARE"] = "colony_http"
-        environment_map["SERVER_NAME"] = "localhost"
-        environment_map["GATEWAY_INTERFACE"] = "CGI/1.0"
-        environment_map["SERVER_PROTOCOL"] = "HTTP/1.1"
-        environment_map["SERVER_PORT"] = "80"
-        environment_map["REQUEST_METHOD"] = request.operation_type
-        environment_map["PATH_INFO"] = ""
-        environment_map["PATH_TRANSLATED"] = ""
-        environment_map["SCRIPT_NAME"] = "test"
-        environment_map["QUERY_STRING"] = ""
-        environment_map["REMOTE_HOST"] = "localhost"
-        environment_map["REMOTE_ADDR"] = "127.0.0.1"
-        environment_map["CONTENT_TYPE"] = "application/x-www-form-urlencoded"
-        environment_map["CONTENT_LENGTH"] = str(request_contents_length)
+        # retrieves the operative system name
+        os_name = os.name
 
-        # iterates over all the environment values and keys
-        for environment_key, environment_value in environment_map.items():
-            # retrieves the environment value type
-            environment_value_type = type(environment_value)
+        # in case the operative system is windows
+        if os_name == "nt" or os_name == "dos":
+            # retrieves the request file extension
+            request_file_extension = request_filename.split(".")[-1]
 
-            # in case the environment value type is not string
-            if not environment_value_type == types.StringType:
-                # sets the string value in the environment map
-                environment_map[environment_key] = str(environment_value)
+            # sets the windows content handler
+            handler = WINDOWS_CONTENT_HANDLERS_MAP.get(request_file_extension, "")
+        else:
+            # sets the empty handler (default)
+            handler = ""
 
-        # creates the process
-        process = subprocess.Popen("C:/Programs/Python26/python.exe c:/script.cgi", stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, shell = True, env = environment_map)
+        # sets the base directory for file search
+        base_directory = request.properties.get("base_path", DEFAULT_PATH)
 
-        # retrieves the standard output data and the standard error data
-        stdout_data, _stderr_data = process.communicate(request_contents)
+        # retrieves the real base directory
+        real_base_directory = self.main_service_http_cgi_handler_plugin.resource_manager_plugin.get_real_string_value(base_directory)
 
-        # splits the standard output data
-        stdout_data_splitted = stdout_data.split("\r\n\r\n")
+        # constructs the complete path
+        complete_path = real_base_directory + "/" + request_filename
 
-        # retrieves the header string from the first part
-        # of the standard output data
-        header_string = stdout_data_splitted[0]
+        # creates the complete command
+        complete_command = handler + " " + complete_path
 
-        # retrieves the contents joining the second part
-        # of the splitted standard output data
-        contents = "".join(stdout_data_splitted[1:])
+        # in case the path exists
+        if os.path.exists(complete_path):
+            # retrieves the environment map
+            environment_map = os.environ
 
-        # splits the header string retrieving the headers list
-        headers_list = header_string.split("\r\n")
+            environment_map["SERVER_SOFTWARE"] = "colony_http"
+            environment_map["SERVER_NAME"] = "localhost"
+            environment_map["GATEWAY_INTERFACE"] = "CGI/1.0"
+            environment_map["SERVER_PROTOCOL"] = "HTTP/1.1"
+            environment_map["SERVER_PORT"] = "80"
+            environment_map["REQUEST_METHOD"] = request.operation_type
+            environment_map["PATH_INFO"] = ""
+            environment_map["PATH_TRANSLATED"] = ""
+            environment_map["SCRIPT_NAME"] = "test"
+            environment_map["QUERY_STRING"] = ""
+            environment_map["REMOTE_HOST"] = "localhost"
+            environment_map["REMOTE_ADDR"] = "127.0.0.1"
+            environment_map["CONTENT_TYPE"] = "application/x-www-form-urlencoded"
+            environment_map["CONTENT_LENGTH"] = str(request_contents_length)
 
-        # creates the headers map
-        headers_map = {}
+            # resets the python path to avoid collisions
+            environment_map["PYTHONPATH"] = ""
 
-        # iterates over all the headers in the headers list
-        for header in headers_list:
-            # retrieves the header name and value spliting the header
-            header_name, header_value = header.split(":")
+            # iterates over all the environment values and keys
+            for environment_key, environment_value in environment_map.items():
+                # retrieves the environment value type
+                environment_value_type = type(environment_value)
 
-            # strips the header name
-            header_name_stripped = header_name.strip()
+                # in case the environment value type is not string
+                if not environment_value_type == types.StringType:
+                    # sets the string value in the environment map
+                    environment_map[environment_key] = str(environment_value)
 
-            # strips the header value
-            header_value_stripped = header_value.strip()
+            # creates the process executing the command
+            process = subprocess.Popen(complete_command, stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, shell = True, env = environment_map)
 
-            # sets the header value in the headers map
-            headers_map[header_name_stripped] = header_value_stripped
+            # retrieves the standard output data and the standard error data
+            stdout_data, stderr_data = process.communicate(request_contents)
 
-        # retrieves the content type
-        content_type = headers_map.get(CONTENT_TYPE_VALUE, DEFAULT_CONTENT_TYPE)
+            # in case there is contents in the standard error data
+            if not stderr_data == "":
+                # raises the cgi script error exception
+                raise main_service_http_cgi_handler_exceptions.CgiScriptError(stderr_data)
 
-        # retrieves the status
-        status = headers_map.get(STATUS_VALUE, DEFAULT_STATUS)
+            # splits the standard output data
+            stdout_data_splitted = stdout_data.split("\r\n\r\n")
 
-        # writes the contents to the request
-        request.write(contents)
+            # retrieves the header string from the first part
+            # of the standard output data
+            header_string = stdout_data_splitted[0]
 
-        # sets the request content type
-        request.content_type = content_type
+            # retrieves the contents joining the second part
+            # of the splitted standard output data
+            contents = "".join(stdout_data_splitted[1:])
 
-        # sets the request status code
-        request.status_code = status
+            # splits the header string retrieving the headers list
+            headers_list = header_string.split("\r\n")
+
+            # creates the headers map
+            headers_map = {}
+
+            # iterates over all the headers in the headers list
+            for header in headers_list:
+                # retrieves the header name and value spliting the header
+                header_name, header_value = header.split(":")
+
+                # strips the header name
+                header_name_stripped = header_name.strip()
+
+                # strips the header value
+                header_value_stripped = header_value.strip()
+
+                # sets the header value in the headers map
+                headers_map[header_name_stripped] = header_value_stripped
+
+            # retrieves the content type
+            content_type = headers_map.get(CONTENT_TYPE_VALUE, DEFAULT_CONTENT_TYPE)
+
+            # retrieves the status
+            status = headers_map.get(STATUS_VALUE, DEFAULT_STATUS)
+
+            # writes the contents to the request
+            request.write(contents)
+
+            # sets the request content type
+            request.content_type = content_type
+
+            # sets the request status code
+            request.status_code = status
+
+            # returns
+            return
 
         # raises the request not handled exception
-        #raise main_service_http_cgi_handler_exceptions.RequestNotHandled("no cgi handler could handle the request")
+        raise main_service_http_cgi_handler_exceptions.RequestNotHandled("no cgi handler could handle the request")
