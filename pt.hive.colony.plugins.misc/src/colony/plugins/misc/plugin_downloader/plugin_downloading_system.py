@@ -41,8 +41,6 @@ import os
 import gc
 import xml.dom.minidom
 
-import colony.plugins.plugin_system
-
 PLUGINS_DIRECTORY = "colony/plugins"
 """ The plugins directory """
 
