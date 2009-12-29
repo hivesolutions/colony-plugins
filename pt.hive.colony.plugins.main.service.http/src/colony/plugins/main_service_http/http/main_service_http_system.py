@@ -76,7 +76,7 @@ SERVER_NAME = "Hive-Colony-Web"
 SERVER_VERSION = "1.0.0"
 """ The server version """
 
-ENVIRONMENT_VERSION = str(sys.version_info[0]) + "." +  str(sys.version_info[1]) + "." + str(sys.version_info[2]) + "-" + str(sys.version_info[3])
+ENVIRONMENT_VERSION = str(sys.version_info[0]) + "." + str(sys.version_info[1]) + "." + str(sys.version_info[2]) + "-" + str(sys.version_info[3])
 """ The environment version """
 
 SERVER_IDENTIFIER = SERVER_NAME + "/" + SERVER_VERSION + " (Python/" + sys.platform + "/" + ENVIRONMENT_VERSION + ")"
@@ -463,6 +463,7 @@ class HttpClientServiceTask:
         # sets the request timeout
         request_timeout = REQUEST_TIMEOUT
 
+        # iterates indefinitely
         while True:
             try:
                 # retrieves the request
@@ -589,6 +590,7 @@ class HttpClientServiceTask:
 
             # in case no valid data was received
             if data == "":
+                # raises the http invalid data exception
                 raise main_service_http_exceptions.HttpInvalidDataException("empty data received")
 
             # writes the data to the string buffer
@@ -724,9 +726,9 @@ class HttpClientServiceTask:
         valid_charset = False
 
         # in case the content type is defined
-        if "Content-Type" in request.headers_map:
+        if CONTENT_TYPE_VALUE in request.headers_map:
             # retrieves the content type
-            content_type = request.headers_map["Content-Type"]
+            content_type = request.headers_map[CONTENT_TYPE_VALUE]
 
             # splits the content type
             content_type_splited = content_type.split(";")
@@ -1210,11 +1212,11 @@ class HttpRequest:
         if self.content_type:
             result.write(CONTENT_TYPE_VALUE + ": " + self.content_type + "\r\n")
         if self.encoded:
-            result.write(CONTENT_ENCODING_VALUE + ": " + self.encoding_name +"\r\n")
+            result.write(CONTENT_ENCODING_VALUE + ": " + self.encoding_name + "\r\n")
         if self.chunked_encoding:
             result.write(TRANSFER_ENCODING_VALUE + ": " + CHUNKED_VALUE + "\r\n")
         if not self.chunked_encoding:
-            result.write(CONTENT_LENGTH_VALUE  + ": " + str(content_length) + "\r\n")
+            result.write(CONTENT_LENGTH_VALUE + ": " + str(content_length) + "\r\n")
         result.write(SERVER_VALUE + ": " + SERVER_IDENTIFIER + "\r\n")
         result.write(CONNECTION_VALUE + ": " + KEEP_ALIVE_VALUE + "\r\n")
         result.write("\r\n")
