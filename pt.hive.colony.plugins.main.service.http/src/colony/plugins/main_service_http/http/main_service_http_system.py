@@ -360,7 +360,7 @@ class MainServiceHttp:
                 http_connection, http_address = self.http_socket.accept()
 
                 # creates a new http client service task, with the given http connection, address, encoding and encoding handler
-                http_client_service_task = HttpClientServiceTask(self.main_service_http_plugin, http_connection, http_address, encoding, service_configuration, encoding_handler)
+                http_client_service_task = HttpClientServiceTask(self.main_service_http_plugin, http_connection, http_address, port, encoding, service_configuration, encoding_handler)
 
                 # creates a new task descriptor
                 task_descriptor = task_descriptor_class(start_method = http_client_service_task.start,
@@ -429,6 +429,9 @@ class HttpClientServiceTask:
     http_address = None
     """ The http address """
 
+    port = None
+    """ The http address """
+
     encoding = None
     """ The encoding """
 
@@ -441,10 +444,11 @@ class HttpClientServiceTask:
     content_type_charset = DEFAULT_CHARSET
     """ The content type charset """
 
-    def __init__(self, main_service_http_plugin, http_connection, http_address, encoding, service_configuration, encoding_handler):
+    def __init__(self, main_service_http_plugin, http_connection, http_address, port, encoding, service_configuration, encoding_handler):
         self.main_service_http_plugin = main_service_http_plugin
         self.http_connection = http_connection
         self.http_address = http_address
+        self.port = port
         self.encoding = encoding
         self.service_configuration = service_configuration
         self.encoding_handler = encoding_handler

@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
+import sys
 import types
 import subprocess
 
@@ -51,6 +52,9 @@ CONTENT_TYPE_VALUE = "Content-type"
 
 STATUS_VALUE = "Status"
 """ The status value """
+
+GATEWAY_INTERFACE_VALUE = "CGI/1.0"
+""" The gateway interface value """
 
 DEFAULT_CONTENT_TYPE = "text/plain"
 """ The default content type """
@@ -67,8 +71,17 @@ DEFAULT_PATH = "~/cgi-bin"
 WINDOWS_CONTENT_HANDLERS_MAP = {"py" : "python.exe"}
 """ The windows content handlers map """
 
-GATEWAY_INTERFACE_VALUE = "CGI/1.0"
-""" The gateway interface value """
+SERVER_NAME = "Hive-Colony-Web"
+""" The server name """
+
+SERVER_VERSION = "1.0.0"
+""" The server version """
+
+ENVIRONMENT_VERSION = str(sys.version_info[0]) + "." + str(sys.version_info[1]) + "." + str(sys.version_info[2]) + "-" + str(sys.version_info[3])
+""" The environment version """
+
+SERVER_IDENTIFIER = SERVER_NAME + "/" + SERVER_VERSION + " (Python/" + sys.platform + "/" + ENVIRONMENT_VERSION + ")"
+""" The server identifier """
 
 class MainServiceHttpCgiHandler:
     """
@@ -123,6 +136,9 @@ class MainServiceHttpCgiHandler:
         # retrieves the request http address
         request_http_address = request_http_client_service_task.http_address
 
+        # retrieves the request port
+        request_port = request_http_client_service_task.port
+
         # retrieves the client hostname and port
         client_http_address, _client_http_port = request_http_address
 
@@ -157,11 +173,11 @@ class MainServiceHttpCgiHandler:
             # retrieves the environment map
             environment_map = os.environ
 
-            environment_map["SERVER_SOFTWARE"] = "colony_http"
-            environment_map["SERVER_NAME"] = "localhost"
+            environment_map["SERVER_SOFTWARE"] = SERVER_IDENTIFIER
+            environment_map["SERVER_NAME"] = ""
             environment_map["GATEWAY_INTERFACE"] = GATEWAY_INTERFACE_VALUE
-            environment_map["SERVER_PROTOCOL"] = "HTTP/" + request_protocol_version
-            environment_map["SERVER_PORT"] = "80"
+            environment_map["SERVER_PROTOCOL"] = request_protocol_version
+            environment_map["SERVER_PORT"] = str(request_port)
             environment_map["REQUEST_METHOD"] = request_operation_type
             environment_map["PATH_INFO"] = request_filename
             environment_map["PATH_TRANSLATED"] = request_filename
