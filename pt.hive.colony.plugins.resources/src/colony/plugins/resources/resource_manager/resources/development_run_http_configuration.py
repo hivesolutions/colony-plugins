@@ -89,7 +89,9 @@ configuration = {
                      },
                      "/cgi-bin" : {
                          "handler" : "cgi",
-                         "request_properties" : {}
+                         "request_properties" : {
+                             "base_path" : "${HOME}",
+                         }
                      }
                  }
              }
