@@ -256,8 +256,11 @@ class MainServiceHttpCgiHandler:
             # replaces the extra carriage returns, normalizing the data
             stdout_data = stdout_data.replace("\r\r\n", "\r\n")
 
-            # in case there is contents in the standard error data
-            if not stderr_data == "":
+            # retrieves the return code
+            return_code = process.returncode
+
+            # in case there is a return code different than zero and contents in the standard error data
+            if return_code and not stderr_data == "":
                 # raises the cgi script error exception
                 raise main_service_http_cgi_handler_exceptions.CgiScriptError(stderr_data)
 
