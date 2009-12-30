@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="/web_administration/css/main.css" />
+		<script type="text/javascript" src="/web_administration/js/main.js"></script>
+	</head>
+	<body>
+		<div id="wiki-container">
+			<div id="wiki-header">
+				<div class="turning-page">
+				</div>
+			</div>
+			${include file="teste.txt" /}
+			<div id="wiki-contents">
+				<div class="welcome">
+				</div>
+				<div class="login-panel">
+					<div class="login-box">
+						<input id="login-username" type="text" value="username"/>
+						<input id="login-password" type="password" value="password"/>
+						<img id="login-loading" src="/web_administration/images/loading_animation.gif"/>
+						<div id="login-button" onclick="switchLogin();">Submit</div>
+						<p id="login-registration">Not registered? 
+							<a href="#">Signup now</a>
+						</p>
+					</div>
+				</div>
+			</div>
+			<div id="wiki-footer">
+				<div class="wiki-footer-contents">
+					<div class="logo-image">
+						<a href="http://getcolony.com">
+							<img src="/web_administration/images/powered_by_colony_white.png"/>
+						</a>
+					</div>
+					<div class="separator">
+						<img src="/web_administration/images/separator.png"/>
+					</div>
+					<div class="text-contents">Document provided by colony framework
+						<br/>Copyright 
+						<a href="http://www.hive.pt">Hive Solutions Lda.</a> distributed under 
+						<a href="http://creativecommons.org/licenses/by-sa/3.0"> Creative Commons License</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

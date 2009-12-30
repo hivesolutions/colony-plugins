@@ -37,6 +37,12 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+XHTML_MIME_TYPE = "application/xhtml+xml"
+""" The xhtml mime type """
+
+WEB_ADMINISTRATION_RESOURCES_PATH = "web_administration/administration/resources"
+""" The web administration resources path """
+
 class WebAdministration:
     """
     The web administration class.
@@ -65,7 +71,7 @@ class WebAdministration:
         to the rest service.
         """
 
-        return []
+        return [r"^administrator/.*$"]
 
     def handle_rest_request(self, rest_request):
         """
@@ -77,4 +83,51 @@ class WebAdministration:
         @return: The result of the handling.
         """
 
-        pass
+        # 1º preciso de ver se ja estou autenticado senao estiver tenho de redirecionar
+        # tenho de ver se consigo controlar isso
+        # 2º preciso de ver em que passou estou
+
+        # retrieves the request
+        request = rest_request.get_request()
+
+        # retrieves the rest path list
+        path_list = rest_request.get_path_list()
+
+        # retrieves the rest encoder plugins
+        rest_encoder_plugins = rest_request.get_rest_encoder_plugins()
+
+        # retrieves the rest encoder name
+        encoder_name = rest_request.get_encoder_name()
+
+        # retrieves the plugin manager
+        plugin_manager = self.web_administration_plugin.manager
+
+        # retrieves the template engine manager plugin
+        template_engine_manager_plugin = self.web_administration_plugin.template_engine_manager_plugin
+
+        # retrieves the web administration plugin path
+        web_administration_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_administration_plugin.id)
+
+        # creates the template file path
+        template_file_path = web_administration_plugin_path + "/" + WEB_ADMINISTRATION_RESOURCES_PATH + "/" + "web_administrator_login.xhtml"
+
+        # parses the template file path
+        template_file = template_engine_manager_plugin.parse_file_path(template_file_path)
+
+        # processes the template file
+        processed_template_file = template_file.process()
+
+        # decodes the processed template file into a unicode object
+        processed_template_file_decoded = processed_template_file.decode("utf-8")
+
+        # sets the content type for the rest request
+        rest_request.set_content_type(XHTML_MIME_TYPE)
+
+        # sets the content type for the rest request
+        rest_request.set_result_translated(processed_template_file_decoded)
+
+        # flushes the rest request
+        rest_request.flush()
+
+        # returns true
+        return True
