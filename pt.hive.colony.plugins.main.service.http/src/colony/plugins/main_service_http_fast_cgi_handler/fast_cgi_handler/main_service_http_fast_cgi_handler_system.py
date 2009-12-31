@@ -562,7 +562,7 @@ class FastCgiConnection:
             self.socket.setblocking(0)
 
             # runs the select in the http connection, with timeout
-            selected_values = select.select([self.socket], [], [], 10)
+            selected_values = select.select([self.socket], [], [], request_timeout)
 
             # sets the connection to blocking mode
             self.socket.setblocking(1)
@@ -572,12 +572,8 @@ class FastCgiConnection:
         if selected_values == ([], [], []):
             self.socket.close()
             raise main_service_http_fast_cgi_handler_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
-        try:
-            # receives the data in chunks
-            data = self.socket.recv(chunk_size)
-        except:
-            raise main_service_http_fast_cgi_handler_exceptions.ClientRequestTimeout("timeout")
-
+        # receives the data in chunks
+        data = self.socket.recv(chunk_size)
         # returns the data
         return data
 
