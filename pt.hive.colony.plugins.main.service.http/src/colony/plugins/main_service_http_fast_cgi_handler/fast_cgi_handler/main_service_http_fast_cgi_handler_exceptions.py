@@ -71,6 +71,84 @@ class RequestNotHandled(MainServiceHttpFastCgiHandlerException):
 
         return "Request Not handled: %s" % self.message
 
+class ServerRequestTimeout(MainServiceHttpFastCgiHandlerException):
+    """
+    The server request timeout clas.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        MainServiceHttpFastCgiHandlerException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Server request timeout: %s" % self.message
+
+class ClientRequestTimeout(MainServiceHttpFastCgiHandlerException):
+    """
+    The client request timeout clas.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        MainServiceHttpFastCgiHandlerException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Client request timeout: %s" % self.message
+
+class RequestClosed(MainServiceHttpFastCgiHandlerException):
+    """
+    The request closed clas.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        MainServiceHttpFastCgiHandlerException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Request closed: %s" % self.message
+
 class InvalidFastCgiData(MainServiceHttpFastCgiHandlerException):
     """
     The invalid fast cgi data class.

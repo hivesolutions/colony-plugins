@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import sys
 import struct
 import socket
+import select
 import threading
 
 import colony.libs.string_buffer_util
@@ -210,6 +211,9 @@ DEFAULT_CONNECTION_TYPE = INTERNET_CONNECTION_TYPE
 
 DEFAULT_CONNECTION_ARGUMENTS = ("127.0.0.1", 9000)
 """ The default connection arguments type """
+
+DEFAULT_REQUEST_TIEMOUT = 100
+""" The default request timeout """
 
 class MainServiceHttpFastCgiHandler:
     """
@@ -552,6 +556,31 @@ class FastCgiConnection:
         # returns the record
         return record
 
+    def _recv(self, chunk_size, request_timeout = DEFAULT_REQUEST_TIEMOUT):
+        try:
+            # sets the connection to non blocking mode
+            self.socket.setblocking(0)
+
+            # runs the select in the http connection, with timeout
+            selected_values = select.select([self.socket], [], [], 10)
+
+            # sets the connection to blocking mode
+            self.socket.setblocking(1)
+        except:
+            raise main_service_http_fast_cgi_handler_exceptions.RequestClosed("invalid socket")
+
+        if selected_values == ([], [], []):
+            self.socket.close()
+            raise main_service_http_fast_cgi_handler_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
+        try:
+            # receives the data in chunks
+            data = self.socket.recv(chunk_size)
+        except:
+            raise main_service_http_fast_cgi_handler_exceptions.ClientRequestTimeout("timeout")
+
+        # returns the data
+        return data
+
     def _get_record(self, target_request_id):
         """
         Retrieves a record from the socket
@@ -565,18 +594,18 @@ class FastCgiConnection:
         # iterates indefinitely
         while True:
             # retrieves the header data
-            header_data = self.socket.recv(FCGI_HEADER_LENGTH)
+            header_data = self._recv(FCGI_HEADER_LENGTH)
 
             # unpacks the header data
             version, type, request_id, content_length, padding_length = struct.unpack(FCGI_HEADER_STRUCT, header_data)
 
             # retrieves the contents
-            contents = self.socket.recv(content_length)
+            contents = self._recv(content_length)
 
             # in case there is padding
             if padding_length:
                 # retrieves the padding
-                self.socket.recv(padding_length)
+                self._recv(padding_length)
 
             # creates the record as a tuple
             record = (version, type, request_id, content_length, padding_length, contents)
