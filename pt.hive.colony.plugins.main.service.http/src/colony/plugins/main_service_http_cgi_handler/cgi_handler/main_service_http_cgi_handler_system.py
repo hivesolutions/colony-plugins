@@ -53,11 +53,8 @@ CONTENT_TYPE_HEADER_VALUE = "Content-type"
 STATUS_VALUE = "Status"
 """ The status value """
 
-GATEWAY_INTERFACE_VALUE = "CGI/1.0"
-""" The gateway interface value """
-
-DEFAULT_CONTENT_TYPE = "text/plain"
-""" The default content type """
+GATEWAY_INTERFACE = "CGI/1.0"
+""" The gateway interface """
 
 SERVER_SOFTWARE_VALUE = "SERVER_SOFTWARE"
 """ The server software value """
@@ -106,6 +103,9 @@ PYTHONPATH_VALUE = "PYTHONPATH"
 
 DEFAULT_APPLICATION_CONTENT_TYPE = "application/x-www-form-urlencoded"
 """ The default application content type """
+
+DEFAULT_CONTENT_TYPE = "text/plain"
+""" The default content type """
 
 DEFAULT_STATUS = 200
 """ The default status """
@@ -221,7 +221,7 @@ class MainServiceHttpCgiHandler:
             # sets the cgi properties in the environment map
             environment_map[SERVER_SOFTWARE_VALUE] = SERVER_IDENTIFIER
             environment_map[SERVER_NAME_VALUE] = ""
-            environment_map[GATEWAY_INTERFACE_VALUE] = GATEWAY_INTERFACE_VALUE
+            environment_map[GATEWAY_INTERFACE_VALUE] = GATEWAY_INTERFACE
             environment_map[SERVER_PROTOCOL_VALUE] = request_protocol_version
             environment_map[SERVER_PORT_VALUE] = str(request_port)
             environment_map[REQUEST_METHOD_VALUE] = request_operation_type
