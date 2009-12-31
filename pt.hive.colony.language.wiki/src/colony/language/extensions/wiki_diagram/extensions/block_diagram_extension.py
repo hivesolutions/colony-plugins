@@ -71,7 +71,7 @@ CLASS_REGEX = re.compile(CLASS_REGEX_VALUE, re.UNICODE)
 COLSPAN_REGEX = re.compile(COLSPAN_REGEX_VALUE, re.UNICODE)
 """ The colspan regex """
 
-ROW_WIDTH = 100
+ROW_WIDTH = 200
 """ The percent value of the width taken up by each row """
 
 ROW_HEIGHT = 7.0
@@ -252,9 +252,6 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
 
                 # determines the width for the current block with specified colspan
                 block_width = float(colspan) * min_block_width
-
-                # converts the fraction to percentage
-                block_width = (block_width / ROW_WIDTH) * PERCENTAGE_FACTOR
 
                 # determines the height for the current block
                 block_height = ROW_HEIGHT

@@ -47,7 +47,7 @@ import wiki_diagram.wiki_diagram_extension_system
 GENERATOR_TYPE = "diagram"
 """ The generator type """
 
-DEFAULT_WIDTH_VALUE = "500px"
+DEFAULT_WIDTH_VALUE = "100%"
 """ The default width value """
 
 DEFAULT_HEIGHT_VALUE = None
