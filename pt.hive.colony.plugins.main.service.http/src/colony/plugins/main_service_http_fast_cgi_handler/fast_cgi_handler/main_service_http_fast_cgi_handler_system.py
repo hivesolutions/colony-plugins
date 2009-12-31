@@ -564,6 +564,9 @@ class FastCgiConnection:
 
         # iterates indefinitely
         while True:
+            import time
+            time.sleep(10)
+
             # retrieves the header data
             header_data = self.socket.recv(FCGI_HEADER_LENGTH)
 
