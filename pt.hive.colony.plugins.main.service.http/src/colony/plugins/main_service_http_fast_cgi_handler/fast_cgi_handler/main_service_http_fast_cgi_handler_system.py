@@ -199,6 +199,18 @@ INTERNET_CONNECTION_TYPE = 1
 UNIX_CONNECTION_TYPE = 2
 """ The unix connection type """
 
+DEFAULT_HANDLER_TYPE = "local"
+""" The default handler type """
+
+DEFAULT_PATH = "~/fastcgi-bin"
+""" The default path """
+
+DEFAULT_CONNECTION_TYPE = INTERNET_CONNECTION_TYPE
+""" The default connection type """
+
+DEFAULT_CONNECTION_ARGUMENTS = ("127.0.0.1", 9000)
+""" The default connection arguments type """
+
 class MainServiceHttpFastCgiHandler:
     """
     The main service http fast cgi handler class.
@@ -262,8 +274,20 @@ class MainServiceHttpFastCgiHandler:
         # retrieves the client hostname and port
         client_http_address, _client_http_port = request_http_address
 
+        # sets the handler type
+        handler_type = request.properties.get("handler_type", DEFAULT_HANDLER_TYPE)
+
+        # sets the base path
+        base_path = request.properties.get("base_path", DEFAULT_PATH)
+
+        # retrieves the connection type
+        connection_type = request.properties.get("connection_type", DEFAULT_CONNECTION_TYPE)
+
+        # retrieves the connection arguments
+        connection_arguments = request.properties.get("connection_arguments", DEFAULT_CONNECTION_ARGUMENTS)
+
         # retrieves the connection
-        connection = self._get_connection(INTERNET_CONNECTION_TYPE, ("127.0.0.1", 9010))
+        connection = self._get_connection(connection_type, connection_arguments)
 
         # increments the current request id of the connection
         # and retrieves the current request id
