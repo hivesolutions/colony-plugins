@@ -45,7 +45,7 @@ configuration = {
                  "default_content_type_charset" : "utf-8",
                  "preferred_error_handlers" : ["template", "default"],
                  "contexts" : {
-                     "resolution_order" : ["/colony_web/plugins", "/colony_web", "/colony_manager", "/colony_mod_python", "/template_error_handler", "/docs", "/eclipse", "/cgi-bin", "/web_administration"],
+                     "resolution_order" : ["/colony_web/plugins", "/colony_web", "/colony_manager", "/colony_mod_python", "/template_error_handler", "/docs", "/eclipse", "/cgi-bin", "/fastcgi-bin", "/web_administration"],
                      "/colony_web" : {
                          "handler" : "file",
                          "request_properties" : {
@@ -91,6 +91,15 @@ configuration = {
                          "handler" : "cgi",
                          "request_properties" : {
                              "base_path" : "${HOME}",
+                         }
+                     },
+                     "/fastcgi-bin" : {
+                         "handler" : "fast_cgi",
+                         "request_properties" : {
+                             "handler_type" : "local",
+                             "base_path" : "${HOME}",
+                             "connection_type" : 1,
+                             "connection_arguments" : ("localhost", 9010)
                          }
                      },
                      "/web_administration" : {
