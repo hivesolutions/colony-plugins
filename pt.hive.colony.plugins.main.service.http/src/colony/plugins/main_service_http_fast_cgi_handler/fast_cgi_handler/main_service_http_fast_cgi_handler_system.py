@@ -569,12 +569,6 @@ class FastCgiConnection:
         # returns the record
         return record
 
-    def _insert_record_in_buffer(self, record, request_id):
-        if not request_id in self.record_buffer_map:
-            self.record_buffer_map[request_id] = []
-
-        self.record_buffer_map[request_id].insert(0, record)
-
     def increment_request_id(self):
         """
         Increments the requst id.
@@ -665,3 +659,25 @@ class FastCgiConnection:
         """
 
         self.request_id = request_id
+
+    def _insert_record_in_buffer(self, record, request_id):
+        """
+        Inserts a record in buffer, for the given request id.
+
+        @type record: Tuple
+        @param record: The record to be inserted.
+        @type request_id: int
+        @param request_id: The id of the request to be inserted.
+        """
+
+        # in case the request id is not defined in the record
+        # buffer map
+        if not request_id in self.record_buffer_map:
+            # creates a new record list in the record buffer map
+            self.record_buffer_map[request_id] = []
+
+        # retrieves the record list for the request id
+        record_list = self.record_buffer_map[request_id]
+
+        # inserts the record in the record list
+        record_list.insert(0, record)
