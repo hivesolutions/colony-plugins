@@ -509,7 +509,7 @@ class FastCgiConnection:
         # in case the connection is of type unix
         elif self.connection_type == UNIX_CONNECTION_TYPE:
             # creates the socket
-            self.socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            self.socket = socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET)
 
         # connects the socket using the connection arguments
         self.socket.connect(self.connection_arguments)
