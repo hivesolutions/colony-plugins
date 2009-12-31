@@ -50,7 +50,7 @@ GENERATOR_TYPE = "diagram"
 DEFAULT_WIDTH_VALUE = "100%"
 """ The default width value """
 
-DEFAULT_HEIGHT_VALUE = None
+DEFAULT_HEIGHT_VALUE = "30%"
 """ The default height value """
 
 class WikiDiagramExtension(wiki_extension_system.WikiExtension):
