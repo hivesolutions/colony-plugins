@@ -499,7 +499,7 @@ class FastCgiConnection:
 
     def establish_connection(self):
         """
-        Established the connection with the host.
+        Establishes the connection with the host.
         """
 
         # in case the connection is of type internet
