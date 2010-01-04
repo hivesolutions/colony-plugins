@@ -47,11 +47,14 @@ import wiki_diagram.wiki_diagram_extension_system
 GENERATOR_TYPE = "diagram"
 """ The generator type """
 
-DEFAULT_WIDTH_VALUE = "100%"
+DEFAULT_WIDTH_VALUE = None
 """ The default width value """
 
-DEFAULT_HEIGHT_VALUE = "30%"
+DEFAULT_HEIGHT_VALUE = None
 """ The default height value """
+
+HEIGHT_SCALE_FACTOR = 4
+""" The height scale factor """
 
 class WikiDiagramExtension(wiki_extension_system.WikiExtension):
     """
@@ -170,6 +173,9 @@ class WikiDiagramExtension(wiki_extension_system.WikiExtension):
 
             # unpacks the view box dimensions
             view_box_width, view_box_height = viewport_size
+
+            if not node_tag_height:
+                node_tag_height = view_box_height * HEIGHT_SCALE_FACTOR
 
             # creates the vector graphics support
             vector_graphics = wiki_diagram.wiki_diagram_extension_system.ScalableVectorGraphics()

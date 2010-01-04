@@ -71,7 +71,7 @@ CLASS_REGEX = re.compile(CLASS_REGEX_VALUE, re.UNICODE)
 COLSPAN_REGEX = re.compile(COLSPAN_REGEX_VALUE, re.UNICODE)
 """ The colspan regex """
 
-ROW_WIDTH = 200
+ROW_WIDTH = 100
 """ The percent value of the width taken up by each row """
 
 ROW_HEIGHT = 7.0
@@ -94,6 +94,12 @@ SHADOW_DELTA_Y = 0.5
 
 TEXT_PADDING = 1
 """ The padding in percentage to apply to the text """
+
+DEFAULT_STYLE_CLASS = "dark"
+""" The default style class to apply to the blocks """
+
+WIDTH_SCALE_FACTOR = 1.6
+""" The horizontal scale factor, used to compensate the effect of additional columns """
 
 class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagramExtension):
     """
@@ -164,30 +170,45 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
                 block_name =  block_regular_expression_match.group(1)
                 block_options_string = block_regular_expression_match.group(2)
 
+                # creates the options map
+                options = {}
+
+                # initializes the style class with the default value
                 style_class = None
+
+                # initializes the colspan as not defined
                 colspan = None
 
                 if block_options_string:
+                    # tries to match the regular expression for the block options
                     options_regular_expression_match = OPTIONS_REGEX.match(block_options_string)
 
+                    # in case no match occurs, raises an error
                     if not options_regular_expression_match:
+                        # @todo: raise a specific exception
                         raise
 
+                    # retrieves the first capture group, corresponding to the options string itself
                     options_string = options_regular_expression_match.group(1)
 
+                    # in case the options string is found, retrieves the options from it
                     if options_string:
                         class_regular_expression_match = CLASS_REGEX.match(options_string)
+                        # in case the the class is defined
                         if class_regular_expression_match:
+                            # overrides the default style definition
                             style_class = class_regular_expression_match.group(1)
+
+                            # sets the style class in the options map
+                            options["class"] = style_class
 
                         colspan_regular_expression_match = COLSPAN_REGEX.match(options_string)
                         if colspan_regular_expression_match:
+                            # retrieves the colspan from the options match
                             colspan = colspan_regular_expression_match.group(1)
 
-                    options = {"class" : style_class,
-                               "colspan": colspan}
-                else:
-                    options = None
+                            # sets the colspan in the options map
+                            options["colspan"] = colspan
 
                 # creates the block tuple
                 block = (block_name, options)
@@ -202,9 +223,12 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
             # appends the row of blocks to the overall blocks matrix
             blocks.append(row_blocks)
 
+        # calculates the baseline width
+        baseline_width = (max_columns / WIDTH_SCALE_FACTOR) * ROW_WIDTH
+
         for row_blocks in blocks:
             # retrieves the graphics elements for the row
-            row_graphics_elements = self.get_row_graphics_elements(row_blocks, max_columns, baseline_x, baseline_y)
+            row_graphics_elements = self.get_row_graphics_elements(row_blocks, max_columns, baseline_x, baseline_y, baseline_width)
 
             # appends the row graphics element to the graphics element
             graphics_elements.extend(row_graphics_elements)
@@ -213,12 +237,12 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
             baseline_y += ROW_HEIGHT + VERTICAL_SPACING
 
         # creates the view port size
-        viewport_size = (ROW_WIDTH, baseline_y)
+        viewport_size = (baseline_width, baseline_y)
 
         # returns the graphics elements and the viewport size
         return graphics_elements, viewport_size
 
-    def get_row_graphics_elements(self, row_blocks, max_columns, baseline_x, baseline_y):
+    def get_row_graphics_elements(self, row_blocks, max_columns, baseline_x, baseline_y, baseline_width):
         # initializes the row graphics elements
         row_graphics_elements = []
 
@@ -229,7 +253,7 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
         number_columns = len(row_blocks)
 
         # determines the available width (total width minus spacing)
-        available_width = ROW_WIDTH - (HORIZONTAL_SPACING * (number_columns + 1))
+        available_width = baseline_width - (HORIZONTAL_SPACING * (number_columns + 1))
 
         # determines the width of each block (assuming equal size)
         column_block_width = available_width / number_columns
@@ -240,10 +264,10 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
             row_block_title, row_block_options = row_block
 
             if row_block_options:
-                style_class = row_block_options["class"]
-                colspan = row_block_options["colspan"]
+                style_class = row_block_options.get("class", DEFAULT_STYLE_CLASS)
+                colspan = row_block_options.get("colspan", None)
             else:
-                style_class = None
+                style_class = DEFAULT_STYLE_CLASS
                 colspan = None
 
             if colspan:
