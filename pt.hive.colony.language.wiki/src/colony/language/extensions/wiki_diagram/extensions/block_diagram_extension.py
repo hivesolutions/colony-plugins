@@ -92,7 +92,7 @@ SHADOW_DELTA_X = 0.5
 SHADOW_DELTA_Y = 0.5
 """ The y delta to apply to the drop shadow """
 
-TEXT_PADDING = 1
+TEXT_PADDING = 2
 """ The padding in percentage to apply to the text """
 
 DEFAULT_STYLE_CLASS = "dark"
