@@ -667,11 +667,19 @@ h5:hover > a.headerlink {
 }
 
 .diagram .block-diagram .white {
-    fill: #f1f2f1;
+    fill: white;
 }
 
 .diagram .block-diagram text.white {
     fill: #424242;
+}
+
+.diagram .block-diagram .light {
+    fill: #949699;
+}
+
+.diagram .block-diagram text.light {
+    fill: #f1f2f1;
 }
 
 .diagram .block-diagram .dark {
@@ -719,7 +727,7 @@ h5:hover > a.headerlink {
 }
 
 .diagram .block-diagram text.green {
-    fill: #000000;
+    fill: #white;
 }
 
 .diagram .block-diagram .yellow {
