@@ -350,7 +350,7 @@ class MainXmlrpcManager:
 
         # in case there is an error
         if not error == None:
-            error_fault = xmlrpclib.Fault(error.__class__.__name__, error.message)
+            error_fault = xmlrpclib.Fault(error.__class__.__name__, str(error))
             data = xmlrpclib.dumps(error_fault, None, True)
             return data
 
