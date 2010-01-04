@@ -383,7 +383,7 @@ class MainJsonrpcManager:
 
         # in case there is an error
         if not error == None:
-            error = {"code" : INTERNAL_ERROR_CODE_VALUE, "message" : error.message, "data" : {"traceback" : error.traceback, "name" : error.__class__.__name__}}
+            error = {"code" : INTERNAL_ERROR_CODE_VALUE, "message" : str(error), "data" : {"traceback" : error.traceback, "name" : error.__class__.__name__}}
             data = main_jsonrpc_manager_serializer.dumps({"result" : None, "id" : id_, "error" : error})
             return data
 
