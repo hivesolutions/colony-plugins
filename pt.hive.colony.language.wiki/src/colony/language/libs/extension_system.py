@@ -171,7 +171,7 @@ class Extension(object):
         formatting_message = "[" + self.id + "] "
 
         # appends the formatting message to the logging message
-        logger_message =  formatting_message + message
+        logger_message = formatting_message + message
 
         return logger_message
 
@@ -229,6 +229,13 @@ class ExtensionManager:
     """ The map associating capabilities with sub capabilities """
 
     def __init__(self, extension_paths = None):
+        """
+        Constructor of the class.
+
+        @type extension_paths: List
+        @param extension_paths: The list of extensions paths to be used.
+        """
+
         self.extension_paths = extension_paths
 
         self.uid = util.get_timestamp_uid()
@@ -302,6 +309,7 @@ class ExtensionManager:
         Starts the process of loading the extension system.
         """
 
+        # prints an info message
         self.logger.info("Starting extension manager...")
 
         # gets all modules from all extension paths
@@ -600,9 +608,19 @@ class Capability:
     """ The value of the capability described as a list """
 
     def __init__(self, string_value = None):
+        """
+        Constructor of the class.
+
+        @type string_value: String
+        @param string_value: The capability string value.
+        """
+
+        # in case the string value is valid
         if string_value:
+            # splits the string value to retrieve the list value
             self.list_value = string_value.split(".")
         else:
+            # sets the list value as an empty list
             self.list_value = []
 
     def __eq__(self, capability):
@@ -639,6 +657,7 @@ class Capability:
         return True
 
     def __ne__(self, capability):
+        # retrieves the not value of the equals method
         return not self.__eq__(capability)
 
     def capability_and_super_capabilites(self):
@@ -646,84 +665,185 @@ class Capability:
         Retrieves the list of the capability and all super capabilities.
 
         @rtype: List
-        @return: The of the capability and all super capabilities.
+        @return: The list of the capability and all super capabilities.
         """
 
+        # creates the capability and super capabilities list
         capability_and_super_capabilites_list = []
 
         # retrieves the list value
         list_value_self = self.list_value
 
+        # start the current capability value
         curent_capability_value = None
 
+        # iterates over the list of values self
         for value_self in list_value_self:
+            # in case the current capability value is valied
             if curent_capability_value:
-                curent_capability_value = curent_capability_value + "." + value_self
+                # appends the value self and a dot to the current capability value
+                curent_capability_value += "." + value_self
+            # otherwise (initial iteration)
             else:
+                # sets the current capability value as the value self
                 curent_capability_value = value_self
+
+            # adds the current capability value to the capability
+            # and super capabilities list
             capability_and_super_capabilites_list.append(curent_capability_value)
 
+        # returns the capability and super capabilities list
         return capability_and_super_capabilites_list
 
     def is_sub_capability(self, capability):
+        """
+        Tests if the given capability is sub capability.
 
+        @type capability: Capability
+        @param capability: The capability to be tested.
+        @rtype: bool
+        @return: The result of the is sub capability test.
+        """
+
+        # retrieves the list value self
         list_value_self = self.list_value
+
+        # retrieves the list value capability
         list_value_capability = capability.list_value
 
+        # in case any of the lists is empty or invalid
         if not list_value_self or not list_value_capability:
+            # returns false
             return False
 
-        len_self = len(list_value_self)
-        len_capability = len(list_value_capability)
+        # retrieves the list value self length
+        list_value_self_length = len(list_value_self)
 
-        if len_capability <= len_self:
+        # retrieves the list value capability length
+        list_value_capability_length = len(list_value_capability)
+
+        # in case the list value capability length is less or
+        # equal than list value self length
+        if list_value_capability_length <= list_value_self_length:
+            # returns false
             return False
 
-        for index in range(len_self):
+        # iterates over the list value self range
+        for index in range(list_value_self_length):
+            # in case the value fot each list are different
             if list_value_self[index] != list_value_capability[index]:
+                # returns false
                 return False
 
+        # returns true
         return True
 
     def is_capability_or_sub_capability(self, capability):
+        """
+        Tests if the given capability is a capability or sub capability.
+
+        @type capability: Capability
+        @param capability: The capability to be tested.
+        @rtype: bool
+        @return: The result of the is capability or sub capability test.
+        """
+
+        # in case the capability is equal or sub capability
         if self.__eq__(capability) or self.is_sub_capability(capability):
+            # returns true
             return True
+        # otherwise
         else:
+            # returns false
             return False
 
 def capability_and_super_capabilites(capability):
     """
     Retrieves the list of the capability and all super capabilities.
 
+    @type capability: String
+    @param capability: The capability to retrieve the the list of the
+    capability and all super capabilities.
     @rtype: List
-    @return: The of the capability and all super capabilities.
+    @return: The list of the capability and all super capabilities.
     """
 
+    # creates the capability structure from the capability string
     capability_structure = Capability(capability)
 
+    # returns the list of the capability and all super capabilities
     return capability_structure.capability_and_super_capabilites()
 
 def is_capability_or_sub_capability(base_capability, capability):
+    """
+    Tests if the given capability is capability or sub capability
+    of the given base capability.
 
+    @type base_capability: String
+    @param base_capability: The base capability to be used for test.
+    @type capability: String
+    @param capability: The capability to be tested.
+    @rtype: bool
+    @return: The result of the test.
+    """
+
+    # creates the base capability structure from
+    # the base capability string
     base_capability_structure = Capability(base_capability)
+
+    # creates the capability structure from the capability string
     capability_structure = Capability(capability)
 
+    # returns the result of the is capability or sub capability test
     return base_capability_structure.is_capability_or_sub_capability(capability_structure)
 
 def is_capability_or_sub_capability_in_list(base_capability, capability_list):
+    """
+    Tests if any of the capabilities in the capability list is capability or
+    sub capability of the given base capability.
 
+    @type base_capability: String
+    @param base_capability: The base capability to be used for test.
+    @type capability_list: List
+    @param capability_list: The list of capabilities to be tested.
+    @rtype: bool
+    @return: The result of the test.
+    """
+
+    # iterates over all the capabilities in the capability lsit
     for capability in capability_list:
+        # tests if the capability is capability or
+        # sub capability of the base capability
         if is_capability_or_sub_capability(base_capability, capability):
+            # returns true
             return True
 
+    # returns false
     return False
 
 def convert_to_capability_list(capability_list):
+    """
+    Converts the given capability list (list of strings),
+    into a list of capability objects (structures).
 
+    @type capability_list: List
+    @para capability_list: The list of capability strings.
+    @rtype: List
+    @return: The list of converted capability objects (structures).
+    """
+
+    # creates the list of capability structures
     capability_list_structure = []
 
+    # iterates over all the capabilities in the capability list
     for capability in capability_list:
+        # creates the capability structure from the
+        # capability string
         capability_structure = Capability(capability)
+
+        # adds the capability structure to the list
+        # of capability structures
         capability_list_structure.append(capability_structure)
 
+    # returns the list of capability structures
     return capability_list_structure
