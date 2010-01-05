@@ -147,11 +147,49 @@ class ScalableVectorGraphics(AbstractVectorGraphics):
 
         return string_value
 
+    def generate_elements(self, graphics_elements):
+        # initializes the string buffer
+        string_buffer = libs.string_buffer_util.StringBuffer()
+
+        # for each graphics element
+        for graphics_element in graphics_elements:
+            # retrieves the graphics element type and attributes
+            graphics_element_type, graphics_element_attributes = graphics_element
+
+            # creates the graphics for the graphics element
+            graphics_element_string = self.generate_element(graphics_element_type, graphics_element_attributes)
+
+            # adds the graphics element string to the string buffer
+            string_buffer.write(graphics_element_string)
+
+        # retrieves the string value
+        string_value = string_buffer.get_value()
+
+        return string_value
+
     def generate_element(self, graphics_element_type, graphics_element_attributes):
-        if graphics_element_type == "rectangle":
+        if graphics_element_type == "viewport":
+            return self.generate_viewport(graphics_element_attributes)
+        elif graphics_element_type == "rectangle":
             return self.generate_rectangle(graphics_element_attributes)
         elif graphics_element_type == "text":
             return self.generate_text(graphics_element_attributes)
+
+    def generate_viewport(self, graphics_attributes):
+        x = graphics_attributes["x"]
+        y = graphics_attributes["y"]
+        width = graphics_attributes["width"]
+        height = graphics_attributes["height"]
+        child_graphic_elements = graphics_attributes["childs"]
+
+        # create the viewport element
+        open_viewport_element_string = "<svg:svg x=\"%.1f\" y=\"%.1f\" width=\"%.1f\" height=\"%.1f\">" % (x, y, width, height)
+
+        child_elements_string = self.generate_elements(child_graphic_elements)
+
+        close_viewport_element_string = "</svg:svg>"
+
+        return open_viewport_element_string + child_elements_string + close_viewport_element_string
 
     def generate_rectangle(self, graphics_attributes):
         x = graphics_attributes["x"]

@@ -47,7 +47,7 @@ DIAGRAM_TYPE = "block"
 ROW_SPLITTER_VALUE = "/"
 """ The value for the row splitter string """
 
-BLOCK_REGEX_VALUE = "\[([\w, ]*)(\{[\w,\:,\; ]*\})*\]+"
+BLOCK_REGEX_VALUE = "\[([\w, ]*)(\[.*\])? *(\{[\w,\:,\; ]*\})*\]+"
 """ The block regex value """
 
 OPTIONS_REGEX_VALUE = "\{(.*)\}"
@@ -101,6 +101,12 @@ DEFAULT_STYLE_CLASS = "dark"
 WIDTH_SCALE_FACTOR = 1.6
 """ The horizontal scale factor, used to compensate the effect of additional columns """
 
+HEIGHT_SCALE_FACTOR = 0.5
+""" The vertical scale factor, used to compensate the effect of additional rows """
+
+INNER_ROW_SPLITTER_VALUE = "\\"
+""" The splitter for inner rows, to be replaced by the regular splitter """
+
 class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagramExtension):
     """
     The block diagram extension class.
@@ -140,117 +146,224 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
 
         return DIAGRAM_TYPE
 
-    def get_graphics_elements(self, contents):
-        # initializes the graphics element
-        graphics_elements = []
+    def get_graphics_elements(self, block_language_string):
+        # parses the block language string and creates the block structure
+        block_structure = self.parse(block_language_string)
 
-        # initializes the max columns
-        max_columns = None
+        # generates the graphics elements for the parsed block structure
+        graphics_elements, viewport_size = self.generate_graphics_elements(0, 0, block_structure, ROW_WIDTH)
 
-        # initializes the baseline x
-        baseline_x = HORIZONTAL_SPACING
+        # returns the graphics elements and the viewport size
+        return graphics_elements, viewport_size
 
-        # initializes the baseline y
-        baseline_y = VERTICAL_SPACING
+    def parse(self, block_language_data_string):
+        # initializes the block structure
+        block_structure = BlockStructure()
 
-        # the block matrix
-        blocks = []
+        # the highest number of columns in a row
+        maximum_number_columns = None
+
+        # the number of rows in the overall structure
+        number_rows = 0
 
         # retrieves the rows by splitting by comma
-        rows = contents.split(ROW_SPLITTER_VALUE)
+        rows = block_language_data_string.split(ROW_SPLITTER_VALUE)
 
         # for each row
         for row in rows:
+            # initializes the block row structure
+            block_row_structure = BlockRowStructure()
+
             # initializes the list of row blocks
             row_blocks = []
 
+            # initializes the number of columns in the row
+            row_number_columns = 0
+
+            # initializes the maximum number of inner rows in the current row
+            row_maximum_number_rows = None
+
+            # finds the matches for the regular expression for detecting blocks
             block_regular_expression_matches = BLOCK_REGEX.finditer(row)
 
             for block_regular_expression_match in block_regular_expression_matches:
-                block_name =  block_regular_expression_match.group(1)
-                block_options_string = block_regular_expression_match.group(2)
-
-                # creates the options map
-                options = {}
-
-                # initializes the style class with the default value
-                style_class = None
-
-                # initializes the colspan as not defined
-                colspan = None
-
-                if block_options_string:
-                    # tries to match the regular expression for the block options
-                    options_regular_expression_match = OPTIONS_REGEX.match(block_options_string)
-
-                    # in case no match occurs, raises an error
-                    if not options_regular_expression_match:
-                        # @todo: raise a specific exception
-                        raise
-
-                    # retrieves the first capture group, corresponding to the options string itself
-                    options_string = options_regular_expression_match.group(1)
-
-                    # in case the options string is found, retrieves the options from it
-                    if options_string:
-                        class_regular_expression_match = CLASS_REGEX.match(options_string)
-                        # in case the the class is defined
-                        if class_regular_expression_match:
-                            # overrides the default style definition
-                            style_class = class_regular_expression_match.group(1)
-
-                            # sets the style class in the options map
-                            options["class"] = style_class
-
-                        colspan_regular_expression_match = COLSPAN_REGEX.match(options_string)
-                        if colspan_regular_expression_match:
-                            # retrieves the colspan from the options match
-                            colspan = colspan_regular_expression_match.group(1)
-
-                            # sets the colspan in the options map
-                            options["colspan"] = colspan
-
-                # creates the block tuple
-                block = (block_name, options)
+                # creates the block from the regular expression match
+                block = self.parse_block(block_regular_expression_match)
 
                 # appends the new block to the blocks list
                 row_blocks.append(block)
 
+                # retrieves the number of columns in the block
+                block_columns = block.get_number_columns()
+
+                # retrieve the number of rows in the block
+                block_rows = block.get_number_rows()
+
+                # increments the row's number of columns
+                row_number_columns += block_columns
+
+                if block_rows > row_maximum_number_rows:
+                    row_maximum_number_rows = block_rows
+
+            # sets the block contents in the row structure
+            block_row_structure.set_blocks(row_blocks)
+
+            # sets the number of rows in the row structure
+            block_row_structure.set_number_columns(len(row_blocks))
+
+            # sets the number of rows in the row structure
+            block_row_structure.set_number_rows(row_maximum_number_rows)
+
+            # appends the row of blocks to the overall block structure
+            block_structure.add_row(block_row_structure)
+
             # update the maximum column number
-            if len(row_blocks) > max_columns:
-                max_columns = len(row_blocks)
+            if row_number_columns > maximum_number_columns:
+                maximum_number_columns = row_number_columns
 
-            # appends the row of blocks to the overall blocks matrix
-            blocks.append(row_blocks)
+            number_rows += row_maximum_number_rows
 
-        # calculates the baseline width
-        baseline_width = (max_columns / WIDTH_SCALE_FACTOR) * ROW_WIDTH
+        # sets the number of columns in the block structure
+        block_structure.set_number_columns(maximum_number_columns)
 
-        for row_blocks in blocks:
+        # sets the number of rows in the block structure
+        block_structure.set_number_rows(number_rows)
+
+        # returns the parsed block structure
+        return block_structure
+
+    def parse_block(self, block_regular_expression_match):
+        # initializes the block
+        block = Block()
+
+        block_name =  block_regular_expression_match.group(1)
+        child_blocks_string = block_regular_expression_match.group(2)
+        block_options_string = block_regular_expression_match.group(3)
+
+        # the number of columns inside the block
+        number_columns = 1
+
+        # the number of rows inside the block
+        number_rows = 1
+
+        # creates the options map
+        options = {}
+
+        # initializes the style class with the default value
+        style_class = None
+
+        # initializes the colspan as not defined
+        colspan = None
+
+        # initializes the child blocks list
+        child_block_structure = None
+
+        if block_options_string:
+            # tries to match the regular expression for the block options
+            options_regular_expression_match = OPTIONS_REGEX.match(block_options_string)
+
+            # in case no match occurs, raises an error
+            if not options_regular_expression_match:
+                # @todo: raise a specific exception
+                raise
+
+            # retrieves the first capture group, corresponding to the options string itself
+            options_string = options_regular_expression_match.group(1)
+
+            # in case the options string is found, retrieves the options from it
+            if options_string:
+                class_regular_expression_match = CLASS_REGEX.match(options_string)
+                # in case the the class is defined
+                if class_regular_expression_match:
+                    # overrides the default style definition
+                    style_class = class_regular_expression_match.group(1)
+
+                    # sets the style class in the options map
+                    options["class"] = style_class
+
+                colspan_regular_expression_match = COLSPAN_REGEX.match(options_string)
+                if colspan_regular_expression_match:
+                    # retrieves the colspan from the options match
+                    colspan = colspan_regular_expression_match.group(1)
+
+                    # sets the colspan in the options map
+                    options["colspan"] = colspan
+
+        # retrieves the child blocks
+        if child_blocks_string:
+            child_blocks_string = child_blocks_string.replace(INNER_ROW_SPLITTER_VALUE, ROW_SPLITTER_VALUE)
+            child_block_structure = self.parse(child_blocks_string)
+
+            child_blocks_columns = child_block_structure.get_number_columns()
+            child_blocks_rows = child_block_structure.get_number_rows()
+
+            # updates the max columns with the number of columns of the child blocks
+            number_columns = child_blocks_columns
+            number_rows = child_blocks_rows
+
+        # sets the retrieved name in the block
+        block.set_title(block_name)
+
+        # sets the retrieved options in the block
+        block.set_options(options)
+
+        # sets the parsed children in the block
+        block.set_children(child_block_structure)
+        block.set_number_columns(number_columns)
+        block.set_number_rows(number_rows)
+
+        # returns the created block
+        return block
+
+    def generate_graphics_elements(self, x, y, block_structure, parent_width):
+        # initializes the graphics element
+        graphics_elements = []
+
+        # retrieves the number of columns in the block structure
+        number_columns = block_structure.get_number_columns()
+
+        # initializes the baseline x
+        baseline_x = x + HORIZONTAL_SPACING
+
+        # initializes the baseline y
+        baseline_y = y + VERTICAL_SPACING
+
+        if parent_width == ROW_WIDTH:
+            # calculates the baseline width
+            baseline_width = (number_columns / WIDTH_SCALE_FACTOR) * parent_width
+        else:
+            baseline_width = number_columns * parent_width
+
+        for block_row_structure in block_structure.get_rows():
+            # retrieves the number of rows in the block structure
+            number_rows = block_row_structure.get_number_rows()
+
+            # computes the baseline height
+            if number_rows == 1:
+                baseline_height = ROW_HEIGHT
+            else:
+                baseline_height = (number_rows / HEIGHT_SCALE_FACTOR) * ROW_HEIGHT
+
             # retrieves the graphics elements for the row
-            row_graphics_elements = self.get_row_graphics_elements(row_blocks, max_columns, baseline_x, baseline_y, baseline_width)
+            row_graphics_elements = self.generate_row_graphics_elements(block_row_structure, number_columns, baseline_x, baseline_y, baseline_width, baseline_height)
 
             # appends the row graphics element to the graphics element
             graphics_elements.extend(row_graphics_elements)
 
             # updates the baseline for the next rows
-            baseline_y += ROW_HEIGHT + VERTICAL_SPACING
+            baseline_y += baseline_height + VERTICAL_SPACING
 
         # creates the view port size
         viewport_size = (baseline_width, baseline_y)
 
-        # returns the graphics elements and the viewport size
         return graphics_elements, viewport_size
 
-    def get_row_graphics_elements(self, row_blocks, max_columns, baseline_x, baseline_y, baseline_width):
+    def generate_row_graphics_elements(self, block_row_structure, max_columns, baseline_x, baseline_y, baseline_width, baseline_height):
         # initializes the row graphics elements
         row_graphics_elements = []
 
-        # saves the original baseline x
-        original_baseline_x = baseline_x
-
-        # determines the number of columns
-        number_columns = len(row_blocks)
+        # determines the number of columns in the current row
+        number_columns = block_row_structure.get_number_columns()
 
         # determines the available width (total width minus spacing)
         available_width = baseline_width - (HORIZONTAL_SPACING * (number_columns + 1))
@@ -259,9 +372,15 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
         column_block_width = available_width / number_columns
 
         # for each block columns
-        for row_block in row_blocks:
-            # unpacks the row block
-            row_block_title, row_block_options = row_block
+        for row_block in block_row_structure.get_blocks():
+            # retrieves the row block title
+            row_block_title = row_block.get_title()
+
+            # retrieves the row block children
+            row_block_children = row_block.get_children()
+
+            # retrieves the row block options
+            row_block_options = row_block.get_options()
 
             if row_block_options:
                 style_class = row_block_options.get("class", DEFAULT_STYLE_CLASS)
@@ -278,17 +397,17 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
                 block_width = float(colspan) * min_block_width
 
                 # determines the height for the current block
-                block_height = ROW_HEIGHT
+                block_height = baseline_height
             else:
                 # determines the width for the current block
                 block_width = column_block_width
 
                 # determines the height for the current block
-                block_height = ROW_HEIGHT
+                block_height = baseline_height
 
             if row_block_title and not row_block_title == "":
                 # generates the block
-                block_graphics_elements = self.get_block_graphics_elements(baseline_x, baseline_y, block_width, block_height, row_block_title, {"class" : style_class})
+                block_graphics_elements = self.generate_block_graphics_elements(baseline_x, baseline_y, block_width, block_height, row_block_title, row_block_children, {"class" : style_class})
 
                 # appends the generated block graphics elements to the row graphics elements
                 row_graphics_elements.extend(block_graphics_elements)
@@ -299,15 +418,23 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
         # returns the row graphics elements
         return row_graphics_elements
 
-    def get_block_graphics_elements(self, x, y, width, height, title, options):
+    def generate_block_graphics_elements(self, x, y, width, height, title, child_blocks, options):
         # initializes the block graphics elements
         block_graphics_elements = []
 
         # calculates the text x
         text_x = x + (width / 2)
 
-        # calculates the text y
-        text_y = y + (height / 2) + TEXT_PADDING
+        if child_blocks:
+            rect_x = 0
+            rect_y = 0
+            # calculates the text y for a block with childs
+            text_y = 0 + 2 * TEXT_PADDING
+        else:
+            rect_x = x
+            rect_y = y
+            # calculates the text y for an empty block
+            text_y = y + (height / 2) + TEXT_PADDING
 
         # calculates the shadow x
         shadow_x = x + SHADOW_DELTA_X
@@ -322,10 +449,17 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
         shadow_rect = self.create_rectangle(shadow_x, shadow_y, width, height, {"class" : "shadow"})
 
         # draws the block rectangle
-        rect = self.create_rectangle(x, y, width, height, {"class" : style_class})
+        rect = self.create_rectangle(rect_x, rect_y, width, height, {"class" : style_class})
 
         # draws the block text
         text = self.create_text(text_x, text_y, title, {"class" : style_class})
+
+        # initializes the child blocks graphics elements
+        child_blocks_graphics_elements = None
+
+        if child_blocks:
+            # creates the graphics elements for the child blocks
+            child_blocks_graphics_elements, _viewport_size = self.generate_graphics_elements(0, 5, child_blocks, width)
 
         # adds the shadow rectangle to the block graphics elements
         block_graphics_elements.append(shadow_rect)
@@ -336,8 +470,22 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
         # adds the text to the block graphics elements
         block_graphics_elements.append(text)
 
+        if child_blocks_graphics_elements:
+            # adds the graphics elements for the child block
+            block_graphics_elements.extend(child_blocks_graphics_elements)
+
+        if child_blocks:
+            viewport = self.create_viewport(x, y, width, height, block_graphics_elements, {"class" : style_class})
+
+            return [viewport]
+
         # returns the string value
         return block_graphics_elements
+
+    def create_viewport(self, x, y, width, height, childs, options):
+        viewport = ("viewport", {"x" : x, "y" : y, "width" : width, "height" : height, "childs" : childs, "options" : options})
+
+        return viewport
 
     def create_rectangle(self, x, y, width, height, options):
         rectangle = ("rectangle", {"x" : x, "y" : y, "width" : width, "height" : height, "options" : options})
@@ -348,3 +496,120 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
         text = ("text", {"x" : x, "y" : y, "text" : text, "options" : options})
 
         return text
+
+class BlockStructure:
+
+    rows = None
+    """ The list of row structures in the block structure """
+
+    number_columns = None
+    """ The number of columns in the block structure """
+
+    number_rows = None
+    """ The number of rows in the block structure """
+
+    def __init__(self):
+        self.rows = []
+
+    def get_rows(self):
+        return self.rows
+
+    def set_rows(self, rows):
+        self.rows = rows
+
+    def add_row(self, row):
+        self.rows.append(row)
+
+    def get_number_columns(self):
+        return self.number_columns
+
+    def set_number_columns(self, number_columns):
+        self.number_columns = number_columns
+
+    def get_number_rows(self):
+        return self.number_rows
+
+    def set_number_rows(self, number_rows):
+        self.number_rows = number_rows
+
+class BlockRowStructure:
+
+    blocks = None
+    """ The list of blocks in the row """
+
+    number_columns = None
+    """ The number of rows in the current row structure """
+
+    number_rows = None
+    """ The number of inner rows in the current row structure """
+
+    def __init__(self):
+        self.blocks = []
+
+    def get_blocks(self):
+        return self.blocks
+
+    def set_blocks(self, blocks):
+        self.blocks = blocks
+
+    def get_number_columns(self):
+        return self.number_columns
+
+    def set_number_columns(self, number_columns):
+        self.number_columns = number_columns
+
+    def get_number_rows(self):
+        return self.number_rows
+
+    def set_number_rows(self, number_rows):
+        self.number_rows = number_rows
+
+class Block:
+
+    title = None
+    """ The title of the block """
+
+    children = None
+    """ The list of childs in the block """
+
+    options = None
+    """ The options controlling the block """
+
+    number_columns = None
+    """ The number of columns in the current block """
+
+    number_rows = None
+    """ The number of rows in the current block """
+
+    def __init__(self):
+        pass
+
+    def get_title(self):
+        return self.title
+
+    def set_title(self, title):
+        self.title = title
+
+    def get_children(self):
+        return self.children
+
+    def set_children(self, children):
+        self.children = children
+
+    def get_options(self):
+        return self.options
+
+    def set_options(self, options):
+        self.options = options
+
+    def get_number_rows(self):
+        return self.number_rows
+
+    def set_number_rows(self, number_rows):
+        self.number_rows = number_rows
+
+    def get_number_columns(self):
+        return self.number_columns
+
+    def set_number_columns(self, number_columns):
+        self.number_columns = number_columns

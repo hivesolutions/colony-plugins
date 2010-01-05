@@ -189,22 +189,17 @@ class WikiDiagramExtension(wiki_extension_system.WikiExtension):
             # starts the graphics
             open_graphics_string = vector_graphics.open_graphics({"class" : diagram_type_style_class, "width" : node_tag_width, "height" : node_tag_height, "view_box_width" : view_box_width, "view_box_height" : view_box_height})
 
-            # writes the open graphics tag
-            string_buffer.write(open_graphics_string)
-
-            # for each graphics element
-            for graphics_element in graphics_elements:
-                # retrieves the graphics element type and attributes
-                graphics_element_type, graphics_element_attributes = graphics_element
-
-                # creates the graphics for the graphics element
-                graphics_element_string = vector_graphics.generate_element(graphics_element_type, graphics_element_attributes)
-
-                # adds the graphics element string to the string buffer
-                string_buffer.write(graphics_element_string)
+            # retrieves the graphic elements string
+            graphics_elements_string = vector_graphics.generate_elements(graphics_elements)
 
             # stops the graphics
             close_graphics_string = vector_graphics.close_graphics()
+
+            # writes the open graphics tag
+            string_buffer.write(open_graphics_string)
+
+            # write the graphic elements string
+            string_buffer.write(graphics_elements_string)
 
             # writes the close graphics tag
             string_buffer.write(close_graphics_string)
