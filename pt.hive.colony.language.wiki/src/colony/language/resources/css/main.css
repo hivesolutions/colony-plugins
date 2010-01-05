@@ -727,7 +727,7 @@ h5:hover > a.headerlink {
 }
 
 .diagram .block-diagram text.green {
-    fill: #white;
+    fill: white;
 }
 
 .diagram .block-diagram .yellow {
