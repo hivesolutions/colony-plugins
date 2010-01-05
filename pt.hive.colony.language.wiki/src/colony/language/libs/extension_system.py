@@ -447,9 +447,6 @@ class ExtensionManager:
         # retrieves the extension id
         extension_id = extension.id
 
-        # retrieves the extension version
-        extension_version = extension.version
-
         # retrieves the extension description
         extension_description = extension.description
 
@@ -531,6 +528,7 @@ class ExtensionManager:
 
         # iterates over all the extension instance capabilities
         for capability in extension.capabilities:
+            # retrieves the capability and super capabilities list
             capability_and_super_capabilites_list = capability_and_super_capabilites(capability)
 
             for capability_or_super_capability_index in range(len(capability_and_super_capabilites_list)):
@@ -558,6 +556,7 @@ class ExtensionManager:
 
         # iterates over all the extension instance capabilities
         for capability in extension.capabilities:
+            # retrieves the capability and super capabilities list
             capability_and_super_capabilites_list = capability_and_super_capabilites(capability)
 
             for capability_or_super_capability_index in range(len(capability_and_super_capabilites_list)):
@@ -587,16 +586,23 @@ class ExtensionManager:
         # the results list
         result = []
 
-        # the capability converter to internal capbility structure
+        # the capability converted to internal capability structure
         capability_structure = Capability(capability)
 
+        # iterates over all the extension instances
         for extension in self.extension_instances:
+            # retrieves the extension capabilities structure
             extension_capabilities_structure = convert_to_capability_list(extension.capabilities)
 
+            # iterates over all the extension capabilities structure
             for extension_capability_structure in extension_capabilities_structure:
+                # in case the extension capability structure is capability is sub
+                # capability of the capability structure
                 if capability_structure.is_capability_or_sub_capability(extension_capability_structure):
+                    # adds the extension to the results list
                     result.append(extension)
 
+        # returns the results list
         return result
 
 class Capability:
