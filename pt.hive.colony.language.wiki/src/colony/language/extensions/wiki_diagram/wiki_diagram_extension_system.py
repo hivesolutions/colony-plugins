@@ -207,19 +207,46 @@ class ScalableVectorGraphics(AbstractVectorGraphics):
         return rectangle_element_string
 
     def generate_text(self, graphics_attributes):
+        # initializes the string buffer
+        string_buffer = libs.string_buffer_util.StringBuffer()
+
+        # retrieves the x
         x = graphics_attributes["x"]
+
+        # retrieves the y
         y = graphics_attributes["y"]
+
+        # retrieves the text
         text = graphics_attributes["text"]
+
+        # escapes the retrieved text
         escaped_text = self.visitor.escape_string_value(text)
+
+        # retrieves the graphic element options
         options = graphics_attributes["options"]
 
-        # retrieves the style class
-        style_class = options.get("class", "")
+        # opens the text tag
+        string_buffer.write("<svg:text")
 
-        # create the text element
-        text_element_string = "<svg:text class=\"%s\" x=\"%.1f\" y=\"%.1f\">%s</svg:text>" % (style_class, x, y, escaped_text)
+        # writes the options
+        for options_name, option_value in options.items():
+            string_buffer.write(" %s=\"%s\"" % (options_name, option_value))
 
-        return text_element_string
+        # opens the text element
+        string_buffer.write(" x=\"%.1f\" y=\"%.1f\"" % (x, y))
+
+        string_buffer.write(">")
+
+        # writes the escaped text
+        string_buffer.write(escaped_text)
+
+        # closes the text element
+        string_buffer.write("</svg:text>")
+
+        # retrieves the string value
+        string_value = string_buffer.get_value()
+
+        return string_value
 
     def get_visitor(self):
         return self.visitor
