@@ -190,9 +190,6 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
                 # increments the row's number of columns
                 row_number_columns += block_columns
 
-                if block_rows == None:
-                    pass
-
                 if block_rows > row_maximum_number_rows:
                     row_maximum_number_rows = block_rows
 
@@ -211,9 +208,6 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
             # update the maximum column number
             if row_number_columns > maximum_number_columns:
                 maximum_number_columns = row_number_columns
-
-            if row_maximum_number_rows == None:
-                pass
 
             number_rows += row_maximum_number_rows
 
