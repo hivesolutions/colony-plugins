@@ -47,29 +47,17 @@ DIAGRAM_TYPE = "block"
 ROW_SPLITTER_VALUE = "/"
 """ The value for the row splitter string """
 
-BLOCK_REGEX_VALUE = "\[([\w, ]*)(\[.*\])? *(\{[\w,\:,\; ]*\})*\]+"
+BLOCK_REGEX_VALUE = "\[([\w, ]*)(\[.*\])? *(\{(.*?)\})?\]+"
 """ The block regex value """
 
-OPTIONS_REGEX_VALUE = "\{(.*)\}"
-""" The options regex value """
-
-CLASS_REGEX_VALUE = "class *: *(\w*);?"
-""" The class regex value """
-
-COLSPAN_REGEX_VALUE = ".*colspan *: *(.*);?"
-""" The colspan regex value """
+OPTIONS_REGEX_VALUE = "([\w-]*) ?: ?([\w]*)"
+""" The regex value for retrieving an option in the a: b, format """
 
 BLOCK_REGEX = re.compile(BLOCK_REGEX_VALUE, re.UNICODE)
 """ The block regex """
 
 OPTIONS_REGEX = re.compile(OPTIONS_REGEX_VALUE, re.UNICODE)
-""" The options regex """
-
-CLASS_REGEX = re.compile(CLASS_REGEX_VALUE, re.UNICODE)
-""" The class regex """
-
-COLSPAN_REGEX = re.compile(COLSPAN_REGEX_VALUE, re.UNICODE)
-""" The colspan regex """
+""" The regex for retrieving options """
 
 ROW_WIDTH = 100
 """ The percent value of the width taken up by each row """
@@ -202,6 +190,9 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
                 # increments the row's number of columns
                 row_number_columns += block_columns
 
+                if block_rows == None:
+                    pass
+
                 if block_rows > row_maximum_number_rows:
                     row_maximum_number_rows = block_rows
 
@@ -220,6 +211,9 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
             # update the maximum column number
             if row_number_columns > maximum_number_columns:
                 maximum_number_columns = row_number_columns
+
+            if row_maximum_number_rows == None:
+                pass
 
             number_rows += row_maximum_number_rows
 
@@ -249,45 +243,26 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
         # creates the options map
         options = {}
 
-        # initializes the style class with the default value
-        style_class = None
-
-        # initializes the colspan as not defined
-        colspan = None
-
         # initializes the child blocks list
         child_block_structure = None
 
         if block_options_string:
-            # tries to match the regular expression for the block options
-            options_regular_expression_match = OPTIONS_REGEX.match(block_options_string)
+            # retrieves an iterator for the various options
+            option_matches_iterator = OPTIONS_REGEX.finditer(block_options_string)
 
-            # in case no match occurs, raises an error
-            if not options_regular_expression_match:
-                # @todo: raise a specific exception
-                raise
-
-            # retrieves the first capture group, corresponding to the options string itself
-            options_string = options_regular_expression_match.group(1)
+            if not option_matches_iterator:
+                raise Exception("invalid block options specified")
 
             # in case the options string is found, retrieves the options from it
-            if options_string:
-                class_regular_expression_match = CLASS_REGEX.match(options_string)
-                # in case the the class is defined
-                if class_regular_expression_match:
-                    # overrides the default style definition
-                    style_class = class_regular_expression_match.group(1)
+            for option_match in option_matches_iterator:
+                # retrieves the options name
+                options_name = option_match.group(1)
 
-                    # sets the style class in the options map
-                    options["class"] = style_class
+                # retrieves the options value
+                options_value = option_match.group(2)
 
-                colspan_regular_expression_match = COLSPAN_REGEX.match(options_string)
-                if colspan_regular_expression_match:
-                    # retrieves the colspan from the options match
-                    colspan = colspan_regular_expression_match.group(1)
-
-                    # sets the colspan in the options map
-                    options["colspan"] = colspan
+                # sets the option in the options map
+                options[options_name] = options_value
 
         # retrieves the child blocks
         if child_blocks_string:
@@ -382,12 +357,8 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
             # retrieves the row block options
             row_block_options = row_block.get_options()
 
-            if row_block_options:
-                style_class = row_block_options.get("class", DEFAULT_STYLE_CLASS)
-                colspan = row_block_options.get("colspan", None)
-            else:
-                style_class = DEFAULT_STYLE_CLASS
-                colspan = None
+            # retrieves the colspan options
+            colspan = row_block_options.get("colspan", None)
 
             if colspan:
                 # determines the minimum block width (according to row with more columns)
@@ -407,7 +378,7 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
 
             if row_block_title and not row_block_title == "":
                 # generates the block
-                block_graphics_elements = self.generate_block_graphics_elements(baseline_x, baseline_y, block_width, block_height, row_block_title, row_block_children, {"class" : style_class})
+                block_graphics_elements = self.generate_block_graphics_elements(baseline_x, baseline_y, block_width, block_height, row_block_title, row_block_children, row_block_options)
 
                 # appends the generated block graphics elements to the row graphics elements
                 row_graphics_elements.extend(block_graphics_elements)
@@ -446,17 +417,14 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
             # otherwise places the text at the bottom
             text_y = y + (height / 2) + TEXT_PADDING
 
-        # retrieves the block style from the options
-        style_class = options["class"]
-
         # draws the block shadow rectangle
         shadow_rect = self.create_rectangle(shadow_x, shadow_y, width, height, {"class" : "shadow"})
 
         # draws the block rectangle
-        rect = self.create_rectangle(rect_x, rect_y, width, height, {"class" : style_class})
+        rect = self.create_rectangle(rect_x, rect_y, width, height, options)
 
         # draws the block text
-        text = self.create_text(text_x, text_y, title, {"class" : style_class})
+        text = self.create_text(text_x, text_y, title, options)
 
         # initializes the child blocks graphics elements
         viewport = None
@@ -467,7 +435,7 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
             child_blocks_graphics_elements, _viewport_size = self.generate_graphics_elements(0, 5, child_blocks, width)
 
             # creates a viewport to host the child block's graphic elements
-            viewport = self.create_viewport(x, y, width, height, child_blocks_graphics_elements, {"class" : style_class})
+            viewport = self.create_viewport(x, y, width, height, child_blocks_graphics_elements, options)
 
         # adds the shadow rectangle to the block graphics elements
         block_graphics_elements.append(shadow_rect)
@@ -586,7 +554,8 @@ class Block:
     """ The number of rows in the current block """
 
     def __init__(self):
-        pass
+        # initializes the options map
+        self.options = {}
 
     def get_title(self):
         return self.title
