@@ -101,7 +101,7 @@ DEFAULT_STYLE_CLASS = "dark"
 WIDTH_SCALE_FACTOR = 1.6
 """ The horizontal scale factor, used to compensate the effect of additional columns """
 
-HEIGHT_SCALE_FACTOR = 0.5
+HEIGHT_SCALE_FACTOR = 0.9
 """ The vertical scale factor, used to compensate the effect of additional rows """
 
 INNER_ROW_SPLITTER_VALUE = "\\"
@@ -299,7 +299,7 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
 
             # updates the max columns with the number of columns of the child blocks
             number_columns = child_blocks_columns
-            number_rows = child_blocks_rows
+            number_rows += child_blocks_rows
 
         # sets the retrieved name in the block
         block.set_title(block_name)
@@ -332,7 +332,7 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
             # calculates the baseline width
             baseline_width = (number_columns / WIDTH_SCALE_FACTOR) * parent_width
         else:
-            baseline_width = number_columns * parent_width
+            baseline_width = parent_width
 
         for block_row_structure in block_structure.get_rows():
             # retrieves the number of rows in the block structure
@@ -425,22 +425,26 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
         # calculates the text x
         text_x = x + (width / 2)
 
-        if child_blocks:
-            rect_x = 0
-            rect_y = 0
-            # calculates the text y for a block with childs
-            text_y = 0 + 2 * TEXT_PADDING
-        else:
-            rect_x = x
-            rect_y = y
-            # calculates the text y for an empty block
-            text_y = y + (height / 2) + TEXT_PADDING
+        # defines the block rectangle x
+        rect_x = x
+
+        # defines the block rectangle y
+        rect_y = y
 
         # calculates the shadow x
         shadow_x = x + SHADOW_DELTA_X
 
         # calculates the shadow y
         shadow_y = y + SHADOW_DELTA_Y
+
+        # defines the text position
+        # in case the block has children
+        if child_blocks:
+            # places the text at the top
+            text_y = y + 2 * TEXT_PADDING
+        else:
+            # otherwise places the text at the bottom
+            text_y = y + (height / 2) + TEXT_PADDING
 
         # retrieves the block style from the options
         style_class = options["class"]
@@ -455,11 +459,15 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
         text = self.create_text(text_x, text_y, title, {"class" : style_class})
 
         # initializes the child blocks graphics elements
-        child_blocks_graphics_elements = None
+        viewport = None
 
+        # in case the block has childs
         if child_blocks:
             # creates the graphics elements for the child blocks
             child_blocks_graphics_elements, _viewport_size = self.generate_graphics_elements(0, 5, child_blocks, width)
+
+            # creates a viewport to host the child block's graphic elements
+            viewport = self.create_viewport(x, y, width, height, child_blocks_graphics_elements, {"class" : style_class})
 
         # adds the shadow rectangle to the block graphics elements
         block_graphics_elements.append(shadow_rect)
@@ -470,16 +478,12 @@ class BlockDiagramExtension(wiki_diagram.wiki_diagram_extension_system.WikiDiagr
         # adds the text to the block graphics elements
         block_graphics_elements.append(text)
 
-        if child_blocks_graphics_elements:
-            # adds the graphics elements for the child block
-            block_graphics_elements.extend(child_blocks_graphics_elements)
+        # in case the viewport was created
+        if viewport:
+            # adds the viewport to the block's graphic elements
+            block_graphics_elements.append(viewport)
 
-        if child_blocks:
-            viewport = self.create_viewport(x, y, width, height, block_graphics_elements, {"class" : style_class})
-
-            return [viewport]
-
-        # returns the string value
+        # returns the list of graphic elements representing the block
         return block_graphics_elements
 
     def create_viewport(self, x, y, width, height, childs, options):
