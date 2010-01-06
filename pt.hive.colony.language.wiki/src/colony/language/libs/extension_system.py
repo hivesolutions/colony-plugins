@@ -531,24 +531,46 @@ class ExtensionManager:
             # retrieves the capability and super capabilities list
             capability_and_super_capabilites_list = capability_and_super_capabilites(capability)
 
-            for capability_or_super_capability_index in range(len(capability_and_super_capabilites_list)):
+            # retrieves the capability and super capabilities list length
+            capability_and_super_capabilites_list_length = len(capability_and_super_capabilites_list)
+
+            # iterates over the capability or super capabilities list length range
+            for capability_or_super_capability_index in range(capability_and_super_capabilites_list_length):
+                # retrieves the capability from the capability and super capabilities list
                 capability = capability_and_super_capabilites_list[capability_or_super_capability_index]
+
+                # retrieves the sub capabilities list from the the capability and super capabilities list
                 sub_capabilities_list = capability_and_super_capabilites_list[capability_or_super_capability_index + 1:]
 
+                # in case the capability does not exists in the capabilities extension instances map
                 if not capability in self.capabilities_extension_instances_map:
+                    # creates a new list as the value for the capability in the
+                    # capabilities extension instances map
                     self.capabilities_extension_instances_map[capability] = []
+
+                # adds the extension to the capabilities extension instances map for the capability
                 self.capabilities_extension_instances_map[capability].append(extension)
 
+                # in case the capability does not exists in the capabilities and sub capabilities map
                 if not capability in self.capabilities_sub_capabilities_map:
+                    # creates a new list as the value for the capability in the
+                    # capabilities and sub capabilities map
                     self.capabilities_sub_capabilities_map[capability] = []
 
+                # iterates over all the sub capabilities in the sub capabilities list
                 for sub_capability in sub_capabilities_list:
+                    # in case the sub capability is not defined for the capability in the
+                    # capabilities sub capabilities map
                     if not sub_capability in self.capabilities_sub_capabilities_map[capability]:
+                        # adds the sub capability to the capabilities sub capabilities map for the capability
                         self.capabilities_sub_capabilities_map[capability].append(sub_capability)
 
     def unregister_extension_capabilities(self, extension):
         """
         Unregisters all the available capabilities for the given extension.
+        The unregistering process removes the capability from the capabilities
+        extension instances map and the sub capabilities from the capabilities
+        sub capabilities map (in case this is the only extension to have it).
 
         @type extension: String
         @param extension: The extension to unregister the capabilities.
@@ -559,18 +581,37 @@ class ExtensionManager:
             # retrieves the capability and super capabilities list
             capability_and_super_capabilites_list = capability_and_super_capabilites(capability)
 
-            for capability_or_super_capability_index in range(len(capability_and_super_capabilites_list)):
+            # retrieves the capability and super capabilities list length
+            capability_and_super_capabilites_list_length = len(capability_and_super_capabilites_list)
+
+            # iterates over the capability and super capabilities list length range
+            for capability_or_super_capability_index in range(capability_and_super_capabilites_list_length):
+                # retrieves the capability from the capability and super capabilities list
                 capability = capability_and_super_capabilites_list[capability_or_super_capability_index]
+
+                # retrieves the sub capabilities list from the the capability and super capabilities list
                 sub_capabilities_list = capability_and_super_capabilites_list[capability_or_super_capability_index + 1:]
 
+                # in case the capability exists in the capabilities extension instances map
                 if capability in self.capabilities_extension_instances_map:
+                    # in case the extension exists in the value for the capability in the
+                    # capabilities extension instances map
                     if extension in self.capabilities_extension_instances_map[capability]:
+                        # removes the extension from the capabilities extension instances map value for
+                        # the capability
                         self.capabilities_extension_instances_map[capability].remove(extension)
 
+                # in case the capability exists in the capabilities and sub capabilities map
                 if capability in self.capabilities_sub_capabilities_map:
+                    # iterates over all the sub capabilities in the sub capabilities list
                     for sub_capability in sub_capabilities_list:
+                        # in case the sub capability exists the in the capabilities sub capabilities map
+                        # for the capability
                         if sub_capability in self.capabilities_sub_capabilities_map[capability]:
+                            # in case this is the only instance to be registered with the given sub capability
                             if len(self.capabilities_extension_instances_map[sub_capability]) == 0:
+                                # removes the sub capability from the value of capabilities sub capabilities map
+                                # for the given capability
                                 self.capabilities_sub_capabilities_map[capability].remove(sub_capability)
 
     def get_extensions_by_capability(self, capability):
@@ -736,7 +777,7 @@ class Capability:
 
         # iterates over the list value self range
         for index in range(list_value_self_length):
-            # in case the value fot each list are different
+            # in case the value for each list are different
             if list_value_self[index] != list_value_capability[index]:
                 # returns false
                 return False
