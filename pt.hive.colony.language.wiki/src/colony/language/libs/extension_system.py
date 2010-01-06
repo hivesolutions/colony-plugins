@@ -195,8 +195,8 @@ class ExtensionManager:
     extension_paths = None
     """ The set of paths for the loaded extensions """
 
-    refered_modules = []
-    """ The refered modules """
+    referred_modules = []
+    """ The referred modules """
 
     loaded_extensions = []
     """ The loaded extensions """
@@ -240,7 +240,7 @@ class ExtensionManager:
 
         self.uid = util.get_timestamp_uid()
 
-        self.refered_modules = []
+        self.referred_modules = []
         self.loaded_extensions = []
         self.loaded_extensions_map = {}
         self.loaded_extensions_id_map = {}
@@ -314,10 +314,10 @@ class ExtensionManager:
 
         # gets all modules from all extension paths
         for extension_path in self.extension_paths:
-            self.refered_modules.extend(self.get_all_modules(extension_path))
+            self.referred_modules.extend(self.get_all_modules(extension_path))
 
         # starts the extension loading process
-        self.init_extension_system({"extension_paths": self.extension_paths, "extensions": self.refered_modules})
+        self.init_extension_system({"extension_paths": self.extension_paths, "extensions": self.referred_modules})
 
     def init_extension_system(self, configuration):
         """
