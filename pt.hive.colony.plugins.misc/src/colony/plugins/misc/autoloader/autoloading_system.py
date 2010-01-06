@@ -160,8 +160,10 @@ class Autoloader:
 
                                 # in case the plugin is already loaded in the plugin manager
                                 if plugin:
+                                    # reloads the module
                                     self.reload_module(plugin, module_name)
                                 else:
+                                    # loads the module
                                     self.load_module(search_directory, module_name)
 
                                 # sets the new modified date
@@ -194,24 +196,65 @@ class Autoloader:
             time.sleep(SLEEP_TIME_VALUE)
 
     def load_module(self, search_directory, module_name):
+        """
+        Loads a module with the given module name and
+        for the given search directory.
+
+        @type search_directory: String
+        @param search_directory: The search directory to be used as base in the module load.
+        @type module_name: String
+        @param module_name: The name of the module to be loaded.
+        """
+
         try:
+            # prints an info message
             self.autoloader_plugin.info("Loading module " + module_name)
+
+            # in case the search directory is not is the system (python) path
             if not search_directory in sys.path:
+                # inserts the search directory in the system (python) path
                 sys.path.insert(0, search_directory)
+
+            # loads the plugin for the module name
             self.manager.load_plugins([module_name])
+
+            # starts the plugins
             self.manager.start_plugins()
         except:
-            self.autoloader_plugin.info("There was a problem loading module " + module_name)
+            # prints an error message
+            self.autoloader_plugin.error("There was a problem loading module " + module_name)
 
     def unload_module(self, module_name):
+        """
+        Unloads a module with the given module name.
+
+        @type module_name: String
+        @param module_name: The name of the module to be unloaded.
+        """
+
         try:
+            # prints an info message
             self.autoloader_plugin.info("Unloading module " + module_name)
+
+            # stops the module
             self.manager.stop_module(module_name)
         except:
-            self.autoloader_plugin.info("There was a problem unloading module " + module_name)
+            # prints an error message
+            self.autoloader_plugin.error("There was a problem unloading module " + module_name)
 
     def reload_module(self, plugin, module_name):
+        """
+        Reloads the module with the given module name and
+        reloads the main modules of the given plugin.
+
+        @type plugin: Plugin
+        @param plugin: The plugin to have the main modules reloaded.
+        @type module_name: String
+        @param module_name: The name of the module to be reloaded.
+        """
+
         try:
+            # prints an info message
             self.autoloader_plugin.info("Reloading module " + module_name)
 
             # retrieves the plugin id
@@ -247,15 +290,37 @@ class Autoloader:
                 # tries to load the plugin with the given id
                 self.manager.load_plugin(loaded_plugin_id)
         except:
+            # prints an error message
             self.autoloader_plugin.error("There was a problem reloading module " + module_name)
 
     def unload_autoloader(self):
+        """
+        Unloads the autoloader unsetting the continue flag.
+        """
+
+        # unsets the continue flag
         self.continue_flag = False
 
     def add_search_path(self):
+        """
+        Adds the system (path) path search directories
+        to the autoloader search path.
+        """
+
+        # extends the search directories with the system
+        # path
         self.search_directories.extend(sys.path)
 
     def add_search_directory(self, path):
+        """
+        Adds the given path to the autoloader search path.
+
+        @type path: String
+        @param path: The path to be added to the autoloader
+        search path.
+        """
+
+        # adds the path to the search directories
         self.search_directories.append(path)
 
 class FileInformation:
