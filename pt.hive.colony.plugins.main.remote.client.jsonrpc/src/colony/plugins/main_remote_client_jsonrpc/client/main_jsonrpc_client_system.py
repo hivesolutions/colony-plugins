@@ -58,6 +58,13 @@ class MainJsonrpcClient:
         self.main_jsonrpc_client_plugin = main_jsonrpc_client_plugin
 
     def get_service_name(self):
+        """
+        Retrieves the service name.
+
+        @rtype: String
+        @return: The service name.
+        """
+
         return SERVICE_NAME
 
     def create_remote_client(self, service_attributes):
