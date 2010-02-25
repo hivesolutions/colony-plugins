@@ -107,6 +107,6 @@ configuration = {
                          "request_properties" : {
                              "base_path" : "$resource{system.path.colony}/pt.hive.colony.plugins.web.administration/src/colony/plugins/web_administration/administration/resources"
                          }
-                     },
+                     }
                  }
              }
