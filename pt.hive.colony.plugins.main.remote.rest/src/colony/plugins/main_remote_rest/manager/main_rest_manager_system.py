@@ -63,6 +63,9 @@ HANDLER_NAME = "rest"
 HANDLER_PORT = 80
 """ The handler port """
 
+SERVICES_SERVICE_NAME = "services"
+""" The services service name """
+
 class MainRestManager:
     """
     The main rest manager class.
@@ -72,7 +75,7 @@ class MainRestManager:
     """ The main rest manager plugin """
 
     matching_regex = None
-    """ The matching regex to be used in route mathcing """
+    """ The matching regex to be used in route matching """
 
     rest_service_routes_map = {}
     """ The rest service routes map """
@@ -158,7 +161,7 @@ class MainRestManager:
         # retrieves the rest resource name
         resource_name = resource_path_splitted[0]
 
-        # retrieves the midle path name
+        # retrieves the middle path name
         middle_path_name = resource_path_splitted[1:-1]
 
         # retrieves the last path name
@@ -206,7 +209,7 @@ class MainRestManager:
         rest_request.set_rest_encoder_plugins(rest_encoder_plugins)
 
         # in case the request is meant to be handled by services
-        if resource_name == "services":
+        if resource_name == SERVICES_SERVICE_NAME:
             # handles the request with the services request handler
             return self.handle_rest_request_services(rest_request)
         else:
