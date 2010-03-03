@@ -99,7 +99,7 @@ class JavascriptFileHandler:
         relative_path_list = uri_splited[3:]
 
         # start the relative path string
-        relative_path = ""
+        relative_path = str()
 
         # iterates over the list of relative path
         for relative_path_item in relative_path_list:
