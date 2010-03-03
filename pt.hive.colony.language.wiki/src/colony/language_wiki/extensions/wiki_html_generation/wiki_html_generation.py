@@ -41,11 +41,11 @@ import sys
 import time
 import copy
 
-import libs.string_buffer_util
+import language_wiki.libs.string_buffer_util
 
-import wiki_ast
-import wiki_visitor
-import wiki_exceptions
+import language_wiki.wiki_ast
+import language_wiki.wiki_visitor
+import language_wiki.wiki_exceptions
 
 DEFAULT_RESOURCES_PATH = "resources"
 """ The default resources path """
@@ -114,7 +114,7 @@ INDEX_PAGE = "documentation_index.xhtml"
 BASE_LEVEL_VALUE = 0
 """ The base level value """
 
-class HtmlGenerationVisitor(wiki_visitor.Visitor):
+class HtmlGenerationVisitor(language_wiki.wiki_visitor.Visitor):
     """
     The html generation visitor class.
     """
@@ -153,10 +153,10 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
     """ The previous recursion limit value """
 
     def __init__(self):
-        wiki_visitor.Visitor.__init__(self)
+        language_wiki.wiki_visitor.Visitor.__init__(self)
 
         # creates the string buffer
-        self.string_buffer = libs.string_buffer_util.StringBuffer()
+        self.string_buffer = language_wiki.libs.string_buffer_util.StringBuffer()
 
         # start the resources paths list
         self.resources_paths_list = []
@@ -208,7 +208,7 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
         """
 
         # clones the current visitor
-        cloned_visitor = wiki_visitor.Visitor.clone(self)
+        cloned_visitor = language_wiki.wiki_visitor.Visitor.clone(self)
 
         # cones the configuration map
         clone_configuration_map = copy.copy(self.configuration_map)
@@ -301,19 +301,19 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
 
         self.configuration_map = configuration_map
 
-    @wiki_visitor._visit(wiki_ast.AstNode)
+    @language_wiki.wiki_visitor._visit(language_wiki.wiki_ast.AstNode)
     def visit_ast_node(self, node):
         pass
 
-    @wiki_visitor._visit(wiki_ast.AstSequenceNode)
+    @language_wiki.wiki_visitor._visit(language_wiki.wiki_ast.AstSequenceNode)
     def visit_ast_sequence_node(self, node):
         pass
 
-    @wiki_visitor._visit(wiki_ast.RootNode)
+    @language_wiki.wiki_visitor._visit(language_wiki.wiki_ast.RootNode)
     def visit_root_node(self, node):
         pass
 
-    @wiki_visitor._visit(wiki_ast.ProgramNode)
+    @language_wiki.wiki_visitor._visit(language_wiki.wiki_ast.ProgramNode)
     def visit_program_node(self, node):
         if self.visit_index == 0:
             # retrieves the current recursion limit and saves it
@@ -421,43 +421,43 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
                 # closes the html
                 self._write("</html>")
 
-    @wiki_visitor._visit(wiki_ast.StatementsNode)
+    @language_wiki.wiki_visitor._visit(language_wiki.wiki_ast.StatementsNode)
     def visit_statements_node(self, node):
         pass
 
-    @wiki_visitor._visit(wiki_ast.StatementNode)
+    @language_wiki.wiki_visitor._visit(language_wiki.wiki_ast.StatementNode)
     def visit_statement_node(self, node):
         pass
 
-    @wiki_visitor._visit(wiki_ast.BoldNode)
+    @language_wiki.wiki_visitor._visit(language_wiki.wiki_ast.BoldNode)
     def visit_bold_node(self, node):
         if self.visit_index == 0:
             self._write("<b>")
         elif self.visit_index == 1:
             self._write("</b>")
 
-    @wiki_visitor._visit(wiki_ast.ItalicNode)
+    @language_wiki.wiki_visitor._visit(language_wiki.wiki_ast.ItalicNode)
     def visit_italic_node(self, node):
         if self.visit_index == 0:
             self._write("<i>")
         elif self.visit_index == 1:
             self._write("</i>")
 
-    @wiki_visitor._visit(wiki_ast.UnderlineNode)
+    @language_wiki.wiki_visitor._visit(language_wiki.wiki_ast.UnderlineNode)
     def visit_underline_node(self, node):
         if self.visit_index == 0:
             self._write("<u>")
         elif self.visit_index == 1:
             self._write("</u>")
 
-    @wiki_visitor._visit(wiki_ast.MonospaceNode)
+    @language_wiki.wiki_visitor._visit(language_wiki.wiki_ast.MonospaceNode)
     def visit_monospace_node(self, node):
         if self.visit_index == 0:
             self._write("<code class=\"monospace\">")
         elif self.visit_index == 1:
             self._write("</code>")
 
-    @wiki_visitor._visit(wiki_ast.SectionNode)
+    @language_wiki.wiki_visitor._visit(language_wiki.wiki_ast.SectionNode)
     def visit_section_node(self, node):
         if self.visit_index == 0:
             # retrieves the node section size
@@ -516,7 +516,7 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
             # opens a new paragraph
             self.open_paragraph()
 
-    @wiki_visitor._visit(wiki_ast.NameNode)
+    @language_wiki.wiki_visitor._visit(language_wiki.wiki_ast.NameNode)
     def visit_name_node(self, node):
         if self.visit_index == 0:
             # retrieves the name value
@@ -529,18 +529,18 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
 
             self._write(name_value)
 
-    @wiki_visitor._visit(wiki_ast.NewLineNode)
+    @language_wiki.wiki_visitor._visit(language_wiki.wiki_ast.NewLineNode)
     def visit_new_line_node(self, node):
         if self.visit_index == 0:
             self.close_paragraph()
             self.open_paragraph()
 
-    @wiki_visitor._visit(wiki_ast.SpaceNode)
+    @language_wiki.wiki_visitor._visit(language_wiki.wiki_ast.SpaceNode)
     def visit_space_node(self, node):
         if self.visit_index == 0:
             self._write(" ")
 
-    @wiki_visitor._visit(wiki_ast.ImageNode)
+    @language_wiki.wiki_visitor._visit(language_wiki.wiki_ast.ImageNode)
     def visit_image_node(self, node):
         if self.visit_index == 0:
             # in case the base vale is not available in
@@ -602,11 +602,11 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
             self._write("</p>")
             self._write("</div>")
 
-    @wiki_visitor._visit(wiki_ast.LinkNode)
+    @language_wiki.wiki_visitor._visit(language_wiki.wiki_ast.LinkNode)
     def visit_link_node(self, node):
         pass
 
-    @wiki_visitor._visit(wiki_ast.ExternalLinkNode)
+    @language_wiki.wiki_visitor._visit(language_wiki.wiki_ast.ExternalLinkNode)
     def visit_external_link_node(self, node):
         if self.visit_index == 0:
             # retrieves the special names
@@ -626,7 +626,7 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
         elif self.visit_index == 1:
             self._write("</a>")
 
-    @wiki_visitor._visit(wiki_ast.InternalLinkNode)
+    @language_wiki.wiki_visitor._visit(language_wiki.wiki_ast.InternalLinkNode)
     def visit_internal_link_node(self, node):
         if self.visit_index == 0:
             self._write("<a class=\"internal\" href=\"" + node.link_value + ".xhtml\">")
@@ -637,11 +637,11 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
         elif self.visit_index == 1:
             self._write("</a>")
 
-    @wiki_visitor._visit(wiki_ast.ListNode)
+    @language_wiki.wiki_visitor._visit(language_wiki.wiki_ast.ListNode)
     def visit_list_node(self, node):
         pass
 
-    @wiki_visitor._visit(wiki_ast.BulletListNode)
+    @language_wiki.wiki_visitor._visit(language_wiki.wiki_ast.BulletListNode)
     def visit_bullet_list_node(self, node):
         if self.visit_index == 0:
             if self.string_buffer.get_last() == "</ul>":
@@ -656,7 +656,7 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
             self._write("</li>")
             self._write("</ul>")
 
-    @wiki_visitor._visit(wiki_ast.OrderedListNode)
+    @language_wiki.wiki_visitor._visit(language_wiki.wiki_ast.OrderedListNode)
     def visit_ordered_list_node(self, node):
         if self.visit_index == 0:
             if self.string_buffer.get_last() == "</ol>":
@@ -671,7 +671,7 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
             self._write("</li>")
             self._write("</ol>")
 
-    @wiki_visitor._visit(wiki_ast.TagNode)
+    @language_wiki.wiki_visitor._visit(language_wiki.wiki_ast.TagNode)
     def visit_tag_node(self, node):
         if self.visit_index == 0:
             # retrieves the tag name
@@ -700,7 +700,7 @@ class HtmlGenerationVisitor(wiki_visitor.Visitor):
                 # splitted is less than one
                 if node_tag_name_splitted_length < 1:
                     # raisers the invalid tag name exception
-                    raise wiki_exceptions.InvalidTagName("tag name is not valid: " + node_tag_name)
+                    raise language_wiki.wiki_exceptions.InvalidTagName("tag name is not valid: " + node_tag_name)
 
                 # retrieves the node tag value
                 node_tag_value = node_tag_name_splitted[0]

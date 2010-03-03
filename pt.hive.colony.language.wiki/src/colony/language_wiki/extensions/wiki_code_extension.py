@@ -41,18 +41,18 @@ import types
 
 import os.path
 
-import libs.string_buffer_util
-import libs.extension_system
+import language_wiki.libs.string_buffer_util
+import language_wiki.libs.extension_system
 
-import wiki_exceptions
-import wiki_extension_system
+import language_wiki.wiki_exceptions
+import language_wiki.wiki_extension_system
 
 import wiki_code.wiki_code_extension_system
 
 GENERATOR_TYPE = "code"
 """ The generator type """
 
-class WikiCodeExtension(wiki_extension_system.WikiExtension):
+class WikiCodeExtension(language_wiki.wiki_extension_system.WikiExtension):
     """
     The wiki code extension class.
     """
@@ -94,10 +94,10 @@ class WikiCodeExtension(wiki_extension_system.WikiExtension):
         @param logger: The extension manager logger.
         """
 
-        wiki_extension_system.WikiExtension.__init__(self, manager, logger)
+        language_wiki.wiki_extension_system.WikiExtension.__init__(self, manager, logger)
 
         # creates a new extension manager
-        self.extension_manager = libs.extension_system.ExtensionManager([os.path.dirname(__file__) + "/wiki_code/extensions"])
+        self.extension_manager = language_wiki.libs.extension_system.ExtensionManager([os.path.dirname(__file__) + "/wiki_code/extensions"])
         self.extension_manager.set_extension_class(wiki_code.wiki_code_extension_system.WikiCodeExtension)
         self.extension_manager.start_logger()
         self.extension_manager.load_system()
@@ -128,7 +128,7 @@ class WikiCodeExtension(wiki_extension_system.WikiExtension):
         contents = tag_node.contents
 
         # creates the string buffer
-        string_buffer = libs.string_buffer_util.StringBuffer()
+        string_buffer = language_wiki.libs.string_buffer_util.StringBuffer()
 
         # retrieves the code highlighting extensions
         code_highlighting_extensions = self.extension_manager.get_extensions_by_capability("code_highlighting")
@@ -146,7 +146,7 @@ class WikiCodeExtension(wiki_extension_system.WikiExtension):
         # is less than one
         if node_attributes_map_keys < 1:
             # raisers the invalid tag name exception
-            raise wiki_exceptions.InvalidTagName("tag name is not valid: " + node_tag_name)
+            raise language_wiki.wiki_exceptions.InvalidTagName("tag name is not valid: " + node_tag_name)
 
         # retrieves the node tag language value
         node_tag_language_value = node_attributes_map_keys[0]

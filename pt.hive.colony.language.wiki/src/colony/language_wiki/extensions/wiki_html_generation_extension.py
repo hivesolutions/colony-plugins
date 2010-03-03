@@ -42,8 +42,8 @@ import sys
 
 import os.path
 
-import wiki_parser
-import wiki_extension_system
+import language_wiki.wiki_parser
+import language_wiki.wiki_extension_system
 
 import wiki_html_generation.wiki_html_generation
 
@@ -53,35 +53,35 @@ GENERATION_TYPE = "html"
 WIKI_EXTENSIONS = ("wiki", "wik")
 """ The valid wiki extensions list """
 
-BASE_FILES = {"resources/css/main.css" : "/css",
-              "resources/js/main.js" : "/js",
-              "resources/images/link_icon.png" : "/images",
-              "resources/images/console_icon.png" : "/images",
-              "resources/images/header.png" : "/images",
-              "resources/images/tick_icon.png" : "/images",
-              "resources/images/arrow_icon.png" : "/images",
-              "resources/images/wikipedia_icon.png" : "/images",
-              "resources/images/colony_logo.png" : "/images",
-              "resources/images/powered_by_colony.png" : "/images",
-              "resources/images/separator.png" : "/images",
-              "resources/images/quote.png" : "/images",
-              "resources/images/document_information_note.gif" : "/images",
-              "resources/images/warning_note.gif" : "/images",
-              "resources/images/error_note.gif" : "/images",
-              "resources/images/info_note.gif" : "/images",
-              "resources/images/quote_note.gif" : "/images",
-              "resources/images/code_note.gif" : "/images",
-              "resources/images/image_note.gif" : "/images",
-              "resources/images/video_note.gif" : "/images",
-              "resources/images/checkbox_note.gif" : "/images",
-              "resources/images/resources_note.gif" : "/images",
-              "resources/images/diagram_note.gif" : "/images"}
+BASE_FILES = {"colony/language_wiki/resources/css/main.css" : "/css",
+              "colony/language_wiki/resources/js/main.js" : "/js",
+              "colony/language_wiki/resources/images/link_icon.png" : "/images",
+              "colony/language_wiki/resources/images/console_icon.png" : "/images",
+              "colony/language_wiki/resources/images/header.png" : "/images",
+              "colony/language_wiki/resources/images/tick_icon.png" : "/images",
+              "colony/language_wiki/resources/images/arrow_icon.png" : "/images",
+              "colony/language_wiki/resources/images/wikipedia_icon.png" : "/images",
+              "colony/language_wiki/resources/images/colony_logo.png" : "/images",
+              "colony/language_wiki/resources/images/powered_by_colony.png" : "/images",
+              "colony/language_wiki/resources/images/separator.png" : "/images",
+              "colony/language_wiki/resources/images/quote.png" : "/images",
+              "colony/language_wiki/resources/images/document_information_note.gif" : "/images",
+              "colony/language_wiki/resources/images/warning_note.gif" : "/images",
+              "colony/language_wiki/resources/images/error_note.gif" : "/images",
+              "colony/language_wiki/resources/images/info_note.gif" : "/images",
+              "colony/language_wiki/resources/images/quote_note.gif" : "/images",
+              "colony/language_wiki/resources/images/code_note.gif" : "/images",
+              "colony/language_wiki/resources/images/image_note.gif" : "/images",
+              "colony/language_wiki/resources/images/video_note.gif" : "/images",
+              "colony/language_wiki/resources/images/checkbox_note.gif" : "/images",
+              "colony/language_wiki/resources/images/resources_note.gif" : "/images",
+              "colony/language_wiki/resources/images/diagram_note.gif" : "/images"}
 """ The base files """
 
 DEFAULT_CONFIGURATION_MAP = {"auto_numbered_sections" : True, "generate_footer" : True}
 """ The default configuration map """
 
-class WikiHtmlGenerator(wiki_extension_system.WikiExtension):
+class WikiHtmlGenerator(language_wiki.wiki_extension_system.WikiExtension):
     """
     The wiki html generator class.
     """
@@ -207,11 +207,11 @@ class WikiHtmlGenerator(wiki_extension_system.WikiExtension):
                 wiki_file_contents = wiki_file_contents.strip()
 
                 # parses the javascript file retrieving the result
-                parse_result = wiki_parser.parser.parse(wiki_file_contents)
+                parse_result = language_wiki.wiki_parser.parser.parse(wiki_file_contents)
 
                 # creates the generator visitor
                 generation_visitor = wiki_html_generation.wiki_html_generation.HtmlGenerationVisitor()
-                generation_visitor.set_parser(wiki_parser.parser)
+                generation_visitor.set_parser(language_wiki.wiki_parser.parser)
                 generation_visitor.set_extension_manager(self.manager)
                 generation_visitor.set_configuration_map(DEFAULT_CONFIGURATION_MAP)
 

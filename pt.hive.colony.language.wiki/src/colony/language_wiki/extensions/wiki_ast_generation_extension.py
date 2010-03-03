@@ -41,8 +41,8 @@ import os
 
 import os.path
 
-import wiki_parser
-import wiki_extension_system
+import language_wiki.wiki_parser
+import language_wiki.wiki_extension_system
 
 GENERATION_TYPE = "ast"
 """ The generation type """
@@ -50,7 +50,7 @@ GENERATION_TYPE = "ast"
 WIKI_EXTENSIONS = ("wiki", "wik")
 """ The valid wiki extensions list """
 
-class WikiAstGenerator(wiki_extension_system.WikiExtension):
+class WikiAstGenerator(language_wiki.wiki_extension_system.WikiExtension):
     """
     The wiki ast generator class.
     """
@@ -159,7 +159,7 @@ class WikiAstGenerator(wiki_extension_system.WikiExtension):
                 wiki_file_contents = wiki_file_contents.strip()
 
                 # parses the javascript file retrieving the result
-                parse_result = wiki_parser.parser.parse(wiki_file_contents)
+                parse_result = language_wiki.wiki_parser.parser.parse(wiki_file_contents)
 
                 # adds the parse result to the parse results list
                 parse_results_list.append(parse_result)

@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import sys
 
-import libs.url_parser
+import language_wiki.libs.url_parser
 
 import wiki_video.wiki_video_extension_system
 
@@ -116,7 +116,7 @@ class YoutubeVideoExtension(wiki_video.wiki_video_extension_system.WikiVideoExte
         video_id = self._get_video_id(url)
 
         # creates a new url
-        url = libs.url_parser.Url()
+        url = language_wiki.libs.url_parser.Url()
 
         # parses the base address
         url.parse_url(BASE_ADDRESS)

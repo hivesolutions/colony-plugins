@@ -39,10 +39,10 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os.path
 
-import libs.url_parser
-import libs.string_buffer_util
+import language_wiki.libs.url_parser
+import language_wiki.libs.string_buffer_util
 
-import wiki_extension_system
+import language_wiki.wiki_extension_system
 
 import wiki_video.wiki_video_extension_system
 
@@ -55,7 +55,7 @@ DEFAULT_WIDTH = 445
 DEFAULT_HEIGHT = 364
 """ The default width """
 
-class WikiVideoExtension(wiki_extension_system.WikiExtension):
+class WikiVideoExtension(language_wiki.wiki_extension_system.WikiExtension):
     """
     The wiki video extension class.
     """
@@ -100,16 +100,16 @@ class WikiVideoExtension(wiki_extension_system.WikiExtension):
         @param logger: The extension manager logger.
         """
 
-        wiki_extension_system.WikiExtension.__init__(self, manager, logger)
+        language_wiki.wiki_extension_system.WikiExtension.__init__(self, manager, logger)
 
         # creates a new extension manager
-        self.extension_manager = libs.extension_system.ExtensionManager([os.path.dirname(__file__) + "/wiki_video/extensions"])
+        self.extension_manager = language_wiki.libs.extension_system.ExtensionManager([os.path.dirname(__file__) + "/wiki_video/extensions"])
         self.extension_manager.set_extension_class(wiki_video.wiki_video_extension_system.WikiVideoExtension)
         self.extension_manager.start_logger()
         self.extension_manager.load_system()
 
         # creates the url parser
-        self.url_parser = libs.url_parser.UrlParser()
+        self.url_parser = language_wiki.libs.url_parser.UrlParser()
 
     def get_generator_type(self):
         """
@@ -140,7 +140,7 @@ class WikiVideoExtension(wiki_extension_system.WikiExtension):
         attributes_map = tag_node.attributes_map
 
         # creates the string buffer
-        string_buffer = libs.string_buffer_util.StringBuffer()
+        string_buffer = language_wiki.libs.string_buffer_util.StringBuffer()
 
         # parses the url
         url = self.url_parser.parse_url(contents)

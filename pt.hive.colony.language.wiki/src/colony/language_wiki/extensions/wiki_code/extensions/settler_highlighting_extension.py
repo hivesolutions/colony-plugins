@@ -43,7 +43,7 @@ import wiki_code.wiki_code_extension_system
 
 from settler_highlighting.settler_lexer import *
 
-COLONY_GENERATOR_PATH = "../../../../pt.hive.colony.language.generator/src/colony"
+COLONY_GENERATOR_PATH = "../../pt.hive.colony.language.generator/src/colony"
 """ The colony generator path """
 
 # appends the colony language generator path

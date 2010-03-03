@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import libs.string_buffer_util
+import language_wiki.libs.string_buffer_util
 
-import wiki_extension_system
+import language_wiki.wiki_extension_system
 
 GENERATOR_TYPE = "command"
 """ The generator type """
@@ -47,7 +47,7 @@ GENERATOR_TYPE = "command"
 CONFIGURATION_MAP = {"generate_footer" : False, "simple_parse" : True}
 """ The configuration map """
 
-class WikiCommandExtension(wiki_extension_system.WikiExtension):
+class WikiCommandExtension(language_wiki.wiki_extension_system.WikiExtension):
     """
     The wiki command extension class.
     """
@@ -102,7 +102,7 @@ class WikiCommandExtension(wiki_extension_system.WikiExtension):
         contents = tag_node.contents
 
         # creates the string buffer
-        string_buffer = libs.string_buffer_util.StringBuffer()
+        string_buffer = language_wiki.libs.string_buffer_util.StringBuffer()
 
         # writes the start span command tag
         string_buffer.write("<span class=\"command\">")

@@ -37,16 +37,15 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import libs.extension_system
-import libs.string_buffer_util
+import language_wiki.libs.extension_system
+import language_wiki.libs.string_buffer_util
 
-class WikiDiagramExtension(libs.extension_system.Extension):
+class WikiDiagramExtension(language_wiki.libs.extension_system.Extension):
     """
     The wiki diagram extension class.
     """
 
     pass
-
 
 class AbstractVectorGraphics:
     def __init__(self):
@@ -83,7 +82,7 @@ class ScalableVectorGraphics(AbstractVectorGraphics):
         """
 
         # initializes the string buffer
-        string_buffer = libs.string_buffer_util.StringBuffer()
+        string_buffer = language_wiki.libs.string_buffer_util.StringBuffer()
 
         # retrieves the view box width
         view_box_width = graphics_attributes["view_box_width"]
@@ -149,7 +148,7 @@ class ScalableVectorGraphics(AbstractVectorGraphics):
 
     def generate_elements(self, graphics_elements):
         # initializes the string buffer
-        string_buffer = libs.string_buffer_util.StringBuffer()
+        string_buffer = language_wiki.libs.string_buffer_util.StringBuffer()
 
         # for each graphics element
         for graphics_element in graphics_elements:
@@ -208,7 +207,7 @@ class ScalableVectorGraphics(AbstractVectorGraphics):
 
     def generate_text(self, graphics_attributes):
         # initializes the string buffer
-        string_buffer = libs.string_buffer_util.StringBuffer()
+        string_buffer = language_wiki.libs.string_buffer_util.StringBuffer()
 
         # retrieves the x
         x = graphics_attributes["x"]

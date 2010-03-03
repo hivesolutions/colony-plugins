@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import libs.string_buffer_util
+import language_wiki.libs.string_buffer_util
 
-import wiki_extension_system
+import language_wiki.wiki_extension_system
 
 GENERATOR_TYPE = "document_information"
 """ The generator type """
@@ -47,7 +47,7 @@ GENERATOR_TYPE = "document_information"
 CONFIGURATION_MAP = {"generate_footer" : False, "simple_parse" : True}
 """ The configuration map """
 
-class WikiDocumentInformationExtension(wiki_extension_system.WikiExtension):
+class WikiDocumentInformationExtension(language_wiki.wiki_extension_system.WikiExtension):
     """
     The wiki document information extension class.
     """
@@ -105,7 +105,7 @@ class WikiDocumentInformationExtension(wiki_extension_system.WikiExtension):
         attributes_map = tag_node.attributes_map
 
         # creates the string buffer
-        string_buffer = libs.string_buffer_util.StringBuffer()
+        string_buffer = language_wiki.libs.string_buffer_util.StringBuffer()
 
         # writes the start div document information tag
         string_buffer.write("<div class=\"document-information\">")

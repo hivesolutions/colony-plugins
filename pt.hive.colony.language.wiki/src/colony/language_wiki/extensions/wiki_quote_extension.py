@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import libs.string_buffer_util
+import language_wiki.libs.string_buffer_util
 
-import wiki_extension_system
+import language_wiki.wiki_extension_system
 
 GENERATOR_TYPE = "quote"
 """ The generator type """
@@ -47,7 +47,7 @@ GENERATOR_TYPE = "quote"
 CONFIGURATION_MAP = {"generate_footer" : False, "simple_parse" : True}
 """ The configuration map """
 
-class WikiQuoteExtension(wiki_extension_system.WikiExtension):
+class WikiQuoteExtension(language_wiki.wiki_extension_system.WikiExtension):
     """
     The wiki quote extension class.
     """
@@ -108,7 +108,7 @@ class WikiQuoteExtension(wiki_extension_system.WikiExtension):
         author = attributes_map.get("author", None)
 
         # creates the string buffer
-        string_buffer = libs.string_buffer_util.StringBuffer()
+        string_buffer = language_wiki.libs.string_buffer_util.StringBuffer()
 
         # writes the start div quote tag
         string_buffer.write("<div class=\"quote\">")

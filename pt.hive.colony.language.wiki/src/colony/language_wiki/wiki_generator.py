@@ -37,25 +37,14 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import sys
 import time
-import getopt
 import logging
 
 import os.path
 
 import libs.extension_system
 
-import wiki_extension_system
-
-USAGE_MESSAGE = "wiki_generator --file=file_path [--target=target_path] [--generation=generation_engine] [-v] [-d]"
-""" The usage message """
-
-DEFAULT_BASE_PATH = ""
-""" The default base path """
-
-DEFAULT_TARGET_PATH = "generated"
-""" The default target path """
+import language_wiki.wiki_extension_system
 
 class WikiGenerator:
     """
@@ -63,7 +52,7 @@ class WikiGenerator:
     """
 
     log_level = None
-    """ The log leve """
+    """ The log level """
 
     extension_manager = None
     """ The extension manager """
@@ -111,7 +100,7 @@ class WikiGenerator:
 
         # creates a new extension manager
         self.extension_manager = libs.extension_system.ExtensionManager([os.path.dirname(__file__) + "/extensions"])
-        self.extension_manager.set_extension_class(wiki_extension_system.WikiExtension)
+        self.extension_manager.set_extension_class(language_wiki.wiki_extension_system.WikiExtension)
         self.extension_manager.start_logger(self.log_level)
         self.extension_manager.load_system()
 
@@ -206,59 +195,3 @@ class WikiGenerator:
 
         # returns the extension manager
         return self.extension_manager
-
-if __name__ == "__main__":
-    # starts the verbose flag as false
-    verbose = False
-
-    # starts the debug flag as false
-    debug = False
-
-    # start the file path value as None
-    file_path = None
-
-    # start the target path as the default target path
-    target_path = DEFAULT_TARGET_PATH
-
-    # start the generation as None
-    generation = None
-
-    # retrieves the argument options
-    opts, args = getopt.getopt(sys.argv[1:], "vdf:t:", ["verbose", "debug", "file=", "target=", "generation="])
-
-    # iterates over all the given options
-    for option, value in opts:
-        if option in ("-v", "--verbose"):
-            verbose = True
-        elif option in ("-d", "--debug"):
-            debug = True
-        elif option in ("-f", "--file"):
-            file_path = value
-        elif option in ("-y", "--target"):
-            target_path = value
-        elif option in ("-g", "--generation"):
-            generation = value
-
-    # in case the file path is not defined
-    if not file_path:
-        print "File Path not defined"
-        print "Usage: " + USAGE_MESSAGE
-        sys.exit(2)
-
-    # creates the properties map
-    properties = {"file_path" : file_path, "target_path" : target_path}
-
-    # creates a new wiki generator
-    wiki_generator = WikiGenerator()
-
-    # starts the logger in the wiki generator
-    wiki_generator.start_logger(verbose, debug)
-
-    # sets the generation engine in the wiki generator
-    wiki_generator.set_generation_engine(generation)
-
-    # sets the generation properties in the wiki generator
-    wiki_generator.set_generation_properties(properties)
-
-    # processes the wiki generator
-    wiki_generator.process()

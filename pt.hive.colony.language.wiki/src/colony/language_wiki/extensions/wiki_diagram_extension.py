@@ -39,10 +39,10 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os.path
 
-import libs.string_buffer_util
+import language_wiki.libs.string_buffer_util
 
-import wiki_exceptions
-import wiki_extension_system
+import language_wiki.wiki_exceptions
+import language_wiki.wiki_extension_system
 
 import wiki_diagram.wiki_diagram_extension_system
 
@@ -58,7 +58,7 @@ DEFAULT_HEIGHT_VALUE = None
 HEIGHT_SCALE_FACTOR = 4
 """ The height scale factor """
 
-class WikiDiagramExtension(wiki_extension_system.WikiExtension):
+class WikiDiagramExtension(language_wiki.wiki_extension_system.WikiExtension):
     """
     The wiki diagram extension class.
     """
@@ -97,10 +97,10 @@ class WikiDiagramExtension(wiki_extension_system.WikiExtension):
         @param logger: The extension manager logger.
         """
 
-        wiki_extension_system.WikiExtension.__init__(self, manager, logger)
+        language_wiki.wiki_extension_system.WikiExtension.__init__(self, manager, logger)
 
         # creates a new extension manager
-        self.extension_manager = libs.extension_system.ExtensionManager([os.path.dirname(__file__) + "/wiki_diagram/extensions"])
+        self.extension_manager = language_wiki.libs.extension_system.ExtensionManager([os.path.dirname(__file__) + "/wiki_diagram/extensions"])
         self.extension_manager.set_extension_class(wiki_diagram.wiki_diagram_extension_system.WikiDiagramExtension)
         self.extension_manager.start_logger()
         self.extension_manager.load_system()
@@ -131,7 +131,7 @@ class WikiDiagramExtension(wiki_extension_system.WikiExtension):
         contents = tag_node.contents
 
         # creates the string buffer
-        string_buffer = libs.string_buffer_util.StringBuffer()
+        string_buffer = language_wiki.libs.string_buffer_util.StringBuffer()
 
         # retrieves the code highlighting extensions
         diagram_extensions = self.extension_manager.get_extensions_by_capability("diagram")
@@ -151,7 +151,7 @@ class WikiDiagramExtension(wiki_extension_system.WikiExtension):
         # in case the diagram type is not specified
         if not diagram_type:
             # raisers the invalid tag name exception
-            raise wiki_exceptions.InvalidTagName("tag name is not valid: " + node_tag_name)
+            raise language_wiki.wiki_exceptions.InvalidTagName("tag name is not valid: " + node_tag_name)
 
         # retrieves the title
         node_tag_title = node_attributes_map.get("title", "none")

@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import libs.extension_system
+import language_wiki.libs.extension_system
 
-class WikiVideoExtension(libs.extension_system.Extension):
+class WikiVideoExtension(language_wiki.libs.extension_system.Extension):
     """
     The wiki video extension class.
     """
