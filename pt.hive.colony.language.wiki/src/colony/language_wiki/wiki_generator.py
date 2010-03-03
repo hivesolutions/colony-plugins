@@ -42,6 +42,8 @@ import time
 import getopt
 import logging
 
+import os.path
+
 import libs.extension_system
 
 import wiki_extension_system
@@ -108,7 +110,7 @@ class WikiGenerator:
         """
 
         # creates a new extension manager
-        self.extension_manager = libs.extension_system.ExtensionManager(["./extensions"])
+        self.extension_manager = libs.extension_system.ExtensionManager([os.path.dirname(__file__) + "/extensions"])
         self.extension_manager.set_extension_class(wiki_extension_system.WikiExtension)
         self.extension_manager.start_logger(self.log_level)
         self.extension_manager.load_system()

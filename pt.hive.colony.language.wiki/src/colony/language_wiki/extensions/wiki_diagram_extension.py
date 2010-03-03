@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os.path
+
 import libs.string_buffer_util
 
 import wiki_exceptions
@@ -98,7 +100,7 @@ class WikiDiagramExtension(wiki_extension_system.WikiExtension):
         wiki_extension_system.WikiExtension.__init__(self, manager, logger)
 
         # creates a new extension manager
-        self.extension_manager = libs.extension_system.ExtensionManager(["./extensions/wiki_diagram/extensions"])
+        self.extension_manager = libs.extension_system.ExtensionManager([os.path.dirname(__file__) + "/wiki_diagram/extensions"])
         self.extension_manager.set_extension_class(wiki_diagram.wiki_diagram_extension_system.WikiDiagramExtension)
         self.extension_manager.start_logger()
         self.extension_manager.load_system()

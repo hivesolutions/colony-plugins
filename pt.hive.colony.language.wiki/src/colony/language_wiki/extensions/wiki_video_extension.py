@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os.path
+
 import libs.url_parser
 import libs.string_buffer_util
 
@@ -101,7 +103,7 @@ class WikiVideoExtension(wiki_extension_system.WikiExtension):
         wiki_extension_system.WikiExtension.__init__(self, manager, logger)
 
         # creates a new extension manager
-        self.extension_manager = libs.extension_system.ExtensionManager(["./extensions/wiki_video/extensions"])
+        self.extension_manager = libs.extension_system.ExtensionManager([os.path.dirname(__file__) + "/wiki_video/extensions"])
         self.extension_manager.set_extension_class(wiki_video.wiki_video_extension_system.WikiVideoExtension)
         self.extension_manager.start_logger()
         self.extension_manager.load_system()

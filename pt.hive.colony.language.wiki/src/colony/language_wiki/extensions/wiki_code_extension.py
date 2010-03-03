@@ -39,6 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import types
 
+import os.path
+
 import libs.string_buffer_util
 import libs.extension_system
 
@@ -95,7 +97,7 @@ class WikiCodeExtension(wiki_extension_system.WikiExtension):
         wiki_extension_system.WikiExtension.__init__(self, manager, logger)
 
         # creates a new extension manager
-        self.extension_manager = libs.extension_system.ExtensionManager(["./extensions/wiki_code/extensions"])
+        self.extension_manager = libs.extension_system.ExtensionManager([os.path.dirname(__file__) + "/wiki_code/extensions"])
         self.extension_manager.set_extension_class(wiki_code.wiki_code_extension_system.WikiCodeExtension)
         self.extension_manager.start_logger()
         self.extension_manager.load_system()
