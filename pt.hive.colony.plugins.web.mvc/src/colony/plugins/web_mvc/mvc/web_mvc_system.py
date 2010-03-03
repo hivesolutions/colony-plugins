@@ -209,6 +209,16 @@ class WebMvc:
         self.matching_regex = re.compile(matching_regex_value)
 
     def _serialize_number(self, number):
+        """
+        Serializes a number into a string of characters
+        representing the number in ascii.
+
+        @type number: int
+        @param number: The number to be serialized.
+        @rtype: String
+        @return: The serialized version of the number.
+        """
+
         # converts the number to string
         number_string = str(number)
 
@@ -223,6 +233,16 @@ class WebMvc:
         return number_string_serialized
 
     def _deserialize_number(self, number_string_serialized):
+        """
+        Deserealizes a number in the character ascii form into
+        the original number.
+
+        @type number_string_serialized: String
+        @param number_string_serialized: The number serialized in the ascii form.
+        @rtype: int
+        @return: The unserialized version of the number.
+        """
+
         # initializes the number string
         number_string = ""
 
