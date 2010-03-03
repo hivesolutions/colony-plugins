@@ -119,7 +119,7 @@ def capitalize_tokens(string_value, exclusion_list):
     tokens = string_value.split(SPACE_VALUE)
 
     # capitalizes all capitalizable tokens
-    capitalized_string = ""
+    capitalized_string = str()
     for token in tokens:
         if not token in exclusion_list:
             token = token.capitalize()

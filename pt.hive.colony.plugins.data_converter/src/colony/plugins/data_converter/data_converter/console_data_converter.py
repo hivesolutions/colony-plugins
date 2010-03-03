@@ -173,7 +173,7 @@ class ConsoleDataConverter:
 
         # creates the table rows
         for configuration_item in configuration_items:
-            configuration_item_str = ""
+            configuration_item_str = str()
 
             # creates the cell for the id column
             configuration_item_id_str = str(configuration_item.get_configuration_item_id())
@@ -226,7 +226,7 @@ class ConsoleDataConverter:
 
         # creates the table rows
         for configuration in configurations:
-            configuration_str = ""
+            configuration_str = str()
 
             # creates the cell for the id column
             configuration_id_str = str(configuration.get_configuration_id())

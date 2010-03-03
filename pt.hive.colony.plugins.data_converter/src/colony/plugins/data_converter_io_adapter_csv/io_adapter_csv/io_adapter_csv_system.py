@@ -198,7 +198,7 @@ class IoAdapterCsv:
     def tokenize_csv_data(self, csv_data, token_separator, text_delimiter):
         separators = (token_separator, "\n")
         tokens = []
-        token = ""
+        token = str()
         inside_text = False
 
         # parses the csv data into tokens
