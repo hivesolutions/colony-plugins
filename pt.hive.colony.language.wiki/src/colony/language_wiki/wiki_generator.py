@@ -102,6 +102,7 @@ class WikiGenerator:
         self.extension_manager = libs.extension_system.ExtensionManager([os.path.dirname(__file__) + "/extensions"])
         self.extension_manager.set_extension_class(language_wiki.wiki_extension_system.WikiExtension)
         self.extension_manager.start_logger(self.log_level)
+        self.extension_manager.set_base_path(os.path.dirname(__file__))
         self.extension_manager.load_system()
 
     def process(self):

@@ -53,29 +53,29 @@ GENERATION_TYPE = "html"
 WIKI_EXTENSIONS = ("wiki", "wik")
 """ The valid wiki extensions list """
 
-BASE_FILES = {"colony/language_wiki/resources/css/main.css" : "/css",
-              "colony/language_wiki/resources/js/main.js" : "/js",
-              "colony/language_wiki/resources/images/link_icon.png" : "/images",
-              "colony/language_wiki/resources/images/console_icon.png" : "/images",
-              "colony/language_wiki/resources/images/header.png" : "/images",
-              "colony/language_wiki/resources/images/tick_icon.png" : "/images",
-              "colony/language_wiki/resources/images/arrow_icon.png" : "/images",
-              "colony/language_wiki/resources/images/wikipedia_icon.png" : "/images",
-              "colony/language_wiki/resources/images/colony_logo.png" : "/images",
-              "colony/language_wiki/resources/images/powered_by_colony.png" : "/images",
-              "colony/language_wiki/resources/images/separator.png" : "/images",
-              "colony/language_wiki/resources/images/quote.png" : "/images",
-              "colony/language_wiki/resources/images/document_information_note.gif" : "/images",
-              "colony/language_wiki/resources/images/warning_note.gif" : "/images",
-              "colony/language_wiki/resources/images/error_note.gif" : "/images",
-              "colony/language_wiki/resources/images/info_note.gif" : "/images",
-              "colony/language_wiki/resources/images/quote_note.gif" : "/images",
-              "colony/language_wiki/resources/images/code_note.gif" : "/images",
-              "colony/language_wiki/resources/images/image_note.gif" : "/images",
-              "colony/language_wiki/resources/images/video_note.gif" : "/images",
-              "colony/language_wiki/resources/images/checkbox_note.gif" : "/images",
-              "colony/language_wiki/resources/images/resources_note.gif" : "/images",
-              "colony/language_wiki/resources/images/diagram_note.gif" : "/images"}
+BASE_FILES = {"resources/css/main.css" : "/css",
+              "resources/js/main.js" : "/js",
+              "resources/images/link_icon.png" : "/images",
+              "resources/images/console_icon.png" : "/images",
+              "resources/images/header.png" : "/images",
+              "resources/images/tick_icon.png" : "/images",
+              "resources/images/arrow_icon.png" : "/images",
+              "resources/images/wikipedia_icon.png" : "/images",
+              "resources/images/colony_logo.png" : "/images",
+              "resources/images/powered_by_colony.png" : "/images",
+              "resources/images/separator.png" : "/images",
+              "resources/images/quote.png" : "/images",
+              "resources/images/document_information_note.gif" : "/images",
+              "resources/images/warning_note.gif" : "/images",
+              "resources/images/error_note.gif" : "/images",
+              "resources/images/info_note.gif" : "/images",
+              "resources/images/quote_note.gif" : "/images",
+              "resources/images/code_note.gif" : "/images",
+              "resources/images/image_note.gif" : "/images",
+              "resources/images/video_note.gif" : "/images",
+              "resources/images/checkbox_note.gif" : "/images",
+              "resources/images/resources_note.gif" : "/images",
+              "resources/images/diagram_note.gif" : "/images"}
 """ The base files """
 
 DEFAULT_CONFIGURATION_MAP = {"auto_numbered_sections" : True, "generate_footer" : True}
@@ -253,7 +253,7 @@ class WikiHtmlGenerator(language_wiki.wiki_extension_system.WikiExtension):
             base_target_path = BASE_FILES[base_file_path]
 
             # copies the base file to the target path
-            self._copy_files((base_file_path,), target_path + base_target_path)
+            self._copy_files((self.manager.get_base_path() + "/" + base_file_path,), target_path + base_target_path)
 
     def _copy_extra_files(self, base_path, target_path, extra_resources_paths_list):
         """

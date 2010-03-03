@@ -195,6 +195,9 @@ class ExtensionManager:
     extension_paths = None
     """ The set of paths for the loaded extensions """
 
+    base_path = ""
+    """ The base path to be used in related resources """
+
     referred_modules = []
     """ The referred modules """
 
@@ -645,6 +648,26 @@ class ExtensionManager:
 
         # returns the results list
         return result
+
+    def get_base_path(self):
+        """
+        Returns the base path for resources retrieval.
+
+        @rtype: String
+        @return: The base path for resources retrieval.
+        """
+
+        return self.base_path
+
+    def set_base_path(self, base_path):
+        """
+        Sets the base path for resources retrieval.
+
+        @type base_path: String
+        @param base_path: The base path for resources retrieval.
+        """
+
+        self.base_path = base_path
 
 class Capability:
     """
