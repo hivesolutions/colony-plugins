@@ -83,7 +83,7 @@ configuration = {
                      "/eclipse" : {
                          "handler" : "file",
                          "request_properties" : {
-                             "base_path" : "${WORKSPACE_HOME}/pt.hive.eclipse.plugins.site",
+                             "base_path" : "$resource{system.path.base}/pt.hive.eclipse.plugins.site",
                              "default_page" : "site.xml"
                          }
                      },

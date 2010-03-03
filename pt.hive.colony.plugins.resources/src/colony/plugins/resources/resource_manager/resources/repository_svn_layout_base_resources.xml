@@ -50,6 +50,12 @@
     <!-- General configuration -->
     <resource>
         <namespace>system.path</namespace>
+        <name>base</name>
+        <type>string</type>
+        <data>../../</data>
+    </resource>
+    <resource>
+        <namespace>system.path</namespace>
         <name>colony</name>
         <type>string</type>
         <data>../../</data>
