@@ -96,7 +96,6 @@ class WebMvcWiki:
         # creates a new parser generator
         #parser_generator = language_generator.parser_generator.ParserGenerator(language_generator.parser_generator.ParserGenerator.LR0_PARSER_TYPE, True, globals())
 
-        import language_settler.settler_lexer
         import language_wiki.wiki_generator
 
         # creates a new wiki generator
