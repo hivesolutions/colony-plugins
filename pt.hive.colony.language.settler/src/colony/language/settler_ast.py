@@ -1333,7 +1333,7 @@ class NameReferenceNode(AstSequenceNode):
         """
 
         # creates a new name variable
-        name = ""
+        name = str()
 
         # creates the is first flag
         is_first = True
