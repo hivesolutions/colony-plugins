@@ -57,7 +57,7 @@ class EurekaItem:
     types_allowed = None
 
     def __str__(self):
-        return_string = ""
+        return_string = str()
         return_string +="title:         " + self.title +"\n"
         return_string +="type:          " + self.type +"\n"
         return_string +="key:           " + self.key +"\n"
