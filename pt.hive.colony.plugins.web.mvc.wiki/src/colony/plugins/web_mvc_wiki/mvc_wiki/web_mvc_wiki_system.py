@@ -78,6 +78,53 @@ class WebMvcWiki:
         @return: The result of the handling.
         """
 
+        # primeiro faço import da biblioteca nativa
+        # a partir do path especificado
+
+        # segundo corro para cada pagina a cada pedido a partir do path
+        # pedido
+
+        # imports the sys package
+        #import sys
+
+        # appends the wiki path
+        #sys.path.append(WIKI_PATH)
+
+        # imports the colony generator package
+        #import language_generator.parser_generator
+
+        # creates a new parser generator
+        #parser_generator = language_generator.parser_generator.ParserGenerator(language_generator.parser_generator.ParserGenerator.LR0_PARSER_TYPE, True, globals())
+
+        import language_settler.settler_lexer
+        import language_wiki.wiki_generator
+
+        # creates a new wiki generator
+        wiki_generator = language_wiki.wiki_generator.WikiGenerator()
+
+        file_path = "/Users/joamag/Documents/workspace/pt.hive.colony.documentation.technical"
+
+        target_path = "generated"
+
+        # creates the structure that will hold the information
+        # about the output of the wiki generation
+        output_structure = {}
+
+        # creates the engine properties map
+        engine_properties = {"file_path": file_path, "target_path": target_path, "output_structure": output_structure}
+
+        # starts the logger in the wiki generator
+        wiki_generator.start_logger()
+
+        # sets the generation engine in the wiki generator
+        wiki_generator.set_generation_engine("html")
+
+        # sets the generation properties in the wiki generator
+        wiki_generator.set_generation_properties(engine_properties)
+
+        # processes the wiki generator
+        wiki_generator.process()
+
         # sets the content type for the rest request
         rest_request.set_content_type("text/html")
 
