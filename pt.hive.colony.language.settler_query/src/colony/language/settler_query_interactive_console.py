@@ -55,7 +55,7 @@ NEW_BLOCK_CHARACTER = ":"
 EXIT_COMMAND = "exit()"
 
 def get_command_from_command_list(command_list):
-    command_string = ""
+    command_string = str()
 
     for command_item in command_list:
         command_string += command_item + "\n"
