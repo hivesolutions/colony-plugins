@@ -37,8 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import sys
-
 import language_wiki.libs.url_parser
 
 import wiki_video.wiki_video_extension_system
