@@ -57,15 +57,15 @@ class LanguageWikiPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["language_wiki.wiki.language_wiki_system", "language_wiki.wiki.language_wiki_exceptions"]
+    main_modules = ["_language_wiki.wiki.language_wiki_system", "_language_wiki.wiki.language_wiki_exceptions"]
 
     language_wiki = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
-        global language_wiki
-        import language_wiki.wiki.language_wiki_system
-        self.language_wiki = language_wiki.wiki.language_wiki_system.LanguageWiki(self)
+        global _language_wiki
+        import _language_wiki.wiki.language_wiki_system
+        self.language_wiki = _language_wiki.wiki.language_wiki_system.LanguageWiki(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
