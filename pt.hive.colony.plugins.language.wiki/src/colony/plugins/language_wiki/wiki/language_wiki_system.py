@@ -46,7 +46,7 @@ COLONY_LANGUAGE_WIKI_PATH = "../../pt.hive.colony.language.wiki/src/colony"
 sys.path.append(COLONY_LANGUAGE_WIKI_PATH)
 
 # imports the colony language wiki package
-import language.wiki_generator
+import language_wiki.wiki_generator
 
 class LanguageWiki:
     """
@@ -68,7 +68,7 @@ class LanguageWiki:
 
     def generate(self, engine_name, engine_properties):
         # creates a new wiki generator
-        wiki_generator = language.wiki_generator.WikiGenerator()
+        wiki_generator = language_wiki.wiki_generator.WikiGenerator()
 
         # starts the logger in the wiki generator
         wiki_generator.start_logger()
