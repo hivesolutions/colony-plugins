@@ -92,14 +92,14 @@ class TemplateEngineManager:
         file = open(file_path, "r")
 
         # parses the file
-        result = self.parse_file(file)
+        result = self.parse_file(file, file_path)
 
         # closes the file
         file.close()
 
         return result
 
-    def parse_file(self, file):
+    def parse_file(self, file, file_path = None):
         # reads the file contents
         file_contents = file.read()
 
@@ -304,8 +304,8 @@ class TemplateEngineManager:
                 # adds the literal node as a child to the parent node
                 parent_node.add_child_node(literal_node)
 
-        # creates the template file from the root node
-        template_file = TemplateFile(root_node)
+        # creates the template file from the file path and root node
+        template_file = TemplateFile(self, file_path, root_node)
 
         # returns the template file
         return template_file
@@ -367,21 +367,64 @@ class TemplateFile:
     The template file class.
     """
 
+    manager = None
+    """ The manager """
+
+    file_path = None
+    """ The path to the file to be used """
+
     root_node = None
     """ The root node """
 
     visitor = None
     """ The visitor """
 
-    def __init__(self, root_node = None):
+    def __init__(self, manager = None, file_path = None, root_node = None):
+        """
+        Constructor of the class.
+
+        @type manager: TemplateEngineManager
+        @param manager: The manager to be used.
+        @type file_path: String
+        @param file_path: The path to the file to be used.
+        @type root_node: AstNode
+        @param root_node: The root node to be used.
+        """
+
+        self.manager = manager
+        self.file_path = file_path
         self.root_node = root_node
 
         self.visitor = template_engine_visitor.Visitor()
 
     def assign(self, variable_name, variable_value):
+        """
+        Assigns a variable to a value. This assignment
+        allows the usage of the value internally in the template.
+
+        @type variable_name: String
+        @param variable_name: The name of the variable to assign a value.
+        @type variable_value: Object
+        @param variable_value: The value to be assigned to the variable
+        """
+
         self.visitor.add_global_variable(variable_name, variable_value)
 
     def process(self):
+        """
+        Processes the template file running the visitor
+        and returning the result value.
+
+        @rtype: String
+        @return: The result value from the visitor.
+        """
+
+        # sets the file path in the visitor
+        self.visitor.set_file_path(self.file_path)
+
+        # sets the template engine manager in the visitor
+        self.visitor.set_template_engine_manager(self.manager)
+
         # accepts the visitor in the root node
         self.root_node.accept(self.visitor)
 

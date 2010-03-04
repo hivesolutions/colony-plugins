@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os.path
+
 import xml.sax.saxutils
 
 import string_buffer_util
@@ -172,6 +174,12 @@ class Visitor:
     node_method_map = {}
     """ The node method map """
 
+    file_path = None
+    """ The path to the file """
+
+    template_engine_manager = None
+    """ The template engine manager """
+
     visit_childs = True
     """ The visit childs flag """
 
@@ -223,6 +231,46 @@ class Visitor:
 
     def remove_global_variable(self, variable_name):
         del self.global_map[variable_name]
+
+    def get_file_path(self):
+        """
+        Retrieves path to the file.
+
+        @rtype: String
+        @return: The path to the file.
+        """
+
+        return self.file_path
+
+    def set_file_path(self, file_path):
+        """
+        Sets the path to the file.
+
+        @type file_path: String
+        @param file_path: The path to the file.
+        """
+
+        self.file_path = file_path
+
+    def get_template_engine_manager(self):
+        """
+        Retrieves the template engine manager.
+
+        @rtype: TemplateEngineManager
+        @return: The template engine manager.
+        """
+
+        return self.template_engine_manager
+
+    def set_template_engine_manager(self, template_engine_manager):
+        """
+        Sets the template engine manager.
+
+        @type template_engine_manager: TemplateEngineManager
+        @param template_engine_manager: The template engine manager.
+        """
+
+        self.template_engine_manager = template_engine_manager
 
     @dispatch_visit()
     def visit(self, node):
@@ -397,7 +445,31 @@ class Visitor:
         @param node: The single node to be processed as include.
         """
 
-        pass
+        attributes_map = node.get_attributes_map()
+        attribute_file = attributes_map["file"]
+
+        attribute_file_literal_value = self.get_literal_value(attribute_file)
+
+        # in case the path is absolute
+        if attribute_file_literal_value[0] == "/":
+            # sets the file path as absolute
+            file_path = attribute_file_literal_value
+        # in case the path is relative to the current file
+        else:
+            # retrieves the file directory from the file path
+            file_directory = os.path.dirname(self.file_path)
+
+            # sets the file path as relative to the file directory
+            file_path = file_directory + "/" + attribute_file_literal_value
+
+        # parses the file retrieving the template file
+        template_file = self.template_engine_manager.parse_file_path(file_path)
+
+        # processes the template file
+        processed_template_file = template_file.process()
+
+        # writes the processed template file to the string buffer
+        self.string_buffer.write(processed_template_file)
 
     def get_value(self, attribute_value):
         # in case the attribute value is of type variable
@@ -439,16 +511,24 @@ class Visitor:
         return value
 
     def get_literal_value(self, attribute_value):
+        # retrieves the literal value
         literal_value = attribute_value["value"]
 
+        # returns the literal value
         return literal_value
 
     def get_boolean_value(self, attribute_value):
+        # retrieves the literal value
         literal_value = attribute_value["value"]
 
+        # in case the literal value is true
         if literal_value == "True":
+            # returns true
             return True
+        # in case the literal value is false
         elif literal_value == "False":
+            # returns false
             return False
 
+        # raises an invalid boolean value exception
         raise template_engine_exceptions.InvalidBooleanValue("invalid boolean " + literal_value)
