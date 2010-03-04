@@ -45,7 +45,7 @@ configuration = {
                  "default_content_type_charset" : "utf-8",
                  "preferred_error_handlers" : ["template", "default"],
                  "contexts" : {
-                     "resolution_order" : ["/colony_web/plugins", "/colony_web", "/colony_manager", "/colony_mod_python", "/template_error_handler", "/docs", "/eclipse", "/cgi-bin", "/fastcgi-bin", "/web_administration"],
+                     "resolution_order" : ["/colony_web/plugins", "/colony_web", "/colony_manager", "/colony_mod_python/rest/mvc/hive/resources", "/colony_mod_python", "/template_error_handler", "/docs", "/eclipse", "/cgi-bin", "/fastcgi-bin", "/web_administration"],
                      "/colony_web" : {
                          "handler" : "file",
                          "request_properties" : {
@@ -62,6 +62,12 @@ configuration = {
                      "/colony_manager" : {
                          "handler" : "colony",
                          "request_properties" : {}
+                     },
+                     "/colony_mod_python/rest/mvc/hive/resources" : {
+                         "handler" : "file",
+                         "request_properties" : {
+                             "base_path" : "$resource{system.path.hive_site}/pt.hive.hive_site.plugins.main/src/hive_site/plugins/hive_site_main/main/resources/extras"
+                         }
                      },
                      "/colony_mod_python" : {
                          "handler" : "colony",
