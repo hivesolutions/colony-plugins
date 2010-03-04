@@ -54,7 +54,8 @@ class LanguageWikiPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["language.wiki"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PackageDependency(
+                    "Colony Language Wiki", "language_wiki.wiki_generator", "1.0.x", "http://www.hive.pt")]
     events_handled = []
     events_registrable = []
     main_modules = ["_language_wiki.wiki.language_wiki_system", "_language_wiki.wiki.language_wiki_exceptions"]
@@ -69,7 +70,6 @@ class LanguageWikiPlugin(colony.plugins.plugin_system.Plugin):
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
-        self.language_wiki.generate("ast", {"file_path" : "../../../../pt.hive.colony.documentation.technical"})
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
@@ -87,4 +87,15 @@ class LanguageWikiPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def generate(self, engine_name, engine_properties):
+        """
+        Generates the wiki output base in the given engine name
+        and in the given engine properties.
+
+        @type engine_name: String
+        @param engine_name: The name of the engine to be used in generation.
+        @type engine_properties: Dictionary
+        @param engine_properties: The properties to be used by the engine
+        during the engine processing.
+        """
+
         self.language_wiki.generate(engine_name, engine_properties)
