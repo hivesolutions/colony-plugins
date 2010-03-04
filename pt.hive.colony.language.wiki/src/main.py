@@ -51,12 +51,14 @@ DEFAULT_BASE_PATH = ""
 DEFAULT_TARGET_PATH = "generated"
 """ The default target path """
 
+COLONY_PATH = "colony"
+""" The colony path """
+
 if __name__ == "__main__":
-    print "vai adicionar o path: " + os.path.abspath("./colony/")
-
     # adds the colony path to the system path
-    sys.path.insert(0, os.path.abspath("./colony/"))
+    sys.path.insert(0, os.path.abspath(COLONY_PATH))
 
+    # imports the wiki generator
     import colony.language_wiki.wiki_generator
 
     # starts the verbose flag as false
