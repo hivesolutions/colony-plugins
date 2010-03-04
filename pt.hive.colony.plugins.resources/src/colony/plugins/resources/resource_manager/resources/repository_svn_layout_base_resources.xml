@@ -90,4 +90,10 @@
         <type>string</type>
         <data>../../../../pt.hive.colony.demo/trunk</data>
     </resource>
+    <resource>
+        <namespace>system.path</namespace>
+        <name>hive_site</name>
+        <type>string</type>
+        <data>../../../../pt.hive.hive_site/trunk</data>
+    </resource>
 </resources>
