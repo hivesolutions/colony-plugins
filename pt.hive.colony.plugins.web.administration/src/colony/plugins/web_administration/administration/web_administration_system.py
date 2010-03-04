@@ -123,7 +123,7 @@ class WebAdministration:
         # sets the content type for the rest request
         rest_request.set_content_type(XHTML_MIME_TYPE)
 
-        # sets the content type for the rest request
+        # sets the result for the rest request
         rest_request.set_result_translated(processed_template_file_decoded)
 
         # flushes the rest request
