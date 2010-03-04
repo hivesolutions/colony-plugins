@@ -234,13 +234,13 @@ class WebMvc:
 
     def _deserialize_number(self, number_string_serialized):
         """
-        Deserealizes a number in the character ascii form into
+        Deserializes a number in the character ascii form into
         the original number.
 
         @type number_string_serialized: String
         @param number_string_serialized: The number serialized in the ascii form.
         @rtype: int
-        @return: The unserialized version of the number.
+        @return: The deserialized version of the number.
         """
 
         # initializes the number string
