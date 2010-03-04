@@ -104,7 +104,7 @@ class WebMvcWiki:
         # sets the content type for the rest request
         rest_request.set_content_type("text/html")
 
-        # sets the content type for the rest request
+        # sets the result for the rest request
         rest_request.set_result_translated("hello wiki")
 
         # flushes the rest request
