@@ -297,7 +297,7 @@ class MainRestManager:
         # sets the content type for the rest request
         rest_request.set_content_type(content_type)
 
-        # sets the content type for the rest request
+        # sets the result for the rest request
         rest_request.set_result_translated(result_translated)
 
         # flushes the rest request
