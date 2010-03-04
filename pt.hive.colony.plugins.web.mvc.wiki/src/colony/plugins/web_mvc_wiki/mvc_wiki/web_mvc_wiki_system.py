@@ -45,15 +45,15 @@ class WebMvcWiki:
     web_mvc_wiki_plugin = None
     """ The web mvc wiki plugin """
 
-    def __init__(self, web_mvc_plugin):
+    def __init__(self, web_mvc_wiki_plugin):
         """
         Constructor of the class.
 
-        @type web_mvc_plugin: WebMvcPlugin
-        @param web_mvc_plugin: The web mvc plugin.
+        @type web_mvc_wiki_plugin: WebMvcWikiPlugin
+        @param web_mvc_wiki_plugin: The web mvc wiki plugin.
         """
 
-        self.web_mvc_plugin = web_mvc_plugin
+        self.web_mvc_wiki_plugin = web_mvc_wiki_plugin
 
     def get_patterns(self):
         """
@@ -84,23 +84,6 @@ class WebMvcWiki:
         # segundo corro para cada pagina a cada pedido a partir do path
         # pedido
 
-        # imports the sys package
-        #import sys
-
-        # appends the wiki path
-        #sys.path.append(WIKI_PATH)
-
-        # imports the colony generator package
-        #import language_generator.parser_generator
-
-        # creates a new parser generator
-        #parser_generator = language_generator.parser_generator.ParserGenerator(language_generator.parser_generator.ParserGenerator.LR0_PARSER_TYPE, True, globals())
-
-        import language_wiki.wiki_generator
-
-        # creates a new wiki generator
-        wiki_generator = language_wiki.wiki_generator.WikiGenerator()
-
         file_path = "/Users/joamag/Documents/workspace/pt.hive.colony.documentation.technical"
 
         target_path = "generated"
@@ -112,17 +95,11 @@ class WebMvcWiki:
         # creates the engine properties map
         engine_properties = {"file_path": file_path, "target_path": target_path, "output_structure": output_structure}
 
-        # starts the logger in the wiki generator
-        wiki_generator.start_logger()
+        # retrieves the language wiki plugin
+        language_wiki_plugin = self.web_mvc_wiki_plugin.language_wiki_plugin
 
-        # sets the generation engine in the wiki generator
-        wiki_generator.set_generation_engine("html")
-
-        # sets the generation properties in the wiki generator
-        wiki_generator.set_generation_properties(engine_properties)
-
-        # processes the wiki generator
-        wiki_generator.process()
+        # generates the
+        language_wiki_plugin.generate("html", engine_properties)
 
         # sets the content type for the rest request
         rest_request.set_content_type("text/html")
