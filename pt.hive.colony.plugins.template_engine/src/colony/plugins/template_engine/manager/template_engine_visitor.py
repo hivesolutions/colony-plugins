@@ -465,6 +465,9 @@ class Visitor:
         # parses the file retrieving the template file
         template_file = self.template_engine_manager.parse_file_path(file_path)
 
+        # sets the global map in template file
+        template_file.set_global_map(self.global_map)
+
         # processes the template file
         processed_template_file = template_file.process()
 

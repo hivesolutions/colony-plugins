@@ -410,6 +410,18 @@ class TemplateFile:
 
         self.visitor.add_global_variable(variable_name, variable_value)
 
+    def set_global_map(self, global_map):
+        """
+        Sets the global map to the current template file.
+        The global map should be used as the support for the variable
+        assignment.
+
+        @type global_map: Dictionary
+        @param global_map: The global map containing all the variable values.
+        """
+
+        self.visitor.set_global_map(global_map)
+
     def process(self):
         """
         Processes the template file running the visitor
