@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import datetime
+
 import os.path
 
 import xml.sax.saxutils
@@ -476,6 +478,52 @@ class Visitor:
 
         # writes the processed template file to the string buffer
         self.string_buffer.write(processed_template_file)
+
+    def process_year(self, node):
+        # formats the year value
+        year_value = datetime.datetime.now().strftime("%Y")
+
+        # writes the year value
+        self.string_buffer.write(year_value)
+
+    def process_date(self, node):
+        attributes_map = node.get_attributes_map()
+
+        if "format" in attributes_map:
+            attribute_format = attributes_map["format"]
+            attribute_format_literal_value = self.get_literal_value(attribute_format)
+        else:
+            attribute_format_literal_value = "%d/%m/%y"
+
+        date_value = datetime.datetime.now().strftime(attribute_format_literal_value)
+
+        self.string_buffer.write(date_value)
+
+    def process_time(self, node):
+        attributes_map = node.get_attributes_map()
+
+        if "format" in attributes_map:
+            attribute_format = attributes_map["format"]
+            attribute_format_literal_value = self.get_literal_value(attribute_format)
+        else:
+            attribute_format_literal_value = "%H:%M:%S"
+
+        date_value = datetime.datetime.now().strftime(attribute_format_literal_value)
+
+        self.string_buffer.write(date_value)
+
+    def process_datetime(self, node):
+        attributes_map = node.get_attributes_map()
+
+        if "format" in attributes_map:
+            attribute_format = attributes_map["format"]
+            attribute_format_literal_value = self.get_literal_value(attribute_format)
+        else:
+            attribute_format_literal_value = "%d/%m/%y %H:%M:%S"
+
+        date_value = datetime.datetime.now().strftime(attribute_format_literal_value)
+
+        self.string_buffer.write(date_value)
 
     def get_value(self, attribute_value):
         # in case the attribute value is of type variable
