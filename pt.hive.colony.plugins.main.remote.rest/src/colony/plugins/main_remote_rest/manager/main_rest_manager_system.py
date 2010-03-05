@@ -177,15 +177,19 @@ class MainRestManager:
         last_path_initial_extension = None
 
         # in case there is an extension defined
-        if last_path_name_splitted_length == 2:
-            # retrieves the last path initial name and extension
-            last_path_initial_name, last_path_initial_extension = last_path_name_splitted
+        if last_path_name_splitted_length >= 2:
+            # retrieves the last path initial name
+            last_path_initial_name = last_path_name_splitted[0]
+
+            # retrieves the last path extension
+            last_path_initial_extension = last_path_name_splitted[-1]
         # in case there is no extension defined
         elif last_path_name_splitted_length == 1:
             # retrieves the last path initial name
             last_path_initial_name, = last_path_name_splitted
         else:
-            raise main_rest_manager_exceptions.BadServiceRequest("invalid value last path name value %s: " + last_path_name_splitted)
+            # raises a bad service request exception
+            raise main_rest_manager_exceptions.InvalidPath("invalid last path name value size: " + str(last_path_name_splitted_length))
 
         # retrieves the encoder name
         encoder_name = last_path_initial_extension
