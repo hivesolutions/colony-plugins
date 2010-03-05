@@ -39,6 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import re
 
+import web_mvc_exceptions
+
 ASCII_NUMBER_TO_LETTER = 17
 """ The value to be added to a number value in ascii to letter """
 
@@ -123,6 +125,9 @@ class WebMvc:
 
                     # handles the web mvc request to the handler method
                     return handler_method(rest_request)
+
+        # raises the mvc request not handled exception
+        raise web_mvc_exceptions.MvcRequestNotHandled("no mvc service plugin could handle the request")
 
         # returns true
         return True
