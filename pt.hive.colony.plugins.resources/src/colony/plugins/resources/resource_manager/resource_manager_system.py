@@ -179,12 +179,12 @@ class ResourceManager:
         # list
         for validation in validation_list:
             # processes the validation
-             return_value = self.process_validation(validation)
+            return_value = self.process_validation(validation)
 
-             # in case the return value is invalid
-             if not return_value:
-                 # returns immediately
-                 return
+            # in case the return value is invalid
+            if not return_value:
+                # returns immediately
+                return
 
         # iterates over all the resources in the list
         for resource in resource_list:
@@ -204,9 +204,6 @@ class ResourceManager:
 
         # creates the base resource list
         base_resource_list = [value for value in resource_list if value.__class__ == resource_manager_parser.Resource]
-
-        # retrieves the plugin manager
-        plugin_manager = self.resource_manager_plugin.manager
 
         # iterates over all the resources in the plugin configuration list
         for plugin_configuration in plugin_configuration_list:
