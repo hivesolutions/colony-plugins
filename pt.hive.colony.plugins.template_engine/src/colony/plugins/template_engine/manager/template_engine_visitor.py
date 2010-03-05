@@ -437,6 +437,9 @@ class Visitor:
                 for node_child_node in node.child_nodes:
                     node_child_node.accept(self)
 
+    def process_else(self, node):
+        pass
+
     def process_include(self, node):
         """
         Processes the include node.
