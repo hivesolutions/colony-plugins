@@ -48,7 +48,7 @@ configuration = {
                      "resolution_order" : ["/"],
                      "/" : {
                          "target" : "/colony_mod_python/rest/mvc/hive/",
-                         "recursive_redirection" : False
+                         "recursive_redirection" : True
                      }
                   },
                  "contexts" : {
