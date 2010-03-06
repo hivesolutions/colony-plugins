@@ -93,9 +93,23 @@ class MainServiceHttpFileHandlerPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_handler_name(self):
+        """
+        Retrieves the handler name.
+
+        @rtype: String
+        @return: The handler name.
+        """
+
         return self.main_service_http_file_handler.get_handler_name()
 
     def handle_request(self, request):
+        """
+        Handles the given http request.
+
+        @type request: HttpRequest
+        @param request: The http request to be handled.
+        """
+
         return self.main_service_http_file_handler.handle_request(request)
 
     def get_resource_manager_plugin(self):

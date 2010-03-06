@@ -103,6 +103,13 @@ class MainServiceHttpColonyHandlerPlugin(colony.plugins.plugin_system.Plugin):
         return self.main_service_http_colony_handler.get_handler_name()
 
     def handle_request(self, request):
+        """
+        Handles the given http request.
+
+        @type request: HttpRequest
+        @param request: The http request to be handled.
+        """
+
         return self.main_service_http_colony_handler.handle_request(request)
 
     @colony.plugins.decorators.load_allowed_capability("http_python_handler")

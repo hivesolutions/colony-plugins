@@ -71,4 +71,11 @@ class MainServiceHttpWebdavHandler:
         return HANDLER_NAME
 
     def handle_request(self, request):
+        """
+        Handles the given http request.
+
+        @type request: HttpRequest
+        @param request: The http request to be handled.
+        """
+
         pass

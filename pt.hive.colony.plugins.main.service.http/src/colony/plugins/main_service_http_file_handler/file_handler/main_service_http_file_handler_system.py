@@ -83,9 +83,23 @@ class MainServiceHttpFileHandler:
         self.main_service_http_file_handler_plugin = main_service_http_file_handler_plugin
 
     def get_handler_name(self):
+        """
+        Retrieves the handler name.
+
+        @rtype: String
+        @return: The handler name.
+        """
+
         return HANDLER_NAME
 
     def handle_request(self, request):
+        """
+        Handles the given http request.
+
+        @type request: HttpRequest
+        @param request: The http request to be handled.
+        """
+
         # retrieves the handler configuration
         handler_configuration = self.main_service_http_file_handler_plugin.get_configuration_property("handler_configuration").get_data()
 

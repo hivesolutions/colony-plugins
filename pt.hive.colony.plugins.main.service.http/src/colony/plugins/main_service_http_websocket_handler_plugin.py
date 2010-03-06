@@ -98,4 +98,11 @@ class MainServiceHttpWebsocketHandlerPlugin(colony.plugins.plugin_system.Plugin)
         return self.main_service_http_websocket_handler.get_handler_name()
 
     def handle_request(self, request):
+        """
+        Handles the given http request.
+
+        @type request: HttpRequest
+        @param request: The http request to be handled.
+        """
+
         return self.main_service_http_websocket_handler.handle_request(request)
