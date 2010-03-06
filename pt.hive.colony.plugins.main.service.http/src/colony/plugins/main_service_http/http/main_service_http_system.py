@@ -42,6 +42,7 @@ import time
 import types
 import socket
 import select
+import datetime
 import threading
 import traceback
 
@@ -101,13 +102,25 @@ DEFAULT_VALUE = "default"
 """ The default value """
 
 STATUS_CODE_VALUES = {200 : "OK", 207 : "Multi-Status",
-                      301 : "Moved permanently", 302 : "Found", 303 : "See Other",
+                      301 : "Moved permanently", 302 : "Found", 303 : "See Other", 304 : "Not Modified",
                       403 : "Forbidden", 404 : "Not Found",
                       500 : "Internal Server Error"}
 """ The status code values map """
 
 DEFAULT_STATUS_CODE_VALUE = "Invalid"
 """ The default status code value """
+
+DATE_VALUE = "Date"
+""" The date value """
+
+ETAG_VALUE = "ETag"
+""" The etag value """
+
+EXPIRES_VALUE = "Expires"
+""" The expires value """
+
+LAST_MODIFIED_VALUE = "Last-Modified"
+""" The last modified value """
 
 CONTENT_TYPE_VALUE = "Content-Type"
 """ The content type value """
@@ -135,6 +148,9 @@ CHUNKED_VALUE = "chunked"
 
 KEEP_ALIVE_VALUE = "Keep-Alive"
 """ The keep alive value """
+
+DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
+""" The date format """
 
 DEFAULT_CONTENT_TYPE_CHARSET_VALUE = "default_content_type_charset"
 """ The default content type charset value """
@@ -1180,6 +1196,9 @@ class HttpRequest:
     headers_map = {}
     """ The headers map """
 
+    response_headers_map = {}
+    """ The response headers map """
+
     received_message = "none"
     """ The received message """
 
@@ -1222,6 +1241,15 @@ class HttpRequest:
     content_type_charset = None
     """ The content type charset """
 
+    etag = None
+    """ The etag """
+
+    expiration_timestamp = None
+    """ The expiration timestatmp """
+
+    last_modified_timestamp = None
+    """ The last modified timestatmp """
+
     request_time = None
     """ The time when the request started """
 
@@ -1236,6 +1264,7 @@ class HttpRequest:
 
         self.attributes_map = {}
         self.headers_map = {}
+        self.response_headers_map = {}
         self.message_stream = string_buffer_util.StringBuffer()
         self.properties = {}
 
@@ -1317,6 +1346,34 @@ class HttpRequest:
     def is_chunked_encoded(self):
         return self.chunked_encoding
 
+    def get_header(self, header_name):
+        """
+        Retrieves an header value of the request,
+        or none if no header is defined for the given
+        header name.
+
+        @type header_name: String
+        @param header_name: The name of the header to be retrieved.
+        @rtype: Object
+        @return: The value of the request header.
+        """
+
+        return self.headers_map.get(header_name, None)
+
+    def set_header(self, header_name, header_value):
+        """
+        Set a response header value on the request.
+        This header
+
+        @type header_name: String
+        @param header_name: The name of the header to be set.
+        @type header_value: Object
+        @param header_value: The value of the header to be sent
+        in the response.
+        """
+
+        self.response_headers_map[header_name] = header_value
+
     def get_result(self):
         # retrieves the result stream
         result = string_buffer_util.StringBuffer()
@@ -1342,6 +1399,13 @@ class HttpRequest:
         status_code_value = STATUS_CODE_VALUES.get(self.status_code, DEFAULT_STATUS_CODE_VALUE)
 
         result.write(self.protocol_version + " " + str(self.status_code) + " " + status_code_value + "\r\n")
+
+        # retrieves the current date time
+        current_date_time = datetime.datetime.utcnow()
+
+        # formats the current date time according to the http specification
+        current_date_time_formatted = current_date_time.strftime(DATE_FORMAT)
+
         if self.content_type:
             result.write(CONTENT_TYPE_VALUE + ": " + self.content_type + "\r\n")
         if self.encoded:
@@ -1350,8 +1414,33 @@ class HttpRequest:
             result.write(TRANSFER_ENCODING_VALUE + ": " + CHUNKED_VALUE + "\r\n")
         if not self.chunked_encoding:
             result.write(CONTENT_LENGTH_VALUE + ": " + str(content_length) + "\r\n")
+        if self.etag:
+            result.write(ETAG_VALUE + ": " + self.etag + "\r\n")
+        if self.expiration_timestamp:
+            # converts the expiration timestamp to date time
+            expiration_date_time = datetime.datetime.fromtimestamp(self.expiration_timestamp)
+
+            # formats the expiration date time according to the http specification
+            expiration_date_time_formatted = expiration_date_time.strftime(DATE_FORMAT)
+
+            result.write(EXPIRES_VALUE + ": " + expiration_date_time_formatted + "\r\n")
+        if self.last_modified_timestamp:
+            # converts the last modified timestamp to date time
+            last_modified_date_time = datetime.datetime.fromtimestamp(self.last_modified_timestamp)
+
+            # formats the last modified date time according to the http specification
+            last_modified_date_time_formatted = last_modified_date_time.strftime(DATE_FORMAT)
+
+            result.write(LAST_MODIFIED_VALUE + ": " + last_modified_date_time_formatted + "\r\n")
+        result.write(DATE_VALUE + ": " + current_date_time_formatted + "\r\n")
         result.write(SERVER_VALUE + ": " + SERVER_IDENTIFIER + "\r\n")
         result.write(CONNECTION_VALUE + ": " + KEEP_ALIVE_VALUE + "\r\n")
+
+        # iterates over all the "extra" header values to be sent
+        for header_name, header_value in self.response_headers_map.items():
+            # writes the extra header value in the result
+            result.write(header_name + ": " + header_value + "\r\n")
+
         result.write("\r\n")
         result.write(message)
 
@@ -1400,12 +1489,33 @@ class HttpRequest:
         self.protocol_version = protocol_version
 
     def get_resource_path(self):
+        """
+        Retrieves the resource path.
+
+        @rtype: String
+        @return: The resource path.
+        """
+
         return self.resource_path
 
     def get_handler_path(self):
+        """
+        Retrieves the handler path.
+
+        @rtype: String
+        @return: The handler path.
+        """
+
         return self.handler_path
 
     def get_arguments(self):
+        """
+        Retrieves the arguments.
+
+        @rtype: String
+        @return: The arguments.
+        """
+
         return self.arguments
 
     def get_content_type_charset(self):
@@ -1413,3 +1523,21 @@ class HttpRequest:
 
     def set_content_type_charset(self, content_type_charset):
         self.content_type_charset = content_type_charset
+
+    def get_etag(self):
+        return self.etag
+
+    def set_etag(self, etag):
+        self.etag = etag
+
+    def get_expiration_timestamp(self):
+        return self.expiration_timestamp
+
+    def set_expiration_timestamp(self, expiration_timestamp):
+        self.expiration_timestamp = expiration_timestamp
+
+    def get_last_modified_timestamp(self):
+        return self.last_modified_timestamp
+
+    def set_last_modified_timestamp(self, last_modified_timestamp):
+        self.last_modified_timestamp = last_modified_timestamp

@@ -38,6 +38,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import re
+import stat
+import hashlib
+import datetime
 
 import os.path
 
@@ -54,9 +57,27 @@ CHUNK_FILE_SIZE_LIMIT = 3072
 CHUNK_SIZE = 1024
 """ The chunk size """
 
+EXPIRATION_DELTA_TIMESTAMP = 31536000
+""" The expiration delta timestamp """
+
+DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
+""" The date format """
+
 FILE_MIME_TYPE_MAPPING = {"html" : "text/html", "txt" : "text/plain", "js" : "text/javascript",
                           "css" : "text/css", "jpg" : "image/jpg", "png" : "image/png"}
 """ The map that relates the file extension and the associated mime type """
+
+SERVER_VALUE = "Server"
+""" The server value """
+
+IF_MODIFIED_SINCE_VALUE = "If-Modified-Since"
+""" The if modified since value """
+
+IF_NONE_MATCH_VALUE = "If-None-Match"
+""" The if none match value """
+
+INVALID_EXPIRATION_STRING_VALUE = "-1"
+""" The invalid expiration string value """
 
 RELATIVE_PATHS_REGEX_VALUE = "^\.\.|\/\.\.\/|\\\.\.\\|\.\.$"
 """ The relative paths regex value """
@@ -173,11 +194,74 @@ class MainServiceHttpFileHandler:
             # raises file not found exception with 404 http error code
             raise main_service_http_file_handler_exceptions.FileNotFoundException(resource_path, 404)
 
+        # retrieves the file stat
+        file_stat = os.stat(complete_path)
+
+        # retrieves the modified timestamp
+        modified_timestamp = file_stat[stat.ST_MTIME]
+
+        # computes the etag value base in the file stat and
+        # modified timestamp
+        etag_value = self._compute_etag(file_stat, modified_timestamp)
+
+        # retrieves the if modified header value
+        if_modified_header = request.get_header(IF_MODIFIED_SINCE_VALUE)
+
+        # in case the if modified header is defined
+        if if_modified_header:
+            # converts the if modified header value to date time
+            if_modified_header_data_time = datetime.datetime.strptime(if_modified_header, DATE_FORMAT)
+
+            # converts the modified timestamp to date time
+            modified_date_time = datetime.datetime.fromtimestamp(modified_timestamp)
+
+            # in case the modified date time is less or the same
+            # as the if modified header date time (no modification)
+            if modified_date_time <= if_modified_header_data_time:
+                # sets the request mime type
+                request.content_type = mime_type
+
+                # sets the request status code
+                request.status_code = 304
+
+                # returns immediately
+                return
+
+        # retrieves the if none match value
+        if_none_match_header = request.get_header(IF_NONE_MATCH_VALUE)
+
+        # in case the if none header is defined
+        if if_none_match_header:
+            # in case the value of the if modified heade is the same
+            # as the etag value of the file (no modification)
+            if if_modified_header == etag_value:
+                # sets the request mime type
+                request.content_type = mime_type
+
+                # sets the request status code
+                request.status_code = 304
+
+                # returns immediately
+                return
+
+        # calculates the expiration timestamp from the modified timestamp
+        # incrementing the delta timestamp for expiration
+        expiration_timestamp = modified_timestamp + EXPIRATION_DELTA_TIMESTAMP
+
         # sets the request mime type
         request.content_type = mime_type
 
         # sets the request status code
         request.status_code = 200
+
+        # sets the last modified timestamp
+        request.set_last_modified_timestamp(modified_timestamp)
+
+        # sets the expiration timestamp in the request
+        request.set_expiration_timestamp(expiration_timestamp)
+
+        # sets the etag in the request
+        request.set_etag(etag_value)
 
         # opens the requested file
         file = open(complete_path, "rb")
@@ -205,6 +289,38 @@ class MainServiceHttpFileHandler:
 
             # writes the file contents
             request.write(file_contents, 1, False)
+
+    def _compute_etag(self, file_stat, modified_timestamp):
+        """
+        Computes the etag for the given file stat and
+        modified timestamp.
+
+        @type file_stat: Dictionary
+        @param file_stat: The file stat values dictionary.
+        @type modified_timestamp: int
+        @param modified_timestamp: The last modified timestamp.
+        @rtype: String
+        @return: The etag value.
+        """
+
+        # retrieves the md5 builder
+        md5 = hashlib.md5()
+
+        # retrieves the size
+        size = file_stat[stat.ST_SIZE]
+
+        # creates the modification plus size string
+        modification_size_string = str(modified_timestamp + size)
+
+        # updates the md5 hash with the modification
+        # plus size string
+        md5.update(modification_size_string)
+
+        # retrieves the md5 hex digest as the etag value
+        etag_value = md5.hexdigest()
+
+        # returns the etag value
+        return etag_value
 
     def _escape_relative_paths(self, path):
         """
