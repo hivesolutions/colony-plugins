@@ -2860,9 +2860,11 @@ class BusinessSqliteEngine:
         if attribute_value == None:
             return None
 
+        # in case the attribute date type is date
         if attribute_date_type == "date":
             return datetime.datetime.utcfromtimestamp(float(attribute_value))
 
+        # returns the attribute value
         return attribute_value
 
     def get_entity_sub_classes(self, entity_class):
