@@ -39,36 +39,35 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.plugins.plugin_system
 import colony.plugins.decorators
 
-class MainServiceHttpWebdavHandlerPlugin(colony.plugins.plugin_system.Plugin):
+class MainServiceHttpWebsocketHandlerPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Http Service Main Webdav Handler plugin.
+    The main class for the Http Service Main Websocket Handler plugin.
     """
 
-    id = "pt.hive.colony.plugins.main.service.http.webdav_handler"
-    name = "Http Service Main Webdav Handler Plugin"
-    short_name = "Http Service Main Webdav Handler"
-    description = "The plugin that offers the http service webdav handler"
+    id = "pt.hive.colony.plugins.main.service.http.websocket_handler"
+    name = "Http Service Main Websocket Handler Plugin"
+    short_name = "Http Service Main Websocket Handler"
+    description = "The plugin that offers the http service websocket handler"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["http_service_handler"]
     capabilities_allowed = []
-    dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.resources.resource_manager", "1.0.0")]
+    dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["main_service_http_webdav_handler.webdav_handler.main_service_http_webdav_handler_exceptions", "main_service_http_webdav_handler.webdav_handler.main_service_http_webdav_handler_system"]
+    main_modules = ["main_service_http_websocket_handler.websocket_handler.main_service_http_websocket_handler_system", "main_service_http_websocket_handler.websocket_handler.main_service_http_websocket_handler_exceptions"]
 
-    main_service_http_webdav_handler = None
+    main_service_http_websocket_handler = None
 
     resource_manager_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
-        global main_service_http_webdav_handler
-        import main_service_http_webdav_handler.webdav_handler.main_service_http_webdav_handler_system
-        self.main_service_http_webdav_handler = main_service_http_webdav_handler.webdav_handler.main_service_http_webdav_handler_system.MainServiceHttpWebdavHandler(self)
+        global main_service_http_websocket_handler
+        import main_service_http_websocket_handler.websocket_handler.main_service_http_websocket_handler_system
+        self.main_service_http_websocket_handler = main_service_http_websocket_handler.websocket_handler.main_service_http_websocket_handler_system.MainServiceHttpWebsocketHandler(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -85,7 +84,6 @@ class MainServiceHttpWebdavHandlerPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.main.service.http.webdav_handler", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -97,14 +95,7 @@ class MainServiceHttpWebdavHandlerPlugin(colony.plugins.plugin_system.Plugin):
         @return: The handler name.
         """
 
-        return self.main_service_http_webdav_handler.get_handler_name()
+        return self.main_service_http_websocket_handler.get_handler_name()
 
     def handle_request(self, request):
-        return self.main_service_http_webdav_handler.handle_request(request)
-
-    def get_resource_manager_plugin(self):
-        return self.resource_manager_plugin
-
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.resources.resource_manager")
-    def set_resource_manager_plugin(self, resource_manager_plugin):
-        self.resource_manager_plugin = resource_manager_plugin
+        return self.main_service_http_websocket_handler.handle_request(request)

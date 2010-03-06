@@ -525,134 +525,6 @@ class HttpClientServiceTask:
         # closes the http connection
         self.http_connection.close()
 
-    def _process_redirection(self, request):
-        """
-        Processes the redirection stage of the http request.
-        Processing redirection implies matching the path against the
-        rules.
-
-        @type request: HttpRequest
-        @param request: The request to be processed.
-        """
-
-        # retrieves the service configuration redirections
-        service_configuration_redirections = self.service_configuration.get("redirections", {})
-
-        # retrieves the service configuration redirections resolution order
-        service_configuration_redirections_resolution_order = service_configuration_redirections.get("resolution_order", service_configuration_redirections.keys())
-
-        # iterates over the service configuration redirection names
-        for service_configuration_redirection_name in service_configuration_redirections_resolution_order:
-            # in case the path is found in the request path
-            if request.path.find(service_configuration_redirection_name) == 0:
-                # retrieves the service configuration redirection
-                service_configuration_redirection = service_configuration_redirections[service_configuration_redirection_name]
-
-                # retrieves the target path
-                target_path = service_configuration_redirection.get("target", service_configuration_redirection_name)
-
-                # retrieves the recursive redirection option
-                recursive_redirection = service_configuration_redirection.get("recursive_redirection", False)
-
-                # retrieves the sub request path as the request from the redirection name path
-                # in front
-                sub_request_path = request.path[len(service_configuration_redirection_name):]
-
-                # in case the recursive redirection is disbaled and there is a subdirectory
-                # in the sub request path
-                if not recursive_redirection and not sub_request_path.find("/") == -1:
-                    # breaks the loop because the request is not meant to be recursivly redirected
-                    # and it contains a sub-directory
-                    break
-
-                # (saves) the old path as the base path
-                request.base_path = request.path
-
-                # retrieves the new (redirected) path in the request
-                request_path = request.path.replace(service_configuration_redirection_name, target_path, 1)
-
-                # sets the new path in the request
-                request.set_path(request_path)
-
-                # sets the redirection validation flag in the request
-                request.redirection_validation = True
-
-                # sets the redirected flag in the request
-                request.redirected = True
-
-                # breaks the loop
-                break
-
-    def _process_handler(self, request):
-        # sets the default handler name
-        handler_name = None
-
-        # retrieves the service configuration contexts
-        service_configuration_contexts = self.service_configuration.get("contexts", {})
-
-        # retrieves the service configuration contexts resolution order
-        service_configuration_contexts_resolution_order = service_configuration_contexts.get("resolution_order", service_configuration_contexts.keys())
-
-        # in case the request is pending redirection validation
-        if request.redirection_validation:
-            # the request base path is used as the reuqest path
-            # for redirection allowing purposes
-            request_path = request.base_path
-        # in non redirection validation iteration case
-        else:
-            # sets the request path as the normal (valid) request
-            # path
-            request_path = request.path
-
-        # iterates over the service configuration context names
-        for service_configuration_context_name in service_configuration_contexts_resolution_order:
-            # in case the path is found in the request path
-            if request_path.find(service_configuration_context_name) == 0:
-                # retrieves the service configuration context
-                service_configuration_context = service_configuration_contexts[service_configuration_context_name]
-
-                # retrieves the allow redirection property
-                allow_redirection = service_configuration_context.get("allow_redirection", True)
-
-                # in case the request is pending redirection validation
-                if request.redirection_validation:
-                    # in case it does not allow redirection
-                    if not allow_redirection:
-                        # changes the path to the base path
-                        request.set_path(request.base_path)
-
-                        # unsets the redirected flag in the request
-                        request.redirected = False
-
-                    # unsets the redirection validation flag in the request
-                    request.redirection_validation = False
-
-                    # re-processes the request (to process the real handler)
-                    return self._process_handler(request)
-
-                # sets the request properties
-                request.properties = service_configuration_context.get("request_properties", {})
-
-                # sets the handler path
-                request.handler_path = service_configuration_context_name
-
-                # retrieves the handler name
-                handler_name = service_configuration_context.get("handler", None)
-
-                # breaks the loop
-                break
-
-        # in case the request is pending redirection validation
-        if request.redirection_validation:
-            # unsets the redirection validation flag in the request
-            request.redirection_validation = False
-
-            # re-processes the request (to process the real handler)
-            return self._process_handler(request)
-
-        # returns the handler name
-        return handler_name
-
     def stop(self):
         # closes the http connection
         self.http_connection.close()
@@ -1135,6 +1007,143 @@ class HttpClientServiceTask:
         for formated_traceback_line in formated_traceback:
             # writes the traceback line in the request
             request.write(formated_traceback_line)
+
+    def _process_redirection(self, request):
+        """
+        Processes the redirection stage of the http request.
+        Processing redirection implies matching the path against the
+        rules.
+
+        @type request: HttpRequest
+        @param request: The request to be processed.
+        """
+
+        # retrieves the service configuration redirections
+        service_configuration_redirections = self.service_configuration.get("redirections", {})
+
+        # retrieves the service configuration redirections resolution order
+        service_configuration_redirections_resolution_order = service_configuration_redirections.get("resolution_order", service_configuration_redirections.keys())
+
+        # iterates over the service configuration redirection names
+        for service_configuration_redirection_name in service_configuration_redirections_resolution_order:
+            # in case the path is found in the request path
+            if request.path.find(service_configuration_redirection_name) == 0:
+                # retrieves the service configuration redirection
+                service_configuration_redirection = service_configuration_redirections[service_configuration_redirection_name]
+
+                # retrieves the target path
+                target_path = service_configuration_redirection.get("target", service_configuration_redirection_name)
+
+                # retrieves the recursive redirection option
+                recursive_redirection = service_configuration_redirection.get("recursive_redirection", False)
+
+                # retrieves the sub request path as the request from the redirection name path
+                # in front
+                sub_request_path = request.path[len(service_configuration_redirection_name):]
+
+                # in case the recursive redirection is disbaled and there is a subdirectory
+                # in the sub request path
+                if not recursive_redirection and not sub_request_path.find("/") == -1:
+                    # breaks the loop because the request is not meant to be recursivly redirected
+                    # and it contains a sub-directory
+                    break
+
+                # (saves) the old path as the base path
+                request.base_path = request.path
+
+                # retrieves the new (redirected) path in the request
+                request_path = request.path.replace(service_configuration_redirection_name, target_path, 1)
+
+                # sets the new path in the request
+                request.set_path(request_path)
+
+                # sets the redirection validation flag in the request
+                request.redirection_validation = True
+
+                # sets the redirected flag in the request
+                request.redirected = True
+
+                # breaks the loop
+                break
+
+    def _process_handler(self, request):
+        """
+        Processes the handler stage of the http request.
+        Processing handler implies matching the path against the
+        various handler rules defined to retrieve the valid handler.
+
+        @type request: HttpRequest
+        @param request: The request to be processed.
+        """
+
+        # sets the default handler name
+        handler_name = None
+
+        # retrieves the service configuration contexts
+        service_configuration_contexts = self.service_configuration.get("contexts", {})
+
+        # retrieves the service configuration contexts resolution order
+        service_configuration_contexts_resolution_order = service_configuration_contexts.get("resolution_order", service_configuration_contexts.keys())
+
+        # in case the request is pending redirection validation
+        if request.redirection_validation:
+            # the request base path is used as the reuqest path
+            # for redirection allowing purposes
+            request_path = request.base_path
+        # in non redirection validation iteration case
+        else:
+            # sets the request path as the normal (valid) request
+            # path
+            request_path = request.path
+
+        # iterates over the service configuration context names
+        for service_configuration_context_name in service_configuration_contexts_resolution_order:
+            # in case the path is found in the request path
+            if request_path.find(service_configuration_context_name) == 0:
+                # retrieves the service configuration context
+                service_configuration_context = service_configuration_contexts[service_configuration_context_name]
+
+                # retrieves the allow redirection property
+                allow_redirection = service_configuration_context.get("allow_redirection", True)
+
+                # in case the request is pending redirection validation
+                if request.redirection_validation:
+                    # in case it does not allow redirection
+                    if not allow_redirection:
+                        # changes the path to the base path
+                        request.set_path(request.base_path)
+
+                        # unsets the redirected flag in the request
+                        request.redirected = False
+
+                    # unsets the redirection validation flag in the request
+                    request.redirection_validation = False
+
+                    # re-processes the request (to process the real handler)
+                    return self._process_handler(request)
+
+                # sets the request properties
+                request.properties = service_configuration_context.get("request_properties", {})
+
+                # sets the handler path
+                request.handler_path = service_configuration_context_name
+
+                # retrieves the handler name
+                handler_name = service_configuration_context.get("handler", None)
+
+                # breaks the loop
+                break
+
+        # in case the request is pending redirection validation
+        if request.redirection_validation:
+            # unsets the redirection validation flag in the request
+            request.redirection_validation = False
+
+            # re-processes the request (to process the real handler)
+            return self._process_handler(request)
+
+        # returns the handler name
+        return handler_name
 
 class HttpRequest:
     """

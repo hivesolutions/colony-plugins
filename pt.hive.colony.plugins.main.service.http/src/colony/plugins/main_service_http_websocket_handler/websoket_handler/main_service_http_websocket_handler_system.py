@@ -37,28 +37,28 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import main_service_http_webdav_handler_exceptions
+import main_service_http_websocket_handler_exceptions
 
-HANDLER_NAME = "webdav"
+HANDLER_NAME = "websocket"
 """ The handler name """
 
-class MainServiceHttpWebdavHandler:
+class MainServiceHttpWebsocketHandler:
     """
     The main service http webdav handler class.
     """
 
-    main_service_http_webdav_handler_plugin = None
-    """ The main service http webdav handler plugin """
+    main_service_http_websocket_handler_plugin = None
+    """ The main service http websocket handler plugin """
 
-    def __init__(self, main_service_http_webdav_handler_plugin):
+    def __init__(self, main_service_http_websocket_handler_plugin):
         """
         Constructor of the class.
 
-        @type main_service_http_webdav_handler_plugin: MainServiceHttpWebdavHandlerPlugin
-        @param main_service_http_webdav_handler_plugin: The main service http webdav handler plugin.
+        @type main_service_http_websocket_handler_plugin: MainServiceHttpWebsocketHandlerPlugin
+        @param main_service_http_websocket_handler_plugin: The main service http websocket handler plugin.
         """
 
-        self.main_service_http_webdav_handler_plugin = main_service_http_webdav_handler_plugin
+        self.main_service_http_websocket_handler_plugin = main_service_http_websocket_handler_plugin
 
     def get_handler_name(self):
         """
