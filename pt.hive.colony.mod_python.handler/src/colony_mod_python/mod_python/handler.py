@@ -135,6 +135,12 @@ class PluginManagerHandler:
         # sends the request to the mod_python to handle it
         mod_python_plugin.handle_request(self.req, plugin_handler_id)
 
+        # in case the status code attribute is set
+        if hasattr(self.req, "status_code"):
+            # sets the request status
+            self.req.status = self.req.status_code
+
+        # returns true
         return True
 
     def get_plugin_manager(self, python_options = {}):
@@ -190,13 +196,38 @@ class PluginManagerHandler:
         plugin_manager = main.plugin_manager
 
     def _get_header(self, header_name):
-        return self.headers_out.get(header_name, None)
+        """
+        Retrieves the header attribute for the given
+        header name.
+
+        @type header_name: String
+        @param header_name: The name of the header to retrieve.
+        @rtype: Object
+        @return: The header value for the given header name.
+        """
+
+        return self.req.headers_out.get(header_name, None)
 
     def _set_etag(self, etag_value):
+        """
+        Sets the etag value in the request.
+
+        @type etag_value: String
+        @param etag_value: The value to be set in the request.
+        """
+
         # sets the etag value in the header
-        self.headers_out[ETAG_VALUE] = etag_value
+        self.req.headers_out[ETAG_VALUE] = etag_value
 
     def _set_expiration_timestamp(self, expiration_timestamp):
+        """
+        Sets the expiration timestamp value in the request.
+
+        @type expiration_timestamp: int
+        @param expiration_timestamp: The expiration timestamp
+        to be set in the request.
+        """
+
         # converts the expiration timestamp to date time
         expiration_date_time = datetime.datetime.fromtimestamp(expiration_timestamp)
 
@@ -204,9 +235,17 @@ class PluginManagerHandler:
         expiration_date_time_formatted = expiration_date_time.strftime(DATE_FORMAT)
 
         # sets the expiration date time formatted in the header
-        self.headers_out[EXPIRES_VALUE] = expiration_date_time_formatted
+        self.req.headers_out[EXPIRES_VALUE] = expiration_date_time_formatted
 
     def _set_last_modified_timestamp(self, last_modified_timestamp):
+        """
+        Sets the last modified timestamp value in the request.
+
+        @type last_modified_timestamp: int
+        @param last_modified_timestamp: The last modified timestamp
+        to be set in the request.
+        """
+
         # converts the last modified timestamp to date time
         last_modified_date_time = datetime.datetime.fromtimestamp(last_modified_timestamp)
 
@@ -214,7 +253,7 @@ class PluginManagerHandler:
         last_modified_date_time_formatted = last_modified_date_time.strftime(DATE_FORMAT)
 
         # sets the last modified date time formatted in the header
-        self.headers_out[LAST_MODIFIED_VALUE] = last_modified_date_time_formatted
+        self.req.headers_out[LAST_MODIFIED_VALUE] = last_modified_date_time_formatted
 
     def _write(self, message):
         """
