@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import sys
 import types
+import datetime
 
 import mod_python.apache
 
@@ -50,6 +51,18 @@ MOD_PYTHON_PLUGIN_ID = "pt.hive.colony.plugins.main.mod_python"
 
 DEFAULT_CONTENT_ENCODING = "utf-8"
 """ The default content encoding """
+
+ETAG_VALUE = "ETag"
+""" The etag value """
+
+EXPIRES_VALUE = "Expires"
+""" The expires value """
+
+LAST_MODIFIED_VALUE = "Last-Modified"
+""" The last modified value """
+
+DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
+""" The date format """
 
 plugin_manager = None
 """ The plugin manager """
@@ -88,6 +101,12 @@ class PluginManagerHandler:
         # changes the write method
         self._old_write = req.write
         req.write = self._write
+
+        # puts the extra methods in the request
+        req.get_header = self._get_header
+        req.set_etag = self._set_etag
+        req.set_expiration_timestamp = self._set_expiration_timestamp
+        req.set_last_modified_timestamp = self._set_last_modified_timestamp
 
     def handle_request(self, data):
         """
@@ -169,6 +188,33 @@ class PluginManagerHandler:
 
         # retrieves the plugin manager, setting the variable
         plugin_manager = main.plugin_manager
+
+    def _get_header(self, header_name):
+        return self.headers_out.get(header_name, None)
+
+    def _set_etag(self, etag_value):
+        # sets the etag value in the header
+        self.headers_out[ETAG_VALUE] = etag_value
+
+    def _set_expiration_timestamp(self, expiration_timestamp):
+        # converts the expiration timestamp to date time
+        expiration_date_time = datetime.datetime.fromtimestamp(expiration_timestamp)
+
+        # formats the expiration date time according to the http specification
+        expiration_date_time_formatted = expiration_date_time.strftime(DATE_FORMAT)
+
+        # sets the expiration date time formatted in the header
+        self.headers_out[EXPIRES_VALUE] = expiration_date_time_formatted
+
+    def _set_last_modified_timestamp(self, last_modified_timestamp):
+        # converts the last modified timestamp to date time
+        last_modified_date_time = datetime.datetime.fromtimestamp(last_modified_timestamp)
+
+        # formats the last modified date time according to the http specification
+        last_modified_date_time_formatted = last_modified_date_time.strftime(DATE_FORMAT)
+
+        # sets the last modified date time formatted in the header
+        self.headers_out[LAST_MODIFIED_VALUE] = last_modified_date_time_formatted
 
     def _write(self, message):
         """
