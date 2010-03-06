@@ -440,6 +440,13 @@ class Visitor:
                     node_child_node.accept(self)
 
     def process_else(self, node):
+        """
+        Processes the else node.
+
+        @type node: SingleNode
+        @param node: The single node to be processed as else.
+        """
+
         pass
 
     def process_include(self, node):
@@ -480,13 +487,30 @@ class Visitor:
         self.string_buffer.write(processed_template_file)
 
     def process_year(self, node):
+        """
+        Processes the year node.
+
+        @type node: SingleNode
+        @param node: The single node to be processed as year.
+        """
+
+        # retrieves the current date time
+        current_date_time = datetime.datetime.now()
+
         # formats the year value
-        year_value = datetime.datetime.now().strftime("%Y")
+        year_value = current_date_time.strftime("%Y")
 
         # writes the year value
         self.string_buffer.write(year_value)
 
     def process_date(self, node):
+        """
+        Processes the date node.
+
+        @type node: SingleNode
+        @param node: The single node to be processed as date.
+        """
+
         attributes_map = node.get_attributes_map()
 
         if "format" in attributes_map:
@@ -495,11 +519,23 @@ class Visitor:
         else:
             attribute_format_literal_value = "%d/%m/%y"
 
-        date_value = datetime.datetime.now().strftime(attribute_format_literal_value)
+        # retrieves the current date time
+        current_date_time = datetime.datetime.now()
 
+        # formats the date value
+        date_value = current_date_time.strftime(attribute_format_literal_value)
+
+        # writes the date value
         self.string_buffer.write(date_value)
 
     def process_time(self, node):
+        """
+        Processes the time node.
+
+        @type node: SingleNode
+        @param node: The single node to be processed as time.
+        """
+
         attributes_map = node.get_attributes_map()
 
         if "format" in attributes_map:
@@ -508,8 +544,13 @@ class Visitor:
         else:
             attribute_format_literal_value = "%H:%M:%S"
 
-        date_value = datetime.datetime.now().strftime(attribute_format_literal_value)
+        # retrieves the current date time
+        current_date_time = datetime.datetime.now()
 
+        # formats the time value
+        date_value = current_date_time.strftime(attribute_format_literal_value)
+
+        # writes the time value
         self.string_buffer.write(date_value)
 
     def process_datetime(self, node):
@@ -521,9 +562,14 @@ class Visitor:
         else:
             attribute_format_literal_value = "%d/%m/%y %H:%M:%S"
 
-        date_value = datetime.datetime.now().strftime(attribute_format_literal_value)
+        # retrieves the current date time
+        current_date_time = datetime.datetime.now()
 
-        self.string_buffer.write(date_value)
+        # formats the datetime value
+        datetime_value = current_date_time.strftime(attribute_format_literal_value)
+
+        # writes the datetime value
+        self.string_buffer.write(datetime_value)
 
     def get_value(self, attribute_value):
         # in case the attribute value is of type variable
