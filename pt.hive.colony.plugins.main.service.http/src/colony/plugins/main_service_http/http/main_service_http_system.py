@@ -664,6 +664,7 @@ class HttpClientServiceTask:
 
                         # sets the header in the headers map
                         request.headers_map[header_name] = header_value
+                        request.headers_in[header_name] = header_value
 
                     # in case the operation type is get
                     if request.operation_type == GET_METHOD_VALUE:
@@ -1184,6 +1185,12 @@ class HttpRequest:
     handler_path = "none"
     """ The handler path """
 
+    filename = "none"
+    """ The filename """
+
+    uri = "none"
+    """ The uri """
+
     arguments = "none"
     """ The arguments """
 
@@ -1198,6 +1205,12 @@ class HttpRequest:
 
     response_headers_map = {}
     """ The response headers map """
+
+    headers_in = {}
+    """ The headers in value (deprecated) """
+
+    headers_out = {}
+    """ The headers out value (deprecated) """
 
     received_message = "none"
     """ The received message """
@@ -1373,6 +1386,7 @@ class HttpRequest:
         """
 
         self.response_headers_map[header_name] = header_value
+        self.response_out[header_name] = header_value
 
     def get_result(self):
         # retrieves the result stream
