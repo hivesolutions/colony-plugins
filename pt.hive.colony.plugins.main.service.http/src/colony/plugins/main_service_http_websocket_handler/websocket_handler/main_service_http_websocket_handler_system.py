@@ -78,25 +78,93 @@ class MainServiceHttpWebsocketHandler:
         @param request: The http request to be handled.
         """
 
+        # creates a new websocket connection
+        websocket_connection = WebSocketConnection(request)
+
+        # opens the websocket connection
+        websocket_connection.open()
+
+class WebSocketConnection:
+    """
+    Web socket connection representing a websocket
+    connection.
+    """
+
+    request = None
+    """ The http request object """
+
+    http_client_service_task = None
+    """ The http client service task """
+
+    http_connection = None
+    """ The http connection """
+
+    def __init__(self, request):
+        """
+        Constructor of the class.
+
+        @type request: HttpRequest
+        @param request: The http request associated with the
+        opening of the websocket.
+        """
+
+        self.request = request
+
+        self.http_client_service_task = request.http_client_service_task
+        self.http_connection = request.http_client_service_task.http_connection
+
+    def open(self):
+        """
+        Opens the websocket by proceeding with the handshake.
+        """
+
         # retrieves the host header
-        host = request.get_header("Host")
-        origin = request.get_header("Origin")
-        base_path = request.base_path
+        host = self.request.get_header("Host")
+        origin = self.request.get_header("Origin")
+        base_path = self.request.base_path
+
+        # in case the host, origin or base path is not available
+        if not host or not origin or not base_path:
+            raise main_service_http_websocket_handler_exceptions.InvalidHandshakeData("not enough handshake data available")
 
         # sets the upgrade mode in the request
-        request.set_upgrade_mode("WebSocket")
+        self.request.set_upgrade_mode("WebSocket")
 
         # sets the connection mode in the request
-        request.set_connection_mode("Upgrade")
+        self.request.set_connection_mode("Upgrade")
 
         # unsets the contains message flag to avoid
         # unnecessary header values
-        request.set_contains_message(False)
+        self.request.set_contains_message(False)
 
         # sets the headers in the request
-        request.set_header("WebSocket-Origin", origin)
-        request.set_header("WebSocket-Location", "ws://%s%s" % (host, base_path))
+        self.request.set_header("WebSocket-Origin", origin)
+        self.request.set_header("WebSocket-Location", "ws://%s%s" % (host, base_path))
 
         # sets the request status code
-        request.status_code = 101
-        request.status_message = "Web Socket Protocol Handshake"
+        self.request.status_code = 101
+        self.request.status_message = "Web Socket Protocol Handshake"
+
+        # sets the request handler for the http client service task
+        # this step upgrades the protocol interpretation
+        self.http_client_service_task.set_current_request_handler(self.websocket_request_handler)
+
+    def close(self):
+        """
+        Closes the websocket, cleaning the remaining changes.
+        """
+
+        # sets the request handler for the http client service task
+        # as the original (http) request handler, this step downgrades
+        # the protocol interpretation (back to http)
+        self.http_client_service_task.set_current_request_handler(self.http_client_service_task.http_request_handler)
+
+    def websocket_request_handler(self, request_timeout, http_service_handler_plugins_map):
+        # tries to receive the data
+        data = self.http_connection.recv(1024)
+
+        # prints the data
+        print(data)
+
+        # returns true (connection remains open)
+        return True

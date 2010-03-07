@@ -467,6 +467,9 @@ class HttpClientServiceTask:
     encoding_handler = None
     """ The encoding handler """
 
+    current_request_handler = None
+    """ The current request handler being used """
+
     content_type_charset = DEFAULT_CHARSET
     """ The content type charset """
 
@@ -478,6 +481,8 @@ class HttpClientServiceTask:
         self.encoding = encoding
         self.service_configuration = service_configuration
         self.encoding_handler = encoding_handler
+
+        self.current_request_handler = self.http_request_handler
 
         if DEFAULT_CONTENT_TYPE_CHARSET_VALUE in service_configuration:
             # sets the content type charset to be used in the responses
@@ -495,58 +500,11 @@ class HttpClientServiceTask:
 
         # iterates indefinitely
         while True:
-            try:
-                # retrieves the request
-                request = self.retrieve_request(request_timeout)
-            except main_service_http_exceptions.MainServiceHttpException:
-                # prints a debug message about the connection closing
-                self.main_service_http_plugin.debug("Connection: %s closed by peer or abnormally" % str(self.http_address))
+            # handles the current request if it returns false
+            # the connection was closed or is meant to be closed
+            if not self.current_request_handler(request_timeout, http_service_handler_plugins_map):
+                # breaks the cycle to close the http connection
                 break
-
-            try:
-                # prints debug message about request
-                self.main_service_http_plugin.debug("Handling request: %s" % str(request))
-
-                # processes the redirection information in the request
-                self._process_redirection(request)
-
-                # processes the handler part of the request and retrieves
-                # the handler name
-                handler_name = self._process_handler(request)
-
-                # in case the request was not already handled
-                if not handler_name:
-                    # retrieves the default handler name
-                    handler_name = self.service_configuration.get("default_handler", None)
-
-                    # sets the handler path
-                    request.handler_path = None
-
-                # in case no handler name is defined (request not handled)
-                if not handler_name:
-                    # raises an http no handler exception
-                    raise main_service_http_exceptions.HttpNoHandlerException("no handler defined for current request")
-
-                # handles the request by the request handler
-                http_service_handler_plugins_map[handler_name].handle_request(request)
-
-                # sends the request to the client (response)
-                self.send_request(request)
-
-                # in case the connection is meant to be kept alive
-                if self.keep_alive(request):
-                    self.main_service_http_plugin.debug("Connection: %s kept alive for %ss" % (str(self.http_address), str(request_timeout)))
-                # in case the connection is not meant to be kept alive
-                else:
-                    self.main_service_http_plugin.debug("Connection: %s closed" % str(self.http_address))
-                    break
-
-            except Exception, exception:
-                # prints info message about exception
-                self.main_service_http_plugin.info("There was an exception handling the request: " + str(exception))
-
-                # sends the exception
-                self.send_exception(request, exception)
 
         # closes the http connection
         self.http_connection.close()
@@ -560,6 +518,67 @@ class HttpClientServiceTask:
 
     def resume(self):
         pass
+
+    def http_request_handler(self, request_timeout, http_service_handler_plugins_map):
+        try:
+            # retrieves the request
+            request = self.retrieve_request(request_timeout)
+        except main_service_http_exceptions.MainServiceHttpException:
+            # prints a debug message about the connection closing
+            self.main_service_http_plugin.debug("Connection: %s closed by peer or abnormally" % str(self.http_address))
+
+            # returns false (connection closed)
+            return False
+
+        try:
+            # prints debug message about request
+            self.main_service_http_plugin.debug("Handling request: %s" % str(request))
+
+            # processes the redirection information in the request
+            self._process_redirection(request)
+
+            # processes the handler part of the request and retrieves
+            # the handler name
+            handler_name = self._process_handler(request)
+
+            # in case the request was not already handled
+            if not handler_name:
+                # retrieves the default handler name
+                handler_name = self.service_configuration.get("default_handler", None)
+
+                # sets the handler path
+                request.handler_path = None
+
+            # in case no handler name is defined (request not handled)
+            if not handler_name:
+                # raises an http no handler exception
+                raise main_service_http_exceptions.HttpNoHandlerException("no handler defined for current request")
+
+            # handles the request by the request handler
+            http_service_handler_plugins_map[handler_name].handle_request(request)
+
+            # sends the request to the client (response)
+            self.send_request(request)
+
+            # in case the connection is meant to be kept alive
+            if self.keep_alive(request):
+                self.main_service_http_plugin.debug("Connection: %s kept alive for %ss" % (str(self.http_address), str(request_timeout)))
+            # in case the connection is not meant to be kept alive
+            else:
+                self.main_service_http_plugin.debug("Connection: %s closed" % str(self.http_address))
+
+                # returns false (connection closed)
+                return False
+
+        except Exception, exception:
+            # prints info message about exception
+            self.main_service_http_plugin.info("There was an exception handling the request: " + str(exception))
+
+            # sends the exception
+            self.send_exception(request, exception)
+
+        # returns true (connection remains open)
+        return True
 
     def retrieve_request(self, request_timeout = REQUEST_TIMEOUT):
         """
@@ -1042,6 +1061,26 @@ class HttpClientServiceTask:
         for formated_traceback_line in formated_traceback:
             # writes the traceback line in the request
             request.write(formated_traceback_line)
+
+    def get_current_request_handler(self):
+        """
+        Retrieves the current request handler.
+
+        @rtype: Method
+        @return: The current request handler.
+        """
+
+        return self.current_request_handler
+
+    def set_current_request_handler(self, current_request_handler):
+        """
+        Sets the current request handler.
+
+        @type current_request_handler: Method
+        @param current_request_handler: The current request handler.
+        """
+
+        self.current_request_handler = current_request_handler
 
     def _process_redirection(self, request):
         """
