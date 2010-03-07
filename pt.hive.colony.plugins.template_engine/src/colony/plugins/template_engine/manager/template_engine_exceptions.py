@@ -45,6 +45,32 @@ class TemplateEngineException(Exception):
     message = None
     """ The exception's message """
 
+class UndefinedVariable(TemplateEngineException):
+    """
+    The undefined variable class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        TemplateEngineException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Undefined variable: %s" % self.message
+
 class InvalidNumberAttributes(TemplateEngineException):
     """
     The invalid number attributes class.

@@ -399,11 +399,14 @@ class TemplateFile:
     encoding = None
     """ The encoding used in the file """
 
-    root_node = None
-    """ The root node """
-
     variable_encoding = DEFAULT_VARIABLE_ENCODING
     """ The variable encoding """
+
+    strict_mode = False
+    """ The strict mode flag """
+
+    root_node = None
+    """ The root node """
 
     visitor = None
     """ The visitor """
@@ -475,6 +478,9 @@ class TemplateFile:
         # sets the variable encoding in the visitor
         self.visitor.set_variable_encoding(self.variable_encoding)
 
+        # sets the strict mode in the visitor
+        self.visitor.set_strict_mode(self.strict_mode)
+
         # accepts the visitor in the root node
         self.root_node.accept(self.visitor)
 
@@ -506,3 +512,27 @@ class TemplateFile:
         """
 
         self.variable_encoding = variable_encoding
+
+    def get_strict_mode(self):
+        """
+        Retrieves the strict mode.
+        In strict mode, variables referenced but node defined
+        raise exceptions.
+
+        @rtype: String
+        @return: The strict mode.
+        """
+
+        return self.strict_mode
+
+    def set_strict_mode(self, strict_mode):
+        """
+        Sets the strict mode.
+        In strict mode, variables referenced but node defined
+        raise exceptions.
+
+        @type strict_mode: bool
+        @param strict_mode: The strict mode.
+        """
+
+        self.strict_mode = strict_mode

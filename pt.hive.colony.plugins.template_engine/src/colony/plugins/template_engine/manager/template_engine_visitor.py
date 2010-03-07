@@ -188,6 +188,9 @@ class Visitor:
     variable_encoding = None
     """ The variable encoding """
 
+    strict_mode = False
+    """ The strict mode """
+
     visit_childs = True
     """ The visit childs flag """
 
@@ -319,6 +322,26 @@ class Visitor:
         """
 
         self.variable_encoding = variable_encoding
+
+    def get_strict_mode(self):
+        """
+        Retrieves the strict mode.
+
+        @rtype: bool
+        @return: The strict mode.
+        """
+
+        return self.strict_mode
+
+    def set_strict_mode(self, strict_mode):
+        """
+        Sets the strict mode.
+
+        @type strict_mode: String
+        @param strict_mode: The strict mode.
+        """
+
+        self.strict_mode = strict_mode
 
     @dispatch_visit()
     def visit(self, node):
@@ -643,11 +666,30 @@ class Visitor:
                 first_variable_name_split = variable_name_splitted[0]
 
                 # sets the current variable as the first split
-                current_variable = self.global_map[first_variable_name_split]
+                current_variable = self.global_map.get(first_variable_name_split, None)
 
-                for variable_name_split in variable_name_splitted[1:]:
-                    # retrieves the current variable
-                    current_variable = getattr(current_variable, variable_name_split)
+                # in case the current variable is defined
+                if current_variable:
+                    # iterates over the sub values of the variable
+                    for variable_name_split in variable_name_splitted[1:]:
+                        if hasattr(current_variable, variable_name_split):
+                            # retrieves the current variable
+                            current_variable = getattr(current_variable, variable_name_split)
+                        elif not self.strict_mode:
+                            # sets the current variable as none
+                            current_variable = None
+
+                            # breaks the cycle
+                            break
+                        else:
+                            # raises the undefined variable exception
+                            raise template_engine_exceptions.UndefinedVariable("variable is not defined: " + variable_name)
+                elif not self.strict_mode:
+                    # sets the current variable as none
+                    current_variable = None
+                else:
+                    # raises the undefined variable exception
+                    raise template_engine_exceptions.UndefinedVariable("variable is not defined: " + variable_name)
 
                 # sets the value as the current variable value
                 value = current_variable
