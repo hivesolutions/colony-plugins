@@ -101,7 +101,8 @@ DEFAULT_CHARSET = "utf-8"
 DEFAULT_VALUE = "default"
 """ The default value """
 
-STATUS_CODE_VALUES = {200 : "OK", 207 : "Multi-Status",
+STATUS_CODE_VALUES = {100 : "Continue", 101 : "Switching Protocols",
+                      200 : "OK", 207 : "Multi-Status",
                       301 : "Moved permanently", 302 : "Found", 303 : "See Other", 304 : "Not Modified",
                       403 : "Forbidden", 404 : "Not Found",
                       500 : "Internal Server Error"}
@@ -137,11 +138,20 @@ CONTENT_LENGTH_VALUE = "Content-Length"
 CONTENT_LENGTH_LOWER_VALUE = "Content-length"
 """ The content length lower value """
 
+UPGRADE_VALUE = "Upgrade"
+""" The upgrade value """
+
 SERVER_VALUE = "Server"
 """ The server value """
 
 CONNECTION_VALUE = "Connection"
 """ The connection value """
+
+IF_MODIFIED_SINCE_VALUE = "If-Modified-Since"
+""" The if modified since value """
+
+IF_NONE_MATCH_VALUE = "If-None-Match"
+""" The if none match value """
 
 CHUNKED_VALUE = "chunked"
 """ The chunked value """
@@ -490,7 +500,7 @@ class HttpClientServiceTask:
                 request = self.retrieve_request(request_timeout)
             except main_service_http_exceptions.MainServiceHttpException:
                 # prints a debug message about the connection closing
-                self.main_service_http_plugin.debug("Connection: %s closed" % str(self.http_address))
+                self.main_service_http_plugin.debug("Connection: %s closed by peer or abnormally" % str(self.http_address))
                 break
 
             try:
@@ -967,14 +977,22 @@ class HttpClientServiceTask:
         @return: The value of the keep alive for the given request.
         """
 
+        # in case connection is defined in the headers map
         if "Connection" in request.headers_map:
+            # retrieves the connection type
             connection_type = request.headers_map["Connection"]
 
-            if connection_type.lower() == "keep-alive":
+            # in case the connection is meant to be kept alive
+            # or in case is of type upgrade
+            if connection_type.lower() in ["keep-alive", "upgrade"]:
+                # returns true
                 return True
             else:
+                # returns false
                 return False
+        # in case no connection header is defined
         else:
+            # returns false
             return False
 
     def default_error_handler(self, request, error):
@@ -1000,7 +1018,7 @@ class HttpClientServiceTask:
             request.status_code = 500
 
         # retrieves the value for the status code
-        status_code_value = STATUS_CODE_VALUES.get(request.status_code, DEFAULT_STATUS_CODE_VALUE)
+        status_code_value = self.get_status_code_value()
 
         # writes the header message in the message
         request.write("colony web server - " + str(request.status_code) + " " + status_code_value + "\n")
@@ -1224,6 +1242,9 @@ class HttpRequest:
     status_code = None
     """ The status code """
 
+    status_message = None
+    """ The status message """
+
     redirected = False
     """ The redirected flag """
 
@@ -1250,6 +1271,12 @@ class HttpRequest:
 
     chunk_handler = None
     """ The chunk handler """
+
+    upgrade_mode = None
+    """ The upgrade mode mode """
+
+    connection_mode = KEEP_ALIVE_VALUE
+    """ The connection mode """
 
     content_type_charset = None
     """ The content type charset """
@@ -1386,7 +1413,7 @@ class HttpRequest:
         """
 
         self.response_headers_map[header_name] = header_value
-        self.response_out[header_name] = header_value
+        self.headers_out[header_name] = header_value
 
     def get_result(self):
         # retrieves the result stream
@@ -1409,8 +1436,8 @@ class HttpRequest:
         else:
             content_length = len(message)
 
-        # retrieves the status code value
-        status_code_value = STATUS_CODE_VALUES.get(self.status_code, DEFAULT_STATUS_CODE_VALUE)
+        # retrieves the value for the status code
+        status_code_value = self.get_status_code_value()
 
         result.write(self.protocol_version + " " + str(self.status_code) + " " + status_code_value + "\r\n")
 
@@ -1420,14 +1447,16 @@ class HttpRequest:
         # formats the current date time according to the http specification
         current_date_time_formatted = current_date_time.strftime(DATE_FORMAT)
 
-        if self.content_type:
+        if self.content_type and message:
             result.write(CONTENT_TYPE_VALUE + ": " + self.content_type + "\r\n")
         if self.encoded:
             result.write(CONTENT_ENCODING_VALUE + ": " + self.encoding_name + "\r\n")
         if self.chunked_encoding:
             result.write(TRANSFER_ENCODING_VALUE + ": " + CHUNKED_VALUE + "\r\n")
-        if not self.chunked_encoding:
+        if not self.chunked_encoding and message:
             result.write(CONTENT_LENGTH_VALUE + ": " + str(content_length) + "\r\n")
+        if self.upgrade_mode:
+            result.write(UPGRADE_VALUE + ": " + self.upgrade_mode + "\r\n")
         if self.etag:
             result.write(ETAG_VALUE + ": " + self.etag + "\r\n")
         if self.expiration_timestamp:
@@ -1446,9 +1475,9 @@ class HttpRequest:
             last_modified_date_time_formatted = last_modified_date_time.strftime(DATE_FORMAT)
 
             result.write(LAST_MODIFIED_VALUE + ": " + last_modified_date_time_formatted + "\r\n")
+        result.write(CONNECTION_VALUE + ": " + self.connection_mode + "\r\n")
         result.write(DATE_VALUE + ": " + current_date_time_formatted + "\r\n")
         result.write(SERVER_VALUE + ": " + SERVER_IDENTIFIER + "\r\n")
-        result.write(CONNECTION_VALUE + ": " + KEEP_ALIVE_VALUE + "\r\n")
 
         # iterates over all the "extra" header values to be sent
         for header_name, header_value in self.response_headers_map.items():
@@ -1532,6 +1561,18 @@ class HttpRequest:
 
         return self.arguments
 
+    def get_upgrade_mode(self):
+        return self.upgrade_mode
+
+    def set_upgrade_mode(self, upgrade_mode):
+        self.upgrade_mode = upgrade_mode
+
+    def get_connection_mode(self):
+        return self.connection_mode
+
+    def set_connection_mode(self, connection_mode):
+        self.connection_mode = connection_mode
+
     def get_content_type_charset(self):
         return self.content_type_charset
 
@@ -1555,3 +1596,61 @@ class HttpRequest:
 
     def set_last_modified_timestamp(self, last_modified_timestamp):
         self.last_modified_timestamp = last_modified_timestamp
+
+    def get_status_code_value(self):
+        # in case a status message is defined
+        if self.status_message:
+            # sets the defined status message as the
+            # status code value
+            status_code_value = self.status_message
+        else:
+            # retrieves the value for the status code
+            status_code_value = STATUS_CODE_VALUES.get(self.status_code, DEFAULT_STATUS_CODE_VALUE)
+
+        # returns the status code value
+        return status_code_value
+
+    def verify_resource_modification(self, modified_timestamp = None, etag_value = None):
+        """
+        Verifies the resource to check for any modification since the
+        value defined in the http request.
+
+        @type modified_timestamp: int
+        @param modified_timestamp: The timestamp of the resource modification.
+        @type etag_value: String
+        @param etag_value: The etag value of the resource.
+        @rtype: bool
+        @return: The result of the resource modification test.
+        """
+
+        # retrieves the if modified header value
+        if_modified_header = self.get_header(IF_MODIFIED_SINCE_VALUE)
+
+        # in case the modified timestamp and if modified header are defined
+        if modified_timestamp and if_modified_header:
+            # converts the if modified header value to date time
+            if_modified_header_data_time = datetime.datetime.strptime(if_modified_header, DATE_FORMAT)
+
+            # converts the modified timestamp to date time
+            modified_date_time = datetime.datetime.fromtimestamp(modified_timestamp)
+
+            # in case the modified date time is less or the same
+            # as the if modified header date time (no modification)
+            if modified_date_time <= if_modified_header_data_time:
+                # returns false (not modified)
+                return False
+
+        # retrieves the if none match value
+        if_none_match_header = self.get_header(IF_NONE_MATCH_VALUE)
+
+        # in case the etag value and the if none header are defined
+        if etag_value and if_none_match_header:
+            # in case the value of the if modified header is the same
+            # as the etag value of the file (no modification)
+            if if_modified_header == etag_value:
+                # returns false (not modified)
+                return False
+
+        # returns false (modified or no information for
+        # modification test)
+        return True

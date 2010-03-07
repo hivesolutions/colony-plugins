@@ -78,4 +78,21 @@ class MainServiceHttpWebsocketHandler:
         @param request: The http request to be handled.
         """
 
-        pass
+        # retrieves the host header
+        host = request.get_header("Host")
+        origin = request.get_header("Origin")
+        base_path = request.base_path
+
+        # sets the upgrade mode in the request
+        request.set_upgrade_mode("WebSocket")
+
+        # sets the connection mode in the request
+        request.set_connection_mode("Upgrade")
+
+        # sets the headers in the request
+        request.set_header("WebSocket-Origin", origin)
+        request.set_header("WebSocket-Location", "ws://%s%s" % (host, base_path))
+
+        # sets the request status code
+        request.status_code = 101
+        request.status_message = "Web Socket Protocol Handshake"

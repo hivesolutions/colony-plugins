@@ -40,7 +40,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import re
 import stat
 import hashlib
-import datetime
 
 import os.path
 
@@ -60,21 +59,9 @@ CHUNK_SIZE = 1024
 EXPIRATION_DELTA_TIMESTAMP = 31536000
 """ The expiration delta timestamp """
 
-DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
-""" The date format """
-
 FILE_MIME_TYPE_MAPPING = {"html" : "text/html", "txt" : "text/plain", "js" : "text/javascript",
                           "css" : "text/css", "jpg" : "image/jpg", "png" : "image/png"}
 """ The map that relates the file extension and the associated mime type """
-
-SERVER_VALUE = "Server"
-""" The server value """
-
-IF_MODIFIED_SINCE_VALUE = "If-Modified-Since"
-""" The if modified since value """
-
-IF_NONE_MATCH_VALUE = "If-None-Match"
-""" The if none match value """
 
 INVALID_EXPIRATION_STRING_VALUE = "-1"
 """ The invalid expiration string value """
@@ -204,45 +191,16 @@ class MainServiceHttpFileHandler:
         # modified timestamp
         etag_value = self._compute_etag(file_stat, modified_timestamp)
 
-        # retrieves the if modified header value
-        if_modified_header = request.get_header(IF_MODIFIED_SINCE_VALUE)
+        # verifies the resource to validate any modification
+        if not request.verify_resource_modification(modified_timestamp, etag_value):
+            # sets the request mime type
+            request.content_type = mime_type
 
-        # in case the if modified header is defined
-        if if_modified_header:
-            # converts the if modified header value to date time
-            if_modified_header_data_time = datetime.datetime.strptime(if_modified_header, DATE_FORMAT)
+            # sets the request status code
+            request.status_code = 304
 
-            # converts the modified timestamp to date time
-            modified_date_time = datetime.datetime.fromtimestamp(modified_timestamp)
-
-            # in case the modified date time is less or the same
-            # as the if modified header date time (no modification)
-            if modified_date_time <= if_modified_header_data_time:
-                # sets the request mime type
-                request.content_type = mime_type
-
-                # sets the request status code
-                request.status_code = 304
-
-                # returns immediately
-                return
-
-        # retrieves the if none match value
-        if_none_match_header = request.get_header(IF_NONE_MATCH_VALUE)
-
-        # in case the if none header is defined
-        if if_none_match_header:
-            # in case the value of the if modified heade is the same
-            # as the etag value of the file (no modification)
-            if if_modified_header == etag_value:
-                # sets the request mime type
-                request.content_type = mime_type
-
-                # sets the request status code
-                request.status_code = 304
-
-                # returns immediately
-                return
+            # returns immediately
+            return
 
         # calculates the expiration timestamp from the modified timestamp
         # incrementing the delta timestamp for expiration
