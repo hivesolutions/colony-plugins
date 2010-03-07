@@ -1233,7 +1233,7 @@ class HttpRequest:
     received_message = "none"
     """ The received message """
 
-    content_type = "none"
+    content_type = None
     """ The content type """
 
     message_stream = None
@@ -1289,6 +1289,9 @@ class HttpRequest:
 
     last_modified_timestamp = None
     """ The last modified timestatmp """
+
+    contains_message = True
+    """ The contains message flag """
 
     request_time = None
     """ The time when the request started """
@@ -1447,13 +1450,13 @@ class HttpRequest:
         # formats the current date time according to the http specification
         current_date_time_formatted = current_date_time.strftime(DATE_FORMAT)
 
-        if self.content_type and message:
+        if self.content_type:
             result.write(CONTENT_TYPE_VALUE + ": " + self.content_type + "\r\n")
         if self.encoded:
             result.write(CONTENT_ENCODING_VALUE + ": " + self.encoding_name + "\r\n")
         if self.chunked_encoding:
             result.write(TRANSFER_ENCODING_VALUE + ": " + CHUNKED_VALUE + "\r\n")
-        if not self.chunked_encoding and message:
+        if not self.chunked_encoding and self.contains_message:
             result.write(CONTENT_LENGTH_VALUE + ": " + str(content_length) + "\r\n")
         if self.upgrade_mode:
             result.write(UPGRADE_VALUE + ": " + self.upgrade_mode + "\r\n")
@@ -1596,6 +1599,12 @@ class HttpRequest:
 
     def set_last_modified_timestamp(self, last_modified_timestamp):
         self.last_modified_timestamp = last_modified_timestamp
+
+    def get_contains_message(self):
+        return self.contains_message
+
+    def set_contains_message(self, contains_message):
+        self.contains_message = contains_message
 
     def get_status_code_value(self):
         # in case a status message is defined

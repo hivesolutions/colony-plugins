@@ -89,6 +89,10 @@ class MainServiceHttpWebsocketHandler:
         # sets the connection mode in the request
         request.set_connection_mode("Upgrade")
 
+        # unsets the contains message flag to avoid
+        # unnecessary header values
+        request.set_contains_message(False)
+
         # sets the headers in the request
         request.set_header("WebSocket-Origin", origin)
         request.set_header("WebSocket-Location", "ws://%s%s" % (host, base_path))
