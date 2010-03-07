@@ -60,7 +60,7 @@ configuration = {
                      }
                  },
                  "contexts" : {
-                     "resolution_order" : ["/colony_web/plugins", "/colony_web", "/colony_manager", "/colony_mod_python/rest/mvc/hive/resources", "/colony_mod_python", "/template_error_handler", "/docs", "/eclipse", "/cgi-bin", "/fastcgi-bin", "/web_administration"],
+                     "resolution_order" : ["/colony_web/plugins", "/colony_web", "/colony_manager", "/colony_mod_python/rest/mvc/hive/resources", "/colony_mod_python", "/template_error_handler", "/docs", "/eclipse", "/cgi-bin", "/fastcgi-bin", "/web_administration", "/websession_test", "/websession"],
                      "/colony_web" : {
                          "handler" : "file",
                          "allow_redirection" : False,
@@ -138,6 +138,21 @@ configuration = {
                          "allow_redirection" : False,
                          "request_properties" : {
                              "base_path" : "$resource{system.path.colony}/pt.hive.colony.plugins.web.administration/src/colony/plugins/web_administration/administration/resources"
+                         }
+                     },
+                     "/websession_test" : {
+                         "handler" : "file",
+                         "allow_redirection" : False,
+                         "request_properties" : {
+                             "base_path" : "c:/test",
+                             "default_page" : "index.html"
+                         }
+                     },
+                     "/websession" : {
+                         "handler" : "websocket",
+                         "allow_redirection" : False,
+                         "request_properties" : {
+                             "protocol" : "default"
                          }
                      }
                  }
