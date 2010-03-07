@@ -61,6 +61,12 @@ EXPIRES_VALUE = "Expires"
 LAST_MODIFIED_VALUE = "Last-Modified"
 """ The last modified value """
 
+IF_MODIFIED_SINCE_VALUE = "If-Modified-Since"
+""" The if modified since value """
+
+IF_NONE_MATCH_VALUE = "If-None-Match"
+""" The if none match value """
+
 DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
 """ The date format """
 
@@ -107,6 +113,7 @@ class PluginManagerHandler:
         req.set_etag = self._set_etag
         req.set_expiration_timestamp = self._set_expiration_timestamp
         req.set_last_modified_timestamp = self._set_last_modified_timestamp
+        req.verify_resource_modification = self._verify_resource_modification
 
     def handle_request(self, data):
         """
@@ -254,6 +261,51 @@ class PluginManagerHandler:
 
         # sets the last modified date time formatted in the header
         self.req.headers_out[LAST_MODIFIED_VALUE] = last_modified_date_time_formatted
+
+    def _verify_resource_modification(self, modified_timestamp = None, etag_value = None):
+        """
+        Verifies the resource to check for any modification since the
+        value defined in the http request.
+
+        @type modified_timestamp: int
+        @param modified_timestamp: The timestamp of the resource modification.
+        @type etag_value: String
+        @param etag_value: The etag value of the resource.
+        @rtype: bool
+        @return: The result of the resource modification test.
+        """
+
+        # retrieves the if modified header value
+        if_modified_header = self.req.get_header(IF_MODIFIED_SINCE_VALUE)
+
+        # in case the modified timestamp and if modified header are defined
+        if modified_timestamp and if_modified_header:
+            # converts the if modified header value to date time
+            if_modified_header_data_time = datetime.datetime.strptime(if_modified_header, DATE_FORMAT)
+
+            # converts the modified timestamp to date time
+            modified_date_time = datetime.datetime.fromtimestamp(modified_timestamp)
+
+            # in case the modified date time is less or the same
+            # as the if modified header date time (no modification)
+            if modified_date_time <= if_modified_header_data_time:
+                # returns false (not modified)
+                return False
+
+        # retrieves the if none match value
+        if_none_match_header = self.req.get_header(IF_NONE_MATCH_VALUE)
+
+        # in case the etag value and the if none header are defined
+        if etag_value and if_none_match_header:
+            # in case the value of the if modified header is the same
+            # as the etag value of the file (no modification)
+            if if_modified_header == etag_value:
+                # returns false (not modified)
+                return False
+
+        # returns false (modified or no information for
+        # modification test)
+        return True
 
     def _write(self, message):
         """
