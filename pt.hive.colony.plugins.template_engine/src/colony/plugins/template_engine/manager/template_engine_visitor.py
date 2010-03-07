@@ -176,11 +176,17 @@ class Visitor:
     node_method_map = {}
     """ The node method map """
 
+    encoding = None
+    """ The encoding used the file """
+
     file_path = None
     """ The path to the file """
 
     template_engine_manager = None
     """ The template engine manager """
+
+    variable_encoding = None
+    """ The variable encoding """
 
     visit_childs = True
     """ The visit childs flag """
@@ -234,6 +240,26 @@ class Visitor:
     def remove_global_variable(self, variable_name):
         del self.global_map[variable_name]
 
+    def get_encoding(self):
+        """
+        Retrieves encoding used in the file.
+
+        @rtype: String
+        @return: The encoding used in the file.
+        """
+
+        return self.encoding
+
+    def set_encoding(self, encoding):
+        """
+        Sets the encoding used in the file.
+
+        @type encoding: String
+        @param encoding: The encoding used in the file.
+        """
+
+        self.encoding = encoding
+
     def get_file_path(self):
         """
         Retrieves path to the file.
@@ -273,6 +299,26 @@ class Visitor:
         """
 
         self.template_engine_manager = template_engine_manager
+
+    def get_variable_encoding(self):
+        """
+        Retrieves the variable encoding.
+
+        @rtype: String
+        @return: The variable encoding.
+        """
+
+        return self.variable_encoding
+
+    def set_variable_encoding(self, variable_encoding):
+        """
+        Sets the variable encoding.
+
+        @type variable_encoding: String
+        @param variable_encoding: The variable encoding.
+        """
+
+        self.variable_encoding = variable_encoding
 
     @dispatch_visit()
     def visit(self, node):
@@ -335,7 +381,10 @@ class Visitor:
         else:
             attribute_xml_escape_value = False
 
-        attribute_value_value = unicode(attribute_value_value).encode("utf-8")
+        # in case the variable encoding is defined
+        if self.variable_encoding:
+            # re-encodes the variable value
+            attribute_value_value = unicode(attribute_value_value).encode(self.variable_encoding)
 
         if attribute_xml_escape_value:
             attribute_value_value = xml.sax.saxutils.escape(attribute_value_value)
@@ -360,7 +409,10 @@ class Visitor:
             attribute_xml_escape_value = False
 
         if not attribute_value_value == None:
-            attribute_value_value = unicode(attribute_value_value).encode("utf-8")
+            # in case the variable encoding is defined
+            if self.variable_encoding:
+                # re-encodes the variable value
+                attribute_value_value = unicode(attribute_value_value).encode(self.variable_encoding)
 
             if attribute_xml_escape_value:
                 attribute_value_value = xml.sax.saxutils.escape(attribute_value_value)
@@ -475,10 +527,13 @@ class Visitor:
             file_path = file_directory + "/" + attribute_file_literal_value
 
         # parses the file retrieving the template file
-        template_file = self.template_engine_manager.parse_file_path(file_path)
+        template_file = self.template_engine_manager.parse_file_path_encoding(file_path, self.encoding)
 
         # sets the global map in template file
         template_file.set_global_map(self.global_map)
+
+        # sets the variable encoding in the template file
+        template_file.set_variable_encoding(self.variable_encoding)
 
         # processes the template file
         processed_template_file = template_file.process()

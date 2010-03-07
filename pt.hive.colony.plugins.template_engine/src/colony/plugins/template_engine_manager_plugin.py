@@ -91,5 +91,8 @@ class TemplateEngineManagerPlugin(colony.plugins.plugin_system.Plugin):
     def parse_file_path(self, file_path):
         return self.template_engine_manager.parse_file_path(file_path)
 
+    def parse_file_path_encoding(self, file_path, encoding):
+        return self.template_engine_manager.parse_file_path_encoding(file_path, encoding)
+
     def parse_file(self, file):
         return self.template_engine_manager.parse_file(file)

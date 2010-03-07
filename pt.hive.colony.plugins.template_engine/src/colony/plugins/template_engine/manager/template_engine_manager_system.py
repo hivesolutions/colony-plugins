@@ -69,6 +69,12 @@ SINGLE_VALUE = "single"
 LITERAL_VALUE = "literal"
 """ The literal value """
 
+DEFAULT_ENCODING_VALUE = None
+""" The default encoding value """
+
+DEFAULT_VARIABLE_ENCODING = "utf-8"
+""" The default variable encoding """
+
 class TemplateEngineManager:
     """
     The template engine manager class.
@@ -92,16 +98,33 @@ class TemplateEngineManager:
         file = open(file_path, "r")
 
         # parses the file
-        result = self.parse_file(file, file_path)
+        result = self.parse_file(file, file_path, DEFAULT_ENCODING_VALUE)
 
         # closes the file
         file.close()
 
         return result
 
-    def parse_file(self, file, file_path = None):
+    def parse_file_path_encoding(self, file_path, encoding = None):
+        # opens the file for reading
+        file = open(file_path, "r")
+
+        # parses the file
+        result = self.parse_file(file, file_path, encoding)
+
+        # closes the file
+        file.close()
+
+        return result
+
+    def parse_file(self, file, file_path = None, encoding = None):
         # reads the file contents
         file_contents = file.read()
+
+        # in case an encoding is defined
+        if encoding:
+            # decodes the file contents
+            file_contents = file_contents.decode(encoding)
 
         # creates the template start regex
         template_start_regex = re.compile(START_TAG_VALUE)
@@ -304,8 +327,8 @@ class TemplateEngineManager:
                 # adds the literal node as a child to the parent node
                 parent_node.add_child_node(literal_node)
 
-        # creates the template file from the file path and root node
-        template_file = TemplateFile(self, file_path, root_node)
+        # creates the template file from the file path, encoding and root node
+        template_file = TemplateFile(self, file_path, encoding, root_node)
 
         # returns the template file
         return template_file
@@ -373,13 +396,19 @@ class TemplateFile:
     file_path = None
     """ The path to the file to be used """
 
+    encoding = None
+    """ The encoding used in the file """
+
     root_node = None
     """ The root node """
+
+    variable_encoding = DEFAULT_VARIABLE_ENCODING
+    """ The variable encoding """
 
     visitor = None
     """ The visitor """
 
-    def __init__(self, manager = None, file_path = None, root_node = None):
+    def __init__(self, manager = None, file_path = None, encoding = None, root_node = None):
         """
         Constructor of the class.
 
@@ -387,12 +416,15 @@ class TemplateFile:
         @param manager: The manager to be used.
         @type file_path: String
         @param file_path: The path to the file to be used.
+        @type encoding: String
+        @param encoding: The encoding used in the file.
         @type root_node: AstNode
         @param root_node: The root node to be used.
         """
 
         self.manager = manager
         self.file_path = file_path
+        self.encoding = encoding
         self.root_node = root_node
 
         self.visitor = template_engine_visitor.Visitor()
@@ -431,11 +463,17 @@ class TemplateFile:
         @return: The result value from the visitor.
         """
 
+        # sets the encoding in the visitor
+        self.visitor.set_encoding(self.encoding)
+
         # sets the file path in the visitor
         self.visitor.set_file_path(self.file_path)
 
         # sets the template engine manager in the visitor
         self.visitor.set_template_engine_manager(self.manager)
+
+        # sets the variable encoding in the visitor
+        self.visitor.set_variable_encoding(self.variable_encoding)
 
         # accepts the visitor in the root node
         self.root_node.accept(self.visitor)
@@ -448,3 +486,23 @@ class TemplateFile:
 
         # returns the visitor string buffer value
         return visitor_string_buffer_value
+
+    def get_variable_encoding(self):
+        """
+        Retrieves the variable encoding.
+
+        @rtype: String
+        @return: The variable encoding.
+        """
+
+        return self.variable_encoding
+
+    def set_variable_encoding(self, variable_encoding):
+        """
+        Sets the variable encoding.
+
+        @type variable_encoding: String
+        @param variable_encoding: The variable encoding.
+        """
+
+        self.variable_encoding = variable_encoding
