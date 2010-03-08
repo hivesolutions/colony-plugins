@@ -1676,17 +1676,21 @@ class HttpRequest:
 
         # in case the modified timestamp and if modified header are defined
         if modified_timestamp and if_modified_header:
-            # converts the if modified header value to date time
-            if_modified_header_data_time = datetime.datetime.strptime(if_modified_header, DATE_FORMAT)
+            try:
+                # converts the if modified header value to date time
+                if_modified_header_data_time = datetime.datetime.strptime(if_modified_header, DATE_FORMAT)
 
-            # converts the modified timestamp to date time
-            modified_date_time = datetime.datetime.fromtimestamp(modified_timestamp)
+                # converts the modified timestamp to date time
+                modified_date_time = datetime.datetime.fromtimestamp(modified_timestamp)
 
-            # in case the modified date time is less or the same
-            # as the if modified header date time (no modification)
-            if modified_date_time <= if_modified_header_data_time:
-                # returns false (not modified)
-                return False
+                # in case the modified date time is less or the same
+                # as the if modified header date time (no modification)
+                if modified_date_time <= if_modified_header_data_time:
+                    # returns false (not modified)
+                    return False
+            except:
+                # prints a warning for not being able to check the modification date
+                self.http_client_service_task.main_service_http_plugin.warn("Problem while checking modification date")
 
         # retrieves the if none match value
         if_none_match_header = self.get_header(IF_NONE_MATCH_VALUE)
