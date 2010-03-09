@@ -53,6 +53,38 @@
         <data>C:/Program Files/IzPack/bin</data>
     </resource>
 
+    <!-- Mail server configuration -->
+    <resource>
+        <namespace>system.mail</namespace>
+        <name>smtp_server</name>
+        <type>string</type>
+        <data>smtp.gmail.com</data>
+    </resource>
+    <resource>
+        <namespace>system.mail</namespace>
+        <name>smtp_port</name>
+        <type>integer</type>
+        <data>587</data>
+    </resource>
+    <resource>
+        <namespace>system.mail</namespace>
+        <name>smtp_use_tls</name>
+        <type>boolean</type>
+        <data>true</data>
+    </resource>
+    <resource>
+        <namespace>system.mail</namespace>
+        <name>smtp_user</name>
+        <type>string</type>
+        <data>joamag@gmail.com</data>
+    </resource>
+    <resource>
+        <namespace>system.mail</namespace>
+        <name>smtp_password</name>
+        <type>string</type>
+        <data>ek41Xuyw</data>
+    </resource>
+
     <!-- Distribution registry server management -->
     <resource>
         <namespace>pt.hive.colony.plugins.distribution.registry_server</namespace>

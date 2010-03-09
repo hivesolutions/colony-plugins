@@ -176,11 +176,23 @@ class ResourcesFileParser(Parser):
         return resource_name
 
     def parse_type(self, type):
+        # retrieves the resource type
         resource_type = type.firstChild.data.strip()
+
+        # returns the resource type
         return resource_type
 
     def parse_data(self, data):
-        resource_data = data.firstChild.data.strip()
+        # in case there is a child available
+        if data.firstChild:
+            # strips the resource data from extra space
+            resource_data = data.firstChild.data.strip()
+        # in case the field is empty
+        else:
+            # sets the resource data as an empty string
+            resource_data = ""
+
+        # returns the resource data
         return resource_data
 
     def parse_validation(self, validation):

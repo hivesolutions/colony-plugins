@@ -276,8 +276,16 @@ class ResourceManager:
         # sets the resource data as the real string value
         resource.data = self.get_real_string_value(resource.data)
 
+        # in case the resource type is boolean
+        if resource_type == "boolean":
+            if resource.data == "true":
+                resource.data = True
+            elif resource.data == "false":
+                resource.data = False
+            else:
+                resource.data = None
         # in case the resource type is integer
-        if resource_type == "integer":
+        elif resource_type == "integer":
             resource.data = int(resource.data)
         # in case the resource type is float
         elif resource_type == "float":
