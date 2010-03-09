@@ -49,6 +49,12 @@
 
     <!-- General configuration -->
     <resource>
+        <namespace>system.debug</namespace>
+        <name>level</name>
+        <type>integer</type>
+        <data>8</data>
+    </resource>
+    <resource>
         <namespace>system.database</namespace>
         <name>file_name</name>
         <type>string</type>
