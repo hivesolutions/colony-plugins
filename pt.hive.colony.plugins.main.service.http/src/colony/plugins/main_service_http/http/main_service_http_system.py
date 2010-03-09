@@ -525,7 +525,7 @@ class HttpClientServiceTask:
             request = self.retrieve_request(request_timeout)
         except main_service_http_exceptions.MainServiceHttpException:
             # prints a debug message about the connection closing
-            self.main_service_http_plugin.debug("Connection: %s closed by peer or abnormally" % str(self.http_address))
+            self.main_service_http_plugin.debug("Connection: %s closed by peer or timeout" % str(self.http_address))
 
             # returns false (connection closed)
             return False
