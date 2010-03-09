@@ -70,7 +70,7 @@
         <namespace>system.mail</namespace>
         <name>smtp_use_tls</name>
         <type>boolean</type>
-        <data>true</data>
+        <data>false</data>
     </resource>
     <resource>
         <namespace>system.mail</namespace>
