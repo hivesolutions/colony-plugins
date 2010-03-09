@@ -648,6 +648,15 @@ class RestRequest:
 
         self.request = request
 
+    def parse_post(self):
+        """
+        Parses the post message using the default,
+        parses and the default encoding.
+        """
+
+        # parses the post attributes
+        self.request.parse_post_attributes()
+
     def flush(self):
         """
         Flushes the rest request buffer.
@@ -661,6 +670,22 @@ class RestRequest:
 
         # flushes the request, sending the output to the client
         self.request.flush()
+
+    def redirect(self, target_path):
+        """
+        Redirects the request logically, so it
+        becomes readable as a new resource.
+
+        @type target_path: String
+        @param target_path: The target path of the redirection.
+        """
+
+        # sets the status code as temporary redirect
+        self.request.status_code = 307
+
+        # sets the redirection headers
+        self.request.set_header("Location", target_path)
+        self.request.set_header("Request-URI", target_path)
 
     def get_request(self):
         """
