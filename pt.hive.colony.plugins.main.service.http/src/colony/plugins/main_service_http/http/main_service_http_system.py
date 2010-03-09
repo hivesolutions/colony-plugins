@@ -104,6 +104,7 @@ DEFAULT_VALUE = "default"
 STATUS_CODE_VALUES = {100 : "Continue", 101 : "Switching Protocols",
                       200 : "OK", 207 : "Multi-Status",
                       301 : "Moved permanently", 302 : "Found", 303 : "See Other", 304 : "Not Modified",
+                      305 : "Use Proxy", 306 : "(Unused)", 307 : "Temporary Redirect",
                       403 : "Forbidden", 404 : "Not Found",
                       500 : "Internal Server Error"}
 """ The status code values map """
@@ -1366,12 +1367,35 @@ class HttpRequest:
         # retrieves the size of the split
         path_splitted_length = len(path_splitted)
 
-        # in case there are arguments to be parsed
+        # in case there are no arguments to be parsed
         if path_splitted_length < 2:
             return
 
         # retrieves the arguments from the path splitted
         self.arguments = path_splitted[1]
+
+        # parses the arguments
+        self.parse_arguments()
+
+    def parse_post_attributes(self):
+        """
+        Parses the post attributes from the standard post
+        syntax.
+        """
+
+        # sets the arguments as the received message
+        self.arguments = self.received_message
+
+        # parses the arguments
+        self.parse_arguments()
+
+    def parse_arguments(self):
+        """
+        Parses the arguments, using the currently defined
+        arguments string (in the request).
+        The parsing of the arguments is based in the default get
+        arguments parsing.
+        """
 
         # retrieves the attribute fields list
         attribute_fields_list = self.arguments.split("&")
@@ -1473,14 +1497,20 @@ class HttpRequest:
             else:
                 message = self.encoding_handler(message)
 
+        # in case the request is mediated
         if self.mediated:
+            # retrieves the content length
+            # from the mediated handler
             content_length = self.mediated_handler.get_size()
         else:
+            # retrieves the content length from the
+            # message content itself
             content_length = len(message)
 
         # retrieves the value for the status code
         status_code_value = self.get_status_code_value()
 
+        # writes the http command in the string buffer (version, status code and status value)
         result.write(self.protocol_version + " " + str(self.status_code) + " " + status_code_value + "\r\n")
 
         # retrieves the current date time
