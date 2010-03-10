@@ -204,7 +204,7 @@ class MainRestManager:
         path_list = middle_path_name + [last_path_initial_name]
 
         # creates the rest request
-        rest_request = RestRequest(request)
+        rest_request = RestRequest(self, request)
 
         # sets the resource name in the rest request
         rest_request.set_resource_name(resource_name)
@@ -620,6 +620,9 @@ class RestRequest:
     The rest request class.
     """
 
+    main_rest_manager = None
+    """ The main rest manager """
+
     request = None
     """ The associated request """
 
@@ -644,14 +647,17 @@ class RestRequest:
     rest_encoder_plugins_map = []
     """ The rest encoder plugins map """
 
-    def __init__(self, request):
+    def __init__(self, main_rest_manager, request):
         """
         Constructor of the class.
 
+        @type main_rest_manager: MainRestManager
+        @param main_rest_manager: The main rest manager.
         @type request: Request
         @param request: The associated request.
         """
 
+        self.main_rest_manager = main_rest_manager
         self.request = request
 
     def parse_post(self):
@@ -689,6 +695,31 @@ class RestRequest:
 
         # in case the operation is of type post
         if self.request.operation_type == POST_METHOD_VALUE:
+            return True
+        else:
+            return False
+
+    def is_debug(self, minimum_level = 6):
+        """
+        In case the request should be set in debug mode.
+        Maximum verbosity, in actions like exception handling.
+
+        @type minimum_level: int
+        @param minimum_level: The minimum level to be used for verbosity.
+        """
+
+        # retrieves the main rest manager plugin
+        main_rest_manager_plugin = self.main_rest_manager.main_rest_manager_plugin
+
+        # retrieves the resource manager plugin
+        resource_manager_plugin = main_rest_manager_plugin.resource_manager_plugin
+
+        # retrieves the debug level
+        debug_level = resource_manager_plugin.get_resource("system.debug.level")
+
+        # in case the debug level does meet
+        # the required level
+        if debug_level and debug_level.data >= minimum_level:
             return True
         else:
             return False

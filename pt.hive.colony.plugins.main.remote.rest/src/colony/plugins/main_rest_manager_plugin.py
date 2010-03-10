@@ -55,12 +55,15 @@ class MainRestManagerPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["rest_manager", "http_python_handler", "rpc_handler"]
     capabilities_allowed = ["rest_encoder", "rest_service", "rpc_service"]
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.resources.resource_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["main_remote_rest.manager.main_rest_manager_system", "main_remote_rest.manager.main_rest_manager_exceptions"]
 
     main_rest_manager = None
+
+    resource_manager_plugin = None
 
     rest_encoder_plugins = []
     rest_service_plugins = []
@@ -89,6 +92,7 @@ class MainRestManagerPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.main.remote.rest.manager", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -165,3 +169,10 @@ class MainRestManagerPlugin(colony.plugins.plugin_system.Plugin):
     def rpc_servicer_capability_unload_allowed(self, plugin, capability):
         self.rpc_service_plugins.remove(plugin)
         self.main_rest_manager.update_service_methods()
+
+    def get_resource_manager_plugin(self):
+        return self.resource_manager_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.resources.resource_manager")
+    def set_resource_manager_plugin(self, resource_manager_plugin):
+        self.resource_manager_plugin = resource_manager_plugin
