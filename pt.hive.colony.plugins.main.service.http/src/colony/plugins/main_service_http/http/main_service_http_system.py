@@ -1676,6 +1676,15 @@ class HttpRequest:
         self.contains_message = contains_message
 
     def get_status_code_value(self):
+        """
+        Retrieves the current status code value.
+        The method returns the defined status code value,
+        or the default in case none is defined.
+
+        @rtype: String
+        @return: The status code value.
+        """
+
         # in case a status message is defined
         if self.status_message:
             # sets the defined status message as the
