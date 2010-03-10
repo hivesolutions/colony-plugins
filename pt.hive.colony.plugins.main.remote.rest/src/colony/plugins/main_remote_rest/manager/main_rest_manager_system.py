@@ -66,6 +66,12 @@ HANDLER_PORT = 80
 SERVICES_SERVICE_NAME = "services"
 """ The services service name """
 
+GET_METHOD_VALUE = "GET"
+""" The get method value """
+
+POST_METHOD_VALUE = "POST"
+""" The post mehtod value """
+
 class MainRestManager:
     """
     The main rest manager class.
@@ -657,6 +663,36 @@ class RestRequest:
         # parses the post attributes
         self.request.parse_post_attributes()
 
+    def is_get(self):
+        """
+        Tests the request to check if it is of type
+        get method.
+
+        @rtype: bool
+        @return: If the request method is of type get.
+        """
+
+        # in case the operation is of type get
+        if self.request.operation_type == GET_METHOD_VALUE:
+            return True
+        else:
+            return False
+
+    def is_post(self):
+        """
+        Tests the request to check if it is of type
+        post method.
+
+        @rtype: bool
+        @return: If the request method is of type post.
+        """
+
+        # in case the operation is of type post
+        if self.request.operation_type == POST_METHOD_VALUE:
+            return True
+        else:
+            return False
+
     def flush(self):
         """
         Flushes the rest request buffer.
@@ -681,11 +717,35 @@ class RestRequest:
         """
 
         # sets the status code as temporary redirect
-        self.request.status_code = 307
+        self.request.status_code = 302
 
-        # sets the redirection headers
+        # sets the location header
         self.request.set_header("Location", target_path)
-        self.request.set_header("Request-URI", target_path)
+
+    def get_attribute(self, attribute_name):
+        """
+        Retrieves the attribute for the given attribute name.
+
+        @type attribute_name: String
+        @param attribute_name: The name of the attribute to retrieve.
+        @rtype: Object
+        @return: The value of the retrieved attribute.
+        """
+
+        return self.request.get_attribute(attribute_name)
+
+    def set_attribute(self, attribute_name, attribute_value):
+        """
+        Sets the attribute with the given name with the given
+        value.
+
+        @type attribute_name: String
+        @param attribute_name: The name of the attribute to set.
+        @type attribute_value: Object
+        @param attribute_value: The value to set the attribute.
+        """
+
+        self.request.set_attribute(attribute_name, attribute_value)
 
     def get_request(self):
         """
