@@ -74,10 +74,12 @@ def transaction(transaction_type = "required"):
             try:
                 # calls the callback function and gets the return value
                 return_value = func(*args, **kwargs)
-            except Exception, exception:
+            except:
                 # "rollsback" the transaction
                 self_value.entity_manager.rollback_transaction()
-                raise exception
+
+                # re-throws the exception
+                raise
 
             # closes the transaction
             self_value.entity_manager.commit_transaction()
