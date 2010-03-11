@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.plugins.plugin_system
+import colony.plugins.decorators
 
 class WebMvcUtilsPlugin(colony.plugins.plugin_system.Plugin):
     """
@@ -54,13 +55,16 @@ class WebMvcUtilsPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["web.mvc.utils"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.template_engine.manager", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["web_mvc_utils.mvc_utils.web_mvc_controller", "web_mvc_utils.mvc_utils.web_mvc_model", "web_mvc_utils.mvc_utils.web_mvc_utils_exceptions",
                     "web_mvc_utils.mvc_utils.web_mvc_utils_system"]
 
     web_mvc_utils = None
+
+    template_engine_manager_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -83,6 +87,7 @@ class WebMvcUtilsPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.web.mvc.utils", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -91,3 +96,10 @@ class WebMvcUtilsPlugin(colony.plugins.plugin_system.Plugin):
 
     def create_controller(self, base_controller, base_arguments_list, base_arguments_map):
         return self.web_mvc_utils.create_controller(base_controller, base_arguments_list, base_arguments_map)
+
+    def get_template_engine_manager_plugin(self):
+        return self.template_engine_manager_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.template_engine.manager")
+    def set_template_engine_manager_plugin(self, template_engine_manager_plugin):
+        self.template_engine_manager_plugin = template_engine_manager_plugin

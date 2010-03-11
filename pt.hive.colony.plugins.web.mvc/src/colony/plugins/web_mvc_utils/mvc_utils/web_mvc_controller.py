@@ -37,5 +37,98 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import urllib
+
+DEFAULT_CONTENT_TYPE = "text/html;charset=utf-8"
+""" The default content type """
+
+DEFAULT_ENCODING = "utf-8"
+""" The default encoding value """
+
 def _start(self):
-    pass
+    # in case the controller has the start method
+    if hasattr(self, "start"):
+        # calls the start method
+        # in the controller
+        self.start()
+
+def set_contents(self, rest_request, contents):
+    # sets the content type for the rest request
+    rest_request.set_content_type(DEFAULT_CONTENT_TYPE)
+
+    # sets the result for the rest request
+    rest_request.set_result_translated(contents)
+
+    # flushes the rest request
+    rest_request.flush()
+
+def retrieve_template_file(self, file_name = None):
+    # creates the template file path
+    template_file_path = self.templates_path + "/" + file_name
+
+    # parses the template file path
+    template_file = self.template_engine_manager_plugin.parse_file_path_encoding(template_file_path, "Cp1252")
+
+    # returns the template file
+    return template_file
+
+def get_attribute_decoded(self, rest_request, attribute_name, encoding = DEFAULT_ENCODING):
+    # retrieves the attribute value from the attribute name
+    attribute_value = rest_request.get_attribute(attribute_name)
+
+    # in case the attribute value is valid
+    if attribute_value:
+        # unquotes the attribute value
+        attribute_value_unquoted = urllib.unquote(attribute_value)
+
+        # converts the spaces values
+        attribute_value_spaced = attribute_value_unquoted.replace("+", " ")
+
+        # decodes the attribute value
+        attribute_value_decoded = attribute_value_spaced.decode(encoding)
+
+        # the attribute value decoded
+        return attribute_value_decoded
+    else:
+        # returns the empty value
+        return ""
+
+def get_templates_path(self):
+    """
+    Retrieves the templates path.
+
+    @rtype: Sring
+    @return: The templates path.
+    """
+
+    return self.templates_path
+
+def set_templates_path(self, templates_path):
+    """
+    Sets the templates path.
+
+    @type templates_path: String
+    @param templates_path: The templates path.
+    """
+
+    self.templates_path = templates_path
+
+def get_template_engine_manager_plugin(self):
+    """
+    Retrieves the template engine manager plugin.
+
+    @rtype: Plugin
+    @return: The template engine manager plugin.
+    """
+
+    return self.template_engine_manager_plugin
+
+def set_template_engine_manager_plugin(self, template_engine_manager_plugin):
+    """
+    Sets the template engine manager plugin.
+
+    @type template_engine_manager_plugin: String
+    @param template_engine_manager_plugin: The templates path.
+    """
+
+    self.template_engine_manager_plugin = template_engine_manager_plugin

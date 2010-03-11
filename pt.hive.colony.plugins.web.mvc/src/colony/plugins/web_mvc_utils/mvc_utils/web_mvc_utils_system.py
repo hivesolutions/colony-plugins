@@ -83,6 +83,12 @@ class WebMvcUtils:
         # starts the controller structures
         controller._start()
 
+        # retrieves the template engine manager plugin
+        template_engine_manager_plugin = self.web_mvc_utils_plugin.template_engine_manager_plugin
+
+        # sets the template engine manager plugin in the controller
+        controller.set_template_engine_manager_plugin(template_engine_manager_plugin)
+
         # returns the controller
         return controller
 
