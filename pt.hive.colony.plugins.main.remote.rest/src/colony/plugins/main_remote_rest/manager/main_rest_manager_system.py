@@ -70,7 +70,16 @@ GET_METHOD_VALUE = "GET"
 """ The get method value """
 
 POST_METHOD_VALUE = "POST"
-""" The post mehtod value """
+""" The post method value """
+
+COOKIE_VALUE = "Cookie"
+""" The cookie value """
+
+SET_COOKIE_VALUE = "Set-Cookie"
+""" The set cookie value """
+
+SESSION_ID_VALUE = "session_id"
+""" The session id value """
 
 class MainRestManager:
     """
@@ -95,6 +104,9 @@ class MainRestManager:
     service_methods_map = {}
     """ The service methods map """
 
+    rest_session_map = {}
+    """ The map associating the session id with the rest session """
+
     def __init__(self, main_rest_manager_plugin):
         """
         Constructor of the class.
@@ -109,6 +121,7 @@ class MainRestManager:
         self.plugin_id_undotted_plugin_map = {}
         self.service_objects = []
         self.service_methods_map = {}
+        self.rest_session_map = {}
 
     def get_handler_filename(self):
         """
@@ -205,6 +218,12 @@ class MainRestManager:
 
         # creates the rest request
         rest_request = RestRequest(self, request)
+
+        try:
+            # updates the rest request session
+            rest_request.update_session()
+        except:
+            rest_request.start_session()
 
         # sets the resource name in the rest request
         rest_request.set_resource_name(resource_name)
@@ -569,6 +588,45 @@ class MainRestManager:
             # returns the content type and the encoded result
             return content_type, result_encoded
 
+    def add_session(self, session):
+        """
+        Adds a session to the sessions map.
+
+        @type session: RestSession
+        @param session: The session to be added to the map.
+        """
+
+        # retrieves the session id
+        session_id = session.get_session_id()
+
+        # sets the session in the rest session map
+        self.rest_session_map[session_id] = session
+
+    def remove_session(self, session):
+        """
+        Removes a session from the sessions map.
+
+        @type session: RestSession
+        @param session: The session to be removed from the map.
+        """
+
+        # retrieves the session id
+        session_id = session.get_session_id()
+
+        # unsets the session from the rest session map
+        del self.rest_session_map[session_id]
+
+    def get_session(self, session_id):
+        """
+        Retrieves the session with the given session id
+        from the sessions map.
+
+        @type session_id: String
+        @param session_id: The id of the session to retrieve.
+        """
+
+        return self.rest_session_map.get(session_id, None)
+
     def _update_matching_regex(self):
         """
         Updates the matching regex.
@@ -700,6 +758,35 @@ class RestRequest:
         # unsets the session value
         self.session = None
 
+    def update_session(self):
+        """
+        Updates the current session.
+        This method retrieves information from the cookie to
+        update the session based in the session id.
+        """
+
+        # retrieves the cookie value from the request
+        cookie_value = self.request.get_header(COOKIE_VALUE)
+
+        # in case there is a valid cookie value
+        if cookie_value:
+            # creates a new cookie
+            cookie = Cookie(cookie_value)
+
+            # parses the cookie
+            cookie.parse()
+
+            # retrieves the session id
+            session_id = cookie.get_attribute(SESSION_ID_VALUE)
+
+            # retrieves the session from the session id
+            self.session = self.main_rest_manager.get_session(session_id)
+
+            # if no session is selected
+            if not self.session:
+                # raises an invalid session exception
+                raise main_rest_manager_exceptions.InvalidSession("no session started or session timed out")
+
     def parse_post(self):
         """
         Parses the post message using the default,
@@ -772,7 +859,7 @@ class RestRequest:
         # in case there is a session available
         if self.session:
             # sets the session id in the cookie
-            self.request.append_header("Set-Cookie", "session_id=" + self.session.get_session_id() + ";")
+            self.request.append_header(SET_COOKIE_VALUE, SESSION_ID_VALUE + "=" + self.session.get_session_id() + ";")
 
         # sets the content type for the request
         self.request.content_type = self.content_type
@@ -1055,3 +1142,66 @@ class RestSession:
         """
 
         self.attributes_map[attribute_name] = attribute_value
+
+class Cookie:
+    """
+    The cookie class representing an http cookie.
+    """
+
+    string_value = None
+    """ The string value """
+
+    attributes_map = {}
+    """ The attributes map """
+
+    def __init__(self, string_value):
+        """
+        Constructor of the class.
+
+        @type string_value: String
+        @param string_value: The cookie string value.
+        """
+
+        self.string_value = string_value
+
+    def parse(self):
+        """
+        Parses the string value creating the attributes
+        map, with all the name and values association.
+        """
+
+        # in case the string value is invalid
+        if self.string_value == None:
+            # raises an exception
+            raise Exception("Invalid cookie string value")
+
+        # retrieves the value pairs by splitting the
+        # string value
+        value_pairs = self.string_value.split(";")
+
+        # iterates over all the value pairs to
+        # retrieve the name and value pairs
+        for value_pair in value_pairs:
+            # splits the value pair
+            value_splitted = value_pair.split("=")
+
+            # in case the value pairs does not respect
+            # the key value
+            if not len(value_splitted) == 2:
+                raise Exception("invalid cookie value")
+
+            # retrieves the name and the value
+            name, value = value_splitted
+
+            # sets the value in the attributes map
+            self.attributes_map[name] = value
+
+    def get_attribute(self, attribute_name):
+        """
+        Retrieves an attribute using the attribute name.
+
+        @type attribute_name: String
+        @param attribute_name: The name of the attribute to retrieve.
+        """
+
+        return self.attributes_map.get(attribute_name, None)
