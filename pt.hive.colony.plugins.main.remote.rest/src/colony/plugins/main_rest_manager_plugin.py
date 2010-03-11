@@ -56,7 +56,9 @@ class MainRestManagerPlugin(colony.plugins.plugin_system.Plugin):
     capabilities = ["rest_manager", "http_python_handler", "rpc_handler"]
     capabilities_allowed = ["rest_encoder", "rest_service", "rpc_service"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.resources.resource_manager", "1.0.0")]
+                    "pt.hive.colony.plugins.resources.resource_manager", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.random", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["main_remote_rest.manager.main_rest_manager_system", "main_remote_rest.manager.main_rest_manager_exceptions"]
@@ -176,3 +178,10 @@ class MainRestManagerPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.resources.resource_manager")
     def set_resource_manager_plugin(self, resource_manager_plugin):
         self.resource_manager_plugin = resource_manager_plugin
+
+    def get_random_plugin(self):
+        return self.random_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.random")
+    def set_random_plugin(self, random_plugin):
+        self.random_plugin = random_plugin

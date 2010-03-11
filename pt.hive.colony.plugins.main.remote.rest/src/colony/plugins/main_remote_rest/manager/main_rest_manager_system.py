@@ -626,6 +626,9 @@ class RestRequest:
     request = None
     """ The associated request """
 
+    session = None
+    """ The associated session """
+
     resource_name = None
     """ The resource name """
 
@@ -659,6 +662,43 @@ class RestRequest:
 
         self.main_rest_manager = main_rest_manager
         self.request = request
+
+    def start_session(self, session_id = None):
+        """
+        Starts the session for the given session id,
+        or generates a new session id.
+
+        @type session_id: String
+        @param session_id: The session id to be used.
+        """
+
+        # in case no session id is defined
+        if not session_id:
+            # retrieves the random plugin
+            random_plugin = self.main_rest_manager.main_rest_manager_plugin.random_plugin
+
+            # creates a new random session id
+            session_id = random_plugin.generate_random_md5_string()
+
+        # creates a new rest session and sets
+        # it as the current session
+        self.session = RestSession(session_id)
+
+    def stop_session(self):
+        """
+        Stops the current session.
+        """
+
+        # in case no session is defined
+        if not self.session:
+            # raises invalid session exception
+            raise main_rest_manager_exceptions.InvalidSession("no session started")
+
+        # stops the session
+        self.session.stop()
+
+        # unsets the session value
+        self.session = None
 
     def parse_post(self):
         """
@@ -728,6 +768,11 @@ class RestRequest:
         """
         Flushes the rest request buffer.
         """
+
+        # in case there is a session available
+        if self.session:
+            # sets the session id in the cookie
+            self.request.append_header("Set-Cookie", "session_id=" + self.session.get_session_id() + ";")
 
         # sets the content type for the request
         self.request.content_type = self.content_type
@@ -937,3 +982,76 @@ class RestRequest:
         """
 
         self.set_rest_encoder_plugins_map = set_rest_encoder_plugins_map
+
+class RestSession:
+    """
+    The rest session class.
+    """
+
+    session_id = None
+    """ The session id """
+
+    attributes_map = {}
+    """ The attributes map """
+
+    def __init__(self, session_id = None):
+        """
+        Constructor of the class.
+
+        @type session_id: String
+        @param session_id: The session id.
+        """
+
+        self.session_id = session_id
+
+    def stop(self):
+        """
+        Stops the current session.
+        """
+
+        self.session_id = None
+
+    def get_session_id(self):
+        """
+        Retrieves the session id.
+
+        @rtype: String
+        @return: The session id.
+        """
+
+        return self.session_id
+
+    def set_session_id(self, session_id):
+        """
+        Sets the session id.
+
+        @type session_id: String
+        @param session_id: The session id.
+        """
+
+        self.session_id = session_id
+
+    def get_attribute(self, attribute_name):
+        """
+        Retrieves the attribute value for the given
+        attribute name.
+
+        @type attribute_name: String
+        @param attribute_name: The name of the attribute to retrieve.
+        @rtype: String
+        @return: The retrieved attribute value.
+        """
+
+        return self.attributes_map.get(attribute_name, None)
+
+    def set_attribute(self, attribute_name, attribute_value):
+        """
+        Sets the session id.
+
+        @type attribute_name: String
+        @param attribute_name: The name of the attribute to set.
+        @type attribute_value: String
+        @param attribute_value: The attribute value to set.
+        """
+
+        self.attributes_map[attribute_name] = attribute_value
