@@ -1469,7 +1469,6 @@ class HttpRequest:
     def set_header(self, header_name, header_value):
         """
         Set a response header value on the request.
-        This header
 
         @type header_name: String
         @param header_name: The name of the header to be set.
@@ -1480,6 +1479,34 @@ class HttpRequest:
 
         self.response_headers_map[header_name] = header_value
         self.headers_out[header_name] = header_value
+
+    def append_header(self, header_name, header_value):
+        """
+        Appends an header value to a response header.
+        This method calls the set header method in case the
+        header is not yet defined.
+
+        @type header_name: String
+        @param header_name: The name of the header to be appended with the value.
+        @type header_value: Object
+        @param header_value: The value of the header to be appended
+        in the response.
+        """
+
+        # in case the header is already defined
+        if header_name in self.response_headers_map:
+            # retrieves the current header value
+            current_header_value = self.response_headers_map[header_name]
+
+            # creates the final header value as the appending of both the current
+            # and the concatenation value
+            final_header_value = current_header_value + header_value
+        else:
+            # sets the final header value as the header value
+            final_header_value = header_value
+
+        # sets the final header value
+        self.set_header(header_name, final_header_value)
 
     def get_result(self):
         # retrieves the result stream
