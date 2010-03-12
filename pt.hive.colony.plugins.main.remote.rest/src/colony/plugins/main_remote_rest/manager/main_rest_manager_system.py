@@ -483,6 +483,7 @@ class MainRestManager:
                 available_rpc_methods_alias_string = available_rpc_methods_alias[available_rpc_method_alias_key]
                 available_rpc_methods_string.extend(available_rpc_methods_alias_string)
 
+            # extends the service methods list with the available rpc methods string
             self.service_methods.extend(available_rpc_methods_string)
 
             # retrieves the service id
