@@ -38,7 +38,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import re
+import time
 import urllib
+import datetime
 
 import main_rest_manager_exceptions
 
@@ -80,6 +82,24 @@ SET_COOKIE_VALUE = "Set-Cookie"
 
 SESSION_ID_VALUE = "session_id"
 """ The session id value """
+
+LANG_VALUE = "lang"
+""" The lang value """
+
+EXPIRES_VALUE = "expires"
+""" The expires value """
+
+DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
+""" The date format """
+
+DEFAULT_EXPIRATION_DATE = "Thu, 01 Jan 1970 00:00:00 GMT"
+""" The default expiration date """
+
+DEFAULT_LANG_VALUE = "en"
+""" The default lang value """
+
+DEFAULT_EXPIRATION_DELTA_TIMESTAMP = 31536000
+""" The default expiration delta timestamp """
 
 class MainRestManager:
     """
@@ -223,7 +243,8 @@ class MainRestManager:
             # updates the rest request session
             rest_request.update_session()
         except:
-            rest_request.start_session()
+            # logs a debug message
+            self.main_rest_manager_plugin.debug("Session is invalid no session loaded or updated")
 
         # sets the resource name in the rest request
         rest_request.set_resource_name(resource_name)
@@ -614,8 +635,11 @@ class MainRestManager:
         # retrieves the session id
         session_id = session.get_session_id()
 
-        # unsets the session from the rest session map
-        del self.rest_session_map[session_id]
+        # in case the session  id exist in the rest
+        # session map
+        if session_id in self.rest_session_map:
+            # unsets the session from the rest session map
+            del self.rest_session_map[session_id]
 
     def get_session(self, session_id):
         """
@@ -722,14 +746,23 @@ class RestRequest:
         self.main_rest_manager = main_rest_manager
         self.request = request
 
-    def start_session(self, session_id = None):
+    def start_session(self, force = False, session_id = None):
         """
         Starts the session for the given session id,
         or generates a new session id.
 
+        @type force: bool
+        @param force: If the session should be created if a session
+        is already selected.
         @type session_id: String
         @param session_id: The session id to be used.
         """
+
+        # in case a session exists and force flag is disabled
+        # avoids creation
+        if self.session and not force:
+            # returns immediately
+            return
 
         # in case no session id is defined
         if not session_id:
@@ -743,6 +776,12 @@ class RestRequest:
         # it as the current session
         self.session = RestSession(session_id)
 
+        # starts the session
+        self.session.start()
+
+        # adds the session to the main rest manager
+        self.main_rest_manager.add_session(self.session)
+
     def stop_session(self):
         """
         Stops the current session.
@@ -750,14 +789,14 @@ class RestRequest:
 
         # in case no session is defined
         if not self.session:
-            # raises invalid session exception
-            raise main_rest_manager_exceptions.InvalidSession("no session started")
+            # crates a new empty session
+            self.session = RestSession()
 
         # stops the session
         self.session.stop()
 
-        # unsets the session value
-        self.session = None
+        # removes the session from the main rest manager
+        self.main_rest_manager.remove_session(self.session)
 
     def update_session(self):
         """
@@ -859,8 +898,19 @@ class RestRequest:
 
         # in case there is a session available
         if self.session:
-            # sets the session id in the cookie
-            self.request.append_header(SET_COOKIE_VALUE, SESSION_ID_VALUE + "=" + self.session.get_session_id() + ";")
+            # retrieves the session cookie
+            session_cookie = self.session.get_cookie()
+
+            # in case there is a session cookie
+            if session_cookie:
+                # serializes the session cookie
+                serialized_session_cookie = session_cookie.serialize()
+
+                # sets the session id in the cookie
+                self.request.append_header(SET_COOKIE_VALUE, serialized_session_cookie)
+
+                # invalidates the cookie
+                self.session.set_cookie(None)
 
         # sets the content type for the request
         self.request.content_type = self.content_type
@@ -1079,6 +1129,9 @@ class RestSession:
     session_id = None
     """ The session id """
 
+    cookie = None
+    """ The cookie """
+
     attributes_map = {}
     """ The attributes map """
 
@@ -1092,12 +1145,34 @@ class RestSession:
 
         self.session_id = session_id
 
+    def start(self):
+        """
+        Starts the current session.
+        """
+
+        current_timestamp = time.time()
+        current_timestamp += DEFAULT_EXPIRATION_DELTA_TIMESTAMP
+        current_date_time = datetime.datetime.utcfromtimestamp(current_timestamp)
+        current_date_time_formatted = current_date_time.strftime(DATE_FORMAT)
+
+        self.cookie = Cookie()
+        self.cookie.set_main_attribute_name(SESSION_ID_VALUE)
+        self.cookie.set_attribute(SESSION_ID_VALUE, self.session_id)
+        self.cookie.set_attribute(LANG_VALUE, DEFAULT_LANG_VALUE)
+        self.cookie.set_attribute(EXPIRES_VALUE, current_date_time_formatted)
+
     def stop(self):
         """
         Stops the current session.
         """
 
         self.session_id = None
+
+        self.cookie = Cookie()
+        self.cookie.set_main_attribute_name(SESSION_ID_VALUE)
+        self.cookie.set_attribute(SESSION_ID_VALUE, "")
+        self.cookie.set_attribute(LANG_VALUE, DEFAULT_LANG_VALUE)
+        self.cookie.set_attribute(EXPIRES_VALUE, DEFAULT_EXPIRATION_DATE)
 
     def get_session_id(self):
         """
@@ -1118,6 +1193,26 @@ class RestSession:
         """
 
         self.session_id = session_id
+
+    def get_cookie(self):
+        """
+        Retrieves the cookie.
+
+        @type cookie: Cookie
+        @param cookie: The cookie.
+        """
+
+        return self.cookie
+
+    def set_cookie(self, cookie):
+        """
+        Sets the cookie.
+
+        @type cookie: Cookie
+        @param cookie: The cookie.
+        """
+
+        self.cookie = cookie
 
     def get_attribute(self, attribute_name):
         """
@@ -1152,10 +1247,13 @@ class Cookie:
     string_value = None
     """ The string value """
 
+    main_attribute_name = None
+    """ The main attribute name """
+
     attributes_map = {}
     """ The attributes map """
 
-    def __init__(self, string_value):
+    def __init__(self, string_value = None):
         """
         Constructor of the class.
 
@@ -1197,6 +1295,35 @@ class Cookie:
             # sets the value in the attributes map
             self.attributes_map[name] = value
 
+    def serialize(self):
+        """
+        Serializes the cookie into a string value, using
+        the current attributes map.
+        """
+
+        # starts the string value
+        string_value = str()
+
+        # in case the main attribute name exists and exists in the
+        # attributes map
+        if self.main_attribute_name and self.main_attribute_name in self.attributes_map:
+            # retrieves the main attribute value
+            main_attribute_value = self.attributes_map[self.main_attribute_name]
+
+            # appends the serialized attribute to the string value
+            string_value += self.main_attribute_name + "=" + main_attribute_value + ";"
+
+        # iterates over all the attribute name and value in
+        # the attributes map
+        for attribute_name, attribute_value in self.attributes_map.items():
+            # in case the attribute is not the main one
+            if not attribute_name == self.main_attribute_name:
+                # appends the serialized attribute to the string value
+                string_value += attribute_name + "=" + attribute_value + ";"
+
+        # returns the string value
+        return string_value
+
     def get_attribute(self, attribute_name):
         """
         Retrieves an attribute using the attribute name.
@@ -1206,3 +1333,25 @@ class Cookie:
         """
 
         return self.attributes_map.get(attribute_name, None)
+
+    def set_attribute(self, attribute_name, attribute_value):
+        """
+        Retrieves an attribute using the attribute name.
+
+        @type attribute_name: String
+        @param attribute_name: The name of the attribute to set.
+        @type attribute_value: Object
+        @param attribute_value: The value of the attribute to set.
+        """
+
+        self.attributes_map[attribute_name] = attribute_value
+
+    def set_main_attribute_name(self, main_attribute_name):
+        """
+        Sets the main attribute name.
+
+        @type main_attribute_name: String
+        @param main_attribute_name: The main attribute name.
+        """
+
+        self.main_attribute_name = main_attribute_name
