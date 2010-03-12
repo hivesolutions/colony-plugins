@@ -52,7 +52,7 @@ def _start(self):
         # in the controller
         self.start()
 
-def set_contents(self, rest_request, contents):
+def set_contents(self, rest_request, contents = ""):
     # sets the content type for the rest request
     rest_request.set_content_type(DEFAULT_CONTENT_TYPE)
 
