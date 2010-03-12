@@ -981,6 +981,26 @@ class RestRequest:
 
         self.request = request
 
+    def get_session(self):
+        """
+        Retrieves the associated session.
+
+        @rtype: RestSession
+        @return: The associated session.
+        """
+
+        return self.session
+
+    def set_session(self, session):
+        """
+        Sets the associated session.
+
+        @type session: RestSession
+        @param session: The associated session.
+        """
+
+        self.session = session
+
     def get_resource_name(self):
         """
         Retrieves the resource name.
@@ -1238,6 +1258,26 @@ class RestSession:
         """
 
         self.attributes_map[attribute_name] = attribute_value
+
+    def get_attributes_map(self):
+        """
+        Retrieves the attributes map.
+
+        @rtype: Dictionary
+        @return: The attributes map.
+        """
+
+        return self.attributes_map
+
+    def set_attributes_map(self, attributes_map):
+        """
+        Sets the attributes map.
+
+        @type attributes_map: Dictionary
+        @param attributes_map: The attributes map.
+        """
+
+        self.attributes_map = attributes_map
 
 class Cookie:
     """
