@@ -72,6 +72,38 @@ def retrieve_template_file(self, file_name = None):
     # returns the template file
     return template_file
 
+def get_session_attribute(self, rest_request, session_attribute_name):
+    # tries to retrieve the rest request session
+    rest_request_session = rest_request.get_session()
+
+    # in case the rest request session
+    # is invalid
+    if not rest_request_session:
+        # returns none (invalid)
+        return None
+
+    # retrieves the attribute from the session
+    session_attribute = rest_request_session.get_attribute(session_attribute_name)
+
+    # returns the session attribute
+    return session_attribute
+
+def set_session_attribute(self, rest_request, session_attribute_name, session_attribute_value):
+    # tries to retrieve the rest request session
+    rest_request_session = rest_request.get_session()
+
+    # in case the rest request session
+    # is invalid
+    if not rest_request_session:
+        # start a session if none is started
+        rest_request.start_session()
+
+        # retrieves the rest request session
+        rest_request_session = rest_request.get_session()
+
+    # sets the attribute in the session
+    rest_request_session.set_attribute(session_attribute_name, session_attribute_value)
+
 def get_attribute_decoded(self, rest_request, attribute_name, encoding = DEFAULT_ENCODING):
     # retrieves the attribute value from the attribute name
     attribute_value = rest_request.get_attribute(attribute_name)
