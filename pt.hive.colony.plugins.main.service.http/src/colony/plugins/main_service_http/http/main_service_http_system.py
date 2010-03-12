@@ -160,11 +160,17 @@ CHUNKED_VALUE = "chunked"
 KEEP_ALIVE_VALUE = "Keep-Alive"
 """ The keep alive value """
 
+CACHE_CONTROL_VALUE = "Cache-Control"
+""" The cache control value """
+
 DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
 """ The date format """
 
 DEFAULT_CONTENT_TYPE_CHARSET_VALUE = "default_content_type_charset"
 """ The default content type charset value """
+
+DEFAULT_CACHE_CONTROL_VALUE = "no-cache, must-revalidate"
+""" The default cache control value """
 
 class MainServiceHttp:
     """
@@ -1576,6 +1582,7 @@ class HttpRequest:
             result.write(LAST_MODIFIED_VALUE + ": " + last_modified_date_time_formatted + "\r\n")
         result.write(CONNECTION_VALUE + ": " + self.connection_mode + "\r\n")
         result.write(DATE_VALUE + ": " + current_date_time_formatted + "\r\n")
+        result.write(CACHE_CONTROL_VALUE + ": " + DEFAULT_CACHE_CONTROL_VALUE + "\r\n")
         result.write(SERVER_VALUE + ": " + SERVER_IDENTIFIER + "\r\n")
 
         # iterates over all the "extra" header values to be sent
