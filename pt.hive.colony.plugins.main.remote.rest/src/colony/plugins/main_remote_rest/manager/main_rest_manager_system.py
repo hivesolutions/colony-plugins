@@ -1311,8 +1311,8 @@ class Cookie:
 
         # in case the string value is invalid
         if self.string_value == None:
-            # raises an exception
-            raise Exception("Invalid cookie string value")
+            # raises an invalid cookie exception
+            raise main_rest_manager_exceptions.InvalidCookie("invalid cookie string value")
 
         # retrieves the value pairs by splitting the
         # string value
@@ -1324,13 +1324,17 @@ class Cookie:
             # splits the value pair
             value_splitted = value_pair.split("=")
 
-            # in case the value pairs does not respect
+            # in case the value pairs does respect
             # the key value
-            if not len(value_splitted) == 2:
-                raise Exception("invalid cookie value")
+            if len(value_splitted) == 2:
+                # retrieves the name and the value
+                name, value = value_splitted
+            else:
+                # sets the name as the first element
+                name = value_splitted[0]
 
-            # retrieves the name and the value
-            name, value = value_splitted
+                # sets the value as invalid (not set)
+                value = None
 
             # sets the value in the attributes map
             self.attributes_map[name] = value
@@ -1350,16 +1354,22 @@ class Cookie:
             # retrieves the main attribute value
             main_attribute_value = self.attributes_map[self.main_attribute_name]
 
+            # serializes the main attribute
+            serialized_attribute = self._serialize_attribute(self.main_attribute_name, main_attribute_value)
+
             # appends the serialized attribute to the string value
-            string_value += self.main_attribute_name + "=" + main_attribute_value + ";"
+            string_value += serialized_attribute
 
         # iterates over all the attribute name and value in
         # the attributes map
         for attribute_name, attribute_value in self.attributes_map.items():
             # in case the attribute is not the main one
             if not attribute_name == self.main_attribute_name:
+                # serializes the attribute
+                serialized_attribute = self._serialize_attribute(attribute_name, attribute_value)
+
                 # appends the serialized attribute to the string value
-                string_value += attribute_name + "=" + attribute_value + ";"
+                string_value += serialized_attribute
 
         # returns the string value
         return string_value
@@ -1395,3 +1405,23 @@ class Cookie:
         """
 
         self.main_attribute_name = main_attribute_name
+
+    def _serialize_attribute(self, attribute_name, attribute_value):
+        """
+        Serializes the given attribute (name and value) into
+        a valid cookie string.
+
+        @type attribute_name: String
+        @param attribute_name: The name of the attribute to be serialized.
+        @type attribute_value: Object
+        @param attribute_value: The of the attribute to be serialized.
+        @rtype: String
+        @return: The cookie serialized string.
+        """
+
+        # in case the attribute value is invalid
+        if attribute_value == None:
+            return attribute_name + "=;"
+        # in case the attribute value is valid
+        else:
+            return attribute_name + "=" + str(attribute_value) + ";"
