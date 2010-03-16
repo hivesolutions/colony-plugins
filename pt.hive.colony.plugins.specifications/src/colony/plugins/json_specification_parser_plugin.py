@@ -39,34 +39,33 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.plugins.plugin_system
 
-class PythonResourceParserPlugin(colony.plugins.plugin_system.Plugin):
+class JsonSpecificationParserPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Python Resource Parser plugin.
+    The main class for the Json Specification Parser plugin.
     """
 
     id = "pt.hive.colony.plugins.specification.json_specification_parser"
-    name = "Python Resource Parser Plugin"
-    short_name = "Python Resource Parser"
-    description = "A plugin to parse python resource"
+    name = "Json Specification Parser Plugin"
+    short_name = "Json Specification Parser"
+    description = "A plugin to parse json specifications"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
-                 colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
-                 colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    capabilities = ["resource_parser"]
+    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    capabilities = ["specification_parser"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["specifications.json_specification_parser.json_specification_parser_system"]
 
-    python_resource_parser = None
+    json_specification_parser = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
-        global resources
-        import resources.python_resource_parser.python_resource_parser_system
-        self.python_resource_parser = resources.python_resource_parser.python_resource_parser_system.PythonResourceParser(self)
+        global specifications
+        import specifications.json_specification_parser.json_specification_parser_system
+        self.json_specification_parser = specifications.json_specification_parser.json_specification_parser_system.JsonSpecificationParser(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -86,8 +85,15 @@ class PythonResourceParserPlugin(colony.plugins.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def get_resource_parser_name(self):
-        return self.python_resource_parser.get_resource_parser_name()
+    def get_specification_parser_name(self):
+        """
+        Retrieves the specification parser name.
 
-    def parse_resource(self, resource):
-        self.python_resource_parser.parse_resource(resource)
+        @rtype: String
+        @return: The specification parser name.
+        """
+
+        return self.json_specification_parser.get_specification_parser_name()
+
+    def parse_specification(self, specification):
+        self.json_specification_parser.parse_specification(specification)

@@ -39,11 +39,14 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 class SepecificationManager:
     """
-    Specification manager class.
+    The specification manager class.
     """
 
     specification_manager_plugin = None
     """ The specification manager plugin """
+
+    specification_parser_name_specification_parser_plugin = {}
+    """ The map associating the specification parser name with the specification parser plugin """
 
     def __init__(self, specification_manager_plugin):
         """
@@ -54,6 +57,8 @@ class SepecificationManager:
         """
 
         self.specification_manager_plugin = specification_manager_plugin
+
+        self.specification_parser_name_specification_parser_plugin = {}
 
     def get_plugin_specification(self, file_path, properties):
         """
@@ -68,3 +73,33 @@ class SepecificationManager:
         """
 
         pass
+
+    def specification_parser_load(self, specification_parser_plugin):
+        """
+        Loads the given specification parser plugin.
+
+        @type specification_parser_plugin: Plugin
+        @param specification_parser_plugin: The specification parser plugin to be loaded.
+        """
+
+        # retrieves specification parser plugin name
+        specification_parser_name = specification_parser_plugin.get_specification_parser_name()
+
+        # sets the specification parser plugin in the specification parser name
+        # specification parser plugin
+        self.specification_parser_name_specification_parser_plugin[specification_parser_name] = specification_parser_plugin
+
+    def packing_service_unload(self, specification_parser_plugin):
+        """
+        Unloads the given specification parser plugin.
+
+        @type specification_parser_plugin: Plugin
+        @param specification_parser_plugin: The specification parser plugin to be loaded.
+        """
+
+        # retrieves specification parser plugin name
+        specification_parser_name = specification_parser_plugin.get_specification_parser_name()
+
+        # removes the specification parser plugin from the specification parser name
+        # specification parser plugin
+        self.specification_parser_name_specification_parser_plugin[specification_parser_name] = specification_parser_plugin

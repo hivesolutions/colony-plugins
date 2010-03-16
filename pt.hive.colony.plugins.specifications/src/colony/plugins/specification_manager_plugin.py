@@ -107,7 +107,9 @@ class SpecificationPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.load_allowed_capability("specification_parser")
     def specification_parser_capability_load_allowed(self, plugin, capability):
         self.specification_parser_plugins.append(plugin)
+        self.specification_manager.specification_parser_load(plugin)
 
     @colony.plugins.decorators.unload_allowed_capability("specification_parser")
     def specification_parser_capability_unload_allowed(self, plugin, capability):
         self.specification_parser_plugins.remove(plugin)
+        self.specification_manager.specification_parser_unload(plugin)
