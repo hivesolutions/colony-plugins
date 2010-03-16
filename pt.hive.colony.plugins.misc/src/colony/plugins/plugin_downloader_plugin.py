@@ -68,8 +68,10 @@ class PluginDownloaderPlugin(colony.plugins.plugin_system.Plugin):
 
     downloader_plugin = None
     """ Plugin to access the downloading system """
+
     zip_plugin = None
     """ Plugin to manage zip files """
+
     dependencies_calculator_plugin = None
     """ Plugin to calculate dependencies """
 
