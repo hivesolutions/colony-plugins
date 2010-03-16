@@ -80,7 +80,7 @@ class TreeVisualizerPanel(wx.Panel):
         self.Bind(wx.lib.customtreectrl.EVT_TREE_ITEM_HYPERLINK, self.on_hyperlink)
 
         # build tree panel
-        self.tree = wx.lib.customtreectrl.CustomTreeCtrl(self, wx.ID_ANY, style = wx.BORDER_DEFAULT| wx.lib.customtreectrl.TR_HAS_BUTTONS | wx.lib.customtreectrl.TR_HAS_VARIABLE_ROW_HEIGHT)
+        self.tree = wx.lib.customtreectrl.CustomTreeCtrl(self, wx.ID_ANY, style = wx.BORDER_DEFAULT | wx.lib.customtreectrl.TR_HAS_BUTTONS | wx.lib.customtreectrl.TR_HAS_VARIABLE_ROW_HEIGHT)
         self.tree.EnableSelectionVista(True)
         isz = (16, 16)
         il = wx.ImageList(isz[0], isz[1])
@@ -119,17 +119,17 @@ class TreeVisualizerPanel(wx.Panel):
         top_sizer = wx.FlexGridSizer(0, 2, 0, 0)
         top_sizer.AddGrowableCol(1)
         search_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        search_sizer.Add(self.search, 0, wx.GROW|wx.ALIGN_LEFT|wx.ALL, 5)
-        search_sizer.Add(self.chk_regex, 0, wx.GROW|wx.ALIGN_LEFT|wx.ALL, 5)
-        search_sizer.Add(self.radio_search, 0, wx.GROW|wx.ALIGN_LEFT|wx.ALL, 5)
-        search_sizer.Add(self.radio_filter, 0, wx.GROW|wx.ALIGN_LEFT|wx.ALL, 5)
+        search_sizer.Add(self.search, 0, wx.GROW | wx.ALIGN_LEFT | wx.ALL, 5)
+        search_sizer.Add(self.chk_regex, 0, wx.GROW | wx.ALIGN_LEFT | wx.ALL, 5)
+        search_sizer.Add(self.radio_search, 0, wx.GROW | wx.ALIGN_LEFT | wx.ALL, 5)
+        search_sizer.Add(self.radio_filter, 0, wx.GROW | wx.ALIGN_LEFT | wx.ALL, 5)
         tree_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        tree_sizer.Add(self.btn_expand_all, 0, wx.GROW|wx.ALIGN_RIGHT|wx.ALL, 5)
-        tree_sizer.Add(self.btn_collapse_all, 0, wx.GROW|wx.ALIGN_RIGHT|wx.ALL, 5)
-        top_sizer.Add(search_sizer, 0, wx.GROW|wx.ALIGN_CENTER|wx.ALL, 5)
-        top_sizer.Add(tree_sizer, 0, wx.GROW|wx.ALIGN_CENTER|wx.ALL, 5)
-        grid_sizer.Add(top_sizer, 0, wx.GROW|wx.ALIGN_CENTER|wx.ALL, 5)
-        grid_sizer.Add(self.tree, 0, wx.GROW|wx.ALIGN_CENTER|wx.ALL, 5)
+        tree_sizer.Add(self.btn_expand_all, 0, wx.GROW | wx.ALIGN_RIGHT | wx.ALL, 5)
+        tree_sizer.Add(self.btn_collapse_all, 0, wx.GROW | wx.ALIGN_RIGHT | wx.ALL, 5)
+        top_sizer.Add(search_sizer, 0, wx.GROW | wx.ALIGN_CENTER | wx.ALL, 5)
+        top_sizer.Add(tree_sizer, 0, wx.GROW | wx.ALIGN_CENTER | wx.ALL, 5)
+        grid_sizer.Add(top_sizer, 0, wx.GROW | wx.ALIGN_CENTER | wx.ALL, 5)
+        grid_sizer.Add(self.tree, 0, wx.GROW | wx.ALIGN_CENTER | wx.ALL, 5)
         self.SetSizer(grid_sizer)
         self.Layout()
 
@@ -221,7 +221,7 @@ class TreeVisualizerPanel(wx.Panel):
                 self.delete_list.remove(delete_node)
 
     def find_all_matches_aux(self, node, regex):
-         if node:
+        if node:
             if self.tree.ItemHasChildren(node):
                 self.find_all_matches_aux(self.tree.GetFirstChild(node)[0], regex)
             self.find_all_matches_aux(self.tree.GetNextSibling(node), regex)

@@ -106,9 +106,15 @@ class PluginManagerPanel(misc_gui.tree_visualizer.tree_visualizer_system.TreeVis
 
     def add_capabilities_allowed(self, node, plugin):
         if len(plugin.capabilities_allowed) > 0:
+            # ads the capabilities allowed node label
             capabilities_allowed_node = self.add_item(node, "Capabilities allowed", 0)
-            for capability_allowed in plugin.capabilities_allowed:
-                capability_node = self.add_item(capabilities_allowed_node, "capability allowed = \"%s\"" % capability_allowed, 0)
+
+            # retrieves the capabilities allowed (names) from the plugin
+            capabilities_allowed = plugin._get_capabilities_allowed_names()
+
+            # iterates over all the allowed capabilities
+            for capability_allowed in capabilities_allowed:
+                capability_node = self.add_item(capabilities_allowed_node, "capability allowed = \"%s\"" % str(capability_allowed), 0)
                 plugin_list = self.parent_plugin.manager._get_plugins_by_capability(capability_allowed)
                 for plugin in plugin_list:
                     item_node = self.add_item(capability_node, "capability provider plugin id = \"%s\"" % plugin.id, 0)
@@ -189,7 +195,7 @@ class PluginManagerPanel(misc_gui.tree_visualizer.tree_visualizer_system.TreeVis
         def plugin_comparer(plugin1, plugin2):
             if plugin1.name > plugin2.name:
                 return 1
-            return -1
+            return - 1
 
         # constructs the plugin nodes map
         self.plugin_nodes_map = {}
