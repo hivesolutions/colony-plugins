@@ -58,7 +58,7 @@ class SpecificationPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["specifications.specification_manager.specification_manager_system"]
+    main_modules = ["specifications.specification_manager.specification_manager_exceptions", "specifications.specification_manager.specification_manager_system"]
 
     specification_manager = None
 

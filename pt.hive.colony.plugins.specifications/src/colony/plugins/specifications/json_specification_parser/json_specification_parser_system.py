@@ -69,5 +69,4 @@ class JsonSpecificationParser:
         return SPECIFICATION_PARSER_NAME
 
     def parse_specification(self, specification):
-
         pass
