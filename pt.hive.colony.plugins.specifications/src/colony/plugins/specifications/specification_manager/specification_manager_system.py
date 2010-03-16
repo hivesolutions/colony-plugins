@@ -39,6 +39,12 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import specification_manager_exceptions
 
+SPECIFICATION_PARSER_VALUE = "specification_parser"
+""" The specification parser value """
+
+DEFAULT_SPECIFICATION_PARSER_NAME = "json"
+""" The default specification parser name """
+
 class SepecificationManager:
     """
     The specification manager class.
@@ -74,7 +80,20 @@ class SepecificationManager:
         @param properties: The properties for the file parsing.
         """
 
-        pass
+        # retrieves the specification parser name
+        specification_parser_name = properties.get(SPECIFICATION_PARSER_VALUE, DEFAULT_SPECIFICATION_PARSER_NAME)
+
+        # retrieves the specification parser plugin
+        specification_parser_plugin = self._get_specification_parser_plugin_by_specification_parser_name(specification_parser_name)
+
+        # creates a new specification with the given file path
+        specification = Specification(file_path)
+
+        # forces the specification parser plugin to parser the specification
+        specification_parser_plugin.parse_specification(specification)
+
+        # returns the specification
+        return specification
 
     def specification_parser_load(self, specification_parser_plugin):
         """
@@ -129,3 +148,39 @@ class SepecificationManager:
 
         # returns the specification parser plugin
         return specification_parser_plugin
+
+class Specification:
+    """
+    The specification class representing
+    a plugin specification including the properties of it.
+    """
+
+    file_path = None
+    """ The path to the specification file """
+
+    properties = {}
+    """ The specification properties """
+
+    def __init__(self, file_path = None):
+        """
+        Constructor of the class.
+
+        @type file_path: String
+        @param file_path: The path to the specification file.
+        """
+
+        self.file_path = file_path
+
+        self.properties = {}
+
+    def get_file_path(self):
+        return self.file_path
+
+    def set_file_path(self, file_path):
+        self.file_path = file_path
+
+    def get_property(self, property_name):
+        return self.properties.get(property_name, None)
+
+    def set_property(self, property_name, property_value):
+        self.properties[property_name] = property_value

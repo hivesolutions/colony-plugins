@@ -102,7 +102,7 @@ class SpecificationPlugin(colony.plugins.plugin_system.Plugin):
         @param properties: The properties for the file parsing.
         """
 
-        self.specification_manager.get_plugin_specification(file_path, properties)
+        return self.specification_manager.get_plugin_specification(file_path, properties)
 
     @colony.plugins.decorators.load_allowed_capability("specification_parser")
     def specification_parser_capability_load_allowed(self, plugin, capability):

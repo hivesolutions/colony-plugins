@@ -69,4 +69,25 @@ class JsonSpecificationParser:
         return SPECIFICATION_PARSER_NAME
 
     def parse_specification(self, specification):
-        pass
+        # retrieves the json plugin
+        json_plugin = self.json_specification_parser_plugin.json_plugin
+
+        # retrieves the specification file path
+        file_path = specification.get_file_path()
+
+        # opens the json file
+        json_file = open(file_path, "rb")
+
+        # parses the json contents retrieving the json data
+        json_data = json_plugin.load_file(json_file)
+
+        # closes the json file
+        json_file.close()
+
+        # iterates over all the json keys and values
+        # to copy the information to the specification structure
+        # properties map
+        for json_key, json_value in json_data.items():
+            # sets the json key and value as a property in
+            # the specification structure
+            specification.set_property(json_key, json_value)
