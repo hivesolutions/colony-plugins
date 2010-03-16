@@ -1,0 +1,15 @@
+{
+    "id" : "pt.hive.colony.plugins.main.packing.manager",
+    "name" : "Packing Manager Main Plugin",
+    "short_name" : "Packing Manager Main",
+    "description" : "Packing Manager Main Plugin",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["packing_manager"],
+    "capabilities_allowed" : ["packing_service"],
+    "dependencies" : [],
+    "resources" : ["main_packing_manager_plugin.py",
+            "main_packing/__init__.py", "main_packing/manager/__init__.py",
+            "main_packing/manager/main_packing_manager_exceptions.py",
+            "main_packing/manager/main_packing_manager_system.py"]
+}

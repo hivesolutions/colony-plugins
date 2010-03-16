@@ -54,12 +54,15 @@ class MainPackingColonyServicePlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["packing_service"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.specifications.specification_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["main_packing.colony_service.main_packing_colony_service_system"]
 
     main_packing_colony_service = None
+
+    specification_manager_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -82,6 +85,7 @@ class MainPackingColonyServicePlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.main.packing.colony_service", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -95,25 +99,34 @@ class MainPackingColonyServicePlugin(colony.plugins.plugin_system.Plugin):
 
         return self.main_packing_colony_service.get_service_name()
 
-    def pack_directory(self, directory_path, recursive):
+    def pack_directory(self, directory_path, properties):
         """
         Packs the directory using the service.
 
         @type directory_path: String
         @param directory_path: The path to the directory to be used
         in the packing.
-        @type recursive: bool
-        @param recursive: If the packing should be made recursive.
+        @type properties: Dictionary
+        @param properties: The properties for the packing.
         """
 
-        self.main_packing_colony_service.pack_directory(directory_path, recursive)
+        self.main_packing_colony_service.pack_directory(directory_path, properties)
 
-    def pack_files(self, file_paths_list):
+    def pack_files(self, file_paths_list, properties):
         """
         Packs the given files using the service.
 
         @type file_paths_list: List
         @param file_paths_list: The list of file paths to be used in the packing.
+        @type properties: Dictionary
+        @param properties: The properties for the packing.
         """
 
-        self.main_packing_colony_service.pack_files(file_paths_list)
+        self.main_packing_colony_service.pack_files(file_paths_list, properties)
+
+    def get_specification_manager_plugin(self):
+        return self.specification_manager_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.specifications.specification_manager")
+    def set_specification_manager_plugin(self, specification_manager_plugin):
+        self.specification_manager_plugin = specification_manager_plugin

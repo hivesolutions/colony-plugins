@@ -90,32 +90,34 @@ class MainPackingManagerPlugin(colony.plugins.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def pack_directory(self, directory_path, recursive, service_name):
+    def pack_directory(self, directory_path, properties, service_name):
         """
         Packs the directory using the provided service name.
 
         @type directory_path: String
         @param directory_path: The path to the directory to be used
         in the packing.
-        @type recursive: bool
-        @param recursive: If the packing should be made recursive.
+        @type properties: Dictionary
+        @param properties: The properties for the packing.
         @type service_name: String
         @param service_name: The name of the service to be used for packing.
         """
 
-        self.main_packing_manager.pack_directory(directory_path, recursive, service_name)
+        self.main_packing_manager.pack_directory(directory_path, properties, service_name)
 
-    def pack_files(self, file_paths_list, service_name):
+    def pack_files(self, file_paths_list, properties, service_name):
         """
         Packs the given files using the provided service name.
 
         @type file_paths_list: List
         @param file_paths_list: The list of file paths to be used in the packing.
+        @type properties: Dictionary
+        @param properties: The properties for the packing.
         @type service_name: String
         @param service_name: The name of the service to be used for packing.
         """
 
-        self.main_packing_manager.pack_files(file_paths_list, service_name)
+        self.main_packing_manager.pack_files(file_paths_list, properties, service_name)
 
     @colony.plugins.decorators.load_allowed_capability("packing_service")
     def packing_service_capability_load_allowed(self, plugin, capability):

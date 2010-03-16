@@ -59,7 +59,45 @@ class MainPackingManager:
         """
 
         self.main_packing_manager_plugin = main_packing_manager_plugin
+
         self.service_name_packing_service_plugin_map = {}
+
+    def pack_directory(self, directory_path, properties, service_name):
+        """
+        Packs the directory using the provided service name.
+
+        @type directory_path: String
+        @param directory_path: The path to the directory to be used
+        in the packing.
+        @type properties: Dictionary
+        @param properties: The properties for the packing.
+        @type service_name: String
+        @param service_name: The name of the service to be used for packing.
+        """
+
+        # retrieves the packing service plugin for the service name
+        packing_service_plugin = self._get_service_name_plugin_by_packing_service_name(service_name)
+
+        # packs the directory with the packing service plugin
+        packing_service_plugin.pack_directory(directory_path, properties)
+
+    def pack_files(self, file_paths_list, properties, service_name):
+        """
+        Packs the given files using the provided service name.
+
+        @type file_paths_list: List
+        @param file_paths_list: The list of file paths to be used in the packing.
+        @type properties: Dictionary
+        @param properties: The properties for the packing.
+        @type service_name: String
+        @param service_name: The name of the service to be used for packing.
+        """
+
+        # retrieves the packing service plugin for the service name
+        packing_service_plugin = self._get_service_name_plugin_by_packing_service_name(service_name)
+
+        # packs the files with the packing service plugin
+        packing_service_plugin.pack_files(file_paths_list, properties)
 
     def packing_service_load(self, packing_service_plugin):
         """
@@ -89,42 +127,7 @@ class MainPackingManager:
         # removes the packing service plugin from the service name packing service plugin map
         del self.service_name_packing_service_plugin_map[service_name]
 
-    def pack_directory(self, directory_path, recursive, service_name):
-        """
-        Packs the directory using the provided service name.
-
-        @type directory_path: String
-        @param directory_path: The path to the directory to be used
-        in the packing.
-        @type recursive: bool
-        @param recursive: If the packing should be made recursive.
-        @type service_name: String
-        @param service_name: The name of the service to be used for packing.
-        """
-
-        # retrieves the packing service plugin for the service name
-        packing_service_plugin = self._get_packing_service_by_service_name_plugin(service_name)
-
-        # packs the directory with the packing service plugin
-        packing_service_plugin.pack_directory(directory_path, recursive)
-
-    def pack_files(self, file_paths_list, service_name):
-        """
-        Packs the given files using the provided service name.
-
-        @type file_paths_list: List
-        @param file_paths_list: The list of file paths to be used in the packing.
-        @type service_name: String
-        @param service_name: The name of the service to be used for packing.
-        """
-
-        # retrieves the packing service plugin for the service name
-        packing_service_plugin = self._get_packing_service_by_service_name_plugin(service_name)
-
-        # packs the files with the packing service plugin
-        packing_service_plugin.pack_files(file_paths_list)
-
-    def _get_packing_service_by_service_name_plugin(self, service_name):
+    def _get_service_name_plugin_by_packing_service_name(self, service_name):
         """
         Retrieves the packing service plugin for the given
         service name.
