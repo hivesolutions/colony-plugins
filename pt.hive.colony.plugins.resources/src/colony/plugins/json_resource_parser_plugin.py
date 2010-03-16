@@ -48,7 +48,7 @@ class JsonResourceParserPlugin(colony.plugins.plugin_system.Plugin):
     id = "pt.hive.colony.plugins.resources.json_resource_parser"
     name = "Json Resource Parser Plugin"
     short_name = "Json Resource Parser"
-    description = "A plugin to parse json resource"
+    description = "A plugin to parse json resources"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
