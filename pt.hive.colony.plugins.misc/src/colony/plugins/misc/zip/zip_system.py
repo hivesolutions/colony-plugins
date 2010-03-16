@@ -219,7 +219,7 @@ class Zip:
         zip_file_path = os.path.abspath(zip_file_path)
         input_directory = os.path.abspath(input_directory)
         if input_directory and os.path.isdir(input_directory):
-            zip_file = zipfile.ZipFile(zip_file_path, 'w', compression=zipfile.ZIP_DEFLATED)
+            zip_file = zipfile.ZipFile(zip_file_path, "w", compression = zipfile.ZIP_DEFLATED)
             if not file_path_list:
                 file_path_list = get_file_paths(input_directory)
             for file_path in file_path_list:
@@ -244,7 +244,7 @@ class Zip:
             self.create_directories(zip_file_path, output_directory)
             self.create_files(zip_file_path, output_directory)
 
-def get_file_paths(path, returned_path_list=[]):
+def get_file_paths(path, returned_path_list = []):
     """
     Returns a list with full paths to all files contained within the specified directory.
 
