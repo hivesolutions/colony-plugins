@@ -99,6 +99,24 @@ class MainPackingManager:
         # packs the files with the packing service plugin
         packing_service_plugin.pack_files(file_paths_list, properties)
 
+    def unpack_files(self, file_paths_list, properties, service_name):
+        """
+        Unpacks the given files using the provided service name.
+
+        @type file_paths_list: List
+        @param file_paths_list: The list of file paths to be used in the unpacking.
+        @type properties: Dictionary
+        @param properties: The properties for the unpacking.
+        @type service_name: String
+        @param service_name: The name of the service to be used for unpacking.
+        """
+
+        # retrieves the packing service plugin for the service name
+        packing_service_plugin = self._get_service_name_plugin_by_packing_service_name(service_name)
+
+        # unpacks the files with the packing service plugin
+        packing_service_plugin.unpack_files(file_paths_list, properties)
+
     def packing_service_load(self, packing_service_plugin):
         """
         Loads the given packing service plugin.

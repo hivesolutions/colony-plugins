@@ -119,6 +119,20 @@ class MainPackingManagerPlugin(colony.plugins.plugin_system.Plugin):
 
         self.main_packing_manager.pack_files(file_paths_list, properties, service_name)
 
+    def unpack_files(self, file_paths_list, properties, service_name):
+        """
+        Unpacks the given files using the provided service name.
+
+        @type file_paths_list: List
+        @param file_paths_list: The list of file paths to be used in the unpacking.
+        @type properties: Dictionary
+        @param properties: The properties for the unpacking.
+        @type service_name: String
+        @param service_name: The name of the service to be used for unpacking.
+        """
+
+        self.main_packing_manager.unpack_files(file_paths_list, properties, service_name)
+
     @colony.plugins.decorators.load_allowed_capability("packing_service")
     def packing_service_capability_load_allowed(self, plugin, capability):
         self.packing_service_plugins.append(plugin)

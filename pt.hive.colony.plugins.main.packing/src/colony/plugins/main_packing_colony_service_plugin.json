@@ -10,6 +10,7 @@
     "capabilities" : ["packing_service"],
     "capabilities_allowed" : [],
     "dependencies" : [],
+    "main_file" : "main_packing_colony_service_plugin.py",
     "resources" : ["main_packing_colony_service_plugin.py",
             "main_packing/__init__.py",
             "main_packing/colony_service/__init__.py",

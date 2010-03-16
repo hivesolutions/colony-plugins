@@ -168,6 +168,25 @@ class MainPackingColonyService:
                 # processes the plugin file
                 self._process_plugin_file(file_path, target_path)
 
+    def unpack_files(self, file_paths_list, properties):
+        """
+        Unpacks the given files using the service.
+
+        @type file_paths_list: List
+        @param file_paths_list: The list of file paths to be used in the unpacking.
+        @type properties: Dictionary
+        @param properties: The properties for the unpacking.
+        """
+
+        # retrieves the target path property
+        target_path = properties.get(TARGET_PATH_VALUE, DEFAULT_TARGET_PATH)
+
+        # iterates over all the file path in the
+        # file paths list
+        for file_path in file_paths_list:
+            # unprocesses the plugin file
+            self._unprocess_plugin_file(file_path, target_path)
+
     def _pack_directory(self, arguments, directory_path, directory_file_list):
         # retrieves the plugin regex attribute
         plugin_regex = arguments[PLUGIN_REGEX_VALUE]
@@ -224,6 +243,16 @@ class MainPackingColonyService:
 
             # closes the compressed file
             compressed_file.close()
+
+    def _unprocess_plugin_file(self, file_path, target_path):
+        # retrieves the plugin specification for the given file
+        plugin_specification = self.main_packing_colony_service_plugin.specification_manager_plugin.get_plugin_specification(file_path, {})
+
+        # tenho de abrir o plugin processar a specification e imprimir alguma coisa para o logger
+        # tipo installing plugin xpto
+
+        # depois tenho de descomprimir em ultimo lugar o main plugin file
+        # para que nao exista problema no auto loading
 
 class ColonyPluginCompressedFile:
     """
@@ -283,3 +312,18 @@ class ColonyPluginCompressedFile:
             self.file.write(file_path, target_file_path)
         elif self.mode == TAR_FILE_MODE:
             self.file.add(file_path, target_file_path)
+
+    def extract(self, file_path, target_path):
+        #ZipFile.extract(member[, path[, pwd]])
+        #TarFile.extract(member, path="")
+        pass
+
+    def extract_all(self, target_path):
+        #ZipFile.extractall([path[, members[, pwd]]])
+        #TarFile.extractall(path=".", members=None)
+        pass
+
+    def read(self, file_path):
+        #ZipFile.read(name[, pwd])
+        #TarFile.extractfile(member)
+        pass

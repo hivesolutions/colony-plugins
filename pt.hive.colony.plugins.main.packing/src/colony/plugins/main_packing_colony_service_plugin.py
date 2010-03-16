@@ -124,6 +124,18 @@ class MainPackingColonyServicePlugin(colony.plugins.plugin_system.Plugin):
 
         self.main_packing_colony_service.pack_files(file_paths_list, properties)
 
+    def unpack_files(self, file_paths_list, properties):
+        """
+        Unpacks the given files using the service.
+
+        @type file_paths_list: List
+        @param file_paths_list: The list of file paths to be used in the unpacking.
+        @type properties: Dictionary
+        @param properties: The properties for the unpacking.
+        """
+
+        self.main_packing_colony_service.unpack_files(file_paths_list, properties)
+
     def get_specification_manager_plugin(self):
         return self.specification_manager_plugin
 

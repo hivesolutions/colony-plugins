@@ -10,6 +10,7 @@
     "capabilities" : ["packing_manager"],
     "capabilities_allowed" : ["packing_service"],
     "dependencies" : [],
+    "main_file" : "main_packing_manager_plugin.py",
     "resources" : ["main_packing_manager_plugin.py",
             "main_packing/__init__.py", "main_packing/manager/__init__.py",
             "main_packing/manager/main_packing_manager_exceptions.py",
