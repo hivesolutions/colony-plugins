@@ -40,15 +40,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.plugins.plugin_system
 import colony.plugins.decorators
 
-class IzpackBuildAutomationExtensionPlugin(colony.plugins.plugin_system.Plugin):
+class PackingBuildAutomationExtensionPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Izpack Build Automation Extension plugin
+    The main class for the Packing Build Automation Extension plugin
     """
 
-    id = "pt.hive.colony.plugins.build.automation.extensions.izpack"
-    name = "Izpack Build Automation Extension Plugin"
-    short_name = "Izpack Build Automation Extension"
-    description = "A plugin to manage the izpack build automation tasks"
+    id = "pt.hive.colony.plugins.build.automation.extensions.packing"
+    name = "Packing Build Automation Extension Plugin"
+    short_name = "Packing Build Automation Extension"
+    description = "A plugin to manage the creation of packing automation tasks"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
@@ -56,26 +56,20 @@ class IzpackBuildAutomationExtensionPlugin(colony.plugins.plugin_system.Plugin):
     capabilities = ["build_automation_extension"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.resources.resource_manager", "1.0.0"),
-                    colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.execution_environment", "1.0.0"),
-                    colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.command_execution", "1.0.0")]
+                    "pt.hive.colony.plugins.main.packing.manager", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["build_automation_extensions.izpack.izpack_build_automation_extension_exceptions", "build_automation_extensions.izpack.izpack_build_automation_extension_system"]
+    main_modules = ["build_automation_extensions.packing.packing_build_automation_extension_system"]
 
-    izpack_build_automation_extension = None
+    packing_build_automation_extension = None
 
-    resource_manager_plugin = None
-    execution_environment_plugin = None
-    command_execution_plugin = None
+    main_packing_manager_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global build_automation_extensions
-        import build_automation_extensions.izpack.izpack_build_automation_extension_system
-        self.izpack_build_automation_extension = build_automation_extensions.izpack.izpack_build_automation_extension_system.IzpackBuildAutomationExtension(self)
+        import build_automation_extensions.packing.packing_build_automation_extension_system
+        self.packing_build_automation_extension = build_automation_extensions.packing.packing_build_automation_extension_system.PackingBuildAutomationExtension(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -92,30 +86,16 @@ class IzpackBuildAutomationExtensionPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.build.automation.extensions.izpack", "1.0.0")
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.build.automation.extensions.packing", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def run_automation(self, plugin, stage, parameters, build_automation_structure):
-        self.izpack_build_automation_extension.run_automation(plugin, stage, parameters, build_automation_structure)
+        self.test_build_automation_extension.run_automation(plugin, stage, parameters, build_automation_structure)
 
-    def get_resource_manager_plugin(self):
-        return self.resource_manager_plugin
+    def get_main_packing_manager_plugin(self):
+        return self.main_packing_manager_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.resources.resource_manager")
-    def set_resource_manager_plugin(self, resource_manager_plugin):
-        self.resource_manager_plugin = resource_manager_plugin
-
-    def get_execution_environment_plugin(self):
-        return self.execution_environment_plugin
-
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.execution_environment")
-    def set_execution_environment_plugin(self, execution_environment_plugin):
-        self.execution_environment_plugin = execution_environment_plugin
-
-    def get_command_execution_plugin(self):
-        return self.command_execution_plugin
-
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.command_execution")
-    def set_command_execution_plugin(self, command_execution_plugin):
-        self.command_execution_plugin = command_execution_plugin
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.packing.manager")
+    def set_main_packing_manager_plugin(self, main_packing_manager_plugin):
+        self.main_packing_manager_plugin = main_packing_manager_plugin

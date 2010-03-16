@@ -59,6 +59,7 @@ class TestBuildAutomationExtensionPlugin(colony.plugins.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.test", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["build_automation_extensions.test.test_build_automation_extension_system"]
 
     test_build_automation_extension = None
 
