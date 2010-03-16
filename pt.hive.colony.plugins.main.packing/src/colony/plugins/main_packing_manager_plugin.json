@@ -1,4 +1,6 @@
 {
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
     "id" : "pt.hive.colony.plugins.main.packing.manager",
     "name" : "Packing Manager Main Plugin",
     "short_name" : "Packing Manager Main",
