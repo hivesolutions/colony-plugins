@@ -1,0 +1,22 @@
+{
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.main.service.http",
+    "name" : "Http Service Main Plugin",
+    "short_name" : "Http Service Main",
+    "description" : "The plugin that offers the http service",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["service.http"],
+    "capabilities_allowed" : ["http_service_handler", "http_service_encoding",
+            "http_service_error_handler", "socket_provider"],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.main.threads.thread_pool_manager",
+                "version" : "1.0.0"
+            }],
+    "resources" : ["main_service_http_plugin.py",
+            "main_service_http/__init__.py",
+            "main_service_http/http/__init__.py",
+            "main_service_http/http/main_service_http_exceptions.py",
+            "main_service_http/http/main_service_http_system.py"]
+}
