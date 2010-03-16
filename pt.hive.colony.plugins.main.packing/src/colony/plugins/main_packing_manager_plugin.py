@@ -58,7 +58,7 @@ class MainPackingManagerPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["main_packing.manager.main_packing_manager_system"]
+    main_modules = ["main_packing.manager.main_packing_manager_exceptions", "main_packing.manager.main_packing_manager_system"]
 
     main_packing_manager = None
 
@@ -79,27 +79,50 @@ class MainPackingManagerPlugin(colony.plugins.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.main.packing_manager", "1.0.0")
+    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.main.packing.manager", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.main.packing_manager", "1.0.0")
+    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.main.packing.manager", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def pack_directory(self, directory_path, recursive):
-        self.main_rest_manager.pack_directory(directory_path, recursive)
+    def pack_directory(self, directory_path, recursive, service_name):
+        """
+        Packs the directory using the provided service name.
 
-    def pack_files(self, file_paths_list):
-        self.main_rest_manager.pack_files(file_paths_list)
+        @type directory_path: String
+        @param directory_path: The path to the directory to be used
+        in the packing.
+        @type recursive: bool
+        @param recursive: If the packing should be made recursive.
+        @type service_name: String
+        @param service_name: The name of the service to be used for packing.
+        """
+
+        self.main_packing_manager.pack_directory(directory_path, recursive, service_name)
+
+    def pack_files(self, file_paths_list, service_name):
+        """
+        Packs the given files using the provided service name.
+
+        @type file_paths_list: List
+        @param file_paths_list: The list of file paths to be used in the packing.
+        @type service_name: String
+        @param service_name: The name of the service to be used for packing.
+        """
+
+        self.main_packing_manager.pack_files(file_paths_list, service_name)
 
     @colony.plugins.decorators.load_allowed_capability("packing_service")
     def packing_service_capability_load_allowed(self, plugin, capability):
-        self.main_packing_manager.append(plugin)
+        self.packing_service_plugins.append(plugin)
+        self.main_packing_manager.packing_service_load(plugin)
 
     @colony.plugins.decorators.unload_allowed_capability("packing_service")
     def packing_service_capability_unload_allowed(self, plugin, capability):
-        self.main_packing_manager.remove(plugin)
+        self.packing_service_plugins.remove(plugin)
+        self.main_packing_manager.packing_service_unload(plugin)

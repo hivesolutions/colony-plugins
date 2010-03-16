@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import main_packing_manager_exceptions
+
 class MainPackingManager:
     """
     The main packing manager class.
@@ -44,6 +46,9 @@ class MainPackingManager:
 
     main_packing_manager_plugin = None
     """ The main packing manager plugin """
+
+    service_name_packing_service_plugin_map = {}
+    """ The map associating the service name with the packing service plugin """
 
     def __init__(self, main_packing_manager_plugin):
         """
@@ -54,3 +59,91 @@ class MainPackingManager:
         """
 
         self.main_packing_manager_plugin = main_packing_manager_plugin
+        self.service_name_packing_service_plugin_map = {}
+
+    def packing_service_load(self, packing_service_plugin):
+        """
+        Loads the given packing service plugin.
+
+        @type packing_service_plugin: Plugin
+        @param packing_service_plugin: The packing service plugin to be loaded.
+        """
+
+        # retrieves packing service plugin service name
+        service_name = packing_service_plugin.get_service_name()
+
+        # sets the packing service plugin in the service name packing service plugin map
+        self.service_name_packing_service_plugin_map[service_name] = packing_service_plugin
+
+    def packing_service_unload(self, packing_service_plugin):
+        """
+        Unloads the given packing service plugin.
+
+        @type packing_service_plugin: Plugin
+        @param packing_service_plugin: The packing service plugin to be loaded.
+        """
+
+        # retrieves packing service plugin service name
+        service_name = packing_service_plugin.get_service_name()
+
+        # removes the packing service plugin from the service name packing service plugin map
+        del self.service_name_packing_service_plugin_map[service_name]
+
+    def pack_directory(self, directory_path, recursive, service_name):
+        """
+        Packs the directory using the provided service name.
+
+        @type directory_path: String
+        @param directory_path: The path to the directory to be used
+        in the packing.
+        @type recursive: bool
+        @param recursive: If the packing should be made recursive.
+        @type service_name: String
+        @param service_name: The name of the service to be used for packing.
+        """
+
+        # retrieves the packing service plugin for the service name
+        packing_service_plugin = self._get_packing_service_by_service_name_plugin(service_name)
+
+        # packs the directory with the packing service plugin
+        packing_service_plugin.pack_directory(directory_path, recursive)
+
+    def pack_files(self, file_paths_list, service_name):
+        """
+        Packs the given files using the provided service name.
+
+        @type file_paths_list: List
+        @param file_paths_list: The list of file paths to be used in the packing.
+        @type service_name: String
+        @param service_name: The name of the service to be used for packing.
+        """
+
+        # retrieves the packing service plugin for the service name
+        packing_service_plugin = self._get_packing_service_by_service_name_plugin(service_name)
+
+        # packs the files with the packing service plugin
+        packing_service_plugin.pack_files(file_paths_list)
+
+    def _get_packing_service_by_service_name_plugin(self, service_name):
+        """
+        Retrieves the packing service plugin for the given
+        service name.
+
+        @type service_name: String
+        @param service_name: The service name to retrieve
+        the packing service plugin.
+        @rtype: Plugin
+        @return: The packing service plugin.
+        """
+
+        # in case the service name does not exist in the service
+        # name packing service plugin map
+        if not service_name in self.service_name_packing_service_plugin_map:
+            # raises the packing service not available exception
+            raise main_packing_manager_exceptions.PackingServiceNotAvailable("the service is not available: " + service_name)
+
+        # retrieves the packing service plugin
+        packing_service_plugin = self.service_name_packing_service_plugin_map[service_name]
+
+        # returns the packing service plugin
+        return packing_service_plugin

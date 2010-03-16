@@ -65,7 +65,7 @@ class MainPackingColonyServicePlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global main_packing
         import main_packing.colony_service.main_packing_colony_service_system
-        self.main_packing_manager = main_packing.colony_service.main_packing_colony_service_system.MainPackingColonyService(self)
+        self.main_packing_colony_service = main_packing.colony_service.main_packing_colony_service_system.MainPackingColonyService(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
