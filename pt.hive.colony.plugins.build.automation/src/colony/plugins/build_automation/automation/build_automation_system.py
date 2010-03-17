@@ -52,6 +52,9 @@ BASE_AUTOMATION_ID = "pt.hive.colony.plugins.build.automation.base"
 VARIABLE_REGEX = "\$\{[^\}]*\}"
 """ The regular expression for the variable """
 
+BASE_REGEX = "\$base\{(\$\{[^\}]*\}|[^\}])*\}"
+""" The regular expression for the base """
+
 CALL_REGEX = "\$call\{(\$\{[^\}]*\}|[^\}])*\}"
 """ The regular expression for the call """
 
@@ -60,6 +63,9 @@ RESOURCE_REGEX = "\$resource\{(\$\{[^\}]*\}|[^\}])*\}"
 
 EXCLUSION_LIST = ["__doc__", "__init__", "__module__"]
 """ The exclusion list """
+
+PLUGIN_DIRECTORY_VALUE = "plugin_directory"
+""" The plugin directory value """
 
 class BuildAutomation:
     """
@@ -83,6 +89,9 @@ class BuildAutomation:
 
     variable_pattern = None
     """ The variable pattern used for regular expression match """
+
+    base_pattern = None
+    """ The base pattern used for regular expression match """
 
     call_pattern = None
     """ The call pattern used for regular expression match """
@@ -112,6 +121,9 @@ class BuildAutomation:
 
         # compiles the variable regular expression generating the pattern
         self.variable_pattern = re.compile(VARIABLE_REGEX)
+
+        # compiles the base regular expression generating the pattern
+        self.base_pattern = re.compile(BASE_REGEX)
 
         # compiles the call regular expression generating the pattern
         self.call_pattern = re.compile(CALL_REGEX)
@@ -545,6 +557,23 @@ class BuildAutomation:
             # replaces the value in the string
             string = string.replace(group, real_variable_value_parsed)
 
+        # retrieves the base match iterator
+        base_match_iterator = self.base_pattern.finditer(string)
+
+        # iterates using the base match iterator
+        for base_match in base_match_iterator:
+            # retrieves the match group
+            group = base_match.group()
+
+            # retrieves the base value
+            base_value = group[6:-1]
+
+            # retrieves the real base value
+            real_base_value = self.get_base_value(base_value, build_automation_structure)
+
+            # replaces the value in the string
+            string = string.replace(group, real_base_value)
+
         # retrieves the call match iterator
         call_match_iterator = self.call_pattern.finditer(string)
 
@@ -604,6 +633,27 @@ class BuildAutomation:
                 raise build_automation_exceptions.InvalidVaribleException("variable: " + variable_value + " does not exist in this context")
 
         return current_structure_selection
+
+    def get_base_value(self, base_value, build_automation_structure):
+        """
+        Retrieves the real "base" resource value by executing the associated logic
+        to retrieve the value.
+
+        @type call_value: String
+        @param call_value: The base value in string mode representing the base resource.
+        @type build_automation_structure: BuildAutomationStructure
+        @param build_automation_structure: The build automation structure to be used in the retrieving of the value.
+        @rtype: Object
+        @return: The real value of the base resource value.
+        """
+
+        # in case the base value is plugin directory value
+        if base_value == PLUGIN_DIRECTORY_VALUE:
+            # sets the value as the plugin path (directory)
+            value = build_automation_structure.get_plugin_path()
+
+        # returns the value
+        return value
 
     def get_call_value(self, call_value, build_automation_structure):
         """
