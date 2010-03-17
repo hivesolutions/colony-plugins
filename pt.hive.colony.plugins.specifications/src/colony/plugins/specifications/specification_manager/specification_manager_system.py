@@ -95,6 +95,33 @@ class SepecificationManager:
         # returns the specification
         return specification
 
+    def get_plugin_specification_file_buffer(self, file_buffer, properties):
+        """
+        Retrieves a structure describing the structure and specification
+        of a plugin. This structure is created from the given file buffer and
+        using the given properties.
+
+        @type file_buffer: String
+        @param file_buffer: The buffer to the specification file.
+        @type properties: Dictionary
+        @param properties: The properties for the file parsing.
+        """
+
+        # retrieves the specification parser name
+        specification_parser_name = properties.get(SPECIFICATION_PARSER_VALUE, DEFAULT_SPECIFICATION_PARSER_NAME)
+
+        # retrieves the specification parser plugin
+        specification_parser_plugin = self._get_specification_parser_plugin_by_specification_parser_name(specification_parser_name)
+
+        # creates a new specification with the given file buffer
+        specification = Specification(None, file_buffer)
+
+        # forces the specification parser plugin to parser the specification
+        specification_parser_plugin.parse_specification(specification)
+
+        # returns the specification
+        return specification
+
     def specification_parser_load(self, specification_parser_plugin):
         """
         Loads the given specification parser plugin.
@@ -158,18 +185,24 @@ class Specification:
     file_path = None
     """ The path to the specification file """
 
+    file_buffer = None
+    """ The buffer to the specification file """
+
     properties = {}
     """ The specification properties """
 
-    def __init__(self, file_path = None):
+    def __init__(self, file_path = None, file_buffer = None):
         """
         Constructor of the class.
 
         @type file_path: String
         @param file_path: The path to the specification file.
+        @type file_buffer: String
+        @param file_buffer: The buffer to the specification file.
         """
 
         self.file_path = file_path
+        self.file_buffer = file_buffer
 
         self.properties = {}
 
@@ -178,6 +211,12 @@ class Specification:
 
     def set_file_path(self, file_path):
         self.file_path = file_path
+
+    def get_file_buffer(self):
+        return self.file_buffer
+
+    def set_file_buffer(self, file_buffer):
+        self.file_buffer = file_buffer
 
     def get_property(self, property_name):
         return self.properties.get(property_name, None)

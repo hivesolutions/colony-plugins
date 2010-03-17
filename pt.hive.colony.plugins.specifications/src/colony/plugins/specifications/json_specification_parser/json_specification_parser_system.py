@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import json_specification_parser_exceptions
+
 SPECIFICATION_PARSER_NAME = "json"
 """ The specification parser name """
 
@@ -72,17 +74,29 @@ class JsonSpecificationParser:
         # retrieves the json plugin
         json_plugin = self.json_specification_parser_plugin.json_plugin
 
+        # tries to retrieve the file buffer
+        file_buffer = specification.get_file_buffer()
+
         # retrieves the specification file path
         file_path = specification.get_file_path()
 
-        # opens the json file
-        json_file = open(file_path, "rb")
+        # in case the file buffer is defined
+        if file_buffer:
+            # parses the json contents retrieving the json data
+            json_data = json_plugin.loads(file_buffer)
+        # in case the file path is defined
+        elif file_path:
+            # opens the json file
+            json_file = open(file_path, "rb")
 
-        # parses the json contents retrieving the json data
-        json_data = json_plugin.load_file(json_file)
+            # parses the json contents retrieving the json data
+            json_data = json_plugin.load_file(json_file)
 
-        # closes the json file
-        json_file.close()
+            # closes the json file
+            json_file.close()
+        else:
+            # raises the invalid specification file exception
+            raise json_specification_parser_exceptions.InvalidSpecificationFile("not enough information about file")
 
         # iterates over all the json keys and values
         # to copy the information to the specification structure

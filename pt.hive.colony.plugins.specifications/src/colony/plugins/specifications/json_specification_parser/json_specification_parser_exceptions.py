@@ -37,9 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class SpecificationManagerException(Exception):
+class JsonSpecificationParserException(Exception):
     """
-    The specification manager exception class.
+    The json specification parser exception class.
     """
 
     message = None
@@ -64,11 +64,11 @@ class SpecificationManagerException(Exception):
         @return: The string representation of the class.
         """
 
-        return "Specification manager exception: %s" % self.message
+        return "Json Specification parser exception: %s" % self.message
 
-class SpecificationParserNotAvailable(SpecificationManagerException):
+class InvalidSpecificationFile(JsonSpecificationParserException):
     """
-    The specification parser not available class.
+    The invalid specification file class.
     """
 
     def __init__(self, message):
@@ -79,7 +79,7 @@ class SpecificationParserNotAvailable(SpecificationManagerException):
         @param message: The message to be printed.
         """
 
-        SpecificationManagerException.__init__(self, message)
+        JsonSpecificationParserException.__init__(self, message)
 
     def __str__(self):
         """
@@ -89,4 +89,4 @@ class SpecificationParserNotAvailable(SpecificationManagerException):
         @return: The string representation of the class.
         """
 
-        return "Specification parser not available: %s" % self.message
+        return "Invalid specification file: %s" % self.message

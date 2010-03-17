@@ -104,6 +104,20 @@ class SpecificationPlugin(colony.plugins.plugin_system.Plugin):
 
         return self.specification_manager.get_plugin_specification(file_path, properties)
 
+    def get_plugin_specification_file_buffer(self, file_buffer, properties):
+        """
+        Retrieves a structure describing the structure and specification
+        of a plugin. This structure is created from the given file buffer and
+        using the given properties.
+
+        @type file_buffer: String
+        @param file_buffer: The buffer to the specification file.
+        @type properties: Dictionary
+        @param properties: The properties for the file parsing.
+        """
+
+        return self.specification_manager.get_plugin_specification_file_buffer(file_buffer, properties)
+
     @colony.plugins.decorators.load_allowed_capability("specification_parser")
     def specification_parser_capability_load_allowed(self, plugin, capability):
         self.specification_parser_plugins.append(plugin)
