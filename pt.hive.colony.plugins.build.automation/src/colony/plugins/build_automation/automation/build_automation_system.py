@@ -67,6 +67,9 @@ EXCLUSION_LIST = ["__doc__", "__init__", "__module__"]
 PLUGIN_DIRECTORY_VALUE = "plugin_directory"
 """ The plugin directory value """
 
+COLONY_ARTIFACT_VALUE = "colony"
+""" The colony artifact value """
+
 class BuildAutomation:
     """
     The build automation class.
@@ -311,7 +314,7 @@ class BuildAutomation:
         artifact = build_automation_parsing_structure.artifact
 
         # in case the artifact is of type colony
-        if artifact.type == "colony":
+        if artifact.type == COLONY_ARTIFACT_VALUE:
             # creates the colony build automation structure object
             build_automation_structure = ColonyBuildAutomationStructure()
 
@@ -417,7 +420,8 @@ class BuildAutomation:
         # retrieves the list of build automation plugins
         build_automation_plugins = build.plugins
 
-        # iterates over all the build automation plugins
+        # iterates over all the build automation plugins, to update
+        # the build automation structure with the plugin values
         for build_automation_plugin in build_automation_plugins:
             # retrieves the build automation plugin id
             build_automation_plugin_id = build_automation_plugin.id
@@ -433,6 +437,23 @@ class BuildAutomation:
 
             # appends the build automation plugin instance to the automation plugins list
             build_automation_structure.automation_plugins.append(build_automation_plugin_instance)
+
+            # retrieves the build automation stage
+            build_automation_plugin_stage = build_automation_plugin.stage
+
+            # sets the build automation plugin stage in the automation plugins stages map
+            build_automation_structure.automation_plugins_stages[build_automation_plugin_tuple] = build_automation_structure
+
+            # in case the build automation plugin stages does not exists in the stages automation plugins
+            if not build_automation_plugin_stage in build_automation_structure.stages_automation_plugins:
+                # creates the list for the plugin tuples of the current stage
+                build_automation_structure.stages_automation_plugins[build_automation_plugin_stage] = []
+
+            # retrieves the build automation plugin stage list for the current stage
+            build_automation_plugin_stage_list = build_automation_structure.stages_automation_plugins[build_automation_plugin_stage]
+
+            # adds the build automation plugin tuple to the build automation plugin stage list
+            build_automation_plugin_stage_list.append(build_automation_plugin_tuple)
 
             # retrieves the build automation plugin configuration
             build_automation_plugin_configuration = build_automation_plugin.configuration
@@ -740,10 +761,25 @@ class BuildAutomationStructure:
     """
 
     parent = None
+    """ The parent build automation structure """
+
     build_properties = {}
+    """ The build properties of the current structure """
+
     dependecy_plugins = []
+    """ The dependency plugins list """
+
     automation_plugins = []
+    """ The automation plugins to be used as a list """
+
+    automation_plugins_stages = {}
+    """ The map associating the plugin tuple with the stage """
+
     automation_plugins_configurations = {}
+    """ The map associating the plugin tuple with the configuration """
+
+    stages_automation_plugins = {}
+    """ The map associating the stages with a list of various plugin tuples """
 
     build_automation_parsing_structure = None
     """ The associated build automation parsing structure """
@@ -764,9 +800,20 @@ class BuildAutomationStructure:
         self.build_properties = {}
         self.dependecy_plugins = []
         self.automation_plugins = []
+        self.automation_plugins_stages = {}
         self.automation_plugins_configurations = {}
+        self.stages_automation_plugins = {}
 
     def get_all_build_properties(self):
+        """
+        Retrieves all the build properties, recursively processing
+        the properties of the parents.
+
+        @rtype: Dictionary
+        @return: A map containing all the properties of the current build
+        automation structure and the parents.
+        """
+
         # creates a copy of the build properties map
         build_properties = copy.copy(self.build_properties)
 
@@ -808,7 +855,8 @@ class BuildAutomationStructure:
         Retrieves all the automation plugin configurations using a recursive approach.
 
         @type automation_plugin_tuple: Tuple
-        @param automation_plugin_tuple: The automation plugin tuple containg both the id and version of the automation plugin.
+        @param automation_plugin_tuple: The automation plugin tuple containing both the id
+        and version of the automation plugin.
         @rtype: Dictionary
         @return: A map containing all the automation plugin configurations.
         """
