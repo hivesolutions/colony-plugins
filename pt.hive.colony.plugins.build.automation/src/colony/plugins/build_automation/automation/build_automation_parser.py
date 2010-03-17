@@ -118,6 +118,8 @@ class BuildAutomationFileParser(Parser):
             build_automation.parent = self.parse_build_automation_parent(build_automation_element)
         elif node_name == "artifact":
             build_automation.artifact = self.parse_build_automation_artifact(build_automation_element)
+        elif node_name == "modules":
+            build_automation.modules = self.parse_build_automation_modules(build_automation_element)
         elif node_name == "build":
             build_automation.build = self.parse_build_automation_build(build_automation_element)
         elif node_name == "profiles":
@@ -192,6 +194,37 @@ class BuildAutomationFileParser(Parser):
     def parse_build_automation_artifact_description(self, artifact_description):
         build_automation_artifact_description = artifact_description.firstChild.data.strip()
         return build_automation_artifact_description
+
+    def parse_build_automation_modules(self, build_automation_modules):
+        build_automation_modules_list = []
+        child_nodes = build_automation_modules.childNodes
+
+        for child_node in child_nodes:
+            if valid_node(child_node):
+                build_automation_module = self.parse_build_automation_module(child_node)
+                build_automation_modules_list.append(build_automation_module)
+
+        return build_automation_modules_list
+
+    def parse_build_automation_module(self, build_automation_module):
+        module = Module()
+        child_nodes = build_automation_module.childNodes
+
+        for child_node in child_nodes:
+            if valid_node(child_node):
+                self.parse_build_automation_module_element(child_node, module)
+
+        return module
+
+    def parse_build_automation_module_element(self, build_automation_module_element, module):
+        node_name = build_automation_module_element.nodeName
+
+        if node_name == "id":
+            module.id = self.parse_build_automation_module_id(build_automation_module_element)
+
+    def parse_build_automation_module_id(self, module_id):
+        build_automation_module_id = module_id.firstChild.data.strip()
+        return build_automation_module_id
 
     def parse_build_automation_build(self, build_automation_build):
         build = Build()
@@ -455,6 +488,7 @@ class BuildAutomation:
 
     parent = None
     artifact = None
+    modules = []
     build = None
     profiles = []
 
@@ -493,6 +527,16 @@ class Artifact:
         self.type = type
         self.name = name
         self.description = description
+
+class Module:
+    """
+    The module class.
+    """
+
+    id = "none"
+
+    def __init__(self, id = "none"):
+        self.id = id
 
 class Build:
     """
