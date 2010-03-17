@@ -91,7 +91,7 @@ class PackingBuildAutomationExtensionPlugin(colony.plugins.plugin_system.Plugin)
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def run_automation(self, plugin, stage, parameters, build_automation_structure):
-        self.test_build_automation_extension.run_automation(plugin, stage, parameters, build_automation_structure)
+        self.packing_build_automation_extension.run_automation(plugin, stage, parameters, build_automation_structure)
 
     def get_main_packing_manager_plugin(self):
         return self.main_packing_manager_plugin

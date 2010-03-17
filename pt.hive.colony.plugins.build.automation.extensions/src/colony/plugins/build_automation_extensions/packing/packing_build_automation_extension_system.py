@@ -37,6 +37,18 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+TARGET_DIRECTORY_VALUE = "target_directory"
+""" The target directory value """
+
+TARGET_PATH_VALUE = "target_path"
+""" The target path value """
+
+COLONY_VALUE = "colony"
+""" The colony value """
+
+SPECIFICATION_FILE_VALUE = "specification_file"
+""" The specification file value """
+
 class PackingBuildAutomationExtension:
     """
     The packing build automation extension class.
@@ -54,3 +66,28 @@ class PackingBuildAutomationExtension:
         """
 
         self.packing_build_automation_extension_plugin = packing_build_automation_extension_plugin
+
+    def run_automation(self, plugin, stage, parameters, build_automation_structure):
+        # retrieves the main packing manager plugin
+        main_packing_manager_plugin = self.packing_build_automation_extension_plugin.main_packing_manager_plugin
+
+        # retrieves the build properties
+        build_properties = build_automation_structure.get_all_build_properties()
+
+        # retrieves the plugin path
+        plugin_path = build_automation_structure.get_plugin_path()
+
+        # retrieves the target directory
+        target_directory = build_properties[TARGET_DIRECTORY_VALUE]
+
+        # retrieves the specification file
+        specification_file = parameters[SPECIFICATION_FILE_VALUE]
+
+        # creates the file paths list
+        file_paths_list = [plugin_path + "/" + specification_file]
+
+        # creates the properties map for the directory packing
+        properties = {TARGET_PATH_VALUE : plugin_path + "/" + target_directory}
+
+        # packs the directory
+        main_packing_manager_plugin.pack_files(file_paths_list, properties, COLONY_VALUE)
