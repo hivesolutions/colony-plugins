@@ -54,8 +54,7 @@ class CodeCoveragePlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["code_coverage"]
     capabilities_allowed = []
-    dependencies = [colony.plugins.plugin_system.PackageDependency(
-                    "figleaf", "figleaf", "0.6.x", "http://darcs.idyll.org/~t/projects/figleaf")]
+    dependencies = []
     events_handled = []
     events_registrable = []
 

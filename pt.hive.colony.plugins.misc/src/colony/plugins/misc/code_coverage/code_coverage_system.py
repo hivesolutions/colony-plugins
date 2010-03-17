@@ -37,8 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import figleaf
-
 class CodeCoverage:
     """
     The code coverage class.
@@ -58,13 +56,13 @@ class CodeCoverage:
         self.code_coverage_plugin = code_coverage_plugin
 
     def start_code_coverage(self):
-        figleaf.start()
+        self.code_coverage_plugin.debug("Starting code coverage")
 
     def stop_code_coverage(self):
-        figleaf.stop()
+        self.code_coverage_plugin.debug("Stopping code coverage")
 
     def write_code_coverage(self, code_coverage_file_path):
-        figleaf.write_coverage(code_coverage_file_path)
+        self.code_coverage_plugin.debug("Writing code coverage")
 
     def get_code_coverage(self):
-        return figleaf.get_info()
+        return None
