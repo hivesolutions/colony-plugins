@@ -67,6 +67,12 @@ PLUGIN_REGEX_VALUE = "plugin_regex"
 TARGET_PATH_VALUE = "target_path"
 """ The target path value """
 
+MAIN_FILE_VALUE = "main_file"
+""" The main file value """
+
+SPECIFICATION_FILE_PATH_VALUE = "specification_file_path"
+""" The specification file path value """
+
 JSON_PLUGIN_REGEX = ".+plugin.json$"
 """ The json plugin regex """
 
@@ -84,6 +90,12 @@ DEFAULT_COLONY_PLUGIN_FILE_EXTENSION = ".cpx"
 
 DEFAULT_TARGET_PATH = "colony"
 """ The default target path """
+
+DEFAULT_TAR_COMPRESSION_FORMAT = "bz2"
+""" The default tar compression format """
+
+DEFAULT_SPECIFICATION_FILE_PATH = "specification.json"
+""" The default specification file path """
 
 class MainPackingColonyService:
     """
@@ -181,13 +193,29 @@ class MainPackingColonyService:
         # retrieves the target path property
         target_path = properties.get(TARGET_PATH_VALUE, DEFAULT_TARGET_PATH)
 
+        # retrieves the specification file path property
+        specification_file_path = properties.get(SPECIFICATION_FILE_PATH_VALUE, DEFAULT_SPECIFICATION_FILE_PATH)
+
         # iterates over all the file path in the
         # file paths list
         for file_path in file_paths_list:
-            # unprocesses the plugin file
-            self._unprocess_plugin_file(file_path, target_path)
+            # (un)processes the plugin file using he given specification file path
+            self._unprocess_plugin_file(file_path, target_path, specification_file_path)
 
     def _pack_directory(self, arguments, directory_path, directory_file_list):
+        """
+        Method to be used as callback for the walking procedure.
+        This method processes the given directory entries packing the files
+        taht are valid.
+
+        @type arguments: Object
+        @param arguments: The arguments sent to the walking procedure.
+        @type directory_path: String
+        @param directory_path: The path to the current directory.
+        @type directory_file_list: List
+        @param directory_file_list: The list of files in the current directory.
+        """
+
         # retrieves the plugin regex attribute
         plugin_regex = arguments[PLUGIN_REGEX_VALUE]
 
@@ -206,8 +234,21 @@ class MainPackingColonyService:
                 self._process_plugin_file(full_file_path, target_path)
 
     def _process_plugin_file(self, file_path, target_path):
+        """
+        Processes the plugin file in the given file path, putting
+        the results in the target path.
+
+        @type file_path: String
+        @param file_path: The path to the plugin file to be processed.
+        @type target_path: String
+        @param target_path: The target path to be used in the results.
+        """
+
+        # retrieves the specification manager plugin
+        specification_manager_plugin = self.main_packing_colony_service_plugin.specification_manager_plugin
+
         # retrieves the plugin specification for the given file
-        plugin_specification = self.main_packing_colony_service_plugin.specification_manager_plugin.get_plugin_specification(file_path, {})
+        plugin_specification = specification_manager_plugin.get_plugin_specification(file_path, {})
 
         # retrieves the plugin id
         plugin_id = plugin_specification.get_property(ID_VALUE)
@@ -230,7 +271,7 @@ class MainPackingColonyService:
             compressed_file = ColonyPluginCompressedFile()
 
             # opens the compressed file
-            compressed_file.open(target_path + "/" + plugin_id + "_" + plugin_version + DEFAULT_COLONY_PLUGIN_FILE_EXTENSION)
+            compressed_file.open(target_path + "/" + plugin_id + "_" + plugin_version + DEFAULT_COLONY_PLUGIN_FILE_EXTENSION, "w")
 
             # iterates over all the plugin resources
             for plugin_resource in plugin_resources:
@@ -244,15 +285,52 @@ class MainPackingColonyService:
             # closes the compressed file
             compressed_file.close()
 
-    def _unprocess_plugin_file(self, file_path, target_path):
+    def _unprocess_plugin_file(self, file_path, target_path, specification_file_path):
+        """
+        (Un)processes the plugin file in the given file path, putting
+        the results in the target path.
+
+        @type file_path: String
+        @param file_path: The path to the plugin file to be (un)processed.
+        @type target_path: String
+        @param target_path: The target path to be used in the results.
+        @type specification_file_path: String
+        @param specification_file_path: The specification file path in the plugin file.
+        """
+
+        # retrieves the specification manager plugin
+        specification_manager_plugin = self.main_packing_colony_service_plugin.specification_manager_plugin
+
+        # creates a new compressed file
+        compressed_file = ColonyPluginCompressedFile()
+
+        # opens the compressed file
+        compressed_file.open(file_path, "r")
+
+        # reads the specification file from the compressed file
+        specification_file_buffer = compressed_file.read(specification_file_path)
+
         # retrieves the plugin specification for the given file
-        plugin_specification = self.main_packing_colony_service_plugin.specification_manager_plugin.get_plugin_specification(file_path, {})
+        plugin_specification = specification_manager_plugin.get_plugin_specification_file_buffer(specification_file_buffer, {})
 
-        # tenho de abrir o plugin processar a specification e imprimir alguma coisa para o logger
-        # tipo installing plugin xpto
+        # retrieves the plugin main file
+        main_file = plugin_specification.get_property(MAIN_FILE_VALUE)
 
-        # depois tenho de descomprimir em ultimo lugar o main plugin file
-        # para que nao exista problema no auto loading
+        # retrieves the plugin resources
+        plugin_resources = plugin_specification.get_property(RESOURCES_VALUE)
+
+        # in case the plugin contains resources
+        if plugin_resources:
+            # iterates over all the plugin resources
+            for plugin_resource in plugin_resources:
+                # in case the resource is not the main file
+                # (because it should be extracted at the end)
+                if not plugin_resource == main_file:
+                    # extracts the resource
+                    compressed_file.extract(plugin_resource, target_path)
+
+            # the main file is extracted at the end to avoid any problem
+            compressed_file.extract(main_file, target_path)
 
 class ColonyPluginCompressedFile:
     """
@@ -276,18 +354,20 @@ class ColonyPluginCompressedFile:
 
         self.mode = mode
 
-    def open(self, file_path):
+    def open(self, file_path, mode = "rw"):
         """
         Opens the file in the given file path.
 
         @type file_path: String
         @param file_path: The path to the file to open.
+        @type mode: String
+        @param mode: The opening mode to be used.
         """
 
         if self.mode == ZIP_FILE_MODE:
-            self.file = zipfile.ZipFile(file_path, "w", compression = zipfile.ZIP_DEFLATED)
+            self.file = zipfile.ZipFile(file_path, mode, compression = zipfile.ZIP_DEFLATED)
         elif self.mode == TAR_FILE_MODE:
-            self.file = tarfile.open(file_path, "w:gz")
+            self.file = tarfile.open(file_path, mode + ":" + DEFAULT_TAR_COMPRESSION_FORMAT)
 
     def close(self):
         """
@@ -313,17 +393,30 @@ class ColonyPluginCompressedFile:
         elif self.mode == TAR_FILE_MODE:
             self.file.add(file_path, target_file_path)
 
-    def extract(self, file_path, target_path):
-        #ZipFile.extract(member[, path[, pwd]])
-        #TarFile.extract(member, path="")
-        pass
+    def extract(self, file_path, target_path = ""):
+        if self.mode == ZIP_FILE_MODE:
+            self.file.extract(file_path, target_path)
+        elif self.mode == TAR_FILE_MODE:
+            self.file.extract(file_path, target_path)
 
-    def extract_all(self, target_path):
-        #ZipFile.extractall([path[, members[, pwd]]])
-        #TarFile.extractall(path=".", members=None)
-        pass
+    def extract_all(self, target_path = ""):
+        if self.mode == ZIP_FILE_MODE:
+            self.file.extractall(target_path)
+        elif self.mode == TAR_FILE_MODE:
+            self.file.extractall(target_path)
 
     def read(self, file_path):
-        #ZipFile.read(name[, pwd])
-        #TarFile.extractfile(member)
-        pass
+        if self.mode == ZIP_FILE_MODE:
+            # retrieves the file contents from the
+            # compressed file
+            file_contents = self.file.read(file_path)
+        elif self.mode == TAR_FILE_MODE:
+            # retrieves the file from the compressed
+            # file
+            file = self.file.extractfile(file_path)
+
+            # reads the file contents from the file
+            file_contents = file.read()
+
+        # returns the file contents
+        return file_contents
