@@ -55,6 +55,9 @@ VARIABLE_REGEX = "\$\{[^\}]*\}"
 CALL_REGEX = "\$call\{(\$\{[^\}]*\}|[^\}])*\}"
 """ The regular expression for the call """
 
+RESOURCE_REGEX = "\$resource\{(\$\{[^\}]*\}|[^\}])*\}"
+""" The regular expression for the resource """
+
 EXCLUSION_LIST = ["__doc__", "__init__", "__module__"]
 """ The exclusion list """
 
@@ -84,6 +87,9 @@ class BuildAutomation:
     call_pattern = None
     """ The call pattern used for regular expression match """
 
+    resource_pattern = None
+    """ The resource pattern used for regular expression match """
+
     base_build_automation_structure = None
     """ the base build automation structure """
 
@@ -109,6 +115,9 @@ class BuildAutomation:
 
         # compiles the call regular expression generating the pattern
         self.call_pattern = re.compile(CALL_REGEX)
+
+        # compiles the resource regular expression generating the pattern
+        self.resource_pattern = re.compile(RESOURCE_REGEX)
 
     def load_build_automation_item_plugin(self, build_automation_item_plugin):
         # adds the build automation item plugin to the list of build automation item plugins
@@ -553,6 +562,23 @@ class BuildAutomation:
             # replaces the value in the string
             string = string.replace(group, real_call_value)
 
+        # retrieves the resource match iterator
+        resource_match_iterator = self.resource_pattern.finditer(string)
+
+        # iterates using the resource match iterator
+        for resource_match in resource_match_iterator:
+            # retrieves the match group
+            group = resource_match.group()
+
+            # retrieves the call value
+            resource_value = group[10:-1]
+
+            # retrieves the real resource value
+            real_resource_value = self.get_resource_value(resource_value, build_automation_structure)
+
+            # replaces the value in the string
+            string = string.replace(group, real_resource_value)
+
         # returns the string value
         return string
 
@@ -580,6 +606,19 @@ class BuildAutomation:
         return current_structure_selection
 
     def get_call_value(self, call_value, build_automation_structure):
+        """
+        Retrieves the real "call" value by calling the associated method
+        with the provided arguments.
+
+        @type call_value: String
+        @param call_value: The call value in string mode representing the method.
+        to be called and the arguments to be sent.
+        @type build_automation_structure: BuildAutomationStructure
+        @param build_automation_structure: The build automation structure to be used in the retrieving of the value.
+        @rtype: Object
+        @return: The real value of the call value.
+        """
+
         # splits the call value
         call_values = call_value.split(",")
 
@@ -612,7 +651,38 @@ class BuildAutomation:
         # calls the method
         value = method(*method_arguments_parsed)
 
+        # returns the value
         return value
+
+    def get_resource_value(self, resource_value, build_automation_structure):
+        """
+        Retrieves the real "resource" value by retrieving the resource value
+        from the resources manager plugin.
+
+        @type resource_value: String
+        @param resource_value: The resource value in string mode representing the resource.
+        @type build_automation_structure: BuildAutomationStructure
+        @param build_automation_structure: The build automation structure to be used in the retrieving of the resource.
+        @rtype: Object
+        @return: The real value of the resource.
+        """
+
+        # retrieves the resource manager plugin
+        resource_manager_plugin = self.build_automation_plugin.resource_manager_plugin
+
+        # retrieves the resource for the given resource value
+        resource = resource_manager_plugin.get_resource(resource_value)
+
+        # in case the resource is valid
+        if resource:
+            # retrieves the resource data
+            resource_data = resource.data
+
+            # returns the resource data
+            return resource_data
+        else:
+            # returns invalid
+            return None
 
 class BuildAutomationStructure:
     """
@@ -634,6 +704,8 @@ class BuildAutomationStructure:
 
         @type parent: BuildAutomationStructure
         @param parent: The parent build automation structure.
+        @type build_automation_parsing_structure: BuildAutomation
+        @param build_automation_parsing_structure: The build automation parsing structure to generate the build automation structure.
         """
 
         self.parent = parent
@@ -729,6 +801,28 @@ class ColonyBuildAutomationStructure(BuildAutomationStructure):
 
         BuildAutomationStructure.__init__(self, parent)
         self.associated_plugin = associated_plugin
+
+    def get_plugin_path(self):
+        """
+        Retrieves the path to the plugin representing (associated)
+        the automation structure.
+
+        @rtype: String
+        @return: The path to the plugin representing (associated)
+        the automation structure.
+        """
+
+        # retrieves the plugin manager
+        manager = self.associated_plugin.manager
+
+        # retrieves the associated plugin id
+        associated_plugin_id = self.associated_plugin.id
+
+        # retrieves the associated plugin path
+        associated_plugin_path = manager.get_plugin_path_by_id(associated_plugin_id)
+
+        # returns the associated plugin path
+        return associated_plugin_path
 
 def copy_map(source_map, destiny_map):
     """

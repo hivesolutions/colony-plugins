@@ -56,6 +56,8 @@ class BuildAutomationPlugin(colony.plugins.plugin_system.Plugin):
     capabilities = ["build_automation", "console_command_extension"]
     capabilities_allowed = ["build_automation_extension", "build_automation_item"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.resources.resource_manager", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.build.automation.extensions.test", "1.0.0")]
     events_handled = []
     events_registrable = []
@@ -65,6 +67,8 @@ class BuildAutomationPlugin(colony.plugins.plugin_system.Plugin):
 
     build_automation_extension_plugins = []
     build_automation_item_plugins = []
+
+    resource_manager_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -94,6 +98,7 @@ class BuildAutomationPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.build.automation", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -138,3 +143,10 @@ class BuildAutomationPlugin(colony.plugins.plugin_system.Plugin):
     def build_automation_item_unload_allowed(self, plugin, capability):
         self.build_automation_item_plugins.remove(plugin)
         self.build_automation.unload_build_automation_item_plugin(plugin)
+
+    def get_resource_manager_plugin(self):
+        return self.resource_manager_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.resources.resource_manager")
+    def set_resource_manager_plugin(self, resource_manager_plugin):
+        self.resource_manager_plugin = resource_manager_plugin

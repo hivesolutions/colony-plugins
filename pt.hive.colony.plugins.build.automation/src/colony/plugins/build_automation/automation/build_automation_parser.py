@@ -474,7 +474,7 @@ class Parent:
 
     def __init__(self, id = "none", version = "none"):
         self.id = id
-        self.version= version
+        self.version = version
 
 class Artifact:
     """
