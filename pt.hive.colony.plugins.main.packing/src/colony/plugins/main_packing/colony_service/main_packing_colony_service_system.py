@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import re
+import stat
 import zipfile
 import tarfile
 
@@ -389,7 +390,34 @@ class ColonyPluginCompressedFile:
         """
 
         if self.mode == ZIP_FILE_MODE:
-            self.file.write(file_path, target_file_path)
+            # retrieves the file mode
+            mode = os.stat(file_path)[stat.ST_MODE]
+
+            # in case the file is not a directory
+            if stat.S_ISDIR(mode):
+                # retrieves the directory file list
+                directory_file_list = os.listdir(file_path)
+
+                # iterates over all the directory file name
+                for directory_file_name in directory_file_list:
+                    # creates the full file path as the file path and
+                    # the directory file name
+                    full_file_path = file_path + "/" + directory_file_name
+
+                    # creates the full target file path as the target file path and
+                    # the directory file name
+                    full_target_file_path = target_file_path + "/" + directory_file_name
+
+                    # retrieves the file mode
+                    mode = os.stat(full_file_path)[stat.ST_MODE]
+
+                    # in case the file is not a directory
+                    if stat.S_ISDIR(mode):
+                        self.add(full_file_path, full_target_file_path)
+                    else:
+                        self.file.write(full_file_path, full_target_file_path)
+            else:
+                self.file.write(file_path, target_file_path)
         elif self.mode == TAR_FILE_MODE:
             self.file.add(file_path, target_file_path)
 
