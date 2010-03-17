@@ -74,9 +74,6 @@ class PackingBuildAutomationExtension:
         # retrieves the build properties
         build_properties = build_automation_structure.get_all_build_properties()
 
-        # retrieves the plugin path
-        plugin_path = build_automation_structure.get_plugin_path()
-
         # retrieves the target directory
         target_directory = build_properties[TARGET_DIRECTORY_VALUE]
 
@@ -84,10 +81,10 @@ class PackingBuildAutomationExtension:
         specification_file = parameters[SPECIFICATION_FILE_VALUE]
 
         # creates the file paths list
-        file_paths_list = [plugin_path + "/" + specification_file]
+        file_paths_list = [specification_file]
 
         # creates the properties map for the directory packing
-        properties = {TARGET_PATH_VALUE : plugin_path + "/" + target_directory}
+        properties = {TARGET_PATH_VALUE : target_directory}
 
         # packs the directory
         main_packing_manager_plugin.pack_files(file_paths_list, properties, COLONY_VALUE)
