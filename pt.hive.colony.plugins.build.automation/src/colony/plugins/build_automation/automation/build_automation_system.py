@@ -257,7 +257,7 @@ class BuildAutomation:
         # returns the loaded build automation item plugins
         return self.loaded_build_automation_item_plugins_list
 
-    def run_automation_plugin_id_version(self, plugin_id, plugin_version = None):
+    def run_automation(self, plugin_id, plugin_version = None, stage = None):
         """
         Runs all the automation plugins for the given plugin id and version.
 
@@ -265,6 +265,8 @@ class BuildAutomation:
         @param plugin_id: The id of the plugin to run all the automation plugins.
         @type plugin_version: String
         @param plugin_version: The version of the plugin to run the automation plugins.
+        @type stage: String
+        @param stage: The stage to be run in the automation.
         """
 
         # retrieves the build automation structure
@@ -277,8 +279,17 @@ class BuildAutomation:
         # creates the build automation directories
         self.create_build_automation_directories(build_automation_structure)
 
-        # retrieves all the automation plugins
-        all_automation_plugins = build_automation_structure.get_all_automation_plugins()
+        # in case the stage is not defined, it's is going
+        # to find the default one
+        if not stage:
+            # retrieves the build properties
+            build_properties = build_automation_structure.get_all_build_properties()
+
+            # retrieves the default stage as the stage to be used
+            stage = build_properties["default_stage"]
+
+        # retrieves the automation plugins for the stage
+        all_automation_plugins = build_automation_structure.get_all_automation_plugins_by_stage(stage)
 
         # iterates over all of the automation plugins
         for automation_plugin in all_automation_plugins:
@@ -294,8 +305,8 @@ class BuildAutomation:
             # retrieves the automation plugin configurations
             automation_plugin_configurations = build_automation_structure.get_all_automation_plugin_configurations(automation_plugin_tuple)
 
-            # runs the automation
-            automation_plugin.run_automation(build_automation_structure.associated_plugin, "main", automation_plugin_configurations, build_automation_structure)
+            # runs the automation for the current stage
+            automation_plugin.run_automation(build_automation_structure.associated_plugin, stage, automation_plugin_configurations, build_automation_structure)
 
     def generate_build_automation_structure(self, build_automation_parsing_structure):
         """
@@ -452,8 +463,8 @@ class BuildAutomation:
             # retrieves the build automation plugin stage list for the current stage
             build_automation_plugin_stage_list = build_automation_structure.stages_automation_plugins[build_automation_plugin_stage]
 
-            # adds the build automation plugin tuple to the build automation plugin stage list
-            build_automation_plugin_stage_list.append(build_automation_plugin_tuple)
+            # adds the build automation plugin instance to the build automation plugin stage list
+            build_automation_plugin_stage_list.append(build_automation_plugin_instance)
 
             # retrieves the build automation plugin configuration
             build_automation_plugin_configuration = build_automation_plugin.configuration
@@ -846,6 +857,34 @@ class BuildAutomationStructure:
 
             # appends all of the automation plugins from the parent to itself
             automation_plugins.extend(automation_plugins_parent)
+
+        # returns the automation plugins
+        return automation_plugins
+
+    def get_all_automation_plugins_by_stage(self, stage):
+        """
+        Retrieves all the automation plugins for the given stage,
+        using a recursive approach.
+
+        @type stage: String
+        @param stage: The stage to retrieve the plugins.
+        @rtype: List
+        @return: A list containing all the automation plugins fot the given stage.
+        """
+
+        # retrieves the automation plugins for the stage
+        automation_plugins_stage = self.stages_automation_plugins.get(stage, [])
+
+        # creates a copy of the automation plugins list
+        automation_plugins = copy.copy(automation_plugins_stage)
+
+        # in case it contains a parent
+        if self.parent:
+            # retrieves all of the automation plugins for the stage from the parent
+            automation_plugins_stage_parent = self.parent.get_all_automation_plugins_by_stage(stage)
+
+            # appends all of the automation plugins from the parent to itself
+            automation_plugins.extend(automation_plugins_stage_parent)
 
         # returns the automation plugins
         return automation_plugins

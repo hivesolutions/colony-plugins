@@ -61,6 +61,8 @@ class BuildAutomationPlugin(colony.plugins.plugin_system.Plugin):
                     "pt.hive.colony.plugins.build.automation.extensions.test", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["build_automation.automation.build_automation_exceptions", "build_automation.automation.build_automation_parser",
+                    "build_automation.automation.build_automation_system", "build_automation.automation.console_build_automation"]
 
     build_automation = None
     console_build_automation = None
@@ -121,10 +123,13 @@ class BuildAutomationPlugin(colony.plugins.plugin_system.Plugin):
         return self.build_automation.get_all_build_automation_item_plugins()
 
     def run_automation_plugin_id(self, plugin_id):
-        self.build_automation.run_automation_plugin_id_version(plugin_id)
+        self.build_automation.run_automation(plugin_id)
 
     def run_automation_plugin_id_plugin_version(self, plugin_id, plugin_version):
-        self.build_automation.run_automation_plugin_id_version(plugin_id, plugin_version)
+        self.build_automation.run_automation(plugin_id, plugin_version)
+
+    def run_automation(self, plugin_id, plugin_version, stage):
+        self.build_automation.run_automation(plugin_id, plugin_version, stage)
 
     @colony.plugins.decorators.load_allowed_capability("build_automation_extension")
     def build_automation_extension_load_allowed(self, plugin, capability):

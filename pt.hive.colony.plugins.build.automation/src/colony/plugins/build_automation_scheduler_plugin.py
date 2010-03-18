@@ -65,6 +65,7 @@ class BuildAutomationSchedulerPlugin(colony.plugins.plugin_system.Plugin):
                     "pt.hive.colony.plugins.misc.guid", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["build_automation.scheduler.build_automation_scheduler_system", "build_automation.scheduler.console_build_automation_scheduler.py"]
 
     build_automation_scheduler = None
     console_build_automation_scheduler = None
