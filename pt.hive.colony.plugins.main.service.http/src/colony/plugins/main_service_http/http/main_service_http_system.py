@@ -59,6 +59,9 @@ POST_METHOD_VALUE = "POST"
 MULTIPART_FORM_DATA_VALUE = "multipart/form-data"
 """ The multipart form data value """
 
+WWW_FORM_URLENCODED_VALUE = "application/x-www-form-urlencoded"
+""" The www form urlencoded value """
+
 HOST_VALUE = ""
 """ The host value """
 
@@ -162,6 +165,15 @@ KEEP_ALIVE_VALUE = "Keep-Alive"
 
 CACHE_CONTROL_VALUE = "Cache-Control"
 """ The cache control value """
+
+CONTENT_DISPOSITION_VALUE = "Content-Disposition"
+""" The content dispotion value """
+
+NAME_VALUE = "name"
+""" The name value """
+
+CONTENTS_VALUE = "contents"
+""" The contents value """
 
 DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
 """ The date format """
@@ -532,7 +544,7 @@ class HttpClientServiceTask:
             request = self.retrieve_request(request_timeout)
         except main_service_http_exceptions.MainServiceHttpException:
             # prints a debug message about the connection closing
-            self.main_service_http_plugin.debug("Connection: %s closed by peer or timeout" % str(self.http_address))
+            self.main_service_http_plugin.debug("Connection: %s closed by peer, timeout or invalid request" % str(self.http_address))
 
             # returns false (connection closed)
             return False
@@ -773,6 +785,18 @@ class HttpClientServiceTask:
 
                 # in case the content is of type multipart form data
                 if content_type_item_stripped.startswith(MULTIPART_FORM_DATA_VALUE):
+                    # parses the request as multipart
+                    request.parse_post_multipart()
+
+                    # returns immediately
+                    return
+
+                # in case the content is of type www form urlencoded
+                if content_type_item_stripped.startswith(WWW_FORM_URLENCODED_VALUE):
+                    # parses the request attributes
+                    request.parse_post_attributes()
+
+                    # returns immediately
                     return
 
                 # in case the item is the charset definition
@@ -1450,100 +1474,78 @@ class HttpRequest:
             self.__setattribute__(attribute_name, attribute_value)
 
     def parse_multipart(self):
+        """
+        Parses the multipart using the currently defined multipart value.
+        The processing of multipart is done according the standard
+        specifications and rfqs.
+        """
+
         # retrieves the content type header
         content_type = self.headers_map.get(CONTENT_TYPE_VALUE, None)
 
+        # in case no content type is defined
         if not content_type:
-            raise Exception("invalid content type")
+            # raises the http invalid multipart request exception
+            raise main_service_http_exceptions.HttpInvalidMultipartRequestException("no content type defined")
 
         # splits the content type
         content_type_splitted = content_type.split(";")
 
+        # retrieves the content type value
         content_type_value = content_type_splitted[0].strip()
 
+        # in case the content type value is not valie
         if not content_type_value == MULTIPART_FORM_DATA_VALUE:
-            raise Exception("invalid content type")
+            # raises the http invalid multipart request exception
+            raise main_service_http_exceptions.HttpInvalidMultipartRequestException("invalid content type defined: " + content_type_value)
 
+        # retrieves the boundary value
         boundary = content_type_splitted[1].strip()
 
-        _boundary, boundary_value = boundary.split("=")
+        # splits the boundary
+        boundary_splitted = boundary.split("=")
 
+        # in case the length of the boundary is not two (invalid)
+        if not len(boundary_splitted) == 2:
+            # raises the http invalid multipart request exception
+            raise main_service_http_exceptions.HttpInvalidMultipartRequestException("invalid boundary value: " + boundary)
+
+        # retrieves the boundary reference and the boundary value
+        _boundary, boundary_value = boundary_splitted
+
+        # retrieves the boundary value length
         boundary_value_length = len(boundary_value)
 
+        # sets the initial index as the as the boundary value length
+        # plus the base boundary value of two (equivalent to: --)
         current_index = boundary_value_length + 2
 
+        # iterates indefinitely
         while 1:
             end_index = self.multipart.find(boundary_value, current_index)
 
-            # in case the end index is invalid
+            # in case the end index is invalid (end of multipart)
             if end_index == -1:
                 break
 
+            # parses the multipart part retrieving the headers map and the contents
             headers_map, contents = self._parse_multipart_part(current_index + 2, end_index - 2)
 
-            content_disposition = headers_map.get("Content-Disposition", "")
+            # parses the content disposition header retrieving the content
+            # disposition map and list (with the attributes order)
+            content_disposition_map = self._parse_content_disposition(headers_map)
 
-            content_disposition_attributes = content_disposition.split(";")
+            # sets the contents in the content disposition map
+            content_disposition_map[CONTENTS_VALUE] = contents
 
-            content_disposition_map = {}
+            # retrieves the name from the content disposition map
+            name = content_disposition_map[NAME_VALUE]
 
-            for content_disposition_attribute in content_disposition_attributes:
-                content_disposition_attribute_stripped = content_disposition_attribute.strip()
-
-                value_splitted = content_disposition_attribute_stripped.split("=")
-
-                if len(value_splitted) == 2:
-                    key, value = value_splitted
-
-                    content_disposition_map[key] = value
-                elif len(value_splitted) == 1:
-                    key = value_splitted[0]
-
-                    content_disposition_map[key] = None
-                else:
-                    raise Exception("invalid value")
-
-            name = content_disposition_map["name"]
-
-            name_stripped = name.strip("\"")
-
-            self.__setattribute__(name_stripped, contents)
+            # sets the attribute
+            self.__setattribute__(name, content_disposition_map)
 
             # sets the current index as the end index
             current_index = end_index + boundary_value_length
-
-    def _parse_multipart_part(self, start_index, end_index):
-        # creates the headers map
-        headers_map = {}
-
-        # retrieves the end header index
-        end_header_index = self.multipart.find("\r\n\r\n", start_index, end_index)
-
-        # retrieves the headers from the multipart
-        headers = self.multipart[start_index:end_header_index]
-
-        # splits the headers by line
-        headers_splitted = headers.split("\r\n")
-
-        # iterates over the headers lines
-        for header_splitted in headers_splitted:
-            # finds the header separator
-            division_index = header_splitted.find(":")
-
-            # retrieves the header name
-            header_name = header_splitted[:division_index].strip()
-
-            # retrieves the header value
-            header_value = header_splitted[division_index + 1:].strip()
-
-            # sets the header in the headers map
-            headers_map[header_name] = header_value
-
-        # retrieves the contents from the multipart
-        contents = self.multipart[end_header_index + 4:end_index - 2]
-
-        # returns the headers map and the contents as a tuple
-        return (headers_map, contents)
 
     def read(self):
         return self.received_message
@@ -1890,3 +1892,113 @@ class HttpRequest:
         # returns false (modified or no information for
         # modification test)
         return True
+
+    def _parse_multipart_part(self, start_index, end_index):
+        """
+        Parses a "part" of the whole multipart content bases on the
+        interval of send indexes.
+
+        @type start_index: int
+        @param start_index: The start index of the "part" to be processed.
+        @type end_index: int
+        @param end_index: The end index of the "part" to be processed.
+        @rtype: Tuple
+        @return: A Tuple with a map of header for the "part" and the content of the "part".
+        """
+
+        # creates the headers map
+        headers_map = {}
+
+        # retrieves the end header index
+        end_header_index = self.multipart.find("\r\n\r\n", start_index, end_index)
+
+        # retrieves the headers from the multipart
+        headers = self.multipart[start_index:end_header_index]
+
+        # splits the headers by line
+        headers_splitted = headers.split("\r\n")
+
+        # iterates over the headers lines
+        for header_splitted in headers_splitted:
+            # finds the header separator
+            division_index = header_splitted.find(":")
+
+            # retrieves the header name
+            header_name = header_splitted[:division_index].strip()
+
+            # retrieves the header value
+            header_value = header_splitted[division_index + 1:].strip()
+
+            # sets the header in the headers map
+            headers_map[header_name] = header_value
+
+        # retrieves the contents from the multipart
+        contents = self.multipart[end_header_index + 4:end_index - 2]
+
+        # returns the headers map and the contents as a tuple
+        return (headers_map, contents)
+
+    def _parse_content_disposition(self, headers_map):
+        """
+        Parses the content disposition value from the headers map.
+        This method returns a map containing associations of key and value
+        of the various content disposition values.
+
+        @type headers_map: Dictionary
+        @param headers_map: The map containing the headers and the values.
+        @rtype: Dictionary
+        @return: The map containing the various disposition values in a map.
+        """
+
+        # retrieves the content disposition header
+        content_disposition = headers_map.get(CONTENT_DISPOSITION_VALUE, None)
+
+        # in case no content disposition is defined
+        if not content_disposition:
+            # raises the http invalid multipart request exception
+            raise main_service_http_exceptions.HttpInvalidMultipartRequestException("missing content disposition in multipart value")
+
+        # splits the content disposition to obtain the attributes
+        content_disposition_attributes = content_disposition.split(";")
+
+        # creates the content disposition map
+        content_disposition_map = {}
+
+        # iterates over all the content disposition attributes
+        # the content disposition attributes are not stripped
+        for content_disposition_attribute in content_disposition_attributes:
+            # strips the content disposition attribute
+            content_disposition_attribute_stripped = content_disposition_attribute.strip()
+
+            # splits the content disposition attribute
+            content_disposition_attribute_splitted = content_disposition_attribute_stripped.split("=")
+
+            # retrieves the lenght of the content disposition attribute splitted
+            content_disposition_attribute_splitted_length = len(content_disposition_attribute_splitted)
+
+            # in case the length is two (key and value)
+            if content_disposition_attribute_splitted_length == 2:
+                # retrieves the key and the value
+                key, value = content_disposition_attribute_splitted
+
+                # strips the value from the string items
+                value_stripped = value.strip("\"")
+
+                # sets the key with value in the
+                # content disposition map
+                content_disposition_map[key] = value_stripped
+            # in case the length is one (just key with no value)
+            elif content_disposition_attribute_splitted_length == 1:
+                # retrieves the key value
+                key = content_disposition_attribute_splitted[0]
+
+                # sets the key with invalid value in the
+                # content disposition map
+                content_disposition_map[key] = None
+            # invalid state
+            else:
+                # raises the http invalid multipart request exception
+                raise main_service_http_exceptions.HttpInvalidMultipartRequestException("invalid content disposition value in multipart value: " + content_disposition_attribute_stripped)
+
+        # returns the content disposition map
+        return content_disposition_map

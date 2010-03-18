@@ -252,3 +252,30 @@ class HttpNoHandlerException(HttpRuntimeException):
         """
 
         return "Http no handler exception: %s" % self.message
+
+class HttpInvalidMultipartRequestException(HttpRuntimeException):
+    """
+    The http invalid multipart request exception.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        @type status_code: int
+        @param status_code: The http status code.
+        """
+
+        HttpRuntimeException.__init__(self, message)
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Http invalid multipart request exception: %s" % self.message
