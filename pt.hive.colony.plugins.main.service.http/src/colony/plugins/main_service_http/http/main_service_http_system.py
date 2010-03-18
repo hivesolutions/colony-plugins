@@ -624,24 +624,43 @@ class HttpClientServiceTask:
         # creates the message loaded flag
         message_loaded = False
 
+        # creates the message offset index, representing the
+        # offset byte to the initialization of the message
+        message_offset_index = 0
+
         # creates the message size value
         message_size = 0
+
+        # creates the received data size (counter)
+        received_data_size = 0
 
         # continuous loop
         while True:
             # retrieves the data
             data = self.retrieve_data(request_timeout)
 
+            # retrieves the data length
+            data_length = len(data)
+
             # in case no valid data was received
-            if data == "":
+            if data_length == 0:
                 # raises the http invalid data exception
                 raise main_service_http_exceptions.HttpInvalidDataException("empty data received")
+
+            # increments the received data size (counter)
+            received_data_size += data_length
 
             # writes the data to the string buffer
             message.write(data)
 
-            # retrieves the message value from the string buffer
-            message_value = message.get_value()
+            # in case the header is loaded or the message contents are completely loaded
+            if not header_loaded or received_data_size - message_offset_index == message_size:
+                # retrieves the message value from the string buffer
+                message_value = message.get_value()
+            # in case there's no need to inspect the message contents
+            else:
+                # continues with the loop
+                continue
 
             # in case the start line is not loaded
             if not start_line_loaded:
@@ -687,6 +706,10 @@ class HttpClientServiceTask:
 
                 # in case the end header index is found
                 if not end_header_index == -1:
+                    # sets the message offset index as the end header index
+                    # plus the two sequences of newlines (four characters)
+                    message_offset_index = end_header_index + 4
+
                     # sets the header loaded flag
                     header_loaded = True
 
@@ -1522,6 +1545,7 @@ class HttpRequest:
 
         # iterates indefinitely
         while 1:
+            # retrieves the end index (boundary start index)
             end_index = self.multipart.find(boundary_value, current_index)
 
             # in case the end index is invalid (end of multipart)
@@ -1529,6 +1553,8 @@ class HttpRequest:
                 break
 
             # parses the multipart part retrieving the headers map and the contents
+            # the sent indexes avoid the extra newline values incrementing and decrementing
+            # the value of two at the end and start
             headers_map, contents = self._parse_multipart_part(current_index + 2, end_index - 2)
 
             # parses the content disposition header retrieving the content
