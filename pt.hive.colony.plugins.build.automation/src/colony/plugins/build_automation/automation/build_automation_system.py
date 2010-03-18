@@ -279,7 +279,7 @@ class BuildAutomation:
         if not build_automation_structure:
             return
 
-        # creates the build automation directories
+        # creates the build automation directories (if they don't exist)
         self.create_build_automation_directories(build_automation_structure)
 
         # in case the stage is not defined, it's is going
@@ -290,6 +290,11 @@ class BuildAutomation:
 
             # retrieves the default stage as the stage to be used
             stage = build_properties[DEFAULT_STAGE_VALUE]
+
+        # iterates over all the module plugins to execute them (composition)
+        for module_plugin in build_automation_structure.module_plugins:
+            # runs the module plugin for the same stage
+            self.run_automation(module_plugin.id, module_plugin.version, stage)
 
         # retrieves the automation plugins for the stage
         all_automation_plugins = build_automation_structure.get_all_automation_plugins_by_stage(stage)
@@ -341,6 +346,9 @@ class BuildAutomation:
         # generates the build automation artifact structure
         self.generate_build_automation_artifact_structure(build_automation_parsing_structure, build_automation_structure)
 
+        # generates the build automation modules structure
+        self.generate_build_automation_modules_structure(build_automation_parsing_structure, build_automation_structure)
+
         # generates the build automation build structure
         self.generate_build_automation_build_structure(build_automation_parsing_structure, build_automation_structure)
 
@@ -385,6 +393,29 @@ class BuildAutomation:
 
         # sets the associated plugin in the build automation structure
         build_automation_structure.associated_plugin = associated_plugin
+
+    def generate_build_automation_modules_structure(self, build_automation_parsing_structure, build_automation_structure):
+        # retrieves the modules parsing value
+        modules = build_automation_parsing_structure.modules
+
+        # iterates over all the module items
+        for module in modules:
+            # creates the plugin id regex
+            plugin_id_regex = re.compile(module.id)
+
+            # creates the plugin version regex
+            plugin_version_regex = re.compile(module.version)
+
+            # retrieves the build automation module plugins (the ones that match the regex)
+            build_automation_module_plugins = self.get_build_automation_item_plugins_regex(plugin_id_regex, plugin_version_regex)
+
+            # in case the associated plugin is in the build automation module plugins, it must be removed
+            if build_automation_structure.associated_plugin in build_automation_module_plugins:
+                # removes the associated plugin from the build automation module plugins
+                build_automation_module_plugins.remove(build_automation_structure.associated_plugin)
+
+            # extends the module plugins list with the new ones
+            build_automation_structure.module_plugins.extend(build_automation_module_plugins)
 
     def generate_build_automation_build_structure(self, build_automation_parsing_structure, build_automation_structure):
         # retrieves the build parsing value
@@ -553,6 +584,40 @@ class BuildAutomation:
             else:
                 if build_automation_extension_plugin.id == plugin_id:
                     return build_automation_extension_plugin
+
+    def get_build_automation_item_plugins_regex(self, plugin_id_regex, plugin_version_regex = None):
+        """
+        Retrieves the list of build automation item plugins that match both the
+        given id and version regex.
+
+        @type plugin_id_regex: RegexObject
+        @param plugin_id_regex: The plugin id regex.
+        @type plugin_version_regex: RegexObject
+        @param plugin_version_regex: The plugin version regex.
+        @rtype: List
+        @return: The list of build automation item plugins that match both the
+        given id and version regex.
+        """
+
+        # allocates the build automation item plugins list
+        build_automation_item_plugins_list = []
+
+        # iterates over all the loaded build automation item plugins
+        for loaded_build_automation_item_plugin in self.loaded_build_automation_item_plugins_list:
+            # in case the plugin version regex is defined
+            if plugin_version_regex:
+                # in case both the id and the version match the regex
+                if plugin_id_regex.match(loaded_build_automation_item_plugin.id) and plugin_version_regex.match(loaded_build_automation_item_plugin.version):
+                    # adds the loaded build automation item plugin to the build autmation item plugins list
+                    build_automation_item_plugins_list.append(loaded_build_automation_item_plugin)
+            else:
+                # in case the id matches the regex
+                if plugin_id_regex.match(loaded_build_automation_item_plugin.id):
+                    # adds the loaded build automation item plugin to the build autmation item plugins list
+                    build_automation_item_plugins_list.append(loaded_build_automation_item_plugin)
+
+        # returns the build automation item plugins list
+        return build_automation_item_plugins_list
 
     def parse_string(self, string, build_automation_structure):
         """
@@ -780,6 +845,9 @@ class BuildAutomationStructure:
     build_properties = {}
     """ The build properties of the current structure """
 
+    module_plugins = []
+    """ The module plugins """
+
     dependecy_plugins = []
     """ The dependency plugins list """
 
@@ -812,6 +880,7 @@ class BuildAutomationStructure:
         self.build_automation_parsing_structure = build_automation_parsing_structure
 
         self.build_properties = {}
+        self.module_plugins = []
         self.dependecy_plugins = []
         self.automation_plugins = []
         self.automation_plugins_stages = {}
