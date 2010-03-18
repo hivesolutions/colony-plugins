@@ -1258,6 +1258,9 @@ class HttpRequest:
     arguments = "none"
     """ The arguments """
 
+    multipart = "none"
+    """ The multipart """
+
     protocol_version = "none"
     """ The protocol version """
 
@@ -1395,6 +1398,18 @@ class HttpRequest:
         # parses the arguments
         self.parse_arguments()
 
+    def parse_post_multipart(self):
+        """
+        Parses the post multipart from the standard post
+        syntax.
+        """
+
+        # sets the multipart as the received message
+        self.multipart = self.received_message
+
+        # parses the multipart
+        self.parse_multipart()
+
     def parse_arguments(self):
         """
         Parses the arguments, using the currently defined
@@ -1433,6 +1448,102 @@ class HttpRequest:
 
             # sets the attribute value
             self.__setattribute__(attribute_name, attribute_value)
+
+    def parse_multipart(self):
+        # retrieves the content type header
+        content_type = self.headers_map.get(CONTENT_TYPE_VALUE, None)
+
+        if not content_type:
+            raise Exception("invalid content type")
+
+        # splits the content type
+        content_type_splitted = content_type.split(";")
+
+        content_type_value = content_type_splitted[0].strip()
+
+        if not content_type_value == MULTIPART_FORM_DATA_VALUE:
+            raise Exception("invalid content type")
+
+        boundary = content_type_splitted[1].strip()
+
+        _boundary, boundary_value = boundary.split("=")
+
+        boundary_value_length = len(boundary_value)
+
+        current_index = boundary_value_length + 2
+
+        while 1:
+            end_index = self.multipart.find(boundary_value, current_index)
+
+            # in case the end index is invalid
+            if end_index == -1:
+                break
+
+            headers_map, contents = self._parse_multipart_part(current_index + 2, end_index - 2)
+
+            content_disposition = headers_map.get("Content-Disposition", "")
+
+            content_disposition_attributes = content_disposition.split(";")
+
+            content_disposition_map = {}
+
+            for content_disposition_attribute in content_disposition_attributes:
+                content_disposition_attribute_stripped = content_disposition_attribute.strip()
+
+                value_splitted = content_disposition_attribute_stripped.split("=")
+
+                if len(value_splitted) == 2:
+                    key, value = value_splitted
+
+                    content_disposition_map[key] = value
+                elif len(value_splitted) == 1:
+                    key = value_splitted[0]
+
+                    content_disposition_map[key] = None
+                else:
+                    raise Exception("invalid value")
+
+            name = content_disposition_map["name"]
+
+            name_stripped = name.strip("\"")
+
+            self.__setattribute__(name_stripped, contents)
+
+            # sets the current index as the end index
+            current_index = end_index + boundary_value_length
+
+    def _parse_multipart_part(self, start_index, end_index):
+        # creates the headers map
+        headers_map = {}
+
+        # retrieves the end header index
+        end_header_index = self.multipart.find("\r\n\r\n", start_index, end_index)
+
+        # retrieves the headers from the multipart
+        headers = self.multipart[start_index:end_header_index]
+
+        # splits the headers by line
+        headers_splitted = headers.split("\r\n")
+
+        # iterates over the headers lines
+        for header_splitted in headers_splitted:
+            # finds the header separator
+            division_index = header_splitted.find(":")
+
+            # retrieves the header name
+            header_name = header_splitted[:division_index].strip()
+
+            # retrieves the header value
+            header_value = header_splitted[division_index + 1:].strip()
+
+            # sets the header in the headers map
+            headers_map[header_name] = header_value
+
+        # retrieves the contents from the multipart
+        contents = self.multipart[end_header_index + 4:end_index - 2]
+
+        # returns the headers map and the contents as a tuple
+        return (headers_map, contents)
 
     def read(self):
         return self.received_message
