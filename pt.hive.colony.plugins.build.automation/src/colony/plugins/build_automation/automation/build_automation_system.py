@@ -70,6 +70,9 @@ PLUGIN_DIRECTORY_VALUE = "plugin_directory"
 COLONY_ARTIFACT_VALUE = "colony"
 """ The colony artifact value """
 
+DEFAULT_STAGE_VALUE = "default_stage"
+""" The default stage value """
+
 class BuildAutomation:
     """
     The build automation class.
@@ -286,7 +289,7 @@ class BuildAutomation:
             build_properties = build_automation_structure.get_all_build_properties()
 
             # retrieves the default stage as the stage to be used
-            stage = build_properties["default_stage"]
+            stage = build_properties[DEFAULT_STAGE_VALUE]
 
         # retrieves the automation plugins for the stage
         all_automation_plugins = build_automation_structure.get_all_automation_plugins_by_stage(stage)
