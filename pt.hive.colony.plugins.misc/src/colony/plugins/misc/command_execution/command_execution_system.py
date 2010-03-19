@@ -50,6 +50,9 @@ class CommandExecution:
     command_execution_plugin = None
     """ The command execution plugin """
 
+    normalized_environament_map = None
+    """ The normalized environment map (no unicode strings) """
+
     def __init__(self, command_execution_plugin):
         """
         Constructor of the class.
@@ -59,6 +62,8 @@ class CommandExecution:
         """
 
         self.command_execution_plugin = command_execution_plugin
+
+        self.normalized_environament_map = self._normalize_environment_map()
 
     def execute_command(self, command, arguments):
         # creates the call list
@@ -78,7 +83,7 @@ class CommandExecution:
         startup_info = self.get_startup_info()
 
         # opens the subprocess
-        subprocess.Popen(call_list, stdin = logger_file, stdout = logger_file, stderr = logger_file, env = os.environ, startupinfo = startup_info)
+        subprocess.Popen(call_list, stdin = logger_file, stdout = logger_file, stderr = logger_file, env = self.normalized_environament_map, startupinfo = startup_info)
 
     def execute_command_logger_execution_directory(self, command, arguments, logger, execution_directory):
         # creates the call list
@@ -91,7 +96,7 @@ class CommandExecution:
         startup_info = self.get_startup_info()
 
         # opens the subprocess
-        subprocess.Popen(call_list, stdin = logger_file, stdout = logger_file, stderr = logger_file, cwd = execution_directory, env = os.environ, startupinfo = startup_info)
+        subprocess.Popen(call_list, stdin = logger_file, stdout = logger_file, stderr = logger_file, cwd = execution_directory, env = self.normalized_environament_map, startupinfo = startup_info)
 
     def create_call_list(self, command, arguments):
         # constructs the call list
@@ -136,3 +141,24 @@ class CommandExecution:
             startup_info = None
 
         return startup_info
+
+    def _normalize_environment_map(self):
+        """
+        Normalizes the environment variables map.
+        The process of normalization consists in the
+        decoding of the encoded string (unicode).
+
+        @rtype: Dictionary
+        @return: The normalized environment map.
+        """
+
+        # creates the normalized environment map
+        normalized_environment_map = {}
+
+        # iterates over all the environment items
+        for environment_key, environment_value in os.environ.items():
+            # sets the environment value in the normalized environment map
+            normalized_environment_map[environment_key] = str(environment_value)
+
+        # returns the normalized environment map
+        return normalized_environment_map
