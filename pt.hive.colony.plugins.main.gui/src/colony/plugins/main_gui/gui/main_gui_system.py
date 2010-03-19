@@ -54,25 +54,3 @@ class MainGui:
         """
 
         self.main_gui_plugin = main_gui_plugin
-
-    def get_build_automation_file_path(self):
-        """
-        Retrieves the build automation file path.
-
-        @rtype: String
-        @return: The build automation file path.
-        """
-
-        # retrieves the plugin manager
-        manager = self.main_gui_plugin.manager
-
-        # retrieves the main gui plugin id
-        main_gui_plugin_id = self.main_gui_plugin.id
-
-        # retrieves the main gui plugin path
-        main_gui_plugin_path = manager.get_plugin_path_by_id(main_gui_plugin_id)
-
-        # retrieves the main gui baf xml path
-        main_gui_baf_path = main_gui_plugin_path + "/main_gui/gui/resources/baf.xml"
-
-        return main_gui_baf_path
