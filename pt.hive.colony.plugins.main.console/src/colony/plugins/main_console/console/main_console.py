@@ -217,28 +217,6 @@ class MainConsole:
 
         return self.write
 
-    def get_build_automation_file_path(self):
-        """
-        Retrieves the build automation file path.
-
-        @rtype: String
-        @return: The build automation file path.
-        """
-
-        # retrieves the plugin manager
-        manager = self.main_console_plugin.manager
-
-        # retrieves the main console plugin id
-        main_console_plugin_id = self.main_console_plugin.id
-
-        # retrieves the main console plugin path
-        main_console_plugin_path = manager.get_plugin_path_by_id(main_console_plugin_id)
-
-        # retrieves the main console baf xml path
-        main_console_baf_path = main_console_plugin_path + "/main_console/console/resources/baf.xml"
-
-        return main_console_baf_path
-
     def split_command_line_arguments(self, command_line):
         """
         Separates the various command line arguments per space or per quotes.

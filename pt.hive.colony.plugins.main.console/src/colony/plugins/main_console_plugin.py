@@ -55,6 +55,7 @@ class MainConsolePlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
+    attributes = {"build_automation_file_path" : "$base{plugin_dir}/main_console/console/resources/baf.xml"}
     capabilities = ["main", "main_console", "test_case", "build_automation_item"]
     capabilities_allowed = ["console_command_extension"]
     dependencies = []
@@ -141,16 +142,6 @@ class MainConsolePlugin(colony.plugins.plugin_system.Plugin):
         """
 
         return self.console_test_case_class
-
-    def get_build_automation_file_path(self):
-        """
-        Retrieves the build automation file path.
-
-        @rtype: String
-        @return: The build automation file path.
-        """
-
-        return self.console.get_build_automation_file_path()
 
     @colony.plugins.decorators.load_allowed_capability("console_command_extension")
     def console_command_extension_load_allowed(self, plugin, capability):
