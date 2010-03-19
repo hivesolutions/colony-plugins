@@ -54,6 +54,7 @@ class ColonyBaseBuildAutomationItemPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
+    attributes = {"build_automation_file_path" : "$base{plugin_dir}/build_automation_items/colony_base/resources/baf.xml"}
     capabilities = ["build_automation_item"]
     capabilities_allowed = []
     dependencies = []
@@ -85,6 +86,3 @@ class ColonyBaseBuildAutomationItemPlugin(colony.plugins.plugin_system.Plugin):
 
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
-
-    def get_build_automation_file_path(self):
-        return self.colony_base_build_automation_item.get_build_automation_file_path()
