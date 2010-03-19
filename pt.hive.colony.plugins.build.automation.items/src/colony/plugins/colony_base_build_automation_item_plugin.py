@@ -88,6 +88,3 @@ class ColonyBaseBuildAutomationItemPlugin(colony.plugins.plugin_system.Plugin):
 
     def get_build_automation_file_path(self):
         return self.colony_base_build_automation_item.get_build_automation_file_path()
-
-    def get_build_automation_execution_path(self):
-        return self.colony_base_build_automation_item.get_build_automation_execution_path()

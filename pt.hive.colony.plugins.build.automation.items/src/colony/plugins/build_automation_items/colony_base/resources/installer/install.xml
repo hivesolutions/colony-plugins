@@ -30,9 +30,9 @@
 -->
 
 <installation version="1.0">
-
     <native type="izpack" name="ShellLink.dll"/>
 
+    <!-- the general information -->
     <info>
         <appname>Hive Colony Framework</appname>
         <appversion>1.0.0</appversion>

@@ -30,11 +30,8 @@
 -->
 
 <shortcuts>
-
     <skipIfNotSupported/>
-
     <programGroup defaultName="Hive Solutions/Hive Colony" location="applications"/>
-
     <shortcut
         name="Hive Colony $APP_VER"
         programGroup="yes"
@@ -49,5 +46,4 @@
 
         <createForPack name="Hive Colony Framework"/>
     </shortcut>
-
 </shortcuts>

@@ -40,16 +40,30 @@
         <description>The Colony Base Build Automation Item Plugin automation file (baf)</description>
         <url>http://www.hive.pt</url>
     </artifact>
+    <modules>
+        <module>
+            <id>pt.hive.colony.plugins.*</id>
+            <version>.*</version>
+        </module>
+    </modules>
     <build>
         <default_stage>build</default_stage>
-        <execution_directory>$call{get_build_automation_execution_path}</execution_directory>
         <plugins>
+            <plugin>
+                <id>pt.hive.colony.plugins.build.automation.extensions.packing</id>
+                <version>1.0.0</version>
+                <stage>build</stage>
+                <configuration>
+                    <specification_file>$base{plugin_directory}/colony_base_build_automation_item_plugin.json</specification_file>
+                </configuration>
+            </plugin>
             <plugin>
                 <id>pt.hive.colony.plugins.build.automation.extensions.izpack</id>
                 <version>1.0.0</version>
                 <stage>build</stage>
                 <configuration>
-                    <install_file>build_automation_items/colony_base/resources/installer/install.xml</install_file>
+                    <base_directory>$base{plugin_directory}</base_directory>
+                    <install_file>$base{plugin_directory}/build_automation_items/colony_base/resources/installer/install.xml</install_file>
                 </configuration>
             </plugin>
         </plugins>
