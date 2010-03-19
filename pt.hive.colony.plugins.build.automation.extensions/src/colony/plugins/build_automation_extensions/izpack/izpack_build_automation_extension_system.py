@@ -102,29 +102,26 @@ class IzpackBuildAutomationExtension:
             # creates the execution command
             izpack_execution_command = izpack_home_path + "/compile"
 
+        # retrieves the base directory path from the given parameters
+        base_directory_path = parameters["base_directory"]
+
         # retrieves the install file path from the given parameters
         install_file_path = parameters["install_file"]
 
         # retrieves the build properties
         build_properties = build_automation_structure.get_all_build_properties()
 
-        # retrieves the execution directory path value
-        execution_directory_path = build_properties["execution_directory"]
-
         # retrieves the target directory path value
         target_directory_path = build_properties["target_directory"]
 
-        # creates the install file full path
-        install_file_full_path = execution_directory_path + "/" + install_file_path
-
-        # retrieves output directory path
-        output_directory_path = execution_directory_path + "/" + target_directory_path
-
         # creates the output file full path
-        output_file_full_path = output_directory_path + "/installer.jar"
+        output_file_full_path = target_directory_path + "/installer.jar"
+
+        # converts the output file path to absolute value
+        output_file_full_absolute_path = os.path.abspath(output_file_full_path)
 
         # retrieves the main logger
         logger = manager.logger
 
         # executes the compilation command
-        command_execution_plugin.execute_command_logger_execution_directory(izpack_execution_command, [install_file_full_path, "-o", output_file_full_path], logger, execution_directory_path)
+        command_execution_plugin.execute_command_logger_execution_directory(izpack_execution_command, [install_file_path, "-o", output_file_full_absolute_path], logger, base_directory_path)
