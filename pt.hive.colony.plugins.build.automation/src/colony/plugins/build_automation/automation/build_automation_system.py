@@ -217,8 +217,26 @@ class BuildAutomation:
                 # retrieves the build automation item plugin version
                 build_automation_item_plugin_version = build_automation_item_plugin.version
 
-                # retrieves the build automation file path
-                build_automation_file_path = build_automation_item_plugin.get_build_automation_file_path()
+                # tries to retrieve the build automation file
+                build_automation_file_path = build_automation_item_plugin.get_attribute("build_automation_file_path")
+
+                # in case the build automation file path attribute is not defined
+                if not build_automation_file_path:
+                    # retrieves the build automation file path
+                    build_automation_file_path = build_automation_item_plugin.get_build_automation_file_path()
+
+                # creates the plugin directory value as the base reference
+                # to the plugin directory value
+                plugin_directory_value = "$base{" + PLUGIN_DIRECTORY_VALUE + "}"
+
+                # in case there is a reference to the plugin directory
+                if build_automation_file_path.startswith(plugin_directory_value):
+                    # retrieves the plugin path (plugin base path)
+                    plugin_path = self.build_automation_plugin.manager.get_plugin_path_by_id(build_automation_item_plugin_id)
+
+                    # updates the build automation file substituting the plugin directory reference
+                    # with the plugin path directory
+                    build_automation_file_path = build_automation_file_path.replace(plugin_directory_value, plugin_path)
 
                 # creates the build automation file parser
                 build_automation_file_parser = build_automation_parser.BuildAutomationFileParser(build_automation_file_path)
