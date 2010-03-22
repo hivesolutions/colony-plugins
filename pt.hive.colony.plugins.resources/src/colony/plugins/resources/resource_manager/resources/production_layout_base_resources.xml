@@ -96,4 +96,10 @@
         <type>string</type>
         <data>../../</data>
     </resource>
+    <resource>
+        <namespace>system.path</namespace>
+        <name>hive_blog</name>
+        <type>string</type>
+        <data>../../</data>
+    </resource>
 </resources>

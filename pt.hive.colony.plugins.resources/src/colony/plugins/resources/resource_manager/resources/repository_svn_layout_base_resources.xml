@@ -96,4 +96,10 @@
         <type>string</type>
         <data>../../../../pt.hive.hive_site/trunk</data>
     </resource>
+    <resource>
+        <namespace>system.path</namespace>
+        <name>hive_blog</name>
+        <type>string</type>
+        <data>../../../../pt.hive.hive_blog/trunk</data>
+    </resource>
 </resources>
