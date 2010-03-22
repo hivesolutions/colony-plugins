@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import types
 import datetime
 
 import os.path
@@ -472,12 +473,41 @@ class Visitor:
         attribute_item = attributes_map["item"]
         attribute_item_literal_value = self.get_literal_value(attribute_item)
 
-        for attribute_from_value_item in attribute_from_value:
-            self.global_map[attribute_item_literal_value] = attribute_from_value_item
+        if "key" in attributes_map:
+            attribute_key = attributes_map["key"]
+            attribute_key_literal_value = self.get_literal_value(attribute_key)
+        else:
+            attribute_key_literal_value = None
 
-            if self.visit_childs:
-                for node_child_node in node.child_nodes:
-                    node_child_node.accept(self)
+        # in case the attribute does not have the iterator method
+        # it's not iterable
+        if not hasattr(attribute_from_value, "__iter__"):
+            # retrieves the attribute from value
+            attribute_from_value = attribute_from["value"]
+
+            # raises the variable not iterable exception
+            raise template_engine_exceptions.VariableNotIterable("value not iterable: " + attribute_from_value)
+
+        # retrieves the attrbiute from value type
+        attribute_from_value_type = type(attribute_from_value)
+
+        if attribute_from_value_type == types.DictType:
+            for attribute_from_value_key, attribute_from_value_value in attribute_from_value.items():
+                self.global_map[attribute_item_literal_value] = attribute_from_value_value
+
+                if attribute_key_literal_value:
+                    self.global_map[attribute_key_literal_value] = attribute_from_value_key
+
+                if self.visit_childs:
+                    for node_child_node in node.child_nodes:
+                        node_child_node.accept(self)
+        else:
+            for attribute_from_value_item in attribute_from_value:
+                self.global_map[attribute_item_literal_value] = attribute_from_value_item
+
+                if self.visit_childs:
+                    for node_child_node in node.child_nodes:
+                        node_child_node.accept(self)
 
     def process_if(self, node):
         """
@@ -672,18 +702,31 @@ class Visitor:
                 if current_variable:
                     # iterates over the sub values of the variable
                     for variable_name_split in variable_name_splitted[1:]:
-                        if hasattr(current_variable, variable_name_split):
-                            # retrieves the current variable
-                            current_variable = getattr(current_variable, variable_name_split)
-                        elif not self.strict_mode:
-                            # sets the current variable as none
-                            current_variable = None
+                        # retrieves the current variable type
+                        current_variable_type = type(current_variable)
 
-                            # breaks the cycle
-                            break
+                        # in case the variable is of type dictionary
+                        if current_variable_type == types.DictType:
+                            if variable_name_split in current_variable:
+                                # retrieves the current variable (from the dictionary)
+                                current_variable = current_variable[variable_name_split]
+                            else:
+                                # raises the undefined variable exception
+                                raise template_engine_exceptions.UndefinedVariable("variable is not defined: " + variable_name)
+                        # variable is of type object or other
                         else:
-                            # raises the undefined variable exception
-                            raise template_engine_exceptions.UndefinedVariable("variable is not defined: " + variable_name)
+                            if hasattr(current_variable, variable_name_split):
+                                # retrieves the current variable (from the object)
+                                current_variable = getattr(current_variable, variable_name_split)
+                            elif not self.strict_mode:
+                                # sets the current variable as none
+                                current_variable = None
+
+                                # breaks the cycle
+                                break
+                            else:
+                                # raises the undefined variable exception
+                                raise template_engine_exceptions.UndefinedVariable("variable is not defined: " + variable_name)
                 elif not self.strict_mode:
                     # sets the current variable as none
                     current_variable = None
