@@ -1169,10 +1169,10 @@ class HttpClientServiceTask:
                 # in front
                 sub_request_path = request.path[len(service_configuration_redirection_name):]
 
-                # in case the recursive redirection is disbaled and there is a subdirectory
+                # in case the recursive redirection is disabled and there is a subdirectory
                 # in the sub request path
                 if not recursive_redirection and not sub_request_path.find("/") == -1:
-                    # breaks the loop because the request is not meant to be recursivly redirected
+                    # breaks the loop because the request is not meant to be recursively redirected
                     # and it contains a sub-directory
                     break
 
@@ -1180,7 +1180,8 @@ class HttpClientServiceTask:
                 request.base_path = request.path
 
                 # retrieves the new (redirected) path in the request
-                request_path = request.path.replace(service_configuration_redirection_name, target_path, 1)
+                # strips both parts of the path to avoid problems with duplicated slashes
+                request_path = target_path.rstrip("/") + "/" + sub_request_path.lstrip("/")
 
                 # sets the new path in the request
                 request.set_path(request_path)
