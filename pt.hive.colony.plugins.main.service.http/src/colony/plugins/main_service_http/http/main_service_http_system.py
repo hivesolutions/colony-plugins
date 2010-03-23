@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import sys
 import time
+import copy
 import types
 import socket
 import select
@@ -1136,6 +1137,94 @@ class HttpClientServiceTask:
 
         self.current_request_handler = current_request_handler
 
+    def _get_service_configuration(self, request):
+        """
+        Retrieves the service configuration for the given request.
+        This retrieval takes into account the request target and characteristics
+        to merge the virtual servers configurations.
+
+        @type request: HttpRequest
+        @param request: The request to be used in the resolution
+        of the service configuration.
+        @rtype: Dictionary
+        @return: The resolved service configuration.
+        """
+
+        # retrieves the base service configuration
+        service_configuration = self.service_configuration
+
+        # retrieves the host value from the headers
+        host = request.headers_map.get("Host", None)
+
+        # in case the host is defined
+        if host:
+            # retrieves the virtual servers map
+            service_configuration_virtual_servers = self.service_configuration.get("virtual_servers", {})
+
+            # retrieves the service configuration virtual servers resolution order
+            service_configuration_virtual_servers_resolution_order = service_configuration_virtual_servers.get("resolution_order", service_configuration_virtual_servers.keys())
+
+            # splits the host value (to try
+            # to retrieve hostname and port)
+            host_splited = host.split(":")
+
+            # retrieves the host splited length
+            host_splited_len = len(host_splited)
+
+            if host_splited_len == 2:
+                hostname, _port = host_splited
+            else:
+                hostname = host
+
+            if hostname in service_configuration_virtual_servers:
+                # iterates over the service configuration virtual server names
+                for service_configuration_virtual_servers_name in service_configuration_virtual_servers_resolution_order:
+                    if hostname == service_configuration_virtual_servers_name:
+                        service_configuration_virtual_servers_value = service_configuration_virtual_servers[service_configuration_virtual_servers_name]
+
+                        service_configuration = self._mege_values(service_configuration, service_configuration_virtual_servers_value)
+
+        # returns the service configuration
+        return service_configuration
+
+    def _mege_values(self, target_value, source_value):
+        target_value_type = type(target_value)
+        source_value_type = type(source_value)
+
+        if target_value_type == source_value_type:
+            if target_value_type == types.DictType:
+                return self._merge_maps(target_value, source_value)
+            elif target_value_type == types.ListType or target_value_type == types.TupleType:
+                return self._merge_lists(target_value, source_value)
+            else:
+                return source_value
+        else:
+            return source_value
+
+    def _merge_lists(self, target_list, source_list):
+        final_list = []
+
+        final_list.extend(target_list)
+        final_list.extend(source_list)
+
+        return final_list
+
+    def _merge_maps(self, target_map, source_map):
+        # copies the target map as the final map
+        final_map = copy.copy(target_map)
+
+        for source_key, source_value in source_map.items():
+            if source_key in final_map:
+                target_value = final_map[source_key]
+
+                final_value = self._mege_values(target_value, source_value)
+
+                final_map[source_key] = final_value
+            else:
+                final_map[source_key] = source_value
+
+        return final_map
+
     def _process_redirection(self, request):
         """
         Processes the redirection stage of the http request.
@@ -1146,8 +1235,11 @@ class HttpClientServiceTask:
         @param request: The request to be processed.
         """
 
+        # @todo: rmeove this !!!!!
+        service_configuration = self._get_service_configuration(request)
+
         # retrieves the service configuration redirections
-        service_configuration_redirections = self.service_configuration.get("redirections", {})
+        service_configuration_redirections = service_configuration.get("redirections", {})
 
         # retrieves the service configuration redirections resolution order
         service_configuration_redirections_resolution_order = service_configuration_redirections.get("resolution_order", service_configuration_redirections.keys())
@@ -1903,7 +1995,7 @@ class HttpRequest:
                     return False
             except:
                 # prints a warning for not being able to check the modification date
-                self.http_client_service_task.main_service_http_plugin.warn("Problem while checking modification date")
+                self.http_client_service_task.main_service_http_plugin.warning("Problem while checking modification date")
 
         # retrieves the if none match value
         if_none_match_header = self.get_header(IF_NONE_MATCH_VALUE)
