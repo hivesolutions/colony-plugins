@@ -56,7 +56,9 @@ class WebMvcUtilsPlugin(colony.plugins.plugin_system.Plugin):
     capabilities = ["web.mvc.utils"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.template_engine.manager", "1.0.0")]
+                    "pt.hive.colony.plugins.template_engine.manager", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.business.entity_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["web_mvc_utils.mvc_utils.web_mvc_controller", "web_mvc_utils.mvc_utils.web_mvc_model", "web_mvc_utils.mvc_utils.web_mvc_utils_exceptions",
@@ -65,6 +67,7 @@ class WebMvcUtilsPlugin(colony.plugins.plugin_system.Plugin):
     web_mvc_utils = None
 
     template_engine_manager_plugin = None
+    business_entity_manager_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -103,3 +106,10 @@ class WebMvcUtilsPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.template_engine.manager")
     def set_template_engine_manager_plugin(self, template_engine_manager_plugin):
         self.template_engine_manager_plugin = template_engine_manager_plugin
+
+    def get_business_entity_manager_plugin(self):
+        return self.business_entity_manager_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.business.entity_manager")
+    def set_business_entity_manager_plugin(self, business_entity_manager_plugin):
+        self.business_entity_manager_plugin = business_entity_manager_plugin

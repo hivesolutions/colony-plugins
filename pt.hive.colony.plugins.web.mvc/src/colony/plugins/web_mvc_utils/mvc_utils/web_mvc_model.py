@@ -58,7 +58,7 @@ def _start(self):
 def add_validation_method(self, attribute_name, validation_method_name, properties = {}):
     """
     Adds a validation method to the attribute with the given name.
-    The adding of the validation can me configured using the properties
+    The adding of the validation can be configured using the properties
     map.
 
     @type attribute_name: String
