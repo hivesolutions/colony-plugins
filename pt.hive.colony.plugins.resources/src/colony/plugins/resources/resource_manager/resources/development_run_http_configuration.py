@@ -49,7 +49,15 @@ configuration = {
                       "default_handler" : "file"}
                  ],
                  "virtual_servers" : {
-                     "hive.pt" : {
+                     "resolution_order" : ["127.0.0.1"],
+                     "127.0.0.1" : {
+                         "redirections" : {
+                             "resolution_order" : ["/"],
+                             "/" : {
+                                 "target" : "/colony_mod_python/rest/mvc/hive_blog/",
+                                 "recursive_redirection" : True
+                             }
+                         }
                      }
                  },
                  "redirections" : {
