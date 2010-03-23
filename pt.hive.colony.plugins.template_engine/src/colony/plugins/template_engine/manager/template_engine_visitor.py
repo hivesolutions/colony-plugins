@@ -488,7 +488,7 @@ class Visitor:
             # raises the variable not iterable exception
             raise template_engine_exceptions.VariableNotIterable("value not iterable: " + attribute_from_value)
 
-        # retrieves the attrbiute from value type
+        # retrieves the attribute from value type
         attribute_from_value_type = type(attribute_from_value)
 
         if attribute_from_value_type == types.DictType:

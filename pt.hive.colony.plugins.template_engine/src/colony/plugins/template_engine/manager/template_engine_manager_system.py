@@ -51,7 +51,7 @@ END_TAG_VALUE = "\$\{\/[^\{\}][^\/\{}\{}]*\}"
 SINGLE_TAG_VALUE = "\$\{[^\{\}]*\/\}"
 """ The single tag value """
 
-ATTRIBUTE_VALUE = "[a-zA-Z_]+=[a-zA-Z_0-9\.]+"
+ATTRIBUTE_VALUE = "[a-zA-Z_]+=[a-zA-Z_0-9\.\/]+"
 """ The attribute value """
 
 ATTRIBUTE_QUOTED_VALUE = "[a-zA-Z_]+=\".+\""
@@ -312,7 +312,7 @@ class TemplateEngineManager:
                 parent_node = tree_node_stack[-1]
 
                 # creates the single node from the match orderer
-                single_node = template_engine_ast.SingleNode(match_orderer,  attribute_regex, attribute_quoted_regex)
+                single_node = template_engine_ast.SingleNode(match_orderer, attribute_regex, attribute_quoted_regex)
 
                 # adds the single node as a child to the parent node
                 parent_node.add_child_node(single_node)
