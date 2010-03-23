@@ -554,17 +554,21 @@ class HttpClientServiceTask:
             # prints debug message about request
             self.main_service_http_plugin.debug("Handling request: %s" % str(request))
 
+            # retrieves the real service configuration,
+            # taking the request information into account
+            service_configuration = self._get_service_configuration(request)
+
             # processes the redirection information in the request
-            self._process_redirection(request)
+            self._process_redirection(request, service_configuration)
 
             # processes the handler part of the request and retrieves
             # the handler name
-            handler_name = self._process_handler(request)
+            handler_name = self._process_handler(request, service_configuration)
 
             # in case the request was not already handled
             if not handler_name:
                 # retrieves the default handler name
-                handler_name = self.service_configuration.get("default_handler", None)
+                handler_name = service_configuration.get("default_handler", None)
 
                 # sets the handler path
                 request.handler_path = None
@@ -1137,95 +1141,7 @@ class HttpClientServiceTask:
 
         self.current_request_handler = current_request_handler
 
-    def _get_service_configuration(self, request):
-        """
-        Retrieves the service configuration for the given request.
-        This retrieval takes into account the request target and characteristics
-        to merge the virtual servers configurations.
-
-        @type request: HttpRequest
-        @param request: The request to be used in the resolution
-        of the service configuration.
-        @rtype: Dictionary
-        @return: The resolved service configuration.
-        """
-
-        # retrieves the base service configuration
-        service_configuration = self.service_configuration
-
-        # retrieves the host value from the headers
-        host = request.headers_map.get("Host", None)
-
-        # in case the host is defined
-        if host:
-            # retrieves the virtual servers map
-            service_configuration_virtual_servers = self.service_configuration.get("virtual_servers", {})
-
-            # retrieves the service configuration virtual servers resolution order
-            service_configuration_virtual_servers_resolution_order = service_configuration_virtual_servers.get("resolution_order", service_configuration_virtual_servers.keys())
-
-            # splits the host value (to try
-            # to retrieve hostname and port)
-            host_splited = host.split(":")
-
-            # retrieves the host splited length
-            host_splited_len = len(host_splited)
-
-            if host_splited_len == 2:
-                hostname, _port = host_splited
-            else:
-                hostname = host
-
-            if hostname in service_configuration_virtual_servers:
-                # iterates over the service configuration virtual server names
-                for service_configuration_virtual_servers_name in service_configuration_virtual_servers_resolution_order:
-                    if hostname == service_configuration_virtual_servers_name:
-                        service_configuration_virtual_servers_value = service_configuration_virtual_servers[service_configuration_virtual_servers_name]
-
-                        service_configuration = self._mege_values(service_configuration, service_configuration_virtual_servers_value)
-
-        # returns the service configuration
-        return service_configuration
-
-    def _mege_values(self, target_value, source_value):
-        target_value_type = type(target_value)
-        source_value_type = type(source_value)
-
-        if target_value_type == source_value_type:
-            if target_value_type == types.DictType:
-                return self._merge_maps(target_value, source_value)
-            elif target_value_type == types.ListType or target_value_type == types.TupleType:
-                return self._merge_lists(target_value, source_value)
-            else:
-                return source_value
-        else:
-            return source_value
-
-    def _merge_lists(self, target_list, source_list):
-        final_list = []
-
-        final_list.extend(target_list)
-        final_list.extend(source_list)
-
-        return final_list
-
-    def _merge_maps(self, target_map, source_map):
-        # copies the target map as the final map
-        final_map = copy.copy(target_map)
-
-        for source_key, source_value in source_map.items():
-            if source_key in final_map:
-                target_value = final_map[source_key]
-
-                final_value = self._mege_values(target_value, source_value)
-
-                final_map[source_key] = final_value
-            else:
-                final_map[source_key] = source_value
-
-        return final_map
-
-    def _process_redirection(self, request):
+    def _process_redirection(self, request, service_configuration):
         """
         Processes the redirection stage of the http request.
         Processing redirection implies matching the path against the
@@ -1233,10 +1149,9 @@ class HttpClientServiceTask:
 
         @type request: HttpRequest
         @param request: The request to be processed.
+        @type service_configuration: Dictionary
+        @param service_configuration: The service configuration map.
         """
-
-        # @todo: rmeove this !!!!!
-        service_configuration = self._get_service_configuration(request)
 
         # retrieves the service configuration redirections
         service_configuration_redirections = service_configuration.get("redirections", {})
@@ -1287,7 +1202,7 @@ class HttpClientServiceTask:
                 # breaks the loop
                 break
 
-    def _process_handler(self, request):
+    def _process_handler(self, request, service_configuration):
         """
         Processes the handler stage of the http request.
         Processing handler implies matching the path against the
@@ -1295,13 +1210,15 @@ class HttpClientServiceTask:
 
         @type request: HttpRequest
         @param request: The request to be processed.
+        @type service_configuration: Dictionary
+        @param service_configuration: The service configuration map.
         """
 
         # sets the default handler name
         handler_name = None
 
         # retrieves the service configuration contexts
-        service_configuration_contexts = self.service_configuration.get("contexts", {})
+        service_configuration_contexts = service_configuration.get("contexts", {})
 
         # retrieves the service configuration contexts resolution order
         service_configuration_contexts_resolution_order = service_configuration_contexts.get("resolution_order", service_configuration_contexts.keys())
@@ -1341,7 +1258,7 @@ class HttpClientServiceTask:
                     request.redirection_validation = False
 
                     # re-processes the request (to process the real handler)
-                    return self._process_handler(request)
+                    return self._process_handler(request, service_configuration)
 
                 # sets the request properties
                 request.properties = service_configuration_context.get("request_properties", {})
@@ -1361,10 +1278,168 @@ class HttpClientServiceTask:
             request.redirection_validation = False
 
             # re-processes the request (to process the real handler)
-            return self._process_handler(request)
+            return self._process_handler(request, service_configuration)
 
         # returns the handler name
         return handler_name
+
+    def _get_service_configuration(self, request):
+        """
+        Retrieves the service configuration for the given request.
+        This retrieval takes into account the request target and characteristics
+        to merge the virtual servers configurations.
+
+        @type request: HttpRequest
+        @param request: The request to be used in the resolution
+        of the service configuration.
+        @rtype: Dictionary
+        @return: The resolved service configuration.
+        """
+
+        # retrieves the base service configuration
+        service_configuration = self.service_configuration
+
+        # retrieves the host value from the headers
+        host = request.headers_map.get("Host", None)
+
+        # in case the host is defined
+        if host:
+            # retrieves the virtual servers map
+            service_configuration_virtual_servers = service_configuration.get("virtual_servers", {})
+
+            # retrieves the service configuration virtual servers resolution order
+            service_configuration_virtual_servers_resolution_order = service_configuration_virtual_servers.get("resolution_order", service_configuration_virtual_servers.keys())
+
+            # splits the host value (to try
+            # to retrieve hostname and port)
+            host_splitted = host.split(":")
+
+            # retrieves the host splitted length
+            host_splitted_length = len(host_splitted)
+
+            # in case the host splitted length is two
+            if host_splitted_length == 2:
+                # retrieves the hostname and the port
+                hostname, _port = host_splitted
+            else:
+                # sets the hostname as the host (size one)
+                hostname = host
+
+            # in case the hostname exists in the service configuration virtual servers map
+            if hostname in service_configuration_virtual_servers:
+                # iterates over the service configuration virtual server names
+                for service_configuration_virtual_server_name in service_configuration_virtual_servers_resolution_order:
+                    # in case this is the hostname
+                    if hostname == service_configuration_virtual_server_name:
+                        # retrieves the service configuration virtual server value
+                        service_configuration_virtual_server_value = service_configuration_virtual_servers[service_configuration_virtual_server_name]
+
+                        # merges the service configuration map with the service configuration virtual server value,
+                        # to retrieve the final service configuration for this request
+                        service_configuration = self._mege_values(service_configuration, service_configuration_virtual_server_value)
+
+                        # breaks the loop
+                        break
+
+        # returns the service configuration
+        return service_configuration
+
+    def _mege_values(self, target_value, source_value):
+        """
+        Merges two values into one, the type of the values
+        is taken into account and the merge only occurs when
+        the type is list or dictionary.
+
+        @type target_list: Object
+        @param target_list: The target value to be used.
+        @type source_list: Object
+        @param source_list: The source value to be used.
+        @rtype: Object
+        @return: The final resulting value.
+        """
+
+        # retrieves the types for both the target and
+        # the source values
+        target_value_type = type(target_value)
+        source_value_type = type(source_value)
+
+        # in case both types are the same (no conflict)
+        if target_value_type == source_value_type:
+            # in case the type is dictionary
+            if target_value_type == types.DictType:
+                # merges both maps
+                return self._merge_maps(target_value, source_value)
+            # in case the type is list
+            elif target_value_type == types.ListType or target_value_type == types.TupleType:
+                # merges both list
+                return self._merge_lists(target_value, source_value)
+            # in case it's a different type
+            else:
+                # returns the source value (no possible merge)
+                return source_value
+        else:
+            # returns the source value (no possible merge)
+            return source_value
+
+    def _merge_lists(self, target_list, source_list):
+        """
+        Merges two lists into one, the source list is made
+        prioritaire, and is taken into account first.
+
+        @type target_list: List
+        @param target_list: The target list to be used.
+        @type source_list: List
+        @param source_list: The source list to be used.
+        @rtype: List
+        @return: The final resulting list.
+        """
+
+        # creates the final list
+        final_list = []
+
+        # extends the list with both lists
+        final_list.extend(source_list)
+        final_list.extend(target_list)
+
+        # returns the final list
+        return final_list
+
+    def _merge_maps(self, target_map, source_map):
+        """
+        Merges two maps into one, the source map is made
+        prioritaire, and is taken into account first.
+
+        @type target_map: Dictionary
+        @param target_map: The target map to be used.
+        @type source_map: List
+        @param source_map: The source map to be used.
+        @rtype: List
+        @return: The final resulting map.
+        """
+
+        # copies the target map as the final map
+        final_map = copy.copy(target_map)
+
+        # iterates over all the source map values
+        for source_key, source_value in source_map.items():
+            # in case the source key exists in the
+            # final map, merge is required
+            if source_key in final_map:
+                # retrieves the target value
+                target_value = final_map[source_key]
+
+                # merges both maps returning the final value
+                final_value = self._mege_values(target_value, source_value)
+
+                # sets the ginal value in the final map
+                final_map[source_key] = final_value
+            # otherwise no merge is required
+            else:
+                # sets the source value in the final map
+                final_map[source_key] = source_value
+
+        # returns the final map
+        return final_map
 
 class HttpRequest:
     """
