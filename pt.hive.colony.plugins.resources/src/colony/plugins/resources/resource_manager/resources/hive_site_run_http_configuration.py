@@ -49,18 +49,30 @@ configuration = {
                       "default_handler" : "file"}
                  ],
                  "virtual_servers" : {
-                     "hive.pt" : {
+                     "resolution_order" : ["blog.hive.pt"],
+                     "blog.hive.pt" : {
+                         "redirections" : {
+                             "resolution_order" : ["/"],
+                             "/" : {
+                                 "target" : "/colony_mod_python/rest/mvc/hive_blog/",
+                                 "recursive_redirection" : True
+                             }
+                         }
                      }
                  },
                  "redirections" : {
-                     "resolution_order" : ["/"],
+                     "resolution_order" : ["/blog", "/"],
+                     "/blog" : {
+                         "target" : "/colony_mod_python/rest/mvc/hive_blog/",
+                         "recursive_redirection" : True
+                     },
                      "/" : {
                          "target" : "/colony_mod_python/rest/mvc/hive/",
                          "recursive_redirection" : True
                      }
                  },
                  "contexts" : {
-                     "resolution_order" : ["/colony_web/plugins", "/colony_web", "/colony_manager", "/colony_mod_python/rest/mvc/hive/resources", "/colony_mod_python", "/template_error_handler", "/docs", "/eclipse", "/cgi-bin", "/fastcgi-bin", "/web_administration", "/websession_test", "/websession"],
+                     "resolution_order" : ["/colony_web/plugins", "/colony_web", "/colony_manager", "/colony_mod_python/rest/mvc/hive/resources", "/colony_mod_python/rest/mvc/hive_blog/resources", "/colony_mod_python", "/template_error_handler", "/docs", "/eclipse", "/cgi-bin", "/fastcgi-bin", "/web_administration", "/websession_test", "/websession"],
                      "/colony_web" : {
                          "handler" : "file",
                          "allow_redirection" : False,
@@ -86,6 +98,13 @@ configuration = {
                          "allow_redirection" : False,
                          "request_properties" : {
                              "base_path" : "$resource{system.path.hive_site}/pt.hive.hive_site.plugins.main/src/hive_site/plugins/hive_site_main/main/resources/extras"
+                         }
+                     },
+                     "/colony_mod_python/rest/mvc/hive_blog/resources" : {
+                         "handler" : "file",
+                         "allow_redirection" : False,
+                         "request_properties" : {
+                             "base_path" : "$resource{system.path.hive_blog}/pt.hive.hive_blog.plugins.main/src/hive_blog/plugins/hive_blog_main/main/resources/extras"
                          }
                      },
                      "/colony_mod_python" : {
