@@ -132,20 +132,20 @@ class BusinessHelper:
         # returns the target module
         return target_module
 
-    def generate_entity_bundle_map(self, entity_bundle_classes):
-        # creates the entity bundle map
-        entity_bundle_map = {}
+    def generate_bundle_map(self, bundle_classes):
+        # creates the bundle map
+        bundle_map = {}
 
-        # iterates over all the entity bundle classes
-        for entity_class in entity_bundle_classes:
-            # retrieves the entity class name
-            entity_class_name = entity_class.__name__
+        # iterates over all the bundle classes
+        for bundle_class in bundle_classes:
+            # retrieves the bundle class name
+            bundle_class_name = bundle_class.__name__
 
-            # sets the class in the entity bundle map
-            entity_bundle_map[entity_class_name] = entity_class
+            # sets the class in the bundle bundle map
+            bundle_map[bundle_class_name] = bundle_class
 
-        # returns the entity bundle map
-        return entity_bundle_map
+        # returns the bundle map
+        return bundle_map
 
     def generate_module_bundle(self, bundle_module_name, bundle_map):
         # creates the bundle module

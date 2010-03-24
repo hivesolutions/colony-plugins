@@ -79,10 +79,10 @@ class BusinessDummyBusinessLogic:
         base_directory_name = self.get_path_directory_name()
 
         # imports the class module
-        business_helper_plugin.import_class_module("business_dummy_business_logic_class", globals(), locals(), global_values, base_directory_name)
+        business_dummy_business_logic_class = business_helper_plugin.import_class_module_target("business_dummy_business_logic_class", globals(), locals(), global_values, base_directory_name, "business_dummy_business_logic_class")
 
         # sets the business logic class
-        self.business_logic_class = DummyBusinessLogic
+        self.business_logic_class = business_dummy_business_logic_class.DummyBusinessLogic
 
     def get_business_logic_class(self):
         return self.business_logic_class

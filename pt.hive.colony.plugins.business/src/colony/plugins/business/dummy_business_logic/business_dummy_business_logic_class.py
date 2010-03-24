@@ -39,6 +39,14 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import datetime
 
+import colony.libs.importer_util
+
+TRANSACTION_DECORATOR_VALUE = "transaction_decorator"
+""" The transaction decorator value """
+
+# imports the transaction decorator
+transaction_decorator = colony.libs.importer_util.__importer__(TRANSACTION_DECORATOR_VALUE)
+
 class DummyBusinessLogic:
 
     def print_dummy(self):

@@ -80,7 +80,7 @@ class BusinessDummyEntityBundle:
         self.entity_bundle = business_dummy_entity_bundle_classes.ENTITY_CLASSES
 
         # generates the entity bundle map from the entity bundle
-        self.entity_bundle_map = business_helper_plugin.generate_entity_bundle_map(self.entity_bundle)
+        self.entity_bundle_map = business_helper_plugin.generate_bundle_map(self.entity_bundle)
 
     def get_entity_bundle(self):
         return self.entity_bundle
