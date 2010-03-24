@@ -37,6 +37,11 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import imp
+
+GLOBALS_REFERENCE_VALUE = "_globals"
+""" The globals reference value """
+
 class BusinessHelper:
     """
     The business helper class.
@@ -55,7 +60,27 @@ class BusinessHelper:
 
         self.business_helper_plugin = business_helper_plugin
 
-    def import_class_module(self, class_module_name, globals, locals, global_values, base_directory_path):
+    def import_class_module(self, class_module_name, globals, locals, global_values, base_directory_path, target_module_name = None):
+        """
+        Imports the class module using the globals and locals from the current target,
+        it imports the symbols in the module to the current globals environment.
+
+        @type class_module_name: String
+        @param class_module_name: The name of the module containing the classes to be imported.
+        @type globals: Dictionary
+        @param globals: The global variables map.
+        @type locals: Dictionary
+        @param locals: The local variables map.
+        @type global_values: List
+        @param global_values: A list containing the global values to be converted from locals.
+        @type base_directory_path: String
+        @param base_directory_path: The base directory path to be used.
+        @type target_module_name: String
+        @param target_module_name: The name of the module to import the classes.
+        @rtype: Module
+        @return: The created target module.
+        """
+
         # creates a copy of locals
         locals_copy = locals.copy()
 
@@ -69,14 +94,72 @@ class BusinessHelper:
                 # adds the value to globals
                 globals[local_key_value] = local_value
 
-        # adds the entity class to the globals map
+        if target_module_name:
+            # tries to retrieve the target module
+            target_module = self._get_target_module(target_module_name, globals)
+
+            # sets the target module dictionary as the target map
+            target_map = target_module.__dict__
+
+            # sets the target module in the globals
+            globals[target_module_name] = target_module
+        else:
+            # sets the target module as none
+            target_module = None
+
+            # sets the globals map as the target map
+            target_map = globals
+
+        base_data_module = self._get_target_module("base_data", globals)
+
+        globals["base_data"] = base_data_module
+
+        base_data_module.__dict__[EntityClass.__name__] = EntityClass
+
         globals[EntityClass.__name__] = EntityClass
 
+        # sets the globals reference attribute
+        target_map[GLOBALS_REFERENCE_VALUE] = globals
+
         # executes the file in the given environment
-        execfile(base_directory_path + "/" + class_module_name + ".py", globals, globals)
+        # to import the symbols
+        execfile(base_directory_path + "/" + class_module_name + ".py", target_map, target_map)
+
+        # returns the target module
+        return target_module
 
     def get_entity_class(self):
         return EntityClass
+
+    def _get_target_module(self, target_module_name, globals):
+        # tries to retrieve the target module
+        target_module = globals.get(target_module_name, None)
+
+        # in case the target module is not defined
+        if not target_module:
+            # creates the target module
+            target_module = imp.new_module(target_module_name)
+
+            # adds the target module to the globals map
+            globals[target_module_name] = target_module
+
+        # returns the target model
+        return target_module
+
+    def _get_base_data_module(self, target_module_name, globals):
+        # tries to retrieve the base data module
+        base_data_module = globals.get("base_data", None)
+
+        # in case the base data module is not defined
+        if not base_data_module:
+            # creates the base data module
+            base_data_module = imp.new_module(base_data_module)
+
+            # adds the target module to the globals map
+            globals[target_module_name] = target_module
+
+        # returns the target model
+        return target_module
 
 class EntityClass(object):
     """

@@ -85,7 +85,10 @@ class BusinessHelperPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def import_class_module(self, class_module_name, globals, locals, global_values, base_directory_path):
-        self.business_helper.import_class_module(class_module_name, globals, locals, global_values, base_directory_path)
+        return self.business_helper.import_class_module(class_module_name, globals, locals, global_values, base_directory_path)
+
+    def import_class_module_target(self, class_module_name, globals, locals, global_values, base_directory_path, target_module_name):
+        return self.business_helper.import_class_module(class_module_name, globals, locals, global_values, base_directory_path, target_module_name)
 
     def get_entity_class(self):
         return self.business_helper.get_entity_class()
