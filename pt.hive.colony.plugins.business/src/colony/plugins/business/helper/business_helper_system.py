@@ -39,6 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import imp
 
+BASE_ENTITY_MODULE_VALUE = "base_entity"
+""" The base entity module value """
+
 GLOBALS_REFERENCE_VALUE = "_globals"
 """ The globals reference value """
 
@@ -110,11 +113,14 @@ class BusinessHelper:
             # sets the globals map as the target map
             target_map = globals
 
-        base_data_module = self._get_target_module("base_data", globals)
+        # retrieves the base entity module
+        base_entity_module = self._get_target_module(BASE_ENTITY_MODULE_VALUE, globals)
 
-        globals["base_data"] = base_data_module
+        # sets the base entity module in the globals
+        globals[BASE_ENTITY_MODULE_VALUE] = base_entity_module
 
-        base_data_module.__dict__[EntityClass.__name__] = EntityClass
+        # sets the entity class in the base entity module
+        base_entity_module.__dict__[EntityClass.__name__] = EntityClass
 
         globals[EntityClass.__name__] = EntityClass
 
@@ -128,6 +134,21 @@ class BusinessHelper:
         # returns the target module
         return target_module
 
+    def generate_entity_bundle_map(self, entity_bundle_classes):
+        # creates the entity bundle map
+        entity_bundle_map = {}
+
+        # iterates over all the entity bundle classes
+        for entity_class in entity_bundle_classes:
+            # retrieves the entity class name
+            entity_class_name = entity_class.__name__
+
+            # sets the class in the entity bundle map
+            entity_bundle_map[entity_class_name] = entity_class
+
+        # returns the entity bundle map
+        return entity_bundle_map
+
     def get_entity_class(self):
         return EntityClass
 
@@ -139,21 +160,6 @@ class BusinessHelper:
         if not target_module:
             # creates the target module
             target_module = imp.new_module(target_module_name)
-
-            # adds the target module to the globals map
-            globals[target_module_name] = target_module
-
-        # returns the target model
-        return target_module
-
-    def _get_base_data_module(self, target_module_name, globals):
-        # tries to retrieve the base data module
-        base_data_module = globals.get("base_data", None)
-
-        # in case the base data module is not defined
-        if not base_data_module:
-            # creates the base data module
-            base_data_module = imp.new_module(base_data_module)
 
             # adds the target module to the globals map
             globals[target_module_name] = target_module

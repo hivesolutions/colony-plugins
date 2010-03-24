@@ -90,5 +90,8 @@ class BusinessHelperPlugin(colony.plugins.plugin_system.Plugin):
     def import_class_module_target(self, class_module_name, globals, locals, global_values, base_directory_path, target_module_name):
         return self.business_helper.import_class_module(class_module_name, globals, locals, global_values, base_directory_path, target_module_name)
 
+    def generate_entity_bundle_map(self, entity_bundle_classes):
+        return self.business_helper.generate_entity_bundle_map(entity_bundle_classes)
+
     def get_entity_class(self):
         return self.business_helper.get_entity_class()
