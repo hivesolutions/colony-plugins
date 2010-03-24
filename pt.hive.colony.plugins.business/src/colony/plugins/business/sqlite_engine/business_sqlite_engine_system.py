@@ -587,12 +587,6 @@ class BusinessSqliteEngine:
             # returns immediately
             return
 
-        # retrieves the database connection from the connection object
-        database_connection = connection.database_connection
-
-        # creates the cursor for the given connection
-        cursor = database_connection.cursor()
-
         # unsets the requires table recreation flag
         requires_table_recreation = False
 
@@ -623,7 +617,14 @@ class BusinessSqliteEngine:
 
             # restores the entity table data in the associated tables
             self._restore_entity_table_data(connection, entity_class, entities_list)
+        # in case the table just requires an addition of a column
         else:
+            # retrieves the database connection from the connection object
+            database_connection = connection.database_connection
+
+            # creates the cursor for the given connection
+            cursor = database_connection.cursor()
+
             # iterates over all the unsynced attributes
             for unsynced_attribute in unsynced_attributes_list:
                 # retrieves the unsynced attribute name and reason
@@ -645,8 +646,8 @@ class BusinessSqliteEngine:
                     # executes the query altering the table
                     self.execute_query(cursor, query_string_value)
 
-        # closes the cursor
-        cursor.close()
+            # closes the cursor
+            cursor.close()
 
     def create_table_generator(self, connection):
         """
