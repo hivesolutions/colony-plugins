@@ -358,7 +358,8 @@ class EntityManager:
             if self.entity_manager_engine_plugin.exists_entity_definition(connection, entity_class):
                 if not self.entity_manager_engine_plugin.synced_entity_definition(connection, entity_class):
                     # updates the entity definition (because the model is not synced)
-                    self.entity_manager_engine_plugin.update_entity_definition(connection, entity_class)
+                    #self.entity_manager_engine_plugin.update_entity_definition(connection, entity_class)
+                    pass
             else:
                 self.entity_manager_engine_plugin.create_entity_definition(connection, entity_class)
 
