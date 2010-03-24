@@ -70,31 +70,17 @@ class BusinessDummyEntityBundle:
         # retrieves the business helper plugin
         business_helper_plugin = self.business_dummy_entity_bundle_plugin.business_helper_plugin
 
-        # creates the list of global values
-        global_values = []
-
         # retrieves the base directory name
         base_directory_name = self.get_path_directory_name()
 
-        # imports the classes module
-        business_helper_plugin.import_class_module("business_dummy_entity_bundle_classes", globals(), locals(), global_values, base_directory_name)
+        # imports the class module
+        business_dummy_entity_bundle_classes = business_helper_plugin.import_class_module_target("business_dummy_entity_bundle_classes", globals(), locals(), [], base_directory_name, "business_dummy_entity_bundle_classes")
 
         # sets the entity bundle
-        self.entity_bundle = [TestEntity, DummyEntityBundleParent, DummyEntityBundleAssociation, DummyEntityBundle, DummyEntityBundleNew]
+        self.entity_bundle = business_dummy_entity_bundle_classes.ENTITY_CLASSES
 
-        # creates the entity bundle map
-        entity_bundle_map = {}
-
-        # iterates over all the classes in the entity bundle
-        for entity_class in self.entity_bundle:
-            # retrieves the entity class name
-            entity_class_name = entity_class.__name__
-
-            # sets the class in the entity bundle map
-            entity_bundle_map[entity_class_name] = entity_class
-
-        # sets the entity bundle map
-        self.entity_bundle_map = entity_bundle_map
+        # generates the entity bundle map from the entity bundle
+        self.entity_bundle_map = business_helper_plugin.generate_entity_bundle_map(self.entity_bundle)
 
     def get_entity_bundle(self):
         return self.entity_bundle

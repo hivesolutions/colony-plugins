@@ -37,7 +37,15 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class TestEntity(EntityClass):
+import colony.libs.importer_util
+
+BASE_ENTITY_MODULE_VALUE = "base_entity"
+""" The base entity module value """
+
+# imports the base entity classes
+base_entity = colony.libs.importer_util.__importer__(BASE_ENTITY_MODULE_VALUE)
+
+class TestEntity(base_entity.EntityClass):
 
     id = {"id" : True, "data_type" : "numeric", "generated" : True, "generator_type" : "table", "table_generator_field_name" : "Test"}
     """ The id of the entity """
@@ -49,7 +57,7 @@ class TestEntity(EntityClass):
         self.id = None
         self.object_value = None
 
-class DummyEntityBundleParent(EntityClass):
+class DummyEntityBundleParent(base_entity.EntityClass):
 
     name = {"id" : True, "data_type" : "text"}
     """ The name of the entity """
@@ -61,7 +69,6 @@ class DummyEntityBundleParent(EntityClass):
     """ The local date of the entity """
 
     mapping_options = {"inheritance_mapping": "table_per_class"}
-    #mapping_options = {"inheritance_mapping": "single_table"}
     """ The object relational (o/r) options """
 
     def __init__(self):
@@ -78,7 +85,7 @@ class DummyEntityBundleParent(EntityClass):
     def get_address(self):
         return self.address
 
-    def set_address(self, name):
+    def set_address(self, address):
         self.address = address
 
     def get_local_date(self):
@@ -208,3 +215,6 @@ class DummyEntityBundleNew(DummyEntityBundleParent):
                 "attribute_column_name" : "dummy_entity_bundle_new_name",
                 "join_attribute_column_name" : "dummy_entity_bundle_association_name",
                 "join_table" : "DummyOtherJoin"}
+
+ENTITY_CLASSES = [TestEntity, DummyEntityBundleParent, DummyEntityBundleAssociation, DummyEntityBundle, DummyEntityBundleNew]
+""" The entity classes of the module """

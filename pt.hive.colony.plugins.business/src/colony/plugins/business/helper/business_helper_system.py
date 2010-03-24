@@ -122,8 +122,6 @@ class BusinessHelper:
         # sets the entity class in the base entity module
         base_entity_module.__dict__[EntityClass.__name__] = EntityClass
 
-        globals[EntityClass.__name__] = EntityClass
-
         # sets the globals reference attribute
         target_map[GLOBALS_REFERENCE_VALUE] = globals
 
@@ -148,6 +146,16 @@ class BusinessHelper:
 
         # returns the entity bundle map
         return entity_bundle_map
+
+    def generate_module_bundle(self, bundle_module_name, bundle_map):
+        # creates the bundle module
+        bundle_module = imp.new_module(bundle_module_name)
+
+        for bundle_key, bundle_value in bundle_map.items():
+            bundle_module.__dict__[bundle_key] = bundle_value
+
+        # returns the bundle module
+        return bundle_module
 
     def get_entity_class(self):
         return EntityClass

@@ -37,13 +37,21 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class DummyEntity(DummyEntityBundleParent):
+import colony.libs.importer_util
+
+DUMMY_BUNDLE_MODULE_VALUE = "dummy_bundle"
+""" The dummy bundle module value """
+
+# imports the dummy bundle module
+dummy_bundle = colony.libs.importer_util.__importer__(DUMMY_BUNDLE_MODULE_VALUE)
+
+class DummyEntity(dummy_bundle.DummyEntityBundleParent):
 
     age = {"data_type" : "numeric"}
     """ The age of the entity """
 
     def __init__(self):
-        DummyEntityBundleParent.__init__(self)
+        dummy_bundle.DummyEntityBundleParent.__init__(self)
         self.age = None
 
     def get_age(self):
