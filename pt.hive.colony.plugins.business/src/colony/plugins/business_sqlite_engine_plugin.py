@@ -122,6 +122,9 @@ class BusinessSqliteEnginePlugin(colony.plugins.plugin_system.Plugin):
     def create_entity_definition(self, connection, entity_class):
         return self.business_sqlite_engine.create_entity_definition(connection, entity_class)
 
+    def remove_entity_definition(self, connection, entity_class):
+        return self.business_sqlite_engine.remove_entity_definition(connection, entity_class)
+
     def update_entity_definition(self, connection, entity_class):
         return self.business_sqlite_engine.update_entity_definition(connection, entity_class)
 

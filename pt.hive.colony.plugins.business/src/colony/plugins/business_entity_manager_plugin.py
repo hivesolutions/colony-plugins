@@ -88,9 +88,24 @@ class BusinessEntityManagerPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def load_entity_manager(self, engine_name):
+        """
+        Loads an entity manager for the given engine name.
+
+        @rtype: EntityManager
+        @return: The loaded entity manager.
+        """
+
         return self.business_entity_manager.load_entity_manager(engine_name)
 
     def get_transaction_decorator(self):
+        """
+        Retrieves the transaction decorator used to decorate
+        a method in order to force transaction existence.
+
+        @rtype: Function
+        @return: The transaction decorator function.
+        """
+
         return business.entity_manager.business_entity_manager_decorators.transaction
 
     @colony.plugins.decorators.load_allowed_capability("entity_manager_engine")

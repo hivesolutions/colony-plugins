@@ -155,6 +155,21 @@ ID_ATTRIBUTE_NAME_VALUE = "id_attribute_name"
 EXISTS_ENTITY_DEFINITION_QUERY = "select name from SQLite_Master"
 """ The exists entity definition query """
 
+INEXISTING_ATTRIBUTE_REASON_CODE = 1
+""" The inexisting attribute reason code """
+
+INEXISTING_RELATION_ATTRIBUTE_REASON_CODE = 2
+""" The inexisting relation attribute reason code """
+
+INVALID_ATTRIBUTE_TYPE_REASON_CODE = 3
+""" The invalid attribute type reason code """
+
+INEXISTING_ATTRIBUTE_REASON_CODES = [1, 2]
+""" The inexisting attribute reason codes """
+
+FORCE_UPDATE_REASON_CODES = [2, 3]
+""" The force update reason codes """
+
 class BusinessSqliteEngine:
     """
     The business sqlite engine class.
@@ -384,91 +399,18 @@ class BusinessSqliteEngine:
         @return: The result of the check.
         """
 
-        # retrieves the database connection from the connection object
-        database_connection = connection.database_connection
+        # retrieves the unsynced attributes of the entity class
+        unsynced_attributes_list = self._get_unsynced_attributes(connection, entity_class)
 
-        # retrieves the entity class name
-        entity_class_name = entity_class.__name__
-
-        # retrieves all the valid class attribute names, removes method values and the name exceptions
-        entity_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_class)
-
-        # retrieves all the valid class attribute values
-        entity_class_valid_attribute_values = self.get_entity_class_attribute_values(entity_class)
-
-        # retrieves the number of attributes in the entity class
-        entity_class_valid_attributes_size = len(entity_class_valid_attribute_names)
-
-        # creates the cursor for the given connection
-        cursor = database_connection.cursor()
-
-        # creates the initial query string value
-        query_string_value = "pragma table_info(" + entity_class_name + ")"
-
-        # executes the query retrieving the values
-        self.execute_query(cursor, query_string_value)
-
-        # selects the table information from the cursor
-        table_information_list = [value for value in cursor]
-
-        # creates the initial index value
-        index = 0
-
-        # retrieves the table information list size
-        table_information_list_size = len(table_information_list)
-
-        # in case the table information list size is different from the entity class
-        # valid attributes size, invalid number of attributes situation
-        if not table_information_list_size == entity_class_valid_attributes_size:
-            # closes the cursor
-            cursor.close()
-
-            # returns false
+        # in case the unsynced attributes list is not
+        # empty and valid
+        if unsynced_attributes_list:
+            # returns false (the class is not completely synced)
             return False
-
-        # iterates over all the table information
-        for table_information_item in table_information_list:
-            # retrieves the attribute name
-            attribute_name = table_information_item[1]
-
-            # retrieves the attribute data type
-            attribute_data_type = table_information_item[2]
-
-            # retrieves the entity class valid attribute name
-            entity_class_valid_attribute_name = entity_class_valid_attribute_names[index]
-
-            # retrieves the entity class valid attribute value
-            entity_class_valid_attribute_value = entity_class_valid_attribute_values[index]
-
-            # retrieves the entity class valid attribute data type
-            entity_class_valid_attribute_data_type = entity_class_valid_attribute_value[DATA_TYPE_FIELD]
-
-            # retrieves the entity class valid attribute target data type
-            entity_class_valid_attribute_target_data_type = DATA_TYPE_MAP[entity_class_valid_attribute_data_type]
-
-            # in case the attribute name is not the same as the entity class valid attribute name,
-            # invalid attribute name situation
-            if not attribute_name == entity_class_valid_attribute_name:
-                # closes the cursor
-                cursor.close()
-
-                return False
-
-            # in case the attribute data type is not the same as the entity class valid attribute target data type,
-            # invalid attribute data type situation
-            if not attribute_data_type == entity_class_valid_attribute_target_data_type:
-                # closes the cursor
-                cursor.close()
-
-                return False
-
-            # increments the index value
-            index += 1
-
-        # closes the cursor
-        cursor.close()
-
-        return True
+        # in case the unsynced attributes list is empty or invalid
+        else:
+            # returns true (the class is synced)
+            return True
 
     def create_entity_definition(self, connection, entity_class):
         """
@@ -605,6 +547,25 @@ class BusinessSqliteEngine:
         # closes the cursor
         cursor.close()
 
+    def remove_entity_definition(self, connection, entity_class):
+        # retrieves the database connection from the connection object
+        database_connection = connection.database_connection
+
+        # creates the cursor for the given connection
+        cursor = database_connection.cursor()
+
+        # retrieves the entity class name
+        entity_class_name = entity_class.__name__
+
+        # creates the query string value
+        query_string_value = "drop table " + entity_class_name
+
+        # executes the query dropping the table
+        self.execute_query(cursor, query_string_value)
+
+        # closes the cursor
+        cursor.close()
+
     def update_entity_definition(self, connection, entity_class):
         """
         Updates the entity definition in the database from the entity class.
@@ -615,7 +576,77 @@ class BusinessSqliteEngine:
         @param entity_class: The entity class to be used in the update.
         """
 
-        pass
+        # retrieves the entity class name
+        entity_class_name = entity_class.__name__
+
+        # retrieves the unsynced attributes list from the entity class
+        unsynced_attributes_list = self._get_unsynced_attributes(connection, entity_class)
+
+        # in case there are not
+        if not unsynced_attributes_list:
+            # returns immediately
+            return
+
+        # retrieves the database connection from the connection object
+        database_connection = connection.database_connection
+
+        # creates the cursor for the given connection
+        cursor = database_connection.cursor()
+
+        # unsets the requires table recreation flag
+        requires_table_recreation = False
+
+        # iterates over all the unsynced attributes, to check if any
+        # of the attribute problems is due to a type conflict
+        for unsynced_attribute in unsynced_attributes_list:
+            # retrieves the unsynced attribute name and reason
+            _unsynced_attribute_name, unsynced_attribute_reason = unsynced_attribute
+
+            if unsynced_attribute_reason in FORCE_UPDATE_REASON_CODES:
+                # sets the requires table recreation flag
+                requires_table_recreation = True
+
+                # breaks the loop
+                break
+
+        # in case it requires table recreation
+        if requires_table_recreation:
+            # saves the entity table data in a list of entities
+            entities_list = self._save_entity_table_data(connection, entity_class)
+
+            # removes the entity definition by removing the
+            # currently created tables
+            self.remove_entity_definition(connection, entity_class)
+
+            # creates the entity definition by creating the necessary tables
+            self.create_entity_definition(connection, entity_class)
+
+            # restores the entity table data in the associated tables
+            self._restore_entity_table_data(connection, entity_class, entities_list)
+        else:
+            # iterates over all the unsynced attributes
+            for unsynced_attribute in unsynced_attributes_list:
+                # retrieves the unsynced attribute name and reason
+                unsynced_attribute_name, unsynced_attribute_reason = unsynced_attribute
+
+                # retrieves the unsynced attribute value
+                unsynced_attribute_value = getattr(entity_class, unsynced_attribute_name)
+
+                # retrieves the unsynced attribute data type
+                unsynced_attribute_data_type = self.get_attribute_data_type(unsynced_attribute_value, entity_class, unsynced_attribute_name)
+
+                # retrieves the valid sqlite data type from the formal unsynced attribute data type
+                unsynced_attribute_target_data_type = DATA_TYPE_MAP[unsynced_attribute_data_type]
+
+                if unsynced_attribute_reason == INEXISTING_ATTRIBUTE_REASON_CODE:
+                    # creates the query string value
+                    query_string_value = "alter table " + entity_class_name + " add column " + unsynced_attribute_name + " " + unsynced_attribute_target_data_type
+
+                    # executes the query altering the table
+                    self.execute_query(cursor, query_string_value)
+
+        # closes the cursor
+        cursor.close()
 
     def create_table_generator(self, connection):
         """
@@ -2787,14 +2818,14 @@ class BusinessSqliteEngine:
 
         self.business_sqlite_engine_plugin.debug("sql script: " + script_string_value)
 
-    def get_attribute_sqlite_string_value(self, attribute_value, attribute_date_type):
+    def get_attribute_sqlite_string_value(self, attribute_value, attribute_data_type):
         """
         Retrieves the sqlite string representation of the given attribute.
 
         @type attribute_value: Object
         @param attribute_value: The attribute value.
-        @type attribute_date_type: String
-        @param attribute_date_type: The attribute data type.
+        @type attribute_data_type: String
+        @param attribute_data_type: The attribute data type.
         @rtype: String
         @return: The sqlite string representation of the given attribute.
         """
@@ -2803,12 +2834,12 @@ class BusinessSqliteEngine:
         if attribute_value == None:
             return "null"
         else:
-            if attribute_date_type == "text":
+            if attribute_data_type == "text":
                 # retrieves the escaped attribute value
                 escaped_attribute_value = self.escape_text_value(attribute_value)
 
                 return "'" + escaped_attribute_value + "'"
-            elif attribute_date_type == "date":
+            elif attribute_data_type == "date":
                 # in case the attribute is given in the date time format
                 if type(attribute_value) == datetime.datetime:
                     # retrieves the date time tuple
@@ -2844,14 +2875,14 @@ class BusinessSqliteEngine:
         # returns the escaped text value
         return escaped_text_value
 
-    def get_processed_sqlite_attribute_value(self, attribute_value, attribute_date_type):
+    def get_processed_sqlite_attribute_value(self, attribute_value, attribute_data_type):
         """
         Retrieves the sqlite string representation of the given attribute.
 
         @type attribute_value: Object
         @param attribute_value: The attribute value.
-        @type attribute_date_type: String
-        @param attribute_date_type: The attribute data type.
+        @type attribute_data_type: String
+        @param attribute_data_type: The attribute data type.
         @rtype: Object
         @return: The python object representing the given sqlite object.
         """
@@ -2861,7 +2892,7 @@ class BusinessSqliteEngine:
             return None
 
         # in case the attribute date type is date
-        if attribute_date_type == "date":
+        if attribute_data_type == "date":
             return datetime.datetime.utcfromtimestamp(float(attribute_value))
 
         # returns the attribute value
@@ -2887,6 +2918,238 @@ class BusinessSqliteEngine:
 
         # returns the entity sub classes
         return entity_sub_classes
+
+    def _save_entity_table_data(self, connection, entity_class):
+        # creates the entities list
+        entities_list = []
+
+        # retrieves the database connection from the connection object
+        database_connection = connection.database_connection
+
+        # creates the cursor for the given connection
+        cursor = database_connection.cursor()
+
+        # retrieves the entity class name
+        entity_class_name = entity_class.__name__
+
+        # creates the query string value
+        query_string_value = "select "
+
+        # retrieves all the valid class attribute names, removes method values and the name exceptions
+        entity_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_class)
+
+        missing_attributes_list = self._get_missing_attributes(connection, entity_class)
+
+        entity_class_valid_attribute_names = [value for value in entity_class_valid_attribute_names if not value in missing_attributes_list]
+
+        # sets the is first flag
+        is_first = True
+
+        for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
+            if is_first:
+                is_first = False
+            else:
+                query_string_value += ", "
+
+            query_string_value += entity_class_valid_attribute_name
+
+        query_string_value += " from " + entity_class_name
+
+        # executes the query selecting the table
+        self.execute_query(cursor, query_string_value)
+
+        # selects the values from the cursor
+        values_list = [value for value in cursor]
+
+        for value in values_list:
+            # creates a new entity
+            entity = entity_class()
+
+            # starts the index
+            index = 0
+
+            for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
+                entity_class_valid_attribute_value = value[index]
+
+                setattr(entity, entity_class_valid_attribute_name, entity_class_valid_attribute_value)
+
+                # increments the index
+                index += 1
+
+            # iterates over all the missing attributes and sets them to invalid
+            # none value
+            for missing_attribute in missing_attributes_list:
+                # sets the none value in the missing attribute
+                setattr(entity, missing_attribute, None)
+
+            # adds the entity to the entities list
+            entities_list.append(entity)
+
+        # closes the cursor
+        cursor.close()
+
+        # returns the entities list
+        return entities_list
+
+    def _restore_entity_table_data(self, connection, entity_class, entities_list):
+        # retrieves the database connection from the connection object
+        database_connection = connection.database_connection
+
+        # creates the cursor for the given connection
+        cursor = database_connection.cursor()
+
+        # retrieves the entity class name
+        entity_class_name = entity_class.__name__
+
+        # iterates over all the entities in the entities list
+        for entity in entities_list:
+            # creates the query string value
+            query_string_value = "insert into " + entity_class_name + "("
+
+            # retrieves all the valid class attribute names, removes method values and the name exceptions
+            entity_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_class)
+
+            # sets the is first flag
+            is_first = True
+
+            for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
+                if hasattr(entity, entity_class_valid_attribute_name):
+                    if is_first:
+                        is_first = False
+                    else:
+                        query_string_value += ", "
+
+                    query_string_value += entity_class_valid_attribute_name
+
+            query_string_value += ") values ("
+
+            # sets the is first flag
+            is_first = True
+
+            for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
+                if hasattr(entity, entity_class_valid_attribute_name):
+                    entity_valid_attribute_value = getattr(entity, entity_class_valid_attribute_name)
+
+                    entity_class_valid_attribute_value = getattr(entity_class, entity_class_valid_attribute_name)
+
+                    # retrieves the entity class valid attribute value data type
+                    entity_class_valid_attribute_data_type = self.get_attribute_data_type(entity_class_valid_attribute_value, entity_class, entity_class_valid_attribute_name)
+
+                    # retrieves the entity valid attribute sqlite string value
+                    entity_valid_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(entity_valid_attribute_value, entity_class_valid_attribute_data_type)
+
+                    if is_first:
+                        is_first = False
+                    else:
+                        query_string_value += ", "
+
+                    query_string_value += entity_valid_attribute_value_sqlite_string_value
+
+            query_string_value += ")"
+
+            # executes the query inserting the record into the table
+            self.execute_query(cursor, query_string_value)
+
+        # closes the cursor
+        cursor.close()
+
+    def _get_unsynced_attributes(self, connection, entity_class):
+        # creates the unsynced attributes list
+        unsynced_attributes_list = []
+
+        # retrieves the database connection from the connection object
+        database_connection = connection.database_connection
+
+        # retrieves the entity class name
+        entity_class_name = entity_class.__name__
+
+        # retrieves all the valid class attribute names, removes method values and the name exceptions
+        entity_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_class)
+
+        # retrieves all the valid class attribute values
+        entity_class_valid_attribute_values = self.get_entity_class_attribute_values(entity_class)
+
+        # creates the cursor for the given connection
+        cursor = database_connection.cursor()
+
+        # creates the initial query string value
+        query_string_value = "pragma table_info(" + entity_class_name + ")"
+
+        # executes the query retrieving the values
+        self.execute_query(cursor, query_string_value)
+
+        # selects the table information from the cursor
+        table_information_list = [value for value in cursor]
+
+        # creates the table information map
+        table_information_map = {}
+
+        # iterates over all the table information
+        for table_information_item in table_information_list:
+            # retrieves the attribute name
+            attribute_name = table_information_item[1]
+
+            # retrieves the attribute data type
+            attribute_data_type = table_information_item[2]
+
+            # sets the attribute data type in the table information map
+            table_information_map[attribute_name] = attribute_data_type
+
+        # starts the index value
+        index = 0
+
+        # iterates over all the entity class valid attribute names
+        for entity_class_valid_attribute_name in entity_class_valid_attribute_names:
+            # in case the entity class valid attribute name is not defined
+            # in the table information map (attribute does not exists in the data source)
+            if not entity_class_valid_attribute_name in table_information_map:
+                # in case the attribute missing is of type relation
+                if self.is_attribute_name_relation(entity_class_valid_attribute_name, entity_class):
+                    # adds the attribute to the unsynced attributes with reason
+                    # relation attribute inexistant
+                    unsynced_attributes_list.append((entity_class_valid_attribute_name, INEXISTING_RELATION_ATTRIBUTE_REASON_CODE))
+                else:
+                    # adds the attribute to the unsynced attributes with reason
+                    # attribute inexistant
+                    unsynced_attributes_list.append((entity_class_valid_attribute_name, INEXISTING_ATTRIBUTE_REASON_CODE))
+            # the attribute exists in the data source
+            else:
+                # retrieves the attribute data type
+                attribute_data_type = table_information_map[entity_class_valid_attribute_name]
+
+                # retrieves the entity class valid attribute value
+                entity_class_valid_attribute_value = entity_class_valid_attribute_values[index]
+
+                # retrieves the entity class valid attribute data type
+                entity_class_valid_attribute_data_type = self.get_attribute_data_type(entity_class_valid_attribute_value, entity_class, entity_class_valid_attribute_name)
+
+                # retrieves the entity class valid attribute target data type
+                entity_class_valid_attribute_target_data_type = DATA_TYPE_MAP[entity_class_valid_attribute_data_type]
+
+                # checks if the data type in both the data source and schema are the same
+                if not entity_class_valid_attribute_target_data_type == attribute_data_type:
+                    # adds the attribute to the unsynced attributes with reason
+                    # attribute type mismatch
+                    unsynced_attributes_list.append((entity_class_valid_attribute_name, INVALID_ATTRIBUTE_TYPE_REASON_CODE))
+
+            # increments the index
+            index += 1
+
+        # closes the cursor
+        cursor.close()
+
+        # returns unsynced attributes list
+        return unsynced_attributes_list
+
+    def _get_missing_attributes(self, connection, entity_class):
+        # retrieves the unsynced attributes list
+        unsynced_attributes_list = self._get_unsynced_attributes(connection, entity_class)
+
+        # filters the unsynced attributes list to create the missing attributes list
+        missing_attributes_list = [value[0] for value in unsynced_attributes_list if value[1] in INEXISTING_ATTRIBUTE_REASON_CODES]
+
+        # returns the missing attributes list
+        return missing_attributes_list
 
 class BufferedEntities:
     """

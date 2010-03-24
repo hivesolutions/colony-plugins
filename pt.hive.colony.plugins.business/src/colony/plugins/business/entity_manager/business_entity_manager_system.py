@@ -115,14 +115,35 @@ class BusinessEntityManager:
         for entity_class in entity_bundle:
             self.unload_entity_class(entity_class)
 
-    def load_entity_manager(self, engine_name):
+    def load_entity_manager(self, engine_name, properties = {}):
+        """
+        Loads an entity manager for the given engine name.
+
+        @type engine_name: String
+        @param engine_name: The name of the engine to be used.
+        @type properties: Dictionary
+        @param properties: The properties to be used in the
+        loading of the entity manager
+        @rtype: EntityManager
+        @return: The loaded entity manager.
+        """
+
+        # iterates over all the entity manager engine plugins
         for entity_manager_engine_plugin in self.entity_manager_engine_plugins_list:
+            # retrieves the entity manager engine name
             entity_manager_engine_name = entity_manager_engine_plugin.get_engine_name()
 
+            # in case the entity manager engine name is the requested
+            # engine name
             if entity_manager_engine_name == engine_name:
+                # creates a new entity manager with the entity manager engine plugin the load entity classes list
+                # and the loaded entity classes map
                 entity_manager = EntityManager(entity_manager_engine_plugin, self.loaded_entity_classes_list, self.loaded_entity_classes_map)
+
+                # returns the entity manager
                 return entity_manager
 
+        # raises the entity manager engine not found exception
         raise business_entity_manager_exceptions.EntityManagerEngineNotFound("engine " + engine_name + " not available")
 
 class EntityManager:
@@ -295,24 +316,49 @@ class EntityManager:
         return self.transaction_stack_thread_id_map[current_thread_id]
 
     def set_connection_parameters(self, connection_parameters):
+        """
+        Sets the connection parameters of the entity manager.
+        The connection parameters are used to established the connection
+        with the database endpoint.
+
+        @type connection_parameters: Dictionary
+        @param connection_parameters: The map containing the connection parameters.
+        """
+
         self.connection_parameters = connection_parameters
 
     def load_entity_manager(self):
+        """
+        Loads the entity manager, registering the classes
+        and creating the table generator (generates the tables).
+        """
+
         self.register_classes()
         self.create_table_generator()
 
     def unload_entity_manager(self):
+        """
+        Unloads the entity manager, disabling all the necessary
+        structures.
+        """
+
         pass
 
     def register_classes(self):
+        """
+        Registers all the available classes in the entity manager,
+        the registration includes updating or creating the table definition
+        in the target data source.
+        """
+
         # retrieves the connection object
         connection = self.get_connection()
 
         for entity_class in self.entity_classes_list:
             if self.entity_manager_engine_plugin.exists_entity_definition(connection, entity_class):
                 if not self.entity_manager_engine_plugin.synced_entity_definition(connection, entity_class):
-                    pass
-                    # @todo not synced needs to be updated
+                    # updates the entity definition (because the model is not synced)
+                    self.entity_manager_engine_plugin.update_entity_definition(connection, entity_class)
             else:
                 self.entity_manager_engine_plugin.create_entity_definition(connection, entity_class)
 
