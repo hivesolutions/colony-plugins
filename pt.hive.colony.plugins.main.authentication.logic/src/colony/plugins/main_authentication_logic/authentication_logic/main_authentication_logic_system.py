@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os.path
 
-import colony.plugins.decorators
+import main_authentication_logic_exceptions
 
 class MainAuthenticationLogic:
     """
@@ -79,30 +79,19 @@ class MainAuthenticationLogic:
         transaction_decorator = business_entity_manager_plugin.get_transaction_decorator()
 
         # creates the list of global values
-        global_values = [transaction_decorator]
+        global_values = [transaction_decorator, main_authentication_logic_exceptions]
 
         # retrieves the base directory name
         base_directory_name = self.get_path_directory_name()
 
-        # imports the class modules
-        business_helper_plugin.import_class_module("main_authentication_logic_classes", globals(), locals(), global_values, base_directory_name)
+        # imports the class module
+        main_authentication_logic_classes = business_helper_plugin.import_class_module_target("main_authentication_logic_classes", globals(), locals(), global_values, base_directory_name, "main_authentication_logic_classes")
 
         # sets the business logic bundle
-        self.business_logic_bundle = [AuthenticationLogic]
+        self.business_logic_bundle = main_authentication_logic_classes.BUSINESS_LOGIC_CLASSES
 
-        # creates the business logic bundle map
-        business_logic_bundle_map = {}
-
-        # iterates over all the classes in the business logic bundle
-        for business_logic_class in self.business_logic_bundle:
-            # retrieves the business logic name
-            business_logic_class_name = business_logic_class.__name__
-
-            # sets the class in the business logic bundle map
-            business_logic_bundle_map[business_logic_class_name] = business_logic_class
-
-        # sets the business logic bundle map
-        self.business_logic_bundle_map = business_logic_bundle_map
+        # generates the business logic bundle map from the business logic bundle
+        self.business_logic_bundle_map = business_helper_plugin.generate_bundle_map(self.business_logic_bundle)
 
     def get_business_logic_bundle(self):
         return self.business_logic_bundle

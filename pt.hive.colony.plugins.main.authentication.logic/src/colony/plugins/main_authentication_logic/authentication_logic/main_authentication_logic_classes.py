@@ -37,14 +37,20 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import main_authentication_logic_exceptions
-
 ENTITY_MANAGER_VALUE = "entity_manager"
 
 USER_VALUE = "User"
 
 MAIN_AUTHENTICATION_PLUGIN_ID = "pt.hive.colony.plugins.main.authentication"
 """ The main authentication plugin id """
+
+import colony.libs.importer_util
+
+MAIN_AUTHENTICATION_LOGIC_EXCEPTIONS_VALUE = "main_authentication_logic_exceptions"
+""" The main authentication logic exceptions value """
+
+# imports the main authentication logic exceptions decorator
+main_authentication_logic_exceptions = colony.libs.importer_util.__importer__(MAIN_AUTHENTICATION_LOGIC_EXCEPTIONS_VALUE)
 
 class AuthenticationLogic:
 
@@ -101,3 +107,6 @@ class AuthenticationLogic:
 
         # returns the authentication result
         return authentication_result
+
+BUSINESS_LOGIC_CLASSES = [AuthenticationLogic]
+""" The business logic classes """
