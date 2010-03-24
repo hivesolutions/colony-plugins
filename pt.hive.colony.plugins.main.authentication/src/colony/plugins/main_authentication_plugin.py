@@ -48,7 +48,7 @@ class MainAuthenticationPlugin(colony.plugins.plugin_system.Plugin):
     id = "pt.hive.colony.plugins.main.authentication"
     name = "Authentication Main Plugin"
     short_name = "Authentication Main"
-    description = "Authentication Main Plugin"
+    description = "Plugin that provides the authentication front-end mechanisms"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
