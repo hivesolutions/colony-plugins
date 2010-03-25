@@ -39,6 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import specification_generator_exceptions
 
+import language_wiki.libs.string_buffer_util
+
 SPECIFICATION_GENERATOR_VALUE = "specification_generator"
 """ The specification generator value """
 
@@ -68,7 +70,7 @@ class SepecificationGenerator:
 
         self.specification_generator_handler_name_specification_generator_handler_plugin_map = {}
 
-    def generate_plugin_specification(self, plugin_id, plugin_version, file_path, properties):
+    def generate_plugin_specification(self, plugin_id, plugin_version, properties, file_path):
         """
         Generates a specification file describing the structure
         and specification of the plugin with the given id and version.
@@ -81,30 +83,25 @@ class SepecificationGenerator:
         @type plugin_version: String
         @param plugin_version: The version of the plugin to be used for
         specification generation.
-        @type file_path: String
-        @param file_path: The to store the file being generated.
         @type properties: Dictionary
         @param properties: The properties for plugin specification generation.
+        @type file_path: String
+        @param file_path: The to store the file being generated.
         """
 
-        # retrieves the plugin manager
-        plugin_manager = self.specification_generator_plugin.manager
+        # retrieves the plugin specification string
+        plugin_specification_string = self._get_plugin_specification_string(plugin_id, plugin_version, properties)
 
-        # retrieves the specification generator handler name
-        specification_generator_handler_name = properties.get(SPECIFICATION_GENERATOR_VALUE, DEFAULT_SPECIFICATION_GENERATOR_NAME)
+        # opens the file
+        file = open(file_path, "wb")
 
-        # retrieves the specification generator handler plugin
-        specification_generator_handler_plugin = self._get_specification_generator_handler_plugin_by_specification_generator_handler_name(specification_generator_handler_name)
+        # writes the plugin specification string to the file
+        file.write(plugin_specification_string)
 
-        # retrieves the plugin from the plugin id and version
-        plugin = plugin_manager.get_plugin_by_id_and_version(plugin_id, plugin_version)
+        # cloeses the file
+        file.close()
 
-        # retrieves the plugin specification string from the plugin
-        plugin_specification_string = specification_generator_handler_plugin.generate_plugin_specification(plugin)
-
-        print plugin_specification_string
-
-    def generate_specification_file_buffer(self, plugin_id, plugin_version, properties):
+    def generate_plugin_specification_file_buffer(self, plugin_id, plugin_version, properties):
         """
         Generates a specification file describing the structure
         and specification of the plugin with the given id and version.
@@ -119,11 +116,23 @@ class SepecificationGenerator:
         specification generation.
         @type properties: Dictionary
         @param properties: The properties for plugin specification generation.
+        @rtype: File
+        @return: The generated specification file.
         """
 
-        pass
+        # retrieves the plugin specification string
+        plugin_specification_string = self._get_plugin_specification_string(plugin_id, plugin_version, properties)
 
-    def specification_specification_generator_handler_load(self, specification_generator_handler_plugin):
+        # initializes the string buffer
+        string_buffer = language_wiki.libs.string_buffer_util.StringBuffer()
+
+        # writes the plugin specification string
+        string_buffer.write(plugin_specification_string)
+
+        # returns the string buffer
+        return string_buffer
+
+    def specification_generator_handler_load(self, specification_generator_handler_plugin):
         """
         Loads the given specification generator handler plugin.
 
@@ -138,7 +147,7 @@ class SepecificationGenerator:
         # specification generator handler plugin map
         self.specification_generator_handler_name_specification_generator_handler_plugin_map[specification_generator_handler_name] = specification_generator_handler_plugin
 
-    def specification_specification_generator_handler_unload(self, specification_generator_handler_plugin):
+    def specification_generator_handler_unload(self, specification_generator_handler_plugin):
         """
         Unloads the given specification parser plugin.
 
@@ -153,10 +162,24 @@ class SepecificationGenerator:
         # specification generator handler plugin map
         del self.specification_generator_handler_name_specification_generator_handler_plugin_map[specification_generator_handler_name]
 
+    def _get_plugin_specification_string(self, plugin_id, plugin_version, properties):
+        # retrieves the plugin manager
+        plugin_manager = self.specification_generator_plugin.manager
 
+        # retrieves the specification generator handler name
+        specification_generator_handler_name = properties.get(SPECIFICATION_GENERATOR_VALUE, DEFAULT_SPECIFICATION_GENERATOR_NAME)
 
+        # retrieves the specification generator handler plugin
+        specification_generator_handler_plugin = self._get_specification_generator_handler_plugin_by_specification_generator_handler_name(specification_generator_handler_name)
 
+        # retrieves the plugin from the plugin id and version
+        plugin = plugin_manager.get_plugin_by_id_and_version(plugin_id, plugin_version)
 
+        # retrieves the plugin specification string from the plugin
+        plugin_specification_string = specification_generator_handler_plugin.generate_plugin_specification(plugin, properties)
+
+        # returns the plugin specification string
+        return plugin_specification_string
 
     def _get_specification_generator_handler_plugin_by_specification_generator_handler_name(self, specification_generator_handler_name):
         """

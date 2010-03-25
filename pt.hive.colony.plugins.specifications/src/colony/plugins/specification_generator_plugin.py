@@ -72,7 +72,6 @@ class SpecificationGeneratorPlugin(colony.plugins.plugin_system.Plugin):
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
-        self.generate_plugin_specification("pt.hive.colony.plugins.main.authentication", "1.0.0", "c:/tobias", {})
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
@@ -91,7 +90,7 @@ class SpecificationGeneratorPlugin(colony.plugins.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def generate_plugin_specification(self, plugin_id, plugin_version, file_path, properties):
+    def generate_plugin_specification(self, plugin_id, plugin_version, properties, file_path):
         """
         Generates a specification file describing the structure
         and specification of the plugin with the given id and version.
@@ -104,15 +103,15 @@ class SpecificationGeneratorPlugin(colony.plugins.plugin_system.Plugin):
         @type plugin_version: String
         @param plugin_version: The version of the plugin to be used for
         specification generation.
-        @type file_path: String
-        @param file_path: The to store the file being generated.
         @type properties: Dictionary
         @param properties: The properties for plugin specification generation.
+        @type file_path: String
+        @param file_path: The to store the file being generated.
         """
 
-        self.specification_generator.generate_plugin_specification(plugin_id, plugin_version, file_path, properties)
+        self.specification_generator.generate_plugin_specification(plugin_id, plugin_version, properties, file_path)
 
-    def generate_specification_file_buffer(self, plugin_id, plugin_version, properties):
+    def generate_plugin_specification_file_buffer(self, plugin_id, plugin_version, properties):
         """
         Generates a specification file describing the structure
         and specification of the plugin with the given id and version.
@@ -127,16 +126,18 @@ class SpecificationGeneratorPlugin(colony.plugins.plugin_system.Plugin):
         specification generation.
         @type properties: Dictionary
         @param properties: The properties for plugin specification generation.
+        @rtype: File
+        @return: The generated specification file.
         """
 
-        self.specification_generator.generate_specification_file_buffer(plugin_id, plugin_version, properties)
+        return self.specification_generator.generate_plugin_specification_file_buffer(plugin_id, plugin_version, properties)
 
     @colony.plugins.decorators.load_allowed_capability("specification_generator_handler")
     def specification_parser_capability_load_allowed(self, plugin, capability):
         self.specification_generator_handler_plugins.append(plugin)
-        self.specification_generator.specification_generate_handler_load(plugin)
+        self.specification_generator.specification_generator_handler_load(plugin)
 
     @colony.plugins.decorators.unload_allowed_capability("specification_generator_handler")
     def specification_parser_capability_unload_allowed(self, plugin, capability):
         self.specification_generator_handler_plugins.remove(plugin)
-        self.specification_generator.specification_generate_handler_unload(plugin)
+        self.specification_generator.specification_generator_handler_unload(plugin)

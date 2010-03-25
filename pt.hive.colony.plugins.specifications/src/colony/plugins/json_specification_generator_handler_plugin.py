@@ -59,7 +59,7 @@ class JsonSpecificationGeneratorHandlerPlugin(colony.plugins.plugin_system.Plugi
                     "pt.hive.colony.plugins.template_engine.manager", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["specifications.specification_generator.json_specification_generator_handler_system"]
+    main_modules = ["specifications.json_specification_generator_handler.json_specification_generator_handler_system"]
 
     json_specification_generator_handler = None
 
@@ -68,8 +68,8 @@ class JsonSpecificationGeneratorHandlerPlugin(colony.plugins.plugin_system.Plugi
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global specifications
-        import specifications.specification_generator.json_specification_generator_handler_system
-        self.json_specification_generator_handler = specifications.specification_generator.json_specification_generator_handler_system.JsonSepecificationGeneratorHandler(self)
+        import specifications.json_specification_generator_handler.json_specification_generator_handler_system
+        self.json_specification_generator_handler = specifications.json_specification_generator_handler.json_specification_generator_handler_system.JsonSepecificationGeneratorHandler(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -106,7 +106,7 @@ class JsonSpecificationGeneratorHandlerPlugin(colony.plugins.plugin_system.Plugi
         @return: The generated plugin specification string.
         """
 
-        self.json_specification_generator_handler.generate_plugin_specification(plugin, properties)
+        return self.json_specification_generator_handler.generate_plugin_specification(plugin, properties)
 
     def get_template_engine_manager_plugin(self):
         return self.template_engine_manager_plugin

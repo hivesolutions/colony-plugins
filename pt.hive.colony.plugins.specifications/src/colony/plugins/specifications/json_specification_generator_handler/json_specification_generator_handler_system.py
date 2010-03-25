@@ -86,7 +86,8 @@ class JsonSepecificationGeneratorHandler:
         # retrieves the json specification generator handler plugin path
         json_specification_generator_handler_plugin_path = plugin_manager.get_plugin_path_by_id(self.json_specification_generator_handler_plugin.id)
 
-        template_file_path = json_specification_generator_handler_plugin_path + "/" + json_specification_generator_handler_plugin_path
+        # creates the full template file path
+        template_file_path = json_specification_generator_handler_plugin_path + "/" + TEMPLATE_FILE_PATH
 
         # parses the template file path
         template_file = template_engine_manager_plugin.parse_file_path(template_file_path)
@@ -101,10 +102,9 @@ class JsonSepecificationGeneratorHandler:
         processed_template_file = template_file.process()
 
         # decodes the processed template file into a unicode object
-        processed_template_file_decoded = processed_template_file.decode("utf-8")
+        processed_template_file_decoded = processed_template_file.decode("Cp1252")
 
-        print processed_template_file_decoded
-
+        # returns the processed template file decoded (plugin specification)
         return processed_template_file_decoded
 
     def _generate_specification_map(self, plugin):
