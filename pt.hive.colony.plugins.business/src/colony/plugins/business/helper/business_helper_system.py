@@ -45,6 +45,12 @@ BASE_ENTITY_MODULE_VALUE = "base_entity"
 GLOBALS_REFERENCE_VALUE = "_globals"
 """ The globals reference value """
 
+LOCALS_REFERENCE_VALUE = "_locals"
+""" The locals reference value """
+
+DEFAULT_MODULE_NAME = "helper_module"
+""" The default module name """
+
 class BusinessHelper:
     """
     The business helper class.
@@ -63,7 +69,7 @@ class BusinessHelper:
 
         self.business_helper_plugin = business_helper_plugin
 
-    def import_class_module(self, class_module_name, globals, locals, global_values, base_directory_path, target_module_name = None):
+    def import_class_module(self, class_module_name, globals, locals, global_values, base_directory_path, target_module_name = DEFAULT_MODULE_NAME):
         """
         Imports the class module using the globals and locals from the current target,
         it imports the symbols in the module to the current globals environment.
@@ -84,46 +90,26 @@ class BusinessHelper:
         @return: The created target module.
         """
 
-        # creates a copy of locals
-        locals_copy = locals.copy()
+        # tries to retrieve the target module
+        target_module = self._get_target_module(target_module_name, globals)
 
-        # iterates over the keys of the copy of locals
-        for local_key_value in locals_copy:
-            # retrieves the current local value
-            local_value = locals_copy[local_key_value]
-
-            # in case the local value exists in the list of global values
-            if local_value in global_values:
-                # adds the value to globals
-                globals[local_key_value] = local_value
-
-        if target_module_name:
-            # tries to retrieve the target module
-            target_module = self._get_target_module(target_module_name, globals)
-
-            # sets the target module dictionary as the target map
-            target_map = target_module.__dict__
-
-            # sets the target module in the globals
-            globals[target_module_name] = target_module
-        else:
-            # sets the target module as none
-            target_module = None
-
-            # sets the globals map as the target map
-            target_map = globals
+        # sets the target module dictionary as the target map
+        target_map = target_module.__dict__
 
         # retrieves the base entity module
         base_entity_module = self._get_target_module(BASE_ENTITY_MODULE_VALUE, globals)
 
-        # sets the base entity module in the globals
-        globals[BASE_ENTITY_MODULE_VALUE] = base_entity_module
-
         # sets the entity class in the base entity module
         base_entity_module.__dict__[EntityClass.__name__] = EntityClass
 
+        # sets the base entity module in the globals
+        globals[BASE_ENTITY_MODULE_VALUE] = base_entity_module
+
         # sets the globals reference attribute
         target_map[GLOBALS_REFERENCE_VALUE] = globals
+
+        # sets the locals reference attribute
+        target_map[LOCALS_REFERENCE_VALUE] = locals
 
         # executes the file in the given environment
         # to import the symbols
