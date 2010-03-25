@@ -37,6 +37,14 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import specification_generator_exceptions
+
+SPECIFICATION_GENERATOR_VALUE = "specification_generator"
+""" The specification generator value """
+
+DEFAULT_SPECIFICATION_GENERATOR_NAME = "json"
+""" The default specification generator name """
+
 class SepecificationGenerator:
     """
     The specification generator class.
@@ -79,7 +87,22 @@ class SepecificationGenerator:
         @param properties: The properties for plugin specification generation.
         """
 
-        pass
+        # retrieves the plugin manager
+        plugin_manager = self.specification_generator_plugin.manager
+
+        # retrieves the specification generator handler name
+        specification_generator_handler_name = properties.get(SPECIFICATION_GENERATOR_VALUE, DEFAULT_SPECIFICATION_GENERATOR_NAME)
+
+        # retrieves the specification generator handler plugin
+        specification_generator_handler_plugin = self._get_specification_generator_handler_plugin_by_specification_generator_handler_name(specification_generator_handler_name)
+
+        # retrieves the plugin from the plugin id and version
+        plugin = plugin_manager.get_plugin_by_id_and_version(plugin_id, plugin_version)
+
+        # retrieves the plugin specification string from the plugin
+        plugin_specification_string = specification_generator_handler_plugin.generate_plugin_specification(plugin)
+
+        print plugin_specification_string
 
     def generate_specification_file_buffer(self, plugin_id, plugin_version, properties):
         """
@@ -129,3 +152,32 @@ class SepecificationGenerator:
         # removes the specification generator handler plugin from the specification generator handler name
         # specification generator handler plugin map
         del self.specification_generator_handler_name_specification_generator_handler_plugin_map[specification_generator_handler_name]
+
+
+
+
+
+
+    def _get_specification_generator_handler_plugin_by_specification_generator_handler_name(self, specification_generator_handler_name):
+        """
+        Retrieves the specification generator handler plugin for the given
+        specification generator handler name.
+
+        @type specification_generator_handler_name: String
+        @param specification_generator_handler_name: The specification generator handler name to retrieve
+        the specification generator handler plugin.
+        @rtype: Plugin
+        @return: The specification generator handler plugin.
+        """
+
+        # in case the specification generator handler name does not exist in the
+        # specification generator handler name specification generator handler plugin map
+        if not specification_generator_handler_name in self.specification_generator_handler_name_specification_generator_handler_plugin_map:
+            # raises the specification generator handler not available exception
+            raise specification_generator_exceptions.SpecificationGeneratorHandlerNotAvailable("the specification generator handler is not available: " + specification_generator_handler_name)
+
+        # retrieves the specification generator handler plugin
+        specification_generator_handler_plugin = self.specification_generator_handler_name_specification_generator_handler_plugin_map[specification_generator_handler_name]
+
+        # returns the specification generator handler plugin
+        return specification_generator_handler_plugin

@@ -40,6 +40,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 SPECIFICATION_GENERATOR_HANDLER_NAME = "json"
 """ The specification genertor handler name """
 
+TEMPLATE_FILE_PATH = "specifications/json_specification_generator_handler/resources/plugin_specification.json.tpl"
+""" The template file path """
+
 class JsonSepecificationGeneratorHandler:
     """
     The json specification generator handler class.
@@ -74,4 +77,55 @@ class JsonSepecificationGeneratorHandler:
         @return: The generated plugin specification string.
         """
 
-        pass
+        # retrieves the plugin manager
+        plugin_manager = self.json_specification_generator_handler_plugin.manager
+
+        # retrieves the template engine manager plugin
+        template_engine_manager_plugin = self.json_specification_generator_handler_plugin.template_engine_manager_plugin
+
+        # retrieves the json specification generator handler plugin path
+        json_specification_generator_handler_plugin_path = plugin_manager.get_plugin_path_by_id(self.json_specification_generator_handler_plugin.id)
+
+        template_file_path = json_specification_generator_handler_plugin_path + "/" + json_specification_generator_handler_plugin_path
+
+        # parses the template file path
+        template_file = template_engine_manager_plugin.parse_file_path(template_file_path)
+
+        # generates the specification for the plugin
+        specification_map = self._generate_specification_map(plugin)
+
+        # assigns the specification to the template file
+        template_file.assign("specification", specification_map)
+
+        # processes the template file
+        processed_template_file = template_file.process()
+
+        # decodes the processed template file into a unicode object
+        processed_template_file_decoded = processed_template_file.decode("utf-8")
+
+        print processed_template_file_decoded
+
+        return processed_template_file_decoded
+
+    def _generate_specification_map(self, plugin):
+        """
+        Generates the specification map for the given plugin.
+        The specification map contains all the information
+        necessary to generate the specification file for the plugin.
+
+        @type plugin: Plugin
+        @param plugin: The plugin to be used to generate
+        the specification map.
+        @rtype: Dictionary
+        @return: The specification map.
+        """
+
+        # creates the specification map
+        specification_map = {}
+
+        # sets the specification map attributes
+        specification_map["id"] = plugin.id
+        specification_map["version"] = plugin.version
+
+        # returns the specification map
+        return specification_map

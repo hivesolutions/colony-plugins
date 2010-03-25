@@ -53,12 +53,12 @@ class SpecificationGeneratorPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["specification_generator"]
+    capabilities = ["startup", "specification_generator"]
     capabilities_allowed = ["specification_generator_handler"]
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["specifications.specification_generator.specification_generator_system"]
+    main_modules = ["specifications.specification_generator.specification_generator_exceptions", "specifications.specification_generator.specification_generator_system"]
 
     specification_generator = None
 
@@ -68,10 +68,11 @@ class SpecificationGeneratorPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global specifications
         import specifications.specification_generator.specification_generator_system
-        self.specification_generator = specifications.specification_generator.specification_generator_system.SepecificationGenerator()
+        self.specification_generator = specifications.specification_generator.specification_generator_system.SepecificationGenerator(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        self.generate_plugin_specification("pt.hive.colony.plugins.main.authentication", "1.0.0", "c:/tobias", {})
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
@@ -109,7 +110,7 @@ class SpecificationGeneratorPlugin(colony.plugins.plugin_system.Plugin):
         @param properties: The properties for plugin specification generation.
         """
 
-        self.specification_manager.generate_plugin_specification(plugin_id, plugin_version, file_path, properties)
+        self.specification_generator.generate_plugin_specification(plugin_id, plugin_version, file_path, properties)
 
     def generate_specification_file_buffer(self, plugin_id, plugin_version, properties):
         """
@@ -128,14 +129,14 @@ class SpecificationGeneratorPlugin(colony.plugins.plugin_system.Plugin):
         @param properties: The properties for plugin specification generation.
         """
 
-        self.specification_manager.generate_specification_file_buffer(plugin_id, plugin_version, properties)
+        self.specification_generator.generate_specification_file_buffer(plugin_id, plugin_version, properties)
 
     @colony.plugins.decorators.load_allowed_capability("specification_generator_handler")
     def specification_parser_capability_load_allowed(self, plugin, capability):
         self.specification_generator_handler_plugins.append(plugin)
-        self.specification_manager.specification_generate_handler_load(plugin)
+        self.specification_generator.specification_generate_handler_load(plugin)
 
     @colony.plugins.decorators.unload_allowed_capability("specification_generator_handler")
     def specification_parser_capability_unload_allowed(self, plugin, capability):
         self.specification_generator_handler_plugins.remove(plugin)
-        self.specification_manager.specification_generate_handler_unload(plugin)
+        self.specification_generator.specification_generate_handler_unload(plugin)
