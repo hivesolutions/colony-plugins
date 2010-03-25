@@ -710,6 +710,12 @@ class Visitor:
                             if variable_name_split in current_variable:
                                 # retrieves the current variable (from the dictionary)
                                 current_variable = current_variable[variable_name_split]
+                            elif not self.strict_mode:
+                                # sets the current variable as none
+                                current_variable = None
+
+                                # breaks the cycle
+                                break
                             else:
                                 # raises the undefined variable exception
                                 raise template_engine_exceptions.UndefinedVariable("variable is not defined: " + variable_name)
