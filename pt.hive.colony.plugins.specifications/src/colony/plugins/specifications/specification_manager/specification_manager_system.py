@@ -60,7 +60,7 @@ class SepecificationManager:
         """
         Constructor of the class.
 
-        @type specification_manager_plugin: Plugin
+        @type specification_manager_plugin: SpecificationManagerPlugin
         @param specification_manager_plugin: The specification manager plugin.
         """
 
@@ -142,7 +142,7 @@ class SepecificationManager:
         Unloads the given specification parser plugin.
 
         @type specification_parser_plugin: Plugin
-        @param specification_parser_plugin: The specification parser plugin to be loaded.
+        @param specification_parser_plugin: The specification parser plugin to be unloaded.
         """
 
         # retrieves specification parser plugin name
@@ -150,7 +150,7 @@ class SepecificationManager:
 
         # removes the specification parser plugin from the specification parser name
         # specification parser plugin map
-        self.specification_parser_name_specification_parser_plugin_map[specification_parser_name] = specification_parser_plugin
+        del self.specification_parser_name_specification_parser_plugin_map[specification_parser_name]
 
     def _get_specification_parser_plugin_by_specification_parser_name(self, specification_parser_name):
         """

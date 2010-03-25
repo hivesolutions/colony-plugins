@@ -54,7 +54,7 @@ class JsonSpecificationParser:
         """
         Constructor of the class.
 
-        @type json_specification_parser_plugin: Plugin
+        @type json_specification_parser_plugin: JsonSpecificationParserPlugin
         @param json_specification_parser_plugin: The json specification parser plugin.
         """
 

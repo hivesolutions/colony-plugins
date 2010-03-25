@@ -40,7 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.plugins.plugin_system
 import colony.plugins.decorators
 
-class SpecificationPlugin(colony.plugins.plugin_system.Plugin):
+class SpecificationManagerPlugin(colony.plugins.plugin_system.Plugin):
     """
     The main class for the Specification Manager plugin.
     """
