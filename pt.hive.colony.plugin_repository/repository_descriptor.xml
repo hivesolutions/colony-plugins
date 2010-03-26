@@ -6,7 +6,52 @@
     <description>
         Simply the best repository
     </description>
-    <packages/>
+    <packages>
+     <package>
+      <name>Colony UI</name>
+      <type>colony</type>
+      <id>pt.hive.colony.ui_package</id>
+      <version>1.0.0</version>
+      <plugins>
+       <plugin>
+        <id>pt.hive.colony.plugins.main.gui</id>
+        <version>1.0.0</version>
+       </plugin>
+       <plugin>
+        <id>pt.hive.colony.plugins.misc.gui.console_interface</id>
+        <version>1.0.0</version>
+       </plugin>
+       <plugin>
+        <id>pt.hive.colony.plugins.misc.gui.dependencies_visualizer</id>
+        <version>1.0.0</version>
+       </plugin>
+       <plugin>
+        <id>pt.hive.colony.plugins.misc.gui.garbage_collector_visualizer</id>
+        <version>1.0.0</version>
+       </plugin>
+       <plugin>
+        <id>pt.hive.colony.plugins.misc.gui.plugin_manager_interface</id>
+        <version>1.0.0</version>
+       </plugin>
+       <plugin>
+        <id>pt.hive.colony.plugins.misc.gui.progress_information</id>
+        <version>1.0.0</version>
+       </plugin>
+       <plugin>
+        <id>pt.hive.colony.plugins.misc.gui.shell_interface</id>
+        <version>1.0.0</version>
+       </plugin>
+       <plugin>
+        <id>pt.hive.colony.plugins.misc.gui.system_updater_interface</id>
+        <version>1.0.0</version>
+       </plugin>
+       <plugin>
+        <id>pt.hive.colony.plugins.misc.gui.tree_visualizer</id>
+        <version>1.0.0</version>
+       </plugin>
+      </plugins>
+     </package>
+    </packages>
     <plugins>
         <plugin>
             <name>
