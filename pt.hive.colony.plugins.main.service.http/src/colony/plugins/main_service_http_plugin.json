@@ -1,6 +1,6 @@
 {
     "platform" : "python",
-    "sub_platforms" : ["cpython"],
+    "sub_platforms" : ["cpython", "jython", "iron_python"],
     "id" : "pt.hive.colony.plugins.main.service.http",
     "name" : "Http Service Main Plugin",
     "short_name" : "Http Service Main",
