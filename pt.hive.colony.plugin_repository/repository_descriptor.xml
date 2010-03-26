@@ -8,6 +8,26 @@
     </description>
     <packages>
         <package>
+            <name>Colony Translation</name>
+            <type>colony</type>
+            <id>pt.hive.colony.translation</id>
+            <version>1.0.0</version>
+            <plugins>
+                <plugin>
+                    <id>pt.hive.colony.plugins.dummy.nelson</id>
+                    <version>1.0.0</version>
+                </plugin>
+                <plugin>
+                    <id>pt.hive.colony.plugins.dummy.english</id>
+                    <version>1.0.0</version>
+                </plugin>
+                <plugin>
+                    <id>pt.hive.colony.plugins.dummy.italian</id>
+                    <version>1.0.0</version>
+                </plugin>
+            </plugins>
+        </package>
+        <package>
             <name>Colony Resources</name>
             <type>colony</type>
             <id>pt.hive.colony.resources</id>
