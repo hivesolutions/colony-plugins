@@ -197,7 +197,9 @@ class JsonSepecificationGeneratorHandler:
             else:
                 string_buffer.write(", ")
 
-            string_buffer.write("\"" + capability + "\"")
+            # @todo: avoid problems when using composite capabilities
+            # refer to the specification of the colony file
+            string_buffer.write("\"" + str(capability) + "\"")
 
         # writes the list end
         string_buffer.write("]")

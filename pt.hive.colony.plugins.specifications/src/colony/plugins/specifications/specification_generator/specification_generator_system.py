@@ -173,7 +173,7 @@ class SepecificationGenerator:
         specification_generator_handler_plugin = self._get_specification_generator_handler_plugin_by_specification_generator_handler_name(specification_generator_handler_name)
 
         # retrieves the plugin from the plugin id and version
-        plugin = plugin_manager.get_plugin_by_id_and_version(plugin_id, plugin_version)
+        plugin = plugin_manager._get_plugin_by_id_and_version(plugin_id, plugin_version)
 
         # retrieves the plugin specification string from the plugin
         plugin_specification_string = specification_generator_handler_plugin.generate_plugin_specification(plugin, properties)
