@@ -10,7 +10,7 @@
      <package>
       <name>Colony UI</name>
       <type>colony</type>
-      <id>pt.hive.colony.ui_package</id>
+      <id>pt.hive.colony.ui</id>
       <version>1.0.0</version>
       <plugins>
        <plugin>
