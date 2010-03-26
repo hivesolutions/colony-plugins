@@ -59,6 +59,8 @@ class SystemUpdaterPlugin(colony.plugins.plugin_system.Plugin):
                     "pt.hive.colony.plugins.misc.downloader", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["system_updater.updater.console_system_updater", "system_updater.updater.system_updating_parser",
+                    "system_updater.updater.system_updating_system"]
 
     system_updater = None
     console_system_updater = None

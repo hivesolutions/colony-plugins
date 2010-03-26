@@ -59,6 +59,7 @@ class ColonyDeployerPlugin(colony.plugins.plugin_system.Plugin):
                     "pt.hive.colony.plugins.misc.zip", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["system_updater.colony_deployer.colony_deployment_system"]
 
     colony_deployer = None
 
