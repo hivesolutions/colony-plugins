@@ -39,8 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import xml.dom.minidom
 
-PROTOTYPE_CONVERTER_TYPE = "prototype_converter"
-""" The prototype converter type """
+COLONY_TYPE = "colony"
+""" The colony type """
 
 class RepositoryDescriptorGenerator:
     """
@@ -60,7 +60,33 @@ class RepositoryDescriptorGenerator:
 
         self.repository_descriptor_generator_plugin = repository_descriptor_generator_plugin
 
+    def generate_repository_descriptor_file(self, file_path, repository_name = "none", repository_description = "none"):
+        # retrieves the repository descriptor string from the repository descriptor generator
+        repository_descriptor_string = self.generate_repository_descriptor(repository_name, repository_description)
+
+        # opens the file (to write the repository descriptor)
+        file = open(file_path, "wb")
+
+        # writes the repository descriptor to string
+        # to the file
+        file.write(repository_descriptor_string)
+
+        # closes the file
+        file.close()
+
     def generate_repository_descriptor(self, repository_name = "none", repository_description = "none"):
+        """
+        Generates a repository descriptor file (xml) using the current loaded plugins.
+        The generated repository is named after the sent argument and description.
+
+        @type repository_name: String
+        @param repository_name: The name to be used to refer the repository.
+        @type repository_description: String
+        @param repository_description: The description to be used by the repository.
+        @rtype: String
+        @return: The string containing the repository descriptor.
+        """
+
         xml_document = xml.dom.minidom.Document()
 
         # creates the repository element
@@ -111,7 +137,7 @@ class RepositoryDescriptorGenerator:
             repository_plugin_type_node = xml_document.createElement("type")
             repository_plugin_node.appendChild(repository_plugin_type_node)
 
-            repository_plugin_type_value_node = xml_document.createTextNode(PROTOTYPE_CONVERTER_TYPE)
+            repository_plugin_type_value_node = xml_document.createTextNode(COLONY_TYPE)
             repository_plugin_type_node.appendChild(repository_plugin_type_value_node)
 
             repository_plugin_id_node = xml_document.createElement("id")
@@ -171,4 +197,8 @@ class RepositoryDescriptorGenerator:
                 repository_plugin_plugin_version_value_node = xml_document.createTextNode(plugin_dependency.plugin_version)
                 repository_plugin_plugin_version_node.appendChild(repository_plugin_plugin_version_value_node)
 
-        print xml_document.toprettyxml(indent="    ")
+        # generates the repository descriptor string from the xml document
+        repository_descriptor_string = xml_document.toprettyxml(indent = "    ")
+
+        # returns the repository descriptor string
+        return repository_descriptor_string

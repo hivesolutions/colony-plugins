@@ -90,6 +90,16 @@ class ConsoleRepositoryDescriptorGenerator:
 
         file_path = args[0]
 
+        if len(args) > 1:
+            repository_name = args[1]
+        else:
+            repository_name = "none"
+
+        if len(args) > 2:
+            repository_description = args[2]
+        else:
+            repository_description = "none"
+
         output_method("creating repository descriptor in " + file_path)
 
-        self.repository_descriptor_generator_plugin.repository_descriptor_generator.generate_repository_descriptor()
+        self.repository_descriptor_generator_plugin.repository_descriptor_generator.generate_repository_descriptor_file(file_path, repository_name, repository_description)

@@ -37,7 +37,7 @@
         <description>Contains most of the main plugins</description>
         <addresses>
             <address name="Local Address">
-                http://localhost/colony/repository
+                http://localhost:8080/colony/repository
             </address>
             <address name="Example Address">
                 http://example.com/colony/repository
@@ -51,7 +51,7 @@
         </description>
         <addresses>
             <address name="Local Address">
-                http://localhost/colony/auxiliary_repository
+                http://localhost:8080/colony/auxiliary_repository
             </address>
             <address name="Example Address">
                 http://example.com/colony/auxiliary_repository
