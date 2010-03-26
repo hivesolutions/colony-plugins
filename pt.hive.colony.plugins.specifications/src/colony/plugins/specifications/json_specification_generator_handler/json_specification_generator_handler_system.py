@@ -41,7 +41,7 @@ import os
 import os.path
 
 import colony.plugins.plugin_system
-import language_wiki.libs.string_buffer_util
+import colony.libs.string_buffer_util
 
 SPECIFICATION_GENERATOR_HANDLER_NAME = "json"
 """ The specification genertor handler name """
@@ -149,7 +149,7 @@ class JsonSepecificationGeneratorHandler:
 
     def _serialize_sub_platforms(self, platforms):
         # initializes the string buffer
-        string_buffer = language_wiki.libs.string_buffer_util.StringBuffer()
+        string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
         # writes the list start
         string_buffer.write("[")
@@ -182,7 +182,7 @@ class JsonSepecificationGeneratorHandler:
 
     def _serialize_capabilities(self, capabilities):
         # initializes the string buffer
-        string_buffer = language_wiki.libs.string_buffer_util.StringBuffer()
+        string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
         # writes the list start
         string_buffer.write("[")
@@ -212,7 +212,7 @@ class JsonSepecificationGeneratorHandler:
 
     def _serialize_dependencies(self, dependencies):
         # initializes the string buffer
-        string_buffer = language_wiki.libs.string_buffer_util.StringBuffer()
+        string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
         # writes the list start
         string_buffer.write("[")
@@ -261,7 +261,7 @@ class JsonSepecificationGeneratorHandler:
         plugin_path = plugin_manager.get_plugin_path_by_id(plugin.id)
 
         # initializes the string buffer
-        string_buffer = language_wiki.libs.string_buffer_util.StringBuffer()
+        string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
         # writes the list start
         string_buffer.write("[")

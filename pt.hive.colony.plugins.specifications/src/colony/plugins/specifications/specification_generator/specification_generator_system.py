@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import specification_generator_exceptions
 
-import language_wiki.libs.string_buffer_util
+import colony.libs.string_buffer_util
 
 SPECIFICATION_GENERATOR_VALUE = "specification_generator"
 """ The specification generator value """
@@ -124,7 +124,7 @@ class SepecificationGenerator:
         plugin_specification_string = self._get_plugin_specification_string(plugin_id, plugin_version, properties)
 
         # initializes the string buffer
-        string_buffer = language_wiki.libs.string_buffer_util.StringBuffer()
+        string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
         # writes the plugin specification string
         string_buffer.write(plugin_specification_string)
