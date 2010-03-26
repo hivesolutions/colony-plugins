@@ -72,7 +72,9 @@ configuration = {
                      }
                  },
                  "contexts" : {
-                     "resolution_order" : ["/colony_web/plugins", "/colony_web", "/colony_manager", "/colony_mod_python/rest/mvc/hive/resources", "/colony_mod_python/rest/mvc/hive_blog/resources", "/colony_mod_python", "/template_error_handler", "/docs", "/eclipse", "/cgi-bin", "/fastcgi-bin", "/web_administration", "/websession_test", "/websession"],
+                     "resolution_order" : ["/colony_web/plugins", "/colony_web", "/colony_manager", "/colony_mod_python/rest/mvc/hive/resources", "/colony_mod_python/rest/mvc/hive_blog/resources",
+                                           "/colony_mod_python", "/template_error_handler", "/docs", "/eclipse", "/cgi-bin", "/fastcgi-bin", "/web_administration", "/websession_test", "/websession",
+                                           "/colony/repository"],
                      "/colony_web" : {
                          "handler" : "file",
                          "allow_redirection" : False,
@@ -172,6 +174,13 @@ configuration = {
                          "allow_redirection" : False,
                          "request_properties" : {
                              "protocol" : "default"
+                         }
+                     },
+                     "/colony/repository" : {
+                         "handler" : "file",
+                         "allow_redirection" : False,
+                         "request_properties" : {
+                             "base_path" : "$resource{system.path.colony}/pt.hive.colony.plugin_repository"
                          }
                      }
                  }
