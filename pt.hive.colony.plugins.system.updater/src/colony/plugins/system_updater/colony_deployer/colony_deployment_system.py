@@ -41,7 +41,7 @@ DEPLOYER_TYPE = "colony"
 
 PLUGINS_DIRECTORY = "colony/plugins"
 
-class colonyDeployer:
+class ColonyDeployer:
 
     colony_deployer_plugin = None
 

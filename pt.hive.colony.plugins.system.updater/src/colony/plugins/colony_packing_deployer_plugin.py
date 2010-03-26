@@ -25,10 +25,10 @@ __author__ = "João Magalhães <joamag@hive.pt>"
 __version__ = "1.0.0"
 """ The version of the module """
 
-__revision__ = "$LastChangedRevision$"
+__revision__ = "$LastChangedRevision: 7715 $"
 """ The revision number of the module """
 
-__date__ = "$LastChangedDate$"
+__date__ = "$LastChangedDate: 2010-03-26 07:31:00 +0000 (sex, 26 Mar 2010) $"
 """ The last change date of the module """
 
 __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
@@ -40,15 +40,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.plugins.plugin_system
 import colony.plugins.decorators
 
-class ColonyDeployerPlugin(colony.plugins.plugin_system.Plugin):
+class ColonyPackingDeployerPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Colony Deployer plugin
+    The main class for the Colony Packing Deployer plugin
     """
 
-    id = "pt.hive.colony.plugins.system.updater.colony_deployer"
-    name = "Colony Deployer Plugin"
-    short_name = "Colony Deployer"
-    description = "Colony Deployer Plugin"
+    id = "pt.hive.colony.plugins.system.updater.colony_packing_deployer"
+    name = "Colony Packing Deployer Plugin"
+    short_name = "Colony Packing Deployer"
+    description = "Colony Packing Deployer Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
@@ -56,25 +56,25 @@ class ColonyDeployerPlugin(colony.plugins.plugin_system.Plugin):
     capabilities = ["deployer"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.zip", "1.0.0")]
+                    "pt.hive.colony.plugins.main.packing.manager", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["system_updater.colony_deployer.colony_deployment_system"]
+    main_modules = ["system_updater.colony_packing.colony_packing_deployment_system"]
 
-    colony_deployer = None
+    colony_packing_deployer = None
 
-    zip_plugin = None
-    """ Plugin to manage zip files """
+    packing_manager_plugin = None
+    """ Plugin to for packing of files """
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global system_updater
-        import system_updater.colony_deployer.colony_deployment_system
-        self.colony_deployer = system_updater.colony_deployer.colony_deployment_system.ColonyDeployer(self)
+        import system_updater.colony_packing.colony_packing_deployment_system
+        self.colony_packing_deployer = system_updater.colony_packing.colony_packing_deployment_system.ColonyPackingDeployer(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
-        self.colony_deployer.load_deployer()
+        self.colony_packing_deployer.load_deployer()
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
@@ -88,19 +88,19 @@ class ColonyDeployerPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.system.updater.colony_deployer", "1.0.0")
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.system.updater.colony_packing_deployer", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def deploy_package(self, zip_file, plugin_id, plugin_version):
-        self.colony_deployer.deploy_package(zip_file, plugin_id, plugin_version)
+        self.colony_packing_deployer.deploy_package(zip_file, plugin_id, plugin_version)
 
     def get_deployer_type(self):
-        return self.colony_deployer.get_deployer_type()
+        return self.colony_packing_deployer.get_deployer_type()
 
-    def get_zip_plugin(self):
-        return self.zip_plugin
+    def get_packing_manager_plugin(self):
+        return self.packing_manager_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.zip")
-    def set_zip_plugin(self, zip_plugin):
-        self.zip_plugin = zip_plugin
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.packing.manager")
+    def set_packing_manager_plugin(self, packing_manager_plugin):
+        self.packing_manager_plugin = packing_manager_plugin
