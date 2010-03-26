@@ -37,6 +37,12 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
+import os.path
+
+import colony.plugins.plugin_system
+import language_wiki.libs.string_buffer_util
+
 SPECIFICATION_GENERATOR_HANDLER_NAME = "json"
 """ The specification genertor handler name """
 
@@ -124,8 +130,166 @@ class JsonSepecificationGeneratorHandler:
         specification_map = {}
 
         # sets the specification map attributes
+        specification_map["platform"] = "python"
+        specification_map["sub_platforms"] = self._serialize_sub_platforms(plugin.platforms)
         specification_map["id"] = plugin.id
+        specification_map["name"] = plugin.name
+        specification_map["short_name"] = plugin.short_name
+        specification_map["description"] = plugin.description
         specification_map["version"] = plugin.version
+        specification_map["author"] = plugin.author
+        specification_map["capabilities"] = self._serialize_capabilities(plugin.capabilities)
+        specification_map["capabilities_allowed"] = self._serialize_capabilities(plugin.capabilities_allowed)
+        specification_map["dependencies"] = self._serialize_dependencies(plugin.dependencies)
+        specification_map["main_file"] = self._serialize_main_file(plugin)
+        specification_map["resources"] = self._serialize_resources(plugin)
 
         # returns the specification map
         return specification_map
+
+    def _serialize_sub_platforms(self, platforms):
+        # initializes the string buffer
+        string_buffer = language_wiki.libs.string_buffer_util.StringBuffer()
+
+        # writes the list start
+        string_buffer.write("[")
+
+        # sets the is first flag
+        is_first = True
+
+        # iterates over all the platforms
+        for platform in platforms:
+            if is_first:
+                is_first = False
+            else:
+                string_buffer.write(", ")
+
+            if platform == colony.plugins.plugin_system.CPYTHON_ENVIRONMENT:
+                string_buffer.write("\"cpython\"")
+            elif platform == colony.plugins.plugin_system.JYTHON_ENVIRONMENT:
+                string_buffer.write("\"jython\"")
+            elif platform == colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT:
+                string_buffer.write("\"iron_python\"")
+
+        # writes the list end
+        string_buffer.write("]")
+
+        # retrieves the string value
+        string_value = string_buffer.get_value()
+
+        # returns the string value
+        return string_value
+
+    def _serialize_capabilities(self, capabilities):
+        # initializes the string buffer
+        string_buffer = language_wiki.libs.string_buffer_util.StringBuffer()
+
+        # writes the list start
+        string_buffer.write("[")
+
+        # sets the is first flag
+        is_first = True
+
+        # iterates over all the capabilities
+        for capability in capabilities:
+            if is_first:
+                is_first = False
+            else:
+                string_buffer.write(", ")
+
+            string_buffer.write("\"" + capability + "\"")
+
+        # writes the list end
+        string_buffer.write("]")
+
+        # retrieves the string value
+        string_value = string_buffer.get_value()
+
+        # returns the string value
+        return string_value
+
+    def _serialize_dependencies(self, dependencies):
+        # initializes the string buffer
+        string_buffer = language_wiki.libs.string_buffer_util.StringBuffer()
+
+        # writes the list start
+        string_buffer.write("[")
+
+        # iterates over all the dependencies
+        for dependency in dependencies:
+            if dependency.__class__ == colony.plugins.plugin_system.PluginDependency:
+                string_buffer.write("{\"id\" : \"%s\", \"version\" : \"%s\"}" % (dependency.plugin_id, dependency.plugin_version))
+
+        # writes the list end
+        string_buffer.write("]")
+
+        # retrieves the string value
+        string_value = string_buffer.get_value()
+
+        # returns the string value
+        return string_value
+
+    def _serialize_main_file(self, plugin):
+        # retrieves the plugin manager
+        plugin_manager = self.json_specification_generator_handler_plugin.manager
+
+        # retrieves the plugin module name for the plugin id
+        plugin_module_name = plugin_manager.get_plugin_module_name_by_id(plugin.id)
+
+        # creates the main file by appending the pytohn extension
+        # to the plugin module name
+        main_file = plugin_module_name + ".py"
+
+        # returns the main file
+        return main_file
+
+    def _serialize_resources(self, plugin):
+        # retrieves the plugin manager
+        plugin_manager = self.json_specification_generator_handler_plugin.manager
+
+        # retrievs the plugin path for the plugin id
+        plugin_path = plugin_manager.get_plugin_path_by_id(plugin.id)
+
+        # initializes the string buffer
+        string_buffer = language_wiki.libs.string_buffer_util.StringBuffer()
+
+        # writes the list start
+        string_buffer.write("[")
+
+        # sets the is first flag
+        is_first = True
+
+        # retrieves the directories entries from the plugin path
+        directory_entries = os.listdir(plugin_path)
+
+        # iterates over all the directory entries
+        for directory_entry in directory_entries:
+            full_directory_entry = plugin_path + "/" + directory_entry
+
+            if os.path.isdir(full_directory_entry):
+                os.path.walk(full_directory_entry, self._serializer_aux, (plugin_path, string_buffer, is_first))
+
+        # writes the list end
+        string_buffer.write("]")
+
+        # retrieves the string value
+        string_value = string_buffer.get_value()
+
+        # returns the string value
+        return string_value
+
+    def _serializer_aux(self, arg, dirname, names):
+        plugin_path, string_buffer, is_first = arg
+
+        if ".svn" in dirname:
+            return
+
+        complete_paths_list = [(dirname + "/" + value).replace(plugin_path, "") for value in names if not os.path.isdir(dirname + "/" + value)]
+
+        for complete_path in complete_paths_list:
+            if is_first:
+                is_first = False
+            else:
+                string_buffer.write(", ")
+
+            string_buffer.write("\"" + complete_path.replace("\\", "/") + "\"")
