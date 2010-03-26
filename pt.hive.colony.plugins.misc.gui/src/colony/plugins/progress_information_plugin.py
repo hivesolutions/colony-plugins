@@ -58,7 +58,7 @@ class ProgressInformationPlugin(colony.plugins.plugin_system.Plugin):
                     "pt.hive.colony.plugins.misc.bitmap_loader", "1.0.0")]
     events_handled = ["gui_progress_information_changed"]
     events_registrable = ["task_information_changed"]
-    main_modules = ["progress_information.progress_information_logic", "progress_information.progress_information_system"]
+    main_modules = ["misc_gui.progress_information.progress_information_logic", "misc_gui.progress_information.progress_information_system"]
 
     progress_information = None
 

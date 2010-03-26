@@ -57,7 +57,7 @@ class TreeVisualizerPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["tree_visualizer.tree_visualizer_system"]
+    main_modules = ["misc_gui.tree_visualizer.tree_visualizer_system"]
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)

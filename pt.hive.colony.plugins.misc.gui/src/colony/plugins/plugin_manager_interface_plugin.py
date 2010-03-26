@@ -58,7 +58,7 @@ class PluginManagerInterfacePlugin(colony.plugins.plugin_system.Plugin):
                     "pt.hive.colony.plugins.misc.gui.tree_visualizer", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["plugin_manager_interface.plugin_manager_interface_system"]
+    main_modules = ["misc_gui.plugin_manager_interface.plugin_manager_interface_system"]
 
     panel = None
 

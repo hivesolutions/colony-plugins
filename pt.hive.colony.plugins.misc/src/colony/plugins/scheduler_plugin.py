@@ -61,7 +61,7 @@ class SchedulerPlugin(colony.plugins.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.console", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["scheduler.console_scheduler", "scheduler.scheduler_system"]
+    main_modules = ["misc.scheduler.console_scheduler", "misc.scheduler.scheduler_system"]
 
     scheduler = None
     console_scheduler = None

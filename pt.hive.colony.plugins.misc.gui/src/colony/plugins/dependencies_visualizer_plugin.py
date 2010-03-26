@@ -58,7 +58,7 @@ class DependenciesVisualizerPlugin(colony.plugins.plugin_system.Plugin):
                     "pt.hive.colony.plugins.misc.dependencies_calculator", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["dependencies_visualizer.dependencies_visualizer_system"]
+    main_modules = ["misc_gui.dependencies_visualizer.dependencies_visualizer_system"]
 
     dependencies_visualizer = None
 

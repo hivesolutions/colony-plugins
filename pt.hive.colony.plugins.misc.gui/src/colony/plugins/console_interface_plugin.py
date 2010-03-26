@@ -59,7 +59,7 @@ class ConsoleInterfacePlugin(colony.plugins.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.console", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["console_interface.console_interface_system", "console_interface.console_window"]
+    main_modules = ["misc_gui.console_interface.console_interface_system", "misc_gui.console_interface.console_window"]
 
     console_interface = None
 
