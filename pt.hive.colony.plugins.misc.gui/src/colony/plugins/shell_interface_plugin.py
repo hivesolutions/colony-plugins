@@ -57,6 +57,7 @@ class ShellInterfacePlugin(colony.plugins.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["shell_interface.shell_interface_system"]
 
     shell_interface = None
 

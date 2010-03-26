@@ -57,6 +57,7 @@ class SystemUpdaterInterfacePlugin(colony.plugins.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["system_updater_interface.system_updater_interface_system"]
 
     system_updater_interface = None
 

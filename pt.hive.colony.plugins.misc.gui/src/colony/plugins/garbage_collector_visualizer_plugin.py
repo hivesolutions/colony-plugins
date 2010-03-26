@@ -57,6 +57,7 @@ class GarbageCollectorVisualizerPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["garbage_collector_visualizer.garbage_collector_visualizer_system"]
 
     garbage_collector_visualizer = None
 
