@@ -424,7 +424,8 @@ class SystemUpdater:
         for repository_address in repository_addresses:
             self.system_updater_plugin.info("Trying address %s (%s)" % (repository_address.name, repository_address.value))
             repository_address_value = repository_address.value
-            file_address = repository_address_value + "/" + plugin_name + "/" + plugin_version + "/" + zip_file
+            file_address = repository_address_value + "/plugins/" + zip_file
+
             result = downloader_plugin.download_package(file_address, target_directory)
             # in case the download was successful
             if result:
