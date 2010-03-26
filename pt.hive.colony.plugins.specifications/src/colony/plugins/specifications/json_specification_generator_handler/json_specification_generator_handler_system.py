@@ -215,8 +215,16 @@ class JsonSepecificationGeneratorHandler:
         # writes the list start
         string_buffer.write("[")
 
+        # sets the is first flag
+        is_first = True
+
         # iterates over all the dependencies
         for dependency in dependencies:
+            if is_first:
+                is_first = False
+            else:
+                string_buffer.write(", ")
+
             if dependency.__class__ == colony.plugins.plugin_system.PluginDependency:
                 string_buffer.write("{\"id\" : \"%s\", \"version\" : \"%s\"}" % (dependency.plugin_id, dependency.plugin_version))
 
@@ -256,8 +264,8 @@ class JsonSepecificationGeneratorHandler:
         # writes the list start
         string_buffer.write("[")
 
-        # sets the is first flag
-        is_first = True
+        # writes the plugin file
+        string_buffer.write("\"" + self._serialize_main_file(plugin) + "\"")
 
         # retrieves the directories entries from the plugin path
         directory_entries = os.listdir(plugin_path)
@@ -267,7 +275,7 @@ class JsonSepecificationGeneratorHandler:
             full_directory_entry = plugin_path + "/" + directory_entry
 
             if os.path.isdir(full_directory_entry):
-                os.path.walk(full_directory_entry, self._serializer_aux, (plugin_path, string_buffer, is_first))
+                os.path.walk(full_directory_entry, self._serializer_aux, (plugin_path, string_buffer))
 
         # writes the list end
         string_buffer.write("]")
@@ -279,7 +287,7 @@ class JsonSepecificationGeneratorHandler:
         return string_value
 
     def _serializer_aux(self, arg, dirname, names):
-        plugin_path, string_buffer, is_first = arg
+        plugin_path, string_buffer = arg
 
         if ".svn" in dirname:
             return
@@ -287,9 +295,4 @@ class JsonSepecificationGeneratorHandler:
         complete_paths_list = [(dirname + "/" + value).replace(plugin_path, "") for value in names if not os.path.isdir(dirname + "/" + value)]
 
         for complete_path in complete_paths_list:
-            if is_first:
-                is_first = False
-            else:
-                string_buffer.write(", ")
-
-            string_buffer.write("\"" + complete_path.replace("\\", "/") + "\"")
+            string_buffer.write(", \"" + complete_path.replace("\\", "/").strip("/") + "\"")
