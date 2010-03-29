@@ -71,6 +71,12 @@ TARGET_PATH_VALUE = "target_path"
 MAIN_FILE_VALUE = "main_file"
 """ The main file value """
 
+EXTRACT_VALUE = "extract"
+""" The extract value """
+
+EXTRACTALL_VALUE = "extractall"
+""" The extract all value """
+
 SPECIFICATION_FILE_PATH_VALUE = "specification_file_path"
 """ The specification file path value """
 
@@ -423,13 +429,19 @@ class ColonyPluginCompressedFile:
 
     def extract(self, file_path, target_path = ""):
         if self.mode == ZIP_FILE_MODE:
-            self.file.extract(file_path, target_path)
+            if hasattr(self.file, EXTRACT_VALUE):
+                self.file.extract(file_path, target_path)
+            else:
+                self._extract_zip(file_path, target_path)
         elif self.mode == TAR_FILE_MODE:
             self.file.extract(file_path, target_path)
 
     def extract_all(self, target_path = ""):
         if self.mode == ZIP_FILE_MODE:
-            self.file.extractall(target_path)
+            if hasattr(self.file, EXTRACTALL_VALUE):
+                self.file.extractall(target_path)
+            else:
+                self._extract_all_zip(target_path)
         elif self.mode == TAR_FILE_MODE:
             self.file.extractall(target_path)
 
@@ -448,3 +460,40 @@ class ColonyPluginCompressedFile:
 
         # returns the file contents
         return file_contents
+
+    def _extract_zip(self, file_path, target_path):
+        # creates the complete target path by appending the
+        # file path to the target path
+        complete_target_path = target_path + "/" + file_path
+
+        target_path_normalized = os.path.normpath(complete_target_path)
+
+        # retrieves all the upper directories
+        upper_directory_paths = os.path.dirname(target_path_normalized)
+
+        # in case the upper directory does no exists and is valid
+        if upper_directory_paths and not os.path.exists(upper_directory_paths):
+            # creates all the upper directories
+            os.makedirs(upper_directory_paths)
+
+        # reads the zip file contents
+        zip_file_contents = self.file.read(file_path)
+
+        # opens the target file for writing
+        target_file = open(complete_target_path, "wb")
+
+        # writes the zip file contents into
+        # the target file
+        target_file.write(zip_file_contents)
+
+        # closes the target file
+        target_file.close()
+
+    def _extract_all_zip(self, target_path):
+        # retrieves the member paths from the zip file
+        member_paths = self.file.namelist()
+
+        # iterates over all the member paths
+        for member_path in member_paths:
+            # extracts the member path to the target path
+            self._extract_zip(member_path, target_path)
