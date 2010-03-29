@@ -197,8 +197,8 @@ class WebEntityManagerAdministration:
             # retrieves the resource manager plugin
             resource_manager_plugin = self.web_entity_manager_administration_plugin.resource_manager_plugin
 
-            # retrieves the business entity manager plugin
-            business_entity_manager_plugin = self.web_entity_manager_administration_plugin.business_entity_manager_plugin
+            # retrieves the entity manager plugin
+            entity_manager_plugin = self.web_entity_manager_administration_plugin.entity_manager_plugin
 
             # retrieves the user home path resource
             user_home_path_resource = resource_manager_plugin.get_resource("system.path.user_home")
@@ -213,7 +213,7 @@ class WebEntityManagerAdministration:
             database_file_name = database_file_name_resource.data
 
             # creates a new entity manager with the sqlite engine
-            self.entity_manager = business_entity_manager_plugin.load_entity_manager("sqlite")
+            self.entity_manager = entity_manager_plugin.load_entity_manager("sqlite")
 
             # sets the connection parameters for the entity manager
             self.entity_manager.set_connection_parameters({"file_path" : user_home_path + "/" + database_file_name, "autocommit" : False})

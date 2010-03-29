@@ -58,7 +58,7 @@ class WebEntityManagerAdministrationPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.resources.resource_manager", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.business.entity_manager", "1.0.0")]
+                    "pt.hive.colony.plugins.data.entity_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["web_entity_manager_administration.administration.web_entity_manager_administration_system"]
@@ -66,7 +66,7 @@ class WebEntityManagerAdministrationPlugin(colony.plugins.plugin_system.Plugin):
     web_entity_manager_administration = None
 
     resource_manager_plugin = None
-    business_entity_manager_plugin = None
+    entity_manager_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -138,23 +138,23 @@ class WebEntityManagerAdministrationPlugin(colony.plugins.plugin_system.Plugin):
 
         self.resource_manager_plugin = resource_manager_plugin
 
-    def get_business_entity_manager_plugin(self):
+    def get_entity_manager_plugin(self):
         """
-        Retrieves the business entity manager plugin.
+        Retrieves the entity manager plugin.
 
-        @rtype: BusinessEntityManagerPlugin
-        @return: The business entity manager plugin.
-        """
-
-        return self.business_entity_manager_plugin
-
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.business.entity_manager")
-    def set_business_entity_manager_plugin(self, business_entity_manager_plugin):
-        """
-        Sets the business entity manager plugin.
-
-        @type business_entity_manager_plugin: BusinessEntityManagerPlugin
-        @param business_entity_manager_plugin: The business entity manager plugin.
+        @rtype: EntityManagerPlugin
+        @return: The entity manager plugin.
         """
 
-        self.business_entity_manager_plugin = business_entity_manager_plugin
+        return self.entity_manager_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.data.entity_manager")
+    def set_entity_manager_plugin(self, entity_manager_plugin):
+        """
+        Sets the entity manager plugin.
+
+        @type entity_manager_plugin: EntityManagerPlugin
+        @param entity_manager_plugin: The entity manager plugin.
+        """
+
+        self.entity_manager_plugin = entity_manager_plugin
