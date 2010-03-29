@@ -63,14 +63,14 @@ class BusinessDummyBusinessLogic:
         self.business_dummy_business_logic_plugin = business_dummy_business_logic_plugin
 
     def generate_class(self):
-        # retrieves the business entity manager plugin
-        business_entity_manager_plugin = self.business_dummy_business_logic_plugin.business_entity_manager_plugin
+        # retrieves the entity manager plugin
+        entity_manager_plugin = self.business_dummy_business_logic_plugin.entity_manager_plugin
 
         # retrieves the business helper plugin
         business_helper_plugin = self.business_dummy_business_logic_plugin.business_helper_plugin
 
         # retrieves the transaction decorator
-        transaction_decorator = business_entity_manager_plugin.get_transaction_decorator()
+        transaction_decorator = entity_manager_plugin.get_transaction_decorator()
 
         # creates the list of global values
         global_values = [transaction_decorator]

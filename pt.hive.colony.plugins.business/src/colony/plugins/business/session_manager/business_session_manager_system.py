@@ -179,21 +179,21 @@ class BusinessSessionManager:
         return session_manager_master
 
     def load_session_manager_entity_manager(self, session_name, engine_name):
-        # retrieves the business entity manager plugin
-        business_entity_manager_plugin = self.business_session_manager_plugin.business_entity_manager_plugin
+        # retrieves the entity manager plugin
+        entity_manager_plugin = self.business_session_manager_plugin.entity_manager_plugin
 
         # creates the entity manager
-        entity_manager = business_entity_manager_plugin.load_entity_manager(engine_name)
+        entity_manager = entity_manager_plugin.load_entity_manager(engine_name)
 
         # creates the session manager and returns it
         return self.load_session_manager(session_name, entity_manager)
 
     def load_session_manager_master_entity_manager(self, session_name, engine_name):
-        # retrieves the business entity manager plugin
-        business_entity_manager_plugin = self.business_session_manager_plugin.business_entity_manager_plugin
+        # retrieves the entity manager plugin
+        entity_manager_plugin = self.business_session_manager_plugin.entity_manager_plugin
 
         # creates the entity manager
-        entity_manager = business_entity_manager_plugin.load_entity_manager(engine_name)
+        entity_manager = entity_manager_plugin.load_entity_manager(engine_name)
 
         # creates the session manager master and returns it
         return self.load_session_manager_master(session_name, entity_manager)

@@ -55,7 +55,7 @@ class BusinessDummyEntityBundlePlugin(colony.plugins.plugin_system.Plugin):
     capabilities = ["business_logic"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.business.entity_manager", "1.0.0"),
+                    "pt.hive.colony.plugins.data.entity_manager", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.business.helper", "1.0.0")]
     events_handled = []
@@ -63,7 +63,7 @@ class BusinessDummyEntityBundlePlugin(colony.plugins.plugin_system.Plugin):
 
     business_dummy_business_logic = None
 
-    business_entity_manager_plugin = None
+    entity_manager_plugin = None
     business_helper_plugin = None
 
     def load_plugin(self):
@@ -95,12 +95,12 @@ class BusinessDummyEntityBundlePlugin(colony.plugins.plugin_system.Plugin):
     def get_business_logic_class(self):
         return self.business_dummy_business_logic.get_business_logic_class()
 
-    def get_business_entity_manager_plugin(self):
-        return self.business_entity_manager_plugin
+    def get_entity_manager_plugin(self):
+        return self.entity_manager_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.business.entity_manager")
-    def set_business_entity_manager_plugin(self, business_entity_manager_plugin):
-        self.business_entity_manager_plugin = business_entity_manager_plugin
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.data.entity_manager")
+    def set_entity_manager_plugin(self, entity_manager_plugin):
+        self.entity_manager_plugin = entity_manager_plugin
 
     def get_business_helper_plugin(self):
         return self.business_helper_plugin

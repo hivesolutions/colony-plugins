@@ -42,7 +42,7 @@ import colony.plugins.decorators
 
 class BusinessSessionManagerPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Business Entity Manager plugin
+    The main class for the Business Session Manager plugin
     """
 
     id = "pt.hive.colony.plugins.business.session_manager"
@@ -56,7 +56,7 @@ class BusinessSessionManagerPlugin(colony.plugins.plugin_system.Plugin):
     capabilities = ["business_session_manager"]
     capabilities_allowed = ["business_session_serializer", "business_logic", "business_logic_bundle"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.business.entity_manager", "1.0.0"),
+                    "pt.hive.colony.plugins.data.entity_manager", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.pool.simple_pool_manager", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
@@ -69,7 +69,7 @@ class BusinessSessionManagerPlugin(colony.plugins.plugin_system.Plugin):
 
     business_session_serializer_plugins = []
 
-    business_entity_manager_plugin = None
+    entity_manager_plugin = None
     simple_pool_manager_plugin = None
     random_plugin = None
 
@@ -113,7 +113,7 @@ class BusinessSessionManagerPlugin(colony.plugins.plugin_system.Plugin):
         return self.business_session_manager.load_session_manager_master_entity_manager(session_name, engine_name)
 
     def get_transaction_decorator(self):
-        return self.business_entity_manager_plugin.get_transaction_decorator()
+        return self.entity_manager_plugin.get_transaction_decorator()
 
     @colony.plugins.decorators.load_allowed_capability("business_session_serializer")
     def business_session_serializer_load_allowed(self, plugin, capability):
@@ -143,12 +143,12 @@ class BusinessSessionManagerPlugin(colony.plugins.plugin_system.Plugin):
         business_logic_bundle = plugin.get_business_logic_bundle()
         self.business_session_manager.unload_business_logic_bundle(business_logic_bundle)
 
-    def get_business_entity_manager_plugin(self):
-        return self.business_entity_manager_plugin
+    def get_entity_manager_plugin(self):
+        return self.entity_manager_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.business.entity_manager")
-    def set_business_entity_manager_plugin(self, business_entity_manager_plugin):
-        self.business_entity_manager_plugin = business_entity_manager_plugin
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.data.entity_manager")
+    def set_entity_manager_plugin(self, entity_manager_plugin):
+        self.entity_manager_plugin = entity_manager_plugin
 
     def get_simple_pool_manager_plugin(self):
         return self.simple_pool_manager_plugin
