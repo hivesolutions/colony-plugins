@@ -348,8 +348,8 @@ class RepositoryDescriptorFileParser(Parser):
             plugin_descriptor.main_class = self.parse_repository_descriptor_plugin_main_class(repository_descriptor_plugin_element)
         elif node_name == "file_name":
             plugin_descriptor.file_name = self.parse_repository_descriptor_plugin_file_name(repository_descriptor_plugin_element)
-        elif node_name == "zip_file":
-            plugin_descriptor.zip_file = self.parse_repository_descriptor_plugin_zip_file(repository_descriptor_plugin_element)
+        elif node_name == "contents_file":
+            plugin_descriptor.contents_file = self.parse_repository_descriptor_plugin_contents_file(repository_descriptor_plugin_element)
         elif node_name == "dependencies":
             plugin_descriptor.dependencies = self.parse_repository_descriptor_plugin_dependencies(repository_descriptor_plugin_element)
 
@@ -381,9 +381,9 @@ class RepositoryDescriptorFileParser(Parser):
         repository_descriptor_plugin_file_name = descriptor_plugin_file_name.firstChild.data.strip()
         return repository_descriptor_plugin_file_name
 
-    def parse_repository_descriptor_plugin_zip_file(self, descriptor_plugin_zip_file):
-        repository_descriptor_plugin_zip_file = descriptor_plugin_zip_file.firstChild.data.strip()
-        return repository_descriptor_plugin_zip_file
+    def parse_repository_descriptor_plugin_contents_file(self, descriptor_plugin_contents_file):
+        repository_descriptor_plugin_contents_file = descriptor_plugin_contents_file.firstChild.data.strip()
+        return repository_descriptor_plugin_contents_file
 
     def parse_repository_descriptor_plugin_dependencies(self, descriptor_plugin_dependencies):
         repository_descriptor_plugin_dependencies_list = []
@@ -565,17 +565,17 @@ class PluginDescriptor:
     version = "none"
     main_class = "none"
     file_name = "none"
-    zip_file = "none"
+    contents_file = "none"
     dependencies = []
 
-    def __init__(self, name = "none", plugin_type = "none", id = "none", version = "none", main_class = "none", file_name = "none", zip_file = "none"):
+    def __init__(self, name = "none", plugin_type = "none", id = "none", version = "none", main_class = "none", file_name = "none", contents_file = "none"):
         self.name = name
         self.plugin_type = plugin_type
         self.id = id
         self.version = version
         self.main_class = main_class
         self.file_name = file_name
-        self.zip_file = zip_file
+        self.contents_file = contents_file
         self.dependencies = []
 
     def __repr__(self):

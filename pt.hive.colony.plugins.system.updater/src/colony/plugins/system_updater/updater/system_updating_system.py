@@ -239,14 +239,14 @@ class SystemUpdater:
         # retrieves the repository structure for the provided repository descriptor
         repository = self.repository_descriptor_repository_map[repository_descriptor]
 
-        # retrieves the zip file
-        zip_file = self.get_zip_file(repository.name, plugin_descriptor.name, plugin_descriptor.version, plugin_descriptor.zip_file)
+        # retrieves the contents file
+        contents_file = self.get_contents_file(repository.name, plugin_descriptor.name, plugin_descriptor.version, plugin_descriptor.contents_file)
 
-        # sends the zip file to the plugin type deployer
-        plugin_deployer.deploy_package(zip_file, plugin_descriptor.id, plugin_descriptor.version)
+        # sends the contents file to the plugin type deployer
+        plugin_deployer.deploy_package(contents_file, plugin_descriptor.id, plugin_descriptor.version)
 
-        # deletes the zip file
-        self.delete_zip_file(zip_file)
+        # deletes the contents file
+        self.delete_contents_file(contents_file)
 
         return True
 
@@ -373,20 +373,20 @@ class SystemUpdater:
             if plugin_descriptor in repository_descriptor.plugins:
                 return repository_descriptor
 
-    def get_zip_file(self, repository_name, plugin_name, plugin_version, zip_file):
+    def get_contents_file(self, repository_name, plugin_name, plugin_version, contents_file):
         """
-        Retrieves the plugin zip file for the given repository name, plugin name, plugin version and zip file name
+        Retrieves the plugin contents file for the given repository name, plugin name, plugin version and contents file name
 
         @type repository_name: String
-        @param repository_name: The name of the repository to use in the plugin zip file retrieval
+        @param repository_name: The name of the repository to use in the plugin contents file retrieval
         @type plugin_name: String
-        @param plugin_name: The name of the plugin to use in the plugin zip file retrieval
+        @param plugin_name: The name of the plugin to use in the plugin contents file retrieval
         @type plugin_version: String
-        @param plugin_version: The version of the plugin to use in the plugin zip file retrieval
-        @type zip_file: String
-        @param zip_file: The name of the plugin zip file to retrieve
+        @param plugin_version: The version of the plugin to use in the plugin contents file retrieval
+        @type contents_file: String
+        @param contents_file: The name of the plugin contents file to retrieve
         @rtype: Stream
-        @return: The retrieved plugin zip file stream
+        @return: The retrieved plugin contents file stream
         """
 
         # retrieves the repository structure for the given repository name
@@ -398,29 +398,30 @@ class SystemUpdater:
         # retrieves the repository layout
         repository_layout = repository.layout
 
-        # downloads the zip file
-        self.download_zip_file(repository_addresses, plugin_name, plugin_version, zip_file, repository_layout, TEMP_DIRECTORY)
+        # downloads the contents file
+        self.download_contents_file(repository_addresses, plugin_name, plugin_version, contents_file, repository_layout, TEMP_DIRECTORY)
 
-        # the created zip file path
-        zip_file_path = TEMP_DIRECTORY + "/" + zip_file;
+        # the created contents file path
+        contents_file_path = TEMP_DIRECTORY + "/" + contents_file;
 
-        # the created zip file
-        zip_file = open(zip_file_path, "r")
+        # the created contents file
+        contents_file = open(contents_file_path, "r")
 
-        return zip_file
+        # returns teh contents file
+        return contents_file
 
-    def download_zip_file(self, repository_addresses, plugin_name, plugin_version, zip_file, repository_layout = SIMPLE_REPOSITORY_LAYOUT_VALUE, target_directory = TEMP_DIRECTORY):
+    def download_contents_file(self, repository_addresses, plugin_name, plugin_version, contents_file, repository_layout = SIMPLE_REPOSITORY_LAYOUT_VALUE, target_directory = TEMP_DIRECTORY):
         """
-        Downloads the plugin zip file for the given repository name, plugin name, plugin version and zip file name
+        Downloads the plugin contents file for the given repository name, plugin name, plugin version and contents file name
 
         @type repository_name: String
-        @param repository_name: The name of the repository to use in the plugin zip file download
+        @param repository_name: The name of the repository to use in the plugin contents file download
         @type plugin_name: String
-        @param plugin_name: The name of the plugin to use in the plugin zip file download
+        @param plugin_name: The name of the plugin to use in the plugin contents file download
         @type plugin_version: String
-        @param plugin_version: The version of the plugin to use in the plugin zip file download
-        @type zip_file: String
-        @param zip_file: The name of the plugin zip file to download
+        @param plugin_version: The version of the plugin to use in the plugin contents file download
+        @type contents_file: String
+        @param contents_file: The name of the plugin contents file to download
         @type repository_layout: String
         @param repository_layout: The layout of the repository.
         @type target_directory: String
@@ -440,11 +441,11 @@ class SystemUpdater:
             # in case the layout of the repository is simple
             # (eg: plugins/plugin_id_version.ext)
             if SIMPLE_REPOSITORY_LAYOUT_VALUE:
-                file_address = repository_address_value + "/plugins/" + zip_file
+                file_address = repository_address_value + "/plugins/" + contents_file
             # in case the layout of the repository is extended
             # (eg: plugins/plugin_name/plugin_version/plugin_id_version.ext)
             elif EXTENDED_REPOSITORY_LAYOUT_VALUE:
-                file_address = repository_address_value + "/plugins" + plugin_name + "/" + plugin_version + "/" + zip_file
+                file_address = repository_address_value + "/plugins" + plugin_name + "/" + plugin_version + "/" + contents_file
 
             result = downloader_plugin.download_package(file_address, target_directory)
 
@@ -453,12 +454,12 @@ class SystemUpdater:
                 return True
         return False
 
-    def delete_zip_file(self, zip_file):
-        # closes the zip file
-        zip_file.close()
+    def delete_contents_file(self, contents_file):
+        # closes the contents file
+        contents_file.close()
 
-        # retrieves the zip file path
-        zip_file_path = zip_file.name
+        # retrieves the contents file path
+        contents_file_path = contents_file.name
 
-        # removes the zip file
-        os.remove(zip_file_path)
+        # removes the contents file
+        os.remove(contents_file_path)

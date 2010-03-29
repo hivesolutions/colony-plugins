@@ -51,7 +51,7 @@ class ColonyDeployer:
     def load_deployer(self):
         self.colony_deployer_plugin.info("Loading colony deployer")
 
-    def deploy_package(self, zip_file, plugin_id, plugin_version):
+    def deploy_package(self, contents_file, plugin_id, plugin_version):
         # retrieves the plugin manager
         plugin_manager = self.colony_deployer_plugin.manager
 
@@ -60,13 +60,13 @@ class ColonyDeployer:
             return
 
         # retrieves the zip file names
-        zip_file_name = zip_file.name
+        zip_file_name = contents_file.name
 
         # prints some logging information
         self.colony_deployer_plugin.info("Deploying zip file: " + zip_file_name + " using colony deployer")
 
         # uncompresses the zip file
-        self.uncompress_zip_file(zip_file)
+        self.uncompress_zip_file(contents_file)
 
     def get_deployer_type(self):
         """

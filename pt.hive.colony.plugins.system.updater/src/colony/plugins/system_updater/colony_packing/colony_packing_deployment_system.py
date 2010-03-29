@@ -64,7 +64,7 @@ class ColonyPackingDeployer:
     def load_deployer(self):
         self.colony_packing_deployer_plugin.info("Loading colony packing deployer")
 
-    def deploy_package(self, zip_file, plugin_id, plugin_version):
+    def deploy_package(self, contents_file, plugin_id, plugin_version):
         # retrieves the packing manager plugin
         packing_manager_plugin = self.colony_packing_deployer_plugin.packing_manager_plugin
 
@@ -72,7 +72,7 @@ class ColonyPackingDeployer:
         properties = {"target_path" : PLUGINS_DIRECTORY}
 
         # unpacks the files using the colony service
-        packing_manager_plugin.unpack_files([zip_file.name], properties, "colony")
+        packing_manager_plugin.unpack_files([contents_file.name], properties, "colony")
 
     def get_deployer_type(self):
         """

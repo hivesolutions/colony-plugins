@@ -97,8 +97,8 @@ class WebDeployerPlugin(colony.plugins.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def deploy_package(self, zip_file, plugin_id, plugin_version):
-        self.web_deployer.deploy_package(zip_file, plugin_id, plugin_version)
+    def deploy_package(self, contents_file, plugin_id, plugin_version):
+        self.web_deployer.deploy_package(contents_file, plugin_id, plugin_version)
 
     def get_deployer_type(self):
         return self.web_deployer.get_deployer_type()

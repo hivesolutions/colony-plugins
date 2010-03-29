@@ -157,19 +157,19 @@ class ConsoleSystemUpdater:
         output_method("plugins: " + str(package_information.plugins))
 
     def print_plugin_info(self, plugin_information, output_method):
-        output_method("name:        " + plugin_information.name)
-        output_method("type:        " + plugin_information.plugin_type)
-        output_method("id:          " + plugin_information.id)
-        output_method("version:     " + plugin_information.version)
-        output_method("main_module: " + plugin_information.main_module)
-        output_method("main_class:  " + plugin_information.main_class)
-        output_method("file_name:   " + plugin_information.file_name)
-        output_method("zip_file:    " + plugin_information.zip_file)
+        output_method("name:          " + plugin_information.name)
+        output_method("type:          " + plugin_information.plugin_type)
+        output_method("id:            " + plugin_information.id)
+        output_method("version:       " + plugin_information.version)
+        output_method("main_module:   " + plugin_information.main_module)
+        output_method("main_class:    " + plugin_information.main_class)
+        output_method("file_name:     " + plugin_information.file_name)
+        output_method("contents_file: " + plugin_information.contents_file)
 
         for dependency_information in plugin_information.dependencies:
             output_method("dependency")
             self.print_dependency_info(dependency_information, output_method)
 
     def print_dependency_info(self, dependency_information, output_method):
-        output_method("id:          " + dependency_information.id)
-        output_method("version:     " + dependency_information.version)
+        output_method("id:            " + dependency_information.id)
+        output_method("version:       " + dependency_information.version)

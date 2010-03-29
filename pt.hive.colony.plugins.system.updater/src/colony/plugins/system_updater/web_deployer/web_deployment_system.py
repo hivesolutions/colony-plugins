@@ -56,8 +56,8 @@ class WebDeployer:
         # adds the new resource to the resource manager
         self.web_deployer_plugin.resource_manager_plugin.register_resource(self.web_deployer_plugin.id, "web_configuration", "xml", "resources/web_deployer_configuration.xml")
 
-    def deploy_package(self, zip_file, plugin_id, plugin_version):
-        zip_file_name = zip_file.name
+    def deploy_package(self, contents_file, plugin_id, plugin_version):
+        zip_file_name = contents_file.name
         self.web_deployer_plugin.info("Deploying zip file: " + zip_file_name + " using web deployer")
 
         # retrieves the resource (web configuration resource)
@@ -82,7 +82,7 @@ class WebDeployer:
         web_deployment_path = web_deployer_configuration.web_apps_path + "/" + web_deployer_configuration.project_path + "/" + web_deployer_configuration.plugins_path
 
         # uncompresses the zip file into the target plugins directory
-        self.uncompress_zip_file(zip_file, web_deployment_path)
+        self.uncompress_zip_file(contents_file, web_deployment_path)
 
     def get_deployer_type(self):
         """

@@ -42,7 +42,7 @@
 			<xsd:element name="main_module" type="xsd:string" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="main_class" type="xsd:string" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="file_name" type="xsd:string" maxOccurs="1" minOccurs="0" />
-			<xsd:element name="zip_file" type="xsd:string" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="contents_file" type="xsd:string" maxOccurs="1" minOccurs="0" />
 		</xsd:all>
 	</xsd:complexType>
 	<xsd:complexType name="plugins">
