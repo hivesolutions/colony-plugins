@@ -402,9 +402,12 @@ class BusinessSqliteEngine:
         # retrieves the unsynced attributes of the entity class
         unsynced_attributes_list = self._get_unsynced_attributes(connection, entity_class)
 
-        # in case the unsynced attributes list is not
+        # retrieves the unsynced relation attributes of the entity class
+        unsynced_relation_attributes_list = self._get_unsynced_relation_attributes(connection, entity_class)
+
+        # in case the unsynced (or relation) attributes list is not
         # empty and valid
-        if unsynced_attributes_list:
+        if unsynced_attributes_list or unsynced_relation_attributes_list:
             # returns false (the class is not completely synced)
             return False
         # in case the unsynced attributes list is empty or invalid
@@ -582,8 +585,11 @@ class BusinessSqliteEngine:
         # retrieves the unsynced attributes list from the entity class
         unsynced_attributes_list = self._get_unsynced_attributes(connection, entity_class)
 
-        # in case there are not
-        if not unsynced_attributes_list:
+        # retrieves the unsynced relation attributes list from the entity class
+        unsynced_relation_attributes_list = self._get_unsynced_relation_attributes(connection, entity_class)
+
+        # in case there are no unsynced attributes an relation attributes
+        if not unsynced_attributes_list and not unsynced_relation_attributes_list:
             # returns immediately
             return
 
@@ -648,6 +654,9 @@ class BusinessSqliteEngine:
 
             # closes the cursor
             cursor.close()
+
+        # tries to create the entity relations definition (to update the many to many relations)
+        self.create_entity_relations_definition(connection, entity_class)
 
     def create_table_generator(self, connection):
         """
@@ -3135,6 +3144,53 @@ class BusinessSqliteEngine:
 
             # increments the index
             index += 1
+
+        # closes the cursor
+        cursor.close()
+
+        # returns unsynced attributes list
+        return unsynced_attributes_list
+
+    def _get_unsynced_relation_attributes(self, connection, entity_class):
+        # creates the unsynced attributes list
+        unsynced_attributes_list = []
+
+        # retrieves the database connection from the connection object
+        database_connection = connection.database_connection
+
+        # creates the cursor for the given connection
+        cursor = database_connection.cursor()
+
+        # retrieves the entity class valid indirect attribute names
+        entity_class_valid_indirect_attribute_names = self.get_entity_class_indirect_attribute_names(entity_class)
+
+        # iterates over all the entity class valid indirect attribute names
+        # and checks if any of them is not mapped in a relation table (but only if it is a many-to many relation)
+        for entity_class_valid_indirect_attribute_name in entity_class_valid_indirect_attribute_names:
+            # retrieves the relation attributes for the given attribute name in the given entity class
+            relation_attributes = self.get_relation_attributes(entity_class, entity_class_valid_indirect_attribute_name)
+
+            # retrieves the relation type field
+            relation_type_field = relation_attributes[RELATION_TYPE_FIELD]
+
+            # in case the relation is of type many-to-many
+            if relation_type_field == MANY_TO_MANY_RELATION:
+                # retrieves the join table field
+                join_table_field = relation_attributes[JOIN_TABLE_FIELD]
+
+                # retrieves the attribute column name field
+                attribute_column_name_field = relation_attributes[ATTRIBUTE_COLUMN_NAME_FIELD]
+
+                # in case there is a table definition for the relation table
+                if self.exists_table_definition(connection, join_table_field):
+                    if not self.exists_table_column_definition(connection, join_table_field, attribute_column_name_field):
+                        # adds the attribute to the unsynced attributes with reason
+                        # attribute inexistant
+                        unsynced_attributes_list.append((entity_class_valid_indirect_attribute_name, INEXISTING_ATTRIBUTE_REASON_CODE))
+                else:
+                    # adds the attribute to the unsynced attributes with reason
+                    # attribute inexistant
+                    unsynced_attributes_list.append((entity_class_valid_indirect_attribute_name, INEXISTING_ATTRIBUTE_REASON_CODE))
 
         # closes the cursor
         cursor.close()
