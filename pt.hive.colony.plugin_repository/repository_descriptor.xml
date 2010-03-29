@@ -6,6 +6,9 @@
     <description>
         Simply the best repository
     </description>
+    <layout>
+        simple
+    </layout>
     <packages>
         <package>
             <name>Colony Translation</name>
@@ -167,9 +170,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.configuration.startup_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -194,9 +197,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.restricted_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -221,9 +224,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.demo.plugins.twitter_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -281,9 +284,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.build.automation_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -325,9 +328,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.build.automation.scheduler_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -385,9 +388,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.build.automation.extensions.izpack_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -437,9 +440,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.build.automation.extensions.packing_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -473,9 +476,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.build.automation.extensions.test_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -509,9 +512,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.build.automation.items.colony_base_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -536,9 +539,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.business.business_logic_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -580,9 +583,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.business.dummy_entity_bundle_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -616,9 +619,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.business.dummy_entity_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -660,9 +663,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.business.entity_manager_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -687,9 +690,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.business.helper_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -714,9 +717,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.business.session_manager_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -766,9 +769,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.business.session_serializer_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -793,9 +796,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.business.sqlite_engine_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -829,9 +832,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.data_converter.io_adapter.csv_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -865,9 +868,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.data_converter.io_adapter.dbase_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -901,9 +904,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.data_converter.io_adapter.entity_manager_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -945,9 +948,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.data_converter.io_adapter.filesystem_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -981,9 +984,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.data_converter.io_adapter.pickle_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -1017,9 +1020,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.data_converter.io_adapter.sqlite_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -1053,9 +1056,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.data_converter.io_adapter.xml_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -1089,9 +1092,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.data_converter_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -1133,9 +1136,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.data_converter_test_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -1193,9 +1196,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.distribution.bonjour_client_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -1229,9 +1232,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.distribution.bonjour_server_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -1273,9 +1276,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.distribution.client_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -1309,9 +1312,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.distribution.registry_client_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -1336,9 +1339,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.distribution.registry_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -1363,9 +1366,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.distribution.registry_server_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -1407,9 +1410,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.distribution.server_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -1443,9 +1446,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.distribution.helper.pyro_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -1479,9 +1482,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.distribution.helper.xmlrpc_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -1515,9 +1518,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.distribution.registry.service_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -1551,9 +1554,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.dummy.bonjour_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -1587,9 +1590,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.dummy.business_logic_1_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -1631,9 +1634,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.dummy.business_logic_2_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -1675,9 +1678,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.dummy.business_logic_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -1711,9 +1714,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.dummy.database_access_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -1738,9 +1741,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.dummy.distribution_client_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -1774,9 +1777,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.dummy.entity_manager_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -1826,9 +1829,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.dummy_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -1853,9 +1856,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.dummy.aux1_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -1889,9 +1892,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.dummy.aux2_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -1925,9 +1928,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.dummy.aux3_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -1952,9 +1955,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.dummy.aux4_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -1988,9 +1991,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.dummy.rpc_service_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -2015,9 +2018,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.dummy.swing_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -2042,9 +2045,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.dummy.plugin_unit_test_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -2069,9 +2072,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.dummy.windows_forms_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -2096,9 +2099,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.dummy.windows_forms_label_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -2123,9 +2126,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.dummy.windows_forms_label1_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -2150,9 +2153,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.dummy.remote_client_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -2186,9 +2189,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.dummy.unit_test_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -2213,9 +2216,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.dummy.english_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -2240,9 +2243,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.dummy.italian_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -2267,9 +2270,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.dummy.nelson_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -2294,9 +2297,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.eureka.engine_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -2321,9 +2324,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.eureka.mock_item_context_aware_filter_plugin_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -2348,9 +2351,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.eureka.mock_item_extension_plugin_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -2375,9 +2378,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.eureka.mock_item_filter_plugin_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -2402,9 +2405,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.eureka.mock_item_mapper_plugin_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -2429,9 +2432,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.eureka.mock_item_sorter_plugin_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -2456,9 +2459,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.javascript.file_handler_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -2492,9 +2495,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.javascript.handlers.localization_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -2519,9 +2522,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.javascript.manager.autoloader_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -2555,9 +2558,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.javascript.manager_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -2591,9 +2594,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.language.wiki_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -2618,9 +2621,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.access.plugin_manager_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -2645,9 +2648,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.access_control_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -2672,9 +2675,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.authentication.entity_manager_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -2699,9 +2702,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.authentication.ldap_handler_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -2726,9 +2729,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.authentication.openid_handler_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -2753,9 +2756,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.authentication_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -2780,9 +2783,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.authentication.xml_handler_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -2807,9 +2810,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.authentication.logic_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -2859,9 +2862,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.client.ldap_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -2886,9 +2889,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.console_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -2913,9 +2916,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.distribution.main.plugin_system_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -2940,9 +2943,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.distribution.main.registry.service_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -2976,9 +2979,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.gui_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -3020,9 +3023,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.localization.localization_manager_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -3047,9 +3050,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.localization.localization_translation_json_bundle_handler_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -3083,9 +3086,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.localization.localization_translation_manager_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -3110,9 +3113,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.localization.translation_bundle.en_us_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -3137,9 +3140,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.localization.translation_bundle.pt_pt_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -3164,9 +3167,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.log_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -3191,9 +3194,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.mock_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -3218,9 +3221,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.mod_python_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -3245,9 +3248,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.packing.colony_service_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -3281,9 +3284,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.packing.manager_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -3308,9 +3311,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.pool.simple_pool_manager_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -3335,9 +3338,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.remote.manager_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -3362,9 +3365,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.remote.client.manager_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -3389,9 +3392,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.remote.client.jsonrpc_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -3416,9 +3419,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.remote.client.pyro_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -3443,9 +3446,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.remote.client.xmlrpc_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -3470,9 +3473,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.remote.jsonrpc.manager_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -3497,9 +3500,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.remote.pyro.manager_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -3524,9 +3527,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.remote.rest.manager_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -3568,9 +3571,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.remote.rest.encoder.json_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -3604,9 +3607,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.remote.rest.encoder.xml_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -3631,9 +3634,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.remote.xmlrpc.manager_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -3658,9 +3661,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.service.normal_socket_provider_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -3685,9 +3688,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.service.ssl_socket_provider_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -3712,9 +3715,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.service.http.cgi_handler_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -3748,9 +3751,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.service.http.colony_handler_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -3775,9 +3778,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.service.http.fast_cgi_handler_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -3811,9 +3814,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.service.http.file_handler_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -3847,9 +3850,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.service.http.gzip_encoding_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -3883,9 +3886,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.service.http_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -3919,9 +3922,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.service.http.starter_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -3955,9 +3958,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.service.http.template_error_handler_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -3991,9 +3994,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.service.http.webdav_handler_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -4027,9 +4030,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.service.http.websocket_handler_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -4054,9 +4057,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.service.irc_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -4090,9 +4093,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.service.irc.starter_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -4126,9 +4129,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.service.smtp.dabase_session_handler_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -4153,9 +4156,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.service.smtp_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -4189,9 +4192,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.service.smtp.starter_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -4225,9 +4228,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.service.smtp.stream_handler_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -4252,9 +4255,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.service.telnet.console_handler_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -4288,9 +4291,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.service.telnet_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -4324,9 +4327,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.service.telnet.starter_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -4360,9 +4363,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.service.xmpp_helper_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -4387,9 +4390,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.service.xmpp_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -4431,9 +4434,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.service.xmpp.starter_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -4467,9 +4470,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.service.xmpp.stream_handler_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -4494,9 +4497,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.test_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -4530,9 +4533,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.tasks.task_manager_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -4566,9 +4569,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.threads.thread_pool_manager_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -4593,9 +4596,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.main.web.view_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -4620,9 +4623,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.messaging.extensions.email_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -4656,9 +4659,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.messaging.manager_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -4683,9 +4686,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.messaging.extensions.stdout_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -4710,9 +4713,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.autoloader_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -4737,9 +4740,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.bitmap_loader_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -4764,9 +4767,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.bonjour_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -4800,9 +4803,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.bot_engine_aiml_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -4827,9 +4830,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.bot_engine_console_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -4863,9 +4866,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.bot_manager_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -4890,9 +4893,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.code_coverage_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -4917,9 +4920,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.command_execution_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -4944,9 +4947,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.dependencies_calculator_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -4971,9 +4974,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.downloader_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -4998,9 +5001,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.email_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -5025,9 +5028,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.execution_environment_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -5052,9 +5055,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.garbage_collector_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -5079,9 +5082,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.google_data_client_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -5106,9 +5109,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.guid_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -5133,9 +5136,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.gzip_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -5160,9 +5163,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.image_treatment_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -5187,9 +5190,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.json_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -5214,9 +5217,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.plugin_downloader_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -5266,9 +5269,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.plugin_package_manager_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -5293,9 +5296,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.random_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -5320,9 +5323,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.repository_descriptor_generator_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -5347,9 +5350,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.scheduler_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -5391,9 +5394,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.svn_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -5418,9 +5421,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.timer_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -5445,9 +5448,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.zip_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -5472,9 +5475,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.gui.console_interface_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -5508,9 +5511,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.gui.dependencies_visualizer_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -5544,9 +5547,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.gui.garbage_collector_visualizer_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -5571,9 +5574,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.gui.plugin_manager_interface_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -5607,9 +5610,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.gui.progress_information_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -5643,9 +5646,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.gui.shell_interface_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -5670,9 +5673,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.gui.system_updater_interface_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -5697,9 +5700,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.misc.gui.tree_visualizer_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -5724,9 +5727,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.plugin_manager_logic_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -5751,9 +5754,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.printing.manager_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -5778,9 +5781,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.printing.win32_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -5805,9 +5808,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.resources.json_resource_parser_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -5841,9 +5844,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.resources.python_resource_parser_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -5868,9 +5871,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.resources.resource_manager_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -5895,9 +5898,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.revision_control.bazaar_adapter_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -5922,9 +5925,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.revision_control.manager_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -5949,9 +5952,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.revision_control.mercurial_adapter_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -5976,9 +5979,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.revision_control.subversion_adapter_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -6003,9 +6006,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.search.index_repository_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -6030,9 +6033,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.search_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -6130,9 +6133,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.search.crawler.file_system_adapter_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -6157,9 +6160,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.search.crawler_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -6184,9 +6187,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.search.index_persistence.file_system_adapter_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -6211,9 +6214,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.search.index_persistence_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -6238,9 +6241,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.search.index_serializer.cpickle_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -6265,9 +6268,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.search.index_serializer.shelve_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -6292,9 +6295,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.search.indexer_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -6319,9 +6322,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.search.interpreter.capitals_adapter_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -6346,9 +6349,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.search.interpreter_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -6373,9 +6376,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.search.provider.text_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -6400,9 +6403,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.search.query_evaluator_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -6427,9 +6430,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.search.query_evaluator_visitor_adapter_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -6463,9 +6466,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.search.query_interpreter_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -6490,9 +6493,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.search.remote_service_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -6534,9 +6537,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.search.scorer.default_function_bundle_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -6570,9 +6573,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.search.scorer.default_metric_bundle_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -6606,9 +6609,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.search.scorer.function_repository_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -6633,9 +6636,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.search.scorer.metric_repository_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -6660,9 +6663,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.search.scorer_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -6704,9 +6707,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.search.sorter_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -6740,9 +6743,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.service.twitter_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -6776,9 +6779,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.specifications.json_specification_generator_handler_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -6812,9 +6815,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.specification.json_specification_parser_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -6848,9 +6851,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.specifications.specification_generator_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -6875,9 +6878,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.specifications.specification_manager_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -6902,9 +6905,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.system.updater.colony_deployer_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -6938,9 +6941,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.system.updater.colony_packing_deployer_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -6974,9 +6977,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.system.updater_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -7010,9 +7013,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.system.updater.web_deployer_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -7054,9 +7057,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.template_engine.manager_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -7081,9 +7084,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.template.administration.default_items_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -7108,9 +7111,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.template.administration_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -7135,9 +7138,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.template.administration.search_items_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -7162,9 +7165,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.template.handler_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -7189,9 +7192,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.web.administration_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -7225,9 +7228,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.web.entity_manager_administration_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -7269,9 +7272,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.web.mvc_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -7296,9 +7299,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.web.mvc.utils_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -7340,9 +7343,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.colony.plugins.web.mvc.wiki_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -7376,9 +7379,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.omni.plugins.base.data_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -7412,9 +7415,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.omni.plugins.base.data_test_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -7464,9 +7467,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.omni.plugins.base.logic_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -7508,9 +7511,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.omni.plugins.base.logic_test_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -7560,9 +7563,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.omni.plugins.extra.business.access_data_filter_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -7587,9 +7590,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.omni.plugins.migration_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -7614,9 +7617,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.omni.plugins.migration.demo_data_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -7666,9 +7669,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.omni.plugins.migration.diamante.2003.lugar_da_joia_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -7702,9 +7705,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.omni.plugins.migration.diamante.2003_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -7754,9 +7757,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.omni.plugins.migration.saft_pt_logic_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -7814,9 +7817,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.omni.plugins.migration.saft_pt_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies/>
         </plugin>
         <plugin>
@@ -7841,9 +7844,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.hive_site.plugins.main_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
@@ -7885,9 +7888,9 @@
             <file_name>
                 none
             </file_name>
-            <zip_file>
+            <contents_file>
                 pt.hive.hive_blog.plugins.main_1.0.0.cpx
-            </zip_file>
+            </contents_file>
             <dependencies>
                 <plugin_dependency>
                     <id>
