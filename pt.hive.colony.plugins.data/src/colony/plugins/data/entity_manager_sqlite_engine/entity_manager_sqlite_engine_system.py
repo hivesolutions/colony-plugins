@@ -2652,11 +2652,11 @@ class EntityManagerSqliteEngine:
         @return: The value of the relation attribute.
         """
 
-        # retrieves the entity manager helper plugin
-        entity_manager_helper_plugin = self.entity_manager_sqlite_engine_plugin.entity_manager_helper_plugin
+        # retrieves the business helper plugin
+        business_helper_plugin = self.entity_manager_sqlite_engine_plugin.business_helper_plugin
 
         # retrieves the object entity class
-        object_entity_class = entity_manager_helper_plugin.get_entity_class()
+        object_entity_class = business_helper_plugin.get_entity_class()
 
         # in case the value of the attribute is None returns immediately
         if attribute_value == None:
