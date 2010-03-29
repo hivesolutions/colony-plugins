@@ -493,9 +493,21 @@ class BusinessSqliteEngine:
         cursor.close()
 
         # creates the entity relations definition
-        self.create_entity_relations_definition(connection, entity_class)
+        self.create_update_entity_relations_definition(connection, entity_class)
 
-    def create_entity_relations_definition(self, connection, entity_class):
+    def create_update_entity_relations_definition(self, connection, entity_class):
+        """
+        Creates or updates the entity relations definition.
+        The method starts by retrieving the current relation schema for the
+        given entity class, in case the related tables are not currently updated
+        it proceeds by updating them.
+
+        @type connection: Connection
+        @param connection: The database connection to use.
+        @type entity_class: Class
+        @param entity_class: The entity class to be used in the creation or updating.
+        """
+
         # retrieves the database connection from the connection object
         database_connection = connection.database_connection
 
@@ -655,8 +667,8 @@ class BusinessSqliteEngine:
             # closes the cursor
             cursor.close()
 
-        # tries to create the entity relations definition (to update the many to many relations)
-        self.create_entity_relations_definition(connection, entity_class)
+        # tries to create (update) the entity relations definition (to update the many to many relations)
+        self.create_update_entity_relations_definition(connection, entity_class)
 
     def create_table_generator(self, connection):
         """
