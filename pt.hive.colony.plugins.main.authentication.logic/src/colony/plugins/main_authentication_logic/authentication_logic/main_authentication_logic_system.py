@@ -69,14 +69,14 @@ class MainAuthenticationLogic:
         self.business_logic_bundle_map = {}
 
     def generate_classes(self):
-        # retrieves the business entity manager plugin
-        business_entity_manager_plugin = self.main_authentication_logic_plugin.business_entity_manager_plugin
+        # retrieves the entity manager plugin
+        entity_manager_plugin = self.main_authentication_logic_plugin.entity_manager_plugin
 
         # retrieves the business helper plugin
         business_helper_plugin = self.main_authentication_logic_plugin.business_helper_plugin
 
         # retrieves the transaction decorator
-        transaction_decorator = business_entity_manager_plugin.get_transaction_decorator()
+        transaction_decorator = entity_manager_plugin.get_transaction_decorator()
 
         # creates the list of global values
         global_values = [transaction_decorator, main_authentication_logic_exceptions]
