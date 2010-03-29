@@ -64,8 +64,8 @@ class DummyEntityManager:
         # retrieves the resource manager plugin
         resource_manager_plugin = self.dummy_entity_manager_plugin.resource_manager_plugin
 
-        # retrieves the business entity manager plugin
-        business_entity_manager_plugin = self.dummy_entity_manager_plugin.business_entity_manager_plugin
+        # retrieves the entity manager plugin
+        entity_manager_plugin = self.dummy_entity_manager_plugin.entity_manager_plugin
 
         # retrieves the user home path resource
         user_home_path_resource = resource_manager_plugin.get_resource("system.path.user_home")
@@ -80,7 +80,7 @@ class DummyEntityManager:
         database_file_name = database_file_name_resource.data
 
         # creates a new entity manager with the sqlite engine
-        entity_manager = business_entity_manager_plugin.load_entity_manager("sqlite")
+        entity_manager = entity_manager_plugin.load_entity_manager("sqlite")
 
         # sets the connection parameters for the entity manager
         entity_manager.set_connection_parameters({"file_path" : user_home_path + "/" + database_file_name, "autocommit" : False})
