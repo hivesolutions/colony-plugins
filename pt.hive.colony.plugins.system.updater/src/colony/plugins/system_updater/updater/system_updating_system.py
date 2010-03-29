@@ -46,6 +46,12 @@ TEMP_DIRECTORY = "colony/tmp"
 REPOSITORIES_FILE_PATH = "resources/repositories.xml"
 REPOSITORY_DESCRIPTOR_FILE = "repository_descriptor.xml"
 
+SIMPLE_REPOSITORY_LAYOUT_VALUE = "simple"
+""" The simple repository layout value """
+
+EXTENDED_REPOSITORY_LAYOUT_VALUE = "extended"
+""" The extended repository layout value """
+
 class SystemUpdater:
 
     system_updater_plugin = None
@@ -389,8 +395,11 @@ class SystemUpdater:
         # retrieves the repository addresses
         repository_addresses = repository.addresses
 
+        # retrieves the repository layout
+        repository_layout = repository.layout
+
         # downloads the zip file
-        self.download_zip_file(repository_addresses, plugin_name, plugin_version, zip_file, TEMP_DIRECTORY)
+        self.download_zip_file(repository_addresses, plugin_name, plugin_version, zip_file, repository_layout, TEMP_DIRECTORY)
 
         # the created zip file path
         zip_file_path = TEMP_DIRECTORY + "/" + zip_file;
@@ -400,7 +409,7 @@ class SystemUpdater:
 
         return zip_file
 
-    def download_zip_file(self, repository_addresses, plugin_name, plugin_version, zip_file, target_directory = TEMP_DIRECTORY):
+    def download_zip_file(self, repository_addresses, plugin_name, plugin_version, zip_file, repository_layout = SIMPLE_REPOSITORY_LAYOUT_VALUE, target_directory = TEMP_DIRECTORY):
         """
         Downloads the plugin zip file for the given repository name, plugin name, plugin version and zip file name
 
@@ -412,6 +421,8 @@ class SystemUpdater:
         @param plugin_version: The version of the plugin to use in the plugin zip file download
         @type zip_file: String
         @param zip_file: The name of the plugin zip file to download
+        @type repository_layout: String
+        @param repository_layout: The layout of the repository.
         @type target_directory: String
         @param target_directory: The target directory of the download
         @rtype: bool
@@ -422,11 +433,21 @@ class SystemUpdater:
 
         # iterates over all the repository addresses
         for repository_address in repository_addresses:
+            # prints an info message
             self.system_updater_plugin.info("Trying address %s (%s)" % (repository_address.name, repository_address.value))
             repository_address_value = repository_address.value
-            file_address = repository_address_value + "/plugins/" + zip_file
+
+            # in case the layout of the repository is simple
+            # (eg: plugins/plugin_id_version.ext)
+            if SIMPLE_REPOSITORY_LAYOUT_VALUE:
+                file_address = repository_address_value + "/plugins/" + zip_file
+            # in case the layout of the repository is extended
+            # (eg: plugins/plugin_name/plugin_version/plugin_id_version.ext)
+            elif EXTENDED_REPOSITORY_LAYOUT_VALUE:
+                file_address = repository_address_value + "/plugins" + plugin_name + "/" + plugin_version + "/" + zip_file
 
             result = downloader_plugin.download_package(file_address, target_directory)
+
             # in case the download was successful
             if result:
                 return True

@@ -123,6 +123,8 @@ class RepositoriesFileParser(Parser):
             repository.name = self.parse_name(repository_element)
         elif node_name == "description":
             repository.description = self.parse_description(repository_element)
+        elif node_name == "layout":
+            repository.layout = self.parse_layout(repository_element)
         elif node_name == "addresses":
             repository.addresses = self.parse_addresses(repository_element)
 
@@ -133,6 +135,10 @@ class RepositoriesFileParser(Parser):
     def parse_description(self, description):
         repository_description = description.firstChild.data.strip()
         return repository_description
+
+    def parse_layout(self, layout):
+        repository_layout = layout.firstChild.data.strip()
+        return repository_layout
 
     def parse_addresses(self, addresses):
         addresses_list = []
@@ -197,6 +203,8 @@ class RepositoryDescriptorFileParser(Parser):
             repository_descriptor.name = self.parse_repository_descriptor_name(repository_descriptor_element)
         elif node_name == "description":
             repository_descriptor.description = self.parse_repository_descriptor_description(repository_descriptor_element)
+        elif node_name == "layout":
+            repository_descriptor.layout = self.parse_repository_descriptor_layout(repository_descriptor_element)
         elif node_name == "packages":
             repository_descriptor.packages = self.parse_repository_descriptor_packages(repository_descriptor_element)
         elif node_name == "plugins":
@@ -209,6 +217,10 @@ class RepositoryDescriptorFileParser(Parser):
     def parse_repository_descriptor_description(self, descriptor_description):
         repository_descriptor_description = descriptor_description.firstChild.data.strip()
         return repository_descriptor_description
+
+    def parse_repository_descriptor_layout(self, descriptor_layout):
+        repository_descriptor_layout = descriptor_layout.firstChild.data.strip()
+        return repository_descriptor_layout
 
     def parse_repository_descriptor_packages(self, descriptor_packages):
         repository_descriptor_packages_list = []
@@ -417,9 +429,10 @@ class Repository:
 
     name = "none"
     description = "none"
+    layout = "none"
     addresses = []
 
-    def __init__(self, name = "none", description = "none"):
+    def __init__(self, name = "none", description = "none", layout = "none"):
         self.name = name
         self.description = description
         self.addresses = []
@@ -457,10 +470,11 @@ class RepositoryDescriptor:
 
     name = "none"
     description = "none"
+    layout = "none"
     packages = []
     plugins = []
 
-    def __init__(self, name = "none", description = "none"):
+    def __init__(self, name = "none", description = "none", layout = "none"):
         self.name = name
         self.description = description
         self.packages = []

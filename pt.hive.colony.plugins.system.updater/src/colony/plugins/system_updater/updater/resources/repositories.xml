@@ -35,6 +35,7 @@
     <repository>
         <name>Main Repository</name>
         <description>Contains most of the main plugins</description>
+        <layout>simple</layout>
         <addresses>
             <address name="Local Address">
                 http://localhost:8080/colony/repository
@@ -49,6 +50,7 @@
         <description>
             Contains most of the auxiliary plugins
         </description>
+        <layout>simple</layout>
         <addresses>
             <address name="Local Address">
                 http://localhost:8080/colony/auxiliary_repository
