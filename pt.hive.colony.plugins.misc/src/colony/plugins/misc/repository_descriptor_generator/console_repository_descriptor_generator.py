@@ -44,8 +44,11 @@ INVALID_NUMBER_ARGUMENTS_MESSAGE = "invalid number of arguments"
 """ The invalid number of arguments message """
 
 HELP_TEXT = "### REPOSITORY DESCRIPTOR GENERATOR HELP ###\n\
-generate_repository_descriptor <file-path> [repository-name] [repository-description] - generates a repository descriptor with the available plugins"
+generate_repository_descriptor <file-path> [repository-name] [repository-description] [repository-layout] - generates a repository descriptor with the available plugins"
 """ The help text """
+
+SIMPLE_LAYOUT_VALUE = "simple"
+""" The simple layout value """
 
 class ConsoleRepositoryDescriptorGenerator:
     """
@@ -100,6 +103,11 @@ class ConsoleRepositoryDescriptorGenerator:
         else:
             repository_description = "none"
 
+        if len(args) > 3:
+            repository_layout = args[3]
+        else:
+            repository_layout = SIMPLE_LAYOUT_VALUE
+
         output_method("creating repository descriptor in " + file_path)
 
-        self.repository_descriptor_generator_plugin.repository_descriptor_generator.generate_repository_descriptor_file(file_path, repository_name, repository_description)
+        self.repository_descriptor_generator_plugin.repository_descriptor_generator.generate_repository_descriptor_file(file_path, repository_name, repository_description, repository_layout)

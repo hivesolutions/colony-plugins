@@ -39,8 +39,11 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import xml.dom.minidom
 
-COLONY_TYPE = "colony"
-""" The colony type """
+DEFAULT_REPOSITORY_LAYOUT = "simple"
+""" The default repository layout """
+
+COLONY_PACKING_TYPE = "colony_packing"
+""" The colony packing type """
 
 class RepositoryDescriptorGenerator:
     """
@@ -60,9 +63,9 @@ class RepositoryDescriptorGenerator:
 
         self.repository_descriptor_generator_plugin = repository_descriptor_generator_plugin
 
-    def generate_repository_descriptor_file(self, file_path, repository_name = "none", repository_description = "none"):
+    def generate_repository_descriptor_file(self, file_path, repository_name = "none", repository_description = "none", repository_layout = DEFAULT_REPOSITORY_LAYOUT):
         # retrieves the repository descriptor string from the repository descriptor generator
-        repository_descriptor_string = self.generate_repository_descriptor(repository_name, repository_description)
+        repository_descriptor_string = self.generate_repository_descriptor(repository_name, repository_description, repository_layout)
 
         # opens the file (to write the repository descriptor)
         file = open(file_path, "wb")
@@ -74,15 +77,18 @@ class RepositoryDescriptorGenerator:
         # closes the file
         file.close()
 
-    def generate_repository_descriptor(self, repository_name = "none", repository_description = "none"):
+    def generate_repository_descriptor(self, repository_name = "none", repository_description = "none", repository_layout = DEFAULT_REPOSITORY_LAYOUT):
         """
         Generates a repository descriptor file (xml) using the current loaded plugins.
         The generated repository is named after the sent argument and description.
+        The generated repository descriptor obeys the defined repository descriptor.
 
         @type repository_name: String
         @param repository_name: The name to be used to refer the repository.
         @type repository_description: String
         @param repository_description: The description to be used by the repository.
+        @type repository_layout: String
+        @param repository_layout: The layout to be used by the repository.
         @rtype: String
         @return: The string containing the repository descriptor.
         """
@@ -108,6 +114,14 @@ class RepositoryDescriptorGenerator:
         # creates the repository description value element
         repository_description_value_node = xml_document.createTextNode(repository_description)
         repository_description_node.appendChild(repository_description_value_node)
+
+        # creates the repository layout element
+        repository_layout_node = xml_document.createElement("layout")
+        repository_node.appendChild(repository_layout_node)
+
+        # creates the repository layout value element
+        repository_description_layout_node = xml_document.createTextNode(repository_layout)
+        repository_layout_node.appendChild(repository_description_layout_node)
 
         # creates the repository packages element
         repository_packages_node = xml_document.createElement("packages")
@@ -137,7 +151,7 @@ class RepositoryDescriptorGenerator:
             repository_plugin_type_node = xml_document.createElement("type")
             repository_plugin_node.appendChild(repository_plugin_type_node)
 
-            repository_plugin_type_value_node = xml_document.createTextNode(COLONY_TYPE)
+            repository_plugin_type_value_node = xml_document.createTextNode(COLONY_PACKING_TYPE)
             repository_plugin_type_node.appendChild(repository_plugin_type_value_node)
 
             repository_plugin_id_node = xml_document.createElement("id")
@@ -173,7 +187,7 @@ class RepositoryDescriptorGenerator:
             repository_plugin_zip_file_node = xml_document.createElement("zip_file")
             repository_plugin_node.appendChild(repository_plugin_zip_file_node)
 
-            repository_plugin_zip_file_value_node = xml_document.createTextNode(plugin.id + ".zip")
+            repository_plugin_zip_file_value_node = xml_document.createTextNode(plugin.id + "_" + plugin.version + ".cpx")
             repository_plugin_zip_file_node.appendChild(repository_plugin_zip_file_value_node)
 
             repository_plugin_dependencies_node = xml_document.createElement("dependencies")
