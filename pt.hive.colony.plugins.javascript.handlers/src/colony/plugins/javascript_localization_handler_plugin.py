@@ -46,7 +46,7 @@ class JavascriptLocalizationHandlerPlugin(colony.plugins.plugin_system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.javascript.handlers.localization"
-    name = "Jaavascript Localization Handler Plugin"
+    name = "Javascript Localization Handler Plugin"
     short_name = "Javascript Localization Handler"
     description = "Javascript Localization Handler Plugin"
     version = "1.0.0"
