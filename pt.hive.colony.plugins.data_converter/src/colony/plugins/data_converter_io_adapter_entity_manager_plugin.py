@@ -43,13 +43,13 @@ import colony.plugins.decorators
 class DataConverterIoAdapterEntityManagerPlugin(colony.plugins.plugin_system.Plugin):
     """
     Provides a means to load and save intermediate structures by using the
-    colony business entity manager.
+    colony entity manager.
     """
 
     id = "pt.hive.colony.plugins.data_converter.io_adapter.entity_manager"
     name = "Data Converter Input Output Adapter Entity Manager plugin"
     short_name = "Data Converter Input Output Adapter Entity Manager"
-    description = "Provides a means to load and save intermediate structures by using the colony business entity manager"
+    description = "Provides a means to load and save intermediate structures by using the colony entity manager"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
@@ -57,7 +57,7 @@ class DataConverterIoAdapterEntityManagerPlugin(colony.plugins.plugin_system.Plu
     capabilities = ["data_converter_io_adapter.entity_manager"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.business.entity_manager", "1.0.0"),
+                    "pt.hive.colony.plugins.data.entity_manager", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.log", "1.0.0")]
     events_handled = []
@@ -67,10 +67,10 @@ class DataConverterIoAdapterEntityManagerPlugin(colony.plugins.plugin_system.Plu
     """ The intermediate structure entity manager input output adapter """
 
     entity_manager_plugin = None
-    """ Business entity manager plugin """
+    """ The entity manager plugin """
 
     logger_plugin = None
-    """ Logger plugin """
+    """ The logger plugin """
 
     def __init__(self, manager):
         colony.plugins.plugin_system.Plugin.__init__(self, manager)
@@ -141,7 +141,7 @@ class DataConverterIoAdapterEntityManagerPlugin(colony.plugins.plugin_system.Plu
     def get_entity_manager_plugin(self):
         return self.entity_manager_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.business.entity_manager")
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.data.entity_manager")
     def set_entity_manager_plugin(self, entity_manager_plugin):
         self.entity_manager_plugin = entity_manager_plugin
 

@@ -76,7 +76,7 @@ LAZY_LOADED = "%lazy-loaded%"
 class IoAdapterEntityManager:
     """
     Provides a means to load and save the intermediate structure by using the
-    colony business entity manager.
+    colony entity manager.
     """
 
     io_adapter_entity_manager_plugin = None
