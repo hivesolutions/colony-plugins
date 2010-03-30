@@ -163,8 +163,13 @@ class BusinessHelper:
 
 class EntityClass(object):
     """
-    The entity class.
+    The base entity class used
+    for the entity manager.
     """
 
     def __init__(self):
+        """
+        Constructor fo the class.
+        """
+
         pass
