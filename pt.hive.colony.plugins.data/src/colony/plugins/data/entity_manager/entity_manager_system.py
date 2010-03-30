@@ -46,10 +46,13 @@ ATTRIBUTE_EXCLUSION_LIST = ["__class__", "__delattr__", "__dict__", "__doc__", "
 """ The attribute exclusion list """
 
 TYPE_EXCLUSION_LIST = [types.MethodType, types.FunctionType, types.ClassType]
+""" The type exclusion list """
 
 RELATION_DATA_TYPE = "relation"
+""" The relation data type """
 
 DATA_TYPE_FIELD = "data_type"
+""" The data type field """
 
 class DataEntityManager:
     """
