@@ -47,7 +47,7 @@ class JavascriptManagerAutoloaderPlugin(colony.plugins.plugin_system.Plugin):
 
     id = "pt.hive.colony.plugins.javascript.manager.autoloader"
     name = "Javascript Manager Autoloader Plugin"
-    short_name = "Javascript Manager Autloader"
+    short_name = "Javascript Manager Autoloader"
     description = "Javascript Manager Autoloader Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
