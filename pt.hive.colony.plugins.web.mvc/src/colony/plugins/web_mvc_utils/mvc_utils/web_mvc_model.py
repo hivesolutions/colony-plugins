@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import web_mvc_utils_exceptions
 
-def _start(self):
+def _start_model(self):
     """
     Starts the model structures.
     """
@@ -52,8 +52,10 @@ def _start(self):
     # attribute name with the list of errors
     self.validation_errors_map = {}
 
-    # calls the start method (to be implemented)
-    self.start()
+    # in case the model has the start method
+    if hasattr(self, "start"):
+        # calls the start method (to be implemented)
+        self.start()
 
 def add_validation_method(self, attribute_name, validation_method_name, properties = {}):
     """

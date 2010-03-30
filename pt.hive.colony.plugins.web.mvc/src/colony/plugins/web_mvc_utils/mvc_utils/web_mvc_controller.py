@@ -45,7 +45,11 @@ DEFAULT_CONTENT_TYPE = "text/html;charset=utf-8"
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding value """
 
-def _start(self):
+def _start_controller(self):
+    """
+    Starts the controller structures.
+    """
+
     # in case the controller has the start method
     if hasattr(self, "start"):
         # calls the start method

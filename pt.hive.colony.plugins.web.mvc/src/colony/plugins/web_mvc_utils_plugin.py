@@ -58,7 +58,9 @@ class WebMvcUtilsPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.template_engine.manager", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.data.entity_manager", "1.0.0")]
+                    "pt.hive.colony.plugins.data.entity_manager", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.business.helper", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["web_mvc_utils.mvc_utils.web_mvc_controller", "web_mvc_utils.mvc_utils.web_mvc_model", "web_mvc_utils.mvc_utils.web_mvc_utils_exceptions",
@@ -68,6 +70,7 @@ class WebMvcUtilsPlugin(colony.plugins.plugin_system.Plugin):
 
     template_engine_manager_plugin = None
     entity_manager_plugin = None
+    business_helper_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -100,6 +103,9 @@ class WebMvcUtilsPlugin(colony.plugins.plugin_system.Plugin):
     def create_controller(self, base_controller, base_arguments_list, base_arguments_map):
         return self.web_mvc_utils.create_controller(base_controller, base_arguments_list, base_arguments_map)
 
+    def create_entity_models(self, base_entity_models_module_name, entity_manager_arguments):
+        return self.web_mvc_utils.create_entity_models(base_entity_models_module_name, entity_manager_arguments)
+
     def get_template_engine_manager_plugin(self):
         return self.template_engine_manager_plugin
 
@@ -113,3 +119,10 @@ class WebMvcUtilsPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.data.entity_manager")
     def set_entity_manager_plugin(self, entity_manager_plugin):
         self.entity_manager_plugin = entity_manager_plugin
+
+    def get_business_helper_plugin(self):
+        return self.business_helper_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.business.helper")
+    def set_business_helper_plugin(self, business_helper_plugin):
+        self.business_helper_plugin = business_helper_plugin
