@@ -102,4 +102,10 @@
         <type>string</type>
         <data>../../</data>
     </resource>
+    <resource>
+        <namespace>system.path</namespace>
+        <name>take_the_bill</name>
+        <type>string</type>
+        <data>../../</data>
+    </resource>
 </resources>
