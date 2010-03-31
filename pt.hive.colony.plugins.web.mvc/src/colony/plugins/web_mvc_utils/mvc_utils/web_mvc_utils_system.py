@@ -43,6 +43,18 @@ import web_mvc_model
 import web_mvc_controller
 import web_mvc_entity_model
 
+ENGINE_VALUE = "engine"
+""" The engine value """
+
+CONNECTION_PARAMETERS_VALUE = "connection_parameters"
+""" The connection parameters value """
+
+DEFAULT_ENGINE = "sqlite"
+""" The default engine """
+
+DEFAULT_CONNECTION_PARAMETERS = {"file_path" : "c:/tobias.db", "autocommit" : False}
+""" The default connection parameters """
+
 class WebMvcUtils:
     """
     The web mvc utils class.
@@ -93,52 +105,48 @@ class WebMvcUtils:
         # returns the controller
         return controller
 
-    def create_entity_models(self, base_entity_models_module_name, entity_manager_arguments):
+    def create_entity_models(self, base_entity_models_module_name, entity_manager_arguments, directory_path):
         # retrieves the entity manager plugin
         entity_manager_plugin = self.web_mvc_utils_plugin.entity_manager_plugin
 
         # retrieves the business helper plugin
         business_helper_plugin = self.web_mvc_utils_plugin.business_helper_plugin
 
-
-
-        # retrieves the base directory name
-        #base_directory_name = self.get_path_directory_name()
-
         # imports the base entity models module
-        base_entity_models_module = business_helper_plugin.import_class_module_target(base_entity_models_module_name, globals(), locals(), [], "C:/Users/joamag/workspace/pt.hive.hive_blog.plugins.main/src/hive_blog/plugins/hive_blog_main/main", base_entity_models_module_name)
+        base_entity_models_module = business_helper_plugin.import_class_module_target(base_entity_models_module_name, globals(), locals(), [], directory_path, base_entity_models_module_name)
 
+        # retrieves the entity class
+        entity_class = business_helper_plugin.get_entity_class()
 
+        # retrieves all the entity classes from the base entity models module
+        base_entity_models = self._get_entity_classes(base_entity_models_module, entity_class)
 
+        # generates the entity models map from the base entity models list
+        # creating the map associating the class names with the classes
+        base_entity_models_map = business_helper_plugin.generate_bundle_map(base_entity_models)
 
+        # retrieves the engine from the entity manager arguments or uses
+        # the default engine
+        engine = entity_manager_arguments.get(ENGINE_VALUE, DEFAULT_ENGINE)
 
-        # generates the entity bundle map from the entity bundle
-        #self.entity_bundle_map = business_helper_plugin.generate_bundle_map(self.entity_bundle)
-
-
-
-        # HARDCODED PLEASE CHANGE !!!!
-        base_entity_models = [base_entity_models_module.Comment]
-
-
-
+        # retrieves the connection parameters from the entity manager arguments or uses
+        # the default connection parameters
+        connection_parameters = entity_manager_arguments.get(CONNECTION_PARAMETERS_VALUE, DEFAULT_CONNECTION_PARAMETERS)
 
         # creates a new entity manager for the remote models
-        entity_manager = entity_manager_plugin.load_entity_manager("sqlite")
+        entity_manager = entity_manager_plugin.load_entity_manager(engine)
+
+        # sets the connection parameters for the entity manager
+        entity_manager.set_connection_parameters(connection_parameters)
 
         # sets the entity manager classes list
         entity_manager.entity_classes_list = base_entity_models
 
-        # TENHO DE TB ACTUALIZAR A ENTITY CLASSES MAP !!!
-
-
-        # sets the connection parameters for the entity manager
-        entity_manager.set_connection_parameters({"file_path" : "c:/tobias.db", "autocommit" : False})
+        # sets the entity manager classes map
+        entity_manager.entity_classes_map = base_entity_models_map
 
         # loads the entity manager
         entity_manager.load_entity_manager()
-
-
 
         # iterates over all the base entity models to update them
         # in order to allow them to become entity models
@@ -149,14 +157,57 @@ class WebMvcUtils:
             # sets the module functions in the base model class
             self._set_module_functions(web_mvc_entity_model, base_entity_model)
 
+            # saves the init method in the oldinit attribute
             base_entity_model.__oldinit__ = base_entity_model.__init__
 
+            # sets the newinit method as the new init method
             base_entity_model.__init__ = base_entity_model.__newinit__
 
             # sets the entity manager in the base entity model
             base_entity_model.entity_manager = entity_manager
 
+        # sets the entity manager in the base entity models module
+        base_entity_models_module.entity_manager = entity_manager
+
+        # returns the base entity models module
         return base_entity_models_module
+
+    def _get_entity_classes(self, module, entity_class):
+        """
+        Retrieves all the entity classes from the given module
+        using the given entity class as the reference to get the entity classes.
+
+        @type module: Module
+        @param module: The module to be used to retrieve the entity classes.
+        @type entity_class: Class
+        @param entity_class: The entity class to be used as reference
+        to retrieve the entity classes.
+        @rtype: List
+        @return: The list of entity classes in the module.
+        """
+
+        # creates the entity classes list
+        entity_classes = []
+
+        # retrieves the base entity models module map
+        module_map = module.__dict__
+
+        # iterates over all the module item names
+        for module_item_name in module_map:
+            # retrieves the module item from  module
+            module_item = getattr(module, module_item_name)
+
+            # retrieves the module item type
+            module_item_type = type(module_item)
+
+            # in case the module item type is type and
+            # the module item is subclass of the entity class
+            if module_item_type == types.TypeType and issubclass(module_item, entity_class):
+                # adds the module item to the entity classes
+                entity_classes.append(module_item)
+
+        # returns the entity classes
+        return entity_classes
 
     def _set_module_functions(self, module, target_class):
         """

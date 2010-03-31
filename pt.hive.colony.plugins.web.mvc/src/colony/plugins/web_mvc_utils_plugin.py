@@ -103,8 +103,8 @@ class WebMvcUtilsPlugin(colony.plugins.plugin_system.Plugin):
     def create_controller(self, base_controller, base_arguments_list, base_arguments_map):
         return self.web_mvc_utils.create_controller(base_controller, base_arguments_list, base_arguments_map)
 
-    def create_entity_models(self, base_entity_models_module_name, entity_manager_arguments):
-        return self.web_mvc_utils.create_entity_models(base_entity_models_module_name, entity_manager_arguments)
+    def create_entity_models(self, base_entity_models_module_name, entity_manager_arguments, directory_path):
+        return self.web_mvc_utils.create_entity_models(base_entity_models_module_name, entity_manager_arguments, directory_path)
 
     def get_template_engine_manager_plugin(self):
         return self.template_engine_manager_plugin
