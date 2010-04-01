@@ -158,7 +158,7 @@ class WebMvcUtils:
             self._set_module_functions(web_mvc_entity_model, base_entity_model)
 
             # saves the init method in the oldinit attribute
-            base_entity_model.__oldinit__ = base_entity_model.__init__
+            base_entity_model_oldinit = base_entity_model.__init__
 
             # creates the new init function based on the base entity model
             def __newinit__(self):
@@ -171,7 +171,7 @@ class WebMvcUtils:
                 self._start_model()
 
                 # calls the old constructor
-                base_entity_model.__oldinit__(self)
+                base_entity_model_oldinit(self)
 
             # sets the newinit method as the new init method
             base_entity_model.__init__ = __newinit__
