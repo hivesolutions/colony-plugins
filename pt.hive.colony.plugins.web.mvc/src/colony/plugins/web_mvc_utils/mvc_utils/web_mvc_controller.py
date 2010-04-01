@@ -45,6 +45,12 @@ DEFAULT_CONTENT_TYPE = "text/html;charset=utf-8"
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding value """
 
+BASE_PATH_VALUE = "base_path"
+""" The base path value """
+
+BACK_PATH_VALUE = "../"
+""" The back path value """
+
 def _start_controller(self):
     """
     Starts the controller structures.
@@ -75,6 +81,32 @@ def retrieve_template_file(self, file_name = None):
 
     # returns the template file
     return template_file
+
+def apply_base_path_template_file(self, rest_request, template_file):
+    """
+    Applies the base path to the template file according to
+    the current rest request path.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used to set the base path.
+    @type template_file: TemplateFile
+    @param template_file: The template to be "applied" with the base path.
+    """
+
+    # retrieves the path list length
+    path_list_length = len(rest_request.path_list)
+
+    # creates the base path
+    base_path = str()
+
+    # iterates over all the path list length without
+    # the delta value
+    for _index in range(path_list_length - 2):
+        # adds the back path to the base path
+        base_path += BACK_PATH_VALUE
+
+    # assigns the area value
+    template_file.assign(BASE_PATH_VALUE, base_path)
 
 def get_session_attribute(self, rest_request, session_attribute_name):
     # tries to retrieve the rest request session
