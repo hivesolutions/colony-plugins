@@ -37,18 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-def __newinit__(self):
-    """
-    The new class constructor to be used by the
-    the entity model.
-    """
-
-    # calls the model start method
-    self._start_model()
-
-    # calls the old constructor
-    self.__oldinit__()
-
 def save(self):
     # saves the entity using the entity manager
     self.entity_manager.save(self)

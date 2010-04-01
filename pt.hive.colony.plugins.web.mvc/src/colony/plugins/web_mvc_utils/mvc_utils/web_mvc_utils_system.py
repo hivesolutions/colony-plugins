@@ -160,8 +160,21 @@ class WebMvcUtils:
             # saves the init method in the oldinit attribute
             base_entity_model.__oldinit__ = base_entity_model.__init__
 
+            # creates the new init function based on the base entity model
+            def __newinit__(self):
+                """
+                The new class constructor to be used by the
+                the entity model.
+                """
+
+                # calls the model start method
+                self._start_model()
+
+                # calls the old constructor
+                base_entity_model.__oldinit__(self)
+
             # sets the newinit method as the new init method
-            base_entity_model.__init__ = base_entity_model.__newinit__
+            base_entity_model.__init__ = __newinit__
 
             # sets the entity manager in the base entity model
             base_entity_model.entity_manager = entity_manager
