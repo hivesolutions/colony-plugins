@@ -63,7 +63,8 @@ class WebMvcUtilsPlugin(colony.plugins.plugin_system.Plugin):
                     "pt.hive.colony.plugins.business.helper", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["web_mvc_utils.mvc_utils.web_mvc_controller", "web_mvc_utils.mvc_utils.web_mvc_model", "web_mvc_utils.mvc_utils.web_mvc_utils_exceptions",
+    main_modules = ["web_mvc_utils.mvc_utils.web_mvc_controller", "web_mvc_utils.mvc_utils.web_mvc_entity_model",
+                    "web_mvc_utils.mvc_utils.web_mvc_model", "web_mvc_utils.mvc_utils.web_mvc_utils_exceptions",
                     "web_mvc_utils.mvc_utils.web_mvc_utils_system"]
 
     web_mvc_utils = None

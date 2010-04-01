@@ -157,24 +157,8 @@ class WebMvcUtils:
             # sets the module functions in the base model class
             self._set_module_functions(web_mvc_entity_model, base_entity_model)
 
-            # saves the init method in the oldinit attribute
-            base_entity_model_oldinit = base_entity_model.__init__
-
-            # creates the new init function based on the base entity model
-            def __newinit__(self):
-                """
-                The new class constructor to be used by the
-                the entity model.
-                """
-
-                # calls the model start method
-                self._start_model()
-
-                # calls the old constructor
-                base_entity_model_oldinit(self)
-
             # sets the newinit method as the new init method
-            base_entity_model.__init__ = __newinit__
+            base_entity_model.__init__ = create_newinit(base_entity_model)
 
             # sets the entity manager in the base entity model
             base_entity_model.entity_manager = entity_manager
@@ -247,3 +231,31 @@ class WebMvcUtils:
             if item_value_type == types.FunctionType:
                 # sets the item in the
                 setattr(target_class, item, item_value)
+
+def create_newinit(base_entity_model):
+    """
+    Creates the new init function based on the base entity model.
+
+    @type base_entity_model: Object
+    @param base_entity_model: The base entity model to be used
+    in the construction of the the new init function.
+    @rtype: Function
+    @return: The generated new init function.
+    """
+
+    # retrieves the base entity model oldinit function
+    base_entity_model_oldinit = base_entity_model.__init__
+
+    def __newinit__(self):
+        """
+        The new class constructor to be used by the
+        the entity model.
+        """
+
+        # calls the model start method
+        self._start_model()
+
+        # calls the old constructor
+        base_entity_model_oldinit(self)
+
+    return __newinit__
