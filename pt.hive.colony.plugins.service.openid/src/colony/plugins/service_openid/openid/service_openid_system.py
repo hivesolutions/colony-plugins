@@ -49,6 +49,21 @@ POST_METHOD_VALUE = "POST"
 OPENID_NAMESPACE_VALUE = "http://specs.openid.net/auth/2.0"
 """ The openid namespace value """
 
+ASSOCIATE_MODE_VALUE = "associate"
+""" The associate mode value """
+
+CHECKID_SETUP_VALUE = "checkid_setup"
+""" The checkid setup value """
+
+CHECKID_IMMEDIATE_VALUE = "checkid_immediate"
+""" The checkid immediate value """
+
+DEFAULT_OPENID_ASSOCIATE_TYPE = "HMAC-SHA1"
+""" The default openid associate type """
+
+DEFAULT_OPENID_SESSION_TYPE = "no-encryption"
+""" The default openid session type """
+
 class ServiceOpenid:
     """
     The service openid class.
@@ -77,11 +92,8 @@ class ServiceOpenid:
         @return: The created remote client.
         """
 
-        # @todo: REMOVER ISTO QUE NAO E NECESSARIO !!!
-        openid_structure = OpenidStructure()
-
         # creates the openid client
-        openid_client = OpenidClient(openid_structure)
+        openid_client = OpenidClient()
 
         # returns the openid client
         return openid_client
@@ -106,7 +118,7 @@ class OpenidClient:
     openid_structure = None
     """ The openid structure """
 
-    def __init__(self, openid_structure):
+    def __init__(self, openid_structure = None):
         """
         Constructor of the class.
 
@@ -115,6 +127,18 @@ class OpenidClient:
         """
 
         self.openid_structure = openid_structure
+
+    def generate_openid_structure(self, provider_url, claimed_id, identity, association_type = DEFAULT_OPENID_ASSOCIATE_TYPE, session_type = DEFAULT_OPENID_SESSION_TYPE, set_structure = True):
+        # creates a new openid structure
+        openid_structure = OpenidStructure(provider_url, claimed_id, identity, association_type, session_type)
+
+        # in case the structure is meant to be set
+        if set_structure:
+            # sets the openid structure
+            self.set_openid_structure(openid_structure)
+
+        # returns the openid structure
+        return openid_structure
 
     def openid_associate(self):
         """
@@ -126,20 +150,20 @@ class OpenidClient:
         """
 
         # sets the retrieval url
-        retrieval_url = "http://localhost/myid/MyID.config.php"
+        retrieval_url = self.openid_structure.provider_url
 
         # start the parameters map
         parameters = {}
 
-        # sets the namespace
+        # sets the namespace as the openid default namespace
         parameters["openid.ns"] = OPENID_NAMESPACE_VALUE
 
         # sets the mode as associate
-        parameters["openid.mode"] = "associate"
+        parameters["openid.mode"] = ASSOCIATE_MODE_VALUE
 
-        parameters["openid.assoc_type"] = "HMAC-SHA1"
+        parameters["openid.assoc_type"] = self.openid_structure.association_type
 
-        parameters["openid.session_type"] = "no-encryption"
+        parameters["openid.session_type"] = self.openid_structure.session_type
 
         # fetches the retrieval url with the given parameters retrieving the json
         result = self._fetch_url(retrieval_url, parameters, method = POST_METHOD_VALUE)
@@ -151,13 +175,10 @@ class OpenidClient:
         values = result.split("\n")
 
         # retrieves the values list
-        values_list = [value.split(":") for value in values]
+        values_list = [value.split(":", 1) for value in values]
 
         # converts the values list into a map
         values_map = dict(values_list)
-
-        # retrieves the association type from the values map
-        self.openid_structure.assoc_type = values_map["assoc_type"]
 
         # retrieves the expiration from the values map
         self.openid_structure.expires_in = values_map["expires_in"]
@@ -181,21 +202,20 @@ class OpenidClient:
         """
 
         # sets the retrieval url
-        retrieval_url = "http://localhost/myid/MyID.config.php"
+        retrieval_url = self.openid_structure.provider_url
 
         # start the parameters map
         parameters = {}
 
-        # sets the namespace
+        # sets the namespace as the openid default namespace
         parameters["openid.ns"] = OPENID_NAMESPACE_VALUE
 
         # sets the mode as checkid setup
-        parameters["openid.mode"] = "checkid_setup"
-        #parameters["openid.mode"] = "checkid_immediate"
+        parameters["openid.mode"] = CHECKID_SETUP_VALUE
 
         parameters["openid.claimed_id"] = self.openid_structure.claimed_id
 
-        parameters["openid.identity"] = self.openid_structure.claimed_id
+        parameters["openid.identity"] = self.openid_structure.identity
 
         parameters["openid.assoc_handle"] = self.openid_structure.assoc_handle
 
@@ -208,6 +228,16 @@ class OpenidClient:
 
         # returns the request url
         return request_url
+
+    def set_openid_structure(self, openid_structure):
+        """
+        Sets the openid structure.
+
+        @type openid_structure: OpenidStructure
+        @param openid_structure: The openid structure.
+        """
+
+        self.openid_structure = openid_structure
 
     def _get_opener(self, url):
         """
@@ -347,4 +377,43 @@ class OpenidClient:
         return unicode(string_value).encode("utf-8")
 
 class OpenidStructure:
-    pass
+    """
+    The openid structure class.
+    """
+
+    provider_url = None
+    """ The url of the openid provider """
+
+    claimed_id = None
+    """ The id being claimed """
+
+    identity = None
+    """ The identity of the authentication """
+
+    association_type = None
+    """ The association type """
+
+    session_type = None
+    """ The session type """
+
+    def __init__(self, provider_url, claimed_id, identity, association_type = DEFAULT_OPENID_ASSOCIATE_TYPE, session_type = DEFAULT_OPENID_SESSION_TYPE):
+        """
+        Constructor of the class.
+
+        @type provider_url: String
+        @param provider_url: The url of the openid provider.
+        @type claimed_id: String
+        @param claimed_id: The id being claimed.
+        @type identity: String
+        @param identity: The identity of the authentication.
+        @type association_type: String
+        @param association_type: The association type.
+        @param session_type: String
+        @param session_type: The session type.
+        """
+
+        self.provider_url = provider_url
+        self.claimed_id = claimed_id
+        self.identity = identity
+        self.association_type = association_type
+        self.session_type = session_type
