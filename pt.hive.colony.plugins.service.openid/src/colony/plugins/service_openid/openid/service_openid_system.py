@@ -434,3 +434,143 @@ class OpenidStructure:
         self.realm = realm
         self.association_type = association_type
         self.session_type = session_type
+
+    def get_provider_url(self):
+        """
+        Retrieves the provider url.
+
+        @rtype: String
+        @return: The provider url.
+        """
+
+        return self.provider_url
+
+    def set_provider_url(self, provider_url):
+        """
+        Sets the provider url.
+
+        @type provider_url: String
+        @param provider_url: The provider url.
+        """
+
+        self.provider_url = provider_url
+
+    def get_claimed_id(self):
+        """
+        Retrieves the claimed id.
+
+        @rtype: String
+        @return: The claimed id.
+        """
+
+        return self.claimed_id
+
+    def set_claimed_id(self, claimed_id):
+        """
+        Sets the claimed id.
+
+        @type claimed_id: String
+        @param claimed_id: The claimed id.
+        """
+
+        self.claimed_id = claimed_id
+
+    def get_identity(self):
+        """
+        Retrieves the identity.
+
+        @rtype: String
+        @return: The identity.
+        """
+
+        return self.identity
+
+    def set_identity(self, identity):
+        """
+        Retrieves the identity.
+
+        @type identity: String
+        @param identity: The identity.
+        """
+
+        self.identity = identity
+
+    def get_return_to(self):
+        """
+        Retrieves the return to.
+
+        @rtype: String
+        @return: The return to.
+        """
+
+        return self.return_to
+
+    def set_return_to(self, return_to):
+        """
+        Retrieves the return to.
+
+        @type return_to: String
+        @param return_to: The return to.
+        """
+
+        self.return_to = return_to
+
+    def get_realm(self):
+        """
+        Retrieves the realm.
+
+        @rtype: String
+        @return: The realm.
+        """
+
+        return self.realm
+
+    def set_realm(self, realm):
+        """
+        Retrieves the realm.
+
+        @type realm: String
+        @param realm: The realm.
+        """
+
+        self.realm = realm
+
+    def get_association_type(self):
+        """
+        Retrieves the association type.
+
+        @rtype: String
+        @return: The association type.
+        """
+
+        return self.association_type
+
+    def set_association_type(self, association_type):
+        """
+        Retrieves the association type.
+
+        @type association_type: String
+        @param association_type: The association type.
+        """
+
+        self.association_type = association_type
+
+    def get_session_type(self):
+        """
+        Retrieves the session type.
+
+        @rtype: String
+        @return: The session type.
+        """
+
+        return self.session_type
+
+    def set_session_type(self, session_type):
+        """
+        Retrieves the session type.
+
+        @type session_type: String
+        @param session_type: The session type.
+        """
+
+        self.session_type = session_type
