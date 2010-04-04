@@ -65,11 +65,20 @@ class ServiceOpenid:
         @return: The created remote client.
         """
 
-        pass
+        # creates the openid client
+        openid_client = OpenidClient()
+
+        # returns the openid client
+        return openid_client
 
 class OpenidClient:
     """
     The class that represent a openid client connection.
     """
 
-    pass
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        pass

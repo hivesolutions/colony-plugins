@@ -38,7 +38,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.plugins.plugin_system
-import colony.plugins.decorators
 
 class ServiceOpenidPlugin(colony.plugins.plugin_system.Plugin):
     """
@@ -58,17 +57,15 @@ class ServiceOpenidPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["service_twitter.twitter.service_twitter_system", "service_twitter.twitter.service_twitter_exceptions"]
+    main_modules = ["service_openid.openid.service_openid_system", "service_openid.openid.service_openid_exceptions"]
 
-    service_twitter = None
-
-    json_plugin = None
+    service_openid = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
-        global service_twitter
-        import service_twitter.twitter.service_twitter_system
-        self.service_twitter = service_twitter.twitter.service_twitter_system.ServiceTwitter(self)
+        global service_openid
+        import service_openid.openid.service_openid_system
+        self.service_openid = service_openid.openid.service_openid_system.ServiceOpenid(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -85,7 +82,6 @@ class ServiceOpenidPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.service.twitter", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -95,15 +91,8 @@ class ServiceOpenidPlugin(colony.plugins.plugin_system.Plugin):
 
         @type service_attributes: Dictionary
         @param service_attributes: The service attributes to be used.
-        @rtype: TwitterClient
+        @rtype: OpenidClient
         @return: The created remote client.
         """
 
-        return self.service_twitter.create_remote_client(service_attributes)
-
-    def get_json_plugin(self):
-        return self.json_plugin
-
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
-    def set_json_plugin(self, json_plugin):
-        self.json_plugin = json_plugin
+        return self.service_openid.create_remote_client(service_attributes)
