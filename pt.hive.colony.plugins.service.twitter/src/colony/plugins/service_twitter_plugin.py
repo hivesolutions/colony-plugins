@@ -59,7 +59,7 @@ class ServiceTwitterPlugin(colony.plugins.plugin_system.Plugin):
                     "pt.hive.colony.plugins.misc.json", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["service_twitter.twitter.service_twitter_system", "service_twitter.twitter.service_twitter_exceptions"]
+    main_modules = ["service_twitter.twitter.service_twitter_exceptions", "service_twitter.twitter.service_twitter_system"]
 
     service_twitter = None
 
