@@ -92,8 +92,11 @@ class ServiceOpenid:
         @return: The created remote client.
         """
 
+        # retrieves the openid structure (if available)
+        openid_structure = service_attributes.get("openid_structure", None)
+
         # creates the openid client
-        openid_client = OpenidClient()
+        openid_client = OpenidClient(openid_structure)
 
         # returns the openid client
         return openid_client
@@ -128,9 +131,9 @@ class OpenidClient:
 
         self.openid_structure = openid_structure
 
-    def generate_openid_structure(self, provider_url, claimed_id, identity, association_type = DEFAULT_OPENID_ASSOCIATE_TYPE, session_type = DEFAULT_OPENID_SESSION_TYPE, set_structure = True):
+    def generate_openid_structure(self, provider_url, claimed_id, identity, return_to, realm, association_type = DEFAULT_OPENID_ASSOCIATE_TYPE, session_type = DEFAULT_OPENID_SESSION_TYPE, set_structure = True):
         # creates a new openid structure
-        openid_structure = OpenidStructure(provider_url, claimed_id, identity, association_type, session_type)
+        openid_structure = OpenidStructure(provider_url, claimed_id, identity, return_to, realm, association_type, session_type)
 
         # in case the structure is meant to be set
         if set_structure:
@@ -161,8 +164,10 @@ class OpenidClient:
         # sets the mode as associate
         parameters["openid.mode"] = ASSOCIATE_MODE_VALUE
 
+        # sets the association type
         parameters["openid.assoc_type"] = self.openid_structure.association_type
 
+        # sets the session type
         parameters["openid.session_type"] = self.openid_structure.session_type
 
         # fetches the retrieval url with the given parameters retrieving the json
@@ -219,9 +224,9 @@ class OpenidClient:
 
         parameters["openid.assoc_handle"] = self.openid_structure.assoc_handle
 
-        parameters["openid.return_to"] = "http://localhost:8080/take_the_bill/openid"
+        parameters["openid.return_to"] = self.openid_structure.return_to
 
-        parameters["openid.realm"] = "http://localhost:8080"
+        parameters["openid.realm"] = self.openid_structure.realm
 
         # creates the request url from the parameters
         request_url = self._build_url(retrieval_url, parameters)
@@ -390,13 +395,19 @@ class OpenidStructure:
     identity = None
     """ The identity of the authentication """
 
+    return_to = None
+    """ The return to url to be used after authentication """
+
+    realm = None
+    """ The realm to be used during the authentication """
+
     association_type = None
     """ The association type """
 
     session_type = None
     """ The session type """
 
-    def __init__(self, provider_url, claimed_id, identity, association_type = DEFAULT_OPENID_ASSOCIATE_TYPE, session_type = DEFAULT_OPENID_SESSION_TYPE):
+    def __init__(self, provider_url, claimed_id, identity, return_to, realm, association_type = DEFAULT_OPENID_ASSOCIATE_TYPE, session_type = DEFAULT_OPENID_SESSION_TYPE):
         """
         Constructor of the class.
 
@@ -406,6 +417,10 @@ class OpenidStructure:
         @param claimed_id: The id being claimed.
         @type identity: String
         @param identity: The identity of the authentication.
+        @type return_to: String
+        @param return_to: The return to url to be used after authentication.
+        @type realm: String
+        @param realm: The realm to be used during the authentication.
         @type association_type: String
         @param association_type: The association type.
         @param session_type: String
@@ -415,5 +430,7 @@ class OpenidStructure:
         self.provider_url = provider_url
         self.claimed_id = claimed_id
         self.identity = identity
+        self.return_to = return_to
+        self.realm = realm
         self.association_type = association_type
         self.session_type = session_type
