@@ -277,7 +277,7 @@ class TwitterClient:
         values = result.split("&")
 
         # retrieves the values list
-        values_list = [value.split("=") for value in values]
+        values_list = [value.split("=", 1) for value in values]
 
         # converts the values list into a map
         values_map = dict(values_list)
@@ -357,7 +357,7 @@ class TwitterClient:
         values = result.split("&")
 
         # retrieves the values list
-        values_list = [value.split("=") for value in values]
+        values_list = [value.split("=", 1) for value in values]
 
         # converts the values list into a map
         values_map = dict(values_list)
