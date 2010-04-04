@@ -126,7 +126,7 @@ class ServiceTwitter:
 
 class TwitterClient:
     """
-    The class that represent a twitter client connection.
+    The class that represents a twitter client connection.
     """
 
     json_plugin = None
