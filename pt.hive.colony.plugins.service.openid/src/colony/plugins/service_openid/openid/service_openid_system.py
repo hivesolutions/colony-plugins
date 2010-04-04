@@ -189,7 +189,7 @@ class OpenidClient:
         self.openid_structure.expires_in = values_map["expires_in"]
 
         # retrieves the association handle from the values map
-        self.openid_structure.assoc_handle = values_map["assoc_handle"]
+        self.openid_structure.association_handle = values_map["assoc_handle"]
 
         # retrieves the mac key from the values map
         self.openid_structure.mac_key = values_map["mac_key"]
@@ -218,14 +218,19 @@ class OpenidClient:
         # sets the mode as checkid setup
         parameters["openid.mode"] = CHECKID_SETUP_VALUE
 
+        # sets the claimed id
         parameters["openid.claimed_id"] = self.openid_structure.claimed_id
 
+        # sets the identity
         parameters["openid.identity"] = self.openid_structure.identity
 
-        parameters["openid.assoc_handle"] = self.openid_structure.assoc_handle
+        # sets the association handle
+        parameters["openid.assoc_handle"] = self.openid_structure.association_handle
 
+        # sets the return to
         parameters["openid.return_to"] = self.openid_structure.return_to
 
+        # sets the realm
         parameters["openid.realm"] = self.openid_structure.realm
 
         # creates the request url from the parameters
