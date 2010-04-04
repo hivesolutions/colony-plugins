@@ -795,7 +795,7 @@ class TwitterClient:
         Sets the oauth structure.
 
         @type oauth_structure: OauthStructure
-        @param: The oauth structure.
+        @param oauth_structure: The oauth structure.
         """
 
         self.oauth_structure = oauth_structure
