@@ -563,9 +563,14 @@ class Visitor:
         """
 
         attributes_map = node.get_attributes_map()
-        attribute_file = attributes_map["file"]
 
-        attribute_file_literal_value = self.get_literal_value(attribute_file)
+        if "file" in attributes_map:
+            attribute_file = attributes_map["file"]
+            attribute_file_literal_value = self.get_literal_value(attribute_file)
+
+        if "file_value" in attributes_map:
+            attribute_file_value = attributes_map["file_value"]
+            attribute_file_literal_value = self.get_value(attribute_file_value)
 
         # in case the path is absolute
         if attribute_file_literal_value[0] == "/":
