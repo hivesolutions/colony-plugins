@@ -704,7 +704,7 @@ class Visitor:
                 current_variable = self.global_map.get(first_variable_name_split, None)
 
                 # in case the current variable is defined
-                if current_variable:
+                if not current_variable == None:
                     # iterates over the sub values of the variable
                     for variable_name_split in variable_name_splitted[1:]:
                         # retrieves the current variable type
