@@ -47,6 +47,13 @@ TEST_FILES_PATH = "resources/test"
 DEFAULT_INDEX_TYPE = "file_system"
 """ The default type to use when creating an index """
 
+ENTITY_MANAGER_INDEX_TYPE = "entity_manager"
+""" The entity manger index type """
+
+ENTITY_MANAGER_ARGUMENTS = {"engine" : "sqlite",
+                            "connection_parameters" : {"file_path" : "/remote_home/lmartinho/colony_test_database.db", "autocommit" : False}}
+""" The entity manager arguments for crawling """
+
 DEFAULT_PERSISTENCE_TYPE = "file_system"
 """ The default persistence type to use when persisting an index """
 
@@ -173,7 +180,7 @@ class SearchTestCase(unittest.TestCase):
             self.empty_crawler_target_path = self.test_resources_path + "/empty"
 
             # determines the file path for the index persistence
-            self.index_persistence_target_file_path = self.test_resources_path + "/index_persistence/index.idx"
+            self.index_persistence_target_file_path = self.test_resources_path + "/index.idx"
 
     def generate_test_indexes(self):
         if not self.test_index:
@@ -775,6 +782,50 @@ class SearchTestCase(unittest.TestCase):
 
         # checks if the only two results where returned
         self.assertTrue(test_results_size == 2)
+
+    def test_create_entity_manager_index(self):
+        """
+        This method targets the index creation using an available test path.
+        """
+
+        # sets the hive blog main entity models as a global variable
+        global search_test_classes
+
+        # creates an index using the base crawl directory
+        test_index = self.plugin.create_index({"type" : ENTITY_MANAGER_INDEX_TYPE,
+                                               "entity_manager_arguments" : ENTITY_MANAGER_ARGUMENTS,
+                                               "entity_classes_module" : "search_test_classes",
+                                               "directory_path": os.path.dirname(__file__)})
+
+        # asserts that the index was successfully created
+        self.assertTrue(test_index)
+
+        # asserts that the index contains a forward index
+        self.assertTrue(test_index.forward_index_map)
+
+        # asserts that the index contains a inverted index
+        self.assertTrue(test_index.inverted_index_map)
+
+    def test_search_entity_manager_index(self):
+        """
+        This method targets the index creation using an available test path and uses the repository in the process.
+        """
+
+        # sets the hive blog main entity models as a global variable
+        global search_test_classes
+
+        # creates an index using the base crawl directory
+        self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER, {"type" : ENTITY_MANAGER_INDEX_TYPE,
+                                               "entity_manager_arguments" : ENTITY_MANAGER_ARGUMENTS,
+                                               "entity_classes_module" : "search_test_classes",
+                                               "directory_path": os.path.dirname(__file__)})
+
+        # creates the properties for the searhc operation
+        properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "term_frequency_scorer_function"}
+
+        results = self.plugin.search_index_by_identifier(TEST_INDEX_IDENTIFIER, "luis", properties)
+
+        self.assertTrue(results)
 
 class SearchPluginTestCase:
 
