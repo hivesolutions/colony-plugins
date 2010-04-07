@@ -300,7 +300,7 @@ class OpenidClient:
 
     def get_request_url(self):
         """
-        Retrieves the request url according to the
+        Retrieves the request (authentication) url according to the
         openid specification.
 
         @rtype: String
