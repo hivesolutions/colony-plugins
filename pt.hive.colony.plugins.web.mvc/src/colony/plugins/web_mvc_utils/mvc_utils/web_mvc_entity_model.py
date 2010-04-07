@@ -40,3 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 def save(self):
     # saves the entity using the entity manager
     self.entity_manager.save(self)
+
+def update(self):
+    # updates the entity using the entity manager
+    self.entity_manager.update(self)
