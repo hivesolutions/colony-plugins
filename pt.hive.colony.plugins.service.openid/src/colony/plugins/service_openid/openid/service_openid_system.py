@@ -37,8 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import hmac
 import urllib
 import urllib2
+import hashlib
 
 import service_openid_parser
 import service_openid_exceptions
@@ -82,6 +84,9 @@ DEFAULT_OPENID_ASSOCIATE_TYPE = "HMAC-SHA1"
 DEFAULT_OPENID_SESSION_TYPE = "no-encryption"
 """ The default openid session type """
 
+MAXIMUM_NONCE_VALUES_LIST_SIZE = 1000
+""" The maximum nonce values list size """
+
 class ServiceOpenid:
     """
     The service openid class.
@@ -89,6 +94,9 @@ class ServiceOpenid:
 
     service_openid_plugin = None
     """ The service openid plugin """
+
+    nonce_values_map = {}
+    """ The map associating the provider url with the nonce values """
 
     def __init__(self, service_openid_plugin):
         """
@@ -99,6 +107,8 @@ class ServiceOpenid:
         """
 
         self.service_openid_plugin = service_openid_plugin
+
+        self.nonce_values_map = {}
 
     def create_remote_client(self, service_attributes):
         """
@@ -117,10 +127,89 @@ class ServiceOpenid:
         openid_structure = service_attributes.get("openid_structure", None)
 
         # creates the openid client
-        openid_client = OpenidClient(self.service_openid_plugin, service_yadis_plugin, urllib2, openid_structure)
+        openid_client = OpenidClient(self.service_openid_plugin, service_yadis_plugin, urllib2, self, openid_structure)
 
         # returns the openid client
         return openid_client
+
+    def _verify_nonce(self, nonce_value, provider_url):
+        """
+        Verifies if the nonce value does not exists in the current
+        nonce values database. The validation is made in accordance
+        with the openid specification.
+
+        @type nonce_value: String
+        @param nonce_value: The nonce value to be verified.
+        @type provider_url: String
+        @param provider_url: The provider url to be used in
+        the verification.
+        @rtype: bool
+        @return: The result of the verification.
+        """
+
+        # in case the provider url does not exists in the
+        # global nonce values map
+        if not provider_url in self.nonce_values_map:
+            return True
+
+        # retrieves the nonce values map
+        nonce_values_map = self.nonce_values_map[provider_url][2]
+
+        # in case the nonce value exists in the
+        # nonce values map (collision)
+        if nonce_value in nonce_values_map:
+            # returns false
+            return False
+
+        # returns true
+        return True
+
+    def _update_nonce(self, nonce_value, provider_url):
+        """
+        Updates the nonce database by adding the nonce value
+        to it, using the provider url.
+
+        @type nonce_value: String
+        @param nonce_value: The nonce value to be added.
+        @type provider_url: String
+        @param provider_url: The provider url to be used in
+        the addition.
+        """
+
+        # in case the provider url is not defined
+        # in the nonce values map
+        if not provider_url in self.nonce_values_map:
+            # sets the nonce values map
+            self.nonce_values_map[provider_url] = {}
+
+            # sets the nonce values list and map
+            self.nonce_values_map[provider_url][1] = []
+            self.nonce_values_map[provider_url][2] = {}
+
+        # retrieves the nonce values list and map
+        nonce_values_list = self.nonce_values_map[provider_url][1]
+        nonce_values_map = self.nonce_values_map[provider_url][2]
+
+        # retrieves the nonce values list length
+        nonce_values_list_length = len(nonce_values_list)
+
+        # in case the list is full (it's a circular list)
+        # the list needs to be kept at the same size (last item is removed)
+        if nonce_values_list_length == MAXIMUM_NONCE_VALUES_LIST_SIZE:
+            # retrieves the last element from the
+            # nonce values list (the oldest)
+            last_element = nonce_values_list[-1]
+
+            # removes the last element from the nonce values map
+            del nonce_values_map[last_element]
+
+            # pops the last element from the nonce values list
+            nonce_values_list.pop()
+
+        # inserts the item at the beginning of the list
+        # and sets the item in the map
+        nonce_values_list.insert(0, nonce_value)
+        nonce_values_map[nonce_value] = True
 
 class OpenidServer:
     """
@@ -148,10 +237,13 @@ class OpenidClient:
     http_client_plugin = None
     """ The http client plugin """
 
+    service_openid = None
+    """ The service openid """
+
     openid_structure = None
     """ The openid structure """
 
-    def __init__(self, service_openid_plugin = None, service_yadis_plugin = None, http_client_plugin = None, openid_structure = None):
+    def __init__(self, service_openid_plugin = None, service_yadis_plugin = None, http_client_plugin = None, service_openid = None, openid_structure = None):
         """
         Constructor of the class.
 
@@ -161,6 +253,8 @@ class OpenidClient:
         @param service_yadis_plugin: The service yadis plugin.
         @type http_client_plugin: HttpClientPlugin
         @param http_client_plugin: The http client plugin.
+        @type service_openid: ServiceOpenid
+        @param service_openid: The service openid.
         @type openid_structure: OpenidStructure
         @param openid_structure: The openid structure.
         """
@@ -168,6 +262,7 @@ class OpenidClient:
         self.service_openid_plugin = service_openid_plugin
         self.service_yadis_plugin = service_yadis_plugin
         self.http_client_plugin = http_client_plugin
+        self.service_openid = service_openid
         self.openid_structure = openid_structure
 
     def generate_openid_structure(self, provider_url, claimed_id, identity, return_to, realm, association_type = DEFAULT_OPENID_ASSOCIATE_TYPE, session_type = DEFAULT_OPENID_SESSION_TYPE, set_structure = True):
@@ -190,7 +285,7 @@ class OpenidClient:
         @type claimed_id: String
         @param claimed_id: The claimed id to be normalized.
         @rtype: String
-        @return: The normalized claimded id.
+        @return: The normalized claimed id.
         """
 
         # strips the claimed id from trailing spaces
@@ -243,6 +338,9 @@ class OpenidClient:
 
         # prints a debug message
         self.service_openid_plugin.debug("Found openid provider url '%s'" % provider_url)
+
+        # returns the openid structure
+        return self.openid_structure
 
     def openid_associate(self):
         """
@@ -297,6 +395,62 @@ class OpenidClient:
 
         # returns the openid structure
         return self.openid_structure
+
+    def open_id_verify(self, return_openid_structure):
+        """
+        Verifies the given return openid structure (verification)
+        according to the openid specification.
+
+        @type return_openid_structure: OpenidStructure
+        @param return_openid_structure: The return openid structure
+        to be verified.
+        @rtype: OpenidStructure
+        @return: The current openid structure.
+        """
+
+        # in case any of the base information items missmatches
+        if not (self.openid_structure.return_to == return_openid_structure.return_to and\
+                self.openid_structure.claimed_id == return_openid_structure.claimed_id and\
+                self.openid_structure.identity == return_openid_structure.identity and\
+                self.openid_structure.provider_url == return_openid_structure.provider_url and\
+                return_openid_structure.ns == OPENID_NAMESPACE_VALUE):
+            # raises a verification failed exception
+            raise service_openid_exceptions.VerificationFailed("invalid discovered information")
+
+        nonce_verification_result = self.service_openid._verify_nonce(return_openid_structure.response_nonce, return_openid_structure.provider_url)
+
+        # in case the nonce verification is not successful
+        if not nonce_verification_result:
+            # raises a verification failed exception
+            raise service_openid_exceptions.VerificationFailed("invalid return nonce value")
+
+        # retrieves the list of signed items by spliting the list
+        signed_items_list = return_openid_structure.signed.split(",")
+
+        # starts the message value
+        message = str()
+
+        # iterates over all the signed items
+        for signed_item_name in signed_items_list:
+            # retrieves the signed item value from the return openid structure
+            signed_item_value = getattr(return_openid_structure, signed_item_name)
+
+            # adds the key value pais to the message
+            message += signed_item_name.encode("utf-8") + ":" + signed_item_value.encode("utf-8") + "\n"
+
+        # decodes the signature mac key from base64
+        signature_mac_key = self.openid_structure.mac_key.decode("base64")
+
+        # calculates the signature value and encode it into base64
+        signature = hmac.new(signature_mac_key, message, hashlib.sha1).digest().encode("base64")
+
+        # in case there is a signature mismatch
+        if return_openid_structure.signature == signature:
+            # raises a verification failed exception
+            raise service_openid_exceptions.VerificationFailed("invalid message signature")
+
+        # updates the nonce value
+        self.service_openid._update_nonce(return_openid_structure.response_nonce, return_openid_structure.provider_url)
 
     def get_request_url(self):
         """
@@ -584,6 +738,15 @@ class OpenidStructure:
     session_type = None
     """ The session type """
 
+    expires_in = None
+    """ The expires in """
+
+    association_handle = None
+    """ The association handle """
+
+    mac_key = None
+    """ The mac key """
+
     def __init__(self, provider_url, claimed_id, identity, return_to, realm, association_type = DEFAULT_OPENID_ASSOCIATE_TYPE, session_type = DEFAULT_OPENID_SESSION_TYPE):
         """
         Constructor of the class.
@@ -751,3 +914,63 @@ class OpenidStructure:
         """
 
         self.session_type = session_type
+
+    def get_expires_in(self):
+        """
+        Retrieves the expires in.
+
+        @rtype: String
+        @return: The expires in.
+        """
+
+        return self.expires_in
+
+    def set_expires_in(self, expires_in):
+        """
+        Retrieves the expires in.
+
+        @type expires_in: String
+        @param expires_in: The expires in.
+        """
+
+        self.expires_in = expires_in
+
+    def get_association_handle(self):
+        """
+        Retrieves the association handle.
+
+        @rtype: String
+        @return: The association handle.
+        """
+
+        return self.association_handle
+
+    def set_association_handle(self, association_handle):
+        """
+        Retrieves the association handle.
+
+        @type association_handle: String
+        @param association_handle: The association handle.
+        """
+
+        self.association_handle = association_handle
+
+    def get_mac_key(self):
+        """
+        Retrieves the mac key.
+
+        @rtype: String
+        @return: The mac key.
+        """
+
+        return self.mac_key
+
+    def set_mac_key(self, mac_key):
+        """
+        Retrieves the mac key.
+
+        @type mac_key: String
+        @param mac_key: The mac key.
+        """
+
+        self.mac_key = mac_key
