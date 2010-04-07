@@ -49,6 +49,18 @@ GET_METHOD_VALUE = "GET"
 POST_METHOD_VALUE = "POST"
 """ The post method value """
 
+HTTP_URI_VALUE = "http://"
+""" The http uri value """
+
+HTTPS_URI_VALUE = "https://"
+""" The https uri value """
+
+XRI_URI_VALUE = "xri://="
+""" The xri uri value """
+
+XRI_INITIALIZER_VALUE = "="
+""" The xri initializer value """
+
 OPENID_NAMESPACE_VALUE = "http://specs.openid.net/auth/2.0"
 """ The openid namespace value """
 
@@ -169,6 +181,32 @@ class OpenidClient:
 
         # returns the openid structure
         return openid_structure
+
+    def normalize_claimed_id(self, claimed_id):
+        """
+        Normalizes the claimed id according to the
+        openid specification.
+
+        @type claimed_id: String
+        @param claimed_id: The claimed id to be normalized.
+        @rtype: String
+        @return: The normalized claimded id.
+        """
+
+        # strips the claimed id from trailing spaces
+        claimed_id = claimed_id.strip()
+
+        # in case the claimed id is not xri and starts with the correct uri
+        if not claimed_id.startswith(HTTP_URI_VALUE) and not claimed_id.startswith(HTTPS_URI_VALUE) and not claimed_id.startswith(XRI_URI_VALUE) and not claimed_id.startswith(XRI_INITIALIZER_VALUE):
+            # adds the http uri to the claimed id
+            claimed_id = HTTP_URI_VALUE + claimed_id
+        # in case the claimed id is of type xri
+        elif claimed_id.startswith(XRI_URI_VALUE):
+            # removes the xri uri from the claimed id
+            claimed_id = claimed_id[6:]
+
+        # returns the claimed id
+        return claimed_id
 
     def openid_discover(self):
         """
