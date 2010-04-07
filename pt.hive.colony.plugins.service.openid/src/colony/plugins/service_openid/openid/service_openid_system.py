@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import urllib
 import urllib2
 
+import service_openid_parser
 import service_openid_exceptions
 
 GET_METHOD_VALUE = "GET"
@@ -104,7 +105,7 @@ class ServiceOpenid:
         openid_structure = service_attributes.get("openid_structure", None)
 
         # creates the openid client
-        openid_client = OpenidClient(service_yadis_plugin, urllib2, openid_structure)
+        openid_client = OpenidClient(self.service_openid_plugin, service_yadis_plugin, urllib2, openid_structure)
 
         # returns the openid client
         return openid_client
@@ -126,6 +127,9 @@ class OpenidClient:
     The class that represents an openid client connection.
     """
 
+    service_openid_plugin = None
+    """ The service openid plugin """
+
     service_yadis_plugin = None
     """ The service yadis plugin """
 
@@ -135,10 +139,12 @@ class OpenidClient:
     openid_structure = None
     """ The openid structure """
 
-    def __init__(self, service_yadis_plugin = None, http_client_plugin = None, openid_structure = None):
+    def __init__(self, service_openid_plugin = None, service_yadis_plugin = None, http_client_plugin = None, openid_structure = None):
         """
         Constructor of the class.
 
+        @type service_openid_plugin: ServiceOpenidPlugin
+        @param service_openid_plugin: The service openid plugin.
         @type service_yadis_plugin: ServiceYadisPlugin
         @param service_yadis_plugin: The service yadis plugin.
         @type http_client_plugin: HttpClientPlugin
@@ -147,6 +153,7 @@ class OpenidClient:
         @param openid_structure: The openid structure.
         """
 
+        self.service_openid_plugin = service_openid_plugin
         self.service_yadis_plugin = service_yadis_plugin
         self.http_client_plugin = http_client_plugin
         self.openid_structure = openid_structure
@@ -172,22 +179,8 @@ class OpenidClient:
         @return: The current openid structure.
         """
 
-        # sets the retrieval url
-        retrieval_url = self.openid_structure.claimed_id
-
-        # start the parameters map
-        parameters = {}
-
-        # fetches the retrieval url with the given parameters retrieving the result
-        _result, headers_map = self._fetch_url(retrieval_url, parameters, headers = True)
-
-        # tries to retrieve the yadis provider url
-        yadis_provider_url = headers_map.get(XRDS_LOCATION_VALUE, None)
-
-        # in case no valid yadis provider url is set
-        if not yadis_provider_url:
-            # raises the invalid data exception
-            raise service_openid_exceptions.InvalidData("no valid yadis provider url found")
+        # retrieves the yadis provider url
+        yadis_provider_url = self._get_yadis_provider_url()
 
         # creates a new yadis remote client
         yadis_remote_client = self.service_yadis_plugin.create_remote_client({})
@@ -211,7 +204,7 @@ class OpenidClient:
         self.openid_structure.provider_url = provider_url
 
         # prints a debug message
-        self.service_yadis_plugin.debug("Found openid provider url '%s'" % provider_url)
+        self.service_openid_plugin.debug("Found openid provider url '%s'" % provider_url)
 
     def openid_associate(self):
         """
@@ -256,13 +249,13 @@ class OpenidClient:
         values_map = dict(values_list)
 
         # retrieves the expiration from the values map
-        self.openid_structure.expires_in = values_map["expires_in"]
+        self.openid_structure.expires_in = values_map.get("expires_in", None)
 
         # retrieves the association handle from the values map
-        self.openid_structure.association_handle = values_map["assoc_handle"]
+        self.openid_structure.association_handle = values_map.get("assoc_handle", None)
 
         # retrieves the mac key from the values map
-        self.openid_structure.mac_key = values_map["mac_key"]
+        self.openid_structure.mac_key = values_map.get("mac_key", None)
 
         # returns the openid structure
         return self.openid_structure
@@ -328,6 +321,57 @@ class OpenidClient:
         """
 
         self.openid_structure = openid_structure
+
+    def _get_yadis_provider_url(self):
+        """
+        Retrieves the "yadis" provider url, using the two base strategies
+        (the header and the html header strategies).
+
+        @rtype: String
+        @return: The "yadis" provider url.
+        """
+
+        # sets the retrieval url
+        retrieval_url = self.openid_structure.claimed_id
+
+        # start the parameters map
+        parameters = {}
+
+        # fetches the retrieval url with the given parameters retrieving the result
+        result, headers_map = self._fetch_url(retrieval_url, parameters, headers = True)
+
+        # tries to retrieve the yadis provider url
+        yadis_provider_url = headers_map.get(XRDS_LOCATION_VALUE, None)
+
+        # in case a valid yadis provider
+        # url was discovered
+        if yadis_provider_url:
+            # returns the yadis provider url
+            return yadis_provider_url
+
+        # creates a new yadis html parser
+        yadis_html_parser = service_openid_parser.YadisHtmlParser()
+
+        try:
+            # feeds the result to the yadis html parser
+            yadis_html_parser.feed(result)
+        except Exception, exception:
+            # prints an info message
+            self.service_openid_plugin.info("There was a problem parsing yadis html: %s" % str(exception))
+
+        # retrieves the yadis provider url
+        yadis_provider_url = yadis_html_parser.yadis_provider_url
+
+        # in case a valid yadis provider
+        # url was discovered
+        if yadis_provider_url:
+            # returns the yadis provider url
+            return yadis_provider_url
+
+        # in case no valid yadis provider url is set
+        if not yadis_provider_url:
+            # raises the invalid data exception
+            raise service_openid_exceptions.InvalidData("no valid yadis provider url found")
 
     def _get_opener(self, url):
         """

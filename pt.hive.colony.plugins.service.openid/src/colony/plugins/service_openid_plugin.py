@@ -58,7 +58,8 @@ class ServiceOpenidPlugin(colony.plugins.plugin_system.Plugin):
                     "pt.hive.colony.plugins.service.yadis", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["service_openid.openid.service_openid_exceptions", "service_openid.openid.service_openid_system"]
+    main_modules = ["service_openid.openid.service_openid_exceptions", "service_openid.openid.service_openid_parser",
+                    "service_openid.openid.service_openid_system"]
 
     service_openid = None
 
