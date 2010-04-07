@@ -43,8 +43,13 @@ HITS_VALUE = "hits"
 """ The key for the search result dictionary that retrieves the search result hits """
 
 QUERY_EVALUATOR_TYPE = "query_parser"
+""" The default query evaluator type """
 
 DOCUMENT_ID_VALUE = "document_id"
+""" The document id value """
+
+DOCUMENT_INFORMATION_MAP_VALUE = "document_information_map"
+""" The document information map value """
 
 class SearchQueryEvaluatorVisitorAdapter:
     """
@@ -116,6 +121,9 @@ class SearchQueryEvaluatorVisitorAdapter:
             # set the document id, using the key in the results map
             # the map with all the search results is now going to be a list
             search_result_map[DOCUMENT_ID_VALUE] = index_search_visitor_result_key
+
+            # adds the document information for the current document
+            search_result_map[DOCUMENT_INFORMATION_MAP_VALUE] = search_index.get_document_information_map_metadata(index_search_visitor_result_key)
 
             # add the map to the search results list
             search_results.append(search_result_map)

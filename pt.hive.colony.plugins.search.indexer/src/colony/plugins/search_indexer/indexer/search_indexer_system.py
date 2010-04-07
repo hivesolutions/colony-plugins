@@ -41,6 +41,9 @@ import time
 
 import search_indexer_exceptions
 
+DOCUMENT_ID_VALUE = "document_id"
+""" The key that retrieves the document id """
+
 HITS_VALUE = "hits"
 """ The key that retrieves the set of results, contained in an arbitrary index level """
 
@@ -452,3 +455,23 @@ class SearchIndex:
         metadata = {"properties" : self.properties, "metrics" : self.metrics, "statistics": self.statistics}
 
         return metadata
+
+    def get_document_information_map_metadata(self, document_id):
+        """
+        Returns a dictionary containing the metadata for the specified document.
+        The dictionary is obtained from the document information map, without the document id and the hits.
+        """
+
+        # initializes the document information map metadata dictionary
+        document_information_map_metadata = {}
+
+        # retrieves the document information for the current document
+        document_information_map = self.forward_index_map[document_id]
+
+        # gathers the document's metadata by removing the document id and hits values
+        for document_information_map_key, document_information_map_value in document_information_map.items():
+            if document_information_map_key not in [DOCUMENT_ID_VALUE, HITS_VALUE]:
+                document_information_map_metadata[document_information_map_key] = document_information_map_value
+
+        # returns the retrieved document information
+        return document_information_map_metadata
