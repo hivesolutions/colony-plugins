@@ -936,6 +936,16 @@ class RestRequest:
         # sets the location header
         self.request.set_header("Location", target_path)
 
+    def get_attributes_list(self):
+        """
+        Retrieves the list of available attribute names.
+
+        @rtype: List
+        @return: The list of available attribute names.
+        """
+
+        return self.request.get_attributes_list()
+
     def get_attribute(self, attribute_name):
         """
         Retrieves the attribute for the given attribute name.
