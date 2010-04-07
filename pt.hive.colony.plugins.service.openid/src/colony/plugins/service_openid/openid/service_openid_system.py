@@ -40,6 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import urllib
 import urllib2
 
+import service_openid_exceptions
+
 GET_METHOD_VALUE = "GET"
 """ The get method value """
 
@@ -57,6 +59,9 @@ CHECKID_SETUP_VALUE = "checkid_setup"
 
 CHECKID_IMMEDIATE_VALUE = "checkid_immediate"
 """ The checkid immediate value """
+
+XRDS_LOCATION_VALUE = "x-xrds-location"
+""" The xrds location value """
 
 DEFAULT_OPENID_ASSOCIATE_TYPE = "HMAC-SHA1"
 """ The default openid associate type """
@@ -92,11 +97,14 @@ class ServiceOpenid:
         @return: The created remote client.
         """
 
+        # retrieves the service yadis plugin
+        service_yadis_plugin = self.service_openid_plugin.service_yadis_plugin
+
         # retrieves the openid structure (if available)
         openid_structure = service_attributes.get("openid_structure", None)
 
         # creates the openid client
-        openid_client = OpenidClient(urllib2, openid_structure)
+        openid_client = OpenidClient(service_yadis_plugin, urllib2, openid_structure)
 
         # returns the openid client
         return openid_client
@@ -118,22 +126,28 @@ class OpenidClient:
     The class that represents an openid client connection.
     """
 
+    service_yadis_plugin = None
+    """ The service yadis plugin """
+
     http_client_plugin = None
     """ The http client plugin """
 
     openid_structure = None
     """ The openid structure """
 
-    def __init__(self, http_client_plugin = None, openid_structure = None):
+    def __init__(self, service_yadis_plugin = None, http_client_plugin = None, openid_structure = None):
         """
         Constructor of the class.
 
+        @type service_yadis_plugin: ServiceYadisPlugin
+        @param service_yadis_plugin: The service yadis plugin.
         @type http_client_plugin: HttpClientPlugin
         @param http_client_plugin: The http client plugin.
         @type openid_structure: OpenidStructure
         @param openid_structure: The openid structure.
         """
 
+        self.service_yadis_plugin = service_yadis_plugin
         self.http_client_plugin = http_client_plugin
         self.openid_structure = openid_structure
 
@@ -148,6 +162,41 @@ class OpenidClient:
 
         # returns the openid structure
         return openid_structure
+
+    def openid_discover(self):
+        """
+        Initializes the discovery process according to the
+        openid specification.
+
+        @rtype: OpenidStructure
+        @return: The current openid structure.
+        """
+
+        # sets the retrieval url
+        retrieval_url = self.openid_structure.claimed_id
+
+        # start the parameters map
+        parameters = {}
+
+        # fetches the retrieval url with the given parameters retrieving the result
+        _result, headers_map = self._fetch_url(retrieval_url, parameters, headers = True)
+
+        # tries to retrieve the yadis provider url
+        yadis_provider_url = headers_map.get(XRDS_LOCATION_VALUE, None)
+
+        # in case no valid yadis provider url is set
+        if not yadis_provider_url:
+            # raises the invalid data exception
+            raise service_openid_exceptions.InvalidData("no valid yadis provider url found")
+
+        # creates a new yadis client
+        yadis_client = self.service_yadis_plugin.create_remote_client({})
+
+        # generates the yadis structure
+        yadis_client.generate_yadis_structure(yadis_provider_url)
+
+        # retrieves the resource descriptor
+        resource_descriptor = yadis_client.get_resource_descriptor()
 
     def openid_associate(self):
         """
@@ -176,7 +225,7 @@ class OpenidClient:
         # sets the session type
         parameters["openid.session_type"] = self.openid_structure.session_type
 
-        # fetches the retrieval url with the given parameters retrieving the json
+        # fetches the retrieval url with the given parameters retrieving the result
         result = self._fetch_url(retrieval_url, parameters, method = POST_METHOD_VALUE)
 
         # strips the result value
@@ -281,7 +330,7 @@ class OpenidClient:
         # returns the opener
         return opener
 
-    def _fetch_url(self, url, parameters = None, post_data = None, method = GET_METHOD_VALUE):
+    def _fetch_url(self, url, parameters = None, post_data = None, method = GET_METHOD_VALUE, headers = False):
         """
         Fetches the given url for the given parameters, post data and using the given method.
 
@@ -293,6 +342,8 @@ class OpenidClient:
         @param post_data: The post data to be used the fetch.
         @type method: String
         @param method: The method to be used in the fetch.
+        @type headers: bool
+        @param headers: If the headers should be returned.
         @rtype: String
         @return: The fetched data.
         """
@@ -327,8 +378,16 @@ class OpenidClient:
         # reads the contents from the url structure
         contents = url_structure.read()
 
-        # returns the contents
-        return contents
+        # in case the headers flag is set
+        if headers:
+            # creates the headers map
+            headers_map = dict(url_structure.info().items())
+
+            # returns the contents and the headers map
+            return contents, headers_map
+        else:
+            # returns the contents
+            return contents
 
     def _build_url(self, url, parameters):
         """
