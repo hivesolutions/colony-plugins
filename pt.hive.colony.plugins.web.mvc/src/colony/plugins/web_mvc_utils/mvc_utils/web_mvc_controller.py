@@ -62,6 +62,33 @@ def _start_controller(self):
         # in the controller
         self.start()
 
+def get_base_path(self, rest_request):
+    """
+    Retrieves the base path according to
+    the current rest request path.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used to retrieve
+    the base path.
+    @rtype: String
+    @return: The base path.
+    """
+
+    # retrieves the path list length
+    path_list_length = len(rest_request.path_list)
+
+    # creates the base path
+    base_path = str()
+
+    # iterates over all the path list length without
+    # the delta value
+    for _index in range(path_list_length - 2):
+        # adds the back path to the base path
+        base_path += BACK_PATH_VALUE
+
+    # returns the base path
+    return base_path
+
 def set_contents(self, rest_request, contents = ""):
     # sets the content type for the rest request
     rest_request.set_content_type(DEFAULT_CONTENT_TYPE)
@@ -93,17 +120,8 @@ def apply_base_path_template_file(self, rest_request, template_file):
     @param template_file: The template to be "applied" with the base path.
     """
 
-    # retrieves the path list length
-    path_list_length = len(rest_request.path_list)
-
-    # creates the base path
-    base_path = str()
-
-    # iterates over all the path list length without
-    # the delta value
-    for _index in range(path_list_length - 2):
-        # adds the back path to the base path
-        base_path += BACK_PATH_VALUE
+    # retrieves the base path
+    base_path = self.get_base_path(rest_request);
 
     # assigns the area value
     template_file.assign(BASE_PATH_VALUE, base_path)
