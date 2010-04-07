@@ -198,6 +198,15 @@ class OpenidClient:
         # retrieves the resource descriptor
         resource_descriptor = yadis_client.get_resource_descriptor()
 
+        # retrieves the resources list
+        resources_list = resource_descriptor.get_resources_list()
+
+        # retrieves the first service from the resources list
+        first_service = resources_list[0].services_list[0]
+
+        # sets the provider url in the open id structure
+        self.openid_structure.provider_url = first_service.get_attribute("URI")
+
     def openid_associate(self):
         """
         Requests an association (associate mode) according to the

@@ -52,7 +52,7 @@ class ServiceOpenidPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["startup", "service.openid"]
+    capabilities = ["service.openid"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.service.yadis", "1.0.0")]
@@ -72,13 +72,6 @@ class ServiceOpenidPlugin(colony.plugins.plugin_system.Plugin):
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
-
-        remote_client = self.create_remote_client({})
-        remote_client.generate_openid_structure("http://www.myopenid.com/server", "http://joamag.myopenid.com/", "http://joamag.myopenid.com/", "http://hive.pt", "http://hive.pt", "HMAC-SHA1", "no-encryption")
-        remote_client.openid_discover()
-        #remote_client.openid_associate()
-        #request_url = remote_client.get_request_url()
-        #print request_url
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
