@@ -961,16 +961,6 @@ class RestRequest:
 
         self.request.set_attribute(attribute_name, attribute_value)
 
-    def unset_attribute(self, attribute_name):
-        """
-        Unsets the attribute with the given name.
-
-        @type attribute_name: String
-        @param attribute_name: The name of the attribute to unset.
-        """
-
-        self.request.unset_attribute(attribute_name)
-
     def get_request(self):
         """
         Retrieves the associated request.
