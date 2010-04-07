@@ -204,8 +204,14 @@ class OpenidClient:
         # retrieves the first service from the resources list
         first_service = resources_list[0].services_list[0]
 
+        # retrieves the provider url
+        provider_url = first_service.get_attribute("URI")
+
         # sets the provider url in the open id structure
-        self.openid_structure.provider_url = first_service.get_attribute("URI")
+        self.openid_structure.provider_url = provider_url
+
+        # prints a debug message
+        self.service_yadis_plugin.debug("Found openid provider url '%s'" % provider_url)
 
     def openid_associate(self):
         """
