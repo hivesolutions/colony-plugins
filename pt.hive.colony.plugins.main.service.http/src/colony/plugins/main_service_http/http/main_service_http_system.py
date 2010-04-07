@@ -1904,6 +1904,18 @@ class HttpRequest:
 
         return result_value
 
+    def get_attributes_list(self):
+        """
+        Retrieves the list of attribute names in the
+        current attributes map.
+
+        @rtype: List
+        @return: The list of attribute names in the
+        current attributes map.
+        """
+
+        return self.attributes_map.keys()
+
     def get_attribute(self, attribute_name):
         return self.__getattribute__(attribute_name)
 
