@@ -158,6 +158,19 @@ def set_session_attribute(self, rest_request, session_attribute_name, session_at
     # sets the attribute in the session
     rest_request_session.set_attribute(session_attribute_name, session_attribute_value)
 
+def unset_session_attribute(self, rest_request, session_attribute_name):
+    # tries to retrieve the rest request session
+    rest_request_session = rest_request.get_session()
+
+    # in case the rest request session
+    # is invalid
+    if not rest_request_session:
+        # returns none (invalid)
+        return None
+
+    # unsets the attribute from the session
+    rest_request_session.unset_attribute(session_attribute_name)
+
 def get_attribute_decoded(self, rest_request, attribute_name, encoding = DEFAULT_ENCODING):
     # retrieves the attribute value from the attribute name
     attribute_value = rest_request.get_attribute(attribute_name)
