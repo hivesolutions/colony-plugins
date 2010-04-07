@@ -52,6 +52,9 @@ ENTITY_MANAGER_ARGUMENTS_VALUE = "entity_manager_arguments"
 ENTITY_CLASSES_MODULE_VALUE = "entity_classes_module"
 """ The value for the entity classes module """
 
+ENTITY_CLASSES_LIST_VALUE = "entity_classes_list"
+""" The entity classes list value """
+
 DIRECTORY_PATH_VALUE = "directory_path"
 """ The directory path value """
 
@@ -107,9 +110,6 @@ class SearchCrawlerEntityManagerAdapter:
         if not ENTITY_MANAGER_ARGUMENTS_VALUE in properties:
             raise search_crawler_entity_manager_adapter_exceptions.MissingProperty(ENTITY_MANAGER_ARGUMENTS_VALUE)
 
-        if not ENTITY_CLASSES_MODULE_VALUE in properties:
-            raise search_crawler_entity_manager_adapter_exceptions.MissingProperty(ENTITY_CLASSES_MODULE_VALUE)
-
         # retrieves the entity manager plugin
         entity_manager_plugin = self.search_crawler_entity_manager_adapter_plugin.entity_manager_plugin
 
@@ -119,24 +119,32 @@ class SearchCrawlerEntityManagerAdapter:
         # retrieves the entity manager arguments
         entity_manager_arguments = properties[ENTITY_MANAGER_ARGUMENTS_VALUE]
 
-        # retrieves the relevant entity classes
-        entity_classes_module_name = properties[ENTITY_CLASSES_MODULE_VALUE]
+        # tries to retrieve the list of entity classes from the properties
+        if ENTITY_CLASSES_LIST_VALUE in properties:
+            entity_classes_list = properties[ENTITY_CLASSES_LIST_VALUE]
+        # otherwise tries to retrieve all the classes in the provided module
+        elif ENTITY_CLASSES_MODULE_VALUE in properties and DIRECTORY_PATH_VALUE in properties:
+            # retrieves the relevant entity classes
+            entity_classes_module_name = properties[ENTITY_CLASSES_MODULE_VALUE]
 
-        # retrieves the directory path
-        directory_path = properties[DIRECTORY_PATH_VALUE]
+            # retrieves the directory path
+            directory_path = properties[DIRECTORY_PATH_VALUE]
 
-        # imports the base entity models module
-        base_entity_models_module = business_helper_plugin.import_class_module_target(entity_classes_module_name, globals(), locals(), [], directory_path, entity_classes_module_name)
+            # imports the base entity models module
+            base_entity_models_module = business_helper_plugin.import_class_module_target(entity_classes_module_name, globals(), locals(), [], directory_path, entity_classes_module_name)
 
-        # retrieves the entity class
-        entity_class = business_helper_plugin.get_entity_class()
+            # retrieves the entity class
+            entity_class = business_helper_plugin.get_entity_class()
 
-        # retrieves all the entity classes from the base entity models module
-        base_entity_models = self._get_entity_classes(base_entity_models_module, entity_class)
+            # retrieves all the entity classes from the base entity models module
+            entity_classes_list = self._get_entity_classes(base_entity_models_module, entity_class)
+        # in case no entity specification is provided
+        else:
+            raise search_crawler_entity_manager_adapter_exceptions.MissingProperty(ENTITY_CLASSES_LIST_VALUE)
 
         # generates the entity models map from the base entity models list
         # creating the map associating the class names with the classes
-        base_entity_models_map = business_helper_plugin.generate_bundle_map(base_entity_models)
+        entity_classes_map = business_helper_plugin.generate_bundle_map(entity_classes_list)
 
         # retrieves the engine from the entity manager arguments or uses
         # the default engine
@@ -153,10 +161,10 @@ class SearchCrawlerEntityManagerAdapter:
         entity_manager.set_connection_parameters(connection_parameters)
 
         # sets the entity manager classes list
-        entity_manager.entity_classes_list = base_entity_models
+        entity_manager.entity_classes_list = entity_classes_list
 
         # sets the entity manager classes map
-        entity_manager.entity_classes_map = base_entity_models_map
+        entity_manager.entity_classes_map = entity_classes_map
 
         # loads the entity manager
         entity_manager.load_entity_manager()
@@ -166,11 +174,11 @@ class SearchCrawlerEntityManagerAdapter:
 
         # retrieves the list of entities
         options = {}
-        for entity_class in base_entity_models:
+        for entity_class in entity_classes_list:
             entities = entity_manager._find_all_options(entity_class, options)
 
             for entity in entities:
-                entity_tokens = self.get_entity_tokens(entity)
+                entity_tokens = self.get_entity_tokens(entity, entity_class)
                 token_list.append(entity_tokens)
 
         # crawls across the entities for tokens
@@ -185,9 +193,15 @@ class SearchCrawlerEntityManagerAdapter:
             if search_provider_entity_manager_plugin.is_file_provider(properties):
                 return search_provider_entity_manager_plugin
 
-    def get_entity_tokens(self, entity):
+    def get_entity_tokens(self, entity, entity_class):
+        # retrieves the name of the entity class
+        entity_class_name = entity_class.__name__
+
         # the list of words in the entity
         entity_word_list = []
+
+        # the corresponding attributes for each word in the
+        entity_word_attribute_list = []
 
         # retrieves the entitie's attributes
         entity_attributes = [value for value in dir(entity) if not value in EXCLUSION_MAP and not type(getattr(entity, value)) in EXCLUSION_TYPES]
@@ -203,14 +217,22 @@ class SearchCrawlerEntityManagerAdapter:
             # appends the list of words in the attribute to the entity word list
             entity_word_list.extend(attribute_word_list)
 
+            attribute_word_list_length = len(attribute_word_list)
+
+            entity_word_attribute_list.extend([entity_attribute for _i in range(attribute_word_list_length)])
+
+        # computes the number of word hits
         entity_word_list_length = len(entity_word_list)
 
+        # creates a list with the corresponding positions for each word
+        entity_word_positions_list = range(entity_word_list_length)
+
         # generates the words metadata list
-        entity_word_metadata_list = [{"position" : value} for value in range(entity_word_list_length)]
+        entity_word_metadata_list = [{"position" : value, "attribute" : attribute} for value, attribute in zip(entity_word_positions_list, entity_word_attribute_list)]
 
         # creates the document information map
-        # @todo: determine the entities primary key
-        document_information_map = {"document_id": entity.object_id}
+        # @todo: determine the entity's primary key
+        document_information_map = {"document_id": entity.object_id, "entity_class_name" : entity_class_name}
 
         return [entity_word_list, entity_word_metadata_list, document_information_map]
 
