@@ -57,7 +57,8 @@ class ServiceYadisPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["service_yadis.yadis.service_yadis_exceptions", "service_yadis.yadis.service_yadis_system"]
+    main_modules = ["service_yadis.yadis.service_yadis_exceptions", "service_yadis.yadis.service_yadis_parser",
+                    "service_yadis.yadis.service_yadis_system"]
 
     service_yadis = None
 

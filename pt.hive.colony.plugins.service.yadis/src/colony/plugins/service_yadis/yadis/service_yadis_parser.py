@@ -110,8 +110,6 @@ class ResourceDescriptorParser(Parser):
             if valid_node(child_node):
                 self.resources_list = self.parse_resources(child_node)
 
-        print self.resources_list
-
     def parse_resources(self, resources):
         resources_list = []
         child_nodes = resources.childNodes
