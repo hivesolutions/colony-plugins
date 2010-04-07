@@ -54,15 +54,12 @@ class ServiceYadisPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["service.yadis"]
     capabilities_allowed = []
-    dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.json", "1.0.0")]
+    dependencies = []
     events_handled = []
     events_registrable = []
     main_modules = ["service_yadis.yadis.service_yadis_exceptions", "service_yadis.yadis.service_yadis_system"]
 
     service_yadis = None
-
-    json_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
