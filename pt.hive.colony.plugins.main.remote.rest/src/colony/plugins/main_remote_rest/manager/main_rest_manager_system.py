@@ -961,6 +961,16 @@ class RestRequest:
 
         self.request.set_attribute(attribute_name, attribute_value)
 
+    def unset_attribute(self, attribute_name):
+        """
+        Unsets the attribute with the given name.
+
+        @type attribute_name: String
+        @param attribute_name: The name of the attribute to unset.
+        """
+
+        self.request.unset_attribute(attribute_name)
+
     def get_request(self):
         """
         Retrieves the associated request.
@@ -1249,7 +1259,8 @@ class RestSession:
 
     def set_attribute(self, attribute_name, attribute_value):
         """
-        Sets the session id.
+        Sets the attribute with the given name with the
+        provided value.
 
         @type attribute_name: String
         @param attribute_name: The name of the attribute to set.
@@ -1258,6 +1269,16 @@ class RestSession:
         """
 
         self.attributes_map[attribute_name] = attribute_value
+
+    def unset_attribute(self, attribute_name):
+        """
+        Unsets the attribute with the given name.
+
+        @type attribute_name: String
+        @param attribute_name: The name of the attribute to unset.
+        """
+
+        del self.attributes_map[attribute_name]
 
     def get_attributes_map(self):
         """
