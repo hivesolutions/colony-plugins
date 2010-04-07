@@ -189,14 +189,14 @@ class OpenidClient:
             # raises the invalid data exception
             raise service_openid_exceptions.InvalidData("no valid yadis provider url found")
 
-        # creates a new yadis client
-        yadis_client = self.service_yadis_plugin.create_remote_client({})
+        # creates a new yadis remote client
+        yadis_remote_client = self.service_yadis_plugin.create_remote_client({})
 
         # generates the yadis structure
-        yadis_client.generate_yadis_structure(yadis_provider_url)
+        yadis_remote_client.generate_yadis_structure(yadis_provider_url)
 
         # retrieves the resource descriptor
-        resource_descriptor = yadis_client.get_resource_descriptor()
+        resource_descriptor = yadis_remote_client.get_resource_descriptor()
 
         # retrieves the resources list
         resources_list = resource_descriptor.get_resources_list()
