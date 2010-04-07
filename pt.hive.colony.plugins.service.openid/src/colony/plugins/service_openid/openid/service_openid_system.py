@@ -245,6 +245,16 @@ class OpenidClient:
         # returns the request url
         return request_url
 
+    def get_openid_structure(self):
+        """
+        Retrieves the openid structure.
+
+        @rtype: OpenidStructure
+        @return: The openid structure.
+        """
+
+        return self.openid_structure
+
     def set_openid_structure(self, openid_structure):
         """
         Sets the openid structure.

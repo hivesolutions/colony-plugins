@@ -54,12 +54,15 @@ class ServiceOpenidPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["service.openid"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.service.yadis", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["service_openid.openid.service_openid_exceptions", "service_openid.openid.service_openid_system"]
 
     service_openid = None
+
+    service_yadis_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -82,6 +85,7 @@ class ServiceOpenidPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.service.openid", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -96,3 +100,10 @@ class ServiceOpenidPlugin(colony.plugins.plugin_system.Plugin):
         """
 
         return self.service_openid.create_remote_client(service_attributes)
+
+    def get_service_yadis_plugin(self):
+        return self.service_yadis_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.service.yadis")
+    def set_service_yadis_plugin(self, service_yadis_plugin):
+        self.service_yadis_plugin = service_yadis_plugin
