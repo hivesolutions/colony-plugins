@@ -40,7 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import urllib
 import urllib2
 
-import service_yadis_exceptions
+import service_yadis_parser
 
 GET_METHOD_VALUE = "GET"
 """ The get method value """
@@ -147,25 +147,20 @@ class YadisClient:
         # fetches the retrieval url with the given parameters retrieving the xml response
         result = self._fetch_url(retrieval_url, parameters)
 
-        print result
+        # creates a new resource descriptor parser
+        resource_descriptor_parser = service_yadis_parser.ResourceDescriptorParser()
 
-        # retrieves the values from the request
-#        values = result.split("&")
-#
-#        # retrieves the values list
-#        values_list = [value.split("=", 1) for value in values]
-#
-#        # converts the values list into a map
-#        values_map = dict(values_list)
-#
-#        # retrieves the yadis token from the values map
-#        self.yadis_structure.yadis_token = values_map["yadis_token"]
-#
-#        # retrieves the yadis token secret from the values map
-#        self.yadis_structure.yadis_token_secret = values_map["yadis_token_secret"]
+        # loads the yadis contents
+        resource_descriptor_parser.load_yadis_contents(result)
 
-        # returns the yadis structure
-        return self.yadis_structure
+        # retrieves the resources list
+        resources_list = resource_descriptor_parser.get_value()
+
+        # creates the yadis resource descriptor
+        resource_descriptor = YadisResourceDescriptor(resources_list)
+
+        # returns the yadis resource descriptor
+        return resource_descriptor
 
     def get_yadis_structure(self):
         """
@@ -361,3 +356,41 @@ class YadisStructure:
         """
 
         self.provider_url = provider_url
+
+class YadisResourceDescriptor:
+    """
+    The yadis resource descriptor class.
+    """
+
+    resources_list = []
+    """ The list of yadis resources """
+
+    def __init__(self, resources_list):
+        """
+        Constructor of the class.
+
+        @type resources_list: List
+        @param resources_list: The list of yadis resources.
+        """
+
+        self.resources_list = resources_list
+
+    def get_resources_list(self):
+        """
+        Retrieves the list of yadis resources.
+
+        @rtype: List
+        @return: The list of yadis resources.
+        """
+
+        return self.resources_list
+
+    def set_resources_list(self, resources_list):
+        """
+        Sets the list of yadis resources.
+
+        @type resources_list: List
+        @param resources_list: The list of yadis resources.
+        """
+
+        self.resources_list = resources_list
