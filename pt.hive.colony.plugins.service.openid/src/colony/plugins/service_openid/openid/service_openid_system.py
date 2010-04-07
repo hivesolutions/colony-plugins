@@ -96,7 +96,7 @@ class ServiceOpenid:
         openid_structure = service_attributes.get("openid_structure", None)
 
         # creates the openid client
-        openid_client = OpenidClient(openid_structure)
+        openid_client = OpenidClient(urllib2, openid_structure)
 
         # returns the openid client
         return openid_client
@@ -118,17 +118,23 @@ class OpenidClient:
     The class that represents an openid client connection.
     """
 
+    http_client_plugin = None
+    """ The http client plugin """
+
     openid_structure = None
     """ The openid structure """
 
-    def __init__(self, openid_structure = None):
+    def __init__(self, http_client_plugin = None, openid_structure = None):
         """
         Constructor of the class.
 
+        @type http_client_plugin: HttpClientPlugin
+        @param http_client_plugin: The http client plugin.
         @type openid_structure: OpenidStructure
         @param openid_structure: The openid structure.
         """
 
+        self.http_client_plugin = http_client_plugin
         self.openid_structure = openid_structure
 
     def generate_openid_structure(self, provider_url, claimed_id, identity, return_to, realm, association_type = DEFAULT_OPENID_ASSOCIATE_TYPE, session_type = DEFAULT_OPENID_SESSION_TYPE, set_structure = True):
