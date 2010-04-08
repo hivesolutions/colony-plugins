@@ -40,7 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import sys
 import traceback
 
-import string_buffer_util
+import colony.libs.string_buffer_util
 
 import main_jsonrpc_manager_serializer
 import main_jsonrpc_manager_exceptions
@@ -162,7 +162,7 @@ class MainJsonrpcManager:
                     error = exception
 
                     # creates the traceback buffer
-                    traceback_buffer = string_buffer_util.StringBuffer()
+                    traceback_buffer = colony.libs.string_buffer_util.StringBuffer()
 
                     # retrieves the execution information
                     _type, _value, traceback_list = sys.exc_info()

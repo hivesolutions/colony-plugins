@@ -45,7 +45,7 @@ import types
 import datetime
 import calendar
 
-import string_buffer_util
+import colony.libs.string_buffer_util
 
 import main_jsonrpc_manager_exceptions
 
@@ -96,7 +96,7 @@ def escape_char(match):
 
 def dumps_buffer(obj):
     # creates the string buffer
-    string_buffer = string_buffer_util.StringBuffer()
+    string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
     # dumps the object parts to the string buffer
     dump_parts_buffer(obj, string_buffer)
