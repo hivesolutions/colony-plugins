@@ -42,7 +42,7 @@ import bzrlib.bzrdir
 import bzrlib.revisionspec
 import bzrlib.builtins
 
-import string_buffer_util
+import colony.libs.string_buffer_util
 
 ADAPTER_NAME = "bzr"
 """ The name for the bazaar revision control adapter """
@@ -136,7 +136,7 @@ class RevisionControlBazaarAdapter:
         old_tree, new_tree, specific_files, _extra_trees = bzrlib.diff._get_trees_to_diff(resource_identifiers, bazaar_revision_specs, None, None, True)
 
         # creates the string buffer for the diffs
-        diffs_string_buffer = string_buffer_util.StringBuffer()
+        diffs_string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
         # retrieves the diffs
         bzrlib.diff.show_diff_trees(old_tree, new_tree, diffs_string_buffer, specific_files)
@@ -178,7 +178,7 @@ class RevisionControlBazaarAdapter:
 
                 if bazaar_revision_spec:
                     # retrieves the revision tree
-                    rev_tree = bzrlib.builtins._get_one_revision_tree('cat', [bazaar_revision_spec], branch=branch)
+                    rev_tree = bzrlib.builtins._get_one_revision_tree("cat", [bazaar_revision_spec], branch = branch)
                 else:
                     rev_tree = revision_control_reference
 
@@ -220,11 +220,11 @@ class RevisionControlBazaarAdapter:
         revision = Revision()
 
         # splits the revision attributes in the revision identifier
-        revision_attributes = revision_identifier.split('-')
+        revision_attributes = revision_identifier.split("-")
 
         # retrieves the attributes
         author = revision_attributes[0]
-        date  = revision_attributes[1]
+        date = revision_attributes[1]
         identifier = revision_attributes[2]
 
         # retrieves the revision number from the working tree branch
