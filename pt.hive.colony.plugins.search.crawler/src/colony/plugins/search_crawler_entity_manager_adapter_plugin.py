@@ -112,6 +112,9 @@ class SearchCrawlerEntityManagerAdapterPlugin(colony.plugins.plugin_system.Plugi
     def search_provider_entity_manager_unload_allowed(self, plugin, capability):
         self.search_provider_entity_manager_plugins.remove(plugin)
 
+    def get_entity_manager_plugin(self):
+        return self.entity_manager_plugin
+
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.data.entity_manager")
     def set_entity_manager_plugin(self, entity_manager_plugin):
         self.entity_manager_plugin = entity_manager_plugin
