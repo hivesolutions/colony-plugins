@@ -95,7 +95,6 @@ DEFAULT_OPENID_SESSION_TYPE = "no-encryption"
 MAXIMUM_NONCE_VALUES_LIST_SIZE = 1000
 """ The maximum nonce values list size """
 
-
 HMAC_HASH_MODULES_MAP = {HMAC_SHA1_VALUE : hashlib.sha1,
                          HMAC_SHA256_VALUE : hashlib.sha256}
 """ The map associating the hmac values with the hashlib hash function modules """
