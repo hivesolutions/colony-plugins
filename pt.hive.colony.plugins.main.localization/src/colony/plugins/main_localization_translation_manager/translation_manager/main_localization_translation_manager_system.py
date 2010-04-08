@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import re
 
-import string_buffer_util
+import colony.libs.string_buffer_util
 
 HANDLER_NAME = "translation"
 """ The handler name """
@@ -441,7 +441,7 @@ class MainLocalizationTranslationManager:
         options_find_iterator = self.options_regex.finditer(format_string)
 
         # creates a new string buffer
-        string_buffer = string_buffer_util.StringBuffer()
+        string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
         # sets the initial current index
         current_index = 0
