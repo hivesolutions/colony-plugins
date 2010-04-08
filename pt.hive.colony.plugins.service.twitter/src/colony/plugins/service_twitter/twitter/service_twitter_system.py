@@ -54,13 +54,22 @@ TWITTER_API_REALM_VALUE = "Twitter API"
 TWITTER_CHARACTER_LIMIT_VALUE = 140
 """ The twitter character limit value """
 
+HMAC_SHA1_VALUE = "HMAC-SHA1"
+""" The hmac sha1 value """
+
+RSA_SHA1_VALUE = "RSA-SHA1"
+""" The rsa sha1 value """
+
+PLAINTEXT_VALUE = "PLAINTEXT"
+""" The plaintext value """
+
 OAUTH_AUTHENTICATION_TYPE = 1
 """ The oauth authentication type """
 
 BASIC_AUTHENTICATION_TYPE = 2
 """ The basic authentication type """
 
-DEFAULT_OAUTH_SIGNATURE_METHOD = "HMAC-SHA1"
+DEFAULT_OAUTH_SIGNATURE_METHOD = HMAC_SHA1_VALUE
 """ The default oauth signature method """
 
 DEFAULT_OAUTH_VERSION = "1.0"
@@ -72,8 +81,11 @@ GET_METHOD_VALUE = "GET"
 POST_METHOD_VALUE = "POST"
 """ The post method value """
 
-PIN_BASED_CALLBACK_VALUE = "oob"
-""" The pin based callback value """
+OUT_OF_BAND_CALLBACK_VALUE = "oob"
+""" The out of band (default) callback value """
+
+HMAC_HASH_MODULES_MAP = {HMAC_SHA1_VALUE : hashlib.sha1}
+""" The map associating the hmac values with the hashlib hash function modules """
 
 class ServiceTwitter:
     """
@@ -177,7 +189,7 @@ class TwitterClient:
 
         self.request_header = {}
 
-    def generate_oauth_structure(self, oauth_consumer_key, oauth_consumer_secret, oauth_signature_method = DEFAULT_OAUTH_SIGNATURE_METHOD, oauth_signature = None, oauth_timestamp = None, oauth_nonce = None, oauth_version = DEFAULT_OAUTH_VERSION, oauth_callback = PIN_BASED_CALLBACK_VALUE, set_structure = True):
+    def generate_oauth_structure(self, oauth_consumer_key, oauth_consumer_secret, oauth_signature_method = DEFAULT_OAUTH_SIGNATURE_METHOD, oauth_signature = None, oauth_timestamp = None, oauth_nonce = None, oauth_version = DEFAULT_OAUTH_VERSION, oauth_callback = OUT_OF_BAND_CALLBACK_VALUE, set_structure = True):
         """
         Generates a new oauth structure, for the given parameters.
 
@@ -1141,7 +1153,7 @@ class OauthStructure:
     oauth_version = DEFAULT_OAUTH_VERSION
     """ The version """
 
-    oauth_callback = PIN_BASED_CALLBACK_VALUE
+    oauth_callback = OUT_OF_BAND_CALLBACK_VALUE
     """ The callback """
 
     oauth_token = None
@@ -1162,7 +1174,7 @@ class OauthStructure:
     screen_name = None
     """ The screen name """
 
-    def __init__(self, oauth_consumer_key, oauth_consumer_secret, oauth_signature_method = DEFAULT_OAUTH_SIGNATURE_METHOD, oauth_signature = None, oauth_timestamp = None, oauth_nonce = None, oauth_version = DEFAULT_OAUTH_VERSION, oauth_callback = PIN_BASED_CALLBACK_VALUE):
+    def __init__(self, oauth_consumer_key, oauth_consumer_secret, oauth_signature_method = DEFAULT_OAUTH_SIGNATURE_METHOD, oauth_signature = None, oauth_timestamp = None, oauth_nonce = None, oauth_version = DEFAULT_OAUTH_VERSION, oauth_callback = OUT_OF_BAND_CALLBACK_VALUE):
         """
         Constructor of the class.
 
