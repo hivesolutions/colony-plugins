@@ -41,7 +41,7 @@ import zlib
 import time
 import struct
 
-import string_buffer_util
+import colony.libs.string_buffer_util
 
 DEFAULT_COMPRESSION_LEVEL = 3
 """ The default compression level """
@@ -66,7 +66,7 @@ class Gzip:
 
     def gzip_contents(self, contents_string):
         # creates a new string buffer
-        string_buffer = string_buffer_util.StringBuffer()
+        string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
         # writes the magic header
         string_buffer.write("\037\213")

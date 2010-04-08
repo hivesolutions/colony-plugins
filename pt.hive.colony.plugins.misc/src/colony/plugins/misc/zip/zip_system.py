@@ -41,7 +41,7 @@ import os
 import stat
 import zipfile
 
-import string_buffer_util
+import colony.libs.string_buffer_util
 
 BUFFER_LENGTH = 1024
 """ The length for the zip operation buffer """
@@ -182,7 +182,7 @@ class Zip:
             zip_file_contents = zip_file.read(file_name)
 
             # creates a new string buffer
-            string_buffer = string_buffer_util.StringBuffer(False)
+            string_buffer = colony.libs.string_buffer_util.StringBuffer(False)
 
             # writes the zip file contents into the string buffer
             string_buffer.write(zip_file_contents)
