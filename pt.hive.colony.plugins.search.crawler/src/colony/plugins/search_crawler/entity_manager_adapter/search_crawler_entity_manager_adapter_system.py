@@ -58,6 +58,9 @@ ENTITY_CLASSES_LIST_VALUE = "entity_classes_list"
 DIRECTORY_PATH_VALUE = "directory_path"
 """ The directory path value """
 
+ENTITY_MANAGER_CRAWL_OPTIONS_VALUE = "entity_manager_crawl_options"
+""" The options for the entity manager crawl """
+
 TOKEN_LIST_VALUE = "token_list"
 """ The key for the token list in the properties map """
 
@@ -172,16 +175,19 @@ class SearchCrawlerEntityManagerAdapter:
         # creates the token list
         token_list = []
 
-        # retrieves the list of entities
-        options = {}
+        # tries to retrieve query options from the crawler options
+        options = properties.get(ENTITY_MANAGER_CRAWL_OPTIONS_VALUE, {})
+
+        # for all the entity classes in the list
         for entity_class in entity_classes_list:
+            # retrieves the full set of entities for the class
+            # and the provided index
             entities = entity_manager._find_all_options(entity_class, options)
 
+            # crawls across the entities for tokens
             for entity in entities:
                 entity_tokens = self.get_entity_tokens(entity, entity_class)
                 token_list.append(entity_tokens)
-
-        # crawls across the entities for tokens
 
         # returns the token list
         return token_list
