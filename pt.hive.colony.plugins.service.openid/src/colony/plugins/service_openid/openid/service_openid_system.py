@@ -77,10 +77,16 @@ CHECKID_SETUP_VALUE = "checkid_setup"
 CHECKID_IMMEDIATE_VALUE = "checkid_immediate"
 """ The checkid immediate value """
 
+HMAC_SHA1_VALUE = "HMAC-SHA1"
+""" The hmac sha1 value """
+
+HMAC_SHA256_VALUE = "HMAC-SHA256"
+""" The hmac sha256 value """
+
 XRDS_LOCATION_VALUE = "x-xrds-location"
 """ The xrds location value """
 
-DEFAULT_OPENID_ASSOCIATE_TYPE = "HMAC-SHA1"
+DEFAULT_OPENID_ASSOCIATE_TYPE = HMAC_SHA256_VALUE
 """ The default openid associate type """
 
 DEFAULT_OPENID_SESSION_TYPE = "no-encryption"
@@ -88,6 +94,11 @@ DEFAULT_OPENID_SESSION_TYPE = "no-encryption"
 
 MAXIMUM_NONCE_VALUES_LIST_SIZE = 1000
 """ The maximum nonce values list size """
+
+
+HMAC_HASH_MODULES_MAP = {HMAC_SHA1_VALUE : hashlib.sha1,
+                         HMAC_SHA256_VALUE : hashlib.sha256}
+""" The map associating the hmac values with the hashlib hash function modules """
 
 class ServiceOpenid:
     """
@@ -456,6 +467,14 @@ class OpenidClient:
 
         # decodes the signature mac key from base64
         signature_mac_key = self.openid_structure.mac_key.decode("base64")
+
+        # retrieves the hash module from the hmac hash modules map
+        hash_module = HMAC_HASH_MODULES_MAP.get(self.openid_structure.association_type, None)
+
+        # in case no hash module is set
+        if not hash_module:
+            # raises the invalid hash function exception
+            raise service_openid_exceptions.InvalidHashFunction("the hash functionn is not available: " + self.openid_structure.association_type)
 
         # calculates the signature value and encode it into base64
         signature = hmac.new(signature_mac_key, message, hashlib.sha1).digest().encode("base64")
