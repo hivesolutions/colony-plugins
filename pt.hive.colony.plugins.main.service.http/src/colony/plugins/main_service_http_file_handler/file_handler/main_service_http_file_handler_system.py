@@ -43,7 +43,7 @@ import hashlib
 
 import os.path
 
-import string_buffer_util
+import colony.libs.string_buffer_util
 
 import main_service_http_file_handler_exceptions
 
@@ -338,7 +338,7 @@ class ChunkHandler:
 
         # creates a new string buffer to used as a memory file
         # for the encoded file
-        file_contents_encoded_file_buffer = string_buffer_util.StringBuffer(False)
+        file_contents_encoded_file_buffer = colony.libs.string_buffer_util.StringBuffer(False)
 
         # writes the file contents encoded into the file contents
         # file buffer
