@@ -45,7 +45,7 @@ import win32con
 import PIL.Image
 import PIL.ImageWin
 
-import string_buffer_util
+import colony.libs.string_buffer_util
 
 import printing_win32_constants
 import printing_win32_exceptions
@@ -471,7 +471,7 @@ class Visitor:
                 image_source_decoded = base64.b64decode(image_source)
 
                 # creates the image buffer
-                image_source_buffer = string_buffer_util.StringBuffer(False)
+                image_source_buffer = colony.libs.string_buffer_util.StringBuffer(False)
 
                 # writes the image source decoded in the image source buffer
                 image_source_buffer.write(image_source_decoded)
