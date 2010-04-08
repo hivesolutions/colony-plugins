@@ -44,7 +44,7 @@ import os.path
 
 import xml.sax.saxutils
 
-import string_buffer_util
+import colony.libs.string_buffer_util
 
 import template_engine_ast
 import template_engine_exceptions
@@ -209,7 +209,7 @@ class Visitor:
         self.visit_childs = True
         self.visit_next = True
         self.global_map = {}
-        self.string_buffer = string_buffer_util.StringBuffer()
+        self.string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
         self.update_node_method_map()
 
