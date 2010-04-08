@@ -52,7 +52,7 @@ ENTITY_MANAGER_ARGUMENTS_VALUE = "entity_manager_arguments"
 ENTITY_CLASSES_MODULE_VALUE = "entity_classes_module"
 """ The value for the entity classes module """
 
-ENTITY_CLASSES_LIST_VALUE = "entity_classes_list"
+ENTITY_MANAGER_CRAWL_TARGET_CLASSES_VALUE = "entity_manager_crawl_target_classes"
 """ The entity classes list value """
 
 DIRECTORY_PATH_VALUE = "directory_path"
@@ -123,8 +123,8 @@ class SearchCrawlerEntityManagerAdapter:
         entity_manager_arguments = properties[ENTITY_MANAGER_ARGUMENTS_VALUE]
 
         # tries to retrieve the list of entity classes from the properties
-        if ENTITY_CLASSES_LIST_VALUE in properties:
-            entity_classes_list = properties[ENTITY_CLASSES_LIST_VALUE]
+        if ENTITY_MANAGER_CRAWL_TARGET_CLASSES_VALUE in properties:
+            entity_classes_list = properties[ENTITY_MANAGER_CRAWL_TARGET_CLASSES_VALUE]
         # otherwise tries to retrieve all the classes in the provided module
         elif ENTITY_CLASSES_MODULE_VALUE in properties and DIRECTORY_PATH_VALUE in properties:
             # retrieves the relevant entity classes
@@ -143,7 +143,7 @@ class SearchCrawlerEntityManagerAdapter:
             entity_classes_list = self._get_entity_classes(base_entity_models_module, entity_class)
         # in case no entity specification is provided
         else:
-            raise search_crawler_entity_manager_adapter_exceptions.MissingProperty(ENTITY_CLASSES_LIST_VALUE)
+            raise search_crawler_entity_manager_adapter_exceptions.MissingProperty(ENTITY_MANAGER_CRAWL_TARGET_CLASSES_VALUE)
 
         # generates the entity models map from the base entity models list
         # creating the map associating the class names with the classes
