@@ -43,7 +43,7 @@ import select
 import threading
 import traceback
 
-import string_buffer_util
+import colony.libs.string_buffer_util
 
 import main_service_smtp_exceptions
 
@@ -407,7 +407,7 @@ class SmtpClientServiceTask:
         """
 
         # creates the string buffer for the message
-        message = string_buffer_util.StringBuffer()
+        message = colony.libs.string_buffer_util.StringBuffer()
 
         # creates a request object
         request = SmtpRequest()
@@ -576,7 +576,7 @@ class SmtpRequest:
     """ The properties """
 
     def __init__(self):
-        self.message_stream = string_buffer_util.StringBuffer()
+        self.message_stream = colony.libs.string_buffer_util.StringBuffer()
         self.properties = {}
 
     def __repr__(self):
