@@ -42,7 +42,7 @@ import socket
 import select
 import traceback
 
-import string_buffer_util
+import colony.libs.string_buffer_util
 
 import main_service_irc_exceptions
 
@@ -367,7 +367,7 @@ class IrcClientServiceTask:
         """
 
         # creates the string buffer for the message
-        message = string_buffer_util.StringBuffer()
+        message = colony.libs.string_buffer_util.StringBuffer()
 
         # creates a request object
         request = IrcRequest()
