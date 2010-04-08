@@ -42,6 +42,8 @@ import urllib
 import urllib2
 import hashlib
 
+import colony.libs.string_buffer_util
+
 import service_openid_parser
 import service_openid_exceptions
 
@@ -384,6 +386,14 @@ class OpenidClient:
         # converts the values list into a map
         values_map = dict(values_list)
 
+        # retrieves the error from the values map
+        error = values_map.get("error", None)
+
+        # in case the error value is set
+        if error:
+            # raises a provider error exception
+            raise service_openid_exceptions.ProviderError("problem in provider: " + error)
+
         # retrieves the expiration from the values map
         self.openid_structure.expires_in = values_map.get("expires_in", None)
 
@@ -396,7 +406,7 @@ class OpenidClient:
         # returns the openid structure
         return self.openid_structure
 
-    def open_id_verify(self, return_openid_structure):
+    def open_id_verify(self, return_openid_structure, strict = True):
         """
         Verifies the given return openid structure (verification)
         according to the openid specification.
@@ -404,19 +414,22 @@ class OpenidClient:
         @type return_openid_structure: OpenidStructure
         @param return_openid_structure: The return openid structure
         to be verified.
+        @type strict: bool
+        @param strict: Flag to control if the verification should be strict.
         @rtype: OpenidStructure
         @return: The current openid structure.
         """
 
-        # in case any of the base information items missmatches
-        if not (self.openid_structure.return_to == return_openid_structure.return_to and\
-                self.openid_structure.claimed_id == return_openid_structure.claimed_id and\
-                self.openid_structure.identity == return_openid_structure.identity and\
-                self.openid_structure.provider_url == return_openid_structure.provider_url and\
-                return_openid_structure.ns == OPENID_NAMESPACE_VALUE):
+        # in case the verification is strict and any of the base information items mismatches
+        if strict and not (self.openid_structure.return_to == return_openid_structure.return_to and\
+                           self.openid_structure.claimed_id == return_openid_structure.claimed_id and\
+                           self.openid_structure.identity == return_openid_structure.identity and\
+                           self.openid_structure.provider_url == return_openid_structure.provider_url and\
+                           return_openid_structure.ns == OPENID_NAMESPACE_VALUE):
             # raises a verification failed exception
             raise service_openid_exceptions.VerificationFailed("invalid discovered information")
 
+        # verifies the nonce value retrieving the result
         nonce_verification_result = self.service_openid._verify_nonce(return_openid_structure.response_nonce, return_openid_structure.provider_url)
 
         # in case the nonce verification is not successful
@@ -427,16 +440,19 @@ class OpenidClient:
         # retrieves the list of signed items by spliting the list
         signed_items_list = return_openid_structure.signed.split(",")
 
-        # starts the message value
-        message = str()
+        # creates the string buffer for the message
+        message_string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
         # iterates over all the signed items
         for signed_item_name in signed_items_list:
             # retrieves the signed item value from the return openid structure
             signed_item_value = getattr(return_openid_structure, signed_item_name)
 
-            # adds the key value pais to the message
-            message += signed_item_name.encode("utf-8") + ":" + signed_item_value.encode("utf-8") + "\n"
+            # adds the key value pair to the message string buffer
+            message_string_buffer.write(signed_item_name.encode("utf-8") + ":" + signed_item_value.encode("utf-8") + "\n")
+
+        # retrieves the value from the message string buffer
+        message = message_string_buffer.get_value()
 
         # decodes the signature mac key from base64
         signature_mac_key = self.openid_structure.mac_key.decode("base64")
