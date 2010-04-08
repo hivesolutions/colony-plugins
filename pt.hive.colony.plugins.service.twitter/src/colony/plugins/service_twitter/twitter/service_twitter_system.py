@@ -87,6 +87,12 @@ OUT_OF_BAND_CALLBACK_VALUE = "oob"
 HMAC_HASH_MODULES_MAP = {HMAC_SHA1_VALUE : hashlib.sha1}
 """ The map associating the hmac values with the hashlib hash function modules """
 
+BASE_REST_URL = "http://twitter.com/"
+""" The base rest url to be used """
+
+BASE_REST_SECURE_URL = "https://twitter.com/"
+""" The base rest secure url to be used """
+
 class ServiceTwitter:
     """
     The service twitter class.
@@ -235,7 +241,7 @@ class TwitterClient:
         """
 
         # sets the retrieval url
-        retrieval_url = "https://twitter.com/oauth/request_token"
+        retrieval_url = BASE_REST_SECURE_URL + "oauth/request_token"
 
         # retrieves the timestamp
         oauth_timestamp = self._get_oauth_timestamp()
@@ -312,7 +318,7 @@ class TwitterClient:
         """
 
         # sets the retrieval url
-        retrieval_url = "https://twitter.com/oauth/access_token"
+        retrieval_url = BASE_REST_SECURE_URL + "oauth/access_token"
 
         # retrieves the timestamp
         oauth_timestamp = self._get_oauth_timestamp()
@@ -398,7 +404,7 @@ class TwitterClient:
         """
 
         # sets the retrieval url
-        retrieval_url = "https://twitter.com/oauth/authorize"
+        retrieval_url = BASE_REST_SECURE_URL + "oauth/authorize"
 
         # creates the authentication parameters
         authentication_parameters = {"oauth_token" : self.oauth_structure.oauth_token}
@@ -418,7 +424,7 @@ class TwitterClient:
         """
 
         # sets the retrieval url
-        retrieval_url = "https://twitter.com/oauth/authenticate"
+        retrieval_url = BASE_REST_SECURE_URL + "oauth/authenticate"
 
         # creates the authentication parameters
         authentication_parameters = {"oauth_token" : self.oauth_structure.oauth_token}
@@ -445,7 +451,7 @@ class TwitterClient:
         if since_id:
             parameters["since_id"] = since_id
 
-        retrieval_url = "http://twitter.com/statuses/public_timeline.json"
+        retrieval_url = BASE_REST_URL + "statuses/public_timeline.json"
 
         # fetches the retrieval url with the given parameters retrieving the json
         json = self._fetch_url(retrieval_url, parameters)
@@ -494,7 +500,7 @@ class TwitterClient:
         if page:
             parameters["page"] = page
 
-        retrieval_url = "http://twitter.com/statuses/home_timeline.json"
+        retrieval_url = BASE_REST_URL + "statuses/home_timeline.json"
 
         # fetches the retrieval url with the given parameters retrieving the json
         json = self._fetch_url(retrieval_url, parameters)
@@ -543,7 +549,7 @@ class TwitterClient:
         if page:
             parameters["page"] = page
 
-        retrieval_url = "http://twitter.com/statuses/friends_timeline.json"
+        retrieval_url = BASE_REST_URL + "statuses/friends_timeline.json"
 
         # fetches the retrieval url with the given parameters retrieving the json
         json = self._fetch_url(retrieval_url, parameters)
@@ -590,12 +596,12 @@ class TwitterClient:
             parameters["page"] = count
 
         if user:
-            retrieval_url = "http://twitter.com/statuses/user_timeline/%s.json" % user
+            retrieval_url = BASE_REST_URL + "statuses/user_timeline/%s.json" % user
         else:
             # requires authentication
             self.require_authentication()
 
-            retrieval_url = "http://twitter.com/statuses/user_timeline.json"
+            retrieval_url = BASE_REST_URL + "statuses/user_timeline.json"
 
         # fetches the retrieval url with the given parameters retrieving the json
         json = self._fetch_url(retrieval_url, parameters)
@@ -643,9 +649,9 @@ class TwitterClient:
 
         # in case the user is defined
         if user:
-            retrieval_url = "http://twitter.com/statuses/friends/%s.json" % user
+            retrieval_url = BASE_REST_URL + "statuses/friends/%s.json" % user
         else:
-            retrieval_url = "http://twitter.com/statuses/friends.json"
+            retrieval_url = BASE_REST_URL + "statuses/friends.json"
 
         # fetches the retrieval url retrieving the json
         json = self._fetch_url(retrieval_url, parameters)
@@ -693,9 +699,9 @@ class TwitterClient:
 
         # in case the user is defined
         if user:
-            retrieval_url = "http://twitter.com/statuses/followers/%s.json" % user
+            retrieval_url = BASE_REST_URL + "statuses/followers/%s.json" % user
         else:
-            retrieval_url = "http://twitter.com/statuses/followers.json"
+            retrieval_url = BASE_REST_URL + "statuses/followers.json"
 
         # fetches the retrieval url retrieving the json
         json = self._fetch_url(retrieval_url, parameters)
@@ -725,7 +731,7 @@ class TwitterClient:
             user = self._get_current_user()
 
         # sets the retrieval url
-        retrieval_url = "http://twitter.com/users/show/%s.json" % user
+        retrieval_url = BASE_REST_URL + "users/show/%s.json" % user
 
         # fetches the retrieval url retrieving the json
         json = self._fetch_url(retrieval_url)
@@ -770,7 +776,7 @@ class TwitterClient:
             post_data["in_reply_to_status_id"] = in_reply_to_status_id
 
         # sets the retrieval url
-        retrieval_url = "http://twitter.com/statuses/update.json"
+        retrieval_url = BASE_REST_URL + "statuses/update.json"
 
         # fetches the retrieval url retrieving the json
         json = self._fetch_url(retrieval_url, post_data = post_data, method = POST_METHOD_VALUE)
