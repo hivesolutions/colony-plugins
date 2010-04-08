@@ -45,7 +45,7 @@ import threading
 
 import os.path
 
-import update_thread_util
+import colony.libs.update_thread_util
 
 DEFAULT_UPDATING_TIME = 3
 """ The default updating time """
@@ -118,7 +118,7 @@ class JavascriptManagerAutoloader:
         # in case the auto update plugin files flag is active
         if self.auto_update_plugin_files_flag:
             # creates the auto update plugin files timer timer thread
-            self.auto_update_plugin_files_timer = update_thread_util.UpdateThread()
+            self.auto_update_plugin_files_timer = colony.libs.update_thread_util.UpdateThread()
 
             # sets the timeout in the auto update plugin files timer timer thread
             self.auto_update_plugin_files_timer.set_timeout(DEFAULT_UPDATING_TIME)

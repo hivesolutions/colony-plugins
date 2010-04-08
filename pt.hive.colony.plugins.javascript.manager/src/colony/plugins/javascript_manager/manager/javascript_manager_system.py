@@ -44,8 +44,8 @@ import threading
 
 import os.path
 
-import string_buffer_util
-import update_thread_util
+import colony.libs.string_buffer_util
+import colony.libs.update_thread_util
 
 import javascript_manager_parser
 import javascript_manager_exceptions
@@ -154,7 +154,7 @@ class JavascriptManager:
         colony_web_ui_path = colony_web_ui_path_resource.data
 
         # retrieves the colony web ui real path value
-        colony_web_ui_real_path = os.path.realpath(manager_path + "/"  + colony_web_ui_path)
+        colony_web_ui_real_path = os.path.realpath(manager_path + "/" + colony_web_ui_path)
 
         # retrieves the colony demo path resource
         colony_demo_path_resource = resource_manager_plugin.get_resource("system.path.colony_demo")
@@ -165,7 +165,7 @@ class JavascriptManager:
         self.colony_demo_path = colony_demo_path
 
         # retrieves the colony demo real path value
-        colony_demo_real_path = os.path.realpath(manager_path + "/"  + colony_demo_path)
+        colony_demo_real_path = os.path.realpath(manager_path + "/" + colony_demo_path)
 
         # sets the workspace base path
         self.workspace_base_path = workspace_home_path
@@ -241,7 +241,7 @@ class JavascriptManager:
         # in case the auto index plugin search directories flag is active
         if self.auto_index_plugin_search_directories_flag:
             # creates the auto index plugin search directories timer thread
-            self.auto_index_plugin_search_directories_timer = update_thread_util.UpdateThread()
+            self.auto_index_plugin_search_directories_timer = colony.libs.update_thread_util.UpdateThread()
 
             # sets the timeout in the auto index plugin search directories timer thread
             self.auto_index_plugin_search_directories_timer.set_timeout(DEFAULT_INDEX_TIME)
@@ -404,7 +404,7 @@ class JavascriptManager:
 
     def get_plugins_files(self, plugin_id_list):
         # creates the stream buffer
-        stream_buffer = string_buffer_util.StringBuffer()
+        stream_buffer = colony.libs.string_buffer_util.StringBuffer()
 
         # iterates over the plugins ids list
         for plugin_id in plugin_id_list:
