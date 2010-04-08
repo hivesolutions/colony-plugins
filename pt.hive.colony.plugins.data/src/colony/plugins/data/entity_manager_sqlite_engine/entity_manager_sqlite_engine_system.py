@@ -43,7 +43,7 @@ import sqlite3
 import datetime
 import calendar
 
-import string_buffer_util
+import colony.libs.string_buffer_util
 
 import entity_manager_sqlite_engine_exceptions
 
@@ -863,7 +863,7 @@ class EntityManagerSqliteEngine:
         entity_class_valid_attribute_values = self.get_entity_class_attribute_values(entity_class)
 
         # creates the query string buffer
-        query_string_buffer = string_buffer_util.StringBuffer()
+        query_string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
         # creates the initial query string buffer
         query_string_buffer.write("insert into " + entity_class_name + "(")
