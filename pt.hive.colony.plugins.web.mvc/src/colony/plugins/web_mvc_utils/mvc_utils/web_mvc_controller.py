@@ -37,7 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import urllib
+import re
+
+import web_mvc_utils_exceptions
 
 DEFAULT_CONTENT_TYPE = "text/html;charset=utf-8"
 """ The default content type """
@@ -51,6 +53,21 @@ BASE_PATH_VALUE = "base_path"
 BACK_PATH_VALUE = "../"
 """ The back path value """
 
+NAME_TYPE_VALUE = "name"
+""" The name type value """
+
+SEQUENCE_TYPE_VALUE = "sequence"
+""" The sequence type value """
+
+MAP_TYPE_VALUE = "map"
+""" The map type value """
+
+ATTRIBUTE_PARSING_REGEX_VALUE = r"(?P<name>\w+)|(?P<sequence>\[\])|(?P<map>\[\w+\])"
+""" The attribute parsing regular expression value """
+
+ATTRIBUTE_PARSING_REGEX = re.compile(ATTRIBUTE_PARSING_REGEX_VALUE)
+""" The attribute parsing regex """
+
 def _start_controller(self):
     """
     Starts the controller structures.
@@ -61,6 +78,108 @@ def _start_controller(self):
         # calls the start method
         # in the controller
         self.start()
+
+def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING):
+    # retrieves the attributes list
+    attributes_list = rest_request.get_attributes_list()
+
+    # creates the base attributes map
+    base_attributes_map = {}
+
+    # iterates over all the attributes in the
+    # attributes list
+    for attribute in attributes_list:
+        # retrieves the attribute value from the request
+        attribute_value = self.get_attribute_decoded(rest_request, attribute, encoding)
+
+        # start the processing of the form attribute with the base attributes map
+        # the base attribute name and the attribute value
+        self._process_form_attribute(base_attributes_map, attribute, attribute_value)
+
+    # returns the base attributes map
+    return base_attributes_map
+
+def _process_form_attribute(self, parent_structure, current_attribute_name, attribute_value):
+    # retrieves the current match result
+    match_result = ATTRIBUTE_PARSING_REGEX.match(current_attribute_name)
+
+    # in case there is no match result
+    if not match_result:
+        # raises the invalid attribute name exception
+        raise web_mvc_utils_exceptions.InvalidAttributeName("invalid match value: " + current_attribute_name)
+
+    # retrieves the match result end position
+    match_result_end = match_result.end()
+
+    # checks if it's the last attribute name
+    is_last_attribute_name = match_result_end == len(current_attribute_name)
+
+    # retrieves the match result value
+    match_result_value = match_result.group()
+
+    # in case the match result value is of type map
+    # the parentheses need to be removed
+    if match_result.lastgroup == MAP_TYPE_VALUE:
+        # retrieves the match result value without the parentheses
+        match_result_value = match_result_value[1:-1]
+
+    # in case it's the only (last) match available
+    if is_last_attribute_name:
+        if match_result.lastgroup == NAME_TYPE_VALUE:
+            parent_structure[match_result_value] = attribute_value
+        elif match_result.lastgroup == SEQUENCE_TYPE_VALUE:
+            parent_structure.append(attribute_value)
+        elif match_result.lastgroup == MAP_TYPE_VALUE:
+            parent_structure[match_result_value] = attribute_value
+
+    # there is more parsing to be made
+    else:
+        # retrieves the next match value in order to make
+        next_match_result = ATTRIBUTE_PARSING_REGEX.match(current_attribute_name, match_result_end)
+
+        # in case there is no next match result
+        if not next_match_result:
+            # raises the invalid attribute name exception
+            raise web_mvc_utils_exceptions.InvalidAttributeName("invalid next match value: " + current_attribute_name)
+
+        # retrieves the next match result value
+        next_match_result_value = next_match_result.group()
+
+        if next_match_result.lastgroup == MAP_TYPE_VALUE:
+            # retrieves the next match result value without the parentheses
+            next_match_result_value = next_match_result_value[1:-1]
+
+        # in case the next match is of type name
+        if next_match_result.lastgroup == NAME_TYPE_VALUE:
+            # raises the invalid attribute name exception
+            raise web_mvc_utils_exceptions.InvalidAttributeName("invalid next match value (is a name): " + current_attribute_name)
+        elif next_match_result.lastgroup == SEQUENCE_TYPE_VALUE:
+            current_attribute_value = []
+        elif next_match_result.lastgroup == MAP_TYPE_VALUE:
+            if match_result.lastgroup == SEQUENCE_TYPE_VALUE:
+                if next_match_result_value in parent_structure[-1]:
+                    current_attribute_value = {}
+                else:
+                    current_attribute_value = parent_structure[-1]
+            elif match_result_value in parent_structure:
+                current_attribute_value = parent_structure[match_result_value]
+            else:
+                current_attribute_value = {}
+
+        if match_result.lastgroup == NAME_TYPE_VALUE:
+            parent_structure[match_result_value] = current_attribute_value
+        elif match_result.lastgroup == SEQUENCE_TYPE_VALUE:
+            parent_structure.append(current_attribute_value)
+        elif match_result.lastgroup == MAP_TYPE_VALUE:
+            parent_structure[match_result_value] = current_attribute_value
+
+        # retrieves the remaining attribute name
+        remaining_attribute_name = current_attribute_name[match_result_end:]
+
+        # processes the next form attribute with the current attribute value as the new parent structure
+        # the remaining attribute name as the new current attribute name and the attribute value
+        # continues with the same value
+        self._process_form_attribute(current_attribute_value, remaining_attribute_name, attribute_value)
 
 def get_base_path(self, rest_request):
     """
@@ -178,13 +297,10 @@ def get_attribute_decoded(self, rest_request, attribute_name, encoding = DEFAULT
     # in case the attribute value is valid
     if attribute_value:
         # unquotes the attribute value
-        attribute_value_unquoted = urllib.unquote(attribute_value)
-
-        # converts the spaces values
-        attribute_value_spaced = attribute_value_unquoted.replace("+", " ")
+        attribute_value_unquoted = rest_request.request.unquote_plus(attribute_value)
 
         # decodes the attribute value
-        attribute_value_decoded = attribute_value_spaced.decode(encoding)
+        attribute_value_decoded = attribute_value_unquoted.decode(encoding)
 
         # the attribute value decoded
         return attribute_value_decoded
