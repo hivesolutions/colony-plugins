@@ -37,11 +37,14 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import types
 import urllib
 import urllib2
 import hashlib
 
 import colony.libs.string_buffer_util
+
+import service_facebook_exceptions
 
 GET_METHOD_VALUE = "GET"
 """ The get method value """
@@ -49,8 +52,14 @@ GET_METHOD_VALUE = "GET"
 POST_METHOD_VALUE = "POST"
 """ The post method value """
 
-API_VERSION = "1.0"
-""" The facebook api version """
+JSON_FORMAT_VALUE = "json"
+""" The json format value """
+
+DEFAULT_FORMAT_VALUE = JSON_FORMAT_VALUE
+""" The default format value """
+
+DEFAULT_API_VERSION = "1.0"
+""" The default facebook api version """
 
 BASE_REST_URL = "http://api.facebook.com/restserver.php"
 """ The base rest url to be used """
@@ -63,12 +72,6 @@ BASE_HOME_URL = "http://www.facebook.com/"
 
 BASE_HOME_SECURE_URL = "https://www.facebook.com/"
 """ The base home secure url """
-
-API_KEY = "b42e59dee7e7b07258dfc82913648e43"
-""" The api key """
-
-API_SECRET = "6fddb2bbaade579798f45b1134865f01"
-""" The api secret """
 
 class ServiceFacebook:
     """
@@ -140,9 +143,23 @@ class FacebookClient:
         self.http_client_plugin = http_client_plugin
         self.facebook_structure = facebook_structure
 
-    def generate_facebook_structure(self, set_structure = True):
+    def generate_facebook_structure(self, consumer_key, consumer_secret, set_structure = True):
+        """
+        Generates the facebook structure for the given arguments.
+
+        @type consumer_key: String
+        @param consumer_key: The consumer key.
+        @type consumer_secret: String
+        @param consumer_secret: The consumer secret.
+        @type set_structure: bool
+        @param set_structure: Íf the structure should be
+        set in the facebook client.
+        @rtype: FacebookStructure
+        @return: The generated facebook structure.
+        """
+
         # creates a new facebook structure
-        facebook_structure = FacebookStructure()
+        facebook_structure = FacebookStructure(consumer_key, consumer_secret)
 
         # in case the structure is meant to be set
         if set_structure:
@@ -153,55 +170,58 @@ class FacebookClient:
         return facebook_structure
 
     def auth_create_token(self):
+        """
+        Initializes the process of creating an authentication token
+        for the facebook session creation.
+
+        @rtype: FacebookStructure
+        @return: The current facebook structure.
+        """
+
         # sets the retrieval url
         retrieval_url = BASE_REST_SECURE_URL
 
         # start the parameters map
         parameters = {}
 
-        # sets the method
-        parameters["method"] = "Auth.createToken"
-
-        # sets the api key
-        parameters["api_key"] = API_KEY
-
-        # sets the version (v)
-        parameters["v"] = API_VERSION
-
-        parameters["format"] = "json"
-
-        parameters["sig"] = self._get_signature(parameters)
+        # sets the base parameters (including the signature)
+        self._set_base_parameters("auth.createToken", parameters)
 
         # fetches the retrieval url with the given parameters retrieving the json
         json = self._fetch_url(retrieval_url, parameters, method = POST_METHOD_VALUE)
 
         # loads json retrieving the data
         data = self.json_plugin.loads(json)
+
+        # checks for facebook errors
+        self._check_facebook_errors(data)
 
         # sets the token in the facebook structure
         self.facebook_structure.token = data
 
+        # returns the facebook structure
+        return self.facebook_structure
+
     def auth_get_session(self):
+        """
+        Retrieves a news session using the created auth token
+        obtained from the user login.
+
+        @rtype: FacebookStructure
+        @return: The current facebook structure.
+        """
+
         # sets the retrieval url
         retrieval_url = BASE_REST_SECURE_URL
 
         # start the parameters map
         parameters = {}
 
-        # sets the method
-        parameters["method"] = "Auth.getSession"
-
-        # sets the api key
-        parameters["api_key"] = API_KEY
-
-        # sets the version (v)
-        parameters["v"] = API_VERSION
-
+        # sets the authentication token
         parameters["auth_token"] = self.facebook_structure.token
 
-        parameters["format"] = "json"
-
-        parameters["sig"] = self._get_signature(parameters)
+        # sets the base parameters (including the signature)
+        self._set_base_parameters("auth.getSession", parameters)
 
         # fetches the retrieval url with the given parameters retrieving the json
         json = self._fetch_url(retrieval_url, parameters, method = POST_METHOD_VALUE)
@@ -209,7 +229,39 @@ class FacebookClient:
         # loads json retrieving the data
         data = self.json_plugin.loads(json)
 
+        # checks for facebook errors
+        self._check_facebook_errors(data)
+
+        # sets the session key in the facebook structure
+        self.facebook_structure.session_key = data["session_key"]
+
+        # sets the user id in the facebook structure
+        self.facebook_structure.user_id = data["uid"]
+
+        # returns the facebook structure
+        return self.facebook_structure
+
+    def auth_get_info(self):
+        # retrieves the user id
+        user_id = self.facebook_structure.user_id
+
+        # retrieves the user information
+        user_info = self.user_get_user_info([user_id], ["username"])
+
+        # sets the username in the facebook structure
+        self.facebook_structure.username = user_info[0]["username"]
+
+        # returns the faceboook structure
+        return self.facebook_structure
+
     def get_login_url(self):
+        """
+        Retrieves the url used for facebook user login.
+
+        @rtype: String
+        @return: The url used for facebook user login.
+        """
+
         # sets the retrieval url
         retrieval_url = BASE_HOME_SECURE_URL + "login.php"
 
@@ -217,10 +269,10 @@ class FacebookClient:
         parameters = {}
 
         # sets the api key
-        parameters["api_key"] = API_KEY
+        parameters["api_key"] = self.facebook_structure.consumer_key
 
         # sets the version (v)
-        parameters["v"] = API_VERSION
+        parameters["v"] = self.facebook_structure.api_version
 
         # sets the next web site to redirect
         parameters["next"] = "http://localhost:8080/take_the_bill/facebook"
@@ -231,26 +283,73 @@ class FacebookClient:
         # returns the login url
         return login_url
 
-    def _get_signature(self, parameters):
-        # creates the message string buffer
-        message_string_buffer = colony.libs.string_buffer_util.StringBuffer()
+    def user_get_user_info(self, user_id_list, fields):
+        """
+        Retrieves the user information for the given user identifiers
+        and field.
 
-        # retrieves the parameters keys
-        parameters_keys = parameters.keys()
+        @type user_id_list: List
+        @param user_id_list: The user id to retrieve the information.
+        @type fields: List
+        @param fields: The field to be retrieve as the user information.
+        @rtype: Dictionary
+        @return: The retrieved user information.
+        """
 
-        # sorts the parameters keys
-        parameters_keys.sort()
+        # sets the retrieval url
+        retrieval_url = BASE_REST_SECURE_URL
 
-        for parameter_key in parameters_keys:
-            parameter_value = parameters[parameter_key]
+        # start the parameters map
+        parameters = {}
 
-            message_string_buffer.write(parameter_key + "=" + str(parameter_value))
+        # sets the user id list in the parameters
+        parameters["uids"] = self._list_to_coma_string(user_id_list)
 
-        message_string_buffer.write(API_SECRET)
+        # sets the fields in the parameters
+        parameters["fields"] = self._list_to_coma_string(fields)
 
-        message = message_string_buffer.get_value()
+        # sets the base parameters (including the signature)
+        self._set_base_parameters("users.getInfo", parameters)
 
-        return hashlib.md5(message).hexdigest()
+        # fetches the retrieval url with the given parameters retrieving the json
+        json = self._fetch_url(retrieval_url, parameters, method = POST_METHOD_VALUE)
+
+        # loads json retrieving the data
+        data = self.json_plugin.loads(json)
+
+        # checks for facebook errors
+        self._check_facebook_errors(data)
+
+        # reeturns the data
+        return data
+
+    def _list_to_coma_string(self, list):
+        # creates the coma string buffer
+        coma_string_buffer = colony.libs.string_buffer_util.StringBuffer()
+
+        # sets the is first flag
+        is_first = True
+
+        # iterates over all the list items
+        # in the list
+        for list_item in list:
+            # in case the is first flag is set
+            if is_first:
+                # unsets the is first flag
+                is_first = False
+            else:
+                # writes the coma to the coma string buffer
+                coma_string_buffer.write(",")
+
+            # writes the list item to the coma string buffer
+            coma_string_buffer.write(list_item)
+
+        # retrieves the coma string value from the
+        # coma string buffer
+        coma_string = coma_string_buffer.get_value()
+
+        # returns the coma string
+        return coma_string
 
     def get_facebook_structure(self):
         """
@@ -271,6 +370,76 @@ class FacebookClient:
         """
 
         self.facebook_structure = facebook_structure
+
+    def _get_signature(self, parameters):
+        """
+        Calculates and retrieves the message signature
+        for the given parameters.
+
+        @type parameters: Dictionary
+        @param parameters: The map with the parameters to be used
+        to calculate the signature.
+        @rtype: String
+        @return: The calculated signature.
+        """
+
+        # creates the message string buffer
+        message_string_buffer = colony.libs.string_buffer_util.StringBuffer()
+
+        # retrieves the parameters keys
+        parameters_keys = parameters.keys()
+
+        # sorts the parameters keys
+        parameters_keys.sort()
+
+        # iterates over all the parameters keys (ordered)
+        for parameter_key in parameters_keys:
+            # retrieves the parameter value
+            parameter_value = parameters[parameter_key]
+
+            # writes the key value pair in the message string buffer
+            message_string_buffer.write(parameter_key + "=" + str(parameter_value))
+
+        # writes the consumer secret to the message string buffer
+        message_string_buffer.write(self.facebook_structure.consumer_secret)
+
+        # retrieves the message from the message string buffer
+        message = message_string_buffer.get_value()
+
+        # returns the md5 hex digest for the message
+        return hashlib.md5(message).hexdigest()
+
+    def _set_base_parameters(self, method_name, parameters):
+        """
+        Sets the base facebook rest request parameters
+        in the parameters map.
+
+        @type method_name: String
+        @param method_name: The name of the method to be called.
+        @type parameters: Dictionary
+        @param parameters: The parameters map to be used in setting
+        the authentication parameters.
+        """
+
+        # sets the method name
+        parameters["method"] = method_name
+
+        # sets the api key
+        parameters["api_key"] = self.facebook_structure.consumer_key
+
+        # sets the version (v)
+        parameters["v"] = self.facebook_structure.api_version
+
+        # sets the format
+        parameters["format"] = DEFAULT_FORMAT_VALUE
+
+        # in case the session key is defined
+        if self.facebook_structure.session_key:
+            # sets the session key
+            parameters["session_key"] = self.facebook_structure.session_key
+
+        # calculates and sets the signature value
+        parameters["sig"] = self._get_signature(parameters)
 
     def _get_opener(self, url):
         """
@@ -419,20 +588,79 @@ class FacebookClient:
 
         return unicode(string_value).encode("utf-8")
 
+    def _check_facebook_errors(self, data):
+        """
+        Checks the given data for facebook errors.
+
+        @type data: String
+        @param data: The data to be checked for facebook errors.
+        @rtype: bool
+        @return: The result of the data error check.
+        """
+
+        # retrieves the data type
+        data_type = type(data)
+
+        # in case the data is not of type dictionary
+        if not data_type == types.DictType:
+            # returns immediately
+            return
+
+        # retrieves the error code
+        error_code = data.get("error_code", None)
+
+        # in case the error code is not set
+        if not error_code:
+            # returns immediately
+            return
+
+        # retrieves the error message
+        error_message = data.get("error_msg", None)
+
+        # raises the facebook pi error
+        raise service_facebook_exceptions.FacebookApiError("error in request: " + error_message)
+
 class FacebookStructure:
     """
     The facebook structure class.
     """
 
+    consumer_key = None
+    """ The consumer key """
+
+    consumer_secret = None
+    """ The consumer secret """
+
+    api_version = None
+    """ The version of the api being used """
+
     token = None
     """ The authentication token used """
 
-    def __init__(self):
+    session_key = None
+    """ The key used to identify the session """
+
+    user_id = None
+    """ The identification of the logged user """
+
+    username = None
+    """ The username of the logged user """
+
+    def __init__(self, consumer_key, consumer_secret, api_version = DEFAULT_API_VERSION):
         """
         Constructor of the class.
+
+        @type consumer_key: String
+        @param consumer_key: The consumer key.
+        @type consumer_secret: String
+        @param consumer_secret: The consumer secret.
+        @type api_version: String
+        @param api_version: The version of the api being used.
         """
 
-        pass
+        self.consumer_key = consumer_key
+        self.consumer_secret = consumer_secret
+        self.api_version = api_version
 
     def get_token(self):
         """
