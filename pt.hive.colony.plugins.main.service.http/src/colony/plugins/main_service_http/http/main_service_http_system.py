@@ -1639,11 +1639,8 @@ class HttpRequest:
         arguments parsing.
         """
 
-        # "unquotes" the arguments from the url encoding
-        unquoted_arguments = self.unquote_plus(self.arguments)
-
         # retrieves the attribute fields list
-        attribute_fields_list = unquoted_arguments.split("&")
+        attribute_fields_list = self.arguments.split("&")
 
         # iterates over all the attribute fields
         for attribute_field in attribute_fields_list:
@@ -1669,6 +1666,9 @@ class HttpRequest:
 
                 # sets the attribute value to none
                 attribute_value = None
+
+            # "unquotes" the attribute name from the url encoding
+            attribute_name = self.unquote_plus(attribute_name)
 
             # sets the attribute value
             self.__setattribute__(attribute_name, attribute_value)
