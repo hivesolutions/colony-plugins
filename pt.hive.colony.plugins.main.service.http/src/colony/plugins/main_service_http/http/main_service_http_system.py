@@ -43,7 +43,6 @@ import copy
 import types
 import socket
 import select
-import urllib
 import datetime
 import threading
 import traceback
@@ -185,6 +184,9 @@ DEFAULT_CONTENT_TYPE_CHARSET_VALUE = "default_content_type_charset"
 
 DEFAULT_CACHE_CONTROL_VALUE = "no-cache, must-revalidate"
 """ The default cache control value """
+
+HEX_TO_CHAR_MAP = dict(("%02x" % i, chr(i)) for i in range(256))
+""" The map associating the hexadecimal byte (256) values with the integers """
 
 class MainServiceHttp:
     """
@@ -1635,7 +1637,7 @@ class HttpRequest:
         """
 
         # "unquotes" the arguments from the url encoding
-        unquoted_arguments = urllib.unquote_plus(self.arguments)
+        unquoted_arguments = self.unquote_plus(self.arguments)
 
         # retrieves the attribute fields list
         attribute_fields_list = unquoted_arguments.split("&")
@@ -2212,3 +2214,53 @@ class HttpRequest:
 
         # returns the content disposition map
         return content_disposition_map
+
+    def unquote(self, string_value):
+        """
+        Unquotes the given string value according to
+        the url encoding specification.
+        The implementation is based on the python base library.
+
+        @type string_value: String
+        @param string_value: The string value to be unquoted.
+        @rtype: String
+        @return: The unquoted string value.
+        """
+
+        # splits the string value around
+        # percentage value
+        string_value_splitted = string_value.split("%")
+
+        # iterates over all the "percentage values" range
+        for index in xrange(1, len(string_value_splitted)):
+            # retrieves the current iteration item
+            item = string_value_splitted[index]
+
+            try:
+                string_value_splitted[index] = HEX_TO_CHAR_MAP[item[:2]] + item[2:]
+            except KeyError:
+                string_value_splitted[index] = "%" + item
+            except UnicodeDecodeError:
+                string_value_splitted[index] = unichr(int(item[:2], 16)) + item[2:]
+
+        # returns the joined "partial" string value
+        return "".join(string_value_splitted)
+
+    def unquote_plus(self, string_value):
+        """
+        Unquotes the given string value according to
+        the url encoding specification. This kind of unquote
+        takes into account the plus and the space relation.
+        The implementation is based on the python base library.
+
+        @type string_value: String
+        @param string_value: The string value to be unquoted.
+        @rtype: String
+        @return: The unquoted string value.
+        """
+
+        # replaces the plus sign with a space
+        string_value = string_value.replace("+", " ")
+
+        # returns the unquoted string value
+        return self.unquote(string_value)
