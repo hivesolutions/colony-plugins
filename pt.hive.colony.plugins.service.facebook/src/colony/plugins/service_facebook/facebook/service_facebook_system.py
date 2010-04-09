@@ -662,12 +662,72 @@ class FacebookStructure:
         self.consumer_secret = consumer_secret
         self.api_version = api_version
 
+    def get_consumer_key(self):
+        """
+        Retrieves the consumer key.
+
+        @rtype: String
+        @return: The consumer key.
+        """
+
+        return self.consumer_key
+
+    def set_consumer_key(self, consumer_key):
+        """
+        Sets the consumer key.
+
+        @type consumer_key: String
+        @param consumer_key: The consumer key.
+        """
+
+        self.consumer_key = consumer_key
+
+    def get_consumer_secret(self):
+        """
+        Retrieves the consumer secret.
+
+        @rtype: String
+        @return: The consumer secret.
+        """
+
+        return self.consumer_secret
+
+    def set_consumer_secret(self, consumer_secret):
+        """
+        Sets the consumer key.
+
+        @type consumer_secret: String
+        @param consumer_secret: The consumer secret.
+        """
+
+        self.consumer_secret = consumer_secret
+
+    def get_api_version(self):
+        """
+        Retrieves the api version.
+
+        @rtype: String
+        @return: The api version.
+        """
+
+        return self.api_version
+
+    def set_api_version(self, api_version):
+        """
+        Sets the api version.
+
+        @type api_version: String
+        @param api_version: The api version.
+        """
+
+        self.api_version = api_version
+
     def get_token(self):
         """
         Retrieves the token.
 
         @rtype: String
-        @return: The token
+        @return: The token.
         """
 
         return self.token
@@ -677,7 +737,67 @@ class FacebookStructure:
         Sets the token.
 
         @type token: String
-        @param token: The token
+        @param token: The token.
         """
 
         self.token = token
+
+    def get_session_key(self):
+        """
+        Retrieves the session key.
+
+        @rtype: String
+        @return: The session key.
+        """
+
+        return self.session_key
+
+    def set_session_key(self, session_key):
+        """
+        Sets the session key.
+
+        @type session_key: String
+        @param session_key: The session key.
+        """
+
+        self.session_key = session_key
+
+    def get_user_id(self):
+        """
+        Retrieves the user id.
+
+        @rtype: String
+        @return: The user id.
+        """
+
+        return self.user_id
+
+    def set_user_id(self, user_id):
+        """
+        Sets the user id.
+
+        @type user_id: String
+        @param user_id: The user id.
+        """
+
+        self.user_id = user_id
+
+    def get_username(self):
+        """
+        Retrieves the username.
+
+        @rtype: String
+        @return: The username.
+        """
+
+        return self.username
+
+    def set_username(self, username):
+        """
+        Sets the username.
+
+        @type username: String
+        @param username: The username.
+        """
+
+        self.username = username
