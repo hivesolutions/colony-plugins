@@ -43,6 +43,7 @@ import copy
 import types
 import socket
 import select
+import urllib
 import datetime
 import threading
 import traceback
@@ -1633,8 +1634,11 @@ class HttpRequest:
         arguments parsing.
         """
 
+        # "unquotes" the arguments from the url encoding
+        unquoted_arguments = urllib.unquote_plus(self.arguments)
+
         # retrieves the attribute fields list
-        attribute_fields_list = self.arguments.split("&")
+        attribute_fields_list = unquoted_arguments.split("&")
 
         # iterates over all the attribute fields
         for attribute_field in attribute_fields_list:
