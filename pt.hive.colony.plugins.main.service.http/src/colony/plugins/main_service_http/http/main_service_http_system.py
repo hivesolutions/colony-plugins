@@ -188,6 +188,9 @@ DEFAULT_CACHE_CONTROL_VALUE = "no-cache, must-revalidate"
 HEX_TO_CHAR_MAP = dict(("%02x" % i, chr(i)) for i in range(256))
 """ The map associating the hexadecimal byte (256) values with the integers """
 
+# updates the map with the upper case values
+HEX_TO_CHAR_MAP.update(("%02X" % i, chr(i)) for i in range(256))
+
 class MainServiceHttp:
     """
     The main service http class.
