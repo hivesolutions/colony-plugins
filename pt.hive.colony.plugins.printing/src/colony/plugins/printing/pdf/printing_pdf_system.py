@@ -81,8 +81,14 @@ class PrintingPdf:
         # creates a document controller
         pdf_document_controller = document_pdf_plugin.create_document_controller({"title" : TEST_TITLE})
 
-        # draws a string in the pdf document
-        pdf_document_controller.draw_string(100, 750, TEST_TEXT)
+        # retrieves the pdf document page size
+        pdf_document_page_width, pdf_document_page_height = pdf_document_controller.get_page_size()
+
+        # retrieves the inch size
+        inch_size = pdf_document_controller.get_inch_size()
+
+        # draws a string centered in the pdf document
+        pdf_document_controller.draw_string_centered(pdf_document_page_width / 2, pdf_document_page_height - inch_size * 1, TEST_TEXT)
 
         # saves the pdf document
         pdf_document_controller.save()
