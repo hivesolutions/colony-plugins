@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import document_pdf_filters
+import document_pdf_exceptions
 
 class DocumentPdf:
     """
@@ -58,14 +59,26 @@ class DocumentPdf:
         self.document_pdf_plugin = document_pdf_plugin
 
     def create_document_controller(self, document_attributes):
-        ascii85_filter = document_pdf_filters.Ascii85Filter()
-        flate_filter = document_pdf_filters.FlateFilter()
+        # tries to retrieve the
+        title = document_attributes.get("title", None)
 
-        data = "Gap@D_$WFm'Lhapro)L<_*!jn@V)B;en?UF)Ti\"Ld]Ki9k6gpRHsAhA9$n#EU)R\"l'fs]UA6pF//(W.u(A/r:44`=1G@5N*\F*j5iY:4rm/%B_#<l*&p]~>"
-        data = ascii85_filter.decode(data)
-        data = flate_filter.decode(data)
+        # in case the title is not defined
+        if not title:
+            # raises the mandatory attribute not found exception
+            raise document_pdf_exceptions.MandatoryAttributeNotFound("title")
 
-        print data
+        reportlab_pdf_document_controller = ReportLabPdfDocumentController(title)
+
+        return reportlab_pdf_document_controller
+
+        #ascii85_filter = document_pdf_filters.Ascii85Filter()
+        #flate_filter = document_pdf_filters.FlateFilter()
+
+        #data = "Gap@D_$WFm'Lhapro)L<_*!jn@V)B;en?UF)Ti\"Ld]Ki9k6gpRHsAhA9$n#EU)R\"l'fs]UA6pF//(W.u(A/r:44`=1G@5N*\F*j5iY:4rm/%B_#<l*&p]~>"
+        #data = ascii85_filter.decode(data)
+        #data = flate_filter.decode(data)
+
+        #print data
 
 class PdfDocumentController:
     """
@@ -78,3 +91,32 @@ class PdfDocumentController:
         """
 
         pass
+
+import reportlab.pdfgen.canvas
+
+class ReportLabPdfDocumentController:
+    """
+    The reportlab pdf document controller class.
+    """
+
+    canvas = None
+    """ The canvas object """
+
+    def __init__(self, title):
+        """
+        Constructor of the class.
+
+        @type title: String
+        @param title: The title of the document, to be used
+        also as the filename for the document.
+        """
+
+        # creates the canvas with the given title
+        self.canvas = reportlab.pdfgen.canvas.Canvas(title)
+
+    def draw_string(self, x_position, y_position, string_value):
+        # draws a string in the pdf document
+        self.canvas.drawString(x_position, y_position, string_value)
+
+    def save(self):
+        self.canvas.save()
