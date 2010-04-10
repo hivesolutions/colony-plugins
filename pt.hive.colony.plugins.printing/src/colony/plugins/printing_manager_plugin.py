@@ -126,7 +126,9 @@ class PrintingManagerPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.load_allowed_capability("printing")
     def printing_load_allowed(self, plugin, capability):
         self.printing_plugins.append(plugin)
+        self.printing_manager.load_printing_plugin(plugin)
 
     @colony.plugins.decorators.unload_allowed_capability("printing")
     def printing_unload_allowed(self, plugin, capability):
         self.printing_plugins.remove(plugin)
+        self.printing_manager.unload_printing_plugin(plugin)

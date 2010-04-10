@@ -87,6 +87,16 @@ class PrintingWin32Plugin(colony.plugins.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
+    def get_printing_name(self):
+        """
+        Retrieves the printing name.
+
+        @rtype: String
+        @return: The printing name.
+        """
+
+        return self.printing_win32.get_printing_name()
+
     def print_test(self, printing_options):
         self.printing_win32.print_test(printing_options)
 

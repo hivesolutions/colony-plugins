@@ -25,10 +25,10 @@ __author__ = "João Magalhães <joamag@hive.pt>"
 __version__ = "1.0.0"
 """ The version of the module """
 
-__revision__ = "$LastChangedRevision: 1089 $"
+__revision__ = "$LastChangedRevision: 2300 $"
 """ The revision number of the module """
 
-__date__ = "$LastChangedDate: 2009-01-22 23:19:39 +0000 (qui, 22 Jan 2009) $"
+__date__ = "$LastChangedDate: 2009-04-01 17:10:15 +0100 (qua, 01 Abr 2009) $"
 """ The last change date of the module """
 
 __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
@@ -37,42 +37,36 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-PRINTING_NAME = "pdf"
-""" The printing name """
-
-class PrintingPdf:
+class PrintingManagerException(Exception):
     """
-    The printing pdf class.
+    The printing manager exception class.
     """
 
-    printing_pdf_plugin = None
-    """ The printing pdf plugin """
+    message = None
+    """ The exception's message """
 
-    def __init__(self, printing_pdf_plugin):
+class PrintingPluginNotAvailable(PrintingManagerException):
+    """
+    The printing plugin not available name class.
+    """
+
+    def __init__(self, message):
         """
         Constructor of the class.
 
-        @type printing_pdf_plugin: PrintingPdfPlugin
-        @param printing_pdf_plugin: The printing pdf plugin.
+        @type message: String
+        @param message: The message to be printed.
         """
 
-        self.printing_pdf_plugin = printing_pdf_plugin
+        PrintingManagerException.__init__(self)
+        self.message = message
 
-    def get_printing_name(self):
+    def __str__(self):
         """
-        Retrieves the printing name.
+        Returns the string representation of the class.
 
         @rtype: String
-        @return: The printing name.
+        @return: The string representation of the class.
         """
 
-        return PRINTING_NAME
-
-    def print_test(self, printing_options = {}):
-        pass
-
-    def print_test_image(self, image_path, printing_options = {}):
-        pass
-
-    def print_printing_language(self, printing_document, printing_options = {}):
-        pass
+        return "Printing plugin not available: %s" % self.message

@@ -64,7 +64,7 @@ class PrintingPdfPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global printing
         import printing.pdf.printing_pdf_system
-        self.load_plugin = printing.pdf.printing_pdf_system.PrintingPdf(self)
+        self.printing_pdf = printing.pdf.printing_pdf_system.PrintingPdf(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -83,6 +83,16 @@ class PrintingPdfPlugin(colony.plugins.plugin_system.Plugin):
 
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    def get_printing_name(self):
+        """
+        Retrieves the printing name.
+
+        @rtype: String
+        @return: The printing name.
+        """
+
+        return self.printing_pdf.get_printing_name()
 
     def print_test(self, printing_options):
         self.printing_pdf.print_test(printing_options)

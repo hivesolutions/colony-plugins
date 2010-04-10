@@ -47,6 +47,9 @@ import PIL.ImageWin
 import printing_win32_constants
 import printing_win32_visitor
 
+PRINTING_NAME = "win32"
+""" The printing name """
+
 PRINTING_SCALE = 4
 """ The printing scale """
 
@@ -73,6 +76,16 @@ class PrintingWin32:
         """
 
         self.printing_win32_plugin = printing_win32_plugin
+
+    def get_printing_name(self):
+        """
+        Retrieves the printing name.
+
+        @rtype: String
+        @return: The printing name.
+        """
+
+        return PRINTING_NAME
 
     def print_test(self, printing_options = {}):
         # retrieves the printer handler
