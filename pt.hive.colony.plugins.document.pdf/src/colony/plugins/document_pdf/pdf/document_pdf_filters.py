@@ -38,7 +38,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import zlib
-import cStringIO
+
+import colony.libs.string_buffer_util
 
 import document_pdf_exceptions
 
@@ -122,8 +123,8 @@ class FlateFilter(DocumentPdfFilter):
 
             # checks if it is a png predictor
             if predictor >= 10 and predictor <= 15:
-                # creates the ouput stream
-                output = cStringIO.StringIO()
+                # creates the string buffer
+                string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
                 # png prediction can vary from row to row
                 row_length = columns + 1
@@ -148,7 +149,7 @@ class FlateFilter(DocumentPdfFilter):
                         pass
                     elif filterByte == 1:
                         for i in range(2, row_length):
-                            row_data[i] = (row_data[i] + row_data[i-1]) % 256
+                            row_data[i] = (row_data[i] + row_data[i - 1]) % 256
                     elif filterByte == 2:
                         for i in range(1, row_length):
                             row_data[i] = (row_data[i] + previous_rowdata[i]) % 256
@@ -159,8 +160,10 @@ class FlateFilter(DocumentPdfFilter):
                     # sets the current row data as the previous row data
                     previous_rowdata = row_data
 
-                    output.write("".join([chr(x) for x in row_data[1:]]))
-                decoded_data = output.getvalue()
+                    string_buffer.write("".join([chr(x) for x in row_data[1:]]))
+
+                # retrieves the decoded data from the string buffer
+                decoded_data = string_buffer.get_value()
             else:
                 # raises a pdf read error exception
                 raise document_pdf_exceptions.PdfReadError("unsupported flatedecode predictor: " + repr(predictor))
@@ -186,32 +189,49 @@ class AsciiHexFitler(DocumentPdfFilter):
     def decode(self, data, decode_parameters = {}):
         DocumentPdfFilter.decode(self, data, decode_parameters)
 
-        # starts the decoded data
-        decoded_data = str()
+        # starts the string buffer
+        string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
         char = str()
 
-        x = 0
+        # starts the index
+        index = 0
 
         while True:
-            c = data[x]
+            # retrieves the current character
+            c = data[index]
 
+            # in case the end of data
+            # is found
             if c == ">":
                 break
+            # in case it's a space
             elif c.isspace():
-                x += 1
+                # increments the index
+                index += 1
+
+                # continues the loop
                 continue
 
             char += c
 
             if len(char) == 2:
-                decoded_data += chr(int(char, base=16))
-                char = ""
+                # converts the character value from base 16
+                # to "normal"character value
+                string_buffer.write(chr(int(char, base = 16)))
 
-            x += 1
+                # resets the character value
+                char = str()
+
+            # increments the index
+            index += 1
 
         assert char == ""
 
+        # retrieves the decoded data from the string buffer
+        decoded_data = string_buffer.get_value()
+
+        # returns the decoded data
         return decoded_data
 
 class Ascii85Filter(DocumentPdfFilter):
@@ -245,7 +265,7 @@ class Ascii85Filter(DocumentPdfFilter):
         while not hit_eod:
             c = data[x]
 
-            if len(decoded_data) == 0 and c == "<" and data[x+1] == "~":
+            if len(decoded_data) == 0 and c == "<" and data[x + 1] == "~":
                 x += 2
                 continue
             elif c == "z":
@@ -269,15 +289,15 @@ class Ascii85Filter(DocumentPdfFilter):
             else:
                 c = ord(c) - 33
                 assert c >= 0 and c < 85
-                group += [ c ]
+                group += [c]
             if len(group) >= 5:
-                b = group[0] * (85**4) + \
-                    group[1] * (85**3) + \
-                    group[2] * (85**2) + \
+                b = group[0] * (85 ** 4) + \
+                    group[1] * (85 ** 3) + \
+                    group[2] * (85 ** 2) + \
                     group[3] * 85 + \
                     group[4]
 
-                assert b < (2**32 - 1)
+                assert b < (2 ** 32 - 1)
 
                 c4 = chr((b >> 0) % 256)
                 c3 = chr((b >> 8) % 256)
@@ -287,7 +307,7 @@ class Ascii85Filter(DocumentPdfFilter):
                 decoded_data += (c1 + c2 + c3 + c4)
 
                 if hit_eod:
-                    decoded_data = decoded_data[:-4+hit_eod]
+                    decoded_data = decoded_data[:-4 + hit_eod]
 
                 group = []
 
