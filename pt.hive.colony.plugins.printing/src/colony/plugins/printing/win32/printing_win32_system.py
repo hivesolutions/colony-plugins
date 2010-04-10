@@ -76,7 +76,7 @@ class PrintingWin32:
 
     def print_test(self, printing_options = {}):
         # retrieves the printer handler
-        handler_device_context, printable_area, printer_size, printer_margins = self.get_printer_handler(printing_options)
+        handler_device_context, _printable_area, _printer_size, _printer_margins = self.get_printer_handler(printing_options)
 
         # starts the document
         handler_device_context.StartDoc(TEST_TITLE)
@@ -101,7 +101,7 @@ class PrintingWin32:
 
     def print_test_image(self, image_path, printing_options = {}):
         # retrieves the printer handler
-        handler_device_context, printable_area, printer_size, printer_margins = self.get_printer_handler(printing_options)
+        handler_device_context, _printable_area, printer_size, printer_margins = self.get_printer_handler(printing_options)
 
         # opens the bitmap image
         bitmap_image = PIL.Image.open(image_path)
@@ -143,6 +143,7 @@ class PrintingWin32:
         self.close_printer_handler(handler_device_context)
 
     def print_printing_language(self, printing_document, printing_options = {}):
+        # creates the win32 printing visitor
         visitor = printing_win32_visitor.Visitor()
 
         # retrieves the printer handler
@@ -190,6 +191,16 @@ class PrintingWin32:
         printer_handler_context.DeleteDC()
 
     def get_default_printable_area(self, handler_device_context):
+        """
+        Retrieves the default printable area from the given
+        device context handler.
+
+        @type handler_device_context: PyCDC
+        @param handler_device_context: The handler to the device context.
+        @rtype: Tuple
+        @return: A tuple containing the printable area.
+        """
+
         return handler_device_context.GetDeviceCaps(printing_win32_constants.HORIZONTAL_RESOLUTION), handler_device_context.GetDeviceCaps(printing_win32_constants.VERTICAL_RESOLUTION)
 
     def get_default_printer_size(self, handler_device_context):

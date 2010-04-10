@@ -25,10 +25,10 @@ __author__ = "João Magalhães <joamag@hive.pt>"
 __version__ = "1.0.0"
 """ The version of the module """
 
-__revision__ = "$LastChangedRevision: 2300 $"
+__revision__ = "$LastChangedRevision: 1089 $"
 """ The revision number of the module """
 
-__date__ = "$LastChangedDate: 2009-04-01 17:10:15 +0100 (qua, 01 Abr 2009) $"
+__date__ = "$LastChangedDate: 2009-01-22 23:19:39 +0000 (qui, 22 Jan 2009) $"
 """ The last change date of the module """
 
 __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
@@ -37,36 +37,29 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class PrintingWin32Exception(Exception):
+class PrintingPdf:
     """
-    The printing win32 exception class.
-    """
-
-    message = None
-    """ The exception's message """
-
-class InvalidContextInformationName(PrintingWin32Exception):
-    """
-    The invalid context information name class.
+    The printing pdf class.
     """
 
-    def __init__(self, message):
+    printing_pdf_plugin = None
+    """ The printing pdf plugin """
+
+    def __init__(self, printing_pdf_plugin):
         """
         Constructor of the class.
 
-        @type message: String
-        @param message: The message to be printed.
+        @type printing_pdf_plugin: PrintingPdfPlugin
+        @param printing_pdf_plugin: The printing pdf plugin.
         """
 
-        PrintingWin32Exception.__init__(self)
-        self.message = message
+        self.printing_pdf_plugin = printing_pdf_plugin
 
-    def __str__(self):
-        """
-        Returns the string representation of the class.
+    def print_test(self, printing_options = {}):
+        pass
 
-        @rtype: String
-        @return: The string representation of the class.
-        """
+    def print_test_image(self, image_path, printing_options = {}):
+        pass
 
-        return "Invalid context information name: %s" % self.message
+    def print_printing_language(self, printing_document, printing_options = {}):
+        pass

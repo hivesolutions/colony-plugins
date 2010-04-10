@@ -37,36 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class PrintingWin32Exception(Exception):
+class PrintingPdfException(Exception):
     """
-    The printing win32 exception class.
+    The printing pdf exception class.
     """
 
     message = None
     """ The exception's message """
-
-class InvalidContextInformationName(PrintingWin32Exception):
-    """
-    The invalid context information name class.
-    """
-
-    def __init__(self, message):
-        """
-        Constructor of the class.
-
-        @type message: String
-        @param message: The message to be printed.
-        """
-
-        PrintingWin32Exception.__init__(self)
-        self.message = message
-
-    def __str__(self):
-        """
-        Returns the string representation of the class.
-
-        @rtype: String
-        @return: The string representation of the class.
-        """
-
-        return "Invalid context information name: %s" % self.message

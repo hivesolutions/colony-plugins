@@ -39,35 +39,32 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.plugins.plugin_system
 
-class PrintingWin32Plugin(colony.plugins.plugin_system.Plugin):
+class PrintingPdfPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Printing Win32 plugin.
+    The main class for the Printing Pdf plugin.
     """
 
-    id = "pt.hive.colony.plugins.printing.win32"
-    name = "Printing Win32 Plugin"
-    short_name = "Printing Win32"
-    description = "Printing Win32 Plugin"
+    id = "pt.hive.colony.plugins.printing.pdf"
+    name = "Printing Pdf Plugin"
+    short_name = "Printing Pdf"
+    description = "Printing Pdf Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["printing"]
     capabilities_allowed = []
-    dependencies = [colony.plugins.plugin_system.PackageDependency(
-                    "Win32 Extensions for Python", "win32print", "b202", "http://starship.python.net/crew/mhammond/win32"),
-                    colony.plugins.plugin_system.PackageDependency(
-                    "Python Imaging Library (PIL)", "PIL", "1.1.x", "http://www.pythonware.com/products/pil")]
+    dependencies = []
     events_handled = []
     events_registrable = []
 
-    printing_win32 = None
+    printing_pdf = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global printing
-        import printing.win32.printing_win32_system
-        self.printing_win32 = printing.win32.printing_win32_system.PrintingWin32(self)
+        import printing.pdf.printing_pdf_system
+        self.load_plugin = printing.pdf.printing_pdf_system.PrintingPdf(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -88,10 +85,10 @@ class PrintingWin32Plugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def print_test(self, printing_options):
-        self.printing_win32.print_test(printing_options)
+        self.printing_pdf.print_test(printing_options)
 
     def print_test_image(self, image_path, printing_options):
-        self.printing_win32.print_test_image(image_path, printing_options)
+        self.printing_pdf.print_test_image(image_path, printing_options)
 
     def print_printing_language(self, printing_document, printing_options):
-        self.printing_win32.print_printing_language(printing_document, printing_options)
+        self.printing_pdf.print_printing_language(printing_document, printing_options)

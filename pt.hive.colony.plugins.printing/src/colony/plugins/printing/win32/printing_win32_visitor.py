@@ -39,7 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import base64
 import win32ui
-import win32gui
 import win32con
 
 import PIL.Image
@@ -47,7 +46,6 @@ import PIL.ImageWin
 
 import colony.libs.string_buffer_util
 
-import printing_win32_constants
 import printing_win32_exceptions
 import printing.manager.printing_language_ast
 
@@ -276,7 +274,7 @@ class Visitor:
 
     @_visit(printing.manager.printing_language_ast.PrintingDocument)
     def visit_printing_document(self, node):
-        handler_device_context, printable_area, printer_size, printer_margins = self.printer_handler
+        handler_device_context, _printable_area, _printer_size, _printer_margins = self.printer_handler
 
         if self.visit_index == 0:
             self.add_context_information(node)
@@ -358,7 +356,7 @@ class Visitor:
     @_visit(printing.manager.printing_language_ast.Text)
     def visit_text(self, node):
         if self.visit_index == 0:
-            handler_device_context, printable_area, printer_size, printer_margins = self.printer_handler
+            handler_device_context, _printable_area, _printer_size, _printer_margins = self.printer_handler
 
             self.add_context_information(node)
 
@@ -411,13 +409,13 @@ class Visitor:
             handler_device_context.SelectObject(font)
 
             # retrieves the current position in x and y
-            current_position_context_x, current_position_context_y = self.current_position
+            _current_position_context_x, current_position_context_y = self.current_position
 
             # retrieves the text width and height
             text_width, text_height = handler_device_context.GetTextExtent(node.text.encode(DEFAULT_ENCODER))
 
             # retrieves the current clip box values
-            clip_box_left, clip_box_top, clip_box_right, clip_box_bottom = handler_device_context.GetClipBox()
+            _clip_box_left, _clip_box_top, clip_box_right, _clip_box_bottom = handler_device_context.GetClipBox()
 
             text_x = (margin_left - margin_right) * FONT_SCALE_FACTOR
 
@@ -441,7 +439,7 @@ class Visitor:
     @_visit(printing.manager.printing_language_ast.Image)
     def visit_image(self, node):
         if self.visit_index == 0:
-            handler_device_context, printable_area, printer_size, printer_margins = self.printer_handler
+            handler_device_context, _printable_area, _printer_size, _printer_margins = self.printer_handler
 
             self.add_context_information(node)
 
@@ -496,7 +494,7 @@ class Visitor:
             current_position_x, current_position_y = self.current_position
 
             # retrieves the current clip box values
-            clip_box_left, clip_box_top, clip_box_right, clip_box_bottom = handler_device_context.GetClipBox()
+            _clip_box_left, _clip_box_top, clip_box_right, _clip_box_bottom = handler_device_context.GetClipBox()
 
             if text_align == "left":
                 real_bitmap_x1 = 0

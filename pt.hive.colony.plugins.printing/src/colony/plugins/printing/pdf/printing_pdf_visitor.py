@@ -25,10 +25,10 @@ __author__ = "João Magalhães <joamag@hive.pt>"
 __version__ = "1.0.0"
 """ The version of the module """
 
-__revision__ = "$LastChangedRevision: 2300 $"
+__revision__ = "$LastChangedRevision: 72 $"
 """ The revision number of the module """
 
-__date__ = "$LastChangedDate: 2009-04-01 17:10:15 +0100 (qua, 01 Abr 2009) $"
+__date__ = "$LastChangedDate: 2008-10-21 23:29:54 +0100 (Ter, 21 Out 2008) $"
 """ The last change date of the module """
 
 __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
@@ -36,37 +36,3 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
-
-class PrintingWin32Exception(Exception):
-    """
-    The printing win32 exception class.
-    """
-
-    message = None
-    """ The exception's message """
-
-class InvalidContextInformationName(PrintingWin32Exception):
-    """
-    The invalid context information name class.
-    """
-
-    def __init__(self, message):
-        """
-        Constructor of the class.
-
-        @type message: String
-        @param message: The message to be printed.
-        """
-
-        PrintingWin32Exception.__init__(self)
-        self.message = message
-
-    def __str__(self):
-        """
-        Returns the string representation of the class.
-
-        @rtype: String
-        @return: The string representation of the class.
-        """
-
-        return "Invalid context information name: %s" % self.message
