@@ -1671,7 +1671,7 @@ class HttpRequest:
                 attribute_value = None
 
             # "unquotes" the attribute name from the url encoding
-            attribute_name = self.unquote_plus(attribute_name)
+            attribute_name = self._unquote_plus(attribute_name)
 
             # sets the attribute value
             self.__setattribute__(attribute_name, attribute_value)
@@ -2221,7 +2221,7 @@ class HttpRequest:
         # returns the content disposition map
         return content_disposition_map
 
-    def unquote(self, string_value):
+    def _unquote(self, string_value):
         """
         Unquotes the given string value according to
         the url encoding specification.
@@ -2252,7 +2252,7 @@ class HttpRequest:
         # returns the joined "partial" string value
         return "".join(string_value_splitted)
 
-    def unquote_plus(self, string_value):
+    def _unquote_plus(self, string_value):
         """
         Unquotes the given string value according to
         the url encoding specification. This kind of unquote
@@ -2269,4 +2269,4 @@ class HttpRequest:
         string_value = string_value.replace("+", " ")
 
         # returns the unquoted string value
-        return self.unquote(string_value)
+        return self._unquote(string_value)
