@@ -69,10 +69,10 @@ class PrintingPdf:
         return PRINTING_NAME
 
     def print_test(self, printing_options = {}):
-        pass
+        print "printing test in pdf"
 
     def print_test_image(self, image_path, printing_options = {}):
-        pass
+        print "printing test image in pdf"
 
     def print_printing_language(self, printing_document, printing_options = {}):
-        pass
+        print "printing language in pdf"
