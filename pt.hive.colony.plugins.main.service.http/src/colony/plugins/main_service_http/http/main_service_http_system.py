@@ -1659,6 +1659,9 @@ class HttpRequest:
                 # retrieves the attribute name and the attribute value,
                 # from the attribute field splitted
                 attribute_name, attribute_value = attribute_field_splitted
+
+                # "unquotes" the attribute value from the url encoding
+                attribute_value = self.unquote_plus(attribute_value)
             # in case the attribute field splitted length is one
             elif attribute_field_splitted_length == 1:
                 # retrieves the attribute name, from the attribute field splitted
