@@ -296,11 +296,8 @@ def get_attribute_decoded(self, rest_request, attribute_name, encoding = DEFAULT
 
     # in case the attribute value is valid
     if attribute_value:
-        # unquotes the attribute value
-        attribute_value_unquoted = rest_request.request.unquote_plus(attribute_value)
-
         # decodes the attribute value
-        attribute_value_decoded = attribute_value_unquoted.decode(encoding)
+        attribute_value_decoded = attribute_value.decode(encoding)
 
         # the attribute value decoded
         return attribute_value_decoded
