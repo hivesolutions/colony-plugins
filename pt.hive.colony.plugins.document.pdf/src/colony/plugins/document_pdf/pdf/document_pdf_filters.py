@@ -255,7 +255,8 @@ class Ascii85Filter(DocumentPdfFilter):
 
         group = []
 
-        x = 0
+        # starts the index
+        index = 0
 
         hit_eod = False
 
@@ -263,10 +264,10 @@ class Ascii85Filter(DocumentPdfFilter):
         data = [value for value in data if not (value in " \n\r\t")]
 
         while not hit_eod:
-            c = data[x]
+            c = data[index]
 
-            if len(decoded_data) == 0 and c == "<" and data[x + 1] == "~":
-                x += 2
+            if len(decoded_data) == 0 and c == "<" and data[index + 1] == "~":
+                index += 2
                 continue
             elif c == "z":
                 assert len(group) == 0
@@ -274,7 +275,7 @@ class Ascii85Filter(DocumentPdfFilter):
                 decoded_data += "\x00\x00\x00\x00"
 
                 continue
-            elif c == "~" and data[x+1] == ">":
+            elif c == "~" and data[index + 1] == ">":
                 if len(group) != 0:
                     # cannot have a final group of just 1 char
                     assert len(group) > 1
@@ -311,7 +312,8 @@ class Ascii85Filter(DocumentPdfFilter):
 
                 group = []
 
-            x += 1
+            # increments the index
+            index += 1
 
         # returns the decoded data
         return decoded_data
