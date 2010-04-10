@@ -341,8 +341,12 @@ class FacebookClient:
                 # writes the coma to the coma string buffer
                 coma_string_buffer.write(",")
 
-            # writes the list item to the coma string buffer
-            coma_string_buffer.write(list_item)
+            # converts the list item to string
+            list_item_string = str(list_item)
+
+            # writes the list item (in string) to
+            # the coma string buffer
+            coma_string_buffer.write(list_item_string)
 
         # retrieves the coma string value from the
         # coma string buffer
