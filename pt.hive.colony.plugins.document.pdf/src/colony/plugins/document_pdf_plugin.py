@@ -57,7 +57,8 @@ class DocumentPdfPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["document_pdf.pdf.document_pdf_exceptions", "document_pdf.pdf.document_pdf_system"]
+    main_modules = ["document_pdf.pdf.document_pdf_exceptions", "document_pdf.pdf.document_pdf_filters",
+                    "document_pdf.pdf.document_pdf_system"]
 
     document_pdf = None
 
@@ -84,3 +85,6 @@ class DocumentPdfPlugin(colony.plugins.plugin_system.Plugin):
 
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    def create_document_controller(self, document_attributes):
+        return self.document_pdf.create_document_controller(document_attributes)

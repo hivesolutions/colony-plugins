@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import document_pdf_filters
+
 class DocumentPdf:
     """
     The document pdf class.
@@ -54,3 +56,25 @@ class DocumentPdf:
         """
 
         self.document_pdf_plugin = document_pdf_plugin
+
+    def create_document_controller(self, document_attributes):
+        ascii85_filter = document_pdf_filters.Ascii85Filter()
+        flate_filter = document_pdf_filters.FlateFilter()
+
+        data = "Gap@D_$WFm'Lhapro)L<_*!jn@V)B;en?UF)Ti\"Ld]Ki9k6gpRHsAhA9$n#EU)R\"l'fs]UA6pF//(W.u(A/r:44`=1G@5N*\F*j5iY:4rm/%B_#<l*&p]~>"
+        data = ascii85_filter.decode(data)
+        data = flate_filter.decode(data)
+
+        print data
+
+class PdfDocumentController:
+    """
+    The pdf document controller class.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        pass
