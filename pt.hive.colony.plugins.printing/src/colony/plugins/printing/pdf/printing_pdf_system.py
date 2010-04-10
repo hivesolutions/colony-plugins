@@ -40,6 +40,12 @@ __license__ = "GNU General Public License (GPL), Version 3"
 PRINTING_NAME = "pdf"
 """ The printing name """
 
+TEST_TITLE = "colony_test_document.pdf"
+""" The test title """
+
+TEST_TEXT = "Hello world from Hive Colony"
+""" The test text """
+
 class PrintingPdf:
     """
     The printing pdf class.
@@ -69,7 +75,17 @@ class PrintingPdf:
         return PRINTING_NAME
 
     def print_test(self, printing_options = {}):
-        print "printing test in pdf"
+        # retrieves the document pdf plugin
+        document_pdf_plugin = self.printing_pdf_plugin.document_pdf_plugin
+
+        # creates a document controller
+        pdf_document_controller = document_pdf_plugin.create_document_controller({"title" : TEST_TITLE})
+
+        # draws a string in the pdf document
+        pdf_document_controller.draw_string(100, 750, TEST_TEXT)
+
+        # saves the pdf document
+        pdf_document_controller.save()
 
     def print_test_image(self, image_path, printing_options = {}):
         print "printing test image in pdf"

@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.plugins.plugin_system
+import colony.plugins.decorators
 
 class PrintingPdfPlugin(colony.plugins.plugin_system.Plugin):
     """
@@ -54,11 +55,16 @@ class PrintingPdfPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["printing"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.document.pdf", "1.0.0")]
     events_handled = []
     events_registrable = []
+    main_modules = ["printing.pdf.printing_pdf_exceptions", "printing.pdf.printing_pdf_system",
+                    "printing.pdf.printing_pdf_visitor"]
 
     printing_pdf = None
+
+    document_pdf_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -81,6 +87,7 @@ class PrintingPdfPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.printing.pdf", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -102,3 +109,10 @@ class PrintingPdfPlugin(colony.plugins.plugin_system.Plugin):
 
     def print_printing_language(self, printing_document, printing_options):
         self.printing_pdf.print_printing_language(printing_document, printing_options)
+
+    def get_document_pdf_plugin(self):
+        return self.document_pdf_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.document.pdf")
+    def set_document_pdf_plugin(self, document_pdf_plugin):
+        self.document_pdf_plugin = document_pdf_plugin
