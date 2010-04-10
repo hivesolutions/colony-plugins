@@ -55,8 +55,7 @@ class PrintingManagerPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["printing_manager", "console_command_extension"]
     capabilities_allowed = ["printing"]
-    dependencies = [colony.plugins.plugin_system.PackageDependency(
-                    "Python Imaging Library (PIL)", "PIL", "1.1.x", "http://www.pythonware.com/products/pil")]
+    dependencies = []
     events_handled = []
     events_registrable = []
 
