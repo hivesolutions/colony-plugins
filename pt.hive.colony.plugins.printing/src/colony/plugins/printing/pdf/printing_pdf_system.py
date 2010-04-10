@@ -79,7 +79,7 @@ class PrintingPdf:
         document_pdf_plugin = self.printing_pdf_plugin.document_pdf_plugin
 
         # creates a document controller
-        pdf_document_controller = document_pdf_plugin.create_document_controller({"title" : TEST_TITLE})
+        pdf_document_controller = document_pdf_plugin.create_document_controller({"file" : TEST_TITLE})
 
         # retrieves the pdf document page size
         pdf_document_page_width, pdf_document_page_height = pdf_document_controller.get_page_size()
