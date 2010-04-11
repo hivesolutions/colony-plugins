@@ -303,14 +303,27 @@ class OpenidClient:
         # strips the claimed id from trailing spaces
         claimed_id = claimed_id.strip()
 
-        # in case the claimed id is not xri and starts with the correct uri
-        if not claimed_id.startswith(HTTP_URI_VALUE) and not claimed_id.startswith(HTTPS_URI_VALUE) and not claimed_id.startswith(XRI_URI_VALUE) and not claimed_id.startswith(XRI_INITIALIZER_VALUE):
-            # adds the http uri to the claimed id
-            claimed_id = HTTP_URI_VALUE + claimed_id
         # in case the claimed id is of type xri
-        elif claimed_id.startswith(XRI_URI_VALUE):
-            # removes the xri uri from the claimed id
-            claimed_id = claimed_id[6:]
+        if claimed_id.startswith(XRI_URI_VALUE) or claimed_id.startswith(XRI_INITIALIZER_VALUE):
+            # in case the claimed id starts with the xri uri value
+            if claimed_id.startswith(XRI_URI_VALUE):
+                # removes the xri uri from the claimed id
+                claimed_id = claimed_id[6:]
+        # in case the claimed id is of type url
+        else:
+            # in case the clamed id (url) does not start with the correct uri value
+            if not claimed_id.startswith(HTTP_URI_VALUE) and not claimed_id.startswith(HTTPS_URI_VALUE):
+                # adds the http uri to the claimed id
+                claimed_id = HTTP_URI_VALUE + claimed_id
+
+            # in case the claimed id (url) is missing
+            # the trailing slash
+            if not claimed_id[-1] == "/":
+                # in case the claimed id is an empty
+                # path (eg: http://example.com)
+                if claimed_id.count("/") < 3:
+                    # adds the trailing slash
+                    claimed_id += "/"
 
         # returns the claimed id
         return claimed_id
