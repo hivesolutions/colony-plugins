@@ -551,7 +551,7 @@ class Visitor:
 
     def get_context_information(self, context_information_name):
         if not self.has_context_information(context_information_name):
-            raise printing_win32_exceptions.InvalidContextInformationName("the context information name: " + context_information_name + " is invalid")
+            raise printing_pdf_exceptions.InvalidContextInformationName("the context information name: " + context_information_name + " is invalid")
 
         return self.peek_context_information(context_information_name)
 
@@ -575,19 +575,19 @@ class Visitor:
 
     def pop_context_information(self, context_information_name):
         if not context_information_name in self.context_information_map:
-            raise printing_win32_exceptions.InvalidContextInformationName("the context information name: " + context_information_name + " is invalid")
+            raise printing_pdf_exceptions.InvalidContextInformationName("the context information name: " + context_information_name + " is invalid")
 
         self.context_information_map[context_information_name].pop()
 
     def peek_context_information(self, context_information_name):
         if not context_information_name in self.context_information_map:
-            raise printing_win32_exceptions.InvalidContextInformationName("the context information name: " + context_information_name + " is invalid")
+            raise printing_pdf_exceptions.InvalidContextInformationName("the context information name: " + context_information_name + " is invalid")
 
         return self.context_information_map[context_information_name][-1]
 
     def put_context_information(self, context_information_name, context_information_value):
         if not context_information_name in self.context_information_map:
-            raise printing_win32_exceptions.InvalidContextInformationName("the context information name: " + context_information_name + " is invalid")
+            raise printing_pdf_exceptions.InvalidContextInformationName("the context information name: " + context_information_name + " is invalid")
 
         self.context_information_map[context_information_name][-1] = context_information_value
 
