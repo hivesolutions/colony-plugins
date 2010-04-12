@@ -266,17 +266,19 @@ class Visitor:
 
     @_visit(printing.manager.printing_language_ast.AstNode)
     def visit_ast_node(self, node):
-        print "AstNode: " + str(node)
+        pass
 
     @_visit(printing.manager.printing_language_ast.GenericElement)
     def visit_generic_element(self, node):
-        print "GenericElement: " + str(node)
+        pass
 
     @_visit(printing.manager.printing_language_ast.PrintingDocument)
     def visit_printing_document(self, node):
         handler_device_context, _printable_area, _printer_size, _printer_margins = self.printer_handler
 
+        # in case it's the first visit
         if self.visit_index == 0:
+            # adds the node as the context information
             self.add_context_information(node)
 
             # retrieves the printing document name
@@ -299,6 +301,7 @@ class Visitor:
 
             # sets the initial position
             self.current_position = (0, 0)
+        # in case it's the second visit
         elif self.visit_index == 1:
             # ends the current page
             handler_device_context.EndPage()
@@ -306,6 +309,7 @@ class Visitor:
             # ends the document
             handler_device_context.EndDoc()
 
+            # removes the context information
             self.remove_context_information(node)
 
     @_visit(printing.manager.printing_language_ast.Paragraph)
@@ -526,12 +530,22 @@ class Visitor:
             self.remove_context_information(node)
 
     def get_current_position_context(self):
+        """
+        Retrieves the current position based on the current
+        context information.
+
+        @rtype: Tuple
+        @return: The current position base on the current context information
+        and applied with the font scale factor.
+        """
+
         # retrieves the current position in x and y
         current_position_x, current_position_y = self.current_position
 
         # converts the current position to context
         current_position_context = (FONT_SCALE_FACTOR * current_position_x, -1 * FONT_SCALE_FACTOR * current_position_y)
 
+        # returns the current position context
         return current_position_context
 
     def get_context_information(self, context_information_name):
@@ -571,13 +585,42 @@ class Visitor:
         return self.context_information_map[context_information_name][-1]
 
     def put_context_information(self, context_information_name, context_information_value):
+        """
+        Puts the given context information in the context
+        information map.
+
+        @type context_information_name: String
+        @param context_information_name: The name of the context information
+        to be put in the context information map.
+        @type context_information_value: Object
+        @param context_information_value: The value of the context information to be put
+        in the context information map.
+        """
+
         if not context_information_name in self.context_information_map:
             raise printing_win32_exceptions.InvalidContextInformationName("the context information name: " + context_information_name + " is invalid")
 
         self.context_information_map[context_information_name][-1] = context_information_value
 
     def has_context_information(self, context_information_name):
-        if not context_information_name in self.context_information_map or not self.context_information_map[context_information_name]:
-            return False
-        else:
+        """
+        Tests if the given context information name exists
+        in the current context information map.
+
+        @type context_information_name: String
+        @param context_information_name: The context information name
+        to be tested against the current context information map.
+        @rtype: bool
+        @return: If the context information name exists in the
+        current context information map (and is valid).
+        """
+
+        # in case the context information name exists in the
+        # context information map and is not invalid
+        if context_information_name in self.context_information_map and self.context_information_map[context_information_name]:
+            # returns true
             return True
+        # otherwise
+        else:
+            # returns false
+            return False
