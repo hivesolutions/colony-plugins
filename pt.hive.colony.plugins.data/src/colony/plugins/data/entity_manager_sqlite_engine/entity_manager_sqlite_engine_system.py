@@ -2658,7 +2658,7 @@ class EntityManagerSqliteEngine:
         # retrieves the object entity class
         object_entity_class = business_helper_plugin.get_entity_class()
 
-        # in case the value of the attribute is None returns immediately
+        # in case the value of the attribute is none returns immediately
         if attribute_value == None:
             return None
 
@@ -2852,7 +2852,7 @@ class EntityManagerSqliteEngine:
         @return: The sqlite string representation of the given attribute.
         """
 
-        # in case the value is None a null is added
+        # in case the value is none a null is added
         if attribute_value == None:
             return "null"
         else:
@@ -2909,7 +2909,7 @@ class EntityManagerSqliteEngine:
         @return: The python object representing the given sqlite object.
         """
 
-        # in case the value is None
+        # in case the value is none
         if attribute_value == None:
             return None
 
