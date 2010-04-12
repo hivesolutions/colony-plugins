@@ -176,6 +176,18 @@ class ReportLabPdfDocumentController:
     def get_current_font(self):
         return (self.canvas._fontname, self.canvas._fontsize)
 
+    def set_title(self, title):
+        self.canvas.setTitle(title)
+
+    def set_author(self, author):
+        self.canvas.setAuthor(author)
+
+    def set_subject(self, subject):
+        self.canvas.subject(subject)
+
+    def set_keywords(self, keywords):
+        self.canvas.subject(keywords)
+
     def set_font(self, font_name, font_size):
         # retrieves the list of available fonts
         available_fonts_list = self.canvas.getAvailableFonts()
