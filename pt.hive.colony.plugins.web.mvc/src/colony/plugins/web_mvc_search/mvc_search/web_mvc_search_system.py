@@ -165,6 +165,14 @@ class WebMvcSearch:
         # returns the created search index controller
         return search_index_controller
 
+    def has_index(self, search_index_identifier):
+        search_plugin = self.web_mvc_search_plugin.search_plugin
+
+        # retrieves the prefixed index identifier
+        prefixed_index_identifier = self._get_prefixed_index_identifier(search_index_identifier)
+
+        return search_plugin.has_index(prefixed_index_identifier)
+
     def _get_prefixed_index_identifier(self, index_identifier):
         return INDEX_IDENTIFIER_PREFIX + index_identifier
 
@@ -181,9 +189,6 @@ class SearchIndexController:
 
     search_index_identifier = "none"
     """ The identifier for the controlled index """
-
-    updated = False
-    """ Indicates if the index is updated """
 
     def __init__(self, web_mvc_search, search_index_identifier):
         """
@@ -244,9 +249,6 @@ class SearchIndexController:
         # updates the index
         self.web_mvc_search.update_index(self.search_index_identifier, self.index_configuration_map)
 
-        # indicates the update is complete
-        self.updated = True
-
     def search(self, search_query):
         # the empty search options
         options = {}
@@ -255,8 +257,8 @@ class SearchIndexController:
         return self.search_options(search_query, options)
 
     def search_options(self, search_query, options):
-        # in case the index is not updated
-        if not self.updated:
+        # in case the index was not already created
+        if not self.web_mvc_search.has_index(self.search_index_identifier):
             # updates the index, creating if necessary
             self.update()
 
