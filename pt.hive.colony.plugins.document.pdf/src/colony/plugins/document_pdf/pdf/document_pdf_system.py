@@ -92,8 +92,9 @@ class PdfDocumentController:
 
         pass
 
-import reportlab.pdfgen.canvas
 import reportlab.lib.units
+import reportlab.pdfgen.canvas
+import reportlab.pdfbase.pdfmetrics
 
 class ReportLabPdfDocumentController:
     """
@@ -116,16 +117,91 @@ class ReportLabPdfDocumentController:
         self.canvas = reportlab.pdfgen.canvas.Canvas(file)
 
     def draw_string(self, x_position, y_position, string_value):
+        # retrieves the y position (considering the page height)
+        y_position = self._get_y_position(y_position)
+
+        # draws the string into the canvas
         self.canvas.drawString(x_position, y_position, string_value)
 
     def draw_string_centered(self, x_position, y_position, string_value):
+        # retrieves the y position (considering the page height)
+        y_position = self._get_y_position(y_position)
+
+        # draws the string into the canvas (centered)
         self.canvas.drawCentredString(x_position, y_position, string_value)
 
     def get_page_size(self):
         return self.canvas._pagesize
+
+    def get_current_font(self):
+        return (self.canvas._fontname, self.canvas._fontsize)
 
     def save(self):
         self.canvas.save()
 
     def get_inch_size(self):
         return reportlab.lib.units.inch
+
+    def _get_y_position(self, y_position):
+        """
+        Retrieves the y coordinate taking into account the
+        page height and the current font height.
+
+        @type y_position: int
+        @param y_position: The base y position.
+        @rtype: int
+        @return: The calculated y position.
+        """
+
+        # retrieves the current font height
+        current_font_height = self._get_current_font_height()
+
+        return self.canvas._pagesize[1] - y_position - current_font_height
+
+    def _get_current_font_height(self):
+        """
+        Retrieves the current font height.
+
+        @rtype: int
+        @return: The current font height.
+        """
+
+        # retrieves the current font name and size
+        current_font_name, current_font_size = self.get_current_font()
+
+        # retrieves the current font height
+        current_font_height = self._get_font_height(current_font_name, current_font_size)
+
+        # returns the current font height
+        return current_font_height
+
+    def _get_font_height(self, font_name, font_size):
+        """
+        Retrieves the font height for the given font name
+        and size.
+
+        @type font_name: String
+        @param font_name: The name of the font to retrieve the height.
+        """
+
+        # retrieves the font descriptor
+        font = reportlab.pdfbase.pdfmetrics.getFont(font_name)
+
+        # retrieves the font face
+        font_face = font.face
+
+        # retrieves the font ascent
+        font_ascent = font_face.ascent
+
+        # retrieves the font descent
+        font_descent = font_face.descent
+
+        # converts both the font ascent and descent to decimal
+        font_ascent_decimal = font_ascent / 1000.0
+        font_descent_decimal = font_descent / 1000.0
+
+        # calculates the font height by adding both the descent and the ascent value
+        font_height = (font_ascent_decimal * self.canvas._fontsize) + (font_descent_decimal * self.canvas._fontsize * -1)
+
+        # returns the font height
+        return font_height
