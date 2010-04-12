@@ -81,6 +81,20 @@ def _start_controller(self):
         self.start()
 
 def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING):
+    """
+    Processes the form data (attributes), creating a map containing
+    the hierarchy of defined structure for the "form" contents.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @type encoding: String
+    @param encoding: The encoding to be used when retrieving
+    the attribute values.
+    @rtype: Dictionary
+    @return: The map containing the hierarchy of defined structure
+    for the "form" contents.
+    """
+
     # retrieves the attributes list
     attributes_list = rest_request.get_attributes_list()
 
@@ -103,13 +117,16 @@ def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING):
 
             # iterates over all the attribute value items
             for attribute_value_item in attribute_value:
+                # starts the processing of the form attribute with the base attributes map
+                # the base attribute name and the attribute value and the index of the current
+                # attribute value item
                 self._process_form_attribute(base_attributes_map, attribute, attribute_value_item, index)
 
                 # increments the index
                 index += 1
         # otherwise the attribute type must be a string
         else:
-            # start the processing of the form attribute with the base attributes map
+            # starts the processing of the form attribute with the base attributes map
             # the base attribute name and the attribute value
             self._process_form_attribute(base_attributes_map, attribute, attribute_value)
 
@@ -117,6 +134,25 @@ def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING):
     return base_attributes_map
 
 def _process_form_attribute(self, parent_structure, current_attribute_name, attribute_value, index = 0):
+    """
+    Processes a form attribute using the sent parent structure and for
+    the given index as a reference.
+    At the end the parent structure is changed and contains the form
+    attribute in the correct structure place.
+
+    @type parent_structure: List/Dictionary
+    @param parent_structure: The parent structure to be used to set the
+    attribute.
+    @type current_attribute_name: String
+    @param current_attribute_name: The current attribute name, current
+    because it's parsed
+    recursively using this process method.
+    @type attribute_value: Object
+    @param attribute_value: The attribute value.
+    @type index: int
+    @param index: The index of the current attribute reference.
+    """
+
     # retrieves the current match result
     match_result = ATTRIBUTE_PARSING_REGEX.match(current_attribute_name)
 
