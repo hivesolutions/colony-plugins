@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import re
+import types
 
 import web_mvc_utils_exceptions
 
@@ -291,13 +292,49 @@ def unset_session_attribute(self, rest_request, session_attribute_name):
     rest_request_session.unset_attribute(session_attribute_name)
 
 def get_attribute_decoded(self, rest_request, attribute_name, encoding = DEFAULT_ENCODING):
+    """
+    Retrieves the attribute from the rest request with
+    the given attribute name and decoded using the given
+    encoding.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used to retrieve the
+    attribute.
+    @type attribute_name: String
+    @param attribute_name: The name of the attribute to retrieve.
+    @type encoding: String
+    @param encoding: The name of the encoding to be used in the retrieving
+    of the attribute.
+    @rtype: Object
+    @return: The decoded attribute.
+    """
+
     # retrieves the attribute value from the attribute name
     attribute_value = rest_request.get_attribute(attribute_name)
 
     # in case the attribute value is valid
     if attribute_value:
-        # decodes the attribute value
-        attribute_value_decoded = attribute_value.decode(encoding)
+        # retrieves the attribute value type
+        attribute_value_type = type(attribute_value)
+
+        # in case the attribute value is a list
+        if attribute_value_type == types.ListType:
+            # starts the attribute value decoded as list
+            attribute_value_decoded = []
+
+            # iterates over all the attribute value
+            # items in the attribute value
+            for attribute_value_item in attribute_value:
+                # decodes the attribute value item
+                attribute_value_item_decoded = attribute_value_item.decode(encoding)
+
+                # adds the attribute value item to the attribute
+                # value decoded
+                attribute_value_decoded.append(attribute_value_item_decoded)
+        # otherwise it must be a string
+        else:
+            # decodes the attribute value
+            attribute_value_decoded = attribute_value.decode(encoding)
 
         # the attribute value decoded
         return attribute_value_decoded
