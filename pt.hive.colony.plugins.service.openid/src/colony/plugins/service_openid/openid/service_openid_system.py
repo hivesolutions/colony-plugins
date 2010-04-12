@@ -358,8 +358,20 @@ class OpenidClient:
         # retrieves the provider url
         provider_url = first_service.get_attribute("URI")
 
+        # retrieves the local id
+        local_id = first_service.get_attribute("LocalID")
+
+        # retrieves the types list
+        types_list = first_service.types_list
+
         # sets the provider url in the open id structure
         self.openid_structure.provider_url = provider_url
+
+        # sets the local id in the open id structure
+        self.openid_structure.local_id = local_id
+
+        # sets the types list in the open id structure
+        self.openid_structure.types_list = types_list
 
         # prints a debug message
         self.service_openid_plugin.debug("Found openid provider url '%s'" % provider_url)
@@ -535,11 +547,45 @@ class OpenidClient:
         # sets the realm
         parameters["openid.realm"] = self.openid_structure.realm
 
+        # processes the extensions
+        self.process_extensions(parameters)
+
         # creates the request url from the parameters
         request_url = self._build_url(retrieval_url, parameters)
 
         # returns the request url
         return request_url
+
+    def process_extensions(self, parameters):
+        """
+        Processes the extensions part of the openid
+        get request method.
+
+        @type parameters: Dictionary
+        @param parameters: The parameters to be processed.
+        """
+
+        if "http://openid.net/extensions/sreg/1.1" in self.openid_structure.types_list:
+            parameters["openid.ns.sreg"] = "http://openid.net/extensions/sreg/1.1"
+            parameters["openid.sreg.required"] = ""
+            parameters["openid.sreg.optional"] = "nickname,email,fullname,dob"
+
+        if "http://openid.net/srv/ax/1.0" in self.openid_structure.types_list:
+            parameters["openid.ns.ax"] = "http://openid.net/srv/ax/1.0"
+            parameters["openid.ax.mode"] = "fetch_request"
+            parameters["openid.ax.type.fname"] = "http://openid.net/schema/fullname"
+            parameters["openid.ax.required"] = "fname"
+
+    def get_preferred_claimed_id(self):
+        """
+        Retrieves the preferred claimed id
+        for the current openid structure.
+
+        @rtype: String
+        @return: The preferred claimed id value.
+        """
+
+        return self.openid_structure.get_preferred_claimed_id()
 
     def get_openid_structure(self):
         """
@@ -785,6 +831,9 @@ class OpenidStructure:
     session_type = None
     """ The session type """
 
+    ns = OPENID_NAMESPACE_VALUE
+    """ The namespace """
+
     expires_in = None
     """ The expires in """
 
@@ -793,6 +842,21 @@ class OpenidStructure:
 
     mac_key = None
     """ The mac key """
+
+    signed = None
+    """ The current type of signature being used """
+
+    signature = None
+    """ The signature value of the current message """
+
+    response_nonce = None
+    """ The response nonce of the message """
+
+    local_id = None
+    """ The local id """
+
+    types_list = []
+    """ the list of extension types accepted by the provider """
 
     def __init__(self, provider_url, claimed_id, identity, return_to, realm, association_type = DEFAULT_OPENID_ASSOCIATE_TYPE, session_type = DEFAULT_OPENID_SESSION_TYPE):
         """
@@ -821,6 +885,30 @@ class OpenidStructure:
         self.realm = realm
         self.association_type = association_type
         self.session_type = session_type
+
+        self.types_list = []
+
+    def get_preferred_claimed_id(self):
+        """
+        Retrieves the preferred claimed id
+        for the current openid structure.
+
+        @rtype: String
+        @return: The preferred claimed id value.
+        """
+
+        # in case there is a local id defined
+        if self.local_id:
+            # returns the local id
+            return self.local_id
+        # in case there is a claimed id defined
+        elif self.claimed_id:
+            # returns the claimed id
+            return self.claimed_id
+        # in case none is defined
+        else:
+            # raises the invalid claimed id exception
+            raise service_openid_exceptions.InvalidClaimedId("no claimed id available")
 
     def get_provider_url(self):
         """
@@ -962,6 +1050,26 @@ class OpenidStructure:
 
         self.session_type = session_type
 
+    def get_ns(self):
+        """
+        Retrieves the namespace.
+
+        @rtype: String
+        @return: The namespace.
+        """
+
+        return self.ns
+
+    def set_ns(self, ns):
+        """
+        Retrieves the namespace.
+
+        @type ns: String
+        @param ns: The namespace.
+        """
+
+        self.ns = ns
+
     def get_expires_in(self):
         """
         Retrieves the expires in.
@@ -1021,3 +1129,103 @@ class OpenidStructure:
         """
 
         self.mac_key = mac_key
+
+    def get_signed(self):
+        """
+        Retrieves the signed
+
+        @rtype: String
+        @return: The signed.
+        """
+
+        return self.signed
+
+    def set_signed(self, signed):
+        """
+        Retrieves the signed.
+
+        @type signed: String
+        @param signed: The signed.
+        """
+
+        self.signed = signed
+
+    def get_signature(self):
+        """
+        Retrieves the signature
+
+        @rtype: String
+        @return: The signature.
+        """
+
+        return self.signature
+
+    def set_signature(self, signature):
+        """
+        Retrieves the signature.
+
+        @type signed: String
+        @param signed: The signature.
+        """
+
+        self.signature = signature
+
+    def get_response_nonce(self):
+        """
+        Retrieves the response nonce
+
+        @rtype: String
+        @return: The response nonce.
+        """
+
+        return self.response_nonce
+
+    def set_response_nonce(self, response_nonce):
+        """
+        Retrieves the response nonce.
+
+        @type signed: String
+        @param signed: The response nonce.
+        """
+
+        self.response_nonce = response_nonce
+
+    def get_local_id(self):
+        """
+        Retrieves the local id.
+
+        @rtype: String
+        @return: The local id.
+        """
+
+        return self.local_id
+
+    def set_local_id(self, local_id):
+        """
+        Retrieves the local id.
+
+        @type local_id: String
+        @param local_id: The local id.
+        """
+
+        self.local_id = local_id
+
+    def get_types_list(self):
+        """
+        Retrieves the types list.
+
+        @rtype: List
+        @return: The types list.
+        """
+
+        return self.types_list
+
+    def set_types_list(self, types_list):
+        """
+        Retrieves the types list.
+
+        @type types_list: List
+        @param types_list: The types list.
+        """
+
+        self.types_list = types_list
