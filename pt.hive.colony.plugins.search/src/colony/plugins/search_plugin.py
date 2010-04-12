@@ -164,6 +164,9 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
     def get_indexes_metadata(self):
         return self.search.get_indexes_metadata()
 
+    def has_index(self, index_identifier):
+        return self.search.has_index(index_identifier)
+
     def get_search_crawler_adapter_types(self):
         return self.search.get_search_crawler_adapter_types()
 

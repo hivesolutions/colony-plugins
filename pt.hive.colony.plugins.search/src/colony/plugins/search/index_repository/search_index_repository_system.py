@@ -122,3 +122,10 @@ class SearchIndexRepository:
             indexes_metadata[search_index_identifier] = search_index_metadata
 
         return indexes_metadata
+
+    def has_index(self, search_index_identifier):
+        # an index exists if a value is present for the provided key
+        has_index = self.search_index_repository_map.has_key(search_index_identifier)
+
+        # returns the determined truth value
+        return has_index

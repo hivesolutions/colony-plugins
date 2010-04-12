@@ -473,6 +473,19 @@ class Search:
 
         return indexes_metadata
 
+    def has_index(self, search_index_identifier):
+        """
+        Determines if the provided identifier exists in the index repository
+        """
+
+        # retrieves the reference to the index repository
+        search_index_repository_plugin = self.search_plugin.search_index_repository_plugin
+
+        # determines if the index exists
+        has_index = search_index_repository_plugin.has_index(search_index_identifier)
+
+        return has_index
+
     def get_search_crawler_adapter_types(self):
         """
         Retrieves the available crawler adapter types in the crawler plugin.
