@@ -95,6 +95,7 @@ class PdfDocumentController:
 import reportlab.lib.units
 import reportlab.pdfgen.canvas
 import reportlab.pdfbase.pdfmetrics
+import reportlab.pdfbase.ttfonts
 
 class ReportLabPdfDocumentController:
     """
@@ -135,6 +136,22 @@ class ReportLabPdfDocumentController:
 
     def get_current_font(self):
         return (self.canvas._fontname, self.canvas._fontsize)
+
+    def set_font(self, font_name, font_size):
+        # retrieves the list of available fonts
+        available_fonts_list = self.canvas.getAvailableFonts()
+
+        # in case the font name is not present in the
+        # list of available fonts, tries to register the font
+        if not font_name in available_fonts_list:
+            # creates the true type font
+            true_type_font = reportlab.pdfbase.ttfonts.TTFont(font_name, font_name + ".ttf")
+
+            # registers the true type font
+            reportlab.pdfbase.pdfmetrics.registerFont(true_type_font)
+
+        # sets the font in the current canvas
+        self.canvas.setFont(font_name, font_size)
 
     def save(self):
         self.canvas.save()
