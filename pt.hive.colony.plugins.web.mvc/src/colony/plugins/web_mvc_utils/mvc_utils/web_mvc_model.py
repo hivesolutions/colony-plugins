@@ -161,6 +161,6 @@ def not_empty_validate(self, attribute_name, attribute_value, properties):
     """
 
     # in case the attribute value is empty of invalid
-    if not attribute_value:
+    if attribute_value is None or attribute_value == "":
         # adds an error to the given attribute name
         self.add_error(attribute_name, "value is empty")
