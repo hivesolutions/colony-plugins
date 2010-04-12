@@ -131,6 +131,27 @@ class ReportLabPdfDocumentController:
         # draws the string into the canvas (centered)
         self.canvas.drawCentredString(x_position, y_position, string_value)
 
+    def get_text_size(self, string_value):
+        """
+        Retrieves the size for the current font
+        and for the given text value.
+
+        @type string_value: String
+        @param string_value: The string value to retrieve the size.
+        @rtype: Tuple
+        @return: A tuple containing the width and height in points
+        for the given string value.
+        """
+
+        # retrieves the text width
+        text_width = self._get_text_width(string_value)
+
+        # retrieves the current font height
+        current_font_height = self._get_current_font_height()
+
+        # returns the text size tuple
+        return (text_width, current_font_height)
+
     def get_page_size(self):
         return self.canvas._pagesize
 
@@ -222,3 +243,24 @@ class ReportLabPdfDocumentController:
 
         # returns the font height
         return font_height
+
+    def _get_text_width(self, string_value):
+        """
+        Retrieves the text width for the given text
+        and for the currently selected font.
+
+        @type string_value: String
+        @param string_value: The text to check the size.
+        @rtype: int
+        @return: The text width for the given text and
+        the currently selected font.
+        """
+
+        # retrieves the current font name and size
+        current_font_name, current_font_size = self.get_current_font()
+
+        # retrieves the text width for the current font name and size
+        text_width = reportlab.pdfbase.pdfmetrics.stringWidth(string_value, current_font_name, current_font_size)
+
+        # returns the text width
+        return text_width
