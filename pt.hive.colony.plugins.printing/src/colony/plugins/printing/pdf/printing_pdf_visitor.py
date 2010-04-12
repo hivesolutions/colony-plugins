@@ -419,7 +419,7 @@ class Visitor:
             _current_position_context_x, current_position_context_y = self.current_position
 
             # retrieves the text width and height
-            text_width, text_height = self.pdf_document_controller.get_text_size(node.text.encode(DEFAULT_ENCODER))
+            text_width, text_height = self.pdf_document_controller.get_text_size(node.text)
 
             # retrieves the current page size
             page_width, _page_height = self.pdf_document_controller.get_page_size()
@@ -441,7 +441,7 @@ class Visitor:
             text_y = current_position_context_y
 
             # draws a string in the pdf document
-            self.pdf_document_controller.draw_string(text_x, text_y, node.text.encode(DEFAULT_ENCODER))
+            self.pdf_document_controller.draw_string(text_x, text_y, node.text)
 
             # in case the current text height is bigger than the current
             # context biggest height, updates the information
