@@ -198,11 +198,9 @@ class DrawPanel(wx.Panel):
             self.Update()
 
             if self.drag_shape.text:
-                self.drag_image = wx.DragString(self.drag_shape.text,
-                                              wx.StockCursor(wx.CURSOR_HAND))
+                self.drag_image = wx.DragString(self.drag_shape.text, wx.StockCursor(wx.CURSOR_HAND))
             else:
-                self.drag_image = wx.DragImage(self.drag_shape.bitmap,
-                                             wx.StockCursor(wx.CURSOR_HAND))
+                self.drag_image = wx.DragImage(self.drag_shape.bitmap, wx.StockCursor(wx.CURSOR_HAND))
 
             hotspot = self.drag_start_position - self.drag_shape.position
             self.drag_image.BeginDrag(hotspot, self, self.drag_shape.fullscreen)
@@ -210,15 +208,15 @@ class DrawPanel(wx.Panel):
             self.drag_image.Move(position)
             self.drag_image.Show()
 
-        # if we have shape and image then move it, posibly highlighting another shape.
+        # if we have shape and image then move it, possibly highlighting another shape
         elif self.drag_shape and self.drag_image:
             on_shape = self.find_shape(event.GetPosition())
             unhilite_old = False
             hilite_new = False
 
-            # figure out what to hilite and what to unhilite
+            # figure out what to highlight and what to unhighlight
             if self.hilite_shape:
-                if on_shape is None or self.hilite_shape is not on_shape:
+                if on_shape == None or not self.hilite_shape == on_shape:
                     unhilite_old = True
 
             if on_shape and on_shape is not self.hilite_shape and on_shape.shown:
@@ -282,4 +280,4 @@ class DragShape:
 class GraphNodeDragShape(DragShape):
 
     def __init__(self, bitmap, graph_node):
-        DragNode.__init__(self, bitmap)
+        DragShape.__init__(self, bitmap)
