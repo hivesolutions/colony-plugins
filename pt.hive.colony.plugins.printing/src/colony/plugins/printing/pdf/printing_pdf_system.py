@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import printing_pdf_visitor
+
 PRINTING_NAME = "pdf"
 """ The printing name """
 
@@ -82,13 +84,13 @@ class PrintingPdf:
         pdf_document_controller = document_pdf_plugin.create_document_controller({"file" : TEST_TITLE})
 
         # retrieves the pdf document page size
-        pdf_document_page_width, pdf_document_page_height = pdf_document_controller.get_page_size()
+        pdf_document_page_width, _pdf_document_page_height = pdf_document_controller.get_page_size()
 
         # retrieves the inch size
         inch_size = pdf_document_controller.get_inch_size()
 
         # draws a string centered in the pdf document
-        pdf_document_controller.draw_string_centered(pdf_document_page_width / 2, pdf_document_page_height - inch_size * 1, TEST_TEXT)
+        pdf_document_controller.draw_string_centered(pdf_document_page_width / 2, inch_size * 1, TEST_TEXT)
 
         # saves the pdf document
         pdf_document_controller.save()
@@ -97,4 +99,53 @@ class PrintingPdf:
         print "printing test image in pdf"
 
     def print_printing_language(self, printing_document, printing_options = {}):
-        print "printing language in pdf"
+        # creates the pdf printing visitor
+        visitor = printing_pdf_visitor.Visitor()
+
+        # retrieves the pdf document controller
+        pdf_document_controller = self.get_pdf_document_controller(printing_options)
+
+        # sets the pdf document controller in the visitor
+        visitor.set_pdf_document_controller(pdf_document_controller)
+
+        # sets the printing options in the visitor
+        visitor.set_printing_options(printing_options)
+
+        # accepts the visitor in the printing document,
+        # using double visiting mode
+        printing_document.accept_double(visitor)
+
+        # closes the pdf document controller
+        self.close_pdf_document_controller(pdf_document_controller)
+
+    def get_pdf_document_controller(self, printing_options):
+        """
+        Retrieves a new pdf document controller for the
+        given printing options.
+
+        @type printing_options: Dictionary
+        @param printing_options: The printing options to be used
+        to create the pdf document controller.
+        @rtype: PdfDocumentController
+        @return: The created pdf document controller.
+        """
+
+        # retrieves the document pdf plugin
+        document_pdf_plugin = self.printing_pdf_plugin.document_pdf_plugin
+
+        # creates a document controller
+        pdf_document_controller = document_pdf_plugin.create_document_controller({"file" : TEST_TITLE})
+
+        # returns the pdf document controller
+        return pdf_document_controller
+
+    def close_pdf_document_controller(self, pdf_document_controller):
+        """
+        Closes the given pdf document controller.
+
+        @type pdf_document_controller: PdfDocumentController
+        @param pdf_document_controller: The pdf document controller to be closed.
+        """
+
+        # saves the pdf document
+        pdf_document_controller.save()
