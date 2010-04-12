@@ -304,13 +304,13 @@ def is_valid_creator_entity(creator_input_entity, arguments):
 
     # declares the connector as invalid in case the creator input entity doesn't have
     # the specified attribute value as null
-    creator_entity_null_attribute_values = [None for creator_entity_null_attribute_name in creator_entity_null_attribute_names if not creator_input_entity.has_attribute(creator_entity_null_attribute_name) or creator_input_entity.get_attribute(creator_entity_null_attribute_name) is None]
+    creator_entity_null_attribute_values = [None for creator_entity_null_attribute_name in creator_entity_null_attribute_names if not creator_input_entity.has_attribute(creator_entity_null_attribute_name) or creator_input_entity.get_attribute(creator_entity_null_attribute_name) == None]
     if not len(creator_entity_null_attribute_names) == len(creator_entity_null_attribute_values):
         return False
 
     # declares the connector as invalid in case the creator input entity doesn't have
     # the specified attribute value as not null
-    creator_entity_non_null_attribute_values = [creator_input_entity.get_attribute(creator_entity_non_null_attribute_name) for creator_entity_non_null_attribute_name in creator_entity_non_null_attribute_names if creator_input_entity.has_attribute(creator_entity_non_null_attribute_name) and not creator_input_entity.get_attribute(creator_entity_non_null_attribute_name) is None]
+    creator_entity_non_null_attribute_values = [creator_input_entity.get_attribute(creator_entity_non_null_attribute_name) for creator_entity_non_null_attribute_name in creator_entity_non_null_attribute_names if creator_input_entity.has_attribute(creator_entity_non_null_attribute_name) and not creator_input_entity.get_attribute(creator_entity_non_null_attribute_name) == None]
     if not len(creator_entity_non_null_attribute_names) == len(creator_entity_non_null_attribute_values):
         return False
 
@@ -323,13 +323,13 @@ def is_valid_output_entity(output_entity, arguments):
 
     # declares the connector as invalid in case the output input entity doesn't have
     # the specified attribute value as null
-    output_entity_null_attribute_values = [None for output_entity_null_attribute_name in output_entity_null_attribute_names if not output_entity.has_attribute(output_entity_null_attribute_name) or output_entity.get_attribute(output_entity_null_attribute_name) is None]
+    output_entity_null_attribute_values = [None for output_entity_null_attribute_name in output_entity_null_attribute_names if not output_entity.has_attribute(output_entity_null_attribute_name) or output_entity.get_attribute(output_entity_null_attribute_name) == None]
     if not len(output_entity_null_attribute_names) == len(output_entity_null_attribute_values):
         return False
 
     # declares the connector as invalid in case the output input entity doesn't have
     # the specified attribute value as not null
-    output_entity_non_null_attribute_values = [output_entity.get_attribute(output_entity_non_null_attribute_name) for output_entity_non_null_attribute_name in output_entity_non_null_attribute_names if output_entity.has_attribute(output_entity_non_null_attribute_name) and not output_entity.get_attribute(output_entity_non_null_attribute_name) is None]
+    output_entity_non_null_attribute_values = [output_entity.get_attribute(output_entity_non_null_attribute_name) for output_entity_non_null_attribute_name in output_entity_non_null_attribute_names if output_entity.has_attribute(output_entity_non_null_attribute_name) and not output_entity.get_attribute(output_entity_non_null_attribute_name) == None]
     if not len(output_entity_non_null_attribute_names) == len(output_entity_non_null_attribute_values):
         return False
 
@@ -342,13 +342,13 @@ def is_valid_related_entity(related_entity, arguments):
 
     # declares the connector as invalid in case the related input entity doesn't have
     # the specified attribute value as null
-    related_entity_null_attribute_values = [None for related_entity_null_attribute_name in related_entity_null_attribute_names if not related_entity.has_attribute(related_entity_null_attribute_name) or related_entity.get_attribute(related_entity_null_attribute_name) is None]
+    related_entity_null_attribute_values = [None for related_entity_null_attribute_name in related_entity_null_attribute_names if not related_entity.has_attribute(related_entity_null_attribute_name) or related_entity.get_attribute(related_entity_null_attribute_name) == None]
     if not len(related_entity_null_attribute_names) == len(related_entity_null_attribute_values):
         return False
 
     # declares the connector as invalid in case the related input entity doesn't have
     # the specified attribute value as not null
-    related_entity_non_null_attribute_values = [None for related_entity_non_null_attribute_name in related_entity_non_null_attribute_names if related_entity.has_attribute(related_entity_non_null_attribute_name) and not related_entity.get_attribute(related_entity_non_null_attribute_name) is None]
+    related_entity_non_null_attribute_values = [None for related_entity_non_null_attribute_name in related_entity_non_null_attribute_names if related_entity.has_attribute(related_entity_non_null_attribute_name) and not related_entity.get_attribute(related_entity_non_null_attribute_name) == None]
     if not len(related_entity_non_null_attribute_names) == len(related_entity_non_null_attribute_values):
         return False
 

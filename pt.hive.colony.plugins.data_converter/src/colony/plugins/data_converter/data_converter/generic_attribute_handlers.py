@@ -98,7 +98,7 @@ def attribute_handler_map_value(data_converter, configuration, input_intermediat
 
 def attribute_handler_convert_to_string(data_converter, configuration, input_intermediate_structure, input_entity, output_intermediate_structure, output_entity, output_attribute_value, arguments):
     # converts the value to a string
-    if not output_attribute_value is None:
+    if not output_attribute_value == None:
         output_attribute_value = str(output_attribute_value)
 
     return output_attribute_value

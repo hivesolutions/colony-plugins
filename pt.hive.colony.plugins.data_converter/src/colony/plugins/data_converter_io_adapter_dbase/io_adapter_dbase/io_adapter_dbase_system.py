@@ -220,7 +220,7 @@ class IoAdapterDbase:
         for row in rows:
 
             # ignores the row in case it is completely empty
-            non_null_field_values = [row[column_name_index] for column_name_index in range(len(column_names)) if not row[column_name_index] is None]
+            non_null_field_values = [row[column_name_index] for column_name_index in range(len(column_names)) if not row[column_name_index] == None]
             if non_null_field_values:
                 entity = intermediate_structure.create_entity(table_name)
 

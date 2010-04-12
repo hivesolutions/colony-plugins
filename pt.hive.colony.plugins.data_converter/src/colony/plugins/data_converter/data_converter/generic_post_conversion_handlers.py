@@ -120,7 +120,7 @@ def post_conversion_handler_copy_entity_attributes(data_converter, configuration
 
                         # retrieves the source attribute from the specified list position in case the
                         # source attribute is a list and an index was specified
-                        if not source_attribute_index is None:
+                        if not source_attribute_index == None:
                             source_attribute = source_attribute[source_attribute_index]
 
                         # copies the source attribute to the entitie's destination attribute

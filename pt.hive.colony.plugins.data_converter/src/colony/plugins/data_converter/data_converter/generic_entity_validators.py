@@ -67,7 +67,7 @@ def entity_validator_has_all_attributes(data_converter, configuration, input_int
     # returns false in case one of the attributes is null
     for attribute_name in attribute_names:
         input_entity_attribute_value = input_entity.get_attribute(attribute_name)
-        if input_entity_attribute_value is None:
+        if input_entity_attribute_value == None:
             return False
 
     return True
@@ -97,7 +97,7 @@ def entity_validator_has_any_attribute(data_converter, configuration, input_inte
     # retrieves the mandatory options
     attribute_names = arguments[ATTRIBUTES_VALUE]
 
-    attribute_values = [input_entity.get_attribute(attribute_name) for attribute_name in attribute_names if not input_entity.get_attribute(attribute_name) is None]
+    attribute_values = [input_entity.get_attribute(attribute_name) for attribute_name in attribute_names if not input_entity.get_attribute(attribute_name) == None]
 
     return bool(attribute_values)
 

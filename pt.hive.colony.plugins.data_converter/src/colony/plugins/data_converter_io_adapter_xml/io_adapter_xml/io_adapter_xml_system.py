@@ -235,7 +235,7 @@ class IoAdapterXml:
             attribute_tag = None
 
             # creates the entity's attribute tag
-            if not attribute_value is None:
+            if not attribute_value == None:
                 attribute_tag = XML_NODE_TAG_FORMAT % (attribute_name, attribute_value, attribute_name)
             elif attribute_name in mandatory_tags:
                 # creates and empty tag if the tag is mandatory

@@ -635,7 +635,7 @@ class DataConverter:
         handlers = output_attribute_mapping.get_handlers()
 
         # raises an exception in case neither an attribute value source nor a default value were provided
-        if not input_attribute_name and not handlers and default_value is None:
+        if not input_attribute_name and not handlers and default_value == None:
             raise data_converter_exceptions.DataConverterMandatoryOptionNotFound("input attribute name or default value or handlers")
 
         # retrieves the input entity's attribute value in case an input attribute was specified
@@ -644,7 +644,7 @@ class DataConverter:
             input_attribute_value = input_entity.get_attribute(input_attribute_name)
 
         # replaces the input attribute value with the default value in case it is none
-        if input_attribute_value is None and not default_value is None:
+        if input_attribute_value == None and not default_value == None:
             input_attribute_value = default_value
 
         # returns in case one of the specified validators fails
