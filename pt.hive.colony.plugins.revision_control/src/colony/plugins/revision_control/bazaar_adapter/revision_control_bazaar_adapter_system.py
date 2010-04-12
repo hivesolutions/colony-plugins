@@ -172,7 +172,7 @@ class RevisionControlBazaarAdapter:
             branch.lock_read()
 
             try:
-                if tree is None:
+                if tree == None:
                     # retrieves the basis tree for the branch
                     tree = branch.basis_tree()
 
