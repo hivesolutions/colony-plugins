@@ -2308,7 +2308,7 @@ class AstSequenceNodeIterator:
         # retrieves the current ast sequence node
         current_ast_sequence_node = self.ast_sequence_node
 
-        # in case the current ast sequence node is None or an ast sequence end node
+        # in case the current ast sequence node is none or an ast sequence end node
         if current_ast_sequence_node == None or current_ast_sequence_node.__class__ == AstSequenceEndNode:
             # breaks the iteration
             raise StopIteration()
