@@ -68,6 +68,12 @@ XRI_INITIALIZER_VALUE = "="
 OPENID_NAMESPACE_VALUE = "http://specs.openid.net/auth/2.0"
 """ The openid namespace value """
 
+OPENID_SREG_1_1_EXTENSION_NAMESPACE_VALUE = "http://openid.net/extensions/sreg/1.1"
+""" The openid sreg 1.1 extension namespace value """
+
+OPENID_AX_1_0_EXTENSION_NAMESPACE_VALUE = "http://openid.net/srv/ax/1.0"
+""" The openid ax 1.0 extension namespace value """
+
 ASSOCIATE_MODE_VALUE = "associate"
 """ The associate mode value """
 
@@ -565,13 +571,17 @@ class OpenidClient:
         @param parameters: The parameters to be processed.
         """
 
-        if "http://openid.net/extensions/sreg/1.1" in self.openid_structure.types_list:
-            parameters["openid.ns.sreg"] = "http://openid.net/extensions/sreg/1.1"
+        # in case the sreg 1.1 extension exists in the current openid
+        # context information
+        if OPENID_SREG_1_1_EXTENSION_NAMESPACE_VALUE in self.openid_structure.types_list:
+            parameters["openid.ns.sreg"] = OPENID_SREG_1_1_EXTENSION_NAMESPACE_VALUE
             parameters["openid.sreg.required"] = ""
             parameters["openid.sreg.optional"] = "nickname,email,fullname,dob"
 
-        if "http://openid.net/srv/ax/1.0" in self.openid_structure.types_list:
-            parameters["openid.ns.ax"] = "http://openid.net/srv/ax/1.0"
+        # in case the ax 1.0 extension exists in the current openid
+        # context information
+        if OPENID_AX_1_0_EXTENSION_NAMESPACE_VALUE in self.openid_structure.types_list:
+            parameters["openid.ns.ax"] = OPENID_AX_1_0_EXTENSION_NAMESPACE_VALUE
             parameters["openid.ax.mode"] = "fetch_request"
             parameters["openid.ax.type.fname"] = "http://openid.net/schema/fullname"
             parameters["openid.ax.required"] = "fname"
