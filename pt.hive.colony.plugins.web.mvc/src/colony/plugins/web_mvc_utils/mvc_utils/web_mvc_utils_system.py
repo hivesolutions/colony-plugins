@@ -52,7 +52,7 @@ CONNECTION_PARAMETERS_VALUE = "connection_parameters"
 DEFAULT_ENGINE = "sqlite"
 """ The default engine """
 
-DEFAULT_CONNECTION_PARAMETERS = {"file_path" : "/remote_home/lmartinho/tobias.db", "autocommit" : False}
+DEFAULT_CONNECTION_PARAMETERS = {"file_path" : "c:/tobias.db", "autocommit" : False}
 """ The default connection parameters """
 
 class WebMvcUtils:
