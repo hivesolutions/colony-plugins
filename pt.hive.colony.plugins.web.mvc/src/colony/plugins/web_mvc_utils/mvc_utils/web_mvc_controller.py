@@ -133,118 +133,6 @@ def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING):
     # returns the base attributes map
     return base_attributes_map
 
-def _process_form_attribute(self, parent_structure, current_attribute_name, attribute_value, index = 0):
-    """
-    Processes a form attribute using the sent parent structure and for
-    the given index as a reference.
-    At the end the parent structure is changed and contains the form
-    attribute in the correct structure place.
-
-    @type parent_structure: List/Dictionary
-    @param parent_structure: The parent structure to be used to set the
-    attribute.
-    @type current_attribute_name: String
-    @param current_attribute_name: The current attribute name, current
-    because it's parsed
-    recursively using this process method.
-    @type attribute_value: Object
-    @param attribute_value: The attribute value.
-    @type index: int
-    @param index: The index of the current attribute reference.
-    """
-
-    # retrieves the current match result
-    match_result = ATTRIBUTE_PARSING_REGEX.match(current_attribute_name)
-
-    # in case there is no match result
-    if not match_result:
-        # raises the invalid attribute name exception
-        raise web_mvc_utils_exceptions.InvalidAttributeName("invalid match value: " + current_attribute_name)
-
-    # retrieves the match result end position
-    match_result_end = match_result.end()
-
-    # checks if it's the last attribute name
-    is_last_attribute_name = match_result_end == len(current_attribute_name)
-
-    # retrieves the match result value
-    match_result_value = match_result.group()
-
-    # in case the match result value is of type map
-    # the parentheses need to be removed
-    if match_result.lastgroup == MAP_TYPE_VALUE:
-        # retrieves the match result value without the parentheses
-        match_result_value = match_result_value[1:-1]
-
-    # in case it's the only (last) match available
-    if is_last_attribute_name:
-        if match_result.lastgroup == NAME_TYPE_VALUE:
-            parent_structure[match_result_value] = attribute_value
-        elif match_result.lastgroup == SEQUENCE_TYPE_VALUE:
-            parent_structure.append(attribute_value)
-        elif match_result.lastgroup == MAP_TYPE_VALUE:
-            parent_structure[match_result_value] = attribute_value
-
-    # there is more parsing to be made
-    else:
-        # retrieves the next match value in order to make
-        next_match_result = ATTRIBUTE_PARSING_REGEX.match(current_attribute_name, match_result_end)
-
-        # in case there is no next match result
-        if not next_match_result:
-            # raises the invalid attribute name exception
-            raise web_mvc_utils_exceptions.InvalidAttributeName("invalid next match value: " + current_attribute_name)
-
-        # retrieves the next match result value
-        next_match_result_value = next_match_result.group()
-
-        if next_match_result.lastgroup == MAP_TYPE_VALUE:
-            # retrieves the next match result value without the parentheses
-            next_match_result_value = next_match_result_value[1:-1]
-
-        # in case the next match is of type name
-        if next_match_result.lastgroup == NAME_TYPE_VALUE:
-            # raises the invalid attribute name exception
-            raise web_mvc_utils_exceptions.InvalidAttributeName("invalid next match value (it's a name): " + current_attribute_name)
-        # in case the next match is of type list, a list needs to
-        # be created in order to support the sequence, in case a list
-        # already exist it is used
-        elif next_match_result.lastgroup == SEQUENCE_TYPE_VALUE:
-            if match_result_value in parent_structure:
-                current_attribute_value = parent_structure[match_result_value]
-            else:
-                current_attribute_value = []
-        elif next_match_result.lastgroup == MAP_TYPE_VALUE:
-            if match_result.lastgroup == SEQUENCE_TYPE_VALUE:
-                if len(parent_structure) <= index:
-                    current_attribute_value = {}
-                else:
-                    current_attribute_value = parent_structure[index]
-            elif match_result_value in parent_structure:
-                current_attribute_value = parent_structure[match_result_value]
-            else:
-                current_attribute_value = {}
-
-        if match_result.lastgroup == NAME_TYPE_VALUE:
-            parent_structure[match_result_value] = current_attribute_value
-        elif match_result.lastgroup == SEQUENCE_TYPE_VALUE:
-            # in case the current attribute value is meant
-            # to be added to the parent structure
-            if len(parent_structure) <= index:
-                # adds the current attribute value to the
-                # parent structure
-                parent_structure.append(current_attribute_value)
-        elif match_result.lastgroup == MAP_TYPE_VALUE:
-            parent_structure[match_result_value] = current_attribute_value
-
-        # retrieves the remaining attribute name
-        remaining_attribute_name = current_attribute_name[match_result_end:]
-
-        # processes the next form attribute with the current attribute value as the new parent structure
-        # the remaining attribute name as the new current attribute name and the attribute value
-        # continues with the same value
-        self._process_form_attribute(current_attribute_value, remaining_attribute_name, attribute_value, index)
-
 def get_base_path(self, rest_request):
     """
     Retrieves the base path according to
@@ -444,3 +332,162 @@ def set_template_engine_manager_plugin(self, template_engine_manager_plugin):
     """
 
     self.template_engine_manager_plugin = template_engine_manager_plugin
+
+def _process_form_attribute(self, parent_structure, current_attribute_name, attribute_value, index = 0):
+    """
+    Processes a form attribute using the sent parent structure and for
+    the given index as a reference.
+    At the end the parent structure is changed and contains the form
+    attribute in the correct structure place.
+
+    @type parent_structure: List/Dictionary
+    @param parent_structure: The parent structure to be used to set the
+    attribute.
+    @type current_attribute_name: String
+    @param current_attribute_name: The current attribute name, current
+    because it's parsed
+    recursively using this process method.
+    @type attribute_value: Object
+    @param attribute_value: The attribute value.
+    @type index: int
+    @param index: The index of the current attribute reference.
+    """
+
+    # retrieves the current match result
+    match_result = ATTRIBUTE_PARSING_REGEX.match(current_attribute_name)
+
+    # in case there is no match result
+    if not match_result:
+        # raises the invalid attribute name exception
+        raise web_mvc_utils_exceptions.InvalidAttributeName("invalid match value: " + current_attribute_name)
+
+    # retrieves the match result end position
+    match_result_end = match_result.end()
+
+    # checks if it's the last attribute name
+    is_last_attribute_name = match_result_end == len(current_attribute_name)
+
+    # retrieves the match result name
+    match_result_name = match_result.lastgroup
+
+    # retrieves the match result value
+    match_result_value = match_result.group()
+
+    # in case the match result value is of type map
+    # the parentheses need to be removed
+    if match_result_name == MAP_TYPE_VALUE:
+        # retrieves the match result value without the parentheses
+        match_result_value = match_result_value[1:-1]
+
+    # in case it's the only (last) match available
+    if is_last_attribute_name:
+        # in case the match result is of type name
+        if match_result_name == NAME_TYPE_VALUE:
+            # sets the attribute value in the parent structure
+            parent_structure[match_result_value] = attribute_value
+        # in case the match result is of type sequence
+        elif match_result_name == SEQUENCE_TYPE_VALUE:
+            # adds the attribute value to the
+            # parent structure
+            parent_structure.append(attribute_value)
+        # in case the match result is of type map
+        elif match_result_name == MAP_TYPE_VALUE:
+            # sets the attribute value in the parent structure
+            parent_structure[match_result_value] = attribute_value
+
+    # there is more parsing to be made
+    else:
+        # retrieves the next match value in order to make
+        next_match_result = ATTRIBUTE_PARSING_REGEX.match(current_attribute_name, match_result_end)
+
+        # retrieves the next match result name
+        next_match_result_name = next_match_result.lastgroup
+
+        # in case there is no next match result
+        if not next_match_result:
+            # raises the invalid attribute name exception
+            raise web_mvc_utils_exceptions.InvalidAttributeName("invalid next match value: " + current_attribute_name)
+
+        # retrieves the next match result value
+        next_match_result_value = next_match_result.group()
+
+        # in case the next match result value is of type map
+        # the parentheses need to be removed
+        if next_match_result_name == MAP_TYPE_VALUE:
+            # retrieves the next match result value without the parentheses
+            next_match_result_value = next_match_result_value[1:-1]
+
+        # in case the next match is of type name
+        if next_match_result_name == NAME_TYPE_VALUE:
+            # raises the invalid attribute name exception
+            raise web_mvc_utils_exceptions.InvalidAttributeName("invalid next match value (it's a name): " + current_attribute_name)
+        # in case the next match is of type list, a list needs to
+        # be created in order to support the sequence, in case a list
+        # already exists it is used instead
+        elif next_match_result_name == SEQUENCE_TYPE_VALUE:
+            # in case the match result value exists in the
+            # parent structure there is no need to create a new structure
+            # the previous one should be used
+            if match_result_value in parent_structure:
+                # sets the current attribute value as the value that
+                # exists in the parent structure
+                current_attribute_value = parent_structure[match_result_value]
+            else:
+                # creates a new list structure
+                current_attribute_value = []
+        # in case the next match is of type map, a map needs to
+        # be created in order to support the mapping structure, in case a map
+        # already exists it is used instead
+        elif next_match_result_name == MAP_TYPE_VALUE:
+            # in case the current match result is a sequence
+            # it's required to check for the valid structure
+            # it may be set or it may be a new structure depending
+            # on the current "selected" index
+            if match_result_name == SEQUENCE_TYPE_VALUE:
+                # retrieves the parent structure length
+                parent_structure_length = len(parent_structure)
+
+                # in case the parent structure length is
+                # not sufficient to hold the the elements
+                if parent_structure_length <= index:
+                    # creates a new map structure
+                    current_attribute_value = {}
+                else:
+                    # sets the current attribute value as the structure
+                    # in the current "selected" index
+                    current_attribute_value = parent_structure[index]
+            # in case the match result value exists in the
+            # parent structure there is no need to create a new structure
+            # the previous one should be used
+            elif match_result_value in parent_structure:
+                # sets the current attribute value as the value that
+                # exists in the parent structure
+                current_attribute_value = parent_structure[match_result_value]
+            else:
+                # creates a new map structure
+                current_attribute_value = {}
+
+        # in case the match result is of type name (first match)
+        if match_result_name == NAME_TYPE_VALUE:
+            # sets the current attribute value in the parent structure
+            parent_structure[match_result_value] = current_attribute_value
+        # in case the match result is of type sequence
+        elif match_result_name == SEQUENCE_TYPE_VALUE:
+            # in case the current attribute value is meant
+            # to be added to the parent structure
+            if len(parent_structure) <= index:
+                # adds the current attribute value to the
+                # parent structure
+                parent_structure.append(current_attribute_value)
+        # in case the match result is of type map
+        elif match_result_name == MAP_TYPE_VALUE:
+            # sets the current attribute value in the parent structure
+            parent_structure[match_result_value] = current_attribute_value
+
+        # retrieves the remaining attribute name
+        remaining_attribute_name = current_attribute_name[match_result_end:]
+
+        # processes the next form attribute with the current attribute value as the new parent structure
+        # the remaining attribute name as the new current attribute name and the attribute value
+        # continues with the same value
+        self._process_form_attribute(current_attribute_value, remaining_attribute_name, attribute_value, index)
