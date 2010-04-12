@@ -1585,10 +1585,50 @@ class HttpRequest:
         return "(%s, %s)" % (self.operation_type, self.path)
 
     def __getattribute__(self, attribute_name):
+        """
+        Retrieves the attribute from the attributes map.
+
+        @type attribute_name: String
+        @param attribute_name: The name of the attribute to retrieve.
+        @rtype: Object
+        @return: The retrieved attribute.
+        """
+
         return self.attributes_map.get(attribute_name, None)
 
     def __setattribute__(self, attribute_name, attribute_value):
-        self.attributes_map[attribute_name] = attribute_value
+        """
+        Sets the given attribute in the request. The referenced
+        attribute is the http request attribute and the setting takes
+        into account a possible duplication of the values.
+
+        @type attribute_name: String
+        @param attribute_name: The name of the attribute to be set.
+        @type attribute_value: Object
+        @param attribute_value: The value of the attribute to be set.
+        """
+
+        # in case the attribute name is already defined
+        # in the attributes map (duplicated reference), it
+        # requires a list structure to be used
+        if attribute_name in self.attributes_map:
+            # retrieves the attribute value reference from the attributes map
+            attribute_value_reference = self.attributes_map[attribute_name]
+
+            # retrieves the attribute value reference type
+            attribute_value_reference_type = type(attribute_value_reference)
+
+            # in case the attribute value reference type is a list
+            if attribute_value_reference_type == types.ListType:
+                # adds the attribute value to the attribute value reference
+                attribute_value_reference.append(attribute_value)
+            else:
+                # sets the list with the previously defined attribute reference
+                # and the attribute value
+                self.attributes_map[attribute_name] = [attribute_value_reference, attribute_value]
+        else:
+            # sets the attribute value in the attributes map
+            self.attributes_map[attribute_name] = attribute_value
 
     def __parse_get_attributes__(self):
         # splits the path to get the attributes path of the request
