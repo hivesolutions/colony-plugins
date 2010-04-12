@@ -61,6 +61,24 @@ EXCLUSION_LIST = ["__class__", "__delattr__", "__dict__", "__doc__", "__getattri
 DEFAULT_ENCODER = "Cp1252"
 """ The default encoder """
 
+NORMAL_TEXT_WEIGHT = 400
+""" The normal text weight """
+
+BOLD_TEXT_WEIGHT = 800
+""" The bold text weight """
+
+DEFAULT_TEXT_WEIGH = NORMAL_TEXT_WEIGHT
+""" The default text weight """
+
+LEFT_TEXT_ALIGN_VALUE = "left"
+""" The left text align value """
+
+RIGHT_TEXT_ALIGN_VALUE = "right"
+""" The right text align value """
+
+CENTER_TEXT_ALIGN_VALUE = "center"
+""" The center text align value """
+
 def _visit(ast_node_class):
     """
     Decorator for the visit of an ast node.
@@ -242,15 +260,43 @@ class Visitor:
                 self.node_method_map[ast_node_class] = self_class_real_element
 
     def get_printer_handler(self):
+        """
+        Retrieves the printer handler.
+
+        @rtype: Tuple
+        @return: The printer handler.
+        """
+
         return self.printer_handler
 
     def set_printer_handler(self, printer_handler):
+        """
+        Sets the printer handler.
+
+        @type printer_handler: Tuple
+        @param printer_handler: The printer handler.
+        """
+
         self.printer_handler = printer_handler
 
     def get_printing_options(self):
+        """
+        Retrieves the printing options.
+
+        @rtype: Dictionary
+        @return: The printing options.
+        """
+
         return self.printing_options
 
     def set_printing_options(self, printing_options):
+        """
+        Sets the printing options.
+
+        @type printing_options: Dictionary.
+        @param printing_options: The printing options.
+        """
+
         self.printing_options = printing_options
 
     @dispatch_visit()
@@ -317,6 +363,7 @@ class Visitor:
         if self.visit_index == 0:
             self.add_context_information(node)
         elif self.visit_index == 1:
+            # removes the context information
             self.remove_context_information(node)
 
     @_visit(printing.manager.printing_language_ast.Line)
@@ -355,6 +402,7 @@ class Visitor:
             # sets the new current position
             self.current_position = 0, current_position_y - biggest_height - margin_bottom * FONT_SCALE_FACTOR
 
+            # removes the context information
             self.remove_context_information(node)
 
     @_visit(printing.manager.printing_language_ast.Text)
@@ -394,11 +442,14 @@ class Visitor:
                 # sets the default margin right
                 margin_right = 0
 
-            text_weight = 400
+            # sets the text weight as the default one
+            text_weight = DEFAULT_TEXT_WEIGH
+
+            # unsets the text italic flag
             text_italic = False
 
             if font_style == "bold" or font_style == "bold_italic":
-                text_weight = 800
+                text_weight = BOLD_TEXT_WEIGHT
 
             if font_style == "italic" or font_style == "bold_italic":
                 text_italic = True
@@ -421,23 +472,32 @@ class Visitor:
             # retrieves the current clip box values
             _clip_box_left, _clip_box_top, clip_box_right, _clip_box_bottom = handler_device_context.GetClipBox()
 
+            # initializes the text x coordinate
             text_x = (margin_left - margin_right) * FONT_SCALE_FACTOR
 
-            if text_align == "left":
+            # in case the text align is left
+            if text_align == LEFT_TEXT_ALIGN_VALUE:
                 text_x += 0
-            elif text_align == "right":
+            # in case the text align is right
+            elif text_align == RIGHT_TEXT_ALIGN_VALUE:
                 text_x += clip_box_right - text_width
-            elif text_align == "center":
+            # in case the text align is left
+            elif text_align == CENTER_TEXT_ALIGN_VALUE:
                 text_x += int(clip_box_right / 2) - int(text_width / 2)
 
             text_y = current_position_context_y
 
+            # outputs the text to the handler device context
             handler_device_context.TextOut(text_x, text_y, node.text.encode(DEFAULT_ENCODER))
 
+            # in case the current text height is bigger than the current
+            # context biggest height, updates the information
             if self.get_context_information("biggest_height") < text_height:
                 self.put_context_information("biggest_height", text_height)
 
+        # in case it's the second visit
         elif self.visit_index == 1:
+            # removes the context information
             self.remove_context_information(node)
 
     @_visit(printing.manager.printing_language_ast.Image)
@@ -500,11 +560,14 @@ class Visitor:
             # retrieves the current clip box values
             _clip_box_left, _clip_box_top, clip_box_right, _clip_box_bottom = handler_device_context.GetClipBox()
 
-            if text_align == "left":
+            # in case the text align is left
+            if text_align == LEFT_TEXT_ALIGN_VALUE:
                 real_bitmap_x1 = 0
-            elif text_align == "right":
+            # in case the text align is right
+            elif text_align == RIGHT_TEXT_ALIGN_VALUE:
                 real_bitmap_x1 = clip_box_right - real_bitmap_image_width * IMAGE_SCALE_FACTOR
-            elif text_align == "center":
+            # in case the text align is center
+            elif text_align == CENTER_TEXT_ALIGN_VALUE:
                 real_bitmap_x1 = int(clip_box_right / 2) - int(real_bitmap_image_width * IMAGE_SCALE_FACTOR / 2)
 
             real_bitmap_y1 = current_position_y

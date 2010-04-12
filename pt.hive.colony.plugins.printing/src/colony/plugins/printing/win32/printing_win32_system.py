@@ -179,6 +179,17 @@ class PrintingWin32:
         self.close_printer_handler(handler_device_context)
 
     def get_printer_handler(self, printing_options):
+        """
+        Retrieves a new printer handler for the
+        given printing options.
+
+        @type printing_options: Dictionary
+        @param printing_options: The printing options to be used
+        to create the printer handler.
+        @rtype: Tuple
+        @return: The tuple containing the printer handler.
+        """
+
         # retrieves the printer name
         printer_name = printing_options.get("printer_name", win32print.GetDefaultPrinter())
 
@@ -197,9 +208,19 @@ class PrintingWin32:
         # retrieves the printer margins
         printer_margins = printing_options.get("printer_margins", self.get_default_printer_margins(handler_device_context))
 
+        # returns the printer handler tuple
         return (handler_device_context, printable_area, printer_size, printer_margins)
 
     def close_printer_handler(self, printer_handler_context):
+        """
+        Closes the printer handler for the given printer
+        handler context.
+
+        @type handler_device_context: PyCDC
+        @param handler_device_context: The handler to the device (printer) context
+        to be closed.
+        """
+
         # releases the resource
         printer_handler_context.DeleteDC()
 
