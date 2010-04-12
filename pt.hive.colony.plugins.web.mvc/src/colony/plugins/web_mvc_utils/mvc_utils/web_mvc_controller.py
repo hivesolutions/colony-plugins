@@ -93,14 +93,30 @@ def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING):
         # retrieves the attribute value from the request
         attribute_value = self.get_attribute_decoded(rest_request, attribute, encoding)
 
-        # start the processing of the form attribute with the base attributes map
-        # the base attribute name and the attribute value
-        self._process_form_attribute(base_attributes_map, attribute, attribute_value)
+        # retrieves the attribute type
+        attribute_value_type = type(attribute_value)
+
+        # in case the attribute value type is list
+        if attribute_value_type == types.ListType:
+            # starts the index
+            index = 0
+
+            # iterates over all the attribute value items
+            for attribute_value_item in attribute_value:
+                self._process_form_attribute(base_attributes_map, attribute, attribute_value_item, index)
+
+                # increments the index
+                index += 1
+        # otherwise the attribute type must be a string
+        else:
+            # start the processing of the form attribute with the base attributes map
+            # the base attribute name and the attribute value
+            self._process_form_attribute(base_attributes_map, attribute, attribute_value)
 
     # returns the base attributes map
     return base_attributes_map
 
-def _process_form_attribute(self, parent_structure, current_attribute_name, attribute_value):
+def _process_form_attribute(self, parent_structure, current_attribute_name, attribute_value, index = 0):
     # retrieves the current match result
     match_result = ATTRIBUTE_PARSING_REGEX.match(current_attribute_name)
 
@@ -153,15 +169,21 @@ def _process_form_attribute(self, parent_structure, current_attribute_name, attr
         # in case the next match is of type name
         if next_match_result.lastgroup == NAME_TYPE_VALUE:
             # raises the invalid attribute name exception
-            raise web_mvc_utils_exceptions.InvalidAttributeName("invalid next match value (is a name): " + current_attribute_name)
+            raise web_mvc_utils_exceptions.InvalidAttributeName("invalid next match value (it's a name): " + current_attribute_name)
+        # in case the next match is of type list, a list needs to
+        # be created in order to support the sequence, in case a list
+        # already exist it is used
         elif next_match_result.lastgroup == SEQUENCE_TYPE_VALUE:
-            current_attribute_value = []
+            if match_result_value in parent_structure:
+                current_attribute_value = parent_structure[match_result_value]
+            else:
+                current_attribute_value = []
         elif next_match_result.lastgroup == MAP_TYPE_VALUE:
             if match_result.lastgroup == SEQUENCE_TYPE_VALUE:
-                if next_match_result_value in parent_structure[-1]:
+                if len(parent_structure) <= index:
                     current_attribute_value = {}
                 else:
-                    current_attribute_value = parent_structure[-1]
+                    current_attribute_value = parent_structure[index]
             elif match_result_value in parent_structure:
                 current_attribute_value = parent_structure[match_result_value]
             else:
@@ -170,7 +192,12 @@ def _process_form_attribute(self, parent_structure, current_attribute_name, attr
         if match_result.lastgroup == NAME_TYPE_VALUE:
             parent_structure[match_result_value] = current_attribute_value
         elif match_result.lastgroup == SEQUENCE_TYPE_VALUE:
-            parent_structure.append(current_attribute_value)
+            # in case the current attribute value is meant
+            # to be added to the parent structure
+            if len(parent_structure) <= index:
+                # adds the current attribute value to the
+                # parent structure
+                parent_structure.append(current_attribute_value)
         elif match_result.lastgroup == MAP_TYPE_VALUE:
             parent_structure[match_result_value] = current_attribute_value
 
@@ -180,7 +207,7 @@ def _process_form_attribute(self, parent_structure, current_attribute_name, attr
         # processes the next form attribute with the current attribute value as the new parent structure
         # the remaining attribute name as the new current attribute name and the attribute value
         # continues with the same value
-        self._process_form_attribute(current_attribute_value, remaining_attribute_name, attribute_value)
+        self._process_form_attribute(current_attribute_value, remaining_attribute_name, attribute_value, index)
 
 def get_base_path(self, rest_request):
     """
