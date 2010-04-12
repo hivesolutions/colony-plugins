@@ -317,7 +317,10 @@ class Visitor:
             self.add_context_information(node)
 
             # retrieves the printing document name
-            #printing_document_name = node.name
+            printing_document_name = node.name
+
+            # sets the title in the pdf document controller
+            self.pdf_document_controller.set_title(printing_document_name)
 
             # sets the initial position
             self.current_position = (0, 0)
