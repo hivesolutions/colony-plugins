@@ -93,6 +93,7 @@ class PdfDocumentController:
         pass
 
 import reportlab.lib.units
+import reportlab.lib.utils
 import reportlab.pdfgen.canvas
 import reportlab.pdfbase.pdfmetrics
 import reportlab.pdfbase.ttfonts
@@ -130,6 +131,23 @@ class ReportLabPdfDocumentController:
 
         # draws the string into the canvas (centered)
         self.canvas.drawCentredString(x_position, y_position, string_value)
+
+    def draw_image(self, image_buffer, x_position, y_position, width, height):
+        # creates a new image reader
+        image_reader = reportlab.lib.utils.ImageReader(image_buffer)
+
+        # retrieves the y position (considering the page height)
+        y_position = self._get_y_position_height(y_position, height)
+
+        # draw the image into the canvas
+        self.canvas.drawImage(image_reader, x_position, y_position, width, height)
+
+    def draw_image_path(self, image, x_position, y_position, width, height):
+        # retrieves the y position (considering the page height)
+        y_position = self._get_y_position_height(y_position, height)
+
+        # draw the image into the canvas
+        self.canvas.drawImage(image, x_position, y_position, width, height)
 
     def get_text_size(self, string_value):
         """
@@ -194,7 +212,38 @@ class ReportLabPdfDocumentController:
         # retrieves the current font height
         current_font_height = self._get_current_font_height()
 
-        return self.canvas._pagesize[1] - y_position - current_font_height
+        # retrieves the page height
+        page_height = self.canvas._pagesize[1]
+
+        # calculates the y position as the page height minus
+        # the previous y position minus the current font height in points
+        y_position = page_height - y_position - current_font_height
+
+        # returns the new y position
+        return y_position
+
+    def _get_y_position_height(self, y_position, base_height):
+        """
+        Retrieves the y coordinate taking into account the
+        page height and the given base height.
+
+        @type y_position: int
+        @param y_position: The base y position.
+        @type base_height: int
+        @param base_height: The base height position.
+        @rtype: int
+        @return: The calculated y position.
+        """
+
+        # retrieves the page height
+        page_height = self.canvas._pagesize[1]
+
+        # calculates the y position as the page height minus
+        # the previous y position minus the current height base
+        y_position = page_height - y_position - base_height
+
+        # returns the new y position
+        return y_position
 
     def _get_current_font_height(self):
         """
