@@ -38,21 +38,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import base64
-import win32ui
-import win32con
 
 import PIL.Image
-import PIL.ImageWin
 
 import colony.libs.string_buffer_util
 
 import printing_pdf_exceptions
 import printing.manager.printing_language_ast
 
-FONT_SCALE_FACTOR = 20
-""" The font scale factor """
-
-IMAGE_SCALE_FACTOR = 10
+IMAGE_SCALE_FACTOR = 0.5
 """ The image scale factor """
 
 EXCLUSION_LIST = ["__class__", "__delattr__", "__dict__", "__doc__", "__getattribute__", "__hash__", "__init__", "__module__", "__new__", "__reduce__", "__reduce_ex__", "__repr__", "__setattr__", "__str__", "__weakref__", "__format__", "__sizeof__", "__subclasshook__", "accept", "accept_double", "accept_post_order", "add_child_node", "remove_child_node", "set_indent", "set_value", "indent", "value", "child_nodes"]
@@ -357,7 +351,7 @@ class Visitor:
             # retrieves the current position in x and y
             current_position_x, current_position_y = self.current_position
 
-            self.current_position = (current_position_x, current_position_y + margin_top * FONT_SCALE_FACTOR)
+            self.current_position = (current_position_x, current_position_y + margin_top)
         elif self.visit_index == 1:
             # retrieves the line biggest height
             biggest_height = self.get_context_information("biggest_height")
@@ -405,7 +399,7 @@ class Visitor:
                 font_style = "regular"
 
             # sets the font in the pdf document controller
-            self.pdf_document_controller.set_font(font_name, font_size)
+            self.pdf_document_controller.set_font(font_name, font_size, font_style)
 
             if self.has_context_information("margin_left"):
                 # retrieves the margin left
@@ -507,8 +501,6 @@ class Visitor:
             # retrieves the bitmap image width and height
             bitmap_image_width, bitmap_image_height = bitmap_image.size
 
-            IMAGE_SCALE_FACTOR = 0.5
-
             real_bitmap_image_width = bitmap_image_width * IMAGE_SCALE_FACTOR
             real_bitmap_image_height = bitmap_image_height * IMAGE_SCALE_FACTOR
 
@@ -548,7 +540,7 @@ class Visitor:
         current_position_x, current_position_y = self.current_position
 
         # converts the current position to context
-        current_position_context = (FONT_SCALE_FACTOR * current_position_x, -1 * FONT_SCALE_FACTOR * current_position_y)
+        current_position_context = (current_position_x, -1 * current_position_y)
 
         return current_position_context
 
