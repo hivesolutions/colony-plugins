@@ -383,7 +383,7 @@ class Visitor:
             # retrieves the current position in x and y
             current_position_x, current_position_y = self.current_position
 
-            self.current_position = current_position_x, current_position_y - margin_top * FONT_SCALE_FACTOR
+            self.current_position = (current_position_x, current_position_y - margin_top * FONT_SCALE_FACTOR)
         elif self.visit_index == 1:
             biggest_height = self.get_context_information("biggest_height")
 
@@ -400,7 +400,7 @@ class Visitor:
             current_position_x, current_position_y = self.current_position
 
             # sets the new current position
-            self.current_position = 0, current_position_y - biggest_height - margin_bottom * FONT_SCALE_FACTOR
+            self.current_position = (0, current_position_y - biggest_height - margin_bottom * FONT_SCALE_FACTOR)
 
             # removes the context information
             self.remove_context_information(node)
@@ -493,6 +493,7 @@ class Visitor:
             # in case the current text height is bigger than the current
             # context biggest height, updates the information
             if self.get_context_information("biggest_height") < text_height:
+                # substitutes the new biggest height with the text height
                 self.put_context_information("biggest_height", text_height)
 
         # in case it's the second visit
@@ -584,7 +585,7 @@ class Visitor:
             handler_device_context.SetMapMode(win32con.MM_TWIPS)
 
             # sets the new current position
-            self.current_position = current_position_x + real_bitmap_x2, current_position_y
+            self.current_position = (real_bitmap_x2, current_position_y)
 
             if self.get_context_information("biggest_height") < real_bitmap_image_height * IMAGE_SCALE_FACTOR:
                 self.put_context_information("biggest_height", real_bitmap_image_height * IMAGE_SCALE_FACTOR)
