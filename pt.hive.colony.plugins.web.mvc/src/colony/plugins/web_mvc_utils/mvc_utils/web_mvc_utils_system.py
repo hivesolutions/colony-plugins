@@ -52,7 +52,7 @@ CONNECTION_PARAMETERS_VALUE = "connection_parameters"
 DEFAULT_ENGINE = "sqlite"
 """ The default engine """
 
-DEFAULT_CONNECTION_PARAMETERS = {"file_path" : "c:/tobias.db", "autocommit" : False}
+DEFAULT_CONNECTION_PARAMETERS = {"file_path" : "/remote_home/lmartinho/tobias.db", "autocommit" : False}
 """ The default connection parameters """
 
 class WebMvcUtils:
@@ -168,6 +168,16 @@ class WebMvcUtils:
 
         # returns the base entity models module
         return base_entity_models_module
+
+    def create_search_index_controller(self, search_index_identifier, search_index_configuration_map, entity_models_modules):
+        # retrieves the web mvc search plugin
+        web_mvc_search_plugin = self.web_mvc_utils_plugin.web_mvc_search_plugin
+
+        # creates the search index controller
+        search_index_controller = web_mvc_search_plugin.create_search_index_controller(search_index_identifier, search_index_configuration_map, entity_models_modules)
+
+        # returns the created search index controller
+        return search_index_controller
 
     def _get_entity_classes(self, module, entity_class):
         """

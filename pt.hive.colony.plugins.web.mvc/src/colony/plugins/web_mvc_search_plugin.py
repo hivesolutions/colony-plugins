@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt>"
+__author__ = "Luís Martinho <lmartinho@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
@@ -40,47 +40,39 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.plugins.plugin_system
 import colony.plugins.decorators
 
-class WebMvcUtilsPlugin(colony.plugins.plugin_system.Plugin):
+class WebMvcSearchPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Web Mvc Utils plugin.
+    The main class for the Web Mvc Search plugin.
     """
 
-    id = "pt.hive.colony.plugins.web.mvc.utils"
-    name = "Web Mvc Utils Plugin"
-    short_name = "Web Mvc Utils"
-    description = "The plugin that offers the top-level abstractions for mvc processing"
+    id = "pt.hive.colony.plugins.web.mvc.search"
+    name = "Web Mvc Search Plugin"
+    short_name = "Web Mvc Search"
+    description = "Web Mvc Search Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["web.mvc.utils"]
+    capabilities = []
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.template_engine.manager", "1.0.0"),
-                    colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.data.entity_manager", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.business.helper", "1.0.0"),
-                    colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.web.mvc.search", "1.0.0")]
+                    "pt.hive.colony.plugins.search", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["web_mvc_utils.mvc_utils.web_mvc_controller", "web_mvc_utils.mvc_utils.web_mvc_entity_model",
-                    "web_mvc_utils.mvc_utils.web_mvc_model", "web_mvc_utils.mvc_utils.web_mvc_utils_exceptions",
-                    "web_mvc_utils.mvc_utils.web_mvc_utils_system"]
+    main_modules = ["web_mvc_search.mvc_search.web_mvc_search_system"]
 
-    web_mvc_utils = None
+    web_mvc_search = None
 
-    template_engine_manager_plugin = None
     entity_manager_plugin = None
-    business_helper_plugin = None
-    web_mvc_search_plugin = None
+    search_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
-        global web_mvc_utils
-        import web_mvc_utils.mvc_utils.web_mvc_utils_system
-        self.web_mvc_utils = web_mvc_utils.mvc_utils.web_mvc_utils_system.WebMvcUtils(self)
+        global web_mvc_search
+        import web_mvc_search.mvc_search.web_mvc_search_system
+        self.web_mvc_search = web_mvc_search.mvc_search.web_mvc_search_system.WebMvcSearch(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -97,28 +89,24 @@ class WebMvcUtilsPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.web.mvc.utils", "1.0.0")
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.web.mvc.search", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def create_model(self, base_model, base_arguments_list, base_arguments_map):
-        return self.web_mvc_utils.create_model(base_model, base_arguments_list, base_arguments_map)
-
-    def create_controller(self, base_controller, base_arguments_list, base_arguments_map):
-        return self.web_mvc_utils.create_controller(base_controller, base_arguments_list, base_arguments_map)
-
-    def create_entity_models(self, base_entity_models_module_name, entity_manager_arguments, directory_path):
-        return self.web_mvc_utils.create_entity_models(base_entity_models_module_name, entity_manager_arguments, directory_path)
+    def load_index_configuration_map(self, index_configuration_map):
+        self.web_mvc_search.load_index_configuration_map(index_configuration_map)
 
     def create_search_index_controller(self, search_index_identifier, search_index_configuration_map, entity_models_modules):
-        return self.web_mvc_utils.create_search_index_controller(search_index_identifier, search_index_configuration_map, entity_models_modules)
+        return self.web_mvc_search.create_search_index_controller(search_index_identifier, search_index_configuration_map, entity_models_modules)
 
-    def get_template_engine_manager_plugin(self):
-        return self.template_engine_manager_plugin
+    def update_index(self, index_identifier):
+        self.web_mvc_search.update_index(index_identifier)
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.template_engine.manager")
-    def set_template_engine_manager_plugin(self, template_engine_manager_plugin):
-        self.template_engine_manager_plugin = template_engine_manager_plugin
+    def search_index(self, index_identifier, query_string):
+        return self.web_mvc_search.search_index(index_identifier, query_string)
+
+    def search_index_options(self, index_identifier, query_string, options):
+        return self.web_mvc_search.search_index_options(index_identifier, query_string, options)
 
     def get_entity_manager_plugin(self):
         return self.entity_manager_plugin
@@ -127,16 +115,9 @@ class WebMvcUtilsPlugin(colony.plugins.plugin_system.Plugin):
     def set_entity_manager_plugin(self, entity_manager_plugin):
         self.entity_manager_plugin = entity_manager_plugin
 
-    def get_business_helper_plugin(self):
-        return self.business_helper_plugin
+    def get_search_plugin(self):
+        return self.search_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.business.helper")
-    def set_business_helper_plugin(self, business_helper_plugin):
-        self.business_helper_plugin = business_helper_plugin
-
-    def get_web_mvc_search_plugin(self):
-        return self.web_mvc_search_plugin
-
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.web.mvc.search")
-    def set_web_mvc_search_plugin(self, web_mvc_search_plugin):
-        self.web_mvc_search_plugin = web_mvc_search_plugin
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.search")
+    def set_search_plugin(self, search_plugin):
+        self.search_plugin = search_plugin
