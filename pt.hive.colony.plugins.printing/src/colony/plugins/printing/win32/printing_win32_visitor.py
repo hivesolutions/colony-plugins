@@ -556,7 +556,7 @@ class Visitor:
             real_bitmap_image_height = bitmap_image_height
 
             # retrieves the current position in x and y
-            current_position_x, current_position_y = self.current_position
+            _current_position_x, current_position_y = self.current_position
 
             # retrieves the current clip box values
             _clip_box_left, _clip_box_top, clip_box_right, _clip_box_bottom = handler_device_context.GetClipBox()
