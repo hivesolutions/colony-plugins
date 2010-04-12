@@ -473,9 +473,12 @@ def _process_form_attribute(self, parent_structure, current_attribute_name, attr
             parent_structure[match_result_value] = current_attribute_value
         # in case the match result is of type sequence
         elif match_result_name == SEQUENCE_TYPE_VALUE:
+            # retrieves the parent structure length
+            parent_structure_length = len(parent_structure)
+
             # in case the current attribute value is meant
             # to be added to the parent structure
-            if len(parent_structure) <= index:
+            if parent_structure_length <= index:
                 # adds the current attribute value to the
                 # parent structure
                 parent_structure.append(current_attribute_value)
