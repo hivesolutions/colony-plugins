@@ -197,6 +197,44 @@ def apply_base_path_template_file(self, rest_request, template_file):
     # assigns the area value
     template_file.assign(BASE_PATH_VALUE, base_path)
 
+def assign_session_template_file(self, rest_request, template_file, variable_prefix = "session_"):
+    """
+    Assigns the session variables to the given template file.
+    The name of the session variables is modified replacing
+    the dots with underscores.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @type template_file: TemplateFile
+    @param template_file: The template to be "applied" with the session variables.
+    @type variable_prefix: String
+    @param variable_prefix: The variable prefix to be prepended to the variable names.
+    """
+
+    # tries to retrieve the rest request session
+    rest_request_session = rest_request.get_session()
+
+    # in case the rest request session
+    # is invalid
+    if not rest_request_session:
+        # returns immediately
+        return
+
+    # retrieves the session attributes map
+    session_attributes_map = rest_request_session.get_attributes_map()
+
+    # iterates over all the session attributes in the session
+    # attributes map
+    for session_attribute_name in session_attributes_map:
+        # retrieves the session attribute from the session attributes map
+        session_attribute = session_attributes_map[session_attribute_name]
+
+        # replaces the dots in the session attribute name
+        session_attribute_name_replaced = session_attribute_name.replace(".", "_")
+
+        # assigns the session attribute to the template file
+        template_file.assign(variable_prefix + session_attribute_name_replaced, session_attribute)
+
 def get_session_attribute(self, rest_request, session_attribute_name):
     # tries to retrieve the rest request session
     rest_request_session = rest_request.get_session()
