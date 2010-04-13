@@ -42,9 +42,6 @@ import printing_pdf_visitor
 PRINTING_NAME = "pdf"
 """ The printing name """
 
-TEST_TITLE = "colony_test_document.pdf"
-""" The test title """
-
 TEST_TEXT = "Hello world from Hive Colony"
 """ The test text """
 
@@ -81,7 +78,7 @@ class PrintingPdf:
         document_pdf_plugin = self.printing_pdf_plugin.document_pdf_plugin
 
         # creates a document controller
-        pdf_document_controller = document_pdf_plugin.create_document_controller({"file" : TEST_TITLE})
+        pdf_document_controller = document_pdf_plugin.create_document_controller()
 
         # retrieves the pdf document page size
         pdf_document_page_width, _pdf_document_page_height = pdf_document_controller.get_page_size()
@@ -134,7 +131,7 @@ class PrintingPdf:
         document_pdf_plugin = self.printing_pdf_plugin.document_pdf_plugin
 
         # creates a document controller
-        pdf_document_controller = document_pdf_plugin.create_document_controller({"file" : TEST_TITLE})
+        pdf_document_controller = document_pdf_plugin.create_document_controller(printing_options)
 
         # returns the pdf document controller
         return pdf_document_controller
