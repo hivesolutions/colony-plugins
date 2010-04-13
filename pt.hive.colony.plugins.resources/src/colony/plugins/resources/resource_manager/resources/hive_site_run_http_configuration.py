@@ -58,12 +58,25 @@ configuration = {
                                  "recursive_redirection" : True
                              }
                          }
+                     },
+                     "takethebill.com" : {
+                         "redirections" : {
+                             "resolution_order" : ["/"],
+                             "/" : {
+                                 "target" : "/colony_mod_python/rest/mvc/take_the_bill/",
+                                 "recursive_redirection" : True
+                             }
+                         }
                      }
                  },
                  "redirections" : {
-                     "resolution_order" : ["/blog", "/"],
+                     "resolution_order" : ["/blog", "/take_the_bill", "/"],
                      "/blog" : {
                          "target" : "/colony_mod_python/rest/mvc/hive_blog/",
+                         "recursive_redirection" : True
+                     },
+                     "/take_the_bill" : {
+                         "target" : "/colony_mod_python/rest/mvc/take_the_bill/",
                          "recursive_redirection" : True
                      },
                      "/" : {
@@ -72,7 +85,9 @@ configuration = {
                      }
                  },
                  "contexts" : {
-                     "resolution_order" : ["/colony_web/plugins", "/colony_web", "/colony_manager", "/colony_mod_python/rest/mvc/hive/resources", "/colony_mod_python/rest/mvc/hive_blog/resources", "/colony_mod_python", "/template_error_handler", "/docs", "/eclipse", "/cgi-bin", "/fastcgi-bin", "/web_administration", "/websession_test", "/websession"],
+                     "resolution_order" : ["/colony_web/plugins", "/colony_web", "/colony_manager", "/colony_mod_python/rest/mvc/hive/resources", "/colony_mod_python/rest/mvc/hive_blog/resources",
+                                           "/colony_mod_python/rest/mvc/take_the_bill/resources" "/colony_mod_python", "/template_error_handler", "/docs", "/eclipse", "/cgi-bin", "/fastcgi-bin",
+                                           "/web_administration", "/websession_test", "/websession"],
                      "/colony_web" : {
                          "handler" : "file",
                          "allow_redirection" : False,
@@ -105,6 +120,13 @@ configuration = {
                          "allow_redirection" : False,
                          "request_properties" : {
                              "base_path" : "$resource{system.path.hive_blog}/pt.hive.hive_blog.plugins.main/src/hive_blog/plugins/hive_blog_main/main/resources/extras"
+                         }
+                     },
+                     "/colony_mod_python/rest/mvc/take_the_bill/resources" : {
+                         "handler" : "file",
+                         "allow_redirection" : False,
+                         "request_properties" : {
+                             "base_path" : "$resource{system.path.take_the_bill}/pt.hive.take_the_bill.plugins.main/src/take_the_bill/plugins/take_the_bill_main/main/resources/extras"
                          }
                      },
                      "/colony_mod_python" : {
