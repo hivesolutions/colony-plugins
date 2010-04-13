@@ -1231,7 +1231,7 @@ class HttpClientServiceTask:
 
         # in case the request is pending redirection validation
         if request.redirection_validation:
-            # the request base path is used as the reuqest path
+            # the request base path is used as the request path
             # for redirection allowing purposes
             request_path = request.base_path
         # in non redirection validation iteration case
@@ -1305,7 +1305,7 @@ class HttpClientServiceTask:
         # retrieves the base service configuration
         service_configuration = self.service_configuration
 
-        # retrieves the host value from the headers
+        # retrieves the host value from the request headers
         host = request.headers_map.get("Host", None)
 
         # in case the host is defined
