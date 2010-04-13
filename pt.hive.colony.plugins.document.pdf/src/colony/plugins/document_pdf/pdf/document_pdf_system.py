@@ -188,7 +188,7 @@ class ReportLabPdfDocumentController:
     def set_keywords(self, keywords):
         self.canvas.subject(keywords)
 
-    def set_font(self, font_name, font_size):
+    def set_font(self, font_name, font_size, font_style = None):
         # retrieves the list of available fonts
         available_fonts_list = self.canvas.getAvailableFonts()
 
