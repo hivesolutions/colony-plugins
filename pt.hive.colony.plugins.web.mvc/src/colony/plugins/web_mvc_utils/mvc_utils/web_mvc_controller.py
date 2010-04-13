@@ -48,6 +48,9 @@ DEFAULT_CONTENT_TYPE = "text/html;charset=utf-8"
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding value """
 
+DEFAULT_TEMPLATE_FILE_ENCODING = "Cp1252"
+""" The default template file encoding """
+
 BASE_PATH_VALUE = "base_path"
 """ The base path value """
 
@@ -170,12 +173,12 @@ def set_contents(self, rest_request, contents = ""):
     # flushes the rest request
     rest_request.flush()
 
-def retrieve_template_file(self, file_name = None):
+def retrieve_template_file(self, file_name = None, encoding = DEFAULT_TEMPLATE_FILE_ENCODING):
     # creates the template file path
     template_file_path = self.templates_path + "/" + file_name
 
     # parses the template file path
-    template_file = self.template_engine_manager_plugin.parse_file_path_encoding(template_file_path, "Cp1252")
+    template_file = self.template_engine_manager_plugin.parse_file_path_encoding(template_file_path, encoding)
 
     # returns the template file
     return template_file
