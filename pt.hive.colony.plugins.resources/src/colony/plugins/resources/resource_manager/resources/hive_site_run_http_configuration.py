@@ -61,9 +61,13 @@ configuration = {
                      }
                  },
                  "redirections" : {
-                     "resolution_order" : ["/blog", "/"],
+                     "resolution_order" : ["/blog", "/take_the_bill", "/"],
                      "/blog" : {
                          "target" : "/colony_mod_python/rest/mvc/hive_blog/",
+                         "recursive_redirection" : True
+                     },
+                     "/take_the_bill" : {
+                         "target" : "/colony_mod_python/rest/mvc/take_the_bill/",
                          "recursive_redirection" : True
                      },
                      "/" : {
