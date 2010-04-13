@@ -1278,7 +1278,11 @@ class RestSession:
         @param attribute_name: The name of the attribute to unset.
         """
 
-        del self.attributes_map[attribute_name]
+        # in case the attribute name exists in
+        # the attributes map
+        if attribute_name in self.attributes_map:
+            # unsets the attribute from the attributes map
+            del self.attributes_map[attribute_name]
 
     def get_attributes_map(self):
         """
