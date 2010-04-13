@@ -409,10 +409,14 @@ class Visitor:
         if self.variable_encoding:
             # re-encodes the variable value
             attribute_value_value = unicode(attribute_value_value).encode(self.variable_encoding)
+        else:
+            # converts the value into unicode (in case it's necessary)
+            attribute_value_value = unicode(attribute_value_value)
 
         if attribute_xml_escape_value:
             attribute_value_value = xml.sax.saxutils.escape(attribute_value_value)
 
+        # writes the attribute value value to the string buffer
         self.string_buffer.write(attribute_value_value)
 
     def process_out_none(self, node):
@@ -437,6 +441,9 @@ class Visitor:
             if self.variable_encoding:
                 # re-encodes the variable value
                 attribute_value_value = unicode(attribute_value_value).encode(self.variable_encoding)
+            else:
+                # converts the value into unicode (in case it's necessary)
+                attribute_value_value = unicode(attribute_value_value)
 
             if attribute_xml_escape_value:
                 attribute_value_value = xml.sax.saxutils.escape(attribute_value_value)
