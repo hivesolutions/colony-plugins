@@ -275,7 +275,7 @@ class FacebookClient:
         parameters["v"] = self.facebook_structure.api_version
 
         # sets the next web site to redirect
-        parameters["next"] = "http://localhost:8080/take_the_bill/facebook"
+        parameters["next"] = "http://takethebill.com/facebook"
 
         # creates the login url from the parameters
         login_url = self._build_url(retrieval_url, parameters)
