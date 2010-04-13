@@ -148,6 +148,23 @@ def is_valid(self):
     else:
         return True
 
+def not_none_validate(self, attribute_name, attribute_value, properties):
+    """
+    Validates an attribute to ensure that it is not none.
+
+    @type attribute_name: String
+    @param attribute_name: The name of the attribute to be validated.
+    @type attribute_value: Object
+    @param attribute_value: The value of the attribute to be validated.
+    @type properties: Dictionary
+    @param properties: The properties for the validation.
+    """
+
+    # in case the attribute value is none
+    if attribute_value == None:
+        # adds an error to the given attribute name
+        self.add_error(attribute_name, "value is none")
+
 def not_empty_validate(self, attribute_name, attribute_value, properties):
     """
     Validates an attribute to ensure that it is not empty.
@@ -160,7 +177,7 @@ def not_empty_validate(self, attribute_name, attribute_value, properties):
     @param properties: The properties for the validation.
     """
 
-    # in case the attribute value is empty of invalid
-    if attribute_value == None or attribute_value == "":
+    # in case the attribute value is empty or invalid
+    if not attribute_value:
         # adds an error to the given attribute name
         self.add_error(attribute_name, "value is empty")
