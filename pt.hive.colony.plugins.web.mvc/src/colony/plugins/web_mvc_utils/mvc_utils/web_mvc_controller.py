@@ -164,6 +164,15 @@ def get_base_path(self, rest_request):
     return base_path
 
 def set_contents(self, rest_request, contents = ""):
+    """
+    Sets the given contents in the given rest request.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be set with the contents.
+    @type contents: String
+    @param contents: The contents to set in the rest request.
+    """
+
     # sets the content type for the rest request
     rest_request.set_content_type(DEFAULT_CONTENT_TYPE)
 
@@ -172,6 +181,50 @@ def set_contents(self, rest_request, contents = ""):
 
     # flushes the rest request
     rest_request.flush()
+
+def process_set_contents(self, rest_request, template_file, variable_encoding = None):
+    """
+    Processes the template file and set the result of it
+    as the contents of the given rest request.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be set with the contents.
+    @type template_file: TemplateFile
+    @param template_file: The template file to be processed.
+    @type variable_encoding: String
+    @param variable_encoding: The encoding to be used to encode the variables
+    in the template file processing.
+    """
+
+    # processes the template file with the given variable encoding
+    # retrieving the processed template file
+    processed_template_file = self.process_template_file(template_file, variable_encoding)
+
+    # sets the request contents
+    self.set_contents(rest_request, processed_template_file)
+
+def process_template_file(self, template_file, variable_encoding = None):
+    """
+    Processes the given template file, using the given
+    variable encoding.
+
+    @type template_file: Template
+    @param template_file: The template file to be processed.
+    @type variable_encoding: String
+    @param variable_encoding: The encoding to be used to encode the variables
+    in the template file processing.
+    @rtype: String
+    @return: The processed template file.
+    """
+
+    # sets the template file variable encoding
+    template_file.set_variable_encoding(None)
+
+    # processes the template file
+    processed_template_file = template_file.process()
+
+    # returns the processed template file
+    return processed_template_file
 
 def retrieve_template_file(self, file_name = None, encoding = DEFAULT_TEMPLATE_FILE_ENCODING):
     # creates the template file path
