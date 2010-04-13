@@ -49,7 +49,7 @@ configuration = {
                       "default_handler" : "file"}
                  ],
                  "virtual_servers" : {
-                     "resolution_order" : ["blog.hive.pt"],
+                     "resolution_order" : ["blog.hive.pt", "takethebill.com"],
                      "blog.hive.pt" : {
                          "redirections" : {
                              "resolution_order" : ["/"],
