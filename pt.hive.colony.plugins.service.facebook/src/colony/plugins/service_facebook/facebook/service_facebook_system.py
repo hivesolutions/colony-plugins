@@ -143,7 +143,7 @@ class FacebookClient:
         self.http_client_plugin = http_client_plugin
         self.facebook_structure = facebook_structure
 
-    def generate_facebook_structure(self, consumer_key, consumer_secret, set_structure = True):
+    def generate_facebook_structure(self, consumer_key, consumer_secret, next, api_version = DEFAULT_API_VERSION, set_structure = True):
         """
         Generates the facebook structure for the given arguments.
 
@@ -151,15 +151,20 @@ class FacebookClient:
         @param consumer_key: The consumer key.
         @type consumer_secret: String
         @param consumer_secret: The consumer secret.
+        @type next: String
+        @param next: The next value from which the facebook request
+        will be redirecting.
+        @type api_version: String
+        @param api_version: The version of the api being used.
         @type set_structure: bool
-        @param set_structure: Íf the structure should be
+        @param set_structure: If the structure should be
         set in the facebook client.
         @rtype: FacebookStructure
         @return: The generated facebook structure.
         """
 
         # creates a new facebook structure
-        facebook_structure = FacebookStructure(consumer_key, consumer_secret)
+        facebook_structure = FacebookStructure(consumer_key, consumer_secret, next, api_version)
 
         # in case the structure is meant to be set
         if set_structure:
@@ -275,7 +280,7 @@ class FacebookClient:
         parameters["v"] = self.facebook_structure.api_version
 
         # sets the next web site to redirect
-        parameters["next"] = "http://takethebill.com/facebook"
+        parameters["next"] = self.facebook_structure.next
 
         # creates the login url from the parameters
         login_url = self._build_url(retrieval_url, parameters)
@@ -635,6 +640,9 @@ class FacebookStructure:
     consumer_secret = None
     """ The consumer secret """
 
+    next = None
+    """ The next value from which the facebook request will be redirecting """
+
     api_version = None
     """ The version of the api being used """
 
@@ -650,7 +658,7 @@ class FacebookStructure:
     username = None
     """ The username of the logged user """
 
-    def __init__(self, consumer_key, consumer_secret, api_version = DEFAULT_API_VERSION):
+    def __init__(self, consumer_key, consumer_secret, next, api_version = DEFAULT_API_VERSION):
         """
         Constructor of the class.
 
@@ -658,12 +666,16 @@ class FacebookStructure:
         @param consumer_key: The consumer key.
         @type consumer_secret: String
         @param consumer_secret: The consumer secret.
+        @type next: String
+        @param next: The next value from which the facebook request
+        will be redirecting.
         @type api_version: String
         @param api_version: The version of the api being used.
         """
 
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
+        self.next = next
         self.api_version = api_version
 
     def get_consumer_key(self):
@@ -705,6 +717,26 @@ class FacebookStructure:
         """
 
         self.consumer_secret = consumer_secret
+
+    def get_next(self):
+        """
+        Retrieves the next.
+
+        @rtype: String
+        @return: The next.
+        """
+
+        return self.next
+
+    def set_next(self, next):
+        """
+        Sets the next.
+
+        @type next: String
+        @param next: The next.
+        """
+
+        self.next = next
 
     def get_api_version(self):
         """
