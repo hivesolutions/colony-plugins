@@ -49,12 +49,21 @@ configuration = {
                       "default_handler" : "file"}
                  ],
                  "virtual_servers" : {
-                     "resolution_order" : ["blog.hive.pt"],
+                     "resolution_order" : ["blog.hive.pt", "takethebill.com"],
                      "blog.hive.pt" : {
                          "redirections" : {
                              "resolution_order" : ["/"],
                              "/" : {
                                  "target" : "/colony_mod_python/rest/mvc/hive_blog/",
+                                 "recursive_redirection" : True
+                             }
+                         }
+                     },
+                     "takethebill.com" : {
+                         "redirections" : {
+                             "resolution_order" : ["/"],
+                             "/" : {
+                                 "target" : "/colony_mod_python/rest/mvc/take_the_bill/",
                                  "recursive_redirection" : True
                              }
                          }
