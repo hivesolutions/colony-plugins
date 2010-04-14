@@ -44,6 +44,11 @@ configuration = {
                  "default_encoding" : None,
                  "default_content_type_charset" : "utf-8",
                  "preferred_error_handlers" : ["template", "default"],
+                 "allowed_hosts" : {"hive.pt" : True,
+                                    "www.hive.pt" : True,
+                                    "blog.hive.pt" : True,
+                                    "takethebill.com" : True,
+                                    "www.takethebill.com" : True},
                  "connectors" : [
                      {"default_port" : 8181,
                       "default_handler" : "file"}

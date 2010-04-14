@@ -44,6 +44,8 @@ configuration = {
                  "default_encoding" : None,
                  "default_content_type_charset" : "utf-8",
                  "preferred_error_handlers" : ["template", "default"],
+                 "allowed_hosts" : {"localhost" : True,
+                                    "127.0.0.1" : True},
                  "connectors" : [
                      {"default_port" : 8181,
                       "default_handler" : "file"}
