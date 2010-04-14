@@ -1440,6 +1440,10 @@ class Cookie:
         # iterates over all the value pairs to
         # retrieve the name and value pairs
         for value_pair in value_pairs:
+            # strips the value pair to remove
+            # extra white space
+            value_pair = value_pair.strip()
+
             # splits the value pair
             value_splitted = value_pair.split("=")
 
