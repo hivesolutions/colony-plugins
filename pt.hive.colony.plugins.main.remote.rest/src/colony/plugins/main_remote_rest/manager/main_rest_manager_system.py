@@ -1222,12 +1222,14 @@ class RestSession:
 
         self.attributes_map = {}
 
-    def start(self, domain = None):
+    def start(self, domain = None, include_sub_domain = True):
         """
         Starts the current session.
 
         @type domain: String
         @param domain: The domain to be used by the cookie.
+        @type include_sub_domain: bool
+        @param include_sub_domain: Controls if the sub domain should be included.
         """
 
         current_timestamp = time.time()
@@ -1241,26 +1243,16 @@ class RestSession:
         self.cookie.set_attribute(LANG_VALUE, DEFAULT_LANG_VALUE)
         self.cookie.set_attribute(EXPIRES_VALUE, current_date_time_formatted)
 
-        # in case the domain is defined
-        if domain:
-            # sets the domain in the cookie
-            self.cookie.set_attribute(PATH_VALUE, DEFAULT_PATH)
+        self._set_domain(domain, include_sub_domain)
 
-            # in case the domain is local
-            if domain == LOCALHOST_VALUE:
-                # sets the domain in the cookie
-                self.cookie.set_attribute(DOMAIN_VALUE, "")
-            # in case the domain is "valid"
-            else:
-                # sets the domain in the cookie
-                self.cookie.set_attribute(DOMAIN_VALUE, domain)
-
-    def stop(self, domain):
+    def stop(self, domain, include_sub_domain = True):
         """
         Stops the current session.
 
         @type domain: String
         @param domain: The domain used by the cookie.
+        @type include_sub_domain: bool
+        @param include_sub_domain: Controls if the sub domain should be included.
         """
 
         self.session_id = None
@@ -1271,19 +1263,7 @@ class RestSession:
         self.cookie.set_attribute(LANG_VALUE, DEFAULT_LANG_VALUE)
         self.cookie.set_attribute(EXPIRES_VALUE, DEFAULT_EXPIRATION_DATE)
 
-        # in case the domain is defined
-        if domain:
-            # sets the domain in the cookie
-            self.cookie.set_attribute(PATH_VALUE, DEFAULT_PATH)
-
-            # in case the domain is local
-            if domain == LOCALHOST_VALUE:
-                # sets the domain in the cookie
-                self.cookie.set_attribute(DOMAIN_VALUE, "")
-            # in case the domain is "valid"
-            else:
-                # sets the domain in the cookie
-                self.cookie.set_attribute(DOMAIN_VALUE, domain)
+        self._set_domain(domain, include_sub_domain)
 
     def get_session_id(self):
         """
@@ -1384,6 +1364,37 @@ class RestSession:
         """
 
         self.attributes_map = attributes_map
+
+    def _set_domain(self, domain, include_sub_domain = True):
+        """
+        Sets the domain "attributes" in the session cookie.
+
+        @type domain: String
+        @param domain: The domain used by the cookie.
+        @type include_sub_domain: bool
+        @param include_sub_domain: Controls if the sub domain should be included.
+        """
+
+        # in case the domain is not defined defined
+        if not domain:
+            # returns immediately
+            return
+
+        # sets the domain in the cookie
+        self.cookie.set_attribute(PATH_VALUE, DEFAULT_PATH)
+
+        # in case the domain is local
+        if domain == LOCALHOST_VALUE:
+            # sets the domain in the cookie
+            self.cookie.set_attribute(DOMAIN_VALUE, "")
+        # in case the domain is "valid" and sub domains
+        # flag is active
+        elif include_sub_domain:
+            # sets the domain in the cookie (including sub domains)
+            self.cookie.set_attribute(DOMAIN_VALUE, "." + domain)
+        else:
+            # sets the domain in the cookie
+            self.cookie.set_attribute(DOMAIN_VALUE, domain)
 
 class Cookie:
     """
