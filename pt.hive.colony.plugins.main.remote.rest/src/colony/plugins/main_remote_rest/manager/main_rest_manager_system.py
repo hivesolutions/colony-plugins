@@ -1442,10 +1442,10 @@ class Cookie:
         for value_pair in value_pairs:
             # strips the value pair to remove
             # extra white spaces
-            value_pair = value_pair.strip()
+            value_pair_stripped = value_pair.strip()
 
             # splits the value pair
-            value_splitted = value_pair.split("=")
+            value_splitted = value_pair_stripped.split("=")
 
             # in case the value pairs does respect
             # the key value
