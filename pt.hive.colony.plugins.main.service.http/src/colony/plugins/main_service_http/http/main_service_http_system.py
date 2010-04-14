@@ -63,8 +63,8 @@ MULTIPART_FORM_DATA_VALUE = "multipart/form-data"
 WWW_FORM_URLENCODED_VALUE = "application/x-www-form-urlencoded"
 """ The www form urlencoded value """
 
-HOST_VALUE = ""
-""" The host value """
+BIND_HOST_VALUE = ""
+""" The bind host value """
 
 CLIENT_CONNECTION_TIMEOUT = 1
 """ The client connection timeout """
@@ -115,6 +115,9 @@ STATUS_CODE_VALUES = {100 : "Continue", 101 : "Switching Protocols",
 
 DEFAULT_STATUS_CODE_VALUE = "Invalid"
 """ The default status code value """
+
+HOST_VALUE = "Host"
+""" The host value """
 
 DATE_VALUE = "Date"
 """ The date value """
@@ -366,7 +369,7 @@ class MainServiceHttp:
         self.http_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
         # binds the http socket
-        self.http_socket.bind((HOST_VALUE, port))
+        self.http_socket.bind((BIND_HOST_VALUE, port))
 
         # start listening in the http socket
         self.http_socket.listen(5)
@@ -559,6 +562,10 @@ class HttpClientServiceTask:
         try:
             # prints debug message about request
             self.main_service_http_plugin.debug("Handling request: %s" % str(request))
+
+            # verifies the request information, tries to find any possible
+            # security problem in it
+            self._verify_request_information(request)
 
             # retrieves the real service configuration,
             # taking the request information into account
@@ -1289,6 +1296,35 @@ class HttpClientServiceTask:
         # returns the handler name
         return handler_name
 
+    def _verify_request_information(self, request):
+        """
+        Verifies the request information, checking if there is
+        any possible security problems associated.
+
+        @type request: HttpRequest
+        @param request: The request to be verified.
+        """
+
+        # retrieves the base service configuration
+        service_configuration = self.service_configuration
+
+        # retrieves the host value from the request headers
+        host = request.headers_map.get(HOST_VALUE, None)
+
+        # retrieves the allowed host map
+        allowed_hosts = service_configuration.get("allowed_hosts", {})
+
+        # retrieves the "hostname" from the host
+        hostname = host.rsplit(":", 1)[0]
+
+        # tries to retrieve the host from the allowed hosts map
+        host_allowed = allowed_hosts.get(hostname, False)
+
+        # in case the host is not allowed
+        if not host_allowed:
+            # raises the client request security violation exception
+            raise main_service_http_exceptions.ClientRequestSecurityViolation("hostn not allowed: " + hostname)
+
     def _get_service_configuration(self, request):
         """
         Retrieves the service configuration for the given request.
@@ -1306,7 +1342,7 @@ class HttpClientServiceTask:
         service_configuration = self.service_configuration
 
         # retrieves the host value from the request headers
-        host = request.headers_map.get("Host", None)
+        host = request.headers_map.get(HOST_VALUE, None)
 
         # in case the host is defined
         if host:
