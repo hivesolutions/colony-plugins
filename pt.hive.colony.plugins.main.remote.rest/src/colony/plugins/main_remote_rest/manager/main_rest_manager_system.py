@@ -746,6 +746,9 @@ class RestRequest:
         self.main_rest_manager = main_rest_manager
         self.request = request
 
+        self.rest_encoder_plugins = []
+        self.rest_encoder_plugins_map = {}
+
     def start_session(self, force = False, session_id = None):
         """
         Starts the session for the given session id,
@@ -1175,6 +1178,8 @@ class RestSession:
 
         self.session_id = session_id
 
+        self.attributes_map = {}
+
     def start(self):
         """
         Starts the current session.
@@ -1327,6 +1332,8 @@ class Cookie:
         """
 
         self.string_value = string_value
+
+        self.attributes_map = {}
 
     def parse(self):
         """
