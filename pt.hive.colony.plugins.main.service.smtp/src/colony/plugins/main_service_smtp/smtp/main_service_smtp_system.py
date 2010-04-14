@@ -47,7 +47,7 @@ import colony.libs.string_buffer_util
 
 import main_service_smtp_exceptions
 
-HOST_VALUE = ""
+BIND_HOST_VALUE = ""
 """ The host value """
 
 CLIENT_CONNECTION_TIMEOUT = 1
@@ -222,7 +222,7 @@ class MainServiceSmtp:
         self.smtp_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
         # binds the smtp socket
-        self.smtp_socket.bind((HOST_VALUE, port))
+        self.smtp_socket.bind((BIND_HOST_VALUE, port))
 
         # start listening in the smtp socket
         self.smtp_socket.listen(5)
