@@ -1441,7 +1441,7 @@ class Cookie:
         # retrieve the name and value pairs
         for value_pair in value_pairs:
             # strips the value pair to remove
-            # extra white space
+            # extra white spaces
             value_pair = value_pair.strip()
 
             # splits the value pair
