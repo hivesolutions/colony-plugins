@@ -46,8 +46,8 @@ import colony.libs.string_buffer_util
 
 import main_service_irc_exceptions
 
-HOST_VALUE = ""
-""" The host value """
+BIND_HOST_VALUE = ""
+""" The bind host value """
 
 REQUEST_TIMEOUT = 3
 """ The request timeout """
@@ -182,7 +182,7 @@ class MainServiceIrc:
         self.irc_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
         # binds the irc socket
-        self.irc_socket.bind((HOST_VALUE, port))
+        self.irc_socket.bind((BIND_HOST_VALUE, port))
 
         # start listening in the irc socket
         self.irc_socket.listen(5)
