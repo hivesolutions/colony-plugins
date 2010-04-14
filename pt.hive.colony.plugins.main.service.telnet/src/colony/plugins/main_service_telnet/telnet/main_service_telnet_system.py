@@ -47,8 +47,8 @@ import colony.libs.string_buffer_util
 
 import main_service_telnet_exceptions
 
-HOST_VALUE = ""
-""" The host value """
+BIND_HOST_VALUE = ""
+""" The bind host value """
 
 CLIENT_CONNECTION_TIMEOUT = 1
 """ The client connection timeout """
@@ -222,7 +222,7 @@ class MainServiceTelnet:
         self.telnet_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
         # binds the telnet socket
-        self.telnet_socket.bind((HOST_VALUE, port))
+        self.telnet_socket.bind((BIND_HOST_VALUE, port))
 
         # start listening in the telnet socket
         self.telnet_socket.listen(5)
