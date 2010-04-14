@@ -89,6 +89,15 @@ LANG_VALUE = "lang"
 EXPIRES_VALUE = "expires"
 """ The expires value """
 
+PATH_VALUE = "path"
+""" The path value """
+
+DOMAIN_VALUE = "domain"
+""" The domain value """
+
+LOCALHOST_VALUE = "localhost"
+""" The localhost value """
+
 DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
 """ The date format """
 
@@ -100,6 +109,9 @@ DEFAULT_LANG_VALUE = "en"
 
 DEFAULT_EXPIRATION_DELTA_TIMESTAMP = 31536000
 """ The default expiration delta timestamp """
+
+DEFAULT_PATH = "/"
+""" The default path """
 
 class MainRestManager:
     """
@@ -779,8 +791,11 @@ class RestRequest:
         # it as the current session
         self.session = RestSession(session_id)
 
-        # starts the session
-        self.session.start()
+        # retrieves the host name value
+        domain = self._get_domain()
+
+        # starts the session with the defined domain
+        self.session.start(domain)
 
         # adds the session to the main rest manager
         self.main_rest_manager.add_session(self.session)
@@ -795,8 +810,11 @@ class RestRequest:
             # crates a new empty session
             self.session = RestSession()
 
-        # stops the session
-        self.session.stop()
+        # retrieves the host name value
+        domain = self._get_domain()
+
+        # stops the session with the defined domain
+        self.session.start(domain)
 
         # removes the session from the main rest manager
         self.main_rest_manager.remove_session(self.session)
@@ -1154,6 +1172,30 @@ class RestRequest:
 
         self.set_rest_encoder_plugins_map = set_rest_encoder_plugins_map
 
+    def _get_domain(self):
+        """
+        Retrieves the domain using the http request header
+        host value.
+
+        @rtype: Sring
+        @return: The currently used domain.
+        """
+
+        # retrieves the host value from the request headers
+        host = self.request.headers_map.get("Host", None)
+
+        # in case the host is not defined
+        if not host:
+            # returns invalid
+            return None
+
+        # retrieves the domain removing the port part
+        # of the host value
+        domain = host.rsplit(":", 1)[0]
+
+        # returns the domain
+        return domain
+
 class RestSession:
     """
     The rest session class.
@@ -1180,9 +1222,12 @@ class RestSession:
 
         self.attributes_map = {}
 
-    def start(self):
+    def start(self, domain = None):
         """
         Starts the current session.
+
+        @type domain: String
+        @param domain: The domain to be used by the cookie.
         """
 
         current_timestamp = time.time()
@@ -1196,9 +1241,26 @@ class RestSession:
         self.cookie.set_attribute(LANG_VALUE, DEFAULT_LANG_VALUE)
         self.cookie.set_attribute(EXPIRES_VALUE, current_date_time_formatted)
 
-    def stop(self):
+        # in case the domain is defined
+        if domain:
+            # sets the domain in the cookie
+            self.cookie.set_attribute(PATH_VALUE, DEFAULT_PATH)
+
+            # in case the domain is local
+            if domain == LOCALHOST_VALUE:
+                # sets the domain in the cookie
+                self.cookie.set_attribute(DOMAIN_VALUE, "")
+            # in case the domain is "valid"
+            else:
+                # sets the domain in the cookie
+                self.cookie.set_attribute(DOMAIN_VALUE, domain)
+
+    def stop(self, domain):
         """
         Stops the current session.
+
+        @type domain: String
+        @param domain: The domain used by the cookie.
         """
 
         self.session_id = None
@@ -1208,6 +1270,20 @@ class RestSession:
         self.cookie.set_attribute(SESSION_ID_VALUE, "")
         self.cookie.set_attribute(LANG_VALUE, DEFAULT_LANG_VALUE)
         self.cookie.set_attribute(EXPIRES_VALUE, DEFAULT_EXPIRATION_DATE)
+
+        # in case the domain is defined
+        if domain:
+            # sets the domain in the cookie
+            self.cookie.set_attribute(PATH_VALUE, DEFAULT_PATH)
+
+            # in case the domain is local
+            if domain == LOCALHOST_VALUE:
+                # sets the domain in the cookie
+                self.cookie.set_attribute(DOMAIN_VALUE, "")
+            # in case the domain is "valid"
+            else:
+                # sets the domain in the cookie
+                self.cookie.set_attribute(DOMAIN_VALUE, domain)
 
     def get_session_id(self):
         """
