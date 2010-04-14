@@ -47,8 +47,8 @@ import colony.libs.string_buffer_util
 
 import main_service_xmpp_exceptions
 
-HOST_VALUE = ""
-""" The host value """
+BIND_HOST_VALUE = ""
+""" The bind host value """
 
 CLIENT_CONNECTION_TIMEOUT = 1
 """ The client connection timeout """
@@ -241,7 +241,7 @@ class MainServiceXmpp:
         self.xmpp_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
         # binds the xmpp socket
-        self.xmpp_socket.bind((HOST_VALUE, port))
+        self.xmpp_socket.bind((BIND_HOST_VALUE, port))
 
         # start listening in the xmpp socket
         self.xmpp_socket.listen(5)
