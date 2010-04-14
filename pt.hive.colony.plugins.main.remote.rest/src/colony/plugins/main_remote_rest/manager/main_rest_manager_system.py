@@ -98,6 +98,9 @@ DOMAIN_VALUE = "domain"
 LOCALHOST_VALUE = "localhost"
 """ The localhost value """
 
+HOST_VALUE = "Host"
+""" The host value """
+
 DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
 """ The date format """
 
@@ -1182,7 +1185,7 @@ class RestRequest:
         """
 
         # retrieves the host value from the request headers
-        host = self.request.headers_map.get("Host", None)
+        host = self.request.headers_map.get(HOST_VALUE, None)
 
         # in case the host is not defined
         if not host:
