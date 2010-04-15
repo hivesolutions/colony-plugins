@@ -756,6 +756,18 @@ class Visitor:
         self.string_buffer.write(datetime_value)
 
     def get_value(self, attribute_value):
+        """
+        Retrieves the value (variable or literal) of the given
+        value.
+        The process of retrieving the variable value is iterative
+        and may consume some time in resolution.
+
+        @type attribute_value: Dictionary
+        @param attribute_value: A map describing the attribute value.
+        @rtype: Object
+        @return: The resolved attribute value.
+        """
+
         # in case the attribute value is of type variable
         if attribute_value["type"] == "variable":
             # retrieves the variable name
@@ -833,11 +845,8 @@ class Visitor:
             # retrieves the literal value
             literal_value = attribute_value["value"]
 
-            # strips the literal value
-            literal_value_stripped = literal_value.strip("\"")
-
-            # sets the value as the literal value stripped
-            value = literal_value_stripped
+            # sets the value as the literal value
+            value = literal_value
 
         # returns the value
         return value
@@ -853,14 +862,13 @@ class Visitor:
         # retrieves the literal value
         literal_value = attribute_value["value"]
 
-        # in case the literal value is true
-        if literal_value == "True":
-            # returns true
-            return True
-        # in case the literal value is false
-        elif literal_value == "False":
-            # returns false
-            return False
+        # retrieves the literal value type
+        literal_value_type = type(literal_value)
+
+        # in case the literal value is a boolean
+        if literal_value_type == types.BooleanType:
+            # returns true literal value
+            return literal_value
 
         # raises an invalid boolean value exception
         raise template_engine_exceptions.InvalidBooleanValue("invalid boolean " + literal_value)

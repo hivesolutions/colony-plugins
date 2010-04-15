@@ -186,15 +186,15 @@ class MatchNode(AstNode):
     attribute_regex = None
     """ The attribute regular expression """
 
-    attribute_quoted_regex = None
-    """ The attribute quoted regular expression """
+    attribute_literal_regex = None
+    """ The attribute literal regular expression """
 
-    def __init__(self, value = None, attribute_regex = None, attribute_quoted_regex = None):
+    def __init__(self, value = None, attribute_regex = None, attribute_literal_regex = None):
         AstNode.__init__(self)
 
         self.value = value
         self.attribute_regex = attribute_regex
-        self.attribute_quoted_regex = attribute_quoted_regex
+        self.attribute_literal_regex = attribute_literal_regex
 
         self.attributes_map = {}
 
@@ -221,14 +221,17 @@ class MatchNode(AstNode):
         # retrieves the start match value match value
         start_match_value_match_value = start_match_value.get_match_value()
 
-        # finds all the attributes
-        attributes = self.attribute_regex.findall(start_match_value_match_value)
+        # finds all the attributes matches
+        attributes_matches = self.attribute_regex.finditer(start_match_value_match_value)
 
-        # finds all the attributes quoted
-        attributes_quoted = self.attribute_quoted_regex.findall(start_match_value_match_value)
+        # finds all the attributes literal matches
+        attributes_literal_matches = self.attribute_literal_regex.finditer(start_match_value_match_value)
 
-        # iterates over all the attributes
-        for attribute in attributes:
+        # iterates over all the attributes matches
+        for attribute_match in attributes_matches:
+            # retrieves the attribute value
+            attribute = attribute_match.group()
+
             # splits the attribute around the equals sign
             attribute_splitted = attribute.split("=")
 
@@ -238,16 +241,38 @@ class MatchNode(AstNode):
             # sets the attribute in the attributes map
             self.attributes_map[attribute_name] = {"value" : attribute_value, "type" : "variable"}
 
-        # iterates over all the attributes quoted
-        for attribute_quoted in attributes_quoted:
-            # splits the attribute quoted around the equals sign
-            attribute_quoted_splitted = attribute_quoted.split("=")
+        # iterates over all the attributes literal matches
+        for attribute_literal_match in attributes_literal_matches:
+            # retrieves the attribute literal value
+            attribute_literal = attribute_literal_match.group()
 
-            # retrieves the attribute quoted name and value
-            attribute_quoted_name, attribute_quoted_value = attribute_quoted_splitted
+            # splits the attribute literal around the equals sign
+            attribute_literal_splitted = attribute_literal.split("=")
 
-            # sets the attribute quoted in the attributes map
-            self.attributes_map[attribute_quoted_name] = {"value" : attribute_quoted_value, "type" : "literal"}
+            # retrieves the attribute literal name and value
+            attribute_literal_name, attribute_literal_value = attribute_literal_splitted
+
+            # retrieves the attribute matching group index
+            attribute_group_index = attribute_literal_match.lastindex
+
+            # in case it's quoted
+            if attribute_group_index == 1:
+                attribute_literal_value = attribute_literal_value.strip("\"")
+            # in case it's float
+            elif attribute_group_index == 2:
+                attribute_literal_value = float(attribute_literal_value)
+            # in case it's integer
+            elif attribute_group_index == 3:
+                attribute_literal_value = int(attribute_literal_value)
+            # in case it's boolean and true
+            elif attribute_group_index == 4:
+                attribute_literal_value = True
+            # in case it's boolean and false
+            elif attribute_group_index == 5:
+                attribute_literal_value = False
+
+            # sets the attribute literal in the attributes map
+            self.attributes_map[attribute_literal_name] = {"value" : attribute_literal_value, "type" : "literal"}
 
     def get_value_type(self):
         return self.value_type
@@ -266,8 +291,8 @@ class SingleNode(MatchNode):
     The single node class.
     """
 
-    def __init__(self, value = None, attribute_regex = None, attribute_quoted_regex = None):
-        MatchNode.__init__(self, value, attribute_regex, attribute_quoted_regex)
+    def __init__(self, value = None, attribute_regex = None, attribute_literal_regex = None):
+        MatchNode.__init__(self, value, attribute_regex, attribute_literal_regex)
 
     def get_start_match_value(self):
         return self.value
@@ -280,8 +305,8 @@ class CompositeNode(MatchNode):
     The composite node class.
     """
 
-    def __init__(self, value = None, attribute_regex = None, attribute_quoted_regex = None):
-        MatchNode.__init__(self, value, attribute_regex, attribute_quoted_regex)
+    def __init__(self, value = None, attribute_regex = None, attribute_literal_regex = None):
+        MatchNode.__init__(self, value, attribute_regex, attribute_literal_regex)
 
     def get_start_match_value(self):
         return self.value[0]
