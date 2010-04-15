@@ -49,6 +49,9 @@ import colony.libs.string_buffer_util
 import template_engine_ast
 import template_engine_exceptions
 
+FUNCTION_TYPES = [types.MethodType, types.FunctionType]
+""" The function types """
+
 def _visit(ast_node_class):
     """
     Decorator for the visit of an ast node.
@@ -430,6 +433,12 @@ class Visitor:
         attributes_map = node.get_attributes_map()
         attribute_value = attributes_map["value"]
         attribute_value_value = self.get_value(attribute_value)
+
+        if "format" in attributes_map:
+            format_string = attributes_map["format"]
+            format_string_value = self.get_value(format_string)
+            attribute_value_value = format_string_value % attribute_value_value
+
         if "xml_escape" in attributes_map:
             attribute_xml_escape = attributes_map["xml_escape"]
             attribute_xml_escape_value = self.get_boolean_value(attribute_xml_escape)
@@ -480,11 +489,27 @@ class Visitor:
         attribute_item = attributes_map["item"]
         attribute_item_literal_value = self.get_literal_value(attribute_item)
 
+        if "index" in attributes_map:
+            attribute_index = attributes_map["index"]
+            attribute_index_literal_value = self.get_literal_value(attribute_index)
+        else:
+            attribute_index_literal_value = None
+
         if "key" in attributes_map:
             attribute_key = attributes_map["key"]
             attribute_key_literal_value = self.get_literal_value(attribute_key)
         else:
             attribute_key_literal_value = None
+
+        if "start_index" in attributes_map:
+            attribute_start_index = attributes_map["start_index"]
+            attribute_start_index_literal_value = self.get_literal_value(attribute_start_index)
+
+            # sets the initial index
+            index = int(attribute_start_index_literal_value[1:-1])
+        else:
+            # sets the default initial index
+            index = 1
 
         # in case the attribute does not have the iterator method
         # it's not iterable
@@ -502,19 +527,31 @@ class Visitor:
             for attribute_from_value_key, attribute_from_value_value in attribute_from_value.items():
                 self.global_map[attribute_item_literal_value] = attribute_from_value_value
 
+                if attribute_index_literal_value:
+                    self.global_map[attribute_index_literal_value] = index
+
                 if attribute_key_literal_value:
                     self.global_map[attribute_key_literal_value] = attribute_from_value_key
 
                 if self.visit_childs:
                     for node_child_node in node.child_nodes:
                         node_child_node.accept(self)
+
+                # increments the index
+                index += 1
         else:
             for attribute_from_value_item in attribute_from_value:
                 self.global_map[attribute_item_literal_value] = attribute_from_value_item
 
+                if attribute_index_literal_value:
+                    self.global_map[attribute_index_literal_value] = index
+
                 if self.visit_childs:
                     for node_child_node in node.child_nodes:
                         node_child_node.accept(self)
+
+                # increments the index
+                index += 1
 
     def process_if(self, node):
         """
@@ -560,6 +597,33 @@ class Visitor:
         """
 
         pass
+
+    def process_count(self, node):
+        """
+        Processes the count node.
+
+        @type node: SingleNode
+        @param node: The single node to be processed as count.
+        """
+
+        attributes_map = node.get_attributes_map()
+        attribute_value = attributes_map["value"]
+        attribute_value_value = self.get_value(attribute_value)
+
+        # retrieves the attribute value value length and sets it
+        # as the attribute value length
+        attribute_value_length = len(attribute_value_value)
+
+        # in case the variable encoding is defined
+        if self.variable_encoding:
+            # re-encodes the variable value
+            attribute_value_length = unicode(attribute_value_length).encode(self.variable_encoding)
+        else:
+            # converts the value into unicode (in case it's necessary)
+            attribute_value_length = unicode(attribute_value_length)
+
+        # writes the attribute value value to the string buffer
+        self.string_buffer.write(attribute_value_length)
 
     def process_include(self, node):
         """
@@ -736,6 +800,16 @@ class Visitor:
                             if hasattr(current_variable, variable_name_split):
                                 # retrieves the current variable (from the object)
                                 current_variable = getattr(current_variable, variable_name_split)
+
+                                # retrieves the current variable type
+                                current_variable_type = type(current_variable)
+
+                                # in case its a variable of type function
+                                if current_variable_type in FUNCTION_TYPES:
+                                    # calls the function (without arguments) to
+                                    # retrieve the variable
+                                    current_variable = current_variable()
+
                             elif not self.strict_mode:
                                 # sets the current variable as none
                                 current_variable = None
