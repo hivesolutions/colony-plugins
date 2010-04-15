@@ -1323,7 +1323,7 @@ class HttpClientServiceTask:
         # in case the host is not allowed
         if not host_allowed:
             # raises the client request security violation exception
-            raise main_service_http_exceptions.ClientRequestSecurityViolation("hostn not allowed: " + hostname)
+            raise main_service_http_exceptions.ClientRequestSecurityViolation("host not allowed: " + hostname)
 
     def _get_service_configuration(self, request):
         """
