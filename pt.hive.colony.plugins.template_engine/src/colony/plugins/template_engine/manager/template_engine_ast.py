@@ -270,6 +270,9 @@ class MatchNode(AstNode):
             # in case it's boolean and false
             elif attribute_group_index == 5:
                 attribute_literal_value = False
+            # in case it's null
+            elif attribute_group_index == 6:
+                attribute_literal_value = None
 
             # sets the attribute literal in the attributes map
             self.attributes_map[attribute_literal_name] = {"value" : attribute_literal_value, "type" : "literal"}
