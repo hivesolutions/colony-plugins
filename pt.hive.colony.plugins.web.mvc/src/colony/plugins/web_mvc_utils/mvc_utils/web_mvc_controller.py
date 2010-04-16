@@ -455,7 +455,7 @@ def _dasherize(self, string_value):
     """
     Converts a string value with multiple words in either camel case or
     separated by underscores to a dasherized notation, i.e., different
-    words separted by dashes
+    words separated by dashes.
 
     @type string_value: String
     @param string_value: The string value to dasherize.
