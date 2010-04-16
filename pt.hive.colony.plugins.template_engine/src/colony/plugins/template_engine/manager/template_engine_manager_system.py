@@ -42,35 +42,35 @@ import re
 import template_engine_ast
 import template_engine_visitor
 
-START_TAG_VALUE = "\$\{[^\/\{}\{}][^\{\}][^\/\{}\{}]*\}"
-""" The start tag value """
+START_TAG_REGEX_VALUE = "\$\{[^\/\{}\{}][^\{\}][^\/\{}\{}]*\}"
+""" The start tag regex value """
 
-END_TAG_VALUE = "\$\{\/[^\{\}][^\/\{}\{}]*\}"
-""" The end tag value """
+END_TAG_REGEX_VALUE = "\$\{\/[^\{\}][^\/\{}\{}]*\}"
+""" The end tag regex value """
 
-SINGLE_TAG_VALUE = "\$\{[^\{\}]*\/\}"
-""" The single tag value """
+SINGLE_TAG_REGEX_VALUE = "\$\{[^\{\}]*\/\}"
+""" The single tag regex value """
 
-ATTRIBUTE_VALUE = "[a-zA-Z_]+=[a-zA-Z_][a-zA-Z0-9_\.\/]*"
-""" The attribute value """
+ATTRIBUTE_REGEX_VALUE = "[a-zA-Z_]+=[a-zA-Z_][a-zA-Z0-9_\.\/]*"
+""" The attribute regex value """
 
-ATTRIBUTE_QUOTED_VALUE = "[a-zA-Z_]+=\".+\""
-""" The attribute quoted value """
+ATTRIBUTE_QUOTED_REGEX_VALUE = "[a-zA-Z_]+=\".+\""
+""" The attribute quoted regex value """
 
-ATTRIBUTE_FLOAT_VALUE = "[a-zA-Z_]+=-?[0-9]+\.[0-9]*"
-""" The attribute float value """
+ATTRIBUTE_FLOAT_REGEX_VALUE = "[a-zA-Z_]+=-?[0-9]+\.[0-9]*"
+""" The attribute float regex value """
 
-ATTRIBUTE_INTEGER_VALUE = "[a-zA-Z_]+=-?[0-9]+"
-""" The attribute integer value """
+ATTRIBUTE_INTEGER_REGEX_VALUE = "[a-zA-Z_]+=-?[0-9]+"
+""" The attribute integer regex value """
 
-ATTRIBUTE_TRUE_BOOLEAN_VALUE = "[a-zA-Z_]+=True"
-""" The attribute true boolean value """
+ATTRIBUTE_TRUE_BOOLEAN_REGEX_VALUE = "[a-zA-Z_]+=True"
+""" The attribute true boolean regex value """
 
-ATTRIBUTE_FALSE_BOOLEAN_VALUE = "[a-zA-Z_]+=False"
-""" The attribute false boolean value """
+ATTRIBUTE_FALSE_BOOLEAN_REGEX_VALUE = "[a-zA-Z_]+=False"
+""" The attribute false boolean regex value """
 
-ATTRIBUTE_NONE_VALUE = "[a-zA-Z_]+=None"
-""" The attribute none value """
+ATTRIBUTE_NONE_REGEX_VALUE = "[a-zA-Z_]+=None"
+""" The attribute none regex value """
 
 START_VALUE = "start"
 """ The start value """
@@ -90,25 +90,25 @@ DEFAULT_ENCODING_VALUE = None
 DEFAULT_VARIABLE_ENCODING = "utf-8"
 """ The default variable encoding """
 
-START_TAG_REGEX_VALUE = re.compile(START_TAG_VALUE)
-""" The start tag regex value """
+START_TAG_REGEX = re.compile(START_TAG_REGEX_VALUE)
+""" The start tag regex """
 
-END_TAG_REGEX_VALUE = re.compile(END_TAG_VALUE)
-""" The end tag regex value """
+END_TAG_REGEX = re.compile(END_TAG_REGEX_VALUE)
+""" The end tag regex """
 
-SINGLE_TAG_REGEX_VALUE = re.compile(SINGLE_TAG_VALUE)
-""" The single tag regex value """
+SINGLE_TAG_REGEX = re.compile(SINGLE_TAG_REGEX_VALUE)
+""" The single tag regex """
 
-ATTRIBUTE_REGEX_VALUE = re.compile(ATTRIBUTE_VALUE)
-""" The attribute regex value """
+ATTRIBUTE_REGEX = re.compile(ATTRIBUTE_REGEX_VALUE)
+""" The attribute regex """
 
-ATTRIBUTE_LITERAL_REGEX_VALUE = re.compile("(?P<quoted>" + ATTRIBUTE_QUOTED_VALUE + ")|" +\
-                                           "(?P<float>" + ATTRIBUTE_FLOAT_VALUE + ")|" +\
-                                           "(?P<integer>" + ATTRIBUTE_INTEGER_VALUE + ")|" +\
-                                           "(?P<true_boolean>" + ATTRIBUTE_TRUE_BOOLEAN_VALUE + ")|" +\
-                                           "(?P<false_boolean>" + ATTRIBUTE_FALSE_BOOLEAN_VALUE + ")|" +\
-                                           "(?P<none>" + ATTRIBUTE_NONE_VALUE + ")")
-""" The literal regex value that matches all the literals """
+ATTRIBUTE_LITERAL_REGEX = re.compile("(?P<quoted>" + ATTRIBUTE_QUOTED_REGEX_VALUE + ")|" + \
+                                     "(?P<float>" + ATTRIBUTE_FLOAT_REGEX_VALUE + ")|" + \
+                                     "(?P<integer>" + ATTRIBUTE_INTEGER_REGEX_VALUE + ")|" + \
+                                     "(?P<true_boolean>" + ATTRIBUTE_TRUE_BOOLEAN_REGEX_VALUE + ")|" + \
+                                     "(?P<false_boolean>" + ATTRIBUTE_FALSE_BOOLEAN_REGEX_VALUE + ")|" + \
+                                     "(?P<none>" + ATTRIBUTE_NONE_REGEX_VALUE + ")")
+""" The literal regex that matches all the literals """
 
 class TemplateEngineManager:
     """
@@ -162,7 +162,7 @@ class TemplateEngineManager:
             file_contents = file_contents.decode(encoding)
 
         # retrieves the start matches iterator
-        start_matches_iterator = START_TAG_REGEX_VALUE.finditer(file_contents)
+        start_matches_iterator = START_TAG_REGEX.finditer(file_contents)
 
         # creates the match orderer list
         match_orderer_list = []
@@ -182,7 +182,7 @@ class TemplateEngineManager:
             match_orderer_list.append(start_math_orderer)
 
         # retrieves the end matches iterator
-        end_matches_iterator = END_TAG_REGEX_VALUE.finditer(file_contents)
+        end_matches_iterator = END_TAG_REGEX.finditer(file_contents)
 
         # iterates over all the end matches
         for end_match in end_matches_iterator:
@@ -199,7 +199,7 @@ class TemplateEngineManager:
             match_orderer_list.append(end_match_orderer)
 
         # retrieves the single matches iterator
-        single_matches_iterator = SINGLE_TAG_REGEX_VALUE.finditer(file_contents)
+        single_matches_iterator = SINGLE_TAG_REGEX.finditer(file_contents)
 
         # iterates over all the single matches
         for single_match in single_matches_iterator:
@@ -309,7 +309,7 @@ class TemplateEngineManager:
                 parent_node = tree_node_stack[-1]
 
                 # creates the composite node from the match orderer
-                composite_node = template_engine_ast.CompositeNode([match_orderer], ATTRIBUTE_REGEX_VALUE, ATTRIBUTE_LITERAL_REGEX_VALUE)
+                composite_node = template_engine_ast.CompositeNode([match_orderer], ATTRIBUTE_REGEX, ATTRIBUTE_LITERAL_REGEX)
 
                 # adds the composite node as a child to the parent node
                 parent_node.add_child_node(composite_node)
@@ -332,7 +332,7 @@ class TemplateEngineManager:
                 parent_node = tree_node_stack[-1]
 
                 # creates the single node from the match orderer
-                single_node = template_engine_ast.SingleNode(match_orderer, ATTRIBUTE_REGEX_VALUE, ATTRIBUTE_LITERAL_REGEX_VALUE)
+                single_node = template_engine_ast.SingleNode(match_orderer, ATTRIBUTE_REGEX, ATTRIBUTE_LITERAL_REGEX)
 
                 # adds the single node as a child to the parent node
                 parent_node.add_child_node(single_node)
