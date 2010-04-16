@@ -83,23 +83,23 @@ string_escape_re = re.compile(r"[\x00-\x19\\\"/\b\f\n\r\t]")
 digits_list = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 
 def escape_char(match):
-    c = match.group(0)
+    character = match.group(0)
     try:
-        replacement = char_replacements[c]
+        replacement = char_replacements[character]
         return replacement
     except KeyError:
-        d = ord(c)
+        d = ord(character)
         if d < 32:
             return "\\u%04x" % d
         else:
-            return c
+            return character
 
-def dumps_buffer(obj):
+def dumps_buffer(object):
     # creates the string buffer
     string_buffer = colony.libs.string_buffer_util.StringBuffer()
 
     # dumps the object parts to the string buffer
-    dump_parts_buffer(obj, string_buffer)
+    dump_parts_buffer(object, string_buffer)
 
     # retrieves the string value
     string_value = string_buffer.get_value()
@@ -107,28 +107,28 @@ def dumps_buffer(obj):
     # returns the string value
     return string_value
 
-def dumps(obj):
-    return "".join([part for part in dump_parts(obj)])
+def dumps(object):
+    return "".join([part for part in dump_parts(object)])
 
-def dump_parts_buffer(obj, string_buffer):
-    obj_type = type(obj)
-    if obj == None:
+def dump_parts_buffer(dumps, string_buffer):
+    object_type = type(dumps)
+    if object == None:
         string_buffer.write("null")
-    elif obj_type is types.FunctionType:
+    elif object_type is types.FunctionType:
         string_buffer.write("\"function\"")
-    elif obj_type is types.ModuleType:
+    elif object_type is types.ModuleType:
         string_buffer.write("\"module\"")
-    elif obj_type is types.MethodType:
+    elif object_type is types.MethodType:
         string_buffer.write("\"method\"")
-    elif obj_type is types.BooleanType:
-        if obj:
+    elif object_type is types.BooleanType:
+        if object:
             string_buffer.write("true")
         else:
             string_buffer.write("false")
-    elif obj_type is types.DictionaryType:
+    elif object_type is types.DictionaryType:
         string_buffer.write("{")
         is_first = True
-        for key, value in obj.items():
+        for key, value in object.items():
             if is_first:
                 is_first = False
             else:
@@ -137,30 +137,30 @@ def dump_parts_buffer(obj, string_buffer):
             string_buffer.write(":")
             dump_parts_buffer(value, string_buffer)
         string_buffer.write("}")
-    elif obj_type in types.StringTypes:
-        string_buffer.write("\"" + string_escape_re.sub(escape_char, obj) + "\"")
-    elif obj_type in SEQUENCE_TYPES:
+    elif object_type in types.StringTypes:
+        string_buffer.write("\"" + string_escape_re.sub(escape_char, object) + "\"")
+    elif object_type in SEQUENCE_TYPES:
         string_buffer.write("[")
         is_first = True
-        for item in obj:
+        for item in object:
             if is_first:
                 is_first = False
             else:
                 string_buffer.write(",")
             dump_parts_buffer(item, string_buffer)
         string_buffer.write("]")
-    elif obj_type in NUMBER_TYPES:
-        string_buffer.write(str(obj))
-    elif obj_type == datetime.datetime:
-        obj_time_tuple = obj.utctimetuple()
+    elif object_type in NUMBER_TYPES:
+        string_buffer.write(str(object))
+    elif object_type == datetime.datetime:
+        obj_time_tuple = object.utctimetuple()
         date_time_timestamp = calendar.timegm(obj_time_tuple)
         string_buffer.write(str(date_time_timestamp))
-    elif obj_type is types.InstanceType or hasattr(obj, "__class__"):
+    elif object_type is types.InstanceType or hasattr(object, "__class__"):
         string_buffer.write("{")
         is_first = True
-        obj_items = [value for value in dir(obj) if not value in EXCLUSION_MAP and not type(getattr(obj, value)) in EXCLUSION_TYPES]
+        obj_items = [value for value in dir(object) if not value in EXCLUSION_MAP and not type(getattr(object, value)) in EXCLUSION_TYPES]
         for obj_item in obj_items:
-            obj_value = getattr(obj, obj_item)
+            obj_value = getattr(object, obj_item)
             if is_first:
                 is_first = False
                 string_buffer.write("\"" + obj_item + "\"" + ":")
@@ -169,27 +169,27 @@ def dump_parts_buffer(obj, string_buffer):
             dump_parts_buffer(obj_value, string_buffer)
         string_buffer.write("}")
     else:
-        raise main_jsonrpc_manager_exceptions.JsonEncodeException(obj)
+        raise main_jsonrpc_manager_exceptions.JsonEncodeException(object)
 
-def dump_parts(obj):
-    obj_type = type(obj)
-    if obj == None:
+def dump_parts(object):
+    object_type = type(object)
+    if object == None:
         yield "null"
-    elif obj_type is types.FunctionType:
+    elif object_type is types.FunctionType:
         yield "\"function\""
-    elif obj_type is types.ModuleType:
+    elif object_type is types.ModuleType:
         yield "\"module\""
-    elif obj_type is types.MethodType:
+    elif object_type is types.MethodType:
         yield "\"method\""
-    elif obj_type is types.BooleanType:
-        if obj:
+    elif object_type is types.BooleanType:
+        if object:
             yield "true"
         else:
             yield "false"
-    elif obj_type is types.DictionaryType:
+    elif object_type is types.DictionaryType:
         yield "{"
         is_first = True
-        for key, value in obj.items():
+        for key, value in object.items():
             if is_first:
                 is_first = False
                 for part in dump_parts(key):
@@ -200,12 +200,12 @@ def dump_parts(obj):
             for part in dump_parts(value):
                 yield part
         yield "}"
-    elif obj_type in types.StringTypes:
-        yield "\"" + string_escape_re.sub(escape_char, obj) + "\""
-    elif obj_type in SEQUENCE_TYPES:
+    elif object_type in types.StringTypes:
+        yield "\"" + string_escape_re.sub(escape_char, object) + "\""
+    elif object_type in SEQUENCE_TYPES:
         yield "["
         is_first = True
-        for item in obj:
+        for item in object:
             if is_first:
                 is_first = False
             else:
@@ -213,18 +213,18 @@ def dump_parts(obj):
             for part in dump_parts(item):
                 yield part
         yield "]"
-    elif obj_type in NUMBER_TYPES:
-        yield unicode(obj)
-    elif obj_type == datetime.datetime:
-        obj_time_tuple = obj.utctimetuple()
+    elif object_type in NUMBER_TYPES:
+        yield unicode(object)
+    elif object_type == datetime.datetime:
+        obj_time_tuple = object.utctimetuple()
         date_time_timestamp = calendar.timegm(obj_time_tuple)
         yield unicode(date_time_timestamp)
-    elif obj_type is types.InstanceType or hasattr(obj, "__class__"):
+    elif object_type is types.InstanceType or hasattr(object, "__class__"):
         yield "{"
         is_first = True
-        obj_items = [value for value in dir(obj) if not value in EXCLUSION_MAP and not type(getattr(obj, value)) in EXCLUSION_TYPES]
+        obj_items = [value for value in dir(object) if not value in EXCLUSION_MAP and not type(getattr(object, value)) in EXCLUSION_TYPES]
         for obj_item in obj_items:
-            obj_value = getattr(obj, obj_item)
+            obj_value = getattr(object, obj_item)
             if is_first:
                 is_first = False
                 yield "\"" + obj_item + "\"" + ":"
@@ -234,11 +234,11 @@ def dump_parts(obj):
                 yield part
         yield "}"
     else:
-        raise main_jsonrpc_manager_exceptions.JsonEncodeException(obj)
+        raise main_jsonrpc_manager_exceptions.JsonEncodeException(object)
 
-def loads(s):
+def loads(string):
     stack = []
-    chars = iter(s)
+    chars = iter(string)
     value = None
     curr_char_is_next = False
 
@@ -246,70 +246,70 @@ def loads(s):
         while(1):
             skip = False
             if not curr_char_is_next:
-                c = chars.next()
-            while(c in [" ", "\t", "\r", "\n"]):
-                c = chars.next()
+                character = chars.next()
+            while(character in [" ", "\t", "\r", "\n"]):
+                character = chars.next()
             curr_char_is_next = False
 
             # in case it's the beginning of a string
-            if c == "\"":
+            if character == "\"":
                 value = ""
                 try:
-                    c = chars.next()
+                    character = chars.next()
 
                     # iterates while the string is not finished
-                    while c != "\"":
-                        if c == "\\":
-                            c = chars.next()
+                    while character != "\"":
+                        if character == "\\":
+                            character = chars.next()
                             try:
-                                value += escape_char_to_char[c]
+                                value += escape_char_to_char[character]
                             except KeyError:
-                                if c == "u":
+                                if character == "u":
                                     hex_code = chars.next() + chars.next() + chars.next() + chars.next()
                                     value += unichr(int(hex_code, 16))
                                 else:
                                     raise main_jsonrpc_manager_exceptions.JsonDecodeException("Bad Escape Sequence Found")
                         else:
-                            value += c
-                        c = chars.next()
+                            value += character
+                        character = chars.next()
                 except StopIteration:
                     raise main_jsonrpc_manager_exceptions.JsonDecodeException("Expected end of String")
-            elif c == "{":
+            elif character == "{":
                 stack.append({})
                 skip = True
-            elif c == "}":
+            elif character == "}":
                 value = stack.pop()
-            elif c == "[":
+            elif character == "[":
                 stack.append([])
                 skip = True
-            elif c == "]":
+            elif character == "]":
                 value = stack.pop()
-            elif c in [",", ":"]:
+            elif character in [",", ":"]:
                 skip = True
-            elif c in digits_list or c == "-":
-                digits = [c]
-                c = chars.next()
+            elif character in digits_list or character == "-":
+                digits = [character]
+                character = chars.next()
                 num_conv = int
                 try:
-                    while c in digits_list:
-                        digits.append(c)
-                        c = chars.next()
-                    if c == ".":
+                    while character in digits_list:
+                        digits.append(character)
+                        character = chars.next()
+                    if character == ".":
                         num_conv = float
-                        digits.append(c)
-                        c = chars.next()
-                        while c in digits_list:
-                            digits.append(c)
-                            c = chars.next()
-                        if c.upper() == "E":
-                            digits.append(c)
-                            c = chars.next()
-                            if c in ["+", "-"]:
-                                digits.append(c)
-                                c = chars.next()
-                                while c in digits_list:
-                                    digits.append(c)
-                                    c = chars.next()
+                        digits.append(character)
+                        character = chars.next()
+                        while character in digits_list:
+                            digits.append(character)
+                            character = chars.next()
+                        if character.upper() == "E":
+                            digits.append(character)
+                            character = chars.next()
+                            if character in ["+", "-"]:
+                                digits.append(character)
+                                character = chars.next()
+                                while character in digits_list:
+                                    digits.append(character)
+                                    character = chars.next()
                             else:
                                 raise main_jsonrpc_manager_exceptions.JsonDecodeException("Expected + or -")
                 except StopIteration:
@@ -317,8 +317,8 @@ def loads(s):
                 value = num_conv("".join(digits))
                 curr_char_is_next = True
 
-            elif c in ["t", "f", "n"]:
-                kw = c + chars.next() + chars.next() + chars.next()
+            elif character in ["t", "f", "n"]:
+                kw = character + chars.next() + chars.next() + chars.next()
                 if kw == "null":
                     value = None
                 elif kw == "true":
