@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import re
 import types
+import datetime
 
 import web_mvc_utils_exceptions
 
@@ -50,6 +51,12 @@ DEFAULT_ENCODING = "utf-8"
 
 DEFAULT_TEMPLATE_FILE_ENCODING = "Cp1252"
 """ The default template file encoding """
+
+DATE_FORMAT = "%Y/%m/%d"
+""" The date format """
+
+DATE_TIME_FORMAT = "%Y/%m/%d %H:%M:%S"
+""" The date time format """
 
 BASE_PATH_VALUE = "base_path"
 """ The base path value """
@@ -438,6 +445,40 @@ def set_template_engine_manager_plugin(self, template_engine_manager_plugin):
     """
 
     self.template_engine_manager_plugin = template_engine_manager_plugin
+
+def _parse_date(self, date_string_value):
+    """
+    Parses a string encoded in date format, converting it
+    into a datetime object.
+
+    @type date_string_value: String
+    @param date_string_value: The date encoded string.
+    @rtype: datetime
+    @return: The date time object representing the string value.
+    """
+
+    # converts the date string value to a date time object
+    date_time_value = datetime.datetime.strptime(date_string_value, DATE_FORMAT)
+
+    # returns the date time value
+    return date_time_value
+
+def _parse_date_time(self, date_time_string_value):
+    """
+    Parses a string encoded in date time format, converting it
+    into a datetime object.
+
+    @type date_time_string_value: String
+    @param date_time_string_value: The date time encoded string.
+    @rtype: datetime
+    @return: The date time object representing the string value.
+    """
+
+    # converts the date time string value to a date time object
+    date_time_value = datetime.datetime.strptime(date_time_string_value, DATE_TIME_FORMAT)
+
+    # returns the date time value
+    return date_time_value
 
 def _dasherize(self, string_value):
     """
