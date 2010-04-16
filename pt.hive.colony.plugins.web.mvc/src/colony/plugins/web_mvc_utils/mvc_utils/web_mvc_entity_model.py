@@ -44,3 +44,7 @@ def save(self):
 def update(self):
     # updates the entity using the entity manager
     self.entity_manager.update(self)
+
+def remove(self):
+    # removes the entity using the entity manager
+    self.entity_manager.remove(self)
