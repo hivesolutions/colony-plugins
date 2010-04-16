@@ -458,15 +458,15 @@ class MainServiceHttp:
         # stops the pool
         self.http_client_thread_pool.stop_pool()
 
-    def http_service_handler_load(self, service_handler_plugin):
+    def http_service_handler_load(self, http_service_handler_plugin):
         # retrieves the plugin handler name
-        handler_name = service_handler_plugin.get_handler_name()
+        handler_name = http_service_handler_plugin.get_handler_name()
 
-        self.http_service_handler_plugins_map[handler_name] = service_handler_plugin
+        self.http_service_handler_plugins_map[handler_name] = http_service_handler_plugin
 
-    def http_service_handler_unload(self, service_handler_plugin):
+    def http_service_handler_unload(self, http_service_handler_plugin):
         # retrieves the plugin handler name
-        handler_name = service_handler_plugin.get_handler_name()
+        handler_name = http_service_handler_plugin.get_handler_name()
 
         del self.http_service_handler_plugins_map[handler_name]
 
