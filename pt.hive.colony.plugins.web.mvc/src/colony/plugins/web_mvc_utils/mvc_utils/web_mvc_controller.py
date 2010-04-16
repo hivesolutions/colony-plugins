@@ -66,8 +66,8 @@ SEQUENCE_TYPE_VALUE = "sequence"
 MAP_TYPE_VALUE = "map"
 """ The map type value """
 
-UNDERSCORED_WORD_PAIR_REPLACEMENT_VALUE = "\\1_\\2"
-""" The replacement value for two capture groups to be separated by underscore """
+DASHED_WORD_PAIR_REPLACEMENT_VALUE = "\\1-\\2"
+""" The replacement value for two capture groups to be separated by dash """
 
 DASH_VALUE = "-"
 """ The dash value """
@@ -75,26 +75,14 @@ DASH_VALUE = "-"
 ATTRIBUTE_PARSING_REGEX_VALUE = r"(?P<name>\w+)|(?P<sequence>\[\])|(?P<map>\[\w+\])"
 """ The attribute parsing regular expression value """
 
-CAPITALIZED_CAMEL_CASED_WORD_PAIR_REGEX_VALUE = "([A-Z]+)([A-Z][a-z])"
-""" The capitalized camel cased word pair regex value """
-
 CAMEL_CASED_WORD_PAIR_REGEX_VALUE = "([a-z\d])([A-Z])"
 """ The camel cased word pair regex value """
-
-NON_CHARACTER_REGEX_VALUE = "[^A-Z^a-z^0-9^\/]+"
-""" The non-character regex value """
 
 ATTRIBUTE_PARSING_REGEX = re.compile(ATTRIBUTE_PARSING_REGEX_VALUE)
 """ The attribute parsing regex """
 
-CAPITALIZED_CAMEL_CASED_WORD_PAIR_REGEX = re.compile(CAPITALIZED_CAMEL_CASED_WORD_PAIR_REGEX_VALUE)
-""" The capitalized camel cased word pair regex """
-
 CAMEL_CASED_WORD_PAIR_REGEX = re.compile(CAMEL_CASED_WORD_PAIR_REGEX_VALUE)
 """ The camel cased word pair regex """
-
-NON_CHARACTER_REGEX = re.compile(NON_CHARACTER_REGEX_VALUE)
-""" The non-character regex """
 
 def _start_controller(self):
     """
@@ -453,26 +441,18 @@ def set_template_engine_manager_plugin(self, template_engine_manager_plugin):
 
 def _dasherize(self, string_value):
     """
-    Converts a string value with multiple words in either camel case or
-    separated by underscores to a dasherized notation, i.e., different
-    words separated by dashes.
+    Converts a string value with multiple words in either camel case to
+    a dasherized notation, i.e., different words separted by dashes.
 
     @type string_value: String
-    @param string_value: The string value to dasherize.
+    @param string_value: The string value to dasherize, in camel case and without consecutive capitals.
     @rtype: String
     @return: The dasherized string value.
     """
 
     # inserts underscore between changes of letter cases
     # for string value starting with capitals
-    camel_cased_underscored_string_value = CAPITALIZED_CAMEL_CASED_WORD_PAIR_REGEX.sub(UNDERSCORED_WORD_PAIR_REPLACEMENT_VALUE, string_value)
-
-    # inserts underscore between changes of letter cases
-    # for string values starting with lower case
-    camel_cased_underscored_string_value = CAMEL_CASED_WORD_PAIR_REGEX.sub(UNDERSCORED_WORD_PAIR_REPLACEMENT_VALUE, camel_cased_underscored_string_value)
-
-    # replaces the non-character matches with dashes
-    camel_case_dasherized_string_value = NON_CHARACTER_REGEX.sub(DASH_VALUE, camel_cased_underscored_string_value)
+    camel_case_dasherized_string_value = CAMEL_CASED_WORD_PAIR_REGEX.sub(DASHED_WORD_PAIR_REPLACEMENT_VALUE, string_value)
 
     # lowers the case of the string_value
     dasherized_string_value = camel_case_dasherized_string_value.lower()
