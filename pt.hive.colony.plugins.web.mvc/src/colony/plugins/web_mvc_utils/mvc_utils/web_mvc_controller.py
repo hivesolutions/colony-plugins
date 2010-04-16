@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt>"
+__author__ = "João Magalhães <joamag@hive.pt> & Luís Martinho <lmartinho@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
@@ -71,6 +71,30 @@ ATTRIBUTE_PARSING_REGEX_VALUE = r"(?P<name>\w+)|(?P<sequence>\[\])|(?P<map>\[\w+
 
 ATTRIBUTE_PARSING_REGEX = re.compile(ATTRIBUTE_PARSING_REGEX_VALUE)
 """ The attribute parsing regex """
+
+CAPITALIZED_CAMEL_CASED_WORD_PAIR_REGEX_VALUE = "([A-Z]+)([A-Z][a-z])"
+""" The capitalized camel cased word pair regex value """
+
+CAMEL_CASED_WORD_PAIR_REGEX_VALUE = "([a-z\d])([A-Z])"
+""" The camel cased word pair regex value """
+
+NON_CHARACTER_REGEX_VALUE = "[^A-Z^a-z^0-9^\/]+"
+""" The non-character regex value """
+
+UNDERSCORED_WORD_PAIR_REPLACEMENT_VALUE = "\\1_\\2"
+""" The replacement value for two capture groups to be separated by underscore """
+
+DASH_VALUE = "-"
+""" The dash value """
+
+CAPITALIZED_CAMEL_CASED_WORD_PAIR_REGEX = re.compile(CAPITALIZED_CAMEL_CASED_WORD_PAIR_REGEX_VALUE)
+""" The capitalized camel cased word pair regex """
+
+CAMEL_CASED_WORD_PAIR_REGEX = re.compile(CAMEL_CASED_WORD_PAIR_REGEX_VALUE)
+""" The camel cased word pair regex """
+
+NON_CHARACTER_REGEX = re.compile(NON_CHARACTER_REGEX_VALUE)
+""" The non-character regex """
 
 def _start_controller(self):
     """
@@ -426,6 +450,24 @@ def set_template_engine_manager_plugin(self, template_engine_manager_plugin):
     """
 
     self.template_engine_manager_plugin = template_engine_manager_plugin
+
+def _dasherize(self, word):
+    # inserts underscore between changes of letter cases
+    # for words starting with capitals
+    camel_cased_underscored_word = CAPITALIZED_CAMEL_CASED_WORD_PAIR_REGEX.sub(UNDERSCORED_WORD_PAIR_REPLACEMENT_VALUE, word)
+
+    # inserts underscore between changes of letter cases
+    # for words starting with lower case
+    camel_cased_underscored_word = CAMEL_CASED_WORD_PAIR_REGEX.sub(UNDERSCORED_WORD_PAIR_REPLACEMENT_VALUE, camel_cased_underscored_word)
+
+    # replaces the non-character matches with dashes
+    camel_case_dasherized_word = NON_CHARACTER_REGEX.sub(DASH_VALUE, camel_cased_underscored_word)
+
+    # lowers the case of the word
+    dasherized_word = camel_case_dasherized_word.lower()
+
+    # returns the dasherized word
+    return dasherized_word
 
 def _process_form_attribute(self, parent_structure, current_attribute_name, attribute_value, index = 0):
     """
