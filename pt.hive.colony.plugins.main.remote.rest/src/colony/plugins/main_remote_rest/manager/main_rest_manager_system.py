@@ -95,8 +95,8 @@ PATH_VALUE = "path"
 DOMAIN_VALUE = "domain"
 """ The domain value """
 
-LOCALHOST_VALUE = "localhost"
-""" The localhost value """
+LOCALHOST_VALUES = ["localhost", "127.0.0.1"]
+""" The localhost values """
 
 HOST_VALUE = "Host"
 """ The host value """
@@ -1387,7 +1387,7 @@ class RestSession:
         self.cookie.set_attribute(PATH_VALUE, DEFAULT_PATH)
 
         # in case the domain is local
-        if domain == LOCALHOST_VALUE:
+        if domain in LOCALHOST_VALUES:
             # sets the domain in the cookie
             self.cookie.set_attribute(DOMAIN_VALUE, "")
         # in case the domain is "valid" and sub domains
