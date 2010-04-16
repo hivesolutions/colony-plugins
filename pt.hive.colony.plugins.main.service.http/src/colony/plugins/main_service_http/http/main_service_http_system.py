@@ -1308,6 +1308,14 @@ class HttpClientServiceTask:
         # retrieves the base service configuration
         service_configuration = self.service_configuration
 
+        # retrieves the verify request flag
+        verify_request = service_configuration.get("verify_request", True)
+
+        # in case the request is not meant to be verified
+        if not verify_request:
+            # returns immediately
+            return
+
         # retrieves the host value from the request headers
         host = request.headers_map.get(HOST_VALUE, None)
 
