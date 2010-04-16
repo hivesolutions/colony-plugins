@@ -52,6 +52,12 @@ DEFAULT_ENCODING = "utf-8"
 DEFAULT_TEMPLATE_FILE_ENCODING = "Cp1252"
 """ The default template file encoding """
 
+HTTP_PREFIX_VALUE = "http://"
+""" The http prefix value """
+
+HTTPS_PREFIX_VALUE = "https://"
+""" The https prefix value """
+
 DATE_FORMAT = "%Y/%m/%d"
 """ The date format """
 
@@ -72,6 +78,9 @@ SEQUENCE_TYPE_VALUE = "sequence"
 
 MAP_TYPE_VALUE = "map"
 """ The map type value """
+HOST_VALUE = "Host"
+""" The host value """
+
 DASHED_WORD_PAIR_REPLACEMENT_VALUE = "\\1-\\2"
 """ The replacement value for two capture groups to be separated by dash """
 
@@ -462,6 +471,68 @@ def set_template_engine_manager_plugin(self, template_engine_manager_plugin):
     """
 
     self.template_engine_manager_plugin = template_engine_manager_plugin
+
+def _get_host(self, rest_request, prefix_path = None):
+    """
+    Retrieves the host for the current request prepended
+    with the given prefix path.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @type prefix_path: String
+    @param prefix_path: The prefix path to be prepended to the
+    host value.
+    @rtype: String
+    @return: The current host (name) for the given request.
+    """
+
+    # retrieves the host value from the request headers
+    host = rest_request.request.headers_map.get(HOST_VALUE, None)
+
+    # in case there is a prefix path defined
+    if prefix_path:
+        # prepends the prefix path to the host
+        host = prefix_path + host
+
+    # returns the host
+    return host
+
+def _get_host_path(self, rest_request, suffix_path, prefix_path = HTTP_PREFIX_VALUE):
+    """
+    Retrieves the complete host path to the current rest request.
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @type suffix_path: String
+    @param suffix_path: The suffix path to be appended.
+    @type prefix_path: String
+    @param prefix_path: The prefix path to be prepended.
+    @rtype: String
+    @return: The complete host path to the current rest request.
+    """
+
+    # tries retrieves the host value
+    host = self._get_host(rest_request)
+
+    # in case no host is defined
+    if not host:
+        # raises the insufficient http information exception
+        raise web_mvc_utils_exceptions.InsufficientHttpInformation("no host value defined")
+
+    # retrieves the base path as the path from the request
+    path = rest_request.request.base_path
+
+    # in case the (base) path is not valid (no http server redirection)
+    if not path:
+        # sets the request path as the path
+        path = rest_request.request.path
+
+    # creates the host path with the prefix path the host the first part
+    # of the host split and the suffix path
+    host_path = prefix_path + host + path.rsplit("/", 1)[0] + suffix_path
+
+    # returns the host path
+    return host_path
 
 def _parse_date(self, date_string_value):
     """

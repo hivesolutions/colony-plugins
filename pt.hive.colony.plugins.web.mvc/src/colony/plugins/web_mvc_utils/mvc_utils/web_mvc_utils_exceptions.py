@@ -96,3 +96,29 @@ class InvalidAttributeName(WebMvcUtilsExceptionException):
         """
 
         return "Invalid attribute name: %s" % self.message
+
+class InsufficientHttpInformation(WebMvcUtilsExceptionException):
+    """
+    The insufficient http information error class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        WebMvcUtilsExceptionException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Insufficient http information: %s" % self.message
