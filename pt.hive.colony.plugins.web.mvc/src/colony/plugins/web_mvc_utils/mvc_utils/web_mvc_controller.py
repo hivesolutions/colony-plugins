@@ -472,6 +472,18 @@ def set_template_engine_manager_plugin(self, template_engine_manager_plugin):
 
     self.template_engine_manager_plugin = template_engine_manager_plugin
 
+def _get_path(self, rest_request):
+    # retrieves the base path as the path from the request
+    path = rest_request.request.base_path
+
+    # in case the (base) path is not valid (no http server redirection)
+    if not path:
+        # sets the request path as the path
+        path = rest_request.request.path
+
+    # returns the path
+    return path
+
 def _get_host(self, rest_request, prefix_path = None):
     """
     Retrieves the host for the current request prepended
@@ -497,7 +509,7 @@ def _get_host(self, rest_request, prefix_path = None):
     # returns the host
     return host
 
-def _get_host_path(self, rest_request, suffix_path, prefix_path = HTTP_PREFIX_VALUE):
+def _get_host_path(self, rest_request, suffix_path = "", prefix_path = HTTP_PREFIX_VALUE):
     """
     Retrieves the complete host path to the current rest request.
 
@@ -519,13 +531,8 @@ def _get_host_path(self, rest_request, suffix_path, prefix_path = HTTP_PREFIX_VA
         # raises the insufficient http information exception
         raise web_mvc_utils_exceptions.InsufficientHttpInformation("no host value defined")
 
-    # retrieves the base path as the path from the request
-    path = rest_request.request.base_path
-
-    # in case the (base) path is not valid (no http server redirection)
-    if not path:
-        # sets the request path as the path
-        path = rest_request.request.path
+    # retrieves the path
+    path = self._get_path(rest_request)
 
     # creates the host path with the prefix path the host the first part
     # of the host split and the suffix path
