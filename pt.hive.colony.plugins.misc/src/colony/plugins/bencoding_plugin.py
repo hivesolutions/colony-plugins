@@ -39,33 +39,33 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.plugins.plugin_system
 
-class JsonPlugin(colony.plugins.plugin_system.Plugin):
+class BencodingPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Json plugin.
+    The main class for the Bencoding plugin.
     """
 
-    id = "pt.hive.colony.plugins.misc.json"
-    name = "Json Plugin"
-    short_name = "Json"
-    description = "A plugin to serialize and unserialize json files"
+    id = "pt.hive.colony.plugins.misc.bencoding"
+    name = "Bencoding Plugin"
+    short_name = "Bencoding"
+    description = "A plugin to serialize and unserialize bencoding files"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["json"]
+    capabilities = ["bencoding"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["misc.json.json_exceptions", "misc.json.json_serializer", "misc.json.json_system"]
+    main_modules = ["misc.bencoding.bencoding_exceptions", "misc.bencoding.bencoding_serializer", "misc.bencoding.bencoding_system"]
 
-    json_system = None
+    bencoding_system = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global misc
-        import misc.json.json_system
-        self.json_system = misc.json.json_system.Json(self)
+        import misc.bencoding.bencoding_system
+        self.bencoding_system = misc.bencoding.bencoding_system.Bencoding(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -86,10 +86,10 @@ class JsonPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def dumps(self, object):
-        return self.json_system.dumps(object)
+        return self.bencoding_system.dumps(object)
 
-    def loads(self, json_string):
-        return self.json_system.loads(json_string)
+    def loads(self, bencoding_string):
+        return self.bencoding_system.loads(bencoding_string)
 
-    def load_file(self, json_file):
-        return self.json_system.load_file(json_file)
+    def load_file(self, bencoding_file):
+        return self.bencoding_system.load_file(bencoding_file)

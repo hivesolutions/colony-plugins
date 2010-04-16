@@ -37,41 +37,35 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import json_serializer
+import bencoding_serializer
 
-DEFAULT_ENCODER = "utf-8"
-""" The default encoder """
-
-class Json:
+class Bencoding:
     """
-    Provides functions to interact with json.
+    Provides functions to interact with bencoding.
     """
 
-    json_plugin = None
-    """ The json plugin """
+    bencoding_plugin = None
+    """ The bencoding plugin """
 
-    def __init__(self, json_plugin):
+    def __init__(self, bencoding_plugin):
         """
         Constructor of the class.
 
-        @type json_plugin: JsonPlugin
-        @param json_plugin: The json plugin.
+        @type bencoding_plugin: BencodingPlugin
+        @param bencoding_plugin: The bencoding plugin.
         """
 
-        self.json_plugin = json_plugin
+        self.bencoding_plugin = bencoding_plugin
 
     def dumps(self, object):
-        return json_serializer.dumps(object)
+        return bencoding_serializer.dumps(object)
 
-    def loads(self, json_string):
-        return json_serializer.loads(json_string)
+    def loads(self, bencoding_string):
+        return bencoding_serializer.loads(bencoding_string)
 
-    def load_file(self, json_file):
-        # reads the json file
-        json_file_contents = json_file.read()
+    def load_file(self, bencoding_file):
+        # reads the bencoding file
+        bencoding_file_contents = bencoding_file.read()
 
-        # decodes the json file contents using the default encoder
-        json_file_contents_encoded = json_file_contents.decode(DEFAULT_ENCODER)
-
-        # loads the json file contents
-        return self.loads(json_file_contents_encoded)
+        # loads the bencoding file contents
+        return self.loads(bencoding_file_contents)
