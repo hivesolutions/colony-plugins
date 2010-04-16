@@ -43,34 +43,34 @@ import template_engine_ast
 import template_engine_visitor
 
 START_TAG_REGEX_VALUE = "\$\{[^\/\{}\{}][^\{\}][^\/\{}\{}]*\}"
-""" The start tag regex value """
+""" The start tag regular expression value """
 
 END_TAG_REGEX_VALUE = "\$\{\/[^\{\}][^\/\{}\{}]*\}"
-""" The end tag regex value """
+""" The end tag regular expression value """
 
 SINGLE_TAG_REGEX_VALUE = "\$\{[^\{\}]*\/\}"
-""" The single tag regex value """
+""" The single tag regular expression value """
 
 ATTRIBUTE_REGEX_VALUE = "[a-zA-Z_]+=[a-zA-Z_][a-zA-Z0-9_\.\/]*"
-""" The attribute regex value """
+""" The attribute regular expression value """
 
 ATTRIBUTE_QUOTED_REGEX_VALUE = "[a-zA-Z_]+=\".+\""
-""" The attribute quoted regex value """
+""" The attribute quoted regular expression value """
 
 ATTRIBUTE_FLOAT_REGEX_VALUE = "[a-zA-Z_]+=-?[0-9]+\.[0-9]*"
-""" The attribute float regex value """
+""" The attribute float regular expression value """
 
 ATTRIBUTE_INTEGER_REGEX_VALUE = "[a-zA-Z_]+=-?[0-9]+"
-""" The attribute integer regex value """
+""" The attribute integer regular expression value """
 
 ATTRIBUTE_TRUE_BOOLEAN_REGEX_VALUE = "[a-zA-Z_]+=True"
-""" The attribute true boolean regex value """
+""" The attribute true boolean regular expression value """
 
 ATTRIBUTE_FALSE_BOOLEAN_REGEX_VALUE = "[a-zA-Z_]+=False"
-""" The attribute false boolean regex value """
+""" The attribute false boolean regular expression value """
 
 ATTRIBUTE_NONE_REGEX_VALUE = "[a-zA-Z_]+=None"
-""" The attribute none regex value """
+""" The attribute none regular expression value """
 
 START_VALUE = "start"
 """ The start value """
@@ -91,16 +91,16 @@ DEFAULT_VARIABLE_ENCODING = "utf-8"
 """ The default variable encoding """
 
 START_TAG_REGEX = re.compile(START_TAG_REGEX_VALUE)
-""" The start tag regex """
+""" The start tag regular expression """
 
 END_TAG_REGEX = re.compile(END_TAG_REGEX_VALUE)
-""" The end tag regex """
+""" The end tag regular expression """
 
 SINGLE_TAG_REGEX = re.compile(SINGLE_TAG_REGEX_VALUE)
-""" The single tag regex """
+""" The single tag regular expression """
 
 ATTRIBUTE_REGEX = re.compile(ATTRIBUTE_REGEX_VALUE)
-""" The attribute regex """
+""" The attribute regular expression """
 
 ATTRIBUTE_LITERAL_REGEX = re.compile("(?P<quoted>" + ATTRIBUTE_QUOTED_REGEX_VALUE + ")|" + \
                                      "(?P<float>" + ATTRIBUTE_FLOAT_REGEX_VALUE + ")|" + \
@@ -108,7 +108,7 @@ ATTRIBUTE_LITERAL_REGEX = re.compile("(?P<quoted>" + ATTRIBUTE_QUOTED_REGEX_VALU
                                      "(?P<true_boolean>" + ATTRIBUTE_TRUE_BOOLEAN_REGEX_VALUE + ")|" + \
                                      "(?P<false_boolean>" + ATTRIBUTE_FALSE_BOOLEAN_REGEX_VALUE + ")|" + \
                                      "(?P<none>" + ATTRIBUTE_NONE_REGEX_VALUE + ")")
-""" The literal regex that matches all the literals """
+""" The literal regular expression that matches all the literals """
 
 class TemplateEngineManager:
     """
