@@ -270,7 +270,7 @@ class MatchNode(AstNode):
             # in case it's boolean and false
             elif attribute_group_index == 5:
                 attribute_literal_value = False
-            # in case it's null
+            # in case it's none
             elif attribute_group_index == 6:
                 attribute_literal_value = None
 

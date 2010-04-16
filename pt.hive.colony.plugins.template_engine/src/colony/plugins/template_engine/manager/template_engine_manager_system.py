@@ -69,8 +69,8 @@ ATTRIBUTE_TRUE_BOOLEAN_VALUE = "[a-zA-Z_]+=True"
 ATTRIBUTE_FALSE_BOOLEAN_VALUE = "[a-zA-Z_]+=False"
 """ The attribute false boolean value """
 
-ATTRIBUTE_NULL_VALUE = "[a-zA-Z_]+=null"
-""" The attribute null value """
+ATTRIBUTE_NONE_VALUE = "[a-zA-Z_]+=None"
+""" The attribute none value """
 
 START_VALUE = "start"
 """ The start value """
@@ -107,7 +107,7 @@ ATTRIBUTE_LITERAL_REGEX_VALUE = re.compile("(?P<quoted>" + ATTRIBUTE_QUOTED_VALU
                                            "(?P<integer>" + ATTRIBUTE_INTEGER_VALUE + ")|" +\
                                            "(?P<true_boolean>" + ATTRIBUTE_TRUE_BOOLEAN_VALUE + ")|" +\
                                            "(?P<false_boolean>" + ATTRIBUTE_FALSE_BOOLEAN_VALUE + ")|" +\
-                                           "(?P<null>" + ATTRIBUTE_NULL_VALUE + ")")
+                                           "(?P<none>" + ATTRIBUTE_NONE_VALUE + ")")
 """ The literal regex value that matches all the literals """
 
 class TemplateEngineManager:
