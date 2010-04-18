@@ -153,7 +153,7 @@ def _dechunk(chunks):
 
         # iterates while the map end
         # is not reached
-        while item != "e":
+        while not item == "e":
             # adds the item to the chunks list
             # to be able to parse it bellow
             chunks.append(item)
@@ -164,51 +164,82 @@ def _dechunk(chunks):
             # retrieves the map value
             map[key] = _dechunk(chunks)
 
-            # pops the item from the chunks list
+            # removes the item from the chunks list
             item = chunks.pop()
 
         # returns the map
         return map
-
     # in case the current item is a list
     elif item == "l":
+        # retrieves an item from the
+        # chunks list
         item = chunks.pop()
 
         # creates the empty list
         list = []
 
+        # iterates while the list end
+        # is not reached
         while not item == "e":
+            # adds the item to the chunks list
+            # to be able to parse it bellow
             chunks.append(item)
+
+            # adds the "dechunked" chunk to the list
             list.append(_dechunk(chunks))
+
+            # removes the item from the chunks list
             item = chunks.pop()
 
         # returns the list
         return list
-
     # in case the current item is an integer
     elif item == "i":
+        # retrieves an item from the
+        # chunks list
         item = chunks.pop()
+
+        # sets the initial number value
         number = ""
 
-        while item != "e":
-            number  += item
-            item = chunks.pop()
-
-        return int(number)
-
-    elif (DECIMAL_REGEX.findall(item)):
-        number = ""
-
-        while DECIMAL_REGEX.findall(item):
+        # iterates while the integer end
+        # is not reached
+        while not item == "e":
+            # adds the item character to
+            # the number value
             number += item
+
+            # removes the item from the chunks list
             item = chunks.pop()
 
-        line = ""
+        # returns the integer converted value
+        return int(number)
+    # in case the current item is a string (starts with
+    # the string size integer)
+    elif DECIMAL_REGEX.findall(item):
+        # sets the initial number value
+        number = ""
 
+        # iterates throughout the string size integer
+        while DECIMAL_REGEX.findall(item):
+            # adds the item character to
+            # the number value
+            number += item
+
+            # removes the item from the chunks list
+            item = chunks.pop()
+
+        # starts the string value
+        string_value = ""
+
+        # iterates over the string value size
         for _index in range(1, int(number) + 1):
-            line += chunks.pop()
+            # adds the character to the string value
+            # and removes it from the chunks list
+            string_value += chunks.pop()
 
-        return line
+        # returns the string value
+        return string_value
 
     # raises the bencode decode exception
     raise bencode_exceptions.BencodeDecodeException("data type not defined: " + str(item))
