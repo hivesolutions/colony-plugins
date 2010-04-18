@@ -42,7 +42,7 @@ import types
 
 import colony.libs.string_buffer_util
 
-import bencoding_exceptions
+import bencode_exceptions
 
 LIST_TYPES = [types.ListType, types.TupleType]
 """ The list types """
@@ -120,8 +120,8 @@ def _chunk(chunk, string_buffer):
         # string buffer
         string_buffer.write("e")
     else:
-        # raises the bencoding encode exception
-        raise bencoding_exceptions.BencodingEncodeException("data type not defined: " + str(chunk))
+        # raises the bencode encode exception
+        raise bencode_exceptions.BencodeEncodeException("data type not defined: " + str(chunk))
 
 def loads(data):
     # creates a list from the data
@@ -210,5 +210,5 @@ def _dechunk(chunks):
 
         return line
 
-    # raises the bencoding decode exception
-    raise bencoding_exceptions.BencodingDecodeException("data type not defined: " + str(item))
+    # raises the bencode decode exception
+    raise bencode_exceptions.BencodeDecodeException("data type not defined: " + str(item))

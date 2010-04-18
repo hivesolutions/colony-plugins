@@ -37,35 +37,35 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import bencoding_serializer
+import bencode_serializer
 
-class Bencoding:
+class Bencode:
     """
-    Provides functions to interact with bencoding.
+    Provides functions to interact with bencode.
     """
 
-    bencoding_plugin = None
-    """ The bencoding plugin """
+    bencode_plugin = None
+    """ The bencode plugin """
 
-    def __init__(self, bencoding_plugin):
+    def __init__(self, bencode_plugin):
         """
         Constructor of the class.
 
-        @type bencoding_plugin: BencodingPlugin
-        @param bencoding_plugin: The bencoding plugin.
+        @type bencode_plugin: BencodePlugin
+        @param bencode_plugin: The bencode plugin.
         """
 
-        self.bencoding_plugin = bencoding_plugin
+        self.bencode_plugin = bencode_plugin
 
     def dumps(self, object):
-        return bencoding_serializer.dumps(object)
+        return bencode_serializer.dumps(object)
 
-    def loads(self, bencoding_string):
-        return bencoding_serializer.loads(bencoding_string)
+    def loads(self, bencode_string):
+        return bencode_serializer.loads(bencode_string)
 
-    def load_file(self, bencoding_file):
-        # reads the bencoding file
-        bencoding_file_contents = bencoding_file.read()
+    def load_file(self, bencode_file):
+        # reads the bencode file
+        bencode_file_contents = bencode_file.read()
 
-        # loads the bencoding file contents
-        return self.loads(bencoding_file_contents)
+        # loads the bencode file contents
+        return self.loads(bencode_file_contents)

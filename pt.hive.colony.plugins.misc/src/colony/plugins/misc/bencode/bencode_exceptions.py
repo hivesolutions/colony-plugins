@@ -37,17 +37,17 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class BencodingException(Exception):
+class BencodeException(Exception):
     """
-    The bencoding exception class.
+    The bencode exception class.
     """
 
     message = None
     """ The exception's message """
 
-class BencodingEncodeException(BencodingException):
+class BencodeEncodeException(BencodeException):
     """
-    The bencoding encode exception class.
+    The bencode encode exception class.
     """
 
     def __init__(self, object):
@@ -58,7 +58,7 @@ class BencodingEncodeException(BencodingException):
         @param object: The object containing the encoding problems.
         """
 
-        BencodingException.__init__(self)
+        BencodeException.__init__(self)
         self.object = object
 
     def __str__(self):
@@ -71,9 +71,9 @@ class BencodingEncodeException(BencodingException):
 
         return "Object not encodeable: %s" % self.object
 
-class BencodingDecodeException(BencodingException):
+class BencodeDecodeException(BencodeException):
     """
-    The json decode exception class.
+    The bencode decode exception class.
     """
 
     def __init__(self, message):
@@ -84,7 +84,7 @@ class BencodingDecodeException(BencodingException):
         @param message: The message to be printed.
         """
 
-        BencodingException.__init__(self)
+        BencodeException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -95,4 +95,4 @@ class BencodingDecodeException(BencodingException):
         @return: The string representation of the class.
         """
 
-        return "Bencoding data not decodable: %s" % self.message
+        return "Bencode data not decodable: %s" % self.message

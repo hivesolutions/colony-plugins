@@ -39,33 +39,33 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.plugins.plugin_system
 
-class BencodingPlugin(colony.plugins.plugin_system.Plugin):
+class BencodePlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Bencoding plugin.
+    The main class for the Bencode plugin.
     """
 
-    id = "pt.hive.colony.plugins.misc.bencoding"
-    name = "Bencoding Plugin"
-    short_name = "Bencoding"
-    description = "A plugin to serialize and unserialize bencoding files"
+    id = "pt.hive.colony.plugins.misc.bencode"
+    name = "Bencode Plugin"
+    short_name = "Bencode"
+    description = "A plugin to serialize and unserialize bencode files"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["bencoding"]
+    capabilities = ["bencode"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["misc.bencoding.bencoding_exceptions", "misc.bencoding.bencoding_serializer", "misc.bencoding.bencoding_system"]
+    main_modules = ["misc.bencode.bencode_exceptions", "misc.bencode.bencode_serializer", "misc.bencode.bencode_system"]
 
-    bencoding_system = None
+    bencode_system = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global misc
-        import misc.bencoding.bencoding_system
-        self.bencoding_system = misc.bencoding.bencoding_system.Bencoding(self)
+        import misc.bencode.bencode_system
+        self.bencode_system = misc.bencode.bencode_system.Bencode(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -86,10 +86,10 @@ class BencodingPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def dumps(self, object):
-        return self.bencoding_system.dumps(object)
+        return self.bencode_system.dumps(object)
 
-    def loads(self, bencoding_string):
-        return self.bencoding_system.loads(bencoding_string)
+    def loads(self, bencode_string):
+        return self.bencode_system.loads(bencode_string)
 
-    def load_file(self, bencoding_file):
-        return self.bencoding_system.load_file(bencoding_file)
+    def load_file(self, bencode_file):
+        return self.bencode_system.load_file(bencode_file)
