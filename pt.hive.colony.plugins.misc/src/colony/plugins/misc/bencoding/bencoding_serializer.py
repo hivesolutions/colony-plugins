@@ -38,8 +38,14 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import re
+import types
+
+import colony.libs.string_buffer_util
 
 import bencoding_exceptions
+
+LIST_TYPES = [types.ListType, types.TupleType]
+""" The list types """
 
 DECIMAL_REGEX_VALUE = "\d"
 """ The decimal regular expression value """
@@ -48,7 +54,74 @@ DECIMAL_REGEX = re.compile(DECIMAL_REGEX_VALUE)
 """ The decimal regular expression """
 
 def dumps(object):
-    pass
+    # creates a new string buffer
+    string_buffer = colony.libs.string_buffer_util.StringBuffer()
+
+    # "chunks" the object into the string buffer
+    _chunk(object, string_buffer)
+
+    # retrieves the string value from the
+    # string buffer
+    string_value = string_buffer.get_value()
+
+    # returns the string value
+    return string_value
+
+def _chunk(chunk, string_buffer):
+    # retrieves the chunk type
+    chunk_type = type(chunk)
+
+    if chunk_type == types.IntType:
+        # writes the integer chunk into the string buffer
+        string_buffer.write("i" + str(chunk) + "e")
+    elif chunk_type in types.StringTypes:
+        # retrieves the chunk length
+        chunk_length = len(chunk)
+
+        # writes the string chunk into the string buffer
+        string_buffer.write(str(chunk_length) + ":" + chunk)
+    elif chunk_type in LIST_TYPES:
+        # writes the start token in the
+        # string buffer
+        string_buffer.write("l")
+
+        # iterates over all the chunk item
+        # in the chunk
+        for chunk_item in chunk:
+            _chunk(chunk_item, string_buffer)
+
+        # writes the end token in the
+        # string buffer
+        string_buffer.write("e")
+    elif chunk_type == types.DictType:
+        # writes the start token in the
+        # string buffer
+        string_buffer.write("d")
+
+        # retrieves the chunk items
+        chunk_items = chunk.items()
+
+        # sorts the chunk items
+        chunk_items.sort()
+
+        # iterates over all the chunk items
+        # to encode them
+        for chunk_key, chunk_value in chunk_items:
+            # retrieves the chunk key length
+            chunk_key_length = len(chunk_key)
+
+            # writes the chunk item in the string buffer
+            string_buffer.write(str(chunk_key_length) + ":" + chunk_key)
+
+            # "chunks" the shunk value
+            _chunk(chunk_value, string_buffer)
+
+        # writes the end token in the
+        # string buffer
+        string_buffer.write("e")
+    else:
+        # raises the bencoding encode exception
+        raise bencoding_exceptions.BencodingEncodeException("data type not defined: " + str(chunk))
 
 def loads(data):
     # creates a list from the data
@@ -137,4 +210,5 @@ def _dechunk(chunks):
 
         return line
 
-    raise bencoding_exceptions.BencodingDecodeException("data type nodt defined: " + str(item))
+    # raises the bencoding decode exception
+    raise bencoding_exceptions.BencodingDecodeException("data type not defined: " + str(item))
