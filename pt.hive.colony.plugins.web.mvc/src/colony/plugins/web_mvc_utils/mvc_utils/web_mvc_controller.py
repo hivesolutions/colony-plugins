@@ -702,10 +702,9 @@ def _process_form_attribute_flat(self, parent_structure, attribute_names_list, a
         # returns immediately
         return
 
-    # in case the current attribute name is not defined in the parent structure
-    # or the definition of the attribute is not of type dictionary, a dictionary should be defined
-    # in the parent structure fo the current attribute name
-    if not current_attribute_name in parent_structure or not type(parent_structure[current_attribute_name]) == types.DictType:
+    # in case the current attribute name is not defined in the parent structure,
+    # a dictionary should be defined in the parent structure for the current attribute name
+    if not current_attribute_name in parent_structure:
         # creates a new dictionary for the current attribute name in
         # the parent structure
         parent_structure[current_attribute_name] = {}
@@ -713,6 +712,18 @@ def _process_form_attribute_flat(self, parent_structure, attribute_names_list, a
     # retrieves the "next" parent structure from the current one
     # accessing the current attribute value in the parent structure
     next_parent_structure = parent_structure[current_attribute_name]
+
+    # retrieves the next parent structure value type
+    next_parent_structure_type = type(next_parent_structure)
+
+    # in case the next parent structure is not of type dictionary
+    if not next_parent_structure_type == types.DictType:
+        # creates a new next parent structure map
+        next_parent_structure = {}
+
+        # set the current attribute name with an "escaped" name
+        # and associates it with the "new" next parent structure
+        parent_structure[UNDERSCORE_VALUE + current_attribute_name] = next_parent_structure
 
     # processes the form attribute in flat mode for the next parent structure,
     # the attribute names list and the attribute value
