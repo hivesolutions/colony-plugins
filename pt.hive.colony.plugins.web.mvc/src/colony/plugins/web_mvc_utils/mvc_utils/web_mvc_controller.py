@@ -652,7 +652,8 @@ def _dasherize_camel_cased(self, string_value):
     a dasherized notation, i.e., different words separated by dashes.
 
     @type string_value: String
-    @param string_value: The string value to dasherize, in camel case and without consecutive capitals.
+    @param string_value: The string value to dasherize, in camel case
+    and without consecutive capitals.
     @rtype: String
     @return: The dasherized string value.
     """
@@ -668,6 +669,17 @@ def _dasherize_camel_cased(self, string_value):
     return dasherized_string_value
 
 def _dasherize_underscored(self, string_value):
+    """
+    Converts a string value with multiple words in undescore case to
+    a dasherized notation, i.e., different words separated by dashes.
+
+    @type string_value: String
+    @param string_value: The string value to dasherize, in undescore
+    and without consecutive capitals.
+    @rtype: String
+    @return: The dasherized string value.
+    """
+
     # replaces the underscores for dashes
     dasherized_string_value = string_value.replace(UNDERSCORE_VALUE, DASH_VALUE)
 
