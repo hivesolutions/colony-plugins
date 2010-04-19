@@ -632,6 +632,9 @@ def _dasherize_underscored(self, string_value):
     # returns the dasherized value
     return dasherized_string_value
 
+def _process_form_attribute_flat(self, parent_structure):
+    pass
+
 def _process_form_attribute(self, parent_structure, current_attribute_name, attribute_value, index = 0):
     """
     Processes a form attribute using the sent parent structure and for
