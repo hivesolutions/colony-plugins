@@ -181,6 +181,48 @@ def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING):
     # returns the base attributes map
     return base_attributes_map
 
+def process_form_data_flat(self, rest_request, encoding = DEFAULT_ENCODING):
+    """
+    Processes the form data (attributes), creating a map containing
+    the hierarchy of defined structure for the "form" contents.
+    This method runs in flat mode for hierarchies defined with "dot notation".
+
+    @type rest_request: RestRequest
+    @param rest_request: The rest request to be used.
+    @type encoding: String
+    @param encoding: The encoding to be used when retrieving
+    the attribute values.
+    @rtype: Dictionary
+    @return: The map containing the hierarchy of defined structure
+    for the "form" contents.
+    """
+
+    # retrieves the attributes list
+    attributes_list = rest_request.get_attributes_list()
+
+    # creates the base attributes map
+    base_attributes_map = {}
+
+    # iterates over all the attributes in the
+    # attributes list
+    for attribute in attributes_list:
+        # retrieves the attribute value from the request
+        attribute_value = self.get_attribute_decoded(rest_request, attribute, encoding)
+
+        # creates the attribute names list by splitting the attribute
+        # "around" the dot values
+        attribute_names_list = attribute.split(".")
+
+        # reverses the attribute names list
+        attribute_names_list.reverse()
+
+        # process the entry attribute value with the initial (base) attributes map
+        # the attribute names list and the attribute value
+        self._process_form_attribute_flat(base_attributes_map, attribute_names_list, attribute_value)
+
+    # returns the base attributes map
+    return base_attributes_map
+
 def get_base_path(self, rest_request):
     """
     Retrieves the base path according to
@@ -632,8 +674,49 @@ def _dasherize_underscored(self, string_value):
     # returns the dasherized value
     return dasherized_string_value
 
-def _process_form_attribute_flat(self, parent_structure):
-    pass
+def _process_form_attribute_flat(self, parent_structure, attribute_names_list, attribute_value):
+    """
+    Processes a form attribute using the sent parent structure and for the
+    given attribute names list
+    At the end the parent structure is changed and contains the form
+    attribute in the correct structure place.
+
+    @type parent_structure: Dictionary
+    @param parent_structure: The parent structure to be used to set the
+    attribute.
+    @type attribute_names_list: List
+    @param attribute_names_list: The list of attribute names currently
+    being parsed.
+    @type attribute_value: Object
+    @param attribute_value: The attribute value.
+    """
+
+    # retrieves the current attribute name from the attribute names list
+    current_attribute_name = attribute_names_list.pop()
+
+    # in case the attribute names list is empty
+    if not attribute_names_list:
+        # sets the attribute value in the parent structure
+        parent_structure[current_attribute_name] = attribute_value
+
+        # returns immediately
+        return
+
+    # in case the current attribute name is not defined in the parent structure
+    # or the definition of the attribute is not of type dictionary, a dictionary should be defined
+    # in the parent structure fo the current attribute name
+    if not current_attribute_name in parent_structure or not type(parent_structure[current_attribute_name]) == types.DictType:
+        # creates a new dictionary for the current attribute name in
+        # the parent structure
+        parent_structure[current_attribute_name] = {}
+
+    # retrieves the "next" parent structure from the current one
+    # accessing the current attribute value in the parent structure
+    next_parent_structure = parent_structure[current_attribute_name]
+
+    # processes the form attribute in flat mode for the next parent structure,
+    # the attribute names list and the attribute value
+    self._process_form_attribute_flat(next_parent_structure, attribute_names_list, attribute_value)
 
 def _process_form_attribute(self, parent_structure, current_attribute_name, attribute_value, index = 0):
     """
