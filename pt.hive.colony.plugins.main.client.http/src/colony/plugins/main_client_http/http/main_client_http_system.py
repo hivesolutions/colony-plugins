@@ -45,6 +45,12 @@ import colony.libs.string_buffer_util
 
 import main_client_http_exceptions
 
+HTTP_PREFIX_VALUE = "http://"
+""" The http prefix value """
+
+HTTPS_PREFIX_VALUE = "https://"
+""" The https prefix value """
+
 GET_METHOD_VALUE = "GET"
 """ The get method value """
 
@@ -109,6 +115,12 @@ QUOTE_SAFE_CHAR = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345678
 
 QUOTE_SAFE_MAPS = {}
 """ The map of cached (buffered) safe lists to be quoted """
+
+PROTOCOL_SOCKET_NAME_MAP = {HTTP_PREFIX_VALUE : "normal", HTTPS_PREFIX_VALUE : "ssl"}
+""" The map associating the http protocol prefixed with the name of the socket """
+
+PROTOCOL_DEFAULT_PORT_MAP = {HTTP_PREFIX_VALUE : 80, HTTPS_PREFIX_VALUE : 443}
+""" The map associating the http protocol prefixed with the port number """
 
 class MainClientHttp:
     """
@@ -184,8 +196,8 @@ class HttpClient:
         self.content_type_charset = content_type_charset
 
     def fetch_url(self, url, method, parameters):
-        # parses the url retrieving the host the port and the path
-        host, port, path = self._parse_url(url)
+        # parses the url retrieving the protocol the host the port and the path
+        protocol, host, port, path = self._parse_url(url)
 
         # creates the http request with the host the port, the path
         # and the parameters
@@ -194,9 +206,10 @@ class HttpClient:
         # retrieves the result value from the request
         result_value = request.get_result()
 
-        # @todo :
-        # ESTA CONEXAO TEM DE SER GERIDA PELOS PLUGINS de socket
-        self.http_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # retrieves the socket name from the protocol socket map
+        socket_name = PROTOCOL_SOCKET_NAME_MAP.get(protocol, None)
+
+        self.http_connection = self._get_socket(socket_name)
         self.http_connection.connect((host, port))
         self.http_connection.send(result_value)
 
@@ -205,6 +218,22 @@ class HttpClient:
 
         # returns the response
         return response
+
+    def _get_socket(self, socket_name = "normal"):
+        # retrieves the socket provider plugins
+        socket_provider_plugins = self.main_client_http.main_client_http_plugin.socket_provider_plugins
+
+        # iterates over all the socket provider plugins
+        for socket_provider_plugin in socket_provider_plugins:
+            # retrieves the provider name from the socket provider plugin
+            socket_provider_plugin_provider_name = socket_provider_plugin.get_provider_name()
+
+            # in case the names are the same
+            if socket_provider_plugin_provider_name == socket_name:
+                # creates a new socket with the socket provider plugin
+                socket = socket_provider_plugin.provide_socket()
+
+                return socket
 
     def build_url(self, base_url, method, parameters):
         """
@@ -484,12 +513,13 @@ class HttpClient:
     def _parse_url(self, url):
         """
         Parses the url, retrieving a tuple structure containing
-        the host, the port an the path for the given url.
+        the protocol, the host, the port an the path for the given url.
 
         @type url: String
         @param url: The url to be parsed.
         @rtype: Tuple
-        @return: A tuple containing the host, the port and the path.
+        @return: A tuple containing the protocol, the host, the port
+        and the path.
         """
 
         # retrieves the url parser plugin
@@ -497,6 +527,12 @@ class HttpClient:
 
         # parses the url retrieving the structure
         url_structure = url_parser_plugin.parse_url(url)
+
+        if url_structure.protocol:
+            protocol = url_structure.protocol.lower()
+        else:
+            # raises the http invalid url data exception
+            raise main_client_http_exceptions.HttpInvalidUrlData("missing protocol information: " + url)
 
         if url_structure.base_name:
             host = url_structure.base_name
@@ -507,16 +543,16 @@ class HttpClient:
         if url_structure.port:
             port = url_structure.port
         else:
-            port = 80
+            port = PROTOCOL_DEFAULT_PORT_MAP.get(protocol, None)
 
         if url_structure.resource_reference:
             path = url_structure.resource_reference
         else:
             path = "/"
 
-        # returns the tuple containing the host, the port
+        # returns the tuple containing the protocol, the host, the port
         # and the path of the url
-        return (host, port, path)
+        return (protocol, host, port, path)
 
 class HttpRequest:
     """
