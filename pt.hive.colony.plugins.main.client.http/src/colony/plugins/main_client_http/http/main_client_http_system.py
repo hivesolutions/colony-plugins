@@ -98,6 +98,9 @@ CONTENT_LENGTH_VALUE = "Content-Length"
 CONTENT_TYPE_VALUE = "Content-Type"
 """ The content type value """
 
+LOCATION_VALUE = "Location"
+""" The location value """
+
 DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
 """ The date format """
 
@@ -396,6 +399,14 @@ class HttpClient:
                         # sets the header in the headers map
                         response.headers_map[header_name] = header_value
 
+                    # in case the location value is set in the response header
+                    if LOCATION_VALUE in response.headers_map:
+                        # retrieves the location
+                        location = response.headers_map[LOCATION_VALUE]
+
+                        # returns the "new" fetched url
+                        return self.fetch_url(location, request.operation_type, request.attributes_map)
+
                     # retrieves the message size
                     message_size = int(response.headers_map.get(CONTENT_LENGTH_VALUE, 0))
 
@@ -567,21 +578,24 @@ class HttpRequest:
         # sets the initial path
         path = self.path
 
-        # in case the operation is of type get
-        if self.operation_type == GET_METHOD_VALUE:
-            # in case no exclamation mark exists in
-            # the path
-            if self.path.find("?") == -1:
-                path = self.path + "?" + encoded_attributes
-            else:
-                path = self.path + "&" + encoded_attributes
-        # in case the operation is of type post
-        elif self.operation_type == POST_METHOD_VALUE:
-            # writes the encoded attributes into the message stream
-            self.message_stream.write(encoded_attributes)
+        # in case the encoded attributes string
+        # is valid and not empty
+        if encoded_attributes:
+            # in case the operation is of type get
+            if self.operation_type == GET_METHOD_VALUE:
+                # in case no exclamation mark exists in
+                # the path
+                if self.path.find("?") == -1:
+                    path = self.path + "?" + encoded_attributes
+                else:
+                    path = self.path + "&" + encoded_attributes
+            # in case the operation is of type post
+            elif self.operation_type == POST_METHOD_VALUE:
+                # writes the encoded attributes into the message stream
+                self.message_stream.write(encoded_attributes)
 
-            # sets the response content type
-            self.content_type = "application/x-www-form-urlencoded"
+                # sets the response content type
+                self.content_type = "application/x-www-form-urlencoded"
 
         # retrieves the real host value
         real_host = self._get_real_host()
