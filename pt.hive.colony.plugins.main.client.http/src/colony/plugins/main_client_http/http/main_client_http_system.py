@@ -231,6 +231,13 @@ class HttpClient:
         # encodes the request attributes
         encoded_attributes = request._encode_attributes()
 
+        # in case the encoded attributes string
+        # is not valid or is empty the url remain
+        # the base one
+        if not encoded_attributes:
+            # returns the base url
+            return base_url
+
         # in case no exclamation mark exists in
         # the url
         if base_url.find("?") == -1:
@@ -390,7 +397,7 @@ class HttpClient:
                         response.headers_map[header_name] = header_value
 
                     # retrieves the message size
-                    message_size = int(response.headers_map[CONTENT_LENGTH_VALUE])
+                    message_size = int(response.headers_map.get(CONTENT_LENGTH_VALUE, 0))
 
             # in case the message is not loaded and the header is loaded
             if not message_loaded and header_loaded:
@@ -401,8 +408,8 @@ class HttpClient:
                 message_value_message = message_value[start_message_index:]
 
                 # in case the length of the message value message is the same
-                # as the message size
-                if len(message_value_message) == message_size:
+                # or greater as the message size
+                if len(message_value_message) >= message_size:
                     # sets the message loaded flag
                     message_loaded = True
 
