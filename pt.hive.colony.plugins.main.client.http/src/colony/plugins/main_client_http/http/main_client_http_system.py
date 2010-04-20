@@ -92,6 +92,9 @@ STATUS_CODE_VALUES = {100 : "Continue", 101 : "Switching Protocols",
                       500 : "Internal Server Error"}
 """ The status code values map """
 
+CHUNKED_VALUE = "chunked"
+""" The chunked value """
+
 HOST_VALUE = "Host"
 """ The host value """
 
@@ -103,6 +106,9 @@ CONTENT_LENGTH_VALUE = "Content-Length"
 
 CONTENT_TYPE_VALUE = "Content-Type"
 """ The content type value """
+
+TRANSFER_ENCODING_VALUE = "Transfer-Encoding"
+""" The transfer encoding value """
 
 LOCATION_VALUE = "Location"
 """ The location value """
@@ -121,6 +127,9 @@ PROTOCOL_SOCKET_NAME_MAP = {HTTP_PREFIX_VALUE : "normal", HTTPS_PREFIX_VALUE : "
 
 PROTOCOL_DEFAULT_PORT_MAP = {HTTP_PREFIX_VALUE : 80, HTTPS_PREFIX_VALUE : 443}
 """ The map associating the http protocol prefixed with the port number """
+
+DEFAULT_PORTS = (80, 443)
+""" The tuple of default ports """
 
 class MainClientHttp:
     """
@@ -439,17 +448,37 @@ class HttpClient:
                     # retrieves the message size
                     message_size = int(response.headers_map.get(CONTENT_LENGTH_VALUE, 0))
 
+                    # retrieves the transfer encoding value
+                    transfer_encoding = response.headers_map.get(TRANSFER_ENCODING_VALUE, None)
+
+                    # in case the transfer encoding is chunked
+                    if transfer_encoding == CHUNKED_VALUE:
+                        # retrieves the start message size
+                        start_message_index = end_header_index + 4
+
+                        # retrieves the start message value
+                        start_message_value = message_value[start_message_index:]
+
+                        # retrieves the response in chunked mode
+                        self.retrieve_response_chunked(response, start_message_value, response_timeout)
+
+                        # returns the response
+                        return response
+
             # in case the message is not loaded and the header is loaded
             if not message_loaded and header_loaded:
                 # retrieves the start message size
                 start_message_index = end_header_index + 4
 
-                # retrieves the message part of the message value
-                message_value_message = message_value[start_message_index:]
+                # calculates the message value message length
+                message_value_message_length = len(message_value) - start_message_index
 
                 # in case the length of the message value message is the same
                 # or greater as the message size
-                if len(message_value_message) >= message_size:
+                if message_value_message_length >= message_size:
+                    # retrieves the message part of the message value
+                    message_value_message = message_value[start_message_index:]
+
                     # sets the message loaded flag
                     message_loaded = True
 
@@ -461,6 +490,120 @@ class HttpClient:
 
                     # returns the response
                     return response
+
+    def retrieve_response_chunked(self, response, message_value, response_timeout = RESPONSE_TIMEOUT):
+        # creates the message string buffer
+        message = colony.libs.string_buffer_util.StringBuffer()
+
+        # creates the contents string buffer
+        contents = colony.libs.string_buffer_util.StringBuffer()
+
+        # writes the message value to the message
+        message.write(message_value)
+
+        # tries to find the octet end index
+        octet_end_index = message_value.find("\r\n")
+
+        # loops indefinitely
+        while True:
+            # iterates while the end of octets part is not found
+            while octet_end_index == -1:
+                # retrieves the data
+                data = self.retrieve_data(response_timeout)
+
+                # retrieves the data length
+                data_length = len(data)
+
+                # in case no valid data was received
+                if data_length == 0:
+                    # raises the http invalid data exception
+                    raise main_client_http_exceptions.HttpInvalidDataException("empty data received")
+
+                # writes the data to the message
+                message.write(data)
+
+                # retrieves the message value
+                message_value = message.get_value()
+
+                # tries to find the octet end index
+                octet_end_index = message_value.find("\r\n")
+
+            # retrieves the octet size string
+            octet_size_string = message_value[:octet_end_index]
+
+            # converts the octet size string to integer
+            octet_size = int(octet_size_string.strip(), 16)
+
+            # in case the octet size is zero (end of chunk encoding)
+            if octet_size == 0:
+                # breaks the loop
+                break
+
+            # retrieves the partial message (extra message in data retrieval)
+            partial_message = message_value[octet_end_index + 2:]
+
+            # calculates the partial message length
+            partial_message_length = len(partial_message)
+
+            # resets the message (buffer)
+            message.reset()
+
+            # writes the (initial) partial message to the message
+            message.write(partial_message)
+
+            # calculates the initial message size
+            message_size = partial_message_length
+
+            # iterates while the message size is lower
+            # than the octet size plus the extra end of chunk characters
+            while message_size < octet_size + 2:
+                # retrieves the data
+                data = self.retrieve_data(response_timeout)
+
+                # retrieves the data length
+                data_length = len(data)
+
+                # in case no valid data was received
+                if data_length == 0:
+                    # raises the http invalid data exception
+                    raise main_client_http_exceptions.HttpInvalidDataException("empty data received")
+
+                # writes the data to the message
+                message.write(data)
+
+                # increments the message size with
+                # the data length
+                message_size += data_length
+
+            # retrieves the message value
+            message_value = message.get_value()
+
+            # retrieves the contents value for the current chunk
+            contents_value = message_value[:octet_size]
+
+            # writes the contents value in the contents (buffer)
+            contents.write(contents_value)
+
+            # resets the message (buffer)
+            message.reset()
+
+            # retrieves the partial message (extra contents message)
+            partial_message = message_value[octet_size + 2:]
+
+            # writes the partial message in the message
+            message.write(partial_message)
+
+            # sets the partial data as the new message value
+            message_value = partial_message
+
+            # tries to find the octet end index
+            octet_end_index = message_value.find("\r\n")
+
+        # retrieves the contents value
+        contents_value = contents.get_value()
+
+        # sets the received message in the response
+        response.received_message = contents_value
 
     def decode_response(self, response):
         """
@@ -656,6 +799,13 @@ class HttpRequest:
 
         result.write(HOST_VALUE + ": " + real_host + "\r\n")
         result.write(USER_AGENT_VALUE + ": " + USER_AGENT_IDENTIFIER + "\r\n")
+        result.write("Accept" + ": " + "text/html,application/xhtml+xml,application/xml;q=0.7,*;q=0.7" + "\r\n")
+        result.write("Accept-Language" + ": " + "en-us,en;q=0.5" + "\r\n")
+        #result.write("Accept-Encoding" + ": " + "gzip,deflate" + "\r\n")
+        result.write("Accept-Charset" + ": " + "iso-8859-1,utf-8;q=0.7,*;q=0.7" + "\r\n")
+        result.write("Keep-Alive" + ": " + "115" + "\r\n")
+        result.write("Connection" + ": " + "keep-alive" + "\r\n")
+        result.write("Cache-Control" + ": " + "max-age=0" + "\r\n")
 
         # iterates over all the header values to be sent
         for header_name, header_value in self.headers_map.items():
@@ -682,8 +832,9 @@ class HttpRequest:
         @return: The "real" host value.
         """
 
-        # in case the port is defined
-        if self.port:
+        # in case the port is defined and
+        # is not a default port
+        if self.port and self.port not in DEFAULT_PORTS:
             # returns the host appended with the port value
             return self.host + ":" + str(self.port)
         # in case the port is not defined
