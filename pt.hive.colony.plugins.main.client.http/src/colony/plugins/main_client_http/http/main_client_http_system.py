@@ -113,6 +113,15 @@ TRANSFER_ENCODING_VALUE = "Transfer-Encoding"
 LOCATION_VALUE = "Location"
 """ The location value """
 
+DEFAULT_PORTS = (80, 443)
+""" The tuple of default ports """
+
+PROTOCOL_SOCKET_NAME_MAP = {HTTP_PREFIX_VALUE : "normal", HTTPS_PREFIX_VALUE : "ssl"}
+""" The map associating the http protocol prefixed with the name of the socket """
+
+PROTOCOL_DEFAULT_PORT_MAP = {HTTP_PREFIX_VALUE : 80, HTTPS_PREFIX_VALUE : 443}
+""" The map associating the http protocol prefixed with the port number """
+
 DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
 """ The date format """
 
@@ -121,15 +130,6 @@ QUOTE_SAFE_CHAR = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345678
 
 QUOTE_SAFE_MAPS = {}
 """ The map of cached (buffered) safe lists to be quoted """
-
-PROTOCOL_SOCKET_NAME_MAP = {HTTP_PREFIX_VALUE : "normal", HTTPS_PREFIX_VALUE : "ssl"}
-""" The map associating the http protocol prefixed with the name of the socket """
-
-PROTOCOL_DEFAULT_PORT_MAP = {HTTP_PREFIX_VALUE : 80, HTTPS_PREFIX_VALUE : 443}
-""" The map associating the http protocol prefixed with the port number """
-
-DEFAULT_PORTS = (80, 443)
-""" The tuple of default ports """
 
 class MainClientHttp:
     """
