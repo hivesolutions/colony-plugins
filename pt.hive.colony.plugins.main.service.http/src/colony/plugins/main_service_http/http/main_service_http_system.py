@@ -1993,11 +1993,15 @@ class HttpRequest:
             # writes the extra header value in the result
             result.write(header_name + ": " + header_value + "\r\n")
 
+        # writes the end of the headers and the message
+        # values into the result
         result.write("\r\n")
         result.write(message)
 
+        # retrieves the value from the result buffer
         result_value = result.get_value()
 
+        # returns the result value
         return result_value
 
     def get_attributes_list(self):
