@@ -54,6 +54,9 @@ POST_METHOD_VALUE = "POST"
 HTTP_1_1_VERSION = "HTTP/1.1"
 """ The http 1.1 protocol version """
 
+WWW_FORM_URLENCODED_VALUE = "application/x-www-form-urlencoded"
+""" The www form urlencoded value """
+
 RESPONSE_TIMEOUT = 3
 """ The response timeout """
 
@@ -92,8 +95,15 @@ USER_AGENT_VALUE = "User-Agent"
 CONTENT_LENGTH_VALUE = "Content-Length"
 """ The content length value """
 
+CONTENT_TYPE_VALUE = "Content-Type"
+""" The content type value """
+
 DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
 """ The date format """
+
+QUOTE_SAFE_CHAR = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' '_.-"
+
+QUOTE_SAFE_MAPS = {}
 
 class MainClientHttp:
     """
@@ -172,8 +182,9 @@ class HttpClient:
         # parses the url retrieving the host the port and the path
         host, port, path = self._parse_url(url)
 
-        # creates the http request with the host the port and the path
-        request = HttpRequest(host, port, path)
+        # creates the http request with the host the port, the path
+        # and the parameters
+        request = HttpRequest(host, port, path, parameters)
 
         # retrieves the result value from the request
         result_value = request.get_result()
@@ -184,7 +195,7 @@ class HttpClient:
         self.http_connection.send(result_value)
 
         # retrieves the response
-        response = self.retrieve_response()
+        response = self.retrieve_response(request)
 
         # returns the response
         return response
@@ -462,9 +473,6 @@ class HttpRequest:
     arguments = "none"
     """ The arguments """
 
-    multipart = "none"
-    """ The multipart """
-
     protocol_version = "none"
     """ The protocol version """
 
@@ -474,21 +482,24 @@ class HttpRequest:
     headers_map = {}
     """ The headers map """
 
+    content_type = None
+    """ The content type """
+
     message_stream = None
     """ The message stream """
 
     content_type_charset = None
     """ The content type charset """
 
-    def __init__(self, host, port, path, operation_type = GET_METHOD_VALUE, protocol_version = HTTP_1_1_VERSION, content_type_charset = DEFAULT_CHARSET):
+    def __init__(self, host, port, path, attributes_map = {}, operation_type = GET_METHOD_VALUE, protocol_version = HTTP_1_1_VERSION, content_type_charset = DEFAULT_CHARSET):
         self.host = host
         self.port = port
         self.path = path
+        self.attributes_map = attributes_map
         self.operation_type = operation_type
         self.protocol_version = protocol_version
         self.content_type_charset = content_type_charset
 
-        self.attributes_map = {}
         self.headers_map = {}
         self.message_stream = colony.libs.string_buffer_util.StringBuffer()
 
@@ -496,14 +507,45 @@ class HttpRequest:
         # retrieves the result stream
         result = colony.libs.string_buffer_util.StringBuffer()
 
-        # retrieves the result string value
-        message = self.message_stream.get_value()
+        # encodes the attributes
+        encoded_attributes = self._encode_attributes()
 
-        # writes the http command in the string buffer (version, status code and status value)
-        result.write(self.operation_type + " " + self.path + " " + self.protocol_version + "\r\n")
+        path = self.path
+
+        if self.operation_type == GET_METHOD_VALUE:
+            # in case no exclamation mark exists in
+            # the path
+            if self.path.find("?") == -1:
+                path = self.path + "?" + encoded_attributes
+            else:
+                path = self.path + "&" + encoded_attributes
+        elif self.operation_type == POST_METHOD_VALUE:
+            # writes the encoded attributes into the message stream
+            self.message_stream.write(encoded_attributes)
+
+            # sets the response content type
+            self.content_type = "application/x-www-form-urlencoded"
 
         # retrieves the real host value
         real_host = self._get_real_host()
+
+        # retrieves the result string value
+        message = self.message_stream.get_value()
+
+        # retrieves the content length from the
+        # message content itself
+        content_length = len(message)
+
+        # writes the http command in the string buffer (version, status code and status value)
+        result.write(self.operation_type + " " + path + " " + self.protocol_version + "\r\n")
+
+        # in case there is a content type defined
+        if self.content_type:
+            result.write(CONTENT_TYPE_VALUE + ": " + self.content_type + "\r\n")
+
+        # in case the content length is valid
+        if content_length > 0:
+            result.write(CONTENT_LENGTH_VALUE + ": " + str(content_length) + "\r\n")
 
         result.write(HOST_VALUE + ": " + real_host + "\r\n")
         result.write(USER_AGENT_VALUE + ": " + USER_AGENT_IDENTIFIER + "\r\n")
@@ -541,6 +583,90 @@ class HttpRequest:
         else:
             # returns only the host
             return self.host
+
+    def _quote(self, string_value, safe = "/"):
+        # creates the cache key tuple
+        cache_key = (safe, QUOTE_SAFE_CHAR)
+
+        try:
+            # in case the cache key is not defined
+            # in the quote sage maps creates a new entry
+            safe_map = QUOTE_SAFE_MAPS[cache_key]
+        except KeyError:
+            # adds the "base" quote safe characters to the
+            # "safe list"
+            safe += QUOTE_SAFE_CHAR
+
+            # starts the safe map
+            safe_map = {}
+
+            # iterates over all the ascii values
+            for index in range(256):
+                # retrieves the character for the
+                # given index
+                character = chr(index)
+
+                # adds the "valid" character ot the safe mao entry
+                safe_map[character] = (character in safe) and character or ("%%%02X" % index)
+
+            # sets the safe map in the cache quote safe maps
+            QUOTE_SAFE_MAPS[cache_key] = safe_map
+
+        # maps the getitem method of the map to all the string
+        # value to retrieve the valid items
+        resolution_list = map(safe_map.__getitem__, string_value)
+
+        # joins the resolution list to retrieve the quoted value
+        return "".join(resolution_list)
+
+    def _quote_plus(self, string_value, safe = ""):
+        # in case there is at least one white
+        # space in the string value
+        if " " in string_value:
+            # quotes the string value adding the white space
+            # to the "safe list"
+            string_value = self._quote(string_value, safe + " ")
+
+            # replaces the white spaces with plus signs and
+            # returns the result
+            return string_value.replace(" ", "+")
+
+        # returns the quoted string value
+        return self._quote(string_value, safe)
+
+    def _encode_attributes(self):
+        """
+        Encodes the current attributes into url encoding.
+
+        @rtype: String
+        @return: The encoded parameters.
+        """
+
+        # creates a string buffer to hold the encoded attribute values
+        string_buffer = colony.libs.string_buffer_util.StringBuffer()
+
+        # sets the is first flag
+        is_first = True
+
+        # iterates over all the attribute keys and values
+        for attribute_key, attribute_value in self.attributes_map.items():
+            attribute_key_quoted = self._quote_plus(attribute_key)
+            attribute_value_quoted = self._quote_plus(attribute_value)
+
+            if is_first:
+                is_first = False
+            else:
+                string_buffer.write("&")
+
+            string_buffer.write(attribute_key_quoted)
+            string_buffer.write("=")
+            string_buffer.write(attribute_value_quoted)
+
+        # retrieves the encoded attributes from the string buffer
+        encoded_attributes = string_buffer.get_value()
+
+        # returns the encoded attributes
+        return encoded_attributes
 
 class HttpResponse:
     """
