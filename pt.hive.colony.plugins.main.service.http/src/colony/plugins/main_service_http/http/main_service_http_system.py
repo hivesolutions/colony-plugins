@@ -1577,6 +1577,9 @@ class HttpRequest:
     encoded = False
     """ The encoded flag """
 
+    encoding_name = "none"
+    """ The encoding name """
+
     encoding_handler = "none"
     """ The encoding type """
 
