@@ -781,12 +781,15 @@ class HttpClientServiceTask:
                 # retrieves the start message size
                 start_message_index = end_header_index + 4
 
-                # retrieves the message part of the message value
-                message_value_message = message_value[start_message_index:]
+                # calculates the message value message length
+                message_value_message_length = len(message_value) - start_message_index
 
                 # in case the length of the message value message is the same
                 # as the message size
-                if len(message_value_message) == message_size:
+                if message_value_message_length == message_size:
+                    # retrieves the message part of the message value
+                    message_value_message = message_value[start_message_index:]
+
                     # sets the message loaded flag
                     message_loaded = True
 
@@ -1069,9 +1072,9 @@ class HttpClientServiceTask:
         """
 
         # in case connection is defined in the headers map
-        if "Connection" in request.headers_map:
+        if CONNECTION_VALUE in request.headers_map:
             # retrieves the connection type
-            connection_type = request.headers_map["Connection"]
+            connection_type = request.headers_map[CONNECTION_VALUE]
 
             # in case the connection is meant to be kept alive
             # or in case is of type upgrade
