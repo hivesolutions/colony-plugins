@@ -63,6 +63,8 @@ class MainClientLdapPlugin(colony.plugins.plugin_system.Plugin):
 
     main_client_ldap = None
 
+    socket_provider_plugins = []
+
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global main_client_ldap

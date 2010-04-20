@@ -74,6 +74,11 @@ class MainClientLdap:
         pass
 
 class LdapClient:
+    """
+    The ldap client class, representing
+    a client connection in the ldap protocol.
+    """
+
     pass
 
 class LdapRequest:
