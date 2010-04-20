@@ -580,7 +580,7 @@ class OpenidClient:
         if OPENID_SREG_1_1_EXTENSION_NAMESPACE_VALUE in self.openid_structure.types_list:
             parameters["openid.ns.sreg"] = OPENID_SREG_1_1_EXTENSION_NAMESPACE_VALUE
             parameters["openid.sreg.required"] = ""
-            parameters["openid.sreg.optional"] = "nickname,email,fullname,dob"
+            parameters["openid.sreg.optional"] = "nickname,email,fullname,dob,gender"
 
         # in case the ax 1.0 extension exists in the current openid
         # context information
@@ -591,7 +591,8 @@ class OpenidClient:
             parameters["openid.ax.type.email"] = "http://axschema.org/contact/email"
             parameters["openid.ax.type.fullname"] = "http://axschema.org/namePerson"
             parameters["openid.ax.type.dob"] = "http://axschema.org/birthDate"
-            parameters["openid.ax.required"] = "nickname,email,fullname,dob"
+            parameters["openid.ax.type.gender"] = "http://axschema.org/person/gender"
+            parameters["openid.ax.required"] = "nickname,email,fullname,dob,gender"
             parameters["openid.ax.optional"] = ""
 
     def get_preferred_claimed_id(self):
