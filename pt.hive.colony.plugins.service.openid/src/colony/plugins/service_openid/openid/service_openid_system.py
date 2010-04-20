@@ -38,8 +38,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import hmac
-import urllib
-import urllib2
 import hashlib
 
 import colony.libs.string_buffer_util
@@ -89,8 +87,11 @@ HMAC_SHA1_VALUE = "HMAC-SHA1"
 HMAC_SHA256_VALUE = "HMAC-SHA256"
 """ The hmac sha256 value """
 
-XRDS_LOCATION_VALUE = "x-xrds-location"
+XRDS_LOCATION_VALUE = "X-XRDS-Location"
 """ The xrds location value """
+
+XRDS_LOCATION_LOWER_VALUE = "x-xrds-location"
+""" The xrds location lower value """
 
 DEFAULT_OPENID_ASSOCIATE_TYPE = HMAC_SHA256_VALUE
 """ The default openid associate type """
@@ -138,6 +139,9 @@ class ServiceOpenid:
         @return: The created remote client.
         """
 
+        # retrieves the main client http plugin
+        main_client_http_plugin = self.service_openid_plugin.main_client_http_plugin
+
         # retrieves the service yadis plugin
         service_yadis_plugin = self.service_openid_plugin.service_yadis_plugin
 
@@ -145,7 +149,7 @@ class ServiceOpenid:
         openid_structure = service_attributes.get("openid_structure", None)
 
         # creates the openid client
-        openid_client = OpenidClient(self.service_openid_plugin, service_yadis_plugin, urllib2, self, openid_structure)
+        openid_client = OpenidClient(self.service_openid_plugin, main_client_http_plugin, service_yadis_plugin, self, openid_structure)
 
         # returns the openid client
         return openid_client
@@ -249,11 +253,11 @@ class OpenidClient:
     service_openid_plugin = None
     """ The service openid plugin """
 
+    main_client_http_plugin = None
+    """ The main client http plugin """
+
     service_yadis_plugin = None
     """ The service yadis plugin """
-
-    http_client_plugin = None
-    """ The http client plugin """
 
     service_openid = None
     """ The service openid """
@@ -261,16 +265,16 @@ class OpenidClient:
     openid_structure = None
     """ The openid structure """
 
-    def __init__(self, service_openid_plugin = None, service_yadis_plugin = None, http_client_plugin = None, service_openid = None, openid_structure = None):
+    def __init__(self, service_openid_plugin = None, main_client_http_plugin = None, service_yadis_plugin = None, service_openid = None, openid_structure = None):
         """
         Constructor of the class.
 
         @type service_openid_plugin: ServiceOpenidPlugin
         @param service_openid_plugin: The service openid plugin.
+        @type main_client_http_plugin: MainClientHttpPlugin
+        @param main_client_http_plugin: The main client http plugin.
         @type service_yadis_plugin: ServiceYadisPlugin
         @param service_yadis_plugin: The service yadis plugin.
-        @type http_client_plugin: HttpClientPlugin
-        @param http_client_plugin: The http client plugin.
         @type service_openid: ServiceOpenid
         @param service_openid: The service openid.
         @type openid_structure: OpenidStructure
@@ -278,8 +282,8 @@ class OpenidClient:
         """
 
         self.service_openid_plugin = service_openid_plugin
+        self.main_client_http_plugin = main_client_http_plugin
         self.service_yadis_plugin = service_yadis_plugin
-        self.http_client_plugin = http_client_plugin
         self.service_openid = service_openid
         self.openid_structure = openid_structure
 
@@ -636,7 +640,7 @@ class OpenidClient:
         result, headers_map = self._fetch_url(retrieval_url, parameters, headers = True)
 
         # tries to retrieve the yadis provider url
-        yadis_provider_url = headers_map.get(XRDS_LOCATION_VALUE, None)
+        yadis_provider_url = headers_map.get(XRDS_LOCATION_VALUE, headers_map.get(XRDS_LOCATION_LOWER_VALUE, None))
 
         # in case a valid yadis provider
         # url was discovered
@@ -668,32 +672,35 @@ class OpenidClient:
             # raises the invalid data exception
             raise service_openid_exceptions.InvalidData("no valid yadis provider url found")
 
-    def _get_opener(self, url):
+    def _build_url(self, base_url, parameters):
         """
-        Retrieves the opener to the connection.
+        Builds the url for the given url and parameters.
 
-        @type url: String
-        @param url: The url to create the opener.
-        @rtype: Opener
-        @return: The opener to the connection.
+        @type base_url: String
+        @param base_url: The base url to be used.
+        @type parameters: Dictionary
+        @param parameters: The parameters to be used for url construction.
+        @rtype: String
+        @return: The built url for the given parameters.
         """
 
-        # builds the opener
-        opener = urllib2.build_opener()
+        # creates the http client
+        http_client = self.main_client_http_plugin.create_client({})
 
-        # returns the opener
-        return opener
+        # build the url from the base urtl
+        url = http_client.build_url(base_url, GET_METHOD_VALUE, parameters)
 
-    def _fetch_url(self, url, parameters = None, post_data = None, method = GET_METHOD_VALUE, headers = False):
+        # returns the built url
+        return url
+
+    def _fetch_url(self, url, parameters = None, method = GET_METHOD_VALUE, headers = False):
         """
-        Fetches the given url for the given parameters, post data and using the given method.
+        Fetches the given url for the given parameters and using the given method.
 
         @type url: String
         @param url: The url to be fetched.
         @type parameters: Dictionary
         @param parameters: The parameters to be used the fetch.
-        @type post_data: Dictionary
-        @param post_data: The post data to be used the fetch.
         @type method: String
         @param method: The method to be used in the fetch.
         @type headers: bool
@@ -707,113 +714,25 @@ class OpenidClient:
             # creates a new parameters map
             parameters = {}
 
-        # in case post data is not defined
-        if not post_data:
-            # creates a new post data map
-            post_data = {}
+        # creates the http client
+        http_client = self.main_client_http_plugin.create_client({})
 
-        if method == GET_METHOD_VALUE:
-            pass
-        elif method == POST_METHOD_VALUE:
-            post_data = parameters
+        # fetches the url retrieving the http response
+        http_response = http_client.fetch_url(url, method, parameters)
 
-        # builds the url
-        url = self._build_url(url, parameters)
+        # retrieves the contents from the http response
+        contents = http_response.received_message
 
-        # encodes the post data
-        encoded_post_data = self._encode_post_data(post_data)
-
-        # retrieves the opener for the given url
-        opener = self._get_opener(url)
-
-        # opens the url with the given encoded post data
-        url_structure = opener.open(url, encoded_post_data)
-
-        # reads the contents from the url structure
-        contents = url_structure.read()
+        # retrieves the headers map from the http response
+        headers_map = http_response.headers_map
 
         # in case the headers flag is set
         if headers:
-            # creates the headers map
-            headers_map = dict(url_structure.info().items())
-
             # returns the contents and the headers map
             return contents, headers_map
         else:
             # returns the contents
             return contents
-
-    def _build_url(self, url, parameters):
-        """
-        Builds the url for the given url and parameters.
-
-        @type url: String
-        @param url: The base url to be used.
-        @type parameters: Dictionary
-        @param parameters: The parameters to be used for url construction.
-        @rtype: String
-        @return: The built url for the given parameters.
-        """
-
-        # in case the parameters are valid and the length
-        # of them is greater than zero
-        if parameters and len(parameters) > 0:
-            # retrieves the extra query
-            extra_query = self._encode_parameters(parameters)
-
-            # adds it to the url
-            url += "?" + extra_query
-
-        # returns the url
-        return url
-
-    def _encode_parameters(self, parameters):
-        """
-        Encodes the given parameters into url encoding.
-
-        @type parameters: Dictionary
-        @param parameters: The parameters map to be encoded.
-        @rtype: String
-        @return: The encoded parameters.
-        """
-
-        # in case the parameters are defined
-        if parameters:
-            # returns the encoded parameters
-            return urllib.urlencode(dict([(parameter_key, self._encode(parameter_value)) for parameter_key, parameter_value in parameters.items() if parameter_value is not None]))
-        else:
-            # returns none
-            return None
-
-    def _encode_post_data(self, post_data):
-        """
-        Encodes the post data into url encoding.
-
-        @type post_data: Dictionary
-        @param post_data: The post data map to be encoded.
-        @rtype: String
-        @return: The encoded post data.
-        """
-
-        # in case the post data is defined
-        if post_data:
-            # returns the encoded post data
-            return urllib.urlencode(dict([(post_data_key, self._encode(post_data_value)) for post_data_key, post_data_value in post_data.items()]))
-        else:
-            # returns none
-            return None
-
-    def _encode(self, string_value):
-        """
-        Encodes the given string value to the current encoding.
-
-        @type string_value: String
-        @param string_value: The string value to be encoded.
-        @rtype: String
-        @return: The given string value encoded in the current encoding.
-        """
-
-        return unicode(string_value).encode("utf-8")
 
 class OpenidStructure:
     """
