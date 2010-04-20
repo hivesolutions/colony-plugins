@@ -705,7 +705,7 @@ class HttpClientServiceTask:
                     # from the start line splitted
                     operation_type, path, protocol_version = start_line_splitted
 
-                    # sets the request  operation type
+                    # sets the request operation type
                     request.set_operation_type(operation_type)
 
                     # sets the request path
@@ -2054,6 +2054,13 @@ class HttpRequest:
         self.uri = resource_path
 
     def set_protocol_version(self, protocol_version):
+        """
+        Sets the protocol version.
+
+        @type protocol_version: String
+        @param protocol_version: The protocol version.
+        """
+
         self.protocol_version = protocol_version
 
     def get_resource_path(self):
