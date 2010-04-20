@@ -63,7 +63,7 @@ HTTP_1_1_VERSION = "HTTP/1.1"
 WWW_FORM_URLENCODED_VALUE = "application/x-www-form-urlencoded"
 """ The www form urlencoded value """
 
-RESPONSE_TIMEOUT = 3
+RESPONSE_TIMEOUT = 10
 """ The response timeout """
 
 CHUNK_SIZE = 4096
