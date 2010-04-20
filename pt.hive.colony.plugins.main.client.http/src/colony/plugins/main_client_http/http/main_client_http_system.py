@@ -554,9 +554,13 @@ class HttpClient:
             # calculates the initial message size
             message_size = partial_message_length
 
+            # calculates the octet end as the octet size plus
+            # the two extra end of chunk characters
+            octet_end = octet_size + 2
+
             # iterates while the message size is lower
             # than the octet size plus the extra end of chunk characters
-            while message_size < octet_size + 2:
+            while message_size < octet_end:
                 # retrieves the data
                 data = self.retrieve_data(response_timeout)
 
@@ -588,7 +592,7 @@ class HttpClient:
             message.reset()
 
             # retrieves the partial message (extra contents message)
-            partial_message = message_value[octet_size + 2:]
+            partial_message = message_value[octet_end:]
 
             # writes the partial message in the message
             message.write(partial_message)
