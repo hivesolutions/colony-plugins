@@ -92,10 +92,10 @@ class MainClientLdapPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def create_client(self, parameters):
-        self.main_service_http.create_client(parameters)
+        return self.main_service_http.create_client(parameters)
 
     def create_request(self, parameters):
-        self.main_service_http.create_request(parameters)
+        return self.main_service_http.create_request(parameters)
 
     @colony.plugins.decorators.load_allowed_capability("socket_provider")
     def socket_provider_load_allowed(self, plugin, capability):
