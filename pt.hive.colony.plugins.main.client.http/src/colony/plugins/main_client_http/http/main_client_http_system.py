@@ -102,8 +102,10 @@ DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
 """ The date format """
 
 QUOTE_SAFE_CHAR = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' '_.-"
+""" The string containing all the safe characters to be quoted """
 
 QUOTE_SAFE_MAPS = {}
+""" The map of cached (buffered) safe lists to be quoted """
 
 class MainClientHttp:
     """
@@ -189,6 +191,7 @@ class HttpClient:
         # retrieves the result value from the request
         result_value = request.get_result()
 
+        # @todo :
         # ESTA CONEXAO TEM DE SER GERIDA PELOS PLUGINS de socket
         self.http_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.http_connection.connect((host, port))
@@ -199,6 +202,50 @@ class HttpClient:
 
         # returns the response
         return response
+
+    def build_url(self, base_url, method, parameters):
+        """
+        Builds the url for the given base url, method
+        and parameters.
+
+        @type base_url: String
+        @param base_url: The base url to build the final
+        url.
+        @type method: String
+        @param method: The method to be used in the url retrieval.
+        @type parameters: Dicionary
+        @param parameters: The parameters to be used in the url
+        retrieval.
+        @rtype: String
+        @return: The final url value.
+        """
+
+        # in case the request method is not get
+        if not method == GET_METHOD_VALUE:
+            # returns the base url
+            return base_url
+
+        # creates the http request to build the url
+        request = HttpRequest(attributes_map = parameters)
+
+        # encodes the request attributes
+        encoded_attributes = request._encode_attributes()
+
+        # in case no exclamation mark exists in
+        # the url
+        if base_url.find("?") == -1:
+            # creates the url by adding the encoded attributes
+            # as the first parameters
+            url = base_url + "?" + encoded_attributes
+        # in case an exclamation mark already exists in the
+        # url (parameters exist)
+        else:
+            # creates the url by adding the encoded attributes
+            # to the existing parameters
+            url = base_url + "&" + encoded_attributes
+
+        # return the built url
+        return url
 
     def retrieve_response(self, request, response_timeout = RESPONSE_TIMEOUT):
         """
@@ -491,7 +538,7 @@ class HttpRequest:
     content_type_charset = None
     """ The content type charset """
 
-    def __init__(self, host, port, path, attributes_map = {}, operation_type = GET_METHOD_VALUE, protocol_version = HTTP_1_1_VERSION, content_type_charset = DEFAULT_CHARSET):
+    def __init__(self, host = "none", port = None, path = "none", attributes_map = {}, operation_type = GET_METHOD_VALUE, protocol_version = HTTP_1_1_VERSION, content_type_charset = DEFAULT_CHARSET):
         self.host = host
         self.port = port
         self.path = path
@@ -510,8 +557,10 @@ class HttpRequest:
         # encodes the attributes
         encoded_attributes = self._encode_attributes()
 
+        # sets the initial path
         path = self.path
 
+        # in case the operation is of type get
         if self.operation_type == GET_METHOD_VALUE:
             # in case no exclamation mark exists in
             # the path
@@ -519,6 +568,7 @@ class HttpRequest:
                 path = self.path + "?" + encoded_attributes
             else:
                 path = self.path + "&" + encoded_attributes
+        # in case the operation is of type post
         elif self.operation_type == POST_METHOD_VALUE:
             # writes the encoded attributes into the message stream
             self.message_stream.write(encoded_attributes)
@@ -585,6 +635,17 @@ class HttpRequest:
             return self.host
 
     def _quote(self, string_value, safe = "/"):
+        """
+        Quotes the given string value according to
+        the url encoding specification.
+        The implementation is based on the python base library.
+
+        @type string_value: String
+        @param string_value: The string value to be quoted.
+        @rtype: String
+        @return: The quoted string value.
+        """
+
         # creates the cache key tuple
         cache_key = (safe, QUOTE_SAFE_CHAR)
 
@@ -620,6 +681,18 @@ class HttpRequest:
         return "".join(resolution_list)
 
     def _quote_plus(self, string_value, safe = ""):
+        """
+        Quotes the given string value according to
+        the url encoding specification. This kind of quote
+        takes into account the plus and the space relation.
+        The implementation is based on the python base library.
+
+        @type string_value: String
+        @param string_value: The string value to be quoted.
+        @rtype: String
+        @return: The quoted string value.
+        """
+
         # in case there is at least one white
         # space in the string value
         if " " in string_value:
@@ -650,14 +723,24 @@ class HttpRequest:
 
         # iterates over all the attribute keys and values
         for attribute_key, attribute_value in self.attributes_map.items():
-            attribute_key_quoted = self._quote_plus(attribute_key)
-            attribute_value_quoted = self._quote_plus(attribute_value)
+            # encodes both the attribute key and value
+            attribte_key_encoded = self._encode(attribute_key)
+            attribte_value_encoded = self._encode(attribute_value)
 
+            # quotes both the attribute key and value
+            attribute_key_quoted = self._quote_plus(attribte_key_encoded)
+            attribute_value_quoted = self._quote_plus(attribte_value_encoded)
+
+            # in case it's is the first iteration
             if is_first:
+                # unsets the is first flag
                 is_first = False
             else:
+                # writes the and continuation in the string buffer
                 string_buffer.write("&")
 
+            # adds the quoted key and value strings to the
+            # string buffer
             string_buffer.write(attribute_key_quoted)
             string_buffer.write("=")
             string_buffer.write(attribute_value_quoted)
@@ -667,6 +750,18 @@ class HttpRequest:
 
         # returns the encoded attributes
         return encoded_attributes
+
+    def _encode(self, string_value):
+        """
+        Encodes the given string value to the current encoding.
+
+        @type string_value: String
+        @param string_value: The string value to be encoded.
+        @rtype: String
+        @return: The given string value encoded in the current encoding.
+        """
+
+        return unicode(string_value).encode(self.content_type_charset)
 
 class HttpResponse:
     """

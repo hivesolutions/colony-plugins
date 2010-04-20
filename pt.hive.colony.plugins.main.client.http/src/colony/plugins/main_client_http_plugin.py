@@ -76,8 +76,6 @@ class MainClienthttpPlugin(colony.plugins.plugin_system.Plugin):
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
-        http_client = self.create_client({})
-        http_client.fetch_url("http://hive.pt", "GET", {"tobias" : "2"})
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
