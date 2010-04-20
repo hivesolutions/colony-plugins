@@ -507,7 +507,7 @@ class OpenidClient:
             raise service_openid_exceptions.InvalidHashFunction("the hash functionn is not available: " + self.openid_structure.association_type)
 
         # calculates the signature value and encode it into base64
-        signature = hmac.new(signature_mac_key, message, hashlib.sha1).digest().encode("base64")
+        signature = hmac.new(signature_mac_key, message, hash_module).digest().encode("base64")
 
         # in case there is a signature mismatch
         if return_openid_structure.signature == signature:
