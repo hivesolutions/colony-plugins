@@ -983,9 +983,6 @@ class HttpResponse:
     request = None
     """ The request that originated the response """
 
-    status_code = "none"
-    """ The status code """
-
     protocol_version = "none"
     """ The protocol version """
 
