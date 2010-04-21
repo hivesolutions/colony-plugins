@@ -113,7 +113,7 @@ def _chunk(chunk, string_buffer):
             # writes the chunk item in the string buffer
             string_buffer.write(str(chunk_key_length) + ":" + chunk_key)
 
-            # "chunks" the shunk value
+            # "chunks" the chunk value
             _chunk(chunk_value, string_buffer)
 
         # writes the end token in the

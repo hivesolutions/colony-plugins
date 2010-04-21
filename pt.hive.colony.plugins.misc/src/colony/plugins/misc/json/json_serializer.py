@@ -158,7 +158,7 @@ def dump_parts_buffer(object, string_buffer):
     elif object_type is types.InstanceType or hasattr(object, "__class__"):
         string_buffer.write("{")
         is_first = True
-        obj_items = [value for value in dir(object) if not value in EXCLUSION_MAP and not type(getattr(object, value)) in EXCLUSION_TYPES]
+        obj_items = [value for value in dir(object) if not value.startswith("_") and not value in EXCLUSION_MAP and not type(getattr(object, value)) in EXCLUSION_TYPES]
         for obj_item in obj_items:
             obj_value = getattr(object, obj_item)
             if is_first:
@@ -222,7 +222,7 @@ def dump_parts(object):
     elif object_type is types.InstanceType or hasattr(object, "__class__"):
         yield "{"
         is_first = True
-        obj_items = [value for value in dir(object) if not value in EXCLUSION_MAP and not type(getattr(object, value)) in EXCLUSION_TYPES]
+        obj_items = [value for value in dir(object) if not value.startswith("_") and not value in EXCLUSION_MAP and not type(getattr(object, value)) in EXCLUSION_TYPES]
         for obj_item in obj_items:
             obj_value = getattr(object, obj_item)
             if is_first:
