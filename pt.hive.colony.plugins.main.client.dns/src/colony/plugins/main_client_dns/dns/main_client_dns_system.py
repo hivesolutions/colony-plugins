@@ -1,0 +1,549 @@
+#!/usr/bin/python
+# -*- coding: Cp1252 -*-
+
+# Hive Colony Framework
+# Copyright (C) 2008 Hive Solutions Lda.
+#
+# This file is part of Hive Colony Framework.
+#
+# Hive Colony Framework is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Hive Colony Framework is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
+
+__author__ = "João Magalhães <joamag@hive.pt>"
+""" The author(s) of the module """
+
+__version__ = "1.0.0"
+""" The version of the module """
+
+__revision__ = "$LastChangedRevision: 428 $"
+""" The revision number of the module """
+
+__date__ = "$LastChangedDate: 2008-11-20 18:42:55 +0000 (Qui, 20 Nov 2008) $"
+""" The last change date of the module """
+
+__copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
+""" The copyright for the module """
+
+__license__ = "GNU General Public License (GPL), Version 3"
+""" The license for the module """
+
+import struct
+import select
+
+import colony.libs.string_buffer_util
+
+DEFAULT_PORT = 53
+""" The default port """
+
+DEFAULT_SOCKET_NAME = "datagram"
+""" The default socket name """
+
+RESPONSE_TIMEOUT = 10
+""" The response timeout """
+
+MESSAGE_MAXIMUM_SIZE = 512
+""" The message maximum size """
+
+MESSAGE_HEADER_SIZE = 12
+""" The size of the dns message header (in bytes) """
+
+TYPES_MAP = {"A" : 0x01, "NS" : 0x02, "MD" : 0x03, "MF" : 0x04, "CNAME" : 0x05,
+             "SOA" : 0x06, "MB" : 0x07, "MG" : 0x08, "MR" : 0x09, "NULL" : 0x0a,
+             "WKS" : 0x0b, "PTR" : 0x0c, "HINFO" : 0x0d, "MINFO" : 0x0e, "MX" : 0x0f,
+             "TXT" : 0x10}
+""" The map associating the type string with the integer value """
+
+TYPES_REVERSE_MAP = {0x01 : "A", 0x02 : "NS", 0x03 : "MD", 0x04 : "MF", 0x05 : "CNAME",
+                     0x06 : "SOA", 0x07 : "MB", 0x08 : "MG", 0x09 : "MR", 0x0a : "NULL",
+                     0x0b : "WKS", 0x0c : "PTR", 0x0d : "HINFO", 0x0e : "MINFO", 0x0f : "MX",
+                     0x10 : "TXT"}
+""" The map associating the type integer with the string value """
+
+CLASSES_MAP = {"IN" : 0x01, "CS" : 0x02, "CH" : 0x03, "HS" : 0x04}
+""" The map associating the class string with the integer value """
+
+CLASSES_REVERSE_MAP = {0x01 : "IN", 0x02 : "CS", 0x03 : "CH", 0x04 : "HS"}
+""" The map associating the class integer with the string value """
+
+class MainClientDns:
+    """
+    The main client dns class.
+    """
+
+    main_client_dns_plugin = None
+    """ The main client dns plugin """
+
+    def __init__(self, main_client_dns_plugin):
+        """
+        Constructor of the class.
+
+        @type main_client_dns_plugin: MainClientDns
+        @param main_client_dns_plugin: The main client dns plugin.
+        """
+
+        self.main_client_dns_plugin = main_client_dns_plugin
+
+    def create_client(self, parameters):
+        """
+        Creates a client object for the given paramaters.
+
+        @type parameters: Dictionary
+        @param parameters: The parameters to be used in creating
+        the client object.
+        @rtype: DnsClient
+        @return: The created client object.
+        """
+
+        # creates the dns client
+        dns_client = DnsClient(self)
+
+        # returns the dns client
+        return dns_client
+
+    def create_request(self, parameters):
+        pass
+
+class DnsClient:
+    """
+    The dns client class, representing
+    a client connection in the dns protocol.
+    """
+
+    main_client_dns = None
+    """ The main client dns object """
+
+    def __init__(self, main_client_dns):
+        """
+        Constructor of the class.
+
+        @type main_client_dns: MainClientDns
+        @param main_client_dns: The main client dns object.
+        """
+
+        self.main_client_dns = main_client_dns
+
+    def resolve_queries(self, host, port, queries, parameters = {}, socket_name = DEFAULT_SOCKET_NAME):
+        # creates the dns request with the host, the ports, the queries
+        # and the parameters
+        request = DnsRequest(host, port, queries, parameters)
+
+        # retrieves the result value from the request
+        result_value = request.get_result()
+
+        self.dns_connection = self._get_socket(socket_name)
+        self.dns_connection.connect((host, port))
+        self.dns_connection.send(result_value)
+
+        # retrieves the response
+        response = self.retrieve_response(request)
+
+        # returns the response
+        return response
+
+    def retrieve_response(self, request, response_timeout = RESPONSE_TIMEOUT):
+        """
+        Retrieves the response from the received message.
+
+        @rtype: DnsRequest
+        @return: The request that originated the response.
+        @type response_timeout: int
+        @param response_timeout: The timeout for the response retrieval.
+        @rtype: DnsResponse
+        @return: The response from the received message.
+        """
+
+        # creates a response object
+        response = DnsResponse(request)
+
+        # receives the data
+        data = self.retrieve_data()
+
+        # processes the data
+        response.process_data(data)
+
+        # returns the response
+        return response
+
+    def retrieve_data(self, response_timeout = RESPONSE_TIMEOUT, chunk_size = MESSAGE_MAXIMUM_SIZE):
+        try:
+            # sets the connection to non blocking mode
+            self.dns_connection.setblocking(0)
+
+            # runs the select in the dns connection, with timeout
+            selected_values = select.select([self.dns_connection], [], [], response_timeout)
+
+            # sets the connection to blocking mode
+            self.dns_connection.setblocking(1)
+        except:
+            raise main_client_dns_exceptions.ResponseClosed("invalid socket")
+
+        if selected_values == ([], [], []):
+            self.dns_connection.close()
+            raise main_client_dns_exceptions.ClientResponseTimeout("%is timeout" % response_timeout)
+        try:
+            # receives the data in chunks
+            data = self.dns_connection.recv(chunk_size)
+        except:
+            raise main_client_dns_exceptions.ServerResponseTimeout("timeout")
+
+        # returns the data
+        return data
+
+    def _get_socket(self, socket_name = "normal"):
+        """
+        Retrieves the socket for the given socket name
+        using the socket provider plugins.
+
+        @type socket_name: String
+        @param socket_name: The name of the socket to be retrieved.
+        @rtype: Socket
+        @return: The socket for the given socket name.
+        """
+
+        # retrieves the socket provider plugins
+        socket_provider_plugins = self.main_client_dns.main_client_dns_plugin.socket_provider_plugins
+
+        # iterates over all the socket provider plugins
+        for socket_provider_plugin in socket_provider_plugins:
+            # retrieves the provider name from the socket provider plugin
+            socket_provider_plugin_provider_name = socket_provider_plugin.get_provider_name()
+
+            # in case the names are the same
+            if socket_provider_plugin_provider_name == socket_name:
+                # creates a new socket with the socket provider plugin
+                socket = socket_provider_plugin.provide_socket()
+
+                # returns the socket
+                return socket
+
+class DnsRequest:
+    """
+    The dns request class.
+    """
+
+    host = "none"
+    """ The host value """
+
+    port = None
+    """ The port value """
+
+    queries = []
+    """ The list of queries """
+
+    parameters = {}
+    """ The parameters to the dns request """
+
+    transaction_id = None
+    """ The transaction id, identifying a unique dns request """
+
+    flags = 0x0100
+    """ The flags byte """
+
+    def __init__(self, host, port, queries, parameters):
+        """
+        Constructor of the class.
+
+        @type host: String
+        @param host: The host of the request connection.
+        @type port: int
+        @param port: The port for the request connection.
+        @type queries: List
+        @param queries: The queries list.
+        @type parameters: Dictionary
+        @param parameters: The request parameters.
+        """
+
+        self.host = host
+        self.port = port
+        self.queries = queries
+        self.parameters = parameters
+
+    def get_result(self):
+        """
+        Retrieves the result string (serialized) value of
+        the request.
+
+        @rtype: String
+        @return: The result string (serialized) value of
+        the request.
+        """
+
+        # retrieves the result stream
+        result = colony.libs.string_buffer_util.StringBuffer()
+
+        # @todo: generate random value
+        self.transaction_id = 0x01
+
+        # retrieves the number of queries
+        number_queries = len(self.queries)
+
+        # generates the query header
+        query_header = struct.pack("!HHHHHH", self.transaction_id, self.flags, number_queries, 0, 0, 0)
+
+        # writes the query header to the result stream
+        result.write(query_header)
+
+        # iterates over all the queries
+        for query in self.queries:
+            # serializes the query
+            query_serialized = self._serialize_query(query)
+
+            # writes the serialized query to the result stream
+            result.write(query_serialized)
+
+        # retrieves the value from the result buffer
+        result_value = result.get_value()
+
+        # returns the result value
+        return result_value
+
+    def _serialize_query(self, query):
+        """
+        Serializes the given qury into the dns binary format.
+
+        @type query: Tuple
+        @param query: A tuple with the query information.
+        @rtype: String
+        @return: The string containing the resource record.
+        """
+
+        # unpacks the query tuple, retrieving the name,
+        # type and class
+        query_name, query_type, query_class = query
+
+        # converts the query type to integer
+        query_type_integer = TYPES_MAP[query_type]
+
+        # converts the query class to integer
+        query_class_integer = CLASSES_MAP[query_class]
+
+        # creates the string buffer to hold the stream
+        string_buffer = colony.libs.string_buffer_util.StringBuffer()
+
+        # splits the query name to retrieve the query name items
+        query_name_items = query_name.split(".")
+
+        # iterates over all the query name items
+        for query_name_item in query_name_items:
+            # retrieves the query name item length
+            query_name_item_length = len(query_name_item)
+
+            # retrieves the query name item length in binary value
+            query_name_item_length_character = chr(query_name_item_length)
+
+            # writes the size of the query name item (in binary value) and
+            # the query name itself
+            string_buffer.write(query_name_item_length_character)
+            string_buffer.write(query_name_item)
+
+        # writes the end of string in the string buffer
+        string_buffer.write("\0")
+
+        # creates the query data from the query type and class
+        query_data = struct.pack("!HH", query_type_integer, query_class_integer)
+
+        # writes the query data to the string buffer
+        string_buffer.write(query_data)
+
+        # retrieves the serialized query value from the string buffer
+        query_serialized = string_buffer.get_value()
+
+        # returns the serialized query
+        return query_serialized
+
+class DnsResponse:
+    """
+    The dns response class.
+    """
+
+    request = None
+    """ The request that originated the response """
+
+    queries = []
+    """ The list of queries """
+
+    answers = []
+    """ The list of answers """
+
+    authority_resource_records = []
+    """ The list of authority resource records """
+
+    additional_resource_records = []
+    """ The list of additional resource records """
+
+    parameters = {}
+    """ The parameters to the dns request """
+
+    transaction_id = None
+    """ The transaction id, identifying a unique dns request """
+
+    flags = None
+    """ The flags byte """
+
+    def __init__(self, request):
+        """
+        Constructor of the class.
+        """
+
+        self.request = request
+
+        self.queries = []
+        self.answers = []
+        self.authority_resource_records = []
+        self.additional_resource_records = []
+        self.parameters = {}
+
+    def process_data(self, data):
+        # retrieves the message header from the data
+        message_header = struct.unpack_from("!HHHHHH", data)
+
+        # unpacks the message header retrieving the transaction id, the flags, the number of queries
+        # the number of authority resource records and the number of additional resource records
+        transaction_id, flags, queries, answers, authority_resource_records, additional_resource_records = message_header
+
+        # sets the transaction id and the flags
+        self.transaction_id = transaction_id
+        self.flags = flags
+
+        # sets the current index as the
+        # message header size (offset)
+        current_index = MESSAGE_HEADER_SIZE
+
+        # iterates over the number of queries
+        for _index in range(queries):
+            # retrieves the query and the current index
+            query, current_index = self._get_query(data, current_index)
+
+            # adds the query to the list of queries
+            self.queries.append(query)
+
+        # iterates over the number of answers
+        for _index in range(answers):
+            # retrieves the answer and the current index
+            answer, current_index = self._get_answer(data, current_index)
+
+            # adds the answer to the list of answers
+            self.answers.append(answer)
+
+    def _get_query(self, data, current_index):
+        # retrieves the name for the data and current index
+        name_list, current_index = self._get_name(data, current_index)
+
+        # creates the query name by joining the name list
+        query_name = ".".join(name_list)
+
+        # retrieves the query type and the query class integer values
+        query_type_integer, query_class_integer = struct.unpack_from("!HH", data, current_index)
+
+        # increments the current index with four bytes
+        current_index += 4
+
+        # retrieves the query type (string value)
+        query_type = TYPES_REVERSE_MAP[query_type_integer]
+
+        # retrieves the query class (string value)
+        query_class = CLASSES_REVERSE_MAP[query_class_integer]
+
+        # creates the query tuple with the name, type and class of the query
+        query = (query_name, query_type, query_class)
+
+        return (query, current_index)
+
+    def _get_answer(self, data, current_index):
+        # retrieves the name for the data and current index
+        name_list, current_index = self._get_name(data, current_index)
+
+        # creates the answer name by joining the name list
+        answer_name = ".".join(name_list)
+
+        # retrieves the answer type, answer class, time to live
+        # and data length integer values
+        answer_type_integer, answer_class_integer, answer_time_to_live, answer_data_length = struct.unpack_from("!HHIH", data, current_index)
+
+        # increments the current index with ten bytes
+        current_index += 10
+
+        # @todo: GENERALIZAR ISTO MEHLOR
+        if answer_type_integer == 0x05:
+            # retrieves the answer data as a name
+            answer_data = self._get_name(data, current_index)
+        else:
+            # retrieves the (raw) answer data
+            answer_data = data[current_index:current_index + answer_data_length]
+
+        # increments the current index with the answer data length
+        current_index += answer_data_length
+
+        # retrieves the answer type (string value)
+        answer_type = TYPES_REVERSE_MAP[answer_type_integer]
+
+        # retrieves the answer class (string value)
+        answer_class = CLASSES_REVERSE_MAP[answer_class_integer]
+
+        # creates the answer tuple with the name, type, class,
+        # time to live and data of the answer
+        answer = (answer_name, answer_type, answer_class, answer_time_to_live, answer_data)
+
+        return (answer, current_index)
+
+    def _get_name(self, data, current_index):
+        # creates the name items list
+        name_items = []
+
+        # iterates while the current data item is
+        # not end of string
+        while not data[current_index] == "\0":
+            # retrieves the length of the partial name name
+            partial_name_length, = struct.unpack_from("!B", data, current_index)
+
+            # checks if the name already exists (according to the message compression)
+            existing_resource = partial_name_length & 0xC0 == 0xC0
+
+            # in case the resource exists
+            if existing_resource:
+                # sets the partial name length as the
+                # first offset byte
+                first_offset_byte = partial_name_length
+
+                # unpacks the second offset byte from the data
+                second_offset_byte, = struct.unpack_from("!B", data, current_index + 1)
+
+                # calculates the offset index
+                offset_index = ((first_offset_byte & 0x3F) << 8) + second_offset_byte
+
+                # updates the current index with the two bytes
+                current_index += 2
+
+                # returns the previous (cached) name items list
+                extra_name_items, _current_index = self._get_name(data, offset_index)
+
+                # extends the current name items with the previous (cached) name items
+                name_items.extend(extra_name_items)
+
+                return (name_items, current_index)
+            else:
+                # retrieves the partial name from the data
+                partial_name = data[current_index + 1:current_index + partial_name_length + 1]
+
+                # adds the partial name to the name items list
+                name_items.append(partial_name)
+
+                # updates the current index with the partial name length plus one
+                current_index += partial_name_length + 1
+
+        # increments the current index with the
+        # end string byte
+        current_index += 1
+
+        # returns the name items list
+        return (name_items, current_index)
