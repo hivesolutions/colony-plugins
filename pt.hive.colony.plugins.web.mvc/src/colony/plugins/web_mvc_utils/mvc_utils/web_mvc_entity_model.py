@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import types
+
 def save(self):
     # saves the entity using the entity manager
     self._entity_manager.save(self)
@@ -48,3 +50,96 @@ def update(self):
 def remove(self):
     # removes the entity using the entity manager
     self._entity_manager.remove(self)
+
+def _load_value(self, key, value):
+    """
+    Loads the value with the given key in the
+    current object.
+    The method loads the value taking into account
+    the meta information provided by the entity manager.
+
+    @type key: String
+    @param key: The key to be used to refer to the value
+    in the current object.
+    @type value: Object
+    @param value: The value to be set in the current object.
+    """
+
+    # in case the current object does not contain
+    # an attribute with the key name
+    if not hasattr(self, key):
+        # returns immediately
+        return
+
+    # retrieves the entity class for the current object
+    entity_class = self.__class__
+
+    # in case the entity class does not contain an
+    # attribute with the key name
+    if not hasattr(entity_class, key):
+        # returns immediately
+        return
+
+    # retrieves the class value
+    class_value = getattr(entity_class, key)
+
+    # retrieves the class value type
+    class_value_type = type(class_value)
+
+    # in case the class value type is not
+    # dictionary
+    if not class_value_type == types.DictType:
+        # returns immediately
+        return
+
+    # retrieves the value type
+    value_type = type(value)
+
+    if class_value_type == types.DictType and class_value.get("data_type", None) == "relation":
+        relation_method = getattr(entity_class, "get_relation_attributes_" + key)
+
+        relation_attributes = relation_method()
+
+        relation_type = relation_attributes.get("relation_type", "one-to-one")
+
+        target_entity = relation_attributes.get("target_entity", object)
+
+        if relation_type in ("one-to-one", "many-to-one"):
+            if value_type == types.DictType:
+                # creates a new target entity instance
+                target_entity_instance = target_entity()
+
+                for value_key, value_value in value.items():
+                    target_entity_instance._load_value(value_key, value_value)
+            else:
+                target_entity_instance = None
+
+            # sets the target entity instance in the current object
+            setattr(self, key, target_entity_instance)
+
+        elif relation_type in ("one-to-many", "many-to-many"):
+            # creates the instances list
+            instances_list = []
+
+            if value_type == types.ListType:
+                for value_item in value:
+                    value_item_type = type(value_item)
+
+                    if not value_item_type == types.DictType:
+                        continue
+
+                    # creates a new target entity instance
+                    target_entity_instance = target_entity()
+
+                    for value_key, value_value in value_item.items():
+                        target_entity_instance._load_value(value_key, value_value)
+
+                    # adds the target entity instance
+                    # to the instances list
+                    instances_list.append(target_entity_instance)
+
+            # sets the instances list in the current object
+            setattr(self, key, instances_list)
+    else:
+        # sets the value in the current object
+        setattr(self, key, value)

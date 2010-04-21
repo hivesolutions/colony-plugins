@@ -116,20 +116,8 @@ def _load_value(self, key, value):
         # returns immediately
         return
 
-    # retrieves the type of the value
-    value_type = type(value)
-
-    # in case the type of the value is dictionary but the original
-    # value is not a dictionary
-    if value_type == types.DictType and not type(getattr(self, key)) == types.DictType:
-        # iterates over all the dictionary items
-        # to load the values
-        for key, value in value.items():
-            # loads the given value in the current object
-            self._load_value(key, value)
-    else:
-        # sets the value in the current object
-        setattr(self, key, value)
+    # sets the value in the current object
+    setattr(self, key, value)
 
 def add_validation_method(self, attribute_name, validation_method_name, properties = {}):
     """
