@@ -161,7 +161,7 @@ class WebMvcUtils:
             base_entity_model.__init__ = create_newinit(base_entity_model)
 
             # sets the entity manager in the base entity model
-            base_entity_model.entity_manager = entity_manager
+            base_entity_model._entity_manager = entity_manager
 
         # sets the entity manager in the base entity models module
         base_entity_models_module.entity_manager = entity_manager

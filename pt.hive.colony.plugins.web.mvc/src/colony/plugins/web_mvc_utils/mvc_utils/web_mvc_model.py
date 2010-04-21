@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import types
+
 import web_mvc_utils_exceptions
 
 def _start_model(self):
@@ -56,6 +58,78 @@ def _start_model(self):
     if hasattr(self, "start"):
         # calls the start method (to be implemented)
         self.start()
+
+def dumps(self, serializer):
+    """
+    Serializes (dumps) the current object with
+    the given serializer object.
+
+    @type serializer: Serializer
+    @param serializer: The serializer object to be used
+    to serialize the current object.
+    @rtype: String
+    @return: The serialized value.
+    """
+
+    # serializes the object (dumps)
+    data = serializer.dumps(self)
+
+    # returns the serialized value (data)
+    return data
+
+def loads(self, serializer, data):
+    """
+    Unserializes (loads) converting and loading
+    the given data into the current object.
+
+    @type serializer: Serializer
+    @param serializer: The serializer object to be used
+    to unserialize the given data.
+    @rtype: String
+    @return: The serialized data to be loaded.
+    """
+
+    # unserializes the data (loads)
+    object = serializer.loads(data)
+
+    # iterates over all the dictionary items
+    # to load the values
+    for key, value in object.items():
+        # loads the given value in the current object
+        self._load_value(key, value)
+
+def _load_value(self, key, value):
+    """
+    Loads the value with the given key in the
+    current object.
+
+    @type key: String
+    @param key: The key to be used to refer to the value
+    in the current object.
+    @type value: Object
+    @param value: The value to be set in the current object.
+    """
+
+    # in case the current object does not contain
+    # an attribute with the key name
+    if not hasattr(self, key):
+        # returns immediately
+        return
+
+    # retrieves the type of the value
+    value_type = type(value)
+
+    # in case the type of the value is dictionary but the original
+    # value is not a dictionary
+    if value_type == types.DictType and not type(getattr(self, key)) == types.DictType:
+        # iterates over all the dictionary items
+        # to load the values
+        for key, value in value.items():
+            # loads the given value in the current object
+            self._load_value(key, value)
+    else:
+        # sets the value in the current object
+        setattr(self, key, value)
 
 def add_validation_method(self, attribute_name, validation_method_name, properties = {}):
     """
