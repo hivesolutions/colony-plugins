@@ -42,6 +42,8 @@ import select
 
 import colony.libs.string_buffer_util
 
+import main_client_dns_exceptions
+
 DEFAULT_PORT = 53
 """ The default port """
 
@@ -435,6 +437,22 @@ class DnsResponse:
             # adds the answer to the list of answers
             self.answers.append(answer)
 
+        # iterates over the number of authority resource records
+        for _index in range(authority_resource_records):
+            # retrieves the authority resource record and the current index
+            authority_resource_record, current_index = self._get_answer(data, current_index)
+
+            # adds the authority resource record to the list of authority resource records
+            self.authority_resource_records.append(authority_resource_record)
+
+        # iterates over the number of additional resource records
+        for _index in range(additional_resource_records):
+            # retrieves the additional resource record and the current index
+            additional_resource_record, current_index = self._get_answer(data, current_index)
+
+            # adds the additional resource record to the list of additional resource records
+            self.additional_resource_records.append(additional_resource_record)
+
     def _get_query(self, data, current_index):
         # retrieves the name for the data and current index
         name_list, current_index = self._get_name(data, current_index)
@@ -461,10 +479,7 @@ class DnsResponse:
 
     def _get_answer(self, data, current_index):
         # retrieves the name for the data and current index
-        name_list, current_index = self._get_name(data, current_index)
-
-        # creates the answer name by joining the name list
-        answer_name = ".".join(name_list)
+        answer_name, current_index = self._get_name_joined(data, current_index)
 
         # retrieves the answer type, answer class, time to live
         # and data length integer values
@@ -473,13 +488,34 @@ class DnsResponse:
         # increments the current index with ten bytes
         current_index += 10
 
-        # @todo: GENERALIZAR ISTO MEHLOR
-        if answer_type_integer == 0x05:
-            # retrieves the answer data as a name
-            answer_data = self._get_name(data, current_index)
+        # in case the answer is of type ns or cname
+        if answer_type_integer in (0x02, 0x05):
+            # retrieves the answer data as a joined name
+            answer_data, _current_index = self._get_name_joined(data, current_index)
+        # in case the answer is of type mx
+        elif answer_type_integer in (0x0f,):
+            # retrieves the answer data preference
+            answer_data_preference, = struct.unpack_from("!H", data, current_index)
+
+            # retrieves the answer data name as a joined name
+            answer_data_name, _current_index = self._get_name_joined(data, current_index + 2)
+
+            # sets the answer data
+            answer_data = (answer_data_preference, answer_data_name)
         else:
-            # retrieves the (raw) answer data
-            answer_data = data[current_index:current_index + answer_data_length]
+            # in case the is ipv4 (four bytes)
+            if answer_data_length == 4:
+                raw_answer_data_bytes = struct.unpack_from("!" + str(answer_data_length) + "B", data, current_index)
+                raw_answer_data_string = [str(value) for value in raw_answer_data_bytes]
+                answer_data = ".".join(raw_answer_data_string)
+            # in case the is ipv6 (sixteen bytes)
+            elif answer_data_length == 16:
+                raw_answer_data_shorts = struct.unpack_from("!" + str(answer_data_length / 2) + "H", data, current_index)
+                raw_answer_data_string = ["%h" % value for value in raw_answer_data_shorts]
+                answer_data = ":".join(raw_answer_data_string)
+            else:
+                # sets the answer data as the raw answer data
+                answer_data = data[current_index:current_index + answer_data_length]
 
         # increments the current index with the answer data length
         current_index += answer_data_length
@@ -495,6 +531,15 @@ class DnsResponse:
         answer = (answer_name, answer_type, answer_class, answer_time_to_live, answer_data)
 
         return (answer, current_index)
+
+    def _get_name_joined(self, data, current_index):
+        # retrieves the name list and the "new" current index
+        name_list, current_index = self._get_name(data, current_index)
+
+        # joins the name with dots
+        name_joined = ".".join(name_list)
+
+        return (name_joined, current_index)
 
     def _get_name(self, data, current_index):
         # creates the name items list
