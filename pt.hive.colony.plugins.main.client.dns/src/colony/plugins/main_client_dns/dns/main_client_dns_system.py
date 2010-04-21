@@ -500,7 +500,7 @@ class DnsResponse:
             # retrieves the answer data name as a joined name
             answer_data_name, _current_index = self._get_name_joined(data, current_index + 2)
 
-            # sets the answer data
+            # sets the answer data tuple
             answer_data = (answer_data_preference, answer_data_name)
         else:
             # in case the is ipv4 (four bytes)

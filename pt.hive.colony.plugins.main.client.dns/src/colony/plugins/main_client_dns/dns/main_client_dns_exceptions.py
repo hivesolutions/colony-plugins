@@ -44,3 +44,81 @@ class MainClientDnsException(Exception):
 
     message = None
     """ The exception's message """
+
+class ClientResponseTimeout(MainClientDnsException):
+    """
+    The client response timeout class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        MainClientDnsException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Client response timeout: %s" % self.message
+
+class ServerResponseTimeout(MainClientDnsException):
+    """
+    The server response timeout class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        MainClientDnsException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Server response timeout: %s" % self.message
+
+class ResponseClosed(MainClientDnsException):
+    """
+    The response closed class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        MainClientDnsException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Response closed: %s" % self.message
