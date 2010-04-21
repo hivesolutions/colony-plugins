@@ -676,14 +676,37 @@ class SmtpSession:
     closed = False
     """ The closed flag """
 
+    current_message = None
+    """ The current message being processed """
+
+    messages = []
+    """ The messages associated with the session """
+
     properties = {}
-    """ The properties """
+    """ The properties of the current session """
 
     def __init__(self):
+        self.messages = []
         self.properties = {}
 
     def __repr__(self):
         return "(%s, %s)" % (self.client_hostname, self.properties)
+
+    def generate_message(self, set_current_message = True):
+        # creates the new message
+        message = SmtpMessage()
+
+        # adds the message to the messages list
+        self.add_message(message)
+
+        # in case the set current message flag
+        # is active
+        if set_current_message:
+            # sets the message as the current message
+            self.set_current_message(message)
+
+    def add_message(self, message):
+        self.messages.append(message)
 
     def get_client_hostname(self):
         return self.client_hostname
@@ -709,8 +732,112 @@ class SmtpSession:
     def set_closed(self, closed):
         self.closed = closed
 
+    def get_current_message(self):
+        return self.current_message
+
+    def set_current_message(self, current_message):
+        self.current_message = current_message
+
+    def get_messages(self):
+        return self.messages
+
+    def set_messages(self, messages):
+        self.messages = messages
+
     def get_properties(self):
         return self.properties
 
     def set_properties(self, properties):
         self.properties = properties
+
+class SmtpMessage:
+    """
+    The smtp message class that represents
+    a message to be sent throught smtp.
+    """
+
+    contents = "none"
+    """ The contents of the message """
+
+    sender = "none"
+    """ The sender of the message """
+
+    recipients_list = []
+    """ The list of recipients for the message """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        self.recipients_list = []
+
+    def add_recipient(self, recipient):
+        """
+        Adds a recipient to the recipients list
+
+        @type recipient: String
+        @param recipient: The recipient to be added.
+        """
+
+        self.recipients_list.append(recipient)
+
+    def get_contents(self):
+        """
+        Retrieves the contents.
+
+        @rtype: String
+        @return: The contents.
+        """
+
+        return self.contents
+
+    def set_contents(self, contents):
+        """
+        Sets the contents.
+
+        @type contents: String
+        @param contents: The contents.
+        """
+
+        self.contents = contents
+
+    def get_sender(self):
+        """
+        Retrieves the .
+
+        @rtype: String
+        @return: The sender.
+        """
+
+        return self.sender
+
+    def set_sender(self, sender):
+        """
+        Sets the sender.
+
+        @type sender: String
+        @param sender: The sender.
+        """
+
+        self.sender = sender
+
+    def get_recipients_list(self):
+        """
+        Retrieves the recipients list.
+
+        @rtype: List
+        @return: The recipients list.
+        """
+
+        return self.recipients_list
+
+    def set_recipients_list(self, recipients_list):
+        """
+        Sets the recipients list.
+
+        @type recipients_list: List
+        @param recipients_list: The recipients list.
+        """
+
+        self.recipients_list = recipients_list
