@@ -39,13 +39,23 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import re
 import types
+import datetime
+import calendar
 
 import colony.libs.string_buffer_util
 
 import bencode_exceptions
 
-LIST_TYPES = [types.ListType, types.TupleType]
-""" The list types """
+EXCLUSION_MAP = {"__class__" : True, "__delattr__" : True, "__dict__" : True, "__doc__" : True, "__getattribute__" : True, "__hash__" : True,
+                 "__init__" : True, "__module__" : True, "__new__" : True, "__reduce__" : True, "__reduce_ex__" : True, "__repr__" : True,
+                 "__setattr__" : True, "__str__" : True, "__weakref__" : True, "__format__" : True, "__sizeof__" : True, "__subclasshook__" : True}
+""" The map of items to be excluded from object serialization """
+
+EXCLUSION_TYPES = {types.MethodType : True, types.FunctionType : True}
+""" The map of types to be excluded from object serialization """
+
+LIST_TYPES = {types.ListType : True, types.TupleType : True}
+""" The map of list types """
 
 DECIMAL_REGEX_VALUE = "\d"
 """ The decimal regular expression value """
@@ -109,6 +119,43 @@ def _chunk(chunk, string_buffer):
         for chunk_key, chunk_value in chunk_items:
             # retrieves the chunk key length
             chunk_key_length = len(chunk_key)
+
+            # writes the chunk item in the string buffer
+            string_buffer.write(str(chunk_key_length) + ":" + chunk_key)
+
+            # "chunks" the chunk value
+            _chunk(chunk_value, string_buffer)
+
+        # writes the end token in the
+        # string buffer
+        string_buffer.write("e")
+    elif chunk_type == datetime.datetime:
+        # retrieves the chunk time tuple
+        chunk_time_tuple = chunk.utctimetuple()
+
+        # converts the chunk time tuple to timestamp
+        chunk_timestamp = calendar.timegm(chunk_time_tuple)
+
+        # writes the chunk timestamp into the string buffer
+        string_buffer.write("i" + str(chunk_timestamp) + "e")
+    elif chunk_type == types.InstanceType or hasattr(object, "__class__"):
+        # writes the start token in the
+        # string buffer
+        string_buffer.write("d")
+
+        # retrieves all the chunk keys
+        chunk_keys = [value for value in dir(chunk) if not value.startswith("_") and not value in EXCLUSION_MAP and not type(getattr(chunk, value)) in EXCLUSION_TYPES]
+
+        # sorts the chunk keys
+        chunk_keys.sort()
+
+        # iterates over all the chunk keys
+        for chunk_key in chunk_keys:
+            # retrieves the chunk key length
+            chunk_key_length = len(chunk_key)
+
+            # retrieves the chunk value from the chunk
+            chunk_value = getattr(chunk, chunk_key)
 
             # writes the chunk item in the string buffer
             string_buffer.write(str(chunk_key_length) + ":" + chunk_key)
