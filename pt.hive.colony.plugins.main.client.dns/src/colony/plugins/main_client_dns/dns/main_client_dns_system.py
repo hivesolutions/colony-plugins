@@ -580,6 +580,18 @@ class DnsResponse:
         return (name_joined, current_index)
 
     def _get_name(self, data, current_index):
+        """
+        Retrieves the name "encoded" according to the dns
+        specification in the given index.
+
+        @type data: String
+        @param data: The data buffer to be used.
+        @type current_index: int
+        @param current_index: The index to be used as base index.
+        @rtype: String
+        @return: The "decoded" name in the given index.
+        """
+
         # creates the name items list
         name_items = []
 
