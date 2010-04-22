@@ -39,6 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import types
 
+PLURALIZATION_SUFFIX_VALUE = "s"
+""" The pluralization suffix value """
+
 def save(self):
     # saves the entity using the entity manager
     self._entity_manager.save(self)
@@ -50,6 +53,43 @@ def update(self):
 def remove(self):
     # removes the entity using the entity manager
     self._entity_manager.remove(self)
+
+def get_id_attribute_value(self):
+    # retrieves the id attribute value from the current object
+    id_attribute_value = getattr(self, self.id_attribute_name)
+
+    # returns the id attribute value
+    return id_attribute_value
+
+def get_resource_path(self):
+    # retrieves the id attribute value
+    id_attribute_value = self.get_id_attribute_value()
+
+    # retrieves the controller path for the current object
+    entity_class_pluralized = self._get_entity_class_pluralized()
+
+    # retrieves the entity id attribute value,
+    # and converts it to string
+    id_attribute_value_string = str(id_attribute_value)
+
+    # creates and returns the target request
+    return entity_class_pluralized + "/" + id_attribute_value_string
+
+def _get_entity_class_pluralized(self):
+    # retrieves the class of the current object
+    entity_class = self.__class__
+
+    # retrieves the entity class name
+    entity_class_name = entity_class.__name__
+
+    # lower cased entity class name
+    lower_cased_entity_class_name = entity_class_name.lower()
+
+    # pluralizes the entity class name
+    controller_path = lower_cased_entity_class_name + PLURALIZATION_SUFFIX_VALUE
+
+    # returns the controller path
+    return controller_path
 
 def _load_value(self, key, value):
     """
