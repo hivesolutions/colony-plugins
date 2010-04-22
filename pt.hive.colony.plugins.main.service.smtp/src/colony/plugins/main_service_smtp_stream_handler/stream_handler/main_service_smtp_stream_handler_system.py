@@ -249,6 +249,9 @@ class MainServiceSmtpStreamHandler:
         session.set_data_transmission(True)
 
     def process_auth(self, request, session, arguments):
+        # assets the mail arguments
+        self.assert_arguments(arguments, 1)
+
         # retrieves the authentication type
         authentication_type = arguments[0]
 
