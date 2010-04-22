@@ -124,6 +124,9 @@ class DnsClient:
     main_client_dns = None
     """ The main client dns object """
 
+    current_transaction_id = 0x0000
+    """ The current transaction id """
+
     def __init__(self, main_client_dns):
         """
         Constructor of the class.
@@ -135,16 +138,15 @@ class DnsClient:
         self.main_client_dns = main_client_dns
 
     def resolve_queries(self, host, port, queries, parameters = {}, socket_name = DEFAULT_SOCKET_NAME):
-        # creates the dns request with the host, the ports, the queries
-        # and the parameters
-        request = DnsRequest(host, port, queries, parameters)
-
-        # retrieves the result value from the request
-        result_value = request.get_result()
-
+        # retrieves (generates a socket)
         self.dns_connection = self._get_socket(socket_name)
+
+        # connects to the socket
         self.dns_connection.connect((host, port))
-        self.dns_connection.send(result_value)
+
+        # sends the request for the given queries and
+        # parameters, and retrieves the request
+        request = self.send_request(queries, parameters)
 
         # retrieves the response
         response = self.retrieve_response(request)
@@ -152,16 +154,44 @@ class DnsClient:
         # returns the response
         return response
 
+    def send_request(self, queries, parameters):
+        """
+        Sends the request for the given parameters.
+
+        @type queries: List
+        @param queries: The list of queries to be sent.
+        @type parameters: Dictionary
+        @param parameters: The parameters to the request.
+        @rtype: DnsRequest
+        @return: The sent request for the given parameters..
+        """
+
+        # generates and retrieves a new transaction id
+        transaction_id = self._get_transaction_id()
+
+        # creates the dns request with the the transaction id,
+        # the queries and the parameters
+        request = DnsRequest(transaction_id, queries, parameters)
+
+        # retrieves the result value from the request
+        result_value = request.get_result()
+
+        # sends the result value
+        self.dns_connection.send(result_value)
+
+        # returns the request
+        return request
+
     def retrieve_response(self, request, response_timeout = RESPONSE_TIMEOUT):
         """
-        Retrieves the response from the received message.
+        Retrieves the response from the sent request.
 
         @rtype: DnsRequest
         @return: The request that originated the response.
         @type response_timeout: int
         @param response_timeout: The timeout for the response retrieval.
         @rtype: DnsResponse
-        @return: The response from the received message.
+        @return: The response from the sent request.
         """
 
         # creates a response object
@@ -201,6 +231,26 @@ class DnsClient:
         # returns the data
         return data
 
+    def _get_transaction_id(self):
+        """
+        Retrieves the transaction id, incrementing the
+        current transaction id counter.
+
+        @rtype: int
+        @return: The newly generated transaction id.
+        """
+
+        # in case the limit is reached
+        if self.current_transaction_id == 0xffff:
+            # resets the current transaction id
+            self.current_transaction_id = 0x0000
+
+        # increments the current transaction id
+        self.current_transaction_id += 1
+
+        # returns the current transaction id
+        return self.current_transaction_id
+
     def _get_socket(self, socket_name = "normal"):
         """
         Retrieves the socket for the given socket name
@@ -233,11 +283,8 @@ class DnsRequest:
     The dns request class.
     """
 
-    host = "none"
-    """ The host value """
-
-    port = None
-    """ The port value """
+    transaction_id = None
+    """ The transaction id, identifying a unique dns request """
 
     queries = []
     """ The list of queries """
@@ -245,28 +292,22 @@ class DnsRequest:
     parameters = {}
     """ The parameters to the dns request """
 
-    transaction_id = None
-    """ The transaction id, identifying a unique dns request """
-
     flags = 0x0100
     """ The flags byte """
 
-    def __init__(self, host, port, queries, parameters):
+    def __init__(self, transaction_id, queries, parameters):
         """
         Constructor of the class.
 
-        @type host: String
-        @param host: The host of the request connection.
-        @type port: int
-        @param port: The port for the request connection.
+        @type transaction_id: int
+        @param transaction_id: The transaction id.
         @type queries: List
         @param queries: The queries list.
         @type parameters: Dictionary
         @param parameters: The request parameters.
         """
 
-        self.host = host
-        self.port = port
+        self.transaction_id = transaction_id
         self.queries = queries
         self.parameters = parameters
 
@@ -282,9 +323,6 @@ class DnsRequest:
 
         # retrieves the result stream
         result = colony.libs.string_buffer_util.StringBuffer()
-
-        # @todo: generate random value
-        self.transaction_id = 0x01
 
         # retrieves the number of queries
         number_queries = len(self.queries)
@@ -371,6 +409,9 @@ class DnsResponse:
     request = None
     """ The request that originated the response """
 
+    transaction_id = None
+    """ The transaction id, identifying a unique dns request """
+
     queries = []
     """ The list of queries """
 
@@ -385,9 +426,6 @@ class DnsResponse:
 
     parameters = {}
     """ The parameters to the dns request """
-
-    transaction_id = None
-    """ The transaction id, identifying a unique dns request """
 
     flags = None
     """ The flags byte """
