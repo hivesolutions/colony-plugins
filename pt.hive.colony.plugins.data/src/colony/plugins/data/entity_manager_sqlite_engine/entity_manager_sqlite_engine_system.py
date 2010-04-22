@@ -2435,7 +2435,10 @@ class EntityManagerSqliteEngine:
         @return: The name of the entity class id attribute.
         """
 
+        # in case the entity class contains the id attribute name value
+        # (cached value)
         if hasattr(entity_class, ID_ATTRIBUTE_NAME_VALUE):
+            # retrieves the id attribute directly from the entity class (cached)
             return getattr(entity_class, ID_ATTRIBUTE_NAME_VALUE)
 
         # retrieves all the valid class attribute names, removes method values and the name exceptions

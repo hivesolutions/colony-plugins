@@ -51,8 +51,14 @@ TYPE_EXCLUSION_LIST = [types.MethodType, types.FunctionType, types.ClassType, ty
 RELATION_DATA_TYPE = "relation"
 """ The relation data type """
 
+ID_FIELD = "id"
+""" The id field """
+
 DATA_TYPE_FIELD = "data_type"
 """ The data type field """
+
+ID_ATTRIBUTE_NAME_VALUE = "id_attribute_name"
+""" The id attribute name value """
 
 class DataEntityManager:
     """
@@ -735,6 +741,12 @@ class EntityManager:
         @return: The name of the entity class id attribute.
         """
 
+        # in case the entity class contains the id attribute name value
+        # (cached value)
+        if hasattr(entity_class, ID_ATTRIBUTE_NAME_VALUE):
+            # retrieves the id attribute directly from the entity class (cached)
+            return getattr(entity_class, ID_ATTRIBUTE_NAME_VALUE)
+
         # retrieves all the valid class attribute names, removes method values and the name exceptions
         entity_class_valid_attribute_names = self.get_entity_class_attribute_names(entity_class)
 
@@ -745,8 +757,9 @@ class EntityManager:
         index = 0
 
         for entity_class_valid_attribute_value in entity_class_valid_attribute_values:
-            if "id" in entity_class_valid_attribute_value:
-                if entity_class_valid_attribute_value["id"]:
+            if ID_FIELD in entity_class_valid_attribute_value:
+                if entity_class_valid_attribute_value[ID_FIELD]:
+                    setattr(entity_class, ID_ATTRIBUTE_NAME_VALUE, entity_class_valid_attribute_names[index])
                     return entity_class_valid_attribute_names[index]
 
             # increments the index value
