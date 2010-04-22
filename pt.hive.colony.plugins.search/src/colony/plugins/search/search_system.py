@@ -72,6 +72,9 @@ SEARCH_RESULTS_VALUE = "search_results"
 SEARCH_STATISTICS_VALUE = "search_statistics"
 """ The key to retrieve the statistics for the search from the search results map """
 
+COUNT_VALUE = "count"
+""" The flag to determine if the search query is to be only a count """
+
 class Search:
     """
     The search class.
@@ -339,6 +342,9 @@ class Search:
         # retrieves the search scorer plugin
         search_scorer_plugin = self.search_plugin.search_scorer_plugin
 
+        # initializes the search statistics map
+        search_statistics = {}
+
         # in case the search scorer function is not defined in the properties
         if not SEARCH_SCORER_FUNCTION_IDENTIFIER_VALUE in properties:
             properties[SEARCH_SCORER_FUNCTION_IDENTIFIER_VALUE] = DEFAULT_SEARCH_SCORER_FUNCTION_IDENTIFIER
@@ -349,6 +355,9 @@ class Search:
         # if the specified scorer function is not available
         if not search_scorer_function_identifier in search_scorer_plugin.get_function_identifiers():
             raise search_exceptions.InvalidFunctionRequested(search_scorer_function_identifier)
+
+        # retrieves the count property
+        count = properties.get(COUNT_VALUE, False)
 
         # performs the search using query_index method
         start_time = time.time()
@@ -366,43 +375,64 @@ class Search:
         querying_duration = time.time() - start_time
         self.search_plugin.debug("Querying index finished in %f s" % querying_duration)
 
-        if search_results:
-            # scores the results using the available search scorer plugin
-            start_time = time.time()
-            scored_search_results = self.score_results(search_results, search_index, properties)
-            scoring_duration = time.time() - start_time
-            self.search_plugin.debug("Scoring results finished in %f s" % scoring_duration)
+        # stores the querying duration statistic in the statistics map
+        search_statistics["querying_duration"] = querying_duration
 
-            # sorts the search results using the score
-            start_time = time.time()
-            sorted_search_results = self.sort_results(scored_search_results, properties)
-            sorting_duration = time.time() - start_time
-            self.search_plugin.debug("Sorting results finished in %f s" % sorting_duration)
+        # in case the search did not retrieve any results
+        if not search_results:
+            # builds the search results map with the empty results
+            search_results_map = {SEARCH_RESULTS_VALUE : search_results,
+                                  SEARCH_STATISTICS_VALUE : search_statistics}
 
-            # limit search results according to start record and number of records
-            start_time = time.time()
-            limited_search_results = self.limit_results(sorted_search_results, properties)
-            limiting_duration = time.time() - start_time
-            self.search_plugin.debug("Limiting results finished in %f s" % limiting_duration)
+            # returns the search results map
+            # and skips the subsequent steps
+            return search_results_map
 
-            final_search_results = limited_search_results
-        else:
-            # an empty result set
-            scoring_duration = 0
-            sorting_duration = 0
-            limiting_duration = 0
+        # scores the results using the available search scorer plugin
+        start_time = time.time()
+        scored_search_results = self.score_results(search_results, search_index, properties)
+        scoring_duration = time.time() - start_time
+        self.search_plugin.debug("Scoring results finished in %f s" % scoring_duration)
 
-            # the final search results
-            final_search_results = search_results
+        # stores the scoring duration statistic in the statistics map
+        search_statistics["scoring_duration"] = scoring_duration
 
-        search_statistics = {"querying_duration" : querying_duration,
-                             "scoring_duration" : scoring_duration,
-                             "sorting_duration" : sorting_duration,
-                             "limiting_duration" : limiting_duration}
+        # sorts the search results using the score
+        start_time = time.time()
+        sorted_search_results = self.sort_results(scored_search_results, properties)
+        sorting_duration = time.time() - start_time
+        self.search_plugin.debug("Sorting results finished in %f s" % sorting_duration)
 
-        search_results_map = {SEARCH_RESULTS_VALUE : final_search_results,
+        # stores the sorting duration statistic in the statistics map
+        search_statistics["sorting_duration"] = sorting_duration
+
+        # in case a simple count is intended
+        if count:
+            # counts the search results
+            number_search_results = len(search_results)
+
+            # builds the search results map
+            search_results_map = {COUNT_VALUE : number_search_results,
+                                  SEARCH_STATISTICS_VALUE : search_statistics}
+
+            # returns the search results map
+            # and skips the limiting step
+            return search_results_map
+
+        # limit search results according to start record and number of records
+        start_time = time.time()
+        limited_search_results = self.limit_results(sorted_search_results, properties)
+        limiting_duration = time.time() - start_time
+        self.search_plugin.debug("Limiting results finished in %f s" % limiting_duration)
+
+        # stores the limiting duration statistic in the statistics map
+        search_statistics["limiting_duration"] = limiting_duration
+
+        # builds the search results map
+        search_results_map = {SEARCH_RESULTS_VALUE : limited_search_results,
                               SEARCH_STATISTICS_VALUE : search_statistics}
 
+        # returns the full search results map
         return search_results_map
 
     def search_index_by_identifier(self, search_index_identifier, search_query, properties):
