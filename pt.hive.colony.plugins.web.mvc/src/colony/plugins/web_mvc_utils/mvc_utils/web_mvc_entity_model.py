@@ -38,9 +38,16 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import types
+import datetime
 
 PLURALIZATION_SUFFIX_VALUE = "s"
 """ The pluralization suffix value """
+
+TO_ONE_RELATIONS = ("one-to-one", "many-to-one")
+""" The tuple containing the "to-one" relations """
+
+TO_MANY_RELATIONS = ("one-to-many", "many-to-many")
+""" The tuple containing the "to-many" relations """
 
 def save(self):
     # saves the entity using the entity manager
@@ -105,7 +112,7 @@ def _load_value(self, key, value):
     """
     Loads the value with the given key in the
     current object.
-    The method loads the value taking into account
+    This method loads the value taking into account
     the meta information provided by the entity manager.
 
     @type key: String
@@ -142,54 +149,93 @@ def _load_value(self, key, value):
         # returns immediately
         return
 
-    # retrieves the value type
-    value_type = type(value)
+    # retrieves the value data type
+    value_data_type = class_value.get("data_type", None)
 
-    if class_value_type == types.DictType and class_value.get("data_type", None) == "relation":
+    # in case the data type of the field is relation (presence of an object relation)
+    if value_data_type == "relation":
+        # retrieves the value type
+        value_type = type(value)
+
+        # retrieves the relation information method
         relation_method = getattr(entity_class, "get_relation_attributes_" + key)
 
+        # calls the relation information method to retrieve the relation attributes
         relation_attributes = relation_method()
 
-        relation_type = relation_attributes.get("relation_type", "one-to-one")
+        # retrieves the relation type
+        relation_type = relation_attributes.get("relation_type", None)
 
+        # retrieves the target entity
         target_entity = relation_attributes.get("target_entity", object)
 
-        if relation_type in ("one-to-one", "many-to-one"):
+        # in case the relation is of type "to-one"
+        if relation_type in TO_ONE_RELATIONS:
+            # in case the value is of type dictionary
+            # (to-one relations require list representation)
             if value_type == types.DictType:
                 # creates a new target entity instance
                 target_entity_instance = target_entity()
 
+                # iterates over all the value items
+                # to set the target entity instance values
                 for value_key, value_value in value.items():
+                    # loads the value in the target entity instance
                     target_entity_instance._load_value(value_key, value_value)
             else:
+                # sets the target entity instance as "invalid"
                 target_entity_instance = None
 
             # sets the target entity instance in the current object
             setattr(self, key, target_entity_instance)
 
-        elif relation_type in ("one-to-many", "many-to-many"):
-            # creates the instances list
-            instances_list = []
+        # in case the relation is of type "to-many"
+        elif relation_type in TO_MANY_RELATIONS:
+            # creates the entity instances list
+            entity_instances_list = []
 
+            # in case the value type is a list
+            # (to-many relations require list representation)
             if value_type == types.ListType:
+                # iterates over all the values to process them
                 for value_item in value:
+                    # retrieves the value item type
                     value_item_type = type(value_item)
 
+                    # in case the type of the value item is
+                    # not dictionary (not valid)
                     if not value_item_type == types.DictType:
+                        # continues the loop
                         continue
 
                     # creates a new target entity instance
                     target_entity_instance = target_entity()
 
+                    # iterates over all the value items
+                    # to set the target entity instance values
                     for value_key, value_value in value_item.items():
+                        # loads the value in the target entity instance
                         target_entity_instance._load_value(value_key, value_value)
 
                     # adds the target entity instance
-                    # to the instances list
-                    instances_list.append(target_entity_instance)
+                    # to the entity instances list
+                    entity_instances_list.append(target_entity_instance)
 
-            # sets the instances list in the current object
-            setattr(self, key, instances_list)
+            # sets the entity instances list in the current object
+            setattr(self, key, entity_instances_list)
+    # in case its a date attribute (requires conversion)
+    elif value_data_type == "date":
+        # in case there is a valid value defined
+        if value:
+            # retrieves the date value from the value (timestamp)
+            date_value = datetime.datetime.utcfromtimestamp(float(value))
+        else:
+            # sets an invalid date value
+            date_value = None
+
+        # sets the date value in the current object
+        setattr(self, key, date_value)
+    # in case it's a "normal" attribute
     else:
         # sets the value in the current object
         setattr(self, key, value)
