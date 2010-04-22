@@ -102,7 +102,11 @@ class MainServiceSmtpStreamHandler:
             return False
 
         if "authentication" in session.get_properties() and session.get_properties()["authentication"]:
+            # retrieves the auth value
             auth_value = request.get_message()
+
+            # prints an info message
+            self.main_service_smtp_stream_handler_plugin.info("Trying authentication with %s token" % auth_value)
 
             # sets the request response code
             request.set_response_code(235)
@@ -127,6 +131,14 @@ class MainServiceSmtpStreamHandler:
 
             # sets the request response message
             request.set_response_message("OK: message queued for delivery")
+
+            # import smtplib for the actual sending function
+            import smtplib
+
+            server = smtplib.SMTP("gmail-smtp-in.l.google.com", 25)
+            server.set_debuglevel(1)
+            server.sendmail(message.sender, message.recipients_list, message.contents)
+            server.quit()
 
         # returns valid (data transmission processed)
         return True
