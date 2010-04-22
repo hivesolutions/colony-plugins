@@ -54,9 +54,19 @@ def remove(self):
     # removes the entity using the entity manager
     self._entity_manager.remove(self)
 
+def get_id_attribute_name(self):
+    # retrieves the class of the current object
+    entity_class = self.__class__
+
+    # retrieves the id attribute name from the current object
+    id_attribute_name = self._entity_manager.get_entity_class_id_attribute_name(entity_class)
+
+    # returns the id attribute name
+    return id_attribute_name
+
 def get_id_attribute_value(self):
     # retrieves the id attribute value from the current object
-    id_attribute_value = getattr(self, self.id_attribute_name)
+    id_attribute_value = self._entity_manager.get_entity_id_attribute_value(self)
 
     # returns the id attribute value
     return id_attribute_value
