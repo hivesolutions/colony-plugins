@@ -208,19 +208,15 @@ class HttpClient:
         # parses the url retrieving the protocol the host the port and the path
         protocol, host, port, path = self._parse_url(url)
 
-        # creates the http request with the host, the port, the path
-        # and the parameters
-        request = HttpRequest(host, port, path, parameters)
-
-        # retrieves the result value from the request
-        result_value = request.get_result()
-
         # retrieves the socket name from the protocol socket map
         socket_name = PROTOCOL_SOCKET_NAME_MAP.get(protocol, None)
 
         self.http_connection = self._get_socket(socket_name)
         self.http_connection.connect((host, port))
-        self.http_connection.send(result_value)
+
+        # sends the request for the host, port, path and
+        # parameters, and retrieves the request
+        request = self.send_request(host, port, path, parameters)
 
         # retrieves the response
         response = self.retrieve_response(request)
@@ -279,16 +275,45 @@ class HttpClient:
         # return the built url
         return url
 
+    def send_request(self, host, port, path, parameters):
+        """
+        Sends the request for the given parameters.
+
+        @type host: String
+        @param host: The host to be used by the request.
+        @type port: int
+        @param port: The tcp port to be used.
+        @type path: String
+        @param path: The path to be retrieve via http.
+        @type parameters: Dictionary
+        @param parameters: The parameters to the request.
+        @rtype: HttpRequest
+        @return: The sent request for the given parameters..
+        """
+
+        # creates the http request with the host, the port, the path
+        # and the parameters
+        request = HttpRequest(host, port, path, parameters)
+
+        # retrieves the result value from the request
+        result_value = request.get_result()
+
+        # sends the result value
+        self.http_connection.send(result_value)
+
+        # returns the request
+        return request
+
     def retrieve_response(self, request, response_timeout = RESPONSE_TIMEOUT):
         """
-        Retrieves the response from the received message.
+        Retrieves the response from the sent request.
 
         @rtype: HttpRequest
         @return: The request that originated the response.
         @type response_timeout: int
         @param response_timeout: The timeout for the response retrieval.
         @rtype: HttpResponse
-        @return: The response from the received message.
+        @return: The response from the sent request.
         """
 
         # creates the string buffer for the message
