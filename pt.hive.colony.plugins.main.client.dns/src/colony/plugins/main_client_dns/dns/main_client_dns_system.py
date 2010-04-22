@@ -526,6 +526,43 @@ class DnsResponse:
         # increments the current index with ten bytes
         current_index += 10
 
+        # processes the answer data from the answer type and the answer length
+        answer_data = self._process_answer_data(data, current_index, answer_type_integer, answer_data_length)
+
+        # increments the current index with the answer data length
+        current_index += answer_data_length
+
+        # retrieves the answer type (string value)
+        answer_type = TYPES_REVERSE_MAP[answer_type_integer]
+
+        # retrieves the answer class (string value)
+        answer_class = CLASSES_REVERSE_MAP[answer_class_integer]
+
+        # creates the answer tuple with the name, type, class,
+        # time to live and data of the answer
+        answer = (answer_name, answer_type, answer_class, answer_time_to_live, answer_data)
+
+        return (answer, current_index)
+
+    def _process_answer_data(self, data, current_index, answer_type_integer, answer_data_length):
+        """
+        Processes the answer data according to the dns protocol
+        specification.
+        The answer data is processed converting it into the most
+        appropriate python representation.
+
+        @type data: String
+        @param data: The data buffer to be used.
+        @type current_index: int
+        @param current_index: The index to be used as base index.
+        @type answer_type_integer: int
+        @param answer_type_integer: The answer type in integer mode.
+        @type answer_data_length: int
+        @param answer_data_length: The length of the answer data.
+        @rtype: Object
+        @return: The "processed" answer data.
+        """
+
         # in case the answer is of type ns or cname
         if answer_type_integer in (0x02, 0x05):
             # retrieves the answer data as a joined name
@@ -555,22 +592,25 @@ class DnsResponse:
                 # sets the answer data as the raw answer data
                 answer_data = data[current_index:current_index + answer_data_length]
 
-        # increments the current index with the answer data length
-        current_index += answer_data_length
-
-        # retrieves the answer type (string value)
-        answer_type = TYPES_REVERSE_MAP[answer_type_integer]
-
-        # retrieves the answer class (string value)
-        answer_class = CLASSES_REVERSE_MAP[answer_class_integer]
-
-        # creates the answer tuple with the name, type, class,
-        # time to live and data of the answer
-        answer = (answer_name, answer_type, answer_class, answer_time_to_live, answer_data)
-
-        return (answer, current_index)
+        # returns the answer data
+        return answer_data
 
     def _get_name_joined(self, data, current_index):
+        """
+        Retrieves the name "encoded" according to the dns
+        specification in the given index.
+        This method joins the resulting list in a string
+        separated with dots.
+
+        @type data: String
+        @param data: The data buffer to be used.
+        @type current_index: int
+        @param current_index: The index to be used as base index.
+        @rtype: Tuple
+        @return: The "decoded" name (joined in with dots) in the given index
+        and the current index encoded in a tuple.
+        """
+
         # retrieves the name list and the "new" current index
         name_list, current_index = self._get_name(data, current_index)
 
@@ -588,8 +628,9 @@ class DnsResponse:
         @param data: The data buffer to be used.
         @type current_index: int
         @param current_index: The index to be used as base index.
-        @rtype: String
-        @return: The "decoded" name in the given index.
+        @rtype: Tuple
+        @return: The "decoded" name (in list) in the given index
+        and the current index encoded in a tuple.
         """
 
         # creates the name items list
