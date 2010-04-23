@@ -485,7 +485,7 @@ class HttpClientServiceTask:
     """ The http address """
 
     port = None
-    """ The http address """
+    """ The http port """
 
     encoding = None
     """ The encoding """
