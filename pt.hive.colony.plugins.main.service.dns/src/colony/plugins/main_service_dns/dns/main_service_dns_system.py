@@ -73,6 +73,12 @@ DEFAULT_PORT = 53
 MESSAGE_HEADER_SIZE = 12
 """ The size of the dns message header (in bytes) """
 
+NORMAL_REQUEST_VALUE = 0x0100
+""" The normal request value """
+
+NORMAL_RESPONSE_VALUE = 0x8180
+""" The normal response value """
+
 TYPES_MAP = {"A" : 0x01, "NS" : 0x02, "MD" : 0x03, "MF" : 0x04, "CNAME" : 0x05,
              "SOA" : 0x06, "MB" : 0x07, "MG" : 0x08, "MR" : 0x09, "NULL" : 0x0a,
              "WKS" : 0x0b, "PTR" : 0x0c, "HINFO" : 0x0d, "MINFO" : 0x0e, "MX" : 0x0f,
@@ -261,6 +267,9 @@ class MainServiceDns:
 
             # sends the result to the dns socket
             self.dns_socket.sendto(result, address)
+
+            # para apanhar excepcoes e preciso mandar o bit de excepcao
+            # como esta no rfc na pagina 26
 
         # closes the dns socket
         self.dns_socket.close()
@@ -702,10 +711,10 @@ class DnsRequest:
     parameters = {}
     """ The parameters to the dns request """
 
-    flags = 0x0100
+    flags = NORMAL_REQUEST_VALUE
     """ The flags byte """
 
-    flags_out = 0x8180
+    flags_out = NORMAL_RESPONSE_VALUE
     """ The out flags byte """
 
     name_cache_map = {}
