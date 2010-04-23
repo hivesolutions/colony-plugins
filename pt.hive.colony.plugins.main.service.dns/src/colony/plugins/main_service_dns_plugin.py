@@ -75,7 +75,6 @@ class MainServiceDnsPlugin(colony.plugins.plugin_system.Plugin):
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
-        #self.start_service({})
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
