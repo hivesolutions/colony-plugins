@@ -49,20 +49,11 @@ SEARCH_CRAWLER_ADAPTER_TYPE = "entity_manager"
 ENTITY_MANAGER_ARGUMENTS_VALUE = "entity_manager_arguments"
 """ The value for arguments for the entity manager """
 
-ENTITY_CLASSES_MODULE_VALUE = "entity_classes_module"
-""" The value for the entity classes module """
-
 ENTITY_MANAGER_CRAWL_TARGET_CLASSES_VALUE = "entity_manager_crawl_target_classes"
 """ The entity classes list value """
 
-DIRECTORY_PATH_VALUE = "directory_path"
-""" The directory path value """
-
 ENTITY_MANAGER_CRAWL_OPTIONS_VALUE = "entity_manager_crawl_options"
 """ The options for the entity manager crawl """
-
-TOKEN_LIST_VALUE = "token_list"
-""" The key for the token list in the properties map """
 
 ENGINE_VALUE = "engine"
 """ The engine value """
@@ -73,14 +64,16 @@ CONNECTION_PARAMETERS_VALUE = "connection_parameters"
 DEFAULT_ENGINE = "sqlite"
 """ The default engine """
 
-DEFAULT_CONNECTION_PARAMETERS = {"file_path" : "/remote_home/lmartinho/tobias.db", "autocommit" : False}
+DEFAULT_CONNECTION_PARAMETERS = {"autocommit" : False}
 """ The default connection parameters """
 
 EXCLUSION_MAP = {"__class__" : True, "__delattr__" : True, "__dict__" : True, "__doc__" : True, "__getattribute__" : True, "__hash__" : True,
                  "__init__" : True, "__module__" : True, "__new__" : True, "__reduce__" : True, "__reduce_ex__" : True, "__repr__" : True,
                  "__setattr__" : True, "__str__" : True, "__weakref__" : True, "__format__" : True, "__sizeof__" : True, "__subclasshook__" : True}
+""" The exclusion map for the entity attributes not to be crawled """
 
 EXCLUSION_TYPES = {types.MethodType : True, types.FunctionType : True}
+""" The types to be excluded from the crawl """
 
 WORD_REGEX_VALUE = "(?u)\w+"
 """ The regular expression value for scanning a word """
@@ -125,22 +118,6 @@ class SearchCrawlerEntityManagerAdapter:
         # tries to retrieve the list of entity classes from the properties
         if ENTITY_MANAGER_CRAWL_TARGET_CLASSES_VALUE in properties:
             entity_classes_list = properties[ENTITY_MANAGER_CRAWL_TARGET_CLASSES_VALUE]
-        # otherwise tries to retrieve all the classes in the provided module
-        elif ENTITY_CLASSES_MODULE_VALUE in properties and DIRECTORY_PATH_VALUE in properties:
-            # retrieves the relevant entity classes
-            entity_classes_module_name = properties[ENTITY_CLASSES_MODULE_VALUE]
-
-            # retrieves the directory path
-            directory_path = properties[DIRECTORY_PATH_VALUE]
-
-            # imports the base entity models module
-            base_entity_models_module = business_helper_plugin.import_class_module_target(entity_classes_module_name, globals(), locals(), [], directory_path, entity_classes_module_name)
-
-            # retrieves the entity class
-            entity_class = business_helper_plugin.get_entity_class()
-
-            # retrieves all the entity classes from the base entity models module
-            entity_classes_list = self._get_entity_classes(base_entity_models_module, entity_class)
         # in case no entity specification is provided
         else:
             raise search_crawler_entity_manager_adapter_exceptions.MissingProperty(ENTITY_MANAGER_CRAWL_TARGET_CLASSES_VALUE)
@@ -186,7 +163,7 @@ class SearchCrawlerEntityManagerAdapter:
 
             # crawls across the entities for tokens
             for entity in entities:
-                entity_tokens = self.get_entity_tokens(entity, entity_class)
+                entity_tokens = self.get_entity_tokens(entity_manager, entity, entity_class)
                 token_list.append(entity_tokens)
 
         # returns the token list
@@ -199,7 +176,7 @@ class SearchCrawlerEntityManagerAdapter:
             if search_provider_entity_manager_plugin.is_file_provider(properties):
                 return search_provider_entity_manager_plugin
 
-    def get_entity_tokens(self, entity, entity_class):
+    def get_entity_tokens(self, entity_manager, entity, entity_class):
         # retrieves the name of the entity class
         entity_class_name = entity_class.__name__
 
@@ -233,12 +210,14 @@ class SearchCrawlerEntityManagerAdapter:
         # creates a list with the corresponding positions for each word
         entity_word_positions_list = range(entity_word_list_length)
 
+        # retrieves the id attribute value from the current entity class
+        id_attribute_value = entity_manager.get_entity_id_attribute_value(entity)
+
         # generates the words metadata list
         entity_word_metadata_list = [{"position" : value, "attribute" : attribute} for value, attribute in zip(entity_word_positions_list, entity_word_attribute_list)]
 
         # creates the document information map
-        # @todo: determine the entity's primary key
-        document_information_map = {"document_id": entity.object_id, "entity_class_name" : entity_class_name}
+        document_information_map = {"document_id": id_attribute_value, "entity_class_name" : entity_class_name}
 
         return [entity_word_list, entity_word_metadata_list, document_information_map]
 
