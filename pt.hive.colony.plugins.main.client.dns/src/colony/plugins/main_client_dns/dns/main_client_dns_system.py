@@ -59,6 +59,9 @@ MESSAGE_MAXIMUM_SIZE = 512
 MESSAGE_HEADER_SIZE = 12
 """ The size of the dns message header (in bytes) """
 
+NORMAL_REQUEST_VALUE = 0x0100
+""" The normal request value """
+
 TYPES_MAP = {"A" : 0x01, "NS" : 0x02, "MD" : 0x03, "MF" : 0x04, "CNAME" : 0x05,
              "SOA" : 0x06, "MB" : 0x07, "MG" : 0x08, "MR" : 0x09, "NULL" : 0x0a,
              "WKS" : 0x0b, "PTR" : 0x0c, "HINFO" : 0x0d, "MINFO" : 0x0e, "MX" : 0x0f,
@@ -292,7 +295,7 @@ class DnsRequest:
     parameters = {}
     """ The parameters to the dns request """
 
-    flags = 0x0100
+    flags = NORMAL_REQUEST_VALUE
     """ The flags byte """
 
     def __init__(self, transaction_id, queries, parameters):
@@ -349,7 +352,7 @@ class DnsRequest:
 
     def _serialize_query(self, query):
         """
-        Serializes the given qury into the dns binary format.
+        Serializes the given query into the dns binary format.
 
         @type query: Tuple
         @param query: A tuple with the query information.
@@ -643,7 +646,7 @@ class DnsResponse:
             partial_name_length, = struct.unpack_from("!B", data, current_index)
 
             # checks if the name already exists (according to the message compression)
-            existing_resource = partial_name_length & 0xC0 == 0xC0
+            existing_resource = partial_name_length & 0xc0 == 0xc0
 
             # in case the resource exists
             if existing_resource:
@@ -655,7 +658,7 @@ class DnsResponse:
                 second_offset_byte, = struct.unpack_from("!B", data, current_index + 1)
 
                 # calculates the offset index
-                offset_index = ((first_offset_byte & 0x3F) << 8) + second_offset_byte
+                offset_index = ((first_offset_byte & 0x3f) << 8) + second_offset_byte
 
                 # updates the current index with the two bytes
                 current_index += 2
