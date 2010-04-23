@@ -59,6 +59,7 @@ class MainServiceNormalSocketProviderPlugin(colony.plugins.plugin_system.Plugin)
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["main_service_normal_socket_provider.normal_socket_provider.main_service_normal_socket_provider_system"]
 
     main_service_normal_socket_provider = None
 

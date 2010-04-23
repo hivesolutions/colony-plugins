@@ -59,6 +59,7 @@ class MainServiceDatagramSocketProviderPlugin(colony.plugins.plugin_system.Plugi
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["main_service_datagram_socket_provider.datagram_socket_provider.main_service_datagram_socket_provider_system"]
 
     main_service_datagram_socket_provider = None
 
