@@ -108,8 +108,8 @@ class MainServiceDns:
     dns_service_handler_plugins_map = {}
     """ The dns service handler plugin map """
 
-    dns_socket = None
-    """ The dns socket """
+    dns_connection = None
+    """ The dns connection """
 
     dns_connection_active = False
     """ The dns connection active flag """
@@ -229,50 +229,81 @@ class MainServiceDns:
                 # in case the names are the same
                 if socket_provider_plugin_provider_name == socket_provider:
                     # creates a new dns socket with the socket provider plugin
-                    self.dns_socket = socket_provider_plugin.provide_socket()
+                    self.dns_connection = socket_provider_plugin.provide_socket()
 
             # in case the socket was not created, no socket provider found
-            if not self.dns_socket:
+            if not self.dns_connection:
                 raise main_service_dns_exceptions.SocketProviderNotFound("socket provider %s not found" % socket_provider)
         else:
             # creates the dns socket
-            self.dns_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
+            self.dns_connection = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
         # sets the socket to be able to reuse the socket
-        self.dns_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.dns_connection.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
         # binds the dns socket
-        self.dns_socket.bind((BIND_HOST_VALUE, port))
+        self.dns_connection.bind((BIND_HOST_VALUE, port))
 
         # loops while the dns connection is active
         while not self.dns_connection_close_event.isSet():
-            # receives the dns data from the socket
-            data, address = self.dns_socket.recvfrom(512)
+            try:
+                # sets the socket to non blocking mode
+                self.dns_connection.setblocking(0)
 
-            # creates a new dns request
-            request = DnsRequest({})
+                # starts the select values
+                selected_values = ([], [], [])
 
-            # processes the request
-            request.process_data(data, address)
+                # iterates while there is no selected values
+                while selected_values == ([], [], []):
+                    # in case the connection is closed
+                    if self.dns_connection_close_event.isSet():
+                        # closes the dns socket
+                        self.dns_connection.close()
 
-            # !!! the dummy answer tuple !!!
-            answer = ("www.google.com", "A", "IN", 20000, "192.168.1.1")
+                        return
 
-            # adds a new answer to the request
-            request.answers.append(answer)
+                    # selects the values
+                    selected_values = select.select([self.dns_connection], [], [], CLIENT_CONNECTION_TIMEOUT)
 
-            # retrieves the result from the request
-            result = request.get_result()
+                # sets the socket to blocking mode
+                self.dns_connection.setblocking(1)
+            except:
+                # prints info message about connection
+                self.main_service_dns_plugin.info("The socket is not valid for selection of the pool")
 
-            # sends the result to the dns socket
-            self.dns_socket.sendto(result, address)
+                return
 
-            # para apanhar excepcoes e preciso mandar o bit de excepcao
-            # como esta no rfc na pagina 26
+            # in case the connection is closed
+            if self.dns_connection_close_event.isSet():
+                # closes the dns socket
+                self.dns_connection.close()
+
+                return
+
+            try:
+                # receives the dns data from the socket
+                data, dns_address = self.dns_connection.recvfrom(MESSAGE_MAXIMUM_SIZE)
+
+                # creates a new dns client service task, with the given dns connection, dns address, encoding and encoding handler
+                dns_client_service_task = DnsClientServiceTask(self.main_service_dns_plugin, self.dns_connection, dns_address, port, data, service_configuration)
+
+                # creates a new task descriptor
+                task_descriptor = task_descriptor_class(start_method = dns_client_service_task.start,
+                                                        stop_method = dns_client_service_task.stop,
+                                                        pause_method = dns_client_service_task.pause,
+                                                        resume_method = dns_client_service_task.resume)
+
+                # inserts the new task descriptor into the dns client thread pool
+                self.dns_client_thread_pool.insert_task(task_descriptor)
+
+                # prints a debug message about the number of threads in pool
+                self.main_service_dns_plugin.debug("Number of threads in pool: %d" % self.dns_client_thread_pool.current_number_threads)
+            except Exception, exception:
+                # prints an error message about the problem accepting the connection
+                self.main_service_dns_plugin.error("Error accepting connection: " + str(exception))
 
         # closes the dns socket
-        self.dns_socket.close()
+        self.dns_connection.close()
 
     def stop_server(self):
         """
@@ -309,110 +340,73 @@ class MainServiceDns:
 
         del self.dns_service_handler_plugins_map[handler_name]
 
-#class DnsClientServiceTask:
-#    """
-#    The dns client service task class.
-#    """
-#
-#    main_service_dns_plugin = None
-#    """ The main service dns plugin """
-#
-#    dns_connection = None
-#    """ The dns connection """
-#
-#    dns_address = None
-#    """ The dns address """
-#
-#    port = None
-#    """ The dns address """
-#
-#    encoding = None
-#    """ The encoding """
-#
-#    service_configuration = None
-#    """ The service configuration """
-#
-#    encoding_handler = None
-#    """ The encoding handler """
-#
-#    current_request_handler = None
-#    """ The current request handler being used """
-#
-#    content_type_charset = DEFAULT_CHARSET
-#    """ The content type charset """
-#
-#    def __init__(self, main_service_dns_plugin, dns_connection, dns_address, port, encoding, service_configuration, encoding_handler):
-#        self.main_service_dns_plugin = main_service_dns_plugin
-#        self.dns_connection = dns_connection
-#        self.dns_address = dns_address
-#        self.port = port
-#        self.encoding = encoding
-#        self.service_configuration = service_configuration
-#        self.encoding_handler = encoding_handler
-#
-#        self.current_request_handler = self.dns_request_handler
-#
-#        if DEFAULT_CONTENT_TYPE_CHARSET_VALUE in service_configuration:
-#            # sets the content type charset to be used in the responses
-#            self.content_type_charset = self.service_configuration[DEFAULT_CONTENT_TYPE_CHARSET_VALUE]
-#
-#    def start(self):
-#        # retrieves the dns service handler plugins map
-#        dns_service_handler_plugins_map = self.main_service_dns_plugin.main_service_dns.dns_service_handler_plugins_map
-#
-#        # prints debug message about connection
-#        self.main_service_dns_plugin.debug("Connected to: %s" % str(self.dns_address))
-#
-#        # sets the request timeout
-#        request_timeout = REQUEST_TIMEOUT
-#
-#        # iterates indefinitely
-#        while True:
-#            # handles the current request if it returns false
-#            # the connection was closed or is meant to be closed
-#            if not self.current_request_handler(request_timeout, dns_service_handler_plugins_map):
-#                # breaks the cycle to close the dns connection
-#                break
-#
-#        # closes the dns connection
-#        self.dns_connection.close()
-#
-#    def stop(self):
-#        # closes the dns connection
-#        self.dns_connection.close()
-#
-#    def pause(self):
-#        pass
-#
-#    def resume(self):
-#        pass
-#
-#    def dns_request_handler(self, request_timeout, dns_service_handler_plugins_map):
-#        try:
-#            # retrieves the request
-#            request = self.retrieve_request(request_timeout)
-#        except main_service_dns_exceptions.MainServiceDnsException:
-#            # prints a debug message about the connection closing
-#            self.main_service_dns_plugin.debug("Connection: %s closed by peer, timeout or invalid request" % str(self.dns_address))
-#
-#            # returns false (connection closed)
-#            return False
-#
-#        try:
-#            # prints debug message about request
-#            self.main_service_dns_plugin.debug("Handling request: %s" % str(request))
-#
-#            # verifies the request information, tries to find any possible
-#            # security problem in it
-#            self._verify_request_information(request)
-#
-#            # retrieves the real service configuration,
-#            # taking the request information into account
-#            service_configuration = self._get_service_configuration(request)
-#
-#            # processes the redirection information in the request
-#            self._process_redirection(request, service_configuration)
-#
+class DnsClientServiceTask:
+    """
+    The dns client service task class.
+    """
+
+    main_service_dns_plugin = None
+    """ The main service dns plugin """
+
+    dns_connection = None
+    """ The dns connection """
+
+    dns_address = None
+    """ The dns address """
+
+    port = None
+    """ The dns port """
+
+    data = None
+    """ The data to be processed """
+
+    service_configuration = None
+    """ The service configuration """
+
+    current_request_handler = None
+    """ The current request handler being used """
+
+    def __init__(self, main_service_dns_plugin, dns_connection, dns_address, port, data, service_configuration):
+        self.main_service_dns_plugin = main_service_dns_plugin
+        self.dns_connection = dns_connection
+        self.dns_address = dns_address
+        self.port = port
+        self.data = data
+        self.service_configuration = service_configuration
+
+        self.current_request_handler = self.dns_request_handler
+
+    def start(self):
+        # retrieves the dns service handler plugins map
+        dns_service_handler_plugins_map = self.main_service_dns_plugin.main_service_dns.dns_service_handler_plugins_map
+
+        # prints debug message about connection
+        self.main_service_dns_plugin.debug("Connected to: %s" % str(self.dns_address))
+
+        # handles the current request with the request handler
+        self.current_request_handler(dns_service_handler_plugins_map)
+
+    def stop(self):
+        pass
+
+    def pause(self):
+        pass
+
+    def resume(self):
+        pass
+
+    def dns_request_handler(self, dns_service_handler_plugins_map):
+        # creates the request
+        request = self.create_request()
+
+        try:
+            # prints debug message about request
+            self.main_service_dns_plugin.debug("Handling request: %s" % str(request))
+
+            # retrieves the real service configuration,
+            # taking the request information into account
+            service_configuration = self._get_service_configuration(request)
+
 #            # processes the handler part of the request and retrieves
 #            # the handler name
 #            handler_name = self._process_handler(request, service_configuration)
@@ -432,261 +426,151 @@ class MainServiceDns:
 #
 #            # handles the request by the request handler
 #            dns_service_handler_plugins_map[handler_name].handle_request(request)
+
+            # creates a dummy answer
+            answer = ("www.google.com", "A", "IN", 20000, "192.168.1.11")
+
+            # adds a new answer to the request
+            request.answers.append(answer)
+
+            # sends the request to the client (response)
+            self.send_request(request)
+
+        except Exception, exception:
+            # prints info message about exception
+            self.main_service_dns_plugin.info("There was an exception handling the request: " + str(exception))
+
+            # sends the exception
+            self.send_exception(request, exception)
+
+        # returns true (connection remains open)
+        return True
+
+    def create_request(self):
+        """
+        Creates the request from the received message.
+
+        @rtype: DnsRequest
+        @return: The request from the received message.
+        """
+
+        # creates a new dns request
+        request = DnsRequest({})
+
+        # processes the request
+        request.process_data(self.data)
+
+        # @todo
+        # para apanhar excepcoes e preciso mandar o bit de excepcao
+        # como esta no rfc na pagina 26
+
+        # returns the request
+        return request
+
+    def retrieve_data(self, request_timeout = REQUEST_TIMEOUT, chunk_size = MESSAGE_MAXIMUM_SIZE):
+        try:
+            # sets the connection to non blocking mode
+            self.dns_connection.setblocking(0)
+
+            # runs the select in the dns connection, with timeout
+            selected_values = select.select([self.dns_connection], [], [], request_timeout)
+
+            # sets the connection to blocking mode
+            self.dns_connection.setblocking(1)
+        except:
+            raise main_service_dns_exceptions.RequestClosed("invalid socket")
+
+        if selected_values == ([], [], []):
+            raise main_service_dns_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
+        try:
+            # receives the dns data from the socket
+            data, dns_address = self.dns_connection.recvfrom(MESSAGE_MAXIMUM_SIZE)
+        except:
+            raise main_service_dns_exceptions.ClientRequestTimeout("timeout")
+
+        return data, dns_address
+
+    def send_exception(self, request, exception):
+        """
+        Sends the exception to the given request for the given exception.
+
+        @type request: DnsRequest
+        @param request: The request to send the exception.
+        @type exception: Exception
+        @param exception: The exception to be sent.
+        """
+
+        pass
+
+    def send_request(self, request):
+        # retrieves the result from the request
+        result = request.get_result()
+
+        # sends the result to the dns socket
+        self.dns_connection.sendto(result, self.dns_address)
+
+    def _get_service_configuration(self, request):
+        """
+        Retrieves the service configuration for the given request.
+        This retrieval takes into account the request target and characteristics
+        to merge the virtual servers configurations.
+
+        @type request: DnsRequest
+        @param request: The request to be used in the resolution
+        of the service configuration.
+        @rtype: Dictionary
+        @return: The resolved service configuration.
+        """
+
+        return {}
 #
-#            # sends the request to the client (response)
-#            self.send_request(request)
+#        # retrieves the base service configuration
+#        service_configuration = self.service_configuration
 #
-#            # in case the connection is meant to be kept alive
-#            if self.keep_alive(request):
-#                self.main_service_dns_plugin.debug("Connection: %s kept alive for %ss" % (str(self.dns_address), str(request_timeout)))
-#            # in case the connection is not meant to be kept alive
+#        # retrieves the host value from the request headers
+#        host = request.headers_map.get(HOST_VALUE, None)
+#
+#        # in case the host is defined
+#        if host:
+#            # retrieves the virtual servers map
+#            service_configuration_virtual_servers = service_configuration.get("virtual_servers", {})
+#
+#            # retrieves the service configuration virtual servers resolution order
+#            service_configuration_virtual_servers_resolution_order = service_configuration_virtual_servers.get("resolution_order", service_configuration_virtual_servers.keys())
+#
+#            # splits the host value (to try
+#            # to retrieve hostname and port)
+#            host_splitted = host.split(":")
+#
+#            # retrieves the host splitted length
+#            host_splitted_length = len(host_splitted)
+#
+#            # in case the host splitted length is two
+#            if host_splitted_length == 2:
+#                # retrieves the hostname and the port
+#                hostname, _port = host_splitted
 #            else:
-#                self.main_service_dns_plugin.debug("Connection: %s closed" % str(self.dns_address))
+#                # sets the hostname as the host (size one)
+#                hostname = host
 #
-#                # returns false (connection closed)
-#                return False
+#            # in case the hostname exists in the service configuration virtual servers map
+#            if hostname in service_configuration_virtual_servers:
+#                # iterates over the service configuration virtual server names
+#                for service_configuration_virtual_server_name in service_configuration_virtual_servers_resolution_order:
+#                    # in case this is the hostname
+#                    if hostname == service_configuration_virtual_server_name:
+#                        # retrieves the service configuration virtual server value
+#                        service_configuration_virtual_server_value = service_configuration_virtual_servers[service_configuration_virtual_server_name]
 #
-#        except Exception, exception:
-#            # prints info message about exception
-#            self.main_service_dns_plugin.info("There was an exception handling the request: " + str(exception))
+#                        # merges the service configuration map with the service configuration virtual server value,
+#                        # to retrieve the final service configuration for this request
+#                        service_configuration = self._mege_values(service_configuration, service_configuration_virtual_server_value)
 #
-#            # sends the exception
-#            self.send_exception(request, exception)
+#                        # breaks the loop
+#                        break
 #
-#        # returns true (connection remains open)
-#        return True
-#
-#    def retrieve_request(self, request_timeout = REQUEST_TIMEOUT):
-#        """
-#        Retrieves the request from the received message.
-#
-#        @type request_timeout: int
-#        @param request_timeout: The timeout for the request retrieval.
-#        @rtype: DnsRequest
-#        @return: The request from the received message.
-#        """
-#
-#        # creates the string buffer for the message
-#        message = colony.libs.string_buffer_util.StringBuffer()
-#
-#        # creates a request object
-#        request = DnsRequest(self, self.content_type_charset)
-#
-#        # creates the start line loaded flag
-#        start_line_loaded = False
-#
-#        # creates the header loaded flag
-#        header_loaded = False
-#
-#        # creates the message loaded flag
-#        message_loaded = False
-#
-#        # creates the message offset index, representing the
-#        # offset byte to the initialization of the message
-#        message_offset_index = 0
-#
-#        # creates the message size value
-#        message_size = 0
-#
-#        # creates the received data size (counter)
-#        received_data_size = 0
-#
-#        # continuous loop
-#        while True:
-#            # retrieves the data
-#            data = self.retrieve_data(request_timeout)
-#
-#            # retrieves the data length
-#            data_length = len(data)
-#
-#            # in case no valid data was received
-#            if data_length == 0:
-#                # raises the dns invalid data exception
-#                raise main_service_dns_exceptions.DnsInvalidDataException("empty data received")
-#
-#            # increments the received data size (counter)
-#            received_data_size += data_length
-#
-#            # writes the data to the string buffer
-#            message.write(data)
-#
-#            # in case the header is loaded or the message contents are completely loaded
-#            if not header_loaded or received_data_size - message_offset_index == message_size:
-#                # retrieves the message value from the string buffer
-#                message_value = message.get_value()
-#            # in case there's no need to inspect the message contents
-#            else:
-#                # continues with the loop
-#                continue
-#
-#            # in case the start line is not loaded
-#            if not start_line_loaded:
-#                # finds the first new line value
-#                start_line_index = message_value.find("\r\n")
-#
-#                # in case there is a new line value found
-#                if not start_line_index == -1:
-#                    # retrieves the start line
-#                    start_line = message_value[:start_line_index]
-#
-#                    # splits the start line in spaces
-#                    start_line_splitted = start_line.split(" ")
-#
-#                    # retrieves the start line splitted length
-#                    start_line_splitted_length = len(start_line_splitted)
-#
-#                    # in case the length of the splitted line is not three
-#                    if not start_line_splitted_length == 3:
-#                        # raises the dns invalid data exception
-#                        raise main_service_dns_exceptions.DnsInvalidDataException("invalid data received: " + start_line)
-#
-#                    # retrieve the operation type the path and the protocol version
-#                    # from the start line splitted
-#                    operation_type, path, protocol_version = start_line_splitted
-#
-#                    # sets the request operation type
-#                    request.set_operation_type(operation_type)
-#
-#                    # sets the request path
-#                    request.set_path(path)
-#
-#                    # sets the request protocol version
-#                    request.set_protocol_version(protocol_version)
-#
-#                    # sets the start line loaded flag
-#                    start_line_loaded = True
-#
-#            # in case the header is not loaded
-#            if not header_loaded:
-#                # retrieves the end header index (two new lines)
-#                end_header_index = message_value.find("\r\n\r\n")
-#
-#                # in case the end header index is found
-#                if not end_header_index == -1:
-#                    # sets the message offset index as the end header index
-#                    # plus the two sequences of newlines (four characters)
-#                    message_offset_index = end_header_index + 4
-#
-#                    # sets the header loaded flag
-#                    header_loaded = True
-#
-#                    # retrieves the start header index
-#                    start_header_index = start_line_index + 2
-#
-#                    # retrieves the headers part of the message
-#                    headers = message_value[start_header_index:end_header_index]
-#
-#                    # splits the headers by line
-#                    headers_splitted = headers.split("\r\n")
-#
-#                    # iterates over the headers lines
-#                    for header_splitted in headers_splitted:
-#                        # finds the header separator
-#                        division_index = header_splitted.find(":")
-#
-#                        # retrieves the header name
-#                        header_name = header_splitted[:division_index].strip()
-#
-#                        # retrieves the header value
-#                        header_value = header_splitted[division_index + 1:].strip()
-#
-#                        # sets the header in the headers map
-#                        request.headers_map[header_name] = header_value
-#                        request.headers_in[header_name] = header_value
-#
-#                    # in case the operation type is get
-#                    if request.operation_type == GET_METHOD_VALUE:
-#                        # parses the get attributes
-#                        request.__parse_get_attributes__()
-#
-#                        # returns the request
-#                        return request
-#                    # in case the operation type is post
-#                    elif request.operation_type == POST_METHOD_VALUE:
-#                        # in case the content length is defined in the headers map
-#                        if CONTENT_LENGTH_VALUE in request.headers_map:
-#                            # retrieves the message size
-#                            message_size = int(request.headers_map[CONTENT_LENGTH_VALUE])
-#                        elif CONTENT_LENGTH_LOWER_VALUE in request.headers_map:
-#                            # retrieves the message size
-#                            message_size = int(request.headers_map[CONTENT_LENGTH_LOWER_VALUE])
-#                        # in case there is no content length defined in the headers map
-#                        else:
-#                            # returns the request
-#                            return request
-#
-#            # in case the message is not loaded and the header is loaded
-#            if not message_loaded and header_loaded:
-#                # retrieves the start message size
-#                start_message_index = end_header_index + 4
-#
-#                # calculates the message value message length
-#                message_value_message_length = len(message_value) - start_message_index
-#
-#                # in case the length of the message value message is the same
-#                # as the message size
-#                if message_value_message_length == message_size:
-#                    # retrieves the message part of the message value
-#                    message_value_message = message_value[start_message_index:]
-#
-#                    # sets the message loaded flag
-#                    message_loaded = True
-#
-#                    # sets the received message
-#                    request.received_message = message_value_message
-#
-#                    # decodes the request if necessary
-#                    self.decode_request(request)
-#
-#                    # returns the request
-#                    return request
-#
-#    def retrieve_data(self, request_timeout = REQUEST_TIMEOUT, chunk_size = MESSAGE_MAXIMUM_SIZE):
-#        try:
-#            # sets the connection to non blocking mode
-#            self.dns_connection.setblocking(0)
-#
-#            # runs the select in the dns connection, with timeout
-#            selected_values = select.select([self.dns_connection], [], [], request_timeout)
-#
-#            # sets the connection to blocking mode
-#            self.dns_connection.setblocking(1)
-#        except:
-#            raise main_service_dns_exceptions.RequestClosed("invalid socket")
-#
-#        if selected_values == ([], [], []):
-#            self.dns_connection.close()
-#            raise main_service_dns_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
-#        try:
-#            # receives the data in chunks
-#            data = self.dns_connection.recv(chunk_size)
-#        except:
-#            raise main_service_dns_exceptions.ClientRequestTimeout("timeout")
-#
-#        return data
-#
-#    def send_exception(self, request, exception):
-#        """
-#        Sends the exception to the given request for the given exception.
-#
-#        @type request: DnsRequest
-#        @param request: The request to send the exception.
-#        @type exception: Exception
-#        @param exception: The exception to be sent.
-#        """
-#
-#        pass
-#
-#    def send_request(self, request):
-#        pass
-#
-#
-#
-
-
-
-
-
+#        # returns the service configuration
+#        return service_configuration
 
 class DnsRequest:
     """
@@ -736,7 +620,7 @@ class DnsRequest:
         self.additional_resource_records = []
         self.name_cache_map = {}
 
-    def process_data(self, data, address):
+    def process_data(self, data):
         # retrieves the message header from the data
         message_header = struct.unpack_from("!HHHHHH", data)
 

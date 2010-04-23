@@ -70,3 +70,132 @@ class SocketProviderNotFound(MainServiceDnsException):
         """
 
         return "Socket provider not found: %s" % self.message
+
+class ServerRequestTimeout(MainServiceDnsException):
+    """
+    The server request timeout class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        MainServiceDnsException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Server request timeout: %s" % self.message
+
+class ClientRequestTimeout(MainServiceDnsException):
+    """
+    The client request timeout class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        MainServiceDnsException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Client request timeout: %s" % self.message
+
+class RequestClosed(MainServiceDnsException):
+    """
+    The request closed class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        MainServiceDnsException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Request closed: %s" % self.message
+
+class DnsRuntimeException(MainServiceDnsException):
+    """
+    The dns runtime exception class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        MainServiceDnsException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Dns runtime exception: %s" % self.message
+
+class DnsInvalidDataException(DnsRuntimeException):
+    """
+    The dns invalid data exception class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        DnsRuntimeException.__init__(self, message)
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Dns invalid data exception: %s" % self.message
