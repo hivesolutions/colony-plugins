@@ -46,7 +46,7 @@ class LanguageWikiPlugin(colony.plugins.plugin_system.Plugin):
 
     id = "pt.hive.colony.plugins.language.wiki"
     name = "Language Wiki Plugin"
-    short_name = "Language WIki"
+    short_name = "Language Wiki"
     description = "The plugin that offers the wiki language parsing and generation capabilities"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
