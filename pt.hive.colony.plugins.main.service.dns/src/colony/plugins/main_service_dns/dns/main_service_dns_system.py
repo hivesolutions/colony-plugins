@@ -620,6 +620,9 @@ class DnsRequest:
         self.additional_resource_records = []
         self.name_cache_map = {}
 
+    def __repr__(self):
+        return "(%s, 0x%04x, %s)" % (self.transaction_id, self.flags, str(self.queries))
+
     def process_data(self, data):
         # retrieves the message header from the data
         message_header = struct.unpack_from("!HHHHHH", data)
