@@ -37,35 +37,31 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import ssl
 import socket
 
-PROVIDER_NAME = "ssl"
+PROVIDER_NAME = "raw"
 """ The provider name """
 
 FAMILY_VALUE = "family"
 """ The family value """
 
-RESOURCES_PATH = "main_service_ssl_socket_provider/ssl_socket_provider/resources"
-""" The resources path """
-
-class MainServiceSslSocketProvider:
+class MainServiceRawSocketProvider:
     """
-    The main service ssl socket provider class.
+    The main service raw socket provider class.
     """
 
-    main_service_ssl_socket_provider_plugin = None
-    """ The main service ssl socket provider plugin """
+    main_service_raw_socket_provider_plugin = None
+    """ The main service raw socket provider plugin """
 
-    def __init__(self, main_service_ssl_socket_provider_plugin):
+    def __init__(self, main_service_raw_socket_provider_plugin):
         """
         Constructor of the class.
 
-        @type main_service_ssl_socket_provider_plugin: MainServiceSslSocketProviderPlugin
-        @param main_service_ssl_socket_provider_plugin: The main service ssl socket provider plugin.
+        @type main_service_raw_socket_provider_plugin: MainServiceRawSocketProviderPlugin
+        @param main_service_raw_socket_provider_plugin: The main service raw socket provider plugin.
         """
 
-        self.main_service_ssl_socket_provider_plugin = main_service_ssl_socket_provider_plugin
+        self.main_service_raw_socket_provider_plugin = main_service_raw_socket_provider_plugin
 
     def get_provider_name(self):
         """
@@ -86,11 +82,11 @@ class MainServiceSslSocketProvider:
         @return: The provided socket.
         """
 
-        # creates the ssl socket
-        ssl_socket = self.provide_socket_parameters()
+        # creates the raw socket
+        raw_socket = self.provide_socket_parameters()
 
-        # returns the ssl socket
-        return ssl_socket
+        # returns the raw socket
+        return raw_socket
 
     def provide_socket_parameters(self, parameters = {}):
         """
@@ -103,29 +99,11 @@ class MainServiceSslSocketProvider:
         @return: The provided socket.
         """
 
-        # retrieves the plugin manager
-        manager = self.main_service_ssl_socket_provider_plugin.manager
-
-        # retrieves the main service ssl socket provicer plugin base path
-        main_service_ssl_socket_provicer_plugin_path = manager.get_plugin_path_by_id(self.main_service_ssl_socket_provider_plugin.id)
-
-        # sets the main service ssl socket provicer plugin resources path
-        main_service_ssl_socket_provicer_plugin_resources_path = main_service_ssl_socket_provicer_plugin_path + "/main_service_ssl_socket_provider/ssl_socket_provider/resources"
-
         # tries to retrieve the socket family
         socket_family = parameters.get(FAMILY_VALUE, socket.AF_INET)
 
-        # creates the normal socket
-        normal_socket = socket.socket(socket_family, socket.SOCK_STREAM)
+        # creates the raw socket
+        raw_socket = socket.socket(socket_family, socket.SOCK_RAW)
 
-        # retrieves the dummy ssl key path
-        dummy_ssl_key_path = main_service_ssl_socket_provicer_plugin_resources_path + "/dummy.key"
-
-        # retrieves the dummy ssl certificate path
-        dummy_ssl_certificate_path = main_service_ssl_socket_provicer_plugin_resources_path + "/dummy.crt"
-
-        # warps the normal socket into an ssl socket
-        ssl_socket = ssl.wrap_socket(normal_socket, dummy_ssl_key_path, dummy_ssl_certificate_path)
-
-        # returns the ssl socket
-        return ssl_socket
+        # returns the raw socket
+        return raw_socket
