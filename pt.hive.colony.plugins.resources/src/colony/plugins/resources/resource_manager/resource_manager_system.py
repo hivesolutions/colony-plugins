@@ -694,36 +694,136 @@ class Resource:
     Class to describe a miscellaneous resource.
     """
 
-    #@todo: comment this
+    namespace = "none"
+    """ The namespace of the resource """
+
+    name = "none"
+    """ The name of the resource """
+
+    type = "none"
+    """ The type of the resource """
+
+    data = None
+    """ The data of the resource """
+
     def __init__(self, namespace, name, type, data):
+        """
+        Constructor of the class.
+
+        @type namespace: String
+        @param namespace: The namespace of the resource.
+        @type name: String
+        @param name: The name of the resource.
+        @type type: String
+        @param type: The type of the resource.
+        @type data: Object
+        @param data: The data of the resource
+        """
+
         self.namespace = Namespace(namespace)
         self.name = name
         self.type = type
         self.id = namespace + "." + name
         self.data = data
 
-    #@todo: comment this
     def get_namespace(self):
+        """
+        Retrieves the namespace.
+
+        @rtype: String
+        @return: The namespace.
+        """
+
         return self.namespace
 
-    #@todo: comment this
+    def set_namespace(self, namespace):
+        """
+        Sets the namespace.
+
+        @type namespace: String
+        @param namespace: The namespace.
+        """
+
+        self.namespace = namespace
+
     def get_name(self):
+        """
+        Retrieves the name.
+
+        @rtype: String
+        @return: The name.
+        """
+
         return self.name
 
-    #@todo: comment this
+    def set_name(self, name):
+        """
+        Sets the name.
+
+        @type name: String
+        @param name: The name.
+        """
+
+        self.name = name
+
     def get_type(self):
+        """
+        Retrieves the type.
+
+        @rtype: String
+        @return: The type.
+        """
+
         return self.type
 
-    #@todo: comment this
+    def set_type(self, type):
+        """
+        Sets the type.
+
+        @type type: String
+        @param type: The type.
+        """
+
+        self.type = type
+
     def get_id(self):
+        """
+        Retrieves the id.
+
+        @rtype: String
+        @return: The id.
+        """
+
         return self.id
 
-    #@todo: comment this
+    def set_id(self, id):
+        """
+        Sets the id.
+
+        @type id: String
+        @param id: The id.
+        """
+
+        self.id = id
+
     def get_data(self):
+        """
+        Retrieves the data.
+
+        @rtype: Object
+        @return: The data.
+        """
+
         return self.data
 
-    #@todo: comment this
     def set_data(self, data):
+        """
+        Sets the data.
+
+        @type data: Object
+        @param data: The data.
+        """
+
         self.data = data
 
 class Namespace:
@@ -734,11 +834,22 @@ class Namespace:
     list_value = []
     """ The value of the namespace described as a list """
 
-    #@todo: comment this
     def __init__(self, string_value = None):
+        """
+        Constructor of the class.
+
+        @type string_value: String
+        @param string_value: The string value of the namespace.
+        """
+
+        # in case a string value is defined
         if string_value:
+            # splits the string value around the dot
+            # to retrieve the list of strings
             self.list_value = string_value.split(".")
+        # in case no string value is defined
         else:
+            # seas the (default) empty list
             self.list_value = []
 
     def __eq__(self, namespace):
@@ -777,38 +888,66 @@ class Namespace:
     def __ne__(self, namespace):
         return not self.__eq__(namespace)
 
-    #@todo: comment this
-    def is_sub_namespace(self, event):
+    def is_sub_namespace(self, namespace):
+        """
+        Tests if the given namespace is sub namespace.
+
+        @type namespace: Namespace
+        @param namespace: The namespace to be tested.
+        @rtype: bool
+        @return: The result of the is sub namespace test.
+        """
+
 
         list_value_self = self.list_value
-        list_value_event = event.list_value
+        list_value_namespace = namespace.list_value
 
-        if not list_value_self or not list_value_event:
+        if not list_value_self or not list_value_namespace:
             return False
 
         len_self = len(list_value_self)
-        len_event = len(list_value_event)
+        len_namespace = len(list_value_namespace)
 
-        if len_event <= len_self:
+        if len_namespace <= len_self:
             return False
 
         for index in range(len_self):
-            if list_value_self[index] != list_value_event[index]:
+            if list_value_self[index] != list_value_namespace[index]:
                 return False
 
         return True
 
-    #@todo: comment this
-    def is_namespace_or_sub_namespace(self, event):
-        if self.__eq__(event) or self.is_sub_event(event):
+    def is_namespace_or_sub_namespace(self, namespace):
+        """
+        Tests if the given namespace is a namespace or sub namespace.
+
+        @type namespace: Namespace
+        @param namespace: The namespace to be tested.
+        @rtype: bool
+        @return: The result of the is namespace or sub namespace test.
+        """
+
+        if self.__eq__(namespace) or self.is_sub_namespace(namespace):
             return True
         else:
             return False
 
-    #@todo: comment this
     def get_list_value(self):
+        """
+        Retrieves the list value.
+
+        @rtype: List
+        @return: The list value.
+        """
+
         return self.list_value
 
-    #@todo: comment this
     def set_list_value(self, list_value):
+        """
+        Sets the list value.
+
+        @type list_value: List
+        @param list_value: The list value.
+        """
+
         self.list_value = list_value
