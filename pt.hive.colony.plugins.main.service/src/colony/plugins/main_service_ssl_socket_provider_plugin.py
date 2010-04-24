@@ -87,7 +87,35 @@ class MainServiceSslSocketProviderPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_provider_name(self):
+        """
+        Retrieves the socket provider name.
+
+        @rtype: String
+        @return: The socket provider name.
+        """
+
         return self.main_service_ssl_socket_provider.get_provider_name()
 
     def provide_socket(self):
+        """
+        Provides a new socket, configured with
+        the default parameters.
+
+        @rtype: Socket
+        @return: The provided socket.
+        """
+
         return self.main_service_ssl_socket_provider.provide_socket()
+
+    def provide_socket_parameters(self, parameters):
+        """
+        Provides a new socket, configured with
+        the given parameters.
+
+        @type parameters: Dictionary
+        @param parameters: The parameters for socket configuration.
+        @rtype: Socket
+        @return: The provided socket.
+        """
+
+        return self.main_service_ssl_socket_provider.provide_socket_parameters(parameters)

@@ -42,6 +42,9 @@ import socket
 PROVIDER_NAME = "datagram"
 """ The provider name """
 
+FAMILY_VALUE = "family"
+""" The family value """
+
 class MainServiceDatagramSocketProvider:
     """
     The main service datagram socket provider class.
@@ -61,11 +64,46 @@ class MainServiceDatagramSocketProvider:
         self.main_service_datagram_socket_provider_plugin = main_service_datagram_socket_provider_plugin
 
     def get_provider_name(self):
+        """
+        Retrieves the socket provider name.
+
+        @rtype: String
+        @return: The socket provider name.
+        """
+
         return PROVIDER_NAME
 
     def provide_socket(self):
+        """
+        Provides a new socket, configured with
+        the default parameters.
+
+        @rtype: Socket
+        @return: The provided socket.
+        """
+
         # creates the datagram socket
-        datagram_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        datagram_socket = self.provide_socket_parameters()
+
+        # returns the datagram socket
+        return datagram_socket
+
+    def provide_socket_parameters(self, parameters = {}):
+        """
+        Provides a new socket, configured with
+        the given parameters.
+
+        @type parameters: Dictionary
+        @param parameters: The parameters for socket configuration.
+        @rtype: Socket
+        @return: The provided socket.
+        """
+
+        # tries to retrieve the socket family
+        socket_family = parameters.get(FAMILY_VALUE, socket.AF_INET)
+
+        # creates the datagram socket
+        datagram_socket = socket.socket(socket_family, socket.SOCK_STREAM)
 
         # returns the datagram socket
         return datagram_socket

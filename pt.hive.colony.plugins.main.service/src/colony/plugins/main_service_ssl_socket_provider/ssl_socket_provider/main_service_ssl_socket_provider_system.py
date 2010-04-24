@@ -43,6 +43,9 @@ import socket
 PROVIDER_NAME = "ssl"
 """ The provider name """
 
+FAMILY_VALUE = "family"
+""" The family value """
+
 RESOURCES_PATH = "main_service_ssl_socket_provider/ssl_socket_provider/resources"
 """ The resources path """
 
@@ -65,9 +68,41 @@ class MainServiceSslSocketProvider:
         self.main_service_ssl_socket_provider_plugin = main_service_ssl_socket_provider_plugin
 
     def get_provider_name(self):
+        """
+        Retrieves the socket provider name.
+
+        @rtype: String
+        @return: The socket provider name.
+        """
+
         return PROVIDER_NAME
 
     def provide_socket(self):
+        """
+        Provides a new socket, configured with
+        the default parameters.
+
+        @rtype: Socket
+        @return: The provided socket.
+        """
+
+        # creates the normal socket
+        normal_socket = self.provide_socket_parameters()
+
+        # returns the normal socket
+        return normal_socket
+
+    def provide_socket_parameters(self, parameters = {}):
+        """
+        Provides a new socket, configured with
+        the given parameters.
+
+        @type parameters: Dictionary
+        @param parameters: The parameters for socket configuration.
+        @rtype: Socket
+        @return: The provided socket.
+        """
+
         # retrieves the plugin manager
         manager = self.main_service_ssl_socket_provider_plugin.manager
 
@@ -77,8 +112,11 @@ class MainServiceSslSocketProvider:
         # sets the main service ssl socket provicer plugin resources path
         main_service_ssl_socket_provicer_plugin_resources_path = main_service_ssl_socket_provicer_plugin_path + "/main_service_ssl_socket_provider/ssl_socket_provider/resources"
 
+        # tries to retrieve the socket family
+        socket_family = parameters.get(FAMILY_VALUE, socket.AF_INET)
+
         # creates the normal socket
-        normal_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        normal_socket = socket.socket(socket_family, socket.SOCK_STREAM)
 
         # retrieves the dummy ssl key path
         dummy_ssl_key_path = main_service_ssl_socket_provicer_plugin_resources_path + "/dummy.key"
