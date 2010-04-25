@@ -108,6 +108,9 @@ class MainServiceHttpFileHandler:
         @param request: The http request to be handled.
         """
 
+        # retrieves the resource manager plugin
+        resource_manager_plugin = self.main_service_http_file_handler_plugin.resource_manager_plugin
+
         # retrieves the handler configuration
         handler_configuration = self.main_service_http_file_handler_plugin.get_configuration_property("handler_configuration").get_data()
 
@@ -147,7 +150,7 @@ class MainServiceHttpFileHandler:
         handler_path = request.get_handler_path()
 
         # retrieves the real base directory
-        real_base_directory = self.main_service_http_file_handler_plugin.resource_manager_plugin.get_real_string_value(base_directory)
+        real_base_directory = resource_manager_plugin.get_real_string_value(base_directory)
 
         # in case the relative paths are disabled
         if not relative_paths:
