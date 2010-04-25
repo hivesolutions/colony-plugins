@@ -79,6 +79,24 @@ NORMAL_REQUEST_VALUE = 0x0100
 NORMAL_RESPONSE_VALUE = 0x8180
 """ The normal response value """
 
+NO_ERROR_MASK_VALUE = 0x0000
+""" The no error mask value """
+
+FORMAT_ERROR_MASK_VALUE = 0x0001
+""" The format error mask value """
+
+SERVER_FAILURE_ERROR_MASK_VALUE = 0x0002
+""" The server failure error mask value """
+
+NOT_IMPLEMENTED_ERROR_MASK_VALUE = 0x0004
+""" The not implemented error mask value """
+
+REFUSED_ERROR_MASK_VALUE = 0x0008
+""" The refused error mask value """
+
+CACHE_MASK_VALUE = 0xc000
+""" The cache mask value """
+
 TYPES_MAP = {"A" : 0x01, "NS" : 0x02, "MD" : 0x03, "MF" : 0x04, "CNAME" : 0x05,
              "SOA" : 0x06, "MB" : 0x07, "MG" : 0x08, "MR" : 0x09, "NULL" : 0x0a,
              "WKS" : 0x0b, "PTR" : 0x0c, "HINFO" : 0x0d, "MINFO" : 0x0e, "MX" : 0x0f,
@@ -407,31 +425,16 @@ class DnsClientServiceTask:
             # taking the request information into account
             service_configuration = self._get_service_configuration(request)
 
-#            # processes the handler part of the request and retrieves
-#            # the handler name
-#            handler_name = self._process_handler(request, service_configuration)
-#
-#            # in case the request was not already handled
-#            if not handler_name:
-#                # retrieves the default handler name
-#                handler_name = service_configuration.get("default_handler", None)
-#
-#                # sets the handler path
-#                request.handler_path = None
-#
-#            # in case no handler name is defined (request not handled)
-#            if not handler_name:
-#                # raises an dns no handler exception
-#                raise main_service_dns_exceptions.DnsNoHandlerException("no handler defined for current request")
-#
-#            # handles the request by the request handler
-#            dns_service_handler_plugins_map[handler_name].handle_request(request)
+            # retrieves the default handler name
+            handler_name = service_configuration.get("default_handler", None)
 
-            # creates a dummy answer
-            answer = ("www.google.com", "A", "IN", 20000, "192.168.1.11")
+            # in case no handler name is defined (request not handled)
+            if not handler_name:
+                # raises an dns no handler exception
+                raise main_service_dns_exceptions.DnsNoHandlerException("no handler defined for current request")
 
-            # adds a new answer to the request
-            request.answers.append(answer)
+            # handles the request by the request handler
+            dns_service_handler_plugins_map[handler_name].handle_request(request)
 
             # sends the request to the client (response)
             self.send_request(request)
@@ -459,10 +462,6 @@ class DnsClientServiceTask:
 
         # processes the request
         request.process_data(self.data)
-
-        # @todo
-        # para apanhar excepcoes e preciso mandar o bit de excepcao
-        # como esta no rfc na pagina 26
 
         # returns the request
         return request
@@ -500,7 +499,22 @@ class DnsClientServiceTask:
         @param exception: The exception to be sent.
         """
 
-        pass
+        # resets the response value (deletes answers)
+        request.reset_response()
+
+        # checks if the error contains a dns failure mask
+        if hasattr(exception, "dns_failure_mask"):
+            # sets the flags out (response) with
+            # the dns failure mask
+            request.flags_out |= exception.dns_failure_mask
+        # in case there is no status code defined in the error
+        else:
+            # sets the flags out (response) with
+            # the dns failure mask
+            request.flags_out |= SERVER_FAILURE_ERROR_MASK_VALUE
+
+        # sends the request to the client (response)
+        self.send_request(request)
 
     def send_request(self, request):
         # retrieves the result from the request
@@ -522,55 +536,11 @@ class DnsClientServiceTask:
         @return: The resolved service configuration.
         """
 
-        return {}
-#
-#        # retrieves the base service configuration
-#        service_configuration = self.service_configuration
-#
-#        # retrieves the host value from the request headers
-#        host = request.headers_map.get(HOST_VALUE, None)
-#
-#        # in case the host is defined
-#        if host:
-#            # retrieves the virtual servers map
-#            service_configuration_virtual_servers = service_configuration.get("virtual_servers", {})
-#
-#            # retrieves the service configuration virtual servers resolution order
-#            service_configuration_virtual_servers_resolution_order = service_configuration_virtual_servers.get("resolution_order", service_configuration_virtual_servers.keys())
-#
-#            # splits the host value (to try
-#            # to retrieve hostname and port)
-#            host_splitted = host.split(":")
-#
-#            # retrieves the host splitted length
-#            host_splitted_length = len(host_splitted)
-#
-#            # in case the host splitted length is two
-#            if host_splitted_length == 2:
-#                # retrieves the hostname and the port
-#                hostname, _port = host_splitted
-#            else:
-#                # sets the hostname as the host (size one)
-#                hostname = host
-#
-#            # in case the hostname exists in the service configuration virtual servers map
-#            if hostname in service_configuration_virtual_servers:
-#                # iterates over the service configuration virtual server names
-#                for service_configuration_virtual_server_name in service_configuration_virtual_servers_resolution_order:
-#                    # in case this is the hostname
-#                    if hostname == service_configuration_virtual_server_name:
-#                        # retrieves the service configuration virtual server value
-#                        service_configuration_virtual_server_value = service_configuration_virtual_servers[service_configuration_virtual_server_name]
-#
-#                        # merges the service configuration map with the service configuration virtual server value,
-#                        # to retrieve the final service configuration for this request
-#                        service_configuration = self._mege_values(service_configuration, service_configuration_virtual_server_value)
-#
-#                        # breaks the loop
-#                        break
-#
-#        # returns the service configuration
-#        return service_configuration
+        # retrieves the base service configuration
+        service_configuration = self.service_configuration
+
+        # returns the service configuration
+        return service_configuration
 
 class DnsRequest:
     """
@@ -624,6 +594,15 @@ class DnsRequest:
         return "(%s, 0x%04x, %s)" % (self.transaction_id, self.flags, str(self.queries))
 
     def process_data(self, data):
+        """
+        Processes the given data creating the request
+        information values.
+
+        @type data: String
+        @param data: The data to be processed to create
+        the request.
+        """
+
         # retrieves the message header from the data
         message_header = struct.unpack_from("!HHHHHH", data)
 
@@ -754,6 +733,16 @@ class DnsRequest:
 
         # returns the result value
         return result_value
+
+    def reset_response(self):
+        """
+        Resets the response value, clearing all
+        the response data structures.
+        """
+
+        self.answers = []
+        self.authority_resource_records = []
+        self.additional_resource_records = []
 
     def _get_query(self, data, current_index):
         # retrieves the name for the data and current index
@@ -983,8 +972,8 @@ class DnsRequest:
                 # retrieves the name item index
                 name_item_index = self.name_cache_map[name_item_identifier]
 
-                # ors the name item index with the "cache marker"
-                name_item_index |= 0xc000
+                # "ors" the name item index with the "cache marker"
+                name_item_index |= CACHE_MASK_VALUE
 
                 # converts the name item index to string
                 name_item_index_string = struct.pack("!H", name_item_index)
@@ -1041,8 +1030,8 @@ class DnsRequest:
                 # retrieves the name item index
                 name_item_index = self.name_cache_map[name_item_identifier]
 
-                # ors the name item index with the "cache marker"
-                name_item_index |= 0xc000
+                # "ors" the name item index with the "cache marker"
+                name_item_index |= CACHE_MASK_VALUE
 
                 # converts the name item index to string
                 name_item_index_string = struct.pack("!H", name_item_index)

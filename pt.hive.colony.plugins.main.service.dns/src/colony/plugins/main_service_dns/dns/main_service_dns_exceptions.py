@@ -199,3 +199,29 @@ class DnsInvalidDataException(DnsRuntimeException):
         """
 
         return "Dns invalid data exception: %s" % self.message
+
+
+class DnsNoHandlerException(DnsRuntimeException):
+    """
+    The dns no handler exception.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        DnsRuntimeException.__init__(self, message)
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Dns no handler exception: %s" % self.message
