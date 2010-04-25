@@ -151,7 +151,7 @@ class MainClientHttp:
 
     def create_client(self, parameters):
         """
-        Creates a client object for the given paramaters.
+        Creates a client object for the given parameters.
 
         @type parameters: Dictionary
         @param parameters: The parameters to be used in creating
