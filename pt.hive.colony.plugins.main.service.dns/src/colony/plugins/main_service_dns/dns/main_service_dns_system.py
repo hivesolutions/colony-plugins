@@ -1069,7 +1069,8 @@ class DnsRequest:
             self.name_cache_map[name_item_identifier] = current_index
 
             # increments the current index with the name item length
-            current_index += name_item_length
+            # plus the byte containing the name length
+            current_index += name_item_length + 1
 
             # increments the index counter
             index += 1
