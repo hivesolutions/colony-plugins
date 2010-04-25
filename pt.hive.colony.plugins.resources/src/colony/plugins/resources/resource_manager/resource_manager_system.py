@@ -150,17 +150,8 @@ class ResourceManager:
         # constructs the full resources path
         full_resources_path = plugin_path + BASE_RESOURCES_PATH
 
-        # retrieves the resources path directory contents
-        resources_path_directory_contents = os.listdir(full_resources_path)
-
-        # iterates over the resources path directory contents
-        for resources_path_item in resources_path_directory_contents:
-            if len(resources_path_item) > RESOURCES_SUFIX_LENGTH and resources_path_item[RESOURCES_SUFIX_START_INDEX:] == RESOURCES_SUFIX_VALUE:
-                # creates the resources full path item
-                resources_full_path_item = full_resources_path + "/" + resources_path_item
-
-                # parses the resources description file
-                self.parse_file(resources_full_path_item, full_resources_path)
+        # loads the base resources for the entry directory
+        self._load_base_resouces_directory(full_resources_path)
 
     def parse_file(self, file_path, full_resources_path):
         # creates the resources file parser
@@ -679,6 +670,22 @@ class ResourceManager:
         resource_parser_name = resource_parser_plugin.get_resource_parser_name()
 
         del self.resource_parser_plugins_map[resource_parser_name]
+
+    def _load_base_resouces_directory(self, directory_path):
+        # retrieves the resources path directory contents
+        resources_path_directory_contents = os.listdir(directory_path)
+
+        # iterates over the resources path directory contents
+        for resources_path_item in resources_path_directory_contents:
+            # creates the resources full path item
+            resources_full_path_item = directory_path + "/" + resources_path_item
+
+            if len(resources_path_item) > RESOURCES_SUFIX_LENGTH and resources_path_item[RESOURCES_SUFIX_START_INDEX:] == RESOURCES_SUFIX_VALUE:
+                # parses the resources description file
+                self.parse_file(resources_full_path_item, directory_path)
+            elif os.path.isdir(resources_full_path_item):
+                # loads the base resources for the directory
+                self._load_base_resouces_directory(resources_full_path_item)
 
     def _invalidate_real_string_value_cache(self):
         """
