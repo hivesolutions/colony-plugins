@@ -54,6 +54,9 @@ DEFAULT_SOCKET_NAME = "normal"
 RESPONSE_TIMEOUT = 10
 """ The response timeout """
 
+CHUNK_SIZE = 4096
+""" The chunk size """
+
 class MainClientSmtp:
     """
     The main client smtp class.
@@ -175,6 +178,7 @@ class SmtpClient:
 
         # todo: tenho de ter aki um ciclo
         # para receber a resposta como deve de ser
+        # como no cliente de http
 
         # receives the data
         data = self.retrieve_data()
@@ -185,7 +189,7 @@ class SmtpClient:
         # returns the response
         return response
 
-    def retrieve_data(self, response_timeout = RESPONSE_TIMEOUT, data_size = MESSAGE_MAXIMUM_SIZE):
+    def retrieve_data(self, response_timeout = RESPONSE_TIMEOUT, chunk_size = CHUNK_SIZE):
         try:
             # sets the connection to non blocking mode
             self.smtp_connection.setblocking(0)
@@ -203,7 +207,7 @@ class SmtpClient:
             raise main_client_smtp_exceptions.ClientResponseTimeout("%is timeout" % response_timeout)
         try:
             # receives the data in chunks
-            data = self.smtp_connection.recv(data_size)
+            data = self.smtp_connection.recv(chunk_size)
         except:
             raise main_client_smtp_exceptions.ServerResponseTimeout("timeout")
 
