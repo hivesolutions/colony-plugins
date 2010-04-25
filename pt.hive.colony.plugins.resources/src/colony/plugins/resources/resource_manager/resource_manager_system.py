@@ -481,9 +481,11 @@ class ResourceManager:
         @return: The equals expression result.
         """
 
+        # retrieves both operands, the first and the second
         equals_expression_first_operand = equals_expression.first_operand
         equals_expression_second_operand = equals_expression.second_operand
 
+        # retrieves the operand values
         equals_expression_first_operand_value = self.process_operand(equals_expression_first_operand)
         equals_expression_second_operand_value = self.process_operand(equals_expression_second_operand)
 
