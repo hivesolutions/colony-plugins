@@ -100,7 +100,7 @@ class MainClientDns:
 
     def create_client(self, parameters):
         """
-        Creates a client object for the given paramaters.
+        Creates a client object for the given parameters.
 
         @type parameters: Dictionary
         @param parameters: The parameters to be used in creating
@@ -209,7 +209,7 @@ class DnsClient:
         # returns the response
         return response
 
-    def retrieve_data(self, response_timeout = RESPONSE_TIMEOUT, chunk_size = MESSAGE_MAXIMUM_SIZE):
+    def retrieve_data(self, response_timeout = RESPONSE_TIMEOUT, data_size = MESSAGE_MAXIMUM_SIZE):
         try:
             # sets the connection to non blocking mode
             self.dns_connection.setblocking(0)
@@ -227,7 +227,7 @@ class DnsClient:
             raise main_client_dns_exceptions.ClientResponseTimeout("%is timeout" % response_timeout)
         try:
             # receives the data in chunks
-            data = self.dns_connection.recv(chunk_size)
+            data = self.dns_connection.recv(data_size)
         except:
             raise main_client_dns_exceptions.ServerResponseTimeout("timeout")
 
