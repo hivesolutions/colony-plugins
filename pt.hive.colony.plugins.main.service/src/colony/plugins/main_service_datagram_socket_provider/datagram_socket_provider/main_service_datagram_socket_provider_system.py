@@ -103,7 +103,7 @@ class MainServiceDatagramSocketProvider:
         socket_family = parameters.get(FAMILY_VALUE, socket.AF_INET)
 
         # creates the datagram socket
-        datagram_socket = socket.socket(socket_family, socket.SOCK_STREAM)
+        datagram_socket = socket.socket(socket_family, socket.SOCK_DGRAM)
 
         # returns the datagram socket
         return datagram_socket
