@@ -263,8 +263,6 @@ class HttpNoHandlerException(HttpRuntimeException):
 
         @type message: String
         @param message: The message to be printed.
-        @type status_code: int
-        @param status_code: The http status code.
         """
 
         HttpRuntimeException.__init__(self, message)
@@ -290,8 +288,6 @@ class HttpInvalidMultipartRequestException(HttpRuntimeException):
 
         @type message: String
         @param message: The message to be printed.
-        @type status_code: int
-        @param status_code: The http status code.
         """
 
         HttpRuntimeException.__init__(self, message)
