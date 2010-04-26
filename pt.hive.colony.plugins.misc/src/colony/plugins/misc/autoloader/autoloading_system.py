@@ -42,8 +42,6 @@ import sys
 import time
 import stat
 
-import os.path
-
 SLEEP_TIME_VALUE = 1
 """ The sleep time value """
 
