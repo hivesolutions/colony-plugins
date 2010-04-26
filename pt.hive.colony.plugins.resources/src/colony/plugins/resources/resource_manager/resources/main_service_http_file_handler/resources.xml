@@ -38,7 +38,7 @@
         <resource>
             <name>handler_configuration</name>
             <type>python</type>
-            <data>http_file_configuration.py</data>
+            <data>configuration.py</data>
         </resource>
     </plugin_configuration>
 </resources>
