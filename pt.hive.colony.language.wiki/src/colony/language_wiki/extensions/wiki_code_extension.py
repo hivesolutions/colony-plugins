@@ -37,9 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
 import types
-
-import os.path
 
 import language_wiki.libs.string_buffer_util
 import language_wiki.libs.extension_system

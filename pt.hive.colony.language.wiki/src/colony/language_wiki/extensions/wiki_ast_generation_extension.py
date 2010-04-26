@@ -39,8 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 
-import os.path
-
 import language_wiki.wiki_parser
 import language_wiki.wiki_extension_system
 
