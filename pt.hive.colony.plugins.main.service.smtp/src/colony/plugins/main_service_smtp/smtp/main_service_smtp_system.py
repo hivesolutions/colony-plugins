@@ -79,6 +79,9 @@ class MainServiceSmtp:
     main_service_smtp_plugin = None
     """ The main service smtp plugin """
 
+    smtp_service_handler_plugins_map = {}
+    """ The smtp service handler plugin map """
+
     smtp_socket = None
     """ The smtp socket """
 
@@ -104,6 +107,7 @@ class MainServiceSmtp:
 
         self.main_service_smtp_plugin = main_service_smtp_plugin
 
+        self.smtp_service_handler_plugins_map = {}
         self.smtp_connection_close_event = threading.Event()
         self.smtp_connection_close_end_event = threading.Event()
 
@@ -122,15 +126,21 @@ class MainServiceSmtp:
         port = parameters.get("port", DEFAULT_PORT)
 
         # retrieves the service configuration
-        #service_configuration = self.main_service_smtp_plugin.get_configuration_property("server_configuration").get_data()
+        service_configuration_property = self.main_service_smtp_plugin.get_configuration_property("server_configuration")
 
-        service_configuration = {}
+        # in case the service configuration property is defined
+        if service_configuration_property:
+            # retrieves the service configuration
+            service_configuration = service_configuration_property.get_data()
+        else:
+            # sets the service configuration as an empty map
+            service_configuration = {}
 
         # retrieves the socket provider configuration value
-        #socket_provider = service_configuration.get("default_socket_provider", socket_provider)
+        socket_provider = service_configuration.get("default_socket_provider", socket_provider)
 
         # retrieves the port configuration value
-        #port = service_configuration.get("default_port", port)
+        port = service_configuration.get("default_port", port)
 
         # start the server for the given socket provider, port and encoding
         self.start_server(socket_provider, port, service_configuration)
@@ -287,6 +297,18 @@ class MainServiceSmtp:
         # closes the smtp socket
         self.smtp_socket.close()
 
+    def smtp_service_handler_load(self, smtp_service_handler_plugin):
+        # retrieves the plugin handler name
+        handler_name = smtp_service_handler_plugin.get_handler_name()
+
+        self.smtp_service_handler_plugins_map[handler_name] = smtp_service_handler_plugin
+
+    def smtp_service_handler_unload(self, smtp_service_handler_plugin):
+        # retrieves the plugin handler name
+        handler_name = smtp_service_handler_plugin.get_handler_name()
+
+        del self.smtp_service_handler_plugins_map[handler_name]
+
 class SmtpClientServiceTask:
     """
     The smtp client service task class.
@@ -326,8 +348,31 @@ class SmtpClientServiceTask:
         # retrieves the initial request
         request = self.retrieve_initial_request(session, request_timeout)
 
+        # retrieves the real service configuration,
+        # taking the request information into account
+        service_configuration = self._get_service_configuration(request)
+
+        # retrieves the default handler name
+        handler_name = service_configuration.get("default_handler", None)
+
+        # in case no handler name is defined (request not handled)
+        if not handler_name:
+            # raises an smtp no handler exception
+            raise main_service_smtp_exceptions.SmtpNoHandlerException("no handler defined for current request")
+
+        # retrieves the smtp service handler plugins map
+        smtp_service_handler_plugins_map = self.main_service_smtp_plugin.main_service_smtp.smtp_service_handler_plugins_map
+
+        # in case the handler is not found in the handler plugins map
+        if not handler_name in smtp_service_handler_plugins_map:
+            # raises an smtp handler not found exception
+            raise main_service_smtp_exceptions.SmtpHandlerNotFoundException("no handler found for current request: " + handler_name)
+
+        # retrieves the smtp service handler plugin
+        smtp_service_handler_plugin = smtp_service_handler_plugins_map[handler_name]
+
         # handles the initial request by the request handler
-        self.main_service_smtp_plugin.smtp_service_handler_plugins[0].handle_initial_request(request)
+        smtp_service_handler_plugin.handle_initial_request(request)
 
         # sends the initial request to the client (initial response)
         self.send_request(request)
@@ -345,7 +390,10 @@ class SmtpClientServiceTask:
                 self.main_service_smtp_plugin.debug("Handling request: %s" % str(request))
 
                 # handles the request by the request handler
-                self.main_service_smtp_plugin.smtp_service_handler_plugins[0].handle_request(request)
+                smtp_service_handler_plugins_map[handler_name].handle_request(request)
+
+                # handles the request by the request handler
+                smtp_service_handler_plugin.handle_request(request)
 
                 # sends the request to the client (response)
                 self.send_request(request)
@@ -542,6 +590,25 @@ class SmtpClientServiceTask:
         except:
             # error in the client side
             return
+
+    def _get_service_configuration(self, request):
+        """
+        Retrieves the service configuration for the given request.
+        This retrieval takes into account the request target and characteristics
+        to merge the virtual servers configurations.
+
+        @type request: SmtpRequest
+        @param request: The request to be used in the resolution
+        of the service configuration.
+        @rtype: Dictionary
+        @return: The resolved service configuration.
+        """
+
+        # retrieves the base service configuration
+        service_configuration = self.service_configuration
+
+        # returns the service configuration
+        return service_configuration
 
 class SmtpRequest:
     """
