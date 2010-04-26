@@ -151,7 +151,7 @@ class ResourceManager:
         full_resources_path = plugin_path + BASE_RESOURCES_PATH
 
         # loads the base resources for the entry directory
-        self._load_base_resouces_directory(full_resources_path)
+        self._load_base_resources_directory(full_resources_path)
 
     def parse_file(self, file_path, full_resources_path):
         # creates the resources file parser
@@ -217,7 +217,7 @@ class ResourceManager:
         Registers the plugin resources in the plugin.
 
         @type plugin: Plugin
-        @param plugin: The plugin to have the resouces registered.
+        @param plugin: The plugin to have the resources registered.
         """
 
         # retrieves the plugin id
@@ -671,7 +671,15 @@ class ResourceManager:
 
         del self.resource_parser_plugins_map[resource_parser_name]
 
-    def _load_base_resouces_directory(self, directory_path):
+    def _load_base_resources_directory(self, directory_path):
+        """
+        Loads the base resources in the directory with
+        the given path.
+
+        @type directory_path: String
+        @param directory_path: The directory path to search for resources.
+        """
+
         # retrieves the resources path directory contents
         resources_path_directory_contents = os.listdir(directory_path)
 
@@ -687,7 +695,7 @@ class ResourceManager:
                 self.parse_file(resources_full_path_item, directory_path)
             elif os.path.isdir(resources_full_path_item):
                 # loads the base resources for the directory
-                self._load_base_resouces_directory(resources_full_path_item)
+                self._load_base_resources_directory(resources_full_path_item)
 
     def _invalidate_real_string_value_cache(self):
         """
@@ -908,7 +916,6 @@ class Namespace:
         @rtype: bool
         @return: The result of the is sub namespace test.
         """
-
 
         list_value_self = self.list_value
         list_value_namespace = namespace.list_value
