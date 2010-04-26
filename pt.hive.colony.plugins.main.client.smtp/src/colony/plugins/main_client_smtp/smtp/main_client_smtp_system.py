@@ -266,300 +266,172 @@ class SmtpRequest:
     The smtp request class.
     """
 
-    host = "none"
-    """ The host value """
+    message = "none"
+    """ The received message """
 
-    port = None
-    """ The port value """
-
-    operation_type = "none"
-    """ The operation type """
-
-    path = "none"
-    """ The path """
+    command = "none"
+    """ The received command """
 
     arguments = "none"
-    """ The arguments """
+    """ The received arguments """
 
-    protocol_version = "none"
-    """ The protocol version """
-
-    attributes_map = {}
-    """ The attributes map """
-
-    headers_map = {}
-    """ The headers map """
-
-    content_type = None
-    """ The content type """
+    session = None
+    """ The session """
 
     message_stream = None
     """ The message stream """
 
-    content_type_charset = None
-    """ The content type charset """
+    properties = {}
+    """ The properties """
 
-    def __init__(self, host = "none", port = None, path = "none", attributes_map = {}, operation_type = GET_METHOD_VALUE, protocol_version = HTTP_1_1_VERSION, content_type_charset = DEFAULT_CHARSET):
-        self.host = host
-        self.port = port
-        self.path = path
-        self.attributes_map = attributes_map
-        self.operation_type = operation_type
-        self.protocol_version = protocol_version
-        self.content_type_charset = content_type_charset
-
-        self.headers_map = {}
+    def __init__(self):
         self.message_stream = colony.libs.string_buffer_util.StringBuffer()
+        self.properties = {}
+
+    def __repr__(self):
+        return "(%s, %s)" % (self.command, self.message)
+
+    def read(self):
+        return self.message
+
+    def write(self, message):
+        self.message_stream.write(message)
 
     def get_result(self):
-        # retrieves the result stream
-        result = colony.libs.string_buffer_util.StringBuffer()
+        """
+        Retrieves the result value, processing
+        the current request structure.
 
-        # encodes the attributes
-        encoded_attributes = self._encode_attributes()
-
-        # sets the initial path
-        path = self.path
-
-        # in case the encoded attributes string
-        # is valid and not empty
-        if encoded_attributes:
-            # in case the operation is of type get
-            if self.operation_type == GET_METHOD_VALUE:
-                # in case no exclamation mark exists in
-                # the path
-                if self.path.find("?") == -1:
-                    path = self.path + "?" + encoded_attributes
-                else:
-                    path = self.path + "&" + encoded_attributes
-            # in case the operation is of type post
-            elif self.operation_type == POST_METHOD_VALUE:
-                # writes the encoded attributes into the message stream
-                self.message_stream.write(encoded_attributes)
-
-                # sets the response content type
-                self.content_type = "application/x-www-form-urlencoded"
-
-        # retrieves the real host value
-        real_host = self._get_real_host()
+        @rtype: String
+        @return: The result value for the current
+        request structure.
+        """
 
         # retrieves the result string value
         message = self.message_stream.get_value()
 
-        # retrieves the content length from the
-        # message content itself
-        content_length = len(message)
+        # in case the response messages
+        # are defined
+        if self.response_messages:
+            # initializes the return message
+            return_message_buffer = colony.libs.string_buffer_util.StringBuffer()
 
-        # writes the http command in the string buffer (version, status code and status value)
-        result.write(self.operation_type + " " + path + " " + self.protocol_version + "\r\n")
+            # starts the counter value
+            counter = len(self.response_messages)
 
-        # in case there is a content type defined
-        if self.content_type:
-            result.write(CONTENT_TYPE_VALUE + ": " + self.content_type + "\r\n")
+            # iterates over all the response messages
+            for response_message in self.response_messages:
+                # in case the counter is one (last response message)
+                if counter == 1:
+                    # adds the response code with the response message
+                    return_message_buffer.write(str(self.response_code) + " " + response_message + "\r\n")
+                else:
+                    # adds the response code with the response message (separated with a dash)
+                    return_message_buffer.write(str(self.response_code) + "-" + response_message + "\r\n")
 
-        # in case the content length is valid
-        if content_length > 0:
-            result.write(CONTENT_LENGTH_VALUE + ": " + str(content_length) + "\r\n")
+                # decrements the counter
+                counter -= 1
 
-        result.write(HOST_VALUE + ": " + real_host + "\r\n")
-        result.write(USER_AGENT_VALUE + ": " + USER_AGENT_IDENTIFIER + "\r\n")
-        result.write("Accept" + ": " + "text/html,application/xhtml+xml,application/xml;q=0.7,*;q=0.7" + "\r\n")
-        result.write("Accept-Language" + ": " + "en-us,en;q=0.5" + "\r\n")
-        #result.write("Accept-Encoding" + ": " + "gzip,deflate" + "\r\n")
-        result.write("Accept-Charset" + ": " + "iso-8859-1,utf-8;q=0.7,*;q=0.7" + "\r\n")
-        result.write("Keep-Alive" + ": " + "115" + "\r\n")
-        result.write("Connection" + ": " + "keep-alive" + "\r\n")
-        result.write("Cache-Control" + ": " + "max-age=0" + "\r\n")
-
-        # iterates over all the header values to be sent
-        for header_name, header_value in self.headers_map.items():
-            # writes the extra header value in the result
-            result.write(header_name + ": " + header_value + "\r\n")
-
-        # writes the end of the headers and the message
-        # values into the result
-        result.write("\r\n")
-        result.write(message)
-
-        # retrieves the value from the result buffer
-        result_value = result.get_value()
-
-        # returns the result value
-        return result_value
-
-    def _get_real_host(self):
-        """
-        Retrieves the "real" host value to be sent
-        in http header of the request.
-
-        @rtype: String
-        @return: The "real" host value.
-        """
-
-        # in case the port is defined and
-        # is not a default port
-        if self.port and self.port not in DEFAULT_PORTS:
-            # returns the host appended with the port value
-            return self.host + ":" + str(self.port)
-        # in case the port is not defined
+            # retrieves the return message from the return message buffer
+            return_message = return_message_buffer.get_value()
         else:
-            # returns only the host
-            return self.host
+            # creates the return message
+            return_message = str(self.response_code) + " " + self.response_message + "\r\n"
 
-    def _quote(self, string_value, safe = "/"):
+            # in case the message is not empty
+            if not message == "":
+                return_message += message + "\r\n"
+
+        # returns the return message
+        return return_message
+
+    def get_message(self):
         """
-        Quotes the given string value according to
-        the url encoding specification.
-        The implementation is based on the python base library.
-
-        @type string_value: String
-        @param string_value: The string value to be quoted.
-        @rtype: String
-        @return: The quoted string value.
-        """
-
-        # creates the cache key tuple
-        cache_key = (safe, QUOTE_SAFE_CHAR)
-
-        try:
-            # in case the cache key is not defined
-            # in the quote sage maps creates a new entry
-            safe_map = QUOTE_SAFE_MAPS[cache_key]
-        except KeyError:
-            # adds the "base" quote safe characters to the
-            # "safe list"
-            safe += QUOTE_SAFE_CHAR
-
-            # starts the safe map
-            safe_map = {}
-
-            # iterates over all the ascii values
-            for index in range(256):
-                # retrieves the character for the
-                # given index
-                character = chr(index)
-
-                # adds the "valid" character ot the safe mao entry
-                safe_map[character] = (character in safe) and character or ("%%%02X" % index)
-
-            # sets the safe map in the cache quote safe maps
-            QUOTE_SAFE_MAPS[cache_key] = safe_map
-
-        # maps the getitem method of the map to all the string
-        # value to retrieve the valid items
-        resolution_list = map(safe_map.__getitem__, string_value)
-
-        # joins the resolution list to retrieve the quoted value
-        return "".join(resolution_list)
-
-    def _quote_plus(self, string_value, safe = ""):
-        """
-        Quotes the given string value according to
-        the url encoding specification. This kind of quote
-        takes into account the plus and the space relation.
-        The implementation is based on the python base library.
-
-        @type string_value: String
-        @param string_value: The string value to be quoted.
-        @rtype: String
-        @return: The quoted string value.
-        """
-
-        # in case there is at least one white
-        # space in the string value
-        if " " in string_value:
-            # quotes the string value adding the white space
-            # to the "safe list"
-            string_value = self._quote(string_value, safe + " ")
-
-            # replaces the white spaces with plus signs and
-            # returns the result
-            return string_value.replace(" ", "+")
-
-        # returns the quoted string value
-        return self._quote(string_value, safe)
-
-    def _encode_attributes(self):
-        """
-        Encodes the current attributes into url encoding.
+        Retrieves the message.
 
         @rtype: String
-        @return: The encoded parameters.
+        @return: The message.
         """
 
-        # creates a string buffer to hold the encoded attribute values
-        string_buffer = colony.libs.string_buffer_util.StringBuffer()
+        return self.message
 
-        # sets the is first flag
-        is_first = True
-
-        # iterates over all the attribute keys and values
-        for attribute_key, attribute_value in self.attributes_map.items():
-            # encodes both the attribute key and value
-            attribte_key_encoded = self._encode(attribute_key)
-            attribte_value_encoded = self._encode(attribute_value)
-
-            # quotes both the attribute key and value
-            attribute_key_quoted = self._quote_plus(attribte_key_encoded)
-            attribute_value_quoted = self._quote_plus(attribte_value_encoded)
-
-            # in case it's is the first iteration
-            if is_first:
-                # unsets the is first flag
-                is_first = False
-            else:
-                # writes the and continuation in the string buffer
-                string_buffer.write("&")
-
-            # adds the quoted key and value strings to the
-            # string buffer
-            string_buffer.write(attribute_key_quoted)
-            string_buffer.write("=")
-            string_buffer.write(attribute_value_quoted)
-
-        # retrieves the encoded attributes from the string buffer
-        encoded_attributes = string_buffer.get_value()
-
-        # returns the encoded attributes
-        return encoded_attributes
-
-    def _encode(self, string_value):
+    def set_message(self, message):
         """
-        Encodes the given string value to the current encoding.
+        Sets the message.
 
-        @type string_value: String
-        @param string_value: The string value to be encoded.
+        @type message: String
+        @param message: The message.
+        """
+
+        self.message = message
+
+    def get_command(self):
+        """
+        Retrieves the command.
+
         @rtype: String
-        @return: The given string value encoded in the current encoding.
+        @return: The command.
         """
 
-        return unicode(string_value).encode(self.content_type_charset)
+        return self.command
 
-class HttpResponse:
+    def set_command(self, command):
+        """
+        Sets the command.
+
+        @type command: String
+        @param command: The command.
+        """
+
+        self.command = command
+
+    def get_arguments(self):
+        """
+        Retrieves the arguments.
+
+        @rtype: List
+        @return: The arguments.
+        """
+
+        return self.arguments
+
+    def set_arguments(self, arguments):
+        """
+        Sets the arguments.
+
+        @type arguments: List
+        @param arguments: The arguments.
+        """
+
+        self.arguments = arguments
+
+    def get_session(self):
+        """
+        Retrieves the session.
+
+        @rtype: Session
+        @return: The session.
+        """
+
+        return self.session
+
+    def set_session(self, session):
+        """
+        Sets the session.
+
+        @type session: Session
+        @param session: The session.
+        """
+
+        self.session = session
+
+class SmtpResponse:
     """
-    The http response class.
+    The smtp response class.
     """
 
     request = None
     """ The request that originated the response """
-
-    protocol_version = "none"
-    """ The protocol version """
-
-    headers_map = {}
-    """ The headers map """
-
-    received_message = "none"
-    """ The received message """
-
-    status_code = None
-    """ The status code """
-
-    status_message = None
-    """ The status message """
-
-    content_type_charset = None
-    """ The content type charset """
 
     def __init__(self, request):
         """
@@ -567,37 +439,3 @@ class HttpResponse:
         """
 
         self.request = request
-
-        self.attributes_map = {}
-        self.headers_map = {}
-        self.message_stream = colony.libs.string_buffer_util.StringBuffer()
-
-    def set_protocol_version(self, protocol_version):
-        """
-        Sets the protocol version.
-
-        @type protocol_version: String
-        @param protocol_version: The protocol version.
-        """
-
-        self.protocol_version = protocol_version
-
-    def set_status_code(self, status_code):
-        """
-        Sets the status code.
-
-        @type status_code: int
-        @param status_code: The status code.
-        """
-
-        self.status_code = status_code
-
-    def set_status_message(self, status_message):
-        """
-        Sets the status message.
-
-        @type status_message: String
-        @param status_message: The status message.
-        """
-
-        self.status_message = status_message
