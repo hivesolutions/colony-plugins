@@ -591,8 +591,16 @@ class HttpClientServiceTask:
                 # raises an http no handler exception
                 raise main_service_http_exceptions.HttpNoHandlerException("no handler defined for current request")
 
+            # in case the handler is not found in the handler plugins map
+            if not handler_name in http_service_handler_plugins_map:
+                # raises an http handler not found exception
+                raise main_service_http_exceptions.HttpHandlerNotFoundException("no handler found for current request: " + handler_name)
+
+            # retrieves the http service handler plugin
+            http_service_handler_plugin = http_service_handler_plugins_map[handler_name]
+
             # handles the request by the request handler
-            http_service_handler_plugins_map[handler_name].handle_request(request)
+            http_service_handler_plugin.handle_request(request)
 
             # sends the request to the client (response)
             self.send_request(request)
