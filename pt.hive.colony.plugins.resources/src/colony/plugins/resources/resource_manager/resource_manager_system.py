@@ -48,11 +48,11 @@ BASE_RESOURCES_PATH = "/resources/resource_manager/resources"
 RESOURCES_SUFIX_VALUE = "resources.xml"
 """ The resources sufix value """
 
-RESOURCES_SUFIX_LENGTH = 13
-""" The resources sufix length """
+RESOURCES_SUFFIX_LENGTH = 13
+""" The resources suffix length """
 
-RESOURCES_SUFIX_START_INDEX = -13
-""" The resources sufix value """
+RESOURCES_SUFFIX_START_INDEX = -13
+""" The resources suffix value """
 
 ENVIRONMENT_VARIABLE_REGEX = "\$\{[a-zA-Z0-9_]*\}"
 """ The regular expression for the environment variable """
@@ -680,7 +680,9 @@ class ResourceManager:
             # creates the resources full path item
             resources_full_path_item = directory_path + "/" + resources_path_item
 
-            if len(resources_path_item) > RESOURCES_SUFIX_LENGTH and resources_path_item[RESOURCES_SUFIX_START_INDEX:] == RESOURCES_SUFIX_VALUE:
+            # in case the length of the resources path item is greater than the resources suffix length
+            # and the last item of the resources path item is the same as the resources suffix value
+            if len(resources_path_item) > RESOURCES_SUFFIX_LENGTH and resources_path_item[RESOURCES_SUFFIX_START_INDEX:] == RESOURCES_SUFIX_VALUE:
                 # parses the resources description file
                 self.parse_file(resources_full_path_item, directory_path)
             elif os.path.isdir(resources_full_path_item):
