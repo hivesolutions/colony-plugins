@@ -42,7 +42,7 @@
             </first_operand>
             <second_operand>
                 <type>string</type>
-                <data>production_auxiliary</data>
+                <data>test</data>
             </second_operand>
         </equals_expression>
     </validation>
@@ -52,7 +52,7 @@
         <resource>
             <name>server_configuration</name>
             <type>python</type>
-            <data>production_auxiliary_run_http_configuration.py</data>
+            <data>configuration.py</data>
         </resource>
     </plugin_configuration>
 </resources>
