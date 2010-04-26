@@ -695,9 +695,9 @@ class ResourceManager:
             # creates the resources full path item
             resources_full_path_item = directory_path + "/" + resources_path_item
 
-            # in case the length of the resources path item is greater than the resources suffix length
+            # in case the length of the resources path item is greater or equal than the resources suffix length
             # and the last item of the resources path item is the same as the resources suffix value
-            if len(resources_path_item) > RESOURCES_SUFFIX_LENGTH and resources_path_item[RESOURCES_SUFFIX_START_INDEX:] == RESOURCES_SUFIX_VALUE:
+            if len(resources_path_item) >= RESOURCES_SUFFIX_LENGTH and resources_path_item[RESOURCES_SUFFIX_START_INDEX:] == RESOURCES_SUFIX_VALUE:
                 # parses the resources description file
                 self.parse_file(resources_full_path_item, directory_path)
             elif os.path.isdir(resources_full_path_item):
