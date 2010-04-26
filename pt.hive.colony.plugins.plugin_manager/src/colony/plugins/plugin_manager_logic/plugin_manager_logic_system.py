@@ -37,9 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import os.path
-
-import colony.plugins.decorators
+import os
 
 SERIALIZABLE_PLUGIN_ATTRIBUTES = ["id", "name", "short_name", "description", "version", "author", "loaded"]
 """ List of attributes from the plugin that can be serialized and sent to the client """
