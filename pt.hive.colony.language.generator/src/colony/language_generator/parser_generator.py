@@ -37,14 +37,13 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
 import sys
 import copy
 import types
 import logging
 import hashlib
 import cStringIO
-
-import os.path
 
 import lexer_generator
 import logging_configuration
@@ -2493,7 +2492,7 @@ class ParserGenerator:
         string_value = str()
 
         # adds some space to the string value
-        string_value +=  "  "
+        string_value += "  "
 
         # iterates over all the symbols in the symbols map
         for symbol in self.symbols_map:
@@ -2541,7 +2540,7 @@ class ParserGenerator:
         string_value = str()
 
         # adds some space to the string value
-        string_value +=  "  "
+        string_value += "  "
 
         # iterates over all the symbols in the symbols terminal map
         for symbol_terminal in self.symbols_terminal_end_map:
@@ -2589,7 +2588,7 @@ class ParserGenerator:
         string_value = str()
 
         # adds some space to the string value
-        string_value +=  "  "
+        string_value += "  "
 
         # iterates over all the symbols in the symbols non terminal map
         for symbol_non_terminal in self.symbols_non_terminal_map:
