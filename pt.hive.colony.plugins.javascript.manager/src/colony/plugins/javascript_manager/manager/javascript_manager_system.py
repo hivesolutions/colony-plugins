@@ -42,8 +42,6 @@ import time
 import stat
 import threading
 
-import os.path
-
 import colony.libs.string_buffer_util
 import colony.libs.update_thread_util
 

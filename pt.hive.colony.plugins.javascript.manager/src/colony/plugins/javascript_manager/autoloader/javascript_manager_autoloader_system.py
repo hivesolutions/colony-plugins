@@ -43,8 +43,6 @@ import time
 import types
 import threading
 
-import os.path
-
 import colony.libs.update_thread_util
 
 DEFAULT_UPDATING_TIME = 3
