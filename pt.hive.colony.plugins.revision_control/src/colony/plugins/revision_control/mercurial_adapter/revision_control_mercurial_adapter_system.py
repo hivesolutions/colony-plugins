@@ -37,7 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import os.path
+import os
 
 import mercurial.hg
 import mercurial.ui
@@ -175,7 +175,7 @@ class RevisionControlMercurialAdapter:
         match = mercurial.cmdutil.match(revision_control_reference, resource_identifiers, options)
 
         # diffs the specified revisions
-        diff_iterator = mercurial.patch.diff(revision_control_reference, revision_1, revision_2, match,  None)
+        diff_iterator = mercurial.patch.diff(revision_control_reference, revision_1, revision_2, match, None)
 
         # retrieves the list of diffs from the iterator
         diffs = list(diff_iterator)
@@ -258,6 +258,10 @@ class RevisionControlMercurialAdapter:
         return revision
 
 class MercurialRevision:
+    """
+    The mercurial revision class.
+    """
+
     _mercurial_change_context = None
     """ The adapted mercurial change context """
 
