@@ -589,23 +589,42 @@ class SmtpRequest:
         self.message_stream.write(message)
 
     def get_result(self):
+        """
+        Retrieves the result value, processing
+        the current request structure.
+
+        @rtype: String
+        @return: The result value for the current
+        request structure.
+        """
+
         # retrieves the result string value
         message = self.message_stream.get_value()
 
+        # in case the response messages
+        # are defined
         if self.response_messages:
             # initializes the return message
-            return_message = ""
+            return_message_buffer = colony.libs.string_buffer_util.StringBuffer()
 
             # starts the counter value
             counter = len(self.response_messages)
 
+            # iterates over all the response messages
             for response_message in self.response_messages:
-                if(counter == 1):
-                    return_message += str(self.response_code) + " " + response_message + "\r\n"
+                # in case the counter is one (last response message)
+                if counter == 1:
+                    # adds the response code with the response message
+                    return_message_buffer.write(str(self.response_code) + " " + response_message + "\r\n")
                 else:
-                    return_message += str(self.response_code) + "-" + response_message + "\r\n"
+                    # adds the response code with the response message (separated with a dash)
+                    return_message_buffer.write(str(self.response_code) + "-" + response_message + "\r\n")
 
+                # decrements the counter
                 counter -= 1
+
+            # retrieves the return message from the return message buffer
+            return_message = return_message_buffer.get_value()
         else:
             # creates the return message
             return_message = str(self.response_code) + " " + self.response_message + "\r\n"
@@ -618,45 +637,143 @@ class SmtpRequest:
         return return_message
 
     def get_message(self):
+        """
+        Retrieves the message.
+
+        @rtype: String
+        @return: The message.
+        """
+
         return self.message
 
     def set_message(self, message):
+        """
+        Sets the message.
+
+        @type message: String
+        @param message: The message.
+        """
+
         self.message = message
 
     def get_command(self):
+        """
+        Retrieves the command.
+
+        @rtype: String
+        @return: The command.
+        """
+
         return self.command
 
     def set_command(self, command):
+        """
+        Sets the command.
+
+        @type command: String
+        @param command: The command.
+        """
+
         self.command = command
 
     def get_arguments(self):
+        """
+        Retrieves the arguments.
+
+        @rtype: List
+        @return: The arguments.
+        """
+
         return self.arguments
 
     def set_arguments(self, arguments):
+        """
+        Sets the arguments.
+
+        @type arguments: List
+        @param arguments: The arguments.
+        """
+
         self.arguments = arguments
 
     def get_response_message(self):
+        """
+        Retrieves the response message.
+
+        @rtype: String
+        @return: The response message.
+        """
+
         return self.response_message
 
     def set_response_message(self, response_message):
+        """
+        Sets the response message.
+
+        @type response_message: String
+        @param response_message: The response message.
+        """
+
         self.response_message = response_message
 
     def get_response_messages(self):
+        """
+        Retrieves the response messages.
+
+        @rtype: List
+        @return: The response messages.
+        """
+
         return self.response_messages
 
     def set_response_messages(self, response_messages):
+        """
+        Sets the response messages.
+
+        @type response_messages: List
+        @param response_messages: The response messages.
+        """
+
         self.response_messages = response_messages
 
-    def get_response_code(self, response_code):
+    def get_response_code(self):
+        """
+        Retrieves the response code.
+
+        @rtype: int
+        @return: The response code.
+        """
+
         return self.response_code
 
     def set_response_code(self, response_code):
+        """
+        Sets the response code.
+
+        @type response_code: int
+        @param response_code: The response code.
+        """
+
         self.response_code = response_code
 
     def get_session(self):
+        """
+        Retrieves the session.
+
+        @rtype: Session
+        @return: The session.
+        """
+
         return self.session
 
     def set_session(self, session):
+        """
+        Sets the session.
+
+        @type session: Session
+        @param session: The session.
+        """
+
         self.session = session
 
 class SmtpSession:
@@ -706,54 +823,161 @@ class SmtpSession:
             self.set_current_message(message)
 
     def add_message(self, message):
+        """
+        Adds a message to the list of messages
+        of the current session.
+
+        @type message: SmtpMessage
+        @param message: The message to be added
+        to the session.
+        """
+
         self.messages.append(message)
 
     def get_client_hostname(self):
+        """
+        Retrieves the client hostname.
+
+        @rtype: String
+        @return: The client hostname.
+        """
+
         return self.client_hostname
 
     def set_client_hostname(self, client_hostname):
+        """
+        Sets the client hostname.
+
+        @type client_hostname: String
+        @param client_hostname: The client hostname.
+        """
+
         self.client_hostname = client_hostname
 
     def get_extensions_active(self):
+        """
+        Retrieves the extensions active.
+
+        @rtype: bool
+        @return: The extensions active.
+        """
+
         return self.extensions_active
 
     def set_extensions_active(self, extensions_active):
+        """
+        Sets the extensions active.
+
+        @type extensions_active: bool
+        @param extensions_active: The extensions active.
+        """
+
         self.extensions_active = extensions_active
 
     def get_data_transmission(self):
+        """
+        Retrieves the data transmission.
+
+        @rtype: bool
+        @return: The data transmission.
+        """
+
         return self.data_transmission
 
     def set_data_transmission(self, data_transmission):
+        """
+        Sets the data transmission.
+
+        @type data_transmission: bool
+        @param data_transmission: The data transmission.
+        """
+
         self.data_transmission = data_transmission
 
     def get_closed(self):
+        """
+        Retrieves the closed.
+
+        @rtype: bool
+        @return: The closed.
+        """
+
         return self.closed
 
     def set_closed(self, closed):
+        """
+        Sets the closed.
+
+        @type closed: bool
+        @param closed: The closed.
+        """
+
         self.closed = closed
 
     def get_current_message(self):
+        """
+        Retrieves the current message.
+
+        @rtype: SmtpMessage
+        @return: The current message.
+        """
+
         return self.current_message
 
     def set_current_message(self, current_message):
+        """
+        Sets the current message.
+
+        @type current_message: SmtpMessage
+        @param current_message: The current message.
+        """
+
         self.current_message = current_message
 
     def get_messages(self):
+        """
+        Retrieves the messages.
+
+        @rtype: List
+        @return: The messages.
+        """
+
         return self.messages
 
     def set_messages(self, messages):
+        """
+        Sets the messages.
+
+        @type messages: List
+        @param messages: The messages.
+        """
+
         self.messages = messages
 
     def get_properties(self):
+        """
+        Retrieves the properties.
+
+        @rtype: Dictionary
+        @return: The properties.
+        """
+
         return self.properties
 
     def set_properties(self, properties):
+        """
+        Sets the properties.
+
+        @type properties: Dictionary
+        @param properties: The properties.
+        """
+
         self.properties = properties
 
 class SmtpMessage:
     """
     The smtp message class that represents
-    a message to be sent throught smtp.
+    a message to be sent through smtp.
     """
 
     contents = "none"
