@@ -433,8 +433,16 @@ class DnsClientServiceTask:
                 # raises an dns no handler exception
                 raise main_service_dns_exceptions.DnsNoHandlerException("no handler defined for current request")
 
+            # in case the handler is not found in the handler plugins map
+            if not handler_name in dns_service_handler_plugins_map:
+                # raises an dns handler not found exception
+                raise main_service_dns_exceptions.DnsHandlerNotFoundException("no handler found for current request: " + handler_name)
+
+            # retrieves the dns service handler plugin
+            dns_service_handler_plugin = dns_service_handler_plugins_map[handler_name]
+
             # handles the request by the request handler
-            dns_service_handler_plugins_map[handler_name].handle_request(request)
+            dns_service_handler_plugin.handle_request(request)
 
             # sends the request to the client (response)
             self.send_request(request)
