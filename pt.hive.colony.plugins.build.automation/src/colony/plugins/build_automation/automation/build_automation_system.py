@@ -41,8 +41,6 @@ import os
 import re
 import copy
 
-import os.path
-
 import build_automation_exceptions
 import build_automation_parser
 
