@@ -42,6 +42,9 @@ import sys
 RESOURCE_PARSER_NAME = "python"
 """ The resource parser name """
 
+CONFIGURATION_VALUE = "configuration"
+""" The configuration value """
+
 class PythonResourceParser:
     """
     The python resource parser class.
@@ -70,14 +73,19 @@ class PythonResourceParser:
         # retrieves the full resources path
         full_resources_path = resource.full_resources_path
 
-        # adds the full resources path to the system path
-        sys.path.append(full_resources_path)
+        # creates the full python file path
+        # from the full resources path and the python file path
+        full_python_file_path = full_resources_path + "/" + python_file_path
 
-        # import the python module
-        python_module = __import__(python_file_path.rstrip(".py"))
+        # creates the symbols map to be used in the interpretation
+        # of the file as the locals and globals map
+        symbols_map = {}
 
-        # pops the full resources path from the system path
-        sys.path.pop()
+        # interprets the python file path with the symbols map
+        execfile(full_python_file_path, symbols_map, symbols_map)
+
+        # tries to retrieve the configuration
+        configuration = symbols_map.get(CONFIGURATION_VALUE, {})
 
         # parses the configuration contents from the python module
-        resource.data = python_module.configuration
+        resource.data = configuration

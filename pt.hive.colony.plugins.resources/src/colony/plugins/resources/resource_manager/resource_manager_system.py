@@ -284,8 +284,14 @@ class ResourceManager:
         # in case the resource type is string
         elif resource_type == "string":
             resource.data = str(resource.data)
+        # in case the resource type exists in the
+        # map of resource parser plugins
         elif resource_type in self.resource_parser_plugins_map:
+            # retrieves the resource parser plugin associated with the
+            # resource type
             resource_parser_plugin = self.resource_parser_plugins_map[resource_type]
+
+            # parses the resource with the resource parser plugin
             resource_parser_plugin.parse_resource(resource)
         else:
             # sets the parse resource data handler
@@ -294,6 +300,7 @@ class ResourceManager:
             # returns in failure
             return False
 
+        # returns valid (success)
         return True
 
     def get_real_string_value(self, string_value):
