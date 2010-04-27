@@ -160,7 +160,7 @@ class MainServiceSmtpStreamHandler:
         # sets the request response code
         request.set_response_code(250)
 
-        # este ja faz parte das extensoes SE CALHAR DEVE SER METIDO A PARTE (TLX..... ver isso) !!!!
+        # @todo: este ja faz parte das extensoes SE CALHAR DEVE SER METIDO A PARTE (TLX..... ver isso) !!!!
         request.set_response_messages(["Hello pleased to meet you", "AUTH PLAIN"])
 
         # sets the extensions as active
@@ -316,12 +316,26 @@ class MainServiceSmtpStreamHandler:
             # in case a newline is required
             if new_line:
                 request.write(raw_text + "\r\n")
+            # in case no newline is required
             else:
                 request.write(raw_text)
 
+        # returns the write method
         return write
 
     def assert_arguments(self, arguments, minimum_number = 0, maximum_number = None):
+        """
+        Asserts that the given arguments list respects the given
+        conditions of minimum and maximum number of arguments.
+
+        @type arguments: List
+        @param arguments: The list of arguments to be verified.
+        @type minimum_number: int
+        @param minimum_number: The minimum number that the list must contain.
+        @type maximum_number: int
+        @param maximum_number: The maximum number that the list must contain.
+        """
+
         # in case the maximum number of arguments
         # is not defined the minimum value is used
         if maximum_number == None:

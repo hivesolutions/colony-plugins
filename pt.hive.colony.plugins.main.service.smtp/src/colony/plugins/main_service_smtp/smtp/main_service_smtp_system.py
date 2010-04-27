@@ -643,6 +643,11 @@ class SmtpRequest:
     """ The properties """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        self.response_messages = []
         self.message_stream = colony.libs.string_buffer_util.StringBuffer()
         self.properties = {}
 
