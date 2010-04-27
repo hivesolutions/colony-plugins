@@ -46,6 +46,9 @@ import colony.libs.string_buffer_util
 
 import main_rest_manager_exceptions
 
+REGEX_COMILATION_LIMIT = 99
+""" The regex compilation limit """
+
 HANDLER_BASE_FILENAME = "/colony_mod_python/rest/"
 """ The handler base filename """
 
@@ -126,8 +129,11 @@ class MainRestManager:
     main_rest_manager_plugin = None
     """ The main rest manager plugin """
 
-    matching_regex = None
-    """ The matching regex to be used in route matching """
+    matching_regex_list = []
+    """ The list of matching regex to be used in route matching """
+
+    matching_regex_base_values_map = {}
+    """ The map containing the base values for the various matching regex """
 
     rest_service_routes_map = {}
     """ The rest service routes map """
@@ -157,6 +163,8 @@ class MainRestManager:
 
         self.main_rest_manager_plugin = main_rest_manager_plugin
 
+        self.matching_regex_list = []
+        self.matching_regex_base_values_map = {}
         self.rest_service_routes_map = {}
         self.plugin_id_plugin_map = {}
         self.regex_index_plugin_id_map = {}
@@ -284,22 +292,31 @@ class MainRestManager:
             # handles the request with the services request handler
             return self.handle_rest_request_services(rest_request)
         else:
-            # retrieves the resource path match
-            resource_path_match = self.matching_regex.match(resource_path)
+            # iterates over all the matching regex in the matching regex list
+            for matching_regex in self.matching_regex_list:
+                # retrieves the resource path match
+                resource_path_match = matching_regex.match(resource_path)
 
-            # in case there is a valid resource path match
-            if resource_path_match:
-                # retrieves the index of the captured group
-                group_index = resource_path_match.lastindex
+                # in case there is a valid resource path match
+                if resource_path_match:
+                    # retrieves the base value for the matching regex
+                    base_value = self.matching_regex_base_values_map[matching_regex]
 
-                # retrieves the plugin id from the group index
-                plugin_id = self.regex_index_plugin_id_map[group_index]
+                    # retrieves the index of the captured group
+                    group_index = resource_path_match.lastindex
 
-                # retrieves the rest service plugin using the plugin id
-                rest_service_plugin = self.plugin_id_plugin_map[plugin_id]
+                    # calculates the rest service plugin index from the base value,
+                    # the group index and subtracts one value
+                    rest_service_plugin_index = base_value + group_index - 1
 
-                # handles the rest request to the rest servicxe plugin
-                return rest_service_plugin.handle_rest_request(rest_request)
+                    # retrieves the plugin id from the rest service plugin index
+                    plugin_id = self.regex_index_plugin_id_map[rest_service_plugin_index]
+
+                    # retrieves the rest service plugin using the plugin id
+                    rest_service_plugin = self.plugin_id_plugin_map[plugin_id]
+
+                    # handles the rest request to the rest servicxe plugin
+                    return rest_service_plugin.handle_rest_request(rest_request)
 
             # raises the rest request not handled exception
             raise main_rest_manager_exceptions.RestRequestNotHandled("no rest service plugin could handle the request")
@@ -674,11 +691,20 @@ class MainRestManager:
         # starts the matching regex value buffer
         matching_regex_value_buffer = colony.libs.string_buffer_util.StringBuffer()
 
+        # clears the matching regex list
+        self.matching_regex_list = []
+
+        # clears the matching regex base value map
+        self.matching_regex_base_values_map.clear()
+
         # sets the is first plugin flag
         is_first_plugin = True
 
         # starts the index value
-        index = 1
+        index = 0
+
+        # starts the current base value
+        current_base_value = 0
 
         # iterates over all the items in the rest service routes map
         for rest_service_plugin_id, routes_list in self.rest_service_routes_map.items():
@@ -719,12 +745,43 @@ class MainRestManager:
             # increments the index
             index += 1
 
+            # in case the current index is in the limit of the python
+            # regex compilation
+            if index % REGEX_COMILATION_LIMIT == 0:
+                # retrieves the matching regex value from the matching
+                # regex value buffer
+                matching_regex_value = matching_regex_value_buffer.get_value()
+
+                # compiles the matching regex value
+                matching_regex = re.compile(matching_regex_value)
+
+                # adds the matching regex to the matching regex list
+                self.matching_regex_list.append(matching_regex)
+
+                # sets the base value in matching regex base values map
+                self.matching_regex_base_values_map[matching_regex] = current_base_value
+
+                # re-sets the current base value
+                current_base_value = index
+
+                # resets the matching regex value buffer
+                matching_regex_value_buffer.reset()
+
+                # sets the is first flag
+                is_first = True
+
         # retrieves the matching regex value from the matching
         # regex value buffer
         matching_regex_value = matching_regex_value_buffer.get_value()
 
         # compiles the matching regex value
-        self.matching_regex = re.compile(matching_regex_value)
+        matching_regex = re.compile(matching_regex_value)
+
+        # adds the matching regex to the matching regex list
+        self.matching_regex_list.append(matching_regex)
+
+        # sets the base value in matching regex base values map
+        self.matching_regex_base_values_map[matching_regex] = current_base_value
 
 class RestRequest:
     """
