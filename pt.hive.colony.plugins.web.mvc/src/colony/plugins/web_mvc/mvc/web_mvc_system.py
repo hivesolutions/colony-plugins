@@ -57,7 +57,7 @@ class WebMvc:
     matching_regex_list = []
     """ The list of matching regex to be used in patterns matching """
 
-    matching_regex_base_values_map = []
+    matching_regex_base_values_map = {}
     """ The map containing the base values for the various matching regex """
 
     web_mvc_service_patterns_map = {}
