@@ -56,6 +56,9 @@ RESPONSE_TIMEOUT = 10
 CHUNK_SIZE = 4096
 """ The chunk size """
 
+END_TOKEN_VALUE = "\r\n"
+""" The end token value """
+
 class MainClientSmtp:
     """
     The main client smtp class.
@@ -132,22 +135,68 @@ class SmtpClient:
         response = self.retrieve_response(None, session)
 
         if not response.get_code() == 220:
-            raise Exception("problem establishing connection")
+            raise Exception("problem establishing connection: " + str(response))
 
-        # sends the request for the given sender,
-        # recipients list, message and parameters
-        request = self.send_request("helo", "mail.sender.com", session, parameters)
+        # sends the hello request
+        request = self.send_request("ehlo", "mail.sender.com", session, parameters)
 
         # retrieves the response
         response = self.retrieve_response(request, session)
 
         if not response.get_code() == 250:
-            raise Exception("problem establishing connection")
+            raise Exception("problem establishing connection: " + str(response))
 
-        print str(response)
+        # sends the verify request
+        #request = self.send_request("vrfy", "joamag", session, parameters)
 
-        # returns the response
-        return response
+        # retrieves the response
+        #response = self.retrieve_response(request, session)
+
+        #if not response.get_code() == 250:
+        #    raise Exception("problem verifying user")
+
+        # sends the mail from request
+        request = self.send_request("mail", "from:<" + sender + ">", session, parameters)
+
+        # retrieves the response
+        response = self.retrieve_response(request, session)
+
+        if not response.get_code() == 250:
+            raise Exception("problem sending email: " + str(response))
+
+        for recipient in recipients_list:
+            # sends the mail from request
+            request = self.send_request("rcpt", "to:<" + recipient + ">", session, parameters)
+
+            # retrieves the response
+            response = self.retrieve_response(request, session)
+
+            if not response.get_code() == 250:
+                raise Exception("problem sending email: " + str(response))
+
+        request = self.send_request("data", None, session, parameters)
+
+        # retrieves the response
+        response = self.retrieve_response(request, session)
+
+        if not response.get_code() in (250, 354):
+            raise Exception("problem sending email: " + str(response))
+
+        request = self.send_request_data("From: joamag@gmail.com\r\nTo: tyagooo@gmail.com\r\n\r\nOla como estás ?\r\n.", session, parameters)
+
+        # retrieves the response
+        response = self.retrieve_response(request, session)
+
+        if not response.get_code() == 250:
+            raise Exception("problem sending email data: " + str(response))
+
+        request = self.send_request("quit", None, session, parameters)
+
+        # retrieves the response
+        response = self.retrieve_response(request, session)
+
+        if not response.get_code() == 221:
+            raise Exception("problem ending session: " + str(response))
 
     def send_request(self, command, message, session, parameters):
         """
@@ -176,6 +225,35 @@ class SmtpClient:
 
         # sets the message in the request
         request.set_message(message)
+
+        # retrieves the result value from the request
+        result_value = request.get_result()
+
+        # sends the result value
+        self.smtp_connection.send(result_value)
+
+        # returns the request
+        return request
+
+    def send_request_data(self, data, session, parameters):
+        """
+        Sends the data request for the given parameters.
+
+        @type data: String
+        @param data: The string containing the data to be sent.
+        @type session: SmtpSession
+        @param session: The current smtp session.
+        @type parameters: Dictionary
+        @param parameters: The parameters to the request.
+        @rtype: SmtpRequest
+        @return: The sent request for the given parameters..
+        """
+
+        # creates the smtp request
+        request = SmtpRequest()
+
+        # writes the data to the request
+        request.write(data)
 
         # retrieves the result value from the request
         result_value = request.get_result()
@@ -221,36 +299,90 @@ class SmtpClient:
             # retrieves the message value from the string buffer
             message_value = message.get_value()
 
-            # in case the session is in data transmission mode
-            if session.data_transmission:
-                end_token = ".\r\n"
-            else:
-                end_token = "\r\n"
+            # retrieves the message value length
+            message_value_length = len(message_value)
 
             # finds the first end token value
-            end_token_index = message_value.find(end_token)
+            end_token_index = message_value.rfind(END_TOKEN_VALUE)
 
-            # in case there is an end token found
-            if not end_token_index == -1:
+            # calculates the last end token index, using the message
+            # value length as reference
+            last_end_token_index = message_value_length - 2
+
+            # in case the end token is found in the last position
+            # of the message
+            if end_token_index == last_end_token_index:
+                # tries to find a previous value of the newline
+                # in order to check if it is the "last newline"
+                value = message_value.rfind(END_TOKEN_VALUE, 0, last_end_token_index)
+
+                # in case no previous newline is found
+                if value == -1:
+                    # sets the base value as zero (string initial)
+                    base_value = 0
+                else:
+                    # sets the base value as the index of the find
+                    # plus two indexes (the length of the end token value)
+                    base_value = value + 2
+
+                # retrieves the comparison character (the character that
+                # indicates if it is the final line)
+                comparison_character = message_value[base_value + 3]
+
+                # in case the comparison character is a dash (not the final line)
+                if comparison_character == "-":
+                    continue
+                elif not comparison_character == " ":
+                    raise main_client_smtp_exceptions.SmtpInvalidDataException("invalid comparison character")
+
                 # retrieves the smtp message
                 smtp_message = message_value[:end_token_index]
 
-                # in case the session is not in data transmission mode
-                if not session.data_transmission:
-                    # splits the smtp message
-                    smtp_message_splitted = smtp_message.split(" ", 1)
+                # splits the smtp message in lines
+                smtp_message_lines = smtp_message.split("\r\n")
 
-                    # retrieves the smtp code
-                    smtp_code = int(smtp_message_splitted[0])
+                # retrieves the number of smtp message lines
+                smtp_message_lines_length = len(smtp_message_lines)
 
-                    # retrieves the smtp message
-                    smtp_message = smtp_message_splitted[1]
+                # starts the index counter
+                index = 1
 
-                    # sets the smtp code in the response
-                    response.set_code(smtp_code)
+                # iterates over all the smtp message lines
+                for smtp_message_line in smtp_message_lines:
+                    # in case it's the last line
+                    if index == smtp_message_lines_length:
+                        # splits the smtp message line
+                        smtp_message_line_splitted = smtp_message_line.split(" ", 1)
 
-                    # sets the smtp message in the response
-                    response.set_message(smtp_message)
+                        # retrieves the smtp code
+                        smtp_code = int(smtp_message_line_splitted[0])
+
+                        # retrieves the smtp message
+                        smtp_message = smtp_message_line_splitted[1]
+
+                        # sets the smtp code in the response
+                        response.set_code(smtp_code)
+
+                        # sets the smtp message in the response
+                        response.set_message(smtp_message)
+
+                        # adds the smtp message to the list of
+                        # messages in response
+                        response.add_message(smtp_message)
+                    # in case it's not the last line
+                    else:
+                        # splits the smtp message line
+                        smtp_message_line_splitted = smtp_message_line.split("-", 1)
+
+                        # retrieves the smtp message
+                        smtp_message = smtp_message_line_splitted[1]
+
+                        # adds the smtp message to the list of
+                        # messages in response
+                        response.add_message(smtp_message)
+
+                    # increments the index counter
+                    index += 1
 
                 # sets the session object in the response
                 response.set_session(session)
@@ -335,14 +467,11 @@ class SmtpRequest:
     The smtp request class.
     """
 
-    message = "none"
+    message = None
     """ The message """
 
-    command = "none"
+    command = None
     """ The command """
-
-    messages = []
-    """ The messages """
 
     session = None
     """ The session """
@@ -381,42 +510,42 @@ class SmtpRequest:
         request structure.
         """
 
+        # retrieves the result stream
+        result = colony.libs.string_buffer_util.StringBuffer()
+
+        # in case the command is defined
+        if self.command:
+            # writes the command to the result stream
+            result.write(self.command)
+
+        # in case both the command and the
+        # message are defined
+        if self.command and self.message:
+            # writes the separator space to the
+            # result stream
+            result.write(" ")
+
+        # in case the message is defined
+        if self.message:
+            # writes the message to the result stream
+            result.write(self.message)
+
         # retrieves the result string value
         message = self.message_stream.get_value()
 
-        # in case the messages are defined
-        if self.messages:
-            # initializes the return message
-            return_message_buffer = colony.libs.string_buffer_util.StringBuffer()
+        # in case the message is not empty
+        if not message == "":
+            # writes the message to the result stream
+            result.write(message)
 
-            # starts the counter value
-            counter = len(self.messages)
+        # writes the end of mail to the result stream
+        result.write("\r\n")
 
-            # iterates over all the messages
-            for message in self.messages:
-                # in case the counter is one (last message)
-                if counter == 1:
-                    # adds the code with the message
-                    return_message_buffer.write(self.command + " " + message + "\r\n")
-                else:
-                    # adds the code with the message (separated with a dash)
-                    return_message_buffer.write(self.command + "-" + message + "\r\n")
+        # retrieves the value from the result buffer
+        result_value = result.get_value()
 
-                # decrements the counter
-                counter -= 1
-
-            # retrieves the return message from the return message buffer
-            return_message = return_message_buffer.get_value()
-        else:
-            # creates the return message
-            return_message = self.command + " " + self.message + "\r\n"
-
-            # in case the message is not empty
-            if not message == "":
-                return_message += message + "\r\n"
-
-        # returns the return message
-        return return_message
+        # returns the result value
+        return result_value
 
     def get_message(self):
         """
@@ -506,8 +635,11 @@ class SmtpResponse:
     request = None
     """ The request that originated the response """
 
-    message = "none"
+    message = None
     """ The message """
+
+    messages = []
+    """ The messages """
 
     code = None
     """ The code """
@@ -526,6 +658,23 @@ class SmtpResponse:
         self.request = request
 
         self.properties = {}
+
+    def __repr__(self):
+        return "(%s, %s)" % (self.code, self.message)
+
+    def read(self):
+        return self.message
+
+    def add_message(self, message):
+        """
+        Adds a message to the list of messages.
+
+        @type message: String
+        @param message: The message to be added to the list
+        of messages.
+        """
+
+        self.messages.append(message)
 
     def get_request(self):
         """
@@ -566,6 +715,26 @@ class SmtpResponse:
         """
 
         self.message = message
+
+    def get_messages(self):
+        """
+        Retrieves the messages.
+
+        @rtype: List
+        @return: The messages.
+        """
+
+        return self.messages
+
+    def set_messages(self, messages):
+        """
+        Sets the messages.
+
+        @type messages: List
+        @param messages: The messages.
+        """
+
+        self.messages = messages
 
     def get_code(self):
         """
