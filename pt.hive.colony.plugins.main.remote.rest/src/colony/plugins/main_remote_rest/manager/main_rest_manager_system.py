@@ -704,7 +704,7 @@ class MainRestManager:
                     is_first = False
                 else:
                     # adds the or operand to the matching regex value buffer
-                    matching_regex_value_buffer.wirte("|")
+                    matching_regex_value_buffer.write("|")
 
                 # adds the route to the matching regex value buffer
                 matching_regex_value_buffer.write(route)
