@@ -57,7 +57,7 @@ class WebMvcPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["web_mvc.mvc.web_mvc_system"]
+    main_modules = ["web_mvc.mvc.web_mvc_exceptions", "web_mvc.mvc.web_mvc_system"]
 
     web_mvc = None
 

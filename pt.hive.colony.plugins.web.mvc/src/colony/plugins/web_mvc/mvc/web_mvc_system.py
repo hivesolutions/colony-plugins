@@ -43,6 +43,9 @@ import colony.libs.string_buffer_util
 
 import web_mvc_exceptions
 
+REGEX_COMILATION_LIMIT = 99
+""" The regex compilation limit """
+
 class WebMvc:
     """
     The web mvc class.
@@ -51,8 +54,11 @@ class WebMvc:
     web_mvc_plugin = None
     """ The web mvc plugin """
 
-    matching_regex = None
-    """ The matching regex to be used in patterns matching """
+    matching_regex_list = []
+    """ The list of matching regex to be used in patterns matching """
+
+    matching_regex_base_values_map = []
+    """ The map containing the base values for the various matching regex """
 
     web_mvc_service_patterns_map = {}
     """ The web mvc service patterns map """
@@ -70,6 +76,8 @@ class WebMvc:
 
         self.web_mvc_plugin = web_mvc_plugin
 
+        self.matching_regex_list = []
+        self.matching_regex_base_values_map = {}
         self.web_mvc_service_patterns_map = {}
         self.web_mvc_service_patterns_list = []
 
@@ -101,36 +109,42 @@ class WebMvc:
         # joins the path list to creates the resource path
         resource_path = "/".join(path_list)
 
-        # tries to math the resource path
-        resource_path_match = self.matching_regex.match(resource_path)
+        # iterates over all the matching regex in the matching regex list
+        for matching_regex in self.matching_regex_list:
+            # tries to math the resource path
+            resource_path_match = matching_regex.match(resource_path)
 
-        # in case there is a valid resource path match
-        if resource_path_match:
-            # retrieves the group index from the resource path match
-            group_index = resource_path_match.lastindex
+            # in case there is a valid resource path match
+            if resource_path_match:
+                # retrieves the base value for the matching regex
+                base_value = self.matching_regex_base_values_map[matching_regex]
 
-            # calculates the web mvc service index from the goup index
-            web_mvc_service_index = group_index - 1
+                # retrieves the group index from the resource path match
+                group_index = resource_path_match.lastindex
 
-            # retrieves the pattern for the web mvc service index
-            pattern = self.web_mvc_service_patterns_list[web_mvc_service_index]
+                # calculates the web mvc service index from the base value,
+                # the group index and subtracts one value
+                web_mvc_service_index = base_value + group_index - 1
 
-            # retrieves the pattern handler method
-            handler_method = self.web_mvc_service_patterns_map[pattern]
+                # retrieves the pattern for the web mvc service index
+                pattern = self.web_mvc_service_patterns_list[web_mvc_service_index]
 
-            # tries to retrieve the rest request session
-            rest_request_session = rest_request.get_session()
+                # retrieves the pattern handler method
+                handler_method = self.web_mvc_service_patterns_map[pattern]
 
-            # in case there is a valid rest request session
-            if rest_request_session:
-                # sets the parameters as the session attributes map
-                parameters = rest_request_session.get_attributes_map()
-            else:
-                # sets the parameters as an empty map
-                parameters = {}
+                # tries to retrieve the rest request session
+                rest_request_session = rest_request.get_session()
 
-            # handles the web mvc request to the handler method
-            return handler_method(rest_request, parameters)
+                # in case there is a valid rest request session
+                if rest_request_session:
+                    # sets the parameters as the session attributes map
+                    parameters = rest_request_session.get_attributes_map()
+                else:
+                    # sets the parameters as an empty map
+                    parameters = {}
+
+                # handles the web mvc request to the handler method
+                return handler_method(rest_request, parameters)
 
         # raises the mvc request not handled exception
         raise web_mvc_exceptions.MvcRequestNotHandled("no mvc service plugin could handle the request")
@@ -184,18 +198,30 @@ class WebMvc:
         # starts the matching regex value buffer
         matching_regex_value_buffer = colony.libs.string_buffer_util.StringBuffer()
 
-        # sets the is first plugin flag
-        is_first_plugin = True
-
         # clears the web mvc service patterns list
         self.web_mvc_service_patterns_list = []
 
+        # clears the matching regex list
+        self.matching_regex_list = []
+
+        # clears the matching regex base value map
+        self.matching_regex_base_values_map.clear()
+
+        # sets the is first flag
+        is_first = True
+
+        # starts the index value
+        index = 0
+
+        # starts the current base value
+        current_base_value = 0
+
         # iterates over all the patterns in the web mvc service patterns map
         for pattern in self.web_mvc_service_patterns_map:
-            # in case it's the first plugin
-            if is_first_plugin:
-                # unsets the is first plugin flag
-                is_first_plugin = False
+            # in case it's the first
+            if is_first:
+                # unsets the is first flag
+                is_first = False
             else:
                 # adds the or operand to the matching regex value buffer
                 matching_regex_value_buffer.write("|")
@@ -206,9 +232,43 @@ class WebMvc:
             # adds the pattern to the web mvc service patterns list
             self.web_mvc_service_patterns_list.append(pattern)
 
+            # increments the index
+            index += 1
+
+            # in case the current index is in the limit of the python
+            # regex compilation
+            if index % REGEX_COMILATION_LIMIT == 0:
+                # retrieves the matching regex value from the matching
+                # regex value buffer
+                matching_regex_value = matching_regex_value_buffer.get_value()
+
+                # compiles the matching regex value
+                matching_regex = re.compile(matching_regex_value)
+
+                # adds the matching regex to the matching regex list
+                self.matching_regex_list.append(matching_regex)
+
+                # sets the base value in matching regex base values map
+                self.matching_regex_base_values_map[matching_regex] = current_base_value
+
+                # re-sets the current base value
+                current_base_value = index
+
+                # resets the matching regex value buffer
+                matching_regex_value_buffer.reset()
+
+                # sets the is first flag
+                is_first = True
+
         # retrieves the matching regex value from the matching
         # regex value buffer
         matching_regex_value = matching_regex_value_buffer.get_value()
 
         # compiles the matching regex value
-        self.matching_regex = re.compile(matching_regex_value)
+        matching_regex = re.compile(matching_regex_value)
+
+        # adds the matching regex to the matching regex list
+        self.matching_regex_list.append(matching_regex)
+
+        # sets the base value in matching regex base values map
+        self.matching_regex_base_values_map[matching_regex] = current_base_value
