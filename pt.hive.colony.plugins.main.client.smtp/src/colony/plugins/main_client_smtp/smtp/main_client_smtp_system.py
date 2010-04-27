@@ -131,22 +131,34 @@ class SmtpClient:
         # retrieves the initial response value
         response = self.retrieve_response(None, session)
 
+        if not response.get_code() == 220:
+            raise Exception("problem establishing connection")
+
         # sends the request for the given sender,
         # recipients list, message and parameters
-        request = self.send_request("hello", "mail.sender.com", parameters)
+        request = self.send_request("helo", "mail.sender.com", session, parameters)
 
         # retrieves the response
-        response = self.retrieve_response(request)
+        response = self.retrieve_response(request, session)
+
+        if not response.get_code() == 250:
+            raise Exception("problem establishing connection")
+
+        print str(response)
 
         # returns the response
         return response
 
-    def send_request(self, command, message, parameters):
+    def send_request(self, command, message, session, parameters):
         """
         Sends the request for the given parameters.
 
-        @type queries: List
-        @param queries: The list of queries to be sent.
+        @type command: String
+        @param command: The command to be sent.
+        @type message: String
+        @param message: The message to be sent.
+        @type session: SmtpSession
+        @param session: The current smtp session.
         @type parameters: Dictionary
         @param parameters: The parameters to the request.
         @rtype: SmtpRequest
@@ -155,6 +167,9 @@ class SmtpClient:
 
         # creates the smtp request
         request = SmtpRequest()
+
+        # sets the session object in the request
+        request.set_session(session)
 
         # sets the command in the request
         request.set_command(command)
@@ -314,53 +329,6 @@ class SmtpClient:
 
                 # returns the socket
                 return socket
-
-#
-#class SmtpClientHandler:
-#    """
-#    The smtp client handler.
-#    Handles the client request and response for predefined
-#    operations.
-#    """
-#
-#    smtp_connection = None
-#    """ The smtp connection to be used """
-#
-#    host = None
-#    """ The host for the connection """
-#
-#    port = None
-#    """ The port for the connection """
-#
-#    def __init__(self, smtp_connection, host, port):
-#        """
-#        Constructor of the class.
-#
-#        @type smtp_connection: Socket
-#        @param smtp_connection: The smtp connection (socket) to be used.
-#        @type host: String
-#        @param host: The host for the connection.
-#        @type port: int
-#        @param port: The port for the connection.
-#        """
-#
-#        smtp_connection
-#
-#    def send_email(self, sender, recipients_list, message, parameters = {}):
-#        # creates a new response
-#        response = SmtpResponse()
-#
-#        response.process_data(data)
-#
-#        request = SmtpRequest()
-#
-#        request.set_command("HELO")
-#
-#        request.set_message("OK: message queued for delivery")
-#
-#        pass
-#
-#    def retrieve_response(self):
 
 class SmtpRequest:
     """
@@ -607,7 +575,7 @@ class SmtpResponse:
         @return: The code.
         """
 
-        return self.message
+        return self.code
 
     def set_code(self, code):
         """
