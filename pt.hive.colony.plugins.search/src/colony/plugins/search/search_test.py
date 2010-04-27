@@ -188,7 +188,8 @@ class SearchTestCase(unittest.TestCase):
             self.test_index_identifier = TEST_INDEX_IDENTIFIER
 
             # creates the test index
-            self.test_index = self.plugin.create_index_with_identifier(self.test_index_identifier, {"start_path" : self.crawl_target_path, "type" : DEFAULT_INDEX_TYPE})
+            self.test_index = self.plugin.create_index_with_identifier(self.test_index_identifier, {"search_crawler_type" : DEFAULT_INDEX_TYPE,
+                                                                                                    "search_crawler_options" : {"start_path" : self.crawl_target_path}})
 
     def test_create_index(self):
         """
@@ -196,7 +197,8 @@ class SearchTestCase(unittest.TestCase):
         """
 
         # creates an index using the base crawl directory
-        test_index = self.plugin.create_index({"start_path" : self.crawl_target_path, "type" : DEFAULT_INDEX_TYPE})
+        test_index = self.plugin.create_index({"search_crawler_type" : DEFAULT_INDEX_TYPE,
+                                               "search_crawler_options" : {"start_path" : self.crawl_target_path}})
 
         # asserts that the index was successfully created
         self.assertTrue(test_index)
@@ -213,7 +215,8 @@ class SearchTestCase(unittest.TestCase):
         """
 
         # creates an index using the base crawl directory and stores it in the repository
-        create_index_result = self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER, {"start_path" : self.crawl_target_path, "type" : DEFAULT_INDEX_TYPE})
+        create_index_result = self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER, {"search_crawler_type" : DEFAULT_INDEX_TYPE,
+                                                                                               "search_crawler_options" : {"start_path" : self.crawl_target_path}})
 
         # asserts that the index was successfully created
         self.assertTrue(create_index_result)
@@ -360,8 +363,8 @@ class SearchTestCase(unittest.TestCase):
         """
 
         # creates the properties map for creating the index with term frequency metric
-        properties = {"start_path" : self.crawl_target_path,
-                      "type" : DEFAULT_INDEX_TYPE,
+        properties = {"search_crawler_type" : DEFAULT_INDEX_TYPE,
+                      "search_crawler_options" : {"start_path" : self.crawl_target_path},
                       "metrics_identifiers" : ["term_frequency_scorer_metric"]}
 
         # creates the test index
@@ -376,8 +379,8 @@ class SearchTestCase(unittest.TestCase):
         """
 
         # creates the properties for creating the index with the documents hits scorer metric
-        properties = {"start_path" : self.crawl_target_path,
-                      "type" : DEFAULT_INDEX_TYPE,
+        properties = {"search_crawler_type" : DEFAULT_INDEX_TYPE,
+                      "search_crawler_options" : {"start_path" : self.crawl_target_path},
                       "metrics_identifiers" : ["document_hits_scorer_metric"]}
 
         # creates the index
@@ -403,8 +406,8 @@ class SearchTestCase(unittest.TestCase):
         """
 
         # creates the properties for the index creation
-        properties = {"start_path" : self.crawl_target_path,
-                      "type" : DEFAULT_INDEX_TYPE,
+        properties = {"search_crawler_type" : DEFAULT_INDEX_TYPE,
+                      "search_crawler_options" : {"start_path" : self.crawl_target_path},
                       "metrics_identifiers" : ["word_document_frequency_scorer_metric"]}
 
         # creates the index
@@ -448,8 +451,8 @@ class SearchTestCase(unittest.TestCase):
         """
 
         # creates the properties for index creation
-        properties = {"start_path" : self.crawl_target_path,
-                      "type" : DEFAULT_INDEX_TYPE,
+        properties = {"search_crawler_type" : DEFAULT_INDEX_TYPE,
+                      "search_crawler_options" : {"start_path" : self.crawl_target_path},
                       "metrics_identifiers" : ["hit_distance_to_top_scorer_metric"]}
 
         # creates the index
@@ -565,10 +568,9 @@ class SearchTestCase(unittest.TestCase):
         word_frequency_best_file = self.crawl_target_path + "/2.txt"
 
         # creates the index to support the test
-        self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER,
-                                                              {"start_path" : self.crawl_target_path,
-                                                               "type" : DEFAULT_INDEX_TYPE,
-                                                               "metrics_identifiers" : ["word_document_frequency_scorer_metric"]})
+        self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER, {"search_crawler_type" : DEFAULT_INDEX_TYPE,
+                                                                         "search_crawler_options" : {"start_path" : self.crawl_target_path},
+                                                                         "metrics_identifiers" : ["word_document_frequency_scorer_metric"]})
 
         # creates the properties map for the search operation
         properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "word_frequency_scorer_function"}
@@ -731,7 +733,8 @@ class SearchTestCase(unittest.TestCase):
         test_query = TEST_QUERY
 
         # creates the index for the test and stores it in the repository
-        self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER, {"start_path" : self.empty_crawler_target_path, "type" : "file_system"})
+        self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER, {"search_crawler_type" : "file_system",
+                                                                         "search_crawler_options" : {"start_path" : self.empty_crawler_target_path}})
 
         # creates the properties for the search operation
         properties = {"query_evaluator_type" : "query_parser", "search_scorer_function_identifier" : "term_frequency_scorer_function"}
@@ -750,7 +753,8 @@ class SearchTestCase(unittest.TestCase):
         test_query = TEST_QUERY
 
         # creates the index for the test and stores it in the repository
-        self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER, {"start_path" : self.empty_crawler_target_path, "type" : "file_system"})
+        self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER, {"search_crawler_type" : "file_system",
+                                                                         "search_crawler_options" : {"start_path" : self.empty_crawler_target_path}})
 
         # creates the properties map for the empty search
         properties = {"query_evaluator_type" : "query_parser", "search_scorer_function_identifier" : "term_frequency_scorer_function"}
@@ -768,8 +772,8 @@ class SearchTestCase(unittest.TestCase):
         """
 
         # creates the index for the test and stores it in the repository
-        self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER, {"start_path" : self.crawl_target_path,
-                                                                         "type" : DEFAULT_INDEX_TYPE})
+        self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER, {"search_crawler_type" : DEFAULT_INDEX_TYPE,
+                                                                         "search_crawler_options" : {"start_path" : self.crawl_target_path}})
 
         # creates the properties for the search
         properties = {"start_record" : 0, "number_records" : 2}
@@ -792,10 +796,10 @@ class SearchTestCase(unittest.TestCase):
         global search_test_classes
 
         # creates an index using the base crawl directory
-        test_index = self.plugin.create_index({"type" : ENTITY_MANAGER_INDEX_TYPE,
-                                               "entity_manager_arguments" : ENTITY_MANAGER_ARGUMENTS,
-                                               "entity_classes_module" : "search_test_classes",
-                                               "directory_path": os.path.dirname(__file__)})
+        test_index = self.plugin.create_index({"search_crawler_type" : ENTITY_MANAGER_INDEX_TYPE,
+                                               "search_crawler_options" : {"entity_manager_arguments" : ENTITY_MANAGER_ARGUMENTS,
+                                                                           "entity_classes_module" : "search_test_classes",
+                                                                           "directory_path": os.path.dirname(__file__)}})
 
         # asserts that the index was successfully created
         self.assertTrue(test_index)
@@ -815,12 +819,12 @@ class SearchTestCase(unittest.TestCase):
         global search_test_classes
 
         # creates an index using the base crawl directory
-        self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER, {"type" : ENTITY_MANAGER_INDEX_TYPE,
-                                               "entity_manager_arguments" : ENTITY_MANAGER_ARGUMENTS,
-                                               "entity_classes_module" : "search_test_classes",
-                                               "directory_path": os.path.dirname(__file__)})
+        self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER, {"search_crawler_type" : ENTITY_MANAGER_INDEX_TYPE,
+                                                                         "search_crawler_options" : {"entity_manager_arguments" : ENTITY_MANAGER_ARGUMENTS,
+                                                                                                     "entity_classes_module" : "search_test_classes",
+                                                                                                     "directory_path": os.path.dirname(__file__)}})
 
-        # creates the properties for the searhc operation
+        # creates the properties for the search operation
         properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "term_frequency_scorer_function"}
 
         results = self.plugin.search_index_by_identifier(TEST_INDEX_IDENTIFIER, "luis", properties)

@@ -42,13 +42,13 @@ import time
 
 import search_exceptions
 
-TYPE_VALUE = "type"
+SEARCH_CRAWLER_TYPE_VALUE = "search_crawler_type"
 """ The type value """
 
-PERSISTENCE_TYPE_VALUE = "persistence_type"
+SEARCH_PERSISTENCE_TYPE_VALUE = "search_persistence_type"
 """ The persistence type value """
 
-QUERY_EVALUATOR_TYPE_VALUE = "query_evaluator_type"
+SEARCH_QUERY_EVALUATOR_TYPE_VALUE = "search_query_evaluator_type"
 """ The key for the properties map, to access the query evaluator type """
 
 SEARCH_SCORER_FUNCTION_IDENTIFIER_VALUE = "search_scorer_function_identifier"
@@ -106,8 +106,8 @@ class Search:
         start_time = time.time()
 
         # in case type value is not defined in properties
-        if not TYPE_VALUE in properties:
-            properties[TYPE_VALUE] = DEFAULT_INDEX_TYPE
+        if not SEARCH_CRAWLER_TYPE_VALUE in properties:
+            properties[SEARCH_CRAWLER_TYPE_VALUE] = DEFAULT_INDEX_TYPE
 
         # retrieves the search crawler plugins
         search_crawler_plugin = self.search_plugin.search_crawler_plugin
@@ -194,8 +194,8 @@ class Search:
         """
 
         # in case the persistence type value is not defined in the properties
-        if not PERSISTENCE_TYPE_VALUE in properties:
-            raise search_exceptions.MissingProperty(PERSISTENCE_TYPE_VALUE)
+        if not SEARCH_PERSISTENCE_TYPE_VALUE in properties:
+            raise search_exceptions.MissingProperty(SEARCH_PERSISTENCE_TYPE_VALUE)
 
         # retrieves the search index persistence plugin
         search_index_persistence_plugin = self.search_plugin.search_index_persistence_plugin
@@ -242,8 +242,8 @@ class Search:
         """
 
         # in case the persistence type value is not defined in the properties
-        if not PERSISTENCE_TYPE_VALUE in properties:
-            raise search_exceptions.MissingProperty(PERSISTENCE_TYPE_VALUE)
+        if not SEARCH_PERSISTENCE_TYPE_VALUE in properties:
+            raise search_exceptions.MissingProperty(SEARCH_PERSISTENCE_TYPE_VALUE)
 
         # retrieves the search index persistence plugins
         search_index_persistence_plugin = self.search_plugin.search_index_persistence_plugin
@@ -292,8 +292,8 @@ class Search:
         """
 
         # in case the persistence type value is not defined in the properties
-        if not QUERY_EVALUATOR_TYPE_VALUE in properties:
-            properties[QUERY_EVALUATOR_TYPE_VALUE] = DEFAULT_QUERY_EVALUATOR_TYPE
+        if not SEARCH_QUERY_EVALUATOR_TYPE_VALUE in properties:
+            properties[SEARCH_QUERY_EVALUATOR_TYPE_VALUE] = DEFAULT_QUERY_EVALUATOR_TYPE
 
         # retrieves the query evaluator plugin
         search_query_evaluator_plugin = self.search_plugin.search_query_evaluator_plugin
@@ -359,52 +359,8 @@ class Search:
         # retrieves the count property
         count = properties.get(COUNT_VALUE, False)
 
-        # performs the search using query_index method
-        start_time = time.time()
-
-        # disable the garbage collector during parsing, to improve performance
-        gc.disable()
-
-        # wrapping the query operation in a try-finally block to force the garbage collector to become enabled
-        try:
-            search_results = self.query_index(search_index, search_query, properties)
-        finally:
-            # re-enable the garbage collector
-            gc.enable()
-
-        querying_duration = time.time() - start_time
-        self.search_plugin.debug("Querying index finished in %f s" % querying_duration)
-
-        # stores the querying duration statistic in the statistics map
-        search_statistics["querying_duration"] = querying_duration
-
-        # in case the search did not retrieve any results
-        if not search_results:
-            # builds the search results map with the empty results
-            search_results_map = {SEARCH_RESULTS_VALUE : search_results,
-                                  SEARCH_STATISTICS_VALUE : search_statistics}
-
-            # returns the search results map
-            # and skips the subsequent steps
-            return search_results_map
-
-        # scores the results using the available search scorer plugin
-        start_time = time.time()
-        scored_search_results = self.score_results(search_results, search_index, properties)
-        scoring_duration = time.time() - start_time
-        self.search_plugin.debug("Scoring results finished in %f s" % scoring_duration)
-
-        # stores the scoring duration statistic in the statistics map
-        search_statistics["scoring_duration"] = scoring_duration
-
-        # sorts the search results using the score
-        start_time = time.time()
-        sorted_search_results = self.sort_results(scored_search_results, properties)
-        sorting_duration = time.time() - start_time
-        self.search_plugin.debug("Sorting results finished in %f s" % sorting_duration)
-
-        # stores the sorting duration statistic in the statistics map
-        search_statistics["sorting_duration"] = sorting_duration
+        # queries the search index
+        search_results = self._query_index(search_index, search_query, properties, search_statistics)
 
         # in case a simple count is intended
         if count:
@@ -419,17 +375,31 @@ class Search:
             # and skips the limiting step
             return search_results_map
 
-        # limit search results according to start record and number of records
-        start_time = time.time()
-        limited_search_results = self.limit_results(sorted_search_results, properties)
-        limiting_duration = time.time() - start_time
-        self.search_plugin.debug("Limiting results finished in %f s" % limiting_duration)
+        # in case the search did not retrieve any results
+        if not search_results:
+            # builds the search results map with the empty results
+            search_results_map = {SEARCH_RESULTS_VALUE : search_results,
+                                  SEARCH_STATISTICS_VALUE : search_statistics}
 
-        # stores the limiting duration statistic in the statistics map
-        search_statistics["limiting_duration"] = limiting_duration
+            # returns the search results map
+            # and skips the subsequent steps
+            return search_results_map
+
+        # scores the results using the available search scorer plugin
+        scored_search_results = self.score_results(search_results, search_index, properties, search_statistics)
+
+        # sorts the search results using the score
+        sorted_search_results = self.sort_results(scored_search_results, properties, search_statistics)
+
+
+        # limit search results according to start record and number of records
+        limited_search_results = self.limit_results(sorted_search_results, properties, search_statistics)
+
+        # processes the limited search results
+        processed_search_results = self.process_results(limited_search_results, properties, search_statistics)
 
         # builds the search results map
-        search_results_map = {SEARCH_RESULTS_VALUE : limited_search_results,
+        search_results_map = {SEARCH_RESULTS_VALUE : processed_search_results,
                               SEARCH_STATISTICS_VALUE : search_statistics}
 
         # returns the full search results map
@@ -542,34 +512,120 @@ class Search:
 
         return search_index_persistence_adapter_types
 
-    def score_results(self, search_results, search_index, properties):
+    def _query_index(self, search_index, search_query, properties, search_statistics):
+        # records the query time for the operation
+        start_time = time.time()
+
+        # disable the garbage collector during parsing, to improve performance
+        gc.disable()
+
+        # wrapping the query operation in a try-finally block to force the garbage collector to become enabled
+        try:
+            search_results = self.query_index(search_index, search_query, properties)
+        finally:
+            # re-enable the garbage collector
+            gc.enable()
+
+        # determines the elapsed querying duration
+        querying_duration = time.time() - start_time
+
+        # logs the querying duration
+        self.search_plugin.debug("Querying index finished in %f s" % querying_duration)
+
+        # stores the querying duration statistic in the statistics map
+        search_statistics["querying_duration"] = querying_duration
+
+        return search_results
+
+    def score_results(self, search_results, search_index, properties, search_statistics):
+        # records the start time for the operation
+        start_time = time.time()
+
         # retrieves the search scorer plugin
         search_scorer_plugin = self.search_plugin.search_scorer_plugin
 
         # scores the results using the plugin
         scored_search_results = search_scorer_plugin.score_results(search_results, search_index, properties)
 
+        # determines the elapsed scoring time
+        scoring_duration = time.time() - start_time
+
+        # logs the scoring duration
+        self.search_plugin.debug("Scoring results finished in %f s" % scoring_duration)
+
+        # stores the scoring duration statistic in the statistics map
+        search_statistics["scoring_duration"] = scoring_duration
+
         return scored_search_results
 
-    def sort_results(self, scored_search_results, properties):
+    def sort_results(self, scored_search_results, properties, search_statistics):
+        # records the start time for the operation
+        start_time = time.time()
+
         # retrieves the search sorter plugin
         search_sorter_plugin = self.search_plugin.search_sorter_plugin
 
         # sorts the already scored search results
         sorted_search_results = search_sorter_plugin.sort_results(scored_search_results, properties)
 
+        # determines the elapsed scoring time
+        sorting_duration = time.time() - start_time
+
+        # logs the sorting duration
+        self.search_plugin.debug("Sorting results finished in %f s" % sorting_duration)
+
+        # stores the sorting duration statistic in the statistics map
+        search_statistics["sorting_duration"] = sorting_duration
+
         return sorted_search_results
 
-    def limit_results(self, sorted_search_results, properties):
-        # @todo: perform smarter cut of the search results, as earlier as possible
+    def limit_results(self, sorted_search_results, properties, search_statistics):
+        # records the start time for the operation
+        start_time = time.time()
+
+        # retrieves the start record
         start_record = properties.get("start_record", None)
+
+        # retrieves the number of records
         number_records = properties.get("number_records", None)
 
+        # determines the end record
         if not start_record == None and not number_records == None:
             end_record = start_record + number_records
         else:
             end_record = None
 
+        # limits the search results
         limited_search_results = sorted_search_results[start_record:end_record]
 
+        # determines the elapsed limiting time
+        limiting_duration = time.time() - start_time
+
+        # logs the elapsed limiting time
+        self.search_plugin.debug("Limiting results finished in %f s" % limiting_duration)
+
+        # stores the limiting duration statistic in the statistics map
+        search_statistics["limiting_duration"] = limiting_duration
+
         return limited_search_results
+
+    def process_results(self, limited_search_results, properties, search_statistics):
+        # records the start time for the operation
+        start_time = time.time()
+
+        # retrieves the search processor plugin
+        search_processor_plugin = self.search_plugin.search_processor_plugin
+
+        # processes the results using the plugin
+        processed_search_results = search_processor_plugin.process_results(limited_search_results, properties)
+
+        # determines the elasped processing duration
+        processing_duration = time.time() - start_time
+
+        # logs the elapsed processing time
+        self.search_plugin.debug("Processing results finished in %f s" % processing_duration)
+
+        # stores the limiting duration statistic in the statistics map
+        search_statistics["processing_duration"] = processing_duration
+
+        return processed_search_results
