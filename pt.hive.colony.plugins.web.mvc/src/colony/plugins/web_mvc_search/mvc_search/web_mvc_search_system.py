@@ -39,9 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import types
 
-TYPE_VALUE = "type"
-""" The key to retrieve the index type from the index configuration map """
-
 EMPTY_SEARCH_OPTIONS_MAP = {}
 """ The empty search options map """
 
@@ -57,14 +54,38 @@ INDEX_IDENTIFIER_PREFIX = "web_mvc_"
 CREATION_OPTIONS_VALUE = "creation_options"
 """ The creation options value """
 
+SEARCH_OPTIONS_VALUE = "search_options"
+""" The search options value """
+
 ARGUMENTS_VALUE = "arguments"
 """ The arguments value """
 
-ENTITY_MANAGER_CRAWL_TARGET_CLASS_NAMES_VALUE = "entity_manager_crawl_target_class_names"
-""" The entity manager crawl target class names value """
+SEARCH_CRAWLER_TYPE_VALUE = "search_crawler_type"
+""" The key to retrieve the search crawler type from the index configuration map """
 
-ENTITY_MANAGER_CRAWL_TARGET_CLASSES_VALUE = "entity_manager_crawl_target_classes"
-""" The entity manager crawl target classes value """
+SEARCH_CRAWLER_OPTIONS_VALUE = "search_crawler_options"
+""" The options value for the search crawler """
+
+SEARCH_PROCESSOR_TYPE_VALUE = "search_processor_type"
+""" The key to retrieve the search processor type from the index configuration map """
+
+SEARCH_PROCESSOR_OPTIONS_VALUE = "search_processor_options"
+""" The options value for the search processor """
+
+ENTITY_MANAGER_TYPE = "entity_manager"
+""" The entity manager type """
+
+TARGET_CLASS_NAMES_VALUE = "target_class_names"
+""" The entity manager target class names value """
+
+TARGET_CLASSES_VALUE = "target_classes"
+""" The entity manager target classes value """
+
+QUERY_OPTIONS_VALUE = "query_options"
+""" The entity manager query options """
+
+ENTITY_MANAGER_ARGUMENTS_VALUE = "entity_manager_arguments"
+""" The entity manager arguments value """
 
 class WebMvcSearch:
     """
@@ -185,10 +206,10 @@ class SearchIndexController:
     """ The web mvc search """
 
     search_index_configuration_map = {}
-    """ The index configuration map """
+    """ The search index configuration map """
 
     search_index_identifier = "none"
-    """ The identifier for the controlled index """
+    """ The search identifier for the controlled index """
 
     def __init__(self, web_mvc_search, search_index_identifier):
         """
@@ -230,24 +251,93 @@ class SearchIndexController:
         # replaces the arguments in the base index configuration
         index_configuration_map = self.web_mvc_search.replace_arguments(base_index_configuration_map, arguments_map)
 
+        # retrieves the updated the index creation options
+        index_creation_options = index_configuration_map.get(CREATION_OPTIONS_VALUE, {})
+
+        # in case the index is of entity manager crawler type
+        search_crawler_type = index_creation_options.get(SEARCH_CRAWLER_TYPE_VALUE)
+
+        if not search_crawler_type == ENTITY_MANAGER_TYPE:
+            # stores the concrete index configuration in the controller
+            self.search_index_configuration_map = index_configuration_map
+
+            # skips the processing for entity manager index types
+            return
+
+        # retrieves the search crawler options
+        search_crawler_options = index_creation_options.get(SEARCH_CRAWLER_OPTIONS_VALUE, {})
+
         # retrieves the entity class names list
-        entity_class_names = index_creation_options.get(ENTITY_MANAGER_CRAWL_TARGET_CLASS_NAMES_VALUE, [])
+        entity_class_names = search_crawler_options.get(TARGET_CLASS_NAMES_VALUE, [])
 
         # determines the corresponding classes for the provided class names
         entity_classes = self.get_entity_classes(entity_class_names, entity_models_modules)
 
-        # retrieves the index creation options
-        index_creation_options = index_configuration_map.get(CREATION_OPTIONS_VALUE, {})
-
         # sets the entity classes in the index creation options
-        index_creation_options[ENTITY_MANAGER_CRAWL_TARGET_CLASSES_VALUE] = entity_classes
+        search_crawler_options[TARGET_CLASSES_VALUE] = entity_classes
+
+        # retrieves the search options
+        search_options = index_configuration_map.get(SEARCH_OPTIONS_VALUE)
+
+        # in case the search options map does not exist
+        if not search_options:
+            # creates a new search options map
+            search_options = {}
+
+            # sets the created search options in the configuration map
+            index_configuration_map[SEARCH_OPTIONS_VALUE] = search_options
+
+        # retrieve the search processor type
+        search_processor_type = search_options.get(SEARCH_PROCESSOR_TYPE_VALUE)
+
+        # in case the processor type is not of entity manager type:
+        if not search_processor_type == ENTITY_MANAGER_TYPE:
+            # stores the concrete index configuration in the controller
+            self.search_index_configuration_map = index_configuration_map
+
+            # skips the remaining processor options processing
+            return
+
+        # retrieves the search processor options
+        search_processor_options = search_options.get(SEARCH_PROCESSOR_OPTIONS_VALUE)
+
+        # in case the search processor options map does not exist
+        if not search_processor_options:
+            # creates a new search options map
+            search_processor_options = {}
+
+            # sets the created search processor options in the search options map
+            search_options[SEARCH_PROCESSOR_OPTIONS_VALUE] = search_processor_options
+
+        # in case the entity manager arguments are not defined in the processor options
+        if not ENTITY_MANAGER_ARGUMENTS_VALUE in search_processor_options:
+            # retrieves the entity manager arguments from the creation options
+            entity_manager_arguments = search_crawler_options[ENTITY_MANAGER_ARGUMENTS_VALUE]
+
+            # sets the entity manager arguments in the search options
+            search_processor_options[ENTITY_MANAGER_ARGUMENTS_VALUE] = entity_manager_arguments
+
+        # in case the classes for the entity manager processor have not been specified
+        if not TARGET_CLASSES_VALUE in search_processor_options:
+            # retrieves the entity classes from the index creation options
+            entity_classes = search_crawler_options[TARGET_CLASSES_VALUE]
+
+            # sets the entity classes in the search options
+            search_processor_options[TARGET_CLASSES_VALUE] = entity_classes
+
+        if not QUERY_OPTIONS_VALUE in search_options:
+            # retrieves the entity manager crawl options from the index creation options
+            crawl_options = search_crawler_options.get(QUERY_OPTIONS_VALUE, {})
+
+            # stores the entity manager process options in the search options map
+            search_processor_options[QUERY_OPTIONS_VALUE] = crawl_options
 
         # stores the concrete index configuration in the controller
-        self.index_configuration_map = index_configuration_map
+        self.search_index_configuration_map = index_configuration_map
 
     def update(self):
         # updates the index
-        self.web_mvc_search.update_index(self.search_index_identifier, self.index_configuration_map)
+        self.web_mvc_search.update_index(self.search_index_identifier, self.search_index_configuration_map)
 
     def search(self, search_query):
         # the empty search options
@@ -261,6 +351,12 @@ class SearchIndexController:
         if not self.web_mvc_search.has_index(self.search_index_identifier):
             # updates the index, creating if necessary
             self.update()
+
+        # retrieves the index search options from the configuration map
+        configured_search_options = self.search_index_configuration_map.get(SEARCH_OPTIONS_VALUE, {})
+
+        # merges the provided options map with the configured search options map
+        options.update(configured_search_options)
 
         return self.web_mvc_search.search_index_options(self.search_index_identifier, search_query, options)
 
