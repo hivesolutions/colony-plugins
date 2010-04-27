@@ -37,7 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import sys
 import socket
 import select
 
@@ -126,9 +125,15 @@ class SmtpClient:
         # connects to the socket
         self.smtp_connection.connect((host, port))
 
+        # creates the session object
+        session = SmtpSession()
+
+        # retrieves the initial response value
+        response = self.retrieve_response(None, session)
+
         # sends the request for the given sender,
         # recipients list, message and parameters
-        request = self.send_request(sender, recipients_list, message, parameters)
+        request = self.send_request("hello", "mail.sender.com", parameters)
 
         # retrieves the response
         response = self.retrieve_response(request)
@@ -136,7 +141,7 @@ class SmtpClient:
         # returns the response
         return response
 
-    def send_request(self, sender, recipients_list, message, parameters):
+    def send_request(self, command, message, parameters):
         """
         Sends the request for the given parameters.
 
@@ -148,9 +153,14 @@ class SmtpClient:
         @return: The sent request for the given parameters..
         """
 
-        # creates the smtp request with the the sender,
-        # the recipients_list, the message and the parameters
-        request = SmtpRequest(sender, recipients_list, message, parameters)
+        # creates the smtp request
+        request = SmtpRequest()
+
+        # sets the command in the request
+        request.set_command(command)
+
+        # sets the message in the request
+        request.set_message(message)
 
         # retrieves the result value from the request
         result_value = request.get_result()
@@ -161,33 +171,77 @@ class SmtpClient:
         # returns the request
         return request
 
-    def retrieve_response(self, request, response_timeout = RESPONSE_TIMEOUT):
+    def retrieve_response(self, request, session, response_timeout = RESPONSE_TIMEOUT):
         """
         Retrieves the response from the sent request.
 
         @rtype: SmtpRequest
         @return: The request that originated the response.
+        @type session: SmtpSession
+        @param session: The current smtp session.
         @type response_timeout: int
         @param response_timeout: The timeout for the response retrieval.
         @rtype: SmtpResponse
         @return: The response from the sent request.
         """
 
+        # creates the string buffer for the message
+        message = colony.libs.string_buffer_util.StringBuffer()
+
         # creates a response object
         response = SmtpResponse(request)
 
-        # todo: tenho de ter aki um ciclo
-        # para receber a resposta como deve de ser
-        # como no cliente de http
+        # continuous loop
+        while True:
+            # retrieves the data
+            data = self.retrieve_data(response_timeout)
 
-        # receives the data
-        data = self.retrieve_data()
+            # in case no valid data was received
+            if data == "":
+                raise main_client_smtp_exceptions.SmtpInvalidDataException("empty data received")
 
-        # processes the data
-        response.process_data(data)
+            # writes the data to the string buffer
+            message.write(data)
 
-        # returns the response
-        return response
+            # retrieves the message value from the string buffer
+            message_value = message.get_value()
+
+            # in case the session is in data transmission mode
+            if session.data_transmission:
+                end_token = ".\r\n"
+            else:
+                end_token = "\r\n"
+
+            # finds the first end token value
+            end_token_index = message_value.find(end_token)
+
+            # in case there is an end token found
+            if not end_token_index == -1:
+                # retrieves the smtp message
+                smtp_message = message_value[:end_token_index]
+
+                # in case the session is not in data transmission mode
+                if not session.data_transmission:
+                    # splits the smtp message
+                    smtp_message_splitted = smtp_message.split(" ", 1)
+
+                    # retrieves the smtp code
+                    smtp_code = int(smtp_message_splitted[0])
+
+                    # retrieves the smtp message
+                    smtp_message = smtp_message_splitted[1]
+
+                    # sets the smtp code in the response
+                    response.set_code(smtp_code)
+
+                    # sets the smtp message in the response
+                    response.set_message(smtp_message)
+
+                # sets the session object in the response
+                response.set_session(session)
+
+                # returns the response
+                return response
 
     def retrieve_data(self, response_timeout = RESPONSE_TIMEOUT, chunk_size = CHUNK_SIZE):
         try:
@@ -261,19 +315,66 @@ class SmtpClient:
                 # returns the socket
                 return socket
 
+#
+#class SmtpClientHandler:
+#    """
+#    The smtp client handler.
+#    Handles the client request and response for predefined
+#    operations.
+#    """
+#
+#    smtp_connection = None
+#    """ The smtp connection to be used """
+#
+#    host = None
+#    """ The host for the connection """
+#
+#    port = None
+#    """ The port for the connection """
+#
+#    def __init__(self, smtp_connection, host, port):
+#        """
+#        Constructor of the class.
+#
+#        @type smtp_connection: Socket
+#        @param smtp_connection: The smtp connection (socket) to be used.
+#        @type host: String
+#        @param host: The host for the connection.
+#        @type port: int
+#        @param port: The port for the connection.
+#        """
+#
+#        smtp_connection
+#
+#    def send_email(self, sender, recipients_list, message, parameters = {}):
+#        # creates a new response
+#        response = SmtpResponse()
+#
+#        response.process_data(data)
+#
+#        request = SmtpRequest()
+#
+#        request.set_command("HELO")
+#
+#        request.set_message("OK: message queued for delivery")
+#
+#        pass
+#
+#    def retrieve_response(self):
+
 class SmtpRequest:
     """
     The smtp request class.
     """
 
     message = "none"
-    """ The received message """
+    """ The message """
 
     command = "none"
-    """ The received command """
+    """ The command """
 
-    arguments = "none"
-    """ The received arguments """
+    messages = []
+    """ The messages """
 
     session = None
     """ The session """
@@ -285,6 +386,11 @@ class SmtpRequest:
     """ The properties """
 
     def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        self.messages = []
         self.message_stream = colony.libs.string_buffer_util.StringBuffer()
         self.properties = {}
 
@@ -310,24 +416,23 @@ class SmtpRequest:
         # retrieves the result string value
         message = self.message_stream.get_value()
 
-        # in case the response messages
-        # are defined
-        if self.response_messages:
+        # in case the messages are defined
+        if self.messages:
             # initializes the return message
             return_message_buffer = colony.libs.string_buffer_util.StringBuffer()
 
             # starts the counter value
-            counter = len(self.response_messages)
+            counter = len(self.messages)
 
-            # iterates over all the response messages
-            for response_message in self.response_messages:
-                # in case the counter is one (last response message)
+            # iterates over all the messages
+            for message in self.messages:
+                # in case the counter is one (last message)
                 if counter == 1:
-                    # adds the response code with the response message
-                    return_message_buffer.write(str(self.response_code) + " " + response_message + "\r\n")
+                    # adds the code with the message
+                    return_message_buffer.write(self.command + " " + message + "\r\n")
                 else:
-                    # adds the response code with the response message (separated with a dash)
-                    return_message_buffer.write(str(self.response_code) + "-" + response_message + "\r\n")
+                    # adds the code with the message (separated with a dash)
+                    return_message_buffer.write(self.command + "-" + message + "\r\n")
 
                 # decrements the counter
                 counter -= 1
@@ -336,7 +441,7 @@ class SmtpRequest:
             return_message = return_message_buffer.get_value()
         else:
             # creates the return message
-            return_message = str(self.response_code) + " " + self.response_message + "\r\n"
+            return_message = self.command + " " + self.message + "\r\n"
 
             # in case the message is not empty
             if not message == "":
@@ -377,7 +482,7 @@ class SmtpRequest:
 
     def set_command(self, command):
         """
-        Sets the command.
+        Sets the code.
 
         @type command: String
         @param command: The command.
@@ -385,25 +490,25 @@ class SmtpRequest:
 
         self.command = command
 
-    def get_arguments(self):
+    def get_messages(self):
         """
-        Retrieves the arguments.
+        Retrieves the messages.
 
         @rtype: List
-        @return: The arguments.
+        @return: The messages.
         """
 
-        return self.arguments
+        return self.messages
 
-    def set_arguments(self, arguments):
+    def set_messages(self, messages):
         """
-        Sets the arguments.
+        Sets the messages.
 
-        @type arguments: List
-        @param arguments: The arguments.
+        @type messages: List
+        @param messages: The messages.
         """
 
-        self.arguments = arguments
+        self.messages = messages
 
     def get_session(self):
         """
@@ -433,9 +538,393 @@ class SmtpResponse:
     request = None
     """ The request that originated the response """
 
+    message = "none"
+    """ The message """
+
+    code = None
+    """ The code """
+
+    session = None
+    """ The session """
+
+    properties = {}
+    """ The properties """
+
     def __init__(self, request):
         """
         Constructor of the class.
         """
 
         self.request = request
+
+        self.properties = {}
+
+    def get_request(self):
+        """
+        Retrieves the request.
+
+        @rtype: SmtpRequest
+        @return: The request.
+        """
+
+        return self.request
+
+    def set_request(self, request):
+        """
+        Sets the request.
+
+        @type request: SmtpRequest
+        @param request:  The request.
+        """
+
+        self.request = request
+
+    def get_message(self):
+        """
+        Retrieves the message.
+
+        @rtype: String
+        @return: The message.
+        """
+
+        return self.message
+
+    def set_message(self, message):
+        """
+        Sets the message.
+
+        @type message: String
+        @param message: The message.
+        """
+
+        self.message = message
+
+    def get_code(self):
+        """
+        Retrieves the code.
+
+        @rtype: int
+        @return: The code.
+        """
+
+        return self.message
+
+    def set_code(self, code):
+        """
+        Sets the code.
+
+        @type code: int
+        @param code: The code.
+        """
+
+        self.code = code
+
+    def get_session(self):
+        """
+        Retrieves the session.
+
+        @rtype: Session
+        @return: The session.
+        """
+
+        return self.session
+
+    def set_session(self, session):
+        """
+        Sets the session.
+
+        @type session: Session
+        @param session: The session.
+        """
+
+        self.session = session
+
+class SmtpSession:
+    """
+    The smtp session class.
+    """
+
+    client_hostname = "none"
+    """ The client hostname """
+
+    extensions_active = False
+    """ The extensions active flag """
+
+    data_transmission = False
+    """ The data transmission flag """
+
+    closed = False
+    """ The closed flag """
+
+    current_message = None
+    """ The current message being processed """
+
+    messages = []
+    """ The messages associated with the session """
+
+    properties = {}
+    """ The properties of the current session """
+
+    def __init__(self):
+        self.messages = []
+        self.properties = {}
+
+    def __repr__(self):
+        return "(%s, %s)" % (self.client_hostname, self.properties)
+
+    def generate_message(self, set_current_message = True):
+        # creates the new message
+        message = SmtpMessage()
+
+        # adds the message to the messages list
+        self.add_message(message)
+
+        # in case the set current message flag
+        # is active
+        if set_current_message:
+            # sets the message as the current message
+            self.set_current_message(message)
+
+    def add_message(self, message):
+        """
+        Adds a message to the list of messages
+        of the current session.
+
+        @type message: SmtpMessage
+        @param message: The message to be added
+        to the session.
+        """
+
+        self.messages.append(message)
+
+    def get_client_hostname(self):
+        """
+        Retrieves the client hostname.
+
+        @rtype: String
+        @return: The client hostname.
+        """
+
+        return self.client_hostname
+
+    def set_client_hostname(self, client_hostname):
+        """
+        Sets the client hostname.
+
+        @type client_hostname: String
+        @param client_hostname: The client hostname.
+        """
+
+        self.client_hostname = client_hostname
+
+    def get_extensions_active(self):
+        """
+        Retrieves the extensions active.
+
+        @rtype: bool
+        @return: The extensions active.
+        """
+
+        return self.extensions_active
+
+    def set_extensions_active(self, extensions_active):
+        """
+        Sets the extensions active.
+
+        @type extensions_active: bool
+        @param extensions_active: The extensions active.
+        """
+
+        self.extensions_active = extensions_active
+
+    def get_data_transmission(self):
+        """
+        Retrieves the data transmission.
+
+        @rtype: bool
+        @return: The data transmission.
+        """
+
+        return self.data_transmission
+
+    def set_data_transmission(self, data_transmission):
+        """
+        Sets the data transmission.
+
+        @type data_transmission: bool
+        @param data_transmission: The data transmission.
+        """
+
+        self.data_transmission = data_transmission
+
+    def get_closed(self):
+        """
+        Retrieves the closed.
+
+        @rtype: bool
+        @return: The closed.
+        """
+
+        return self.closed
+
+    def set_closed(self, closed):
+        """
+        Sets the closed.
+
+        @type closed: bool
+        @param closed: The closed.
+        """
+
+        self.closed = closed
+
+    def get_current_message(self):
+        """
+        Retrieves the current message.
+
+        @rtype: SmtpMessage
+        @return: The current message.
+        """
+
+        return self.current_message
+
+    def set_current_message(self, current_message):
+        """
+        Sets the current message.
+
+        @type current_message: SmtpMessage
+        @param current_message: The current message.
+        """
+
+        self.current_message = current_message
+
+    def get_messages(self):
+        """
+        Retrieves the messages.
+
+        @rtype: List
+        @return: The messages.
+        """
+
+        return self.messages
+
+    def set_messages(self, messages):
+        """
+        Sets the messages.
+
+        @type messages: List
+        @param messages: The messages.
+        """
+
+        self.messages = messages
+
+    def get_properties(self):
+        """
+        Retrieves the properties.
+
+        @rtype: Dictionary
+        @return: The properties.
+        """
+
+        return self.properties
+
+    def set_properties(self, properties):
+        """
+        Sets the properties.
+
+        @type properties: Dictionary
+        @param properties: The properties.
+        """
+
+        self.properties = properties
+
+class SmtpMessage:
+    """
+    The smtp message class that represents
+    a message to be sent through smtp.
+    """
+
+    contents = "none"
+    """ The contents of the message """
+
+    sender = "none"
+    """ The sender of the message """
+
+    recipients_list = []
+    """ The list of recipients for the message """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        self.recipients_list = []
+
+    def add_recipient(self, recipient):
+        """
+        Adds a recipient to the recipients list
+
+        @type recipient: String
+        @param recipient: The recipient to be added.
+        """
+
+        self.recipients_list.append(recipient)
+
+    def get_contents(self):
+        """
+        Retrieves the contents.
+
+        @rtype: String
+        @return: The contents.
+        """
+
+        return self.contents
+
+    def set_contents(self, contents):
+        """
+        Sets the contents.
+
+        @type contents: String
+        @param contents: The contents.
+        """
+
+        self.contents = contents
+
+    def get_sender(self):
+        """
+        Retrieves the .
+
+        @rtype: String
+        @return: The sender.
+        """
+
+        return self.sender
+
+    def set_sender(self, sender):
+        """
+        Sets the sender.
+
+        @type sender: String
+        @param sender: The sender.
+        """
+
+        self.sender = sender
+
+    def get_recipients_list(self):
+        """
+        Retrieves the recipients list.
+
+        @rtype: List
+        @return: The recipients list.
+        """
+
+        return self.recipients_list
+
+    def set_recipients_list(self, recipients_list):
+        """
+        Sets the recipients list.
+
+        @type recipients_list: List
+        @param recipients_list: The recipients list.
+        """
+
+        self.recipients_list = recipients_list
