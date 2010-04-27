@@ -42,6 +42,8 @@ import time
 import urllib
 import datetime
 
+import colony.libs.string_buffer_util
+
 import main_rest_manager_exceptions
 
 HANDLER_BASE_FILENAME = "/colony_mod_python/rest/"
@@ -95,7 +97,7 @@ PATH_VALUE = "path"
 DOMAIN_VALUE = "domain"
 """ The domain value """
 
-LOCALHOST_VALUES = ["localhost", "127.0.0.1"]
+LOCALHOST_VALUES = ("localhost", "127.0.0.1")
 """ The localhost values """
 
 HOST_VALUE = "Host"
@@ -130,8 +132,11 @@ class MainRestManager:
     rest_service_routes_map = {}
     """ The rest service routes map """
 
-    plugin_id_undotted_plugin_map = {}
-    """ The plugin id undotted plugin map """
+    plugin_id_plugin_map = {}
+    """ The plugin id plugin map """
+
+    regex_index_plugin_id_map = {}
+    """ The regex index plugin id map """
 
     service_methods = []
     """ The service methods list """
@@ -153,7 +158,8 @@ class MainRestManager:
         self.main_rest_manager_plugin = main_rest_manager_plugin
 
         self.rest_service_routes_map = {}
-        self.plugin_id_undotted_plugin_map = {}
+        self.plugin_id_plugin_map = {}
+        self.regex_index_plugin_id_map = {}
         self.service_objects = []
         self.service_methods_map = {}
         self.rest_session_map = {}
@@ -283,18 +289,17 @@ class MainRestManager:
 
             # in case there is a valid resource path match
             if resource_path_match:
-                # retrieves the groups map from the resource path match
-                groups_map = resource_path_match.groupdict()
+                # retrieves the index of the captured group
+                group_index = resource_path_match.lastindex
 
-                # iterates over all the group items
-                for group_name, group_value in groups_map.items():
-                    # in case the group value is valid
-                    if group_value:
-                        # retrieves the rest service plugin
-                        rest_service_plugin = self.plugin_id_undotted_plugin_map[group_name]
+                # retrieves the plugin id from the group index
+                plugin_id = self.regex_index_plugin_id_map[group_index]
 
-                        # handles the rest request to the rest servicxe plugin
-                        return rest_service_plugin.handle_rest_request(rest_request)
+                # retrieves the rest service plugin using the plugin id
+                rest_service_plugin = self.plugin_id_plugin_map[plugin_id]
+
+                # handles the rest request to the rest servicxe plugin
+                return rest_service_plugin.handle_rest_request(rest_request)
 
             # raises the rest request not handled exception
             raise main_rest_manager_exceptions.RestRequestNotHandled("no rest service plugin could handle the request")
@@ -431,17 +436,14 @@ class MainRestManager:
         # retrieves the rest service plugin id
         rest_service_plugin_id = rest_service_plugin.id
 
-        # remove all the dots from the rest service plugin id
-        rest_service_plugin_id_undotted = rest_service_plugin_id.replace(".", "")
-
         # retrieves the rest service plugin routes
         routes_list = rest_service_plugin.get_routes()
 
         # initializes the rest service plugin id routes list
-        self.rest_service_routes_map[rest_service_plugin_id_undotted] = routes_list
+        self.rest_service_routes_map[rest_service_plugin_id] = routes_list
 
-        # sets the rest service plugin in the plugin id undotted plugin map
-        self.plugin_id_undotted_plugin_map[rest_service_plugin_id_undotted] = rest_service_plugin
+        # sets the rest service plugin in the plugin id plugin map
+        self.plugin_id_plugin_map[rest_service_plugin_id] = rest_service_plugin
 
         # updates the matching regex
         self._update_matching_regex()
@@ -457,14 +459,11 @@ class MainRestManager:
         # retrieves the rest service plugin id
         rest_service_plugin_id = rest_service_plugin.id
 
-        # remove all the dots from the rest service plugin id
-        rest_service_plugin_id_undotted = rest_service_plugin_id.replace(".", "")
-
         # deletes the route list for the plugin
-        del self.rest_service_routes_map[rest_service_plugin_id_undotted]
+        del self.rest_service_routes_map[rest_service_plugin_id]
 
-        # deletes the rest service plugin from the plugin id undotted plugin map
-        del self.plugin_id_undotted_plugin_map[rest_service_plugin_id_undotted]
+        # deletes the rest service plugin from the plugin id plugin map
+        del self.plugin_id_plugin_map[rest_service_plugin_id]
 
         # updates the matching regex
         self._update_matching_regex()
@@ -672,24 +671,27 @@ class MainRestManager:
         Updates the matching regex.
         """
 
-        # starts the matching regex value
-        matching_regex_value = r""
+        # starts the matching regex value buffer
+        matching_regex_value_buffer = colony.libs.string_buffer_util.StringBuffer()
 
         # sets the is first plugin flag
         is_first_plugin = True
 
+        # starts the index value
+        index = 1
+
         # iterates over all the items in the rest service routes map
-        for rest_service_plugin_id_undotted, routes_list in self.rest_service_routes_map.items():
+        for rest_service_plugin_id, routes_list in self.rest_service_routes_map.items():
             # in case it's the first plugin
             if is_first_plugin:
                 # unsets the is first plugin flag
                 is_first_plugin = False
             else:
-                # adds the or operand to the matching regex value
-                matching_regex_value += "|"
+                # adds the or operand to the matching regex value buffer
+                matching_regex_value_buffer.write("|")
 
-            # adds the group name part of the regex to the matching regex value
-            matching_regex_value += "(?P<" + rest_service_plugin_id_undotted + ">"
+            # adds the group part of the regex to the matching regex value buffer
+            matching_regex_value_buffer.write("(")
 
             # sets the is first flag
             is_first = True
@@ -701,14 +703,25 @@ class MainRestManager:
                     # unsets the is first flag
                     is_first = False
                 else:
-                    # adds the or operand to the matching regex value
-                    matching_regex_value += "|"
+                    # adds the or operand to the matching regex value buffer
+                    matching_regex_value_buffer.wirte("|")
 
-                # adds the route to the matching regex value
-                matching_regex_value += route
+                # adds the route to the matching regex value buffer
+                matching_regex_value_buffer.write(route)
 
             # closes the matching regex value group
-            matching_regex_value += ")"
+            matching_regex_value_buffer.write(")")
+
+            # sets the rest service plugin id in the regex index
+            # plugin id map
+            self.regex_index_plugin_id_map[index] = rest_service_plugin_id
+
+            # increments the index
+            index += 1
+
+        # retrieves the matching regex value from the matching
+        # regex value buffer
+        matching_regex_value = matching_regex_value_buffer.get_value()
 
         # compiles the matching regex value
         self.matching_regex = re.compile(matching_regex_value)
