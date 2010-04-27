@@ -39,10 +39,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import re
 
-import web_mvc_exceptions
+import colony.libs.string_buffer_util
 
-ASCII_NUMBER_TO_LETTER = 17
-""" The value to be added to a number value in ascii to letter """
+import web_mvc_exceptions
 
 class WebMvc:
     """
@@ -107,35 +106,31 @@ class WebMvc:
 
         # in case there is a valid resource path match
         if resource_path_match:
-            # retrieves the groups map from the resource path match
-            groups_map = resource_path_match.groupdict()
+            # retrieves the group index from the resource path match
+            group_index = resource_path_match.lastindex
 
-            # iterates over all the group items
-            for group_name, group_value in groups_map.items():
-                # in case the group value is valid
-                if group_value:
-                    # converts the group name to a valid number
-                    index_number = self._deserialize_number(group_name)
+            # calculates the web mvc service index from the goup index
+            web_mvc_service_index = group_index - 1
 
-                    # retrieves the pattern
-                    pattern = self.web_mvc_service_patterns_list[index_number]
+            # retrieves the pattern for the web mvc service index
+            pattern = self.web_mvc_service_patterns_list[web_mvc_service_index]
 
-                    # retrieves the pattern handler method
-                    handler_method = self.web_mvc_service_patterns_map[pattern]
+            # retrieves the pattern handler method
+            handler_method = self.web_mvc_service_patterns_map[pattern]
 
-                    # tries to retrieve the rest request session
-                    rest_request_session = rest_request.get_session()
+            # tries to retrieve the rest request session
+            rest_request_session = rest_request.get_session()
 
-                    # in case there is a valid rest request session
-                    if rest_request_session:
-                        # sets the parameters as the session attributes map
-                        parameters = rest_request_session.get_attributes_map()
-                    else:
-                        # sets the parameters as an empty map
-                        parameters = {}
+            # in case there is a valid rest request session
+            if rest_request_session:
+                # sets the parameters as the session attributes map
+                parameters = rest_request_session.get_attributes_map()
+            else:
+                # sets the parameters as an empty map
+                parameters = {}
 
-                    # handles the web mvc request to the handler method
-                    return handler_method(rest_request, parameters)
+            # handles the web mvc request to the handler method
+            return handler_method(rest_request, parameters)
 
         # raises the mvc request not handled exception
         raise web_mvc_exceptions.MvcRequestNotHandled("no mvc service plugin could handle the request")
@@ -186,17 +181,14 @@ class WebMvc:
         Updates the matching regex.
         """
 
-        # starts the matching regex value
-        matching_regex_value = r""
+        # starts the matching regex value buffer
+        matching_regex_value_buffer = colony.libs.string_buffer_util.StringBuffer()
 
         # sets the is first plugin flag
         is_first_plugin = True
 
         # clears the web mvc service patterns list
         self.web_mvc_service_patterns_list = []
-
-        # starts the index counter
-        index = 0
 
         # iterates over all the patterns in the web mvc service patterns map
         for pattern in self.web_mvc_service_patterns_map:
@@ -205,69 +197,18 @@ class WebMvc:
                 # unsets the is first plugin flag
                 is_first_plugin = False
             else:
-                # adds the or operand to the matching regex value
-                matching_regex_value += "|"
+                # adds the or operand to the matching regex value buffer
+                matching_regex_value_buffer.write("|")
 
-            # serializes the index to avoid problems with
-            # the group naming
-            index_serialized = self._serialize_number(index)
-
-            # adds the group name part of the regex to the matching regex value
-            matching_regex_value += "(?P<" + str(index_serialized) + ">" + pattern + ")"
+            # adds the group name part of the regex to the matching regex value buffer
+            matching_regex_value_buffer.write("(" + pattern + ")")
 
             # adds the pattern to the web mvc service patterns list
             self.web_mvc_service_patterns_list.append(pattern)
 
-            # increments the index
-            index += 1
+        # retrieves the matching regex value from the matching
+        # regex value buffer
+        matching_regex_value = matching_regex_value_buffer.get_value()
 
         # compiles the matching regex value
         self.matching_regex = re.compile(matching_regex_value)
-
-    def _serialize_number(self, number):
-        """
-        Serializes a number into a string of characters
-        representing the number in ascii.
-
-        @type number: int
-        @param number: The number to be serialized.
-        @rtype: String
-        @return: The serialized version of the number.
-        """
-
-        # converts the number to string
-        number_string = str(number)
-
-        # initializes the number string serialized
-        number_string_serialized = ""
-
-        # iterates over all the number string characters
-        for number_string_character in number_string:
-            number_string_serialized += chr(ord(number_string_character) + ASCII_NUMBER_TO_LETTER)
-
-        # returns the number string serialized
-        return number_string_serialized
-
-    def _deserialize_number(self, number_string_serialized):
-        """
-        Deserializes a number in the character ascii form into
-        the original number.
-
-        @type number_string_serialized: String
-        @param number_string_serialized: The number serialized in the ascii form.
-        @rtype: int
-        @return: The deserialized version of the number.
-        """
-
-        # initializes the number string
-        number_string = ""
-
-        # iterates over all the number string serialized characters
-        for number_string_serialized_character in number_string_serialized:
-            number_string += chr(ord(number_string_serialized_character) - ASCII_NUMBER_TO_LETTER)
-
-        # retrieves the number from the number string
-        number = int(number_string)
-
-        # returns the number
-        return number
