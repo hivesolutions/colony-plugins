@@ -46,13 +46,16 @@ import search_crawler_entity_manager_adapter_exceptions
 SEARCH_CRAWLER_ADAPTER_TYPE = "entity_manager"
 """ The search crawler adapter type """
 
+OPTIONS_VALUE = "options"
+""" The options value """
+
 ENTITY_MANAGER_ARGUMENTS_VALUE = "entity_manager_arguments"
 """ The value for arguments for the entity manager """
 
-ENTITY_MANAGER_CRAWL_TARGET_CLASSES_VALUE = "entity_manager_crawl_target_classes"
+TARGET_CLASSES_VALUE = "target_classes"
 """ The entity classes list value """
 
-ENTITY_MANAGER_CRAWL_OPTIONS_VALUE = "entity_manager_crawl_options"
+QUERY_OPTIONS_VALUE = "query_options"
 """ The options for the entity manager crawl """
 
 ENGINE_VALUE = "engine"
@@ -116,11 +119,11 @@ class SearchCrawlerEntityManagerAdapter:
         entity_manager_arguments = properties[ENTITY_MANAGER_ARGUMENTS_VALUE]
 
         # tries to retrieve the list of entity classes from the properties
-        if ENTITY_MANAGER_CRAWL_TARGET_CLASSES_VALUE in properties:
-            entity_classes_list = properties[ENTITY_MANAGER_CRAWL_TARGET_CLASSES_VALUE]
+        if TARGET_CLASSES_VALUE in properties:
+            entity_classes_list = properties[TARGET_CLASSES_VALUE]
         # in case no entity specification is provided
         else:
-            raise search_crawler_entity_manager_adapter_exceptions.MissingProperty(ENTITY_MANAGER_CRAWL_TARGET_CLASSES_VALUE)
+            raise search_crawler_entity_manager_adapter_exceptions.MissingProperty(TARGET_CLASSES_VALUE)
 
         # generates the entity models map from the base entity models list
         # creating the map associating the class names with the classes
@@ -153,7 +156,7 @@ class SearchCrawlerEntityManagerAdapter:
         token_list = []
 
         # tries to retrieve query options from the crawler options
-        options = properties.get(ENTITY_MANAGER_CRAWL_OPTIONS_VALUE, {})
+        options = properties.get(QUERY_OPTIONS_VALUE, {})
 
         # for all the entity classes in the list
         for entity_class in entity_classes_list:

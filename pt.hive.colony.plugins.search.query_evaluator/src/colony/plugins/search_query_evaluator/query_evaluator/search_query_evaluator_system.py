@@ -37,7 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-QUERY_EVALUATOR_TYPE_VALUE = "query_evaluator_type"
+SEARCH_QUERY_EVALUATOR_TYPE_VALUE = "search_query_evaluator_type"
 """ The key for the properties map, to access the query evaluator type """
 
 import search_query_evaluator_exceptions
@@ -81,10 +81,10 @@ class SearchQueryEvaluator:
         @return: The result set for the query in the search index, as a map with document id keys.
         """
 
-        if QUERY_EVALUATOR_TYPE_VALUE not in properties:
-                search_query_evaluator_exceptions.MissingProperty(QUERY_EVALUATOR_TYPE_VALUE)
+        if SEARCH_QUERY_EVALUATOR_TYPE_VALUE not in properties:
+                search_query_evaluator_exceptions.MissingProperty(SEARCH_QUERY_EVALUATOR_TYPE_VALUE)
 
-        search_query_evaluator_type = properties[QUERY_EVALUATOR_TYPE_VALUE]
+        search_query_evaluator_type = properties[SEARCH_QUERY_EVALUATOR_TYPE_VALUE]
 
         # retrieves the index persistence adapter plugin to use in the load operation
         search_query_evaluator_plugin = self.get_search_query_evaluator_adapter_plugin(search_query_evaluator_type)

@@ -39,8 +39,11 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import search_crawler_exceptions
 
-TYPE_VALUE = "type"
+SEARCH_CRAWLER_TYPE_VALUE = "search_crawler_type"
 """ The key to retrieve the crawler type from the properties map """
+
+SEARCH_CRAWLER_OPTIONS_VALUE = "search_crawler_options"
+""" The key to retrieves the crawler options from the properties map """
 
 class SearchCrawler:
     """
@@ -74,16 +77,20 @@ class SearchCrawler:
         """
 
         # if no type is defined, uses the default crawler adapter type
-        if TYPE_VALUE not in properties:
-            raise search_crawler_exceptions.MissingProperty(TYPE_VALUE)
+        if SEARCH_CRAWLER_TYPE_VALUE not in properties:
+            raise search_crawler_exceptions.MissingProperty(SEARCH_CRAWLER_TYPE_VALUE)
 
-        search_crawler_adapter_type = properties[TYPE_VALUE]
+        # retrieves the search crawler adapter type
+        search_crawler_adapter_type = properties[SEARCH_CRAWLER_TYPE_VALUE]
+
+        # retrieves the search crawler options
+        search_crawler_options = properties.get(SEARCH_CRAWLER_OPTIONS_VALUE, {})
 
         # retrieves the crawler adapter plugin
         search_crawler_adapter_plugin = self.get_search_crawler_adapter_plugin(search_crawler_adapter_type)
 
         # uses the adapter plugin to execute the get tokens operation
-        return search_crawler_adapter_plugin.get_tokens(properties)
+        return search_crawler_adapter_plugin.get_tokens(search_crawler_options)
 
     def get_search_crawler_adapter_types(self):
         """
