@@ -71,6 +71,12 @@ SCHEDULING_ALGORITHM = 2
 DEFAULT_PORT = 25
 """ The default port """
 
+END_TOKEN_VALUE = "\r\n"
+""" The end token value """
+
+END_TOKEN_DATA_VALUE = "\r\n.\r\n"
+""" The end token data value """
+
 class MainServiceSmtp:
     """
     The main service smtp class.
@@ -390,9 +396,6 @@ class SmtpClientServiceTask:
                 self.main_service_smtp_plugin.debug("Handling request: %s" % str(request))
 
                 # handles the request by the request handler
-                smtp_service_handler_plugins_map[handler_name].handle_request(request)
-
-                # handles the request by the request handler
                 smtp_service_handler_plugin.handle_request(request)
 
                 # sends the request to the client (response)
@@ -460,6 +463,14 @@ class SmtpClientServiceTask:
         # creates a request object
         request = SmtpRequest()
 
+        # in case the session is in data transmission mode
+        if session.data_transmission:
+            # sets the data transmission end token, with an extra dot
+            end_token = END_TOKEN_DATA_VALUE
+        else:
+            # sets the "normal" end token
+            end_token = END_TOKEN_VALUE
+
         # continuous loop
         while True:
             # retrieves the data
@@ -472,14 +483,13 @@ class SmtpClientServiceTask:
             # writes the data to the string buffer
             message.write(data)
 
+            # in case the end token is not found in the data
+            if data.find(end_token) == -1:
+                # continues the loop
+                continue
+
             # retrieves the message value from the string buffer
             message_value = message.get_value()
-
-            # in case the session is in data transmission mode
-            if session.data_transmission:
-                end_token = ".\r\n"
-            else:
-                end_token = "\r\n"
 
             # finds the first end token value
             end_token_index = message_value.find(end_token)
@@ -615,16 +625,16 @@ class SmtpRequest:
     The smtp request class.
     """
 
-    message = "none"
+    message = None
     """ The received message """
 
-    command = "none"
+    command = None
     """ The received command """
 
-    arguments = "none"
+    arguments = []
     """ The received arguments """
 
-    response_message = "none"
+    response_message = None
     """ The response message """
 
     response_messages = []
@@ -647,6 +657,7 @@ class SmtpRequest:
         Constructor of the class.
         """
 
+        self.arguments = []
         self.response_messages = []
         self.message_stream = colony.libs.string_buffer_util.StringBuffer()
         self.properties = {}
@@ -670,43 +681,60 @@ class SmtpRequest:
         request structure.
         """
 
-        # retrieves the result string value
-        message = self.message_stream.get_value()
+        # retrieves the result stream
+        result = colony.libs.string_buffer_util.StringBuffer()
+
+        # converts the response code to string
+        response_code_string = str(self.response_code)
 
         # in case the response messages
         # are defined
         if self.response_messages:
-            # initializes the return message
-            return_message_buffer = colony.libs.string_buffer_util.StringBuffer()
-
             # starts the counter value
             counter = len(self.response_messages)
 
             # iterates over all the response messages
             for response_message in self.response_messages:
+                result.write(response_code_string)
+
                 # in case the counter is one (last response message)
                 if counter == 1:
-                    # adds the response code with the response message
-                    return_message_buffer.write(str(self.response_code) + " " + response_message + "\r\n")
+                    # adds the space (final) separator to the result stream
+                    result.write(" ")
+
+                    # adds the response message to the result stream
+                    result.write(response_message)
                 else:
-                    # adds the response code with the response message (separated with a dash)
-                    return_message_buffer.write(str(self.response_code) + "-" + response_message + "\r\n")
+                    # adds the dash separator to the result stream
+                    result.write("-")
+
+                    # adds the response message and the end of line
+                    # to the result stream
+                    result.write(response_message + "\r\n")
 
                 # decrements the counter
                 counter -= 1
-
-            # retrieves the return message from the return message buffer
-            return_message = return_message_buffer.get_value()
         else:
-            # creates the return message
-            return_message = str(self.response_code) + " " + self.response_message + "\r\n"
+            # writes the response line (response code plus response message)
+            # to the result stream
+            result.write(response_code_string + " " + self.response_message)
 
-            # in case the message is not empty
-            if not message == "":
-                return_message += message + "\r\n"
+        # retrieves the result string value
+        message = self.message_stream.get_value()
 
-        # returns the return message
-        return return_message
+        # in case the message is not empty
+        if not message == "":
+            # writes the message to the result stream
+            result.write(message)
+
+        # writes the end of mail to the result stream
+        result.write("\r\n")
+
+        # retrieves the value from the result buffer
+        result_value = result.get_value()
+
+        # returns the result value
+        return result_value
 
     def get_message(self):
         """
