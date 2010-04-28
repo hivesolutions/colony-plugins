@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import search_index_persistence_exceptions
 
-PERSISTENCE_TYPE_VALUE = "persistence_type"
+SEARCH_PERSISTENCE_TYPE_VALUE = "search_persistence_type"
 """ The persistence type value """
 
 class SearchIndexPersistence:
@@ -75,10 +75,10 @@ class SearchIndexPersistence:
         @param properties: The map to guide the persistence operation.
         """
 
-        if PERSISTENCE_TYPE_VALUE not in properties:
-                search_index_persistence_exceptions.MissingProperty(PERSISTENCE_TYPE_VALUE)
+        if SEARCH_PERSISTENCE_TYPE_VALUE not in properties:
+                search_index_persistence_exceptions.MissingProperty(SEARCH_PERSISTENCE_TYPE_VALUE)
 
-        search_index_persistence_adapter_type = properties[PERSISTENCE_TYPE_VALUE]
+        search_index_persistence_adapter_type = properties[SEARCH_PERSISTENCE_TYPE_VALUE]
 
         # retrieves the index persistence adapter plugin to use in the persistence operation
         search_index_persistence_adapter_plugin = self.get_search_index_persistence_adapter_plugin(search_index_persistence_adapter_type)
@@ -94,10 +94,10 @@ class SearchIndexPersistence:
         @param properties: The map to guide the load operation.
         """
 
-        if PERSISTENCE_TYPE_VALUE not in properties:
-                search_index_persistence_exceptions.MissingProperty(PERSISTENCE_TYPE_VALUE)
+        if SEARCH_PERSISTENCE_TYPE_VALUE not in properties:
+                search_index_persistence_exceptions.MissingProperty(SEARCH_PERSISTENCE_TYPE_VALUE)
 
-        search_index_persistence_adapter_type = properties[PERSISTENCE_TYPE_VALUE]
+        search_index_persistence_adapter_type = properties[SEARCH_PERSISTENCE_TYPE_VALUE]
 
         # retrieves the index persistence adapter plugin to use in the load operation
         search_index_persistence_adapter_plugin = self.get_search_index_persistence_adapter_plugin(search_index_persistence_adapter_type)

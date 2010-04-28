@@ -53,7 +53,7 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["search", "plugin_test_case_bundle"]
+    capabilities = ["search"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.search.crawler", "1.0.0"),
@@ -78,7 +78,7 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
 
     events_handled = []
     events_registrable = []
-    main_modules = ["search.search_system", "search.search_exceptions", "search.search_test"]
+    main_modules = ["search.search_system", "search.search_exceptions"]
 
     search = None
 
@@ -93,15 +93,11 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
     search_sorter_plugin = None
     search_processor_plugin = None
 
-    search_test = None
-
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global search
         import search.search_system
-        import search.search_test
         self.search = search.search_system.Search(self)
-        self.search_test = search.search_test.SearchTest(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -175,9 +171,6 @@ class SearchPlugin(colony.plugins.plugin_system.Plugin):
 
     def get_search_index_persistence_adapter_types(self):
         return self.search.get_search_index_persistence_adapter_types()
-
-    def get_plugin_test_case_bundle(self):
-        return self.search_test.get_plugin_test_case_bundle()
 
     def get_search_crawler_plugin(self):
         return self.search_crawler_plugin
