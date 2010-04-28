@@ -55,7 +55,7 @@ class MainServiceSmtpPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
     capabilities = ["service.smtp"]
-    capabilities_allowed = ["smtp_service_handler", "smtp_service_session_handler", "socket_provider"]
+    capabilities_allowed = ["smtp_service_handler", "smtp_service_authentication_handler", "smtp_service_session_handler", "socket_provider"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
     events_handled = []
@@ -65,6 +65,7 @@ class MainServiceSmtpPlugin(colony.plugins.plugin_system.Plugin):
     main_service_smtp = None
 
     smtp_service_handler_plugins = []
+    smtp_service_authentication_handler_plugins = []
     smtp_service_session_handler_plugins = []
     socket_provider_plugins = []
 
@@ -108,6 +109,10 @@ class MainServiceSmtpPlugin(colony.plugins.plugin_system.Plugin):
         self.smtp_service_handler_plugins.append(plugin)
         self.main_service_smtp.smtp_service_handler_load(plugin)
 
+    @colony.plugins.decorators.load_allowed_capability("smtp_service_authentication_handler")
+    def smtp_service_authentication_handler_load_allowed(self, plugin, capability):
+        self.smtp_service_authentication_handler_plugins.append(plugin)
+
     @colony.plugins.decorators.load_allowed_capability("smtp_service_session_handler")
     def smtp_service_session_handler_load_allowed(self, plugin, capability):
         self.smtp_service_session_handler_plugins.append(plugin)
@@ -120,6 +125,10 @@ class MainServiceSmtpPlugin(colony.plugins.plugin_system.Plugin):
     def smtp_service_handler_unload_allowed(self, plugin, capability):
         self.smtp_service_handler_plugins.remove(plugin)
         self.main_service_smtp.smtp_service_handler_unload(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("smtp_service_authentication_handler")
+    def smtp_service_authentication_handler_unload_allowed(self, plugin, capability):
+        self.smtp_service_authentication_handler_plugins.remove(plugin)
 
     @colony.plugins.decorators.unload_allowed_capability("smtp_service_session_handler")
     def smtp_service_session_handler_unload_allowed(self, plugin, capability):

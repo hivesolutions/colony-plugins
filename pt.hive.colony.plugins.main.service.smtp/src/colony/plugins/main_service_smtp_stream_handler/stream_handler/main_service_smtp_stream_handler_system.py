@@ -44,6 +44,12 @@ import main_service_smtp_stream_handler_exceptions
 HANDLER_NAME = "stream"
 """ The handler name """
 
+AUTHENTICATION_VALUE = "authentication"
+""" The authentication value """
+
+AUTHENTICATION_TYPE_VALUE = "authentication_type"
+""" The authentication type value """
+
 class MainServiceSmtpStreamHandler:
     """
     The main service smtp stream handler class.
@@ -96,12 +102,29 @@ class MainServiceSmtpStreamHandler:
         command_method(request, session, arguments)
 
     def process_data_transmission(self, request, session):
+        """
+        Processes a data transmission "command".
+
+        @type request: SmtpRequest
+        @param request: The smtp request to be processed.
+        @type session: SmtpSession
+        @param session: The current used smtp session.
+        """
+
         # in case the data transmission mode is active
         if not session.get_data_transmission():
             # returns invalid (no data transmission to be processed)
             return False
 
-        if "authentication" in session.get_properties() and session.get_properties()["authentication"]:
+        # retrieves the session properties
+        session_properties = session.get_properties()
+
+        # retrieves the authentication value
+        authentication_value = session_properties.get(AUTHENTICATION_VALUE, None)
+
+        # in case there is a valid authentication value defined
+        # the data is the authentication token
+        if authentication_value:
             # retrieves the auth value
             auth_value = request.get_message()
 
@@ -113,6 +136,7 @@ class MainServiceSmtpStreamHandler:
 
             # sets the request response message
             request.set_response_message("2.7.0 Authentication successful")
+        # the data is the message contents
         else:
             # retrieves the current message
             message = session.get_current_message()
@@ -136,6 +160,20 @@ class MainServiceSmtpStreamHandler:
         return True
 
     def process_helo(self, request, session, arguments):
+        """
+        Processes the helo command.
+
+        @type request: SmtpRequest
+        @param request: The smtp request to be processed.
+        @type session: SmtpSession
+        @param session: The current used smtp session.
+        @type arguments: List
+        @param arguments: The list of arguments for the request.
+        """
+
+        # asserts the mail arguments
+        self.assert_arguments(arguments, 1)
+
         # retrieves the client hostname
         client_hostname = arguments[0]
 
@@ -149,20 +187,48 @@ class MainServiceSmtpStreamHandler:
         session.set_client_hostname(client_hostname)
 
     def process_ehlo(self, request, session, arguments):
+        """
+        Processes the ehlo command.
+
+        @type request: SmtpRequest
+        @param request: The smtp request to be processed.
+        @type session: SmtpSession
+        @param session: The current used smtp session.
+        @type arguments: List
+        @param arguments: The list of arguments for the request.
+        """
+
+        # asserts the mail arguments
+        self.assert_arguments(arguments, 1)
+
+        # retrieves the client hostname
+        client_hostname = arguments[0]
+
         # sets the request response code
         request.set_response_code(250)
 
-        # @todo: este ja faz parte das extensoes SE CALHAR DEVE SER METIDO A PARTE (TLX..... ver isso) !!!!
+        # sets the response messages in the request
         request.set_response_messages(["Hello pleased to meet you", "AUTH PLAIN"])
 
         # sets the extensions as active
         session.set_extensions_active(True)
 
         # sets the client hostname
-        session.set_client_hostname(arguments[0])
+        session.set_client_hostname(client_hostname)
 
     def process_mail(self, request, session, arguments):
-        # assets the mail arguments
+        """
+        Processes the mail command.
+
+        @type request: SmtpRequest
+        @param request: The smtp request to be processed.
+        @type session: SmtpSession
+        @param session: The current used smtp session.
+        @type arguments: List
+        @param arguments: The list of arguments for the request.
+        """
+
+        # asserts the mail arguments
         self.assert_arguments(arguments, 1)
 
         # retrieves the from argument
@@ -198,7 +264,18 @@ class MainServiceSmtpStreamHandler:
         request.set_response_message("Sender OK")
 
     def process_rcpt(self, request, session, arguments):
-        # assets the mail arguments
+        """
+        Processes the rcpt command.
+
+        @type request: SmtpRequest
+        @param request: The smtp request to be processed.
+        @type session: SmtpSession
+        @param session: The current used smtp session.
+        @type arguments: List
+        @param arguments: The list of arguments for the request.
+        """
+
+        # asserts the mail arguments
         self.assert_arguments(arguments, 1)
 
         # retrieves the to argument
@@ -231,36 +308,66 @@ class MainServiceSmtpStreamHandler:
         request.set_response_message("Accepted")
 
     def process_data(self, request, session, arguments):
+        """
+        Processes the data command.
+
+        @type request: SmtpRequest
+        @param request: The smtp request to be processed.
+        @type session: SmtpSession
+        @param session: The current used smtp session.
+        @type arguments: List
+        @param arguments: The list of arguments for the request.
+        """
+
         # sets the request response code
         request.set_response_code(354)
 
         # sets the request response message
-        request.set_response_message("End data with \".\"")
+        request.set_response_message("End data with \\r\\n.\\r\\n")
 
         # sets the data transmission mode to true
         session.set_data_transmission(True)
 
     def process_auth(self, request, session, arguments):
-        # assets the mail arguments
-        self.assert_arguments(arguments, 1)
+        """
+        Processes the auth command.
+
+        @type request: SmtpRequest
+        @param request: The smtp request to be processed.
+        @type session: SmtpSession
+        @param session: The current used smtp session.
+        @type arguments: List
+        @param arguments: The list of arguments for the request.
+        """
+
+        # asserts the mail arguments
+        self.assert_arguments(arguments, 1, -1)
 
         # retrieves the authentication type
         authentication_type = arguments[0]
 
+        # retrieves the session properties
+        session_properties = session.get_properties()
+
         # sets the authentication type in the session properties
-        session.get_properties()["authentication_type"] = authentication_type
+        session_properties[AUTHENTICATION_TYPE_VALUE] = authentication_type
+
+        # retrieves the arguments length
+        arguments_length = len(arguments)
 
         # in case the number of arguments is bigger than one
-        if arguments > 1:
+        # the authentication token is sent with the auth command
+        if arguments_length > 1:
             # retrieves the authentication token
             authentication_token = arguments[1]
 
             # decodes the authentication token
             authentication_token_decoded = base64.b64decode(authentication_token)
 
-            invalid, username, password = authentication_token_decoded.split("\x00")
+            _invalid, username, password = authentication_token_decoded.split("\x00")
 
-            print "trying to login with: " + username + ", " + password
+            # prints an info message
+            self.main_service_smtp_stream_handler_plugin.info("Trying to login '%s' in %s" % (username, authentication_type))
 
             # se falhar 535 5.7.8  Authentication credentials invalid
             # se nao tiver o mecanismo certo 534 5.7.9  Authentication mechanism is too weak
@@ -275,7 +382,7 @@ class MainServiceSmtpStreamHandler:
             session.set_data_transmission(True)
 
             # sets the authentication property
-            session.get_properties()["authentication"] = True
+            session_properties[AUTHENTICATION_VALUE] = True
 
             # sets the request response code
             request.set_response_code(334)
@@ -284,6 +391,17 @@ class MainServiceSmtpStreamHandler:
             request.set_response_message("Authentication started")
 
     def process_quit(self, request, session, arguments):
+        """
+        Processes the quit command.
+
+        @type request: SmtpRequest
+        @param request: The smtp request to be processed.
+        @type session: SmtpSession
+        @param session: The current used smtp session.
+        @type arguments: List
+        @param arguments: The list of arguments for the request.
+        """
+
         # sets the request response code
         request.set_response_code(221)
 

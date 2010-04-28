@@ -42,4 +42,5 @@ class MainServiceSmtpDatabaseSessionHandlerException(Exception):
     The main service smtp database session handler exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """

@@ -37,17 +37,17 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-class MainServiceSmtpStreamHandlerException(Exception):
+class MainServiceSmtpMainAuthenticationHandlerException(Exception):
     """
-    The main service smtp stream handler exception class.
+    The main service smtp main authentication handler exception class.
     """
 
     message = None
     """ The exception's message """
 
-class InvalidSmtpCommand(MainServiceSmtpStreamHandlerException):
+class MissingProperty(MainServiceSmtpMainAuthenticationHandlerException):
     """
-    The server request timeout class.
+    The missing property class.
     """
 
     def __init__(self, message):
@@ -58,7 +58,7 @@ class InvalidSmtpCommand(MainServiceSmtpStreamHandlerException):
         @param message: The message to be printed.
         """
 
-        MainServiceSmtpStreamHandlerException.__init__(self)
+        MainServiceSmtpMainAuthenticationHandlerException.__init__(self)
         self.message = message
 
     def __str__(self):
@@ -69,4 +69,4 @@ class InvalidSmtpCommand(MainServiceSmtpStreamHandlerException):
         @return: The string representation of the class.
         """
 
-        return "Invalid smtp command: %s" % self.message
+        return "Missing property: %s" % self.message
