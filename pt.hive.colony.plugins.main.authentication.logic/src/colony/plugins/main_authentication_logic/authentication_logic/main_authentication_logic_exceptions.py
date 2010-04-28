@@ -42,4 +42,5 @@ class MainAuthenticationLogicException(Exception):
     The main authentication logic exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
