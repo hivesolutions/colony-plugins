@@ -41,4 +41,10 @@ configuration = {
                  "default_socket_provider" : "normal",
                  "default_port" : 25,
                  "default_handler" : "stream",
+                 "default_authentication_handler" : "main",
+                 "default_session_handler" : "database",
+                 "authentication_properties" : {
+                     "authentication_handler" : "entity_manager",
+                     "arguments" : []
+                 }
              }
