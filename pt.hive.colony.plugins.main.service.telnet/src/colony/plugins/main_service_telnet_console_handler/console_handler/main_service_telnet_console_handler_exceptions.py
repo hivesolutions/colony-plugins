@@ -42,4 +42,5 @@ class MainServiceTelnetConsoleHandlerException(Exception):
     The main service telnet console handler exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
