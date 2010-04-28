@@ -168,7 +168,7 @@ class MainRestManager:
         self.rest_service_routes_map = {}
         self.plugin_id_plugin_map = {}
         self.regex_index_plugin_id_map = {}
-        self.service_objects = []
+        self.service_methods = []
         self.service_methods_map = {}
         self.rest_session_map = {}
 
