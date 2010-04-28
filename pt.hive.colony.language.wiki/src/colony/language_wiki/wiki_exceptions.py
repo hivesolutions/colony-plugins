@@ -42,7 +42,8 @@ class WikiException(Exception):
     The wiki exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
 
 class InvalidTagName(WikiException):
     """
