@@ -42,4 +42,5 @@ class MainClientLdapException(Exception):
     The main client ldap exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
