@@ -45,7 +45,6 @@ class SearchProcessorException(Exception):
     message = None
     """ The exception's message """
 
-
 class MissingProperty(SearchProcessorException):
     """
     The missing property class.
