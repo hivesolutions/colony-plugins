@@ -42,4 +42,5 @@ class MainServiceXmppStreamHandlerException(Exception):
     The main service xmpp stream handler exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """

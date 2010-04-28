@@ -42,4 +42,5 @@ class MainServiceXmppHelperException(Exception):
     The main service xmpp helper exception class.
     """
 
-    pass
+    message = None
+    """ The exception's message """
