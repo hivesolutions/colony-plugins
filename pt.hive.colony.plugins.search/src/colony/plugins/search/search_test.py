@@ -47,13 +47,6 @@ TEST_FILES_PATH = "resources/test"
 DEFAULT_INDEX_TYPE = "file_system"
 """ The default type to use when creating an index """
 
-ENTITY_MANAGER_INDEX_TYPE = "entity_manager"
-""" The entity manger index type """
-
-ENTITY_MANAGER_ARGUMENTS = {"engine" : "sqlite",
-                            "connection_parameters" : {"file_path" : "/remote_home/lmartinho/colony_test_database.db", "autocommit" : False}}
-""" The entity manager arguments for crawling """
-
 DEFAULT_PERSISTENCE_TYPE = "file_system"
 """ The default persistence type to use when persisting an index """
 
@@ -68,9 +61,6 @@ QUERY_EVALUATOR_TYPE_VALUE = "query_evaluator_type"
 
 TEST_INDEX_IDENTIFIER = "test_index_identifier"
 """ The index identifier to be used throughout the tests """
-
-CRAWL_TARGET_INDEX_IDENTIFIER = "crawl_target_index_identifier"
-""" The identifier for the index over the crawl target path """
 
 SCORER_FUNCTIONS_INDEX_IDENTIFIER = "scorer_functions_index_identifier"
 """ The identifier for the index over the scorer function path """
@@ -242,7 +232,7 @@ class SearchTestCase(unittest.TestCase):
         test_index = self.test_index
 
         # creates the properties map for the operation
-        properties = {"file_path" : self.index_persistence_target_file_path, "persistence_type" : DEFAULT_PERSISTENCE_TYPE, "serializer_type" : DEFAULT_SERIALIZER_TYPE}
+        properties = {"file_path" : self.index_persistence_target_file_path, "search_persistence_type" : DEFAULT_PERSISTENCE_TYPE, "serializer_type" : DEFAULT_SERIALIZER_TYPE}
 
         # persists the index to defined storage
         persistence_sucess = self.plugin.persist_index(test_index, properties)
@@ -259,7 +249,7 @@ class SearchTestCase(unittest.TestCase):
         test_index_identifier = self.test_index_identifier
 
         # creates a properties map specified the target persistence file and the persistence options
-        properties = {"file_path" : self.index_persistence_target_file_path, "persistence_type" : DEFAULT_PERSISTENCE_TYPE, "serializer_type" : DEFAULT_SERIALIZER_TYPE}
+        properties = {"file_path" : self.index_persistence_target_file_path, "search_persistence_type" : DEFAULT_PERSISTENCE_TYPE, "serializer_type" : DEFAULT_SERIALIZER_TYPE}
 
         # persists the index to defined storage from the specified identifier
         persistence_sucess = self.plugin.persist_index_with_identifier(test_index_identifier, properties)
@@ -786,50 +776,6 @@ class SearchTestCase(unittest.TestCase):
 
         # checks if the only two results where returned
         self.assertTrue(test_results_size == 2)
-
-    def test_create_entity_manager_index(self):
-        """
-        This method targets the index creation using an available test path.
-        """
-
-        # sets the hive blog main entity models as a global variable
-        global search_test_classes
-
-        # creates an index using the base crawl directory
-        test_index = self.plugin.create_index({"search_crawler_type" : ENTITY_MANAGER_INDEX_TYPE,
-                                               "search_crawler_options" : {"entity_manager_arguments" : ENTITY_MANAGER_ARGUMENTS,
-                                                                           "entity_classes_module" : "search_test_classes",
-                                                                           "directory_path": os.path.dirname(__file__)}})
-
-        # asserts that the index was successfully created
-        self.assertTrue(test_index)
-
-        # asserts that the index contains a forward index
-        self.assertTrue(test_index.forward_index_map)
-
-        # asserts that the index contains a inverted index
-        self.assertTrue(test_index.inverted_index_map)
-
-    def test_search_entity_manager_index(self):
-        """
-        This method targets the index creation using an available test path and uses the repository in the process.
-        """
-
-        # sets the hive blog main entity models as a global variable
-        global search_test_classes
-
-        # creates an index using the base crawl directory
-        self.plugin.create_index_with_identifier(TEST_INDEX_IDENTIFIER, {"search_crawler_type" : ENTITY_MANAGER_INDEX_TYPE,
-                                                                         "search_crawler_options" : {"entity_manager_arguments" : ENTITY_MANAGER_ARGUMENTS,
-                                                                                                     "entity_classes_module" : "search_test_classes",
-                                                                                                     "directory_path": os.path.dirname(__file__)}})
-
-        # creates the properties for the search operation
-        properties = {QUERY_EVALUATOR_TYPE_VALUE : "query_parser", "search_scorer_function_identifier" : "term_frequency_scorer_function"}
-
-        results = self.plugin.search_index_by_identifier(TEST_INDEX_IDENTIFIER, "luis", properties)
-
-        self.assertTrue(results)
 
 class SearchPluginTestCase:
 
