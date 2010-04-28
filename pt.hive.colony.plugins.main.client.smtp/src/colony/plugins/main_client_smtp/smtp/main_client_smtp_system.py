@@ -135,7 +135,7 @@ class SmtpClient:
         response = self.retrieve_response(None, session)
 
         if not response.get_code() == 220:
-            raise Exception("problem establishing connection: " + str(response))
+            raise main_client_smtp_exceptions.SmtpResponseError("problem establishing connection: " + str(response))
 
         # sends the hello request
         request = self.send_request("ehlo", "mail.sender.com", session, parameters)
@@ -144,7 +144,7 @@ class SmtpClient:
         response = self.retrieve_response(request, session)
 
         if not response.get_code() == 250:
-            raise Exception("problem establishing connection: " + str(response))
+            raise main_client_smtp_exceptions.SmtpResponseError("problem establishing connection: " + str(response))
 
         # sends the verify request
         #request = self.send_request("vrfy", "joamag", session, parameters)
@@ -153,7 +153,7 @@ class SmtpClient:
         #response = self.retrieve_response(request, session)
 
         #if not response.get_code() == 250:
-        #    raise Exception("problem verifying user")
+        #    raise main_client_smtp_exceptions.SmtpResponseError("problem verifying user")
 
         # sends the mail from request
         request = self.send_request("mail", "from:<" + sender + ">", session, parameters)
@@ -162,7 +162,7 @@ class SmtpClient:
         response = self.retrieve_response(request, session)
 
         if not response.get_code() == 250:
-            raise Exception("problem sending email: " + str(response))
+            raise main_client_smtp_exceptions.SmtpResponseError("problem sending email: " + str(response))
 
         for recipient in recipients_list:
             # sends the mail from request
@@ -172,7 +172,7 @@ class SmtpClient:
             response = self.retrieve_response(request, session)
 
             if not response.get_code() == 250:
-                raise Exception("problem sending email: " + str(response))
+                raise main_client_smtp_exceptions.SmtpResponseError("problem sending email: " + str(response))
 
         request = self.send_request("data", None, session, parameters)
 
@@ -180,7 +180,7 @@ class SmtpClient:
         response = self.retrieve_response(request, session)
 
         if not response.get_code() in (250, 354):
-            raise Exception("problem sending email: " + str(response))
+            raise main_client_smtp_exceptions.SmtpResponseError("problem sending email: " + str(response))
 
         request = self.send_request_data("From: joamag@gmail.com\r\nTo: tyagooo@gmail.com\r\n\r\nOla como estás ?\r\n.", session, parameters)
 
@@ -188,7 +188,7 @@ class SmtpClient:
         response = self.retrieve_response(request, session)
 
         if not response.get_code() == 250:
-            raise Exception("problem sending email data: " + str(response))
+            raise main_client_smtp_exceptions.SmtpResponseError("problem sending email data: " + str(response))
 
         request = self.send_request("quit", None, session, parameters)
 
@@ -196,7 +196,7 @@ class SmtpClient:
         response = self.retrieve_response(request, session)
 
         if not response.get_code() == 221:
-            raise Exception("problem ending session: " + str(response))
+            raise main_client_smtp_exceptions.SmtpResponseError("problem ending session: " + str(response))
 
     def send_request(self, command, message, session, parameters):
         """
