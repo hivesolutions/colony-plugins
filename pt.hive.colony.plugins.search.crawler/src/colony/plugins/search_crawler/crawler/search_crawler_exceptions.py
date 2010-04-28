@@ -45,7 +45,6 @@ class SearchCrawlerException(Exception):
     message = None
     """ The exception's message """
 
-
 class MissingProperty(SearchCrawlerException):
     """
     The missing property class.
