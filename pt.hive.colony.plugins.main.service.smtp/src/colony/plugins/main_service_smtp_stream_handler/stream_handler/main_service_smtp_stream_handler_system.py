@@ -364,19 +364,35 @@ class MainServiceSmtpStreamHandler:
             # decodes the authentication token
             authentication_token_decoded = base64.b64decode(authentication_token)
 
+            # splits the authentication token retrieving the username and password
             _invalid, username, password = authentication_token_decoded.split("\x00")
 
             # prints an info message
             self.main_service_smtp_stream_handler_plugin.info("Trying to login '%s' in %s" % (username, authentication_type))
 
-            # se falhar 535 5.7.8  Authentication credentials invalid
-            # se nao tiver o mecanismo certo 534 5.7.9  Authentication mechanism is too weak
+            # tries to authenticate with the session mechanism
+            authentication_result = session.authenticate(username, password)
 
-            # sets the request response code
-            request.set_response_code(235)
+            # in case the authentication was successful
+            if authentication_result:
+                # sets the request response code
+                request.set_response_code(235)
 
-            # sets the request response message
-            request.set_response_message("2.7.0 Authentication successful")
+                # sets the request response message
+                request.set_response_message("2.7.0 Authentication successful")
+
+                # sets the request response code
+                request.set_response_code(235)
+            # in case the authentication was not successful
+            else:
+                # sets the request response code
+                request.set_response_code(535)
+
+                # sets the request response message
+                request.set_response_message("5.7.8 Authentication credentials invalid")
+
+                # sets the request response code
+                request.set_response_code(235)
         else:
             # sets the data transmission mode to true
             session.set_data_transmission(True)

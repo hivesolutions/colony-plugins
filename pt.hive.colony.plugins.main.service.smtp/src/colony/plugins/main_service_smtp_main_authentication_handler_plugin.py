@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.plugins.plugin_system
+import colony.plugins.decorators
 
 class MainServiceSmtpMainAuthenticationHandlerPlugin(colony.plugins.plugin_system.Plugin):
     """
@@ -55,12 +56,15 @@ class MainServiceSmtpMainAuthenticationHandlerPlugin(colony.plugins.plugin_syste
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
     capabilities = ["smtp_service_authentication_handler"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.main.authentication", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = []
 
     main_service_smtp_main_authentication_handler = None
+
+    main_authentication_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -83,6 +87,7 @@ class MainServiceSmtpMainAuthenticationHandlerPlugin(colony.plugins.plugin_syste
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.main.service.smtp.main_authentication_handler", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -90,4 +95,11 @@ class MainServiceSmtpMainAuthenticationHandlerPlugin(colony.plugins.plugin_syste
         return self.main_service_smtp_main_authentication_handler.get_handler_name()
 
     def handle_authentication(self, username, password, properties):
-        self.main_service_smtp_main_authentication_handler.handle_authentication(username, password, properties)
+        return self.main_service_smtp_main_authentication_handler.handle_authentication(username, password, properties)
+
+    def get_main_authentication_plugin(self):
+        return self.main_authentication_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.authentication")
+    def set_main_authentication_plugin(self, main_authentication_plugin):
+        self.main_authentication_plugin = main_authentication_plugin

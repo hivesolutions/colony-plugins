@@ -82,3 +82,15 @@ class MainServiceSmtpMainAuthenticationHandler:
         if not AUTHENTICATION_HANDLER_VALUE in properties:
             # raises the missing property exception
             raise main_service_smtp_main_authentication_handler_exceptions.MissingProperty(AUTHENTICATION_HANDLER_VALUE)
+
+        # retrieves the authentication handler
+        authentication_handler = properties[AUTHENTICATION_HANDLER_VALUE]
+
+        # retrieves the main authentication plugin
+        main_authentication_plugin = self.main_service_smtp_main_authentication_handler_plugin.main_authentication_plugin
+
+        # authenticates the user with the main authentication plugin retrieving the result
+        authentication_result = main_authentication_plugin.authenticate_user(username, password, authentication_handler, properties)
+
+        # returns the authentication result
+        return authentication_result

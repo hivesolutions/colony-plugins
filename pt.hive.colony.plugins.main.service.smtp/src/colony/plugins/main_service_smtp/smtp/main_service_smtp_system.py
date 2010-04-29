@@ -407,6 +407,12 @@ class SmtpClientServiceTask:
         # sets the authentication handler (plugin) in the session
         session.set_authentication_handler(smtp_service_authentication_handler_plugin)
 
+        # retrieves the authentication properties
+        authentication_properties = service_configuration.get("authentication_properties", {})
+
+        # sets the authentication properties in the session
+        session.set_authentication_properties(authentication_properties)
+
         # retrieves the default session handler name
         session_handler_name = service_configuration.get("default_session_handler", None)
 
@@ -632,7 +638,7 @@ class SmtpClientServiceTask:
         request.set_response_message("Exception occurred")
 
         # writes the exception message
-        request.write("error: '" + str(exception) + "'\n")
+        request.write(" - Error: '" + str(exception) + "'\n")
 
         # writes the traceback message in the request
         request.write("traceback:\n")
@@ -974,9 +980,13 @@ class SmtpSession:
     session_handler = None
     """ The session handler object """
 
+    authentication_properties = {}
+    """ The authentication properties """
+
     def __init__(self):
         self.messages = []
         self.properties = {}
+        self.authentication_properties = {}
 
     def __repr__(self):
         return "(%s, %s)" % (self.client_hostname, self.properties)
@@ -1005,6 +1015,21 @@ class SmtpSession:
         """
 
         self.messages.append(message)
+
+    def authenticate(self, username, password):
+        # in case no authentication handler is set
+        if not self.authentication_handler:
+            # returns false (invalid)
+            return False
+
+        # uses the authentication handler to try to authenticate
+        authentication_result = self.authentication_handler.handle_authentication(username, password, self.authentication_properties)
+
+        # returns the authentication result
+        return authentication_result
+
+    def handle(self):
+        pass
 
     def get_client_hostname(self):
         """
@@ -1185,6 +1210,26 @@ class SmtpSession:
         """
 
         self.session_handler = session_handler
+
+    def get_authentication_properties(self):
+        """
+        Retrieves the authentication properties.
+
+        @rtype: Dictionary
+        @return: The authentication properties.
+        """
+
+        return self.authentication_properties
+
+    def set_authentication_properties(self, authentication_properties):
+        """
+        Sets the authentication properties.
+
+        @type authentication_properties: Dictionary
+        @param authentication_properties: The authentication properties.
+        """
+
+        self.authentication_properties = authentication_properties
 
 class SmtpMessage:
     """
