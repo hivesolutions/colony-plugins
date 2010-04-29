@@ -2883,19 +2883,25 @@ class EntityManagerSqliteEngine:
             else:
                 return str(attribute_value)
 
-    def escape_text_value(self, text_value):
+    def escape_text_value(self, text_value, escape_double_quotes = False):
         """
         Escapes the text value in the sqlite context.
 
+        @type text_value: String
+        @param text_value: The text value to be escapted.
+        @type escape_double_quotes: bool
+        @param escape_double_quotes: If the double quotes should be escaped.
         @rtype: String
         @return: The escaped text value.
         """
 
-        # escapes the double quote values
-        escaped_text_value = text_value.replace("\"", "\"\"")
-
         # escapes the quote values
-        escaped_text_value = escaped_text_value.replace("'", "''")
+        escaped_text_value = text_value.replace("'", "''")
+
+        # in case the escape double quotes is active
+        if escape_double_quotes:
+            # escapes the double quote values
+            escaped_text_value = escaped_text_value.replace("\"", "\"\"")
 
         # returns the escaped text value
         return escaped_text_value
