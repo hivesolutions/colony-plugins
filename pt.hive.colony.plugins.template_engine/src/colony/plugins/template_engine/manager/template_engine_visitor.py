@@ -699,6 +699,10 @@ class Visitor:
         if "format" in attributes_map:
             attribute_format = attributes_map["format"]
             attribute_format_literal_value = self.get_literal_value(attribute_format)
+
+            # converts the attribute format literal value to string, in order
+            # to avoid possible problems with string formatting
+            attribute_format_literal_value = str(attribute_format_literal_value)
         else:
             attribute_format_literal_value = "%d/%m/%y"
 
@@ -724,6 +728,10 @@ class Visitor:
         if "format" in attributes_map:
             attribute_format = attributes_map["format"]
             attribute_format_literal_value = self.get_literal_value(attribute_format)
+
+            # converts the attribute format literal value to string, in order
+            # to avoid possible problems with string formatting
+            attribute_format_literal_value = str(attribute_format_literal_value)
         else:
             attribute_format_literal_value = "%H:%M:%S"
 
@@ -742,6 +750,10 @@ class Visitor:
         if "format" in attributes_map:
             attribute_format = attributes_map["format"]
             attribute_format_literal_value = self.get_literal_value(attribute_format)
+
+            # converts the attribute format literal value to string, in order
+            # to avoid possible problems with string formatting
+            attribute_format_literal_value = str(attribute_format_literal_value)
         else:
             attribute_format_literal_value = "%d/%m/%y %H:%M:%S"
 
