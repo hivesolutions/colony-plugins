@@ -358,6 +358,12 @@ class SmtpClientServiceTask:
         # taking the request information into account
         service_configuration = self._get_service_configuration(request)
 
+        # retrieves the default authentication handler name
+        authentication_handler_name = service_configuration.get("default_authentication_handler", None)
+
+        # retrieves the default session handler name
+        session_handler_name = service_configuration.get("default_session_handler", None)
+
         # retrieves the default handler name
         handler_name = service_configuration.get("default_handler", None)
 
@@ -902,6 +908,12 @@ class SmtpSession:
     properties = {}
     """ The properties of the current session """
 
+    authentication_handler = None
+    """ The authentication handler object """
+
+    session_handler = None
+    """ The session handler object """
+
     def __init__(self):
         self.messages = []
         self.properties = {}
@@ -1073,6 +1085,46 @@ class SmtpSession:
         """
 
         self.properties = properties
+
+    def get_authetication_handler(self):
+        """
+        Retrieves the authentication handler.
+
+        @rtype: AuthenticationHandler
+        @return: The authentication handler.
+        """
+
+        return self.authetication_handler
+
+    def set_authetication_handler(self, authetication_handler):
+        """
+        Sets the authentication handler.
+
+        @type authetication_handler: AuthenticationHandler
+        @param authetication_handler: The authentication handler.
+        """
+
+        self.authetication_handler = authetication_handler
+
+    def get_session_handler(self):
+        """
+        Retrieves the session handler.
+
+        @rtype: SessionHandler
+        @return: The session handler.
+        """
+
+        return self.session_handler
+
+    def set_session_handler(self, session_handler):
+        """
+        Sets the session handler.
+
+        @type session_handler: SessionHandler
+        @param session_handler: The session handler.
+        """
+
+        self.session_handler = session_handler
 
 class SmtpMessage:
     """
