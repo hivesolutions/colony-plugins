@@ -112,10 +112,12 @@ class MainServiceSmtpPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.load_allowed_capability("smtp_service_authentication_handler")
     def smtp_service_authentication_handler_load_allowed(self, plugin, capability):
         self.smtp_service_authentication_handler_plugins.append(plugin)
+        self.main_service_smtp.smtp_service_authentication_handler_load(plugin)
 
     @colony.plugins.decorators.load_allowed_capability("smtp_service_session_handler")
     def smtp_service_session_handler_load_allowed(self, plugin, capability):
         self.smtp_service_session_handler_plugins.append(plugin)
+        self.main_service_smtp.smtp_service_session_handler_load(plugin)
 
     @colony.plugins.decorators.load_allowed_capability("socket_provider")
     def socket_provider_load_allowed(self, plugin, capability):
@@ -129,10 +131,12 @@ class MainServiceSmtpPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.unload_allowed_capability("smtp_service_authentication_handler")
     def smtp_service_authentication_handler_unload_allowed(self, plugin, capability):
         self.smtp_service_authentication_handler_plugins.remove(plugin)
+        self.main_service_smtp.smtp_service_authentication_handler_unload(plugin)
 
     @colony.plugins.decorators.unload_allowed_capability("smtp_service_session_handler")
     def smtp_service_session_handler_unload_allowed(self, plugin, capability):
         self.smtp_service_session_handler_plugins.remove(plugin)
+        self.main_service_smtp.smtp_service_session_handler_unload(plugin)
 
     @colony.plugins.decorators.unload_allowed_capability("socket_provider")
     def socket_provider_unload_allowed(self, plugin, capability):

@@ -88,6 +88,12 @@ class MainServiceSmtp:
     smtp_service_handler_plugins_map = {}
     """ The smtp service handler plugin map """
 
+    smtp_service_authentication_handler_plugins_map = {}
+    """ The smtp service authentication handler plugin map """
+
+    smtp_service_session_handler_plugins_map = {}
+    """ The smtp service session handler plugin map """
+
     smtp_socket = None
     """ The smtp socket """
 
@@ -114,6 +120,8 @@ class MainServiceSmtp:
         self.main_service_smtp_plugin = main_service_smtp_plugin
 
         self.smtp_service_handler_plugins_map = {}
+        self.smtp_service_authentication_handler_plugins_map = {}
+        self.smtp_service_session_handler_plugins_map = {}
         self.smtp_connection_close_event = threading.Event()
         self.smtp_connection_close_end_event = threading.Event()
 
@@ -315,6 +323,30 @@ class MainServiceSmtp:
 
         del self.smtp_service_handler_plugins_map[handler_name]
 
+    def smtp_service_authentication_handler_load(self, smtp_service_authentication_handler_plugin):
+        # retrieves the plugin handler name
+        authentication_handler_name = smtp_service_authentication_handler_plugin.get_handler_name()
+
+        self.smtp_service_authentication_handler_plugins_map[authentication_handler_name] = smtp_service_authentication_handler_plugin
+
+    def smtp_service_authentication_handler_unload(self, smtp_service_authentication_handler_plugin):
+        # retrieves the plugin handler name
+        authentication_handler_name = smtp_service_authentication_handler_plugin.get_handler_name()
+
+        del self.smtp_service_authentication_handler_plugins_map[authentication_handler_name]
+
+    def smtp_service_session_handler_load(self, smtp_service_session_handler_plugin):
+        # retrieves the plugin handler name
+        session_handler_name = smtp_service_session_handler_plugin.get_handler_name()
+
+        self.smtp_service_session_handler_plugins_map[session_handler_name] = smtp_service_session_handler_plugin
+
+    def smtp_service_session_handler_unload(self, smtp_service_session_handler_plugin):
+        # retrieves the plugin handler name
+        session_handler_name = smtp_service_session_handler_plugin.get_handler_name()
+
+        del self.smtp_service_session_handler_plugins_map[session_handler_name]
+
 class SmtpClientServiceTask:
     """
     The smtp client service task class.
@@ -361,8 +393,36 @@ class SmtpClientServiceTask:
         # retrieves the default authentication handler name
         authentication_handler_name = service_configuration.get("default_authentication_handler", None)
 
+        # retrieves the smtp service authentication handler plugins map
+        smtp_service_authentication_handler_plugins_map = self.main_service_smtp_plugin.main_service_smtp.smtp_service_authentication_handler_plugins_map
+
+        # in case the authentication handler is not found in the handler plugins map
+        if not authentication_handler_name in smtp_service_authentication_handler_plugins_map:
+            # raises an smtp handler not found exception
+            raise main_service_smtp_exceptions.SmtpHandlerNotFoundException("no authentication handler found for current request: " + authentication_handler_name)
+
+        # retrieves the smtp service authentication handler plugin
+        smtp_service_authentication_handler_plugin = smtp_service_authentication_handler_plugins_map[authentication_handler_name]
+
+        # sets the authentication handler (plugin) in the session
+        session.set_authentication_handler(smtp_service_authentication_handler_plugin)
+
         # retrieves the default session handler name
         session_handler_name = service_configuration.get("default_session_handler", None)
+
+        # retrieves the smtp service session handler plugins map
+        smtp_service_session_handler_plugins_map = self.main_service_smtp_plugin.main_service_smtp.smtp_service_session_handler_plugins_map
+
+        # in case the session handler is not found in the handler plugins map
+        if not session_handler_name in smtp_service_session_handler_plugins_map:
+            # raises an smtp handler not found exception
+            raise main_service_smtp_exceptions.SmtpHandlerNotFoundException("no session handler found for current request: " + session_handler_name)
+
+        # retrieves the smtp service session handler plugin
+        smtp_service_session_handler_plugin = smtp_service_session_handler_plugins_map[session_handler_name]
+
+        # sets the session handler (plugin) in the session
+        session.set_session_handler(smtp_service_session_handler_plugin)
 
         # retrieves the default handler name
         handler_name = service_configuration.get("default_handler", None)
@@ -1086,7 +1146,7 @@ class SmtpSession:
 
         self.properties = properties
 
-    def get_authetication_handler(self):
+    def get_authentication_handler(self):
         """
         Retrieves the authentication handler.
 
@@ -1094,17 +1154,17 @@ class SmtpSession:
         @return: The authentication handler.
         """
 
-        return self.authetication_handler
+        return self.authentication_handler
 
-    def set_authetication_handler(self, authetication_handler):
+    def set_authentication_handler(self, authentication_handler):
         """
         Sets the authentication handler.
 
-        @type authetication_handler: AuthenticationHandler
-        @param authetication_handler: The authentication handler.
+        @type authentication_handler: AuthenticationHandler
+        @param authentication_handler: The authentication handler.
         """
 
-        self.authetication_handler = authetication_handler
+        self.authentication_handler = authentication_handler
 
     def get_session_handler(self):
         """
