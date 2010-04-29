@@ -766,6 +766,24 @@ class Visitor:
         # writes the datetime value
         self.string_buffer.write(datetime_value)
 
+    def process_format_datetime(self, node):
+        attributes_map = node.get_attributes_map()
+
+        attribute_value = attributes_map["value"]
+        attribute_value_value = self.get_value(attribute_value)
+        attribute_format = attributes_map["format"]
+        attribute_format_literal_value = self.get_literal_value(attribute_format)
+
+        # converts the attribute format literal value to string, in order
+        # to avoid possible problems with string formatting
+        attribute_format_literal_value = str(attribute_format_literal_value)
+
+        # date formats the attribute value (datetime)
+        attribute_value_formatted = attribute_value_value.strftime(attribute_format_literal_value)
+
+        # writes the attribute value formatted
+        self.string_buffer.write(attribute_value_formatted)
+
     def get_value(self, attribute_value):
         """
         Retrieves the value (variable or literal) of the given
