@@ -45,6 +45,6 @@ configuration = {
                  "default_session_handler" : "database",
                  "authentication_properties" : {
                      "authentication_handler" : "python",
-                     "arguments" : {"file_path" : "C:/authentication_configuration.py"}
+                     "arguments" : {"file_path" : "authentication_configuration.py"}
                  }
              }
