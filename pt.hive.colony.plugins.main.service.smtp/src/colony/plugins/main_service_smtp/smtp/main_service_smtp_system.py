@@ -511,7 +511,11 @@ class SmtpClientServiceTask:
                 self.send_request(request)
 
                 if session.get_upgrade():
+                    # upgrades the session
                     session.upgrade()
+
+                    # unsets the upgrade flag
+                    session.set_upgrade(False)
 
                 # in case the session is closed
                 if session.get_closed():
