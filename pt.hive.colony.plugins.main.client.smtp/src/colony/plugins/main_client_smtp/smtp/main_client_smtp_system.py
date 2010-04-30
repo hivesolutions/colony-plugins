@@ -403,7 +403,6 @@ class SmtpClient:
         # returns the data
         return data
 
-
     def login(self, session, parameters = {}):
         # retrieves the initial response value
         response = self.retrieve_response(None, session)
