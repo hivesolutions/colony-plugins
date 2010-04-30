@@ -77,6 +77,9 @@ END_TOKEN_VALUE = "\r\n"
 DEFAULT_END_TOKEN_VALUE = END_TOKEN_VALUE
 """ The default end token value """
 
+SOCKET_UPGRADER_NAME = "ssl"
+""" The socket upgrader name """
+
 class MainServiceSmtp:
     """
     The main service smtp class.
@@ -383,42 +386,11 @@ class SmtpClientServiceTask:
         # creates the session object
         session = SmtpSession(self)
 
+        # retrieves the socket upgrader plugin for the socket upgrader name
+        socket_upgrader_plugin = self._get_socket_upgrader_plugin(SOCKET_UPGRADER_NAME)
 
-
-
-
-        socket_upgrader = "ssl"
-
-        # in case the socket upgrader is defined
-        if socket_upgrader:
-            # retrieves the socket upgrader plugins
-            socket_upgrader_plugins = self.main_service_smtp_plugin.socket_upgrader_plugins
-
-            # iterates over all the socket upgrader plugins
-            for socket_upgrader_plugin in socket_upgrader_plugins:
-                # retrieves the upgrader name from the socket upgrader plugin
-                socket_upgrader_plugin_upgrader_name = socket_upgrader_plugin.get_upgrader_name()
-
-                # in case the names are the same
-                if socket_upgrader_plugin_upgrader_name == socket_upgrader:
-                    session.upgrader_handler = socket_upgrader_plugin.upgrade_socket_parameters
-
-                    break
-        else:
-            session.upgrader_handler = None
-
-
-
-
-
-
-
-
-
-
-
-
-
+        # sets the upgrader handler in the session
+        session.upgrader_handler = socket_upgrader_plugin.upgrade_socket_parameters
 
         # retrieves the initial request
         request = self.retrieve_initial_request(session, request_timeout)
@@ -734,6 +706,19 @@ class SmtpClientServiceTask:
 
         # returns the service configuration
         return service_configuration
+
+    def _get_socket_upgrader_plugin(self, socket_upgrader_name):
+        # retrieves the socket upgrader plugins
+        socket_upgrader_plugins = self.main_service_smtp_plugin.socket_upgrader_plugins
+
+        # iterates over all the socket upgrader plugins
+        for socket_upgrader_plugin in socket_upgrader_plugins:
+            # retrieves the upgrader name from the socket upgrader plugin
+            socket_upgrader_plugin_upgrader_name = socket_upgrader_plugin.get_upgrader_name()
+
+            # in case the names are the same
+            if socket_upgrader_plugin_upgrader_name == socket_upgrader_name:
+                return socket_upgrader_plugin
 
 class SmtpRequest:
     """
