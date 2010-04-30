@@ -430,9 +430,8 @@ class SmtpClient:
         # checks the response for errors
         self._check_response_error(response, (220,), "problem starting tls: ")
 
-        import ssl
-
-        self.smtp_connection = ssl.wrap_socket(self.smtp_connection)
+        # upgrades the smtp connection to use ssl (tls)
+        self.smtp_connection = self._upgrade_socket(self.smtp_connection, "ssl")
 
     def vrfy(self, session, parameters = {}):
         # retrieves the verification user
@@ -598,6 +597,29 @@ class SmtpClient:
         # returns the current transaction id
         return self.current_transaction_id
 
+    def _check_response_error(self, response, accepted_codes, message = ""):
+        """
+        Checks the given response for errors, in case
+        of errors using the given accepted codes list as the base
+        value for checking. In case of error it raises an exception with the
+        given message as prefix.
+
+        @type response: SmtpResponse
+        @param response: The response
+        @type accepted_codes: List
+        @param accepted_codes: The list of accepted codes.
+        @type message: String
+        @param message: The message to be used as base for the exception.
+        """
+
+        # retrieves the response code
+        response_code = response.get_code()
+
+        # in case the response code is not "accepted"
+        if not response_code in accepted_codes:
+            # raises the smtp response error
+            raise main_client_smtp_exceptions.SmtpResponseError(message + str(response))
+
     def _get_socket(self, socket_name = "normal"):
         """
         Retrieves the socket for the given socket name
@@ -625,28 +647,34 @@ class SmtpClient:
                 # returns the socket
                 return socket
 
-    def _check_response_error(self, response, accepted_codes, message = ""):
+    def _upgrade_socket(self, socket, socket_name = "normal"):
         """
-        Checks the given response for errors, in case
-        of errors using the given accepted codes list as the base
-        value for checking. In case of error it raises an exception with the
-        given message as prefix.
+        Upgrades the socket for the given socket name
+        using the socket upgrader plugins.
 
-        @type response: SmtpResponse
-        @param response: The response
-        @type accepted_codes: List
-        @param accepted_codes: The list of accepted codes.
-        @type message: String
-        @param message: The message to be used as base for the exception.
+        @type socket: Socket
+        @param socket: The socket to be upgraded.
+        @type socket_name: String
+        @param socket_name: The name of the socket to be retrieved for upgrading.
+        @rtype: Socket
+        @return: The upgraded socket for the given socket name.
         """
 
-        # retrieves the response code
-        response_code = response.get_code()
+        # retrieves the socket upgrader plugins
+        socket_upgrader_plugins = self.main_client_smtp.main_client_smtp_plugin.socket_upgrader_plugins
 
-        # in case the response code is not "accepted"
-        if not response_code in accepted_codes:
-            # raises the smtp response error
-            raise main_client_smtp_exceptions.SmtpResponseError(message + str(response))
+        # iterates over all the socket upgrader plugins
+        for socket_upgrader_plugin in socket_upgrader_plugins:
+            # retrieves the upgrader name from the socket upgrader plugin
+            socket_upgrader_plugin_upgrader_name = socket_upgrader_plugin.get_upgrader_name()
+
+            # in case the names are the same
+            if socket_upgrader_plugin_upgrader_name == socket_name:
+                # creates a new socket with the socket upgrader plugin
+                socket = socket_upgrader_plugin.upgrade_socket(socket)
+
+                # returns the socket
+                return socket
 
 class SmtpRequest:
     """

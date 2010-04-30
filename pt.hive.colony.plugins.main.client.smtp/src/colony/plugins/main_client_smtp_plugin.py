@@ -55,7 +55,7 @@ class MainClientSmtpPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
     capabilities = ["client.smtp"]
-    capabilities_allowed = ["socket_provider"]
+    capabilities_allowed = ["socket_provider", "socket_upgrader"]
     dependencies = []
     events_handled = []
     events_registrable = []
@@ -64,6 +64,7 @@ class MainClientSmtpPlugin(colony.plugins.plugin_system.Plugin):
     main_client_smtp = None
 
     socket_provider_plugins = []
+    socket_upgrader_plugins = []
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -101,6 +102,14 @@ class MainClientSmtpPlugin(colony.plugins.plugin_system.Plugin):
     def socket_provider_load_allowed(self, plugin, capability):
         self.socket_provider_plugins.append(plugin)
 
+    @colony.plugins.decorators.load_allowed_capability("socket_upgrader")
+    def socket_upgrader_load_allowed(self, plugin, capability):
+        self.socket_upgrader_plugins.append(plugin)
+
     @colony.plugins.decorators.unload_allowed_capability("socket_provider")
     def socket_provider_unload_allowed(self, plugin, capability):
-        self.socket_provider_plugins.remove(plugin)
+        self.socket_upgrader_plugins.remove(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("socket_upgrader")
+    def socket_upgrader_unload_allowed(self, plugin, capability):
+        self.socket_upgrader_plugins.remove(plugin)
