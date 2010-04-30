@@ -969,7 +969,7 @@ class SmtpSession:
     """ The current message being processed """
 
     authenticated = False
-    """ the authenticated flag """
+    """ The authenticated flag """
 
     messages = []
     """ The messages associated with the session """
@@ -1151,6 +1151,26 @@ class SmtpSession:
         """
 
         self.current_message = current_message
+
+    def get_authenticated(self):
+        """
+        Retrieves the authenticated.
+
+        @rtype: bool
+        @return: The authenticated.
+        """
+
+        return self.authenticated
+
+    def set_authenticated(self, authenticated):
+        """
+        Sets the authenticated.
+
+        @type authenticated: bool
+        @param authenticated: The authenticated.
+        """
+
+        self.authenticated = authenticated
 
     def get_messages(self):
         """
