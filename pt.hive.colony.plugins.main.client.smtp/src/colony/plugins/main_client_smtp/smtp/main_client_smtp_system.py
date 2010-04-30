@@ -144,11 +144,16 @@ class SmtpClient:
         # runs the ehlo command
         self.ehlo(session, parameters)
 
-        # tries to start tls
-        self.starttls(session, parameters)
+        # retrieves the use tls flag
+        tls = parameters.get("tls", False)
 
-        # runs the ehlo command (again, because of tls)
-        self.ehlo(session, parameters)
+        # in case the tls flag is active
+        if tls:
+            # tries to start tls
+            self.starttls(session, parameters)
+
+            # runs the ehlo command (again, because of tls)
+            self.ehlo(session, parameters)
 
         # retrieves the verify user flag
         verify_user = parameters.get("verify_user", False)
