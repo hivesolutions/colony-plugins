@@ -46,6 +46,12 @@ PROVIDER_NAME = "ssl"
 FAMILY_VALUE = "family"
 """ The family value """
 
+SERVER_SIDE_VALUE = "server_side"
+""" The server side value """
+
+DO_HANDSHAKE_ON_CONNECT_VALUE = "do_handshake_on_connect"
+""" The do handshake on connect value """
+
 RESOURCES_PATH = "main_service_ssl_socket_provider/ssl_socket_provider/resources"
 """ The resources path """
 
@@ -124,8 +130,14 @@ class MainServiceSslSocketProvider:
         # retrieves the dummy ssl certificate path
         dummy_ssl_certificate_path = main_service_ssl_socket_provicer_plugin_resources_path + "/dummy.crt"
 
+        # tries to retrieve the server side value
+        server_side = parameters.get(SERVER_SIDE_VALUE, False)
+
+        # tries to retrieve the do handshake on connect value
+        do_handshake_on_connect = parameters.get(DO_HANDSHAKE_ON_CONNECT_VALUE, True)
+
         # warps the normal socket into an ssl socket
-        ssl_socket = ssl.wrap_socket(normal_socket, dummy_ssl_key_path, dummy_ssl_certificate_path)
+        ssl_socket = ssl.wrap_socket(normal_socket, dummy_ssl_key_path, dummy_ssl_certificate_path, server_side, do_handshake_on_connect = do_handshake_on_connect)
 
         # returns the ssl socket
         return ssl_socket
