@@ -262,7 +262,7 @@ class MainServiceSmtpStreamHandler:
         request.set_response_code(220)
 
         # sets the response message in the request
-        request.set_response_message("Go ahead")
+        request.set_response_message("Ready to start TLS")
 
     def process_mail(self, request, session, arguments):
         """
