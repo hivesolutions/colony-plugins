@@ -39,15 +39,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.plugins.plugin_system
 
-class MainAuthenticationXmlHandlerPlugin(colony.plugins.plugin_system.Plugin):
+class MainAuthenticationPythonHandlerPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Authentication Xml Handler Main plugin.
+    The main class for the Authentication Python Handler Main plugin.
     """
 
-    id = "pt.hive.colony.plugins.main.authentication.xml_handler"
-    name = "Authentication Xml Handler Main Plugin"
-    short_name = "Authentication Xml Handler Main"
-    description = "Authentication Xml Handler Plugin"
+    id = "pt.hive.colony.plugins.main.authentication.python_handler"
+    name = "Authentication Python Handler Main Plugin"
+    short_name = "Authentication Python Handler Main"
+    description = "Authentication Python Handler Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
@@ -58,13 +58,13 @@ class MainAuthenticationXmlHandlerPlugin(colony.plugins.plugin_system.Plugin):
     events_handled = []
     events_registrable = []
 
-    main_authentication_xml_handler = None
+    main_authentication_python_handler = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
-        global main_authentication_xml_handler
-        import main_authentication_xml_handler.xml_handler.main_authentication_xml_handler_system
-        self.main_authentication_xml_handler = main_authentication_xml_handler.xml_handler.main_authentication_xml_handler_system.MainAuthenticationXmlHandler(self)
+        global main_authentication_python_handler
+        import main_authentication_python_handler.python_handler.main_authentication_python_handler_system
+        self.main_authentication_python_handler = main_authentication_python_handler.python_handler.main_authentication_python_handler_system.MainAuthenticationPythonHandler(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -85,7 +85,7 @@ class MainAuthenticationXmlHandlerPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_handler_name(self):
-        return self.main_authentication_xml_handler.get_handler_name()
+        return self.main_authentication_python_handler.get_handler_name()
 
     def handle_request(self, request):
-        return self.main_authentication_xml_handler.handle_request(request)
+        return self.main_authentication_python_handler.handle_request(request)
