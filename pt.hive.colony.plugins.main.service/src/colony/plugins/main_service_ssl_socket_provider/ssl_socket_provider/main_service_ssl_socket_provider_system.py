@@ -103,6 +103,48 @@ class MainServiceSslSocketProvider:
         @return: The provided socket.
         """
 
+        # tries to retrieve the socket family
+        socket_family = parameters.get(FAMILY_VALUE, socket.AF_INET)
+
+        # creates the normal socket
+        normal_socket = socket.socket(socket_family, socket.SOCK_STREAM)
+
+        # upgrades the normal socket retrieving the ssl socket
+        ssl_socket = self.upgrade_socket_parameters(normal_socket, parameters)
+
+        # returns the ssl socket
+        return ssl_socket
+
+    def upgrade_socket_socket(self, socket):
+        """
+        Upgrades the given socket, configured with
+        the default parameters.
+
+        @type socket: Socket
+        @param socket: The socket to be upgraded.
+        @rtype: Socket
+        @return: The upgraded socket.
+        """
+
+        # upgrades the socket to ssl socket
+        ssl_socket = self.upgrade_socket_parameters(socket)
+
+        # returns the ssl socket
+        return ssl_socket
+
+    def upgrade_socket_parameters(self, socket, parameters = {}):
+        """
+        Upgrades the given socket, configured with
+        the given parameters.
+
+        @type socket: Socket
+        @param socket: The socket to be upgraded.
+        @type parameters: Dictionary
+        @param parameters: The parameters for socket configuration.
+        @rtype: Socket
+        @return: The upgraded socket.
+        """
+
         # retrieves the plugin manager
         manager = self.main_service_ssl_socket_provider_plugin.manager
 
@@ -112,20 +154,14 @@ class MainServiceSslSocketProvider:
         # sets the main service ssl socket provicer plugin resources path
         main_service_ssl_socket_provicer_plugin_resources_path = main_service_ssl_socket_provicer_plugin_path + "/main_service_ssl_socket_provider/ssl_socket_provider/resources"
 
-        # tries to retrieve the socket family
-        socket_family = parameters.get(FAMILY_VALUE, socket.AF_INET)
-
-        # creates the normal socket
-        normal_socket = socket.socket(socket_family, socket.SOCK_STREAM)
-
         # retrieves the dummy ssl key path
         dummy_ssl_key_path = main_service_ssl_socket_provicer_plugin_resources_path + "/dummy.key"
 
         # retrieves the dummy ssl certificate path
         dummy_ssl_certificate_path = main_service_ssl_socket_provicer_plugin_resources_path + "/dummy.crt"
 
-        # warps the normal socket into an ssl socket
-        ssl_socket = ssl.wrap_socket(normal_socket, dummy_ssl_key_path, dummy_ssl_certificate_path)
+        # warps the socket into an ssl socket
+        ssl_socket = ssl.wrap_socket(socket, dummy_ssl_key_path, dummy_ssl_certificate_path)
 
         # returns the ssl socket
         return ssl_socket

@@ -52,7 +52,7 @@ class MainServiceSslSocketProviderPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["socket_provider"]
+    capabilities = ["socket_provider", "socket_upgrader"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PackageDependency(
                     "Python", "ssl", "2.6.x", "http://www.python.org")]
@@ -119,3 +119,31 @@ class MainServiceSslSocketProviderPlugin(colony.plugins.plugin_system.Plugin):
         """
 
         return self.main_service_ssl_socket_provider.provide_socket_parameters(parameters)
+
+    def upgrade_socket_socket(self, socket):
+        """
+        Upgrades the given socket, configured with
+        the default parameters.
+
+        @type socket: Socket
+        @param socket: The socket to be upgraded.
+        @rtype: Socket
+        @return: The upgraded socket.
+        """
+
+        return self.main_service_ssl_socket_provider.upgrade_socket_socket(socket)
+
+    def upgrade_socket_parameters(self, socket, parameters):
+        """
+        Upgrades the given socket, configured with
+        the given parameters.
+
+        @type socket: Socket
+        @param socket: The socket to be upgraded.
+        @type parameters: Dictionary
+        @param parameters: The parameters for socket configuration.
+        @rtype: Socket
+        @return: The upgraded socket.
+        """
+
+        return self.main_service_ssl_socket_provider.upgrade_socket_parameters(socket, parameters)
