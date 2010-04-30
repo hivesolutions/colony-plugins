@@ -39,6 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import socket
 import select
+import base64
 
 import colony.libs.string_buffer_util
 
@@ -50,6 +51,9 @@ DEFAULT_PORT = 25
 DEFAULT_SOCKET_NAME = "normal"
 """ The default socket name """
 
+DEFAULT_AUTHENTICATION_METHOD = "plain"
+""" The default authentication method """
+
 RESPONSE_TIMEOUT = 10
 """ The response timeout """
 
@@ -58,6 +62,9 @@ CHUNK_SIZE = 4096
 
 END_TOKEN_VALUE = "\r\n"
 """ The end token value """
+
+AUTHENTICATION_METHOD_VALUE = "authentication_method"
+""" The authentication method value """
 
 class MainClientSmtp:
     """
@@ -131,72 +138,48 @@ class SmtpClient:
         # creates the session object
         session = SmtpSession()
 
-        # retrieves the initial response value
-        response = self.retrieve_response(None, session)
+        # runs the initial login
+        self.login(session, parameters)
 
-        if not response.get_code() == 220:
-            raise main_client_smtp_exceptions.SmtpResponseError("problem establishing connection: " + str(response))
+        # runs the ehlo command
+        self.ehlo(session, parameters)
 
-        # sends the hello request
-        request = self.send_request("ehlo", "mail.sender.com", session, parameters)
+        # tries to start tls
+        self.starttls(session, parameters)
 
-        # retrieves the response
-        response = self.retrieve_response(request, session)
+        # runs the ehlo command (again, because of tls)
+        self.ehlo(session, parameters)
 
-        if not response.get_code() == 250:
-            raise main_client_smtp_exceptions.SmtpResponseError("problem establishing connection: " + str(response))
+        # retrieves the verify user flag
+        verify_user = parameters.get("verify_user", False)
 
-        # sends the verify request
-        #request = self.send_request("vrfy", "joamag", session, parameters)
+        # in case the verify user flag is active
+        if verify_user:
+            # runs the vrfy command
+            self.vrfy(session, parameters)
 
-        # retrieves the response
-        #response = self.retrieve_response(request, session)
+        # tries to retrieve the username from the parameters
+        username = parameters.get("username", "")
 
-        #if not response.get_code() == 250:
-        #    raise main_client_smtp_exceptions.SmtpResponseError("problem verifying user")
+        # in case a username is defined
+        if username:
+            # tries to retrieve the password from the parameters
+            password = parameters.get("password", "")
 
-        # sends the mail from request
-        request = self.send_request("mail", "from:<" + sender + ">", session, parameters)
+            # runs the auth command (starting the authentication process)
+            self.auth(session, username, password, parameters)
 
-        # retrieves the response
-        response = self.retrieve_response(request, session)
+        # runs the main command (starting the mail sending)
+        self.mail(session, sender, parameters)
 
-        if not response.get_code() == 250:
-            raise main_client_smtp_exceptions.SmtpResponseError("problem sending email: " + str(response))
+        # runs the rcpt command
+        self.rcpt(session, recipients_list, parameters)
 
-        for recipient in recipients_list:
-            # sends the mail from request
-            request = self.send_request("rcpt", "to:<" + recipient + ">", session, parameters)
+        # runs the data command and sends the raw data (message)
+        self.data(session, message, parameters)
 
-            # retrieves the response
-            response = self.retrieve_response(request, session)
-
-            if not response.get_code() == 250:
-                raise main_client_smtp_exceptions.SmtpResponseError("problem sending email: " + str(response))
-
-        request = self.send_request("data", None, session, parameters)
-
-        # retrieves the response
-        response = self.retrieve_response(request, session)
-
-        if not response.get_code() in (250, 354):
-            raise main_client_smtp_exceptions.SmtpResponseError("problem sending email: " + str(response))
-
-        request = self.send_request_data("From: joamag@gmail.com\r\nTo: tyagooo@gmail.com\r\n\r\nOla como estás ?\r\n.", session, parameters)
-
-        # retrieves the response
-        response = self.retrieve_response(request, session)
-
-        if not response.get_code() == 250:
-            raise main_client_smtp_exceptions.SmtpResponseError("problem sending email data: " + str(response))
-
-        request = self.send_request("quit", None, session, parameters)
-
-        # retrieves the response
-        response = self.retrieve_response(request, session)
-
-        if not response.get_code() == 221:
-            raise main_client_smtp_exceptions.SmtpResponseError("problem ending session: " + str(response))
+        # runs the quit command
+        self.quit(session, parameters)
 
     def send_request(self, command, message, session, parameters):
         """
@@ -415,6 +398,182 @@ class SmtpClient:
         # returns the data
         return data
 
+
+    def login(self, session, parameters = {}):
+        # retrieves the initial response value
+        response = self.retrieve_response(None, session)
+
+        # checks the response for errors
+        self._check_response_error(response, (220,), "problem establishing connection: ")
+
+    def ehlo(self, session, parameters = {}):
+        # sends the hello request
+        request = self.send_request("ehlo", "mail.sender.com", session, parameters)
+
+        # retrieves the response
+        response = self.retrieve_response(request, session)
+
+        # checks the response for errors
+        self._check_response_error(response, (250,), "problem establishing connection: ")
+
+    def starttls(self, session, parameters = {}):
+        # sends the starttls request
+        request = self.send_request("starttls", None, session, parameters)
+
+        # retrieves the response
+        response = self.retrieve_response(request, session)
+
+        # checks the response for errors
+        self._check_response_error(response, (220,), "problem starting tls: ")
+
+        import ssl
+
+        self.smtp_connection = ssl.wrap_socket(self.smtp_connection)
+
+    def vrfy(self, session, parameters = {}):
+        # retrieves the verification user
+        verification_user = parameters.get("verification_user", None)
+
+        # in case no verification user is defined
+        if not verification_user:
+            # raises an smtp runtime exception
+            raise main_client_smtp_exceptions.SmtpRuntimeException("invalid verification user")
+
+        # sends the verify request
+        request = self.send_request("vrfy", verification_user, session, parameters)
+
+        # retrieves the response
+        response = self.retrieve_response(request, session)
+
+        # checks the response for errors
+        self._check_response_error(response, (250, 251, 252), "problem verifying the user: ")
+
+    def auth(self, session, username, password, parameters = {}):
+        # tries to retrieve the username from the parameters
+        username = parameters.get("username", "")
+
+        # tries to retrieve the password from the parameters
+        password = parameters.get("password", "")
+
+        # retrieves the authentication method
+        authentication_method = parameters.get(AUTHENTICATION_METHOD_VALUE, DEFAULT_AUTHENTICATION_METHOD)
+
+        # creates the authentication method name
+        authentication_method_name = "authenticate_" + authentication_method
+
+        # in case the authentication method is not defined in the current object
+        if not hasattr(self, authentication_method_name):
+            # raises the smtp runtime exception
+            raise main_client_smtp_exceptions.SmtpRuntimeException("authentication method not found: " + authentication_method)
+
+        # retrieves the authentication method from the object
+        authentication_method = getattr(self, authentication_method_name)
+
+        # calls the authentication method with the request, session
+        # and authentication arguments
+        authentication_method(session, parameters, username, password)
+
+    def mail(self, session, sender, parameters = {}):
+        # sends the mail request
+        request = self.send_request("mail", "from:<" + sender + ">", session, parameters)
+
+        # retrieves the response
+        response = self.retrieve_response(request, session)
+
+        # checks the response for errors
+        self._check_response_error(response, (250,), "problem sending email: ")
+
+    def rcpt(self, session, recipients_list, parameters = {}):
+        # iterates over all the recipients in the recipients list
+        for recipient in recipients_list:
+            # sends the rcpt request
+            request = self.send_request("rcpt", "to:<" + recipient + ">", session, parameters)
+
+            # retrieves the response
+            response = self.retrieve_response(request, session)
+
+            # checks the response for errors
+            self._check_response_error(response, (250,), "problem sending email: ")
+
+    def data(self, session, data, parameters = {}):
+        # sends the data request
+        request = self.send_request("data", None, session, parameters)
+
+        # retrieves the response
+        response = self.retrieve_response(request, session)
+
+        # checks the response for errors
+        self._check_response_error(response, (250, 354), "problem sending email: ")
+
+        # sends the data in raw format
+        request = self.send_request_data(data + "\r\n.", session, parameters)
+
+        # retrieves the response
+        response = self.retrieve_response(request, session)
+
+        # checks the response for errors
+        self._check_response_error(response, (250,), "problem sending email data: ")
+
+    def quit(self, session, parameters = {}):
+        # sends the quit request
+        request = self.send_request("quit", None, session, parameters)
+
+        # retrieves the response
+        response = self.retrieve_response(request, session)
+
+        # checks the response for errors
+        self._check_response_error(response, (221,), "problem sending email data: ")
+
+    def authenticate_plain(self, session, parameters, username, password):
+        # creates the authentication string for the username and password
+        authentication_string = "\x00%s\x00%s\x00" % (username, password)
+
+        # converts the authentication string to base64
+        authentication_string_base64 = base64.b64encode(authentication_string)
+
+        # sends the auth request
+        request = self.send_request("auth", "plain " + authentication_string_base64, session, parameters)
+
+        # retrieves the response
+        response = self.retrieve_response(request, session)
+
+        # checks the response for errors
+        self._check_response_error(response, (235,), "problem in login authentication: ")
+
+    def authenticate_login(self, session, parameters, username, password):
+        # converts the username to base64
+        username_base64 = base64.b64encode(username)
+
+        # converts the password to base64
+        password_base64 = base64.b64encode(password)
+
+        # sends the auth request
+        request = self.send_request("auth", "login", session, parameters)
+
+        # retrieves the response
+        response = self.retrieve_response(request, session)
+
+        # checks the response for errors
+        self._check_response_error(response, (334,), "problem initializing login: ")
+
+        # sends the username data
+        request = self.send_request_data(username_base64, session, parameters)
+
+        # retrieves the response
+        response = self.retrieve_response(request, session)
+
+        # checks the response for errors
+        self._check_response_error(response, (334,), "problem in username login: ")
+
+        # sends the password data
+        request = self.send_request_data(password_base64, session, parameters)
+
+        # retrieves the response
+        response = self.retrieve_response(request, session)
+
+        # checks the response for errors
+        self._check_response_error(response, (235,), "problem in login authentication: ")
+
     def _get_transaction_id(self):
         """
         Retrieves the transaction id, incrementing the
@@ -461,6 +620,29 @@ class SmtpClient:
 
                 # returns the socket
                 return socket
+
+    def _check_response_error(self, response, accepted_codes, message = ""):
+        """
+        Checks the given response for errors, in case
+        of errors using the given accepted codes list as the base
+        value for checking. In case of error it raises an exception with the
+        given message as prefix.
+
+        @type response: SmtpResponse
+        @param response: The response
+        @type accepted_codes: List
+        @param accepted_codes: The list of accepted codes.
+        @type message: String
+        @param message: The message to be used as base for the exception.
+        """
+
+        # retrieves the response code
+        response_code = response.get_code()
+
+        # in case the response code is not "accepted"
+        if not response_code in accepted_codes:
+            # raises the smtp response error
+            raise main_client_smtp_exceptions.SmtpResponseError(message + str(response))
 
 class SmtpRequest:
     """
