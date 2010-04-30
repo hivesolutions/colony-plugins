@@ -185,6 +185,17 @@ class EntityManager:
     """ The map containing the connection parameters """
 
     def __init__(self, entity_manager_engine_plugin, entity_classes_list, loaded_entity_classes_map = None):
+        """
+        Constructor of the class.
+
+        @type entity_manager_engine_plugin: EntityManagerEnginePlugin
+        @param entity_manager_engine_plugin: The engine entity manager plugin to be used.
+        @type entity_classes_list: List
+        @param entity_classes_list: The list of entity classes to be used.
+        @type loaded_entity_classes_map: Dictionary
+        @param loaded_entity_classes_map: The map containing all the loaded entity classes.
+        """
+
         self.entity_manager_engine_plugin = entity_manager_engine_plugin
         self.entity_classes_list = entity_classes_list
         self.entity_classes_map = loaded_entity_classes_map
@@ -764,6 +775,46 @@ class EntityManager:
 
             # increments the index value
             index += 1
+
+    def get_entity_classes_list(self):
+        """
+        Retrieves the entity classes list.
+
+        @rtype: List
+        @return: The entity classes list.
+        """
+
+        return self.entity_classes_list
+
+    def set_entity_classes_list(self, entity_classes_list):
+        """
+        Sets the entity classes list.
+
+        @type entity_classes_list: List
+        @param entity_classes_list: The entity classes list.
+        """
+
+        self.entity_classes_list = entity_classes_list
+
+    def get_entity_classes_map(self):
+        """
+        Retrieves the entity classes map.
+
+        @rtype: Dictionary
+        @return: The entity classes map.
+        """
+
+        return self.entity_classes_map
+
+    def set_entity_classes_map(self, entity_classes_map):
+        """
+        Sets the entity classes map.
+
+        @type entity_classes_map: Dictionary
+        @param entity_classes_map: The entity classes map.
+        """
+
+        self.entity_classes_map = entity_classes_map
 
 class Connection:
     """
