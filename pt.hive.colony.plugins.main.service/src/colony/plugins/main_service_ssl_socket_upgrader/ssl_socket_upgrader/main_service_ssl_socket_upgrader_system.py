@@ -76,7 +76,7 @@ class MainServiceSslSocketUpgrader:
 
         return UPGRADER_NAME
 
-    def upgrade_socket_socket(self, socket):
+    def upgrade_socket(self, socket):
         """
         Upgrades the given socket, configured with
         the default parameters.

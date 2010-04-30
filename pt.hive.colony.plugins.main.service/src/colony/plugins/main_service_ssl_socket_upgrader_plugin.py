@@ -96,7 +96,7 @@ class MainServiceSslSocketUpgraderPlugin(colony.plugins.plugin_system.Plugin):
 
         return self.main_service_ssl_socket_upgrader.get_upgrader_name()
 
-    def upgrade_socket_socket(self, socket):
+    def upgrade_socket(self, socket):
         """
         Upgrades the given socket, configured with
         the default parameters.
@@ -107,7 +107,7 @@ class MainServiceSslSocketUpgraderPlugin(colony.plugins.plugin_system.Plugin):
         @return: The upgraded socket.
         """
 
-        return self.main_service_ssl_socket_upgrader.upgrade_socket_socket(socket)
+        return self.main_service_ssl_socket_upgrader.upgrade_socket(socket)
 
     def upgrade_socket_parameters(self, socket, parameters):
         """
