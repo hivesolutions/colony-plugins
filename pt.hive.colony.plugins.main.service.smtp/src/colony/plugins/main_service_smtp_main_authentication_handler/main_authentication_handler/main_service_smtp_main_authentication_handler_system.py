@@ -45,6 +45,9 @@ HANDLER_NAME = "main"
 AUTHENTICATION_HANDLER_VALUE = "authentication_handler"
 """ The authentication handler value """
 
+ARGUMENTS_VALUE = "arguments"
+""" The arguments value """
+
 class MainServiceSmtpMainAuthenticationHandler:
     """
     The main service smtp main authentication handler class.
@@ -83,14 +86,22 @@ class MainServiceSmtpMainAuthenticationHandler:
             # raises the missing property exception
             raise main_service_smtp_main_authentication_handler_exceptions.MissingProperty(AUTHENTICATION_HANDLER_VALUE)
 
+        # in case the arguments property is not defined
+        if not ARGUMENTS_VALUE in properties:
+            # raises the missing property exception
+            raise main_service_smtp_main_authentication_handler_exceptions.MissingProperty(ARGUMENTS_VALUE)
+
         # retrieves the authentication handler
         authentication_handler = properties[AUTHENTICATION_HANDLER_VALUE]
+
+        # retrieves the arguments
+        arguments = properties[ARGUMENTS_VALUE]
 
         # retrieves the main authentication plugin
         main_authentication_plugin = self.main_service_smtp_main_authentication_handler_plugin.main_authentication_plugin
 
         # authenticates the user with the main authentication plugin retrieving the result
-        authentication_result = main_authentication_plugin.authenticate_user(username, password, authentication_handler, properties)
+        authentication_result = main_authentication_plugin.authenticate_user(username, password, authentication_handler, arguments)
 
         # returns the authentication result
         return authentication_result

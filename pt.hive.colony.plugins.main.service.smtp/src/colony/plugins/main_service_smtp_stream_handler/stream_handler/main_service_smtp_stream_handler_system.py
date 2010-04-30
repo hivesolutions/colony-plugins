@@ -380,9 +380,6 @@ class MainServiceSmtpStreamHandler:
 
                 # sets the request response message
                 request.set_response_message("2.7.0 Authentication successful")
-
-                # sets the request response code
-                request.set_response_code(235)
             # in case the authentication was not successful
             else:
                 # sets the request response code
@@ -390,9 +387,6 @@ class MainServiceSmtpStreamHandler:
 
                 # sets the request response message
                 request.set_response_message("5.7.8 Authentication credentials invalid")
-
-                # sets the request response code
-                request.set_response_code(235)
         else:
             # sets the data transmission mode to true
             session.set_data_transmission(True)
