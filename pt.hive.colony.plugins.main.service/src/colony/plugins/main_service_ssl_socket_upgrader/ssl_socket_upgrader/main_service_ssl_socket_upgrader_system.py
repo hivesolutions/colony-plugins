@@ -38,85 +38,82 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import ssl
-import socket
 
-PROVIDER_NAME = "ssl"
-""" The provider name """
+UPGRADER_NAME = "ssl"
+""" The upgrader name """
 
 FAMILY_VALUE = "family"
 """ The family value """
 
-RESOURCES_PATH = "main_service_ssl_socket_provider/ssl_socket_provider/resources"
+RESOURCES_PATH = "main_service_ssl_socket_upgrader/ssl_socket_upgrader/resources"
 """ The resources path """
 
-class MainServiceSslSocketProvider:
+class MainServiceSslSocketUpgrader:
     """
-    The main service ssl socket provider class.
+    The main service ssl socket upgrader class.
     """
 
-    main_service_ssl_socket_provider_plugin = None
-    """ The main service ssl socket provider plugin """
+    main_service_ssl_socket_upgrader_plugin = None
+    """ The main service ssl socket upgrader plugin """
 
-    def __init__(self, main_service_ssl_socket_provider_plugin):
+    def __init__(self, main_service_ssl_socket_upgrader_plugin):
         """
         Constructor of the class.
 
-        @type main_service_ssl_socket_provider_plugin: MainServiceSslSocketProviderPlugin
-        @param main_service_ssl_socket_provider_plugin: The main service ssl socket provider plugin.
+        @type main_service_ssl_socket_upgrader_plugin: MainServiceSslSocketUpgraderPlugin
+        @param main_service_ssl_socket_upgrader_plugin: The main service ssl socket upgrader plugin.
         """
 
-        self.main_service_ssl_socket_provider_plugin = main_service_ssl_socket_provider_plugin
+        self.main_service_ssl_socket_upgrader_plugin = main_service_ssl_socket_upgrader_plugin
 
-    def get_provider_name(self):
+    def get_upgrader_name(self):
         """
-        Retrieves the socket provider name.
+        Retrieves the socket upgrader name.
 
         @rtype: String
-        @return: The socket provider name.
+        @return: The socket upgrader name.
         """
 
-        return PROVIDER_NAME
+        return UPGRADER_NAME
 
-    def provide_socket(self):
+    def upgrade_socket_socket(self, socket):
         """
-        Provides a new socket, configured with
+        Upgrades the given socket, configured with
         the default parameters.
 
+        @type socket: Socket
+        @param socket: The socket to be upgraded.
         @rtype: Socket
-        @return: The provided socket.
+        @return: The upgraded socket.
         """
 
-        # creates the ssl socket
-        ssl_socket = self.provide_socket_parameters()
+        # upgrades the socket to ssl socket
+        ssl_socket = self.upgrade_socket_parameters(socket)
 
         # returns the ssl socket
         return ssl_socket
 
-    def provide_socket_parameters(self, parameters = {}):
+    def upgrade_socket_parameters(self, socket, parameters = {}):
         """
-        Provides a new socket, configured with
+        Upgrades the given socket, configured with
         the given parameters.
 
+        @type socket: Socket
+        @param socket: The socket to be upgraded.
         @type parameters: Dictionary
         @param parameters: The parameters for socket configuration.
         @rtype: Socket
-        @return: The provided socket.
+        @return: The upgraded socket.
         """
 
         # retrieves the plugin manager
-        manager = self.main_service_ssl_socket_provider_plugin.manager
+        manager = self.main_service_ssl_socket_upgrader_plugin.manager
 
         # retrieves the main service ssl socket provicer plugin base path
-        main_service_ssl_socket_provicer_plugin_path = manager.get_plugin_path_by_id(self.main_service_ssl_socket_provider_plugin.id)
+        main_service_ssl_socket_provicer_plugin_path = manager.get_plugin_path_by_id(self.main_service_ssl_socket_upgrader_plugin.id)
 
         # sets the main service ssl socket provicer plugin resources path
-        main_service_ssl_socket_provicer_plugin_resources_path = main_service_ssl_socket_provicer_plugin_path + "/main_service_ssl_socket_provider/ssl_socket_provider/resources"
-
-        # tries to retrieve the socket family
-        socket_family = parameters.get(FAMILY_VALUE, socket.AF_INET)
-
-        # creates the normal socket
-        normal_socket = socket.socket(socket_family, socket.SOCK_STREAM)
+        main_service_ssl_socket_provicer_plugin_resources_path = main_service_ssl_socket_provicer_plugin_path + "/main_service_ssl_socket_upgrader/ssl_socket_upgrader/resources"
 
         # retrieves the dummy ssl key path
         dummy_ssl_key_path = main_service_ssl_socket_provicer_plugin_resources_path + "/dummy.key"
@@ -124,8 +121,8 @@ class MainServiceSslSocketProvider:
         # retrieves the dummy ssl certificate path
         dummy_ssl_certificate_path = main_service_ssl_socket_provicer_plugin_resources_path + "/dummy.crt"
 
-        # warps the normal socket into an ssl socket
-        ssl_socket = ssl.wrap_socket(normal_socket, dummy_ssl_key_path, dummy_ssl_certificate_path)
+        # warps the socket into an ssl socket
+        ssl_socket = ssl.wrap_socket(socket, dummy_ssl_key_path, dummy_ssl_certificate_path)
 
         # returns the ssl socket
         return ssl_socket
