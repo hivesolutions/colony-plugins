@@ -968,6 +968,9 @@ class SmtpSession:
     current_message = None
     """ The current message being processed """
 
+    authenticated = False
+    """ the authenticated flag """
+
     messages = []
     """ The messages associated with the session """
 
@@ -1017,13 +1020,31 @@ class SmtpSession:
         self.messages.append(message)
 
     def authenticate(self, username, password):
+        """
+        Authenticates a user with the given username
+        and password, using the current authentication handler.
+
+        @type username: String
+        @param username: The username to be used in the authentication.
+        @type password: String
+        @param password: The password to be used in the authentication.
+        @rtype: Dictionary
+        @return: The authentication map, in case of success otherwise none.
+        """
+
         # in case no authentication handler is set
         if not self.authentication_handler:
-            # returns false (invalid)
-            return False
+            # returns invalid
+            return None
 
         # uses the authentication handler to try to authenticate
         authentication_result = self.authentication_handler.handle_authentication(username, password, self.authentication_properties)
+
+        # in case the authentication result
+        # is valid
+        if authentication_result:
+            # sets the authenticated flag
+            self.authenticated = True
 
         # returns the authentication result
         return authentication_result
