@@ -510,9 +510,13 @@ class SmtpClientServiceTask:
                 # sends the request to the client (response)
                 self.send_request(request)
 
-                if session.get_upgrade():
-                    # upgrades the session
-                    session.upgrade()
+                # retrieves the value of the upgrade flag
+                upgrade = session.get_upgrade()
+
+                # in case the upgrade flag is set
+                if upgrade:
+                    # upgrades the session connection
+                    session.upgrade_connection()
 
                     # unsets the upgrade flag
                     session.set_upgrade(False)
@@ -1112,7 +1116,7 @@ class SmtpSession:
     def handle(self):
         pass
 
-    def upgrade(self):
+    def upgrade_connection(self):
         """
         Upgrades the connection associated with the
         current session.
