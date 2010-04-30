@@ -381,7 +381,44 @@ class SmtpClientServiceTask:
         request_timeout = REQUEST_TIMEOUT
 
         # creates the session object
-        session = SmtpSession()
+        session = SmtpSession(self)
+
+
+
+
+
+        socket_upgrader = "ssl"
+
+        # in case the socket upgrader is defined
+        if socket_upgrader:
+            # retrieves the socket upgrader plugins
+            socket_upgrader_plugins = self.main_service_smtp_plugin.socket_upgrader_plugins
+
+            # iterates over all the socket upgrader plugins
+            for socket_upgrader_plugin in socket_upgrader_plugins:
+                # retrieves the upgrader name from the socket upgrader plugin
+                socket_upgrader_plugin_upgrader_name = socket_upgrader_plugin.get_upgrader_name()
+
+                # in case the names are the same
+                if socket_upgrader_plugin_upgrader_name == socket_upgrader:
+                    session.upgrader_handler = socket_upgrader_plugin.upgrade_socket_parameters
+
+                    break
+        else:
+            session.upgrader_handler = None
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         # retrieves the initial request
         request = self.retrieve_initial_request(session, request_timeout)
@@ -472,6 +509,9 @@ class SmtpClientServiceTask:
 
                 # sends the request to the client (response)
                 self.send_request(request)
+
+                if session.get_upgrade():
+                    session.upgrade()
 
                 # in case the session is closed
                 if session.get_closed():
@@ -948,6 +988,9 @@ class SmtpSession:
     The smtp session class.
     """
 
+    smtp_client_service_task = None
+    """ The smtp client service task """
+
     client_hostname = "none"
     """ The client hostname """
 
@@ -959,6 +1002,9 @@ class SmtpSession:
 
     end_token = DEFAULT_END_TOKEN_VALUE
     """ The end token value """
+
+    upgrade = False
+    """ The upgrade flag """
 
     closed = False
     """ The closed flag """
@@ -981,10 +1027,22 @@ class SmtpSession:
     session_handler = None
     """ The session handler object """
 
+    upgrader_handler = None
+    """ The upgrader handler """
+
     authentication_properties = {}
     """ The authentication properties """
 
-    def __init__(self):
+    def __init__(self, smtp_client_service_task):
+        """
+        Constructor of the class.
+
+        @type smtp_client_service_task: SmtpClientServiceTask
+        @param smtp_client_service_task: The smtp client service task.
+        """
+
+        self.smtp_client_service_task = smtp_client_service_task
+
         self.messages = []
         self.properties = {}
         self.authentication_properties = {}
@@ -1050,6 +1108,22 @@ class SmtpSession:
     def handle(self):
         pass
 
+    def upgrade(self):
+        """
+        Upgrades the connection associated with the
+        current session.
+        """
+
+        # in case no upgrader handler is set
+        if not self.upgrader_handler:
+            raise main_service_smtp_exceptions.SmtpRuntimeException("no upgrader handler defined")
+
+        # the parameters for the upgrader handler
+        parameters = {"server_side" : True, "do_handshake_on_connect" : False}
+
+        # upgrades the smtp client service task with the current upgrader handler
+        self.smtp_client_service_task.smtp_connection = self.upgrader_handler(self.smtp_client_service_task.smtp_connection, parameters)
+
     def reset_end_token(self):
         """
         Resets the current end token to the
@@ -1057,6 +1131,26 @@ class SmtpSession:
         """
 
         self.end_token = DEFAULT_END_TOKEN_VALUE
+
+    def get_smtp_client_service_task(self):
+        """
+        Retrieves the client smtp client service task.
+
+        @rtype: SmtpClientServiceTask
+        @return: The client smtp client service task.
+        """
+
+        return self.smtp_client_service_task
+
+    def set_smtp_client_service_task(self, smtp_client_service_task):
+        """
+        Sets the client smtp client service task.
+
+        @type smtp_client_service_task: SmtpClientServiceTask
+        @param smtp_client_service_task: The client smtp client service task.
+        """
+
+        self.smtp_client_service_task = smtp_client_service_task
 
     def get_client_hostname(self):
         """
@@ -1137,6 +1231,26 @@ class SmtpSession:
         """
 
         self.end_token = end_token
+
+    def get_upgrade(self):
+        """
+        Retrieves the upgrade.
+
+        @rtype: bool
+        @return: The upgrade.
+        """
+
+        return self.upgrade
+
+    def set_upgrade(self, upgrade):
+        """
+        Sets the upgrade.
+
+        @type upgrade: bool
+        @param upgrade: The upgrade.
+        """
+
+        self.upgrade = upgrade
 
     def get_closed(self):
         """
@@ -1277,6 +1391,26 @@ class SmtpSession:
         """
 
         self.session_handler = session_handler
+
+    def get_upgrader_handler(self):
+        """
+        Retrieves the upgrader handler.
+
+        @rtype: UpgraderHandler
+        @return: The upgrader handler.
+        """
+
+        return self.upgrader_handler
+
+    def set_upgrader_handler(self, upgrader_handler):
+        """
+        Sets the upgrader handler.
+
+        @type upgrader_handler: UpgraderHandler
+        @param upgrader_handler: The upgrader handler.
+        """
+
+        self.upgrader_handler = upgrader_handler
 
     def get_authentication_properties(self):
         """

@@ -198,7 +198,7 @@ class MainServiceSmtpStreamHandler:
         @param arguments: The list of arguments for the request.
         """
 
-        # asserts the mail arguments
+        # asserts the helo arguments
         self.assert_arguments(arguments, 1)
 
         # retrieves the client hostname
@@ -225,7 +225,7 @@ class MainServiceSmtpStreamHandler:
         @param arguments: The list of arguments for the request.
         """
 
-        # asserts the mail arguments
+        # asserts the ehlo arguments
         self.assert_arguments(arguments, 1)
 
         # retrieves the client hostname
@@ -242,6 +242,27 @@ class MainServiceSmtpStreamHandler:
 
         # sets the client hostname
         session.set_client_hostname(client_hostname)
+
+    def process_starttls(self, request, session, arguments):
+        """
+        Processes the starttls command.
+
+        @type request: SmtpRequest
+        @param request: The smtp request to be processed.
+        @type session: SmtpSession
+        @param session: The current used smtp session.
+        @type arguments: List
+        @param arguments: The list of arguments for the request.
+        """
+
+        # sets the upgrade flag
+        session.set_upgrade(True)
+
+        # sets the request response code
+        request.set_response_code(220)
+
+        # sets the response message in the request
+        request.set_response_message("Go ahead")
 
     def process_mail(self, request, session, arguments):
         """
@@ -302,7 +323,7 @@ class MainServiceSmtpStreamHandler:
         @param arguments: The list of arguments for the request.
         """
 
-        # asserts the mail arguments
+        # asserts the rcpt arguments
         self.assert_arguments(arguments, 1)
 
         # retrieves the to argument
@@ -370,7 +391,7 @@ class MainServiceSmtpStreamHandler:
         @param arguments: The list of arguments for the request.
         """
 
-        # asserts the mail arguments
+        # asserts the auth arguments
         self.assert_arguments(arguments, 1, -1)
 
         # retrieves the authentication type
