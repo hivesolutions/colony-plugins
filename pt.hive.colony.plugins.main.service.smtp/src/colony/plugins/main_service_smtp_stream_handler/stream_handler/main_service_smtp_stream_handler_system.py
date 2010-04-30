@@ -50,6 +50,9 @@ AUTHENTICATION_VALUE = "authentication"
 AUTHENTICATION_TYPE_VALUE = "authentication_type"
 """ The authentication type value """
 
+USERNAME_VALUE = "username"
+""" The username value """
+
 AUTHENTICATION_MESSAGE_INDEX_VALUE = "authentication_message_index"
 """ The authentication message index value """
 
@@ -58,6 +61,12 @@ USERNAME_BASE64_VALUE = "VXNlcm5hbWU6"
 
 PASSWORD_BASE64_VALUE = "UGFzc3dvcmQ6"
 """ The password base64 value """
+
+SEPARATOR_TOKEN_VALUE = "\x00"
+""" The separator token value """
+
+END_TOKEN_DATA_VALUE = "\r\n.\r\n"
+""" The end token data value """
 
 class MainServiceSmtpStreamHandler:
     """
@@ -161,6 +170,9 @@ class MainServiceSmtpStreamHandler:
 
             # sets the contents in the message
             message.set_contents(contents)
+
+            # resets the end token to the default value
+            session.reset_end_token()
 
             # sets the data transmission mode to false
             session.set_data_transmission(False)
@@ -340,6 +352,9 @@ class MainServiceSmtpStreamHandler:
         # sets the request response message
         request.set_response_message("End data with \\r\\n.\\r\\n")
 
+        # sets the data value end token
+        session.set_end_token(END_TOKEN_DATA_VALUE)
+
         # sets the data transmission mode to true
         session.set_data_transmission(True)
 
@@ -427,7 +442,7 @@ class MainServiceSmtpStreamHandler:
         authentication_token_decoded = base64.b64decode(authentication_token)
 
         # splits the authentication token retrieving the username and password
-        _invalid, username, password = authentication_token_decoded.split("\x00")
+        username, password = authentication_token_decoded.strip(SEPARATOR_TOKEN_VALUE).split(SEPARATOR_TOKEN_VALUE)
 
         # tries to authenticate with the session mechanism
         authentication_result = session.authenticate(username, password)
@@ -449,7 +464,7 @@ class MainServiceSmtpStreamHandler:
 
     def process_authentication_login(self, request, session, arguments):
         # asserts the mail arguments
-        self.assert_arguments(arguments, 1, -1)
+        self.assert_arguments(arguments, 0, -1)
 
         # retrieves the session properties
         session_properties = session.get_properties()
@@ -475,6 +490,16 @@ class MainServiceSmtpStreamHandler:
             # sets the request response message
             request.set_response_message(USERNAME_BASE64_VALUE)
         elif authentication_message_index == 1:
+            # retrieves the contents from the request
+            contents = request.get_message()
+
+            # strips the contents
+            contents = contents.strip()
+
+            # decodes the contents using base64 and sets them as the username
+            # in the session properties
+            session_properties[USERNAME_VALUE] = base64.b64decode(contents)
+
             # increments the authentication message index and set the value
             # in the session properties map
             session_properties[AUTHENTICATION_MESSAGE_INDEX_VALUE] = authentication_message_index + 1
@@ -485,12 +510,43 @@ class MainServiceSmtpStreamHandler:
             # sets the request response message
             request.set_response_message(PASSWORD_BASE64_VALUE)
         elif authentication_message_index == 2:
+            # retrieves the username from the session properties
+            username = session_properties[USERNAME_VALUE]
+
+            # retrieves the contents from the request
+            contents = request.get_message()
+
+            # strips the contents
+            contents = contents.strip()
+
+            # decodes the contents using base64 and sets them in the password variable
+            password = base64.b64decode(contents)
+
+            # tries to authenticate with the session mechanism
+            authentication_result = session.authenticate(username, password)
+
+            # in case the authentication was successful
+            if authentication_result:
+                # sets the request response code
+                request.set_response_code(235)
+
+                # sets the request response message
+                request.set_response_message("2.7.0 Authentication successful")
+            # in case the authentication was not successful
+            else:
+                # sets the request response code
+                request.set_response_code(535)
+
+                # sets the request response message
+                request.set_response_message("5.7.8 Authentication credentials invalid")
+
             # sets the data transmission mode to true
             session.set_data_transmission(False)
 
             # deletes the authentication session properties
             del session_properties[AUTHENTICATION_MESSAGE_INDEX_VALUE]
             del session_properties[AUTHENTICATION_VALUE]
+            del session_properties[USERNAME_VALUE]
         else:
             # raises the invalid smtp command exception
             raise main_service_smtp_stream_handler_exceptions.InvalidSmtpCommand("invalid authentication index")

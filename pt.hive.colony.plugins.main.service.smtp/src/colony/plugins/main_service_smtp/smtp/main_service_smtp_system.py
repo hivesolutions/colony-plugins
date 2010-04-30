@@ -74,8 +74,8 @@ DEFAULT_PORT = 25
 END_TOKEN_VALUE = "\r\n"
 """ The end token value """
 
-END_TOKEN_DATA_VALUE = "\r\n.\r\n"
-""" The end token data value """
+DEFAULT_END_TOKEN_VALUE = END_TOKEN_VALUE
+""" The default end token value """
 
 class MainServiceSmtp:
     """
@@ -535,13 +535,8 @@ class SmtpClientServiceTask:
         # creates a request object
         request = SmtpRequest()
 
-        # in case the session is in data transmission mode
-        if session.data_transmission:
-            # sets the data transmission end token, with an extra dot
-            end_token = END_TOKEN_DATA_VALUE
-        else:
-            # sets the "normal" end token
-            end_token = END_TOKEN_VALUE
+        # retrieves the current end token
+        end_token = session.get_end_token()
 
         # continuous loop
         while True:
@@ -962,6 +957,9 @@ class SmtpSession:
     data_transmission = False
     """ The data transmission flag """
 
+    end_token = DEFAULT_END_TOKEN_VALUE
+    """ The end token value """
+
     closed = False
     """ The closed flag """
 
@@ -1052,6 +1050,14 @@ class SmtpSession:
     def handle(self):
         pass
 
+    def reset_end_token(self):
+        """
+        Resets the current end token to the
+        default value.
+        """
+
+        self.end_token = DEFAULT_END_TOKEN_VALUE
+
     def get_client_hostname(self):
         """
         Retrieves the client hostname.
@@ -1111,6 +1117,26 @@ class SmtpSession:
         """
 
         self.data_transmission = data_transmission
+
+    def get_end_token(self):
+        """
+        Retrieves the end token.
+
+        @rtype: String
+        @return: The end token.
+        """
+
+        return self.end_token
+
+    def set_end_token(self, end_token):
+        """
+        Sets the end token.
+
+        @type end_token: String
+        @param end_token: The end token.
+        """
+
+        self.end_token = end_token
 
     def get_closed(self):
         """
