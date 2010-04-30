@@ -140,10 +140,10 @@ class WebMvcUtils:
         entity_manager.set_connection_parameters(connection_parameters)
 
         # sets the entity manager classes list
-        entity_manager.entity_classes_list = base_entity_models
+        entity_manager.set_entity_classes_list(base_entity_models)
 
         # sets the entity manager classes map
-        entity_manager.entity_classes_map = base_entity_models_map
+        entity_manager.set_entity_classes_map(base_entity_models_map)
 
         # loads the entity manager
         entity_manager.load_entity_manager()
