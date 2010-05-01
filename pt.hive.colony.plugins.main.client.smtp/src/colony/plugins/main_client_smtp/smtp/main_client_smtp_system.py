@@ -508,8 +508,11 @@ class SmtpClient:
         # checks the response for errors
         self._check_response_error(response, (250, 354), "problem sending email: ")
 
+        # "stuffes" the data according to smtp specification
+        data_stuffed = data.replace("\r\n.", "\r\n..")
+
         # sends the data in raw format
-        request = self.send_request_data(data + "\r\n.", session, parameters)
+        request = self.send_request_data(data_stuffed + "\r\n.", session, parameters)
 
         # retrieves the response
         response = self.retrieve_response(request, session)
