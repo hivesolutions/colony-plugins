@@ -124,7 +124,7 @@ class MainServiceDns:
     """ The main service dns plugin """
 
     dns_service_handler_plugins_map = {}
-    """ The dns service handler plugin map """
+    """ The dns service handler plugins map """
 
     dns_connection = None
     """ The dns connection """
