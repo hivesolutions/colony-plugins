@@ -58,8 +58,8 @@ class MainServiceSmtpDatabaseMessageHandlerPlugin(colony.plugins.plugin_system.P
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["main_service_smtp_database_message_handler.database_message_handler.main_service_smtp_database_message_handler_system",
-                    "main_service_smtp_database_message_handler.database_message_handler.main_service_smtp_database_message_handler_exceptions"]
+    main_modules = ["main_service_smtp_database_message_handler.database_message_handler.main_service_smtp_database_message_handler_exceptions",
+                    "main_service_smtp_database_message_handler.database_message_handler.main_service_smtp_database_message_handler_system"]
 
     main_service_smtp_database_sesion_handler = None
 

@@ -121,8 +121,12 @@ class MainServiceSmtpRelayMessageHandler:
             # creates the domain query
             domain_query = (domain, MX_VALUE, IN_VALUE)
 
-            # resolves the queries and retrieves the result
-            response = dns_client.resolve_queries("8.8.8.8", 53, (domain_query,))
+            try:
+                # resolves the queries and retrieves the result
+                response = dns_client.resolve_queries("8.8.8.8", 53, (domain_query,))
+            except:
+                # raises the host resolution error
+                raise main_service_smtp_relay_message_handler_exceptions.HostResolutionError("problem while resolving domain: " + domain)
 
             # retrieves the hostname
             hostname = response.answers[0][4][1]

@@ -62,8 +62,8 @@ class MainServiceSmtpRelayMessageHandlerPlugin(colony.plugins.plugin_system.Plug
                     "pt.hive.colony.plugins.main.client.dns", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["main_service_smtp_relay_message_handler.relay_message_handler.main_service_smtp_relay_message_handler_system",
-                    "main_service_smtp_relay_message_handler.relay_message_handler.main_service_smtp_relay_message_handler_exceptions"]
+    main_modules = ["main_service_smtp_relay_message_handler.relay_message_handler.main_service_smtp_relay_message_handler_exceptions",
+                    "main_service_smtp_relay_message_handler.relay_message_handler.main_service_smtp_relay_message_handler_system"]
 
     main_service_smtp_relay_sesion_handler = None
 
