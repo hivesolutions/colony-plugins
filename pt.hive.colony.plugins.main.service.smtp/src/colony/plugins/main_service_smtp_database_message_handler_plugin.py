@@ -39,35 +39,35 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.plugins.plugin_system
 
-class MainServiceSmtpDatabaseSessionHandlerPlugin(colony.plugins.plugin_system.Plugin):
+class MainServiceSmtpDatabaseMessageHandlerPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Smtp Service Main Database Session Handler plugin.
+    The main class for the Smtp Service Main Database Message Handler plugin.
     """
 
-    id = "pt.hive.colony.plugins.main.service.smtp.database_session_handler"
-    name = "Smtp Service Main Database Session Handler Plugin"
-    short_name = "Smtp Service Main Database Session Handler"
-    description = "The plugin that offers the smtp service database session handler"
+    id = "pt.hive.colony.plugins.main.service.smtp.database_message_handler"
+    name = "Smtp Service Main Database Message Handler Plugin"
+    short_name = "Smtp Service Main Database Message Handler"
+    description = "The plugin that offers the smtp service database message handler"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
-    capabilities = ["smtp_service_session_handler"]
+    capabilities = ["smtp_service_message_handler"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["main_service_smtp_database_session_handler.database_session_handler.main_service_smtp_database_session_handler_system",
-                    "main_service_smtp_database_session_handler.database_session_handler.main_service_smtp_database_session_handler_exceptions"]
+    main_modules = ["main_service_smtp_database_message_handler.database_message_handler.main_service_smtp_database_message_handler_system",
+                    "main_service_smtp_database_message_handler.database_message_handler.main_service_smtp_database_message_handler_exceptions"]
 
     main_service_smtp_database_sesion_handler = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
-        global main_service_smtp_database_session_handler
-        import main_service_smtp_database_session_handler.database_session_handler.main_service_smtp_database_session_handler_system
-        self.main_service_smtp_database_sesion_handler =  main_service_smtp_database_session_handler.database_session_handler.main_service_smtp_database_session_handler_system.MainServiceSmtpDatabaseSessionHandler(self)
+        global main_service_smtp_database_message_handler
+        import main_service_smtp_database_message_handler.database_message_handler.main_service_smtp_database_message_handler_system
+        self.main_service_smtp_database_sesion_handler =  main_service_smtp_database_message_handler.database_message_handler.main_service_smtp_database_message_handler_system.MainServiceSmtpDatabaseMessageHandler(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -88,7 +88,21 @@ class MainServiceSmtpDatabaseSessionHandlerPlugin(colony.plugins.plugin_system.P
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_handler_name(self):
+        """
+        Retrieves the handler name.
+
+        @rtype: String
+        @return: The handler name.
+        """
+
         return self.main_service_smtp_database_sesion_handler.get_handler_name()
 
-    def handle_session(self, session):
-        self.main_service_smtp_database_sesion_handler.handle_session(session)
+    def handle_message(self, message):
+        """
+        Handles the given smtp message.
+
+        @type message: SmtpMessage
+        @param message: The smtp message to handled.
+        """
+
+        self.main_service_smtp_database_sesion_handler.handle_message(message)

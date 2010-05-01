@@ -25,10 +25,10 @@ __author__ = "João Magalhães <joamag@hive.pt>"
 __version__ = "1.0.0"
 """ The version of the module """
 
-__revision__ = "$LastChangedRevision: 428 $"
+__revision__ = "$LastChangedRevision: 421 $"
 """ The revision number of the module """
 
-__date__ = "$LastChangedDate: 2008-11-20 18:42:55 +0000 (Qui, 20 Nov 2008) $"
+__date__ = "$LastChangedDate: 2008-11-20 15:16:53 +0000 (Qui, 20 Nov 2008) $"
 """ The last change date of the module """
 
 __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
@@ -37,38 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import main_service_smtp_database_session_handler_exceptions
-
-HANDLER_NAME = "database"
-""" The handler name """
-
-class MainServiceSmtpDatabaseSessionHandler:
+class MainServiceSmtpDatabaseMessageHandlerException(Exception):
     """
-    The main service smtp database session handler class.
+    The main service smtp database message handler exception class.
     """
 
-    main_service_smtp_database_session_handler_plugin = None
-    """ The main service smtp database session handler plugin """
-
-    def __init__(self, main_service_smtp_database_session_handler_plugin):
-        """
-        Constructor of the class.
-
-        @type main_service_smtp_database_session_handler_plugin: MainServiceSmtpDatabaseSessionHandlerPlugin
-        @param main_service_smtp_database_session_handler_plugin: The main service smtp database session handler plugin.
-        """
-
-        self.main_service_smtp_database_session_handler_plugin = main_service_smtp_database_session_handler_plugin
-
-    def get_handler_name(self):
-        return HANDLER_NAME
-
-    def handle_session(self, session):
-        """
-        Handles the given smtp session.
-
-        @type session: SmtpSession
-        @param session: The smtp session to handled.
-        """
-
-        pass
+    message = None
+    """ The exception's message """
