@@ -203,7 +203,7 @@ class MainServiceHttp:
     """ The main service http plugin """
 
     http_service_handler_plugins_map = {}
-    """ The http service handler plugin map """
+    """ The http service handler plugins map """
 
     http_socket = None
     """ The http socket """
