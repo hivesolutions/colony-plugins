@@ -67,6 +67,13 @@ class MainServiceSmtpMainAuthenticationHandler:
         self.main_service_smtp_main_authentication_handler_plugin = main_service_smtp_main_authentication_handler_plugin
 
     def get_handler_name(self):
+        """
+        Retrieves the handler name.
+
+        @rtype: String
+        @return: The handler name.
+        """
+
         return HANDLER_NAME
 
     def handle_authentication(self, username, password, properties):
