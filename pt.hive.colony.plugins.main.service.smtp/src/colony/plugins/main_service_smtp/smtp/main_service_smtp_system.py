@@ -89,13 +89,13 @@ class MainServiceSmtp:
     """ The main service smtp plugin """
 
     smtp_service_handler_plugins_map = {}
-    """ The smtp service handler plugin map """
+    """ The smtp service handler plugins map """
 
     smtp_service_authentication_handler_plugins_map = {}
-    """ The smtp service authentication handler plugin map """
+    """ The smtp service authentication handler plugins map """
 
     smtp_service_session_handler_plugins_map = {}
-    """ The smtp service session handler plugin map """
+    """ The smtp service session handler plugins map """
 
     smtp_socket = None
     """ The smtp socket """

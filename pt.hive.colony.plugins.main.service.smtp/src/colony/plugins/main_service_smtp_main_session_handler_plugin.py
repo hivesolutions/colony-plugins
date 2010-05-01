@@ -54,13 +54,15 @@ class MainServiceSmtpMainSessionHandlerPlugin(colony.plugins.plugin_system.Plugi
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
     capabilities = ["smtp_service_session_handler"]
-    capabilities_allowed = []
+    capabilities_allowed = ["smtp_service_message_handler"]
     dependencies = []
     events_handled = []
     events_registrable = []
     main_modules = ["main_service_smtp_main_session_handler.main_session_handler.main_service_smtp_main_session_handler_system"]
 
     main_service_smtp_main_session_handler = None
+
+    smtp_service_message_handler_plugins = []
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -77,9 +79,11 @@ class MainServiceSmtpMainSessionHandlerPlugin(colony.plugins.plugin_system.Plugi
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
+    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.main.service.smtp.main_session_handler", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.main.service.smtp.main_session_handler", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
@@ -105,3 +109,13 @@ class MainServiceSmtpMainSessionHandlerPlugin(colony.plugins.plugin_system.Plugi
         """
 
         self.main_service_smtp_main_session_handler.handle_session(session)
+
+    @colony.plugins.decorators.load_allowed_capability("smtp_service_message_handler")
+    def smtp_service_message_handler_load_allowed(self, plugin, capability):
+        self.smtp_service_message_handler_plugins.append(plugin)
+        self.main_service_smtp_main_session_handler.smtp_service_message_handler_load(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("smtp_service_message_handler")
+    def smtp_service_message_handler_unload_allowed(self, plugin, capability):
+        self.smtp_service_message_handler_plugins.remove(plugin)
+        self.main_service_smtp_main_session_handler.smtp_service_message_handler_unload(plugin)

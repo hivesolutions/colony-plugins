@@ -48,6 +48,9 @@ class MainServiceSmtpMainSessionHandler:
     main_service_smtp_main_session_handler_plugin = None
     """ The main service smtp main session handler plugin """
 
+    smtp_service_message_handler_plugins_map = {}
+    """ The smtp service message handler plugins map """
+
     def __init__(self, main_service_smtp_main_session_handler_plugin):
         """
         Constructor of the class.
@@ -57,6 +60,8 @@ class MainServiceSmtpMainSessionHandler:
         """
 
         self.main_service_smtp_main_session_handler_plugin = main_service_smtp_main_session_handler_plugin
+
+        self.smtp_service_message_handler_plugins_map = {}
 
     def get_handler_name(self):
         """
@@ -77,3 +82,15 @@ class MainServiceSmtpMainSessionHandler:
         """
 
         pass
+
+    def smtp_service_message_handler_load(self, smtp_service_message_handler_plugin):
+        # retrieves the plugin handler name
+        message_handler_name = smtp_service_message_handler_plugin.get_handler_name()
+
+        self.smtp_service_message_handler_plugins_map[message_handler_name] = smtp_service_message_handler_plugin
+
+    def smtp_service_message_handler_unload(self, smtp_service_message_handler_plugin):
+        # retrieves the plugin handler name
+        message_handler_name = smtp_service_message_handler_plugin.get_handler_name()
+
+        del self.smtp_service_message_handler_plugins_map[message_handler_name]
