@@ -1099,7 +1099,18 @@ class SmtpSession:
         return authentication_result
 
     def handle(self):
-        pass
+        """
+        Handles the session, using with the current
+        session handler.
+        """
+
+        # in case no session handler is set
+        if not self.session_handler:
+            # returns invalid
+            return None
+
+        # handles the session with the session handler
+        self.session_handler.handle_session(self)
 
     def upgrade_connection(self):
         """

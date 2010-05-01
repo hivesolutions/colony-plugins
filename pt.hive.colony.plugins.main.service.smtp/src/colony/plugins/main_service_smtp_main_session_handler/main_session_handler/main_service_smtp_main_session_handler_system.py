@@ -81,7 +81,33 @@ class MainServiceSmtpMainSessionHandler:
         @param session: The session to be handled.
         """
 
-        pass
+        # retrieves the messages from the session
+        messages = session.get_messages()
+
+        # iterates over all the messages
+        for message in messages:
+            # retrieves the recipients list
+            recipients_list = message.get_recipients_list()
+
+            # unsets the relay message flag
+            relay_message = False
+
+            # iterates over all redcipients in the recipients list
+            # to check the domain
+            for recipient in recipients_list:
+                # splits the recipient retrieving the
+                # user and the domain
+                _user, domain = recipient.split("@")
+
+                if not domain == "hive.pt":
+                    # sets the relay message flag
+                    relay_message = True
+
+            # in case the relay message is set
+            if relay_message:
+                self.smtp_service_message_handler_plugins_map["relay"].handle_message(message)
+            else:
+                self.smtp_service_message_handler_plugins_map["database"].handle_message(message)
 
     def smtp_service_message_handler_load(self, smtp_service_message_handler_plugin):
         # retrieves the plugin handler name

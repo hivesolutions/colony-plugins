@@ -180,6 +180,9 @@ class MainServiceSmtpStreamHandler:
             # sets the data transmission mode to false
             session.set_data_transmission(False)
 
+            # handles the session
+            session.handle()
+
             # sets the request response code
             request.set_response_code(250)
 
