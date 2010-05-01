@@ -168,8 +168,11 @@ class MainServiceSmtpStreamHandler:
             # retrieves the contents from the request
             contents = request.get_message()
 
+            # "de-stuffes" the contents of the message
+            contents_destuffed = contents.replace("\r\n..", "\r\n.")
+
             # sets the contents in the message
-            message.set_contents(contents)
+            message.set_contents(contents_destuffed)
 
             # resets the end token to the default value
             session.reset_end_token()
