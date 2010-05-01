@@ -42,6 +42,15 @@ import main_service_smtp_relay_message_handler_exceptions
 HANDLER_NAME = "relay"
 """ The handler name """
 
+MX_VALUE = "MX"
+""" The mx value """
+
+IN_VALUE = "IN"
+""" The in value """
+
+SMTP_PORT = 25
+""" The smtp port """
+
 class MainServiceSmtpRelayMessageHandler:
     """
     The main service smtp relay message handler class.
@@ -78,4 +87,81 @@ class MainServiceSmtpRelayMessageHandler:
         @param message: The smtp message to handled.
         """
 
-        pass
+        # retrieves the main client smtp plugin
+        main_client_smtp_plugin = self.main_service_smtp_relay_message_handler_plugin.main_client_smtp_plugin
+
+        # retrieves the main client dns plugin
+        main_client_dns_plugin = self.main_service_smtp_relay_message_handler_plugin.main_client_dns_plugin
+
+        # creates a new smtp client, using the main client smtp plugin
+        smtp_client = main_client_smtp_plugin.create_client({})
+
+        # creates a new dns client, using the main client dns plugin
+        dns_client = main_client_dns_plugin.create_client({})
+
+        # retrieves the message contents
+        message_contents = message.get_contents()
+
+        # retrieves the message sender
+        message_sender = message.get_sender()
+
+        # retrieves the message list of recipients
+        message_recipients_list = message.get_recipients_list()
+
+        # creates the domain recipients map for the message
+        # recipients list
+        domain_recipients_map = self._get_domain_recipients_map(message_recipients_list)
+
+        # iterates over all the domain in the domain
+        # recipients map
+        for domain in domain_recipients_map:
+            # retrieves the recipients list for the domain
+            recipients_list = domain_recipients_map[domain]
+
+            # creates the domain query
+            domain_query = (domain, MX_VALUE, IN_VALUE)
+
+            # resolves the queries and retrieves the result
+            response = dns_client.resolve_queries("8.8.8.8", 53, (domain_query,))
+
+            # retrieves the hostname
+            hostname = response.answers[0][4][1]
+
+            # send the email to the host
+            smtp_client.send_mail(hostname, SMTP_PORT, message_sender, recipients_list, message_contents, {})
+
+    def _get_domain_recipients_map(self, recipients_list):
+        """
+        Retrieves a map associating the domain to the
+        list of recipients of the domain.
+
+        @type recipients_list: List
+        @param recipients_list: The list o recipients to be processed.
+        @rtype: Dictionary
+        @return: The map associating the domain to the
+        list of recipients of the domain.
+        """
+
+        # creates the domain recipients map
+        domain_recipients_map = {}
+
+        # iterates over all the recipients in the recipients
+        # list
+        for recipient in recipients_list:
+            # splits the recipient to retrieve the user
+            # and the domain
+            _user, domain = recipient.split("@")
+
+            # in case the domain is not defined in
+            # the domain recipients map
+            if not domain in domain_recipients_map:
+                # creates a list for the domain in the
+                # domain recipients map
+                domain_recipients_map[domain] = []
+
+            # adds the recipient to the list of recipients
+            # for the current domain
+            domain_recipients_map[domain].append(recipient)
+
+        # returns the domain recipients map
+        return domain_recipients_map

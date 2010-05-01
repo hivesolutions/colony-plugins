@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.plugins.plugin_system
+import colony.plugins.decorators
 
 class MainServiceSmtpRelayMessageHandlerPlugin(colony.plugins.plugin_system.Plugin):
     """
@@ -55,13 +56,19 @@ class MainServiceSmtpRelayMessageHandlerPlugin(colony.plugins.plugin_system.Plug
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
     capabilities = ["smtp_service_message_handler"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.main.client.smtp", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.main.client.dns", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["main_service_smtp_relay_message_handler.relay_message_handler.main_service_smtp_relay_message_handler_system",
                     "main_service_smtp_relay_message_handler.relay_message_handler.main_service_smtp_relay_message_handler_exceptions"]
 
     main_service_smtp_relay_sesion_handler = None
+
+    main_client_smtp_plugin = None
+    main_client_dns_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -84,6 +91,7 @@ class MainServiceSmtpRelayMessageHandlerPlugin(colony.plugins.plugin_system.Plug
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.main.service.smtp.relay_message_handler", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -106,3 +114,17 @@ class MainServiceSmtpRelayMessageHandlerPlugin(colony.plugins.plugin_system.Plug
         """
 
         self.main_service_smtp_relay_sesion_handler.handle_message(message)
+
+    def get_main_client_smtp_plugin(self):
+        return self.main_client_smtp_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.client.smtp")
+    def set_main_client_smtp_plugin(self, main_client_smtp_plugin):
+        self.main_client_smtp_plugin = main_client_smtp_plugin
+
+    def get_main_client_dns_plugin(self):
+        return self.main_client_dns_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.client.dns")
+    def set_main_client_dns_plugin(self, main_client_dns_plugin):
+        self.main_client_dns_plugin = main_client_dns_plugin
