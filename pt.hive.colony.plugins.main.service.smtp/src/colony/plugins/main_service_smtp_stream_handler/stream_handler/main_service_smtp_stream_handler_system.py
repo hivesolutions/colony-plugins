@@ -238,7 +238,7 @@ class MainServiceSmtpStreamHandler:
         request.set_response_code(250)
 
         # sets the response messages in the request
-        request.set_response_messages(["Hello pleased to meet you", "auth plain", "auth login", "starttls"])
+        request.set_response_messages(["Hello pleased to meet you", "8bitmime", "auth plain", "auth login", "starttls"])
 
         # sets the extensions as active
         session.set_extensions_active(True)
