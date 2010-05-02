@@ -318,7 +318,7 @@ class TelnetClientServiceTask:
         self.main_service_telnet_plugin.debug("Connected to: %s" % str(self.telnet_address))
 
         # sends the welcome message
-        self.telnet_connection.send("Welcome to colony telnet server\r\n")
+        self.telnet_connection.sendall("Welcome to colony telnet server\r\n")
 
         # creates the initial request object
         request = TelnetRequest()
@@ -480,7 +480,7 @@ class TelnetClientServiceTask:
 
         try:
             # sends the result value to the client
-            self.telnet_connection.send(result_value)
+            self.telnet_connection.sendall(result_value)
         except:
             # error in the client side
             return
