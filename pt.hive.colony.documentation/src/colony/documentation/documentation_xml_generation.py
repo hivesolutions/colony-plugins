@@ -77,14 +77,14 @@ class XmlGenerationVisitor(documentation_visitor.Visitor):
     @documentation_visitor._visit(documentation_ast.ProjectNode)
     def visit_project_node(self, node):
         if self.visit_index == 0:
-            self._write_line_buffer(XML_HEADER_VALUE);
-            self._write_line_buffer("<project>");
-            self._write_line_buffer("<name>tobias</name>");
-            self._write_line_buffer("<author>tobias</author>");
-            self._write_line_buffer("<description>tobias</description>");
-            self._write_line_buffer("<license>tobias</license>");
+            self._write_line_buffer(XML_HEADER_VALUE)
+            self._write_line_buffer("<project>")
+            self._write_line_buffer("<name>tobias</name>")
+            self._write_line_buffer("<author>tobias</author>")
+            self._write_line_buffer("<description>tobias</description>")
+            self._write_line_buffer("<license>tobias</license>")
         elif self.visit_index == 1:
-            self._write_line_buffer("</project>");
+            self._write_line_buffer("</project>")
 
     @documentation_visitor._visit(documentation_ast.DocumentationElementNode)
     def visit_documentation_element_node(self, node):
@@ -93,34 +93,34 @@ class XmlGenerationVisitor(documentation_visitor.Visitor):
     @documentation_visitor._visit(documentation_ast.NamespaceNode)
     def visit_namespace_node(self, node):
         if self.visit_index == 0:
-            self._write_line_buffer("<namespace>");
+            self._write_line_buffer("<namespace>")
         elif self.visit_index == 1:
-            self._write_line_buffer("</namespace>");
+            self._write_line_buffer("</namespace>")
 
     @documentation_visitor._visit(documentation_ast.ClassNode)
     def visit_class_node(self, node):
         if self.visit_index == 0:
-            self._write_line_buffer("<class>");
+            self._write_line_buffer("<class>")
         elif self.visit_index == 1:
-            self._write_line_buffer("</class>");
+            self._write_line_buffer("</class>")
 
     @documentation_visitor._visit(documentation_ast.FunctionNode)
     def visit_function_node(self, node):
         if self.visit_index == 0:
-            self._write_line_buffer("<class>");
+            self._write_line_buffer("<class>")
         elif self.visit_index == 1:
-            self._write_line_buffer("</class>");
+            self._write_line_buffer("</class>")
 
     @documentation_visitor._visit(documentation_ast.VariableNode)
     def visit_variable_node(self, node):
         if self.visit_index == 0:
-            self._write_line_buffer("<variable>");
+            self._write_line_buffer("<variable>")
         elif self.visit_index == 1:
-            self._write_line_buffer("</variable>");
+            self._write_line_buffer("</variable>")
 
     @documentation_visitor._visit(documentation_ast.ConstantNode)
     def visit_constant_node(self, node):
         if self.visit_index == 0:
-            self._write_line_buffer("<constant>");
+            self._write_line_buffer("<constant>")
         elif self.visit_index == 1:
-            self._write_line_buffer("</constant>");
+            self._write_line_buffer("</constant>")
