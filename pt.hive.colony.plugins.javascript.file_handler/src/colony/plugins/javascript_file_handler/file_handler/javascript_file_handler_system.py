@@ -119,7 +119,7 @@ class JavascriptFileHandler:
         # in case the current operative system is windows based
         if os_name == "nt" or os_name == "dos":
             # normalizes the full path
-            full_path = os.path.normpath(full_path);
+            full_path = os.path.normpath(full_path)
 
             # creates the full path in the windows mode
             full_path = LONG_PATH_PREFIX + full_path
