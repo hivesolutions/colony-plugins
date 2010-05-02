@@ -108,7 +108,7 @@ class XmlBeautifier:
         token = lexer.token()
 
         # start the indentation index
-        indentation_index = 0;
+        indentation_index = 0
 
         # start the initial flag
         initial_flag = True
