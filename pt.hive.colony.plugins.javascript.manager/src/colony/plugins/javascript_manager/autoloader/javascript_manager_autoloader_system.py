@@ -199,7 +199,7 @@ class JavascriptManagerAutoloader:
                         plugin_descriptor = plugin_descriptor_parser.get_value()
 
                         # retrieves the plugin id from the plugin descriptor
-                        plugin_id = plugin_descriptor.id;
+                        plugin_id = plugin_descriptor.id
 
                         # in case it is an updated version of the plugin
                         if plugin_id in self.plugin_id_file_modified_date_map:
