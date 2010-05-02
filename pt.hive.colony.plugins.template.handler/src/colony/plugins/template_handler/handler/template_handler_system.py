@@ -150,7 +150,7 @@ class TemplateHandler:
             if handler_filename == request_filename_striped:
                 # retrieves the complete path
                 complete_path = template_handler_extension_plugin.get_template_path()
-                break;
+                break
             elif request_filename_striped.find(handler_filename) == 0:
                 # retrieves the handler file name length
                 handler_filename_length = len(handler_filename)
@@ -171,7 +171,7 @@ class TemplateHandler:
 
                     # in case the path exists
                     if os.path.exists(complete_path):
-                        break;
+                        break
 
                 # retrieves the file extension from the filename
                 file_name_extension = request.uri.split(".")[-1]
