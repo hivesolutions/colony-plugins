@@ -683,7 +683,7 @@ class SmtpClientServiceTask:
 
         try:
             # sends the result value to the client
-            self.smtp_connection.send(result_value)
+            self.smtp_connection.sendall(result_value)
         except:
             # error in the client side
             return
