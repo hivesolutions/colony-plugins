@@ -97,7 +97,7 @@ class TemplateAdministrationPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_handler_filename(self):
-        return self.template_administration.get_handler_filename();
+        return self.template_administration.get_handler_filename()
 
     def get_template_path(self):
         return self.template_administration.get_template_path()
