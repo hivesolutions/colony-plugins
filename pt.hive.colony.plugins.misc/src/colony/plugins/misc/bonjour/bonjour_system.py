@@ -236,7 +236,7 @@ class Bonjour:
         service_reference = bonjour.AllocateDNSServiceRef()
 
         # resolves the service in zeroconf (bonjour)
-        return_value = bonjour.pyDNSServiceResolve(service_reference, flags, interface_index, service_name, registration_type, domain, self.resolve_service_bonjour_callback, user_data);
+        return_value = bonjour.pyDNSServiceResolve(service_reference, flags, interface_index, service_name, registration_type, domain, self.resolve_service_bonjour_callback, user_data)
 
         # processes the zeroconf resolution
         bonjour.DNSServiceProcessResult(service_reference)
@@ -689,7 +689,7 @@ class Bonjour:
         service_reference = bonjour.AllocateDNSServiceRef()
 
         # resolves the service in zeroconf (bonjour)
-        return_value = bonjour.pyDNSServiceResolve(service_reference, flags, interface_index, service_name, registration_type, domain, self.resolve_bonjour_callback, user_data);
+        return_value = bonjour.pyDNSServiceResolve(service_reference, flags, interface_index, service_name, registration_type, domain, self.resolve_bonjour_callback, user_data)
 
         # processes the zeroconf resolution
         bonjour.DNSServiceProcessResult(service_reference)
