@@ -335,7 +335,7 @@ def apply_base_path_template_file(self, rest_request, template_file):
     """
 
     # retrieves the base path
-    base_path = self.get_base_path(rest_request);
+    base_path = self.get_base_path(rest_request)
 
     # assigns the area value
     template_file.assign(BASE_PATH_VALUE, base_path)
