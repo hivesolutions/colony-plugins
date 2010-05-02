@@ -355,8 +355,11 @@ class MainServiceHttp:
 
                 # in case the names are the same
                 if socket_provider_plugin_provider_name == socket_provider:
+                    # the parameters for the socket provider
+                    parameters = {"server_side" : True, "do_handshake_on_connect" : False}
+
                     # creates a new http socket with the socket provider plugin
-                    self.http_socket = socket_provider_plugin.provide_socket()
+                    self.http_socket = socket_provider_plugin.provide_socket_parameters(parameters)
 
             # in case the socket was not created, no socket provider found
             if not self.http_socket:
@@ -1120,7 +1123,7 @@ class HttpClientServiceTask:
             request.status_code = 500
 
         # retrieves the value for the status code
-        status_code_value = self.get_status_code_value()
+        status_code_value = request.get_status_code_value()
 
         # writes the header message in the message
         request.write("colony web server - " + str(request.status_code) + " " + status_code_value + "\n")
