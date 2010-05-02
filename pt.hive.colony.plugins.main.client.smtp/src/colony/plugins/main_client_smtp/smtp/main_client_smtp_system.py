@@ -60,6 +60,9 @@ RESPONSE_TIMEOUT = 60
 CHUNK_SIZE = 4096
 """ The chunk size """
 
+MINIMUM_BAUD_RATE = 51200
+""" The minimum baud rate to be used in communications """
+
 END_TOKEN_VALUE = "\r\n"
 """ The end token value """
 
@@ -508,14 +511,22 @@ class SmtpClient:
         # checks the response for errors
         self._check_response_error(response, (250, 354), "problem sending email: ")
 
+        # retrieves the data length
+        data_length = len(data)
+
         # "stuffes" the data according to smtp specification
         data_stuffed = data.replace("\r\n.", "\r\n..")
 
         # sends the data in raw format
         request = self.send_request_data(data_stuffed + "\r\n.", session, parameters)
 
-        # retrieves the response
-        response = self.retrieve_response(request, session)
+        # calculates the timeout to be used in the data based on
+        # the data length and the minimum baud rate, adding also the base
+        # response timeout
+        data_timeout = RESPONSE_TIMEOUT + (data_length / MINIMUM_BAUD_RATE)
+
+        # retrieves the response, with the data timeout (to avoid possible transmission problems)
+        response = self.retrieve_response(request, session, data_timeout)
 
         # checks the response for errors
         self._check_response_error(response, (250,), "problem sending email data: ")
