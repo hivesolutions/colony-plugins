@@ -121,12 +121,12 @@ class ResourceManagerPlugin(colony.plugins.plugin_system.Plugin):
 
     @colony.plugins.decorators.load_allowed_capability("resource_parser")
     def resource_parser_load_allowed(self, plugin, capability):
-        self.resource_parser_plugins.append(plugin);
+        self.resource_parser_plugins.append(plugin)
         self.resource_manager.load_resource_parser_plugin(plugin)
 
     @colony.plugins.decorators.unload_allowed_capability("resource_parser")
     def resource_parser_unload_allowed(self, plugin, capability):
-        self.resource_parser_plugins.remove(plugin);
+        self.resource_parser_plugins.remove(plugin)
         self.resource_manager.unload_resource_parser_plugin(plugin)
 
     @colony.plugins.decorators.event_handler_method("plugin_manager.init_load_plugin")
