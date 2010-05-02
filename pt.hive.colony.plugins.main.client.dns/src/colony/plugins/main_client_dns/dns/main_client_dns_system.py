@@ -180,7 +180,7 @@ class DnsClient:
         result_value = request.get_result()
 
         # sends the result value
-        self.dns_connection.send(result_value)
+        self.dns_connection.sendall(result_value)
 
         # returns the request
         return request
