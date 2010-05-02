@@ -218,7 +218,7 @@ class SmtpClient:
         result_value = request.get_result()
 
         # sends the result value
-        self.smtp_connection.send(result_value)
+        self.smtp_connection.sendall(result_value)
 
         # returns the request
         return request
@@ -247,7 +247,7 @@ class SmtpClient:
         result_value = request.get_result()
 
         # sends the result value
-        self.smtp_connection.send(result_value)
+        self.smtp_connection.sendall(result_value)
 
         # returns the request
         return request
