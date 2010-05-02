@@ -114,7 +114,7 @@ class ConsolePrintingManager:
         printing_language_file = open(printing_language_file_path, "r")
 
         # reads the printing language file contents
-        printing_language_file_contents = printing_language_file.read();
+        printing_language_file_contents = printing_language_file.read()
 
         # closes the printing language file
         printing_language_file.close()
