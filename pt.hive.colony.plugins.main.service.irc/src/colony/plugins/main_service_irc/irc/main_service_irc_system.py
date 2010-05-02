@@ -655,7 +655,7 @@ class IrcClientServiceTask:
 
         try:
             # sends the result value to the client
-            self.irc_connection.send(result_value)
+            self.irc_connection.sendall(result_value)
         except:
             # error in the client side
             return
@@ -666,7 +666,7 @@ class IrcClientServiceTask:
 
         try:
             # sends the result value to the client
-            self.irc_connection.send(result_value)
+            self.irc_connection.sendall(result_value)
         except:
             # error in the client side
             return
@@ -684,7 +684,7 @@ class IrcClientServiceTask:
 
             try:
                 # sends the mediated value to the client
-                self.irc_connection.send(mediated_value)
+                self.irc_connection.sendall(mediated_value)
             except:
                 # error in the client side
                 return
@@ -695,7 +695,7 @@ class IrcClientServiceTask:
 
         try:
             # sends the result value to the client
-            self.irc_connection.send(result_value)
+            self.irc_connection.sendall(result_value)
         except:
             # error in the client side
             return
@@ -708,7 +708,7 @@ class IrcClientServiceTask:
             # in case the read is complete
             if not chunk_value:
                 # sends the final empty chunk
-                self.irc_connection.send("0\r\n\r\n")
+                self.irc_connection.sendall("0\r\n\r\n")
                 return
 
             try:
@@ -722,7 +722,7 @@ class IrcClientServiceTask:
                 message_value = length_chunk_value_hexadecimal_string + chunk_value + "\r\n"
 
                 # sends the message value to the client
-                self.irc_connection.send(message_value)
+                self.irc_connection.sendall(message_value)
             except:
                 # error in the client side
                 return
