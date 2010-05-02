@@ -124,7 +124,7 @@ class JavascriptDocumentationGenerationVisitor(javascript_documentation_visitor.
     @javascript_documentation_visitor._visit(javascript_documentation_ast.CommentNode)
     def visit_comment_node(self, node):
         # sets the current comment node
-        self.current_comment_node = node;
+        self.current_comment_node = node
 
     @javascript_documentation_visitor._visit(javascript_documentation_ast.PassNode)
     def visit_pass_node(self, node):
