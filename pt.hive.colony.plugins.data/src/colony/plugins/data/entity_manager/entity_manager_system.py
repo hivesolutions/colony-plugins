@@ -60,6 +60,12 @@ DATA_TYPE_FIELD = "data_type"
 ID_ATTRIBUTE_NAME_VALUE = "id_attribute_name"
 """ The id attribute name value """
 
+ENTITY_CLASSES_LIST_VALUE = "entity_classes_list"
+""" The entity classes list value """
+
+ENTITY_CLASSES_MAP_VALUE = "entity_classes_map"
+""" The entity classes map value """
+
 class DataEntityManager:
     """
     The data entity manager class.
@@ -137,6 +143,14 @@ class DataEntityManager:
         @return: The loaded entity manager.
         """
 
+        # tries to retrieve the entity classes list, falling back to all
+        # the currently loaded entity classes list
+        entity_classes_list = properties.get(ENTITY_CLASSES_LIST_VALUE, self.loaded_entity_classes_list)
+
+        # tries to retrieve the entity classes map, falling back to all
+        # the currently loaded entity classes map
+        entity_classes_map = properties.get(ENTITY_CLASSES_MAP_VALUE, self.loaded_entity_classes_map)
+
         # iterates over all the entity manager engine plugins
         for entity_manager_engine_plugin in self.entity_manager_engine_plugins_list:
             # retrieves the entity manager engine name
@@ -145,9 +159,9 @@ class DataEntityManager:
             # in case the entity manager engine name is the requested
             # engine name
             if entity_manager_engine_name == engine_name:
-                # creates a new entity manager with the entity manager engine plugin the load entity classes list
-                # and the loaded entity classes map
-                entity_manager = EntityManager(entity_manager_engine_plugin, self.loaded_entity_classes_list, self.loaded_entity_classes_map)
+                # creates a new entity manager with the entity manager engine plugin, entity classes list
+                # and the entity classes map
+                entity_manager = EntityManager(entity_manager_engine_plugin, entity_classes_list, entity_classes_map)
 
                 # returns the entity manager
                 return entity_manager
@@ -184,7 +198,7 @@ class EntityManager:
     connection_parameters = {}
     """ The map containing the connection parameters """
 
-    def __init__(self, entity_manager_engine_plugin, entity_classes_list, loaded_entity_classes_map = None):
+    def __init__(self, entity_manager_engine_plugin, entity_classes_list, entity_classes_map = None):
         """
         Constructor of the class.
 
@@ -192,13 +206,13 @@ class EntityManager:
         @param entity_manager_engine_plugin: The engine entity manager plugin to be used.
         @type entity_classes_list: List
         @param entity_classes_list: The list of entity classes to be used.
-        @type loaded_entity_classes_map: Dictionary
-        @param loaded_entity_classes_map: The map containing all the loaded entity classes.
+        @type entity_classes_map: Dictionary
+        @param entity_classes_map: The map entity classes to be used.
         """
 
         self.entity_manager_engine_plugin = entity_manager_engine_plugin
         self.entity_classes_list = entity_classes_list
-        self.entity_classes_map = loaded_entity_classes_map
+        self.entity_classes_map = entity_classes_map
 
         self.connection_thread_id_map = {}
         self.database_connection_thread_id_map = {}
@@ -374,6 +388,8 @@ class EntityManager:
         # retrieves the connection object
         connection = self.get_connection()
 
+        # iterates over all the entity classes
+        # in the entity classes list
         for entity_class in self.entity_classes_list:
             if self.entity_manager_engine_plugin.exists_entity_definition(connection, entity_class):
                 if not self.entity_manager_engine_plugin.synced_entity_definition(connection, entity_class):

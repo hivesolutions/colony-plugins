@@ -94,11 +94,28 @@ class EntityManagerPlugin(colony.plugins.plugin_system.Plugin):
         """
         Loads an entity manager for the given engine name.
 
+        @type engine_name: String
+        @param engine_name: The name of the engine to be used.
         @rtype: EntityManager
         @return: The loaded entity manager.
         """
 
         return self.entity_manager.load_entity_manager(engine_name)
+
+    def load_entity_manager_properties(self, engine_name, properties):
+        """
+        Loads an entity manager for the given engine name.
+
+        @type engine_name: String
+        @param engine_name: The name of the engine to be used.
+        @type properties: Dictionary
+        @param properties: The properties to be used in the
+        loading of the entity manager
+        @rtype: EntityManager
+        @return: The loaded entity manager.
+        """
+
+        return self.entity_manager.load_entity_manager(engine_name, properties)
 
     def get_transaction_decorator(self):
         """
