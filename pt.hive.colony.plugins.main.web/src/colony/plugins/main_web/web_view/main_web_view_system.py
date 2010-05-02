@@ -193,4 +193,4 @@ class WindowAccess(PyQt4.QtCore.QObject):
 
     @PyQt4.QtCore.pyqtSlot(result = bool)
     def exit(self):
-        return self.window.main_web_view_plugin.manager.unload_system();
+        return self.window.main_web_view_plugin.manager.unload_system()
