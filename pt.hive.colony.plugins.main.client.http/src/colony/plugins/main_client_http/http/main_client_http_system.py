@@ -299,7 +299,7 @@ class HttpClient:
         result_value = request.get_result()
 
         # sends the result value
-        self.http_connection.send(result_value)
+        self.http_connection.sendall(result_value)
 
         # returns the request
         return request
