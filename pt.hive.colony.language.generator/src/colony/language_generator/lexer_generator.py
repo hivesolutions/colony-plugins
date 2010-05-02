@@ -164,7 +164,7 @@ class LexerGenerator:
     words = []
     """ The words to be used """
 
-    current_index = 0;
+    current_index = 0
     """ The current index of the lexer """
 
     line_number = 0
@@ -342,7 +342,7 @@ class LexerGenerator:
             # in case the current character is to be ignored
             if current_character in self.ignore_value:
                 # increments the current index
-                self.current_index += 1;
+                self.current_index += 1
 
                 continue
 
