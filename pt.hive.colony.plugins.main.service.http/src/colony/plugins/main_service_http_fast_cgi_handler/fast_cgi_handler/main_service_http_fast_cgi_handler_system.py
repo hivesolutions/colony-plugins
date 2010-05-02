@@ -539,7 +539,7 @@ class FastCgiConnection:
         header_data = struct.pack(FCGI_HEADER_STRUCT, FCGI_VERSION_1_VALUE, request_type, request_id, record_data_length, 0)
 
         # sends the record
-        self.socket.send(header_data + record_data)
+        self.socket.sendall(header_data + record_data)
 
     def get_record(self, request_id):
         """

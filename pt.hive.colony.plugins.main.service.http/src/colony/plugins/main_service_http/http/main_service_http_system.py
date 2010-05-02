@@ -978,7 +978,7 @@ class HttpClientServiceTask:
 
         try:
             # sends the result value to the client
-            self.http_connection.send(result_value)
+            self.http_connection.sendall(result_value)
         except:
             # error in the client side
             self.main_service_http_plugin.error("Problem sending request simple")
@@ -992,7 +992,7 @@ class HttpClientServiceTask:
 
         try:
             # sends the result value to the client
-            self.http_connection.send(result_value)
+            self.http_connection.sendall(result_value)
         except:
             # error in the client side
             self.main_service_http_plugin.error("Problem sending request mediated")
@@ -1015,7 +1015,7 @@ class HttpClientServiceTask:
 
             try:
                 # sends the mediated value to the client
-                self.http_connection.send(mediated_value)
+                self.http_connection.sendall(mediated_value)
             except:
                 # error in the client side
                 self.main_service_http_plugin.error("Problem sending request mediated")
@@ -1029,7 +1029,7 @@ class HttpClientServiceTask:
 
         try:
             # sends the result value to the client
-            self.http_connection.send(result_value)
+            self.http_connection.sendall(result_value)
         except:
             # error in the client side
             self.main_service_http_plugin.error("Problem sending request chunked")
@@ -1045,7 +1045,7 @@ class HttpClientServiceTask:
             # in case the read is complete
             if not chunk_value:
                 # sends the final empty chunk
-                self.http_connection.send("0\r\n\r\n")
+                self.http_connection.sendall("0\r\n\r\n")
 
                 # returns immediately
                 return
@@ -1061,7 +1061,7 @@ class HttpClientServiceTask:
                 message_value = length_chunk_value_hexadecimal_string + chunk_value + "\r\n"
 
                 # sends the message value to the client
-                self.http_connection.send(message_value)
+                self.http_connection.sendall(message_value)
             except:
                 # error in the client side
                 self.main_service_http_plugin.error("Problem sending request chunked")
