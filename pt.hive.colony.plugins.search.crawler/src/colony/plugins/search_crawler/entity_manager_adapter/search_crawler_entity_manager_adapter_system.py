@@ -64,6 +64,12 @@ ENGINE_VALUE = "engine"
 CONNECTION_PARAMETERS_VALUE = "connection_parameters"
 """ The connection parameters value """
 
+ENTITY_CLASSES_LIST_VALUE = "entity_classes_list"
+""" The entity classes list value """
+
+ENTITY_CLASSES_MAP_VALUE = "entity_classes_map"
+""" The entity classes map value """
+
 DEFAULT_ENGINE = "sqlite"
 """ The default engine """
 
@@ -137,17 +143,14 @@ class SearchCrawlerEntityManagerAdapter:
         # the default connection parameters
         connection_parameters = entity_manager_arguments.get(CONNECTION_PARAMETERS_VALUE, DEFAULT_CONNECTION_PARAMETERS)
 
-        # creates a new entity manager for the remote models
-        entity_manager = entity_manager_plugin.load_entity_manager(engine)
+        # creates the entity manager properties
+        entity_manager_properties = {ENTITY_CLASSES_LIST_VALUE : entity_classes_list, ENTITY_CLASSES_MAP_VALUE : entity_classes_map}
+
+        # creates a new entity manager with the given properties
+        entity_manager = entity_manager_plugin.load_entity_manager_properties(engine, entity_manager_properties)
 
         # sets the connection parameters for the entity manager
         entity_manager.set_connection_parameters(connection_parameters)
-
-        # sets the entity manager classes list
-        entity_manager.set_entity_classes_list(entity_classes_list)
-
-        # sets the entity manager classes map
-        entity_manager.set_entity_classes_map(entity_classes_map)
 
         # loads the entity manager
         entity_manager.load_entity_manager()
