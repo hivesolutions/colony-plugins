@@ -227,8 +227,11 @@ class MainServiceXmpp:
 
                 # in case the names are the same
                 if socket_provider_plugin_provider_name == socket_provider:
+                    # the parameters for the socket provider
+                    parameters = {"server_side" : True, "do_handshake_on_connect" : False}
+
                     # creates a new xmpp socket with the socket provider plugin
-                    self.xmpp_socket = socket_provider_plugin.provide_socket()
+                    self.xmpp_socket = socket_provider_plugin.provide_socket_parameters(parameters)
 
             # in case the socket was not created, no socket provider found
             if not self.xmpp_socket:
