@@ -560,7 +560,7 @@ class XmppClientServiceTask:
 
         try:
             # sends the result value to the client
-            self.xmpp_connection.send(result_value)
+            self.xmpp_connection.sendall(result_value)
         except:
             # error in the client side
             return
