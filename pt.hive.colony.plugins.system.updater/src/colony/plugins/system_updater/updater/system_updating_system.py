@@ -402,7 +402,7 @@ class SystemUpdater:
         self.download_contents_file(repository_addresses, plugin_name, plugin_version, contents_file, repository_layout, TEMP_DIRECTORY)
 
         # the created contents file path
-        contents_file_path = TEMP_DIRECTORY + "/" + contents_file;
+        contents_file_path = TEMP_DIRECTORY + "/" + contents_file
 
         # the created contents file
         contents_file = open(contents_file_path, "r")
