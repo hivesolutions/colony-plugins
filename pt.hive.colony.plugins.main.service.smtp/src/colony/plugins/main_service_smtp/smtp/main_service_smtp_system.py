@@ -498,7 +498,7 @@ class SmtpClientServiceTask:
                     # prints debug message about session
                     self.main_service_smtp_plugin.debug("Session closed: %s" % str(session))
 
-                    break;
+                    break
 
             except Exception, exception:
                 self.send_exception(request, exception)
