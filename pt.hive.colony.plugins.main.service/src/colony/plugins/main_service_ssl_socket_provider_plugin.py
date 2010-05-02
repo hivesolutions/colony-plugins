@@ -54,8 +54,7 @@ class MainServiceSslSocketProviderPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["socket_provider"]
     capabilities_allowed = []
-    dependencies = [colony.plugins.plugin_system.PackageDependency(
-                    "Python", "ssl", "2.6.x", "http://www.python.org")]
+    dependencies = []
     events_handled = []
     events_registrable = []
     main_modules = ["main_service_ssl_socket_provider.ssl_socket_provider.main_service_ssl_socket_provider_system"]

@@ -54,8 +54,7 @@ class MainServiceSslSocketUpgraderPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["socket_upgrader"]
     capabilities_allowed = []
-    dependencies = [colony.plugins.plugin_system.PackageDependency(
-                    "Python", "ssl", "2.6.x", "http://www.python.org")]
+    dependencies = []
     events_handled = []
     events_registrable = []
     main_modules = ["main_service_ssl_socket_upgrader.ssl_socket_upgrader.main_service_ssl_socket_upgrader_system"]
