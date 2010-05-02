@@ -54,7 +54,7 @@ DEFAULT_SOCKET_NAME = "normal"
 DEFAULT_AUTHENTICATION_METHOD = "plain"
 """ The default authentication method """
 
-RESPONSE_TIMEOUT = 10
+RESPONSE_TIMEOUT = 60
 """ The response timeout """
 
 CHUNK_SIZE = 4096
