@@ -39,6 +39,21 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 
+CONFIGURATION_MODELS_BUNDLE_VALUE = "configuration_models_bundle"
+""" The configuration models bundle value """
+
+GLOBAL_VALUE = "global"
+""" The global value """
+
+REPLACE_VALUE = "replace"
+""" The replace value """
+
+PATH_VALUE = "path"
+""" The path value """
+
+CHUNK_SIZE = 4096
+""" The chunk size """
+
 class ConfigurationManager:
     """
     The configuration manager class.
@@ -65,7 +80,7 @@ class ConfigurationManager:
         configuration_model_provider_plugin_id = configuration_model_provider_plugin.id
 
         # retrieves the configuration models bundle
-        configuration_models_bundle = configuration_model_provider_plugin.get_attribute("configuration_models_bundle") or {}
+        configuration_models_bundle = configuration_model_provider_plugin.get_attribute(CONFIGURATION_MODELS_BUNDLE_VALUE) or {}
 
         # retrieves the plugin path
         plugin_path = plugin_manager.get_plugin_path_by_id(configuration_model_provider_plugin_id)
@@ -79,23 +94,35 @@ class ConfigurationManager:
 
         # iterates over the configuration models bundle
         for configuration_model in configuration_models_bundle:
+            # retrieves the configuration model properties
             configuration_model_properties = configuration_models_bundle[configuration_model]
 
-            global_value = configuration_model_properties.get("global", False)
+            # retrieves the global value from the configuration model properties
+            global_value = configuration_model_properties.get(GLOBAL_VALUE, False)
 
-            replace_value = configuration_model_properties.get("replace", False)
+            # retrieves the replace value from the configuration model properties
+            replace_value = configuration_model_properties.get(REPLACE_VALUE, False)
 
-            path_value = configuration_model_properties.get("path", configuration_model)
+            # retrieves the path value from the configuration model properties
+            path_value = configuration_model_properties.get(PATH_VALUE, configuration_model)
 
+            # in case the global value is set
             if global_value:
+                # sets the configuration model target directory path as the plugin
+                # global configuration path
                 configuration_model_target_directory_path = plugin_global_configuration_path
             else:
+                # sets the configuration model target directory path as the plugin
+                # profile configuration path
                 configuration_model_target_directory_path = plugin_profile_configuration_path
 
+            # retrieves the configuration model path
             configuration_model_path = plugin_path + "/" + path_value
 
+            # retrieves the configuration model target path
             configuration_model_target_path = configuration_model_target_directory_path + "/" + configuration_model
 
+            # retrieves the configuration model target path directory
             configuration_model_target_path_directory = os.path.dirname(configuration_model_target_path)
 
             # in case the configuration model target path does not exists
@@ -104,20 +131,44 @@ class ConfigurationManager:
                 # tries to creates the model path
                 self._try_create_path(configuration_model_target_path_directory)
 
-                configuration_model_file = open(configuration_model_path, "rb")
-
-                configuration_model_target_file = open(configuration_model_target_path, "wb")
-
-                configuration_model_file_contents = configuration_model_file.read()
-
-                configuration_model_file.close()
-
-                configuration_model_target_file.write(configuration_model_file_contents)
-
-                configuration_model_target_file.close()
+                # copies the model file to the target path
+                self._copy_file(configuration_model_path, configuration_model_target_path)
 
     def configuration_model_provider_unload(self, configuration_model_provider_plugin):
         pass
+
+    def _copy_file(self, file_path, target_file_path):
+        """
+        Copies the file in the file path to the given
+        target path.
+
+        @type file_path: String
+        @param file_path: The path to the file to be copied.
+        @type target_file_path: String
+        @param target_file_path: The path to the target file.
+        """
+
+        # opens both the file the target file
+        file = open(file_path, "rb")
+        target_file = open(target_file_path, "wb")
+
+        try:
+            while 1:
+                # reads the contents from the file and copies them to
+                # the target file
+                contents = file.read(CHUNK_SIZE)
+
+                # in case the contents are invalid (end of file is reached)
+                if not contents:
+                    # breaks the loop
+                    break
+
+                # writes the contents to the target file
+                target_file.write(contents)
+        finally:
+            # closes both files
+            file.close()
+            target_file.close()
 
     def _try_create_path(self, path):
         """
