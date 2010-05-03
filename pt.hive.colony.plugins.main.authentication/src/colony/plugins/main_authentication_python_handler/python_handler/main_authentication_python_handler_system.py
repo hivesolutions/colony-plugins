@@ -87,6 +87,9 @@ class MainAuthenticationPythonHandler:
         @param request: The authentication request to be handled.
         """
 
+        # retrieves the plugin manager
+        plugin_manager = self.main_authentication_python_handler_plugin.manager
+
         # retrieves the request username
         username = request.get_username()
 
@@ -103,6 +106,9 @@ class MainAuthenticationPythonHandler:
 
         # retrieves the file path
         file_path = arguments[FILE_PATH_VALUE]
+
+        # resolves the file path
+        file_path = plugin_manager.resolve_file_path(file_path)
 
         # creates the symbols map to be used in the interpretation
         # of the file as the locals and globals map
