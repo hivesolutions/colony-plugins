@@ -44,12 +44,23 @@ import startup_configuration_parser
 STARTUP_CONFIGURATION_FILE_PATH = "resources/startup_configuration.xml"
 
 class StartupConfiguration:
+    """
+    The startup configuration class.
+    """
 
     startup_configuration_plugin = None
+    """ The startup configuration plugin """
 
     startup_configuration = None
 
     def __init__(self, startup_configuration_plugin):
+        """
+        Constructor of the class.
+
+        @type startup_configuration_plugin: StartupConfigurationPlugin
+        @param startup_configuration_plugin: The startup configuration plugin.
+        """
+
         self.startup_configuration_plugin = startup_configuration_plugin
 
     def load_startup_configuration_file(self):
@@ -59,6 +70,18 @@ class StartupConfiguration:
         self.startup_configuration = startup_configuration_parser_parser.get_value()
 
     def is_plugin_loadable(self, plugin, type, loading_type):
+        """
+        Checks if the given plugin is loadable.
+
+        @type plugin: Plugin
+        @param plugin: The plugin to check if is loadable.
+        @type type: String
+        @param type: The type of the plugin to check.
+        @type loading_type: String
+        @param loading_type: The type of loading of the plugin.
+        @rtype: bool
+        @return: If the plugin is loadable.
+        """
 
         # retrieves the plugin manager
         plugin_manager = self.startup_configuration_plugin.manager
@@ -69,8 +92,14 @@ class StartupConfiguration:
 
         for startup_configuration_plugin in self.startup_configuration.plugins:
             if startup_configuration_plugin.id == plugin.id:
+                # in case the load flag is not set
                 if not startup_configuration_plugin.load:
+                    # returns false (is not loadable)
                     return False
+                # otherwiser
                 else:
+                    # returns true (is loadable)
                     return True
+
+        # returns true (is loadable)
         return True
