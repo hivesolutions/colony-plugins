@@ -59,7 +59,7 @@ class MainClientLdapPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["main_client_ldap.ldap.main_client_ldap_system", "main_client_ldap.ldap.main_client_ldap_exceptions"]
+    main_modules = ["main_client_ldap.ldap.main_client_ldap_exceptions", "main_client_ldap.ldap.main_client_ldap_system"]
 
     main_client_ldap = None
 
