@@ -59,7 +59,7 @@ class MainClientSmtpPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["main_client_smtp.smtp.main_client_smtp_system", "main_client_smtp.smtp.main_client_smtp_exceptions"]
+    main_modules = ["main_client_smtp.smtp.main_client_smtp_exceptions", "main_client_smtp.smtp.main_client_smtp_system"]
 
     main_client_smtp = None
 
