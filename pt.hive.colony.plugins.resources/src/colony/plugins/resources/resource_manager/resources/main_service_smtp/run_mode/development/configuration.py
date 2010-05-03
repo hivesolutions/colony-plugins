@@ -42,7 +42,7 @@ configuration = {
                  "default_port" : 25,
                  "default_handler" : "stream",
                  "default_authentication_handler" : "main",
-                 "default_session_handler" : "database",
+                 "default_session_handler" : "main",
                  "authentication_properties" : {
                      "authentication_handler" : "python",
                      "arguments" : {"file_path" : "authentication_configuration.py"}
