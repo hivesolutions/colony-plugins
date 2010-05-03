@@ -38,6 +38,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 authentication_configuration = {
-                                "admin" : {"type" : "PLAIN", "password" : "admin"},
-                                "root" : {"type" : "PLAIN", "password" : "root"}
+                                "admin" : {"type" : "plain", "password" : "admin"},
+                                "root" : {"type" : "plain", "password" : "root"}
                                }
