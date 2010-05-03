@@ -54,12 +54,12 @@ class ConfigurationManagerPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {}
-    capabilities = ["configuration_manager"]
+    capabilities = ["startup", "configuration_manager"]
     capabilities_allowed = ["configuration_model_provider"]
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = []
+    main_modules = ["configuration_manager.manager.configuration_manager_system"]
 
     configuration_manager = None
 
@@ -80,11 +80,11 @@ class ConfigurationManagerPlugin(colony.plugins.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.main.client.http", "1.0.0")
+    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.configuration.manager", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.main.client.http", "1.0.0")
+    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.configuration.manager", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
@@ -94,7 +94,9 @@ class ConfigurationManagerPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.load_allowed_capability("configuration_model_provider")
     def configuration_model_provider_load_allowed(self, plugin, capability):
         self.configuration_model_provider_plugins.append(plugin)
+        self.configuration_manager.configuration_model_provider_load(plugin)
 
     @colony.plugins.decorators.unload_allowed_capability("configuration_model_provider")
     def configuration_model_provider_unload_allowed(self, plugin, capability):
         self.configuration_model_provider_plugins.remove(plugin)
+        self.configuration_manager.configuration_model_provider_unload(plugin)

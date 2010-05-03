@@ -65,7 +65,7 @@ class ConfigurationManager:
         configuration_model_provider_plugin_id = configuration_model_provider_plugin.id
 
         # retrieves the configuration models bundle
-        configuration_models_bundle = configuration_model_provider_plugin.get_configuration_property("configuration_models_bundle", {})
+        configuration_models_bundle = configuration_model_provider_plugin.get_attribute("configuration_models_bundle") or {}
 
         # retrieves the plugin path
         plugin_path = plugin_manager.get_plugin_path_by_id(configuration_model_provider_plugin_id)
@@ -79,24 +79,34 @@ class ConfigurationManager:
 
         # iterates over the configuration models bundle
         for configuration_model in configuration_models_bundle:
-
             configuration_model_properties = configuration_models_bundle[configuration_model]
 
             global_value = configuration_model_properties.get("global", False)
 
             replace_value = configuration_model_properties.get("replace", False)
 
+            path_value = configuration_model_properties.get("path", configuration_model)
+
             if global_value:
-                configuration_model_target_path = plugin_global_configuration_path + "/" + configuration_model
+                configuration_model_target_directory_path = plugin_global_configuration_path
             else:
-                configuration_model_target_path = plugin_profile_configuration_path + "/" + configuration_model
+                configuration_model_target_directory_path = plugin_profile_configuration_path
+
+            configuration_model_path = plugin_path + "/" + path_value
+
+            configuration_model_target_path = configuration_model_target_directory_path + "/" + configuration_model
+
+            configuration_model_target_path_directory = os.path.dirname(configuration_model_target_path)
 
             # in case the configuration model target path does not exists
             # or the replace flag is active
             if not os.path.exists(configuration_model_target_path) or replace_value:
-                configuration_model_file = open(plugin_path + "/" + configuration_model, "rb")
+                # tries to creates the model path
+                self._try_create_path(configuration_model_target_path_directory)
 
-                configuration_model_target_file = open(plugin_path + "/" + configuration_model, "wb")
+                configuration_model_file = open(configuration_model_path, "rb")
+
+                configuration_model_target_file = open(configuration_model_target_path, "wb")
 
                 configuration_model_file_contents = configuration_model_file.read()
 
@@ -108,3 +118,16 @@ class ConfigurationManager:
 
     def configuration_model_provider_unload(self, configuration_model_provider_plugin):
         pass
+
+    def _try_create_path(self, path):
+        """
+        Tries to create the given path.
+
+        @type path: String
+        @param path: The path to try to create.
+        """
+
+        # in case the path does not exists
+        if not os.path.exists(path):
+            # creates the path directories
+            os.makedirs(path)
