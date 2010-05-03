@@ -59,7 +59,7 @@ class MainClientDnsPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["main_client_dns.dns.main_client_dns_system", "main_client_dns.dns.main_client_dns_exceptions"]
+    main_modules = ["main_client_dns.dns.main_client_dns_exceptions", "main_client_dns.dns.main_client_dns_system"]
 
     main_client_dns = None
 
