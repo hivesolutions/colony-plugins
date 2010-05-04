@@ -40,6 +40,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import os
 import random
 
+import colony.libs.string_buffer_util
+
 import PIL.Image
 import PIL.ImageDraw
 import PIL.ImageFont
@@ -70,6 +72,9 @@ NUMBER_LETTERS_VALUE = "number_letters"
 
 RGBA_VALUE = "RGBA"
 """ The rgba value """
+
+JPEG_VALUE = "jpeg"
+""" The jpeg value """
 
 class SecurityCaptcha:
     """
@@ -128,8 +133,18 @@ class SecurityCaptcha:
         # draw the string value into the image
         self._draw_text(image, text_font, string_value)
 
-        # saves the final image
-        image.save("hello.png")
+        # creates a new string buffer for the image
+        string_buffer = colony.libs.string_buffer_util.StringBuffer()
+
+        # saves the image into the string buffer
+        image.save(string_buffer, JPEG_VALUE)
+
+        # seeks the buffer to the beginning of the file
+        string_buffer.seek(0)
+
+        # returns a tuple with the string value and
+        # the string buffer
+        return (string_value, string_buffer)
 
     def _generate_string_value(self, number_letters):
         """
@@ -283,7 +298,7 @@ class SecurityCaptcha:
         # in case the font name is not defined
         if not font_name:
             # retrieves a random font name from the fonts path
-            font_name = self._get_random_file_path(fonts_path)
+            font_name = self._get_random_file_path(fonts_path, (".ttf", ".otf"))
 
         # creates the font full path from the font name
         # and the base fonts path
@@ -302,7 +317,7 @@ class SecurityCaptcha:
         # in case the pattern name is not defined
         if not pattern_name:
             # retrieves a random pattern name from the patterns path
-            pattern_name = self._get_random_file_path(patterns_path)
+            pattern_name = self._get_random_file_path(patterns_path, (".jpg", ".jpeg"))
 
         # creates the pattern full path from the pattern name
         # and the base patterns path
@@ -314,10 +329,13 @@ class SecurityCaptcha:
         # returns the pattern
         return pattern
 
-    def _get_random_file_path(self, directory_path):
+    def _get_random_file_path(self, directory_path, extensions = []):
         # retrieves the list of files within
         # the directory path
         file_paths = os.listdir(directory_path)
+
+        # filters the file paths based on the extensions
+        file_paths = [value for value in file_paths if os.path.splitext(value)[1] in extensions]
 
         # retrieves the length of the list of file paths,
         # the quantity of files available

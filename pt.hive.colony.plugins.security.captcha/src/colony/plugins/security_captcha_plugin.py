@@ -72,7 +72,6 @@ class SecurityCaptchaPlugin(colony.plugins.plugin_system.Plugin):
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
-        self.generate_captcha("asdas", {})
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
@@ -90,4 +89,4 @@ class SecurityCaptchaPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def generate_captcha(self, string_value, properties):
-        self.security_captcha.generate_captcha(string_value, properties)
+        return self.security_captcha.generate_captcha(string_value, properties)
