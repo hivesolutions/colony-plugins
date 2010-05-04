@@ -95,9 +95,6 @@ class TaskProgressInformationItem:
     def get_task_description(self):
         return self.task_description
 
-    def get_percentage_complete(self):
-        return self.percentage_complete
-
     def set_percentage_complete(self, value):
         self.percentage_complete = value
         self.panel.update_value_gauge_value()
