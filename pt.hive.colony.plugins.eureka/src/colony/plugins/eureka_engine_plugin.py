@@ -149,7 +149,7 @@ class EurekaEnginePlugin(colony.plugins.plugin_system.Plugin):
         self.eureka_item_mapper_plugins.append(plugin)
 
     @colony.plugins.decorators.load_allowed_capability("eureka_engine_item_processer.sorter")
-    def eureka_item_mapper_load_allowed(self, plugin, capability):
+    def eureka_item_sorter_load_allowed(self, plugin, capability):
         self.eureka_item_sorter_plugins.append(plugin)
 
     @colony.plugins.decorators.unload_allowed_capability("eureka_item_extension")
