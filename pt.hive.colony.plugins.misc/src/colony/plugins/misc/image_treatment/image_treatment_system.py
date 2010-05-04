@@ -41,6 +41,15 @@ import cStringIO
 
 import PIL.Image
 
+RGBA_VALUE = "RGBA"
+""" The rgba value """
+
+JPEG_VALUE = "jpeg"
+""" The jpeg value """
+
+PNG_VALUE = "png"
+""" The png value """
+
 class ImageTreatment:
     """
     The image treatment class.
@@ -70,7 +79,7 @@ class ImageTreatment:
         string_buffer = cStringIO.StringIO()
 
         # saves the image into the string buffer
-        image_resize.save(string_buffer, "jpeg")
+        image_resize.save(string_buffer, JPEG_VALUE)
 
         # seeks the buffer to the beginning of the file
         string_buffer.seek(0)
@@ -141,7 +150,7 @@ class ImageTreatment:
         resized_image_width, resized_image_height = resized_image.size
 
         # creates the new image
-        new_image = PIL.Image.new("RGBA", (width, height))
+        new_image = PIL.Image.new(RGBA_VALUE, (width, height))
 
         # pastes the resized image into the new image
         new_image.paste(resized_image, ((width - resized_image_width) / 2, (height - resized_image_height) / 2))
@@ -150,7 +159,7 @@ class ImageTreatment:
         string_buffer = cStringIO.StringIO()
 
         # saves the new image into the string buffer
-        new_image.save(string_buffer, "png")
+        new_image.save(string_buffer, PNG_VALUE)
 
         # seeks the buffer to the beginning of the file
         string_buffer.seek(0)
