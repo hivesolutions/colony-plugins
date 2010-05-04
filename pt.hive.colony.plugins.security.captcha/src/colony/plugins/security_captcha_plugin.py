@@ -60,6 +60,7 @@ class SecurityCaptchaPlugin(colony.plugins.plugin_system.Plugin):
                     "Python Imaging Library (PIL)", "PIL", "1.1.x", "http://www.pythonware.com/products/pil")]
     events_handled = []
     events_registrable = []
+    main_modules = ["security_captcha.captcha.security_captcha_system"]
 
     security_captcha = None
 

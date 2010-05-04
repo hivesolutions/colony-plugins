@@ -161,10 +161,7 @@ class SecurityCaptcha:
         # returns the string value
         return string_value
 
-    def _draw_text(self, image, text_font, string_value):
-        # TENHO DE TER DOIS MODOS DE OPERACAO UM EM KE ESCREVO A STRING SIMPLES
-
-
+    def _draw_text(self, image, text_font, string_value, rotate = True):
         # retrieves the image width and height
         image_width, image_height = image.size
 
@@ -173,6 +170,43 @@ class SecurityCaptcha:
 
         # creates the text draw (temporary) from the text image
         text_draw = PIL.ImageDraw.Draw(text_image)
+
+        # in case the rotate flag is set
+        if rotate:
+            # draws the text into the text image in rotate mode
+            text_size = self._draw_text_rotate(text_image, text_font, string_value)
+        else:
+            # draws the text into the text image in simple mode mode
+            text_size = self._draw_text_simple(text_draw, text_font, string_value)
+
+        # unpacks the text size retrieving the text width and height
+        text_width, text_height = text_size
+
+        # calculates the initial text x position
+        initial_text_x = (image_width / 2) - (text_width / 2)
+
+        # calculates the initial text y position
+        initial_text_y = (image_height / 2) - (text_height / 2)
+
+        # paste text image with the mask into the image
+        image.paste(text_image, (initial_text_x, initial_text_y), text_image)
+
+    def _draw_text_simple(self, text_draw, text_font, string_value):
+        # draw the text to the text draw
+        text_draw.text((0, 0), string_value, font = text_font, fill = (220, 220, 220))
+
+        # retrieves the text size from the text font
+        text_size = text_font.getsize(string_value)
+
+        # returns the text size
+        return text_size
+
+    def _draw_text_rotate(self, text_image, text_font, string_value):
+        # start the current letter x position
+        current_letter_x = 0
+
+        # start the maximum letter height
+        maximum_letter_height = 0
 
         # iterates over all the letters in the string value
         for letter_value in string_value:
@@ -189,35 +223,32 @@ class SecurityCaptcha:
             letter_draw.text((0, 0), letter_value, font = text_font, fill = (220, 220, 220))
 
             # generates a random rotation angle
-            rotation = random.randint(-5, 5)
+            rotation = random.randint(-45, 45)
 
             # rotates the text image
-            letter_image = letter_image.rotate(rotation, filter = PIL.Image.BICUBIC, expand = 1)
+            letter_image = letter_image.rotate(rotation, PIL.Image.BICUBIC, 1)
+
+            # retrieves the letter image width and height
+            letter_image_width, letter_image_height = letter_image.size
 
             # paste letter image with the mask into the image
-            #image.paste(text_image, (initial_text_x, initial_text_y), text_image)
+            text_image.paste(letter_image, (current_letter_x, 0), letter_image)
 
+            # increments the current letter z position
+            # with the letter width
+            current_letter_x += letter_image_width
 
-        # retrieves the text width and height from the text font
-        text_width, text_height = text_font.getsize(string_value)
+            # in case the current letter image height is the largest
+            if letter_image_height > maximum_letter_height:
+                # sets the maximum letter height as the
+                # current letter image height
+                maximum_letter_height = letter_image_height
 
-        # calculates the initial text x position
-        initial_text_x = (image_width / 2) - (text_width / 2)
+        # creates the string value size tuple
+        size = (current_letter_x, maximum_letter_height)
 
-        # calculates the initial text y position
-        initial_text_y = (image_height / 2) - (text_height / 2)
-
-        # draw the text to the text draw
-        text_draw.text((0, 0), string_value, font = text_font, fill = (220, 220, 220))
-
-        # generates a random rotation angle
-        rotation = random.randint(-5, 5)
-
-        # rotates the text image
-        text_image = text_image.rotate(rotation, filter = PIL.Image.BICUBIC)
-
-        # paste text image with the mask into the image
-        image.paste(text_image, (initial_text_x, initial_text_y), text_image)
+        # returns the string value size tuple
+        return size
 
     def _fill_pattern(self, image, pattern):
         # retrieves the image width and height
