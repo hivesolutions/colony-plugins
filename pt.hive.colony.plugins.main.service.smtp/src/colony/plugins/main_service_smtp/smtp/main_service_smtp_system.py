@@ -597,7 +597,7 @@ class SmtpClientServiceTask:
                     # retrieves the smtp command
                     smtp_command = smtp_message_splitted[0].lower()
 
-                    # retrieves the smpt arguments
+                    # retrieves the smtp arguments
                     smtp_arguments = smtp_message_splitted[1:]
 
                     # sets the smtp command in the request
