@@ -76,17 +76,36 @@ class ConfigurationManager:
         # retrieves the plugin manager
         plugin_manager = self.configuration_manager_plugin.manager
 
-        # retrieves the configuration model provider plugin id
-        configuration_model_provider_plugin_id = configuration_model_provider_plugin.id
-
         # retrieves the configuration models bundle
         configuration_models_bundle = configuration_model_provider_plugin.get_attribute(CONFIGURATION_MODELS_BUNDLE_VALUE) or {}
+
+        # retrieves the configuration model provider plugin id
+        configuration_model_provider_plugin_id = configuration_model_provider_plugin.id
 
         # retrieves the plugin path
         plugin_path = plugin_manager.get_plugin_path_by_id(configuration_model_provider_plugin_id)
 
         # retrieves the plugin configuration paths
         plugin_configuration_paths = plugin_manager.get_plugin_configuration_paths_by_id(configuration_model_provider_plugin_id)
+
+        # loads the configuration models bundle
+        self._load_configuration_models_bundle(configuration_models_bundle, plugin_configuration_paths, plugin_path)
+
+    def configuration_model_provider_unload(self, configuration_model_provider_plugin):
+        pass
+
+    def _load_configuration_models_bundle(self, configuration_models_bundle, plugin_configuration_paths, plugin_path):
+        """
+        Loads the configuration models bundle, using the given
+        plugin configuration paths and the plugin path.
+
+        @type configuration_models_bundle: Dictionary
+        @param configuration_models_bundle: The configuration models bundle.
+        @type plugin_configuration_paths: List
+        @param plugin_configuration_paths: The plugin configuration paths.
+        @type plugin_path: String
+        @param plugin_path: The plugin path.
+        """
 
         # unpacks the plugin configuration paths to get the global and the profile
         # configuration paths
@@ -133,9 +152,6 @@ class ConfigurationManager:
 
                 # copies the model file to the target path
                 self._copy_file(configuration_model_path, configuration_model_target_path)
-
-    def configuration_model_provider_unload(self, configuration_model_provider_plugin):
-        pass
 
     def _copy_file(self, file_path, target_file_path):
         """
