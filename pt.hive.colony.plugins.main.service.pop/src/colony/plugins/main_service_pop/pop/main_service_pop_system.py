@@ -45,7 +45,7 @@ import traceback
 
 import colony.libs.string_buffer_util
 
-import main_service_smtp_exceptions
+import main_service_pop_exceptions
 
 BIND_HOST_VALUE = ""
 """ The host value """
@@ -80,53 +80,53 @@ DEFAULT_END_TOKEN_VALUE = END_TOKEN_VALUE
 SOCKET_UPGRADER_NAME = "ssl"
 """ The socket upgrader name """
 
-class MainServiceSmtp:
+class MainServicePop:
     """
-    The main service smtp class.
+    The main service pop class.
     """
 
-    main_service_smtp_plugin = None
-    """ The main service smtp plugin """
+    main_service_pop_plugin = None
+    """ The main service pop plugin """
 
-    smtp_service_handler_plugins_map = {}
-    """ The smtp service handler plugins map """
+    pop_service_handler_plugins_map = {}
+    """ The pop service handler plugins map """
 
-    smtp_service_authentication_handler_plugins_map = {}
-    """ The smtp service authentication handler plugins map """
+    pop_service_authentication_handler_plugins_map = {}
+    """ The pop service authentication handler plugins map """
 
-    smtp_service_session_handler_plugins_map = {}
-    """ The smtp service session handler plugins map """
+    pop_service_session_handler_plugins_map = {}
+    """ The pop service session handler plugins map """
 
-    smtp_socket = None
-    """ The smtp socket """
+    pop_socket = None
+    """ The pop socket """
 
-    smtp_connection_active = False
-    """ The smtp connection active flag """
+    pop_connection_active = False
+    """ The pop connection active flag """
 
-    smtp_client_thread_pool = None
-    """ The smtp client thread pool """
+    pop_client_thread_pool = None
+    """ The pop client thread pool """
 
-    smtp_connection_close_event = None
-    """ The smtp connection close event """
+    pop_connection_close_event = None
+    """ The pop connection close event """
 
-    smtp_connection_close_end_event = None
-    """ The smtp connection close end event """
+    pop_connection_close_end_event = None
+    """ The pop connection close end event """
 
-    def __init__(self, main_service_smtp_plugin):
+    def __init__(self, main_service_pop_plugin):
         """
         Constructor of the class.
 
-        @type main_service_smtp_plugin: MainServiceSmtpPlugin
-        @param main_service_smtp_plugin: The main service smtp plugin.
+        @type main_service_pop_plugin: MainServicePopPlugin
+        @param main_service_pop_plugin: The main service pop plugin.
         """
 
-        self.main_service_smtp_plugin = main_service_smtp_plugin
+        self.main_service_pop_plugin = main_service_pop_plugin
 
-        self.smtp_service_handler_plugins_map = {}
-        self.smtp_service_authentication_handler_plugins_map = {}
-        self.smtp_service_session_handler_plugins_map = {}
-        self.smtp_connection_close_event = threading.Event()
-        self.smtp_connection_close_end_event = threading.Event()
+        self.pop_service_handler_plugins_map = {}
+        self.pop_service_authentication_handler_plugins_map = {}
+        self.pop_service_session_handler_plugins_map = {}
+        self.pop_connection_close_event = threading.Event()
+        self.pop_connection_close_end_event = threading.Event()
 
     def start_service(self, parameters):
         """
@@ -143,7 +143,7 @@ class MainServiceSmtp:
         port = parameters.get("port", DEFAULT_PORT)
 
         # retrieves the service configuration
-        service_configuration_property = self.main_service_smtp_plugin.get_configuration_property("server_configuration")
+        service_configuration_property = self.main_service_pop_plugin.get_configuration_property("server_configuration")
 
         # in case the service configuration property is defined
         if service_configuration_property:
@@ -162,11 +162,11 @@ class MainServiceSmtp:
         # start the server for the given socket provider, port and encoding
         self.start_server(socket_provider, port, service_configuration)
 
-        # clears the smtp connection close event
-        self.smtp_connection_close_event.clear()
+        # clears the pop connection close event
+        self.pop_connection_close_event.clear()
 
-        # sets the smtp connection close end event
-        self.smtp_connection_close_end_event.set()
+        # sets the pop connection close end event
+        self.pop_connection_close_end_event.set()
 
     def stop_service(self, parameters):
         """
@@ -176,23 +176,23 @@ class MainServiceSmtp:
         @param parameters: The parameters to start the service.
         """
 
-        # sets the smtp connection active flag as false
-        self.smtp_connection_active = False
+        # sets the pop connection active flag as false
+        self.pop_connection_active = False
 
-        # sets the smtp connection close event
-        self.smtp_connection_close_event.set()
+        # sets the pop connection close event
+        self.pop_connection_close_event.set()
 
-        # waits for the smtp connection close end event
-        self.smtp_connection_close_end_event.wait()
+        # waits for the pop connection close end event
+        self.pop_connection_close_end_event.wait()
 
-        # clears the smtp connection close end event
-        self.smtp_connection_close_end_event.clear()
+        # clears the pop connection close end event
+        self.pop_connection_close_end_event.clear()
 
         # stops all the pool tasks
-        self.smtp_client_thread_pool.stop_pool_tasks()
+        self.pop_client_thread_pool.stop_pool_tasks()
 
         # stops the pool
-        self.smtp_client_thread_pool.stop_pool()
+        self.pop_client_thread_pool.stop_pool()
 
     def start_server(self, socket_provider, port, service_configuration):
         """
@@ -207,26 +207,26 @@ class MainServiceSmtp:
         """
 
         # retrieves the thread pool manager plugin
-        thread_pool_manager_plugin = self.main_service_smtp_plugin.thread_pool_manager_plugin
+        thread_pool_manager_plugin = self.main_service_pop_plugin.thread_pool_manager_plugin
 
         # retrieves the task descriptor class
         task_descriptor_class = thread_pool_manager_plugin.get_thread_task_descriptor_class()
 
-        # creates the smtp client thread pool
-        self.smtp_client_thread_pool = thread_pool_manager_plugin.create_new_thread_pool("smtp pool",
-                                                                                         "pool to support smtp client connections",
+        # creates the pop client thread pool
+        self.pop_client_thread_pool = thread_pool_manager_plugin.create_new_thread_pool("pop pool",
+                                                                                         "pool to support pop client connections",
                                                                                          NUMBER_THREADS, SCHEDULING_ALGORITHM, MAX_NUMBER_THREADS)
 
-        # starts the smtp client thread pool
-        self.smtp_client_thread_pool.start_pool()
+        # starts the pop client thread pool
+        self.pop_client_thread_pool.start_pool()
 
-        # sets the smtp connection active flag as true
-        self.smtp_connection_active = True
+        # sets the pop connection active flag as true
+        self.pop_connection_active = True
 
         # in case the socket provider is defined
         if socket_provider:
             # retrieves the socket provider plugins
-            socket_provider_plugins = self.main_service_smtp_plugin.socket_provider_plugins
+            socket_provider_plugins = self.main_service_pop_plugin.socket_provider_plugins
 
             # iterates over all the socket provider plugins
             for socket_provider_plugin in socket_provider_plugins:
@@ -238,30 +238,30 @@ class MainServiceSmtp:
                     # the parameters for the socket provider
                     parameters = {"server_side" : True, "do_handshake_on_connect" : False}
 
-                    # creates a new smtp socket with the socket provider plugin
-                    self.smtp_socket = socket_provider_plugin.provide_socket_parameters(parameters)
+                    # creates a new pop socket with the socket provider plugin
+                    self.pop_socket = socket_provider_plugin.provide_socket_parameters(parameters)
 
             # in case the socket was not created, no socket provider found
-            if not self.smtp_socket:
-                raise main_service_smtp_exceptions.SocketProviderNotFound("socket provider %s not found" % socket_provider)
+            if not self.pop_socket:
+                raise main_service_pop_exceptions.SocketProviderNotFound("socket provider %s not found" % socket_provider)
         else:
-            # creates the smtp socket
-            self.smtp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            # creates the pop socket
+            self.pop_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         # sets the socket to be able to reuse the socket
-        self.smtp_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.pop_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-        # binds the smtp socket
-        self.smtp_socket.bind((BIND_HOST_VALUE, port))
+        # binds the pop socket
+        self.pop_socket.bind((BIND_HOST_VALUE, port))
 
-        # start listening in the smtp socket
-        self.smtp_socket.listen(5)
+        # start listening in the pop socket
+        self.pop_socket.listen(5)
 
-        # loops while the smtp connection is active
-        while not self.smtp_connection_close_event.isSet():
+        # loops while the pop connection is active
+        while not self.pop_connection_close_event.isSet():
             try:
                 # sets the socket to non blocking mode
-                self.smtp_socket.setblocking(0)
+                self.pop_socket.setblocking(0)
 
                 # starts the select values
                 selected_values = ([], [], [])
@@ -269,103 +269,103 @@ class MainServiceSmtp:
                 # iterates while there is no selected values
                 while selected_values == ([], [], []):
                     # in case the connection is closed
-                    if self.smtp_connection_close_event.isSet():
-                        # closes the smtp socket
-                        self.smtp_socket.close()
+                    if self.pop_connection_close_event.isSet():
+                        # closes the pop socket
+                        self.pop_socket.close()
 
                         return
 
                     # selects the values
-                    selected_values = select.select([self.smtp_socket], [], [], CLIENT_CONNECTION_TIMEOUT)
+                    selected_values = select.select([self.pop_socket], [], [], CLIENT_CONNECTION_TIMEOUT)
 
                 # sets the socket to blocking mode
-                self.smtp_socket.setblocking(1)
+                self.pop_socket.setblocking(1)
             except:
                 # prints debug message about connection
-                self.main_service_smtp_plugin.info("The socket is not valid for selection of the pool")
+                self.main_service_pop_plugin.info("The socket is not valid for selection of the pool")
 
                 return
 
             # in case the connection is closed
-            if self.smtp_connection_close_event.isSet():
-                # closes the smtp socket
-                self.smtp_socket.close()
+            if self.pop_connection_close_event.isSet():
+                # closes the pop socket
+                self.pop_socket.close()
 
                 return
 
             try:
-                # accepts the connection retrieving the smtp connection object and the address
-                smtp_connection, smtp_address = self.smtp_socket.accept()
+                # accepts the connection retrieving the pop connection object and the address
+                pop_connection, pop_address = self.pop_socket.accept()
 
-                # creates a new smtp client service task, with the given smtp connection, address, encoding and encoding handler
-                smtp_client_service_task = SmtpClientServiceTask(self.main_service_smtp_plugin, smtp_connection, smtp_address, service_configuration)
+                # creates a new pop client service task, with the given pop connection, address, encoding and encoding handler
+                pop_client_service_task = PopClientServiceTask(self.main_service_pop_plugin, pop_connection, pop_address, service_configuration)
 
                 # creates a new task descriptor
-                task_descriptor = task_descriptor_class(start_method = smtp_client_service_task.start,
-                                                        stop_method = smtp_client_service_task.stop,
-                                                        pause_method = smtp_client_service_task.pause,
-                                                        resume_method = smtp_client_service_task.resume)
+                task_descriptor = task_descriptor_class(start_method = pop_client_service_task.start,
+                                                        stop_method = pop_client_service_task.stop,
+                                                        pause_method = pop_client_service_task.pause,
+                                                        resume_method = pop_client_service_task.resume)
 
-                # inserts the new task descriptor into the smtp client thread pool
-                self.smtp_client_thread_pool.insert_task(task_descriptor)
+                # inserts the new task descriptor into the pop client thread pool
+                self.pop_client_thread_pool.insert_task(task_descriptor)
 
-                self.main_service_smtp_plugin.debug("Number of threads in pool: %d" % self.smtp_client_thread_pool.current_number_threads)
+                self.main_service_pop_plugin.debug("Number of threads in pool: %d" % self.pop_client_thread_pool.current_number_threads)
             except Exception, exception:
                 print exception
-                self.main_service_smtp_plugin.error("Error accepting connection")
+                self.main_service_pop_plugin.error("Error accepting connection")
 
-        # closes the smtp socket
-        self.smtp_socket.close()
+        # closes the pop socket
+        self.pop_socket.close()
 
-    def smtp_service_handler_load(self, smtp_service_handler_plugin):
+    def pop_service_handler_load(self, pop_service_handler_plugin):
         # retrieves the plugin handler name
-        handler_name = smtp_service_handler_plugin.get_handler_name()
+        handler_name = pop_service_handler_plugin.get_handler_name()
 
-        self.smtp_service_handler_plugins_map[handler_name] = smtp_service_handler_plugin
+        self.pop_service_handler_plugins_map[handler_name] = pop_service_handler_plugin
 
-    def smtp_service_handler_unload(self, smtp_service_handler_plugin):
+    def pop_service_handler_unload(self, pop_service_handler_plugin):
         # retrieves the plugin handler name
-        handler_name = smtp_service_handler_plugin.get_handler_name()
+        handler_name = pop_service_handler_plugin.get_handler_name()
 
-        del self.smtp_service_handler_plugins_map[handler_name]
+        del self.pop_service_handler_plugins_map[handler_name]
 
-    def smtp_service_authentication_handler_load(self, smtp_service_authentication_handler_plugin):
+    def pop_service_authentication_handler_load(self, pop_service_authentication_handler_plugin):
         # retrieves the plugin handler name
-        authentication_handler_name = smtp_service_authentication_handler_plugin.get_handler_name()
+        authentication_handler_name = pop_service_authentication_handler_plugin.get_handler_name()
 
-        self.smtp_service_authentication_handler_plugins_map[authentication_handler_name] = smtp_service_authentication_handler_plugin
+        self.pop_service_authentication_handler_plugins_map[authentication_handler_name] = pop_service_authentication_handler_plugin
 
-    def smtp_service_authentication_handler_unload(self, smtp_service_authentication_handler_plugin):
+    def pop_service_authentication_handler_unload(self, pop_service_authentication_handler_plugin):
         # retrieves the plugin handler name
-        authentication_handler_name = smtp_service_authentication_handler_plugin.get_handler_name()
+        authentication_handler_name = pop_service_authentication_handler_plugin.get_handler_name()
 
-        del self.smtp_service_authentication_handler_plugins_map[authentication_handler_name]
+        del self.pop_service_authentication_handler_plugins_map[authentication_handler_name]
 
-    def smtp_service_session_handler_load(self, smtp_service_session_handler_plugin):
+    def pop_service_session_handler_load(self, pop_service_session_handler_plugin):
         # retrieves the plugin handler name
-        session_handler_name = smtp_service_session_handler_plugin.get_handler_name()
+        session_handler_name = pop_service_session_handler_plugin.get_handler_name()
 
-        self.smtp_service_session_handler_plugins_map[session_handler_name] = smtp_service_session_handler_plugin
+        self.pop_service_session_handler_plugins_map[session_handler_name] = pop_service_session_handler_plugin
 
-    def smtp_service_session_handler_unload(self, smtp_service_session_handler_plugin):
+    def pop_service_session_handler_unload(self, pop_service_session_handler_plugin):
         # retrieves the plugin handler name
-        session_handler_name = smtp_service_session_handler_plugin.get_handler_name()
+        session_handler_name = pop_service_session_handler_plugin.get_handler_name()
 
-        del self.smtp_service_session_handler_plugins_map[session_handler_name]
+        del self.pop_service_session_handler_plugins_map[session_handler_name]
 
-class SmtpClientServiceTask:
+class PopClientServiceTask:
     """
-    The smtp client service task class.
+    The pop client service task class.
     """
 
-    main_service_smtp_plugin = None
-    """ The main service smtp plugin """
+    main_service_pop_plugin = None
+    """ The main service pop plugin """
 
-    smtp_connection = None
-    """ The smtp connection """
+    pop_connection = None
+    """ The pop connection """
 
-    smtp_address = None
-    """ The smtp address """
+    pop_address = None
+    """ The pop address """
 
     service_configuration = None
     """ The service configuration """
@@ -373,21 +373,21 @@ class SmtpClientServiceTask:
     encoding_handler = None
     """ The encoding handler """
 
-    def __init__(self, main_service_smtp_plugin, smtp_connection, smtp_address, service_configuration):
-        self.main_service_smtp_plugin = main_service_smtp_plugin
-        self.smtp_connection = smtp_connection
-        self.smtp_address = smtp_address
+    def __init__(self, main_service_pop_plugin, pop_connection, pop_address, service_configuration):
+        self.main_service_pop_plugin = main_service_pop_plugin
+        self.pop_connection = pop_connection
+        self.pop_address = pop_address
         self.service_configuration = service_configuration
 
     def start(self):
         # prints debug message about connection
-        self.main_service_smtp_plugin.debug("Connected to: %s" % str(self.smtp_address))
+        self.main_service_pop_plugin.debug("Connected to: %s" % str(self.pop_address))
 
         # sets the request timeout
         request_timeout = REQUEST_TIMEOUT
 
         # creates the session object
-        session = SmtpSession(self)
+        session = PopSession(self)
 
         # retrieves the socket upgrader plugin for the socket upgrader name
         socket_upgrader_plugin = self._get_socket_upgrader_plugin(SOCKET_UPGRADER_NAME)
@@ -405,19 +405,19 @@ class SmtpClientServiceTask:
         # retrieves the default authentication handler name
         authentication_handler_name = service_configuration.get("default_authentication_handler", None)
 
-        # retrieves the smtp service authentication handler plugins map
-        smtp_service_authentication_handler_plugins_map = self.main_service_smtp_plugin.main_service_smtp.smtp_service_authentication_handler_plugins_map
+        # retrieves the pop service authentication handler plugins map
+        pop_service_authentication_handler_plugins_map = self.main_service_pop_plugin.main_service_pop.pop_service_authentication_handler_plugins_map
 
         # in case the authentication handler is not found in the handler plugins map
-        if not authentication_handler_name in smtp_service_authentication_handler_plugins_map:
-            # raises an smtp handler not found exception
-            raise main_service_smtp_exceptions.SmtpHandlerNotFoundException("no authentication handler found for current request: " + authentication_handler_name)
+        if not authentication_handler_name in pop_service_authentication_handler_plugins_map:
+            # raises an pop handler not found exception
+            raise main_service_pop_exceptions.PopHandlerNotFoundException("no authentication handler found for current request: " + authentication_handler_name)
 
-        # retrieves the smtp service authentication handler plugin
-        smtp_service_authentication_handler_plugin = smtp_service_authentication_handler_plugins_map[authentication_handler_name]
+        # retrieves the pop service authentication handler plugin
+        pop_service_authentication_handler_plugin = pop_service_authentication_handler_plugins_map[authentication_handler_name]
 
         # sets the authentication handler (plugin) in the session
-        session.set_authentication_handler(smtp_service_authentication_handler_plugin)
+        session.set_authentication_handler(pop_service_authentication_handler_plugin)
 
         # retrieves the authentication properties
         authentication_properties = service_configuration.get("authentication_properties", {})
@@ -428,41 +428,41 @@ class SmtpClientServiceTask:
         # retrieves the default session handler name
         session_handler_name = service_configuration.get("default_session_handler", None)
 
-        # retrieves the smtp service session handler plugins map
-        smtp_service_session_handler_plugins_map = self.main_service_smtp_plugin.main_service_smtp.smtp_service_session_handler_plugins_map
+        # retrieves the pop service session handler plugins map
+        pop_service_session_handler_plugins_map = self.main_service_pop_plugin.main_service_pop.pop_service_session_handler_plugins_map
 
         # in case the session handler is not found in the handler plugins map
-        if not session_handler_name in smtp_service_session_handler_plugins_map:
-            # raises an smtp handler not found exception
-            raise main_service_smtp_exceptions.SmtpHandlerNotFoundException("no session handler found for current request: " + session_handler_name)
+        if not session_handler_name in pop_service_session_handler_plugins_map:
+            # raises an pop handler not found exception
+            raise main_service_pop_exceptions.PopHandlerNotFoundException("no session handler found for current request: " + session_handler_name)
 
-        # retrieves the smtp service session handler plugin
-        smtp_service_session_handler_plugin = smtp_service_session_handler_plugins_map[session_handler_name]
+        # retrieves the pop service session handler plugin
+        pop_service_session_handler_plugin = pop_service_session_handler_plugins_map[session_handler_name]
 
         # sets the session handler (plugin) in the session
-        session.set_session_handler(smtp_service_session_handler_plugin)
+        session.set_session_handler(pop_service_session_handler_plugin)
 
         # retrieves the default handler name
         handler_name = service_configuration.get("default_handler", None)
 
         # in case no handler name is defined (request not handled)
         if not handler_name:
-            # raises an smtp no handler exception
-            raise main_service_smtp_exceptions.SmtpNoHandlerException("no handler defined for current request")
+            # raises an pop no handler exception
+            raise main_service_pop_exceptions.PopNoHandlerException("no handler defined for current request")
 
-        # retrieves the smtp service handler plugins map
-        smtp_service_handler_plugins_map = self.main_service_smtp_plugin.main_service_smtp.smtp_service_handler_plugins_map
+        # retrieves the pop service handler plugins map
+        pop_service_handler_plugins_map = self.main_service_pop_plugin.main_service_pop.pop_service_handler_plugins_map
 
         # in case the handler is not found in the handler plugins map
-        if not handler_name in smtp_service_handler_plugins_map:
-            # raises an smtp handler not found exception
-            raise main_service_smtp_exceptions.SmtpHandlerNotFoundException("no handler found for current request: " + handler_name)
+        if not handler_name in pop_service_handler_plugins_map:
+            # raises an pop handler not found exception
+            raise main_service_pop_exceptions.PopHandlerNotFoundException("no handler found for current request: " + handler_name)
 
-        # retrieves the smtp service handler plugin
-        smtp_service_handler_plugin = smtp_service_handler_plugins_map[handler_name]
+        # retrieves the pop service handler plugin
+        pop_service_handler_plugin = pop_service_handler_plugins_map[handler_name]
 
         # handles the initial request by the request handler
-        smtp_service_handler_plugin.handle_initial_request(request)
+        pop_service_handler_plugin.handle_initial_request(request)
 
         # sends the initial request to the client (initial response)
         self.send_request(request)
@@ -471,16 +471,16 @@ class SmtpClientServiceTask:
             try:
                 # retrieves the request
                 request = self.retrieve_request(session, request_timeout)
-            except main_service_smtp_exceptions.MainServiceSmtpException:
-                self.main_service_smtp_plugin.debug("Connection: %s closed" % str(self.smtp_address))
+            except main_service_pop_exceptions.MainServicePopException:
+                self.main_service_pop_plugin.debug("Connection: %s closed" % str(self.pop_address))
                 return
 
             try:
                 # prints debug message about request
-                self.main_service_smtp_plugin.debug("Handling request: %s" % str(request))
+                self.main_service_pop_plugin.debug("Handling request: %s" % str(request))
 
                 # handles the request by the request handler
-                smtp_service_handler_plugin.handle_request(request)
+                pop_service_handler_plugin.handle_request(request)
 
                 # sends the request to the client (response)
                 self.send_request(request)
@@ -499,19 +499,19 @@ class SmtpClientServiceTask:
                 # in case the session is closed
                 if session.get_closed():
                     # prints debug message about session
-                    self.main_service_smtp_plugin.debug("Session closed: %s" % str(session))
+                    self.main_service_pop_plugin.debug("Session closed: %s" % str(session))
 
                     break
 
             except Exception, exception:
                 self.send_exception(request, exception)
 
-        # closes the smtp connection
-        self.smtp_connection.close()
+        # closes the pop connection
+        self.pop_connection.close()
 
     def stop(self):
-        # closes the smtp connection
-        self.smtp_connection.close()
+        # closes the pop connection
+        self.pop_connection.close()
 
     def pause(self):
         pass
@@ -523,16 +523,16 @@ class SmtpClientServiceTask:
         """
         Retrieves the initial request from the received message.
 
-        @type session: SmtpSession
-        @param session: The current smtp session.
+        @type session: PopSession
+        @param session: The current pop session.
         @type request_timeout: int
         @param request_timeout: The timeout for the request retrieval.
-        @rtype: SmtpRequest
+        @rtype: PopRequest
         @return: The request from the received message.
         """
 
         # creates the initial request object
-        request = SmtpRequest()
+        request = PopRequest()
 
         # sets the session object in the request
         request.set_session(session)
@@ -544,11 +544,11 @@ class SmtpClientServiceTask:
         """
         Retrieves the request from the received message.
 
-        @type session: SmtpSession
-        @param session: The current smtp session.
+        @type session: PopSession
+        @param session: The current pop session.
         @type request_timeout: int
         @param request_timeout: The timeout for the request retrieval.
-        @rtype: SmtpRequest
+        @rtype: PopRequest
         @return: The request from the received message.
         """
 
@@ -556,7 +556,7 @@ class SmtpClientServiceTask:
         message = colony.libs.string_buffer_util.StringBuffer()
 
         # creates a request object
-        request = SmtpRequest()
+        request = PopRequest()
 
         # retrieves the current end token
         end_token = session.get_end_token()
@@ -568,7 +568,7 @@ class SmtpClientServiceTask:
 
             # in case no valid data was received
             if data == "":
-                raise main_service_smtp_exceptions.SmtpInvalidDataException("empty data received")
+                raise main_service_pop_exceptions.PopInvalidDataException("empty data received")
 
             # writes the data to the string buffer
             message.write(data)
@@ -586,28 +586,28 @@ class SmtpClientServiceTask:
 
             # in case there is an end token found
             if not end_token_index == -1:
-                # retrieves the smtp message
-                smtp_message = message_value[:end_token_index]
+                # retrieves the pop message
+                pop_message = message_value[:end_token_index]
 
                 # in case the session is not in data transmission mode
                 if not session.data_transmission:
-                    # splits the smtp message
-                    smtp_message_splitted = smtp_message.split(" ")
+                    # splits the pop message
+                    pop_message_splitted = pop_message.split(" ")
 
-                    # retrieves the smtp command
-                    smtp_command = smtp_message_splitted[0].lower()
+                    # retrieves the pop command
+                    pop_command = pop_message_splitted[0].lower()
 
-                    # retrieves the smpt arguments
-                    smtp_arguments = smtp_message_splitted[1:]
+                    # retrieves the pop arguments
+                    pop_arguments = pop_message_splitted[1:]
 
-                    # sets the smtp command in the request
-                    request.set_command(smtp_command)
+                    # sets the pop command in the request
+                    request.set_command(pop_command)
 
-                    # sets the smtp arguments in the request
-                    request.set_arguments(smtp_arguments)
+                    # sets the pop arguments in the request
+                    request.set_arguments(pop_arguments)
 
-                # sets the smtp message in the request
-                request.set_message(smtp_message)
+                # sets the pop message in the request
+                request.set_message(pop_message)
 
                 # sets the session object in the request
                 request.set_session(session)
@@ -618,24 +618,24 @@ class SmtpClientServiceTask:
     def retrieve_data(self, request_timeout = REQUEST_TIMEOUT, chunk_size = CHUNK_SIZE):
         try:
             # sets the connection to non blocking mode
-            self.smtp_connection.setblocking(0)
+            self.pop_connection.setblocking(0)
 
-            # runs the select in the smtp connection, with timeout
-            selected_values = select.select([self.smtp_connection], [], [], request_timeout)
+            # runs the select in the pop connection, with timeout
+            selected_values = select.select([self.pop_connection], [], [], request_timeout)
 
             # sets the connection to blocking mode
-            self.smtp_connection.setblocking(1)
+            self.pop_connection.setblocking(1)
         except:
-            raise main_service_smtp_exceptions.RequestClosed("invalid socket")
+            raise main_service_pop_exceptions.RequestClosed("invalid socket")
 
         if selected_values == ([], [], []):
-            self.smtp_connection.close()
-            raise main_service_smtp_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
+            self.pop_connection.close()
+            raise main_service_pop_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
         try:
             # receives the data in chunks
-            data = self.smtp_connection.recv(chunk_size)
+            data = self.pop_connection.recv(chunk_size)
         except:
-            raise main_service_smtp_exceptions.ClientRequestTimeout("timeout")
+            raise main_service_pop_exceptions.ClientRequestTimeout("timeout")
 
         return data
 
@@ -643,7 +643,7 @@ class SmtpClientServiceTask:
         """
         Sends the exception to the given request for the given exception.
 
-        @type request: SmtpRequest
+        @type request: PopRequest
         @param request: The request to send the exception.
         @type exception: Exception
         @param exception: The exception to be sent.
@@ -686,7 +686,7 @@ class SmtpClientServiceTask:
 
         try:
             # sends the result value to the client
-            self.smtp_connection.sendall(result_value)
+            self.pop_connection.sendall(result_value)
         except:
             # error in the client side
             return
@@ -697,7 +697,7 @@ class SmtpClientServiceTask:
         This retrieval takes into account the request target and characteristics
         to merge the virtual servers configurations.
 
-        @type request: SmtpRequest
+        @type request: PopRequest
         @param request: The request to be used in the resolution
         of the service configuration.
         @rtype: Dictionary
@@ -712,7 +712,7 @@ class SmtpClientServiceTask:
 
     def _get_socket_upgrader_plugin(self, socket_upgrader_name):
         # retrieves the socket upgrader plugins
-        socket_upgrader_plugins = self.main_service_smtp_plugin.socket_upgrader_plugins
+        socket_upgrader_plugins = self.main_service_pop_plugin.socket_upgrader_plugins
 
         # iterates over all the socket upgrader plugins
         for socket_upgrader_plugin in socket_upgrader_plugins:
@@ -723,9 +723,9 @@ class SmtpClientServiceTask:
             if socket_upgrader_plugin_upgrader_name == socket_upgrader_name:
                 return socket_upgrader_plugin
 
-class SmtpRequest:
+class PopRequest:
     """
-    The smtp request class.
+    The pop request class.
     """
 
     message = None
@@ -979,13 +979,13 @@ class SmtpRequest:
 
         self.session = session
 
-class SmtpSession:
+class PopSession:
     """
-    The smtp session class.
+    The pop session class.
     """
 
-    smtp_client_service_task = None
-    """ The smtp client service task """
+    pop_client_service_task = None
+    """ The pop client service task """
 
     client_hostname = "none"
     """ The client hostname """
@@ -1029,15 +1029,15 @@ class SmtpSession:
     authentication_properties = {}
     """ The authentication properties """
 
-    def __init__(self, smtp_client_service_task):
+    def __init__(self, pop_client_service_task):
         """
         Constructor of the class.
 
-        @type smtp_client_service_task: SmtpClientServiceTask
-        @param smtp_client_service_task: The smtp client service task.
+        @type pop_client_service_task: PopClientServiceTask
+        @param pop_client_service_task: The pop client service task.
         """
 
-        self.smtp_client_service_task = smtp_client_service_task
+        self.pop_client_service_task = pop_client_service_task
 
         self.messages = []
         self.properties = {}
@@ -1048,7 +1048,7 @@ class SmtpSession:
 
     def generate_message(self, set_current_message = True):
         # creates the new message
-        message = SmtpMessage()
+        message = PopMessage()
 
         # adds the message to the messages list
         self.add_message(message)
@@ -1064,7 +1064,7 @@ class SmtpSession:
         Adds a message to the list of messages
         of the current session.
 
-        @type message: SmtpMessage
+        @type message: PopMessage
         @param message: The message to be added
         to the session.
         """
@@ -1123,13 +1123,13 @@ class SmtpSession:
 
         # in case no upgrader handler is set
         if not self.upgrader_handler:
-            raise main_service_smtp_exceptions.SmtpRuntimeException("no upgrader handler defined")
+            raise main_service_pop_exceptions.PopRuntimeException("no upgrader handler defined")
 
         # the parameters for the upgrader handler
         parameters = {"server_side" : True, "do_handshake_on_connect" : False}
 
-        # upgrades the smtp client service task with the current upgrader handler
-        self.smtp_client_service_task.smtp_connection = self.upgrader_handler(self.smtp_client_service_task.smtp_connection, parameters)
+        # upgrades the pop client service task with the current upgrader handler
+        self.pop_client_service_task.pop_connection = self.upgrader_handler(self.pop_client_service_task.pop_connection, parameters)
 
     def reset_end_token(self):
         """
@@ -1139,25 +1139,25 @@ class SmtpSession:
 
         self.end_token = DEFAULT_END_TOKEN_VALUE
 
-    def get_smtp_client_service_task(self):
+    def get_pop_client_service_task(self):
         """
-        Retrieves the client smtp client service task.
+        Retrieves the client pop client service task.
 
-        @rtype: SmtpClientServiceTask
-        @return: The client smtp client service task.
-        """
-
-        return self.smtp_client_service_task
-
-    def set_smtp_client_service_task(self, smtp_client_service_task):
-        """
-        Sets the client smtp client service task.
-
-        @type smtp_client_service_task: SmtpClientServiceTask
-        @param smtp_client_service_task: The client smtp client service task.
+        @rtype: PopClientServiceTask
+        @return: The client pop client service task.
         """
 
-        self.smtp_client_service_task = smtp_client_service_task
+        return self.pop_client_service_task
+
+    def set_pop_client_service_task(self, pop_client_service_task):
+        """
+        Sets the client pop client service task.
+
+        @type pop_client_service_task: PopClientServiceTask
+        @param pop_client_service_task: The client pop client service task.
+        """
+
+        self.pop_client_service_task = pop_client_service_task
 
     def get_client_hostname(self):
         """
@@ -1283,7 +1283,7 @@ class SmtpSession:
         """
         Retrieves the current message.
 
-        @rtype: SmtpMessage
+        @rtype: popMessage
         @return: The current message.
         """
 
@@ -1293,7 +1293,7 @@ class SmtpSession:
         """
         Sets the current message.
 
-        @type current_message: SmtpMessage
+        @type current_message: popMessage
         @param current_message: The current message.
         """
 
@@ -1439,10 +1439,10 @@ class SmtpSession:
 
         self.authentication_properties = authentication_properties
 
-class SmtpMessage:
+class PopMessage:
     """
-    The smtp message class that represents
-    a message to be sent through smtp.
+    The pop message class that represents
+    a message to be sent through pop.
     """
 
     contents = "none"
