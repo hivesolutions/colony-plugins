@@ -146,6 +146,16 @@ class SecurityCaptcha:
         # the string buffer
         return (string_value, string_buffer)
 
+    def generate_captcha_string_value(self, properties):
+        # tries to retrieve the number of letters
+        number_letters = properties.get(NUMBER_LETTERS_VALUE, DEFAULT_NUMBER_LETTERS)
+
+        # generates the string value for the given number of letters
+        string_value = self._generate_string_value(number_letters)
+
+        # returns the generated string value
+        return string_value
+
     def _generate_string_value(self, number_letters):
         """
         Generates a string value with the given number

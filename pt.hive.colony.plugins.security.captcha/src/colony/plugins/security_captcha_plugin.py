@@ -90,3 +90,6 @@ class SecurityCaptchaPlugin(colony.plugins.plugin_system.Plugin):
 
     def generate_captcha(self, string_value, properties):
         return self.security_captcha.generate_captcha(string_value, properties)
+
+    def generate_captcha_string_value(self, properties):
+        return self.security_captcha.generate_captcha_string_value(properties)
