@@ -1345,8 +1345,26 @@ class EntityManagerSqliteEngine:
                 # retrieves the relation type field
                 relation_type_field = relation_attributes[RELATION_TYPE_FIELD]
 
+                if relation_type_field == ONE_TO_ONE_RELATION or relation_type_field == MANY_TO_MANY_RELATION:
+                    # retrieves the target entity name field
+                    target_entity_name_field = relation_attributes[TARGET_ENTITY_NAME_FIELD]
+
+                    # retrieves the join attribute name field
+                    join_attribute_name_field = relation_attributes[JOIN_ATTRIBUTE_NAME_FIELD]
+
+                    # creates the initial query string value
+                    query_string_value = "update " + target_entity_name_field + " set " + join_attribute_name_field + " = null where " + join_attribute_name_field + " = "
+
+                    # retrieves the entity id attribute value sqlite string value
+                    entity_id_attribute_value_sqlite_string_value = self.get_attribute_sqlite_string_value(id_attribute_value, entity_class_id_attribute_value_data_type)
+
+                    query_string_value += entity_id_attribute_value_sqlite_string_value
+
+                    # executes the query removing the values
+                    self.execute_query(cursor, query_string_value)
+
                 # in case the relation is of type many-to-many
-                if relation_type_field == MANY_TO_MANY_RELATION:
+                elif relation_type_field == MANY_TO_MANY_RELATION:
                     # retrieves the join table field
                     join_table_field = relation_attributes[JOIN_TABLE_FIELD]
 
@@ -2563,10 +2581,14 @@ class EntityManagerSqliteEngine:
             # retrieves the relation type
             relation_type = relation_attributes[RELATION_TYPE_FIELD]
 
+            # in case it's a one to many relation
             if relation_type == ONE_TO_MANY_RELATION:
                 return True
+            # in case it's a many to many relation
             elif relation_type == MANY_TO_MANY_RELATION:
                 return True
+            # in case it's a one to one relation, it will check if
+            # the entity is mapped by other relation
             elif relation_type == ONE_TO_ONE_RELATION:
                 # in case the mapped by field is defined in the relation attributes
                 if MAPPED_BY_FIELD in relation_attributes:
