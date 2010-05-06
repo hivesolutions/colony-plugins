@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
 import time
 import base64
 
@@ -456,11 +457,17 @@ class MainServicePopStreamHandler:
         # retrieves the current time
         current_time = time.time()
 
+        # retrieves the pid
+        pid = os.getpid()
+
+        # creates the timestamp string base on the pid and current time
+        timestamp_string = "<" + str(pid) + "." + str(current_time) + "@localhost>"
+
         # sets the request response code
         request.set_response_code("+OK")
 
         # sets the request response message
-        request.set_response_message("pop3 server ready <" + str(current_time) + "@localhost>")
+        request.set_response_message("pop3 server ready " + timestamp_string)
 
     def process_authentication_plain(self, request, session, arguments):
         # asserts the mail arguments
