@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import time
 import base64
 
 import main_service_pop_stream_handler_exceptions
@@ -452,11 +453,14 @@ class MainServicePopStreamHandler:
         session.set_closed(True)
 
     def handle_initial_request(self, request):
+        # retrieves the current time
+        current_time = time.time()
+
         # sets the request response code
         request.set_response_code("+OK")
 
         # sets the request response message
-        request.set_response_message("pop3 server ready <1896.697170952@dbc.mtview.ca.us>")
+        request.set_response_message("pop3 server ready <" + str(current_time) + "@localhost>")
 
     def process_authentication_plain(self, request, session, arguments):
         # asserts the mail arguments
