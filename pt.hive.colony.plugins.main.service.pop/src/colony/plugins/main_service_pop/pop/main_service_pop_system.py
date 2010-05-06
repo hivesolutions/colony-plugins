@@ -68,7 +68,7 @@ MAX_NUMBER_THREADS = 30
 SCHEDULING_ALGORITHM = 2
 """ The scheduling algorithm """
 
-DEFAULT_PORT = 25
+DEFAULT_PORT = 110
 """ The default port """
 
 END_TOKEN_VALUE = "\r\n"
@@ -650,13 +650,13 @@ class PopClientServiceTask:
         """
 
         # sets the request response code
-        request.set_response_code(554)
+        request.set_response_code("-ERR")
 
         # sets the request response message
-        request.set_response_message("Exception occurred")
+        request.set_response_message("exception occurred")
 
         # writes the exception message
-        request.write(" - Error: '" + str(exception) + "'\n")
+        request.write(" - error: '" + str(exception) + "'\n")
 
         # writes the traceback message in the request
         request.write("traceback:\n")
@@ -787,9 +787,6 @@ class PopRequest:
         # retrieves the result stream
         result = colony.libs.string_buffer_util.StringBuffer()
 
-        # converts the response code to string
-        response_code_string = str(self.response_code)
-
         # in case the response messages
         # are defined
         if self.response_messages:
@@ -798,7 +795,7 @@ class PopRequest:
 
             # iterates over all the response messages
             for response_message in self.response_messages:
-                result.write(response_code_string)
+                result.write(self.response_code)
 
                 # in case the counter is one (last response message)
                 if counter == 1:
@@ -820,7 +817,7 @@ class PopRequest:
         else:
             # writes the response line (response code plus response message)
             # to the result stream
-            result.write(response_code_string + " " + self.response_message)
+            result.write(self.response_code + " " + self.response_message)
 
         # retrieves the result string value
         message = self.message_stream.get_value()
@@ -1011,9 +1008,6 @@ class PopSession:
     authenticated = False
     """ The authenticated flag """
 
-    messages = []
-    """ The messages associated with the session """
-
     properties = {}
     """ The properties of the current session """
 
@@ -1039,37 +1033,11 @@ class PopSession:
 
         self.pop_client_service_task = pop_client_service_task
 
-        self.messages = []
         self.properties = {}
         self.authentication_properties = {}
 
     def __repr__(self):
         return "(%s, %s)" % (self.client_hostname, self.properties)
-
-    def generate_message(self, set_current_message = True):
-        # creates the new message
-        message = PopMessage()
-
-        # adds the message to the messages list
-        self.add_message(message)
-
-        # in case the set current message flag
-        # is active
-        if set_current_message:
-            # sets the message as the current message
-            self.set_current_message(message)
-
-    def add_message(self, message):
-        """
-        Adds a message to the list of messages
-        of the current session.
-
-        @type message: PopMessage
-        @param message: The message to be added
-        to the session.
-        """
-
-        self.messages.append(message)
 
     def authenticate(self, username, password):
         """
@@ -1438,95 +1406,3 @@ class PopSession:
         """
 
         self.authentication_properties = authentication_properties
-
-class PopMessage:
-    """
-    The pop message class that represents
-    a message to be sent through pop.
-    """
-
-    contents = "none"
-    """ The contents of the message """
-
-    sender = "none"
-    """ The sender of the message """
-
-    recipients_list = []
-    """ The list of recipients for the message """
-
-    def __init__(self):
-        """
-        Constructor of the class.
-        """
-
-        self.recipients_list = []
-
-    def add_recipient(self, recipient):
-        """
-        Adds a recipient to the recipients list
-
-        @type recipient: String
-        @param recipient: The recipient to be added.
-        """
-
-        self.recipients_list.append(recipient)
-
-    def get_contents(self):
-        """
-        Retrieves the contents.
-
-        @rtype: String
-        @return: The contents.
-        """
-
-        return self.contents
-
-    def set_contents(self, contents):
-        """
-        Sets the contents.
-
-        @type contents: String
-        @param contents: The contents.
-        """
-
-        self.contents = contents
-
-    def get_sender(self):
-        """
-        Retrieves the .
-
-        @rtype: String
-        @return: The sender.
-        """
-
-        return self.sender
-
-    def set_sender(self, sender):
-        """
-        Sets the sender.
-
-        @type sender: String
-        @param sender: The sender.
-        """
-
-        self.sender = sender
-
-    def get_recipients_list(self):
-        """
-        Retrieves the recipients list.
-
-        @rtype: List
-        @return: The recipients list.
-        """
-
-        return self.recipients_list
-
-    def set_recipients_list(self, recipients_list):
-        """
-        Sets the recipients list.
-
-        @type recipients_list: List
-        @param recipients_list: The recipients list.
-        """
-
-        self.recipients_list = recipients_list

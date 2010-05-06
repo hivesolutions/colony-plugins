@@ -192,9 +192,9 @@ class MainServicePopStreamHandler:
         # returns valid (data transmission processed)
         return True
 
-    def process_helo(self, request, session, arguments):
+    def process_apop(self, request, session, arguments):
         """
-        Processes the helo command.
+        Processes the apop command.
 
         @type request: PopRequest
         @param request: The pop request to be processed.
@@ -211,7 +211,7 @@ class MainServicePopStreamHandler:
         client_hostname = arguments[0]
 
         # sets the request response code
-        request.set_response_code(250)
+        request.set_response_code("+OK")
 
         # sets the request response message
         request.set_response_message("Hello pleased to meet you")
@@ -453,12 +453,10 @@ class MainServicePopStreamHandler:
 
     def handle_initial_request(self, request):
         # sets the request response code
-        request.set_response_code(220)
-
-        #OK POP3 server ready < 1896.697170952@dbc.mtview.ca.us >
+        request.set_response_code("+OK")
 
         # sets the request response message
-        request.set_response_message("server ready <1896.697170952@dbc.mtview.ca.us>")
+        request.set_response_message("pop3 server ready <1896.697170952@dbc.mtview.ca.us>")
 
     def process_authentication_plain(self, request, session, arguments):
         # asserts the mail arguments
