@@ -243,8 +243,9 @@ class MainServiceIrc:
                 self.irc_client_thread_pool.insert_task(task_descriptor)
 
                 self.main_service_irc_plugin.debug("Number of threads in pool: %d" % self.irc_client_thread_pool.current_number_threads)
-            except:
-                self.main_service_irc_plugin.error("Error accepting connection")
+            except Exception, exception:
+                # prints an error message about the problem accepting the connection
+                self.main_service_irc_plugin.error("Error accepting connection: " + str(exception))
 
         # closes the irc socket
         self.irc_socket.close()
