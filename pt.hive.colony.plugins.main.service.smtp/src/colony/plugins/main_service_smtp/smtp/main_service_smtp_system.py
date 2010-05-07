@@ -813,7 +813,7 @@ class SmtpRequest:
 
                     # adds the response message and the end of line
                     # to the result stream
-                    result.write(response_message + "\r\n")
+                    result.write(response_message + END_TOKEN_VALUE)
 
                 # decrements the counter
                 counter -= 1
@@ -831,7 +831,7 @@ class SmtpRequest:
             result.write(message)
 
         # writes the end of mail to the result stream
-        result.write("\r\n")
+        result.write(END_TOKEN_VALUE)
 
         # retrieves the value from the result buffer
         result_value = result.get_value()
