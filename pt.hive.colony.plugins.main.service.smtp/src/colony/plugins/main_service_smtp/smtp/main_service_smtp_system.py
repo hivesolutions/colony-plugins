@@ -798,6 +798,7 @@ class SmtpRequest:
 
             # iterates over all the response messages
             for response_message in self.response_messages:
+                # adds the response code string to the result
                 result.write(response_code_string)
 
                 # in case the counter is one (last response message)
