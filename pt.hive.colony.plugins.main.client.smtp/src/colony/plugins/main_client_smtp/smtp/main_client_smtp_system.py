@@ -855,6 +855,26 @@ class SmtpRequest:
 
         self.session = session
 
+    def get_properties(self):
+        """
+        Retrieves the properties.
+
+        @rtype: Dictionary
+        @return: The properties.
+        """
+
+        return self.properties
+
+    def set_properties(self, properties):
+        """
+        Sets the properties.
+
+        @type properties: Dictionary
+        @param properties: The properties.
+        """
+
+        self.properties = properties
+
 class SmtpResponse:
     """
     The smtp response class.
@@ -1003,6 +1023,26 @@ class SmtpResponse:
         """
 
         self.session = session
+
+    def get_properties(self):
+        """
+        Retrieves the properties.
+
+        @rtype: Dictionary
+        @return: The properties.
+        """
+
+        return self.properties
+
+    def set_properties(self, properties):
+        """
+        Sets the properties.
+
+        @type properties: Dictionary
+        @param properties: The properties.
+        """
+
+        self.properties = properties
 
 class SmtpSession:
     """
