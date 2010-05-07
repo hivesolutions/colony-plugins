@@ -52,23 +52,31 @@ AUTHENTICATION_VALUE = "authentication"
 AUTHENTICATION_TYPE_VALUE = "authentication_type"
 """ The authentication type value """
 
-USERNAME_VALUE = "username"
-""" The username value """
+DEFAULT_AUTHENTICATION_TYPE = "plain"
+""" The default authentication type """
 
-AUTHENTICATION_MESSAGE_INDEX_VALUE = "authentication_message_index"
-""" The authentication message index value """
+MESSAGE = """Return-Path: <joamag@gmail.com>
+Received: from [93.108.84.220] (220.84.108.93.rev.vodafone.pt [93.108.84.220])
+        by mx.google.com with ESMTPS id 13sm5671510fad.7.2010.05.07.01.38.17
+        (version=TLSv1/SSLv3 cipher=RC4-MD5);
+        Fri, 07 May 2010 01:38:20 -0700 (PDT)
+Message-Id: <722CD92D-15EB-4F19-8AF5-88B5B88908AE@gmail.com>
+From: =?utf-8?Q?Jo=C3=A3o_Magalh=C3=A3es?= <joamag@gmail.com>
+To: me <joamag@gmail.com>
+Content-Type: text/plain;
+    charset=us-ascii;
+    format=flowed;
+    delsp=yes
+Content-Transfer-Encoding: 7bit
+X-Mailer: iPhone Mail (7E18)
+Mime-Version: 1.0 (iPhone Mail 7E18)
+Subject: Elaborar tops e restaurantes na moda
+Date: Fri, 7 May 2010 09:38:03 +0100
 
-USERNAME_BASE64_VALUE = "VXNlcm5hbWU6"
-""" The username base64 value """
+Ter tb a possibilidade de focar no prato saber informacoes e depois
+saber quem o serve
 
-PASSWORD_BASE64_VALUE = "UGFzc3dvcmQ6"
-""" The password base64 value """
-
-SEPARATOR_TOKEN_VALUE = "\x00"
-""" The separator token value """
-
-END_TOKEN_DATA_VALUE = "\r\n.\r\n"
-""" The end token data value """
+Sent from my iPhone"""
 
 class MainServicePopStreamHandler:
     """
@@ -95,11 +103,6 @@ class MainServicePopStreamHandler:
         # retrieves the current session
         session = request.get_session()
 
-        # in case there was data transmission processed
-        if self.process_data_transmission(request, session):
-            # returns immediately
-            return
-
         # retrieves the command
         command = request.get_command()
 
@@ -120,79 +123,6 @@ class MainServicePopStreamHandler:
         # calls the command method with the request, session
         # and command arguments
         command_method(request, session, arguments)
-
-    def process_data_transmission(self, request, session):
-        """
-        Processes a data transmission "command".
-
-        @type request: PopRequest
-        @param request: The pop request to be processed.
-        @type session: PopSession
-        @param session: The current used pop session.
-        """
-
-        # in case the data transmission mode is active
-        if not session.get_data_transmission():
-            # returns invalid (no data transmission to be processed)
-            return False
-
-        # retrieves the session properties
-        session_properties = session.get_properties()
-
-        # retrieves the authentication value
-        authentication_value = session_properties.get(AUTHENTICATION_VALUE, None)
-
-        # in case there is a valid authentication value defined
-        # the data is the authentication token
-        if authentication_value:
-            # retrieves the authentication type from the session properties
-            authentication_type = session_properties[AUTHENTICATION_TYPE_VALUE]
-
-            # creates the authentication method name
-            authentication_method_name = "process_authentication_" + authentication_type
-
-            # in case the authentication method is not defined in the current object
-            if not hasattr(self, authentication_method_name):
-                # raises the invalid pop command exception
-                raise main_service_pop_stream_handler_exceptions.InvalidPopCommand("authentication method not found: " + authentication_type)
-
-            # retrieves the authentication method from the object
-            authentication_method = getattr(self, authentication_method_name)
-
-            # calls the authentication method with the request, session
-            # and authentication arguments
-            authentication_method(request, session, [])
-        # the data is the message contents
-        else:
-            # retrieves the current message
-            message = session.get_current_message()
-
-            # retrieves the contents from the request
-            contents = request.get_message()
-
-            # "de-stuffes" the contents of the message
-            contents_destuffed = contents.replace("\r\n..", "\r\n.")
-
-            # sets the contents in the message
-            message.set_contents(contents_destuffed)
-
-            # resets the end token to the default value
-            session.reset_end_token()
-
-            # sets the data transmission mode to false
-            session.set_data_transmission(False)
-
-            # handles the session
-            session.handle()
-
-            # sets the request response code
-            request.set_response_code(250)
-
-            # sets the request response message
-            request.set_response_message("OK: message queued for delivery")
-
-        # returns valid (data transmission processed)
-        return True
 
     def process_apop(self, request, session, arguments):
         """
@@ -221,9 +151,9 @@ class MainServicePopStreamHandler:
         # sets the client hostname
         session.set_client_hostname(client_hostname)
 
-    def process_ehlo(self, request, session, arguments):
+    def process_capa(self, request, session, arguments):
         """
-        Processes the ehlo command.
+        Processes the capa command.
 
         @type request: PopRequest
         @param request: The pop request to be processed.
@@ -234,22 +164,16 @@ class MainServicePopStreamHandler:
         """
 
         # asserts the ehlo arguments
-        self.assert_arguments(arguments, 1)
-
-        # retrieves the client hostname
-        client_hostname = arguments[0]
+        self.assert_arguments(arguments, 0)
 
         # sets the request response code
-        request.set_response_code(250)
+        request.set_response_code("+OK")
 
         # sets the response messages in the request
-        request.set_response_messages(["Hello pleased to meet you", "8bitmime", "auth plain", "auth login", "starttls"])
+        request.set_response_messages(["capability list follows", "top", "user", "resp-codes", "uidl", "starttls"])
 
         # sets the extensions as active
         session.set_extensions_active(True)
-
-        # sets the client hostname
-        session.set_client_hostname(client_hostname)
 
     def process_starttls(self, request, session, arguments):
         """
@@ -272,9 +196,9 @@ class MainServicePopStreamHandler:
         # sets the response message in the request
         request.set_response_message("Ready to start TLS")
 
-    def process_mail(self, request, session, arguments):
+    def process_user(self, request, session, arguments):
         """
-        Processes the mail command.
+        Processes the user command.
 
         @type request: PopRequest
         @param request: The pop request to be processed.
@@ -284,44 +208,24 @@ class MainServicePopStreamHandler:
         @param arguments: The list of arguments for the request.
         """
 
-        # asserts the mail arguments
+        # asserts the user arguments
         self.assert_arguments(arguments, 1)
 
-        # retrieves the from argument
-        from_argument = arguments[0]
+        # retrieves the user argument
+        user_argument = arguments[0]
 
-        # retrieves the from command and the from value
-        from_command, from_value = from_argument.split(":")
-
-        # normalizes the from command
-        from_command = from_command.lower()
-
-        # in case the from command is not valid
-        if not from_command == "from":
-            # raises the invalid pop command
-            raise main_service_pop_stream_handler_exceptions.InvalidPopCommand("malformed mail command")
-
-        # generates a new message for the session
-        session.generate_message()
-
-        # retrieves the current message
-        message = session.get_current_message()
-
-        # retrieves the sender from the from value
-        sender = from_value.strip("<>")
-
-        # sets the sender in the message
-        message.set_sender(sender)
+        # sets the current user
+        session.set_current_user(user_argument)
 
         # sets the request response code
-        request.set_response_code(250)
+        request.set_response_code("+OK")
 
         # sets the request response message
-        request.set_response_message("Sender OK")
+        request.set_response_message("user valid")
 
-    def process_rcpt(self, request, session, arguments):
+    def process_pass(self, request, session, arguments):
         """
-        Processes the rcpt command.
+        Processes the pass command.
 
         @type request: PopRequest
         @param request: The pop request to be processed.
@@ -331,91 +235,20 @@ class MainServicePopStreamHandler:
         @param arguments: The list of arguments for the request.
         """
 
-        # asserts the rcpt arguments
+        # asserts the pass arguments
         self.assert_arguments(arguments, 1)
 
-        # retrieves the to argument
-        to_argument = arguments[0]
+        # retrieves the password argument
+        password_argument = arguments[0]
 
-        # retrieves the to command and the from value
-        to_command, to_value = to_argument.split(":")
-
-        # normalizes the to command
-        to_command = to_command.lower()
-
-        # in case the to command is not valid
-        if not to_command == "to":
-            # raises the invalid pop command
-            raise main_service_pop_stream_handler_exceptions.InvalidPopCommand("malformed rcpt command")
-
-        # retrieves the current message
-        message = session.get_current_message()
-
-        # retrieves the sender from the to value
-        recipient = to_value.strip("<>")
-
-        # adds the recipient to the message
-        message.add_recipient(recipient)
-
-        # sets the request response code
-        request.set_response_code(250)
-
-        # sets the request response message
-        request.set_response_message("Accepted")
-
-    def process_data(self, request, session, arguments):
-        """
-        Processes the data command.
-
-        @type request: PopRequest
-        @param request: The pop request to be processed.
-        @type session: PopSession
-        @param session: The current used pop session.
-        @type arguments: List
-        @param arguments: The list of arguments for the request.
-        """
-
-        # sets the request response code
-        request.set_response_code(354)
-
-        # sets the request response message
-        request.set_response_message("End data with \\r\\n.\\r\\n")
-
-        # sets the data value end token
-        session.set_end_token(END_TOKEN_DATA_VALUE)
-
-        # sets the data transmission mode to true
-        session.set_data_transmission(True)
-
-    def process_auth(self, request, session, arguments):
-        """
-        Processes the auth command.
-
-        @type request: PopRequest
-        @param request: The pop request to be processed.
-        @type session: PopSession
-        @param session: The current used pop session.
-        @type arguments: List
-        @param arguments: The list of arguments for the request.
-        """
-
-        # asserts the auth arguments
-        self.assert_arguments(arguments, 1, -1)
-
-        # retrieves the authentication type
-        authentication_type = arguments[0]
-
-        # "lowercases" the authentication type
-        authentication_type = authentication_type.lower()
-
-        # prints an info message
-        self.main_service_pop_stream_handler_plugin.info("Trying to login using authentication method '%s'" % authentication_type)
+        # sets the password
+        session.set_current_password(password_argument)
 
         # retrieves the session properties
         session_properties = session.get_properties()
 
-        # sets the authentication type in the session properties
-        session_properties[AUTHENTICATION_TYPE_VALUE] = authentication_type
+        # retrieves the authentication type from the session properties
+        authentication_type = session_properties.get(AUTHENTICATION_TYPE_VALUE, DEFAULT_AUTHENTICATION_TYPE)
 
         # creates the authentication method name
         authentication_method_name = "process_authentication_" + authentication_type
@@ -430,7 +263,184 @@ class MainServicePopStreamHandler:
 
         # calls the authentication method with the request, session
         # and authentication arguments
-        authentication_method(request, session, arguments)
+        authentication_method(request, session, [])
+
+    def process_stat(self, request, session, arguments):
+        """
+        Processes the stat command.
+
+        @type request: PopRequest
+        @param request: The pop request to be processed.
+        @type session: PopSession
+        @param session: The current used pop session.
+        @type arguments: List
+        @param arguments: The list of arguments for the request.
+        """
+
+        # asserts the stat arguments
+        self.assert_arguments(arguments, 0)
+
+        # sets the request response code
+        request.set_response_code("+OK")
+
+        message_count = 1
+
+        octets_count = len(MESSAGE)
+
+        # sets the request response message
+        request.set_response_message("%i %i" % (message_count, octets_count))
+
+    def process_list(self, request, session, arguments):
+        """
+        Processes the list command.
+
+        @type request: PopRequest
+        @param request: The pop request to be processed.
+        @type session: PopSession
+        @param session: The current used pop session.
+        @type arguments: List
+        @param arguments: The list of arguments for the request.
+        """
+
+        # asserts the list arguments
+        self.assert_arguments(arguments, 0)
+
+        response_messages = []
+
+        message_count = 1
+
+        octets_count = len(MESSAGE)
+
+        response_messages.append("%i messages (%i octets)" % (message_count, octets_count))
+
+        message_description_list = ((1, len(MESSAGE)),)
+
+        for message_description in message_description_list:
+            message_id, message_size = message_description
+
+            message = "%i %i" % (message_id, message_size)
+
+            response_messages.append(message)
+
+        # sets the request response code
+        request.set_response_code("+OK")
+
+        request.set_response_messages(response_messages)
+
+    def process_retr(self, request, session, arguments):
+        """
+        Processes the retr command.
+
+        @type request: PopRequest
+        @param request: The pop request to be processed.
+        @type session: PopSession
+        @param session: The current used pop session.
+        @type arguments: List
+        @param arguments: The list of arguments for the request.
+        """
+
+        # asserts the retr arguments
+        self.assert_arguments(arguments, 1)
+
+        # retrieves the message id argument
+        message_id = arguments[0]
+
+        response_messages = []
+
+        octets_count = len(MESSAGE)
+
+        # sets the request response code
+        request.set_response_code("+OK")
+
+        response_messages.append("%i octets" % octets_count)
+
+        buffer = MESSAGE
+
+        response_messages.append(buffer)
+
+        request.set_response_messages(response_messages)
+
+    def process_dele(self, request, session, arguments):
+        """
+        Processes the dele command.
+
+        @type request: PopRequest
+        @param request: The pop request to be processed.
+        @type session: PopSession
+        @param session: The current used pop session.
+        @type arguments: List
+        @param arguments: The list of arguments for the request.
+        """
+
+        # sets the request response code
+        request.set_response_code("-ERR")
+
+        # sets the request response message
+        request.set_response_message("not implemented")
+
+    def process_uidl(self, request, session, arguments):
+        """
+        Processes the uidl command.
+
+        @type request: PopRequest
+        @param request: The pop request to be processed.
+        @type session: PopSession
+        @param session: The current used pop session.
+        @type arguments: List
+        @param arguments: The list of arguments for the request.
+        """
+
+        # asserts the retr arguments
+        self.assert_arguments(arguments, 0, 1)
+
+        arguments_length = len(arguments)
+
+        message_count = 1
+
+        if arguments_length > 0:
+            # retrieves the message id argument
+            message_id = arguments[0]
+
+            message_uid = "ABDD"
+
+            request.set_response_code("+OK")
+
+            request.set_response_message("%i %s" % (message_id, message_uid))
+        else:
+            response_messages = []
+
+            response_messages.append("%i messages" % message_count)
+
+            for index in range(message_count):
+                message_id = index + 1
+
+                message_uid = "ABDD"
+
+                message = "%i %s" % (message_id, message_uid)
+
+                response_messages.append(message)
+
+            request.set_response_code("+OK")
+
+            request.set_response_messages(response_messages)
+
+    def process_auth(self, request, session, arguments):
+        """
+        Processes the auth command.
+
+        @type request: PopRequest
+        @param request: The pop request to be processed.
+        @type session: PopSession
+        @param session: The current used pop session.
+        @type arguments: List
+        @param arguments: The list of arguments for the request.
+        """
+
+        # sets the request response code
+        request.set_response_code("-ERR")
+
+        # sets the request response message
+        request.set_response_message("auth not supported")
 
     def process_quit(self, request, session, arguments):
         """
@@ -445,10 +455,10 @@ class MainServicePopStreamHandler:
         """
 
         # sets the request response code
-        request.set_response_code(221)
+        request.set_response_code("+OK")
 
         # sets the request response message
-        request.set_response_message("Bye")
+        request.set_response_message("signing off")
 
         # sets the session as closed
         session.set_closed(True)
@@ -470,17 +480,11 @@ class MainServicePopStreamHandler:
         request.set_response_message("pop3 server ready " + timestamp_string)
 
     def process_authentication_plain(self, request, session, arguments):
-        # asserts the mail arguments
-        self.assert_arguments(arguments, 2, -1)
+        # retrieves the current user (as the username)
+        username = session.get_current_user()
 
-        # retrieves the authentication token
-        authentication_token = arguments[1]
-
-        # decodes the authentication token
-        authentication_token_decoded = base64.b64decode(authentication_token)
-
-        # splits the authentication token retrieving the username and password
-        username, password = authentication_token_decoded.strip(SEPARATOR_TOKEN_VALUE).split(SEPARATOR_TOKEN_VALUE)
+        # retrieves the current password
+        password = session.get_current_password()
 
         # tries to authenticate with the session mechanism
         authentication_result = session.authenticate(username, password)
@@ -488,106 +492,17 @@ class MainServicePopStreamHandler:
         # in case the authentication was successful
         if authentication_result:
             # sets the request response code
-            request.set_response_code(235)
+            request.set_response_code("+OK")
 
             # sets the request response message
-            request.set_response_message("2.7.0 Authentication successful")
+            request.set_response_message("authentication successful")
         # in case the authentication was not successful
         else:
             # sets the request response code
-            request.set_response_code(535)
+            request.set_response_code("-ERR")
 
             # sets the request response message
-            request.set_response_message("5.7.8 Authentication credentials invalid")
-
-    def process_authentication_login(self, request, session, arguments):
-        # asserts the mail arguments
-        self.assert_arguments(arguments, 0, -1)
-
-        # retrieves the session properties
-        session_properties = session.get_properties()
-
-        # retrieves the authentication message index
-        authentication_message_index = session_properties.get(AUTHENTICATION_MESSAGE_INDEX_VALUE, 0)
-
-        # in case it's the first communication message
-        if authentication_message_index == 0:
-            # sets the authentication property
-            session_properties[AUTHENTICATION_VALUE] = True
-
-            # increments the authentication message index and set the value
-            # in the session properties map
-            session_properties[AUTHENTICATION_MESSAGE_INDEX_VALUE] = authentication_message_index + 1
-
-            # sets the data transmission mode to true
-            session.set_data_transmission(True)
-
-            # sets the request response code
-            request.set_response_code(334)
-
-            # sets the request response message
-            request.set_response_message(USERNAME_BASE64_VALUE)
-        elif authentication_message_index == 1:
-            # retrieves the contents from the request
-            contents = request.get_message()
-
-            # strips the contents
-            contents = contents.strip()
-
-            # decodes the contents using base64 and sets them as the username
-            # in the session properties
-            session_properties[USERNAME_VALUE] = base64.b64decode(contents)
-
-            # increments the authentication message index and set the value
-            # in the session properties map
-            session_properties[AUTHENTICATION_MESSAGE_INDEX_VALUE] = authentication_message_index + 1
-
-            # sets the request response code
-            request.set_response_code(334)
-
-            # sets the request response message
-            request.set_response_message(PASSWORD_BASE64_VALUE)
-        elif authentication_message_index == 2:
-            # retrieves the username from the session properties
-            username = session_properties[USERNAME_VALUE]
-
-            # retrieves the contents from the request
-            contents = request.get_message()
-
-            # strips the contents
-            contents = contents.strip()
-
-            # decodes the contents using base64 and sets them in the password variable
-            password = base64.b64decode(contents)
-
-            # tries to authenticate with the session mechanism
-            authentication_result = session.authenticate(username, password)
-
-            # in case the authentication was successful
-            if authentication_result:
-                # sets the request response code
-                request.set_response_code(235)
-
-                # sets the request response message
-                request.set_response_message("2.7.0 Authentication successful")
-            # in case the authentication was not successful
-            else:
-                # sets the request response code
-                request.set_response_code(535)
-
-                # sets the request response message
-                request.set_response_message("5.7.8 Authentication credentials invalid")
-
-            # sets the data transmission mode to true
-            session.set_data_transmission(False)
-
-            # deletes the authentication session properties
-            del session_properties[AUTHENTICATION_MESSAGE_INDEX_VALUE]
-            del session_properties[AUTHENTICATION_VALUE]
-            del session_properties[USERNAME_VALUE]
-        else:
-            # raises the invalid pop command exception
-            raise main_service_pop_stream_handler_exceptions.InvalidPopCommand("invalid authentication index")
+            request.set_response_message("authentication credentials invalid")
 
     def create_write(self, request):
         def write(text, new_line = True):

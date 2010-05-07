@@ -74,8 +74,8 @@ DEFAULT_PORT = 110
 END_TOKEN_VALUE = "\r\n"
 """ The end token value """
 
-DEFAULT_END_TOKEN_VALUE = END_TOKEN_VALUE
-""" The default end token value """
+END_MULTILINE_TOKEN_VALUE = "."
+""" The end multiline token value """
 
 SOCKET_UPGRADER_NAME = "ssl"
 """ The socket upgrader name """
@@ -311,8 +311,7 @@ class MainServicePop:
 
                 self.main_service_pop_plugin.debug("Number of threads in pool: %d" % self.pop_client_thread_pool.current_number_threads)
             except Exception, exception:
-                print exception
-                self.main_service_pop_plugin.error("Error accepting connection")
+                self.main_service_pop_plugin.error("Error accepting connection: " + str(exception))
 
         # closes the pop socket
         self.pop_socket.close()
@@ -558,9 +557,6 @@ class PopClientServiceTask:
         # creates a request object
         request = PopRequest()
 
-        # retrieves the current end token
-        end_token = session.get_end_token()
-
         # continuous loop
         while True:
             # retrieves the data
@@ -574,7 +570,7 @@ class PopClientServiceTask:
             message.write(data)
 
             # in case the end token is not found in the data
-            if data.find(end_token) == -1:
+            if data.find(END_TOKEN_VALUE) == -1:
                 # continues the loop
                 continue
 
@@ -582,29 +578,27 @@ class PopClientServiceTask:
             message_value = message.get_value()
 
             # finds the first end token value
-            end_token_index = message_value.find(end_token)
+            end_token_index = message_value.find(END_TOKEN_VALUE)
 
             # in case there is an end token found
             if not end_token_index == -1:
                 # retrieves the pop message
                 pop_message = message_value[:end_token_index]
 
-                # in case the session is not in data transmission mode
-                if not session.data_transmission:
-                    # splits the pop message
-                    pop_message_splitted = pop_message.split(" ")
+                # splits the pop message
+                pop_message_splitted = pop_message.split(" ")
 
-                    # retrieves the pop command
-                    pop_command = pop_message_splitted[0].lower()
+                # retrieves the pop command
+                pop_command = pop_message_splitted[0].lower()
 
-                    # retrieves the pop arguments
-                    pop_arguments = pop_message_splitted[1:]
+                # retrieves the pop arguments
+                pop_arguments = pop_message_splitted[1:]
 
-                    # sets the pop command in the request
-                    request.set_command(pop_command)
+                # sets the pop command in the request
+                request.set_command(pop_command)
 
-                    # sets the pop arguments in the request
-                    request.set_arguments(pop_arguments)
+                # sets the pop arguments in the request
+                request.set_arguments(pop_arguments)
 
                 # sets the pop message in the request
                 request.set_message(pop_message)
@@ -793,24 +787,28 @@ class PopRequest:
             # starts the counter value
             counter = len(self.response_messages)
 
+            # writes the response code to the result
+            result.write(self.response_code + " ")
+
             # iterates over all the response messages
             for response_message in self.response_messages:
-                result.write(self.response_code)
+                # in case the response message starts with a multiline token value
+                # the first character is stuffed
+                if response_message.startswith(END_MULTILINE_TOKEN_VALUE):
+                    # the first character of the message is stuffed
+                    response_message = END_MULTILINE_TOKEN_VALUE + response_message
 
                 # in case the counter is one (last response message)
                 if counter == 1:
-                    # adds the space (final) separator to the result stream
-                    result.write(" ")
-
                     # adds the response message to the result stream
-                    result.write(response_message)
-                else:
-                    # adds the dash separator to the result stream
-                    result.write("-")
+                    result.write(response_message + END_TOKEN_VALUE)
 
+                    # writes the end of multi line message token
+                    result.write(END_MULTILINE_TOKEN_VALUE)
+                else:
                     # adds the response message and the end of line
                     # to the result stream
-                    result.write(response_message + "\r\n")
+                    result.write(response_message + END_TOKEN_VALUE)
 
                 # decrements the counter
                 counter -= 1
@@ -828,7 +826,7 @@ class PopRequest:
             result.write(message)
 
         # writes the end of mail to the result stream
-        result.write("\r\n")
+        result.write(END_TOKEN_VALUE)
 
         # retrieves the value from the result buffer
         result_value = result.get_value()
@@ -976,6 +974,26 @@ class PopRequest:
 
         self.session = session
 
+    def get_properties(self):
+        """
+        Retrieves the properties.
+
+        @rtype: Dictionary
+        @return: The properties.
+        """
+
+        return self.properties
+
+    def set_properties(self, properties):
+        """
+        Sets the properties.
+
+        @type properties: Dictionary
+        @param properties: The properties.
+        """
+
+        self.properties = properties
+
 class PopSession:
     """
     The pop session class.
@@ -984,17 +1002,8 @@ class PopSession:
     pop_client_service_task = None
     """ The pop client service task """
 
-    client_hostname = "none"
-    """ The client hostname """
-
     extensions_active = False
     """ The extensions active flag """
-
-    data_transmission = False
-    """ The data transmission flag """
-
-    end_token = DEFAULT_END_TOKEN_VALUE
-    """ The end token value """
 
     upgrade = False
     """ The upgrade flag """
@@ -1002,8 +1011,11 @@ class PopSession:
     closed = False
     """ The closed flag """
 
-    current_message = None
-    """ The current message being processed """
+    current_user = None
+    """ The current user """
+
+    current_password = None
+    """ The current password """
 
     authenticated = False
     """ The authenticated flag """
@@ -1037,7 +1049,7 @@ class PopSession:
         self.authentication_properties = {}
 
     def __repr__(self):
-        return "(%s, %s)" % (self.client_hostname, self.properties)
+        return "(%s)" % self.properties
 
     def authenticate(self, username, password):
         """
@@ -1099,14 +1111,6 @@ class PopSession:
         # upgrades the pop client service task with the current upgrader handler
         self.pop_client_service_task.pop_connection = self.upgrader_handler(self.pop_client_service_task.pop_connection, parameters)
 
-    def reset_end_token(self):
-        """
-        Resets the current end token to the
-        default value.
-        """
-
-        self.end_token = DEFAULT_END_TOKEN_VALUE
-
     def get_pop_client_service_task(self):
         """
         Retrieves the client pop client service task.
@@ -1127,26 +1131,6 @@ class PopSession:
 
         self.pop_client_service_task = pop_client_service_task
 
-    def get_client_hostname(self):
-        """
-        Retrieves the client hostname.
-
-        @rtype: String
-        @return: The client hostname.
-        """
-
-        return self.client_hostname
-
-    def set_client_hostname(self, client_hostname):
-        """
-        Sets the client hostname.
-
-        @type client_hostname: String
-        @param client_hostname: The client hostname.
-        """
-
-        self.client_hostname = client_hostname
-
     def get_extensions_active(self):
         """
         Retrieves the extensions active.
@@ -1166,46 +1150,6 @@ class PopSession:
         """
 
         self.extensions_active = extensions_active
-
-    def get_data_transmission(self):
-        """
-        Retrieves the data transmission.
-
-        @rtype: bool
-        @return: The data transmission.
-        """
-
-        return self.data_transmission
-
-    def set_data_transmission(self, data_transmission):
-        """
-        Sets the data transmission.
-
-        @type data_transmission: bool
-        @param data_transmission: The data transmission.
-        """
-
-        self.data_transmission = data_transmission
-
-    def get_end_token(self):
-        """
-        Retrieves the end token.
-
-        @rtype: String
-        @return: The end token.
-        """
-
-        return self.end_token
-
-    def set_end_token(self, end_token):
-        """
-        Sets the end token.
-
-        @type end_token: String
-        @param end_token: The end token.
-        """
-
-        self.end_token = end_token
 
     def get_upgrade(self):
         """
@@ -1247,25 +1191,45 @@ class PopSession:
 
         self.closed = closed
 
-    def get_current_message(self):
+    def get_current_user(self):
         """
-        Retrieves the current message.
+        Retrieves the current user.
 
-        @rtype: popMessage
-        @return: The current message.
-        """
-
-        return self.current_message
-
-    def set_current_message(self, current_message):
-        """
-        Sets the current message.
-
-        @type current_message: popMessage
-        @param current_message: The current message.
+        @rtype: String
+        @return: The current user.
         """
 
-        self.current_message = current_message
+        return self.current_user
+
+    def set_current_user(self, current_user):
+        """
+        Sets the current user.
+
+        @type current_user: String
+        @param current_user: The current user.
+        """
+
+        self.current_user = current_user
+
+    def get_current_password(self):
+        """
+        Retrieves the current password.
+
+        @rtype: String
+        @return: The current password.
+        """
+
+        return self.current_password
+
+    def set_current_password(self, current_password):
+        """
+        Sets the current password.
+
+        @type current_password: String
+        @param current_password: The current password.
+        """
+
+        self.current_password = current_password
 
     def get_authenticated(self):
         """
