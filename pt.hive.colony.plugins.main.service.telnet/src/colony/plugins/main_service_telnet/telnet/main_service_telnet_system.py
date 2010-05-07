@@ -284,8 +284,8 @@ class MainServiceTelnet:
 
                 self.main_service_telnet_plugin.debug("Number of threads in pool: %d" % self.telnet_client_thread_pool.current_number_threads)
             except Exception, exception:
-                print exception
-                self.main_service_telnet_plugin.error("Error accepting connection")
+                # prints an error message about the problem accepting the connection
+                self.main_service_telnet_plugin.error("Error accepting connection: " + str(exception))
 
         # closes the telnet socket
         self.telnet_socket.close()
