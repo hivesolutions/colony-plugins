@@ -76,4 +76,39 @@ class MailStorageDatabase:
         return mail_storage_database_client
 
 class MailStorageDatabaseClient:
-    pass
+    """
+    The mail storage database client class.
+    """
+
+    mail_storage_database = None
+    """ The mail storage database """
+
+    def __init__(self, mail_storage_database):
+        """
+        Constructor of the class.
+
+        @type mail_storage_database: MailStorageDatabase
+        @param MailStorageDatabase: The mail storage database.
+        """
+
+        self.mail_storage_database = mail_storage_database
+
+    def get_mail_storage_database(self):
+        """
+        Retrieves the mail storage database.
+
+        @rtype: MailStorageDatabase
+        @return: The mail storage database.
+        """
+
+        return self.mail_storage_database
+
+    def set_mail_storage_database(self, mail_storage_database):
+        """
+        Sets the mail storage database.
+
+        @type mail_storage_database: MailStorageDatabase
+        @param mail_storage_database: Tghe mail storage database.
+        """
+
+        self.mail_storage_database = mail_storage_database
