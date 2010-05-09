@@ -58,7 +58,7 @@ ENTITY_CLASSES_MAP_VALUE = "entity_classes_map"
 DEFAULT_ENGINE = "sqlite"
 """ The default engine """
 
-DEFAULT_CONNECTION_PARAMETERS = {"file_path" : "c:/tobias.db", "autocommit" : False}
+DEFAULT_CONNECTION_PARAMETERS = {"file_path" : "mvc_utils_system.db", "autocommit" : False}
 """ The default connection parameters """
 
 class WebMvcUtils:
