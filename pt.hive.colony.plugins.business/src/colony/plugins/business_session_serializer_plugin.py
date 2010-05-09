@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.plugins.plugin_system
+import colony.plugins.decorators
 
 class BusinessSessionSerializerPlugin(colony.plugins.plugin_system.Plugin):
     """
@@ -57,6 +58,7 @@ class BusinessSessionSerializerPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["business.session_serializer.business_session_serializer_exceptions", "business.session_serializer.business_session_serializer_system"]
 
     business_session_serializer = None
 

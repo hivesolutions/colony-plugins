@@ -57,6 +57,7 @@ class BusinessHelperPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["business.helper.business_helper_system"]
 
     business_helper = None
 
