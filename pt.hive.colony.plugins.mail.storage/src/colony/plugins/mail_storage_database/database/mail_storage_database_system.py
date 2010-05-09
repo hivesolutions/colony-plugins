@@ -37,6 +37,11 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
+
+ENTITIES_MODULE_NAME = "mail_storage_database_entities"
+""" The entities module name """
+
 class MailStorageDatabase:
     """
     The mail storage database class.
@@ -66,11 +71,11 @@ class MailStorageDatabase:
         @return: The created client object.
         """
 
-        # retrieves the version
-        version = parameters.get("version", None)
+        # retrieves the entity manager arguments
+        entity_manager_arguments = parameters.get("entity_manager_arguments", {})
 
         # creates the mail storage database client
-        mail_storage_database_client = MailStorageDatabaseClient(self, version)
+        mail_storage_database_client = MailStorageDatabaseClient(self, entity_manager_arguments)
 
         # returns the mail storage database client
         return mail_storage_database_client
@@ -83,15 +88,36 @@ class MailStorageDatabaseClient:
     mail_storage_database = None
     """ The mail storage database """
 
-    def __init__(self, mail_storage_database):
+    entity_manager_arguments = None
+    """ The entity manager arguments """
+
+    entity_manager = None
+    """ The entity manager to be used to access the database """
+
+    def __init__(self, mail_storage_database, entity_manager_arguments):
         """
         Constructor of the class.
 
         @type mail_storage_database: MailStorageDatabase
         @param MailStorageDatabase: The mail storage database.
+        @type entity_manager_arguments: Dictionary
+        @param entity_manager_arguments: The entity manager arguments.
         """
 
         self.mail_storage_database = mail_storage_database
+        self.entity_manager_arguments = entity_manager_arguments
+
+    def load_entity_manager(self):
+        """
+        Loads the entity manager object, used to access
+        the database.
+        """
+
+        # retrieves the entity manager helper plugin
+        entity_manager_helper_plugin = self.mail_storage_database.mail_storage_database_plugin.entity_manager_helper_plugin
+
+        # loads the entity manager for the entities module name
+        self.entity_manager = entity_manager_helper_plugin.load_entity_manager(ENTITIES_MODULE_NAME, os.path.dirname(__file__), self.entity_manager_arguments)
 
     def get_mail_storage_database(self):
         """
