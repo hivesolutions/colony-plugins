@@ -42,7 +42,7 @@ import colony.plugins.decorators
 
 class BusinessSessionSerializerPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Business Session Serializer plugin
+    The main class for the Business Session Serializer plugin.
     """
 
     id = "pt.hive.colony.plugins.business.session_serializer"

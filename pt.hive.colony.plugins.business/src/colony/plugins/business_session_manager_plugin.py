@@ -42,7 +42,7 @@ import colony.plugins.decorators
 
 class BusinessSessionManagerPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Business Session Manager plugin
+    The main class for the Business Session Manager plugin.
     """
 
     id = "pt.hive.colony.plugins.business.session_manager"

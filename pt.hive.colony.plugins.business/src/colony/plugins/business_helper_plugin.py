@@ -41,7 +41,7 @@ import colony.plugins.plugin_system
 
 class BusinessHelperPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Business Helper plugin
+    The main class for the Business Helper plugin.
     """
 
     id = "pt.hive.colony.plugins.business.helper"
