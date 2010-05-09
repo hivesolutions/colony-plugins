@@ -38,9 +38,21 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
+import time
+
+import mail_storage_database_exceptions
 
 ENTITIES_MODULE_NAME = "mail_storage_database_entities"
 """ The entities module name """
+
+FILTERS_VALUE = "filters"
+""" The filters value """
+
+EAGER_LOADING_RELATIONS_VALUE = "eager_loading_relations"
+""" The eager loading relations value """
+
+UID_MULTIPLICATION_FACTOR = 1000
+""" The uid multiplication factor """
 
 class MailStorageDatabase:
     """
@@ -107,17 +119,143 @@ class MailStorageDatabaseClient:
         self.mail_storage_database = mail_storage_database
         self.entity_manager_arguments = entity_manager_arguments
 
-    def load_entity_manager(self):
+    def create_mailbox(self, name):
+        # retrieves the entity manager
+        entity_manager = self._get_entity_manager()
+
+        # creates a transaction
+        entity_manager.create_transaction()
+
+        try:
+            # retrieves the mailbox class
+            mailbox_class = entity_manager.get_entity_class("Mailbox")
+
+            # creates the new mailbox instance
+            mailbox = mailbox_class()
+
+            # sets the initial mailbox attributes
+            mailbox.name = name
+            mailbox.messages_count = 0
+            mailbox.messages_size = 0
+
+            # saves the mailbox
+            entity_manager.save(mailbox)
+        except:
+            # rolls back the transaction
+            entity_manager.rollback_transaction()
+        else:
+            # commits the transaction
+            entity_manager.commit_transaction()
+
+    def save_message(self, user, contents):
+        # retrieves the entity manager
+        entity_manager = self._get_entity_manager()
+
+        # creates a transaction
+        entity_manager.create_transaction()
+
+        try:
+            # retrieves the user's mailbox
+            mailbox = self.get_mailbox_name(user)
+
+            # in case no mailbox is found
+            if not mailbox:
+                # raises the invalid mailbox error
+                raise mail_storage_database_exceptions.InvalidMailboxError(user)
+
+            # retrieves the contents length
+            contents_length = len(contents)
+
+            # increments the number of messages in the mailbox
+            mailbox.messages_count += 1
+
+            # increments the mailbox size
+            mailbox.messages_size += contents_length
+
+            # sets the messages list as empty
+            mailbox.messages = []
+
+            # retrieves the message class
+            message_class = entity_manager.get_entity_class("Message")
+
+            # creates the new message instance
+            message = message_class()
+
+            # sets the message uid as a new one
+            message.uid = self._generate_uid()
+
+            # sets the message contents
+            message.contents = contents
+
+            # sets the message mailbox
+            message.mailbox = mailbox
+
+            # updates the mailbox
+            entity_manager.update(mailbox)
+
+            # saves the message
+            entity_manager.save(message)
+        except:
+            # rolls back the transaction
+            entity_manager.rollback_transaction()
+        else:
+            # commits the transaction
+            entity_manager.commit_transaction()
+
+    def get_message_uid(self, uid):
         """
-        Loads the entity manager object, used to access
-        the database.
+        Retrieves the message for the given uid.
+
+        @type uid: int
+        @param uid: The uid of the message to be retrieved.
+        @rtype: Message
+        @return: The retrieved message.
         """
 
-        # retrieves the entity manager helper plugin
-        entity_manager_helper_plugin = self.mail_storage_database.mail_storage_database_plugin.entity_manager_helper_plugin
+        # retrieves the entity manager
+        entity_manager = self._get_entity_manager()
 
-        # loads the entity manager for the entities module name
-        self.entity_manager = entity_manager_helper_plugin.load_entity_manager(ENTITIES_MODULE_NAME, os.path.dirname(__file__), self.entity_manager_arguments)
+        # retrieves the message class
+        message_class = entity_manager.get_entity_class("Message")
+
+        # defines the find options for retrieving the messages
+        find_options = {FILTERS_VALUE : [{"filter_type" : "equals",
+                                          "filter_fields" : [{"field_name" : "uid",
+                                                              "field_value" : uid}]}],
+                        EAGER_LOADING_RELATIONS_VALUE : {"mailbox" : {}}}
+
+        # retrieves the valid messages
+        messages = entity_manager._find_all_options(message_class, find_options)
+
+        if len(messages):
+            return messages[0]
+
+    def get_mailbox_name(self, name):
+        """
+        Retrieves the mailbox for the given name.
+
+        @type name: String
+        @param name: The name of the mailbox to be retrieved.
+        @rtype: Mailbox
+        @requires: The retrieved mailbox.
+        """
+
+        # retrieves the entity manager
+        entity_manager = self._get_entity_manager()
+
+        # retrieves the mailbox class
+        mailbox_class = entity_manager.get_entity_class("Mailbox")
+
+        # defines the find options for retrieving the mailboxes
+        find_options = {FILTERS_VALUE : [{"filter_type" : "equals",
+                                          "filter_fields" : [{"field_name" : "name",
+                                                              "field_value" : name}]}]}
+
+        # retrieves the valid mailboxes
+        mailboxes = entity_manager._find_all_options(mailbox_class, find_options)
+
+        if len(mailboxes):
+            return mailboxes[0]
 
     def get_mail_storage_database(self):
         """
@@ -138,3 +276,51 @@ class MailStorageDatabaseClient:
         """
 
         self.mail_storage_database = mail_storage_database
+
+    def _generate_uid(self):
+        """
+        Generates a new uid.
+
+        @rtype: int
+        @return: The generated uid.
+        """
+
+        # retrieves the current time
+        current_time = time.time()
+
+        # creates the unique identifier
+        uid = str(int(current_time * UID_MULTIPLICATION_FACTOR))
+
+        # returns the generated uid (unique identifier)
+        return uid
+
+    def _get_entity_manager(self):
+        """
+        Retrieves the currently available entity
+        manager instance.
+
+        @rtype: EntityManager
+        @return: The currently available entity
+        manager instance.
+        """
+
+        # in case the entity manager is not set
+        # the entity manager is not loaded
+        if not self.entity_manager:
+            # loads the entity manager
+            self._load_entity_manager()
+
+        # returns the entity manager
+        return self.entity_manager
+
+    def _load_entity_manager(self):
+        """
+        Loads the entity manager object, used to access
+        the database.
+        """
+
+        # retrieves the entity manager helper plugin
+        entity_manager_helper_plugin = self.mail_storage_database.mail_storage_database_plugin.entity_manager_helper_plugin
+
+        # loads the entity manager for the entities module name
+        self.entity_manager = entity_manager_helper_plugin.load_entity_manager(ENTITIES_MODULE_NAME, os.path.dirname(__file__), self.entity_manager_arguments)
