@@ -725,7 +725,7 @@ class EntityManagerSqliteEngine:
         cursor = database_connection.cursor()
 
         # creates the query for the database lock
-        query_string_value = "update generator set next_id = next_id where 0=1"
+        query_string_value = "update generator set next_id = next_id where 0 = 1"
 
         # executes the query creating the table
         self.execute_query(cursor, query_string_value)
