@@ -1146,6 +1146,28 @@ class PopSession:
         # returns the mailbox
         return mailbox
 
+    def get_mailbox_messages(self, name = None):
+        """
+        Returns the mailbox (containing messages) for the given name, or for
+        the current user if none is given.
+
+        @type name: String
+        @param name: The name of the mailbox to be retrieved.
+        @rtype: Mailbox
+        @return: The retrieved mailbox (containing messages).
+        """
+
+        # in case no name is given
+        if not name:
+            # sets the mailbox name as the current user
+            name = self.current_user
+
+        # retrieves the mailbox (containing messages) for the given name
+        mailbox = self.message_client.get_mailbox_messages_name(name)
+
+        # returns the mailbox
+        return mailbox
+
     def get_pop_client_service_task(self):
         """
         Retrieves the client pop client service task.

@@ -39,7 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import os
 import time
-import base64
 
 import main_service_pop_stream_handler_exceptions
 
@@ -54,29 +53,6 @@ AUTHENTICATION_TYPE_VALUE = "authentication_type"
 
 DEFAULT_AUTHENTICATION_TYPE = "plain"
 """ The default authentication type """
-
-MESSAGE = """Return-Path: <joamag@gmail.com>
-Received: from [93.108.84.220] (220.84.108.93.rev.vodafone.pt [93.108.84.220])
-        by mx.google.com with ESMTPS id 13sm5671510fad.7.2010.05.07.01.38.17
-        (version=TLSv1/SSLv3 cipher=RC4-MD5);
-        Fri, 07 May 2010 01:38:20 -0700 (PDT)
-Message-Id: <722CD92D-15EB-4F19-8AF5-88B5B88908AE@gmail.com>
-From: =?utf-8?Q?Jo=C3=A3o_Magalh=C3=A3es?= <joamag@gmail.com>
-To: me <joamag@gmail.com>
-Content-Type: text/plain;
-    charset=us-ascii;
-    format=flowed;
-    delsp=yes
-Content-Transfer-Encoding: 7bit
-X-Mailer: iPhone Mail (7E18)
-Mime-Version: 1.0 (iPhone Mail 7E18)
-Subject: Elaborar tops e restaurantes na moda
-Date: Fri, 7 May 2010 09:38:03 +0100
-
-Ter tb a possibilidade de focar no prato saber informacoes e depois
-saber quem o serve
-
-Sent from my iPhone"""
 
 class MainServicePopStreamHandler:
     """
@@ -313,22 +289,40 @@ class MainServicePopStreamHandler:
         # asserts the list arguments
         self.assert_arguments(arguments, 0)
 
+        # creates the response messages list
         response_messages = []
 
-        message_count = 1
+        # retrieves the current mailbox
+        mailbox = session.get_mailbox_messages()
 
-        octets_count = len(MESSAGE)
+        # retrieves the messages
+        messages_count = mailbox.messages_count
 
-        response_messages.append("%i messages (%i octets)" % (message_count, octets_count))
+        # retrieves the octets count
+        octets_count = mailbox.messages_size
 
-        message_description_list = ((1, len(MESSAGE)),)
+        response_messages.append("%i messages (%i octets)" % (messages_count, octets_count))
 
-        for message_description in message_description_list:
-            message_id, message_size = message_description
+        # starts the index counter
+        index = 1
 
-            message = "%i %i" % (message_id, message_size)
+        # iterates over all the messages in the mailbox
+        for message in mailbox.messages:
+            # retrieves the message contents
+            message_contents = message.contents
 
+            # retrieves the message contents length
+            message_contents_length = len(message_contents)
+
+            # creates the response message
+            message = "%i %i" % (index, message_contents_length)
+
+            # adds the (response) message to the list
+            # of response messages
             response_messages.append(message)
+
+            # increments the index counter
+            index += 1
 
         # sets the request response code
         request.set_response_code("+OK")
@@ -352,17 +346,28 @@ class MainServicePopStreamHandler:
         self.assert_arguments(arguments, 1)
 
         # retrieves the message id argument
-        message_id = arguments[0]
+        message_id = int(arguments[0])
 
+        # creates the response messages list
         response_messages = []
 
-        octets_count = len(MESSAGE)
+        # retrieves the current mailbox
+        mailbox = session.get_mailbox_messages()
 
-        response_messages.append("%i octets" % octets_count)
+        # retrieves the selected message
+        message = mailbox.messages[message_id - 1]
 
-        buffer = MESSAGE
+        # retrieves the message contents
+        message_contents = message.contents
 
-        response_messages.append(buffer)
+        # retrieves the message contents length
+        message_contents_length = len(message_contents)
+
+        # adds the initial line to the reponse messages
+        response_messages.append("%i octets" % message_contents_length)
+
+        # adds the message contents to the response messages
+        response_messages.append(message_contents)
 
         # sets the request response code
         request.set_response_code("+OK")
