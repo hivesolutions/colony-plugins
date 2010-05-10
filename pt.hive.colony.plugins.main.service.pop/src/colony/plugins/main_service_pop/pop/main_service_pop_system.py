@@ -441,6 +441,12 @@ class PopClientServiceTask:
         # sets the session handler (plugin) in the session
         session.set_session_handler(pop_service_session_handler_plugin)
 
+        # retrieves the session properties
+        session_properties = service_configuration.get("session_properties", {})
+
+        # sets the session properties in the session
+        session.set_session_properties(session_properties)
+
         # retrieves the default handler name
         handler_name = service_configuration.get("default_handler", None)
 
@@ -1032,8 +1038,14 @@ class PopSession:
     upgrader_handler = None
     """ The upgrader handler """
 
+    message_client = None
+    """ The message client """
+
     authentication_properties = {}
     """ The authentication properties """
+
+    session_properties = {}
+    """ The session properties """
 
     def __init__(self, pop_client_service_task):
         """
@@ -1047,6 +1059,7 @@ class PopSession:
 
         self.properties = {}
         self.authentication_properties = {}
+        self.session_properties = {}
 
     def __repr__(self):
         return "(%s)" % self.properties
@@ -1093,7 +1106,7 @@ class PopSession:
             return None
 
         # handles the session with the session handler
-        self.session_handler.handle_session(self)
+        self.session_handler.handle_session(self, self.session_properties)
 
     def upgrade_connection(self):
         """
@@ -1351,6 +1364,26 @@ class PopSession:
 
         self.upgrader_handler = upgrader_handler
 
+    def get_message_client(self):
+        """
+        Retrieves the message client.
+
+        @rtype: MessageClient
+        @return: The message client.
+        """
+
+        return self.message_client
+
+    def set_message_client(self, message_client):
+        """
+        Sets the upgrader handler.
+
+        @type message_client: MessageClient
+        @param message_client: The message client.
+        """
+
+        self.message_client = message_client
+
     def get_authentication_properties(self):
         """
         Retrieves the authentication properties.
@@ -1370,3 +1403,23 @@ class PopSession:
         """
 
         self.authentication_properties = authentication_properties
+
+    def get_session_properties(self):
+        """
+        Retrieves the session properties.
+
+        @rtype: Dictionary
+        @return: The session properties.
+        """
+
+        return self.session_properties
+
+    def set_session_properties(self, session_properties):
+        """
+        Sets the session properties.
+
+        @type session_properties: Dictionary
+        @param session_properties: The session properties.
+        """
+
+        self.session_properties = session_properties

@@ -39,36 +39,38 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.plugins.plugin_system
 
-class MainServicePopMainSessionHandlerPlugin(colony.plugins.plugin_system.Plugin):
+class MainServicePopDatabaseMessageProviderPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Pop Service Main Main Session Handler plugin.
+    The main class for the Pop Service Main Database Message Provider plugin.
     """
 
-    id = "pt.hive.colony.plugins.main.service.pop.main_session_handler"
-    name = "Pop Service Main Main Session Handler Plugin"
-    short_name = "Pop Service Main Main Session Handler"
-    description = "The plugin that offers the pop service session main handler"
+    id = "pt.hive.colony.plugins.main.service.pop.database_message_provider"
+    name = "Pop Service Main Database Message Provider Plugin"
+    short_name = "Pop Service Main Database Message Provider"
+    description = "The plugin that offers the pop service database message provider"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
-    capabilities = ["pop_service_session_handler"]
-    capabilities_allowed = ["pop_service_message_provider"]
-    dependencies = []
+    capabilities = ["pop_service_message_provider"]
+    capabilities_allowed = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.mail.storage.database", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["main_service_pop_main_session_handler.main_session_handler.main_service_pop_main_session_handler_system"]
+    main_modules = ["main_service_pop_database_message_provider.database_message_provider.main_service_pop_database_message_provider_exceptions",
+                    "main_service_pop_database_message_provider.database_message_provider.main_service_pop_database_message_provider_system"]
 
-    main_service_pop_main_session_handler = None
+    main_service_pop_database_message_provider = None
 
-    pop_service_message_provider_plugins = []
+    mail_storage_database_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
-        global main_service_pop_main_session_handler
-        import main_service_pop_main_session_handler.main_session_handler.main_service_pop_main_session_handler_system
-        self.main_service_pop_main_session_handler =  main_service_pop_main_session_handler.main_session_handler.main_service_pop_main_session_handler_system.MainServicePopMainSessionHandler(self)
+        global main_service_pop_database_message_provider
+        import main_service_pop_database_message_provider.database_message_provider.main_service_pop_database_message_provider_system
+        self.main_service_pop_database_message_provider =  main_service_pop_database_message_provider.database_message_provider.main_service_pop_database_message_provider_system.MainServicePopDatabaseMessageProvider(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -79,45 +81,41 @@ class MainServicePopMainSessionHandlerPlugin(colony.plugins.plugin_system.Plugin
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.main.service.pop.main_session_handler", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.main.service.pop.main_session_handler", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.main.service.pop.database_message_provider", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def get_handler_name(self):
+    def get_provider_name(self):
         """
-        Retrieves the handler name.
+        Retrieves the provider name.
 
         @rtype: String
-        @return: The handler name.
+        @return: The provider name.
         """
 
-        return self.main_service_pop_main_session_handler.get_handler_name()
+        return self.main_service_pop_database_message_provider.get_provider_name()
 
-    def handle_session(self, session, properties):
+    def provide_message_client(self, arguments):
         """
-        Handles the given pop session.
+        Provides the message client.
 
-        @type session: PopSession
-        @param session: The session to be handled.
-        @type properties: Dictionary
-        @param properties: The properties for the session handling.
+        @type arguments: Dictionary
+        @param arguments: The arguments to the message client.
+        @rtype: MessageClient
+        @return: The message client.
         """
 
-        self.main_service_pop_main_session_handler.handle_session(session, properties)
+        return self.main_service_pop_database_message_provider.provide_message_client(arguments)
 
-    @colony.plugins.decorators.load_allowed_capability("pop_service_message_provider")
-    def pop_service_message_provider_load_allowed(self, plugin, capability):
-        self.pop_service_message_provider_plugins.append(plugin)
-        self.main_service_pop_main_session_handler.pop_service_message_provider_load(plugin)
+    def get_mail_storage_database_plugin(self):
+        return self.mail_storage_database_plugin
 
-    @colony.plugins.decorators.unload_allowed_capability("pop_service_message_provider")
-    def pop_service_message_provider_unload_allowed(self, plugin, capability):
-        self.pop_service_message_provider_plugins.remove(plugin)
-        self.main_service_pop_main_session_handler.pop_service_message_provider_unload(plugin)
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.mail.storage.database")
+    def set_mail_storage_database_plugin(self, mail_storage_database_plugin):
+        self.mail_storage_database_plugin = mail_storage_database_plugin

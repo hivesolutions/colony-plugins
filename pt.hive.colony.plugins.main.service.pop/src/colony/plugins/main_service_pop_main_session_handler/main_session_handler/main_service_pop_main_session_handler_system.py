@@ -73,12 +73,14 @@ class MainServicePopMainSessionHandler:
 
         return HANDLER_NAME
 
-    def handle_session(self, session):
+    def handle_session(self, session, properties):
         """
         Handles the given pop session.
 
         @type session: PopSession
         @param session: The session to be handled.
+        @type properties: Dictionary
+        @param properties: The properties for the session handling.
         """
 
         pass

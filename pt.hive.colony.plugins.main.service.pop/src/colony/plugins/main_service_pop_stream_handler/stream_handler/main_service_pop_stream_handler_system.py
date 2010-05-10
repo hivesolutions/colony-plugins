@@ -163,7 +163,7 @@ class MainServicePopStreamHandler:
         @param arguments: The list of arguments for the request.
         """
 
-        # asserts the ehlo arguments
+        # asserts the capa arguments
         self.assert_arguments(arguments, 0)
 
         # sets the request response code
@@ -280,15 +280,20 @@ class MainServicePopStreamHandler:
         # asserts the stat arguments
         self.assert_arguments(arguments, 0)
 
+        # retrieves the message client from the session
+        message_client = session.get_message_client()
+
+        # retrieves the messages
+        messages_count = message_client.get_messages_count()
+
+        # retrieves the octets count
+        octets_count = message_client.get_messages_size()
+
         # sets the request response code
         request.set_response_code("+OK")
 
-        message_count = 1
-
-        octets_count = len(MESSAGE)
-
         # sets the request response message
-        request.set_response_message("%i %i" % (message_count, octets_count))
+        request.set_response_message("%i %i" % (messages_count, octets_count))
 
     def process_list(self, request, session, arguments):
         """
