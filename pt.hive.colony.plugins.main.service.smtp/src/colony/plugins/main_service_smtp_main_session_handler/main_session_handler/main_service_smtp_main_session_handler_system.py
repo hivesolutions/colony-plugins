@@ -73,12 +73,14 @@ class MainServiceSmtpMainSessionHandler:
 
         return HANDLER_NAME
 
-    def handle_session(self, session):
+    def handle_session(self, session, properties):
         """
         Handles the given smtp session.
 
         @type session: SmtpSession
         @param session: The session to be handled.
+        @type properties: Dictionary
+        @param properties: The properties for the session handling.
         """
 
         # retrieves the messages from the session
@@ -92,7 +94,7 @@ class MainServiceSmtpMainSessionHandler:
             # unsets the relay message flag
             relay_message = False
 
-            # iterates over all redcipients in the recipients list
+            # iterates over all recipients in the recipients list
             # to check the domain
             for recipient in recipients_list:
                 # splits the recipient retrieving the

@@ -61,13 +61,13 @@ class MainServiceSmtpDatabaseMessageHandlerPlugin(colony.plugins.plugin_system.P
     main_modules = ["main_service_smtp_database_message_handler.database_message_handler.main_service_smtp_database_message_handler_exceptions",
                     "main_service_smtp_database_message_handler.database_message_handler.main_service_smtp_database_message_handler_system"]
 
-    main_service_smtp_database_sesion_handler = None
+    main_service_smtp_database_message_handler = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global main_service_smtp_database_message_handler
         import main_service_smtp_database_message_handler.database_message_handler.main_service_smtp_database_message_handler_system
-        self.main_service_smtp_database_sesion_handler =  main_service_smtp_database_message_handler.database_message_handler.main_service_smtp_database_message_handler_system.MainServiceSmtpDatabaseMessageHandler(self)
+        self.main_service_smtp_database_message_handler =  main_service_smtp_database_message_handler.database_message_handler.main_service_smtp_database_message_handler_system.MainServiceSmtpDatabaseMessageHandler(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -95,7 +95,7 @@ class MainServiceSmtpDatabaseMessageHandlerPlugin(colony.plugins.plugin_system.P
         @return: The handler name.
         """
 
-        return self.main_service_smtp_database_sesion_handler.get_handler_name()
+        return self.main_service_smtp_database_message_handler.get_handler_name()
 
     def handle_message(self, message):
         """
@@ -105,4 +105,4 @@ class MainServiceSmtpDatabaseMessageHandlerPlugin(colony.plugins.plugin_system.P
         @param message: The smtp message to handled.
         """
 
-        self.main_service_smtp_database_sesion_handler.handle_message(message)
+        self.main_service_smtp_database_message_handler.handle_message(message)

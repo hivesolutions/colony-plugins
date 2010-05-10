@@ -100,15 +100,17 @@ class MainServiceSmtpMainSessionHandlerPlugin(colony.plugins.plugin_system.Plugi
 
         return self.main_service_smtp_main_session_handler.get_handler_name()
 
-    def handle_session(self, session):
+    def handle_session(self, session, properties):
         """
         Handles the given smtp session.
 
         @type session: SmtpSession
         @param session: The session to be handled.
+        @type properties: Dictionary
+        @param properties: The properties for the session handling.
         """
 
-        self.main_service_smtp_main_session_handler.handle_session(session)
+        self.main_service_smtp_main_session_handler.handle_session(session, properties)
 
     @colony.plugins.decorators.load_allowed_capability("smtp_service_message_handler")
     def smtp_service_message_handler_load_allowed(self, plugin, capability):

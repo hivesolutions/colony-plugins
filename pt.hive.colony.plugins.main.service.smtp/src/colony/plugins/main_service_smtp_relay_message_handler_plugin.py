@@ -65,7 +65,7 @@ class MainServiceSmtpRelayMessageHandlerPlugin(colony.plugins.plugin_system.Plug
     main_modules = ["main_service_smtp_relay_message_handler.relay_message_handler.main_service_smtp_relay_message_handler_exceptions",
                     "main_service_smtp_relay_message_handler.relay_message_handler.main_service_smtp_relay_message_handler_system"]
 
-    main_service_smtp_relay_sesion_handler = None
+    main_service_smtp_relay_session_handler = None
 
     main_client_smtp_plugin = None
     main_client_dns_plugin = None
@@ -74,7 +74,7 @@ class MainServiceSmtpRelayMessageHandlerPlugin(colony.plugins.plugin_system.Plug
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global main_service_smtp_relay_message_handler
         import main_service_smtp_relay_message_handler.relay_message_handler.main_service_smtp_relay_message_handler_system
-        self.main_service_smtp_relay_sesion_handler =  main_service_smtp_relay_message_handler.relay_message_handler.main_service_smtp_relay_message_handler_system.MainServiceSmtpRelayMessageHandler(self)
+        self.main_service_smtp_relay_session_handler =  main_service_smtp_relay_message_handler.relay_message_handler.main_service_smtp_relay_message_handler_system.MainServiceSmtpRelayMessageHandler(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -103,7 +103,7 @@ class MainServiceSmtpRelayMessageHandlerPlugin(colony.plugins.plugin_system.Plug
         @return: The handler name.
         """
 
-        return self.main_service_smtp_relay_sesion_handler.get_handler_name()
+        return self.main_service_smtp_relay_session_handler.get_handler_name()
 
     def handle_message(self, message):
         """
@@ -113,7 +113,7 @@ class MainServiceSmtpRelayMessageHandlerPlugin(colony.plugins.plugin_system.Plug
         @param message: The smtp message to handled.
         """
 
-        self.main_service_smtp_relay_sesion_handler.handle_message(message)
+        self.main_service_smtp_relay_session_handler.handle_message(message)
 
     def get_main_client_smtp_plugin(self):
         return self.main_client_smtp_plugin

@@ -1050,6 +1050,9 @@ class SmtpSession:
     authentication_properties = {}
     """ The authentication properties """
 
+    session_properties = {}
+    """ The session properties """
+
     def __init__(self, smtp_client_service_task):
         """
         Constructor of the class.
@@ -1063,6 +1066,7 @@ class SmtpSession:
         self.messages = []
         self.properties = {}
         self.authentication_properties = {}
+        self.session_properties = {}
 
     def __repr__(self):
         return "(%s, %s)" % (self.client_hostname, self.properties)
@@ -1134,7 +1138,7 @@ class SmtpSession:
             return None
 
         # handles the session with the session handler
-        self.session_handler.handle_session(self)
+        self.session_handler.handle_session(self, self.session_properties)
 
     def upgrade_connection(self):
         """
@@ -1459,6 +1463,26 @@ class SmtpSession:
         """
 
         self.authentication_properties = authentication_properties
+
+    def get_session_properties(self):
+        """
+        Retrieves the session properties.
+
+        @rtype: Dictionary
+        @return: The session properties.
+        """
+
+        return self.session_properties
+
+    def set_session_properties(self, session_properties):
+        """
+        Sets the session properties.
+
+        @type session_properties: Dictionary
+        @param session_properties: The session properties.
+        """
+
+        self.session_properties = session_properties
 
 class SmtpMessage:
     """
