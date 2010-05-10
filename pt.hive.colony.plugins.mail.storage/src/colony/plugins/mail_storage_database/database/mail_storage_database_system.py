@@ -51,6 +51,12 @@ FILTERS_VALUE = "filters"
 EAGER_LOADING_RELATIONS_VALUE = "eager_loading_relations"
 """ The eager loading relations value """
 
+FILTER_TYPE_VALUE = "filter_type"
+""" The filter type value """
+
+FILTER_FIELDS_VALUE = "filter_fields"
+""" The filter fields value """
+
 UID_MULTIPLICATION_FACTOR = 1000
 """ The uid multiplication factor """
 
@@ -219,9 +225,9 @@ class MailStorageDatabaseClient:
         message_class = entity_manager.get_entity_class("Message")
 
         # defines the find options for retrieving the messages
-        find_options = {FILTERS_VALUE : [{"filter_type" : "equals",
-                                          "filter_fields" : [{"field_name" : "uid",
-                                                              "field_value" : uid}]}],
+        find_options = {FILTERS_VALUE : [{FILTER_TYPE_VALUE : "equals",
+                                          FILTER_FIELDS_VALUE : [{"field_name" : "uid",
+                                                                  "field_value" : uid}]}],
                         EAGER_LOADING_RELATIONS_VALUE : {"mailbox" : {}}}
 
         # retrieves the valid messages
@@ -247,9 +253,37 @@ class MailStorageDatabaseClient:
         mailbox_class = entity_manager.get_entity_class("Mailbox")
 
         # defines the find options for retrieving the mailboxes
-        find_options = {FILTERS_VALUE : [{"filter_type" : "equals",
-                                          "filter_fields" : [{"field_name" : "name",
-                                                              "field_value" : name}]}]}
+        find_options = {FILTERS_VALUE : [{FILTER_TYPE_VALUE : "equals",
+                                          FILTER_FIELDS_VALUE : [{"field_name" : "name",
+                                                                  "field_value" : name}]}]}
+
+        # retrieves the valid mailboxes
+        mailboxes = entity_manager._find_all_options(mailbox_class, find_options)
+
+        if len(mailboxes):
+            return mailboxes[0]
+
+    def get_mailbox_messages_name(self, name):
+        """
+        Retrieves the mailbox (containing messages) for the given name.
+
+        @type name: String
+        @param name: The name of the mailbox to be retrieved.
+        @rtype: Mailbox
+        @requires: The retrieved mailbox (containing messages).
+        """
+
+        # retrieves the entity manager
+        entity_manager = self._get_entity_manager()
+
+        # retrieves the mailbox class
+        mailbox_class = entity_manager.get_entity_class("Mailbox")
+
+        # defines the find options for retrieving the mailboxes
+        find_options = {FILTERS_VALUE : [{EAGER_LOADING_RELATIONS_VALUE : {"messages" : {}},
+                                          FILTER_TYPE_VALUE : "equals",
+                                          FILTER_FIELDS_VALUE : [{"field_name" : "name",
+                                                                  "field_value" : name}]}]}
 
         # retrieves the valid mailboxes
         mailboxes = entity_manager._find_all_options(mailbox_class, find_options)
