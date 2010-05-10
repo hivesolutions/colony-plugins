@@ -48,5 +48,7 @@ configuration = {
                      "arguments" : {"file_path" : "%configuration:pt.hive.colony.plugins.main.authentication.python_handler%/authentication.py"}
                  },
                  "session_properties" : {
+                     "message_provider" : "database",
+                     "arguments" : {}
                  }
              }
