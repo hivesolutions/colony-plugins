@@ -280,10 +280,10 @@ class MailStorageDatabaseClient:
         mailbox_class = entity_manager.get_entity_class("Mailbox")
 
         # defines the find options for retrieving the mailboxes
-        find_options = {FILTERS_VALUE : [{EAGER_LOADING_RELATIONS_VALUE : {"messages" : {}},
-                                          FILTER_TYPE_VALUE : "equals",
+        find_options = {FILTERS_VALUE : [{FILTER_TYPE_VALUE : "equals",
                                           FILTER_FIELDS_VALUE : [{"field_name" : "name",
-                                                                  "field_value" : name}]}]}
+                                                                  "field_value" : name}]}],
+                        EAGER_LOADING_RELATIONS_VALUE : {"messages" : {}}}
 
         # retrieves the valid mailboxes
         mailboxes = entity_manager._find_all_options(mailbox_class, find_options)
