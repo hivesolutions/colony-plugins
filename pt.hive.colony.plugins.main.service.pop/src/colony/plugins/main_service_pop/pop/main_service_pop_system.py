@@ -1124,6 +1124,28 @@ class PopSession:
         # upgrades the pop client service task with the current upgrader handler
         self.pop_client_service_task.pop_connection = self.upgrader_handler(self.pop_client_service_task.pop_connection, parameters)
 
+    def get_mailbox(self, name = None):
+        """
+        Returns the mailbox for the given name, or for
+        the current user if none is given.
+
+        @type name: String
+        @param name: The name of the mailbox to be retrieved.
+        @rtype: Mailbox
+        @return: The retrieved mailbox.
+        """
+
+        # in case no name is given
+        if not name:
+            # sets the mailbox name as the current user
+            name = self.current_user
+
+        # retrieves the mailbox for the given name
+        mailbox = self.message_client.get_mailbox_name(name)
+
+        # returns the mailbox
+        return mailbox
+
     def get_pop_client_service_task(self):
         """
         Retrieves the client pop client service task.

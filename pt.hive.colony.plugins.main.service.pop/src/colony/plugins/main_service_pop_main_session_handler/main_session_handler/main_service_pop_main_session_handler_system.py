@@ -37,8 +37,16 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import main_service_pop_main_session_handler_exceptions
+
 HANDLER_NAME = "main"
 """ The handler name """
+
+MESSAGE_PROVIDER_VALUE = "message_provider"
+""" The message provider value """
+
+ARGUMENTS_VALUE = "arguments"
+""" The arguments value """
 
 class MainServicePopMainSessionHandler:
     """
@@ -83,7 +91,30 @@ class MainServicePopMainSessionHandler:
         @param properties: The properties for the session handling.
         """
 
-        pass
+        # in case the message provider property is not defined
+        if not MESSAGE_PROVIDER_VALUE in properties:
+            # raises the missing property exception
+            raise main_service_pop_main_session_handler_exceptions.MissingProperty(MESSAGE_PROVIDER_VALUE)
+
+        # in case the arguments property is not defined
+        if not ARGUMENTS_VALUE in properties:
+            # raises the missing property exception
+            raise main_service_pop_main_session_handler_exceptions.MissingProperty(ARGUMENTS_VALUE)
+
+        # retrieves the message provider
+        message_provider = properties[MESSAGE_PROVIDER_VALUE]
+
+        # retrieves the arguments
+        arguments = properties[ARGUMENTS_VALUE]
+
+        # retrieves the message provider plugin
+        message_provider_plugin = self.pop_service_message_provider_plugins_map[message_provider]
+
+        # creates a message client for the given arguments
+        message_client = message_provider_plugin.provide_message_client(arguments)
+
+        # sets the message client in the session
+        session.set_message_client(message_client)
 
     def pop_service_message_provider_load(self, pop_service_message_provider_plugin):
         # retrieves the plugin provider name

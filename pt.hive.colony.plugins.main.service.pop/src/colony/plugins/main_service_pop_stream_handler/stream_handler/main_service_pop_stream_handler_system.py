@@ -265,6 +265,9 @@ class MainServicePopStreamHandler:
         # and authentication arguments
         authentication_method(request, session, [])
 
+        # handles the session
+        session.handle()
+
     def process_stat(self, request, session, arguments):
         """
         Processes the stat command.
@@ -280,14 +283,14 @@ class MainServicePopStreamHandler:
         # asserts the stat arguments
         self.assert_arguments(arguments, 0)
 
-        # retrieves the message client from the session
-        message_client = session.get_message_client()
+        # retrieves the current mailbox
+        mailbox = session.get_mailbox()
 
         # retrieves the messages
-        messages_count = message_client.get_messages_count()
+        messages_count = mailbox.messages_count
 
         # retrieves the octets count
-        octets_count = message_client.get_messages_size()
+        octets_count = mailbox.messages_size
 
         # sets the request response code
         request.set_response_code("+OK")
@@ -330,6 +333,7 @@ class MainServicePopStreamHandler:
         # sets the request response code
         request.set_response_code("+OK")
 
+        # sets the request response messages
         request.set_response_messages(response_messages)
 
     def process_retr(self, request, session, arguments):
@@ -354,15 +358,16 @@ class MainServicePopStreamHandler:
 
         octets_count = len(MESSAGE)
 
-        # sets the request response code
-        request.set_response_code("+OK")
-
         response_messages.append("%i octets" % octets_count)
 
         buffer = MESSAGE
 
         response_messages.append(buffer)
 
+        # sets the request response code
+        request.set_response_code("+OK")
+
+        # sets the request response messages
         request.set_response_messages(response_messages)
 
     def process_dele(self, request, session, arguments):
@@ -408,8 +413,10 @@ class MainServicePopStreamHandler:
 
             message_uid = "ABDD"
 
+            # sets the request response code
             request.set_response_code("+OK")
 
+            # sets the request response message
             request.set_response_message("%i %s" % (message_id, message_uid))
         else:
             response_messages = []
@@ -425,8 +432,10 @@ class MainServicePopStreamHandler:
 
                 response_messages.append(message)
 
+            # sets the request response code
             request.set_response_code("+OK")
 
+            # sets the request response messages
             request.set_response_messages(response_messages)
 
     def process_auth(self, request, session, arguments):
