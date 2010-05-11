@@ -209,10 +209,10 @@ class Message(RootEntity):
     mail_queue = {"data_type" : "relation", "fetch_type" : "lazy"}
     """ The mail queue that contains the message """
 
-    next_message = {"data_type" : "relation", "fetch_type" : "eager"}
+    next_message = {"data_type" : "relation", "fetch_type" : "lazy"}
     """ The next message in the priority list """
 
-    previous_message = {"data_type" : "relation", "fetch_type" : "eager"}
+    previous_message = {"data_type" : "relation", "fetch_type" : "lazy"}
     """ The previous message in the priority list """
 
     def __init__(self):
