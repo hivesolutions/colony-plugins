@@ -55,6 +55,18 @@ NUMBER_RECORDS_VALUE = "number_records"
 ORDER_BY_VALUE = "order_by"
 """ The order by value """
 
+EAGER_LOADING_RELATIONS_VALUE = "eager_loading_relations"
+""" The eager loading relations value """
+
+FILTERS_VALUE = "filters"
+""" The filters value """
+
+FILTER_TYPE_VALUE = "filter_type"
+""" The filter type value """
+
+FILTER_FIELDS_VALUE = "filter_fields"
+""" The filter fields value """
+
 UID_MULTIPLICATION_FACTOR = 1000
 """ The uid multiplication factor """
 
@@ -95,17 +107,6 @@ class MailQueueDatabase:
 
         # returns the mail queue database client
         return mail_queue_database_client
-
-
-
-
-
-
-
-
-
-
-
 
 class MailQueueDatabaseClient:
     """
@@ -155,78 +156,149 @@ class MailQueueDatabaseClient:
             # releases the message access lock
             self.message_access_lock.release()
 
-    def peek_last_message(self):
+    def get_mail_queue_name(self, name):
         # retrieves the entity manager
         entity_manager = self._get_entity_manager()
 
-        # retrieves the message class
-        message_class = entity_manager.get_entity_class("Message")
+        # retrieves the mail queue class
+        mail_queue_class = entity_manager.get_entity_class("MailQueue")
 
-        # defines the find options for retrieving the messages
-        find_options = {ORDER_BY_VALUE : (("object_id", "descending"),),
-                        START_RECORD_VALUE : 0,
-                        NUMBER_RECORDS_VALUE : 1}
+        # defines the find options for retrieving the mailboxes
+        find_options = {FILTERS_VALUE : [{FILTER_TYPE_VALUE : "equals",
+                                          FILTER_FIELDS_VALUE : ({"field_name" : "name",
+                                                                  "field_value" : name},)}]}
 
-        # retrieves the valid messages
-        messages = entity_manager._find_all_options(message_class, find_options)
+        # retrieves the valid mail queues
+        mail_queues = entity_manager._find_all_options(mail_queue_class, find_options)
 
-        if len(messages):
-            return messages[0]
+        if len(mail_queues):
+            return mail_queues[0]
 
-    def put_message(self, sender, recipients_list, contents):
-        # tries to retrieve the last message
-        last_message = self.peek_last_message()
-
+    def get_mail_queue_messages_name(self, name):
         # retrieves the entity manager
         entity_manager = self._get_entity_manager()
+
+        # retrieves the mail queue class
+        mail_queue_class = entity_manager.get_entity_class("MailQueue")
+
+        # defines the find options for retrieving the mailboxes
+        find_options = {FILTERS_VALUE : [{FILTER_TYPE_VALUE : "equals",
+                                          FILTER_FIELDS_VALUE : ({"field_name" : "name",
+                                                                  "field_value" : name},)}],
+                        EAGER_LOADING_RELATIONS_VALUE : {"first_message" : {}, "last_message" : {}, "messages" : {}}}
+
+        # retrieves the valid mail queues
+        mail_queues = entity_manager._find_all_options(mail_queue_class, find_options)
+
+        if len(mail_queues):
+            return mail_queues[0]
+
+    def peek_last_message(self, mail_queue_name):
+        # retrieves the mail queue for the given name
+        mail_queue = self.get_mail_queue_messages_name(mail_queue_name)
+
+        # in case there is a valid mail queue
+        # defined in the database
+        if mail_queue:
+            # retrieves the last message from the mail
+            # queue
+            last_message = mail_queue.get_last_message()
+
+            # returns the last message
+            return last_message
+
+    def put_message(self, mail_queue_name, sender, recipients_list, contents):
+        # acquires the message access lock
+        self.message_access_lock.acquire()
 
         try:
-            # retrieves the message class
-            message_class = entity_manager.get_entity_class("Message")
+            # retrieves the entity manager
+            entity_manager = self._get_entity_manager()
 
-            # retrieves the contents length
-            contents_length = len(contents)
+            # creates a transaction
+            entity_manager.create_transaction()
 
-            # creates the new message instance
-            message = message_class()
+            try:
+                # retrieves the mail queue
+                mail_queue = self.get_mail_queue(mail_queue_name)
 
-            # sets the message uid as a new one
-            message.uid = self._generate_uid()
+                # in case the mail queue is not defined
+                if not mail_queue:
+                    # raises the invalid mail queue error
+                    raise mail_queue_database_exceptions.InvalidMailQueueError(mail_queue_name)
 
-            # sets the initial message attributes
-            message.sender = sender
-            message.contents_size = contents_length
-            message.previous_message = last_message
+                # retrieves the contents length
+                contents_length = len(contents)
 
-            # retrieves the message contents class
-            message_contents_class = entity_manager.get_entity_class("MessageContents")
+                # increments the number of messages in the mail queue
+                mail_queue.messages_count += 1
 
-            # creates the new message contents instance
-            message_contents = message_contents_class()
+                # increments the mail queue size
+                mail_queue.messages_size += contents_length
 
-            # sets the message contents size
-            message_contents.contents_size = contents_length
+                # tries to retrieve the last message
+                last_message = self.peek_last_message(mail_queue_name)
 
-            # sets the message contents data
-            message_contents.contents_data = contents
+                # retrieves the message class
+                message_class = entity_manager.get_entity_class("Message")
 
-            # sets the contents in the message
-            message.contents = message_contents
+                # creates the new message instance
+                message = message_class()
 
-            # saves the message contents
-            entity_manager.save(message_contents)
+                # sets the message uid as a new one
+                message.uid = self._generate_uid()
 
-            # saves the message
-            entity_manager.save(message)
-        except:
-            # rolls back the transaction
-            entity_manager.rollback_transaction()
+                # sets the initial message attributes
+                message.sender = sender
+                message.contents_size = contents_length
+                message.previous_message = last_message
 
-            # re-throws the exception
-            raise
-        else:
-            # commits the transaction
-            entity_manager.commit_transaction()
+                # retrieves the message contents class
+                message_contents_class = entity_manager.get_entity_class("MessageContents")
+
+                # creates the new message contents instance
+                message_contents = message_contents_class()
+
+                # sets the message contents size
+                message_contents.contents_size = contents_length
+
+                # sets the message contents data
+                message_contents.contents_data = contents
+
+                # sets the contents in the message
+                message.contents = message_contents
+
+                # in case the first message is not defined
+                # this is the first message
+                if not mail_queue.first_message:
+                    # sets the current mail queue in the
+                    # first reference
+                    message.mail_queue_first = mail_queue
+
+                # sets the current mail queue in the
+                # last reference (this is the last message)
+                message.mail_queue_last = mail_queue
+
+                # updates the mail queue
+                entity_manager.update(mail_queue)
+
+                # saves the message contents
+                entity_manager.save(message_contents)
+
+                # saves the message
+                entity_manager.save(message)
+            except:
+                # rolls back the transaction
+                entity_manager.rollback_transaction()
+
+                # re-throws the exception
+                raise
+            else:
+                # commits the transaction
+                entity_manager.commit_transaction()
+        finally:
+            # releases the message access lock
+            self.message_access_lock.release()
 
     def get_mail_queue_database(self):
         """
