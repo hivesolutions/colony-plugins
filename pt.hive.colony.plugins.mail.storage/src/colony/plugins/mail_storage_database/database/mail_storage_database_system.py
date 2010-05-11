@@ -396,10 +396,31 @@ class MailStorageDatabaseClient:
         Sets the mail storage database.
 
         @type mail_storage_database: MailStorageDatabase
-        @param mail_storage_database: Tghe mail storage database.
+        @param mail_storage_database: The mail storage database.
         """
 
         self.mail_storage_database = mail_storage_database
+
+
+    def get_entity_manager_arguments(self):
+        """
+        Retrieves the entity manager arguments.
+
+        @rtype: Dictionary
+        @return: The entity manager arguments.
+        """
+
+        return self.entity_manager_arguments
+
+    def set_entity_manager_arguments(self, entity_manager_arguments):
+        """
+        Sets the entity manager arguments.
+
+        @type entity_manager_arguments: Dictionary
+        @param entity_manager_arguments: The entity manager arguments.
+        """
+
+        self.entity_manager_arguments = entity_manager_arguments
 
     def _generate_uid(self):
         """
