@@ -1047,6 +1047,9 @@ class PopSession:
     session_properties = {}
     """ The session properties """
 
+    message_id_uid_map = {}
+    """ The map associating the message id with the message uid """
+
     def __init__(self, pop_client_service_task):
         """
         Constructor of the class.
@@ -1060,6 +1063,7 @@ class PopSession:
         self.properties = {}
         self.authentication_properties = {}
         self.session_properties = {}
+        self.message_id_uid_map = {}
 
     def __repr__(self):
         return "(%s)" % self.properties
@@ -1167,6 +1171,22 @@ class PopSession:
 
         # returns the mailbox
         return mailbox
+
+    def get_message(self, message_uid):
+        """
+        Returns the message for the given message uid.
+
+        @type message_uid: String
+        @param message_uid: The uid of the message to be retrieved.
+        @rtype: Message
+        @return: The retrieved message.
+        """
+
+        # retrieves the message for the given message uid
+        message = self.message_client.get_message_uid(message_uid)
+
+        # returns the message
+        return message
 
     def get_pop_client_service_task(self):
         """
@@ -1467,3 +1487,23 @@ class PopSession:
         """
 
         self.session_properties = session_properties
+
+    def get_message_id_uid_map(self):
+        """
+        Retrieves the message id uid map.
+
+        @rtype: Dictionary
+        @return: The message id uid map.
+        """
+
+        return self.message_id_uid_map
+
+    def set_message_id_uid_map(self, message_id_uid_map):
+        """
+        Sets the message id uid map.
+
+        @type message_id_uid_map: Dictionary
+        @param message_id_uid_map: The message id uid map.
+        """
+
+        self.message_id_uid_map = message_id_uid_map

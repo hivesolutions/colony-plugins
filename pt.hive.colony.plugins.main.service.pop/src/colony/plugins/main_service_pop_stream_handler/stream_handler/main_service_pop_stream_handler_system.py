@@ -306,20 +306,26 @@ class MainServicePopStreamHandler:
         # starts the index counter
         index = 1
 
+        # starts the message id uid map
+        session.message_id_uid_map = {}
+
         # iterates over all the messages in the mailbox
         for message in mailbox.messages:
-            # retrieves the message contents
-            message_contents = message.contents
+            # retrieves the message contents size
+            message_contents_size = message.contents_size
 
-            # retrieves the message contents length
-            message_contents_length = len(message_contents)
+            # retrieves the message uid
+            message_uid = message.uid
 
             # creates the response message
-            message = "%i %i" % (index, message_contents_length)
+            message = "%i %i" % (index, message_contents_size)
 
             # adds the (response) message to the list
             # of response messages
             response_messages.append(message)
+
+            # sets the message uid in the message id uid map
+            session.message_id_uid_map[index] = message_uid
 
             # increments the index counter
             index += 1
@@ -351,23 +357,26 @@ class MainServicePopStreamHandler:
         # creates the response messages list
         response_messages = []
 
-        # retrieves the current mailbox
-        mailbox = session.get_mailbox_messages()
+        # retrieves the message uid from the message id uid map
+        message_uid = session.message_id_uid_map[message_id]
 
-        # retrieves the selected message
-        message = mailbox.messages[message_id - 1]
+        # retrieves the message for the given uid
+        message = session.get_message(message_uid)
 
         # retrieves the message contents
         message_contents = message.contents
 
-        # retrieves the message contents length
-        message_contents_length = len(message_contents)
+        # retrieves the message contents size
+        message_contents_size = message_contents.contents_size
 
-        # adds the initial line to the reponse messages
-        response_messages.append("%i octets" % message_contents_length)
+        # retrieves the message contents data
+        message_contents_data = message_contents.contents_data
 
-        # adds the message contents to the response messages
-        response_messages.append(message_contents)
+        # adds the initial line to the response messages
+        response_messages.append("%i octets" % message_contents_size)
+
+        # adds the message contents data to the response messages
+        response_messages.append(message_contents_data)
 
         # sets the request response code
         request.set_response_code("+OK")
@@ -408,15 +417,15 @@ class MainServicePopStreamHandler:
         # asserts the retr arguments
         self.assert_arguments(arguments, 0, 1)
 
+        # retrieves the arguments length
         arguments_length = len(arguments)
-
-        message_count = 1
 
         if arguments_length > 0:
             # retrieves the message id argument
             message_id = arguments[0]
 
-            message_uid = "ABDD"
+            # retrieves the message uid associated with the message id
+            message_uid = session.message_id_uid_map[message_id]
 
             # sets the request response code
             request.set_response_code("+OK")
@@ -424,17 +433,31 @@ class MainServicePopStreamHandler:
             # sets the request response message
             request.set_response_message("%i %s" % (message_id, message_uid))
         else:
+            # retrieves the current mailbox
+            mailbox = session.get_mailbox()
+
+            # retrieves the messages
+            messages_count = mailbox.messages_count
+
+            # creates the response messages list
             response_messages = []
 
-            response_messages.append("%i messages" % message_count)
+            # adds the initial response message
+            response_messages.append("%i messages" % messages_count)
 
-            for index in range(message_count):
+            # iterates over the ranges of messages count
+            for index in range(messages_count):
+                # retrieves the message id
                 message_id = index + 1
 
-                message_uid = "ABDD"
+                # retrieves the message uid from the message id uid map
+                message_uid = session.message_id_uid_map[message_id]
 
+                # creates the message associating the message id to the
+                # message uid
                 message = "%i %s" % (message_id, message_uid)
 
+                # adds the message to the list of response messages
                 response_messages.append(message)
 
             # sets the request response code
