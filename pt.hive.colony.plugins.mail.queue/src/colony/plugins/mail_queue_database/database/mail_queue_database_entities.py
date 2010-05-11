@@ -159,9 +159,8 @@ class MailQueue(RootEntity):
         return {"relation_type" : "one-to-one",
                 "target_entity" : Message,
                 "target_entity_name" : "Message",
-                "join_attribute" : Message.mail_queue_first,
-                "join_attribute_name" : "mail_queue_first",
-                "mapped_by" : Message,
+                "join_attribute" : Message.object_id,
+                "join_attribute_name" : "object_id",
                 "optional" : True}
 
     @staticmethod
@@ -169,9 +168,8 @@ class MailQueue(RootEntity):
         return {"relation_type" : "one-to-one",
                 "target_entity" : Message,
                 "target_entity_name" : "Message",
-                "join_attribute" : Message.mail_queue_last,
-                "join_attribute_name" : "mail_queue_last",
-                "mapped_by" : Message,
+                "join_attribute" : Message.object_id,
+                "join_attribute_name" : "object_id",
                 "optional" : True}
 
     @staticmethod
@@ -211,10 +209,10 @@ class Message(RootEntity):
     mail_queue = {"data_type" : "relation", "fetch_type" : "lazy"}
     """ The mail queue that contains the message """
 
-    next_message = {"data_type" : "relation", "fetch_type" : "lazy"}
+    next_message = {"data_type" : "relation", "fetch_type" : "eager"}
     """ The next message in the priority list """
 
-    previous_message = {"data_type" : "relation", "fetch_type" : "lazy"}
+    previous_message = {"data_type" : "relation", "fetch_type" : "eager"}
     """ The previous message in the priority list """
 
     def __init__(self):
@@ -331,8 +329,9 @@ class Message(RootEntity):
         return {"relation_type" : "one-to-one",
                 "target_entity" : MailQueue,
                 "target_entity_name" : "MailQueue",
-                "join_attribute" : MailQueue.object_id,
-                "join_attribute_name" : "object_id",
+                "join_attribute" : MailQueue.first_message,
+                "join_attribute_name" : "first_message",
+                "mapped_by" : MailQueue,
                 "optional" : True}
 
     @staticmethod
@@ -340,8 +339,9 @@ class Message(RootEntity):
         return {"relation_type" : "one-to-one",
                 "target_entity" : MailQueue,
                 "target_entity_name" : "MailQueue",
-                "join_attribute" : MailQueue.object_id,
-                "join_attribute_name" : "object_id",
+                "join_attribute" : MailQueue.last_message,
+                "join_attribute_name" : "last_message",
+                "mapped_by" : MailQueue,
                 "optional" : True}
 
     @staticmethod

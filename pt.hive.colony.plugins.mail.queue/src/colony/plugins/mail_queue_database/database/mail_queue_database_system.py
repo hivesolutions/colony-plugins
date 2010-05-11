@@ -140,6 +140,37 @@ class MailQueueDatabaseClient:
 
         self.message_access_lock = threading.Lock()
 
+    def create_mail_queue(self, name):
+        # retrieves the entity manager
+        entity_manager = self._get_entity_manager()
+
+        # creates a transaction
+        entity_manager.create_transaction()
+
+        try:
+            # retrieves the mail queue class
+            mail_queue_class = entity_manager.get_entity_class("MailQueue")
+
+            # creates the new mail queue instance
+            mail_queue = mail_queue_class()
+
+            # sets the initial mail queue attributes
+            mail_queue.name = name
+            mail_queue.messages_count = 0
+            mail_queue.messages_size = 0
+
+            # saves the mail queue
+            entity_manager.save(mail_queue)
+        except:
+            # rolls back the transaction
+            entity_manager.rollback_transaction()
+
+            # re-throws the exception
+            raise
+        else:
+            # commits the transaction
+            entity_manager.commit_transaction()
+
     def pop_message(self):
         # retrieves the entity manager
         entity_manager = self._get_entity_manager()
@@ -220,7 +251,7 @@ class MailQueueDatabaseClient:
 
             try:
                 # retrieves the mail queue
-                mail_queue = self.get_mail_queue(mail_queue_name)
+                mail_queue = self.get_mail_queue_messages_name(mail_queue_name)
 
                 # in case the mail queue is not defined
                 if not mail_queue:
@@ -271,22 +302,21 @@ class MailQueueDatabaseClient:
                 # in case the first message is not defined
                 # this is the first message
                 if not mail_queue.first_message:
-                    # sets the current mail queue in the
-                    # first reference
-                    message.mail_queue_first = mail_queue
+                    # sets the current message as the
+                    # first message, because it's the only message
+                    mail_queue.first_message = message
 
-                # sets the current mail queue in the
-                # last reference (this is the last message)
-                message.mail_queue_last = mail_queue
-
-                # updates the mail queue
-                entity_manager.update(mail_queue)
+                # sets the current message as the last message
+                mail_queue.last_message = message
 
                 # saves the message contents
                 entity_manager.save(message_contents)
 
                 # saves the message
                 entity_manager.save(message)
+
+                # updates the mail queue
+                entity_manager.update(mail_queue)
             except:
                 # rolls back the transaction
                 entity_manager.rollback_transaction()
