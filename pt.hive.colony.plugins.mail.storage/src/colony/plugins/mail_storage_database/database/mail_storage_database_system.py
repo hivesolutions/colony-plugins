@@ -181,6 +181,9 @@ class MailStorageDatabaseClient:
             # increments the mailbox size
             mailbox.messages_size += contents_length
 
+            # sets the mailbox messages
+            mailbox.messages = []
+
             # retrieves the message class
             message_class = entity_manager.get_entity_class("Message")
 
