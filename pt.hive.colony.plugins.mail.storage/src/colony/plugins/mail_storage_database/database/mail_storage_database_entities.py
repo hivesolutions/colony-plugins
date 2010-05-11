@@ -86,6 +86,46 @@ class Mailbox(RootEntity):
         self.messages_size = None
         self.messages = []
 
+    def get_name(self):
+        """
+        Retrieves the mailbox name.
+
+        @rtype: String
+        @return: The mailbox name.
+        """
+
+        return self.name
+
+    def get_messages_count(self):
+        """
+        Retrieves the mailbox messages count.
+
+        @rtype: int
+        @return: The mailbox messages count.
+        """
+
+        return self.messages_count
+
+    def get_messages_size(self):
+        """
+        Retrieves the mailbox messages size.
+
+        @rtype: int
+        @return: The mailbox messages size.
+        """
+
+        return self.messages_size
+
+    def get_messages(self):
+        """
+        Retrieves the mailbox messages.
+
+        @rtype: List
+        @return: The mailbox messages.
+        """
+
+        return self.messages
+
     @staticmethod
     def get_relation_attributes_messages():
         return {"relation_type" : "one-to-many",
@@ -124,6 +164,46 @@ class Message(RootEntity):
         self.contents_size = None
         self.contents = None
         self.mailbox = None
+
+    def get_uid(self):
+        """
+        Retrieves the message uid.
+
+        @rtype: String
+        @return: The message uid.
+        """
+
+        return self.uid
+
+    def get_contents_size(self):
+        """
+        Retrieves the message contents size.
+
+        @rtype: int
+        @return: The message contents size.
+        """
+
+        return self.contents_size
+
+    def get_contents(self):
+        """
+        Retrieves the message contents.
+
+        @rtype: MessageContents
+        @return: The message contents.
+        """
+
+        return self.contents
+
+    def get_mailbox(self):
+        """
+        Retrieves the message mailbox.
+
+        @rtype: Mailbox
+        @return: The message mailbox.
+        """
+
+        return self.mailbox
 
     @staticmethod
     def get_relation_attributes_contents():
@@ -168,6 +248,36 @@ class MessageContents(RootEntity):
         self.contents_size = None
         self.contents_data = None
         self.message = None
+
+    def get_contents_size(self):
+        """
+        Retrieves the contents size.
+
+        @rtype: int
+        @return: The contents size.
+        """
+
+        return self.contents_size
+
+    def get_contents_data(self):
+        """
+        Retrieves the contents data.
+
+        @rtype: String
+        @return: The contents data.
+        """
+
+        return self.contents_data
+
+    def get_message(self):
+        """
+        Retrieves the contents message.
+
+        @rtype: Message
+        @return: The contents message.
+        """
+
+        return self.message
 
     @staticmethod
     def get_relation_attributes_message():
