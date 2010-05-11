@@ -252,7 +252,7 @@ class MailStorageDatabaseClient:
         find_options = {FILTERS_VALUE : [{FILTER_TYPE_VALUE : "equals",
                                           FILTER_FIELDS_VALUE : [{"field_name" : "uid",
                                                                   "field_value" : uid}]}],
-                        EAGER_LOADING_RELATIONS_VALUE : {"mailbox" : {}}}
+                        EAGER_LOADING_RELATIONS_VALUE : {"mailbox" : {}, "contents" : {}}}
 
         # retrieves the valid messages
         messages = entity_manager._find_all_options(message_class, find_options)
