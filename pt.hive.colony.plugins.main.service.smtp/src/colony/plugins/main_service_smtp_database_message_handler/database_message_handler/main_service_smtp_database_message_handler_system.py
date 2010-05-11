@@ -81,7 +81,23 @@ class MainServiceSmtpDatabaseMessageHandler:
         """
 
         # retrieves the mail storage database plugin
-        mail_storage_database_plugin = self.main_service_pop_database_message_provider_plugin.mail_storage_database_plugin
+        mail_storage_database_plugin = self.main_service_smtp_database_message_handler_plugin.mail_storage_database_plugin
 
         # creates the mail storage database client
         mail_storage_database_client = mail_storage_database_plugin.create_client(arguments)
+
+        # retrieves the contents
+        contents = message.get_contents()
+
+        # retrieves the recipients list
+        recipients_list = message.get_recipients_list()
+
+        # iterates over all recipients in the recipients list
+        # to check the domain
+        for recipient in recipients_list:
+            # splits the recipient retrieving the
+            # user and the domain
+            user, _domain = recipient.split("@")
+
+            # saves the message in the database
+            mail_storage_database_client.save_message(user, contents)

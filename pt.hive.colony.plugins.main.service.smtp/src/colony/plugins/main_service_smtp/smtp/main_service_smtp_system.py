@@ -442,6 +442,12 @@ class SmtpClientServiceTask:
         # sets the session handler (plugin) in the session
         session.set_session_handler(smtp_service_session_handler_plugin)
 
+        # retrieves the session properties
+        session_properties = service_configuration.get("session_properties", {})
+
+        # sets the session properties in the session
+        session.set_session_properties(session_properties)
+
         # retrieves the default handler name
         handler_name = service_configuration.get("default_handler", None)
 
@@ -1505,6 +1511,26 @@ class SmtpMessage:
         """
 
         self.recipients_list = []
+
+    def duplicate(self):
+        """
+        Duplicates the current message, returning
+        the copy.
+
+        @rtype: SmtpMessage
+        @return: The duplicated smtp message.
+        """
+
+        # creates a new smtp message
+        duplicated_message = SmtpMessage()
+
+        # sets the smtp message attributes
+        duplicated_message.contents = self.contents
+        duplicated_message.sender = self.sender
+        duplicated_message.recipients_list = self.recipients_list
+
+        # returns the duplicated message
+        return duplicated_message
 
     def add_recipient(self, recipient):
         """

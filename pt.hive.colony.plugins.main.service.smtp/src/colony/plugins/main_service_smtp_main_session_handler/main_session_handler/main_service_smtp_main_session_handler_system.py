@@ -48,6 +48,12 @@ ARGUMENTS_VALUE = "arguments"
 LOCAL_DOMAINS_VALUE = "local_domains"
 """ The local domains value """
 
+RELAY_VALUE = "relay"
+""" The relay value """
+
+DATABASE_VALUE = "database"
+""" The database value """
+
 DEFAULT_LOCAL_DOMAINS = ("127.0.0.1", "localhost")
 """ The default list of local domains """
 
@@ -105,16 +111,25 @@ class MainServiceSmtpMainSessionHandler:
         # retrieves the local domains
         local_domains = properties.get(LOCAL_DOMAINS_VALUE, DEFAULT_LOCAL_DOMAINS)
 
+        # retrieves the relay message handler plugin
+        relay_message_handler_plugin = self.smtp_service_message_handler_plugins_map[RELAY_VALUE]
+
+        # retrieves the database message handler plugin
+        database_message_handler_plugin = self.smtp_service_message_handler_plugins_map[DATABASE_VALUE]
+
         # retrieves the messages from the session
         messages = session.get_messages()
+
+        # creates the local recipients list
+        local_recipients_list = []
+
+        # creates the relay recipients list
+        relay_recipients_list = []
 
         # iterates over all the messages
         for message in messages:
             # retrieves the recipients list
             recipients_list = message.get_recipients_list()
-
-            # unsets the relay message flag
-            relay_message = False
 
             # iterates over all recipients in the recipients list
             # to check the domain
@@ -123,17 +138,33 @@ class MainServiceSmtpMainSessionHandler:
                 # user and the domain
                 _user, domain = recipient.split("@")
 
-                # in case the domain is not contained in the
+                # in case the domain is contained in the
                 # local domains list
-                if not domain in local_domains:
-                    # sets the relay message flag
-                    relay_message = True
+                if domain in local_domains:
+                    # adds the recipient to the local recipients list
+                    local_recipients_list.append(recipient)
+                else:
+                    # adds the recipient to the realy recipients list
+                    relay_recipients_list.append(recipient)
 
-            # in case the relay message is set
-            if relay_message:
-                self.smtp_service_message_handler_plugins_map["relay"].handle_message(message, arguments)
-            else:
-                self.smtp_service_message_handler_plugins_map["database"].handle_message(message, arguments)
+            # duplicates the message (to use it while handling the message)
+            duplicated_message = message.duplicate()
+
+            # in case there are local recipients defined
+            if local_recipients_list:
+                # sets the local recipients list in the duplicated message
+                duplicated_message.set_recipients_list(local_recipients_list)
+
+                # handles the duplicated message with the database message handler
+                database_message_handler_plugin.handle_message(duplicated_message, arguments)
+
+            # in case there are relay recipients defined
+            if relay_recipients_list:
+                # sets the relay recipients list in the duplicated message
+                duplicated_message.set_recipients_list(relay_recipients_list)
+
+                # handles the duplicated message with the relay message handler
+                relay_message_handler_plugin.handle_message(duplicated_message, arguments)
 
     def smtp_service_message_handler_load(self, smtp_service_message_handler_plugin):
         # retrieves the plugin handler name
