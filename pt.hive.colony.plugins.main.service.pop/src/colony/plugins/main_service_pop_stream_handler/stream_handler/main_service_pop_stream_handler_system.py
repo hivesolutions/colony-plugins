@@ -263,10 +263,10 @@ class MainServicePopStreamHandler:
         mailbox = session.get_mailbox()
 
         # retrieves the messages
-        messages_count = mailbox.messages_count
+        messages_count = mailbox.get_messages_count()
 
         # retrieves the octets count
-        octets_count = mailbox.messages_size
+        octets_count = mailbox.get_messages_size()
 
         # sets the request response code
         request.set_response_code("+OK")
@@ -296,26 +296,30 @@ class MainServicePopStreamHandler:
         mailbox = session.get_mailbox_messages()
 
         # retrieves the messages
-        messages_count = mailbox.messages_count
+        messages_count = mailbox.get_messages_count()
 
         # retrieves the octets count
-        octets_count = mailbox.messages_size
+        octets_count = mailbox.get_messages_size()
 
+        # adds the initial line message to the response messages
         response_messages.append("%i messages (%i octets)" % (messages_count, octets_count))
-
-        # starts the index counter
-        index = 1
 
         # starts the message id uid map
         session.message_id_uid_map = {}
 
+        # retrieves the mailbox messages
+        mailbox_messages = mailbox.get_messages()
+
+        # starts the index counter
+        index = 1
+
         # iterates over all the messages in the mailbox
-        for message in mailbox.messages:
+        for message in mailbox_messages:
             # retrieves the message contents size
-            message_contents_size = message.contents_size
+            message_contents_size = message.get_contents_size()
 
             # retrieves the message uid
-            message_uid = message.uid
+            message_uid = message.get_uid()
 
             # creates the response message
             message = "%i %i" % (index, message_contents_size)
@@ -364,13 +368,13 @@ class MainServicePopStreamHandler:
         message = session.get_message(message_uid)
 
         # retrieves the message contents
-        message_contents = message.contents
+        message_contents = message.get_contents()
 
         # retrieves the message contents size
-        message_contents_size = message_contents.contents_size
+        message_contents_size = message_contents.get_contents_size()
 
         # retrieves the message contents data
-        message_contents_data = message_contents.contents_data
+        message_contents_data = message_contents.get_contents_data()
 
         # adds the initial line to the response messages
         response_messages.append("%i octets" % message_contents_size)
@@ -449,7 +453,7 @@ class MainServicePopStreamHandler:
             mailbox = session.get_mailbox()
 
             # retrieves the messages
-            messages_count = mailbox.messages_count
+            messages_count = mailbox.get_messages_count()
 
             # creates the response messages list
             response_messages = []
