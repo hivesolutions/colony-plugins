@@ -1188,6 +1188,17 @@ class PopSession:
         # returns the message
         return message
 
+    def remove_message(self, message_uid):
+        """
+        Removes the message for the given message uid.
+
+        @type message_uid: String
+        @param message_uid: The uid of the message to be removed.
+        """
+
+        # removes the message for the given message uid
+        self.message_client.remove_message(message_uid)
+
     def get_pop_client_service_task(self):
         """
         Retrieves the client pop client service task.

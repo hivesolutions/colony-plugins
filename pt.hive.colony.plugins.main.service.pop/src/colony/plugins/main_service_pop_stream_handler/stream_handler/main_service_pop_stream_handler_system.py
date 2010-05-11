@@ -396,11 +396,23 @@ class MainServicePopStreamHandler:
         @param arguments: The list of arguments for the request.
         """
 
+        # asserts the retr arguments
+        self.assert_arguments(arguments, 1)
+
+        # retrieves the message id argument
+        message_id = int(arguments[0])
+
+        # retrieves the message uid from the message id uid map
+        message_uid = session.message_id_uid_map[message_id]
+
+        # removes the message for the given uid
+        session.remove_message(message_uid)
+
         # sets the request response code
-        request.set_response_code("-ERR")
+        request.set_response_code("+OK")
 
         # sets the request response message
-        request.set_response_message("not implemented")
+        request.set_response_message("message %i removed" % message_id)
 
     def process_uidl(self, request, session, arguments):
         """
