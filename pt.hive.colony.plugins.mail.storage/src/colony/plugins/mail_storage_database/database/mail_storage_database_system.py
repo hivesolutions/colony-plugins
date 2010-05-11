@@ -248,8 +248,8 @@ class MailStorageDatabaseClient:
 
         # defines the find options for retrieving the messages
         find_options = {FILTERS_VALUE : [{FILTER_TYPE_VALUE : "equals",
-                                          FILTER_FIELDS_VALUE : [{"field_name" : "uid",
-                                                                  "field_value" : uid}]}],
+                                          FILTER_FIELDS_VALUE : ({"field_name" : "uid",
+                                                                  "field_value" : uid},)}],
                         EAGER_LOADING_RELATIONS_VALUE : {"mailbox" : {}, "contents" : {}}}
 
         # retrieves the valid messages
@@ -316,8 +316,8 @@ class MailStorageDatabaseClient:
 
         # defines the find options for retrieving the messages
         find_options = {FILTERS_VALUE : [{FILTER_TYPE_VALUE : "equals",
-                                          FILTER_FIELDS_VALUE : [{"field_name" : "uid",
-                                                                  "field_value" : uid}]}],
+                                          FILTER_FIELDS_VALUE : ({"field_name" : "uid",
+                                                                  "field_value" : uid},)}],
                         EAGER_LOADING_RELATIONS_VALUE : {"mailbox" : {}, "contents" : {}}}
 
         # retrieves the valid messages
@@ -344,8 +344,8 @@ class MailStorageDatabaseClient:
 
         # defines the find options for retrieving the mailboxes
         find_options = {FILTERS_VALUE : [{FILTER_TYPE_VALUE : "equals",
-                                          FILTER_FIELDS_VALUE : [{"field_name" : "name",
-                                                                  "field_value" : name}]}]}
+                                          FILTER_FIELDS_VALUE : ({"field_name" : "name",
+                                                                  "field_value" : name},)}]}
 
         # retrieves the valid mailboxes
         mailboxes = entity_manager._find_all_options(mailbox_class, find_options)
@@ -371,8 +371,8 @@ class MailStorageDatabaseClient:
 
         # defines the find options for retrieving the mailboxes
         find_options = {FILTERS_VALUE : [{FILTER_TYPE_VALUE : "equals",
-                                          FILTER_FIELDS_VALUE : [{"field_name" : "name",
-                                                                  "field_value" : name}]}],
+                                          FILTER_FIELDS_VALUE : ({"field_name" : "name",
+                                                                  "field_value" : name},)}],
                         EAGER_LOADING_RELATIONS_VALUE : {"messages" : {}}}
 
         # retrieves the valid mailboxes
