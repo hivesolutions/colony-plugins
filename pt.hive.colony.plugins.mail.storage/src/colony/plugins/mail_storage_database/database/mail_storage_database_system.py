@@ -45,11 +45,11 @@ import mail_storage_database_exceptions
 ENTITIES_MODULE_NAME = "mail_storage_database_entities"
 """ The entities module name """
 
-FILTERS_VALUE = "filters"
-""" The filters value """
-
 EAGER_LOADING_RELATIONS_VALUE = "eager_loading_relations"
 """ The eager loading relations value """
+
+FILTERS_VALUE = "filters"
+""" The filters value """
 
 FILTER_TYPE_VALUE = "filter_type"
 """ The filter type value """
@@ -180,9 +180,6 @@ class MailStorageDatabaseClient:
 
             # increments the mailbox size
             mailbox.messages_size += contents_length
-
-            # sets the messages list as empty
-            mailbox.messages = []
 
             # retrieves the message class
             message_class = entity_manager.get_entity_class("Message")
