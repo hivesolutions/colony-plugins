@@ -49,6 +49,7 @@ configuration = {
                  },
                  "session_properties" : {
                      "message_provider" : "database",
-                     "arguments" : {}
+                     "arguments" : {"entity_manager_arguments" : {"connection_parameters" : {"file_path" : "%configuration:pt.hive.colony.plugins.mail.storage%/messages.db",
+                                                                                             "autocommit" : False}}}
                  }
              }
