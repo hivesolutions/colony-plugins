@@ -193,6 +193,9 @@ class MailStorageDatabaseClient:
             # sets the message uid as a new one
             message.uid = self._generate_uid()
 
+            # sets the contents size in the message
+            message.contents_size = contents_length
+
             # retrieves the message contents class
             message_contents_class = entity_manager.get_entity_class("MessageContents")
 

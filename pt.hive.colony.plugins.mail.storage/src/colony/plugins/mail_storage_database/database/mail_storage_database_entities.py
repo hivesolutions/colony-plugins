@@ -105,6 +105,9 @@ class Message(RootEntity):
     uid = {"data_type" : "text"}
     """ The unique identifier of the message """
 
+    contents_size = {"data_type" : "numeric"}
+    """ The contents size of the message """
+
     contents = {"data_type" : "relation", "fetch_type" : "lazy"}
     """ The contents of the message """
 
@@ -118,6 +121,7 @@ class Message(RootEntity):
 
         RootEntity.__init__(self)
         self.uid = None
+        self.contents_size = None
         self.contents = None
         self.mailbox = None
 
