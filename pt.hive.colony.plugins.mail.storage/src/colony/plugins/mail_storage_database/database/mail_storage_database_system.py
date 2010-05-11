@@ -232,6 +232,72 @@ class MailStorageDatabaseClient:
             # commits the transaction
             entity_manager.commit_transaction()
 
+    def remove_message(self, uid):
+        """
+        Removes the message with the given uid.
+
+        @type uid: int
+        @param uid: The uid of the message to be removed.
+        """
+
+        # retrieves the entity manager
+        entity_manager = self._get_entity_manager()
+
+        # retrieves the message class
+        message_class = entity_manager.get_entity_class("Message")
+
+        # defines the find options for retrieving the messages
+        find_options = {FILTERS_VALUE : [{FILTER_TYPE_VALUE : "equals",
+                                          FILTER_FIELDS_VALUE : [{"field_name" : "uid",
+                                                                  "field_value" : uid}]}],
+                        EAGER_LOADING_RELATIONS_VALUE : {"mailbox" : {}, "contents" : {}}}
+
+        # retrieves the valid messages
+        messages = entity_manager._find_all_options(message_class, find_options)
+
+        # in case there are retrieved messages
+        if len(messages):
+            # retrieves the message from the list
+            # of messages
+            message = messages[0]
+
+            # creates a transaction
+            entity_manager.create_transaction()
+
+            try:
+                # retrieves the message mailbox
+                mailbox = message.mailbox
+
+                # retrieves the message contents
+                contents = message.contents
+
+                # retrieves the contents size
+                contents_size = message.contents_size
+
+                # decrements the number of messages in the mailbox
+                mailbox.messages_count -= 1
+
+                # decrements the mailbox size
+                mailbox.messages_size -= contents_size
+
+                # updates the mailbox
+                entity_manager.update(mailbox)
+
+                # removes the contents
+                entity_manager.remove(contents)
+
+                # removes the message
+                entity_manager.remove(message)
+            except:
+                # rolls back the transaction
+                entity_manager.rollback_transaction()
+
+                # re-throws the exception
+                raise
+            else:
+                # commits the transaction
+                entity_manager.commit_transaction()
+
     def get_message_uid(self, uid):
         """
         Retrieves the message for the given uid.
