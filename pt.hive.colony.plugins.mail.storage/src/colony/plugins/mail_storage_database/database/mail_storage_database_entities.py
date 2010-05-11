@@ -105,7 +105,7 @@ class Message(RootEntity):
     uid = {"data_type" : "text"}
     """ The unique identifier of the message """
 
-    contents = {"data_type" : "text"}
+    contents = {"data_type" : "relation", "fetch_type" : "lazy"}
     """ The contents of the message """
 
     mailbox = {"data_type" : "relation", "fetch_type" : "lazy"}
@@ -122,10 +122,54 @@ class Message(RootEntity):
         self.mailbox = None
 
     @staticmethod
+    def get_relation_attributes_contents():
+        return {"relation_type" : "one-to-one",
+                "target_entity" : MessageContents,
+                "target_entity_name" : "MessageContents",
+                "join_attribute" : MessageContents.message,
+                "join_attribute_name" : "message",
+                "mapped_by" : MessageContents,
+                "optional" : True}
+
+    @staticmethod
     def get_relation_attributes_mailbox():
         return {"relation_type" : "many-to-one",
                 "target_entity" : Mailbox,
                 "target_entity_name" : "Mailbox",
                 "join_attribute" : Mailbox.object_id,
+                "join_attribute_name" : "object_id",
+                "optional" : True}
+
+class MessageContents(RootEntity):
+    """
+    The message contents class, representing the
+    message contents entity.
+    """
+
+    contents_size = {"data_type" : "numeric"}
+    """ The contents size of the message contents """
+
+    contents_data = {"data_type" : "text"}
+    """ The contents data of the message contents """
+
+    message = {"data_type" : "relation", "fetch_type" : "lazy"}
+    """ The contents data of the message contents """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        RootEntity.__init__(self)
+        self.contents_size = None
+        self.contents_data = None
+        self.message = None
+
+    @staticmethod
+    def get_relation_attributes_message():
+        return {"relation_type" : "one-to-one",
+                "target_entity" : Message,
+                "target_entity_name" : "Message",
+                "join_attribute" : Message.object_id,
                 "join_attribute_name" : "object_id",
                 "optional" : True}

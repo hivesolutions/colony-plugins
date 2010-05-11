@@ -149,6 +149,9 @@ class MailStorageDatabaseClient:
         except:
             # rolls back the transaction
             entity_manager.rollback_transaction()
+
+            # re-throws the exception
+            raise
         else:
             # commits the transaction
             entity_manager.commit_transaction()
@@ -190,8 +193,20 @@ class MailStorageDatabaseClient:
             # sets the message uid as a new one
             message.uid = self._generate_uid()
 
-            # sets the message contents
-            message.contents = contents
+            # retrieves the message contents class
+            message_contents_class = entity_manager.get_entity_class("MessageContents")
+
+            # creates the new message contents instance
+            message_contents = message_contents_class()
+
+            # sets the message contents size
+            message_contents.contents_size = contents_length
+
+            # sets the message contents data
+            message_contents.contents_data = contents
+
+            # sets the contents in the message
+            message.contents = message_contents
 
             # sets the message mailbox
             message.mailbox = mailbox
@@ -199,11 +214,17 @@ class MailStorageDatabaseClient:
             # updates the mailbox
             entity_manager.update(mailbox)
 
+            # saves the message contents
+            entity_manager.save(message_contents)
+
             # saves the message
             entity_manager.save(message)
         except:
             # rolls back the transaction
             entity_manager.rollback_transaction()
+
+            # re-throws the exception
+            raise
         else:
             # commits the transaction
             entity_manager.commit_transaction()
