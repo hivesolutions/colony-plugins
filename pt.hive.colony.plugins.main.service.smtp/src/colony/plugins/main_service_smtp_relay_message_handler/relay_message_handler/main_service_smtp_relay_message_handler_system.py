@@ -79,12 +79,14 @@ class MainServiceSmtpRelayMessageHandler:
 
         return HANDLER_NAME
 
-    def handle_message(self, message):
+    def handle_message(self, message, arguments):
         """
         Handles the given smtp message.
 
         @type message: SmtpMessage
         @param message: The smtp message to handled.
+        @type arguments: Dictionary
+        @param arguments: The arguments to the message handling.
         """
 
         # retrieves the main client smtp plugin

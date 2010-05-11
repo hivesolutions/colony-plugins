@@ -58,7 +58,8 @@ class MainServiceSmtpMainSessionHandlerPlugin(colony.plugins.plugin_system.Plugi
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["main_service_smtp_main_session_handler.main_session_handler.main_service_smtp_main_session_handler_system"]
+    main_modules = ["main_service_smtp_main_session_handler.main_session_handler.main_service_smtp_main_session_handler_exceptions",
+                    "main_service_smtp_main_session_handler.main_session_handler.main_service_smtp_main_session_handler_system"]
 
     main_service_smtp_main_session_handler = None
 
@@ -68,7 +69,7 @@ class MainServiceSmtpMainSessionHandlerPlugin(colony.plugins.plugin_system.Plugi
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global main_service_smtp_main_session_handler
         import main_service_smtp_main_session_handler.main_session_handler.main_service_smtp_main_session_handler_system
-        self.main_service_smtp_main_session_handler =  main_service_smtp_main_session_handler.main_session_handler.main_service_smtp_main_session_handler_system.MainServiceSmtpMainSessionHandler(self)
+        self.main_service_smtp_main_session_handler = main_service_smtp_main_session_handler.main_session_handler.main_service_smtp_main_session_handler_system.MainServiceSmtpMainSessionHandler(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)

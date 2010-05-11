@@ -37,8 +37,19 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import main_service_smtp_main_session_handler_exceptions
+
 HANDLER_NAME = "main"
 """ The handler name """
+
+ARGUMENTS_VALUE = "arguments"
+""" The arguments value """
+
+LOCAL_DOMAINS_VALUE = "local_domains"
+""" The local domains value """
+
+DEFAULT_LOCAL_DOMAINS = ("127.0.0.1", "localhost")
+""" The default list of local domains """
 
 class MainServiceSmtpMainSessionHandler:
     """
@@ -83,6 +94,17 @@ class MainServiceSmtpMainSessionHandler:
         @param properties: The properties for the session handling.
         """
 
+        # in case the arguments property is not defined
+        if not ARGUMENTS_VALUE in properties:
+            # raises the missing property exception
+            raise main_service_smtp_main_session_handler_exceptions.MissingProperty(ARGUMENTS_VALUE)
+
+        # retrieves the arguments
+        arguments = properties[ARGUMENTS_VALUE]
+
+        # retrieves the local domains
+        local_domains = properties.get(LOCAL_DOMAINS_VALUE, DEFAULT_LOCAL_DOMAINS)
+
         # retrieves the messages from the session
         messages = session.get_messages()
 
@@ -101,15 +123,17 @@ class MainServiceSmtpMainSessionHandler:
                 # user and the domain
                 _user, domain = recipient.split("@")
 
-                if not domain == "hive.pt":
+                # in case the domain is not contained in the
+                # local domains list
+                if not domain in local_domains:
                     # sets the relay message flag
                     relay_message = True
 
             # in case the relay message is set
             if relay_message:
-                self.smtp_service_message_handler_plugins_map["relay"].handle_message(message)
+                self.smtp_service_message_handler_plugins_map["relay"].handle_message(message, arguments)
             else:
-                self.smtp_service_message_handler_plugins_map["database"].handle_message(message)
+                self.smtp_service_message_handler_plugins_map["database"].handle_message(message, arguments)
 
     def smtp_service_message_handler_load(self, smtp_service_message_handler_plugin):
         # retrieves the plugin handler name

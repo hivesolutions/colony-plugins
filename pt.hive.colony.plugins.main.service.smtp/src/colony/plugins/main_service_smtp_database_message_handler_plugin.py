@@ -67,7 +67,7 @@ class MainServiceSmtpDatabaseMessageHandlerPlugin(colony.plugins.plugin_system.P
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global main_service_smtp_database_message_handler
         import main_service_smtp_database_message_handler.database_message_handler.main_service_smtp_database_message_handler_system
-        self.main_service_smtp_database_message_handler =  main_service_smtp_database_message_handler.database_message_handler.main_service_smtp_database_message_handler_system.MainServiceSmtpDatabaseMessageHandler(self)
+        self.main_service_smtp_database_message_handler = main_service_smtp_database_message_handler.database_message_handler.main_service_smtp_database_message_handler_system.MainServiceSmtpDatabaseMessageHandler(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -97,12 +97,14 @@ class MainServiceSmtpDatabaseMessageHandlerPlugin(colony.plugins.plugin_system.P
 
         return self.main_service_smtp_database_message_handler.get_handler_name()
 
-    def handle_message(self, message):
+    def handle_message(self, message, arguments):
         """
         Handles the given smtp message.
 
         @type message: SmtpMessage
         @param message: The smtp message to handled.
+        @type arguments: Dictionary
+        @param arguments: The arguments to the message handling.
         """
 
-        self.main_service_smtp_database_message_handler.handle_message(message)
+        self.main_service_smtp_database_message_handler.handle_message(message, arguments)

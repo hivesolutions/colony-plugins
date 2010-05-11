@@ -70,12 +70,18 @@ class MainServiceSmtpDatabaseMessageHandler:
 
         return HANDLER_NAME
 
-    def handle_message(self, message):
+    def handle_message(self, message, arguments):
         """
         Handles the given smtp message.
 
         @type message: SmtpMessage
         @param message: The smtp message to handled.
+        @type arguments: Dictionary
+        @param arguments: The arguments to the message handling.
         """
 
-        pass
+        # retrieves the mail storage database plugin
+        mail_storage_database_plugin = self.main_service_pop_database_message_provider_plugin.mail_storage_database_plugin
+
+        # creates the mail storage database client
+        mail_storage_database_client = mail_storage_database_plugin.create_client(arguments)
