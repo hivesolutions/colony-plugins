@@ -145,6 +145,9 @@ class Message(RootEntity):
     uid = {"data_type" : "text"}
     """ The unique identifier of the message """
 
+    sender = {"data_type" : "text"}
+    """ The sender of the message """
+
     contents_size = {"data_type" : "numeric"}
     """ The contents size of the message """
 

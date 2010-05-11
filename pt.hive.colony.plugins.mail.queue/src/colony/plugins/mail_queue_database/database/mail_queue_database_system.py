@@ -38,12 +38,25 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
+import time
 import threading
 
 import mail_queue_database_exceptions
 
 ENTITIES_MODULE_NAME = "mail_queue_database_entities"
 """ The entities module name """
+
+START_RECORD_VALUE = "start_record"
+""" The start record value """
+
+NUMBER_RECORDS_VALUE = "number_records"
+""" The number records value """
+
+ORDER_BY_VALUE = "order_by"
+""" The order by value """
+
+UID_MULTIPLICATION_FACTOR = 1000
+""" The uid multiplication factor """
 
 class MailQueueDatabase:
     """
@@ -126,11 +139,7 @@ class MailQueueDatabaseClient:
 
         self.message_access_lock = threading.Lock()
 
-    def pop_message(self, name):
-
-        # TENHO DE TER UM LOCK E TENHO DE O SACAR DA DB !!1
-        # TENHO DE FAZER UNLOCK NUM FINANLLY !!!
-
+    def pop_message(self):
         # retrieves the entity manager
         entity_manager = self._get_entity_manager()
 
@@ -146,254 +155,78 @@ class MailQueueDatabaseClient:
             # releases the message access lock
             self.message_access_lock.release()
 
-#        try:
-#            # retrieves the mailbox class
-#            mailbox_class = entity_manager.get_entity_class("Mailbox")
-#
-#            # creates the new mailbox instance
-#            mailbox = mailbox_class()
-#
-#            # sets the initial mailbox attributes
-#            mailbox.name = name
-#            mailbox.messages_count = 0
-#            mailbox.messages_size = 0
-#
-#            # saves the mailbox
-#            entity_manager.save(mailbox)
-#        except:
-#            # rolls back the transaction
-#            entity_manager.rollback_transaction()
-#
-#            # re-throws the exception
-#            raise
-#        else:
-#            # commits the transaction
-#            entity_manager.commit_transaction()
+    def peek_last_message(self):
+        # retrieves the entity manager
+        entity_manager = self._get_entity_manager()
 
-#    def save_message(self, user, contents):
-#        # retrieves the entity manager
-#        entity_manager = self._get_entity_manager()
-#
-#        # creates a transaction
-#        entity_manager.create_transaction()
-#
-#        try:
-#            # retrieves the user's mailbox
-#            mailbox = self.get_mailbox_name(user)
-#
-#            # in case no mailbox is found
-#            if not mailbox:
-#                # raises the invalid mailbox error
-#                raise mail_queue_database_exceptions.InvalidMailboxError(user)
-#
-#            # retrieves the contents length
-#            contents_length = len(contents)
-#
-#            # increments the number of messages in the mailbox
-#            mailbox.messages_count += 1
-#
-#            # increments the mailbox size
-#            mailbox.messages_size += contents_length
-#
-#            # sets the messages list as empty
-#            mailbox.messages = []
-#
-#            # retrieves the message class
-#            message_class = entity_manager.get_entity_class("Message")
-#
-#            # creates the new message instance
-#            message = message_class()
-#
-#            # sets the message uid as a new one
-#            message.uid = self._generate_uid()
-#
-#            # sets the contents size in the message
-#            message.contents_size = contents_length
-#
-#            # retrieves the message contents class
-#            message_contents_class = entity_manager.get_entity_class("MessageContents")
-#
-#            # creates the new message contents instance
-#            message_contents = message_contents_class()
-#
-#            # sets the message contents size
-#            message_contents.contents_size = contents_length
-#
-#            # sets the message contents data
-#            message_contents.contents_data = contents
-#
-#            # sets the contents in the message
-#            message.contents = message_contents
-#
-#            # sets the message mailbox
-#            message.mailbox = mailbox
-#
-#            # updates the mailbox
-#            entity_manager.update(mailbox)
-#
-#            # saves the message contents
-#            entity_manager.save(message_contents)
-#
-#            # saves the message
-#            entity_manager.save(message)
-#        except:
-#            # rolls back the transaction
-#            entity_manager.rollback_transaction()
-#
-#            # re-throws the exception
-#            raise
-#        else:
-#            # commits the transaction
-#            entity_manager.commit_transaction()
-#
-#    def remove_message(self, uid):
-#        """
-#        Removes the message with the given uid.
-#
-#        @type uid: int
-#        @param uid: The uid of the message to be removed.
-#        """
-#
-#        # retrieves the entity manager
-#        entity_manager = self._get_entity_manager()
-#
-#        # retrieves the message class
-#        message_class = entity_manager.get_entity_class("Message")
-#
-#        # defines the find options for retrieving the messages
-#        find_options = {FILTERS_VALUE : [{FILTER_TYPE_VALUE : "equals",
-#                                          FILTER_FIELDS_VALUE : [{"field_name" : "uid",
-#                                                                  "field_value" : uid}]}],
-#                        EAGER_LOADING_RELATIONS_VALUE : {"mailbox" : {}, "contents" : {}}}
-#
-#        # retrieves the valid messages
-#        messages = entity_manager._find_all_options(message_class, find_options)
-#
-#        # in case there are retrieved messages
-#        if len(messages):
-#            # retrieves the message from the list
-#            # of messages
-#            message = messages[0]
-#
-#            # creates a transaction
-#            entity_manager.create_transaction()
-#
-#            try:
-#                # retrieves the message mailbox
-#                mailbox = message.mailbox
-#
-#                # retrieves the message contents
-#                contents = message.contents
-#
-#                # retrieves the contents size
-#                contents_size = message.contents_size
-#
-#                # decrements the number of messages in the mailbox
-#                mailbox.messages_count -= 1
-#
-#                # decrements the mailbox size
-#                mailbox.messages_size -= contents_size
-#
-#                # updates the mailbox
-#                entity_manager.update(mailbox)
-#
-#                # removes the contents
-#                entity_manager.remove(contents)
-#
-#                # removes the message
-#                entity_manager.remove(message)
-#            except:
-#                # rolls back the transaction
-#                entity_manager.rollback_transaction()
-#
-#                # re-throws the exception
-#                raise
-#            else:
-#                # commits the transaction
-#                entity_manager.commit_transaction()
-#
-#    def get_message_uid(self, uid):
-#        """
-#        Retrieves the message for the given uid.
-#
-#        @type uid: int
-#        @param uid: The uid of the message to be retrieved.
-#        @rtype: Message
-#        @return: The retrieved message.
-#        """
-#
-#        # retrieves the entity manager
-#        entity_manager = self._get_entity_manager()
-#
-#        # retrieves the message class
-#        message_class = entity_manager.get_entity_class("Message")
-#
-#        # defines the find options for retrieving the messages
-#        find_options = {FILTERS_VALUE : [{FILTER_TYPE_VALUE : "equals",
-#                                          FILTER_FIELDS_VALUE : [{"field_name" : "uid",
-#                                                                  "field_value" : uid}]}],
-#                        EAGER_LOADING_RELATIONS_VALUE : {"mailbox" : {}, "contents" : {}}}
-#
-#        # retrieves the valid messages
-#        messages = entity_manager._find_all_options(message_class, find_options)
-#
-#        if len(messages):
-#            return messages[0]
-#
-#    def get_mailbox_name(self, name):
-#        """
-#        Retrieves the mailbox for the given name.
-#
-#        @type name: String
-#        @param name: The name of the mailbox to be retrieved.
-#        @rtype: Mailbox
-#        @requires: The retrieved mailbox.
-#        """
-#
-#        # retrieves the entity manager
-#        entity_manager = self._get_entity_manager()
-#
-#        # retrieves the mailbox class
-#        mailbox_class = entity_manager.get_entity_class("Mailbox")
-#
-#        # defines the find options for retrieving the mailboxes
-#        find_options = {FILTERS_VALUE : [{FILTER_TYPE_VALUE : "equals",
-#                                          FILTER_FIELDS_VALUE : [{"field_name" : "name",
-#                                                                  "field_value" : name}]}]}
-#
-#        # retrieves the valid mailboxes
-#        mailboxes = entity_manager._find_all_options(mailbox_class, find_options)
-#
-#        if len(mailboxes):
-#            return mailboxes[0]
-#
-#    def get_mailbox_messages_name(self, name):
-#        """
-#        Retrieves the mailbox (containing messages) for the given name.
-#
-#        @type name: String
-#        @param name: The name of the mailbox to be retrieved.
-#        @rtype: Mailbox
-#        @requires: The retrieved mailbox (containing messages).
-#        """
-#
-#        # retrieves the entity manager
-#        entity_manager = self._get_entity_manager()
-#
-#        # retrieves the mailbox class
-#        mailbox_class = entity_manager.get_entity_class("Mailbox")
-#
-#        # defines the find options for retrieving the mailboxes
-#        find_options = {FILTERS_VALUE : [{FILTER_TYPE_VALUE : "equals",
-#                                          FILTER_FIELDS_VALUE : [{"field_name" : "name",
-#                                                                  "field_value" : name}]}],
-#                        EAGER_LOADING_RELATIONS_VALUE : {"messages" : {}}}
-#
-#        # retrieves the valid mailboxes
-#        mailboxes = entity_manager._find_all_options(mailbox_class, find_options)
-#
-#        if len(mailboxes):
-#            return mailboxes[0]
+        # retrieves the message class
+        message_class = entity_manager.get_entity_class("Message")
+
+        # defines the find options for retrieving the messages
+        find_options = {ORDER_BY_VALUE : (("object_id", "descending"),),
+                        START_RECORD_VALUE : 0,
+                        NUMBER_RECORDS_VALUE : 1}
+
+        # retrieves the valid messages
+        messages = entity_manager._find_all_options(message_class, find_options)
+
+        if len(messages):
+            return messages[0]
+
+    def put_message(self, sender, recipients_list, contents):
+        # tries to retrieve the last message
+        last_message = self.peek_last_message()
+
+        # retrieves the entity manager
+        entity_manager = self._get_entity_manager()
+
+        try:
+            # retrieves the message class
+            message_class = entity_manager.get_entity_class("Message")
+
+            # retrieves the contents length
+            contents_length = len(contents)
+
+            # creates the new message instance
+            message = message_class()
+
+            # sets the message uid as a new one
+            message.uid = self._generate_uid()
+
+            # sets the initial message attributes
+            message.sender = sender
+            message.contents_size = contents_length
+            message.previous_message = last_message
+
+            # retrieves the message contents class
+            message_contents_class = entity_manager.get_entity_class("MessageContents")
+
+            # creates the new message contents instance
+            message_contents = message_contents_class()
+
+            # sets the message contents size
+            message_contents.contents_size = contents_length
+
+            # sets the message contents data
+            message_contents.contents_data = contents
+
+            # sets the contents in the message
+            message.contents = message_contents
+
+            # saves the message contents
+            entity_manager.save(message_contents)
+
+            # saves the message
+            entity_manager.save(message)
+        except:
+            # rolls back the transaction
+            entity_manager.rollback_transaction()
+
+            # re-throws the exception
+            raise
+        else:
+            # commits the transaction
+            entity_manager.commit_transaction()
 
     def get_mail_queue_database(self):
         """
@@ -414,6 +247,43 @@ class MailQueueDatabaseClient:
         """
 
         self.mail_queue_database = mail_queue_database
+
+    def get_entity_manager_arguments(self):
+        """
+        Retrieves the entity manager arguments.
+
+        @rtype: Dictionary
+        @return: The entity manager arguments.
+        """
+
+        return self.entity_manager_arguments
+
+    def set_entity_manager_arguments(self, entity_manager_arguments):
+        """
+        Sets the entity manager arguments.
+
+        @type entity_manager_arguments: Dictionary
+        @param entity_manager_arguments: The entity manager arguments.
+        """
+
+        self.entity_manager_arguments = entity_manager_arguments
+
+    def _generate_uid(self):
+        """
+        Generates a new uid.
+
+        @rtype: int
+        @return: The generated uid.
+        """
+
+        # retrieves the current time
+        current_time = time.time()
+
+        # creates the unique identifier
+        uid = str(int(current_time * UID_MULTIPLICATION_FACTOR))
+
+        # returns the generated uid (unique identifier)
+        return uid
 
     def _get_entity_manager(self):
         """
