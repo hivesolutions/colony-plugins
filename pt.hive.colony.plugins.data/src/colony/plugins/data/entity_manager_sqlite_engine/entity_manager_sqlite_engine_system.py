@@ -1345,7 +1345,7 @@ class EntityManagerSqliteEngine:
                 # retrieves the relation type field
                 relation_type_field = relation_attributes[RELATION_TYPE_FIELD]
 
-                if relation_type_field == ONE_TO_ONE_RELATION or relation_type_field == MANY_TO_MANY_RELATION:
+                if relation_type_field == ONE_TO_ONE_RELATION or relation_type_field == ONE_TO_MANY_RELATION:
                     # retrieves the target entity name field
                     target_entity_name_field = relation_attributes[TARGET_ENTITY_NAME_FIELD]
 
