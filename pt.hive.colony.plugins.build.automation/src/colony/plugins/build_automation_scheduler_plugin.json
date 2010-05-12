@@ -27,5 +27,6 @@
             "build_automation/__init__.py",
             "build_automation/scheduler/__init__.py",
             "build_automation/scheduler/build_automation_scheduler_system.py",
-            "build_automation/scheduler/console_build_automation_scheduler.py"]
+            "build_automation/scheduler/console_build_automation_scheduler.py",
+            "build_automation/scheduler/resources/baf.xml"]
 }
