@@ -25,6 +25,7 @@
             "build_automation/automation/build_automation_parser.py",
             "build_automation/automation/build_automation_system.py",
             "build_automation/automation/console_build_automation.py",
+            "build_automation/automation/resources/baf.xml",
             "build_automation/automation/resources/base_baf.xml",
             "build_automation/automation/resources/example_baf.xml",
             "build_automation/automation/resources/xsd/baf.xsd"]
