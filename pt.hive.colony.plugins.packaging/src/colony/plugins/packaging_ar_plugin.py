@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "João Magalhães <joamag@hive.pt> & Tiago Silva <tsilva@hive.pt>"
+__author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
@@ -57,7 +57,7 @@ class PackagingArPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["packaging.ar.packaging_ar_system"]
+    main_modules = ["packaging.ar.packaging_ar_exceptions", "packaging.ar.packaging_ar_system"]
 
     packaging_ar = None
 
@@ -69,9 +69,6 @@ class PackagingArPlugin(colony.plugins.plugin_system.Plugin):
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
-        client = self.packaging_ar.create_file({"file_path" : "C:/test.deb"})
-        client.open()
-        client.read_index()
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)

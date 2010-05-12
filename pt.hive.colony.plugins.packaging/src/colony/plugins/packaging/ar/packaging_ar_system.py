@@ -37,12 +37,17 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
+import stat
 import struct
 
 import packaging_ar_exceptions
 
 FILE_PATH_VALUE = "file_path"
 """ The file path value """
+
+MAGIC_FILE_STRING_VALUE = "\x60\x0a"
+""" The magic file string value """
 
 MAGIC_STRING_VALUE = "!<arch>\n"
 """ The magic string value """
@@ -53,7 +58,16 @@ MAGIC_STRING_SIZE = 8
 FILE_HEADER_SIZE = 60
 """ The file header size (in bytes) """
 
-DEFAULT_MODE = "rb"
+BUFFER_SIZE = 1024
+""" The size of the buffer """
+
+READ_MODE = "rb"
+""" The read mode """
+
+WRITE_MODE = "wb+"
+""" The write mode """
+
+DEFAULT_MODE = READ_MODE
 """ The default file opening mode """
 
 class PackagingAr:
@@ -109,6 +123,12 @@ class ArFile:
     file = None
     """ The file currently being used """
 
+    header_written = False
+    """ The flag to control if the header is written """
+
+    index_map = {}
+    """ The index map associating the archive path with the file descriptor """
+
     def __init__(self, file_path):
         """
         Constructor of the class.
@@ -119,53 +139,459 @@ class ArFile:
 
         self.file_path = file_path
 
+        self.index_map = {}
+
     def open(self, mode = DEFAULT_MODE):
+        """
+        Opens the file in the given mode.
+
+        @type mode: String
+        @param mode: The mode to open the file.
+        """
+
         # opens the file with the current mode
         self.file = open(self.file_path, mode)
 
     def close(self):
+        """
+        Closes the current file, being used.
+        """
+
         # closes the current file
         self.file.close()
 
-    def write(self, file_path, archive_path, parameters = {}):
-        pass
+    def extract_all(self, target_path, parameters = {}):
+        # retrieves the index map
+        index_map = self.get_index()
+
+        # iterates over all the archives in
+        # the index map
+        for archive_path in index_map:
+            # reads the archive contents
+            archive_contents = self.read(archive_path, parameters)
+
+            # creates the full archive path
+            full_archive_path = target_path + "/" + archive_path
+
+            # retrieves the directory path from the full archive path
+            full_archive_directory_path = os.path.dirname(full_archive_path)
+
+            # in case the path does not exists
+            if not os.path.exists(full_archive_directory_path):
+                # creates the directories if necessary
+                os.makedirs(full_archive_directory_path)
+
+            # opens the archive file
+            archive_file = open(full_archive_path, "wb")
+
+            try:
+                # writes the archive contents
+                archive_file.write(archive_contents)
+            finally:
+                # closes the archive file
+                archive_file.close()
+
+    def write(self, file_path, archive_path = None, parameters = {}):
+        # in case the path does not exist
+        if not os.path.exists(file_path):
+            # raises the file not found exception
+            raise packaging_ar_exceptions.FileNotFound("the file paths does not exist: " + file_path)
+
+        # in case the archive paths is not defined
+        if not archive_path:
+            # separates the drive from the base file path
+            _drive, base_file_path = os.path.splitdrive(file_path)
+
+            # strips the base file path from the trailing separators
+            archive_path = base_file_path.strip("/\\")
+
+        # checks the header
+        self.check_header()
+
+        # goes to the end of the file
+        self.file.seek(0, os.SEEK_END)
+
+        # retrieves the file stat
+        file_stat = os.stat(file_path)
+
+        # retrieves the various attributes from the file stat
+        modification_timestamp = file_stat[stat.ST_MTIME]
+        owner_id = file_stat[stat.ST_UID]
+        group_id = file_stat[stat.ST_GID]
+        mode = file_stat[stat.ST_MODE]
+        size = file_stat[stat.ST_SIZE]
+
+        # converts the numeric values to string values
+        modification_timestamp_string = str(modification_timestamp)
+        owner_id_string = str(owner_id)
+        group_id_string = str(group_id)
+        mode_string = "%o" % mode
+        size_string = str(size)
+
+        # creates the file header from the various file components in string format
+        file_header = struct.pack("16s12s6s6s8s10s2s", archive_path, modification_timestamp_string, owner_id_string, group_id_string, mode_string, size_string, MAGIC_FILE_STRING_VALUE)
+
+        # replaces the null values in the file header for spaces (standard)
+        file_header = file_header.replace("\0", " ")
+
+        # writes the file header
+        self.file.write(file_header)
+
+        # opens the file for reading
+        file = open(file_path, "rb")
+
+        try:
+            # loops indefinitely
+            while 1:
+                # reads the file contents
+                file_contents = file.read(BUFFER_SIZE)
+
+                # in case there are no file contents,
+                # the end of file is reached
+                if not file_contents:
+                    # breaks the loop
+                    break
+
+                # writes the file contents to the file
+                self.file.write(file_contents)
+        finally:
+            # closes the file
+            file.close()
 
     def read(self, archive_path, parameters = {}):
-        pass
+        # retrieves the index map
+        index_map = self.get_index()
 
-    def read_index(self):
+        # in case the archive path is not found in the index map
+        if not archive_path in index_map:
+            # raises the file not found exception
+            raise packaging_ar_exceptions.FileNotFound("archive file does not exist: " + archive_path)
+
+        # retrieves the archive file entry from the index map
+        archive_file_entry = index_map[archive_path]
+
+        # retrieves the archive file offset
+        archive_file_offset = archive_file_entry.get_offset()
+
+        # retrieves the archive file size
+        archive_file_size = archive_file_entry.get_size()
+
+        # jumps the file contents
+        self.file.seek(archive_file_offset)
+
+        # reads the archive file contents
+        archive_file_contents = self.file.read(archive_file_size)
+
+        # reads the archive file contents
+        return archive_file_contents
+
+    def get_index(self):
+        # in case the index map is not defined
+        if not self.index_map:
+            # reads the index
+            self._read_index()
+
+        # returns the index map
+        return self.index_map
+
+    def get_names(self):
+        # retrieves the index map
+        index_map = self.get_index()
+
+        # retrieves the keys of the index map (the name of the file)
+        index_map_keys = index_map.keys()
+
+        # returns the index map keys
+        return index_map_keys
+
+    def check_header(self):
+        """
+        Checks the header, to see if it
+        is written.
+        """
+
+        # in case the header is not
+        # yet written (flag is not set)
+        if not self.header_written:
+            # seeks to the beginning of the file
+            self.file.seek(0)
+
+            # reads the magic string
+            magic_string = self.file.read(MAGIC_STRING_SIZE)
+
+            # in case the magic string does not match
+            if not magic_string == MAGIC_STRING_VALUE:
+                # writes the header
+                self._write_header()
+
+            # sets the header written flag
+            self.header_written = True
+
+    def _write_header(self):
+        """
+        Writes the header into the file.
+        """
+
+        # seeks to the beginning of the file
+        self.file.seek(0)
+
+        # writes the magic string value
+        self.file.write(MAGIC_STRING_VALUE)
+
+    def _read_index(self):
+        # start the current offset value
+        current_offset = 0
+
         # reads the magic string
         magic_string = self.file.read(MAGIC_STRING_SIZE)
+
+        # increments the current offset value
+        current_offset += MAGIC_STRING_SIZE
 
         # in case the magic string does not match
         if not magic_string == MAGIC_STRING_VALUE:
             # raises the invalid file format exception
             raise packaging_ar_exceptions.InvalidFileFormat("invalid magic string value: " + magic_string)
 
+        # loops continuously
         while 1:
             # reads the file header from the file
             file_header = self.file.read(FILE_HEADER_SIZE)
+
+            # increments the current offset value
+            current_offset += FILE_HEADER_SIZE
 
             # in case the file header is not file (end of file)
             if not file_header:
                 break
 
+            # unpacks the values from the file header
             name, modification_timestamp, owner_id, group_id, mode, size, magic_value = struct.unpack("16s12s6s6s8s10s2s", file_header)
 
+            # in case the magic value is not valid
+            if not magic_value == MAGIC_FILE_STRING_VALUE:
+                # raises the invalid file format exception
+                raise packaging_ar_exceptions.InvalidFileFormat("invalid magic file string value: " + magic_value)
+
+            # converts the various string integer values to the numeric representation
             modification_timestamp_numeric = int(modification_timestamp)
-
             owner_id_numeric = int(owner_id)
-
             group_id_numeric = int(group_id)
-
             mode_numeric = int(mode, 8)
-
             size_numeric = int(size)
 
-            file_contents = self.file.read(size)
+            # creates the ar file entry from the values
+            ar_file_entry = ArFileEntry(name, modification_timestamp_numeric, owner_id_numeric, group_id_numeric, mode_numeric, size_numeric, magic_value, current_offset)
 
-            if not magic_value == "\x60\x0a":
-                # raises the invalid file format exception
-                raise packaging_ar_exceptions.InvalidFileFormat("invalid magic value: " + magic_value)
+            # sets the file entry in the index map
+            self.index_map[name] = ar_file_entry
 
-            print repr(file_contents)
+            # jumps the file contents
+            self.file.seek(size_numeric, os.SEEK_CUR)
+
+            # increments the current offset value
+            current_offset += size_numeric
+
+class ArFileEntry:
+    """
+    The ar file entry class.
+    Represents an ar file index entry.
+    """
+
+    name = None
+    """ The name of the ar file """
+
+    modification_timestamp = None
+    """ The modification timestamp """
+
+    owner_id = None
+    """ The owner id """
+
+    group_id = None
+    """ The group id """
+
+    mode = None
+    """ The mode of access to the file """
+
+    size = None
+    """ The size of the ar file """
+
+    magic_value = None
+    """ The magic value of the ar file """
+
+    offset = None
+    """ The offser of the file in the archive file """
+
+    def __init__(self, name = None, modification_timestamp = None, owner_id = None, group_id = None, mode = None, size = None, magic_value = None, offset = None):
+        """
+        Constructor of the file.
+        """
+
+        self.name = name
+        self.modification_timestamp = modification_timestamp
+        self.owner_id = owner_id
+        self.group_id = group_id
+        self.mode = mode
+        self.size = size
+        self.magic_value = magic_value
+        self.offset = offset
+
+    def get_name(self):
+        """
+        Retrieves the name.
+
+        @rtype: String
+        @return: The name.
+        """
+
+        return self.name
+
+    def set_name(self, name):
+        """
+        Sets the name.
+
+        @type name: String
+        @param name: The name.
+        """
+
+        self.name = name
+
+    def get_modification_timestamp(self):
+        """
+        Retrieves the modification timestamp.
+
+        @rtype: int
+        @return: The modification timestamp.
+        """
+
+        return self.timestamp
+
+    def set_modification_timestamp(self, modification_timestamp):
+        """
+        Sets the modification timestamp.
+
+        @type modification_timestamp: int
+        @param modification_timestamp: The modification timestamp.
+        """
+
+        self.modification_timestamp = modification_timestamp
+
+    def get_owner_id(self):
+        """
+        Retrieves the owner id.
+
+        @rtype: int
+        @return: The owner id.
+        """
+
+        return self.owner_id
+
+    def set_owner_id(self, owner_id):
+        """
+        Sets the owner id.
+
+        @type owner_id: int
+        @param owner_id: The owner id.
+        """
+
+        self.owner_id = owner_id
+
+    def get_group_id(self):
+        """
+        Retrieves the group id.
+
+        @rtype: int
+        @return: The group id.
+        """
+
+        return self.group_id
+
+    def set_group_id(self, group_id):
+        """
+        Sets the group id.
+
+        @type group_id: int
+        @param group_id: The group id.
+        """
+
+        self.group_id = group_id
+
+    def get_mode(self):
+        """
+        Retrieves the mode.
+
+        @rtype: int
+        @return: The mode.
+        """
+
+        return self.group_id
+
+    def set_mode(self, mode):
+        """
+        Sets the mode.
+
+        @type mode: int
+        @param mode: The mode.
+        """
+
+        self.mode = mode
+
+    def get_size(self):
+        """
+        Retrieves the size.
+
+        @rtype: int
+        @return: The size.
+        """
+
+        return self.size
+
+    def set_size(self, size):
+        """
+        Sets the size.
+
+        @type size: int
+        @param size: The size.
+        """
+
+        self.size = size
+
+    def get_magic_value(self):
+        """
+        Retrieves the magic value.
+
+        @rtype: String
+        @return: The magic value.
+        """
+
+        return self.magic_value
+
+    def set_magic_value(self, magic_value):
+        """
+        Sets the size.
+
+        @type magic_value: String
+        @param magic_value: The magic value.
+        """
+
+        self.magic_value = magic_value
+
+    def get_offset(self):
+        """
+        Retrieves the offset.
+
+        @rtype: int
+        @return: The offset.
+        """
+
+        return self.offset
+
+    def set_offset(self, offset):
+        """
+        Sets offset.
+
+        @type offset: String
+        @param offset: The offset.
+        """
+
+        self.offset = offset

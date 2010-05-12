@@ -96,3 +96,29 @@ class InvalidFileFormat(PackagingArException):
         """
 
         return "Invalid file format: %s" % self.message
+
+class FileNotFound(PackagingArException):
+    """
+    The file not found class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        PackagingArException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "File not found: %s" % self.message
