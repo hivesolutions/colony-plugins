@@ -1,0 +1,23 @@
+{
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.data.entity_manager.sqlite_engine",
+    "name" : "Entity Manager Sqlite Engine Plugin",
+    "short_name" : "Entity Manager Sqlite Engine",
+    "description" : "Entity Manager Sqlite Engine Plugin",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["entity_manager_engine"],
+    "capabilities_allowed" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.business.helper",
+                "version" : "1.0.0"
+            }],
+    "main_file" : "entity_manager_sqlite_engine_plugin.py",
+    "resources" : [
+            "entity_manager_sqlite_engine_plugin.py",
+            "data/__init__.py",
+            "data/entity_manager_sqlite_engine/__init__.py",
+            "data/entity_manager_sqlite_engine/entity_manager_sqlite_engine_exceptions.py",
+            "data/entity_manager_sqlite_engine/entity_manager_sqlite_engine_system.py"]
+}
