@@ -1,0 +1,17 @@
+{
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.business.helper",
+    "name" : "Business Helper Plugin",
+    "short_name" : "Business Helper",
+    "description" : "Business Helper Plugin",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["business_helper"],
+    "capabilities_allowed" : [],
+    "dependencies" : [],
+    "main_file" : "business_helper_plugin.py",
+    "resources" : ["business_helper_plugin.py", "business/__init__.py",
+            "business/helper/__init__.py",
+            "business/helper/business_helper_system.py"]
+}
