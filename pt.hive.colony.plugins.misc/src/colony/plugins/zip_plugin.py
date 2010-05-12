@@ -57,6 +57,7 @@ class ZipPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["misc.zip.zip_system"]
 
     zip_system = None
 

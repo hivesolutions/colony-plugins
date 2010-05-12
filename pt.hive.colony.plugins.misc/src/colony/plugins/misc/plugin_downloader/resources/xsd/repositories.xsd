@@ -20,7 +20,7 @@
  along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<!-- 
+<!--
  __author__    = João Magalhães <joamag@hive.pt>
  __version__   = 1.0.0
  __revision__  = $LastChangedRevision$
@@ -30,32 +30,32 @@
 -->
 
 <xsd:schema targetNamespace="http://www.hive.pt"
-	elementFormDefault="qualified"
-	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-	xmlns="http://www.hive.pt">
-	<xsd:complexType name="address">
-		<xsd:simpleContent>
-			<xsd:extension base="xsd:string">
-				<xsd:attribute name="name" type="xsd:string" />
-			</xsd:extension>
-		</xsd:simpleContent>
-  	</xsd:complexType>
-	<xsd:complexType name="addresses">
-		<xsd:sequence>
-			<xsd:element name="address" type="address" maxOccurs="unbounded" minOccurs="1" />
-		</xsd:sequence>
-	</xsd:complexType>
-	<xsd:complexType name="repository">
-		<xsd:all>
-			<xsd:element name="name" type="xsd:string" maxOccurs="1" minOccurs="1" />
-			<xsd:element name="description" type="xsd:string" maxOccurs="1" minOccurs="0" />
-			<xsd:element name="addresses" type="addresses" maxOccurs="1" minOccurs="1" />
-		</xsd:all>
-	</xsd:complexType>
-	<xsd:complexType name="repositories">
-		<xsd:sequence>
-			<xsd:element name="repository" type="repository" maxOccurs="unbounded" minOccurs="0" />
-		</xsd:sequence>
-	</xsd:complexType>
-	<xsd:element name="repositories" type="repositories" />
+    elementFormDefault="qualified"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://www.hive.pt">
+    <xsd:complexType name="address">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="name" type="xsd:string" />
+            </xsd:extension>
+        </xsd:simpleContent>
+      </xsd:complexType>
+    <xsd:complexType name="addresses">
+        <xsd:sequence>
+            <xsd:element name="address" type="address" maxOccurs="unbounded" minOccurs="1" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="repository">
+        <xsd:all>
+            <xsd:element name="name" type="xsd:string" maxOccurs="1" minOccurs="1" />
+            <xsd:element name="description" type="xsd:string" maxOccurs="1" minOccurs="0" />
+            <xsd:element name="addresses" type="addresses" maxOccurs="1" minOccurs="1" />
+        </xsd:all>
+    </xsd:complexType>
+    <xsd:complexType name="repositories">
+        <xsd:sequence>
+            <xsd:element name="repository" type="repository" maxOccurs="unbounded" minOccurs="0" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="repositories" type="repositories" />
 </xsd:schema>
