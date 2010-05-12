@@ -1,0 +1,18 @@
+{
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.configuration.manager",
+    "name" : "Configuration Manager Plugin",
+    "short_name" : "Configuration Manager",
+    "description" : "The plugin that controls the deployment and retrieval of configurations",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["startup", "configuration_manager"],
+    "capabilities_allowed" : ["configuration_model_provider"],
+    "dependencies" : [],
+    "main_file" : "configuration_manager_plugin.py",
+    "resources" : ["configuration_manager_plugin.py",
+            "configuration_manager/__init__.py",
+            "configuration_manager/manager/__init__.py",
+            "configuration_manager/manager/configuration_manager_system.py"]
+}
