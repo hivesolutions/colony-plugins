@@ -55,7 +55,8 @@ class MainServiceHttpPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    capabilities = ["service.http"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_http/http/resources/baf.xml"}
+    capabilities = ["service.http", "build_automation_item"]
     capabilities_allowed = ["http_service_handler", "http_service_encoding", "http_service_error_handler", "socket_provider"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
