@@ -32,7 +32,7 @@ PID_FILE=/var/run/colony_wrapper.pid
 LOG_FILE_STDOUT=/var/log/colony_wrapper.stdout.log
 LOG_FILE_STDERR=/var/log/colony_wrapper.stderr.log
 
-# changes the directory to the colony home
+# changes the current directory to the colony home
 cd $COLONY_HOME
 
 # launches the colony and redirects the standard output and error
