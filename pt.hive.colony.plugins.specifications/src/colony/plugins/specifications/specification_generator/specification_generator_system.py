@@ -95,11 +95,12 @@ class SepecificationGenerator:
         # opens the file
         file = open(file_path, "wb")
 
-        # writes the plugin specification string to the file
-        file.write(plugin_specification_string)
-
-        # cloeses the file
-        file.close()
+        try:
+            # writes the plugin specification string to the file
+            file.write(plugin_specification_string)
+        finally:
+            # closes the file
+            file.close()
 
     def generate_plugin_specification_file_buffer(self, plugin_id, plugin_version, properties):
         """
