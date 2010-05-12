@@ -146,14 +146,14 @@ class MainServicePopStreamHandler:
         request.set_response_code("+OK")
 
         # sets the response messages in the request
-        request.set_response_messages(["capability list follows", "top", "user", "resp-codes", "uidl", "starttls"])
+        request.set_response_messages(["capability list follows", "top", "user", "resp-codes", "uidl", "stls"])
 
         # sets the extensions as active
         session.set_extensions_active(True)
 
-    def process_starttls(self, request, session, arguments):
+    def process_stls(self, request, session, arguments):
         """
-        Processes the starttls command.
+        Processes the stls command.
 
         @type request: PopRequest
         @param request: The pop request to be processed.
@@ -167,10 +167,10 @@ class MainServicePopStreamHandler:
         session.set_upgrade(True)
 
         # sets the request response code
-        request.set_response_code(220)
+        request.set_response_code("+OK")
 
         # sets the response message in the request
-        request.set_response_message("Ready to start TLS")
+        request.set_response_message("ready to start tls")
 
     def process_user(self, request, session, arguments):
         """
