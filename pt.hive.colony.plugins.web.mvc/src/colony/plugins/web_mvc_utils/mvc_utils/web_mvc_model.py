@@ -57,6 +57,11 @@ def _start_model(self):
         # calls the start method (to be implemented)
         self.start()
 
+    # in case the model has the set validation method
+    if hasattr(self, "set_validation"):
+        # calls the set validation method (to be implemented)
+        self.set_validation()
+
 def dumps(self, serializer):
     """
     Serializes (dumps) the current object with
