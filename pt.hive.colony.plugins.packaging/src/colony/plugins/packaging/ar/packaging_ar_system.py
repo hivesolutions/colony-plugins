@@ -206,7 +206,7 @@ class ArFile:
             archive_path = base_file_path.strip("/\\")
 
         # checks the header
-        self.check_header()
+        self._check_header()
 
         # goes to the end of the file
         self.file.seek(0, os.SEEK_END)
@@ -304,7 +304,7 @@ class ArFile:
         # returns the index map keys
         return index_map_keys
 
-    def check_header(self):
+    def _check_header(self):
         """
         Checks the header, to see if it
         is written.
