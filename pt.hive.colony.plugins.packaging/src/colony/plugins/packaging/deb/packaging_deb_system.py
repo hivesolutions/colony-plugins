@@ -38,11 +38,21 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
+import types
+import tarfile
 
 import packaging_deb_exceptions
 
+import colony.libs.string_buffer_util
+
 FILE_PATH_VALUE = "file_path"
 """ The file path value """
+
+FILE_FORMAT_VALUE = "file_format"
+""" The file format value """
+
+DEB_FILE_ARGUMENTS_VALUE = "deb_file_arguments"
+""" The deb file arguments value """
 
 READ_MODE = "rb"
 """ The read mode """
@@ -50,8 +60,35 @@ READ_MODE = "rb"
 WRITE_MODE = "wb+"
 """ The write mode """
 
+TAR_FILE_FORMAT = "tar"
+""" The tar file format """
+
+TAR_GZ_FILE_FORMAT = "tar_gz"
+""" The tar gz file format """
+
+TAR_BZ2_FILE_FORMAT = "tar_bz2"
+""" The tar bz2 file format """
+
+TAR_LZMA_FILE_FORMAT = "tar_bz2"
+""" The tar lzma file format """
+
 DEFAULT_MODE = READ_MODE
 """ The default file opening mode """
+
+DEFAULT_FILE_FORMAT = TAR_FILE_FORMAT
+""" The default file format """
+
+DEFAULT_DEB_FILE_ARGUMENTS = {}
+""" The default deb file arguments """
+
+FILE_EXTENSIONS_MAP = {TAR_FILE_FORMAT : ".tar",
+                       TAR_GZ_FILE_FORMAT : ".tar.gz",
+                       TAR_BZ2_FILE_FORMAT : ".tar.bz2",
+                       TAR_BZ2_FILE_FORMAT : ".tar.lzma"}
+""" The file extensions map """
+
+CONTROL_FILE_FORMAT = "w:gz"
+""" The control file format """
 
 class PackagingDeb:
     """
@@ -86,11 +123,22 @@ class PackagingDeb:
             # raises the missing parameter exception
             raise packaging_deb_exceptions.MissingParameter(FILE_PATH_VALUE)
 
+        # in case the file path is not in the parameters map
+        if not FILE_PATH_VALUE in parameters:
+            # raises the missing parameter exception
+            raise packaging_deb_exceptions.MissingParameter(FILE_PATH_VALUE)
+
         # retrieves the file path from the parameters
         file_path = parameters[FILE_PATH_VALUE]
 
+        # retrieves the file format from the parameters
+        file_format = parameters.get(FILE_FORMAT_VALUE, DEFAULT_FILE_FORMAT)
+
+        # retrieves the file path references from the parameters
+        deb_file_arguments = parameters.get(DEB_FILE_ARGUMENTS_VALUE, DEFAULT_DEB_FILE_ARGUMENTS)
+
         # creates a new deb file
-        deb_file = DebFile(file_path)
+        deb_file = DebFile(self, file_path, file_format, deb_file_arguments)
 
         # returns the deb file
         return deb_file
@@ -100,21 +148,42 @@ class DebFile:
     The deb file class.
     """
 
+    packing_deb = None
+    """ The packing deb """
+
     file_path = None
     """ The file path for the file """
+
+    file_format = None
+    """ The file format for the file """
+
+    deb_file_arguments = None
+    """ The arguments to the deb file structure creation """
+
+    mode = None
+    """ The mode being used """
 
     file = None
     """ The file currently being used """
 
-    def __init__(self, file_path):
+    def __init__(self, packing_deb, file_path, file_format, deb_file_arguments):
         """
         Constructor of the class.
 
+        @type packing_deb: PackagingDeb
+        @param packing_deb: The packing deb to be used.
         @type file_path: String
         @param file_path: The path to the file to be used.
+        @type file_format: String
+        @param file_format: The file format to be used.
+        @type deb_file_arguments: Dictionary
+        @param deb_file_arguments: The arguments specific for deb files.
         """
 
+        self.packing_deb = packing_deb
         self.file_path = file_path
+        self.file_format = file_format
+        self.deb_file_arguments = deb_file_arguments
 
     def open(self, mode = DEFAULT_MODE):
         """
@@ -124,16 +193,30 @@ class DebFile:
         @param mode: The mode to open the file.
         """
 
+        # sets the current mode
+        self.mode = mode
+
+        # retrieves the packing ar plugin
+        packaging_ar_plugin = self.packing_deb.packaging_deb_plugin.packaging_ar_plugin
+
+        # creates the file
+        self.file = packaging_ar_plugin.create_file({FILE_PATH_VALUE : self.file_path})
+
         # opens the file with the current mode
-        self.file = open(self.file_path, mode)
+        self.file.open(mode)
 
     def close(self):
         """
         Closes the current file, being used.
         """
 
-        # tenho de fechar o ficherio criando a parte de controlo e
-        # escrevendo a data
+        # in case the current mode is write
+        if self.mode == WRITE_MODE:
+            # writes the control
+            self._write_control()
+
+            # writes the data
+            self._write_data()
 
         # closes the current file
         self.file.close()
@@ -169,13 +252,98 @@ class DebFile:
                 # closes the archive file
                 archive_file.close()
 
+    def _write_control(self):
+        if not "control" in self.deb_file_arguments:
+            # raises the missing parameter exception
+            raise packaging_deb_exceptions.MissingParameter("control")
+
+        # retrieves the control string from the deb file arguments
+        # the string can be a path or a file object with the
+        # contents of the control file
+        control = self.deb_file_arguments["control"]
+
+        # retrieves the control file from the control string
+        control_file = self._get_file(control)
+
+        try:
+            # creates the string buffer to hold the control file
+            control_string_buffer = colony.libs.string_buffer_util.StringBuffer(False)
+
+            # creates the compressed file using the control string buffer as
+            # the base file buffer
+            compressed_file = tarfile.open(None, CONTROL_FILE_FORMAT, control_string_buffer)
+
+            # -------------------- ESTA PARTE TEM DE SER GENERALIZADA
+
+            directory_info = tarfile.TarInfo(name = "./")
+
+            directory_info.type = tarfile.DIRTYPE
+
+            compressed_file.addfile(directory_info)
+
+            control_file_info = compressed_file.gettarinfo(fileobj = control_file)
+
+            control_file_info.name = "./control"
+
+            compressed_file.addfile(control_file_info, control_file)
+
+            # ---------------------
+
+            # closes the compressed file
+            compressed_file.close()
+
+            # writes the file base on the file extension
+            self.file.write_file(control_string_buffer, "control.tar.gz")
+
+            # closes the control string buffer
+            control_string_buffer.close()
+        finally:
+            # closes the control file
+            control_file.close()
+
+    def _write_data(self):
+        # in case the file format is tar
+        if self.file_format == TAR_FILE_FORMAT:
+            mode = "w"
+        # in case the file format is tar gz
+        elif self.file_format == TAR_GZ_FILE_FORMAT:
+            mode = "w:gz"
+        # in case the file format is tar bz2s
+        elif self.file_format == TAR_BZ2_FILE_FORMAT:
+            mode = "w:bz2"
+        else:
+            # raises the invalid file format exception
+            raise packaging_deb_exceptions.InvalidFileFormat(self.file_format)
+
+        # retrieves the file extension base on the current file format
+        file_extension = FILE_EXTENSIONS_MAP.get(self.file_format, ".out")
+
+    def _get_file(self, file_value):
+        # retrieves the file value type
+        file_value_type = type(file_value)
+
+        # in case it is a file path (string value)
+        if file_value_type in types.StringTypes:
+            # in case the path does not exist
+            if not os.path.exists(file_value):
+                # raises the file not found exception
+                raise packaging_deb_exceptions.FileNotFound("the file paths does not exist: " + file_value)
+
+            # opens the file
+            file = open(file_value, DEFAULT_MODE)
+        # it must be a file type
+        else:
+            # sets the file as the file value
+            file = file_value
+
+        # returns the file
+        return file
+
     def write(self, file_path, archive_path = None, parameters = {}):
         # in case the path does not exist
         if not os.path.exists(file_path):
             # raises the file not found exception
             raise packaging_deb_exceptions.FileNotFound("the file paths does not exist: " + file_path)
-
-
 
     def read(self, archive_path, parameters = {}):
         # retrieves the index map

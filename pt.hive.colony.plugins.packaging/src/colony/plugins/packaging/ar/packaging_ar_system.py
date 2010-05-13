@@ -112,7 +112,7 @@ class PackagingAr:
         file_path = parameters[FILE_PATH_VALUE]
 
         # creates a new ar file
-        ar_file = ArFile(file_path)
+        ar_file = ArFile(self, file_path)
 
         # returns the ar file
         return ar_file
@@ -122,8 +122,14 @@ class ArFile:
     The ar file class.
     """
 
+    packing_ar = None
+    """ The packing ar to be used """
+
     file_path = None
     """ The file path for the file """
+
+    mode = None
+    """ The mode being used """
 
     file = None
     """ The file currently being used """
@@ -134,14 +140,17 @@ class ArFile:
     index_map = {}
     """ The index map associating the archive path with the file descriptor """
 
-    def __init__(self, file_path):
+    def __init__(self, packing_ar, file_path):
         """
         Constructor of the class.
 
+        @type packing_ar: PackagingAr
+        @param packing_ar: The packing ar to be used.
         @type file_path: String
         @param file_path: The path to the file to be used.
         """
 
+        self.packing_ar = packing_ar
         self.file_path = file_path
 
         self.index_map = {}
@@ -153,6 +162,9 @@ class ArFile:
         @type mode: String
         @param mode: The mode to open the file.
         """
+
+        # saves the current mode
+        self.mode = mode
 
         # opens the file with the current mode
         self.file = open(self.file_path, mode)
