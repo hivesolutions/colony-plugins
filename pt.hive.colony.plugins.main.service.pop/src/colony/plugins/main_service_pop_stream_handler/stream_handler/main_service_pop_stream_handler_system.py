@@ -304,9 +304,6 @@ class MainServicePopStreamHandler:
         # adds the initial line message to the response messages
         response_messages.append("%i messages (%i octets)" % (messages_count, octets_count))
 
-        # starts the message id uid map
-        session.message_id_uid_map = {}
-
         # retrieves the mailbox messages
         mailbox_messages = mailbox.get_messages()
 
@@ -318,9 +315,6 @@ class MainServicePopStreamHandler:
             # retrieves the message contents size
             message_contents_size = message.get_contents_size()
 
-            # retrieves the message uid
-            message_uid = message.get_uid()
-
             # creates the response message
             message = "%i %i" % (index, message_contents_size)
 
@@ -328,11 +322,11 @@ class MainServicePopStreamHandler:
             # of response messages
             response_messages.append(message)
 
-            # sets the message uid in the message id uid map
-            session.message_id_uid_map[index] = message_uid
-
             # increments the index counter
             index += 1
+
+        # generates the message id uid map
+        self._generate_message_id_uid_map(session, mailbox)
 
         # sets the request response code
         request.set_response_code("+OK")
@@ -358,11 +352,14 @@ class MainServicePopStreamHandler:
         # retrieves the message id argument
         message_id = int(arguments[0])
 
+        # retrieves the message id uid map
+        message_id_uid_map = self.get_message_id_uid_map(session)
+
         # creates the response messages list
         response_messages = []
 
         # retrieves the message uid from the message id uid map
-        message_uid = session.message_id_uid_map[message_id]
+        message_uid = message_id_uid_map[message_id]
 
         # retrieves the message for the given uid
         message = session.get_message(message_uid)
@@ -403,11 +400,14 @@ class MainServicePopStreamHandler:
         # asserts the retr arguments
         self.assert_arguments(arguments, 1)
 
+        # retrieves the message id uid map
+        message_id_uid_map = self.get_message_id_uid_map(session)
+
         # retrieves the message id argument
         message_id = int(arguments[0])
 
         # retrieves the message uid from the message id uid map
-        message_uid = session.message_id_uid_map[message_id]
+        message_uid = message_id_uid_map[message_id]
 
         # removes the message for the given uid
         session.remove_message(message_uid)
@@ -436,12 +436,15 @@ class MainServicePopStreamHandler:
         # retrieves the arguments length
         arguments_length = len(arguments)
 
+        # retrieves the message id uid map
+        message_id_uid_map = self.get_message_id_uid_map(session)
+
         if arguments_length > 0:
             # retrieves the message id argument
-            message_id = arguments[0]
+            message_id = int(arguments[0])
 
             # retrieves the message uid associated with the message id
-            message_uid = session.message_id_uid_map[message_id]
+            message_uid = message_id_uid_map[message_id]
 
             # sets the request response code
             request.set_response_code("+OK")
@@ -467,7 +470,7 @@ class MainServicePopStreamHandler:
                 message_id = index + 1
 
                 # retrieves the message uid from the message id uid map
-                message_uid = session.message_id_uid_map[message_id]
+                message_uid = message_id_uid_map[message_id]
 
                 # creates the message associating the message id to the
                 # message uid
@@ -605,3 +608,66 @@ class MainServicePopStreamHandler:
         if arguments_length < minimum_number or (arguments_length > maximum_number and maximum_number >= 0):
             # raises the invalid pop command exception
             raise main_service_pop_stream_handler_exceptions.InvalidPopCommand("invalid number of arguments: " + str(arguments_length))
+
+    def get_message_id_uid_map(self, session):
+        """
+        Retrieves the message id uid map for the given session.
+
+        @type session: PopSession
+        @param session: The session to retrieve the map.
+        @rtype: Dictionary
+        @return: The message id uid map for the given session.
+        """
+
+        # retrieves the message id uid map generated
+        message_id_uid_map_generated = session.get_message_id_uid_map_generated()
+
+        # in case the message id uid map as not been generated
+        if not message_id_uid_map_generated:
+            # generates the message id uid map
+            self._generate_message_id_uid_map(session)
+
+        # retrieves the message id uid map
+        message_id_uid_map = session.get_message_id_uid_map()
+
+        # returns the message id uid map
+        return message_id_uid_map
+
+    def _generate_message_id_uid_map(self, session, mailbox = None):
+        """
+        Generates the message id uid map for the given session, and if given
+        using the given mailbox structure.
+
+        @type session: PopSession
+        @param session: The session to be used in the map generation.
+        @type mailbox: Mailbox
+        @param mailbox: The mailbox to be used in the map generation.
+        """
+
+        # in case the mailbox is not defined
+        if not mailbox:
+            # retrieves the current mailbox
+            mailbox = session.get_mailbox_messages()
+
+        # starts the message id uid map
+        session.message_id_uid_map = {}
+
+        # retrieves the mailbox messages
+        mailbox_messages = mailbox.get_messages()
+
+        # starts the index counter
+        index = 1
+
+        # iterates over all the messages in the mailbox
+        for message in mailbox_messages:
+            # retrieves the message uid
+            message_uid = message.get_uid()
+
+            # sets the message uid in the message id uid map
+            session.message_id_uid_map[index] = message_uid
+
+            # increments the index counter
+            index += 1
+
+        # sets the message id uid map generated flag
+        session.set_message_id_uid_map_generated(True)

@@ -1050,6 +1050,9 @@ class PopSession:
     message_id_uid_map = {}
     """ The map associating the message id with the message uid """
 
+    message_id_uid_map_generated = False
+    """ The flag controlling the generation of the messa id uid map """
+
     def __init__(self, pop_client_service_task):
         """
         Constructor of the class.
@@ -1518,3 +1521,23 @@ class PopSession:
         """
 
         self.message_id_uid_map = message_id_uid_map
+
+    def get_message_id_uid_map_generated(self):
+        """
+        Retrieves the message id uid map generated.
+
+        @rtype: bool
+        @return: The message id uid map generated.
+        """
+
+        return self.message_id_uid_map_generated
+
+    def set_message_id_uid_map_generated(self, message_id_uid_map_generated):
+        """
+        Sets the message id uid map generated.
+
+        @type message_id_uid_map_generated: bool
+        @param message_id_uid_map_generated: The message id uid map generated.
+        """
+
+        self.message_id_uid_map_generated = message_id_uid_map_generated
