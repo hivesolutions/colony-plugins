@@ -43,8 +43,13 @@ import struct
 
 import packaging_ar_exceptions
 
+import colony.libs.string_buffer_util
+
 FILE_PATH_VALUE = "file_path"
 """ The file path value """
+
+FILE_PROPERTIES_VALUE = "file_properties"
+""" The file properties value """
 
 MAGIC_FILE_STRING_VALUE = "\x60\x0a"
 """ The magic file string value """
@@ -197,19 +202,13 @@ class ArFile:
             # raises the file not found exception
             raise packaging_ar_exceptions.FileNotFound("the file paths does not exist: " + file_path)
 
-        # in case the archive paths is not defined
+        # in case the archive path is not defined
         if not archive_path:
             # separates the drive from the base file path
             _drive, base_file_path = os.path.splitdrive(file_path)
 
             # strips the base file path from the trailing separators
             archive_path = base_file_path.strip("/\\")
-
-        # checks the header
-        self._check_header()
-
-        # goes to the end of the file
-        self.file.seek(0, os.SEEK_END)
 
         # retrieves the file stat
         file_stat = os.stat(file_path)
@@ -221,42 +220,75 @@ class ArFile:
         mode = file_stat[stat.ST_MODE]
         size = file_stat[stat.ST_SIZE]
 
-        # converts the numeric values to string values
-        modification_timestamp_string = str(modification_timestamp)
-        owner_id_string = str(owner_id)
-        group_id_string = str(group_id)
-        mode_string = "%o" % mode
-        size_string = str(size)
+        # tries to retrieve the file properties
+        file_properties = parameters.get(FILE_PROPERTIES_VALUE, {})
 
-        # creates the file header from the various file components in string format
-        file_header = struct.pack("16s12s6s6s8s10s2s", archive_path, modification_timestamp_string, owner_id_string, group_id_string, mode_string, size_string, MAGIC_FILE_STRING_VALUE)
+        # sets the file properties values
+        file_properties["modification_timestamp"] = modification_timestamp
+        file_properties["owner_id"] = owner_id
+        file_properties["group_id"] = group_id
+        file_properties["mode"] = mode
+        file_properties["size"] = size
 
-        # replaces the null values in the file header for spaces (standard)
-        file_header = file_header.replace("\0", " ")
-
-        # writes the file header
-        self.file.write(file_header)
+        # sets the file properties in the parameters
+        parameters[FILE_PROPERTIES_VALUE] = file_properties
 
         # opens the file for reading
         file = open(file_path, "rb")
 
         try:
-            # loops indefinitely
-            while 1:
-                # reads the file contents
-                file_contents = file.read(BUFFER_SIZE)
-
-                # in case there are no file contents,
-                # the end of file is reached
-                if not file_contents:
-                    # breaks the loop
-                    break
-
-                # writes the file contents to the file
-                self.file.write(file_contents)
+            # writes the file to the current file
+            self._write_file(file, archive_path, parameters)
         finally:
             # closes the file
             file.close()
+
+    def write_file(self, file, archive_path, parameters = {}):
+        # tries to retrieve the file properties
+        file_properties = parameters.get(FILE_PROPERTIES_VALUE, {})
+
+        # forwards the file to the end position
+        file.seek(0, os.SEEK_END)
+
+        # retrieves the current offset (file size)
+        size = file.tell()
+
+        # rewinds the file to the initial position
+        file.seek(0, os.SEEK_SET)
+
+        # sets the file properties values
+        file_properties["size"] = size
+
+        # sets the file properties in the parameters
+        parameters[FILE_PROPERTIES_VALUE] = file_properties
+
+        # writes the file to the current file
+        self._write_file(file, archive_path, parameters)
+
+    def write_string_value(self, string_value, archive_path, parameters = {}):
+        # creates the string buffer to hold the string value
+        string_buffer = colony.libs.string_buffer_util.StringBuffer(False)
+
+        # writes the string value to the string buffer
+        string_buffer.write(string_value)
+
+        # rewinds the string buffer to the initial position
+        string_buffer.seek(0, os.SEEK_SET)
+
+        # tries to retrieve the file properties
+        file_properties = parameters.get(FILE_PROPERTIES_VALUE, {})
+
+        # retrieves the string value length (file size)
+        size = len(string_value)
+
+        # sets the file properties values
+        file_properties["size"] = size
+
+        # sets the file properties in the parameters
+        parameters[FILE_PROPERTIES_VALUE] = file_properties
+
+        # writes the file to the current file
+        self._write_file(string_buffer, archive_path, parameters)
 
     def read(self, archive_path, parameters = {}):
         # retrieves the index map
@@ -303,6 +335,65 @@ class ArFile:
 
         # returns the index map keys
         return index_map_keys
+
+    def _write_file(self, file, archive_path, parameters = {}):
+        """
+        Writes the given file object to the current file, using the given
+        archive path as the path to the stored object.
+
+        @type file: File
+        @param file: The file object to be written.
+        @type archive_path: String
+        @param archive_path: The path to be used by the file in the archive.
+        @type parameters: Dictionary
+        @param parameters: The parameters to the write.
+        """
+
+        # retrieves the file properties map from the parameters
+        file_properties = parameters.get(FILE_PROPERTIES_VALUE, {})
+
+        # retrieves the values from the file properties map
+        modification_timestamp = file_properties.get("modification_timestamp", 0)
+        owner_id = file_properties.get("owner_id", 0)
+        group_id = file_properties.get("group_id", 0)
+        mode = file_properties.get("mode", 0)
+        size = file_properties.get("size", 0)
+
+        # converts the numeric values to string values
+        modification_timestamp_string = str(modification_timestamp)
+        owner_id_string = str(owner_id)
+        group_id_string = str(group_id)
+        mode_string = "%o" % mode
+        size_string = str(size)
+
+        # checks the header
+        self._check_header()
+
+        # goes to the end of the file
+        self.file.seek(0, os.SEEK_END)
+
+        # creates the file header from the various file components in string format
+        file_header = struct.pack("16s12s6s6s8s10s2s", archive_path, modification_timestamp_string, owner_id_string, group_id_string, mode_string, size_string, MAGIC_FILE_STRING_VALUE)
+
+        # replaces the null values in the file header for spaces (standard)
+        file_header = file_header.replace("\0", " ")
+
+        # writes the file header
+        self.file.write(file_header)
+
+        # loops indefinitely
+        while 1:
+            # reads the file contents
+            file_contents = file.read(BUFFER_SIZE)
+
+            # in case there are no file contents,
+            # the end of file is reached
+            if not file_contents:
+                # breaks the loop
+                break
+
+            # writes the file contents to the file
+            self.file.write(file_contents)
 
     def _check_header(self):
         """
