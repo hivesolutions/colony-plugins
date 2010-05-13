@@ -1458,11 +1458,12 @@ class RestSession:
 
         # in case the domain is local
         if domain in LOCALHOST_VALUES:
-            # sets the domain in the cookie
-            self.cookie.set_attribute(DOMAIN_VALUE, "")
+            # returns immediately
+            return
+
         # in case the domain is "valid" and sub domains
         # flag is active
-        elif include_sub_domain:
+        if include_sub_domain:
             # sets the domain in the cookie (including sub domains)
             self.cookie.set_attribute(DOMAIN_VALUE, "." + domain)
         else:
