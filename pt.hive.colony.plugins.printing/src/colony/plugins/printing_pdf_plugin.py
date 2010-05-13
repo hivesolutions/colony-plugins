@@ -56,7 +56,9 @@ class PrintingPdfPlugin(colony.plugins.plugin_system.Plugin):
     capabilities = ["printing"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.document.pdf", "1.0.0")]
+                    "pt.hive.colony.plugins.document.pdf", "1.0.0"),
+                    colony.plugins.plugin_system.PackageDependency(
+                    "Python Imaging Library (PIL)", "PIL", "1.1.x", "http://www.pythonware.com/products/pil")]
     events_handled = []
     events_registrable = []
     main_modules = ["printing.pdf.printing_pdf_exceptions", "printing.pdf.printing_pdf_system",
