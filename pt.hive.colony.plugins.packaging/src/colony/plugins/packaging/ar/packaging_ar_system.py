@@ -410,11 +410,8 @@ class ArFile:
             # writes the file contents to the file
             self.file.write(file_contents)
 
-        # retrieves the current file offset
-        file_offset = self.file.tell()
-
-        # checks if the current offset is odd
-        if file_offset % 2:
+        # checks if the size is odd
+        if size % 2:
             # writes the padding character
             # to align the data part of the file
             self.file.write(PADDING_BYTE_VALUE)
@@ -488,6 +485,9 @@ class ArFile:
                 # raises the invalid file format exception
                 raise packaging_ar_exceptions.InvalidFileFormat("invalid magic file string value: " + magic_value)
 
+            # strips the name from the extra values (spaces)
+            name = name.strip()
+
             # converts the various string integer values to the numeric representation
             modification_timestamp_numeric = int(modification_timestamp)
             owner_id_numeric = int(owner_id)
@@ -500,6 +500,11 @@ class ArFile:
 
             # sets the file entry in the index map
             self.index_map[name] = ar_file_entry
+
+            # checks if the size is odd
+            if size_numeric % 2:
+                # increments the padding byte
+                size_numeric += 1
 
             # jumps the file contents
             self.file.seek(size_numeric, os.SEEK_CUR)
