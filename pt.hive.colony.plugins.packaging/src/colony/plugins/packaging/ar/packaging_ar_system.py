@@ -567,7 +567,7 @@ class ArFileEntry:
         @return: The modification timestamp.
         """
 
-        return self.timestamp
+        return self.modification_timestamp
 
     def set_modification_timestamp(self, modification_timestamp):
         """
