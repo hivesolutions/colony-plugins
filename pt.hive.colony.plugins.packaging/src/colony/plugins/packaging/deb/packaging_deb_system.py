@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
+import stat
 import types
 import tarfile
 
@@ -47,6 +48,9 @@ import colony.libs.string_buffer_util
 
 FILE_PATH_VALUE = "file_path"
 """ The file path value """
+
+FILE_PROPERTIES_VALUE = "file_properties"
+""" The file properties value """
 
 FILE_FORMAT_VALUE = "file_format"
 """ The file format value """
@@ -87,8 +91,8 @@ FILE_EXTENSIONS_MAP = {TAR_FILE_FORMAT : ".tar",
                        TAR_BZ2_FILE_FORMAT : ".tar.lzma"}
 """ The file extensions map """
 
-CONTROL_FILE_FORMAT = "w:gz"
-""" The control file format """
+CONTROL_FILE_MODE = "w:gz"
+""" The control file mode """
 
 class PackagingDeb:
     """
@@ -166,6 +170,12 @@ class DebFile:
     file = None
     """ The file currently being used """
 
+    pending_files = []
+    """ The list of pending files to be flushed """
+
+    index_map = {}
+    """ The index map associating the archive path with the file descriptor """
+
     def __init__(self, packing_deb, file_path, file_format, deb_file_arguments):
         """
         Constructor of the class.
@@ -184,6 +194,9 @@ class DebFile:
         self.file_path = file_path
         self.file_format = file_format
         self.deb_file_arguments = deb_file_arguments
+
+        self.pending_files = []
+        self.index_map = {}
 
     def open(self, mode = DEFAULT_MODE):
         """
@@ -257,13 +270,26 @@ class DebFile:
             # raises the missing parameter exception
             raise packaging_deb_exceptions.MissingParameter("control")
 
-        # retrieves the control string from the deb file arguments
+        # create a new empty string buffer
+        empty_string_buffer = colony.libs.string_buffer_util.StringBuffer(False)
+
+        # retrieves the control strings from the deb file arguments
         # the string can be a path or a file object with the
         # contents of the control file
         control = self.deb_file_arguments["control"]
+        conffiles = self.deb_file_arguments.get("conffiles", empty_string_buffer)
+        postinst = self.deb_file_arguments.get("postinst", empty_string_buffer)
+        postrm = self.deb_file_arguments.get("postrm", empty_string_buffer)
+        prerm = self.deb_file_arguments.get("prerm", empty_string_buffer)
+        shlibs = self.deb_file_arguments.get("shlibs", empty_string_buffer)
 
-        # retrieves the control file from the control string
+        # retrieves the control files from the control string
         control_file = self._get_file(control)
+        conffiles_file = self._get_file(conffiles)
+        postinst_file = self._get_file(postinst)
+        postrm_file = self._get_file(postrm)
+        prerm_file = self._get_file(prerm)
+        shlibs_file = self._get_file(shlibs)
 
         try:
             # creates the string buffer to hold the control file
@@ -271,37 +297,48 @@ class DebFile:
 
             # creates the compressed file using the control string buffer as
             # the base file buffer
-            compressed_file = tarfile.open(None, CONTROL_FILE_FORMAT, control_string_buffer)
+            compressed_file = tarfile.open(None, CONTROL_FILE_MODE, control_string_buffer)
 
-            # -------------------- ESTA PARTE TEM DE SER GENERALIZADA
-
-            directory_info = tarfile.TarInfo(name = "./")
-
-            directory_info.type = tarfile.DIRTYPE
-
-            compressed_file.addfile(directory_info)
-
-            control_file_info = compressed_file.gettarinfo(fileobj = control_file)
-
-            control_file_info.name = "./control"
-
-            compressed_file.addfile(control_file_info, control_file)
-
-            # ---------------------
+            # writes the various control files
+            self._write_control_file(compressed_file, control_file, "control")
+            self._write_control_file(compressed_file, conffiles_file, "conffiles")
+            self._write_control_file(compressed_file, postinst_file, "postinst")
+            self._write_control_file(compressed_file, postrm_file, "postrm")
+            self._write_control_file(compressed_file, prerm_file, "prerm")
+            self._write_control_file(compressed_file, shlibs_file, "shlibs")
 
             # closes the compressed file
             compressed_file.close()
 
-            # writes the file base on the file extension
+            # writes the control string buffer in the base file
             self.file.write_file(control_string_buffer, "control.tar.gz")
 
             # closes the control string buffer
             control_string_buffer.close()
         finally:
-            # closes the control file
+            # closes the control files
             control_file.close()
+            conffiles_file.close()
+            postinst_file.close()
+            postrm_file.close()
+            prerm_file.close()
+            shlibs_file.close()
+
+    def _write_control_file(self, compressed_file, file, file_name):
+        # creates the file info from the file
+        file_info = compressed_file.gettarinfo(fileobj = file)
+
+        # sets the file name in the file info
+        file_info.name = file_name
+
+        # adds the file to the compressed file using the
+        # given file info
+        compressed_file.addfile(file_info, file)
 
     def _write_data(self):
+        # creates the string buffer to hold the data file
+        data_string_buffer = colony.libs.string_buffer_util.StringBuffer(False)
+
         # in case the file format is tar
         if self.file_format == TAR_FILE_FORMAT:
             mode = "w"
@@ -315,8 +352,48 @@ class DebFile:
             # raises the invalid file format exception
             raise packaging_deb_exceptions.InvalidFileFormat(self.file_format)
 
+        # creates the compressed file using the data string buffer as
+        # the base file buffer
+        compressed_file = tarfile.open(None, mode, data_string_buffer)
+
+        # iterates over all the pending files
+        for pending_file in self.pending_files:
+            # retrieves the pending file descriptor from the index map
+            pending_file_descriptor = self.index_map[pending_file]
+
+            # creates a new padding file info (tar info)
+            pending_file_info = tarfile.TarInfo()
+
+            # sets the various values of the tar info structure
+            pending_file_info.name = pending_file_descriptor.get_name()
+            pending_file_info.size = pending_file_descriptor.get_size()
+            pending_file_info.mtime = pending_file_descriptor.get_modification_timestamp()
+            pending_file_info.mode = pending_file_descriptor.get_mode()
+            pending_file_info.type = tarfile.REGTYPE
+            pending_file_info.uid = pending_file_descriptor.get_owner_id()
+            pending_file_info.gid = pending_file_descriptor.get_group_id()
+
+            # retrieves the pending file buffer
+            pending_file_buffer = pending_file_descriptor.get_file()
+
+            # adds the pending file to the compressed file using the
+            # given file info
+            compressed_file.addfile(pending_file_info, pending_file_buffer)
+
+            # closes the pending file buffer
+            pending_file_buffer.close()
+
+        # closes the compressed file
+        compressed_file.close()
+
         # retrieves the file extension base on the current file format
         file_extension = FILE_EXTENSIONS_MAP.get(self.file_format, ".out")
+
+        # writes the file base on the file extension
+        self.file.write_file(data_string_buffer, "data" + file_extension)
+
+        # closes the data string buffer
+        data_string_buffer.close()
 
     def _get_file(self, file_value):
         # retrieves the file value type
@@ -344,6 +421,75 @@ class DebFile:
         if not os.path.exists(file_path):
             # raises the file not found exception
             raise packaging_deb_exceptions.FileNotFound("the file paths does not exist: " + file_path)
+
+        # in case the archive path is not defined
+        if not archive_path:
+            # separates the drive from the base file path
+            _drive, base_file_path = os.path.splitdrive(file_path)
+
+            # strips the base file path from the trailing separators
+            archive_path = base_file_path.strip("/\\")
+
+        # retrieves the file stat
+        file_stat = os.stat(file_path)
+
+        # retrieves the various attributes from the file stat
+        modification_timestamp = file_stat[stat.ST_MTIME]
+        owner_id = file_stat[stat.ST_UID]
+        group_id = file_stat[stat.ST_GID]
+        mode = file_stat[stat.ST_MODE]
+        size = file_stat[stat.ST_SIZE]
+
+        # tries to retrieve the file properties
+        file_properties = parameters.get(FILE_PROPERTIES_VALUE, {})
+
+        # sets the file properties values
+        file_properties["modification_timestamp"] = modification_timestamp
+        file_properties["owner_id"] = owner_id
+        file_properties["group_id"] = group_id
+        file_properties["mode"] = mode
+        file_properties["size"] = size
+
+        # sets the file properties in the parameters
+        parameters[FILE_PROPERTIES_VALUE] = file_properties
+
+        # opens the file for reading
+        file = open(file_path, "rb")
+
+        # writes the file to the current file
+        self._write_file(file, archive_path, parameters)
+
+    def _write_file(self, file, archive_path, parameters = {}):
+        """
+        Writes the given file object to the current file, using the given
+        archive path as the path to the stored object.
+
+        @type file: File
+        @param file: The file object to be written.
+        @type archive_path: String
+        @param archive_path: The path to be used by the file in the archive.
+        @type parameters: Dictionary
+        @param parameters: The parameters to the write.
+        """
+
+        # retrieves the file properties map from the parameters
+        file_properties = parameters.get(FILE_PROPERTIES_VALUE, {})
+
+        # retrieves the values from the file properties map
+        modification_timestamp = file_properties.get("modification_timestamp", 0)
+        owner_id = file_properties.get("owner_id", 0)
+        group_id = file_properties.get("group_id", 0)
+        mode = file_properties.get("mode", 0)
+        size = file_properties.get("size", 0)
+
+        # creates the file entry from the file information
+        file_entry = DebFileEntry(archive_path, modification_timestamp, owner_id, group_id, mode, size, file)
+
+        # sets the file entry in the index map
+        self.index_map[archive_path] = file_entry
+
+        # adds the archive path to the list of pending files
+        self.pending_files.append(archive_path)
 
     def read(self, archive_path, parameters = {}):
         # retrieves the index map
@@ -391,14 +537,14 @@ class DebFile:
         # returns the index map keys
         return index_map_keys
 
-class ArFileEntry:
+class DebFileEntry:
     """
-    The ar file entry class.
-    Represents an ar file index entry.
+    The deb file entry class.
+    Represents an deb file index entry.
     """
 
     name = None
-    """ The name of the ar file """
+    """ The name of the deb file """
 
     modification_timestamp = None
     """ The modification timestamp """
@@ -413,15 +559,12 @@ class ArFileEntry:
     """ The mode of access to the file """
 
     size = None
-    """ The size of the ar file """
+    """ The size of the deb file """
 
-    magic_value = None
-    """ The magic value of the ar file """
+    file = None
+    """ The file of the deb file """
 
-    offset = None
-    """ The offser of the file in the archive file """
-
-    def __init__(self, name = None, modification_timestamp = None, owner_id = None, group_id = None, mode = None, size = None, magic_value = None, offset = None):
+    def __init__(self, name = None, modification_timestamp = None, owner_id = None, group_id = None, mode = None, size = None, file = None):
         """
         Constructor of the file.
         """
@@ -432,8 +575,7 @@ class ArFileEntry:
         self.group_id = group_id
         self.mode = mode
         self.size = size
-        self.magic_value = magic_value
-        self.offset = offset
+        self.file = file
 
     def get_name(self):
         """
@@ -463,7 +605,7 @@ class ArFileEntry:
         @return: The modification timestamp.
         """
 
-        return self.timestamp
+        return self.modification_timestamp
 
     def set_modification_timestamp(self, modification_timestamp):
         """
@@ -555,42 +697,22 @@ class ArFileEntry:
 
         self.size = size
 
-    def get_magic_value(self):
+    def get_file(self):
         """
-        Retrieves the magic value.
+        Retrieves the file.
 
-        @rtype: String
-        @return: The magic value.
-        """
-
-        return self.magic_value
-
-    def set_magic_value(self, magic_value):
-        """
-        Sets the size.
-
-        @type magic_value: String
-        @param magic_value: The magic value.
+        @rtype: File
+        @return: The file.
         """
 
-        self.magic_value = magic_value
+        return self.file
 
-    def get_offset(self):
+    def set_file(self, file):
         """
-        Retrieves the offset.
+        Sets the file.
 
-        @rtype: int
-        @return: The offset.
-        """
-
-        return self.offset
-
-    def set_offset(self, offset):
-        """
-        Sets offset.
-
-        @type offset: String
-        @param offset: The offset.
+        @type file: File
+        @param file: The file.
         """
 
-        self.offset = offset
+        self.file = file

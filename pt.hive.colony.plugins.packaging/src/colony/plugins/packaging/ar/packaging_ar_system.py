@@ -51,6 +51,9 @@ FILE_PATH_VALUE = "file_path"
 FILE_PROPERTIES_VALUE = "file_properties"
 """ The file properties value """
 
+PADDING_BYTE_VALUE = "\x0a"
+""" The padding byte value """
+
 MAGIC_FILE_STRING_VALUE = "\x60\x0a"
 """ The magic file string value """
 
@@ -406,6 +409,15 @@ class ArFile:
 
             # writes the file contents to the file
             self.file.write(file_contents)
+
+        # retrieves the current file offset
+        file_offset = self.file.tell()
+
+        # checks if the current offset is odd
+        if file_offset % 2:
+            # writes the padding character
+            # to align the data part of the file
+            self.file.write(PADDING_BYTE_VALUE)
 
     def _check_header(self):
         """
