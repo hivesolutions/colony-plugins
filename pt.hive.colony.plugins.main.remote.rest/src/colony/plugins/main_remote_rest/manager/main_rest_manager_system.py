@@ -236,7 +236,7 @@ class MainRestManager:
         last_path_name = resource_path_splitted[-1]
 
         # splits the last path name
-        last_path_name_splitted = last_path_name.split(".")
+        last_path_name_splitted = last_path_name.rsplit(".", 1)
 
         # retrieves the last path name splitted length
         last_path_name_splitted_length = len(last_path_name_splitted)
@@ -250,7 +250,7 @@ class MainRestManager:
             last_path_initial_name = last_path_name_splitted[0]
 
             # retrieves the last path extension
-            last_path_initial_extension = last_path_name_splitted[-1]
+            last_path_initial_extension = last_path_name_splitted[1]
         # in case there is no extension defined
         elif last_path_name_splitted_length == 1:
             # retrieves the last path initial name
