@@ -68,6 +68,19 @@ class WebMvcWiki:
 
         return {r"^wiki/.*$" : self.handle_wiki}
 
+    def get_resource_patterns(self):
+        """
+        Retrieves the map of regular expressions to be used as resource patters,
+        to the web mvc service. The map should relate the route with the base
+        file system path to be used.
+
+        @rtype: Dictionary
+        @return: The map of regular expressions to be used as resource patterns,
+        to the web mvc service.
+        """
+
+        return {}
+
     def handle_wiki(self, rest_request):
         """
         Handles the given wiki rest request.

@@ -102,6 +102,19 @@ class WebMvcWikiPlugin(colony.plugins.plugin_system.Plugin):
 
         return self.web_mvc_wiki.get_patterns()
 
+    def get_resource_patterns(self):
+        """
+        Retrieves the map of regular expressions to be used as resource patters,
+        to the web mvc service. The map should relate the route with the base
+        file system path to be used.
+
+        @rtype: Dictionary
+        @return: The map of regular expressions to be used as resource patterns,
+        to the web mvc service.
+        """
+
+        return self.web_mvc_wiki.get_resource_patterns()
+
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.language.wiki")
     def set_language_wiki_plugin(self, language_wiki_plugin):
         self.language_wiki_plugin = language_wiki_plugin
