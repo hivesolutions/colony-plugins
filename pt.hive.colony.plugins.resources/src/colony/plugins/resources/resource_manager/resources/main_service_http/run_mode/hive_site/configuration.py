@@ -90,7 +90,7 @@ configuration = {
                      }
                  },
                  "contexts" : {
-                     "resolution_order" : ["/colony_web/plugins", "/colony_web", "/colony_manager", "/colony_mod_python/rest/mvc/hive/resources", "/colony_mod_python/rest/mvc/hive_blog/resources", "/colony_mod_python/rest/mvc/take_the_bill/resources", "/colony_mod_python", "/template_error_handler", "/docs", "/eclipse", "/cgi-bin", "/fastcgi-bin", "/web_administration", "/websession_test", "/websession"],
+                     "resolution_order" : ["/colony_web/plugins", "/colony_web", "/colony_manager", "/colony_mod_python", "/template_error_handler", "/docs", "/eclipse", "/cgi-bin", "/fastcgi-bin", "/web_administration", "/websession_test", "/websession"],
                      "/colony_web" : {
                          "handler" : "file",
                          "allow_redirection" : False,
@@ -110,27 +110,6 @@ configuration = {
                          "handler" : "colony",
                          "allow_redirection" : False,
                          "request_properties" : {}
-                     },
-                     "/colony_mod_python/rest/mvc/hive/resources" : {
-                         "handler" : "file",
-                         "allow_redirection" : False,
-                         "request_properties" : {
-                             "base_path" : "$resource{system.path.hive_site}/pt.hive.hive_site.plugins.main/src/hive_site/plugins/hive_site_main/main/resources/extras"
-                         }
-                     },
-                     "/colony_mod_python/rest/mvc/hive_blog/resources" : {
-                         "handler" : "file",
-                         "allow_redirection" : False,
-                         "request_properties" : {
-                             "base_path" : "$resource{system.path.hive_blog}/pt.hive.hive_blog.plugins.main/src/hive_blog/plugins/hive_blog_main/main/resources/extras"
-                         }
-                     },
-                     "/colony_mod_python/rest/mvc/take_the_bill/resources" : {
-                         "handler" : "file",
-                         "allow_redirection" : False,
-                         "request_properties" : {
-                             "base_path" : "$resource{system.path.take_the_bill}/pt.hive.take_the_bill.plugins.main/src/take_the_bill/plugins/take_the_bill_main/main/resources/extras"
-                         }
                      },
                      "/colony_mod_python" : {
                          "handler" : "colony",
