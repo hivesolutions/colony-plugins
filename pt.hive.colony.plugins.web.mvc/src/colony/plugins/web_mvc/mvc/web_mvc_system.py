@@ -37,12 +37,12 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import os
 import re
 
 import colony.libs.string_buffer_util
 
 import web_mvc_exceptions
+import web_mvc_file_handler
 
 REGEX_COMILATION_LIMIT = 99
 """ The regex compilation limit """
@@ -54,6 +54,9 @@ class WebMvc:
 
     web_mvc_plugin = None
     """ The web mvc plugin """
+
+    web_mvc_file_handler = None
+    """ The web mvc file handler """
 
     matching_regex_list = []
     """ The list of matching regex to be used in patterns matching """
@@ -98,6 +101,8 @@ class WebMvc:
         self.web_mvc_service_resource_patterns_map = {}
         self.web_mvc_service_resource_patterns_list = []
 
+        self.web_mvc_file_handler = web_mvc_file_handler.WebMvcFileHandler()
+
     def get_routes(self):
         """
         Retrieves the list of regular expressions to be used as route,
@@ -121,7 +126,7 @@ class WebMvc:
         to the web mvc service.
         """
 
-        return []
+        return {}
 
     def handle_rest_request(self, rest_request):
         """
@@ -164,79 +169,6 @@ class WebMvc:
 
         # returns true
         return True
-
-    def _handle_resource_match(self, rest_request, resource_path, resource_path_match, resource_matching_regex):
-        # retrieves the base value for the matching regex
-        base_value = self.resource_matching_regex_base_values_map[resource_matching_regex]
-
-        # retrieves the group index from the resource path match
-        group_index = resource_path_match.lastindex
-
-        # calculates the web mvc service index from the base value,
-        # the group index and subtracts one value
-        web_mvc_service_index = base_value + group_index - 1
-
-        # retrieves the resource pattern for the web mvc service index
-        pattern = self.web_mvc_service_resource_patterns_list[web_mvc_service_index]
-
-        # retrieves the resource information
-        resource_information = self.web_mvc_service_resource_patterns_map[pattern]
-
-        # unpacks the resource information
-        resource_base_path, resource_initial_token = resource_information
-
-        if not resource_path.startswith(resource_initial_token):
-            raise Exception("asdad")
-
-        resource_initial_token_length = len(resource_initial_token)
-
-        # creates the file path from the resource base path and file path
-        file_path = resource_base_path + "/" + resource_path[resource_initial_token_length:] + "." + rest_request.encoder_name
-
-        # in case the file path exists
-        if os.path.exists(file_path):
-            file = open(file_path, "rb")
-
-            file_contents = file.read()
-
-            rest_request.request.write(file_contents)
-
-            file.close()
-        else:
-            print "asdasd"
-
-        return True
-
-    def _handle_match(self, rest_request, resource_path_match, matching_regex):
-        # retrieves the base value for the matching regex
-        base_value = self.matching_regex_base_values_map[matching_regex]
-
-        # retrieves the group index from the resource path match
-        group_index = resource_path_match.lastindex
-
-        # calculates the web mvc service index from the base value,
-        # the group index and subtracts one value
-        web_mvc_service_index = base_value + group_index - 1
-
-        # retrieves the pattern for the web mvc service index
-        pattern = self.web_mvc_service_patterns_list[web_mvc_service_index]
-
-        # retrieves the pattern handler method
-        handler_method = self.web_mvc_service_patterns_map[pattern]
-
-        # tries to retrieve the rest request session
-        rest_request_session = rest_request.get_session()
-
-        # in case there is a valid rest request session
-        if rest_request_session:
-            # sets the parameters as the session attributes map
-            parameters = rest_request_session.get_attributes_map()
-        else:
-            # sets the parameters as an empty map
-            parameters = {}
-
-        # handles the web mvc request to the handler method
-        return handler_method(rest_request, parameters)
 
     def load_web_mvc_service_plugin(self, web_mvc_service_plugin):
         """
@@ -297,6 +229,71 @@ class WebMvc:
 
         # updates the resource matching regex
         self._update_resource_matching_regex()
+
+    def _handle_resource_match(self, rest_request, resource_path, resource_path_match, resource_matching_regex):
+        # retrieves the base value for the matching regex
+        base_value = self.resource_matching_regex_base_values_map[resource_matching_regex]
+
+        # retrieves the group index from the resource path match
+        group_index = resource_path_match.lastindex
+
+        # calculates the web mvc service index from the base value,
+        # the group index and subtracts one value
+        web_mvc_service_index = base_value + group_index - 1
+
+        # retrieves the resource pattern for the web mvc service index
+        pattern = self.web_mvc_service_resource_patterns_list[web_mvc_service_index]
+
+        # retrieves the resource information
+        resource_information = self.web_mvc_service_resource_patterns_map[pattern]
+
+        # unpacks the resource information
+        resource_base_path, resource_initial_token = resource_information
+
+        # in case the resource path does not start with the resource
+        # initial token
+        if not resource_path.startswith(resource_initial_token):
+            # raises the invalid token value
+            raise web_mvc_exceptions.InvalidTokenValue("invalid initial path request")
+
+        resource_initial_token_length = len(resource_initial_token)
+
+        # creates the file path from the resource base path and file path
+        file_path = resource_base_path + "/" + resource_path[resource_initial_token_length:] + "." + rest_request.encoder_name
+
+        # handles the given request by the web mvc file handler
+        return self.web_mvc_file_handler.handle_request(rest_request.request, file_path)
+
+    def _handle_match(self, rest_request, resource_path_match, matching_regex):
+        # retrieves the base value for the matching regex
+        base_value = self.matching_regex_base_values_map[matching_regex]
+
+        # retrieves the group index from the resource path match
+        group_index = resource_path_match.lastindex
+
+        # calculates the web mvc service index from the base value,
+        # the group index and subtracts one value
+        web_mvc_service_index = base_value + group_index - 1
+
+        # retrieves the pattern for the web mvc service index
+        pattern = self.web_mvc_service_patterns_list[web_mvc_service_index]
+
+        # retrieves the pattern handler method
+        handler_method = self.web_mvc_service_patterns_map[pattern]
+
+        # tries to retrieve the rest request session
+        rest_request_session = rest_request.get_session()
+
+        # in case there is a valid rest request session
+        if rest_request_session:
+            # sets the parameters as the session attributes map
+            parameters = rest_request_session.get_attributes_map()
+        else:
+            # sets the parameters as an empty map
+            parameters = {}
+
+        # handles the web mvc request to the handler method
+        return handler_method(rest_request, parameters)
 
     def _update_matching_regex(self):
         """

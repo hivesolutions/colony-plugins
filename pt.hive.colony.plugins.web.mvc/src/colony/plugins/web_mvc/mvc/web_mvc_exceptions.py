@@ -59,6 +59,32 @@ class BadServiceRequest(ServiceException):
 
     pass
 
+class InvalidTokenValue(BadServiceRequest):
+    """
+    The invalid token value class.
+    """
+
+    def __init__(self, message, status_code):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        BadServiceRequest.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Invalid token value: %s" % self.message
+
 class MvcRequestNotHandled(BadServiceRequest):
     """
     The mvc request not handled class.
@@ -84,3 +110,32 @@ class MvcRequestNotHandled(BadServiceRequest):
         """
 
         return "Mvc Request Not handled: %s" % self.message
+
+class FileNotFoundException(MvcRequestNotHandled):
+    """
+    The file not found exception class.
+    """
+
+    def __init__(self, message, status_code):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        @type status_code: int
+        @param status_code: The http status code.
+        """
+
+        MvcRequestNotHandled.__init__(self)
+        self.message = message
+        self.status_code = status_code
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "File not found: %s" % self.message
