@@ -1534,6 +1534,9 @@ class HttpRequest:
     uri = "none"
     """ The uri """
 
+    query_string = ""
+    """ The query string value """
+
     arguments = "none"
     """ The arguments """
 
@@ -1702,8 +1705,11 @@ class HttpRequest:
         if path_splitted_length < 2:
             return
 
-        # retrieves the arguments from the path splitted
-        self.arguments = path_splitted[1]
+        # retrieves the query string from the path splitted
+        self.query_string = path_splitted[1]
+
+        # sets the arguments as the query string
+        self.arguments = self.query_string
 
         # parses the arguments
         self.parse_arguments()

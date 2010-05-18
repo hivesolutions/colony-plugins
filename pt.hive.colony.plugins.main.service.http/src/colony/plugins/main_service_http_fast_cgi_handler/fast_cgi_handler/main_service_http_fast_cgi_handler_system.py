@@ -279,8 +279,8 @@ class MainServiceHttpFastCgiHandler:
         # retrieves the request protocol version
         request_protocol_version = request.protocol_version
 
-        # retrieves the request arguments
-        request_arguments = request.arguments
+        # retrieves the request query string
+        request_query_string = request.query_string
 
         # retrieves the request http address
         request_http_address = request_http_client_service_task.http_address
@@ -329,7 +329,7 @@ class MainServiceHttpFastCgiHandler:
         environment_map[PATH_INFO_VALUE] = request_filename
         environment_map[PATH_TRANSLATED_VALUE] = request_filename
         environment_map[SCRIPT_NAME_VALUE] = request_filename
-        environment_map[QUERY_STRING_VALUE] = request_arguments
+        environment_map[QUERY_STRING_VALUE] = request_query_string
         environment_map[REMOTE_HOST_VALUE] = client_http_address
         environment_map[REMOTE_ADDR_VALUE] = client_http_address
         environment_map[CONTENT_TYPE_VALUE] = DEFAULT_APPLICATION_CONTENT_TYPE
