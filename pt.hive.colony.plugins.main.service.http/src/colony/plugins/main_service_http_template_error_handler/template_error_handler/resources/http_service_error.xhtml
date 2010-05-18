@@ -28,13 +28,13 @@
 						<b>Description</b>
 					</p>
 					<p class="description">
-						${out_none value=error /}
+						${out_none value=error xml_escape=True /}
 					</p>
 					<p class="traceback-header">
 						<b>Traceback</b>
 					</p>
 					${foreach item=traceback_line from=traceback}
-					<p class="traceback">${out_none value=traceback_line /}</p>
+					<p class="traceback">${out_none value=traceback_line xml_escape=True /}</p>
 					${/foreach}
 				</div>
 			</p>
@@ -49,7 +49,7 @@
 				<div class="separator">
 					<img src="/template_error_handler/images/separator.png"/>
 				</div>
-				<div class="text-contents">Document provided by colony framework in ${out_none value=delta_time /} seconds
+				<div class="text-contents">Document provided by colony framework in ${out_none value=delta_time xml_escape=True /} seconds
 					<br/>Copyright 
 					<a href="http://www.hive.pt">Hive Solutions Lda.</a> distributed under 
 					<a href="http://creativecommons.org/licenses/by-sa/3.0"> Creative Commons License</a>
