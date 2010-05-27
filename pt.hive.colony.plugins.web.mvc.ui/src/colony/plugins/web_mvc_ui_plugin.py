@@ -69,7 +69,6 @@ class WebMvcUiPlugin(colony.plugins.plugin_system.Plugin):
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
-        self.web_mvc_ui.load_components()
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
@@ -95,4 +94,4 @@ class WebMvcUiPlugin(colony.plugins.plugin_system.Plugin):
         @return: The path to the resources.
         """
 
-        return self.web_mvc_ui.get_patterns()
+        return self.web_mvc_ui.get_resources_path()
