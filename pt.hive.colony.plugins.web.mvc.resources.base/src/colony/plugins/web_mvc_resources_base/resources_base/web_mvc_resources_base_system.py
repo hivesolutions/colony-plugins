@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-WEB_MVC_RESOURCES_UI_RESOURCES_PATH = "web_mvc_resources_ui/resources_ui/resources"
-""" The web mvc resources ui resources path """
+WEB_MVC_RESOURCES_BASE_RESOURCES_PATH = "web_mvc_resources_base/resources_base/resources"
+""" The web mvc resources base resources path """
 
-EXTRAS_PATH = WEB_MVC_RESOURCES_UI_RESOURCES_PATH + "/extras"
+EXTRAS_PATH = WEB_MVC_RESOURCES_BASE_RESOURCES_PATH + "/extras"
 """ The extras path """
 
 class WebMvcResourcesBase:
