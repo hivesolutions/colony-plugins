@@ -77,7 +77,7 @@ class WebMvcManager:
         web_mvc_utils_plugin = self.web_mvc_manager_plugin.web_mvc_utils_plugin
 
         # creates the web mvc manager main controller
-        self.take_the_bill_main_controller = web_mvc_utils_plugin.create_controller(WebMvcManagerMainController, [self.web_mvc_manager_plugin, self], {})
+        #self.take_the_bill_main_controller = web_mvc_utils_plugin.create_controller(WebMvcManagerMainController, [self.web_mvc_manager_plugin, self], {})
 
     def get_patterns(self):
         """
@@ -90,8 +90,10 @@ class WebMvcManager:
         to the web mvc service.
         """
 
-        return {r"^web_mvc_manager/?$" : self.take_the_bill_main_controller.handle_take_the_bill_index,
-                r"^web_mvc_manager/index$" : self.take_the_bill_main_controller.handle_take_the_bill_index}
+        return {}
+
+        #return {r"^web_mvc_manager/?$" : self.take_the_bill_main_controller.handle_take_the_bill_index,
+        #        r"^web_mvc_manager/index$" : self.take_the_bill_main_controller.handle_take_the_bill_index}
 
     def get_resource_patterns(self):
         # estes sao os patterns para serem enviados para
@@ -102,8 +104,10 @@ class WebMvcManager:
 
         # tenho de mandar um evento sempre que alguma destas coisas muda
 
-        return {r"^web_mvc_manager/?$" : "c:/tobias",
-                r"^web_mvc_manager/index$" : self.take_the_bill_main_controller.handle_take_the_bill_index}
+        return {}
+
+        #return {r"^web_mvc_manager/?$" : "c:/tobias",
+        #        r"^web_mvc_manager/index$" : self.take_the_bill_main_controller.handle_take_the_bill_index}
 
 class WebMvcManagerMainController:
     """
