@@ -40,7 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding value """
 
-WEB_MVC_MANAGER_RESOURCES_PATH = "web_mvc_manager/main/resources"
+WEB_MVC_MANAGER_RESOURCES_PATH = "web_mvc_manager/manager/resources"
 """ The web mvc manager resources path """
 
 TEMPLATES_PATH = WEB_MVC_MANAGER_RESOURCES_PATH + "/templates"
