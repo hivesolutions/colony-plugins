@@ -37,29 +37,29 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-WEB_MVC_UI_RESOURCES_PATH = "web_mvc_ui/ui/resources"
-""" The web mvc ui resources path """
+WEB_MVC_RESOURCES_UI_RESOURCES_PATH = "web_mvc_resources_ui/resources_ui/resources"
+""" The web mvc resources ui resources path """
 
-EXTRAS_PATH = WEB_MVC_UI_RESOURCES_PATH + "/extras"
+EXTRAS_PATH = WEB_MVC_RESOURCES_UI_RESOURCES_PATH + "/extras"
 """ The extras path """
 
-class WebMvcUi:
+class WebMvcResourcesUi:
     """
-    The web mvc ui class.
+    The web mvc resources ui class.
     """
 
-    web_mvc_ui_plugin = None
-    """ The web mvc ui plugin """
+    web_mvc_resources_ui_plugin = None
+    """ The web mvc resources ui plugin """
 
-    def __init__(self, web_mvc_ui_plugin):
+    def __init__(self, web_mvc_resources_ui_plugin):
         """
         Constructor of the class.
 
-        @type web_mvc_ui_plugin: WebMvcUiPlugin
-        @param web_mvc_ui_plugin: The web mvc ui plugin.
+        @type web_mvc_resources_ui_plugin: WebMvcResourcesUiPlugin
+        @param web_mvc_resources_ui_plugin: The web mvc resources ui plugin.
         """
 
-        self.web_mvc_ui_plugin = web_mvc_ui_plugin
+        self.web_mvc_resources_ui_plugin = web_mvc_resources_ui_plugin
 
     def get_resources_path(self):
         """
@@ -71,13 +71,13 @@ class WebMvcUi:
         """
 
         # retrieves the plugin manager
-        plugin_manager = self.web_mvc_ui_plugin.manager
+        plugin_manager = self.web_mvc_resources_ui_plugin.manager
 
-        # retrieves the web mvc ui plugin path
-        web_mvc_ui_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_ui_plugin.id)
+        # retrieves the web mvc resources ui plugin path
+        web_mvc_resources_ui_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_resources_ui_plugin.id)
 
         # creates the extras path
-        extras_path = web_mvc_ui_plugin_path + "/" + EXTRAS_PATH
+        extras_path = web_mvc_resources_ui_plugin_path + "/" + EXTRAS_PATH
 
         # returns the extras path
         return extras_path

@@ -39,33 +39,33 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.plugins.plugin_system
 
-class WebMvcUiPlugin(colony.plugins.plugin_system.Plugin):
+class WebMvcResourcesUiPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Web Mvc Ui plugin.
+    The main class for the Web Mvc Resources Ui plugin.
     """
 
-    id = "pt.hive.colony.plugins.web.mvc.ui"
-    name = "Web Mvc Ui Plugin"
-    short_name = "Web Mvc Ui"
-    description = "The plugin that offers the web mvc ui infrastructure"
+    id = "pt.hive.colony.plugins.web.mvc.resources.ui"
+    name = "Web Mvc Resources Ui Plugin"
+    short_name = "Web Mvc Resources Ui"
+    description = "The plugin that offers the web mvc resources ui infrastructure"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["web.mvc_ui"]
+    capabilities = ["web.mvc_resources"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
     events_registrable = []
-    main_modules = ["web_mvc_ui.ui.web_mvc_ui_system"]
+    main_modules = ["web_mvc_resources_ui.resources_ui.web_mvc_resources_ui_system"]
 
-    web_mvc_ui = None
+    web_mvc_resources_ui = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
-        global web_mvc_ui
-        import web_mvc_ui.ui.web_mvc_ui_system
-        self.web_mvc_ui = web_mvc_ui.ui.web_mvc_ui_system.WebMvcUi(self)
+        global web_mvc_resources_ui
+        import web_mvc_resources_ui.resources_ui.web_mvc_resources_ui_system
+        self.web_mvc_resources_ui = web_mvc_resources_ui.resources_ui.web_mvc_resources_ui_system.WebMvcResourcesUi(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -94,4 +94,4 @@ class WebMvcUiPlugin(colony.plugins.plugin_system.Plugin):
         @return: The path to the resources.
         """
 
-        return self.web_mvc_ui.get_resources_path()
+        return self.web_mvc_resources_ui.get_resources_path()
