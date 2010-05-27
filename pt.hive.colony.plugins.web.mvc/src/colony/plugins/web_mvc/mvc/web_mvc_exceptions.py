@@ -126,8 +126,7 @@ class FileNotFoundException(MvcRequestNotHandled):
         @param status_code: The http status code.
         """
 
-        MvcRequestNotHandled.__init__(self)
-        self.message = message
+        MvcRequestNotHandled.__init__(self, message)
         self.status_code = status_code
 
     def __str__(self):
