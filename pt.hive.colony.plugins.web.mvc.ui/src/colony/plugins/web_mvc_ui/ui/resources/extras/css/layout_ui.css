@@ -1,0 +1,842 @@
+@charset "utf-8";
+
+/*
+ Take The Bill Service
+ Copyright (C) 2010 Hive Solutions Lda.
+
+ This file is part of Take The Bill Service.
+
+ Take The Bill Service is confidential and property of Hive Solutions Lda,
+ its usage is constrained by the terms of the Hive Solutions
+ Confidential Usage License.
+
+ Take The Bill Service should not be distributed under any circumstances,
+ violation of this may imply legal action.
+
+ If you have any questions regarding the terms of this license please
+ refer to <http://www.hive.pt/licenses/>.
+*/
+
+/*
+ __author__    = Francisco Castro <v-fcastro@hive.pt> & João Magalhães <joamag@hive.pt> & Luís Martinho <lmartinho@hive.pt>
+ __version__   = 1.0.0
+ __revision__  = $LastChangedRevision$
+ __date__      = $LastChangedDate$
+ __copyright__ = Copyright (c) 2010 Hive Solutions Lda.
+ __license__   = Hive Solutions Confidential Usage License (HSCUL)
+*/
+
+/* Global */
+.absolute {
+    position: absolute;
+    z-index: 2;
+}
+
+/* Forms */
+form {
+    background-color: #f5f8fa;
+}
+
+.form-field-area {
+    padding: 16px;
+}
+
+.form-field-area h4 {
+    padding: 0px;
+    margin: 0px;
+    font-size: 8pt;
+    font-weight: normal;
+    color: #74a9ce;
+}
+
+.form-field-area .column-first {
+    float: left;
+    width: 50%;
+}
+
+.form-field-area .column-second {
+    float: left;
+    width: 50%;
+}
+
+.form-field {
+    padding: 0px 10px 0px 10px;
+}
+
+.form-field label {
+    font-size: 8pt;
+    color: #5193c2;
+}
+
+.form-field label.mandatory {
+}
+
+/* Input */
+input {
+    background: url(../images/ui/text-field/text-field-background.png) #ffffff left top repeat-x;
+    height: 17px;
+    width: 100%;
+    border: 1px solid #ccdeeb;
+    margin: 3px 0px 20px 0px;
+    padding: 2px 0px 3px 0px;
+    text-indent: 3px;
+    color: #1a1a1a;
+    font-family: Tahoma, Arial;
+    font-size: 10pt;
+    outline: none;
+}
+
+input.active {
+    border: 1px solid #4d8cba;
+}
+
+input.inactive {
+    border: 1px solid #f2f2f2;
+    background: none;
+}
+
+input.valid {
+    border: 1px solid #7bad87;
+}
+
+input.invalid {
+    border: 1px solid #cc9597;
+}
+
+table input {
+    margin: 0px 0px 0px 0px;
+}
+
+/* Text Area */
+textarea {
+    background: url(../images/ui/text-field/text-field-background.png) #ffffff left top repeat-x;
+    height: 77px;
+    width: 100%;
+    border: 1px solid #ccdeeb;
+    margin: 3px 0px 20px 0px;
+    padding: 2px 0px 3px 0px;
+    text-indent: 3px;
+    color: #1a1a1a;
+    font-family: Tahoma, Arial;
+    font-size: 10pt;
+}
+
+textarea.active {
+    border: 1px solid #4d8cba;
+}
+
+textarea.inactive {
+    border: 1px solid #f2f2f2;
+    background: none;
+}
+
+textarea.valid {
+    border: 1px solid #7bad87;
+}
+
+textarea.invalid {
+    border: 1px solid #cc9597;
+}
+
+/* Button */
+.button {
+    float: right;
+    height: 20px;
+    width: 80px;
+    margin: 12px 0px 0px 10px;
+    padding-top: 6px;
+    color: #ffffff;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+}
+
+.button-green {
+    background: url(../images/ui/button/button-green-normal.png) center center no-repeat;
+}
+
+.button-green:hover {
+    background-image: url(../images/ui/button/button-green-hover.png);
+}
+
+.button-green.click {
+    background-image: url(../images/ui/button/button-green-clicked.png);
+}
+
+.button-blue {
+    background: url(../images/ui/button/button-blue-normal.png) center center no-repeat;
+}
+
+.button-blue:hover {
+    background-image: url(../images/ui/button/button-blue-hover.png);
+}
+
+.button-blue.click {
+    background-image: url(../images/ui/button/button-blue-clicked.png);
+}
+
+/* Button Drop */
+.button-drop-small-gray {
+    float: right;
+    cursor: pointer;
+}
+
+.button-drop-small-gray .label {
+    background: url(../images/ui/button_drop/button-drop-small-gray-normal.png) center center no-repeat;
+    float: left;
+    height: 18px;
+    width: 80px;
+    margin-left: 10px;
+    padding-top: 4px;
+    color: #5193c2;
+    font-weight: bold;
+    text-align: center;
+}
+
+.button-drop-small-gray .label:hover {
+    background: url(../images/ui/button_drop/button-drop-small-gray-hover.png) center center no-repeat;
+    color: #005b9c;
+}
+
+.button-drop-small-gray .arrow {
+    background: url(../images/ui/button_drop/button-drop-small-gray-arrow-normal.png) center center no-repeat;
+    float: left;
+    height: 22px;
+    width: 22px;
+}
+
+.button-drop-small-gray .arrow:hover {
+    background: url(../images/ui/button_drop/button-drop-small-gray-arrow-hover.png) center center no-repeat;
+}
+
+/* Form Button */
+.form-button-area {
+    float: right;
+    height: 50px;
+    width: 100%;
+    background: url(../images/separator/separator-dotted-horizontal.png) #eef4f9 left top repeat-x;
+}
+
+.form-button-area .button {
+    margin: 12px 10px 0px 0px;
+}
+
+/* Table */
+table.table {
+    width: 100%;
+}
+
+.table thead tr th {
+    height: 32px;
+    vertical-align: middle;
+    font-size: 9pt;
+    text-align: left;
+    color: #005b9c;
+    border-bottom: 1px solid #a8c9e0;
+    background: url(../images/ui/table/table-header-background.png) left bottom repeat-x;
+}
+
+.table tbody tr td {
+    height: 32px;
+    padding-left: 6px;
+    vertical-align: middle;
+    text-align: left;
+    border-bottom: 1px solid #eef4f9;
+    background: url(../images/ui/table/table-cell-separator.png) left bottom no-repeat;
+}
+
+.table .first {
+    width: 16px;
+    background: none;
+}
+
+.table tfoot tr td {
+    height: 8px;
+    border-top: 1px solid #a8c9e0;
+    background: url(../images/ui/table/table-footer-background.png) left bottom repeat-x;
+}
+
+.table thead tr th span {
+    float: left;
+}
+
+.table .order-down, .table .order-down-inactive {
+    float: left;
+    display: block;
+    height: 4px;
+    width: 7px;
+    margin: 6px 0px 0px 6px;
+    background: url(../images/ui/table/table-column-arrow-down-active.png) center center no-repeat;
+
+}
+
+.table .order-down-inactive {
+    background: url(../images/ui/table/table-column-arrow-down-normal.png) center center no-repeat;
+}
+
+/* Search Field */
+.search-field {
+    float: right;
+    width: 146px;
+    height: 24px;
+    margin-top: 5px;
+    margin-right: 3px;
+    overflow: visible;
+    background: url(../images/ui/text-field/text-field-background.png) #ffffff center top repeat-x;
+}
+
+.search-field input {
+    float: left;
+    width: 120px;
+    margin: 0px;
+    padding-right: 0px;
+    border-color: #669cc3;
+    border-right: none;
+}
+
+.search-button {
+    float: left;
+    height: 22px;
+    width: 24px;
+    border: 1px solid #669cc3;
+    border-left: none;
+    background: url(../images/icon-magnifier.png) center center no-repeat;
+    cursor: pointer;
+}
+
+.search-button:hover {
+    background-image: url(../images/icon-magnifier-hover.png);
+}
+
+/* Date Field */
+.date-field  {
+    margin: 3px 0px 20px 0px;
+    outline: none;
+}
+
+table .date-field  {
+    margin: 0;
+}
+
+.date-text-field {
+    width: 100%;
+}
+
+.date-field-input-container {
+    padding-right: 30px;
+}
+
+.date-field-input-container input {
+    margin: 0px 0px 0px 0px;
+}
+
+.active .date-field-input-container input {
+    border: 1px solid #4d8cba;
+}
+
+.date-field-button {
+    background: url(../images/ui/date_field/date-field-button-normal.png) top left no-repeat;
+    float: right;
+    height: 24px;
+    width: 30px;
+    margin-top: -24px;
+    cursor: pointer;
+}
+
+.date-field-button:hover {
+    background-image: url(../images/ui/date_field/date-field-button-hover.png);
+}
+
+.date-field-button.click {
+    background-image: url(../images/ui/date_field/date-field-button-clicked.png);
+}
+
+.date-field-contents {
+    display: none;
+    float: right;
+    position: relative;
+    width: 230px;
+    margin-top: 1px;
+    margin-bottom: -247px;
+    background-color: #ffffff;
+    border: 1px solid #6ba0c5;
+    font-family: Tahoma;
+    -moz-box-shadow: 1px 1px 3px #777777;
+    -webkit-box-shadow: 1px 1px 3px #777777;
+    box-shadow: 1px 1px 3px #777777;
+}
+
+.date-field-contents-header, .date-field-contents-footer {
+    width: 100%;
+}
+
+.date-field-contents-header h1, .date-field-contents-footer h1 {
+    width: 100px;
+    font-size: 8pt !important;
+    color: #74a9ce !important;
+    margin: 0px auto 0px auto !important;
+    padding-top: 12px !important;
+    text-align: center;
+}
+
+.date-field-contents span {
+    cursor: default;
+}
+
+.date-field-contents span.active {
+    font-size: 8pt;
+    text-decoration: none;
+    color: #74a9ce;
+    cursor: pointer;
+}
+
+.date-field-contents span.active:hover {
+    color: #005B9C;
+}
+
+.date-field-contents-body table {
+    width: 100%;
+    text-align: right;
+}
+
+.date-field-contents-body table thead {
+}
+
+.date-field-contents-body table thead th {
+    height: 24px;
+    font-size: 8pt;
+    color: #005b9c;
+}
+
+.date-field-contents-body table tbody {
+    width: 100%;
+    font-size: 8pt;
+    padding: 0px 10px 0px 10px;
+    background-color: #f5f8fa;
+}
+
+.date-field-contents-body table tbody .first td {
+    height: 20px;
+    padding-top: 10px;
+    border-top: 1px solid #5193c2;
+}
+
+.date-field-contents-body table tbody td {
+    height: 20px;
+    color: #dddddd;
+}
+
+.date-field-contents-body table tbody .today {
+    font-weight: bold;
+}
+
+.date-field-contents-body table tbody .last td {
+    height: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #5193c2;
+}
+
+.date-field-contents-body table td, .date-field-contents-body table th {
+    padding: 0px 6px 0px 6px;
+}
+
+.date-field-contents .button-next {
+    background: url(../images/ui/date_field/date-field-arrow-blue-right.png) center center no-repeat;
+    float: right;
+    height: 28px;
+    width: 28px;
+    margin: 4px 4px 0px 0px;
+    cursor: pointer;
+}
+
+.date-field-contents .button-next:hover {
+    background: url(../images/ui/date_field/date-field-arrow-blue-right.png) #e3eef5 center center no-repeat;
+}
+
+.date-field-contents .button-previous {
+    background: url(../images/ui/date_field/date-field-arrow-blue-left.png) center center no-repeat;
+    float: left;
+    height: 28px;
+    width: 28px;
+    margin: 4px 0px 4px 4px;
+    cursor: pointer;
+}
+
+.date-field-contents .button-previous:hover {
+    background: url(../images/ui/date_field/date-field-arrow-blue-left.png) #e3eef5 center center no-repeat;
+}
+
+.date-field-contents-header .date-field-contents-footer .button-previous {
+    margin: 4px 0px 4px 4px;
+}
+
+.date-field-contents-header .date-field-contents-footer .button-next {
+    margin: 4px 4px 4px 0px;
+}
+
+/* Dropbox */
+.dropbox {
+    margin: 4px 0px 21px 0px;
+    -khtml-user-select: none;
+    -moz-user-select: -moz-none;
+    outline: none;
+}
+
+table .dropbox {
+    margin: 0;
+}
+
+.active.dropbox {
+    border: 1px dotted black;
+}
+
+.dropbox-text-input {
+    height: 1px;
+    width: 1px;
+    margin: 0px 0px 0px 0px;
+    padding: 0px 0px 0px 0px;
+    border: 0px;
+    float: left;
+    margin-top: -1px;
+    font-size: 0px;
+    outline: none;
+}
+
+.dropbox-container {
+    font-family: Tahoma;
+    font-size: 10pt;
+}
+
+.dropbox-container {
+    height: 22px;
+    padding: 0px 0px 0px 0px;
+    background: url(../images/ui/dropbox/dropbox-left-background.png) top left no-repeat;
+}
+
+.dropbox-left-corners {
+    float: left;
+    height: 22px;
+    width: 3px;
+}
+
+.dropbox-text-field {
+    background: url(../images/ui/dropbox/dropbox-center-background.png) top left repeat-x;
+    float: left;
+    height: 19px;
+    width: 100%;
+    margin: 0px 0px 0px 1px;
+    padding-top: 3px;
+    text-indent: 3px;
+    cursor: default;
+}
+
+.dropbox-button {
+    background: url(../images/ui/dropbox/dropbox-button-normal.png) top left no-repeat;
+    float: right;
+    height: 22px;
+    width: 22px;
+    margin: -3px -2px 0px 0px;
+    cursor: pointer;
+}
+
+.dropbox-button:hover {
+    background-image: url(../images/ui/dropbox/dropbox-button-hover.png);
+}
+
+.dropbox-button.click {
+    background-image: url(../images/ui/dropbox/dropbox-button-clicked.png);
+}
+
+.dropbox ul {
+    background-color: #ffffff;
+    display: none;
+    position: relative;
+    max-height: 320px;
+    margin: 0px 0px -322px 3px;
+    padding: 0px 0px 0px 0px;
+    border: 1px solid #6ba0c5;
+    overflow: auto;
+    -moz-box-shadow: 1px 1px 3px #777777;
+    -webkit-box-shadow: 1px 1px 3px #777777;
+    box-shadow: 1px 1px 3px #777777;
+}
+
+.dropbox ul li {
+    list-style: none;
+    height: 21px;
+    padding: 4px 0px 0px 6px;
+    text-indent: 3px;
+    cursor: pointer;
+}
+
+.dropbox ul li:hover, .dropbox ul li.selected {
+    background: url(../images/ui/dropbox/dropbox-highlight-background.png) top left repeat-x;
+    color: #ffffff;
+}
+
+/* Error message */
+.message {
+    display: none;
+    width: 100%;
+    margin: 0px 0px 16px 0px;
+    box-shadow: 1px 1px 2px #bbbbbb;
+    -moz-box-shadow: 1px 1px 2px #bbbbbb;
+    -webkit-box-shadow: 1px 1px 2px #bbbbbb;
+}
+
+.message.error {
+    background-color: #f0e2e2;
+}
+
+.message.success {
+    background-color: #e6efeb;
+}
+
+.message.information {
+    background-color: #e1ecf4;
+}
+
+.message-container {
+    width: 100%;
+}
+
+.error .message-container {
+    background-color: #f0e2e2;
+}
+
+.success .message-container {
+    background-color: #e6efeb;
+}
+
+.information .message-container {
+    background-color: #e1ecf4;
+}
+
+.message-icon {
+    float: left;
+    height: 24px;
+    width: 24px;
+    margin: 12px 0px 8px 16px;
+}
+
+.error .message-icon {
+    background: url(../images/ui/message/message-icon-exclamation.png) top left no-repeat;
+}
+
+.success .message-icon {
+    background: url(../images/ui/message/message-icon-success.png) top left no-repeat;
+}
+
+.information .message-icon {
+    background: url(../images/ui/message/message-icon-information.png) top left no-repeat;
+}
+
+.message-contents {
+    float: left;
+    margin: 16px 0px 0px 16px;
+}
+
+.error .message-contents {
+    color: #c15559;
+}
+
+.success .message-contents {
+    color: #549676;
+}
+
+.information .message-contents {
+    color: #005b9c;
+}
+
+.message-button {
+    background: url(../images/ui/message/message-button-close-white.png) center center no-repeat;
+    float: right;
+    height: 16px;
+    width: 16px;
+    cursor: pointer;
+}
+
+.message-button:hover {
+    background-image: url(../images/ui/message/message-button-close-red.png);
+}
+
+/* Window */
+.window {
+    margin: 0px auto 0px auto;
+    padding: 10px;
+    background-color: #ffffff;
+    -moz-box-shadow: 0px 0px 8px #cccccc;
+    -webkit-box-shadow: 0px 0px 8px #cccccc;
+    box-shadow: 0px 0px 8px #cccccc;
+}
+
+.window-header{
+}
+
+.window-header-icon {
+    float: left;
+    height: 48px;
+    margin-right: 6px;
+}
+
+.window-header-content {
+    float: left;
+}
+
+.window-header-content h1 {
+    margin: 0px;
+    font-family: Arial;
+    font-size: 26pt;
+    font-weight: normal;
+    color: #5193c2;
+}
+
+.window-header-content h2 {
+    margin: 0px 0px 10px 0px;
+    font-family: Tahoma;
+    font-size: 11pt;
+    font-weight: normal;
+    color: #accbe2;
+}
+
+.window-button-close {
+    background: url(../images/ui/window/window-button-close-normal.png) center center no-repeat;
+    float: right;
+    height: 16px;
+    width: 16px;
+    cursor: pointer;
+}
+
+.window-button-close:hover {
+    background: url(../images/ui/window/window-button-close-hover.png) center center no-repeat;
+}
+
+.window .panel-container {
+    width: 100%;
+    background-color: #f5f8fa;
+}
+
+.window .panel-content {
+    margin: 0px auto 0px auto;
+}
+
+.window .panel-message {
+    color: #5193c2;
+    padding: 10px 10px 10px 10px;
+    line-height: 14pt;
+    font-family: Tahoma;
+    font-size: 9pt;
+}
+
+.notification-message {
+    float: right;
+    width: 330px;
+    display: none;
+    margin: 6px 12px 6px 12px;
+    clear: both;
+}
+
+.alert-message {
+    width: 350px;
+}
+
+.dialog-message {
+    width: 400px;
+    display: none;
+}
+
+.window-button-area {
+    background: url(../images/separator/separator-dotted-horizontal.png) #eef4f9 left top repeat-x;
+    float: right;
+    height: 50px;
+    width: 100%;
+}
+
+.window-button-area .button-message {
+    color: #5193c2;
+    float: left;
+    padding: 14px 14px 14px 14px;
+    line-height: 14pt;
+    font-family: Tahoma;
+    font-weight: bold;
+    font-size: 10pt;
+}
+
+.window-button-area .button {
+    margin: 12px 10px 0px 0px;
+}
+
+/* Widget Table */
+.widget-table {
+    padding: 0px 12px 12px 12px;
+}
+
+.widget-table table {
+    width: 100%;
+    border-spacing: 0px;
+    background-color: #ffffff;
+    box-shadow: 1px 1px 2px #bbbbbb;
+    -moz-box-shadow: 1px 1px 2px #bbbbbb;
+    -webkit-box-shadow: 1px 1px 2px #bbbbbb;
+}
+
+.widget-table table tr {
+    height: 28px;
+}
+
+.widget-table .label {
+    padding-left: 6px;
+}
+
+.widget-table .value {
+    padding-right: 6px;
+    text-align: right;
+}
+
+.widget-table .section-end td {
+    padding-bottom: 6px;
+    border-bottom: 1px solid #E6E6E6;
+}
+
+.widget-table .bold {
+    font-weight: bold;
+}
+
+.widget-table .red {
+    color: #C1272D;
+}
+
+.widget-table .green {
+    color: #8CC63F;
+}
+
+.widget-table .light-blue {
+    color: #5193C2;
+}
+
+.widget-table .dark-blue {
+    color: #005B9C;
+}
+
+/* Widget Text */
+.widget-text {
+    padding: 0px 12px 12px 12px;
+}
+
+.widget-text p {
+    width: 100%;
+    margin-top: 0px;
+    line-height: 1.5em;
+    color: #333333;
+}
+
+/* Overlay */
+.overlay {
+    display: none;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    background-color: #000000;
+    opacity: 0.5;
+    z-index: 1;
+}
