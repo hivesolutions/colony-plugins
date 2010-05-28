@@ -42,7 +42,7 @@
 }
 
 body {
-    background: url(../images/body/body-background.png);
+    background: url(../images/general/body/body-background.png);
     margin: 10px 0px 0px 0px;
     font-family: Tahoma, Arial;
     font-size: 8pt;
@@ -243,7 +243,7 @@ img {
 }
 
 .drop-menu a:hover {
-     background: url(../images/drop_menu/drop-menu-hover-background.png) bottom left repeat-x;
+     background: url(../images/general/drop_menu/drop-menu-hover-background.png) bottom left repeat-x;
 }
 
 /* Float Panel */
@@ -345,59 +345,59 @@ img {
     height: 100%;
     width: 32px;
     margin-left: -32px;
-    background: url(../images/container/main-container-background.png) top right repeat-y;
+    background: url(../images/general/container/main-container-background.png) top right repeat-y;
 }
 
 #icon-bar.blue {
-    background-image: url(../images/container/main-container-blue-background.png);
+    background-image: url(../images/general/container/main-container-blue-background.png);
 }
 
 #icon-bar.brown {
-    background-image: url(../images/container/main-container-brown-background.png);
+    background-image: url(../images/general/container/main-container-brown-background.png);
 }
 
 #icon-bar.dark-gray {
-    background-image: url(../images/container/main-container-dark_gray-background.png);
+    background-image: url(../images/general/container/main-container-dark_gray-background.png);
 }
 
 #icon-bar.dark-green {
-    background-image: url(../images/container/main-container-dark_green-background.png);
+    background-image: url(../images/general/container/main-container-dark_green-background.png);
 }
 
 #icon-bar.light-gray {
-    background-image: url(../images/container/main-container-light_gray-background.png);
+    background-image: url(../images/general/container/main-container-light_gray-background.png);
 }
 
 #icon-bar.light-green {
-    background-image: url(../images/container/main-container-light_green-background.png);
+    background-image: url(../images/general/container/main-container-light_green-background.png);
 }
 
 #icon-bar.medium-gray {
-    background-image: url(../images/container/main-container-medium_gray-background.png);
+    background-image: url(../images/general/container/main-container-medium_gray-background.png);
 }
 
 #icon-bar.medium-green {
-    background-image: url(../images/container/main-container-medium_green-background.png);
+    background-image: url(../images/general/container/main-container-medium_green-background.png);
 }
 
 #icon-bar.orange {
-    background-image: url(../images/container/main-container-orange-background.png);
+    background-image: url(../images/general/container/main-container-orange-background.png);
 }
 
 #icon-bar.pink {
-    background-image: url(../images/container/main-container-pink-background.png);
+    background-image: url(../images/general/container/main-container-pink-background.png);
 }
 
 #icon-bar.purple {
-    background-image: url(../images/container/main-container-purple-background.png);
+    background-image: url(../images/general/container/main-container-purple-background.png);
 }
 
 #icon-bar.red {
-    background-image: url(../images/container/main-container-red-background.png);
+    background-igeneral/container/../images/general/container/main-container-red-background.png);
 }
 
 #icon-bar.yellow {
-    background-image: url(../images/container/main-container-yellow-background.png);
+    background-image: url(../images/general/container/main-container-yellow-background.png);
 }
 
 #content-icon {
@@ -406,55 +406,55 @@ img {
     float: left;
     height: 32px;
     width: 32px;
-    background: url(../images/container/content-icon-background.png) top right no-repeat;
+    background: url(../images/general/container/content-icon-background.png) top right no-repeat;
 }
 
 .blue #content-icon {
-    background-image: url(../images/container/content-icon-blue-background.png);
+    background-image: url(../images/general/container/content-icon-blue-background.png);
 }
 
 .brown #content-icon {
-    background-image: url(../images/container/content-icon-brown-background.png);
+    background-image: url(../images/general/container/content-icon-brown-background.png);
 }
 
 .dark-gray #content-icon {
-    background-image: url(../images/container/content-icon-dark_gray-background.png);
+    background-image: url(../images/general/container/content-icon-dark_gray-background.png);
 }
 
 .dark-green #content-icon {
-    background-image: url(../images/container/content-icon-dark_green-background.png);
+    background-image: url(../images/general/container/content-icon-dark_green-background.png);
 }
 
 .light-gray #content-icon {
-    background-image: url(../images/container/content-icon-light_gray-background.png);
+    background-image: url(../images/general/container/content-icon-light_gray-background.png);
 }
 
 .light-green #content-icon {
-    background-image: url(../images/container/content-icon-light_green-background.png);
+    background-image: url(../images/general/container/content-icon-light_green-background.png);
 }
 
 .medium-gray #content-icon {
-    background-image: url(../images/container/content-icon-medium_gray-background.png);
+    background-image: url(../images/general/container/content-icon-medium_gray-background.png);
 }
 
 .medium-green #content-icon {
-    background-image: url(../images/container/content-icon-medium_green-background.png);
+    background-image: url(../images/general/container/content-icon-medium_green-background.png);
 }
 
 .orange #content-icon {
-    background-image: url(../images/container/content-icon-orange-background.png);
+    background-image: url(../images/general/container/content-icon-orange-background.png);
 }
 
 .pink #content-icon {
-    background-image: url(../images/container/content-icon-pink-background.png);
+    background-image: url(../images/general/container/content-icon-pink-background.png);
 }
 
 .purple #content-icon {
-    background-image: url(../images/container/content-icon-purple-background.png);
+    background-image: url(../images/general/container/content-icon-purple-background.png);
 }
 
 .red #content-icon {
-    background-image: url(../images/container/content-icon-red-background.png);
+    background-image: url(../images/general/container/content-icon-red-background.png);
 }
 
 .yellow #content-icon {
