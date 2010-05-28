@@ -76,7 +76,7 @@ form {
 
 /* Input */
 input {
-    background: url(../images/ui/text-field/text-field-background.png) #ffffff left top repeat-x;
+    background: url(../images/components/text-field/text-field-background.png) #ffffff left top repeat-x;
     height: 17px;
     width: 100%;
     border: 1px solid #ccdeeb;
@@ -112,7 +112,7 @@ table input {
 
 /* Text Area */
 textarea {
-    background: url(../images/ui/text-field/text-field-background.png) #ffffff left top repeat-x;
+    background: url(../images/components/text-field/text-field-background.png) #ffffff left top repeat-x;
     height: 77px;
     width: 100%;
     border: 1px solid #ccdeeb;
@@ -157,27 +157,27 @@ textarea.invalid {
 }
 
 .button-green {
-    background: url(../images/ui/button/button-green-normal.png) center center no-repeat;
+    background: url(../images/components/button/button-green-normal.png) center center no-repeat;
 }
 
 .button-green:hover {
-    background-image: url(../images/ui/button/button-green-hover.png);
+    background-image: url(../images/components/button/button-green-hover.png);
 }
 
 .button-green.click {
-    background-image: url(../images/ui/button/button-green-clicked.png);
+    background-image: url(../images/components/button/button-green-clicked.png);
 }
 
 .button-blue {
-    background: url(../images/ui/button/button-blue-normal.png) center center no-repeat;
+    background: url(../images/components/button/button-blue-normal.png) center center no-repeat;
 }
 
 .button-blue:hover {
-    background-image: url(../images/ui/button/button-blue-hover.png);
+    background-image: url(../images/components/button/button-blue-hover.png);
 }
 
 .button-blue.click {
-    background-image: url(../images/ui/button/button-blue-clicked.png);
+    background-image: url(../images/components/button/button-blue-clicked.png);
 }
 
 .button-big {
@@ -191,15 +191,15 @@ textarea.invalid {
 }
 
 .button-big-blue {
-    background: url(../images/ui/button/button-big-blue-normal.png) no-repeat;
+    background: url(../images/components/button/button-big-blue-normal.png) no-repeat;
 }
 
 .button-big-blue:hover {
-    background-image: url(../images/ui/button/button-big-blue-hover.png);
+    background-image: url(../images/components/button/button-big-blue-hover.png);
 }
 
 .button-big-blue.click {
-    background: url(../images/ui/button/button-big-blue-clicked.png);
+    background: url(../images/components/button/button-big-blue-clicked.png);
 }
 
 /* Button Drop */
@@ -209,7 +209,7 @@ textarea.invalid {
 }
 
 .button-drop-small-gray .label {
-    background: url(../images/ui/button_drop/button-drop-small-gray-normal.png) center center no-repeat;
+    background: url(../images/components/button_drop/button-drop-small-gray-normal.png) center center no-repeat;
     float: left;
     height: 18px;
     width: 80px;
@@ -221,19 +221,19 @@ textarea.invalid {
 }
 
 .button-drop-small-gray .label:hover {
-    background: url(../images/ui/button_drop/button-drop-small-gray-hover.png) center center no-repeat;
+    background: url(../images/components/button_drop/button-drop-small-gray-hover.png) center center no-repeat;
     color: #005b9c;
 }
 
 .button-drop-small-gray .arrow {
-    background: url(../images/ui/button_drop/button-drop-small-gray-arrow-normal.png) center center no-repeat;
+    background: url(../images/components/button_drop/button-drop-small-gray-arrow-normal.png) center center no-repeat;
     float: left;
     height: 22px;
     width: 22px;
 }
 
 .button-drop-small-gray .arrow:hover {
-    background: url(../images/ui/button_drop/button-drop-small-gray-arrow-hover.png) center center no-repeat;
+    background: url(../images/components/button_drop/button-drop-small-gray-arrow-hover.png) center center no-repeat;
 }
 
 /* Form Button */
@@ -260,7 +260,7 @@ table.table {
     text-align: left;
     color: #005b9c;
     border-bottom: 1px solid #a8c9e0;
-    background: url(../images/ui/table/table-header-background.png) left bottom repeat-x;
+    background: url(../images/components/table/table-header-background.png) left bottom repeat-x;
 }
 
 .table tbody tr td {
@@ -269,7 +269,7 @@ table.table {
     vertical-align: middle;
     text-align: left;
     border-bottom: 1px solid #eef4f9;
-    background: url(../images/ui/table/table-cell-separator.png) left bottom no-repeat;
+    background: url(../images/components/table/table-cell-separator.png) left bottom no-repeat;
 }
 
 .table .first {
@@ -280,7 +280,7 @@ table.table {
 .table tfoot tr td {
     height: 8px;
     border-top: 1px solid #a8c9e0;
-    background: url(../images/ui/table/table-footer-background.png) left bottom repeat-x;
+    background: url(../images/components/table/table-footer-background.png) left bottom repeat-x;
 }
 
 .table thead tr th span {
@@ -293,12 +293,12 @@ table.table {
     height: 4px;
     width: 7px;
     margin: 6px 0px 0px 6px;
-    background: url(../images/ui/table/table-column-arrow-down-active.png) center center no-repeat;
+    background: url(../images/components/table/table-column-arrow-down-active.png) center center no-repeat;
 
 }
 
 .table .order-down-inactive {
-    background: url(../images/ui/table/table-column-arrow-down-normal.png) center center no-repeat;
+    background: url(../images/components/table/table-column-arrow-down-normal.png) center center no-repeat;
 }
 
 /* Search Field */
@@ -309,7 +309,7 @@ table.table {
     margin-top: 5px;
     margin-right: 3px;
     overflow: visible;
-    background: url(../images/ui/text-field/text-field-background.png) #ffffff center top repeat-x;
+    background: url(../images/components/text-field/text-field-background.png) #ffffff center top repeat-x;
 }
 
 .search-field input {
@@ -327,12 +327,12 @@ table.table {
     width: 24px;
     border: 1px solid #669cc3;
     border-left: none;
-    background: url(../images/ui/search_field/search-field-icon-magnifier.png) center center no-repeat;
+    background: url(../images/components/search_field/search-field-icon-magnifier.png) center center no-repeat;
     cursor: pointer;
 }
 
 .search-button:hover {
-    background-image: url(../images/ui/search_field/search-field-icon-magnifier-hover.png);
+    background-image: url(../images/components/search_field/search-field-icon-magnifier-hover.png);
 }
 
 /* Date Field */
@@ -362,7 +362,7 @@ table .date-field  {
 }
 
 .date-field-button {
-    background: url(../images/ui/date_field/date-field-button-normal.png) top left no-repeat;
+    background: url(../images/components/date_field/date-field-button-normal.png) top left no-repeat;
     float: right;
     height: 24px;
     width: 30px;
@@ -371,11 +371,11 @@ table .date-field  {
 }
 
 .date-field-button:hover {
-    background-image: url(../images/ui/date_field/date-field-button-hover.png);
+    background-image: url(../images/components/date_field/date-field-button-hover.png);
 }
 
 .date-field-button.click {
-    background-image: url(../images/ui/date_field/date-field-button-clicked.png);
+    background-image: url(../images/components/date_field/date-field-button-clicked.png);
 }
 
 .date-field-contents {
@@ -468,7 +468,7 @@ table .date-field  {
 }
 
 .date-field-contents .button-next {
-    background: url(../images/ui/date_field/date-field-arrow-blue-right.png) center center no-repeat;
+    background: url(../images/components/date_field/date-field-arrow-blue-right.png) center center no-repeat;
     float: right;
     height: 28px;
     width: 28px;
@@ -477,11 +477,11 @@ table .date-field  {
 }
 
 .date-field-contents .button-next:hover {
-    background: url(../images/ui/date_field/date-field-arrow-blue-right.png) #e3eef5 center center no-repeat;
+    background: url(../images/components/date_field/date-field-arrow-blue-right.png) #e3eef5 center center no-repeat;
 }
 
 .date-field-contents .button-previous {
-    background: url(../images/ui/date_field/date-field-arrow-blue-left.png) center center no-repeat;
+    background: url(../images/components/date_field/date-field-arrow-blue-left.png) center center no-repeat;
     float: left;
     height: 28px;
     width: 28px;
@@ -490,7 +490,7 @@ table .date-field  {
 }
 
 .date-field-contents .button-previous:hover {
-    background: url(../images/ui/date_field/date-field-arrow-blue-left.png) #e3eef5 center center no-repeat;
+    background: url(../images/components/date_field/date-field-arrow-blue-left.png) #e3eef5 center center no-repeat;
 }
 
 .date-field-contents-header .date-field-contents-footer .button-previous {
@@ -537,7 +537,7 @@ table .dropbox {
 .dropbox-container {
     height: 22px;
     padding: 0px 0px 0px 0px;
-    background: url(../images/ui/dropbox/dropbox-left-background.png) top left no-repeat;
+    background: url(../images/components/dropbox/dropbox-left-background.png) top left no-repeat;
 }
 
 .dropbox-left-corners {
@@ -547,7 +547,7 @@ table .dropbox {
 }
 
 .dropbox-text-field {
-    background: url(../images/ui/dropbox/dropbox-center-background.png) top left repeat-x;
+    background: url(../images/components/dropbox/dropbox-center-background.png) top left repeat-x;
     float: left;
     height: 19px;
     width: 100%;
@@ -558,7 +558,7 @@ table .dropbox {
 }
 
 .dropbox-button {
-    background: url(../images/ui/dropbox/dropbox-button-normal.png) top left no-repeat;
+    background: url(../images/components/dropbox/dropbox-button-normal.png) top left no-repeat;
     float: right;
     height: 22px;
     width: 22px;
@@ -567,11 +567,11 @@ table .dropbox {
 }
 
 .dropbox-button:hover {
-    background-image: url(../images/ui/dropbox/dropbox-button-hover.png);
+    background-image: url(../images/components/dropbox/dropbox-button-hover.png);
 }
 
 .dropbox-button.click {
-    background-image: url(../images/ui/dropbox/dropbox-button-clicked.png);
+    background-image: url(../images/components/dropbox/dropbox-button-clicked.png);
 }
 
 .dropbox ul {
@@ -597,7 +597,7 @@ table .dropbox {
 }
 
 .dropbox ul li:hover, .dropbox ul li.selected {
-    background: url(../images/ui/dropbox/dropbox-highlight-background.png) top left repeat-x;
+    background: url(../images/components/dropbox/dropbox-highlight-background.png) top left repeat-x;
     color: #ffffff;
 }
 
@@ -647,15 +647,15 @@ table .dropbox {
 }
 
 .error .message-icon {
-    background: url(../images/ui/message/message-icon-exclamation.png) top left no-repeat;
+    background: url(../images/components/message/message-icon-exclamation.png) top left no-repeat;
 }
 
 .success .message-icon {
-    background: url(../images/ui/message/message-icon-success.png) top left no-repeat;
+    background: url(../images/components/message/message-icon-success.png) top left no-repeat;
 }
 
 .information .message-icon {
-    background: url(../images/ui/message/message-icon-information.png) top left no-repeat;
+    background: url(../images/components/message/message-icon-information.png) top left no-repeat;
 }
 
 .message-contents {
@@ -676,7 +676,7 @@ table .dropbox {
 }
 
 .message-button {
-    background: url(../images/ui/message/message-button-close-white.png) center center no-repeat;
+    background: url(../images/components/message/message-button-close-white.png) center center no-repeat;
     float: right;
     height: 16px;
     width: 16px;
@@ -684,7 +684,7 @@ table .dropbox {
 }
 
 .message-button:hover {
-    background-image: url(../images/ui/message/message-button-close-red.png);
+    background-image: url(../images/components/message/message-button-close-red.png);
 }
 
 /* Window */
@@ -727,7 +727,7 @@ table .dropbox {
 }
 
 .window-button-close {
-    background: url(../images/ui/window/window-button-close-normal.png) center center no-repeat;
+    background: url(../images/components/window/window-button-close-normal.png) center center no-repeat;
     float: right;
     height: 16px;
     width: 16px;
@@ -735,7 +735,7 @@ table .dropbox {
 }
 
 .window-button-close:hover {
-    background: url(../images/ui/window/window-button-close-hover.png) center center no-repeat;
+    background: url(../images/components/window/window-button-close-hover.png) center center no-repeat;
 }
 
 .window .panel-container {
