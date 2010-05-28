@@ -62,6 +62,9 @@ class WebMvcManager:
     web_mvc_manager_main_controller = None
     """ The web mvc manager main controller """
 
+    web_mvc_manager_side_panel_controller = None
+    """ The web mvc manager side panel controller """
+
     web_mvc_manager_plugin_controller = None
     """ The web mvc manager plugin controller """
 
@@ -87,6 +90,9 @@ class WebMvcManager:
         # creates the web mvc manager main controller
         self.web_mvc_manager_main_controller = web_mvc_utils_plugin.create_controller(WebMvcManagerMainController, [self.web_mvc_manager_plugin, self], {})
 
+        # creates the web mvc manager side panel controller
+        self.web_mvc_manager_side_panel_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_controllers.SidePanelController, [self.web_mvc_manager_plugin, self], {})
+
         # creates the web mvc manager plugin controller
         self.web_mvc_manager_plugin_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_controllers.PluginController, [self.web_mvc_manager_plugin, self], {})
 
@@ -103,6 +109,7 @@ class WebMvcManager:
 
         return {r"^web_mvc_manager/?$" : self.web_mvc_manager_main_controller.handle_web_mvc_manager_index,
                 r"^web_mvc_manager/index$" : self.web_mvc_manager_main_controller.handle_web_mvc_manager_index,
+                r"^web_mvc_manager/side_panel/configuration$" : self.web_mvc_manager_side_panel_controller.handle_configuration,
                 r"^web_mvc_manager/plugins$" : self.web_mvc_manager_plugin_controller.handle_list}
 
     def get_resource_patterns(self):

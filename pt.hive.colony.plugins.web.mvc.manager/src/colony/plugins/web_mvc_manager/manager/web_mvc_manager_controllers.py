@@ -40,14 +40,80 @@ __license__ = "GNU General Public License (GPL), Version 3"
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding value """
 
-TAKE_THE_BILL_MAIN_RESOURCES_PATH = "web_mvc_manager/manager/resources"
-""" The take the bill main resources path """
+WEB_MVC_MANAGER_RESOURCES_PATH = "web_mvc_manager/manager/resources"
+""" The web mvc manager resources path """
 
-TEMPLATES_PATH = TAKE_THE_BILL_MAIN_RESOURCES_PATH + "/templates"
+TEMPLATES_PATH = WEB_MVC_MANAGER_RESOURCES_PATH + "/templates"
 """ The templates path """
 
 AJAX_ENCODER_NAME = "ajx"
 """ The ajax encoder name """
+
+class SidePanelController:
+    """
+    The side panel controller.
+    """
+
+    web_mvc_manager_plugin = None
+    """ The web mvc manager plugin """
+
+    web_mvc_manager = None
+    """ The web mvc manager """
+
+    def __init__(self, web_mvc_manager_plugin, web_mvc_manager):
+        """
+        Constructor of the class.
+
+        @type web_mvc_manager_plugin: WebMvcManagerPlugin
+        @param web_mvc_manager_plugin: The web mvc manager plugin.
+        @type web_mvc_manager: WebMvcManager
+        @param web_mvc_manager: The web mvc manager.
+        """
+
+        self.web_mvc_manager_plugin = web_mvc_manager_plugin
+        self.web_mvc_manager = web_mvc_manager
+
+    def start(self):
+        """
+        Method called upon structure initialization.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_manager_plugin.manager
+
+        # retrieves the web mvc manager plugin path
+        web_mvc_manager_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_manager_plugin.id)
+
+        # creates the templates path
+        templates_path = web_mvc_manager_plugin_path + "/" + TEMPLATES_PATH + "/side_panel"
+
+        # sets the templates path
+        self.set_templates_path(templates_path)
+
+    def handle_configuration(self, rest_request, parameters = {}):
+        """
+        Handles the given configuration rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The take the bill index rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("side_panel_configuration.html.tpl")
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+        # returns true
+        return True
 
 class PluginController:
     """
