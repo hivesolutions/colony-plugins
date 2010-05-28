@@ -55,15 +55,21 @@ class WebMvcManagerPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["web.mvc_service"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.web.mvc.utils", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.web.mvc.resources.base", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.web.mvc.resources.ui", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["web_mvc_manager.manager.web_mvc_manager_system"]
+    main_modules = ["web_mvc_manager.manager.web_mvc_manager_controllers", "web_mvc_manager.manager.web_mvc_manager_system"]
 
     web_mvc_manager = None
 
     web_mvc_utils_plugin = None
-    resource_manager_plugin = None
+    web_mvc_resources_base_plugin = None
+    web_mvc_resources_ui_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -124,9 +130,16 @@ class WebMvcManagerPlugin(colony.plugins.plugin_system.Plugin):
     def set_web_mvc_utils_plugin(self, web_mvc_utils_plugin):
         self.web_mvc_utils_plugin = web_mvc_utils_plugin
 
-    def get_resource_manager_plugin(self):
-        return self.resource_manager_plugin
+    def get_web_mvc_resources_base_plugin(self):
+        return self.web_mvc_resources_base_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.resources.resource_manager")
-    def set_resource_manager_plugin(self, resource_manager_plugin):
-        self.resource_manager_plugin = resource_manager_plugin
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.web.mvc.resources.base")
+    def set_web_mvc_resources_base_plugin(self, web_mvc_resources_base_plugin):
+        self.web_mvc_resources_base_plugin = web_mvc_resources_base_plugin
+
+    def get_web_mvc_resources_ui_plugin(self):
+        return self.web_mvc_resources_ui_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.web.mvc.resources.ui")
+    def set_web_mvc_resources_ui_plugin(self, web_mvc_resources_ui_plugin):
+        self.web_mvc_resources_ui_plugin = web_mvc_resources_ui_plugin

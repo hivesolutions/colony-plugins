@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import web_mvc_manager_controllers
+
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding value """
 
@@ -45,6 +47,9 @@ WEB_MVC_MANAGER_RESOURCES_PATH = "web_mvc_manager/manager/resources"
 
 TEMPLATES_PATH = WEB_MVC_MANAGER_RESOURCES_PATH + "/templates"
 """ The templates path """
+
+EXTRAS_PATH = WEB_MVC_MANAGER_RESOURCES_PATH + "/extras"
+""" The extras path """
 
 class WebMvcManager:
     """
@@ -56,6 +61,9 @@ class WebMvcManager:
 
     web_mvc_manager_main_controller = None
     """ The web mvc manager main controller """
+
+    web_mvc_manager_plugin_controller = None
+    """ The web mvc manager plugin controller """
 
     def __init__(self, web_mvc_manager_plugin):
         """
@@ -77,7 +85,10 @@ class WebMvcManager:
         web_mvc_utils_plugin = self.web_mvc_manager_plugin.web_mvc_utils_plugin
 
         # creates the web mvc manager main controller
-        #self.take_the_bill_main_controller = web_mvc_utils_plugin.create_controller(WebMvcManagerMainController, [self.web_mvc_manager_plugin, self], {})
+        self.web_mvc_manager_main_controller = web_mvc_utils_plugin.create_controller(WebMvcManagerMainController, [self.web_mvc_manager_plugin, self], {})
+
+        # creates the web mvc manager plugin controller
+        self.web_mvc_manager_plugin_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_controllers.PluginController, [self.web_mvc_manager_plugin, self], {})
 
     def get_patterns(self):
         """
@@ -90,10 +101,9 @@ class WebMvcManager:
         to the web mvc service.
         """
 
-        return {}
-
-        #return {r"^web_mvc_manager/?$" : self.take_the_bill_main_controller.handle_take_the_bill_index,
-        #        r"^web_mvc_manager/index$" : self.take_the_bill_main_controller.handle_take_the_bill_index}
+        return {r"^web_mvc_manager/?$" : self.web_mvc_manager_main_controller.handle_web_mvc_manager_index,
+                r"^web_mvc_manager/index$" : self.web_mvc_manager_main_controller.handle_web_mvc_manager_index,
+                r"^web_mvc_manager/plugins$" : self.web_mvc_manager_plugin_controller.handle_list}
 
     def get_resource_patterns(self):
         # estes sao os patterns para serem enviados para
@@ -104,7 +114,27 @@ class WebMvcManager:
 
         # tenho de mandar um evento sempre que alguma destas coisas muda
 
-        return {}
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_manager_plugin.manager
+
+        # retrieves the web mvc resources base plugin
+        web_mvc_resources_base_plugin = self.web_mvc_manager_plugin.web_mvc_resources_base_plugin
+
+        # retrieves the web mvc resources ui plugin
+        web_mvc_resources_ui_plugin = self.web_mvc_manager_plugin.web_mvc_resources_ui_plugin
+
+        # retrieves the web mvc manager plugin path
+        web_mvc_manager_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_manager_plugin.id)
+
+        # retrieves the web mvc resources base plugin resources path
+        web_mvc_resources_base_plugin_resources_path = web_mvc_resources_base_plugin.get_resources_path()
+
+        # retrieves the web mvc resources ui plugin resources path
+        web_mvc_resources_ui_plugin_resources_path = web_mvc_resources_ui_plugin.get_resources_path()
+
+        return {r"^web_mvc_manager/resources/.+$" : (web_mvc_manager_plugin_path + "/" + EXTRAS_PATH, "web_mvc_manager/resources"),
+                r"^web_mvc_manager/resources_base/.+$" : (web_mvc_resources_base_plugin_resources_path, "web_mvc_manager/resources_base"),
+                r"^web_mvc_manager/resources_ui/.+$" : (web_mvc_resources_ui_plugin_resources_path, "web_mvc_manager/resources_ui")}
 
         #return {r"^web_mvc_manager/?$" : "c:/tobias",
         #        r"^web_mvc_manager/index$" : self.take_the_bill_main_controller.handle_take_the_bill_index}
@@ -139,13 +169,13 @@ class WebMvcManagerMainController:
         """
 
         # retrieves the plugin manager
-        plugin_manager = self.take_the_bill_main_plugin.manager
+        plugin_manager = self.web_mvc_manager_plugin.manager
 
         # retrieves the web mvc manager plugin path
         web_mvc_manager_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_manager_plugin.id)
 
         # creates the templates path
-        templates_path = web_mvc_manager_plugin_path + "/" + TEMPLATES_PATH + "/site"
+        templates_path = web_mvc_manager_plugin_path + "/" + TEMPLATES_PATH
 
         # sets the templates path
         self.set_templates_path(templates_path)
@@ -164,7 +194,7 @@ class WebMvcManagerMainController:
         """
 
         # retrieves the template file
-        template_file = self.retrieve_template_file("site_general.html.tpl")
+        template_file = self.retrieve_template_file("general.html.tpl")
 
         # sets the page to be included
 
