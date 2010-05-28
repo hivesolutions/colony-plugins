@@ -323,8 +323,7 @@ table.table {
     float: left;
     height: 22px;
     width: 24px;
-    margin-left: -25px;
-    border: 1px solid #669cc3;
+    margin-left: -26px;
     border-left: none;
     background: url(../images/components/search_field/search-field-icon-magnifier.png) center center no-repeat;
     cursor: pointer;
