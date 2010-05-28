@@ -50,6 +50,12 @@
          * Creates the necessary html for the component.
          */
         var _appendHtml = function() {
+            // tries to retrieve the hitory load value
+            var historyLoad = options["historyLoad"];
+
+            // sets the defaul history load value
+            historyLoad = historyLoad != null ? historyLoad : true;
+
             // retrieves the base path
             var basePath = getBasePath();
 
@@ -67,8 +73,11 @@
                         hideEffect : "slideUp"
                     });
 
-            // initializes the history
-            $.historyInit(pageLoad, "");
+            // in case the history load flag is active
+            if (historyLoad) {
+                // initializes the history
+                $.historyInit(pageLoad, "");
+            }
         };
 
         /**
