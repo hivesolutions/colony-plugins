@@ -399,10 +399,10 @@ table .date-field  {
 
 .date-field-contents-header h1, .date-field-contents-footer h1 {
     width: 100px;
-    font-size: 8pt !important;
-    color: #74a9ce !important;
-    margin: 0px auto 0px auto !important;
-    padding-top: 12px !important;
+    font-size: 8pt;
+    color: #74a9ce;
+    margin: 0px auto 0px auto;
+    padding-top: 12px;
     text-align: center;
 }
 
