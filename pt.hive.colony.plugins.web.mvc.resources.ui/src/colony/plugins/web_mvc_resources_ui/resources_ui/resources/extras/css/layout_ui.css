@@ -327,12 +327,12 @@ table.table {
     width: 24px;
     border: 1px solid #669cc3;
     border-left: none;
-    background: url(../images/icon-magnifier.png) center center no-repeat;
+    background: url(../images/ui/search_field/search-field-icon-magnifier.png) center center no-repeat;
     cursor: pointer;
 }
 
 .search-button:hover {
-    background-image: url(../images/icon-magnifier-hover.png);
+    background-image: url(../images/ui/search_field/search-field-icon-magnifier-hover.png);
 }
 
 /* Date Field */

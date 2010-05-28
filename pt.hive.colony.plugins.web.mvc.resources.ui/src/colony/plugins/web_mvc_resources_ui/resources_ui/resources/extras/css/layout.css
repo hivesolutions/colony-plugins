@@ -508,7 +508,7 @@ img {
 }
 
 #left-column ul li.active {
-    background-color: #FDD79D;
+    background-color: #fdd79d;
 }
 
 #left-column ul li.active span {
@@ -517,7 +517,7 @@ img {
     margin-right: -10px;
     color: #ffffff;
     font-weight: bold;
-    background: url(../images/arrow-right-yellow.png) right center no-repeat;
+    background: url(../images/left_column/left-column-arrow-right-yellow.png) right center no-repeat;
 }
 
 #contents {
