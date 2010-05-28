@@ -152,6 +152,8 @@ textarea.invalid {
     font-weight: bold;
     text-align: center;
     cursor: pointer;
+    -khtml-user-select: none;
+    -moz-user-select: -moz-none;
 }
 
 .button-green {
@@ -176,6 +178,28 @@ textarea.invalid {
 
 .button-blue.click {
     background-image: url(../images/ui/button/button-blue-clicked.png);
+}
+
+.button-big {
+    height: 78px;
+    width: 360px;
+    margin: 0px 0px 0px 0px;
+    padding-top: 38px;
+    font-family: Arial;
+    font-size: 24pt;
+    font-weight: normal;
+}
+
+.button-big-blue {
+    background: url(../images/ui/button/button-big-blue-normal.png) no-repeat;
+}
+
+.button-big-blue:hover {
+    background-image: url(../images/ui/button/button-big-blue-hover.png);
+}
+
+.button-big-blue.click {
+    background: url(../images/ui/button/button-big-blue-clicked.png);
 }
 
 /* Button Drop */
