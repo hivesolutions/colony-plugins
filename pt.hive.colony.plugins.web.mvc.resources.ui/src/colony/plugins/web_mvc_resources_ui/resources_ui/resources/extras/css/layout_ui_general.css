@@ -227,6 +227,10 @@ h2 {
     max-width: 150px;
 }
 
+.menu-area-container .search-field {
+    width: 160px;
+}
+
 /* Drop Menu */
 .drop-menu {
     position: absolute;
