@@ -642,6 +642,14 @@ class Visitor:
             attribute_file_value = attributes_map["file_value"]
             attribute_file_literal_value = self.get_value(attribute_file_value)
 
+        # in case the attribute file literal value is not valid
+        if not attribute_file_literal_value:
+            # retrieves the node value type
+            node_value_type = node.get_value_type()
+
+            # raises the undefined reference exception
+            raise template_engine_exceptions.UndefinedReference(node_value_type)
+
         # in case the path is absolute
         if attribute_file_literal_value[0] == "/":
             # sets the file path as absolute
