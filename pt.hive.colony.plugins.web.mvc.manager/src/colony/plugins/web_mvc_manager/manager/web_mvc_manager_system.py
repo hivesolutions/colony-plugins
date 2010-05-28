@@ -110,7 +110,8 @@ class WebMvcManager:
         return {r"^web_mvc_manager/?$" : self.web_mvc_manager_main_controller.handle_web_mvc_manager_index,
                 r"^web_mvc_manager/index$" : self.web_mvc_manager_main_controller.handle_web_mvc_manager_index,
                 r"^web_mvc_manager/side_panel/configuration$" : self.web_mvc_manager_side_panel_controller.handle_configuration,
-                r"^web_mvc_manager/plugins$" : self.web_mvc_manager_plugin_controller.handle_list}
+                r"^web_mvc_manager/plugins$" : self.web_mvc_manager_plugin_controller.handle_list,
+                r"^web_mvc_manager/plugins/new$" : self.web_mvc_manager_plugin_controller.handle_new}
 
     def get_resource_patterns(self):
         # estes sao os patterns para serem enviados para

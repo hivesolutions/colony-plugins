@@ -156,6 +156,64 @@ class PluginController:
         # sets the templates path
         self.set_templates_path(templates_path)
 
+    def handle_new(self, rest_request, parameters = {}):
+        # returns in case the required permissions are not set
+        #if not self.take_the_bill_main.require_permissions(self, rest_request):
+        #    return True
+
+        # creates a new company in case this is a post request
+        if rest_request.is_post():
+            print "ola"
+#            try:
+#                # retrieves the template file
+#                template_file = self.retrieve_template_file("company_edit_contents.html.tpl")
+#
+#                # creates the company
+#                company = self._create_company(rest_request)
+#
+#                # assigns the company to the template
+#                template_file.assign("company", company)
+#
+#                # assigns the result message to the template
+#                template_file.assign("result_message", "Empresa criada com sucesso.")
+#            except take_the_bill_main_exceptions.EntityValidationFailed, exception:
+#                # retrieves the template file
+#                template_file = self.retrieve_template_file("company_new_contents.html.tpl")
+#
+#                # retrieves the company from the exception
+#                company = exception.entity
+#
+#                # assigns the company to the template
+#                template_file.assign("company", company)
+#
+#                # assigns the result message to the template
+#                template_file.assign("result_message", "Ocorreu um erro ao criar a empresa.")
+        # in case the encoder name is ajax
+        if rest_request.encoder_name == AJAX_ENCODER_NAME:
+            # retrieves the template file
+            template_file = self.retrieve_template_file("plugin_new_contents.html.tpl")
+        else:
+            # retrieves the template file
+            template_file = self.retrieve_template_file("../general.html.tpl")
+
+            # sets the page to be included
+            template_file.assign("page_include", "plugin/plugin_new_contents.html.tpl")
+
+            # sets the side panel to be included
+            template_file.assign("side_panel_include", "side_panel/side_panel_configuration.html.tpl")
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+        # returns true
+        return True
+
     def handle_list(self, rest_request, parameters = {}):
         # returns in case the required permissions are not set
         #if not self.take_the_bill_main.require_permissions(self, rest_request):
@@ -174,6 +232,12 @@ class PluginController:
 
             # sets the side panel to be included
             template_file.assign("side_panel_include", "side_panel/side_panel_configuration.html.tpl")
+
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_manager_plugin.manager
+
+        # assigns the plugins to the template
+        template_file.assign("plugins", plugin_manager.get_all_plugins())
 
         # assigns the session variables to the template file
         self.assign_session_template_file(rest_request, template_file)

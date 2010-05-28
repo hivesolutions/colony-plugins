@@ -28,15 +28,15 @@
             </tr>
         </thead>
         <tbody>
+            ${foreach item=plugin from=plugins}
+            <tr>
+                <td>${out_none value=plugin.id xml_escape=True /}</td>
+                <td>${out_none value=plugin.name xml_escape=True /}</td>
+                <td>active</td>
+            </tr>
+            ${/foreach}
         </tbody>
         <tfoot>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
         </tfoot>
     </table>
     <div class="pagging-area">
