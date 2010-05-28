@@ -79,7 +79,7 @@ hr {
     height: 1px;
     border: none;
     margin-bottom: 16px;
-    background: url(../images/separator/separator-dotted-horizontal.png) left top repeat-x;
+    background: url(../images/general/separator/separator-dotted-horizontal.png) left top repeat-x;
 }
 
 a, a:active, a:visited {
@@ -125,7 +125,7 @@ img {
     height: 74px;
     width: 1000px;
     margin: 0px auto 0px auto;
-    background: url(../images/header/header-background.png);
+    background: url(../images/general/header/header-background.png);
 }
 
 #header #logo {
@@ -158,14 +158,14 @@ img {
     float: left;
     height: 16px;
     padding: 0px 6px 0px 6px;
-    background: url(../images/separator/separator-vertical.png) center right no-repeat;
+    background: url(../images/general/separator/separator-vertical.png) center right no-repeat;
 }
 
 /* Menu Area */
 .menu-area-container {
     height: 31px;
     width: 100%;
-    background: url(../images/menu_area/menu-area-container-background.png) bottom left repeat-x;
+    background: url(../images/general/menu_area/menu-area-container-background.png) bottom left repeat-x;
 }
 
 .menu-area-container a, .menu-area-container a:link, .menu-area-container a:active, .menu-area-container a:visited {
@@ -198,7 +198,7 @@ img {
 .menu-area-container > ul li {
     float: left;
     padding: 0px 3px 0px 2px;
-    background: url(../images/separator/separator-vertical.png) center right no-repeat;
+    background: url(../images/general/separator/separator-vertical.png) center right no-repeat;
     max-width: 150px;
 }
 
@@ -229,7 +229,7 @@ img {
 .drop-menu hr {
     height: 2px;
     margin: 6px 10px 6px 10px;
-    background: url(../images/separator/separator-horizontal.png) center center repeat-x;
+    background: url(../images/general/separator/separator-horizontal.png) center center repeat-x;
 }
 
 .drop-menu a:link, .drop-menu a:active, .drop-menu a:visited {
@@ -258,7 +258,7 @@ img {
     height: 10px;
     width: 13px;
     margin-left: 10px;
-    background: url(../images/float-panel-arrow-blue.png) center bottom no-repeat;
+    background: url(../images/general/float_panel/float-panel-arrow-blue.png) center bottom no-repeat;
 }
 
 #account-float-panel {
@@ -319,7 +319,7 @@ img {
     height: 32px;
     width: 32px;
     margin: -13px 6px 0px 0px;
-    background: url(../images/loading/loading-icon-square.gif) top left no-repeat;
+    background: url(../images/general/loading/loading-icon-square.gif) top left no-repeat;
 }
 
 .active.loading .loading-animation {
@@ -393,7 +393,7 @@ img {
 }
 
 #icon-bar.red {
-    background-igeneral/container/../images/general/container/main-container-red-background.png);
+    background-image: url(../images/general/container/main-container-red-background.png);
 }
 
 #icon-bar.yellow {
@@ -458,7 +458,7 @@ img {
 }
 
 .yellow #content-icon {
-    background-image: url(../images/container/content-icon-yellow-background.png);
+    background-image: url(../images/general/container/content-icon-yellow-background.png);
 }
 
 #left-column {
@@ -477,12 +477,12 @@ img {
     font-weight: bold;
     text-transform: uppercase;
     color: #808080;
-    background: url(../images/separator/separator-horizontal.png) center bottom repeat-x;
+    background: url(../images/general/separator/separator-horizontal.png) center bottom repeat-x;
 }
 
 #left-column h1.active {
     color: #333333;
-    background: url(../images/separator/separator-horizontal.png) center bottom repeat-x;
+    background: url(../images/general/separator/separator-horizontal.png) center bottom repeat-x;
 }
 
 #left-column ul {
@@ -516,7 +516,7 @@ img {
     margin-right: -10px;
     color: #ffffff;
     font-weight: bold;
-    background: url(../images/left_column/left-column-arrow-right-yellow.png) right center no-repeat;
+    background: url(../images/general/left_column/left-column-arrow-right-yellow.png) right center no-repeat;
 }
 
 #contents {

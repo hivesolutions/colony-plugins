@@ -241,7 +241,7 @@ textarea.invalid {
     float: right;
     height: 50px;
     width: 100%;
-    background: url(../images/separator/separator-dotted-horizontal.png) #eef4f9 left top repeat-x;
+    background: url(../images/general/separator/separator-dotted-horizontal.png) #eef4f9 left top repeat-x;
 }
 
 .form-button-area .button {
@@ -773,7 +773,7 @@ table .dropbox {
 }
 
 .window-button-area {
-    background: url(../images/separator/separator-dotted-horizontal.png) #eef4f9 left top repeat-x;
+    background: url(../images/general/separator/separator-dotted-horizontal.png) #eef4f9 left top repeat-x;
     float: right;
     height: 50px;
     width: 100%;
