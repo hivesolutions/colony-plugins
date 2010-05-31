@@ -60,6 +60,7 @@ $(document).ready(function() {
         var dt = event.originalEvent.dataTransfer;
         var files = dt.files;
 
+        // retrieves the first file
         var file = files[0];
 
         var xhr = new XMLHttpRequest();
@@ -67,24 +68,26 @@ $(document).ready(function() {
 
         var self = this;
 
-        this.xhr.upload.addEventListener("progress", function(event) {
+        xhr.upload.addEventListener("progress", function(event) {
             if (event.lengthComputable) {
                 // calculates the percentage of loading
                 var percentage = Math.round((event.loaded * 100) / event.total);
 
-                // sets the percentage in the progress indicator bar
-                $(".progress-indicator-bar").css("width", percentage + "%");
-
-                $(".progress-indicator-value").html(percentage + "%")
+                // sets the progress indicator percentage
+                $(".progress-indicator", "body").progressindicator("change", {
+                            percentage : percentage
+                        });
             }
         }, false);
 
-        xhr.upload.addEventListener("load", function(e) {
-                    // sets the percentage in the progress indicator bar
-                    $(".progress-indicator-bar").css("width", 100 + "%");
+        xhr.upload.addEventListener("load", function(event) {
+                    // sets the progress indicator percentage
+                    $(".progress-indicator", "body").progressindicator(
+                            "change", {
+                                percentage : 100
+                            });
 
-                    $(".progress-indicator-value").html(100 + "%")
-
+                    // sets a timeout to close the message window
                     setTimeout(function() {
                                 // closes the message window
                                 $("body").messagewindow("close");
@@ -96,13 +99,14 @@ $(document).ready(function() {
         xhr.sendAsBinary(file.getAsBinary());
 
         $("body").messagewindow("default", {
-            "title" : "Installing new plugin",
-            "subTitle" : "The systems is installing the new plugin",
-            "message" : "<div class=\"progress-indicator\">"
-                    + "<div class=\"progress-indicator-bar\"></div>"
-                    + "<div class=\"progress-indicator-value\">50%</div></div>",
-            "icon" : "resources/images/icon/icon-plugin-install.png"
-        });
+                    "title" : "Installing new plugin",
+                    "subTitle" : "The systems is installing the new plugin",
+                    "message" : "<div class=\"progress-indicator\"></div>",
+                    "icon" : "resources/images/icon/icon-plugin-install.png"
+                });
+
+        // starts the progress indicator
+        $(".progress-indicator", "body").progressindicator();
     });
 
     $("#overlay").bind("dragover", function(event) {
