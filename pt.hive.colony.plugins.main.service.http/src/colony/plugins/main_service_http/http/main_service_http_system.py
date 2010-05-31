@@ -876,8 +876,12 @@ class HttpClientServiceTask:
         # retrieves the received message value
         received_message_value = request.received_message
 
-        # decodes the message value into unicode using the given charset
-        request.received_message = received_message_value.decode(content_type_charset)
+        try:
+            # decodes the message value into unicode using the given charset
+            request.received_message = received_message_value.decode(content_type_charset)
+        except:
+            # sets the received message as the original one (fallback procedure)
+            request.received_message = received_message_value
 
     def retrieve_data(self, request_timeout = REQUEST_TIMEOUT, chunk_size = CHUNK_SIZE):
         try:
