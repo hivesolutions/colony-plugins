@@ -74,25 +74,26 @@ $(document).ready(function() {
                 var percentage = Math.round((event.loaded * 100) / event.total);
 
                 // sets the progress indicator percentage
-                $(".progress-indicator", "body").progressindicator("change", {
+                $(".message-message .progress-indicator", "body").progressindicator(
+                        "change", {
                             percentage : percentage
                         });
             }
         }, false);
 
         xhr.upload.addEventListener("load", function(event) {
-                    // sets the progress indicator percentage
-                    $(".progress-indicator", "body").progressindicator(
-                            "change", {
-                                percentage : 100
-                            });
+            // sets the progress indicator percentage
+            $(".message-message .progress-indicator", "body").progressindicator(
+                    "change", {
+                        percentage : 100
+                    });
 
-                    // sets a timeout to close the message window
-                    setTimeout(function() {
-                                // closes the message window
-                                $("body").messagewindow("close");
-                            }, 1000);
-                }, false);
+            // sets a timeout to close the message window
+            setTimeout(function() {
+                        // closes the message window
+                        $("body").messagewindow("close");
+                    }, 1000);
+        }, false);
 
         xhr.open("post", "plugins/new");
         xhr.overrideMimeType("text/plain;charset=utf-8");
@@ -106,7 +107,7 @@ $(document).ready(function() {
                 });
 
         // starts the progress indicator
-        $(".progress-indicator", "body").progressindicator();
+        $(".message-message .progress-indicator", "body").progressindicator();
     });
 
     $("#overlay").bind("dragover", function(event) {
