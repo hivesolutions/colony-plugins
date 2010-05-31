@@ -769,6 +769,11 @@ table .dropbox {
     display: none;
 }
 
+.message-message {
+    width: 400px;
+    display: none;
+}
+
 .window-button-area {
     background: url(../images/general/separator/separator-dotted-horizontal.png) #eef4f9 left top repeat-x;
     float: right;
@@ -852,6 +857,25 @@ table .dropbox {
     margin-top: 0px;
     line-height: 1.5em;
     color: #333333;
+}
+
+/* Progress Indicator */
+.progress-indicator {
+    height: 22px;
+    border: 1px solid #4d8cba;
+}
+
+.progress-indicator-bar {
+    height: 22px;
+    background: url(progress_indicator_bar_background.png) #73adcd left top repeat-x;
+}
+
+.progress-indicator-value {
+    margin-top: -21px;
+    text-align: center;
+    color: 1a1a1a;
+    font-size: 9pt;
+    font-weight: bold;
 }
 
 /* Overlay */

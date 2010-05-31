@@ -1392,6 +1392,145 @@
 })(jQuery);
 
 (function($) {
+    $.fn.messagewindow = function(method, options) {
+        // the default values for the menu
+        var defaults = {};
+
+        // sets the default method value
+        var method = method ? method : "default";
+
+        // sets the default options value
+        var options = options ? options : {};
+
+        // constructs the options
+        var options = $.extend(defaults, options);
+
+        // sets the jquery matched object
+        var matchedObject = this;
+
+        /**
+         * Initializer of the plugin, runs the necessary functions to initialize
+         * the structures.
+         */
+        var initialize = function() {
+            _appendHtml();
+            _registerHandlers();
+        };
+
+        /**
+         * Creates the necessary html for the component.
+         */
+        var _appendHtml = function() {
+            // retrieves the title
+            var title = options["title"];
+
+            // retrieves the sub title
+            var subTitle = options["subTitle"];
+
+            // retrieves the message
+            var message = options["message"];
+
+            // retrieves the centered
+            var centered = options["centered"];
+
+            // retrieves the icon
+            var icon = options["icon"];
+
+            // creates the string with the html code
+            var htmlCode = "<div class=\"absolute window message-message\">"
+                    + "<div class=\"window-header\">";
+
+            // in case an icon is defined
+            if (icon) {
+                htmlCode += "<div class=\"window-header-icon\">" + ""
+                        + "<img src=\"" + icon
+                        + "\" height=\"48\" width=\"48\" alt=\"Receipt\" />"
+                        + "</div>";
+            }
+
+            // adds the last part of the html code
+            htmlCode += "<div class=\"window-header-content\">" + "<h1>"
+                    + title + "</h1>" + "<h2>" + subTitle + "</h2>" + "</div>"
+                    + "<div class=\"clear\"></div>" + "</div>"
+                    + "<div class=\"panel-container\">"
+                    + "<div class=\"panel-content\">"
+                    + "<div class=\"panel-message\">" + message + "</div>"
+                    + "</div>" + "<div class=\"clear\"></div>" + "</div>"
+                    + "</div>";
+
+            // adds the code to the matched object
+            matchedObject.append(htmlCode);
+
+            // retrieves the message window
+            var messageMessage = $(".message-message:last", matchedObject);
+
+            // retrieves the matched object dimensions
+            var matchedObjectHeight = matchedObject.height();
+            var matchedObjectWidth = matchedObject.width();
+
+            // retrieves the message window dimensions
+            var messageMessageHeight = messageMessage.height();
+            var messageMessageWidth = messageMessage.width();
+
+            // sets the message window position, according to the
+            // matched object height and width
+            messageMessage.css("top", 180);
+            messageMessage.css("left", (matchedObjectWidth / 2)
+                            - (messageMessageWidth / 2));
+
+            // fades in the message message
+            messageMessage.fadeIn(500);
+
+            // sets the overlay to be shown
+            $("#overlay").overlay("show");
+
+            // scrolls to the message window
+            $.scrollTo(messageMessage, 800, {
+                        offset : {
+                            top : -50,
+                            left : 0
+                        }
+                    });
+        };
+
+        /**
+         * Registers the event handlers for the created objects.
+         */
+        var _registerHandlers = function() {
+        };
+
+        var _close = function(matchedObject, options) {
+            // retrieves the message window
+            var messageMessage = $(".message-message", matchedObject);
+
+            // sets the overlay to be hidden
+            $("#overlay").overlay("hide");
+
+            // fades out the message window
+            messageMessage.fadeOut(400, function() {
+                        // removes the message window
+                        messageMessage.remove();
+                    });
+        };
+
+        // switches over the method
+        switch (method) {
+            case "close" :
+                _close(matchedObject, options);
+                break;
+
+            case "default" :
+                // initializes the plugin
+                initialize();
+                break;
+        }
+
+        // returns the object
+        return this;
+    };
+})(jQuery);
+
+(function($) {
     $.fn.dialogwindow = function(method, options) {
         // the default values for the menu
         var defaults = {};
