@@ -24,6 +24,94 @@
 // __license__   = GNU General Public License (GPL), Version 3
 
 $(document).ready(function() {
+    $("body").bind("dragenter", function(event) {
+                // stops the event propagation and prevents
+                // the default event operation
+                event.stopPropagation();
+                event.preventDefault();
+
+                $("body").messagewindow("default", {
+                            "title" : "Install new plugin",
+                            "subTitle" : "",
+                            "message" : "Drop the file to install the new plugin.",
+                            "icon" : "resources/images/icon/icon-plugin-install.png"
+                        });
+            });
+
+    $("#overlay").bind("dragleave", function(event) {
+                // stops the event propagation and prevents
+                // the default event operation
+                event.stopPropagation();
+                event.preventDefault();
+
+                // closes the message window
+                $("body").messagewindow("close");
+            });
+
+    $("#overlay").bind("drop", function(event) {
+        // stops the event propagation and prevents
+        // the default event operation
+        event.stopPropagation();
+        event.preventDefault();
+
+        // closes the message window
+        $("body").messagewindow("close");
+
+        var dt = event.originalEvent.dataTransfer;
+        var files = dt.files;
+
+        var file = files[0];
+
+        var xhr = new XMLHttpRequest();
+        this.xhr = xhr;
+
+        var self = this;
+
+        this.xhr.upload.addEventListener("progress", function(event) {
+            if (event.lengthComputable) {
+                // calculates the percentage of loading
+                var percentage = Math.round((event.loaded * 100) / event.total);
+
+                // sets the percentage in the progress indicator bar
+                $(".progress-indicator-bar").css("width", percentage + "%");
+
+                $(".progress-indicator-value").html(percentage + "%")
+            }
+        }, false);
+
+        xhr.upload.addEventListener("load", function(e) {
+                    // sets the percentage in the progress indicator bar
+                    $(".progress-indicator-bar").css("width", 100 + "%");
+
+                    $(".progress-indicator-value").html(100 + "%")
+
+                    setTimeout(function() {
+                                // closes the message window
+                                $("body").messagewindow("close");
+                            }, 1000);
+                }, false);
+
+        xhr.open("post", "plugins/new");
+        xhr.overrideMimeType("text/plain;charset=utf-8");
+        xhr.sendAsBinary(file.getAsBinary());
+
+        $("body").messagewindow("default", {
+            "title" : "Installing new plugin",
+            "subTitle" : "The systems is installing the new plugin",
+            "message" : "<div class=\"progress-indicator\">"
+                    + "<div class=\"progress-indicator-bar\"></div>"
+                    + "<div class=\"progress-indicator-value\">50%</div></div>",
+            "icon" : "resources/images/icon/icon-plugin-install.png"
+        });
+    });
+
+    $("#overlay").bind("dragover", function(event) {
+                // stops the event propagation and prevents
+                // the default event operation
+                event.stopPropagation();
+                event.preventDefault();
+            });
+
     $("#account-description").click(function() {
                 if (!$("#account-float-panel").is(":visible")) {
                     $("#account-float-panel").fadeIn(200, function() {

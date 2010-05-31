@@ -163,7 +163,12 @@ class PluginController:
 
         # creates a new company in case this is a post request
         if rest_request.is_post():
-            print "ola"
+            # retrieves the contents
+            contents = rest_request.request.read()
+
+            # tenho de sacar o temp file do plugin manager
+            # tenho de criar um ficheiro temporario  etenho de instalar o cenas
+            # com base nisso
 #            try:
 #                # retrieves the template file
 #                template_file = self.retrieve_template_file("company_edit_contents.html.tpl")
@@ -188,6 +193,7 @@ class PluginController:
 #
 #                # assigns the result message to the template
 #                template_file.assign("result_message", "Ocorreu um erro ao criar a empresa.")
+
         # in case the encoder name is ajax
         if rest_request.encoder_name == AJAX_ENCODER_NAME:
             # retrieves the template file
