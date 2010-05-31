@@ -1745,6 +1745,84 @@
 })(jQuery);
 
 (function($) {
+    $.fn.progressindicator = function(method, options) {
+        // the default values for the menu
+        var defaults = {};
+
+        // sets the default method value
+        var method = method ? method : "default";
+
+        // sets the default options value
+        var options = options ? options : {};
+
+        // constructs the options
+        var options = $.extend(defaults, options);
+
+        // sets the jquery matched object
+        var matchedObject = this;
+
+        /**
+         * Initializer of the plugin, runs the necessary functions to initialize
+         * the structures.
+         */
+        var initialize = function() {
+            _appendHtml();
+            _registerHandlers();
+        };
+
+        /**
+         * Creates the necessary html for the component.
+         */
+        var _appendHtml = function() {
+            // creates the string with the html code
+            var htmlCode = "<div class=\"progress-indicator-bar\"></div>"
+                    + "<div class=\"progress-indicator-value\">0%</div>";
+
+            // appends the html code to the matched object
+            matchedObject.append(htmlCode);
+        };
+
+        /**
+         * Registers the event handlers for the created objects.
+         */
+        var _registerHandlers = function() {
+        };
+
+        var __changePercentage = function(matchedObject, options) {
+            // retrieves the percentage value
+            var percentage = options["percentage"];
+
+            // sets the percentage in the progress indicator bar
+            $(".progress-indicator-bar", matchedObject).css("width",
+                    percentage + "%");
+
+            // sets the percentage value in the indicator
+            $(".progress-indicator-value", matchedObject).html(percentage + "%");
+
+            // in case the percentage is bigger than the minimum
+            if (percentage > 55) {
+                $(".progress-indicator-value", matchedObject).addClass("white");
+            }
+        };
+
+        // switches over the method
+        switch (method) {
+            case "change" :
+                __changePercentage(matchedObject, options);
+                break;
+
+            case "default" :
+                // initializes the plugin
+                initialize();
+                break;
+        }
+
+        // returns the object
+        return this;
+    };
+})(jQuery);
+
+(function($) {
     $.fn.overlay = function(method, options) {
         // the default values for the menu
         var defaults = {};

@@ -230,6 +230,9 @@
             // creates the date field components
             $("div.date-field", matchedObject).datefield();
 
+            // creates the progress indicator components
+            $("div.progress-indicator", matchedObject).progressindicator();
+
             // creates the dropbox components
             $("div.dropbox", matchedObject).dropbox();
 

@@ -873,9 +873,13 @@ table .dropbox {
 .progress-indicator-value {
     margin-top: -21px;
     text-align: center;
-    color: 1a1a1a;
+    color: #5193c2;
     font-size: 9pt;
     font-weight: bold;
+}
+
+.progress-indicator-value.white {
+    color: #ffffff;
 }
 
 /* Overlay */
