@@ -13,7 +13,7 @@
         <li target_request="plugins"><span>Plugins</span></li>
         <li target_request="capabilities"><span>Capabilities</span></li>
     </ul>
-    <h1 id="info">Status</h1>
+    <h1 id="status">Status</h1>
     <div class="widget-table">
         <table>
             <tr>
@@ -41,5 +41,9 @@
                 <td class="value dark-blue bold">${out_none value=uptime xml_escape=True /}</td>
             </tr>
         </table>
+    </div>
+    <h1 id="did-you-know">Did you know</h1>
+    <div class="widget-text">
+        <p>${out_none value=did_you_know xml_escape=True /}</p>
     </div>
 </div>
