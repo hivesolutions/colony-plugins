@@ -1,11 +1,8 @@
 <tbody id="company-table-body">
-${foreach item=company from=companies_page.companies}
+${foreach item=plugin from=plugins}
 <tr>
-    <td><a href="#companies/${out_none value=company.object_id xml_escape=True /}">${out_none value=company.name xml_escape=True /}</a></td>
-    <td>${out_none value=company.fiscal_id xml_escape=True /}</td>
-    <td>${out_none value=company.primary_contact_information.address xml_escape=True /}</td>
-    <td>${out_none value=company.last_invoice_issue_date xml_escape=True /}</td>
-    <td>${out_none value=company.next_invoice_due_date xml_escape=True /}</td>
+    <td><a href="#plugins/${out_none value=plugin.id xml_escape=True /}">${out_none value=plugin.id xml_escape=True /}</a></td>
+    <td><div class="switch-button ${if item=plugin.loaded value=True operator=eq}on${/if}${if item=plugin.loaded value=False operator=eq}off${/if}" plugin="${out_none value=plugin.id xml_escape=True /}"></div></td>
 </tr>
 ${/foreach}
 </tbody>

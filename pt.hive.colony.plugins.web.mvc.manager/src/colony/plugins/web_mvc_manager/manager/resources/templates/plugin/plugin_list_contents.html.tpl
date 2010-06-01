@@ -9,6 +9,12 @@
 <div id="contents">
     <h1>Configuration</h1>
     <h2>Plugins</h2>
+    <div class="search-field" id="search-list-field">
+        <div>
+            <input class="text" name="search_query" id="search-query" type="text" value="${out_none value=search_query /}"/>
+            <div class="search-button"></div>
+        </div>
+     </div>
     <table id="plugin-table" class="table" cellspacing="0" cellpadding="0">
         <thead>
             <tr>

@@ -359,6 +359,32 @@ class PluginController:
         # returns true
         return True
 
+    def handle_partial_list(self, rest_request, parameters = {}):
+        # returns in case the required permissions are not set
+        if not self.web_mvc_manager.require_permissions(self, rest_request):
+            return True
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("plugin_partial_list_contents.html.tpl")
+
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_manager_plugin.manager
+
+        # assigns the plugins to the template
+        template_file.assign("plugins", plugin_manager.get_all_plugins()[0:10])
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+        # returns true
+        return True
+
     def handle_change_status(self, rest_request, parameters = {}):
         # returns in case the required permissions are not set
         if not self.web_mvc_manager.require_permissions(self, rest_request):

@@ -24,6 +24,8 @@
 // __license__   = GNU General Public License (GPL), Version 3
 
 $(document).ready(function() {
+    var ENTER = 13;
+
     // sets the logic loaded data
     var logicLoaded = $("#contents").data("logicLoaded");
 
@@ -32,6 +34,42 @@ $(document).ready(function() {
         // returns immediately
         return
     }
+
+    var search = function() {
+        // retrieves the current search query value
+        var searchQuery = $("#search-query").attr("value");
+
+        // assembles the form data to submit with the search button click event
+        var searchButtonData = {
+            search_query : searchQuery
+        };
+
+        // processes the ajax request
+        $.ajax({
+                    url : "plugins/partial",
+                    type : "post",
+                    data : searchButtonData,
+                    success : function() {
+                        alert("sacou");
+                    }
+                });
+    }
+
+    // registers the handler for the next button
+    $("#search-query").keydown(function(event) {
+                var keyCode = event.keyCode;
+
+                if (keyCode == ENTER) {
+                    // performs the search
+                    search();
+                }
+            });
+
+    // registers the handler for the key event in the search query field
+    $("#search-query").keyup(function(event) {
+                // performs the search
+                search();
+            });
 
     $("#plugin-table .switch-button").bind("status_change",
             function(event, element, status) {
