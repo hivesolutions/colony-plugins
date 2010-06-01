@@ -56,6 +56,7 @@
     <div id="configuration-menu" class="drop-menu">
         <ul>
             <li><a href="#plugins">Plugins</a></li>
+            <li><a href="#capabilities">Capabilities</a></li>
         </ul>
         <hr/>
         <ul>

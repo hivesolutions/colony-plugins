@@ -44,7 +44,7 @@
             <div class="column-first">
                 ${foreach item=capability from=plugin.capabilities}
                 <div class="form-field">
-                    <label>${out_none value=capability xml_escape=True /}</label>
+                    <label><a href="#capabilities/${out_none value=capability xml_escape=True /}">${out_none value=capability xml_escape=True /}</a></label>
                 </div>
                 ${/foreach}
             </div>

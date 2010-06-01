@@ -357,22 +357,28 @@ class CapabilityController:
         # in case the encoder name is ajax
         if rest_request.encoder_name == AJAX_ENCODER_NAME:
             # retrieves the template file
-            template_file = self.retrieve_template_file("plugin_edit_contents.html.tpl")
+            template_file = self.retrieve_template_file("capability_edit_contents.html.tpl")
         else:
             # retrieves the template file
             template_file = self.retrieve_template_file("../general.html.tpl")
 
             # sets the page to be included
-            template_file.assign("page_include", "plugin/plugin_edit_contents.html.tpl")
+            template_file.assign("page_include", "capability/capability_edit_contents.html.tpl")
 
             # sets the side panel to be included
             template_file.assign("side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
-        # retrieves the specified plugin
-        plugin = self._get_plugin(rest_request)
+        # retrieves the specified capability
+        capability = self._get_capability(rest_request)
 
-        # assigns the plugin to the template
-        template_file.assign("plugin", plugin)
+        # retrieves the plugins map for the capability
+        plugins_capability = self._get_plugins_capability(capability)
+
+        # assigns the capability to the template
+        template_file.assign("capability", capability)
+
+        # assigns the plugins capability to the template
+        template_file.assign("plugins_capability", plugins_capability)
 
         # assigns the session variables to the template file
         self.assign_session_template_file(rest_request, template_file)
@@ -405,12 +411,8 @@ class CapabilityController:
             # sets the side panel to be included
             template_file.assign("side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
-        # retrieves the plugin manager
-        plugin_manager = self.web_mvc_manager_plugin.manager
-
-        capabilities = plugin_manager.capabilities_plugin_instances_map.keys()
-
-        capabilities.sort()
+        # retrieves the capabilities
+        capabilities = self._get_capabilities()
 
         # assigns the plugins to the template
         template_file.assign("capabilities", capabilities)
@@ -427,8 +429,32 @@ class CapabilityController:
         # returns true
         return True
 
+    def _get_capabilities(self):
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_manager_plugin.manager
+
+        # retrieves all the capabilities
+        capabilities = plugin_manager.capabilities_plugin_instances_map.keys()
+
+        # sorts all the capabilities
+        capabilities.sort()
+
+        return capabilities
+
     def _get_capability(self, rest_request):
         # retrieves the capability from the rest request's path list
         capability = rest_request.path_list[-1]
 
         return capability
+
+    def _get_plugins_capability(self, capability):
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_manager_plugin.manager
+
+        # retrieves the plugins providing the capability
+        plugins_offering = plugin_manager.capabilities_plugin_instances_map.get(capability, [])
+
+        # retrieves the plugins allowing the capability
+        plugins_allowing = plugin_manager.capabilities_plugins_map.get(capability, [])
+
+        return {"providing" : plugins_offering, "allowing" : plugins_allowing}
