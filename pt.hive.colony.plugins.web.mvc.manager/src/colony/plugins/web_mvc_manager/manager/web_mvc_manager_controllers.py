@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import copy
+
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding value """
 
@@ -51,6 +53,18 @@ AJAX_ENCODER_NAME = "ajx"
 
 JSON_ENCODER_NAME = "json"
 """ The json encoder name """
+
+LOAD_VALUE = "load"
+""" The load value """
+
+UNLOAD_VALUE = "unload"
+""" The unload value """
+
+LOADED_VALUE = "loaded"
+""" The loaded value """
+
+UNLOADED_VALUE = "unloaded"
+""" The unloaded value """
 
 class SidePanelController:
     """
@@ -392,28 +406,38 @@ class PluginController:
         plugin_id = form_data_map["plugin_id"]
         plugin_status = form_data_map["plugin_status"]
 
-        import copy
+        # retrieves the (beginning) list of loaded plugins
+        loaded_plugins_beginning = copy.copy(plugin_manager.get_all_loaded_plugins())
 
-        all_loaded_plugins_initial = copy.copy(plugin_manager.get_all_loaded_plugins())
-
-        if plugin_status == "load":
+        # in case the plugin status is load
+        if plugin_status == LOAD_VALUE:
+            # loads the plugin for the given plugin id
             plugin_manager.load_plugin(plugin_id)
-        elif plugin_status == "unload":
+        # in case the plugin status in unload
+        elif plugin_status == UNLOAD_VALUE:
+            # unloads the plugin for the given plugin id
             plugin_manager.unload_plugin(plugin_id)
 
-        all_loaded_plugins = plugin_manager.get_all_loaded_plugins()
+        # retrieves the (end) list of loaded plugins
+        loaded_plugins_end = plugin_manager.get_all_loaded_plugins()
 
-        map = {"unloaded" : [], "loaded" : []}
+        # creates the delta plugin status map
+        delta_plugin_status_map = {UNLOADED_VALUE : [], LOADED_VALUE : []}
 
-        for loaded_plugin_initial in all_loaded_plugins_initial:
-            if not loaded_plugin_initial in all_loaded_plugins:
-                map["unloaded"].append(loaded_plugin_initial.id)
+        # iterates over all the plugins loaded at the beginning
+        # to check if they exist in the current loaded plugins
+        for loaded_plugin_beginning in loaded_plugins_beginning:
+            if not loaded_plugin_beginning in loaded_plugins_end:
+                delta_plugin_status_map[UNLOADED_VALUE].append(loaded_plugin_beginning.id)
 
-        for loaded_plugin in all_loaded_plugins:
-            if not loaded_plugin in all_loaded_plugins_initial:
-                map["loaded"].append(loaded_plugin.id)
+        # iterates over all the plugins loaded at the end
+        # to check if they exist in the previously loaded plugins
+        for loaded_plugin_end in loaded_plugins_end:
+            if not loaded_plugin_end in loaded_plugins_beginning:
+                delta_plugin_status_map[LOADED_VALUE].append(loaded_plugin_end.id)
 
-        return map
+        # returns the delta plugin status map
+        return delta_plugin_status_map
 
 class CapabilityController:
     """
