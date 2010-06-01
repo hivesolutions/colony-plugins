@@ -458,12 +458,18 @@ class CapabilityController:
         plugin_manager = self.web_mvc_manager_plugin.manager
 
         # retrieves the plugins providing the capability
-        plugins_offering = plugin_manager.capabilities_plugin_instances_map.get(capability, [])
+        plugins_offering = list(set(plugin_manager.capabilities_plugin_instances_map.get(capability, [])))
 
         # retrieves the plugins allowing the capability
-        plugins_allowing = plugin_manager.capabilities_plugins_map.get(capability, [])
+        plugins_allowing = list(set(plugin_manager.capabilities_plugins_map.get(capability, [])))
 
-        return {"providing" : plugins_offering, "allowing" : plugins_allowing}
+        # creates an unique set of plugins offering the capability
+        plugins_offering_unique = set(plugins_offering)
+
+        # creates an unique set of plugins allowing the capability
+        plugins_allowing_unique = set(plugins_allowing)
+
+        return {"providing" : plugins_offering_unique, "allowing" : plugins_allowing_unique}
 
     def _get_sub_capabilities(self, capability):
         # retrieves the plugin manager
