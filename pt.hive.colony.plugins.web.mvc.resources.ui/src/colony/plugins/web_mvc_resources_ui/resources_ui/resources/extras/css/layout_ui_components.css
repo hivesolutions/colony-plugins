@@ -31,8 +31,14 @@
 
 /* Global */
 .absolute {
-    position: absolute;
-    z-index: 2;
+    position: absolute !important;
+    z-index: 2 !important;
+}
+
+.center {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    float: none !important;
 }
 
 /* Forms */
