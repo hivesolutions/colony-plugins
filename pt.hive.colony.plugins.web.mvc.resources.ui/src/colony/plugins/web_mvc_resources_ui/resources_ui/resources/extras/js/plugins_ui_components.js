@@ -165,25 +165,32 @@
          */
         var _registerHandlers = function() {
             $(matchedObject).click(function(event) {
-                        // retrieves the switch button
-                        var switchButton = $(this);
+                // retrieves the switch button
+                var switchButton = $(this);
 
-                        // in case the swirch button contains the
-                        // on class
-                        if (switchButton.hasClass("on")) {
-                            // removes the on class from the switch button
-                            switchButton.removeClass("on");
+                // in case the swirch button contains the
+                // on class
+                if (switchButton.hasClass("on")) {
+                    // removes the on class from the switch button
+                    switchButton.removeClass("on");
 
-                            // adds the off class to the switch button
-                            switchButton.addClass("off");
-                        } else {
-                            // removes the off class from the switch button
-                            switchButton.removeClass("off");
+                    // adds the off class to the switch button
+                    switchButton.addClass("off");
 
-                            // adds the on class to the switch button
-                            switchButton.addClass("on");
-                        }
-                    });
+                    // triggers the status change event
+                    switchButton.trigger("status_change",
+                            [switchButton, "off"]);
+                } else {
+                    // removes the off class from the switch button
+                    switchButton.removeClass("off");
+
+                    // adds the on class to the switch button
+                    switchButton.addClass("on");
+
+                    // triggers the status change event
+                    switchButton.trigger("status_change", [switchButton, "on"]);
+                }
+            });
         };
 
         // initializes the plugin
