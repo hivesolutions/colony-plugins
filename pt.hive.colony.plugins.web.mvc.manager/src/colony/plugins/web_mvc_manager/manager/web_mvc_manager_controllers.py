@@ -49,6 +49,9 @@ TEMPLATES_PATH = WEB_MVC_MANAGER_RESOURCES_PATH + "/templates"
 AJAX_ENCODER_NAME = "ajx"
 """ The ajax encoder name """
 
+JSON_ENCODER_NAME = "json"
+""" The json encoder name """
+
 class SidePanelController:
     """
     The side panel controller.
@@ -106,6 +109,9 @@ class SidePanelController:
         # retrieves the template file
         template_file = self.retrieve_template_file("side_panel_configuration.html.tpl")
 
+        # assigns the configuration variables
+        self._assign_configuration_variables(template_file)
+
         # applies the base path to the template file
         self.apply_base_path_template_file(rest_request, template_file)
 
@@ -114,6 +120,46 @@ class SidePanelController:
 
         # returns true
         return True
+
+    def _assign_configuration_variables(self, template_file):
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_manager_plugin.manager
+
+        # assigns the plugin count to the template
+        template_file.assign("plugin_count", len(plugin_manager.get_all_plugins()))
+
+        # assigns the plugin loaded count to the template
+        template_file.assign("plugin_loaded_count", len(plugin_manager.get_all_loaded_plugins()))
+
+        # assigns the capabilities count to the template
+        template_file.assign("capabilities_count", len(plugin_manager.capabilities_plugins_map))
+
+        import psutil
+        import os
+        import time
+
+        pid = os.getpid()
+
+        process = psutil.Process(pid)
+
+        memory_usage = process.get_memory_info()[0] / 1048576
+
+        cpu_usage = process.get_cpu_percent()
+
+        # assigns the memory usage to the template
+        template_file.assign("memory_usage", memory_usage)
+
+        # assigns the cpu usage to the template
+        template_file.assign("cpu_usage", cpu_usage)
+
+        current_time = time.time()
+
+        uptime = current_time - plugin_manager.plugin_manager_timestamp
+
+        uptime_string = str(int(uptime)) + "s"
+
+        # assigns the uptime to the template
+        template_file.assign("uptime", uptime_string)
 
 class PluginController:
     """
@@ -278,6 +324,9 @@ class PluginController:
             # sets the side panel to be included
             template_file.assign("side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
+            # assigns the configuration (side panel) variable to the template
+            self.web_mvc_manager.web_mvc_manager_side_panel_controller._assign_configuration_variables(template_file)
+
         # retrieves the plugin manager
         plugin_manager = self.web_mvc_manager_plugin.manager
 
@@ -296,6 +345,30 @@ class PluginController:
         # returns true
         return True
 
+    def handle_change_status(self, rest_request, parameters = {}):
+        # returns in case the required permissions are not set
+        if not self.web_mvc_manager.require_permissions(self, rest_request):
+            return True
+
+        # in case the encoder name is ajax
+        if rest_request.encoder_name == JSON_ENCODER_NAME:
+            # changes the plugin status and retrieves the result
+            change_status_plugin_result = self._change_status_plugin(rest_request)
+
+            # retrieves the json plugin
+            json_plugin = self.web_mvc_manager_plugin.json_plugin
+
+            # serializes the change status result using the json plugin
+            serialized_status = json_plugin.dumps(change_status_plugin_result)
+
+            # sets the serialized status as the rest request contents
+            self.set_contents(rest_request, serialized_status)
+
+            return True
+
+        # returns true
+        return True
+
     def _get_plugin(self, rest_request):
         # retrieves the plugin manager
         plugin_manager = self.web_mvc_manager_plugin.manager
@@ -307,6 +380,40 @@ class PluginController:
         plugin = plugin_manager._get_plugin_by_id(plguin_id)
 
         return plugin
+
+    def _change_status_plugin(self, rest_request):
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_manager_plugin.manager
+
+        # processes the form data
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # partitions the form data
+        plugin_id = form_data_map["plugin_id"]
+        plugin_status = form_data_map["plugin_status"]
+
+        import copy
+
+        all_loaded_plugins_initial = copy.copy(plugin_manager.get_all_loaded_plugins())
+
+        if plugin_status == "load":
+            plugin_manager.load_plugin(plugin_id)
+        elif plugin_status == "unload":
+            plugin_manager.unload_plugin(plugin_id)
+
+        all_loaded_plugins = plugin_manager.get_all_loaded_plugins()
+
+        map = {"unloaded" : [], "loaded" : []}
+
+        for loaded_plugin_initial in all_loaded_plugins_initial:
+            if not loaded_plugin_initial in all_loaded_plugins:
+                map["unloaded"].append(loaded_plugin_initial.id)
+
+        for loaded_plugin in all_loaded_plugins:
+            if not loaded_plugin in all_loaded_plugins_initial:
+                map["loaded"].append(loaded_plugin.id)
+
+        return map
 
 class CapabilityController:
     """

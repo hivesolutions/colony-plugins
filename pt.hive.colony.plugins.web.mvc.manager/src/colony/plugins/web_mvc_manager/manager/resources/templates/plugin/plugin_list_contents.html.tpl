@@ -20,7 +20,7 @@
             ${foreach item=plugin from=plugins}
             <tr>
                 <td><a href="#plugins/${out_none value=plugin.id xml_escape=True /}">${out_none value=plugin.id xml_escape=True /}</a></td>
-                <td><div class="switch-button ${if item=plugin.loaded value=True operator=eq}on${/if}${if item=plugin.loaded value=False operator=eq}off${/if}"></div></td>
+                <td><div class="switch-button ${if item=plugin.loaded value=True operator=eq}on${/if}${if item=plugin.loaded value=False operator=eq}off${/if}" plugin="${out_none value=plugin.id xml_escape=True /}"></div></td>
             </tr>
             ${/foreach}
         </tbody>

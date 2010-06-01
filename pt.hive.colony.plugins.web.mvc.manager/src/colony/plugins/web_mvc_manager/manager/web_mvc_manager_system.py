@@ -118,7 +118,8 @@ class WebMvcManager:
                 r"^web_mvc_manager/side_panel/configuration$" : self.web_mvc_manager_side_panel_controller.handle_configuration,
                 r"^web_mvc_manager/plugins$" : self.web_mvc_manager_plugin_controller.handle_list,
                 r"^web_mvc_manager/plugins/new$" : self.web_mvc_manager_plugin_controller.handle_new,
-                r"^web_mvc_manager/plugins/[a-zA-Z0-9\._]+$" : self.web_mvc_manager_plugin_controller.handle_show,
+                r"^web_mvc_manager/plugins/change_status$" : self.web_mvc_manager_plugin_controller.handle_change_status,
+                #r"^web_mvc_manager/plugins/[a-zA-Z0-9\._]+$" : self.web_mvc_manager_plugin_controller.handle_show,
                 r"^web_mvc_manager/capabilities$" : self.web_mvc_manager_capability_controller.handle_list,
                 r"^web_mvc_manager/capabilities/[a-zA-Z0-9\._]+$" : self.web_mvc_manager_capability_controller.handle_show}
 
@@ -152,9 +153,6 @@ class WebMvcManager:
         return {r"^web_mvc_manager/resources/.+$" : (web_mvc_manager_plugin_path + "/" + EXTRAS_PATH, "web_mvc_manager/resources"),
                 r"^web_mvc_manager/resources_base/.+$" : (web_mvc_resources_base_plugin_resources_path, "web_mvc_manager/resources_base"),
                 r"^web_mvc_manager/resources_ui/.+$" : (web_mvc_resources_ui_plugin_resources_path, "web_mvc_manager/resources_ui")}
-
-        #return {r"^web_mvc_manager/?$" : "c:/tobias",
-        #        r"^web_mvc_manager/index$" : self.take_the_bill_main_controller.handle_take_the_bill_index}
 
     def require_permissions(self, controller, rest_request, permissions_list = [], base_path = None):
         """
