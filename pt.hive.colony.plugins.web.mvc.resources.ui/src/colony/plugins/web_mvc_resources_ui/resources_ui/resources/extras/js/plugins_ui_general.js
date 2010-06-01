@@ -227,6 +227,9 @@
             // creates the button components
             $("div.button", matchedObject).button();
 
+            // creates the switch button components
+            $("div.switch-button", matchedObject).switchbutton();
+
             // creates the date field components
             $("div.date-field", matchedObject).datefield();
 

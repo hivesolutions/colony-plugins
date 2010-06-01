@@ -126,6 +126,75 @@
 })(jQuery);
 
 (function($) {
+    $.fn.switchbutton = function(options) {
+        // the default values for the menu
+        var defaults = {};
+
+        // sets the default options value
+        var options = options ? options : {};
+
+        // constructs the options
+        var options = $.extend(defaults, options);
+
+        // sets the jquery matched object
+        var matchedObject = this;
+
+        /**
+         * Initializer of the plugin, runs the necessary functions to initialize
+         * the structures.
+         */
+        var initialize = function() {
+            _appendHtml();
+            _registerHandlers();
+        };
+
+        /**
+         * Creates the necessary html for the component.
+         */
+        var _appendHtml = function() {
+            // creates the string with the html code
+            var htmlCode = "<div class=\"switch-button-cursor\"></div>"
+                    + "<div class=\"clear\"></div>"
+
+            // appends the html code to the matched object
+            matchedObject.append(htmlCode);
+        };
+
+        /**
+         * Registers the event handlers for the created objects.
+         */
+        var _registerHandlers = function() {
+            $(matchedObject).click(function(event) {
+                        // retrieves the switch button
+                        var switchButton = $(this);
+
+                        // in case the swirch button contains the
+                        // on class
+                        if (switchButton.hasClass("on")) {
+                            // removes the on class from the switch button
+                            switchButton.removeClass("on");
+
+                            // adds the off class to the switch button
+                            switchButton.addClass("off");
+                        } else {
+                            // removes the off class from the switch button
+                            switchButton.removeClass("off");
+
+                            // adds the on class to the switch button
+                            switchButton.addClass("on");
+                        }
+                    });
+        };
+
+        // initializes the plugin
+        initialize();
+
+        // returns the object
+        return this;
+    };
+})(jQuery);
+
+(function($) {
     $.fn.datefield = function(options) {
         // the default values for the menu
         var defaults = {
@@ -299,7 +368,7 @@
                     });
 
             dateFieldButton.click(function(event) {
-                        // retireves the parent date field
+                        // retrieves the parent date field
                         var dateField = $(this).parents(".date-field");
 
                         // retrieves the current date
@@ -330,7 +399,7 @@
                     });
 
             dateFieldHeaderButtonNext.click(function(event) {
-                        // retireves the parent date field
+                        // retrieves the parent date field
                         var dateField = $(this).parents(".date-field");
 
                         // retrieves the current date
@@ -359,7 +428,7 @@
                     });
 
             dateFieldHeaderButtonPrevious.click(function(event) {
-                        // retireves the parent date field
+                        // retrieves the parent date field
                         var dateField = $(this).parents(".date-field");
 
                         // retrieves the current date
@@ -388,7 +457,7 @@
                     });
 
             dateFieldFooterButtonToday.click(function(event) {
-                        // retireves the parent date field
+                        // retrieves the parent date field
                         var dateField = $(this).parents(".date-field");
 
                         // retrieves the current date
@@ -770,7 +839,7 @@
          */
         var _registerHandlers = function() {
             matchedObject.keydown(function(event) {
-                // retireves the dropbox
+                // retrieves the dropbox
                 var dropbox = $(this);
 
                 // retrieves the dropbox contents selected list element
@@ -815,7 +884,7 @@
             });
 
             $(".dropbox-text-input", matchedObject).focus(function() {
-                        // retireves the parent dropbox
+                        // retrieves the parent dropbox
                         var dropbox = $(this).parents(".dropbox");
 
                         // adds the active class from the dropbox
@@ -823,7 +892,7 @@
                     });
 
             $(".dropbox-text-input", matchedObject).blur(function() {
-                        // retireves the parent dropbox
+                        // retrieves the parent dropbox
                         var dropbox = $(this).parents(".dropbox");
 
                         // removes the active class from the dropbox
@@ -831,7 +900,7 @@
                     });
 
             $(".dropbox-text-field", matchedObject).click(function() {
-                        // retireves the parent dropbox
+                        // retrieves the parent dropbox
                         var dropbox = $(this).parents(".dropbox");
 
                         // retrieves the dropbox contents
@@ -855,7 +924,7 @@
                         // retrieves the list element
                         var listElement = $(this);
 
-                        // retireves the parent dropbox
+                        // retrieves the parent dropbox
                         var dropbox = listElement.parents(".dropbox");
 
                         // changes the selection to the given list element
@@ -886,7 +955,7 @@
             // retrieves the current offset
             var currentOffset = listElement.offset();
 
-            // retireves the parent dropbox
+            // retrieves the parent dropbox
             var dropbox = listElement.parents(".dropbox");
 
             // retrieves the dropbox contents
@@ -1036,7 +1105,7 @@
          */
         var _registerHandlers = function() {
             $(".message-button", matchedObject).click(function(event) {
-                        // retireves the parent message
+                        // retrieves the parent message
                         var message = $(this).parents(".message");
 
                         // toggles the message

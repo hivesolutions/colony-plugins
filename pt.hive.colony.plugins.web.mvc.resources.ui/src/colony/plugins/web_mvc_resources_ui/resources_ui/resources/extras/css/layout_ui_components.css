@@ -76,7 +76,7 @@ form {
 
 /* Input */
 input {
-    background: url(../images/components/text-field/text-field-background.png) #ffffff left top repeat-x;
+    background: url(../images/components/text_field/text-field-background.png) #ffffff left top repeat-x;
     height: 17px;
     width: 100%;
     border: 1px solid #ccdeeb;
@@ -112,7 +112,7 @@ table input {
 
 /* Text Area */
 textarea {
-    background: url(../images/components/text-field/text-field-background.png) #ffffff left top repeat-x;
+    background: url(../images/components/text_field/text-field-background.png) #ffffff left top repeat-x;
     height: 77px;
     width: 100%;
     border: 1px solid #ccdeeb;
@@ -248,6 +248,40 @@ textarea.invalid {
     margin: 12px 10px 0px 0px;
 }
 
+/* Switch Button */
+.switch-button {
+    height: 18px;
+    width: 42px;
+    cursor: pointer;
+}
+
+.switch-button.on {
+    background: url(../images/components/switch_button/switch-button-on-background.png) center center no-repeat;
+    height: 18px;
+    width: 42px;
+}
+
+.switch-button.off {
+    background: url(../images/components/switch_button/switch-button-off-background.png) center center no-repeat;
+    height: 18px;
+    width: 42px;
+}
+
+.switch-button-cursor {
+    background: url(../images/components/switch_button/switch-button-cursor.png) center center no-repeat;
+    height: 16px;
+    width: 16px;
+    margin: 1px;
+}
+
+.on .switch-button-cursor {
+    float: right;
+}
+
+.off .switch-button-cursor {
+    float: left;
+}
+
 /* Table */
 table.table {
     width: 100%;
@@ -303,12 +337,12 @@ table.table {
 
 /* Search Field */
 .search-field {
+    background: url(../images/components/text_field/text-field-background.png) #ffffff center top repeat-x;
     float: right;
     height: 24px;
     margin-top: 5px;
     margin-right: 3px;
     overflow: visible;
-    background: url(../images/components/text-field/text-field-background.png) #ffffff center top repeat-x;
 }
 
 .search-field input {
