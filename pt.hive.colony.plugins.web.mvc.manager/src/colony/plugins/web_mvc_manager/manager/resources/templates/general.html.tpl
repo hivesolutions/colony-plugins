@@ -1,6 +1,6 @@
 ${include file="doctype.html.tpl" /}
 <head>
-    <title>Take the Bill - billing made easy</title>
+    <title>Colony Framework - Manager</title>
     ${include file="includes.html.tpl" /}
 </head>
 <body>

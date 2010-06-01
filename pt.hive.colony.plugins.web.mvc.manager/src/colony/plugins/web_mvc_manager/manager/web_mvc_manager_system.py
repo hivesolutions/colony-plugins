@@ -68,6 +68,9 @@ class WebMvcManager:
     web_mvc_manager_plugin_controller = None
     """ The web mvc manager plugin controller """
 
+    web_mvc_manager_capability_controller = None
+    """ The web mvc manager capability controller """
+
     def __init__(self, web_mvc_manager_plugin):
         """
         Constructor of the class.
@@ -96,6 +99,9 @@ class WebMvcManager:
         # creates the web mvc manager plugin controller
         self.web_mvc_manager_plugin_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_controllers.PluginController, [self.web_mvc_manager_plugin, self], {})
 
+        # creates the web mvc manager capability controller
+        self.web_mvc_manager_capability_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_controllers.CapabilityController, [self.web_mvc_manager_plugin, self], {})
+
     def get_patterns(self):
         """
         Retrieves the map of regular expressions to be used as patters,
@@ -111,7 +117,10 @@ class WebMvcManager:
                 r"^web_mvc_manager/index$" : self.web_mvc_manager_main_controller.handle_web_mvc_manager_index,
                 r"^web_mvc_manager/side_panel/configuration$" : self.web_mvc_manager_side_panel_controller.handle_configuration,
                 r"^web_mvc_manager/plugins$" : self.web_mvc_manager_plugin_controller.handle_list,
-                r"^web_mvc_manager/plugins/new$" : self.web_mvc_manager_plugin_controller.handle_new}
+                r"^web_mvc_manager/plugins/new$" : self.web_mvc_manager_plugin_controller.handle_new,
+                r"^web_mvc_manager/plugins/[a-zA-Z0-9\._]+$" : self.web_mvc_manager_plugin_controller.handle_show,
+                r"^web_mvc_manager/capabilities$" : self.web_mvc_manager_capability_controller.handle_list,
+                r"^web_mvc_manager/capabilities/[a-zA-Z0-9\._]+$" : self.web_mvc_manager_capability_controller.handle_show}
 
     def get_resource_patterns(self):
         # estes sao os patterns para serem enviados para
@@ -146,6 +155,49 @@ class WebMvcManager:
 
         #return {r"^web_mvc_manager/?$" : "c:/tobias",
         #        r"^web_mvc_manager/index$" : self.take_the_bill_main_controller.handle_take_the_bill_index}
+
+    def require_permissions(self, controller, rest_request, permissions_list = [], base_path = None):
+        """
+        Requires the permissions in the given permissions list to be set.
+        In case the requirements are not met the request is redirected or an
+        error message is sent.
+
+        @type controller: Controller
+        @param controller: The controller being validated.
+        @type rest_request: RestRequest
+        @param rest_request: The rest request to be updated.
+        @type permissions_list: List
+        @param permissions_list: The list of permission to be validated.
+        @type base_path: String
+        @param base_path: The base path to be used as prefix in the url.
+        """
+
+#        # retrieves the login session attribute
+#        login = controller.get_session_attribute(rest_request, "login")
+#
+#        # in case the login is not set
+#        if not login:
+#            # in case the encoder name is ajax
+#            if rest_request.encoder_name == AJAX_ENCODER_NAME:
+#                # sets the contents
+#                controller.set_contents(rest_request, "not enough permissions - access denied")
+#            else:
+#                # in case the base path is not defined
+#                if not base_path:
+#                    # retrieves the base path from the rest request
+#                    base_path = controller.get_base_path(rest_request)
+#
+#                # redirects the request
+#                rest_request.redirect(base_path + "signin")
+#
+#                # sets the contents (null)
+#                controller.set_contents(rest_request)
+#
+#            # returns false
+#            return False
+
+        # returns true
+        return True
 
 class WebMvcManagerMainController:
     """

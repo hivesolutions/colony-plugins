@@ -11,5 +11,6 @@
     <h1 id="lists">Lists</h1>
     <ul id="lists">
         <li target_request="plugins"><span>Plugins</span></li>
+        <li target_request="capabilities"><span>Capabilities</span></li>
     </ul>
 </div>
