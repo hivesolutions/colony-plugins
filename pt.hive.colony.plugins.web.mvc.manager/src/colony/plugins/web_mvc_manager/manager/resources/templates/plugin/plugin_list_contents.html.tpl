@@ -18,8 +18,8 @@
     <table id="plugin-table" class="table" cellspacing="0" cellpadding="0">
         <thead>
             <tr>
-                <th><span>Plugin ID</span> <span class="order-down"></span></th>
-                <th><span>Status</span> <span class="order-down-inactive"></span></th>
+                <th><span>Plugin ID</span><span class="order-down"></span></th>
+                <th width="60"><span>Status</span><span class="order-down-inactive"></span></th>
             </tr>
         </thead>
         <tbody>
@@ -33,10 +33,4 @@
         <tfoot>
         </tfoot>
     </table>
-    <div class="pagging-area">
-        <a id="previous-button" class="control-button">Previous</a>
-        <span id="page-indicator">
-        </span>
-        <a id="next-button" class="control-button">Next</a>
-    </div>
 </div>

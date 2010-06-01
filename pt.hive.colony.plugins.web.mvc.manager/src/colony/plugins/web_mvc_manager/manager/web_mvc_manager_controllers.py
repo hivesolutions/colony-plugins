@@ -367,11 +367,8 @@ class PluginController:
         # retrieves the template file
         template_file = self.retrieve_template_file("plugin_partial_list_contents.html.tpl")
 
-        # retrieves the plugin manager
-        plugin_manager = self.web_mvc_manager_plugin.manager
-
         # assigns the plugins to the template
-        template_file.assign("plugins", plugin_manager.get_all_plugins()[0:10])
+        template_file.assign("plugins", self._get_fitered_plugins(rest_request))
 
         # assigns the session variables to the template file
         self.assign_session_template_file(rest_request, template_file)
@@ -421,6 +418,26 @@ class PluginController:
 
         return plugin
 
+    def _get_fitered_plugins(self, rest_request):
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_manager_plugin.manager
+
+        # processes the form data
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the form data attributes
+        search_query = form_data_map["search_query"]
+
+        loaded_plugins = plugin_manager.get_all_loaded_plugins()
+
+        filtered_plugins = []
+
+        for loaded_plugin in loaded_plugins:
+            if not loaded_plugin.id.find(search_query) == -1:
+                filtered_plugins.append(loaded_plugin)
+
+        return filtered_plugins
+
     def _change_status_plugin(self, rest_request):
         # retrieves the plugin manager
         plugin_manager = self.web_mvc_manager_plugin.manager
@@ -428,7 +445,7 @@ class PluginController:
         # processes the form data
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
-        # partitions the form data
+        # retrieves the form data attributes
         plugin_id = form_data_map["plugin_id"]
         plugin_status = form_data_map["plugin_status"]
 

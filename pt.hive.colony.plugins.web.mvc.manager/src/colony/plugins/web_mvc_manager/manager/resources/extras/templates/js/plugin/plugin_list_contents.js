@@ -24,6 +24,7 @@
 // __license__   = GNU General Public License (GPL), Version 3
 
 $(document).ready(function() {
+    // the enter key code
     var ENTER = 13;
 
     // sets the logic loaded data
@@ -46,13 +47,98 @@ $(document).ready(function() {
 
         // processes the ajax request
         $.ajax({
-                    url : "plugins/partial",
-                    type : "post",
-                    data : searchButtonData,
-                    success : function() {
-                        alert("sacou");
-                    }
-                });
+            url : "plugins/partial",
+            type : "post",
+            data : searchButtonData,
+            success : function(data) {
+                // retrieves the table body data
+                var tableBody = $("tbody", $(data));
+
+                console.info(data);
+
+                // removes the metadata components
+                $("#contents #meta-data").remove();
+
+                // replaces the table body contents
+                $("#plugin-table > tbody").replaceWith(tableBody);
+
+                // creates the switch buttons for the table
+                $("#plugin-table .switch-button").switchbutton();
+
+                $("#plugin-table .switch-button").bind("status_change",
+                        function(event, element, status) {
+                            // retrieves the switch button
+                            var switchButton = $(this);
+
+                            // retrieves the plugin id from the switch button
+                            var pluginId = switchButton.attr("plugin");
+
+                            // retrieves the plugin status, from the stauts of the switch button
+                            var pluginStatus = status == "on"
+                                    ? "load"
+                                    : "unload";
+
+                            // retrieves the oposite status
+                            var opositeStatus = status == "on" ? "off" : "on";
+
+                            switchButton.removeClass(status);
+                            switchButton.addClass(opositeStatus);
+
+                            $.ajax({
+                                url : "plugins/change_status.json",
+                                type : "post",
+                                data : {
+                                    plugin_id : pluginId,
+                                    plugin_status : pluginStatus
+                                },
+                                success : function(data) {
+                                    // parses the data (json) retrieving the status
+                                    var status = $.parseJSON(data);
+
+                                    // retrieves the unloaded plugins
+                                    var unloadedPlugins = status["unloaded"];
+
+                                    $(unloadedPlugins).each(
+                                            function(index, element) {
+                                                var switchButtonElement = $("#plugin-table .switch-button[plugin="
+                                                        + element + "]");
+                                                switchButtonElement.removeClass("on");
+                                                switchButtonElement.addClass("off");
+
+                                                $("#notification-area-contents").notificationwindow(
+                                                        "default", {
+                                                            "title" : "<span class=\"red\">Plugin Unloaded</span>",
+                                                            "subTitle" : "",
+                                                            "message" : element,
+                                                            "timeout" : 5000
+                                                        });
+                                            });
+
+                                    // retrieves the loaded plugins
+                                    var loadedPlugins = status["loaded"];
+
+                                    $(loadedPlugins).each(
+                                            function(index, element) {
+                                                var switchButtonElement = $("#plugin-table .switch-button[plugin="
+                                                        + element + "]");
+                                                switchButtonElement.removeClass("off");
+                                                switchButtonElement.addClass("on");
+
+                                                $("#notification-area-contents").notificationwindow(
+                                                        "default", {
+                                                            "title" : "<span class=\"green\">Plugin Loaded</span>",
+                                                            "subTitle" : "",
+                                                            "message" : element,
+                                                            "timeout" : 5000
+                                                        });
+                                            });
+                                }
+                            });
+                        });
+
+                $("#main-container").maincontainer("update");
+            }
+        });
     }
 
     // registers the handler for the next button
