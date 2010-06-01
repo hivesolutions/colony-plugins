@@ -756,3 +756,8 @@ h2 {
     background: none;
     border: none;
 }
+
+/* Search List Field */
+#search-list-field {
+    float: none;
+}
