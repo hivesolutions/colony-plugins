@@ -12,8 +12,8 @@
     <table id="plugin-table" class="table" cellspacing="0" cellpadding="0">
         <thead>
             <tr>
-                <th><span>Name</span> <span class="order-down-inactive"></span></th>
-                <th><span>Plugin Count</span> <span class="order-down-inactive"></span></th>
+                <th><span>Capability Name</span><span class="order-down-inactive"></span></th>
+                <th width="100"><span>Plugin Count</span><span class="order-down-inactive"></span></th>
             </tr>
         </thead>
         <tbody>
