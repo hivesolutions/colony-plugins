@@ -33,5 +33,5 @@
         <tfoot>
         </tfoot>
     </table>
-    <div class="button button-green center">More</div>
+    <div id="more-button" class="button button-green center">More</div>
 </div>

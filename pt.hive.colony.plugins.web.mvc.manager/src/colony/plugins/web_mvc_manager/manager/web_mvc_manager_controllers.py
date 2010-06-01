@@ -475,14 +475,20 @@ class PluginController:
         # retrieves the form data attributes
         search_query = form_data_map["search_query"]
 
-        loaded_plugins = plugin_manager.get_all_loaded_plugins()
+        # retrieves the plugins
+        plugins = plugin_manager.get_all_plugins()
 
+        # creates the filtered plugins list
         filtered_plugins = []
 
-        for loaded_plugin in loaded_plugins:
-            if not loaded_plugin.id.find(search_query) == -1:
-                filtered_plugins.append(loaded_plugin)
+        # iterates over all the plugins
+        for plugin in plugins:
+            # in case the search query is found in the plugin id
+            if not plugin.id.find(search_query) == -1:
+                # adds the plugin to the filtered plugins
+                filtered_plugins.append(plugin)
 
+        # returns the filtered plugins
         return filtered_plugins
 
     def _change_status_plugin(self, rest_request):
