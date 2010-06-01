@@ -565,11 +565,17 @@ h2 {
 #footer {
     height: 30px;
     width: 1000px;
-    margin: 10px auto 0px auto;
+    margin: 20px auto 0px auto;
     color: #86b4d4;
-    text-align: right;
+    text-align: center;
 }
 
+#footer a {
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+/* Paging area */
 .pagging-area {
     text-align: right;
     width: 100%;
