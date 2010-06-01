@@ -374,8 +374,22 @@ class PluginController:
         # retrieves the template file
         template_file = self.retrieve_template_file("plugin_partial_list_contents.html.tpl")
 
+        # retrieves the filtered plugins
+        filtered_plugins = self._get_fitered_plugins(rest_request)
+
+        partial_filtered_plugins, start_record, number_records, total_number_records = self._partial_filter(rest_request, filtered_plugins)
+
         # assigns the plugins to the template
-        template_file.assign("plugins", self._get_fitered_plugins(rest_request))
+        template_file.assign("plugins", partial_filtered_plugins)
+
+        # assigns the start record to the template
+        template_file.assign("start_record", start_record)
+
+        # assigns the number records to the template
+        template_file.assign("number_records", number_records)
+
+        # assigns the total number records to the template
+        template_file.assign("total_number_records", total_number_records)
 
         # assigns the session variables to the template file
         self.assign_session_template_file(rest_request, template_file)
@@ -412,6 +426,32 @@ class PluginController:
 
         # returns true
         return True
+
+    def _partial_filter(self, rest_request, contents_list):
+        # processes the form data
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the form data attributes
+        start_record = int(form_data_map["start_record"])
+        number_records = int(form_data_map["number_records"])
+
+        # retrieves the partial contents list
+        partial_contents_list = contents_list[start_record:start_record + number_records]
+
+        # retrieves the total number of records from the contents list
+        total_number_records = len(contents_list)
+
+        # in case the total number of records is smaller
+        # than the request number of records
+        if total_number_records < number_records:
+            # the number of records is set to the total number of records
+            number_records = total_number_records
+
+        # creates the filter contents tuple
+        filter_contents = (partial_contents_list, start_record, number_records, total_number_records)
+
+        # returns the filter contents tuple
+        return filter_contents
 
     def _get_plugin(self, rest_request):
         # retrieves the plugin manager

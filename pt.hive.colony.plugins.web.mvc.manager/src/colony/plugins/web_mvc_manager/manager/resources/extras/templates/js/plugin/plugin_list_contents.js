@@ -28,7 +28,7 @@ $(document).ready(function() {
     var ENTER = 13;
 
     // the number of record to be retrieved at each time
-    var NUMBER_RECORDS = 10;
+    var NUMBER_RECORDS = 15;
 
     // sets the logic loaded data
     var logicLoaded = $("#contents").data("logicLoaded");
@@ -43,7 +43,7 @@ $(document).ready(function() {
         // retrieves the current search query value
         var searchQuery = $("#search-query").attr("value");
 
-        currentFinalRecord = 10;
+        currentFinalRecord = 0;
 
         // assembles the form data to submit with the search button click event
         var searchButtonData = {

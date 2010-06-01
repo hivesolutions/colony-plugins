@@ -10,11 +10,8 @@
         </tbody>
     </table>
     <div id="meta-data">
-        <div id="start-record">${out value=companies_page.start_record xml_escape=True /}</div>
-        <div id="end-record">${out value=companies_page.end_record xml_escape=True /}</div>
-        <div id="number-records">${out value=companies_page.number_records xml_escape=True /}</div>
-        <div id="previous-start-record">${out value=companies_page.previous_start_record xml_escape=True /}</div>
-        <div id="next-start-record">${out value=companies_page.next_start_record xml_escape=True /}</div>
-        <div id="total-number-records">${out value=companies_page.total_number_records xml_escape=True /}</div>
+        <div id="start-record">${out value=start_record xml_escape=True /}</div>
+        <div id="number-records">${out value=number_records xml_escape=True /}</div>
+        <div id="total-number-records">${out value=total_number_records xml_escape=True /}</div>
     </div>
 </div>
