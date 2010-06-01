@@ -66,6 +66,12 @@ LOADED_VALUE = "loaded"
 UNLOADED_VALUE = "unloaded"
 """ The unloaded value """
 
+PROVIDING_VALUE = "providing"
+""" The providing value """
+
+ALLOWING_VALUE = "allowing"
+""" The allowing value """
+
 class SidePanelController:
     """
     The side panel controller.
@@ -156,6 +162,7 @@ class SidePanelController:
 
         process = psutil.Process(pid)
 
+        # calculates the memory usage in mega bytes
         memory_usage = process.get_memory_info()[0] / 1048576
 
         cpu_usage = process.get_cpu_percent()
@@ -643,7 +650,7 @@ class CapabilityController:
         # creates an unique set of plugins allowing the capability
         plugins_allowing_unique = set(plugins_allowing)
 
-        return {"providing" : plugins_offering_unique, "allowing" : plugins_allowing_unique}
+        return {PROVIDING_VALUE : plugins_offering_unique, ALLOWING_VALUE : plugins_allowing_unique}
 
     def _get_sub_capabilities(self, capability):
         # retrieves the plugin manager

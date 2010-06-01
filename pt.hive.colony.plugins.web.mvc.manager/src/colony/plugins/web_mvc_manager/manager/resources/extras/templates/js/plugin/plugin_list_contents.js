@@ -27,6 +27,9 @@ $(document).ready(function() {
     // the enter key code
     var ENTER = 13;
 
+    // the number of record to be retrieved at each time
+    var NUMBER_RECORDS = 10;
+
     // sets the logic loaded data
     var logicLoaded = $("#contents").data("logicLoaded");
 
@@ -40,9 +43,13 @@ $(document).ready(function() {
         // retrieves the current search query value
         var searchQuery = $("#search-query").attr("value");
 
+        currentFinalRecord = 10;
+
         // assembles the form data to submit with the search button click event
         var searchButtonData = {
-            search_query : searchQuery
+            search_query : searchQuery,
+            start_record : currentFinalRecord,
+            number_records : NUMBER_RECORDS
         };
 
         // processes the ajax request
@@ -51,16 +58,23 @@ $(document).ready(function() {
             type : "post",
             data : searchButtonData,
             success : function(data) {
-                // retrieves the table body data
-                var tableBody = $("tbody", $(data));
+                // retrieves the data element
+                var dataElement = $(data);
 
-                console.info(data);
+                // retrieves the table body data
+                var tableBody = $("#table-body", dataElement);
+
+                // retrieves the table metadata data
+                var tableMetadata = $("#meta-data", dataElement);
 
                 // removes the metadata components
-                $("#contents #meta-data").remove();
+                $("#plugin-table > #meta-data").remove();
 
                 // replaces the table body contents
                 $("#plugin-table > tbody").replaceWith(tableBody);
+
+                // appends the table metadata to the plugin table
+                $("#plugin-table").append(tableMetadata);
 
                 // creates the switch buttons for the table
                 $("#plugin-table .switch-button").switchbutton();
