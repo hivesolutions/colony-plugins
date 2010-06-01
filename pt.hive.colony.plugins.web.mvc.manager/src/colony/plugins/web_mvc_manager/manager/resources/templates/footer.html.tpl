@@ -1,3 +1,3 @@
 <div id="footer">
-    <a href="#">Home</a> - <a href="#">Configurações</a> - <a href="#">Plugins Instalados</a>
+    <a href="#">Support</a> - <a href="#">Development</a> - <a href="#">Documentation</a>
 </div>
