@@ -374,11 +374,17 @@ class CapabilityController:
         # retrieves the plugins map for the capability
         plugins_capability = self._get_plugins_capability(capability)
 
+        # retrieves the sub capabilities for the capability
+        sub_capabilities = self._get_sub_capabilities(capability)
+
         # assigns the capability to the template
         template_file.assign("capability", capability)
 
         # assigns the plugins capability to the template
         template_file.assign("plugins_capability", plugins_capability)
+
+        # assigns the sub capabilities to the template
+        template_file.assign("sub_capabilities", sub_capabilities)
 
         # assigns the session variables to the template file
         self.assign_session_template_file(rest_request, template_file)
@@ -458,3 +464,12 @@ class CapabilityController:
         plugins_allowing = plugin_manager.capabilities_plugins_map.get(capability, [])
 
         return {"providing" : plugins_offering, "allowing" : plugins_allowing}
+
+    def _get_sub_capabilities(self, capability):
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_manager_plugin.manager
+
+        # retrieves the sub capabilities for the capability
+        sub_capabilities = plugin_manager.capabilities_sub_capabilities_map.get(capability, [])
+
+        return sub_capabilities

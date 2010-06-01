@@ -23,15 +23,6 @@
             <div class="clear"></div>
         </div>
         <div class="form-field-area">
-            <h4>Sub-Capabilities</h4>
-            <hr/>
-            <div class="column-first">
-            </div>
-            <div class="column-second">
-            </div>
-            <div class="clear"></div>
-        </div>
-        <div class="form-field-area">
             <h4>Plugins</h4>
             <hr/>
             <div class="column-first">
@@ -49,6 +40,20 @@
                     <label><a href="#plugins/${out_none value=allowing_plugin.id xml_escape=True /}">${out_none value=allowing_plugin.id xml_escape=True /}</a></label>
                     ${/foreach}
                 </div>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="form-field-area">
+            <h4>Sub-Capabilities</h4>
+            <hr/>
+            <div class="column-first">
+                ${foreach item=sub_capability from=sub_capabilities}
+                <div class="form-field">
+                    <label><a href="#capabilities/${out_none value=sub_capability xml_escape=True /}">${out_none value=sub_capability xml_escape=True /}</a></label>
+                </div>
+                ${/foreach}
+            </div>
+            <div class="column-second">
             </div>
             <div class="clear"></div>
         </div>
