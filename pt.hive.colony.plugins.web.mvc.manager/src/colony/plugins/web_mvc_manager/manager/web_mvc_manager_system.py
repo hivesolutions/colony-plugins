@@ -62,6 +62,9 @@ class WebMvcManager:
     web_mvc_manager_main_controller = None
     """ The web mvc manager main controller """
 
+    web_mvc_manager_communication_controller = None
+    """ The web mvc manager communication controller """
+
     web_mvc_manager_side_panel_controller = None
     """ The web mvc manager side panel controller """
 
@@ -93,6 +96,9 @@ class WebMvcManager:
         # creates the web mvc manager main controller
         self.web_mvc_manager_main_controller = web_mvc_utils_plugin.create_controller(WebMvcManagerMainController, [self.web_mvc_manager_plugin, self], {})
 
+        # creates the web mvc manager communication controller
+        self.web_mvc_manager_communication_controller = web_mvc_utils_plugin.create_controller(WebMvcManagerCommunicationController, [self.web_mvc_manager_plugin, self], {})
+
         # creates the web mvc manager side panel controller
         self.web_mvc_manager_side_panel_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_controllers.SidePanelController, [self.web_mvc_manager_plugin, self], {})
 
@@ -123,6 +129,11 @@ class WebMvcManager:
                 r"^web_mvc_manager/plugins/change_status$" : self.web_mvc_manager_plugin_controller.handle_change_status,
                 r"^web_mvc_manager/capabilities$" : self.web_mvc_manager_capability_controller.handle_list,
                 r"^web_mvc_manager/capabilities/[a-zA-Z0-9\._]+$" : self.web_mvc_manager_capability_controller.handle_show}
+
+    def get_communication_patterns(self):
+        return {r"^web_mvc_manager/communication$" : (self.web_mvc_manager_communication_controller.handle_data,
+                                                      self.web_mvc_manager_communication_controller.handle_connection_changed,
+                                                      "web_mvc_manager/communication")}
 
     def get_resource_patterns(self):
         # estes sao os patterns para serem enviados para
@@ -194,6 +205,46 @@ class WebMvcManager:
 #
 #            # returns false
 #            return False
+
+        # returns true
+        return True
+
+class WebMvcManagerCommunicationController:
+    """
+    The web mvc manager communication controller.
+    """
+
+    web_mvc_manager_plugin = None
+    """ The web mvc manager main plugin """
+
+    web_mvc_manager = None
+    """ The web mvc manager """
+
+    def __init__(self, web_mvc_manager_plugin, web_mvc_manager):
+        """
+        Constructor of the class.
+
+        @type web_mvc_manager_plugin: WebMvcManagerPlugin
+        @param web_mvc_manager_plugin: The web mvc manager plugin.
+        @type web_mvc_manager: WebMvcManager
+        @param web_mvc_manager: The web mvc manager.
+        """
+
+        self.web_mvc_manager_plugin = web_mvc_manager_plugin
+        self.web_mvc_manager = web_mvc_manager
+
+    def handle_data(self, rest_communication_request, parameters = {}):
+        """
+        Handles the given data communication request.
+        """
+
+        # returns true
+        return True
+
+    def handle_connection_changed(self, rest_communication_request, parameters = {}):
+        """
+        Handles the given connection changed communication request.
+        """
 
         # returns true
         return True
