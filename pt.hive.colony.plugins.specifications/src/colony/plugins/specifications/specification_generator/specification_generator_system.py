@@ -62,7 +62,7 @@ class SepecificationGenerator:
         """
         Constructor of the class.
 
-        @type specification_generator_plugin: Plugin
+        @type specification_generator_plugin: SpecificationGeneratorPlugin
         @param specification_generator_plugin: The specification generator plugin.
         """
 

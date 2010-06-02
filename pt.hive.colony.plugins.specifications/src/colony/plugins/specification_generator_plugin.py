@@ -133,11 +133,11 @@ class SpecificationGeneratorPlugin(colony.plugins.plugin_system.Plugin):
         return self.specification_generator.generate_plugin_specification_file_buffer(plugin_id, plugin_version, properties)
 
     @colony.plugins.decorators.load_allowed_capability("specification_generator_handler")
-    def specification_parser_capability_load_allowed(self, plugin, capability):
+    def specification_generator_handler_capability_load_allowed(self, plugin, capability):
         self.specification_generator_handler_plugins.append(plugin)
         self.specification_generator.specification_generator_handler_load(plugin)
 
     @colony.plugins.decorators.unload_allowed_capability("specification_generator_handler")
-    def specification_parser_capability_unload_allowed(self, plugin, capability):
+    def specification_generator_handler_capability_unload_allowed(self, plugin, capability):
         self.specification_generator_handler_plugins.remove(plugin)
         self.specification_generator.specification_generator_handler_unload(plugin)
