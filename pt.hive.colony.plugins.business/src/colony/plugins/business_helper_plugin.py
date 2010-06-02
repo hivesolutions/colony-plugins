@@ -52,7 +52,8 @@ class BusinessHelperPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["business_helper"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/business/helper/resources/baf.xml"}
+    capabilities = ["business_helper", "build_automation_item"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
