@@ -25,5 +25,6 @@
             "build_automation_extensions/__init__.py",
             "build_automation_extensions/izpack/__init__.py",
             "build_automation_extensions/izpack/izpack_build_automation_extension_exceptions.py",
-            "build_automation_extensions/izpack/izpack_build_automation_extension_system.py"]
+            "build_automation_extensions/izpack/izpack_build_automation_extension_system.py",
+            "build_automation_extensions/izpack/resources/baf.xml]
 }
