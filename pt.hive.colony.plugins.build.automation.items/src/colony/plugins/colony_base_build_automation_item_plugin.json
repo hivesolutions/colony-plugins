@@ -4,7 +4,7 @@
     "id" : "pt.hive.colony.plugins.build.automation.items.colony_base",
     "name" : "Colony Base Build Automation Item Plugin",
     "short_name" : "Colony Base Build Automation Item",
-    "description" : "The build automation item fcr the base of the colony framework",
+    "description" : "The build automation item for the base of the colony framework",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["build_automation_item"],
