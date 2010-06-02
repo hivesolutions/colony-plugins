@@ -150,10 +150,10 @@ class SepecificationGenerator:
 
     def specification_generator_handler_unload(self, specification_generator_handler_plugin):
         """
-        Unloads the given specification parser plugin.
+        Unloads the given specification generator handler plugin.
 
         @type specification_generator_handler_plugin: Plugin
-        @param specification_generator_handler_plugin: he specification generator handler plugin to be loaded.
+        @param specification_generator_handler_plugin: The specification generator handler plugin to be loaded.
         """
 
         # retrieves specification generator handler plugin name

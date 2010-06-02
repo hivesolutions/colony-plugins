@@ -97,7 +97,7 @@ class JsonSepecificationGeneratorHandler:
         # parses the template file path
         template_file = template_engine_manager_plugin.parse_file_path(template_file_path)
 
-        # generates the specification for the plugin
+        # generates the specification map for the plugin
         specification_map = self._generate_specification_map(plugin)
 
         # assigns the specification to the template file
