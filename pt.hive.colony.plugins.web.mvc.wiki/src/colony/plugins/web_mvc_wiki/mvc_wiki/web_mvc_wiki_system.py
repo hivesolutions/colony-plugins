@@ -68,6 +68,20 @@ class WebMvcWiki:
 
         return {r"^wiki/.*$" : self.handle_wiki}
 
+    def get_communication_patterns(self):
+        """
+        Retrieves the map of regular expressions to be used as communication patters,
+        to the web mvc service. The map should relate the route with a tuple
+        containing the data handler, the connection changed handler and the name
+        of the connection.
+
+        @rtype: Dictionary
+        @return: The map of regular expressions to be used as communication patterns,
+        to the web mvc service.
+        """
+
+        return {}
+
     def get_resource_patterns(self):
         """
         Retrieves the map of regular expressions to be used as resource patters,
