@@ -47,6 +47,9 @@ BUILD_AUTOMATION_GENERATOR_VALUE = "build_automation_generator"
 DEFAULT_BUILD_AUTOMATION_GENERATOR_NAME = "packing"
 """ The default build automation generator name """
 
+DEFAULT_ENCODING = "utf-8"
+""" The default encoding """
+
 class BuildAutomationGenerator:
     """
     The build automation generator class.
@@ -92,12 +95,15 @@ class BuildAutomationGenerator:
         # retrieves the plugin build automation string
         plugin_build_automation_string = self._get_plugin_build_automation_string(plugin_id, plugin_version, properties)
 
+        # encodes the plugin build automation string
+        plugin_build_automation_string_encoded = plugin_build_automation_string.encode(DEFAULT_ENCODING)
+
         # opens the file
         file = open(file_path, "wb")
 
         try:
             # writes the plugin build automation string to the file
-            file.write(plugin_build_automation_string)
+            file.write(plugin_build_automation_string_encoded)
         finally:
             # closes the file
             file.close()
