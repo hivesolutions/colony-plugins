@@ -43,7 +43,7 @@ import colony.plugins.plugin_system
 import colony.libs.string_buffer_util
 
 SPECIFICATION_GENERATOR_HANDLER_NAME = "json"
-""" The specification genertor handler name """
+""" The specification generator handler name """
 
 TEMPLATE_FILE_PATH = "specifications/json_specification_generator_handler/resources/plugin_specification.json.tpl"
 """ The template file path """

@@ -42,7 +42,7 @@ import colony.plugins.decorators
 
 class JsonSpecificationGeneratorHandlerPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Specification Generator plugin.
+    The main class for the Json Specification Generator Handler plugin.
     """
 
     id = "pt.hive.colony.plugins.specifications.json_specification_generator_handler"
