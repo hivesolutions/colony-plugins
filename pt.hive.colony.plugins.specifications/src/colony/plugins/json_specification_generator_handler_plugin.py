@@ -47,7 +47,7 @@ class JsonSpecificationGeneratorHandlerPlugin(colony.plugins.plugin_system.Plugi
 
     id = "pt.hive.colony.plugins.specifications.json_specification_generator_handler"
     name = "Json Specification Generator Handler Plugin"
-    short_name = "Json Specification Generator Handler "
+    short_name = "Json Specification Generator Handler"
     description = "A plugin to generate json specification files"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
