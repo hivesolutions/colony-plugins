@@ -11,7 +11,7 @@
     "capabilities_allowed" : [],
     "dependencies" : [],
     "main_file" : "url_parser_plugin.py",
-    "resources" : ["url_parser_plugin.py",
+    "resources" : ["url_parser_plugin.py", "misc/__init__.py",
             "misc/url_parser/url_parser_exceptions.py",
             "misc/url_parser/url_parser_system.py",
             "misc/url_parser/resources/baf.xml"]

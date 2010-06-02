@@ -12,8 +12,8 @@
     "capabilities_allowed" : [],
     "dependencies" : [],
     "main_file" : "bot_engine_aiml_plugin.py",
-    "resources" : ["bot_engine_aiml_plugin.py",
-            "misc/bot_engine_aiml/__init__.py"
+    "resources" : ["bot_engine_aiml_plugin.py", "misc/__init__.py",
+            "misc/bot_engine_aiml/__init__.py",
             "misc/bot_engine_aiml/bot_engine_aiml_system.py",
             "misc/bot_engine_aiml/resources/baf.xml"]
 }

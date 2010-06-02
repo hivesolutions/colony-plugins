@@ -11,7 +11,7 @@
     "capabilities_allowed" : [],
     "dependencies" : [],
     "main_file" : "command_execution_plugin.py",
-    "resources" : ["command_execution_plugin.py",
+    "resources" : ["command_execution_plugin.py", "misc/__init__.py",
             "misc/command_execution/__init__.py",
             "misc/command_execution/command_execution_system.py",
             "misc/command_execution/resources/baf.xml"]

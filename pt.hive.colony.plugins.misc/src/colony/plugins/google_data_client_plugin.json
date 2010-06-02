@@ -12,7 +12,7 @@
     "capabilities_allowed" : [],
     "dependencies" : [],
     "main_file" : "google_data_client_plugin.py",
-    "resources" : ["google_data_client_plugin.py",
+    "resources" : ["google_data_client_plugin.py", "misc/__init__.py",
             "misc/google_data_client/__init__.py",
             "misc/google_data_client/console_google_data_client.py",
             "misc/google_data_client/google_data_client_system.py",

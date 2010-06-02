@@ -11,7 +11,7 @@
     "capabilities_allowed" : [],
     "dependencies" : [],
     "main_file" : "execution_environment_plugin.py",
-    "resources" : ["execution_environment_plugin.py",
+    "resources" : ["execution_environment_plugin.py", "misc/__init__.py",
             "misc/execution_environment/__init__.py",
             "misc/execution_environment/execution_environment_system.py",
             "misc/execution_environment/resources/baf.xml"]

@@ -7,14 +7,12 @@
     "description" : "Code Coverage Plugin",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["code_coverage",
-            "build_automation_item"],
+    "capabilities" : ["code_coverage", "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [],
     "main_file" : "code_coverage_plugin.py",
-    "resources" : [
-            "code_coverage_plugin.py",
-            "misc/code_coverage/__init__.py"
+    "resources" : ["code_coverage_plugin.py", "misc/__init__.py",
+            "misc/code_coverage/__init__.py",
             "misc/code_coverage/code_coverage_system.py",
             "misc/code_coverage/resources/baf.xml"]
 }

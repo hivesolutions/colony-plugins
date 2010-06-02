@@ -22,6 +22,7 @@
     "main_file" : "plugin_downloader_plugin.py",
     "resources" : [
             "plugin_downloader_plugin.py",
+            "misc/__init__.py",
             "misc/plugin_downloader/__init__.py",
             "misc/plugin_downloader/console_plugin_downloader.py",
             "misc/plugin_downloader/plugin_downloading_system.py",

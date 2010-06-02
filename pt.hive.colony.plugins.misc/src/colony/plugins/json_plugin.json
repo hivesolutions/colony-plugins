@@ -11,7 +11,8 @@
     "capabilities_allowed" : [],
     "dependencies" : [],
     "main_file" : "json_plugin.py",
-    "resources" : ["json_plugin.py", "misc/json/__init__.py",
-            "misc/json/json_exceptions.py", "misc/json/json_serializer.py",
-            "misc/json/json_system.py", "misc/json/resources/baf.xml"]
+    "resources" : ["json_plugin.py", "misc/__init__.py",
+            "misc/json/__init__.py", "misc/json/json_exceptions.py",
+            "misc/json/json_serializer.py", "misc/json/json_system.py",
+            "misc/json/resources/baf.xml"]
 }

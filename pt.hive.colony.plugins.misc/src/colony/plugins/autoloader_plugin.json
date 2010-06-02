@@ -12,7 +12,8 @@
     "capabilities_allowed" : [],
     "dependencies" : [],
     "main_file" : "autoloader_plugin.py",
-    "resources" : ["autoloader_plugin.py", "misc/autoloader/__init__.py",
+    "resources" : ["autoloader_plugin.py", "misc/__init__.py",
+            "misc/autoloader/__init__.py",
             "misc/autoloader/autoloading_system.py",
             "misc/autoloader/console_autoloader.py",
             "misc/autoloader/resources/baf.xml"]

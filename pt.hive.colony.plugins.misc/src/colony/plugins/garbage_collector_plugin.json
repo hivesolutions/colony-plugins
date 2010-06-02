@@ -12,7 +12,7 @@
     "capabilities_allowed" : [],
     "dependencies" : [],
     "main_file" : "garbage_collector_plugin.py",
-    "resources" : ["garbage_collector_plugin.py",
+    "resources" : ["garbage_collector_plugin.py", "misc/__init__.py",
             "misc/garbage_collector/__init__.py",
             "misc/garbage_collector/console_garbage_collector.py",
             "misc/garbage_collector/garbage_collecting_system.py",

@@ -11,7 +11,7 @@
     "capabilities_allowed" : [],
     "dependencies" : [],
     "main_file" : "dependencies_calculator_plugin.py",
-    "resources" : ["dependencies_calculator_plugin.py",
+    "resources" : ["dependencies_calculator_plugin.py", "misc/__init__.py",
             "misc/dependencies_calculator/__init__.py",
             "misc/dependencies_calculator/dependencies_calculator_system.py",
             "misc/dependencies_calculator/resources/baf.xml"]

@@ -11,6 +11,7 @@
     "capabilities_allowed" : [],
     "dependencies" : [],
     "main_file" : "guid_plugin.py",
-    "resources" : ["guid_plugin.py", "misc/guid/__init__.py",
-            "misc/guid/guid_system.py", "misc/guid/resources/baf.xml"]
+    "resources" : ["guid_plugin.py", "misc/__init__.py",
+            "misc/guid/__init__.py", "misc/guid/guid_system.py",
+            "misc/guid/resources/baf.xml"]
 }

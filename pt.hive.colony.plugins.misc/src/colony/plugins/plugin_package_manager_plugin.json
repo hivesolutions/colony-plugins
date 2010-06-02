@@ -11,7 +11,7 @@
     "capabilities_allowed" : [],
     "dependencies" : [],
     "main_file" : "plugin_package_manager_plugin.py",
-    "resources" : ["plugin_package_manager_plugin.py",
+    "resources" : ["plugin_package_manager_plugin.py", "misc/__init__.py",
             "misc/plugin_package_manager/__init__.py",
             "misc/plugin_package_manager/console_plugin_package_manager.py",
             "misc/plugin_package_manager/plugin_package_managing_system.py",

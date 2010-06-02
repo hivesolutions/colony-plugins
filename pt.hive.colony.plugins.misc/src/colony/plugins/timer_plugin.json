@@ -11,6 +11,7 @@
     "capabilities_allowed" : [],
     "dependencies" : [],
     "main_file" : "timer_plugin.py",
-    "resources" : ["timer_plugin.py", "misc/timer/__init__.py",
-            "misc/timer/timer.py", "misc/timer/resources/baf.xml"]
+    "resources" : ["timer_plugin.py", "misc/__init__.py",
+            "misc/timer/__init__.py", "misc/timer/timer.py",
+            "misc/timer/resources/baf.xml"]
 }

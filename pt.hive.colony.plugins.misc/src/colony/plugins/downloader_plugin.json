@@ -12,7 +12,8 @@
     "capabilities_allowed" : [],
     "dependencies" : [],
     "main_file" : "downloader_plugin.py",
-    "resources" : ["downloader_plugin.py", "misc/downloader/__init__.py",
+    "resources" : ["downloader_plugin.py", "misc/__init__.py",
+            "misc/downloader/__init__.py",
             "misc/downloader/console_downloader.py",
             "misc/downloader/downloading_system.py",
             "misc/downloader/resources/baf.xml"]

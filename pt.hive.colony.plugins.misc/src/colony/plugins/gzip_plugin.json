@@ -11,6 +11,7 @@
     "capabilities_allowed" : [],
     "dependencies" : [],
     "main_file" : "gzip_plugin.py",
-    "resources" : ["gzip_plugin.py", "misc/gzip/__init__.py",
-            "misc/gzip/gzip_system.py", "misc/gzip/resources/baf.xml"]
+    "resources" : ["gzip_plugin.py", "misc/__init__.py",
+            "misc/gzip/__init__.py", "misc/gzip/gzip_system.py",
+            "misc/gzip/resources/baf.xml"]
 }

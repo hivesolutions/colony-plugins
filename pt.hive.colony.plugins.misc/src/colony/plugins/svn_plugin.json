@@ -11,6 +11,6 @@
     "capabilities_allowed" : [],
     "dependencies" : [],
     "main_file" : "svn_plugin.py",
-    "resources" : ["svn_plugin.py", "misc/svn/__init__.py",
+    "resources" : ["svn_plugin.py", "misc/__init__.py", "misc/svn/__init__.py",
             "misc/svn/svn_system.py", "misc/svn/resources/baf.xml"]
 }
