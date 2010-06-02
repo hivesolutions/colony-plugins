@@ -140,8 +140,7 @@ class BuildAutomationPackingGeneratorHandler:
         build_automation_map["capabilities"] = self._serialize_capabilities(plugin.capabilities)
         build_automation_map["capabilities_allowed"] = self._serialize_capabilities(plugin.capabilities_allowed)
         build_automation_map["dependencies"] = self._serialize_dependencies(plugin.dependencies)
-        build_automation_map["main_file"] = self._serialize_main_file(plugin)
-        build_automation_map["resources"] = self._serialize_resources(plugin)
+        build_automation_map["packing_file"] = self._serialize_packing_file(plugin)
 
         # returns the build automation map
         return build_automation_map
@@ -238,62 +237,16 @@ class BuildAutomationPackingGeneratorHandler:
         # returns the string value
         return string_value
 
-    def _serialize_main_file(self, plugin):
+    def _serialize_packing_file(self, plugin):
         # retrieves the plugin manager
         plugin_manager = self.build_automation_packing_generator_handler_plugin.manager
 
         # retrieves the plugin module name for the plugin id
         plugin_module_name = plugin_manager.get_plugin_module_name_by_id(plugin.id)
 
-        # creates the main file by appending the pytohn extension
+        # creates the packing file by appending the python extension
         # to the plugin module name
-        main_file = plugin_module_name + ".py"
+        packing_file = plugin_module_name + ".json"
 
-        # returns the main file
-        return main_file
-
-    def _serialize_resources(self, plugin):
-        # retrieves the plugin manager
-        plugin_manager = self.build_automation_packing_generator_handler_plugin.manager
-
-        # retrievs the plugin path for the plugin id
-        plugin_path = plugin_manager.get_plugin_path_by_id(plugin.id)
-
-        # initializes the string buffer
-        string_buffer = colony.libs.string_buffer_util.StringBuffer()
-
-        # writes the list start
-        string_buffer.write("[")
-
-        # writes the plugin file
-        string_buffer.write("\"" + self._serialize_main_file(plugin) + "\"")
-
-        # retrieves the directories entries from the plugin path
-        directory_entries = os.listdir(plugin_path)
-
-        # iterates over all the directory entries
-        for directory_entry in directory_entries:
-            full_directory_entry = plugin_path + "/" + directory_entry
-
-            if os.path.isdir(full_directory_entry):
-                os.path.walk(full_directory_entry, self._serializer_aux, (plugin_path, string_buffer))
-
-        # writes the list end
-        string_buffer.write("]")
-
-        # retrieves the string value
-        string_value = string_buffer.get_value()
-
-        # returns the string value
-        return string_value
-
-    def _serializer_aux(self, arg, dirname, names):
-        plugin_path, string_buffer = arg
-
-        if ".svn" in dirname:
-            return
-
-        complete_paths_list = [(dirname + "/" + value).replace(plugin_path, "") for value in names if not os.path.isdir(dirname + "/" + value)]
-
-        for complete_path in complete_paths_list:
-            string_buffer.write(", \"" + complete_path.replace("\\", "/").strip("/") + "\"")
+        # returns the packing file
+        return packing_file
