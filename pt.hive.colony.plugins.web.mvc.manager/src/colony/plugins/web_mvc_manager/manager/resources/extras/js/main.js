@@ -57,18 +57,21 @@ $(document).ready(function() {
         // closes the message window
         $("body").messagewindow("close");
 
-        var dt = event.originalEvent.dataTransfer;
-        var files = dt.files;
+        // retrieves the data tranfer and the files
+        // rom the original event
+        var dataTransfer = event.originalEvent.dataTransfer;
+        var files = dataTransfer.files;
 
         // retrieves the first file
         var file = files[0];
 
+        // creates a new cml http request
         var xhr = new XMLHttpRequest();
-        this.xhr = xhr;
 
-        var self = this;
+        // retrieves the upload element
+        var uploadElement = $(xhr.upload);
 
-        xhr.upload.addEventListener("progress", function(event) {
+        uploadElement.bind("progress", function(event) {
             if (event.lengthComputable) {
                 // calculates the percentage of loading
                 var percentage = Math.round((event.loaded * 100) / event.total);
@@ -79,9 +82,9 @@ $(document).ready(function() {
                             percentage : percentage
                         });
             }
-        }, false);
+        });
 
-        xhr.upload.addEventListener("load", function(event) {
+        uploadElement.bind("load", function(event) {
             // sets the progress indicator percentage
             $(".message-message .progress-indicator", "body").progressindicator(
                     "change", {
@@ -90,10 +93,27 @@ $(document).ready(function() {
 
             // sets a timeout to close the message window
             setTimeout(function() {
-                        // closes the message window
-                        $("body").messagewindow("close");
-                    }, 1000);
-        }, false);
+                // closes the message window
+                $("body").messagewindow("close");
+
+                if (xhr.status == 200) {
+                    $("#notification-area-contents").notificationwindow(
+                            "default", {
+                                "title" : "<span class=\"green\">Plugin Installed</span>",
+                                "subTitle" : "",
+                                "message" : "Tobias",
+                                "timeout" : 5000
+                            });
+                } else {
+                    $("body").dialogwindow("default", {
+                        "title" : "Warning",
+                        "subTitle" : "Problem Installing Plugin",
+                        "message" : "There was a problem installing plugin, this indicates a problem in the server or a problem in the sent file.",
+                        "buttonMessage" : "Do you want to continue ?"
+                    });
+                }
+            }, 500);
+        });
 
         xhr.open("post", "plugins/new");
         xhr.overrideMimeType("text/plain;charset=utf-8");

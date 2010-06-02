@@ -55,6 +55,9 @@ AJAX_ENCODER_NAME = "ajx"
 JSON_ENCODER_NAME = "json"
 """ The json encoder name """
 
+PLUGINS_DIRECTORY = "colony/plugins"
+""" The plugins directory value """
+
 LOAD_VALUE = "load"
 """ The load value """
 
@@ -184,6 +187,7 @@ class SidePanelController:
         # assigns the cpu usage to the template
         template_file.assign("cpu_usage", cpu_usage)
 
+        # retrieves the current time
         current_time = time.time()
 
         uptime = current_time - plugin_manager.plugin_manager_timestamp
@@ -254,38 +258,10 @@ class PluginController:
 
         # creates a new company in case this is a post request
         if rest_request.is_post():
-            pass
-            # retrieves the contents
-            #contents = rest_request.request.read()
+            # deploys the package
+            self._deploy_package(rest_request)
 
-            # tenho de sacar o temp file do plugin manager
-            # tenho de criar um ficheiro temporario e tenho de instalar o cenas
-            # com base nisso
-
-#            try:
-#                # retrieves the template file
-#                template_file = self.retrieve_template_file("company_edit_contents.html.tpl")
-#
-#                # creates the company
-#                company = self._create_company(rest_request)
-#
-#                # assigns the company to the template
-#                template_file.assign("company", company)
-#
-#                # assigns the result message to the template
-#                template_file.assign("result_message", "Empresa criada com sucesso.")
-#            except take_the_bill_main_exceptions.EntityValidationFailed, exception:
-#                # retrieves the template file
-#                template_file = self.retrieve_template_file("company_new_contents.html.tpl")
-#
-#                # retrieves the company from the exception
-#                company = exception.entity
-#
-#                # assigns the company to the template
-#                template_file.assign("company", company)
-#
-#                # assigns the result message to the template
-#                template_file.assign("result_message", "Ocorreu um erro ao criar a empresa.")
+            return True
 
         # in case the encoder name is ajax
         if rest_request.encoder_name == AJAX_ENCODER_NAME:
@@ -450,6 +426,28 @@ class PluginController:
 
         # returns true
         return True
+
+    def _deploy_package(self, rest_request):
+        # retrieves the request contents
+        contents = rest_request.request.read()
+
+        # opens the temporary cpx file
+        temp_file = open("c:/temp.cpx", "wb")
+
+        # writes the contents to the file
+        temp_file.write(contents)
+
+        # closes the temporary file
+        temp_file.close()
+
+        # retrieves the packing manager plugin
+        packing_manager_plugin = self.web_mvc_manager_plugin.packing_manager_plugin
+
+        # creates the properties map for the file unpacking packing
+        properties = {"target_path" : PLUGINS_DIRECTORY}
+
+        # unpacks the files using the colony service
+        packing_manager_plugin.unpack_files(["c:/temp.cpx"], properties, "colony")
 
     def _partial_filter(self, rest_request, contents_list):
         # processes the form data
