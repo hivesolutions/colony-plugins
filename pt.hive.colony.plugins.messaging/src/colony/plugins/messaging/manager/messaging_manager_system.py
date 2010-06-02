@@ -108,5 +108,5 @@ class MessagingManager:
         # retrieves the messaging extension plugin for the given messaging service id
         messaging_extension_plugin = self.messaging_service_id_messaging_extension_plugin_map[messaging_service_id]
 
-        # send the message to the slected messaging extension plugin
+        # send the message to the selected messaging extension plugin
         messaging_extension_plugin.send_message(message_attributes)
