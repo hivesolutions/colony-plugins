@@ -245,7 +245,7 @@ class JsonSepecificationGeneratorHandler:
         # retrieves the plugin module name for the plugin id
         plugin_module_name = plugin_manager.get_plugin_module_name_by_id(plugin.id)
 
-        # creates the main file by appending the pytohn extension
+        # creates the main file by appending the python extension
         # to the plugin module name
         main_file = plugin_module_name + ".py"
 
