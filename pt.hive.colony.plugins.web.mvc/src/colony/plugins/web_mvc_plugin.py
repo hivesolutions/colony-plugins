@@ -54,7 +54,10 @@ class WebMvcPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["web.mvc", "rest_service"]
     capabilities_allowed = ["web.mvc_service"]
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.random", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.json", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["web_mvc.mvc.web_mvc_communication_handler", "web_mvc.mvc.web_mvc_exceptions",
@@ -63,6 +66,9 @@ class WebMvcPlugin(colony.plugins.plugin_system.Plugin):
     web_mvc = None
 
     web_mvc_service_plugins = []
+
+    random_plugin = None
+    json_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -87,6 +93,7 @@ class WebMvcPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.web.mvc", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -123,3 +130,17 @@ class WebMvcPlugin(colony.plugins.plugin_system.Plugin):
     def web_mvc_service_extension_unload_allowed(self, plugin, capability):
         self.web_mvc_service_plugins.remove(plugin)
         self.web_mvc.unload_web_mvc_service_plugin(plugin)
+
+    def get_random_plugin(self):
+        return self.random_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.random")
+    def set_random_plugin(self, random_plugin):
+        self.random_plugin = random_plugin
+
+    def get_json_plugin(self):
+        return self.json_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
+    def set_json_plugin(self, json_plugin):
+        self.json_plugin = json_plugin

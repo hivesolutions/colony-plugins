@@ -73,12 +73,18 @@ class WebMvcFileHandler:
     The web mvc file handler class.
     """
 
-    def __init__(self):
+    web_mvc_plugin = None
+    """ The web mvc plugin """
+
+    def __init__(self, web_mvc_plugin):
         """
         Constructor of the class.
+
+        @type web_mvc_plugin: WebMvcPlugin
+        @param web_mvc_plugin: The web mvc plugin
         """
 
-        pass
+        self.web_mvc_plugin = web_mvc_plugin
 
     def handle_request(self, request, file_path):
         """

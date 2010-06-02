@@ -121,8 +121,8 @@ class WebMvc:
         self.web_mvc_service_resource_patterns_map = {}
         self.web_mvc_service_resource_patterns_list = []
 
-        self.web_mvc_file_handler = web_mvc_file_handler.WebMvcFileHandler()
-        self.web_mvc_communication_handler = web_mvc_communication_handler.WebMvcCommunicationHandler()
+        self.web_mvc_file_handler = web_mvc_file_handler.WebMvcFileHandler(web_mvc_plugin)
+        self.web_mvc_communication_handler = web_mvc_communication_handler.WebMvcCommunicationHandler(web_mvc_plugin)
 
     def get_routes(self):
         """

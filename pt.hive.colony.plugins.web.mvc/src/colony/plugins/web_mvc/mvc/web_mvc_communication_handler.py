@@ -37,20 +37,38 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import web_mvc_exceptions
+
 class WebMvcCommunicationHandler:
     """
     The web mvc communication handler class.
     """
 
-    connection_name_connection_map = {}
-    """ The map associating the connection name with the connection """
+    web_mvc_plugin = None
+    """ The web mvc plugin """
 
-    def __init__(self):
+    connection_name_connections_map = {}
+    """ The map associating the connection name with the connections """
+
+    connection_information_connections_map = {}
+    """ The map associating the connection information with the connections """
+
+    connection_complete_information_connection_map = {}
+    """ The map associating the connection complete information with the connection """
+
+    def __init__(self, web_mvc_plugin):
         """
         Constructor of the class.
+
+        @type web_mvc_plugin: WebMvcPlugin
+        @param web_mvc_plugin: The web mvc plugin
         """
 
-        self.connection_name_connection_map = {}
+        self.web_mvc_plugin = web_mvc_plugin
+
+        self.connection_name_connections_map = {}
+        self.connection_information_connections_map = {}
+        self.connection_complete_information_connection_map = {}
 
     def handle_request(self, request, data_handler_method, connection_changed_handler_method, connection_name):
         """
@@ -68,4 +86,239 @@ class WebMvcCommunicationHandler:
         @return: The result of the handling.
         """
 
+        # retrieves the request command
+        command = request.get_attribute("command")
+
+        # in case the command is not defined
+        if not command:
+            # raises the invalid communication command exception
+            raise web_mvc_exceptions.InvalidCommunicationCommandException(None, 406)
+
+        # creates the process method name
+        process_method_name = "process_" + command
+
+        # in case the process method does not exists
+        if not hasattr(self, process_method_name):
+            # raises the invalid communication command exception
+            raise web_mvc_exceptions.InvalidCommunicationCommandException(command, 406)
+
+        # retrieves the process method for the given method
+        process_method = getattr(self, process_method_name)
+
+        return process_method(request, data_handler_method, connection_changed_handler_method, connection_name)
+
+    def process_connect(self, request, data_handler_method, connection_changed_handler_method, connection_name):
+        # retrieves the random plugin
+        random_plugin = self.web_mvc_plugin.random_plugin
+
+        # retrieves the connection information
+        connection_information = request.get_connection_information()
+
+        # generates a new connection id
+        connection_id = random_plugin.generate_random_md5_string()
+
+        # creates a new communication connection from the connection information
+        communication_connection = CommunicationConnection(connection_id, connection_name, connection_information)
+
+        # adds the communication connection
+        self._add_communication_connection(communication_connection)
+
+        # writes the success message
+        self._write_message(request, communication_connection, "success")
+
+        # returns true (valid)
         return True
+
+    def process_disconnect(self, request, data_handler_method, connection_changed_handler_method, connection_name):
+        # returns true (valid)
+        return True
+
+    def process_update(self, request, data_handler_method, connection_changed_handler_method, connection_name):
+        # retrieves the request connection id
+        connection_id = request.get_attribute("id")
+
+        # tenho de esvaziar a pilha de coisas que tenho para lhe enviar
+
+        # returns true (valid)
+        return True
+
+    def process_message(self, request, data_handler_method, connection_changed_handler_method, connection_name):
+        # returns true (valid)
+        return True
+
+    def _write_message(self, request, communication_connection, message):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_plugin.json_plugin
+
+        # serializes the message
+        serialized_message = communication_connection.serialize_message("success", json_plugin)
+
+        # writes the serialized message to the request
+        request.write(serialized_message)
+
+    def _get_connection(self, request, connection_name):
+        # retrieves the connection information
+        connection_information = request.get_connection_information()
+
+        a = (connection_name, connection_information)
+
+        communication_connection = self.connection_information_connections_map.get(a, None)
+
+        return communication_connection
+
+    def _add_communication_connection(self, communication_connection):
+        self.__add_communication_connection_name_map(communication_connection)
+        self.__add_communication_connection_information_map(communication_connection)
+        self.__set_communication_connection_complete_information_map(communication_connection)
+
+    def _remove_communication_connection(self, communication_connection):
+        pass
+
+    def __add_communication_connection_name_map(self, communication_connection):
+        # retrieves the connection name
+        connection_name = communication_connection.get_connection_name()
+
+        if not connection_name in self.connection_name_connections_map:
+            self.connection_name_connections_map[connection_name] = []
+
+        # retrieves the connection list from the connection name connections map
+        connections_list = self.connection_name_connections_map[connection_name]
+
+        # adds the communication connection to the connections list
+        connections_list.append(communication_connection)
+
+    def __add_communication_connection_information_map(self, communication_connection):
+        # retrieves the connection information
+        connection_information = communication_connection.get_connection_information()
+
+        if not connection_information in self.connection_information_connections_map:
+            self.connection_information_connections_map[connection_information] = []
+
+        # retrieves the connection list from the connection information connections map
+        connections_list = self.connection_information_connections_map[connection_information]
+
+        # adds the communication connection to the connections list
+        connections_list.append(communication_connection)
+
+    def __set_communication_connection_complete_information_map(self, communication_connection):
+        # retrieves the connection complete information
+        connection_complete_information = communication_connection.get_complete_connection_information()
+
+        # set the communication connection in the connection complete information connection map
+        self.connection_complete_information_connection_map[connection_complete_information] = communication_connection
+
+class CommunicationConnection:
+    """
+    The communication connection class.
+    """
+
+    connection_id = None
+    """ The connection id """
+
+    connection_name = None
+    """ The connection name """
+
+    connection_information = None
+    """ The connection information for the connection """
+
+    def __init__(self, connection_id, connection_name, connection_information):
+        """
+        Constructor of the class.
+
+        @type connection_id: String
+        @param connection_id: The identifier of the connection.
+        @type connection_name: String
+        @param connection_name: The name of the connection.
+        @type connection_information: Tuple
+        @param connection_information: A tuple containing both the host
+        address and the host port of the connection.
+        """
+
+        self.connection_id = connection_id
+        self.connection_name = connection_name
+        self.connection_information = connection_information
+
+    def serialize_message(self, message, serializer):
+        # creates the map for the message
+        message_map = {}
+
+        # sets the message map values
+        message_map["id"] = self.connection_id
+        message_map["name"] = self.connection_name
+        message_map["message"] = message
+
+        # serializes the message map
+        serialized_message_map = serializer.dumps(message_map)
+
+        # returns the serialized message map
+        return serialized_message_map
+
+    def get_complete_connection_information(self):
+        """
+        Retrieves the complete connection information.
+
+        @rtype: Tuple
+        @return: The complete connection information.
+        """
+
+        return (self.connection_id, self.connection_name, self.connection_information)
+
+    def get_connection_id(self):
+        """
+        Retrieves the connection id.
+
+        @rtype: String
+        @return: The connection id.
+        """
+
+        return self.connection_id
+
+    def set_connection_id(self, connection_id):
+        """
+        Sets the connection name.
+
+        @type connection_id: String
+        @param connection_id: The connection id.
+        """
+
+        self.connection_id = connection_id
+
+    def get_connection_name(self):
+        """
+        Retrieves the connection name.
+
+        @rtype: String
+        @return: The connection name.
+        """
+
+        return self.connection_name
+
+    def set_connection_name(self, connection_name):
+        """
+        Sets the connection name.
+
+        @type connection_name: String
+        @param connection_name: The connection name.
+        """
+
+        self.connection_name = connection_name
+
+    def get_connection_information(self):
+        """
+        Retrieves the connection information.
+
+        @rtype: Tuple
+        @return: The connection information.
+        """
+
+        return self.connection_information
+
+    def set_connection_information(self, connection_information):
+        """
+        Sets the connection information.
+
+        @type connection_information: Tuple
+        @param connection_information: The connection information.
+        """
+
+        self.connection_information = connection_information
