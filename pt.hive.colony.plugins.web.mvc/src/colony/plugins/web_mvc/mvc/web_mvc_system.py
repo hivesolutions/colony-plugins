@@ -368,6 +368,10 @@ class WebMvc:
             # sets the parameters as an empty map
             parameters = {}
 
+        # sets the extra parameters
+        parameters["file_handler"] = self.web_mvc_file_handler
+        parameters["communication_handler"] = self.web_mvc_communication_handler
+
         # handles the web mvc request to the handler method
         return handler_method(rest_request, parameters)
 

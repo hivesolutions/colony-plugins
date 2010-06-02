@@ -128,6 +128,31 @@ def _start_controller(self):
         # in the controller
         self.start()
 
+def send_broadcast_communication_message(self, parameters, connection_name, message):
+    """
+    Sends a broadcast message to all the clients in the connection
+    with the given name.
+    The mvc communication system is used for the broadcast sending.
+
+    @type parameters: Dictionary
+    @param parameters: A dictionary of parameters.
+    @type connection_name: String
+    @param connection_name: The name of the connection to be used
+    to send the message.
+    @type message: String
+    @param message: The message to be sent in broadcast mode.
+    """
+
+    # retrieves the communication handler
+    communication_handler = parameters.get("communication_handler", None)
+
+    # in case there is no communication handler defined
+    if not communication_handler:
+        return
+
+    # sends the broadcast communication message using the communication handler
+    communication_handler.send_broadcast_communication_message(connection_name, message)
+
 def process_form_data(self, rest_request, encoding = DEFAULT_ENCODING):
     """
     Processes the form data (attributes), creating a map containing

@@ -142,9 +142,43 @@ class WebMvcCommunicationHandler:
         # returns true (valid)
         return True
 
-    def process_message(self, request, data_handler_method, connection_changed_handler_method, connection_name):
+    def process_data(self, request, data_handler_method, connection_changed_handler_method, connection_name):
         # returns true (valid)
         return True
+
+    def get_connections_by_connection_name(self, connection_name):
+        """
+        Retrieves the connections for the given connection
+        name.
+
+        @type connection_name: String
+        @param connection_name: The connection name to retrieve
+        the connections.
+        @rtype: List
+        @return: The connections for the given connection name.
+        """
+
+        return self.connection_name_connections_map.get(connection_name, [])
+
+    def send_broadcast_communication_message(self, connection_name, message):
+        """
+        Sends a broadcast message to all the clients in the connection
+        with the given name.
+
+        @type connection_name: String
+        @param connection_name: The name of the connection to be used
+        to send the message.
+        @type message: String
+        @param message: The message to be sent in broadcast mode.
+        """
+
+        # retrieves the communication connections
+        communication_connections = self.get_connections_by_connection_name(connection_name)
+
+        # iterates over all the communication connections
+        for communication_connection in communication_connections:
+            # adds the message to the communication connection queue
+            communication_connection.add_message_queue(message)
 
     def _write_message(self, request, communication_connection, message):
         # retrieves the json plugin
@@ -221,6 +255,9 @@ class CommunicationConnection:
     connection_information = None
     """ The connection information for the connection """
 
+    message_queue = []
+    """ The queue of messages pending to be sent """
+
     def __init__(self, connection_id, connection_name, connection_information):
         """
         Constructor of the class.
@@ -238,7 +275,22 @@ class CommunicationConnection:
         self.connection_name = connection_name
         self.connection_information = connection_information
 
+        self.message_queue = []
+
     def serialize_message(self, message, serializer):
+        """
+        Serializes the given message, using the given
+        serializer method.
+        The serializartion take into account the current connection
+        information.
+
+        @type message: String
+        @param message: The message to be serialized.
+        @type serializer: Method
+        @param serializer: The serializer method to be used
+        in the serialization.
+        """
+
         # creates the map for the message
         message_map = {}
 
@@ -252,6 +304,17 @@ class CommunicationConnection:
 
         # returns the serialized message map
         return serialized_message_map
+
+    def add_message_queue(self, message):
+        """
+        Adds a message to the connection message queue.
+
+        @type message: String
+        @param message: The message to be added to the
+        connection message queue.
+        """
+
+        self.message_queue.append(message)
 
     def get_complete_connection_information(self):
         """
