@@ -43,6 +43,7 @@ import colony.libs.string_buffer_util
 
 import web_mvc_exceptions
 import web_mvc_file_handler
+import web_mvc_communication_handler
 
 REGEX_COMILATION_LIMIT = 99
 """ The regex compilation limit """
@@ -57,6 +58,9 @@ class WebMvc:
 
     web_mvc_file_handler = None
     """ The web mvc file handler """
+
+    web_mvc_communication_handler = None
+    """ The web mvc communication handler """
 
     matching_regex_list = []
     """ The list of matching regex to be used in patterns matching """
@@ -118,6 +122,7 @@ class WebMvc:
         self.web_mvc_service_resource_patterns_list = []
 
         self.web_mvc_file_handler = web_mvc_file_handler.WebMvcFileHandler()
+        self.web_mvc_communication_handler = web_mvc_communication_handler.WebMvcCommunicationHandler()
 
     def get_routes(self):
         """
@@ -312,37 +317,28 @@ class WebMvc:
         # handles the given request by the web mvc file handler
         return self.web_mvc_file_handler.handle_request(rest_request.request, file_path)
 
-    def _handle_communication_match(self, rest_request, resource_path_match, communication_matching_regex):
+    def _handle_communication_match(self, rest_request, resource_path, communication_path_match, communication_matching_regex):
         # retrieves the base value for the matching regex
-#        base_value = self.matching_regex_base_values_map[matching_regex]
-#
-#        # retrieves the group index from the resource path match
-#        group_index = resource_path_match.lastindex
-#
-#        # calculates the web mvc service index from the base value,
-#        # the group index and subtracts one value
-#        web_mvc_service_index = base_value + group_index - 1
-#
-#        # retrieves the pattern for the web mvc service index
-#        pattern = self.web_mvc_service_patterns_list[web_mvc_service_index]
-#
-#        # retrieves the pattern handler method
-#        handler_method = self.web_mvc_service_patterns_map[pattern]
-#
-#        # tries to retrieve the rest request session
-#        rest_request_session = rest_request.get_session()
-#
-#        # in case there is a valid rest request session
-#        if rest_request_session:
-#            # sets the parameters as the session attributes map
-#            parameters = rest_request_session.get_attributes_map()
-#        else:
-#            # sets the parameters as an empty map
-#            parameters = {}
-#
-#        # handles the web mvc request to the handler method
-#        return handler_method(rest_request, parameters)
-        pass
+        base_value = self.communication_matching_regex_base_values_map[communication_matching_regex]
+
+        # retrieves the group index from the communication path match
+        group_index = communication_path_match.lastindex
+
+        # calculates the web mvc service index from the base value,
+        # the group index and subtracts one value
+        web_mvc_service_index = base_value + group_index - 1
+
+        # retrieves the communication pattern for the web mvc service index
+        pattern = self.web_mvc_service_communication_patterns_list[web_mvc_service_index]
+
+        # retrieves the communication information
+        communication_information = self.web_mvc_service_communication_patterns_map[pattern]
+
+        # unpacks the communication information
+        data_handler_method, connection_changed_handler_method, connection_name = communication_information
+
+        # handles the given request by the web mvc communication handler
+        return self.web_mvc_communication_handler.handle_request(rest_request.request, data_handler_method, connection_changed_handler_method, connection_name)
 
     def _handle_match(self, rest_request, resource_path_match, matching_regex):
         # retrieves the base value for the matching regex

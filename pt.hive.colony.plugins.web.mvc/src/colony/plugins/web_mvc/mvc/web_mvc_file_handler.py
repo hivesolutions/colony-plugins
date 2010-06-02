@@ -86,6 +86,8 @@ class WebMvcFileHandler:
 
         @type request: HttpRequest
         @param request: The http request to be handled.
+        @rtype: bool
+        @return: The result of the handling.
         """
 
         # retrieves the extension of the file
@@ -121,7 +123,7 @@ class WebMvcFileHandler:
             request.status_code = 304
 
             # returns immediately
-            return
+            return True
 
         # calculates the expiration timestamp from the modified timestamp
         # incrementing the delta timestamp for expiration
@@ -168,6 +170,8 @@ class WebMvcFileHandler:
 
             # writes the file contents
             request.write(file_contents, 1, False)
+
+        return True
 
     def _compute_etag(self, file_stat, modified_timestamp):
         """
