@@ -52,7 +52,8 @@ class BitmapLoaderPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["bitmap_load"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc/bitmap_loader/resources/baf.xml"}
+    capabilities = ["bitmap_load", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PackageDependency(
                     "Wx Python", "wx", "2.8.7.x", "http://wxpython.org")]

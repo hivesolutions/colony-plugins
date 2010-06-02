@@ -53,7 +53,8 @@ class SchedulerPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["scheduler", "thread", "console_command_extension"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc/scheduler/resources/baf.xml"}
+    capabilities = ["scheduler", "thread", "console_command_extension", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.guid", "1.0.0"),

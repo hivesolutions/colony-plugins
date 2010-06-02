@@ -53,7 +53,8 @@ class AutoloaderPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
-    capabilities = ["main", "autoload", "console_command_extension"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc/autoloader/resources/baf.xml"}
+    capabilities = ["main", "autoload", "console_command_extension", "build_automation_item"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []

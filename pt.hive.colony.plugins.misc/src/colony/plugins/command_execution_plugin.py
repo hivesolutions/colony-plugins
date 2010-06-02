@@ -52,7 +52,8 @@ class CommandExecutionPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["command_execution"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc/command_execution/resources/baf.xml"}
+    capabilities = ["command_execution", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PackageDependency(
                     "Win32 Extensions for Python", "win32con", "b202", "http://starship.python.net/crew/mhammond/win32",

@@ -52,7 +52,8 @@ class GoogleDataClientPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["google_data_client", "console_command_extension"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc/google_data_client/resources/baf.xml"}
+    capabilities = ["google_data_client", "console_command_extension", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PackageDependency(
                     "Google Data API Python Client Library", ["gdata", "gdata.docs", "gdata.youtube"], "1.1.x", "http://code.google.com/p/gdata-python-client")]

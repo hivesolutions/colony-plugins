@@ -1,0 +1,18 @@
+{
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.misc.email",
+    "name" : "Email Plugin",
+    "short_name" : "Email",
+    "description" : "Email Plugin",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["email", "console_command_extension",
+            "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [],
+    "main_file" : "email_plugin.py",
+    "resources" : ["email_plugin.py", "misc/email/__init__.py",
+            "misc/email/console_email.py", "misc/email/email_system.py",
+            "misc/email/resources/baf.xml"]
+}

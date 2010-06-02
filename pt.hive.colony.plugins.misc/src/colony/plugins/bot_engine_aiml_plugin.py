@@ -53,7 +53,8 @@ class BotEngineAimlPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     loading_type = colony.plugins.plugin_system.LAZY_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["bot_engine.aiml", "console_command_extension"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc/bot_engine_aiml/resources/baf.xml"}
+    capabilities = ["bot_engine.aiml", "console_command_extension", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PackageDependency(
                     "PyAIML", "aiml", "0.8.x", "http://pyaiml.sourceforge.net")]
