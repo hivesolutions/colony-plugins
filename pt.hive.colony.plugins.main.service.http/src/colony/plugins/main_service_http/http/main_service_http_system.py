@@ -2031,6 +2031,18 @@ class HttpRequest:
         # returns the result value
         return result_value
 
+    def get_connection_information(self):
+        """
+        Returns a tuple containing the host address and
+        the host port for the connection.
+
+        @rtype: Tuple
+        @return: A tuple containing the host address and
+        the host port for the connection.
+        """
+
+        return self.http_client_service_task.http_address
+
     def get_attributes_list(self):
         """
         Retrieves the list of attribute names in the
