@@ -86,7 +86,7 @@ class SepecificationGenerator:
         @type properties: Dictionary
         @param properties: The properties for plugin specification generation.
         @type file_path: String
-        @param file_path: The to store the file being generated.
+        @param file_path: The path to store the file being generated.
         """
 
         # retrieves the plugin specification string

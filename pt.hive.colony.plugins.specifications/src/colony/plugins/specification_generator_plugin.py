@@ -106,7 +106,7 @@ class SpecificationGeneratorPlugin(colony.plugins.plugin_system.Plugin):
         @type properties: Dictionary
         @param properties: The properties for plugin specification generation.
         @type file_path: String
-        @param file_path: The to store the file being generated.
+        @param file_path: The path to store the file being generated.
         """
 
         self.specification_generator.generate_plugin_specification(plugin_id, plugin_version, properties, file_path)
