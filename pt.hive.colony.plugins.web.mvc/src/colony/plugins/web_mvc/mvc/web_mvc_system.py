@@ -48,6 +48,12 @@ import web_mvc_communication_handler
 REGEX_COMILATION_LIMIT = 99
 """ The regex compilation limit """
 
+FILE_HANDLER_VALUE = "file_handler"
+""" The file handler value """
+
+COMMUNICATION_HANDLER_VALUE = "communication_handler"
+""" The communication handler value """
+
 class WebMvc:
     """
     The web mvc class.
@@ -357,20 +363,12 @@ class WebMvc:
         # retrieves the pattern handler method
         handler_method = self.web_mvc_service_patterns_map[pattern]
 
-        # tries to retrieve the rest request session
-        rest_request_session = rest_request.get_session()
-
-        # in case there is a valid rest request session
-        if rest_request_session:
-            # sets the parameters as the session attributes map
-            parameters = rest_request_session.get_attributes_map()
-        else:
-            # sets the parameters as an empty map
-            parameters = {}
+        # sets the parameters as an empty map
+        parameters = {}
 
         # sets the extra parameters
-        parameters["file_handler"] = self.web_mvc_file_handler
-        parameters["communication_handler"] = self.web_mvc_communication_handler
+        parameters[FILE_HANDLER_VALUE] = self.web_mvc_file_handler
+        parameters[COMMUNICATION_HANDLER_VALUE] = self.web_mvc_communication_handler
 
         # handles the web mvc request to the handler method
         return handler_method(rest_request, parameters)
