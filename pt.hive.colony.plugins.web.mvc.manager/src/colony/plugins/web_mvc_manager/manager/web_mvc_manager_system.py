@@ -131,11 +131,32 @@ class WebMvcManager:
                 r"^web_mvc_manager/capabilities/[a-zA-Z0-9\._]+$" : self.web_mvc_manager_capability_controller.handle_show}
 
     def get_communication_patterns(self):
+        """
+        Retrieves the map of regular expressions to be used as communication patters,
+        to the web mvc service. The map should relate the route with a tuple
+        containing the data handler, the connection changed handler and the name
+        of the connection.
+
+        @rtype: Dictionary
+        @return: The map of regular expressions to be used as communication patterns,
+        to the web mvc service.
+        """
+
         return {r"^web_mvc_manager/communication$" : (self.web_mvc_manager_communication_controller.handle_data,
                                                       self.web_mvc_manager_communication_controller.handle_connection_changed,
                                                       "web_mvc_manager/communication")}
 
     def get_resource_patterns(self):
+        """
+        Retrieves the map of regular expressions to be used as resource patters,
+        to the web mvc service. The map should relate the route with the base
+        file system path to be used.
+
+        @rtype: Dictionary
+        @return: The map of regular expressions to be used as resource patterns,
+        to the web mvc service.
+        """
+
         # estes sao os patterns para serem enviados para
         # o file handleers
 
