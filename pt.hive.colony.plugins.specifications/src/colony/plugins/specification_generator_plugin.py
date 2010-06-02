@@ -53,7 +53,7 @@ class SpecificationGeneratorPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["startup", "specification_generator"]
+    capabilities = ["specification_generator"]
     capabilities_allowed = ["specification_generator_handler"]
     dependencies = []
     events_handled = []
