@@ -1563,7 +1563,7 @@
             // scrolls to the message window
             $.scrollTo(messageMessage, 800, {
                         offset : {
-                            top : -50,
+                            top : -250,
                             left : 0
                         }
                     });
@@ -1722,7 +1722,7 @@
             // scrolls to the dialog window
             $.scrollTo(dialogMessage, 800, {
                         offset : {
-                            top : -50,
+                            top : -250,
                             left : 0
                         }
                     });
