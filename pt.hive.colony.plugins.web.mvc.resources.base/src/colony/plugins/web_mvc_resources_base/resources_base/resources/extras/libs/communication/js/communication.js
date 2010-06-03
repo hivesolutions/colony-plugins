@@ -110,9 +110,6 @@
         };
 
         var __onConnectSuccess = function(matchedObject, options, data) {
-        };
-
-        var __onConnectError = function(matchedObject, options, request, textStatus, errorThrown) {
             // parses the data generating the json data
             var jsonData = $.parseJSON(data);
 
@@ -136,6 +133,9 @@
                 // sets the matched object interval handler
                 matchedObject.data("intervalHandler", intervalHandler);
             }
+        };
+
+        var __onConnectError = function(matchedObject, options, request, textStatus, errorThrown) {
         };
 
         var __onUpdateSuccess = function(matchedObject, options, data) {
