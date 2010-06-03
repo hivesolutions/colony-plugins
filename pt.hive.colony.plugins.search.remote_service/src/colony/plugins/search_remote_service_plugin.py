@@ -53,7 +53,8 @@ class SearchRemoteServicePlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["rpc_service"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/search_remote_service/remote_service/resources/baf.xml"}
+    capabilities = ["rpc_service", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.search", "1.0.0"),
@@ -66,6 +67,7 @@ class SearchRemoteServicePlugin(colony.plugins.plugin_system.Plugin):
 
     search_plugin = None
     """ Search plugin """
+
     task_manager_plugin = None
     """ Task manager plugin """
 
