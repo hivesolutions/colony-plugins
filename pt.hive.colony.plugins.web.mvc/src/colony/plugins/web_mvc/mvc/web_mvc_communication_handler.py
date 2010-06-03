@@ -189,15 +189,15 @@ class WebMvcCommunicationHandler:
             # adds the message to the communication connection queue
             communication_connection.add_message_queue(message)
 
-    def _write_message(self, request, communication_connection, message):
+    def _write_message(self, request, communication_connection, result_message):
         # retrieves the json plugin
         json_plugin = self.web_mvc_plugin.json_plugin
 
-        # serializes the message
-        serialized_message = communication_connection.serialize_message(message, json_plugin)
+        # serializes the result message
+        serialized_result_message = communication_connection.serialize_message(result_message, json_plugin)
 
-        # writes the serialized message to the request
-        request.write(serialized_message)
+        # writes the serialized result message to the request
+        request.write(serialized_result_message)
 
     def _get_connection(self, request, connection_name):
         # retrieves the request connection id
@@ -290,15 +290,15 @@ class CommunicationConnection:
 
         self.message_queue = []
 
-    def serialize_message(self, message, serializer):
+    def serialize_message(self, result_message, serializer):
         """
         Serializes the given message, using the given
         serializer method.
         The serializartion take into account the current connection
         information.
 
-        @type message: String
-        @param message: The message to be serialized.
+        @type result_message: String
+        @param result_message: The message to be serialized.
         @type serializer: Method
         @param serializer: The serializer method to be used
         in the serialization.
@@ -310,7 +310,7 @@ class CommunicationConnection:
         # sets the message map values
         message_map["id"] = self.connection_id
         message_map["name"] = self.connection_name
-        message_map["message"] = message
+        message_map["result"] = result_message
 
         # serializes the message map
         serialized_message_map = serializer.dumps(message_map)
