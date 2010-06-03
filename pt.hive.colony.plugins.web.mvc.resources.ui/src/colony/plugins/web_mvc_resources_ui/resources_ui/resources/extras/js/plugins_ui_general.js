@@ -242,6 +242,9 @@
             // creates the message components
             $("div.message", matchedObject).message();
 
+            // creates the search table components
+            $("div.search-table", matchedObject).searchtable();
+
             // adds the mandatory dot code to the labels that
             // contain the mandatory option
             $("label.mandatory", matchedObject).append("<span style=\"color: red;margin-left: 4px;\">&bull;</span>");

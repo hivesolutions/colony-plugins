@@ -178,8 +178,7 @@
                     switchButton.addClass("off");
 
                     // triggers the status change event
-                    switchButton.trigger("status_change",
-                            [switchButton, "off"]);
+                    switchButton.trigger("status_change", [switchButton, "off"]);
                 } else {
                     // removes the off class from the switch button
                     switchButton.removeClass("off");
@@ -1983,6 +1982,235 @@
                 initialize();
                 break;
         }
+
+        // returns the object
+        return this;
+    };
+})(jQuery);
+
+(function($) {
+    $.fn.searchtable = function(options) {
+        // the enter key code
+        var ENTER = 13;
+
+        // the default values for the menu
+        var defaults = {
+            numberRecords : 15
+        };
+
+        // sets the default options value
+        var options = options ? options : {};
+
+        // constructs the options
+        var options = $.extend(defaults, options);
+
+        // sets the jquery matched object
+        var matchedObject = this;
+
+        /**
+         * Initializer of the plugin, runs the necessary functions to initialize
+         * the structures.
+         */
+        var initialize = function() {
+            _appendHtml();
+            _registerHandlers();
+            _startSearch();
+        };
+
+        /**
+         * Creates the necessary html for the component.
+         */
+        var _appendHtml = function() {
+            // creates the html code
+            var htmlCode = "<div class=\"search-field\" id=\"search-list-field\">"
+                    + "<input class=\"text\" name=\"search_query\" id=\"search-query\" type=\"text\" />"
+                    + "<div class=\"search-button\"></div>" + "</div>";
+
+            // prepends the html to the matched object
+            matchedObject.prepend(htmlCode);
+
+            // resets the table search
+            __resetTableSearch(matchedObject);
+        };
+
+        /**
+         * Registers the event handlers for the created objects.
+         */
+        var _registerHandlers = function() {
+            // registers the handler for the next button
+            $("#search-query", matchedObject).keydown(function(event) {
+                        var keyCode = event.keyCode;
+
+                        if (keyCode == ENTER) {
+                            // retrieves the searcg table field
+                            var searchTable = $(this).parents(".search-table");
+
+                            // resets the table search
+                            __resetTableSearch(searchTable);
+
+                            // performs the search
+                            _search(searchTable, options, false);
+                        }
+                    });
+
+            // registers the handler for the key event in the search query field
+            $("#search-query", matchedObject).keyup(function(event) {
+                        // retrieves the searcg table field
+                        var searchTable = $(this).parents(".search-table");
+
+                        // resets the table search
+                        __resetTableSearch(searchTable);
+
+                        // performs the search
+                        _search(searchTable, options, false);
+                    });
+        };
+
+        /**
+         * Performs the first and initial search.
+         */
+        var _startSearch = function() {
+            // iterates over all the element in the matched object
+            matchedObject.each(function(index, element) {
+                        _search($(element), options, false);
+                    });
+        };
+
+        var _search = function(searchTable, options, update) {
+            // retrueves the search query
+            var searchQuery = $("#search-query", searchTable);
+
+            // retrueves the table
+            var table = $("table", searchTable);
+
+            // retrieves the provider url
+            var providerUrl = searchTable.attr("provider_url");
+
+            // retrieves the number of records
+            var numberRecords = options["numberRecords"];
+
+            // retrieves the current search query value
+            var searchQueryValue = searchQuery.attr("value");
+
+            // retrieves the current final record
+            var currentFinalRecord = table.data("currentFinalRecord",
+                    currentFinalRecord);
+
+            // assembles the form data to submit with the search button click event
+            var searchButtonData = {
+                search_query : searchQueryValue,
+                start_record : currentFinalRecord,
+                number_records : numberRecords
+            };
+
+            // processes the ajax request
+            $.ajax({
+                        url : providerUrl,
+                        type : "post",
+                        data : searchButtonData,
+                        success : function(data) {
+                            _partialCallback(searchTable, options, data, update);
+                        }
+                    });
+        };
+
+        var _partialCallback = function(searchTable, options, data, update) {
+            // retrieves the data element
+            var dataElement = $(data);
+
+            // retrieves the table body data
+            var tableBody = $("#table-body", dataElement);
+
+            // retrieves the table metadata data
+            var tableMetadata = $("#meta-data", dataElement);
+
+            // creates the switch buttons for the table
+            $(".switch-button", tableBody).switchbutton();
+
+            // triggers the content change event
+            searchTable.trigger("content_change", [tableBody])
+
+            if (update) {
+                $("tbody", searchTable).append($("tr", tableBody));
+            } else {
+                // replaces the table body contents
+                $("tbody", searchTable).replaceWith(tableBody);
+            }
+
+            // retrieves the number of records retrieves
+            var numberRecords = parseInt($("#number-records", tableMetadata).html());
+            var totalNumberRecords = parseInt($("#total-number-records",
+                    tableMetadata).html());
+
+            // sets the initial table data
+            var currentFinalRecord = $("#plugin-table").data("currentFinalRecord");
+            currentFinalRecord += numberRecords;
+
+            // removes the more button
+            $("#more-button", searchTable).remove();
+
+            if (currentFinalRecord < totalNumberRecords) {
+                // creates the button html code
+                var htmlCode = "<div id=\"more-button\" class=\"button button-green center\">More</div>";
+
+                // appends the button html code
+                $(searchTable).append(htmlCode);
+
+                // retrieves the more button
+                var moreButton = $("#more-button", searchTable);
+
+                // creates the more button
+                moreButton.button();
+
+                // register the click callback for the more button
+                moreButton.click(function() {
+                            // performs the search
+                            _search(searchTable, options, true);
+                        });
+            }
+
+            // sets the new table values
+            $("table", searchTable).data("currentFinalRecord",
+                    currentFinalRecord);
+            $("table", searchTable).data("totalNumberRecords",
+                    totalNumberRecords);
+
+            // updates the main container (size)
+            $("#main-container").maincontainer("update");
+
+            // in case the update flag is set
+            if (update) {
+                // retrieves the table footer
+                var tableFooter = $("table > tfoot", searchTable);
+
+                // retrieves the current window (viewport) height
+                var windowHeight = $(window).height();
+
+                // calculates the offset to the top to be used
+                var offsetTop = (windowHeight - 46) * -1;
+
+                // scrolls to the table footer
+                $.scrollTo(tableFooter, 400, {
+                            offset : {
+                                top : offsetTop,
+                                left : 0
+                            }
+                        });
+            }
+        };
+
+        var __resetTableSearch = function(targetElement) {
+            // sets the initial table data
+            $("table", targetElement).data("currentFinalRecord", 0);
+            $("table", targetElement).data("totalNumberRecords", 0);
+        };
+
+        var __baseTableHandlers = function(targetElement) {
+
+        };
+
+        // initializes the plugin
+        initialize();
 
         // returns the object
         return this;
