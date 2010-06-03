@@ -54,7 +54,8 @@ class MainServiceNormalSocketProviderPlugin(colony.plugins.plugin_system.Plugin)
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    capabilities = ["socket_provider"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_normal_socket_provider/normal_socket_provider/resources/baf.xml"}
+    capabilities = ["socket_provider", "build_automation_item"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []

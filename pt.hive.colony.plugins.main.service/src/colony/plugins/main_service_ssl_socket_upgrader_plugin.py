@@ -52,7 +52,8 @@ class MainServiceSslSocketUpgraderPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["socket_upgrader"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_ssl_socket_upgrader/ssl_socket_upgrader/resources/baf.xml"}
+    capabilities = ["socket_upgrader", "build_automation_item"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
