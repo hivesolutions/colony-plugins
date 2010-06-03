@@ -187,7 +187,7 @@ class WebMvcManager:
         # estes sao os patterns para serem enviados para
         # o file handleers
 
-        # rinha de sacar aki o plugin path
+        # tinha de sacar aki o plugin path
         # e tinha de perceber para onde e ke os tinha de enviar
 
         # tenho de mandar um evento sempre que alguma destas coisas muda

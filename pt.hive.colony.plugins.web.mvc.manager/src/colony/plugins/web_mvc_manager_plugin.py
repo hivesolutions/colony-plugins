@@ -54,7 +54,7 @@ class WebMvcManagerPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     capabilities = ["web.mvc_service"]
-    capabilities_allowed = []
+    capabilities_allowed = ["web.mvc_service.panel_item"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.web.mvc.utils", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
@@ -73,6 +73,8 @@ class WebMvcManagerPlugin(colony.plugins.plugin_system.Plugin):
                     "web_mvc_manager.manager.web_mvc_manager_system"]
 
     web_mvc_manager = None
+
+    web_mvc_service_panel_item_plugins = []
 
     web_mvc_utils_plugin = None
     web_mvc_resources_base_plugin = None
@@ -97,9 +99,11 @@ class WebMvcManagerPlugin(colony.plugins.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
+    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.web.mvc.manager", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.web.mvc.manager", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
@@ -146,6 +150,14 @@ class WebMvcManagerPlugin(colony.plugins.plugin_system.Plugin):
         """
 
         return self.web_mvc_manager.get_resource_patterns()
+
+    @colony.plugins.decorators.load_allowed_capability("web.mvc_service.panel_item")
+    def web_mvc_service_panel_item_load_allowed(self, plugin, capability):
+        self.web_mvc_service_panel_item_plugins.append(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("web.mvc_service.panel_item")
+    def web_mvc_service_panel_item_unload_allowed(self, plugin, capability):
+        self.web_mvc_service_panel_item_plugins.remove(plugin)
 
     def get_web_mvc_utils_plugin(self):
         return self.web_mvc_utils_plugin
