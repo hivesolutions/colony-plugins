@@ -11,6 +11,7 @@
 <script type="text/javascript" src="${out_none value=base_path /}resources_base/libs/jquery/jquery-1.4.2-min.js"></script>
 <script type="text/javascript" src="${out_none value=base_path /}resources_base/libs/util/browser.js"></script>
 <script type="text/javascript" src="${out_none value=base_path /}resources_base/libs/util/string_buffer.js"></script>
+<script type="text/javascript" src="${out_none value=base_path /}resources_base/libs/communication/js/communication.js"></script>
 <script type="text/javascript" src="${out_none value=base_path /}resources_base/libs/form/js/form.js"></script>
 <script type="text/javascript" src="${out_none value=base_path /}resources_base/libs/history/js/history.js"></script>
 <script type="text/javascript" src="${out_none value=base_path /}resources_base/libs/scroll_to/js/scroll_to.js"></script>
