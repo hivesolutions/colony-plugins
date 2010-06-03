@@ -121,6 +121,12 @@ class SystemUpdaterPlugin(colony.plugins.plugin_system.Plugin):
     def get_repository_information_by_repository_name(self, repository_name):
         return self.system_updater.get_repository_information_by_repository_name(repository_name)
 
+    def install_plugin(self, plugin_id, plugin_version):
+        return self.system_updater.install_plugin(plugin_id, plugin_version)
+
+    def install_package(self, package_id, package_version):
+        return self.system_updater.install_package(package_id, package_version)
+
     def get_console_extension_name(self):
         return self.console_system_updater.get_console_extension_name()
 
