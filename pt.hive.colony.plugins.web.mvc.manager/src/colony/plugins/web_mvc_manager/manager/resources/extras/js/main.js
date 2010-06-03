@@ -74,7 +74,7 @@ function messageProcessor(data) {
 $(document).ready(function() {
     $("body").communication("default", {
                 url : "communication",
-                timeout : 200,
+                timeout : 500,
                 dataCallbackFunctions : [messageProcessor]
             });
 
