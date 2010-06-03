@@ -54,7 +54,8 @@ class MainClientSmtpPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
-    capabilities = ["client.smtp"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_client_smtp/smtp/resources/baf.xml"}
+    capabilities = ["client.smtp", "build_automation_item"]
     capabilities_allowed = ["socket_provider", "socket_upgrader"]
     dependencies = []
     events_handled = []
