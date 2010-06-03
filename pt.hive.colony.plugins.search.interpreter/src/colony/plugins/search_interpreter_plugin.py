@@ -53,7 +53,8 @@ class SearchInterpreterPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["search_interpreter"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/search_interpreter/interpreter/resources/baf.xml"}
+    capabilities = ["search_interpreter", "build_automation_item"]
     capabilities_allowed = ["search_interpreter_adapter"]
     dependencies = []
     events_handled = []
