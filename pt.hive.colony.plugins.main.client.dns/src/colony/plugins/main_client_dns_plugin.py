@@ -54,7 +54,8 @@ class MainClientDnsPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
-    capabilities = ["client.dns"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_client_dns/dns/resources/baf.xml"}
+    capabilities = ["client.dns", "build_automation_item"]
     capabilities_allowed = ["socket_provider"]
     dependencies = []
     events_handled = []
