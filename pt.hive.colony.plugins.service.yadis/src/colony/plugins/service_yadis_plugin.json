@@ -1,0 +1,20 @@
+{
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.service.yadis",
+    "name" : "Yadis Service Plugin",
+    "short_name" : "Yadis Service Main",
+    "description" : "The plugin that offers the yadis service",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["service.yadis", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [],
+    "main_file" : "service_yadis_plugin.py",
+    "resources" : ["service_yadis_plugin.py", "service_yadis/__init__.py",
+            "service_yadis/yadis/__init__.py",
+            "service_yadis/yadis/service_yadis_exceptions.py",
+            "service_yadis/yadis/service_yadis_parser.py",
+            "service_yadis/yadis/service_yadis_system.py",
+            "service_yadis/yadis/resources/baf.xml"]
+}
