@@ -53,7 +53,8 @@ class SearchQueryEvaluatorVisitorAdapterPlugin(colony.plugins.plugin_system.Plug
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["search_query_evaluator_adapter"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/search_query_evaluator/visitor_adapter/resources/baf.xml"}
+    capabilities = ["search_query_evaluator_adapter", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.search.query_interpreter", "1.0.0")]

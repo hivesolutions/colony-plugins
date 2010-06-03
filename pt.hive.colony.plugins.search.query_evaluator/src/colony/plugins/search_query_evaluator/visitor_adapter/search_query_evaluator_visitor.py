@@ -498,7 +498,7 @@ class IndexSearchVisitor:
                     # not a match, restart the query scan
                     term_value_list_index = 0
 
-                # check if we have matched the full quoted value list
+                # checks if we have matched the full quoted value list
                 if term_value_list_index == term_value_list_length:
                     # this document contains the quoted string
                     quoted_text_hit_list.append(document)

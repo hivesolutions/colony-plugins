@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 class SearchQueryEvaluatorVisitorAdapterException(Exception):
     """
-    The search exception class.
+    The search query evaluator visitor adapter exception class.
     """
 
     message = None
