@@ -7,7 +7,7 @@
     "description" : "A plugin to manage the creation of packing automation tasks",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["build_automation_extension"],
+    "capabilities" : ["build_automation_extension", "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.main.packing.manager",
@@ -18,5 +18,6 @@
             "packing_build_automation_extension_plugin.py",
             "build_automation_extensions/__init__.py",
             "build_automation_extensions/packing/__init__.py",
-            "build_automation_extensions/packing/packing_build_automation_extension_system.py"]
+            "build_automation_extensions/packing/packing_build_automation_extension_system.py",
+            "build_automation_extensions/packing/resources/baf.xml"]
 }
