@@ -72,6 +72,7 @@
             matchedObject.data("dataCallbackFunctions", dataCallbackFunctions);
 
             $.ajax({
+                        type : "post",
                         url : url,
                         data : {
                             command : "connect"
@@ -94,6 +95,7 @@
             var connectionId = matchedObject.data("id");
 
             $.ajax({
+                        type : "post",
                         url : url,
                         data : {
                             id : connectionId,
