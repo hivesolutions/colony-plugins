@@ -9,7 +9,7 @@
 <div id="contents">
     <h1>Configuration</h1>
     <h2>Capabilities</h2>
-    <table id="plugin-table" class="table" cellspacing="0" cellpadding="0">
+    <table id="capability-table" class="table" cellspacing="0" cellpadding="0">
         <thead>
             <tr>
                 <th><span>Capability Name</span><span class="order-down-inactive"></span></th>
@@ -27,10 +27,4 @@
         <tfoot>
         </tfoot>
     </table>
-    <div class="pagging-area">
-        <a id="previous-button" class="control-button">Previous</a>
-        <span id="page-indicator">
-        </span>
-        <a id="next-button" class="control-button">Next</a>
-    </div>
 </div>

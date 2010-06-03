@@ -5,7 +5,7 @@
     <div class="side-panel">side_panel/configuration</div>
 </div>
 <div id="contents">
-    <h1>Capabilities</h1>
+    <h1>Configuration</h1>
     <h2>Capability - ${out_none value=capability xml_escape=True /}</h2>
     <div class="message">${out_none value=result_message xml_escape=True /}</div>
     <form action_target="plugins/edit/${out_none value=plugin.id xml_escape=True /}" id="edit-plugin" method="post">

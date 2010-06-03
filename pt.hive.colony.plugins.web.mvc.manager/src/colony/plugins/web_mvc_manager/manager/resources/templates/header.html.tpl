@@ -28,6 +28,7 @@
         <ul>
             <li class="active"><a id="global">Global</a></li>
             <li><a id="reports">Reports</a></li>
+            <li><a id="update">Update</a></li>
             <li><a id="configuration">Configuration</a></li>
         </ul>
         <div id="menu-bar-search-field" class="search-field">
@@ -43,14 +44,16 @@
     </div>
     <div id="reports-menu" class="drop-menu">
         <ul>
-            <li><a href="">Todos os Relatórios</a></li>
-            <li><a href="">Todos os Relatórios</a></li>
+            <li><a href="">Usage Reports</a></li>
         </ul>
         <hr/>
         <ul>
-            <li><a href="">Relatório de Vendas</a></li>
-            <li><a href="">Relatório de Pagamentos</a></li>
-            <li><a href="">Relatório de Top de Vendas</a></li>
+            <li><a href="">Top Users Report</a></li>
+        </ul>
+    </div>
+    <div id="update-menu" class="drop-menu">
+        <ul>
+            <li><a href="#repositories">Repositories</a></li>
         </ul>
     </div>
     <div id="configuration-menu" class="drop-menu">

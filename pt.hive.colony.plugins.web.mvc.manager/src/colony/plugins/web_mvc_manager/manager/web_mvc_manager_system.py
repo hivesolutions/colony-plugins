@@ -74,6 +74,9 @@ class WebMvcManager:
     web_mvc_manager_capability_controller = None
     """ The web mvc manager capability controller """
 
+    web_mvc_manager_repository_controller = None
+    """ The web mvc manager repository controller """
+
     def __init__(self, web_mvc_manager_plugin):
         """
         Constructor of the class.
@@ -108,6 +111,9 @@ class WebMvcManager:
         # creates the web mvc manager capability controller
         self.web_mvc_manager_capability_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_controllers.CapabilityController, [self.web_mvc_manager_plugin, self], {})
 
+        # creates the web mvc manager repository controller
+        self.web_mvc_manager_repository_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_controllers.RepositoryController, [self.web_mvc_manager_plugin, self], {})
+
     def get_patterns(self):
         """
         Retrieves the map of regular expressions to be used as patters,
@@ -122,13 +128,16 @@ class WebMvcManager:
         return {r"^web_mvc_manager/?$" : self.web_mvc_manager_main_controller.handle_web_mvc_manager_index,
                 r"^web_mvc_manager/index$" : self.web_mvc_manager_main_controller.handle_web_mvc_manager_index,
                 r"^web_mvc_manager/side_panel/configuration$" : self.web_mvc_manager_side_panel_controller.handle_configuration,
+                r"^web_mvc_manager/side_panel/update" : self.web_mvc_manager_side_panel_controller.handle_update,
                 r"^web_mvc_manager/plugins$" : self.web_mvc_manager_plugin_controller.handle_list,
                 #r"^web_mvc_manager/plugins/[a-zA-Z0-9\._]+$" : self.web_mvc_manager_plugin_controller.handle_show,
                 r"^web_mvc_manager/plugins/partial$" : self.web_mvc_manager_plugin_controller.handle_partial_list,
                 r"^web_mvc_manager/plugins/new$" : self.web_mvc_manager_plugin_controller.handle_new,
                 r"^web_mvc_manager/plugins/change_status$" : self.web_mvc_manager_plugin_controller.handle_change_status,
                 r"^web_mvc_manager/capabilities$" : self.web_mvc_manager_capability_controller.handle_list,
-                r"^web_mvc_manager/capabilities/[a-zA-Z0-9\._]+$" : self.web_mvc_manager_capability_controller.handle_show}
+                r"^web_mvc_manager/capabilities/[a-zA-Z0-9\._]+$" : self.web_mvc_manager_capability_controller.handle_show,
+                r"^web_mvc_manager/repositories$" : self.web_mvc_manager_repository_controller.handle_list,
+                r"^web_mvc_manager/repositories/[0-9]+$" : self.web_mvc_manager_repository_controller.handle_show}
 
     def get_communication_patterns(self):
         """

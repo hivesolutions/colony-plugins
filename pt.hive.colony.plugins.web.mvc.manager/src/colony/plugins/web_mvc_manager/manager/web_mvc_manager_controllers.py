@@ -123,6 +123,34 @@ class SidePanelController:
         # sets the templates path
         self.set_templates_path(templates_path)
 
+    def handle_update(self, rest_request, parameters = {}):
+        """
+        Handles the given update rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The take the bill index rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("side_panel_update.html.tpl")
+
+        # assigns the update variables
+        self._assign_update_variables(template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+        # returns true
+        return True
+
     def handle_configuration(self, rest_request, parameters = {}):
         """
         Handles the given configuration rest request.
@@ -150,6 +178,10 @@ class SidePanelController:
 
         # returns true
         return True
+
+    def _assign_update_variables(self, template_file):
+        self.__assign_status_variables(template_file)
+        self.__assign_did_you_know_variables(template_file)
 
     def _assign_configuration_variables(self, template_file):
         self.__assign_status_variables(template_file)
@@ -755,3 +787,146 @@ class CapabilityController:
         sub_capabilities = plugin_manager.capabilities_sub_capabilities_map.get(capability, [])
 
         return sub_capabilities
+
+class RepositoryController:
+    """
+    The web mvc manager repository controller.
+    """
+
+    web_mvc_manager_plugin = None
+    """ The web mvc manager plugin """
+
+    web_mvc_manager = None
+    """ The web mvc manager """
+
+    def __init__(self, web_mvc_manager_plugin, web_mvc_manager):
+        """
+        Constructor of the class.
+
+        @type web_mvc_manager_plugin: WebMvcManagerPlugin
+        @param web_mvc_manager_plugin: The web mvc manager plugin.
+        @type web_mvc_manager: WebMvcManager
+        @param web_mvc_manager: The web mvc manager.
+        """
+
+        self.web_mvc_manager_plugin = web_mvc_manager_plugin
+        self.web_mvc_manager = web_mvc_manager
+
+    def start(self):
+        """
+        Method called upon structure initialization.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_manager_plugin.manager
+
+        # retrieves the web mvc manager plugin path
+        web_mvc_manager_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_manager_plugin.id)
+
+        # creates the templates path
+        templates_path = web_mvc_manager_plugin_path + "/" + TEMPLATES_PATH + "/repository"
+
+        # sets the templates path
+        self.set_templates_path(templates_path)
+
+    def handle_show(self, rest_request, parameters = {}):
+        # returns in case the required permissions are not set
+        if not self.web_mvc_manager.require_permissions(self, rest_request):
+            return True
+
+        # in case the encoder name is ajax
+        if rest_request.encoder_name == AJAX_ENCODER_NAME:
+            # retrieves the template file
+            template_file = self.retrieve_template_file("repository_edit_contents.html.tpl")
+        else:
+            # retrieves the template file
+            template_file = self.retrieve_template_file("../general.html.tpl")
+
+            # sets the page to be included
+            template_file.assign("page_include", "capability/repository_edit_contents.html.tpl")
+
+            # sets the side panel to be included
+            template_file.assign("side_panel_include", "side_panel/side_panel_update.html.tpl")
+
+        # retrieves the specified capability
+        repository = self._get_repository(rest_request)
+
+        # assigns the capability to the template
+        template_file.assign("repository", repository)
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+        # returns true
+        return True
+
+    def handle_list(self, rest_request, parameters = {}):
+        # returns in case the required permissions are not set
+        if not self.web_mvc_manager.require_permissions(self, rest_request):
+            return True
+
+        # in case the encoder name is ajax
+        if rest_request.encoder_name == AJAX_ENCODER_NAME:
+            # retrieves the template file
+            template_file = self.retrieve_template_file("repository_list_contents.html.tpl")
+        else:
+            # retrieves the template file
+            template_file = self.retrieve_template_file("../general.html.tpl")
+
+            # sets the page to be included
+            template_file.assign("page_include", "repository/repository_list_contents.html.tpl")
+
+            # sets the side panel to be included
+            template_file.assign("side_panel_include", "side_panel/side_panel_configuration.html.tpl")
+
+        # retrieves the respositories
+        repositories = self._get_repositories()
+
+        # assigns the plugins to the template
+        template_file.assign("repositories", repositories)
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+        # returns true
+        return True
+
+    def _get_repository(self, rest_request):
+        # retrieves the system updater plugin
+        system_updater_plugin = self.web_mvc_manager_plugin.system_updater_plugin
+
+        # retrieves the repository index from the rest request's path list
+        repository_index = int(rest_request.path_list[-1])
+
+        # retrieves all the repositories
+        repositories = system_updater_plugin.get_repositories()
+
+        repository = repositories[repository_index - 1]
+
+        repository_name = repository.name
+
+        # retrieves the repository for the repository with the given name
+        repository_information = system_updater_plugin.get_repository_information_by_repository_name(repository_name)
+
+        return repository_information
+
+    def _get_repositories(self):
+        # retrieves the system updater plugin
+        system_updater_plugin = self.web_mvc_manager_plugin.system_updater_plugin
+
+        # retrieves all the repositories
+        repositories = system_updater_plugin.get_repositories()
+
+        return repositories

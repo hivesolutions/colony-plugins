@@ -64,7 +64,9 @@ class WebMvcManagerPlugin(colony.plugins.plugin_system.Plugin):
                     colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.json", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.packing.manager", "1.0.0")]
+                    "pt.hive.colony.plugins.main.packing.manager", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.system.updater", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["web_mvc_manager.manager.web_mvc_manager_controllers", "web_mvc_manager.manager.web_mvc_manager_system"]
@@ -76,6 +78,7 @@ class WebMvcManagerPlugin(colony.plugins.plugin_system.Plugin):
     web_mvc_resources_ui_plugin = None
     json_plugin = None
     packing_manager_plugin = None
+    system_updater_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -177,3 +180,10 @@ class WebMvcManagerPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.packing.manager")
     def set_packing_manager_plugin(self, packing_manager_plugin):
         self.packing_manager_plugin = packing_manager_plugin
+
+    def get_system_updater_plugin(self):
+        return self.system_updater_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.system.updater")
+    def set_system_updater_plugin(self, system_updater_plugin):
+        self.system_updater_plugin = system_updater_plugin
