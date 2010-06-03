@@ -53,8 +53,8 @@ class ConfigurationManagerPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {}
-    capabilities = ["startup", "configuration_manager"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/configuration_manager/manager/resources/baf.xml"}
+    capabilities = ["startup", "configuration_manager", "build_automation_item"]
     capabilities_allowed = ["configuration_model_provider"]
     dependencies = []
     events_handled = []
