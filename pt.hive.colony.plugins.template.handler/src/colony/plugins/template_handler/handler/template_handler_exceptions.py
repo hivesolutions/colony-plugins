@@ -50,6 +50,9 @@ class FileNotFoundException(TemplateHandlerException):
     The file not found exception class.
     """
 
+    status_code = None
+    """ The exceptions's status code """
+
     def __init__(self, message, status_code):
         """
         Constructor of the class.
