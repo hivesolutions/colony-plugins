@@ -37,10 +37,20 @@
         <version>1.0.0</version>
         <type>colony</type>
         <name>Gui Main Plugin</name>
-        <description>The Gui Main Plugin automation file (baf)</description>
+        <description>Gui Main Plugin</description>
         <url>http://www.hive.pt</url>
     </artifact>
     <build>
         <default_stage>build</default_stage>
+        <plugins>
+            <plugin>
+                <id>pt.hive.colony.plugins.build.automation.extensions.packing</id>
+                <version>1.0.0</version>
+                <stage>build</stage>
+                <configuration>
+                    <specification_file>$base{plugin_directory}/main_gui_plugin.json</specification_file>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 </build_automation>
