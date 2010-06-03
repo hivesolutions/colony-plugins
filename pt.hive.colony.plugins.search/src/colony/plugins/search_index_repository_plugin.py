@@ -52,7 +52,8 @@ class SearchIndexRepositoryPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["search_index_repository"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/search/index_repository/resources/baf.xml"}
+    capabilities = ["search_index_repository", "build_automation_item"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
