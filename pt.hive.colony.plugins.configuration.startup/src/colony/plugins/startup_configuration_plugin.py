@@ -54,7 +54,8 @@ class StartupConfigurationPlugin(colony.plugins.plugin_system.PluginManagerPlugi
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    capabilities = ["plugin_manager_extension", "plugin_manager_extension.init_plugin_load"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/configuration_startup/startup/resources/baf.xml"}
+    capabilities = ["plugin_manager_extension", "plugin_manager_extension.init_plugin_load", "build_automation_item"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
