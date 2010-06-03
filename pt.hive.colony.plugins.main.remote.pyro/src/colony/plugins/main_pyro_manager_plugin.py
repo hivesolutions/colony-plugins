@@ -53,7 +53,8 @@ class MainPyroManagerPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["thread", "pyro_manager", "rpc_handler"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_remote_pyro/manager/resources/baf.xml"}
+    capabilities = ["thread", "pyro_manager", "rpc_handler", "build_automation_item"]
     capabilities_allowed = ["rpc_service"]
     dependencies = [colony.plugins.plugin_system.PackageDependency(
                     "Pyro", "Pyro", "3.8.x", "http://pyro.sourceforge.net")]
