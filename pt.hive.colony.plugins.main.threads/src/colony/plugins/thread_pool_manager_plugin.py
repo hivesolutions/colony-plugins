@@ -54,7 +54,8 @@ class ThreadPoolManagerPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    capabilities = ["thread_pool_manager"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_threads/thread_pool_manager/resources/baf.xml"}
+    capabilities = ["thread_pool_manager", "build_automation_item"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
