@@ -52,7 +52,8 @@ class MainPyroClientPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["pyro_client", "remote_client_adapter"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_remote_client_pyro/client/resources/baf.xml"}
+    capabilities = ["pyro_client", "remote_client_adapter", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PackageDependency(
                     "Pyro", "Pyro", "3.8.x", "http://pyro.sourceforge.net")]
