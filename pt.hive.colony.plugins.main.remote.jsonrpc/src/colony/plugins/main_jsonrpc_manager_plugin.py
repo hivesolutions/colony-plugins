@@ -54,7 +54,8 @@ class MainJsonrpcManagerPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
-    capabilities = ["jsonrpc_manager", "http_python_handler", "rpc_handler"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_remote_jsonrpc/manager/resources/baf.xml"}
+    capabilities = ["jsonrpc_manager", "http_python_handler", "rpc_handler", "build_automation_item"]
     capabilities_allowed = ["rpc_service"]
     dependencies = []
     events_handled = []
