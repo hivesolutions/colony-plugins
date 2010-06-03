@@ -52,7 +52,8 @@ class SearchIndexerPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["search_indexer"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/search_indexer/indexer/resources/baf.xml"}
+    capabilities = ["search_indexer", "build_automation_item"]
     capabilities_allowed = ["search_scorer_metric_repository"]
     dependencies = []
     events_handled = []
