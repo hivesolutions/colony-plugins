@@ -7,7 +7,7 @@
     "description" : "The plugin that offers the http service",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["service.http"],
+    "capabilities" : ["service.http", "build_automation_item"],
     "capabilities_allowed" : ["http_service_handler", "http_service_encoding",
             "http_service_error_handler", "socket_provider"],
     "dependencies" : [{

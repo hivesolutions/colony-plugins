@@ -55,7 +55,8 @@ class MainServiceHttpStarterPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    capabilities = ["main"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_http_starter/starter/resources/baf.xml"}
+    capabilities = ["main", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.service.http", "1.0.0")]

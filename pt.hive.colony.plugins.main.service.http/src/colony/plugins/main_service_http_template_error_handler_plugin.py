@@ -55,7 +55,8 @@ class MainServiceHttpTemplateErrorHandlerPlugin(colony.plugins.plugin_system.Plu
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    capabilities = ["http_service_error_handler"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_http_template_error_handler/template_error_handler/resources/baf.xml"}
+    capabilities = ["http_service_error_handler", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.template_engine.manager", "1.0.0")]

@@ -7,7 +7,7 @@
     "description" : "The plugin that offers the http service colony handler",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["http_service_handler"],
+    "capabilities" : ["http_service_handler", "build_automation_item"],
     "capabilities_allowed" : ["http_python_handler"],
     "dependencies" : [],
     "main_file" : "main_service_http_colony_handler_plugin.py",
