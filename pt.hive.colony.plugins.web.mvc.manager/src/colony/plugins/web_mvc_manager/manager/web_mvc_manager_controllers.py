@@ -183,12 +183,29 @@ class SidePanelController:
         return True
 
     def _assign_update_variables(self, template_file):
+        self.__assign_panel_item_variables(template_file)
         self.__assign_status_variables(template_file)
         self.__assign_did_you_know_variables(template_file)
 
     def _assign_configuration_variables(self, template_file):
+        self.__assign_panel_item_variables(template_file)
         self.__assign_status_variables(template_file)
         self.__assign_did_you_know_variables(template_file)
+
+    def __assign_panel_item_variables(self, template_file):
+        # retrieves the web mvc service panel item plugins
+        web_mvc_service_panel_item_plugins = self.web_mvc_manager_plugin.web_mvc_service_panel_item_plugins
+
+        # starts the panel items list
+        panel_items_list = []
+
+        # iterates over all the web mvc service panel item plugins
+        for web_mvc_service_panel_item_plugin in web_mvc_service_panel_item_plugins:
+            panel_item = web_mvc_service_panel_item_plugin.get_panel_item({})
+            panel_items_list.append(panel_item)
+
+        # assigns the panel items to the template
+        template_file.assign("panel_items", panel_items_list)
 
     def __assign_status_variables(self, template_file):
         # retrieves the plugin manager
