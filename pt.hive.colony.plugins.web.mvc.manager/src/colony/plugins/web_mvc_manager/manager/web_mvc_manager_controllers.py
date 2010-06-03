@@ -886,8 +886,14 @@ class RepositoryController:
         # retrieves the specified capability
         repository = self._get_repository(rest_request)
 
-        # assigns the capability to the template
+        # retrieves the respository index
+        repository_index = int(rest_request.path_list[-1])
+
+        # assigns the repository to the template
         template_file.assign("repository", repository)
+
+        # assigns the repository index to the template
+        template_file.assign("repository_index", repository_index)
 
         # assigns the session variables to the template file
         self.assign_session_template_file(rest_request, template_file)
@@ -973,12 +979,112 @@ class RepositoryController:
         # returns true
         return True
 
-    def _get_repository(self, rest_request):
+    def handle_install_plugin(self, rest_request, parameters = {}):
+        # returns in case the required permissions are not set
+        if not self.web_mvc_manager.require_permissions(self, rest_request):
+            return True
+
+        # processes the form data
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the form data attributes
+        plugin_id = form_data_map["plugin_id"]
+        plugin_version = form_data_map["plugin_version"]
+
+        # retrieves the system updater plugin
+        system_updater_plugin = self.web_mvc_manager_plugin.system_updater_plugin
+
+        # tries to install the plugin
+        system_updater_plugin.install_plugin(plugin_id, plugin_version)
+
+    def handle_plugins_partial_list(self, rest_request, parameters = {}):
+        # returns in case the required permissions are not set
+        if not self.web_mvc_manager.require_permissions(self, rest_request):
+            return True
+
+        # retrieves the web mvc manager search helper
+        web_mvc_manager_search_helper = self.web_mvc_manager.web_mvc_manager_search_helper
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("repository_plugins_partial_list_contents.html.tpl")
+
+        # retrieves the filtered repositories
+        filtered_repository_plugins = self._get_fitered_repository_plugins(rest_request)
+
+        # retrieves the partial filter from the filtered repository plugins
+        partial_filtered_repository_plugins, start_record, number_records, total_number_records = web_mvc_manager_search_helper.partial_filter(rest_request, filtered_repository_plugins)
+
+        # assigns the repositories to the template
+        template_file.assign("repository_plugins", partial_filtered_repository_plugins)
+
+        # assigns the start record to the template
+        template_file.assign("start_record", start_record)
+
+        # assigns the number records to the template
+        template_file.assign("number_records", number_records)
+
+        # assigns the total number records to the template
+        template_file.assign("total_number_records", total_number_records)
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+        # returns true
+        return True
+
+    def handle_packages_partial_list(self, rest_request, parameters = {}):
+        # returns in case the required permissions are not set
+        if not self.web_mvc_manager.require_permissions(self, rest_request):
+            return True
+
+        # retrieves the web mvc manager search helper
+        web_mvc_manager_search_helper = self.web_mvc_manager.web_mvc_manager_search_helper
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("repository_partial_list_contents.html.tpl")
+
+        # retrieves the filtered repositories
+        filtered_repositories = self._get_fitered_repositories(rest_request)
+
+        # retrieves the partial filter from the filtered repositories
+        partial_filtered_repositories, start_record, number_records, total_number_records = web_mvc_manager_search_helper.partial_filter(rest_request, filtered_repositories)
+
+        # assigns the repositories to the template
+        template_file.assign("repositories", partial_filtered_repositories)
+
+        # assigns the start record to the template
+        template_file.assign("start_record", start_record)
+
+        # assigns the number records to the template
+        template_file.assign("number_records", number_records)
+
+        # assigns the total number records to the template
+        template_file.assign("total_number_records", total_number_records)
+
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+        # returns true
+        return True
+
+    def _get_repository(self, rest_request, index = -1):
         # retrieves the system updater plugin
         system_updater_plugin = self.web_mvc_manager_plugin.system_updater_plugin
 
         # retrieves the repository index from the rest request's path list
-        repository_index = int(rest_request.path_list[-1])
+        repository_index = int(rest_request.path_list[index])
 
         # retrieves all the repositories
         repositories = system_updater_plugin.get_repositories()
@@ -1016,6 +1122,28 @@ class RepositoryController:
 
         # returns the filtered repositories
         return filtered_repositories
+
+    def _get_fitered_repository_plugins(self, rest_request):
+        # processes the form data
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the form data attributes
+        search_query = form_data_map["search_query"]
+
+        # retrieves the repository
+        repository = self._get_repository(rest_request, -2)
+
+        # creates the filtered repository plugins
+        filtered_repository_plugins = []
+
+        # iterates over all the repository plugins
+        for repository_plugin in repository.plugins:
+            # in case the search query is found in the repository plugin id
+            if not repository_plugin.id.find(search_query) == -1:
+                # adds the repository plugin to the filtered repository plugins
+                filtered_repository_plugins.append(repository_plugin)
+
+        return filtered_repository_plugins
 
     def _get_repositories(self):
         # retrieves the system updater plugin

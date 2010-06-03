@@ -1,4 +1,6 @@
 <div id="includes">
+    <div class="javascript">resources/templates/js/repository/repository_edit_contents.js</div>
+    <div class="css">resources/templates/css/repository/repository_edit_contents.css</div>
 </div>
 <div id="meta-data">
     <div class="area">update</div>
@@ -6,7 +8,7 @@
 </div>
 <div id="contents">
     <h1>Update</h1>
-    <h2>Capability - ${out_none value=capability xml_escape=True /}</h2>
+    <h2>Repository - ${out_none value=repository.name xml_escape=True /}</h2>
     <div class="message">${out_none value=result_message xml_escape=True /}</div>
     <form id="edit-repository" method="post">
         <div class="form-field-area">
@@ -25,7 +27,7 @@
             <div class="column-second">
                 <div class="form-field">
                     <label class="mandatory">Layout:</label>
-                    <div><input class="text" name="repository[layout]" type="text" tabindex="3" value="${out_none value=repository.layout xml_escape=True /}" error="${out_none value=repository.validation_errors_map.layout /}" /></div>
+                    <div><input class="text" name="repository[layout]" type="text" tabindex="2" value="${out_none value=repository.layout xml_escape=True /}" error="${out_none value=repository.validation_errors_map.layout /}" /></div>
                 </div>
             </div>
             <div class="clear"></div>
@@ -33,34 +35,24 @@
         <div class="form-field-area">
             <h4>Plugins</h4>
             <hr/>
-            <div class="search-field" id="search-list-field">
-                <div>
-                    <input class="text" name="search_query" id="search-query" type="text" value="${out_none value=search_query /}"/>
-                    <div class="search-button"></div>
-                </div>
-             </div>
-            <table id="plugin-table" class="table" cellspacing="0" cellpadding="0">
-                <thead>
-                    <tr>
-                        <th><span>Plugin ID</span><span class="order-down"></span></th>
-                        <th width="60"><span>Status</span><span class="order-down-inactive"></span></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${foreach item=plugin from=repository.plugins}
-                     <tr>
-                        <td><a href="#plugins/${out_none value=plugin.id xml_escape=True /}">${out_none value=plugin.id xml_escape=True /}</a></td>
-                        <td><div class="switch-button ${if item=plugin.loaded value=True operator=eq}on${/if}${if item=plugin.loaded value=False operator=eq}off${/if}" plugin="${out_none value=plugin.id xml_escape=True /}"></div></td>
-                    </tr>
-                    ${/foreach}
-                </tbody>
-                <tfoot>
-                </tfoot>
-            </table>
+            <div id="repository-plugins-table" class="search-table" provider_url="repositories/${out_none value=repository_index xml_escape=True /}/plugins_partial">
+                <table class="table" cellspacing="0" cellpadding="0">
+                    <thead>
+                        <tr>
+                            <th><span>Plugin ID</span><span class="order-down-inactive"></span></th>
+                            <th width="75"><span>Install</span><span class="order-down-inactive"></span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                    <tfoot>
+                    </tfoot>
+                </table>
+            </div>
             <div class="clear"></div>
         </div>
         <div class="form-field-area">
-            <h4>Sub-Capabilities</h4>
+            <h4>Packages</h4>
             <hr/>
             <div class="column-first">
             </div>
@@ -69,8 +61,8 @@
             <div class="clear"></div>
         </div>
         <div class="form-button-area">
-            <div class="cancel button button-blue" tabindex="13">Cancelar</div>
-            <div class="submit button button-green" tabindex="12">Actualizar</div>
+            <div class="cancel button button-blue" tabindex="4">Cancelar</div>
+            <div class="submit button button-green" tabindex="5">Actualizar</div>
         </div>
     </form>
 </div>

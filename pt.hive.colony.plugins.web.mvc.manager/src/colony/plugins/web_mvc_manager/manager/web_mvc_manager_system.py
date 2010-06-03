@@ -146,7 +146,10 @@ class WebMvcManager:
                 r"^web_mvc_manager/capabilities/partial$" : self.web_mvc_manager_capability_controller.handle_partial_list,
                 r"^web_mvc_manager/repositories$" : self.web_mvc_manager_repository_controller.handle_list,
                 r"^web_mvc_manager/repositories/[0-9]+$" : self.web_mvc_manager_repository_controller.handle_show,
-                r"^web_mvc_manager/repositories/partial$" : self.web_mvc_manager_repository_controller.handle_partial_list}
+                r"^web_mvc_manager/repositories/partial$" : self.web_mvc_manager_repository_controller.handle_partial_list,
+                r"^web_mvc_manager/repositories/install_plugin$" : self.web_mvc_manager_repository_controller.handle_install_plugin,
+                r"^web_mvc_manager/repositories/[0-9]+/plugins_partial$" : self.web_mvc_manager_repository_controller.handle_plugins_partial_list,
+                r"^web_mvc_manager/repositories/[0-9]+/packages_partial$" : self.web_mvc_manager_repository_controller.handle_packages_partial_list}
 
     def get_communication_patterns(self):
         """

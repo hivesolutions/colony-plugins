@@ -33,11 +33,53 @@ $(document).ready(function() {
                 return
             }
 
+            var _registerExtraHandlers = function(targetElement) {
+                // retrieves the switch buttons from the target element
+                var switchButtons = $(".switch-button", targetElement);
+
+                // creates the switch buttons
+                switchButtons.switchbutton();
+
+                // registers the callback for the status change event
+                switchButtons.bind("status_change",
+                        function(event, element, status) {
+                            // retrieves the switch button
+                            var switchButton = $(this);
+
+                            // retrieves the plugin id from the switch button
+                            var pluginId = switchButton.attr("plugin");
+
+                            // retrieves the plugin status, from the stauts of the switch button
+                            var pluginStatus = status == "on"
+                                    ? "load"
+                                    : "unload";
+
+                            // retrieves the oposite status
+                            var opositeStatus = status == "on" ? "off" : "on";
+
+                            // removes the status class, and adds
+                            // the oposite class (changing status)
+                            switchButton.removeClass(status);
+                            switchButton.addClass(opositeStatus);
+
+                            $.ajax({
+                                        url : "plugins/change_status.json",
+                                        type : "post",
+                                        data : {
+                                            plugin_id : pluginId,
+                                            plugin_status : pluginStatus
+                                        }
+                                    });
+                        });
+            };
+
             // retrieves the plugin table
             var pluginTable = $("#plugin-table");
 
+            // registers the extra handlers for the plugin table
             _registerExtraHandlers(pluginTable);
 
+            // register the callback to the content change event
             pluginTable.bind("content_change", function(event, targetElements) {
                         _registerExtraHandlers(targetElements);
                     });
@@ -45,37 +87,3 @@ $(document).ready(function() {
             // sets the logic loaded data
             $("#contents").data("logicLoaded", true);
         });
-
-var _registerExtraHandlers = function(targetElement) {
-    // retrieves the switch buttons from the target element
-    var switchButtons = $(".switch-button", targetElement);
-
-    // registers the callback for the status change event
-    switchButtons.bind("status_change", function(event, element, status) {
-                // retrieves the switch button
-                var switchButton = $(this);
-
-                // retrieves the plugin id from the switch button
-                var pluginId = switchButton.attr("plugin");
-
-                // retrieves the plugin status, from the stauts of the switch button
-                var pluginStatus = status == "on" ? "load" : "unload";
-
-                // retrieves the oposite status
-                var opositeStatus = status == "on" ? "off" : "on";
-
-                // removes the status class, and adds
-                // the oposite class (changing status)
-                switchButton.removeClass(status);
-                switchButton.addClass(opositeStatus);
-
-                $.ajax({
-                            url : "plugins/change_status.json",
-                            type : "post",
-                            data : {
-                                plugin_id : pluginId,
-                                plugin_status : pluginStatus
-                            }
-                        });
-            });
-};
