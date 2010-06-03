@@ -11,7 +11,7 @@
     <h2>Plugins</h2>
     <div id="plugin-table" class="search-table" provider_url="plugins/partial">
         <table class="table" cellspacing="0" cellpadding="0">
-               <thead>
+            <thead>
                 <tr>
                     <th><span>Plugin ID</span><span class="order-down"></span></th>
                     <th width="60"><span>Status</span><span class="order-down-inactive"></span></th>

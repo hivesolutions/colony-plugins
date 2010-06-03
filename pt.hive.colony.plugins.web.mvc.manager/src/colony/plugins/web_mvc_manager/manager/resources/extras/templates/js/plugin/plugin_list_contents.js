@@ -24,56 +24,58 @@
 // __license__   = GNU General Public License (GPL), Version 3
 
 $(document).ready(function() {
-    // sets the logic loaded data
-    var logicLoaded = $("#contents").data("logicLoaded");
+            // sets the logic loaded data
+            var logicLoaded = $("#contents").data("logicLoaded");
 
-    // in case the logic is already loaded
-    if (logicLoaded) {
-        // returns immediately
-        return
-    }
+            // in case the logic is already loaded
+            if (logicLoaded) {
+                // returns immediately
+                return
+            }
 
-    // retrieves the plugin table
-    var pluginTable = $("#plugin-table");
+            // retrieves the plugin table
+            var pluginTable = $("#plugin-table");
 
-    pluginTable.bind("content_change", function(event, targetElements) {
-                // retrieves the switch buttons from the target elements
-                var switchButtons = $(".switch-button", targetElements);
+            _registerExtraHandlers(pluginTable);
 
-                switchButtons.bind("status_change",
-                        function(event, element, status) {
-                            console.info("asdsad")
+            pluginTable.bind("content_change", function(event, targetElements) {
+                        _registerExtraHandlers(targetElements);
+                    });
 
-                            // retrieves the switch button
-                            var switchButton = $(this);
+            // sets the logic loaded data
+            $("#contents").data("logicLoaded", true);
+        });
 
-                            // retrieves the plugin id from the switch button
-                            var pluginId = switchButton.attr("plugin");
+var _registerExtraHandlers = function(targetElement) {
+    // retrieves the switch buttons from the target element
+    var switchButtons = $(".switch-button", targetElement);
 
-                            // retrieves the plugin status, from the stauts of the switch button
-                            var pluginStatus = status == "on"
-                                    ? "load"
-                                    : "unload";
+    // registers the callback for the status change event
+    switchButtons.bind("status_change", function(event, element, status) {
+                // retrieves the switch button
+                var switchButton = $(this);
 
-                            // retrieves the oposite status
-                            var opositeStatus = status == "on" ? "off" : "on";
+                // retrieves the plugin id from the switch button
+                var pluginId = switchButton.attr("plugin");
 
-                            // removes the status class, and adds
-                            // the oposite class (changing status)
-                            switchButton.removeClass(status);
-                            switchButton.addClass(opositeStatus);
+                // retrieves the plugin status, from the stauts of the switch button
+                var pluginStatus = status == "on" ? "load" : "unload";
 
-                            $.ajax({
-                                        url : "plugins/change_status.json",
-                                        type : "post",
-                                        data : {
-                                            plugin_id : pluginId,
-                                            plugin_status : pluginStatus
-                                        }
-                                    });
+                // retrieves the oposite status
+                var opositeStatus = status == "on" ? "off" : "on";
+
+                // removes the status class, and adds
+                // the oposite class (changing status)
+                switchButton.removeClass(status);
+                switchButton.addClass(opositeStatus);
+
+                $.ajax({
+                            url : "plugins/change_status.json",
+                            type : "post",
+                            data : {
+                                plugin_id : pluginId,
+                                plugin_status : pluginStatus
+                            }
                         });
             });
-
-    // sets the logic loaded data
-    $("#contents").data("logicLoaded", true);
-});
+};

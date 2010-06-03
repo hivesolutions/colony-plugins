@@ -380,12 +380,6 @@ class PluginController:
             # assigns the configuration (side panel) variable to the template
             self.web_mvc_manager.web_mvc_manager_side_panel_controller._assign_configuration_variables(template_file)
 
-        # retrieves the plugin manager
-        plugin_manager = self.web_mvc_manager_plugin.manager
-
-        # assigns the plugins to the template
-        template_file.assign("plugins", plugin_manager.get_all_plugins())
-
         # assigns the session variables to the template file
         self.assign_session_template_file(rest_request, template_file)
 
@@ -403,13 +397,16 @@ class PluginController:
         if not self.web_mvc_manager.require_permissions(self, rest_request):
             return True
 
+        # retrieves the web mvc manager search helper
+        web_mvc_manager_search_helper = self.web_mvc_manager.web_mvc_manager_search_helper
+
         # retrieves the template file
         template_file = self.retrieve_template_file("plugin_partial_list_contents.html.tpl")
 
         # retrieves the filtered plugins
         filtered_plugins = self._get_fitered_plugins(rest_request)
 
-        partial_filtered_plugins, start_record, number_records, total_number_records = self._partial_filter(rest_request, filtered_plugins)
+        partial_filtered_plugins, start_record, number_records, total_number_records = web_mvc_manager_search_helper.partial_filter(rest_request, filtered_plugins)
 
         # assigns the plugins to the template
         template_file.assign("plugins", partial_filtered_plugins)
@@ -508,32 +505,6 @@ class PluginController:
         # unpacks the files using the colony service
         packing_manager_plugin.unpack_files(["c:/temp.cpx"], properties, "colony")
 
-    def _partial_filter(self, rest_request, contents_list):
-        # processes the form data
-        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
-
-        # retrieves the form data attributes
-        start_record = int(form_data_map["start_record"])
-        number_records = int(form_data_map["number_records"])
-
-        # retrieves the partial contents list
-        partial_contents_list = contents_list[start_record:start_record + number_records]
-
-        # retrieves the total number of records from the contents list
-        total_number_records = len(contents_list)
-
-        # in case the total number of records is smaller
-        # than the request number of records
-        if total_number_records < number_records:
-            # the number of records is set to the total number of records
-            number_records = total_number_records
-
-        # creates the filter contents tuple
-        filter_contents = (partial_contents_list, start_record, number_records, total_number_records)
-
-        # returns the filter contents tuple
-        return filter_contents
-
     def _get_plugin(self, rest_request):
         # retrieves the plugin manager
         plugin_manager = self.web_mvc_manager_plugin.manager
@@ -547,9 +518,6 @@ class PluginController:
         return plugin
 
     def _get_fitered_plugins(self, rest_request):
-        # retrieves the plugin manager
-        plugin_manager = self.web_mvc_manager_plugin.manager
-
         # processes the form data
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
 
@@ -557,7 +525,7 @@ class PluginController:
         search_query = form_data_map["search_query"]
 
         # retrieves the plugins
-        plugins = plugin_manager.get_all_plugins()
+        plugins = self._get_plugins()
 
         # creates the filtered plugins list
         filtered_plugins = []
@@ -571,6 +539,15 @@ class PluginController:
 
         # returns the filtered plugins
         return filtered_plugins
+
+    def _get_plugins(self):
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_manager_plugin.manager
+
+        # retrieves the plugins
+        plugins = plugin_manager.get_all_plugins()
+
+        return plugins
 
     def _change_status_plugin(self, rest_request):
         # retrieves the plugin manager
@@ -725,11 +702,46 @@ class CapabilityController:
             # sets the side panel to be included
             template_file.assign("side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
-        # retrieves the capabilities
-        capabilities = self._get_capabilities()
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
 
-        # assigns the plugins to the template
-        template_file.assign("capabilities", capabilities)
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+        # returns true
+        return True
+
+    def handle_partial_list(self, rest_request, parameters = {}):
+        # returns in case the required permissions are not set
+        if not self.web_mvc_manager.require_permissions(self, rest_request):
+            return True
+
+        # retrieves the web mvc manager search helper
+        web_mvc_manager_search_helper = self.web_mvc_manager.web_mvc_manager_search_helper
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("capability_partial_list_contents.html.tpl")
+
+        # retrieves the filtered capabilities
+        filtered_capabilities = self._get_fitered_capabilities(rest_request)
+
+        # retrieves the partial filter from the filtered capabilities
+        partial_filtered_capabilities, start_record, number_records, total_number_records = web_mvc_manager_search_helper.partial_filter(rest_request, filtered_capabilities)
+
+        # assigns the capabilities to the template
+        template_file.assign("capabilities", partial_filtered_capabilities)
+
+        # assigns the start record to the template
+        template_file.assign("start_record", start_record)
+
+        # assigns the number records to the template
+        template_file.assign("number_records", number_records)
+
+        # assigns the total number records to the template
+        template_file.assign("total_number_records", total_number_records)
 
         # assigns the session variables to the template file
         self.assign_session_template_file(rest_request, template_file)
@@ -743,6 +755,35 @@ class CapabilityController:
         # returns true
         return True
 
+    def _get_capability(self, rest_request):
+        # retrieves the capability from the rest request's path list
+        capability = rest_request.path_list[-1]
+
+        return capability
+
+    def _get_fitered_capabilities(self, rest_request):
+        # processes the form data
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the form data attributes
+        search_query = form_data_map["search_query"]
+
+        # retrieves the capabilities
+        capabilities = self._get_capabilities()
+
+        # creates the filtered capabilities list
+        filtered_capabilities = []
+
+        # iterates over all the capabilities
+        for capability in capabilities:
+            # in case the search query is found in the capabiity name
+            if not capability.find(search_query) == -1:
+                # adds the capability to the filtered capabilities
+                filtered_capabilities.append(capability)
+
+        # returns the filtered capabilities
+        return filtered_capabilities
+
     def _get_capabilities(self):
         # retrieves the plugin manager
         plugin_manager = self.web_mvc_manager_plugin.manager
@@ -754,12 +795,6 @@ class CapabilityController:
         capabilities.sort()
 
         return capabilities
-
-    def _get_capability(self, rest_request):
-        # retrieves the capability from the rest request's path list
-        capability = rest_request.path_list[-1]
-
-        return capability
 
     def _get_plugins_capability(self, capability):
         # retrieves the plugin manager
@@ -885,11 +920,46 @@ class RepositoryController:
             # sets the side panel to be included
             template_file.assign("side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
-        # retrieves the respositories
-        repositories = self._get_repositories()
+        # assigns the session variables to the template file
+        self.assign_session_template_file(rest_request, template_file)
 
-        # assigns the plugins to the template
-        template_file.assign("repositories", repositories)
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+        # returns true
+        return True
+
+    def handle_partial_list(self, rest_request, parameters = {}):
+        # returns in case the required permissions are not set
+        if not self.web_mvc_manager.require_permissions(self, rest_request):
+            return True
+
+        # retrieves the web mvc manager search helper
+        web_mvc_manager_search_helper = self.web_mvc_manager.web_mvc_manager_search_helper
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("repository_partial_list_contents.html.tpl")
+
+        # retrieves the filtered repositories
+        filtered_repositories = self._get_fitered_repositories(rest_request)
+
+        # retrieves the partial filter from the filtered repositories
+        partial_filtered_repositories, start_record, number_records, total_number_records = web_mvc_manager_search_helper.partial_filter(rest_request, filtered_repositories)
+
+        # assigns the repositories to the template
+        template_file.assign("repositories", partial_filtered_repositories)
+
+        # assigns the start record to the template
+        template_file.assign("start_record", start_record)
+
+        # assigns the number records to the template
+        template_file.assign("number_records", number_records)
+
+        # assigns the total number records to the template
+        template_file.assign("total_number_records", total_number_records)
 
         # assigns the session variables to the template file
         self.assign_session_template_file(rest_request, template_file)
@@ -913,14 +983,39 @@ class RepositoryController:
         # retrieves all the repositories
         repositories = system_updater_plugin.get_repositories()
 
+        # retrieves the repository from the repositories list
         repository = repositories[repository_index - 1]
 
+        # retrieves the repository name
         repository_name = repository.name
 
         # retrieves the repository for the repository with the given name
         repository_information = system_updater_plugin.get_repository_information_by_repository_name(repository_name)
 
         return repository_information
+
+    def _get_fitered_repositories(self, rest_request):
+        # processes the form data
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the form data attributes
+        search_query = form_data_map["search_query"]
+
+        # retrieves the repositories
+        repositories = self._get_repositories()
+
+        # creates the filtered repositories list
+        filtered_repositories = []
+
+        # iterates over all the repositories
+        for repository in repositories:
+            # in case the search query is found in the repository name
+            if not repository.name.find(search_query) == -1:
+                # adds the repository to the filtered repositories
+                filtered_repositories.append(repository)
+
+        # returns the filtered repositories
+        return filtered_repositories
 
     def _get_repositories(self):
         # retrieves the system updater plugin

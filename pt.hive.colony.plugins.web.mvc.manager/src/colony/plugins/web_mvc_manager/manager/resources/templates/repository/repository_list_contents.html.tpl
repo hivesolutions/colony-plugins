@@ -9,9 +9,9 @@
 <div id="contents">
     <h1>Update</h1>
     <h2>Repositories</h2>
-    <div id="repository-plugin-table" class="search-table" provider_url="repositories/partial">
+    <div id="repository-table" class="search-table" provider_url="repositories/partial">
         <table class="table" cellspacing="0" cellpadding="0">
-               <thead>
+            <thead>
                 <tr>
                     <th width="200"><span>Name</span><span class="order-down-inactive"></span></th>
                     <th><span>Description</span><span class="order-down-inactive"></span></th>
