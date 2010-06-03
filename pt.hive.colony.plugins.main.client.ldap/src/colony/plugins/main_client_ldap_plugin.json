@@ -1,0 +1,20 @@
+{
+    "platform" : "python",
+    "sub_platforms" : ["cpython", "jython"],
+    "id" : "pt.hive.colony.plugins.main.client.ldap",
+    "name" : "Ldap Client Main Plugin",
+    "short_name" : "Ldap Client Main",
+    "description" : "The plugin that offers the ldap client",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["client.ldap", "build_automation_item"],
+    "capabilities_allowed" : ["socket_provider"],
+    "dependencies" : [],
+    "main_file" : "main_client_ldap_plugin.py",
+    "resources" : ["main_client_ldap_plugin.py",
+            "main_client_ldap/__init__.py",
+            "main_client_ldap/ldap/__init__.py",
+            "main_client_ldap/ldap/main_client_ldap_exceptions.py",
+            "main_client_ldap/ldap/main_client_ldap_system.py",
+            "main_client_ldap/ldap/resources/baf.xml"]
+}
