@@ -54,7 +54,8 @@ class SecurityCaptchaPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    capabilities = ["startup", "security_captcha"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/security_captcha/captcha/resources/baf.xml"}
+    capabilities = ["startup", "security_captcha", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PackageDependency(
                     "Python Imaging Library (PIL)", "PIL", "1.1.x", "http://www.pythonware.com/products/pil")]
