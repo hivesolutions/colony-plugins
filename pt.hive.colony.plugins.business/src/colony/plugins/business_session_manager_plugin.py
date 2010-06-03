@@ -53,7 +53,8 @@ class BusinessSessionManagerPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["business_session_manager"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/business/session_manager/resources/baf.xml"}
+    capabilities = ["business_session_manager", "build_automation_item"]
     capabilities_allowed = ["business_session_serializer", "business_logic", "business_logic_bundle"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.data.entity_manager", "1.0.0"),

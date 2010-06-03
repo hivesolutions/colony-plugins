@@ -7,7 +7,7 @@
     "description" : "Business Session Manager Plugin",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["business_session_manager"],
+    "capabilities" : ["business_session_manager", "build_automation_item"],
     "capabilities_allowed" : ["business_session_serializer", "business_logic",
             "business_logic_bundle"],
     "dependencies" : [{
@@ -24,5 +24,6 @@
     "resources" : ["business_session_manager_plugin.py",
             "business/__init__.py", "business/session_manager/__init__.py",
             "business/session_manager/business_session_manager_exceptions.py",
-            "business/session_manager/business_session_manager_system.py"]
+            "business/session_manager/business_session_manager_system.py",
+            "business/session_manager/resources/baf.xml"]
 }

@@ -7,7 +7,7 @@
     "description" : "Business Helper Plugin",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["business_helper"],
+    "capabilities" : ["business_helper", "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [],
     "main_file" : "business_helper_plugin.py",

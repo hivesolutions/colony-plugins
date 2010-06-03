@@ -7,7 +7,8 @@
     "description" : "Business Session Serializer Plugin",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["business_session_serializer", "rpc_service"],
+    "capabilities" : ["business_session_serializer", "rpc_service",
+            "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [],
     "main_file" : "business_session_serializer_plugin.py",
@@ -16,5 +17,6 @@
             "business/__init__.py",
             "business/session_serializer/__init__.py",
             "business/session_serializer/business_session_serializer_exceptions.py",
-            "business/session_serializer/business_session_serializer_system.py"]
+            "business/session_serializer/business_session_serializer_system.py",
+            "business/session_serializer/resources/baf.xml"]
 }
