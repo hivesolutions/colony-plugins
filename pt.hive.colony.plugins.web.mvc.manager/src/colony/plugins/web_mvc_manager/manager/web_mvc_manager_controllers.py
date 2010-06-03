@@ -37,8 +37,11 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import time
 import copy
 import random
+
+import web_mvc_manager_exceptions
 
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding value """
@@ -202,7 +205,6 @@ class SidePanelController:
 
         import psutil
         import os
-        import time
 
         pid = os.getpid()
 
@@ -439,11 +441,14 @@ class PluginController:
 
         # in case the encoder name is ajax
         if rest_request.encoder_name == JSON_ENCODER_NAME:
-            # changes the plugin status and retrieves the result
-            change_status_plugin_result = self._change_status_plugin(rest_request)
-
             # retrieves the json plugin
             json_plugin = self.web_mvc_manager_plugin.json_plugin
+
+            # retrieves the web mvc communication helper
+            web_mvc_manager_communication_helper = self.web_mvc_manager.web_mvc_manager_communication_helper
+
+            # changes the plugin status and retrieves the result
+            change_status_plugin_result = self._change_status_plugin(rest_request)
 
             # serializes the change status result using the json plugin
             serialized_status = json_plugin.dumps(change_status_plugin_result)
@@ -452,36 +457,12 @@ class PluginController:
             self.set_contents(rest_request, serialized_status)
 
             # sends the serialized broadcast message
-            self._send_serialized_broadcast_message(parameters, "web_mvc_manager/communication", "web_mvc_manager/plugin/change_status", serialized_status)
+            web_mvc_manager_communication_helper.send_serialized_broadcast_message(parameters, "web_mvc_manager/communication", "web_mvc_manager/plugin/change_status", serialized_status)
 
             return True
 
         # returns true
         return True
-
-    def _send_serialized_broadcast_message(self, parameters, connection_name, message_id, message_contents):
-        # serializes the message using, sending the message id and the message contents
-        serialized_message = self._get_serialized_message(message_id, message_contents)
-
-        # sends the broadcast communication message
-        self.send_broadcast_communication_message(parameters, connection_name, serialized_message)
-
-    def _get_serialized_message(self, message_id, message_contents):
-        # retrieves the json plugin
-        json_plugin = self.web_mvc_manager_plugin.json_plugin
-
-        # creates the message map
-        message_map = {}
-
-        # sets the message attributes in the message map
-        message_map["id"] = message_id
-        message_map["contents"] = message_contents
-
-        # serializes the message map using the json plugin
-        serialized_message = json_plugin.dumps(message_map)
-
-        # returns the serialized message
-        return serialized_message
 
     def _deploy_package(self, rest_request):
         # retrieves the request contents
@@ -576,7 +557,7 @@ class PluginController:
         loaded_plugins_end = plugin_manager.get_all_loaded_plugins()
 
         # creates the delta plugin status map
-        delta_plugin_status_map = {UNLOADED_VALUE : [], LOADED_VALUE : []}
+        delta_plugin_status_map = {LOADED_VALUE : [], UNLOADED_VALUE : []}
 
         # iterates over all the plugins loaded at the beginning
         # to check if they exist in the current loaded plugins
@@ -984,18 +965,29 @@ class RepositoryController:
         if not self.web_mvc_manager.require_permissions(self, rest_request):
             return True
 
-        # processes the form data
-        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+        # in case the encoder name is ajax
+        if rest_request.encoder_name == JSON_ENCODER_NAME:
+            # retrieves the json plugin
+            json_plugin = self.web_mvc_manager_plugin.json_plugin
 
-        # retrieves the form data attributes
-        plugin_id = form_data_map["plugin_id"]
-        plugin_version = form_data_map["plugin_version"]
+            # retrieves the web mvc communication helper
+            web_mvc_manager_communication_helper = self.web_mvc_manager.web_mvc_manager_communication_helper
 
-        # retrieves the system updater plugin
-        system_updater_plugin = self.web_mvc_manager_plugin.system_updater_plugin
+            # install the plugin and retrieves the result
+            install_plugin_result = self._install_plugin(rest_request)
 
-        # tries to install the plugin
-        system_updater_plugin.install_plugin(plugin_id, plugin_version)
+            # serializes the install result using the json plugin
+            serialized_status = json_plugin.dumps(install_plugin_result)
+
+            # sets the serialized status as the rest request contents
+            self.set_contents(rest_request, serialized_status)
+
+            # sends the serialized broadcast message
+            web_mvc_manager_communication_helper.send_serialized_broadcast_message(parameters, "web_mvc_manager/communication", "web_mvc_manager/plugin/install", serialized_status)
+
+            return True
+
+        return True
 
     def handle_plugins_partial_list(self, rest_request, parameters = {}):
         # returns in case the required permissions are not set
@@ -1153,3 +1145,52 @@ class RepositoryController:
         repositories = system_updater_plugin.get_repositories()
 
         return repositories
+
+    def _install_plugin(self, rest_request):
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_manager_plugin.manager
+
+        # retrieves the system updater plugin
+        system_updater_plugin = self.web_mvc_manager_plugin.system_updater_plugin
+
+        # processes the form data
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the form data attributes
+        plugin_id = form_data_map["plugin_id"]
+        plugin_version = form_data_map["plugin_version"]
+
+        # creates the delta plugin install map
+        delta_plugin_install_map = {"installed" : [], "uninstalled" : []}
+
+        # retrieves the (beginning) list of available plugins
+        available_plugins_beginning = copy.copy(plugin_manager.get_all_plugins())
+
+        # tries to install the plugin
+        return_value = system_updater_plugin.install_plugin(plugin_id, plugin_version)
+
+        # sleeps for a second to give time for the autoloader to update
+        time.sleep(1.0)
+
+        # in case the return value is not valid
+        if not return_value:
+            # raises a runtime exception
+            raise web_mvc_manager_exceptions.RuntimeException("problem installing plugin")
+
+        # retrieves the (end) list of available plugins
+        available_plugins_end = plugin_manager.get_all_plugins()
+
+        # iterates over all the plugins available at the beginning
+        # to check if they exist in the current available plugins
+        for available_plugin_beginning in available_plugins_beginning:
+            if not available_plugin_beginning in available_plugins_end:
+                delta_plugin_install_map["uninstalled"].append(available_plugin_beginning.id)
+
+        # iterates over all the plugins available at the end
+        # to check if they exist in the previously available plugins
+        for available_plugin_end in available_plugins_end:
+            if not available_plugin_end in available_plugins_beginning:
+                delta_plugin_install_map["installed"].append(available_plugin_end.id)
+
+        # returns the delta plugin install map
+        return delta_plugin_install_map

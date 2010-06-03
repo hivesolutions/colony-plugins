@@ -89,3 +89,51 @@ class SearchHelper:
 
         # returns the filter contents tuple
         return filter_contents
+
+class CommunicationHelper:
+    """
+    The communication helper.
+    """
+
+    web_mvc_manager_plugin = None
+    """ The web mvc manager plugin """
+
+    web_mvc_manager = None
+    """ The web mvc manager """
+
+    def __init__(self, web_mvc_manager_plugin, web_mvc_manager):
+        """
+        Constructor of the class.
+
+        @type web_mvc_manager_plugin: WebMvcManagerPlugin
+        @param web_mvc_manager_plugin: The web mvc manager plugin.
+        @type web_mvc_manager: WebMvcManager
+        @param web_mvc_manager: The web mvc manager.
+        """
+
+        self.web_mvc_manager_plugin = web_mvc_manager_plugin
+        self.web_mvc_manager = web_mvc_manager
+
+    def send_serialized_broadcast_message(self, parameters, connection_name, message_id, message_contents):
+        # serializes the message using, sending the message id and the message contents
+        serialized_message = self._get_serialized_message(message_id, message_contents)
+
+        # sends the broadcast communication message
+        self.send_broadcast_communication_message(parameters, connection_name, serialized_message)
+
+    def _get_serialized_message(self, message_id, message_contents):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_plugin.json_plugin
+
+        # creates the message map
+        message_map = {}
+
+        # sets the message attributes in the message map
+        message_map["id"] = message_id
+        message_map["contents"] = message_contents
+
+        # serializes the message map using the json plugin
+        serialized_message = json_plugin.dumps(message_map)
+
+        # returns the serialized message
+        return serialized_message

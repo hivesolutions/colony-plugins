@@ -81,6 +81,9 @@ class WebMvcManager:
     web_mvc_manager_search_helper = None
     """ The web mvc manager search helper """
 
+    web_mvc_manager_communication_helper = None
+    """ The web mvc manager communication helper """
+
     def __init__(self, web_mvc_manager_plugin):
         """
         Constructor of the class.
@@ -120,6 +123,9 @@ class WebMvcManager:
 
         # creates the web mvc manager search helper
         self.web_mvc_manager_search_helper = web_mvc_utils_plugin.create_controller(web_mvc_manager_helpers.SearchHelper, [self.web_mvc_manager_plugin, self], {})
+
+        # creates the web mvc manager communication helper
+        self.web_mvc_manager_communication_helper = web_mvc_utils_plugin.create_controller(web_mvc_manager_helpers.CommunicationHelper, [self.web_mvc_manager_plugin, self], {})
 
     def get_patterns(self):
         """

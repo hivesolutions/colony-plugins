@@ -35,26 +35,10 @@ function messageProcessor(data) {
         // parses the data (json) retrieving the status
         var status = $.parseJSON(messageContents);
 
-        // retrieves the unloaded plugins
-        var unloadedPlugins = status["unloaded"];
-
-        $(unloadedPlugins).each(function(index, element) {
-            var switchButtonElement = $("#plugin-table .switch-button[plugin="
-                    + element + "]");
-            switchButtonElement.removeClass("on");
-            switchButtonElement.addClass("off");
-
-            $("#notification-area-contents").notificationwindow("default", {
-                        "title" : "<span class=\"red\">Plugin Unloaded</span>",
-                        "subTitle" : "",
-                        "message" : element,
-                        "timeout" : 5000
-                    });
-        });
-
         // retrieves the loaded plugins
         var loadedPlugins = status["loaded"];
 
+        // iterates over all the loaded plugins
         $(loadedPlugins).each(function(index, element) {
             var switchButtonElement = $("#plugin-table .switch-button[plugin="
                     + element + "]");
@@ -68,13 +52,60 @@ function messageProcessor(data) {
                         "timeout" : 5000
                     });
         });
+
+        // retrieves the unloaded plugins
+        var unloadedPlugins = status["unloaded"];
+
+        // iterates over all the unloaded plugins
+        $(unloadedPlugins).each(function(index, element) {
+            var switchButtonElement = $("#plugin-table .switch-button[plugin="
+                    + element + "]");
+            switchButtonElement.removeClass("on");
+            switchButtonElement.addClass("off");
+
+            $("#notification-area-contents").notificationwindow("default", {
+                        "title" : "<span class=\"red\">Plugin Unloaded</span>",
+                        "subTitle" : "",
+                        "message" : element,
+                        "timeout" : 5000
+                    });
+        });
+    } else if (messageId = "web_mvc_manager/plugin/install") {
+        // parses the data (json) retrieving the status
+        var status = $.parseJSON(messageContents);
+
+        // retrieves the installed plugins
+        var installedPlugins = status["installed"];
+
+        // iterates over all the installed plugins
+        $(installedPlugins).each(function(index, element) {
+            $("#notification-area-contents").notificationwindow("default", {
+                        "title" : "<span class=\"green\">Plugin Installed</span>",
+                        "subTitle" : "",
+                        "message" : element,
+                        "timeout" : 5000
+                    });
+        });
+
+        // retrieves the uninstalled plugins
+        var uninstalledPlugins = status["uninstalled"];
+
+        // iterates over all the uninstalled plugins
+        $(uninstalledPlugins).each(function(index, element) {
+            $("#notification-area-contents").notificationwindow("default", {
+                        "title" : "<span class=\"red\">Plugin Uninstalled</span>",
+                        "subTitle" : "",
+                        "message" : element,
+                        "timeout" : 5000
+                    });
+        });
     }
 }
 
 $(document).ready(function() {
     $("body").communication("default", {
                 url : "communication",
-                timeout : 5000,
+                timeout : 500,
                 dataCallbackFunctions : [messageProcessor]
             });
 

@@ -69,7 +69,8 @@ class WebMvcManagerPlugin(colony.plugins.plugin_system.Plugin):
                     "pt.hive.colony.plugins.system.updater", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["web_mvc_manager.manager.web_mvc_manager_controllers", "web_mvc_manager.manager.web_mvc_manager_system"]
+    main_modules = ["web_mvc_manager.manager.web_mvc_manager_controllers", "web_mvc_manager.manager.web_mvc_manager_helpers",
+                    "web_mvc_manager.manager.web_mvc_manager_system"]
 
     web_mvc_manager = None
 
