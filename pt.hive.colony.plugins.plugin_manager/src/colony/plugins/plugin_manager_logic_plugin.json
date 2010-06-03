@@ -1,0 +1,18 @@
+{
+    "platform" : "python",
+    "sub_platforms" : ["cpython", "jython"],
+    "id" : "pt.hive.colony.plugins.plugin_manager_logic",
+    "name" : "Plugin Manager Logic plugin",
+    "short_name" : "Plugin Manager Logic Plugin",
+    "description" : "Plugin Manager Logic Plugin",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["business_logic_bundle", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [],
+    "main_file" : "plugin_manager_logic_plugin.py",
+    "resources" : ["plugin_manager_logic_plugin.py",
+            "plugin_manager_logic/__init__.py",
+            "plugin_manager_logic/plugin_manager_logic_system.py",
+            "plugin_manager_logic/resources/baf.xml"]
+}
