@@ -54,7 +54,8 @@ class JavascriptManagerPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
-    capabilities = ["rpc_service"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/javascript_manager/manager/resources/baf.xml"}
+    capabilities = ["rpc_service", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.resources.resource_manager", "1.0.0")]
