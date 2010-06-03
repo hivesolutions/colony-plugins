@@ -134,10 +134,19 @@ class WebMvcCommunicationHandler:
         return True
 
     def process_update(self, request, data_handler_method, connection_changed_handler_method, connection_name):
-        # retrieves the request connection id
-        connection_id = request.get_attribute("id")
+        # tries to retrieve the communication connection
+        communication_connection = self._get_connection(request, connection_name)
 
-        # tenho de esvaziar a pilha de coisas que tenho para lhe enviar
+        # in case no communication connection is available
+        if not communication_connection:
+            # raises the communication command exception
+            raise web_mvc_exceptions.CommunicationCommandException("no communication connection available")
+
+        # retrieves the message queue
+        message_queue = communication_connection.pop_message_queue()
+
+        # writes the message queue into the message
+        self._write_message(request, communication_connection, message_queue)
 
         # returns true (valid)
         return True
@@ -185,19 +194,23 @@ class WebMvcCommunicationHandler:
         json_plugin = self.web_mvc_plugin.json_plugin
 
         # serializes the message
-        serialized_message = communication_connection.serialize_message("success", json_plugin)
+        serialized_message = communication_connection.serialize_message(message, json_plugin)
 
         # writes the serialized message to the request
         request.write(serialized_message)
 
     def _get_connection(self, request, connection_name):
-        # retrieves the connection information
-        connection_information = request.get_connection_information()
+        # retrieves the request connection id
+        connection_id = request.get_attribute("id")
 
-        a = (connection_name, connection_information)
+        # creates the connection coplete information tuple
+        connection_complete_information = (connection_id, connection_name)
 
-        communication_connection = self.connection_information_connections_map.get(a, None)
+        # tries to retrieve the communication connection from the connection complete
+        # information connection map
+        communication_connection = self.connection_complete_information_connection_map.get(connection_complete_information, None)
 
+        # returns the communication connection
         return communication_connection
 
     def _add_communication_connection(self, communication_connection):
@@ -236,7 +249,7 @@ class WebMvcCommunicationHandler:
 
     def __set_communication_connection_complete_information_map(self, communication_connection):
         # retrieves the connection complete information
-        connection_complete_information = communication_connection.get_complete_connection_information()
+        connection_complete_information = communication_connection.get_connection_complete_information()
 
         # set the communication connection in the connection complete information connection map
         self.connection_complete_information_connection_map[connection_complete_information] = communication_connection
@@ -316,15 +329,33 @@ class CommunicationConnection:
 
         self.message_queue.append(message)
 
-    def get_complete_connection_information(self):
+    def pop_message_queue(self):
         """
-        Retrieves the complete connection information.
+        Pops the message queue, retrieving all the messages
+        from the queue and cleaning the queue after.
+
+        @rtype: List
+        @return: The popped queue.
+        """
+
+        # saves the queue in the pop queue
+        pop_queue = self.message_queue
+
+        # clears the current message queue
+        self.message_queue = []
+
+        # returns the pop queue
+        return pop_queue
+
+    def get_connection_complete_information(self):
+        """
+        Retrieves the connection complete information.
 
         @rtype: Tuple
-        @return: The complete connection information.
+        @return: The connection complete information.
         """
 
-        return (self.connection_id, self.connection_name, self.connection_information)
+        return (self.connection_id, self.connection_name)
 
     def get_connection_id(self):
         """

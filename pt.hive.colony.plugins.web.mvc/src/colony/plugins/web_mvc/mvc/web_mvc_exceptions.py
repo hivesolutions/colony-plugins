@@ -116,6 +116,9 @@ class FileNotFoundException(MvcRequestNotHandled):
     The file not found exception class.
     """
 
+    status_code = None
+    """ The exceptions's status code """
+
     def __init__(self, message, status_code):
         """
         Constructor of the class.
@@ -141,8 +144,11 @@ class FileNotFoundException(MvcRequestNotHandled):
 
 class InvalidCommunicationCommandException(MvcRequestNotHandled):
     """
-    The invalid communication command class.
+    The invalid communication command exception class.
     """
+
+    status_code = None
+    """ The exceptions's status code """
 
     def __init__(self, message, status_code):
         """
@@ -166,3 +172,28 @@ class InvalidCommunicationCommandException(MvcRequestNotHandled):
         """
 
         return "Invalid communication command: %s" % self.message
+
+class CommunicationCommandException(MvcRequestNotHandled):
+    """
+    The communication command exception class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        MvcRequestNotHandled.__init__(self, message)
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Communication command exception: %s" % self.message
