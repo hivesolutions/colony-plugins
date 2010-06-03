@@ -52,7 +52,8 @@ class LanguageWikiPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["language.wiki"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/_language_wiki/wiki/resources/baf.xml"}
+    capabilities = ["language.wiki", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PackageDependency(
                     "Colony Language Wiki", "language_wiki.wiki_generator", "1.0.x", "http://www.hive.pt")]
