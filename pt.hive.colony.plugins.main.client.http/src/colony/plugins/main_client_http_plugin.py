@@ -54,7 +54,8 @@ class MainClienthttpPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
-    capabilities = ["client.http"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_client_http/http/resources/baf.xml"}
+    capabilities = ["client.http", "build_automation_item"]
     capabilities_allowed = ["socket_provider"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.url_parser", "1.0.0")]
