@@ -54,7 +54,8 @@ class JavascriptFileHandlerPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
-    capabilities = ["javascript_file_handler", "http_python_handler"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/javascript_file_handler/file_handler/resources/baf.xml"}
+    capabilities = ["javascript_file_handler", "http_python_handler", "build_automation_item"]
     capabilities_allowed = ["javascript_handler"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.javascript.manager", "1.0.0")]
