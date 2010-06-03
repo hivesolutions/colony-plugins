@@ -53,7 +53,8 @@ class EurekaEnginePlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["eureka_engine", "plugin_test_case_bundle"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/eureka/resources/baf.xml"}
+    capabilities = ["eureka_engine", "plugin_test_case_bundle", "build_automation_item"]
     capabilities_allowed = ["eureka_item_extension", "eureka_engine_item_processer.filter", "eureka_engine_item_processer.mapper", "eureka_engine_item_processer.sorter"]
     dependencies = []
     events_handled = []
