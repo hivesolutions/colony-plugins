@@ -52,7 +52,8 @@ class SearchScorerDefaultMetricBundlePlugin(colony.plugins.plugin_system.Plugin)
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["search_scorer_metric_bundle"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/search_scorer/default_metric_bundle/resources/baf.xml"}
+    capabilities = ["search_scorer_metric_bundle", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.search.scorer.metric_repository", "1.0.0")]
