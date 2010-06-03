@@ -53,7 +53,8 @@ class BusinessDummyEntityBundlePlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["entity_bundle"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/business_dummy/dummy_entity_bundle/resources/baf.xml"}
+    capabilities = ["entity_bundle", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.business.helper", "1.0.0")]
