@@ -53,7 +53,8 @@ class SearchCrawlerEntityManagerAdapterPlugin(colony.plugins.plugin_system.Plugi
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["search_crawler_adapter.entity_manager"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/search_crawler/entity_manager_adapter/resources/baf.xml"}
+    capabilities = ["search_crawler_adapter.entity_manager", "build_automation_item"]
     capabilities_allowed = ["search_provider.entity_manager"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.data.entity_manager", "1.0.0"),

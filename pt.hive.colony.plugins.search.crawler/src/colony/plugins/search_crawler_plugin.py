@@ -53,7 +53,8 @@ class SearchCrawlerPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["search_crawler"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/search_crawler/crawler/resources/baf.xml"}
+    capabilities = ["search_crawler", "build_automation_item"]
     capabilities_allowed = ["search_crawler_adapter"]
     dependencies = []
     events_handled = []
