@@ -53,7 +53,8 @@ class EntityManagerSqliteEnginePlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["entity_manager_engine"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/data/entity_manager_sqlite_engine/resources/baf.xml"}
+    capabilities = ["entity_manager_engine", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.business.helper", "1.0.0")]

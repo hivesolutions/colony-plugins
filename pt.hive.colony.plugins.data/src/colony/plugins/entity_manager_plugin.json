@@ -7,7 +7,7 @@
     "description" : "The plugin that manages the entity manager orm system",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["entity_manager"],
+    "capabilities" : ["entity_manager", "build_automation_item"],
     "capabilities_allowed" : ["entity_manager_engine", "entity",
             "entity_bundle"],
     "dependencies" : [],
@@ -16,5 +16,6 @@
             "data/entity_manager/__init__.py",
             "data/entity_manager/entity_manager_decorators.py",
             "data/entity_manager/entity_manager_exceptions.py",
-            "data/entity_manager/entity_manager_system.py"]
+            "data/entity_manager/entity_manager_system.py",
+            "data/entity_manager/resources/baf.xml"]
 }
