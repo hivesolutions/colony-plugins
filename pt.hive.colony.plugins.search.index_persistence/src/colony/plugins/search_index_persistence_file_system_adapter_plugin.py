@@ -52,7 +52,8 @@ class SearchIndexPersistenceFileSystemAdapterPlugin(colony.plugins.plugin_system
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["search_index_persistence_adapter.file_system"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/search_index_persistence/file_system_adapter/resources/baf.xml"}
+    capabilities = ["search_index_persistence_adapter.file_system", "build_automation_item"]
     capabilities_allowed = ["search_index_serializer"]
     dependencies = []
     events_handled = []
