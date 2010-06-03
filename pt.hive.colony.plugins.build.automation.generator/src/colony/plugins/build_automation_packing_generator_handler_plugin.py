@@ -53,7 +53,8 @@ class BuildAutomationPackingGeneratorHandlerPlugin(colony.plugins.plugin_system.
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["build_automation_generator_handler"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/build_automation_generator/packing_generator_handler/resources/baf.xml"}
+    capabilities = ["build_automation_generator_handler", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.template_engine.manager", "1.0.0")]
