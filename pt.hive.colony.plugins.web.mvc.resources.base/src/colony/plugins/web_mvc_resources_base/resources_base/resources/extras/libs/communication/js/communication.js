@@ -62,11 +62,20 @@
             // retrieves the url from the options
             var url = options["url"];
 
+            // retrieves the timeout from the options
+            var timeout = options["timeout"];
+
             // retrieves the data callback functions from the options
             var dataCallbackFunctions = options["dataCallbackFunctions"];
 
+            // sets the default timeout value
+            timeout = timeout ? timeout : 1000;
+
             // sets the matched object url data
             matchedObject.data("url", url);
+
+            // sets the matched object timeout data
+            matchedObject.data("timeout", timeout);
 
             // sets the matched object data callback functions data
             matchedObject.data("dataCallbackFunctions", dataCallbackFunctions);
@@ -126,11 +135,14 @@
                 // sets the connection id in the matched object
                 matchedObject.data("id", connectionId);
 
+                // retrieves the timeout data
+                var timeout = matchedObject.data("timeout");
+
                 // sets the interval for contents retrieval, and
                 // retrieves the interval handler
                 var intervalHandler = setInterval(function() {
                             __update(matchedObject, options);
-                        }, 1000);
+                        }, timeout);
 
                 // sets the matched object interval handler
                 matchedObject.data("intervalHandler", intervalHandler);
