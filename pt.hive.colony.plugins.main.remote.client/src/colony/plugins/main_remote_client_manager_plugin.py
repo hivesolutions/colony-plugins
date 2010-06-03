@@ -53,7 +53,8 @@ class MainRemoteClientManagerPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["remote_client_manager"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_remote_client/manager/resources/baf.xml"}
+    capabilities = ["remote_client_manager", "build_automation_item"]
     capabilities_allowed = ["remote_client_adapter"]
     dependencies = []
     events_handled = []
