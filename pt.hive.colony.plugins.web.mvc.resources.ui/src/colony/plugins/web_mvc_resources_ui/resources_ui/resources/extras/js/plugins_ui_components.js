@@ -2029,6 +2029,12 @@
             // prepends the html to the matched object
             matchedObject.prepend(htmlCode);
 
+            // retrieves the search query element
+            var searchQuery = $("#search-query", matchedObject);
+
+            // creates the text area
+            searchQuery.textarea();
+
             // resets the table search
             __resetTableSearch(matchedObject);
         };
@@ -2123,9 +2129,6 @@
 
             // retrieves the table metadata data
             var tableMetadata = $("#meta-data", dataElement);
-
-            // creates the switch buttons for the table
-            $(".switch-button", tableBody).switchbutton();
 
             // triggers the content change event
             searchTable.trigger("content_change", [tableBody])
