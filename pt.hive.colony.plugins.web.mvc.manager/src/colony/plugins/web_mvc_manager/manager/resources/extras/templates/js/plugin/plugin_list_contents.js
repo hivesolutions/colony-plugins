@@ -195,46 +195,6 @@ function baseTableHandlers(context) {
                     data : {
                         plugin_id : pluginId,
                         plugin_status : pluginStatus
-                    },
-                    success : function(data) {
-                        // parses the data (json) retrieving the status
-                        var status = $.parseJSON(data);
-
-                        // retrieves the unloaded plugins
-                        var unloadedPlugins = status["unloaded"];
-
-                        $(unloadedPlugins).each(function(index, element) {
-                            var switchButtonElement = $("#plugin-table .switch-button[plugin="
-                                    + element + "]");
-                            switchButtonElement.removeClass("on");
-                            switchButtonElement.addClass("off");
-
-                            $("#notification-area-contents").notificationwindow(
-                                    "default", {
-                                        "title" : "<span class=\"red\">Plugin Unloaded</span>",
-                                        "subTitle" : "",
-                                        "message" : element,
-                                        "timeout" : 5000
-                                    });
-                        });
-
-                        // retrieves the loaded plugins
-                        var loadedPlugins = status["loaded"];
-
-                        $(loadedPlugins).each(function(index, element) {
-                            var switchButtonElement = $("#plugin-table .switch-button[plugin="
-                                    + element + "]");
-                            switchButtonElement.removeClass("off");
-                            switchButtonElement.addClass("on");
-
-                            $("#notification-area-contents").notificationwindow(
-                                    "default", {
-                                        "title" : "<span class=\"green\">Plugin Loaded</span>",
-                                        "subTitle" : "",
-                                        "message" : element,
-                                        "timeout" : 5000
-                                    });
-                        });
                     }
                 });
             });

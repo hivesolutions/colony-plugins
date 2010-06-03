@@ -422,10 +422,37 @@ class PluginController:
             # sets the serialized status as the rest request contents
             self.set_contents(rest_request, serialized_status)
 
+            # sends the serialized broadcast message
+            self._send_serialized_broadcast_message(parameters, "web_mvc_manager/communication", "web_mvc_manager/plugin/change_status", serialized_status)
+
             return True
 
         # returns true
         return True
+
+    def _send_serialized_broadcast_message(self, parameters, connection_name, message_id, message_contents):
+        # serializes the message using, sending the message id and the message contents
+        serialized_message = self._get_serialized_message(message_id, message_contents)
+
+        # sends the broadcast communication message
+        self.send_broadcast_communication_message(parameters, connection_name, serialized_message)
+
+    def _get_serialized_message(self, message_id, message_contents):
+        # retrieves the json plugin
+        json_plugin = self.web_mvc_manager_plugin.json_plugin
+
+        # creates the message map
+        message_map = {}
+
+        # sets the message attributes in the message map
+        message_map["id"] = message_id
+        message_map["contents"] = message_contents
+
+        # serializes the message map using the json plugin
+        serialized_message = json_plugin.dumps(message_map)
+
+        # returns the serialized message
+        return serialized_message
 
     def _deploy_package(self, rest_request):
         # retrieves the request contents

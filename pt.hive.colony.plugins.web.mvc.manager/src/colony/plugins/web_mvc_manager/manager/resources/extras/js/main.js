@@ -23,7 +23,61 @@
 // __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
 // __license__   = GNU General Public License (GPL), Version 3
 
+function messageProcessor(data) {
+    // parses the data retrieving the json
+    var jsonData = $.parseJSON(data);
+
+    // retrieves the message id and contents
+    var messageId = jsonData["id"];
+    var messageContents = jsonData["contents"];
+
+    if (messageId == "web_mvc_manager/plugin/change_status") {
+        // parses the data (json) retrieving the status
+        var status = $.parseJSON(messageContents);
+
+        // retrieves the unloaded plugins
+        var unloadedPlugins = status["unloaded"];
+
+        $(unloadedPlugins).each(function(index, element) {
+            var switchButtonElement = $("#plugin-table .switch-button[plugin="
+                    + element + "]");
+            switchButtonElement.removeClass("on");
+            switchButtonElement.addClass("off");
+
+            $("#notification-area-contents").notificationwindow("default", {
+                        "title" : "<span class=\"red\">Plugin Unloaded</span>",
+                        "subTitle" : "",
+                        "message" : element,
+                        "timeout" : 5000
+                    });
+        });
+
+        // retrieves the loaded plugins
+        var loadedPlugins = status["loaded"];
+
+        $(loadedPlugins).each(function(index, element) {
+            var switchButtonElement = $("#plugin-table .switch-button[plugin="
+                    + element + "]");
+            switchButtonElement.removeClass("off");
+            switchButtonElement.addClass("on");
+
+            $("#notification-area-contents").notificationwindow("default", {
+                        "title" : "<span class=\"green\">Plugin Loaded</span>",
+                        "subTitle" : "",
+                        "message" : element,
+                        "timeout" : 5000
+                    });
+        });
+    }
+}
+
 $(document).ready(function() {
+    $("body").communication("default", {
+                url : "communication",
+                timeout : 200,
+                dataCallbackFunctions : [messageProcessor]
+            });
+
     $("body").bind("dragenter", function(event) {
                 // stops the event propagation and prevents
                 // the default event operation
