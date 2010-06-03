@@ -59,7 +59,7 @@ class WebMvcPanelItemDidYouKnowPlugin(colony.plugins.plugin_system.Plugin):
                     "pt.hive.colony.plugins.web.mvc.utils", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = []
+    main_modules = ["web_mvc_panel_item.did_you_know.web_mvc_panel_item_did_you_know_system"]
 
     web_mvc_panel_item_did_you_know = None
 

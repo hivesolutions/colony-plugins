@@ -111,4 +111,4 @@ class WebMvcPanelItemDidYouKnow:
         return {}
 
     def get_panel_item(self, parameters):
-        return "<div id=\"tobias\"></div>"
+        return "<h1 id=\"did-you-know\">Did you know</h1>" + "<div class=\"widget-text\">" + "<p>That this is new</p>" + "</div>"
