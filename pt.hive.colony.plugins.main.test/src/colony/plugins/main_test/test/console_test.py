@@ -107,7 +107,7 @@ class ConsoleTest:
             output_method(INVALID_NUMBER_ARGUMENTS_MESSAGE)
             return
 
-        # retrieve the test case id
+        # retrieves the test case id
         test_case_id = args[0]
 
         # retrieves the test cases for the given test case id
