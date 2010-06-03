@@ -2143,12 +2143,14 @@
                     tableMetadata).html());
 
             // sets the initial table data
-            var currentFinalRecord = $("#plugin-table").data("currentFinalRecord");
+            var currentFinalRecord = $("table", searchTable).data("currentFinalRecord");
             currentFinalRecord += numberRecords;
 
             // removes the more button
             $("#more-button", searchTable).remove();
 
+            // in case the current final record is smaller
+            // than the total number of records
             if (currentFinalRecord < totalNumberRecords) {
                 // creates the button html code
                 var htmlCode = "<div id=\"more-button\" class=\"button button-green center\">More</div>";
