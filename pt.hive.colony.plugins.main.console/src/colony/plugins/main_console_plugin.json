@@ -1,0 +1,20 @@
+{
+    "platform" : "python",
+    "sub_platforms" : ["cpython", "jython", "iron_python"],
+    "id" : "pt.hive.colony.plugins.main.console",
+    "name" : "Console Main Plugin",
+    "short_name" : "Console Main",
+    "description" : "The main console plugin that controls the console",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["main", "main_console", "test_case",
+            "build_automation_item"],
+    "capabilities_allowed" : ["console_command_extension"],
+    "dependencies" : [],
+    "main_file" : "main_console_plugin.py",
+    "resources" : ["main_console_plugin.py", "main_console/__init__.py",
+            "main_console/console/__init__.py",
+            "main_console/console/main_console.py",
+            "main_console/console/main_console_test.py",
+            "main_console/console/resources/baf.xml"]
+}
