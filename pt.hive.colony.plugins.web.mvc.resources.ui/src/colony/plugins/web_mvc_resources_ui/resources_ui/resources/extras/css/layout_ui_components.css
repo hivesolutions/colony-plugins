@@ -888,7 +888,7 @@ table .dropbox {
 
 /* Widget Text */
 .widget-text {
-    padding: 0px 12px 12px 12px;
+    padding: 0px 12px 0px 12px;
 }
 
 .widget-text p {
