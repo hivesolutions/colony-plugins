@@ -845,6 +845,9 @@
         };
 
         var __loadMetaData = function(matchedObject, options) {
+            // retrieves the force reload option
+            var forceReload = options["forceReload"];
+
             // retrieves the content body
             var contentBody = $("#content-body")
 
@@ -880,8 +883,9 @@
                 var target = $(element).html();
 
                 // in case the target side panel
-                // is the current one
-                if (target == sidePanel) {
+                // is the current one and the force reload
+                // flag is not set
+                if (target == sidePanel && !forceReload) {
                     // returns immediatly
                     return;
                 }
@@ -964,7 +968,7 @@
                             targetElement = targetElement.parent();
                         }
 
-                        // retrieves the target request fromt the target element
+                        // retrieves the target request from the target element
                         var targetRequest = targetElement.attr("target_request");
 
                         // updates the history with the new value
@@ -992,6 +996,10 @@
 
             case "changeMenu" :
                 _changeContentsMenu(matchedObject, options);
+                break;
+
+            case "loadMetadata" :
+                __loadMetaData(matchedObject, options);
                 break;
 
             case "default" :
