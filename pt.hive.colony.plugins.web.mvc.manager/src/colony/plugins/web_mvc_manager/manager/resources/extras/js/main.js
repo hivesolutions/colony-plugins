@@ -35,24 +35,6 @@ function messageProcessor(data) {
         // parses the data (json) retrieving the status
         var status = $.parseJSON(messageContents);
 
-        // retrieves the loaded plugins
-        var loadedPlugins = status["loaded"];
-
-        // iterates over all the loaded plugins
-        $(loadedPlugins).each(function(index, element) {
-            var switchButtonElement = $("#plugin-table .switch-button[plugin="
-                    + element + "]");
-            switchButtonElement.removeClass("off");
-            switchButtonElement.addClass("on");
-
-            $("#notification-area-contents").notificationwindow("default", {
-                        "title" : "<span class=\"green\">Plugin Loaded</span>",
-                        "subTitle" : "",
-                        "message" : element,
-                        "timeout" : 5000
-                    });
-        });
-
         // retrieves the unloaded plugins
         var unloadedPlugins = status["unloaded"];
 
@@ -70,22 +52,27 @@ function messageProcessor(data) {
                         "timeout" : 5000
                     });
         });
-    } else if (messageId = "web_mvc_manager/plugin/install") {
-        // parses the data (json) retrieving the status
-        var status = $.parseJSON(messageContents);
 
-        // retrieves the installed plugins
-        var installedPlugins = status["installed"];
+        // retrieves the loaded plugins
+        var loadedPlugins = status["loaded"];
 
-        // iterates over all the installed plugins
-        $(installedPlugins).each(function(index, element) {
+        // iterates over all the loaded plugins
+        $(loadedPlugins).each(function(index, element) {
+            var switchButtonElement = $("#plugin-table .switch-button[plugin="
+                    + element + "]");
+            switchButtonElement.removeClass("off");
+            switchButtonElement.addClass("on");
+
             $("#notification-area-contents").notificationwindow("default", {
-                        "title" : "<span class=\"green\">Plugin Installed</span>",
+                        "title" : "<span class=\"green\">Plugin Loaded</span>",
                         "subTitle" : "",
                         "message" : element,
                         "timeout" : 5000
                     });
         });
+    } else if (messageId = "web_mvc_manager/plugin/install") {
+        // parses the data (json) retrieving the status
+        var status = $.parseJSON(messageContents);
 
         // retrieves the uninstalled plugins
         var uninstalledPlugins = status["uninstalled"];
@@ -94,6 +81,19 @@ function messageProcessor(data) {
         $(uninstalledPlugins).each(function(index, element) {
             $("#notification-area-contents").notificationwindow("default", {
                         "title" : "<span class=\"red\">Plugin Uninstalled</span>",
+                        "subTitle" : "",
+                        "message" : element,
+                        "timeout" : 5000
+                    });
+        });
+
+        // retrieves the installed plugins
+        var installedPlugins = status["installed"];
+
+        // iterates over all the installed plugins
+        $(installedPlugins).each(function(index, element) {
+            $("#notification-area-contents").notificationwindow("default", {
+                        "title" : "<span class=\"green\">Plugin Installed</span>",
                         "subTitle" : "",
                         "message" : element,
                         "timeout" : 5000
