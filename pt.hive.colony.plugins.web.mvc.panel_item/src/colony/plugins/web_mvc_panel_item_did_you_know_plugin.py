@@ -45,7 +45,7 @@ class WebMvcPanelItemDidYouKnowPlugin(colony.plugins.plugin_system.Plugin):
     The main class for the Web Mvc Panel Item Did You Know plugin.
     """
 
-    id = "pt.hive.colony.plugins.web.mvc.panel_item"
+    id = "pt.hive.colony.plugins.web.mvc.panel_item.did_you_know"
     name = "Web Mvc Panel Item Did You Know Plugin"
     short_name = "Web Mvc Panel Item Did You Know"
     description = "The plugin that offers the web mvc panel item did you know"
