@@ -331,7 +331,7 @@ class WebMvcManagerMainController:
     """
 
     web_mvc_manager_plugin = None
-    """ The web mvc manager main plugin """
+    """ The web mvc manager plugin """
 
     web_mvc_manager = None
     """ The web mvc manager """

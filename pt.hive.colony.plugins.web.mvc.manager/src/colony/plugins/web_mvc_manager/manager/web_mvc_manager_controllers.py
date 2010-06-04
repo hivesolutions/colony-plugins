@@ -39,7 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import time
 import copy
-import random
 
 import web_mvc_manager_exceptions
 
@@ -78,12 +77,6 @@ PROVIDING_VALUE = "providing"
 
 ALLOWING_VALUE = "allowing"
 """ The allowing value """
-
-DID_YOU_KNOW_LIST = ("Chuck Norris once shot down a German fighter plane with his finger, by yelling, \"Bang!\"",
-                     "A Handicapped parking sign does not signify that this spot is for handicapped people. It is actually in fact a warning, that the spot belongs to Chuck Norris and that you will be handicapped if you park there.",
-                     "Everybody loves Raymond. Except Chuck Norris.",
-                     "Chuck Norris once round-house kicked a salesman. Over the phone.")
-""" The list of did you know sentences """
 
 class SidePanelController:
     """
@@ -185,12 +178,10 @@ class SidePanelController:
     def _assign_update_variables(self, template_file):
         self.__assign_panel_item_variables(template_file)
         self.__assign_status_variables(template_file)
-        self.__assign_did_you_know_variables(template_file)
 
     def _assign_configuration_variables(self, template_file):
         self.__assign_panel_item_variables(template_file)
         self.__assign_status_variables(template_file)
-        self.__assign_did_you_know_variables(template_file)
 
     def __assign_panel_item_variables(self, template_file):
         # retrieves the web mvc service panel item plugins
@@ -247,19 +238,6 @@ class SidePanelController:
 
         # assigns the uptime to the template
         template_file.assign("uptime", uptime_string)
-
-    def __assign_did_you_know_variables(self, template_file):
-        # retrieves the did you know list length
-        did_you_know_list_length = len(DID_YOU_KNOW_LIST)
-
-        # generates the random value
-        random_value = random.randint(0, did_you_know_list_length - 1)
-
-        # retrieves the random did you know sentence
-        did_you_know = DID_YOU_KNOW_LIST[random_value]
-
-        # assigns the did you know to the template
-        template_file.assign("did_you_know", did_you_know)
 
 class PluginController:
     """
