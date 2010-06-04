@@ -218,6 +218,12 @@ class Autoloader:
 
             # starts the plugins
             self.manager.start_plugins()
+
+            # retrieves the plugin for the module name
+            plugin = self.manager.get_plugin_by_module_name(module_name)
+
+            # loads the plugin
+            self.manager.load_plugin(plugin.id)
         except Exception, exception:
             # prints an error message
             self.autoloader_plugin.error("There was a problem loading module %s: %s" % (module_name, str(exception)))
