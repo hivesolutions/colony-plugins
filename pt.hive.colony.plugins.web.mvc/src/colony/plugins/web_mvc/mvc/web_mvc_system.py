@@ -289,6 +289,10 @@ class WebMvc:
         # updates the resource matching regex
         self._update_resource_matching_regex()
 
+    def process_web_mvc_communication_event(self, event_name, connection_name, message):
+        # sends the broadcast message
+        self.web_mvc_communication_handler.send_broadcast_communication_message(connection_name, message)
+
     def _handle_resource_match(self, rest_request, resource_path, resource_path_match, resource_matching_regex):
         # retrieves the base value for the matching regex
         base_value = self.resource_matching_regex_base_values_map[resource_matching_regex]

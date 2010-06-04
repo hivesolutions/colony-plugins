@@ -59,7 +59,7 @@ class WebMvcPlugin(colony.plugins.plugin_system.Plugin):
                     colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.json", "1.0.0")]
     events_handled = []
-    events_registrable = []
+    events_registrable = ["web.mvc.communication"]
     main_modules = ["web_mvc.mvc.web_mvc_communication_handler", "web_mvc.mvc.web_mvc_exceptions",
                     "web_mvc.mvc.web_mvc_file_handler", "web_mvc.mvc.web_mvc_system"]
 
@@ -96,6 +96,10 @@ class WebMvcPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.web.mvc", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    @colony.plugins.decorators.event_handler("pt.hive.colony.plugins.web.mvc", "1.0.0")
+    def event_handler(self, event_name, *event_args):
+        colony.plugins.plugin_system.Plugin.event_handler(self, event_name, *event_args)
 
     def get_routes(self):
         """
@@ -144,3 +148,7 @@ class WebMvcPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
     def set_json_plugin(self, json_plugin):
         self.json_plugin = json_plugin
+
+    @colony.plugins.decorators.event_handler_method("web.mvc.communication")
+    def web_mvc_communication_handler(self, event_name, *event_args):
+        self.web_mvc.process_web_mvc_communication_event(event_name, *event_args)

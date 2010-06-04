@@ -203,7 +203,7 @@ class WebMvcCommunicationHandler:
         # retrieves the request connection id
         connection_id = request.get_attribute("id")
 
-        # creates the connection coplete information tuple
+        # creates the connection complete information tuple
         connection_complete_information = (connection_id, connection_name)
 
         # tries to retrieve the communication connection from the connection complete
