@@ -52,7 +52,8 @@ class MainAccessControlPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["access_control"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_access_control/access_control/resources/baf.xml"}
+    capabilities = ["access_control", "build_automation_item"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
