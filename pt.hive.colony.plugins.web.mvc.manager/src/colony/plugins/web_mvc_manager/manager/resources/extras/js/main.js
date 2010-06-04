@@ -70,7 +70,7 @@ function messageProcessor(data) {
                         "timeout" : 5000
                     });
         });
-    } else if (messageId = "web_mvc_manager/plugin/install") {
+    } else if (messageId == "web_mvc_manager/plugin/install") {
         // parses the data (json) retrieving the status
         var status = $.parseJSON(messageContents);
 
@@ -99,6 +99,11 @@ function messageProcessor(data) {
                         "timeout" : 5000
                     });
         });
+    } else if (messageId == "web_mvc_manager/side_panel/reload") {
+        // reloads the metadata in the main container
+        $("#main-container").maincontainer("loadMetadata", {
+                    forceReload : true
+                });
     }
 }
 

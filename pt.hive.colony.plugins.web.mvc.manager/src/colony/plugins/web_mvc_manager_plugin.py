@@ -67,7 +67,7 @@ class WebMvcManagerPlugin(colony.plugins.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.packing.manager", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.system.updater", "1.0.0")]
-    events_handled = []
+    events_handled = ["web.mvc.communication"]
     events_registrable = []
     main_modules = ["web_mvc_manager.manager.web_mvc_manager_controllers", "web_mvc_manager.manager.web_mvc_manager_helpers",
                     "web_mvc_manager.manager.web_mvc_manager_system"]
@@ -154,10 +154,12 @@ class WebMvcManagerPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.load_allowed_capability("web.mvc_service.panel_item")
     def web_mvc_service_panel_item_load_allowed(self, plugin, capability):
         self.web_mvc_service_panel_item_plugins.append(plugin)
+        self.web_mvc_manager.load_web_mvc_service_plugin(plugin)
 
     @colony.plugins.decorators.unload_allowed_capability("web.mvc_service.panel_item")
     def web_mvc_service_panel_item_unload_allowed(self, plugin, capability):
         self.web_mvc_service_panel_item_plugins.remove(plugin)
+        self.web_mvc_manager.unload_web_mvc_service_plugin(plugin)
 
     def get_web_mvc_utils_plugin(self):
         return self.web_mvc_utils_plugin
