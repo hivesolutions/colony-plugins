@@ -87,7 +87,7 @@ class WebMvcPanelItemDidYouKnowPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.web.mvc.panel_item", "1.0.0")
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.web.mvc.panel_item.did_you_know", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
