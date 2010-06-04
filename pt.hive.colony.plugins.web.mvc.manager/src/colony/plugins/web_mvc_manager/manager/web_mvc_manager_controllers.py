@@ -177,11 +177,9 @@ class SidePanelController:
 
     def _assign_update_variables(self, template_file):
         self.__assign_panel_item_variables(template_file)
-        self.__assign_status_variables(template_file)
 
     def _assign_configuration_variables(self, template_file):
         self.__assign_panel_item_variables(template_file)
-        self.__assign_status_variables(template_file)
 
     def __assign_panel_item_variables(self, template_file):
         # retrieves the web mvc service panel item plugins
@@ -197,47 +195,6 @@ class SidePanelController:
 
         # assigns the panel items to the template
         template_file.assign("panel_items", panel_items_list)
-
-    def __assign_status_variables(self, template_file):
-        # retrieves the plugin manager
-        plugin_manager = self.web_mvc_manager_plugin.manager
-
-        # assigns the plugin count to the template
-        template_file.assign("plugin_count", len(plugin_manager.get_all_plugins()))
-
-        # assigns the plugin loaded count to the template
-        template_file.assign("plugin_loaded_count", len(plugin_manager.get_all_loaded_plugins()))
-
-        # assigns the capabilities count to the template
-        template_file.assign("capabilities_count", len(plugin_manager.capabilities_plugins_map))
-
-        import psutil
-        import os
-
-        pid = os.getpid()
-
-        process = psutil.Process(pid)
-
-        # calculates the memory usage in mega bytes
-        memory_usage = process.get_memory_info()[0] / 1048576
-
-        cpu_usage = process.get_cpu_percent()
-
-        # assigns the memory usage to the template
-        template_file.assign("memory_usage", memory_usage)
-
-        # assigns the cpu usage to the template
-        template_file.assign("cpu_usage", cpu_usage)
-
-        # retrieves the current time
-        current_time = time.time()
-
-        uptime = current_time - plugin_manager.plugin_manager_timestamp
-
-        uptime_string = str(int(uptime)) + "s"
-
-        # assigns the uptime to the template
-        template_file.assign("uptime", uptime_string)
 
 class PluginController:
     """
