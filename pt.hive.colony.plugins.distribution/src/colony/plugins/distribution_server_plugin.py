@@ -53,7 +53,8 @@ class DistributionServerPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["distribution_server", "startup"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/distribution/server/resources/baf.xml"}
+    capabilities = ["distribution_server", "startup", "build_automation_item"]
     capabilities_allowed = ["distribution_server_adapter"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.resources.resource_manager", "1.0.0")]
