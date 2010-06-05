@@ -184,11 +184,11 @@ class RepositoryDescriptorGenerator:
             repository_plugin_file_name_value_node = xml_document.createTextNode("none")
             repository_plugin_file_name_node.appendChild(repository_plugin_file_name_value_node)
 
-            repository_plugin_zip_file_node = xml_document.createElement("zip_file")
-            repository_plugin_node.appendChild(repository_plugin_zip_file_node)
+            repository_plugin_contents_file_node = xml_document.createElement("contents_file")
+            repository_plugin_node.appendChild(repository_plugin_contents_file_node)
 
-            repository_plugin_zip_file_value_node = xml_document.createTextNode(plugin.id + "_" + plugin.version + ".cpx")
-            repository_plugin_zip_file_node.appendChild(repository_plugin_zip_file_value_node)
+            repository_plugin_contents_file_value_node = xml_document.createTextNode(plugin.id + "_" + plugin.version + ".cpx")
+            repository_plugin_contents_file_node.appendChild(repository_plugin_contents_file_value_node)
 
             repository_plugin_dependencies_node = xml_document.createElement("dependencies")
             repository_plugin_node.appendChild(repository_plugin_dependencies_node)
