@@ -40,24 +40,6 @@
             <address name="Local Address">
                 http://localhost:8080/colony/repository
             </address>
-            <address name="Example Address">
-                http://example.com/colony/repository
-            </address>
-        </addresses>
-    </repository>
-    <repository>
-        <name>Aux Repository</name>
-        <description>
-            Contains most of the auxiliary plugins
-        </description>
-        <layout>simple</layout>
-        <addresses>
-            <address name="Local Address">
-                http://localhost:8080/colony/auxiliary_repository
-            </address>
-            <address name="Example Address">
-                http://example.com/colony/auxiliary_repository
-            </address>
         </addresses>
     </repository>
 </repositories>
