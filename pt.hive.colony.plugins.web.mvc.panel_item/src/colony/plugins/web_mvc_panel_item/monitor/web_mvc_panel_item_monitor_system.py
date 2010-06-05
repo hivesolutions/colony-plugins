@@ -119,6 +119,26 @@ class WebMvcPanelItemMonitor:
     def get_panel_item(self, parameters):
         return self.web_mvc_panel_item_monitor_main_controller.get_panel_item()
 
+    def load_web_mvc_monitor_item_plugin(self, web_mvc_monitor_item_plugin):
+        """
+        Loads the given web mvc monitor item plugin.
+
+        @type web_mvc_monitor_item_plugin: Plugin
+        @param web_mvc_monitor_item_plugin: The web mvc monitor item plugin to be loaded.
+        """
+
+        self.web_mvc_panel_item_monitor_plugin.generate_event("web.mvc.side_panel_reload", [])
+
+    def unload_web_mvc_monitor_item_plugin(self, web_mvc_monitor_item_plugin):
+        """
+        Unloads the given web mvc monitor item plugin.
+
+        @type web_mvc_monitor_item_plugin: Plugin
+        @param web_mvc_monitor_item_plugin: The web mvc monitor item plugin to be loaded.
+        """
+
+        self.web_mvc_panel_item_monitor_plugin.generate_event("web.mvc.side_panel_reload", [])
+
 class WebMvcPanelItemMonitorMainController:
     """
     The web mvc panel item monitor main controller.
@@ -165,7 +185,7 @@ class WebMvcPanelItemMonitorMainController:
         template_file = self.retrieve_template_file("panel_item_monitor.html.tpl")
 
         # assigns the monitor variables
-        self.__assign_monitor_variables(template_file)
+        self.__assign_monitor_item_variables(template_file)
 
         # processes the template file
         processed_template_file = self.process_template_file(template_file)
@@ -173,35 +193,17 @@ class WebMvcPanelItemMonitorMainController:
         # returns the processed template file
         return processed_template_file
 
-    def __assign_monitor_variables(self, template_file):
-        # retrieves the plugin manager
-        plugin_manager = self.web_mvc_panel_item_monitor_plugin.manager
+    def __assign_monitor_item_variables(self, template_file):
+        # retrieves the web mvc monitor item plugins
+        web_mvc_monitor_item_plugins = self.web_mvc_panel_item_monitor_plugin.web_mvc_monitor_item_plugins
 
-        import psutil
-        import os
-        import time
+        # starts the monitor items list
+        monitor_items_list = []
 
-        pid = os.getpid()
+        # iterates over all the web mvc monitor item plugins
+        for web_mvc_monitor_item_plugin in web_mvc_monitor_item_plugins:
+            monitor_item = web_mvc_monitor_item_plugin.get_monitor_item({})
+            monitor_items_list.append(monitor_item)
 
-        process = psutil.Process(pid)
-
-        # calculates the memory usage in mega bytes
-        memory_usage = process.get_memory_info()[0] / 1048576
-
-        cpu_usage = process.get_cpu_percent()
-
-        # assigns the memory usage to the template
-        template_file.assign("memory_usage", memory_usage)
-
-        # assigns the cpu usage to the template
-        template_file.assign("cpu_usage", cpu_usage)
-
-        # retrieves the current time
-        current_time = time.time()
-
-        uptime = current_time - plugin_manager.plugin_manager_timestamp
-
-        uptime_string = str(int(uptime)) + "s"
-
-        # assigns the uptime to the template
-        template_file.assign("uptime", uptime_string)
+        # assigns the monitor items to the template
+        template_file.assign("monitor_items", monitor_items_list)

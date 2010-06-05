@@ -45,6 +45,9 @@ WEB_MVC_PANEL_ITEM_DID_YOU_KNOW_RESOURCES_PATH = "web_mvc_panel_item/did_you_kno
 TEMPLATES_PATH = WEB_MVC_PANEL_ITEM_DID_YOU_KNOW_RESOURCES_PATH + "/templates"
 """ The templates path """
 
+RANDOM_MESSAGE = False
+""" The random message flag """
+
 DID_YOU_KNOW_LIST = ("Chuck Norris once shot down a German fighter plane with his finger, by yelling, \"Bang!\"",
                      "A Handicapped parking sign does not signify that this spot is for handicapped people. It is actually in fact a warning, that the spot belongs to Chuck Norris and that you will be handicapped if you park there.",
                      "Everybody loves Raymond. Except Chuck Norris.",
@@ -182,14 +185,25 @@ class WebMvcPanelItemDidYouKnowMainController:
         return processed_template_file
 
     def __assign_did_you_know_variables(self, template_file):
+        # in case random message value is set
+        if RANDOM_MESSAGE:
+            # sets the value as a random value
+            value = self.__get_random_value()
+        else:
+            # sets the value as zero the (first one)
+            value = 0
+
+        # retrieves the random did you know sentence
+        did_you_know = DID_YOU_KNOW_LIST[value]
+
+        # assigns the did you know to the template
+        template_file.assign("did_you_know", did_you_know)
+
+    def __get_random_value(self):
         # retrieves the did you know list length
         did_you_know_list_length = len(DID_YOU_KNOW_LIST)
 
         # generates the random value
         random_value = random.randint(0, did_you_know_list_length - 1)
 
-        # retrieves the random did you know sentence
-        did_you_know = DID_YOU_KNOW_LIST[random_value]
-
-        # assigns the did you know to the template
-        template_file.assign("did_you_know", did_you_know)
+        return random_value
