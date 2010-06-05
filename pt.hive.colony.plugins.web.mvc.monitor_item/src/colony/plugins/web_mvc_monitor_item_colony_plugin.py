@@ -73,6 +73,7 @@ class WebMvcMonitorItemColonyPlugin(colony.plugins.plugin_system.Plugin):
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        self.web_mvc_monitor_colony_system.load_components()
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)

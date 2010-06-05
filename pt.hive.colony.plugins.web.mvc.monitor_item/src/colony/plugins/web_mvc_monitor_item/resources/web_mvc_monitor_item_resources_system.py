@@ -123,7 +123,7 @@ class WebMvcMonitorItemResourcesMainController:
         # sets the templates path
         self.set_templates_path(templates_path)
 
-    def get_panel_item(self):
+    def get_monitor_item(self):
         # retrieves the template file
         template_file = self.retrieve_template_file("monitor_item_resources.html.tpl")
 

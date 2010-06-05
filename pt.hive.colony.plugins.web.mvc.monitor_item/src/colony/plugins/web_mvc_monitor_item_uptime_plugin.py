@@ -73,6 +73,7 @@ class WebMvcMonitorItemUptimePlugin(colony.plugins.plugin_system.Plugin):
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        self.web_mvc_monitor_uptime_system.load_components()
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
@@ -86,7 +87,7 @@ class WebMvcMonitorItemUptimePlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.web.mvc.monitor_item.colony", "1.0.0")
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.web.mvc.monitor_item.uptime", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 

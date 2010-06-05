@@ -122,7 +122,7 @@ class WebMvcMonitorItemUptimeMainController:
         # sets the templates path
         self.set_templates_path(templates_path)
 
-    def get_panel_item(self):
+    def get_monitor_item(self):
         # retrieves the template file
         template_file = self.retrieve_template_file("monitor_item_uptime.html.tpl")
 
@@ -137,7 +137,7 @@ class WebMvcMonitorItemUptimeMainController:
 
     def __assign_uptime_variables(self, template_file):
         # retrieves the plugin manager
-        plugin_manager = self.web_mvc_panel_item_monitor_plugin.manager
+        plugin_manager = self.web_mvc_monitor_item_uptime_plugin.manager
 
         # retrieves the current time
         current_time = time.time()
