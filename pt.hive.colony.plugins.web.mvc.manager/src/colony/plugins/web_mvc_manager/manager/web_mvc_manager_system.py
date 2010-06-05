@@ -242,6 +242,13 @@ class WebMvcManager:
         # generates the communication event
         self.web_mvc_manager_plugin.generate_event("web.mvc.communication", ["web_mvc_manager/communication", serialized_message])
 
+    def process_web_mvc_side_panel_reload_event(self, event_name, validation):
+        # retrieves the serialized message
+        serialized_message = self.web_mvc_manager_communication_helper._get_serialized_message("web_mvc_manager/side_panel/reload", "")
+
+        # generates the communication event
+        self.web_mvc_manager_plugin.generate_event("web.mvc.communication", ["web_mvc_manager/communication", serialized_message])
+
     def require_permissions(self, controller, rest_request, permissions_list = [], base_path = None):
         """
         Requires the permissions in the given permissions list to be set.

@@ -68,7 +68,7 @@ class WebMvcManagerPlugin(colony.plugins.plugin_system.Plugin):
                     colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.system.updater", "1.0.0")]
     events_handled = ["web.mvc.communication"]
-    events_registrable = []
+    events_registrable = ["web.mvc.side_panel_reload"]
     main_modules = ["web_mvc_manager.manager.web_mvc_manager_controllers", "web_mvc_manager.manager.web_mvc_manager_helpers",
                     "web_mvc_manager.manager.web_mvc_manager_system"]
 
@@ -110,6 +110,10 @@ class WebMvcManagerPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.web.mvc.manager", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    @colony.plugins.decorators.event_handler("pt.hive.colony.plugins.web.mvc.manager", "1.0.0")
+    def event_handler(self, event_name, *event_args):
+        colony.plugins.plugin_system.Plugin.event_handler(self, event_name, *event_args)
 
     def get_patterns(self):
         """
@@ -202,3 +206,7 @@ class WebMvcManagerPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.system.updater")
     def set_system_updater_plugin(self, system_updater_plugin):
         self.system_updater_plugin = system_updater_plugin
+
+    @colony.plugins.decorators.event_handler_method("web.mvc.side_panel_reload")
+    def web_mvc_communication_handler(self, event_name, *event_args):
+        self.web_mvc_manager.process_web_mvc_side_panel_reload_event(event_name, *event_args)
