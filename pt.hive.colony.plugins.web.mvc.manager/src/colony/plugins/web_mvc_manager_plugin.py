@@ -89,6 +89,8 @@ class WebMvcManagerPlugin(colony.plugins.plugin_system.Plugin):
         import web_mvc_manager.manager.web_mvc_manager_system
         self.web_mvc_manager = web_mvc_manager.manager.web_mvc_manager_system.WebMvcManager(self)
 
+        self.web_mvc_service_panel_item_plugins = []
+
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
         self.web_mvc_manager.load_components()
