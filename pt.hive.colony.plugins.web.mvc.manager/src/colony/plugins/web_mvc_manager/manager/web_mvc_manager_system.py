@@ -192,6 +192,8 @@ class WebMvcManager:
 
         # tenho de mandar um evento sempre que alguma destas coisas muda
 
+        # tenho de ter sempre paths relativos a uma base (neste caso web_mvc_manager)
+
         # retrieves the plugin manager
         plugin_manager = self.web_mvc_manager_plugin.manager
 
