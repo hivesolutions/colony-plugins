@@ -100,9 +100,13 @@ function messageProcessor(data) {
                     });
         });
     } else if (messageId == "web_mvc_manager/side_panel/reload") {
+        // retrieves the current active menu as the target menu
+        var targetMenu = $("#main-container").data("menu");
+
         // reloads the metadata in the main container
         $("#main-container").maincontainer("loadMetadata", {
-                    forceReload : true
+                    forceReload : true,
+                    target : targetMenu
                 });
     }
 }
