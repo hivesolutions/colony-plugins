@@ -39,19 +39,19 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import colony.plugins.plugin_system
 
-HELP_TEXT = "### NELSON DUMMY PLUGIN HELP ###\n\
+HELP_TEXT = "### TRANSLATION DUMMY PLUGIN HELP ###\n\
 get_translation_engines            - lists all the available translation engines\n\
 translate <dictionary-name> <word> - translates a word for the given dictionary name"
 
-class NelsonDummyPlugin(colony.plugins.plugin_system.Plugin):
+class TranslationDummyPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Nelson Dummy plugin.
+    The main class for the Translation Dummy plugin.
     """
 
-    id = "pt.hive.colony.plugins.dummy.nelson"
-    name = "Nelson Dummy Plugin"
-    short_name = "Nelson Dummy"
-    description = "This is the main plugin for the nelson's stuff"
+    id = "pt.hive.colony.plugins.dummy.translation"
+    name = "Translation Dummy Plugin"
+    short_name = "Translation Dummy"
+    description = "This is the main plugin for the translation's stuff"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
@@ -94,7 +94,7 @@ class NelsonDummyPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_console_extension_name(self):
-        return "nelson_dummy"
+        return "translation_dummy"
 
     def get_all_commands(self):
         return ["get_translation_engines", "translate"]
