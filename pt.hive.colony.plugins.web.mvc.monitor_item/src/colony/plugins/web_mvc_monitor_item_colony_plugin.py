@@ -40,40 +40,39 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.plugins.plugin_system
 import colony.plugins.decorators
 
-class WebMvcPanelItemDidYouKnowPlugin(colony.plugins.plugin_system.Plugin):
+class WebMvcMonitorItemColonyPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Web Mvc Panel Item Did You Know plugin.
+    The main class for the Web Mvc Monitor Item Colony plugin.
     """
 
-    id = "pt.hive.colony.plugins.web.mvc.panel_item.did_you_know"
-    name = "Web Mvc Panel Item Did You Know Plugin"
-    short_name = "Web Mvc Panel Item Did You Know"
-    description = "The plugin that offers the web mvc panel item did you know"
+    id = "pt.hive.colony.plugins.web.mvc.monitor_item.colony"
+    name = "Web Mvc Monitor Item Colony Plugin"
+    short_name = "Web Mvc Monitor Item Colony"
+    description = "The plugin that offers the web mvc monitor item colony"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["web.mvc_service.panel_item"]
+    capabilities = ["web.mvc.monitor_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.web.mvc.utils", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["web_mvc_panel_item.did_you_know.web_mvc_panel_item_did_you_know_system"]
+    main_modules = ["web_mvc_monitor_item.colony.web_mvc_monitor_item_colony_system"]
 
-    web_mvc_panel_item_did_you_know = None
+    web_mvc_monitor_colony_system = None
 
     web_mvc_utils_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
-        global web_mvc_panel_item
-        import web_mvc_panel_item.did_you_know.web_mvc_panel_item_did_you_know_system
-        self.web_mvc_panel_item_did_you_know = web_mvc_panel_item.did_you_know.web_mvc_panel_item_did_you_know_system.WebMvcPanelItemDidYouKnow(self)
+        global web_mvc_monitor_item
+        import web_mvc_monitor_item.colony.web_mvc_monitor_item_colony_system
+        self.web_mvc_monitor_colony_system = web_mvc_monitor_item.colony.web_mvc_monitor_item_colony_system.WebMvcMonitorItemColony(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
-        self.web_mvc_panel_item_did_you_know.load_components()
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
@@ -87,12 +86,12 @@ class WebMvcPanelItemDidYouKnowPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.web.mvc.panel_item.did_you_know", "1.0.0")
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.web.mvc.monitor_item.colony", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_monitor_item(self, parameters):
-        return self.web_mvc_panel_item_did_you_know.get_panel_item(parameters)
+        return self.web_mvc_monitor_colony_system.get_monitor_item(parameters)
 
     def get_web_mvc_utils_plugin(self):
         return self.web_mvc_utils_plugin
