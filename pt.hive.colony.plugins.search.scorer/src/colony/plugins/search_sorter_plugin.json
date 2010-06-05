@@ -14,7 +14,7 @@
                 "version" : "1.0.0"
             }],
     "main_file" : "search_sorter_plugin.py",
-    "resources" : ["search_sorter_plugin.py", "search_scorer/__init__.py",
+    "resources" : ["search_sorter_plugin.py", "search_sorter/__init__.py",
             "search_sorter/sorter/__init__.py",
             "search_sorter/sorter/search_sorter_exceptions.py",
             "search_sorter/sorter/search_sorter_system.py",
