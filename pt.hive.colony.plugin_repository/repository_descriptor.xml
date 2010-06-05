@@ -4,7 +4,7 @@
         Main Repository
     </name>
     <description>
-        Simply the best repository
+         Simply the best repository
     </description>
     <layout>
         simple
@@ -204,6 +204,42 @@
         </plugin>
         <plugin>
             <name>
+                pt.hive.colony.plugins.web.mvc.panel_item.did_you_know
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.web.mvc.panel_item.did_you_know
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.web.mvc.panel_item.did_you_know_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.web.mvc.utils
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
                 pt.hive.colony.demo.plugins.twitter
             </name>
             <type>
@@ -230,7 +266,7 @@
             <dependencies>
                 <plugin_dependency>
                     <id>
-                        pt.hive.colony.plugins.business.entity_manager
+                        pt.hive.colony.plugins.data.entity_manager
                     </id>
                     <version>
                         1.0.0
@@ -492,6 +528,69 @@
         </plugin>
         <plugin>
             <name>
+                pt.hive.colony.plugins.build.automation.generator
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.build.automation.generator
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.build.automation.generator_1.0.0.cpx
+            </contents_file>
+            <dependencies/>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.build.automation.packing_generator_handler
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.build.automation.packing_generator_handler
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.build.automation.packing_generator_handler_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.template_engine.manager
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
                 pt.hive.colony.plugins.build.automation.items.colony_base
             </name>
             <type>
@@ -514,157 +613,6 @@
             </file_name>
             <contents_file>
                 pt.hive.colony.plugins.build.automation.items.colony_base_1.0.0.cpx
-            </contents_file>
-            <dependencies/>
-        </plugin>
-        <plugin>
-            <name>
-                pt.hive.colony.plugins.business.business_logic
-            </name>
-            <type>
-                colony_packing
-            </type>
-            <id>
-                pt.hive.colony.plugins.business.business_logic
-            </id>
-            <version>
-                1.0.0
-            </version>
-            <main_module>
-                none
-            </main_module>
-            <main_class>
-                none
-            </main_class>
-            <file_name>
-                none
-            </file_name>
-            <contents_file>
-                pt.hive.colony.plugins.business.business_logic_1.0.0.cpx
-            </contents_file>
-            <dependencies>
-                <plugin_dependency>
-                    <id>
-                        pt.hive.colony.plugins.business.entity_manager
-                    </id>
-                    <version>
-                        1.0.0
-                    </version>
-                </plugin_dependency>
-                <plugin_dependency>
-                    <id>
-                        pt.hive.colony.plugins.business.helper
-                    </id>
-                    <version>
-                        1.0.0
-                    </version>
-                </plugin_dependency>
-            </dependencies>
-        </plugin>
-        <plugin>
-            <name>
-                pt.hive.colony.plugins.business.dummy_entity_bundle
-            </name>
-            <type>
-                colony_packing
-            </type>
-            <id>
-                pt.hive.colony.plugins.business.dummy_entity_bundle
-            </id>
-            <version>
-                1.0.0
-            </version>
-            <main_module>
-                none
-            </main_module>
-            <main_class>
-                none
-            </main_class>
-            <file_name>
-                none
-            </file_name>
-            <contents_file>
-                pt.hive.colony.plugins.business.dummy_entity_bundle_1.0.0.cpx
-            </contents_file>
-            <dependencies>
-                <plugin_dependency>
-                    <id>
-                        pt.hive.colony.plugins.business.helper
-                    </id>
-                    <version>
-                        1.0.0
-                    </version>
-                </plugin_dependency>
-            </dependencies>
-        </plugin>
-        <plugin>
-            <name>
-                pt.hive.colony.plugins.business.dummy_entity
-            </name>
-            <type>
-                colony_packing
-            </type>
-            <id>
-                pt.hive.colony.plugins.business.dummy_entity
-            </id>
-            <version>
-                1.0.0
-            </version>
-            <main_module>
-                none
-            </main_module>
-            <main_class>
-                none
-            </main_class>
-            <file_name>
-                none
-            </file_name>
-            <contents_file>
-                pt.hive.colony.plugins.business.dummy_entity_1.0.0.cpx
-            </contents_file>
-            <dependencies>
-                <plugin_dependency>
-                    <id>
-                        pt.hive.colony.plugins.business.helper
-                    </id>
-                    <version>
-                        1.0.0
-                    </version>
-                </plugin_dependency>
-                <plugin_dependency>
-                    <id>
-                        pt.hive.colony.plugins.business.dummy_entity_bundle
-                    </id>
-                    <version>
-                        1.0.0
-                    </version>
-                </plugin_dependency>
-            </dependencies>
-        </plugin>
-        <plugin>
-            <name>
-                pt.hive.colony.plugins.business.entity_manager
-            </name>
-            <type>
-                colony_packing
-            </type>
-            <id>
-                pt.hive.colony.plugins.business.entity_manager
-            </id>
-            <version>
-                1.0.0
-            </version>
-            <main_module>
-                none
-            </main_module>
-            <main_class>
-                none
-            </main_class>
-            <file_name>
-                none
-            </file_name>
-            <contents_file>
-                pt.hive.colony.plugins.business.entity_manager_1.0.0.cpx
             </contents_file>
             <dependencies/>
         </plugin>
@@ -723,7 +671,7 @@
             <dependencies>
                 <plugin_dependency>
                     <id>
-                        pt.hive.colony.plugins.business.entity_manager
+                        pt.hive.colony.plugins.data.entity_manager
                     </id>
                     <version>
                         1.0.0
@@ -776,13 +724,13 @@
         </plugin>
         <plugin>
             <name>
-                pt.hive.colony.plugins.business.sqlite_engine
+                pt.hive.colony.plugins.business.dummy.business_logic
             </name>
             <type>
                 colony_packing
             </type>
             <id>
-                pt.hive.colony.plugins.business.sqlite_engine
+                pt.hive.colony.plugins.business.dummy.business_logic
             </id>
             <version>
                 1.0.0
@@ -797,7 +745,229 @@
                 none
             </file_name>
             <contents_file>
-                pt.hive.colony.plugins.business.sqlite_engine_1.0.0.cpx
+                pt.hive.colony.plugins.business.dummy.business_logic_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.data.entity_manager
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.business.helper
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.business.dummy.entity_bundle
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.business.dummy.entity_bundle
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.business.dummy.entity_bundle_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.business.helper
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.business.dummy.entity
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.business.dummy.entity
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.business.dummy.entity_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.business.helper
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.business.dummy.entity_bundle
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.configuration.manager
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.configuration.manager
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.configuration.manager_1.0.0.cpx
+            </contents_file>
+            <dependencies/>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.data.entity_manager_helper
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.data.entity_manager_helper
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.data.entity_manager_helper_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.data.entity_manager
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.business.helper
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.data.entity_manager
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.data.entity_manager
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.data.entity_manager_1.0.0.cpx
+            </contents_file>
+            <dependencies/>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.data.entity_manager.sqlite_engine
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.data.entity_manager.sqlite_engine
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.data.entity_manager.sqlite_engine_1.0.0.cpx
             </contents_file>
             <dependencies>
                 <plugin_dependency>
@@ -910,7 +1080,7 @@
             <dependencies>
                 <plugin_dependency>
                     <id>
-                        pt.hive.colony.plugins.business.entity_manager
+                        pt.hive.colony.plugins.data.entity_manager
                     </id>
                     <version>
                         1.0.0
@@ -1534,6 +1704,33 @@
         </plugin>
         <plugin>
             <name>
+                pt.hive.colony.plugins.document.pdf
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.document.pdf
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.document.pdf_1.0.0.cpx
+            </contents_file>
+            <dependencies/>
+        </plugin>
+        <plugin>
+            <name>
                 pt.hive.colony.plugins.dummy.bonjour
             </name>
             <type>
@@ -1791,7 +1988,7 @@
                 </plugin_dependency>
                 <plugin_dependency>
                     <id>
-                        pt.hive.colony.plugins.business.entity_manager
+                        pt.hive.colony.plugins.data.entity_manager
                     </id>
                     <version>
                         1.0.0
@@ -1799,7 +1996,7 @@
                 </plugin_dependency>
                 <plugin_dependency>
                     <id>
-                        pt.hive.colony.plugins.business.dummy_entity
+                        pt.hive.colony.plugins.business.dummy.entity
                     </id>
                     <version>
                         1.0.0
@@ -2601,6 +2798,78 @@
         </plugin>
         <plugin>
             <name>
+                pt.hive.colony.plugins.mail.queue.database
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.mail.queue.database
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.mail.queue.database_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.data.entity_manager_helper
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.mail.storage.database
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.mail.storage.database
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.mail.storage.database_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.data.entity_manager_helper
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
                 pt.hive.colony.plugins.main.access.plugin_manager
             </name>
             <type>
@@ -2763,6 +3032,33 @@
         </plugin>
         <plugin>
             <name>
+                pt.hive.colony.plugins.main.authentication.python_handler
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.main.authentication.python_handler
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.main.authentication.python_handler_1.0.0.cpx
+            </contents_file>
+            <dependencies/>
+        </plugin>
+        <plugin>
+            <name>
                 pt.hive.colony.plugins.main.authentication.xml_handler
             </name>
             <type>
@@ -2816,7 +3112,7 @@
             <dependencies>
                 <plugin_dependency>
                     <id>
-                        pt.hive.colony.plugins.business.entity_manager
+                        pt.hive.colony.plugins.data.entity_manager
                     </id>
                     <version>
                         1.0.0
@@ -2833,6 +3129,69 @@
                 <plugin_dependency>
                     <id>
                         pt.hive.colony.plugins.main.authentication
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.main.client.dns
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.main.client.dns
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.main.client.dns_1.0.0.cpx
+            </contents_file>
+            <dependencies/>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.main.client.http
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.main.client.http
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.main.client.http_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.misc.url_parser
                     </id>
                     <version>
                         1.0.0
@@ -2864,6 +3223,33 @@
             </file_name>
             <contents_file>
                 pt.hive.colony.plugins.main.client.ldap_1.0.0.cpx
+            </contents_file>
+            <dependencies/>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.main.client.smtp
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.main.client.smtp
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.main.client.smtp_1.0.0.cpx
             </contents_file>
             <dependencies/>
         </plugin>
@@ -3641,6 +4027,33 @@
         </plugin>
         <plugin>
             <name>
+                pt.hive.colony.plugins.main.service.datagram_socket_provider
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.main.service.datagram_socket_provider
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.main.service.datagram_socket_provider_1.0.0.cpx
+            </contents_file>
+            <dependencies/>
+        </plugin>
+        <plugin>
+            <name>
                 pt.hive.colony.plugins.main.service.normal_socket_provider
             </name>
             <type>
@@ -3663,6 +4076,33 @@
             </file_name>
             <contents_file>
                 pt.hive.colony.plugins.main.service.normal_socket_provider_1.0.0.cpx
+            </contents_file>
+            <dependencies/>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.main.service.raw_socket_provider
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.main.service.raw_socket_provider
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.main.service.raw_socket_provider_1.0.0.cpx
             </contents_file>
             <dependencies/>
         </plugin>
@@ -3692,6 +4132,185 @@
                 pt.hive.colony.plugins.main.service.ssl_socket_provider_1.0.0.cpx
             </contents_file>
             <dependencies/>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.main.service.ssl_socket_upgrader
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.main.service.ssl_socket_upgrader
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.main.service.ssl_socket_upgrader_1.0.0.cpx
+            </contents_file>
+            <dependencies/>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.main.service.bittorrent
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.main.service.bittorrent
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.main.service.bittorrent_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.main.threads.thread_pool_manager
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.misc.bencode
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.main.service.dns.file_handler
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.main.service.dns.file_handler
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.main.service.dns.file_handler_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.resources.resource_manager
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.main.service.dns
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.main.service.dns
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.main.service.dns_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.main.threads.thread_pool_manager
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.main.service.dns.starter
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.main.service.dns.starter
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.main.service.dns.starter_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.main.service.dns
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
         </plugin>
         <plugin>
             <name>
@@ -4109,13 +4728,13 @@
         </plugin>
         <plugin>
             <name>
-                pt.hive.colony.plugins.main.service.smtp.dabase_session_handler
+                pt.hive.colony.plugins.main.service.pop.database_message_provider
             </name>
             <type>
                 colony_packing
             </type>
             <id>
-                pt.hive.colony.plugins.main.service.smtp.dabase_session_handler
+                pt.hive.colony.plugins.main.service.pop.database_message_provider
             </id>
             <version>
                 1.0.0
@@ -4130,7 +4749,277 @@
                 none
             </file_name>
             <contents_file>
-                pt.hive.colony.plugins.main.service.smtp.dabase_session_handler_1.0.0.cpx
+                pt.hive.colony.plugins.main.service.pop.database_message_provider_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.mail.storage.database
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.main.service.pop.main_authentication_handler
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.main.service.pop.main_authentication_handler
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.main.service.pop.main_authentication_handler_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.main.authentication
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.main.service.pop.main_session_handler
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.main.service.pop.main_session_handler
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.main.service.pop.main_session_handler_1.0.0.cpx
+            </contents_file>
+            <dependencies/>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.main.service.pop
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.main.service.pop
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.main.service.pop_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.main.threads.thread_pool_manager
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.main.service.pop.starter
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.main.service.pop.starter
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.main.service.pop.starter_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.main.service.pop
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.main.service.pop.stream_handler
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.main.service.pop.stream_handler
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.main.service.pop.stream_handler_1.0.0.cpx
+            </contents_file>
+            <dependencies/>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.main.service.smtp.database_message_handler
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.main.service.smtp.database_message_handler
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.main.service.smtp.database_message_handler_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.mail.storage.database
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.main.service.smtp.main_authentication_handler
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.main.service.smtp.main_authentication_handler
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.main.service.smtp.main_authentication_handler_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.main.authentication
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.main.service.smtp.main_session_handler
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.main.service.smtp.main_session_handler
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.main.service.smtp.main_session_handler_1.0.0.cpx
             </contents_file>
             <dependencies/>
         </plugin>
@@ -4163,6 +5052,50 @@
                 <plugin_dependency>
                     <id>
                         pt.hive.colony.plugins.main.threads.thread_pool_manager
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.main.service.smtp.relay_message_handler
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.main.service.smtp.relay_message_handler
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.main.service.smtp.relay_message_handler_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.main.client.smtp
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.main.client.dns
                     </id>
                     <version>
                         1.0.0
@@ -4715,6 +5648,33 @@
             </file_name>
             <contents_file>
                 pt.hive.colony.plugins.misc.autoloader_1.0.0.cpx
+            </contents_file>
+            <dependencies/>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.misc.bencode
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.misc.bencode
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.misc.bencode_1.0.0.cpx
             </contents_file>
             <dependencies/>
         </plugin>
@@ -5330,6 +6290,33 @@
         </plugin>
         <plugin>
             <name>
+                pt.hive.colony.plugins.resources.resource_manager
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.resources.resource_manager
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.resources.resource_manager_1.0.0.cpx
+            </contents_file>
+            <dependencies/>
+        </plugin>
+        <plugin>
+            <name>
                 pt.hive.colony.plugins.misc.scheduler
             </name>
             <type>
@@ -5423,6 +6410,33 @@
             </file_name>
             <contents_file>
                 pt.hive.colony.plugins.misc.timer_1.0.0.cpx
+            </contents_file>
+            <dependencies/>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.misc.url_parser
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.misc.url_parser
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.misc.url_parser_1.0.0.cpx
             </contents_file>
             <dependencies/>
         </plugin>
@@ -5707,6 +6721,69 @@
         </plugin>
         <plugin>
             <name>
+                pt.hive.colony.plugins.packaging.ar
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.packaging.ar
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.packaging.ar_1.0.0.cpx
+            </contents_file>
+            <dependencies/>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.packaging.deb
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.packaging.deb
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.packaging.deb_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.packaging.ar
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
                 pt.hive.colony.plugins.plugin_manager_logic
             </name>
             <type>
@@ -5758,6 +6835,42 @@
                 pt.hive.colony.plugins.printing.manager_1.0.0.cpx
             </contents_file>
             <dependencies/>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.printing.pdf
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.printing.pdf
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.printing.pdf_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.document.pdf
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
         </plugin>
         <plugin>
             <name>
@@ -5846,33 +6959,6 @@
             </file_name>
             <contents_file>
                 pt.hive.colony.plugins.resources.python_resource_parser_1.0.0.cpx
-            </contents_file>
-            <dependencies/>
-        </plugin>
-        <plugin>
-            <name>
-                pt.hive.colony.plugins.resources.resource_manager
-            </name>
-            <type>
-                colony_packing
-            </type>
-            <id>
-                pt.hive.colony.plugins.resources.resource_manager
-            </id>
-            <version>
-                1.0.0
-            </version>
-            <main_module>
-                none
-            </main_module>
-            <main_class>
-                none
-            </main_class>
-            <file_name>
-                none
-            </file_name>
-            <contents_file>
-                pt.hive.colony.plugins.resources.resource_manager_1.0.0.cpx
             </contents_file>
             <dependencies/>
         </plugin>
@@ -6104,6 +7190,58 @@
                 <plugin_dependency>
                     <id>
                         pt.hive.colony.plugins.search.sorter
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.search.processor
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.search.crawler.entity_manager_adapter
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.search.crawler.entity_manager_adapter
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.search.crawler.entity_manager_adapter_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.data.entity_manager
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.business.helper
                     </id>
                     <version>
                         1.0.0
@@ -6351,6 +7489,77 @@
             </file_name>
             <contents_file>
                 pt.hive.colony.plugins.search.interpreter_1.0.0.cpx
+            </contents_file>
+            <dependencies/>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.search.processor.entity_manager_adapter
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.search.processor.entity_manager_adapter
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.search.processor.entity_manager_adapter_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.data.entity_manager
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.business.helper
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.search.processor
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.search.processor
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.search.processor_1.0.0.cpx
             </contents_file>
             <dependencies/>
         </plugin>
@@ -6723,6 +7932,113 @@
         </plugin>
         <plugin>
             <name>
+                pt.hive.colony.plugins.security.captcha
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.security.captcha
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.security.captcha_1.0.0.cpx
+            </contents_file>
+            <dependencies/>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.service.facebook
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.service.facebook
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.service.facebook_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.misc.json
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.service.openid
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.service.openid
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.service.openid_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.main.client.http
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.service.yadis
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
                 pt.hive.colony.plugins.service.twitter
             </name>
             <type>
@@ -6756,6 +8072,33 @@
                     </version>
                 </plugin_dependency>
             </dependencies>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.service.yadis
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.service.yadis
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.service.yadis_1.0.0.cpx
+            </contents_file>
+            <dependencies/>
         </plugin>
         <plugin>
             <name>
@@ -7242,7 +8585,7 @@
                 </plugin_dependency>
                 <plugin_dependency>
                     <id>
-                        pt.hive.colony.plugins.business.entity_manager
+                        pt.hive.colony.plugins.data.entity_manager
                     </id>
                     <version>
                         1.0.0
@@ -7275,7 +8618,68 @@
             <contents_file>
                 pt.hive.colony.plugins.web.mvc_1.0.0.cpx
             </contents_file>
-            <dependencies/>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.misc.random
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.misc.json
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.web.mvc.search
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.web.mvc.search
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.web.mvc.search_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.data.entity_manager
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.search
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
         </plugin>
         <plugin>
             <name>
@@ -7313,13 +8717,303 @@
                 </plugin_dependency>
                 <plugin_dependency>
                     <id>
-                        pt.hive.colony.plugins.business.entity_manager
+                        pt.hive.colony.plugins.data.entity_manager
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.business.helper
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.web.mvc.search
                     </id>
                     <version>
                         1.0.0
                     </version>
                 </plugin_dependency>
             </dependencies>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.web.mvc.manager
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.web.mvc.manager
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.web.mvc.manager_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.web.mvc.utils
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.web.mvc.resources.base
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.web.mvc.resources.ui
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.misc.json
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.main.packing.manager
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.system.updater
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.web.mvc.monitor_item.colony
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.web.mvc.monitor_item.colony
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.web.mvc.monitor_item.colony_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.web.mvc.utils
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.web.mvc.monitor_item.resources
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.web.mvc.monitor_item.resources
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.web.mvc.monitor_item.resources_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.web.mvc.utils
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.web.mvc.monitor_item.uptime
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.web.mvc.monitor_item.uptime
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.web.mvc.monitor_item.uptime_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.web.mvc.utils
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.web.mvc.panel_item.monitor
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.web.mvc.panel_item.monitor
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.web.mvc.panel_item.monitor_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.web.mvc.utils
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.web.mvc.resources.base
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.web.mvc.resources.base
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.web.mvc.resources.base_1.0.0.cpx
+            </contents_file>
+            <dependencies/>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.colony.plugins.web.mvc.resources.ui
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.colony.plugins.web.mvc.resources.ui
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.colony.plugins.web.mvc.resources.ui_1.0.0.cpx
+            </contents_file>
+            <dependencies/>
         </plugin>
         <plugin>
             <name>
@@ -7429,7 +9123,7 @@
                 </plugin_dependency>
                 <plugin_dependency>
                     <id>
-                        pt.hive.colony.plugins.business.entity_manager
+                        pt.hive.colony.plugins.data.entity_manager
                     </id>
                     <version>
                         1.0.0
@@ -7473,7 +9167,7 @@
             <dependencies>
                 <plugin_dependency>
                     <id>
-                        pt.hive.colony.plugins.business.entity_manager
+                        pt.hive.colony.plugins.data.entity_manager
                     </id>
                     <version>
                         1.0.0
@@ -7763,7 +9457,7 @@
             <dependencies>
                 <plugin_dependency>
                     <id>
-                        pt.hive.colony.plugins.business.entity_manager
+                        pt.hive.colony.plugins.data.entity_manager
                     </id>
                     <version>
                         1.0.0
@@ -7895,6 +9589,284 @@
                 <plugin_dependency>
                     <id>
                         pt.hive.colony.plugins.web.mvc.utils
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.security.captcha
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.service.openid
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.service.twitter
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.service.facebook
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.take_the_bill.plugins.demo_data
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.take_the_bill.plugins.demo_data
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.take_the_bill.plugins.demo_data_1.0.0.cpx
+            </contents_file>
+            <dependencies/>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.take_the_bill.plugins.main
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.take_the_bill.plugins.main
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.take_the_bill.plugins.main_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.web.mvc.utils
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.web.mvc.resources.base
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.web.mvc.resources.ui
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.resources.resource_manager
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.service.openid
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.service.twitter
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.service.facebook
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.printing.manager
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.take_the_bill.plugins.demo_data
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.misc.json
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+            </dependencies>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.a_la_carte.plugins.demo_data
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.a_la_carte.plugins.demo_data
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.a_la_carte.plugins.demo_data_1.0.0.cpx
+            </contents_file>
+            <dependencies/>
+        </plugin>
+        <plugin>
+            <name>
+                pt.hive.a_la_carte.plugins.main
+            </name>
+            <type>
+                colony_packing
+            </type>
+            <id>
+                pt.hive.a_la_carte.plugins.main
+            </id>
+            <version>
+                1.0.0
+            </version>
+            <main_module>
+                none
+            </main_module>
+            <main_class>
+                none
+            </main_class>
+            <file_name>
+                none
+            </file_name>
+            <contents_file>
+                pt.hive.a_la_carte.plugins.main_1.0.0.cpx
+            </contents_file>
+            <dependencies>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.web.mvc.utils
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.resources.resource_manager
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.service.openid
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.service.twitter
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.service.facebook
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.colony.plugins.printing.manager
+                    </id>
+                    <version>
+                        1.0.0
+                    </version>
+                </plugin_dependency>
+                <plugin_dependency>
+                    <id>
+                        pt.hive.a_la_carte.plugins.demo_data
                     </id>
                     <version>
                         1.0.0
