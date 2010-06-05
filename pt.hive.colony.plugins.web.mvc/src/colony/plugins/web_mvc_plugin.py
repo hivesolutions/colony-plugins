@@ -52,7 +52,8 @@ class WebMvcPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["web.mvc", "rest_service"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/web_mvc/mvc/resources/baf.xml"}
+    capabilities = ["web.mvc", "rest_service", "build_automation_item"]
     capabilities_allowed = ["web.mvc_service"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.random", "1.0.0"),
