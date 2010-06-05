@@ -616,6 +616,9 @@
             // retrieves the target
             var target = options["target"];
 
+            // sets the current menu in the matched object
+            matchedObject.data("menu", target);
+
             // removes the active class fomr all the header items
             $("#left-column > h1", matchedObject).removeClass("active");
 
