@@ -129,7 +129,7 @@ class WebMvcPanelItemDidYouKnow:
 
 class WebMvcPanelItemDidYouKnowMainController:
     """
-    The web mvc panel item did you knwo main controller.
+    The web mvc panel item did you know main controller.
     """
 
     web_mvc_panel_item_did_you_know_plugin = None

@@ -74,7 +74,7 @@ class WebMvcPanelItemMonitor:
         web_mvc_utils_plugin = self.web_mvc_panel_item_monitor_plugin.web_mvc_utils_plugin
 
         # creates the web mvc panel item monitor main controller
-        self.web_mvc_panel_item_monitor_main_controller = web_mvc_utils_plugin.create_controller(WebMvcPanelItemDidYouKnowMainController, [self.web_mvc_panel_item_monitor_plugin, self], {})
+        self.web_mvc_panel_item_monitor_main_controller = web_mvc_utils_plugin.create_controller(WebMvcPanelItemMonitorMainController, [self.web_mvc_panel_item_monitor_plugin, self], {})
 
     def get_patterns(self):
         """
@@ -119,9 +119,9 @@ class WebMvcPanelItemMonitor:
     def get_panel_item(self, parameters):
         return self.web_mvc_panel_item_monitor_main_controller.get_panel_item()
 
-class WebMvcPanelItemDidYouKnowMainController:
+class WebMvcPanelItemMonitorMainController:
     """
-    The web mvc panel item did you knwo main controller.
+    The web mvc panel item monitor main controller.
     """
 
     web_mvc_panel_item_monitor_plugin = None
@@ -134,9 +134,9 @@ class WebMvcPanelItemDidYouKnowMainController:
         """
         Constructor of the class.
 
-        @type web_mvc_panel_item_monitor_plugin: WebMvcPanelItemDidYouKnowPlugin
+        @type web_mvc_panel_item_monitor_plugin: WebMvcPanelItemMonitorPlugin
         @param web_mvc_panel_item_monitor_plugin: The web mvc panel item monitor plugin.
-        @type web_mvc_panel_item_monitor: WebMvcPanelItemDidYouKnow
+        @type web_mvc_panel_item_monitor: WebMvcPanelItemDidYouMonitor
         @param web_mvc_panel_item_monitor: The web mvc panel item monitor.
         """
 
@@ -176,15 +176,6 @@ class WebMvcPanelItemDidYouKnowMainController:
     def __assign_monitor_variables(self, template_file):
         # retrieves the plugin manager
         plugin_manager = self.web_mvc_panel_item_monitor_plugin.manager
-
-        # assigns the plugin count to the template
-        template_file.assign("plugin_count", len(plugin_manager.get_all_plugins()))
-
-        # assigns the plugin loaded count to the template
-        template_file.assign("plugin_loaded_count", len(plugin_manager.get_all_loaded_plugins()))
-
-        # assigns the capabilities count to the template
-        template_file.assign("capabilities_count", len(plugin_manager.capabilities_plugins_map))
 
         import psutil
         import os
