@@ -195,7 +195,7 @@ $(document).ready(function() {
                             "default", {
                                 "title" : "<span class=\"green\">Plugin Installed</span>",
                                 "subTitle" : "",
-                                "message" : "Tobias",
+                                "message" : "Plugin installed successfully",
                                 "timeout" : 5000
                             });
                 } else {
