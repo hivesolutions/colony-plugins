@@ -53,7 +53,8 @@ class WebMvcMonitorItemResourcesPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["web.mvc.monitor_item"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/web_mvc_monitor_item/resources/resources/baf.xml"}
+    capabilities = ["web.mvc.monitor_item", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.web.mvc.utils", "1.0.0")]
