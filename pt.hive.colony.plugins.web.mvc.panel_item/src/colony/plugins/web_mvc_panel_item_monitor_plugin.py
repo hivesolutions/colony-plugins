@@ -74,6 +74,8 @@ class WebMvcPanelItemMonitorPlugin(colony.plugins.plugin_system.Plugin):
         import web_mvc_panel_item.monitor.web_mvc_panel_item_monitor_system
         self.web_mvc_panel_item_monitor = web_mvc_panel_item.monitor.web_mvc_panel_item_monitor_system.WebMvcPanelItemMonitor(self)
 
+        self.web_mvc_monitor_item_plugins = []
+
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
         self.web_mvc_panel_item_monitor.load_components()
