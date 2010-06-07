@@ -1,0 +1,23 @@
+{
+    "platform" : "python",
+    "sub_platforms" : ["cpython", "jython"],
+    "id" : "pt.hive.colony.plugins.main.service.telnet",
+    "name" : "Telnet Service Main Plugin",
+    "short_name" : "Telnet Service Main",
+    "description" : "The plugin that offers the telnet service",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["service.telnet", "build_automation_item"],
+    "capabilities_allowed" : ["telnet_service_handler", "socket_provider"],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.main.threads.thread_pool_manager",
+                "version" : "1.0.0"
+            }],
+    "main_file" : "main_service_telnet_plugin.py",
+    "resources" : ["main_service_telnet_plugin.py",
+            "main_service_telnet/__init__.py",
+            "main_service_telnet/telnet/__init__.py",
+            "main_service_telnet/telnet/main_service_telnet_exceptions.py",
+            "main_service_telnet/telnet/main_service_telnet_system.py",
+            "main_service_telnet/telnet/resources/baf.xml"]
+}

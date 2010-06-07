@@ -54,7 +54,8 @@ class MainServiceTelnetConsoleHandlerPlugin(colony.plugins.plugin_system.Plugin)
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
-    capabilities = ["telnet_service_handler"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_telnet_console_handler/console_handler/resources/baf.xml"}
+    capabilities = ["telnet_service_handler", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.console", "1.0.0")]
