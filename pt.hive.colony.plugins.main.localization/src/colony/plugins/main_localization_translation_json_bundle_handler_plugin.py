@@ -53,7 +53,8 @@ class MainLocalizationTranslationJsonBundleHandlerPlugin(colony.plugins.plugin_s
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["localization_translation_bundle_handler"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_localization_translation_json_bundle_handler/translation_json_bundle_handler/resources/baf.xml"}
+    capabilities = ["localization_translation_bundle_handler", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.json", "1.0.0")]
