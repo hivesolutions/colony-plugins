@@ -54,7 +54,8 @@ class MainServiceXmppStreamHandlerPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
-    capabilities = ["xmpp_service_handler"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_xmpp_stream_handler/stream_handler/resources/baf.xml"}
+    capabilities = ["xmpp_service_handler", "build_automation_item"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
