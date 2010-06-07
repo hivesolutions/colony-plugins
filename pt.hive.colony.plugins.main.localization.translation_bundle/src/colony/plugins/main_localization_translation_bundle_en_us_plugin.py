@@ -52,7 +52,8 @@ class MainLocalizationTranslationBundleEnUsPlugin(colony.plugins.plugin_system.P
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["localization_translation_bundle"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_localization_translation_bundle_en_us/en_us/resources/baf.xml"}
+    capabilities = ["localization_translation_bundle", "build_automation_item"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
