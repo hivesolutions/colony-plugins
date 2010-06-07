@@ -54,7 +54,8 @@ class TemplateEngineManagerPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    capabilities = ["template_engine_manager"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/template_engine/manager/resources/baf.xml"}
+    capabilities = ["template_engine_manager", "build_automation_item"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
