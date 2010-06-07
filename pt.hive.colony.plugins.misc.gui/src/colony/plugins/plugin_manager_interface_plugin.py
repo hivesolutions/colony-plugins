@@ -52,7 +52,8 @@ class PluginManagerInterfacePlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["gui_panel"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc_gui/plugin_manager_interface/resources/baf.xml"}
+    capabilities = ["gui_panel", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.gui.tree_visualizer", "1.0.0")]

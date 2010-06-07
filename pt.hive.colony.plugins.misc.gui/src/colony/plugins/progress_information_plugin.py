@@ -52,7 +52,8 @@ class ProgressInformationPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["gui_progress_information"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc_gui/progress_information/resources/baf.xml"}
+    capabilities = ["gui_progress_information", "build_automation_item"]
     capabilities_allowed = ["task_information"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.bitmap_loader", "1.0.0")]

@@ -1,0 +1,23 @@
+{
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.misc.gui.plugin_manager_interface",
+    "name" : "Plugin Manager Interface Plugin",
+    "short_name" : "Plugin Manager Interface",
+    "description" : "Lorem ipsum",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["gui_panel", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.misc.gui.tree_visualizer",
+                "version" : "1.0.0"
+            }],
+    "main_file" : "plugin_manager_interface_plugin.py",
+    "resources" : [
+            "plugin_manager_interface_plugin.py",
+            "misc_gui/__init__.py",
+            "misc_gui/plugin_manager_interface/__init__.py",
+            "misc_gui/plugin_manager_interface/plugin_manager_interface_system.py",
+            "misc_gui/plugin_manager_interface/resources/baf.xml"]
+}
