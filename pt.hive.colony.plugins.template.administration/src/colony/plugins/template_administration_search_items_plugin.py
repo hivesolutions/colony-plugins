@@ -52,7 +52,8 @@ class TemplateAdministrationSearchItemsPlugin(colony.plugins.plugin_system.Plugi
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["template_administration_extension.bundle"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/template_administration/search_items/resources/baf.xml"}
+    capabilities = ["template_administration_extension.bundle", "build_automation_item"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []

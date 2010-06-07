@@ -53,7 +53,8 @@ class TemplateAdministrationPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["template_administration", "template_handler_extension"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/template_administration/administration/resources/baf.xml"}
+    capabilities = ["template_administration", "template_handler_extension", "build_automation_item"]
     capabilities_allowed = ["template_administration_extension.menu_item", "template_administration_extension.top_menu_item",
                             "template_administration_extension.status_item", "template_administration_extension.content_item",
                             "template_administration_extension.bundle"]
