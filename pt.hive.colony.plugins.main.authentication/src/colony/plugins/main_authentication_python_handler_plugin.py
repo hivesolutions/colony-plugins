@@ -52,10 +52,11 @@ class MainAuthenticationPythonHandlerPlugin(colony.plugins.plugin_system.Plugin)
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"configuration_models_bundle" : {"authentication.py" : {"path" : "main_authentication_python_handler/python_handler/configuration/authentication_configuration.py",
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_authentication_python_handler/python_handler/resources/baf.xml",
+                  "configuration_models_bundle" : {"authentication.py" : {"path" : "main_authentication_python_handler/python_handler/configuration/authentication_configuration.py",
                                                                           "global" : False,
                                                                           "replace" : False}}}
-    capabilities = ["authentication_handler", "configuration_model_provider"]
+    capabilities = ["authentication_handler", "configuration_model_provider", "build_automation_item"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []

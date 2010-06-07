@@ -53,7 +53,8 @@ class MainAuthenticationPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["authentication"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_authentication/authentication/resources/baf.xml"}
+    capabilities = ["authentication", "build_automation_item"]
     capabilities_allowed = ["authentication_handler"]
     dependencies = []
     events_handled = []
