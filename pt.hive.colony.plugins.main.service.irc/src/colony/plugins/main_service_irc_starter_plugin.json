@@ -1,0 +1,22 @@
+{
+    "platform" : "python",
+    "sub_platforms" : ["cpython", "jython"],
+    "id" : "pt.hive.colony.plugins.main.service.irc.starter",
+    "name" : "Irc Service Main Starter Plugin",
+    "short_name" : "Irc Service Main Starter",
+    "description" : "The plugin that starts the irc service",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.main.service.irc",
+                "version" : "1.0.0"
+            }],
+    "main_file" : "main_service_irc_starter_plugin.py",
+    "resources" : ["main_service_irc_starter_plugin.py",
+            "main_service_irc/__init__.py", "main_service_irc/irc/__init__.py",
+            "main_service_irc/irc/main_service_irc_exceptions.py",
+            "main_service_irc/irc/main_service_irc_system.py",
+            "main_service_irc/irc/resources/baf.xml"]
+}

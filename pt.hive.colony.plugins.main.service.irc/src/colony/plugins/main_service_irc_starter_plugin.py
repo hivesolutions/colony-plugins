@@ -54,7 +54,8 @@ class MainServiceIrcStarterPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
-    capabilities = []
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_irc_starter/irc_starter/resources/baf.xml"}
+    capabilities = ["build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.service.irc", "1.0.0")]

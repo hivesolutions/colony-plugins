@@ -94,10 +94,10 @@ class MainServiceIrc:
         """
 
         # retrieves the socket provider value
-        socket_provider = parameters.get("socket_provider", None)
+        #socket_provider = parameters.get("socket_provider", None)
 
         # retrieves the port value
-        port = parameters.get("port", DEFAULT_PORT)
+        #port = parameters.get("port", DEFAULT_PORT)
 
         # retrieves the service configuration
         #service_configuration = self.main_service_irc_plugin.get_configuration_property("server_configuration").get_data()
@@ -109,7 +109,7 @@ class MainServiceIrc:
         #port = service_configuration.get("default_port", port)
 
         # start the server for the given socket provider, port and encoding
-        self.start_server(socket_provider, port, service_configuration)
+        #self.start_server(socket_provider, port, service_configuration)
 
         # clears the irc connection close event
         #self.irc_connection_close_event.clear()
