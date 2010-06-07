@@ -186,6 +186,18 @@ textarea.invalid {
     background-image: url(../images/components/button/button-blue-clicked.png);
 }
 
+.button-grey {
+    background: url(../images/components/button/button-grey-normal.png) center center no-repeat;
+}
+
+.button-grey:hover {
+    background-image: url(../images/components/button/button-grey-hover.png);
+}
+
+.button-grey.click {
+    background-image: url(../images/components/button/button-grey-clicked.png);
+}
+
 .button-big {
     height: 78px;
     width: 360px;
@@ -209,13 +221,13 @@ textarea.invalid {
 }
 
 /* Button Drop */
-.button-drop-small-gray {
+.button-drop-small-grey {
     float: right;
     cursor: pointer;
 }
 
-.button-drop-small-gray .label {
-    background: url(../images/components/button_drop/button-drop-small-gray-normal.png) center center no-repeat;
+.button-drop-small-grey .label {
+    background: url(../images/components/button_drop/button-drop-small-grey-normal.png) center center no-repeat;
     float: left;
     height: 18px;
     width: 80px;
@@ -226,20 +238,20 @@ textarea.invalid {
     text-align: center;
 }
 
-.button-drop-small-gray .label:hover {
-    background: url(../images/components/button_drop/button-drop-small-gray-hover.png) center center no-repeat;
+.button-drop-small-grey .label:hover {
+    background: url(../images/components/button_drop/button-drop-small-grey-hover.png) center center no-repeat;
     color: #005b9c;
 }
 
-.button-drop-small-gray .arrow {
-    background: url(../images/components/button_drop/button-drop-small-gray-arrow-normal.png) center center no-repeat;
+.button-drop-small-grey .arrow {
+    background: url(../images/components/button_drop/button-drop-small-grey-arrow-normal.png) center center no-repeat;
     float: left;
     height: 22px;
     width: 22px;
 }
 
-.button-drop-small-gray .arrow:hover {
-    background: url(../images/components/button_drop/button-drop-small-gray-arrow-hover.png) center center no-repeat;
+.button-drop-small-grey .arrow:hover {
+    background: url(../images/components/button_drop/button-drop-small-grey-arrow-hover.png) center center no-repeat;
 }
 
 /* Form Button */
