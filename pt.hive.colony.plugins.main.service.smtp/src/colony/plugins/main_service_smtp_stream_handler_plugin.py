@@ -53,7 +53,8 @@ class MainServiceSmtpStreamHandlerPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
-    capabilities = ["smtp_service_handler"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_smtp_stream_handler/stream_handler/resources/baf.xml"}
+    capabilities = ["smtp_service_handler", "build_automation_item"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
@@ -66,7 +67,7 @@ class MainServiceSmtpStreamHandlerPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global main_service_smtp_stream_handler
         import main_service_smtp_stream_handler.stream_handler.main_service_smtp_stream_handler_system
-        self.main_service_smtp_stream_handler =  main_service_smtp_stream_handler.stream_handler.main_service_smtp_stream_handler_system.MainServiceSmtpStreamHandler(self)
+        self.main_service_smtp_stream_handler = main_service_smtp_stream_handler.stream_handler.main_service_smtp_stream_handler_system.MainServiceSmtpStreamHandler(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)

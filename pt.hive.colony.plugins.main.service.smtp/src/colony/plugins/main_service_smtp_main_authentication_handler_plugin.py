@@ -54,7 +54,8 @@ class MainServiceSmtpMainAuthenticationHandlerPlugin(colony.plugins.plugin_syste
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
-    capabilities = ["smtp_service_authentication_handler"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_smtp_main_authentication_handler/main_authentication_handler/resources/baf.xml"}
+    capabilities = ["smtp_service_authentication_handler", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.authentication", "1.0.0")]
