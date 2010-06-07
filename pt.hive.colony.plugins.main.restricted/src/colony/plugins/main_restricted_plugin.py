@@ -54,7 +54,8 @@ class MainRestrictedPlugin(colony.plugins.plugin_system.PluginManagerPlugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    capabilities = ["plugin_manager_extension", "plugin_manager_extension._load_plugin", "plugin_manager_extension.init_plugin_load", "plugin_manager_extension.test_plugin_load"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_restricted/restricted/resources/baf.xml"}
+    capabilities = ["plugin_manager_extension", "plugin_manager_extension._load_plugin", "plugin_manager_extension.init_plugin_load", "plugin_manager_extension.test_plugin_load", "build_automation_item"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
