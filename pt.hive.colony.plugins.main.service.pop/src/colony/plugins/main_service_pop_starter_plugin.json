@@ -1,0 +1,20 @@
+{
+    "platform" : "python",
+    "sub_platforms" : ["cpython", "jython"],
+    "id" : "pt.hive.colony.plugins.main.service.pop.starter",
+    "name" : "Pop Service Main Starter Plugin",
+    "short_name" : "Pop Service Main Starter",
+    "description" : "The plugin that starts the pop service",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["main", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.main.service.pop",
+                "version" : "1.0.0"
+            }],
+    "main_file" : "main_service_pop_starter_plugin.py",
+    "resources" : ["main_service_pop_starter_plugin.py",
+            "main_service_pop_starter/__init__.py",
+            "main_service_pop_starter/resources/baf.xml"]
+}

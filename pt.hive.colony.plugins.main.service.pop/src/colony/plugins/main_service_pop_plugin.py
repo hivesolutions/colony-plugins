@@ -54,7 +54,8 @@ class MainServicePopPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
-    capabilities = ["service.pop"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_pop/pop/resources/baf.xml"}
+    capabilities = ["service.pop", "build_automation_item"]
     capabilities_allowed = ["pop_service_handler", "pop_service_authentication_handler", "pop_service_session_handler", "socket_provider", "socket_upgrader"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]

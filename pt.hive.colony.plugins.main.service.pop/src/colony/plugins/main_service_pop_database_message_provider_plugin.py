@@ -53,7 +53,8 @@ class MainServicePopDatabaseMessageProviderPlugin(colony.plugins.plugin_system.P
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
-    capabilities = ["pop_service_message_provider"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_pop_database_message_provider/database_message_provider/resources/baf.xml"}
+    capabilities = ["pop_service_message_provider", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.mail.storage.database", "1.0.0")]
