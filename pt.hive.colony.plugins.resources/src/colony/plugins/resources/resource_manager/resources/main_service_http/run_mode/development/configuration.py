@@ -62,13 +62,17 @@ configuration = {
                      }
                  },
                  "redirections" : {
-                     "resolution_order" : ["/manager", "/blog", "/take_the_bill", "/a_la_carte", "/"],
+                     "resolution_order" : ["/manager", "/blog", "/colony_site", "/take_the_bill", "/a_la_carte", "/"],
                      "/manager" : {
                          "target" : "/colony_mod_python/rest/mvc/web_mvc_manager/",
                          "recursive_redirection" : True
                      },
                      "/blog" : {
                          "target" : "/colony_mod_python/rest/mvc/hive_blog/",
+                         "recursive_redirection" : True
+                     },
+                     "/colony_site" : {
+                         "target" : "/colony_mod_python/rest/mvc/colony_site/",
                          "recursive_redirection" : True
                      },
                      "/take_the_bill" : {
