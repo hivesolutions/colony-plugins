@@ -16,7 +16,7 @@
             }, {
                 "id" : "pt.hive.colony.plugins.misc.bitmap_loader",
                 "version" : "1.0.0"
-            },],
+            }],
     "main_file" : "main_gui_plugin.py",
     "resources" : ["main_gui_plugin.py", "main_gui/__init__.py",
             "main_gui/gui/main_gui_system.py", "main_gui/gui/main_window.py",
