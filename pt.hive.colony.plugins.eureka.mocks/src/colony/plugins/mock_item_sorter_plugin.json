@@ -13,5 +13,6 @@
     "main_file" : "mock_item_sorter_plugin.py",
     "resources" : ["mock_item_sorter_plugin.py",
             "eureka_mocks_mock_item_sorter/__init__.py",
-            "eureka_mocks_mock_item_sorter/mock_item_sorter/__init__.py"]
+            "eureka_mocks_mock_item_sorter/mock_item_sorter/__init__.py",
+            "eureka_mocks_mock_item_sorter/mock_item_sorter/resources/baf.xml"]
 }

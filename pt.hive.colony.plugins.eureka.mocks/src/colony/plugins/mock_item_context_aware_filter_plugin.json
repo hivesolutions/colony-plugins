@@ -14,5 +14,6 @@
     "resources" : [
             "mock_item_context_aware_filter_plugin.py",
             "eureka_mocks_mock_item_context_aware_filter/__init__.py",
-            "eureka_mocks_mock_item_context_aware_filter/mock_item_context_aware_filter/__init__.py"]
+            "eureka_mocks_mock_item_context_aware_filter/mock_item_context_aware_filter/__init__.py",
+            "eureka_mocks_mock_item_context_aware_filter/mock_item_context_aware_filter/resources/baf.xml"]
 }

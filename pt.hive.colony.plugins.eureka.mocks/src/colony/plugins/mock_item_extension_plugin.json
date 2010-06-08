@@ -14,5 +14,6 @@
     "main_file" : "mock_item_extension_plugin.py",
     "resources" : ["mock_item_extension_plugin.py",
             "eureka_mocks_mock_item_extension/__init__.py",
-            "eureka_mocks_mock_item_extension/mock_item_extension/__init__.py"]
+            "eureka_mocks_mock_item_extension/mock_item_extension/__init__.py",
+            "eureka_mocks_mock_item_extension/mock_item_extension/resources/baf.xml"]
 }
