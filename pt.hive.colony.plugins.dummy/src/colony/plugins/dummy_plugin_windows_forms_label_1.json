@@ -1,0 +1,20 @@
+{
+    "platform" : "python",
+    "sub_platforms" : ["iron_python"],
+    "id" : "pt.hive.colony.plugins.dummy.windows_forms_label1",
+    "name" : "Dummy Plugin Windows Forms Label 1",
+    "short_name" : "Dummy Windows Forms Label 1",
+    "description" : "Dummy Windows Forms Label 1 Plugin",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["dummy_windows_forms_label", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [],
+    "main_file" : "dummy_plugin_windows_forms_label_1.py",
+    "resources" : [
+            "dummy_plugin_windows_forms_label_1.py",
+            "dummy/__init__.py",
+            "dummy/windows_forms_label_1/__init__.py",
+            "dummy/windows_forms_label_1/dummy_windows_forms_label_1_system.py",
+            "dummy/windows_forms_label_1/resources/baf.xml"]
+}

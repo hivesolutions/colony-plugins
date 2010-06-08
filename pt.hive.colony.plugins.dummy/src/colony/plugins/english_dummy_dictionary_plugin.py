@@ -41,20 +41,21 @@ import colony.plugins.plugin_system
 
 class EnglishDummyDictionary(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Nelson Dummy plugin.
+    The main class for the English Dummy plugin.
     """
 
     id = "pt.hive.colony.plugins.dummy.english"
     name = "English Dummy Plugin"
     short_name = "English Dummy"
-    description = "This is the main plugin for the nelson's stuff"
+    description = "This is the main plugin for the english dictionary's stuff"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    capabilities = ["translation_engine"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/english_dictionary/resources/baf.xml"}
+    capabilities = ["translation_engine", "build_automation_item"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []

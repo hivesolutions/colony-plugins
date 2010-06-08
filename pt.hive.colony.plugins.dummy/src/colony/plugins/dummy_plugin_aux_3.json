@@ -1,0 +1,16 @@
+{
+    "platform" : "python",
+    "sub_platforms" : ["cpython", "jython", "iron_python"],
+    "id" : "pt.hive.colony.plugins.dummy.aux3",
+    "name" : "Dummy Plugin Aux 3",
+    "short_name" : "Dummy Aux 3",
+    "description" : "Dummy Aux 3 Plugin",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["dummy_aux3_capability", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [],
+    "main_file" : "dummy_plugin_aux_3.py",
+    "resources" : ["dummy_plugin_aux_3.py", "dummy/__init__.py",
+            "dummy/aux_3/__init__.py", "dummy/aux_3/resources/baf.xml"]
+}

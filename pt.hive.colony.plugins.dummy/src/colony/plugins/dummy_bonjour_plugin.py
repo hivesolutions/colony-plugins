@@ -53,7 +53,8 @@ class DummyBonjourPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["startup", "dummy_bonjour"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/bonjour/resources/baf.xml"}
+    capabilities = ["dummy_bonjour", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.bonjour", "1.0.0")]

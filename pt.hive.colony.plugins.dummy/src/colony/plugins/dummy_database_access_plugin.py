@@ -52,7 +52,8 @@ class DummyDatabaseAccessPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["dummy_database_access"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/database_access/resources/baf.xml"}
+    capabilities = ["dummy_database_access", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PackageDependency(
                     "SQL Alchemy O/R mapper", "sqlalchemy", "0.4.x", "http://www.sqlalchemy.org")]

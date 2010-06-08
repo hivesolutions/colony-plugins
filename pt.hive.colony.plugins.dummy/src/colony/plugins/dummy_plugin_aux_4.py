@@ -63,7 +63,8 @@ class DummyPluginAux4(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    capabilities = ["dummy_aux4_capability", "task_information"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/aux_4/resources/baf.xml"}
+    capabilities = ["dummy_aux4_capability", "task_information", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.tasks.task_manager", "1.0.0")]

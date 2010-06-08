@@ -47,14 +47,15 @@ class ItalianDummyDictionary(colony.plugins.plugin_system.Plugin):
     id = "pt.hive.colony.plugins.dummy.italian"
     name = "Italian Dummy Plugin"
     short_name = "Italian Dummy"
-    description = "This is the main plugin for the italian's stuff"
+    description = "This is the main plugin for the italian dictionary's stuff"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    capabilities = ["translation_engine"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/italian_dictionary/resources/baf.xml"}
+    capabilities = ["translation_engine", "build_automation_item"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []

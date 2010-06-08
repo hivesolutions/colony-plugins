@@ -58,7 +58,8 @@ class TranslationDummyPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    capabilities = ["console_command_extension"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/translation/resources/baf.xml"}
+    capabilities = ["console_command_extension", "build_automation_item"]
     capabilities_allowed = ["translation_engine"]
     dependencies = []
     events_handled = []

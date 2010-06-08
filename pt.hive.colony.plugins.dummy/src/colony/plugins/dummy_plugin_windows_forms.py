@@ -53,7 +53,8 @@ class DummyPluginWindowsForms(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    capabilities = ["main", "dummy_windows_forms"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/windows_forms/resources/baf.xml"}
+    capabilities = ["main", "dummy_windows_forms", "build_automation_item"]
     capabilities_allowed = ["dummy_windows_forms_label"]
     dependencies = []
     events_handled = []

@@ -54,7 +54,8 @@ class DummyPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    capabilities = ["dummy_capability"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/dummy/dummy/resources/baf.xml"}
+    capabilities = ["dummy_capability", "build_automation_item"]
     capabilities_allowed = ["dummy_aux1_capability", "dummy_aux2_capability"]
     dependencies = []
     events_handled = ["dummy_event"]
