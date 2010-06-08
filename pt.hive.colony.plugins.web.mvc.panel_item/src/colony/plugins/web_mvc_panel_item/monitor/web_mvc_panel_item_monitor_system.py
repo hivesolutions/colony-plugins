@@ -59,7 +59,7 @@ class WebMvcPanelItemMonitor:
         Constructor of the class.
 
         @type web_mvc_panel_item_monitor_plugin: WebMvcPanelItemMonitorPlugin
-        @param web_mvc_panel_item_monitor_plugin: The web mvc panel item monitor plugin
+        @param web_mvc_panel_item_monitor_plugin: The web mvc panel item monitor plugin.
         """
 
         self.web_mvc_panel_item_monitor_plugin = web_mvc_panel_item_monitor_plugin

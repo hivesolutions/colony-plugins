@@ -70,7 +70,7 @@ class WebMvcPanelItemDidYouKnow:
         Constructor of the class.
 
         @type web_mvc_panel_item_did_you_know_plugin: WebMvcPanelItemDidYouKnowPlugin
-        @param web_mvc_panel_item_did_you_know_plugin: The web mvc panel item did you know plugin
+        @param web_mvc_panel_item_did_you_know_plugin: The web mvc panel item did you know plugin.
         """
 
         self.web_mvc_panel_item_did_you_know_plugin = web_mvc_panel_item_did_you_know_plugin
