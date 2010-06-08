@@ -52,7 +52,8 @@ class MockItemContextAwareFilterPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["eureka_item_processer.filter"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/eureka_mocks_mock_item_context_aware_filter/mock_item_context_aware_filter/resources/baf.xml"}
+    capabilities = ["eureka_item_processer.filter", "build_automation_item"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []

@@ -1,0 +1,18 @@
+{
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.eureka.mock_item_context_aware_filter_plugin",
+    "name" : "Mock Item Context Aware Filter Plugin",
+    "short_name" : "Mock Item Context Aware Filter",
+    "description" : "Mock Item Context Aware Filter plugin to illustrate and test the eureka_item_filter capability",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["eureka_item_processer.filter", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [],
+    "main_file" : "mock_item_context_aware_filter_plugin.py",
+    "resources" : [
+            "mock_item_context_aware_filter_plugin.py",
+            "eureka_mocks_mock_item_context_aware_filter/__init__.py",
+            "eureka_mocks_mock_item_context_aware_filter/mock_item_context_aware_filter/__init__.py"]
+}
