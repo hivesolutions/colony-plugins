@@ -1,30 +1,30 @@
 <!--
- Hive Colony Framework
- Copyright (C) 2008 Hive Solutions Lda.
+     Hive Colony Framework
+     Copyright (C) 2008 Hive Solutions Lda.
 
- This file is part of Hive Colony Framework.
+     This file is part of Hive Colony Framework.
 
- Hive Colony Framework is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
+     Hive Colony Framework is free software: you can redistribute it and/or modify
+     it under the terms of the GNU General Public License as published by
+     the Free Software Foundation, either version 3 of the License, or
+     (at your option) any later version.
 
- Hive Colony Framework is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+     Hive Colony Framework is distributed in the hope that it will be useful,
+     but WITHOUT ANY WARRANTY; without even the implied warranty of
+     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+     GNU General Public License for more details.
 
- You should have received a copy of the GNU General Public License
- along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
+     You should have received a copy of the GNU General Public License
+     along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <!--
- __author__    = João Magalhães <joamag@hive.pt>
- __version__   = 1.0.0
- __revision__  = $LastChangedRevision$
- __date__      = $LastChangedDate$
- __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
- __license__   = GNU General Public License (GPL), Version 3
+     __author__    = João Magalhães <joamag@hive.pt>
+     __version__   = 1.0.0
+     __revision__  = $LastChangedRevision$
+     __date__      = $LastChangedDate$
+     __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
+     __license__   = GNU General Public License (GPL), Version 3
 -->
 
 <startup_configuration xmlns="http://www.hive.pt"
@@ -66,6 +66,144 @@
             <id>pt.hive.colony.plugins.resources.resource_manager</id>
             <version>1.0.0</version>
             <load>true</load>
+        </plugin>
+        <plugin>
+            <name>Dummy Bonjour plugin</name>
+            <id>pt.hive.colony.plugins.dummy.bonjour</id>
+            <version>1.0.0</version>
+            <load>false</load>
+        </plugin>
+        <plugin>
+            <name>Dummy plugin</name>
+            <id>pt.hive.colony.plugins.dummy</id>
+            <version>1.0.0</version>
+            <load>false</load>
+        </plugin>
+        <plugin>
+            <name>Dummy Remote Client plugin</name>
+            <id>pt.hive.colony.plugins.dummy.remote_client</id>
+            <version>1.0.0</version>
+            <load>false</load>
+        </plugin>
+        <plugin>
+            <name>Dummy Windows Forms plugin</name>
+            <id>pt.hive.colony.plugins.dummy.windows_forms</id>
+            <version>1.0.0</version>
+            <load>false</load>
+        </plugin>
+        <plugin>
+            <name>Dummy Windows Forms Label plugin</name>
+            <id>pt.hive.colony.plugins.dummy.windows_forms_label</id>
+            <version>1.0.0</version>
+            <load>false</load>
+        </plugin>
+        <plugin>
+            <name>Dummy Windows Forms Label 1 plugin</name>
+            <id>pt.hive.colony.plugins.dummy.windows_forms_label1</id>
+            <version>1.0.0</version>
+            <load>false</load>
+        </plugin>
+        <plugin>
+            <name>Dummy Plugin Unit Test plugin</name>
+            <id>pt.hive.colony.plugins.dummy.plugin_unit_test</id>
+            <version>1.0.0</version>
+            <load>false</load>
+        </plugin>
+        <plugin>
+            <name>Dummy Swing plugin</name>
+            <id>pt.hive.colony.plugins.dummy.swing</id>
+            <version>1.0.0</version>
+            <load>false</load>
+        </plugin>
+        <plugin>
+            <name>Dummy Rpc Service plugin</name>
+            <id>pt.hive.colony.plugins.dummy.rpc_service</id>
+            <version>1.0.0</version>
+            <load>false</load>
+        </plugin>
+        <plugin>
+            <name>Dummy Aux1 plugin</name>
+            <id>pt.hive.colony.plugins.dummy.aux1</id>
+            <version>1.0.0</version>
+            <load>false</load>
+        </plugin>
+        <plugin>
+            <name>Dummy Aux2 plugin</name>
+            <id>pt.hive.colony.plugins.dummy.aux2</id>
+            <version>1.0.0</version>
+            <load>false</load>
+        </plugin>
+        <plugin>
+            <name>Dummy Aux1 plugin</name>
+            <id>pt.hive.colony.plugins.dummy.aux3</id>
+            <version>1.0.0</version>
+            <load>false</load>
+        </plugin>
+        <plugin>
+            <name>Dummy Aux4 plugin</name>
+            <id>pt.hive.colony.plugins.dummy.aux4</id>
+            <version>1.0.0</version>
+            <load>false</load>
+        </plugin>
+        <plugin>
+            <name>Dummy Entity Manager plugin</name>
+            <id>pt.hive.colony.plugins.dummy.entity_manager</id>
+            <version>1.0.0</version>
+            <load>false</load>
+        </plugin>
+        <plugin>
+            <name>Dummy Distribution Client plugin</name>
+            <id>pt.hive.colony.plugins.dummy.distribution_client</id>
+            <version>1.0.0</version>
+            <load>false</load>
+        </plugin>
+        <plugin>
+            <name>Dummy Database Access plugin</name>
+            <id>pt.hive.colony.plugins.dummy.database_access</id>
+            <version>1.0.0</version>
+            <load>false</load>
+        </plugin>
+        <plugin>
+            <name>Dummy Business Logic plugin</name>
+            <id>pt.hive.colony.plugins.dummy.business_logic</id>
+            <version>1.0.0</version>
+            <load>false</load>
+        </plugin>
+        <plugin>
+            <name>Dummy Business Logic 1 plugin</name>
+            <id>pt.hive.colony.plugins.dummy.business_logic_1</id>
+            <version>1.0.0</version>
+            <load>false</load>
+        </plugin>
+        <plugin>
+            <name>Dummy Business Logic 2 plugin</name>
+            <id>pt.hive.colony.plugins.dummy.business_logic_2</id>
+            <version>1.0.0</version>
+            <load>true</load>
+        </plugin>
+        <plugin>
+            <name>Dummy Unit Test plugin</name>
+            <id>pt.hive.colony.plugins.dummy.unit_test</id>
+            <version>1.0.0</version>
+            <load>false</load>
+        </plugin>
+        <plugin>
+            <name>Dummy English plugin</name>
+            <id>pt.hive.colony.plugins.dummy.english</id>
+            <version>1.0.0</version>
+            <load>false</load>
+        </plugin>
+        <plugin>
+            <name>Dummy Italian plugin</name>
+            <id>pt.hive.colony.plugins.dummy.italian</id>
+            <version>1.0.0</version>
+            <load>false</load>
+        </plugin>
+        <plugin>
+            <name>Dummy Translation plugin</name>
+            <id>pt.hive.colony.plugins.dummy.translation</id>
+            <version>1.0.0</version>
+            <load>false</load>
         </plugin>
     </plugins>
 </startup_configuration>
