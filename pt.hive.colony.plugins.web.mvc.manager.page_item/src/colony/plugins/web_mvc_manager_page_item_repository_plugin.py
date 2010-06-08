@@ -60,7 +60,8 @@ class WebMvcManagerPageItemRepositoryPlugin(colony.plugins.plugin_system.Plugin)
                     "pt.hive.colony.plugins.web.mvc.utils", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["web_mvc_manager_page_item.repository.web_mvc_manager_page_item_repository_controllers", "web_mvc_manager_page_item.repository.web_mvc_manager_page_item_repository_system"]
+    main_modules = ["web_mvc_manager_page_item.repository.web_mvc_manager_page_item_repository_controllers", "web_mvc_manager_page_item.repository.web_mvc_manager_page_item_repository_exceptions",
+                    "web_mvc_manager_page_item.repository.web_mvc_manager_page_item_repository_system"]
 
     web_mvc_manager_page_item_repository = None
 
@@ -68,11 +69,11 @@ class WebMvcManagerPageItemRepositoryPlugin(colony.plugins.plugin_system.Plugin)
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global web_mvc_manager_page_item
         import web_mvc_manager_page_item.repository.web_mvc_manager_page_item_repository_system
-        #self.web_mvc_manager_page_item_repository = web_mvc_panel_item.monitor.web_mvc_panel_item_monitor_system.WebMvcPanelItemMonitor(self)
+        self.web_mvc_manager_page_item_repository = web_mvc_manager_page_item.repository.web_mvc_manager_page_item_repository_system.WebMvcManagerPageItemRepository(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
-        #self.web_mvc_panel_item_monitor.load_components()
+        self.web_mvc_manager_page_item_repository.load_components()
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)

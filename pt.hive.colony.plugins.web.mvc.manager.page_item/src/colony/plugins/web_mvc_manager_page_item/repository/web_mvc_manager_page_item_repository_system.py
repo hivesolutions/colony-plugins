@@ -60,12 +60,6 @@ REPOSITORY_PLUGINS_PARTIAL_ITEM_ATTRIBUTES = {"pattern" : (r"^web_mvc_manager/re
 REPOSITORY_PACKAGES_PARTIAL_ITEM_ATTRIBUTES = {"pattern" : (r"^web_mvc_manager/repositories/[0-9]+/packages_partial$", 5)}
 """ The repository packages partial page item attributes """
 
-WEB_MVC_PANEL_ITEM_MONITOR_RESOURCES_PATH = "web_mvc_panel_item/monitor/resources"
-""" The web panel item monitor resources path """
-
-TEMPLATES_PATH = WEB_MVC_PANEL_ITEM_MONITOR_RESOURCES_PATH + "/templates"
-""" The templates path """
-
 class WebMvcManagerPageItemRepository:
     """
     The web mvc manager page item repository class.
@@ -97,4 +91,8 @@ class WebMvcManagerPageItemRepository:
         self.web_mvc_panel_item_monitor_main_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_page_item_repository_controllers.WebMvcManagerPageItemRepositoryController, [self.web_mvc_panel_item_monitor_plugin, self], {})
 
     def get_page_item_bundle(self):
+        """
+        Retrieves a bundle containing a combination
+        """
+
         return {}

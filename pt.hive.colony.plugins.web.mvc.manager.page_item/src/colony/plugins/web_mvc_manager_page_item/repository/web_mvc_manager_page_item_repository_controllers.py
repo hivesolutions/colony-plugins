@@ -37,11 +37,25 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import time
+import copy
+
+import web_mvc_manager_page_item_repository_exceptions
+
+DEFAULT_ENCODING = "utf-8"
+""" The default encoding value """
+
 WEB_MVC_MANAGER_PAGE_ITEM_REPOSITORY_RESOURCES_PATH = "web_mvc_manager_page_item/repository/resources"
 """ The web mvc manager page item repository resources path """
 
 TEMPLATES_PATH = WEB_MVC_MANAGER_PAGE_ITEM_REPOSITORY_RESOURCES_PATH + "/templates"
 """ The templates path """
+
+AJAX_ENCODER_NAME = "ajx"
+""" The ajax encoder name """
+
+JSON_ENCODER_NAME = "json"
+""" The json encoder name """
 
 class WebMvcManagerPageItemRepositoryController:
     """
@@ -414,7 +428,7 @@ class WebMvcManagerPageItemRepositoryController:
         # in case the return value is not valid
         if not return_value:
             # raises a runtime exception
-            raise web_mvc_manager_exceptions.RuntimeException("problem installing plugin")
+            raise web_mvc_manager_page_item_repository_exceptions.RuntimeException("problem installing plugin")
 
         # retrieves the (end) list of available plugins
         available_plugins_end = plugin_manager.get_all_plugins()

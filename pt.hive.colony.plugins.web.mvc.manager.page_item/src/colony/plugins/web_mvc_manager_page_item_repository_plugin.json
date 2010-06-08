@@ -19,6 +19,7 @@
             "web_mvc_manager_page_item/__init__.py",
             "web_mvc_manager_page_item/repository/__init__.py",
             "web_mvc_manager_page_item/repository/web_mvc_manager_page_item_repository_controllers.py",
+            "web_mvc_manager_page_item/repository/web_mvc_manager_page_item_repository_exceptions.py",
             "web_mvc_manager_page_item/repository/web_mvc_manager_page_item_repository_system.py",
             "web_mvc_manager_page_item/repository/resources/baf.xml",
             "web_mvc_manager_page_item/repository/resources/templates/repository/repository_edit_contents.html.tpl",
