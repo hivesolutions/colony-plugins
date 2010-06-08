@@ -1,0 +1,21 @@
+{
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.web.mvc.wiki",
+    "name" : "Web Mvc Wiki Plugin",
+    "short_name" : "Web Mvc Wiki",
+    "description" : "The plugin that offers a web wiki service",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["web.mvc_service", "build_automation_item"],
+    "capabilities_allowed" : [],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.language.wiki",
+                "version" : "1.0.0"
+            }],
+    "main_file" : "web_mvc_wiki_plugin.py",
+    "resources" : ["web_mvc_wiki_plugin.py", "web_mvc_wiki/__init__.py",
+            "web_mvc_wiki/mvc_wiki/__init__.py",
+            "web_mvc_wiki/mvc_wiki/web_mvc_wiki_system.py",
+            "web_mvc_wiki/mvc_wiki/resources/baf.xml"]
+}
