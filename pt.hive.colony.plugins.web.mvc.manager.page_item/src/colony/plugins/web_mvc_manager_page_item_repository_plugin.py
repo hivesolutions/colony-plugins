@@ -60,7 +60,7 @@ class WebMvcManagerPageItemRepositoryPlugin(colony.plugins.plugin_system.Plugin)
                     "pt.hive.colony.plugins.web.mvc.utils", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["web_mvc_manager_page_item.repository.web_mvc_manager_page_item_repository_system"]
+    main_modules = ["web_mvc_manager_page_item.repository.web_mvc_manager_page_item_repository_controllers", "web_mvc_manager_page_item.repository.web_mvc_manager_page_item_repository_system"]
 
     web_mvc_manager_page_item_repository = None
 
