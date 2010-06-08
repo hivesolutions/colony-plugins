@@ -53,7 +53,8 @@ class MainPackingManagerPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["packing_manager"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_packing/manager/resources/baf.xml"}
+    capabilities = ["packing_manager", "build_automation_item"]
     capabilities_allowed = ["packing_service"]
     dependencies = []
     events_handled = []

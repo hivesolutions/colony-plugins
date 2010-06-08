@@ -7,12 +7,14 @@
     "description" : "Packing Colony Service Main Plugin",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["packing_service"],
+    "capabilities" : ["packing_service", "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [],
     "main_file" : "main_packing_colony_service_plugin.py",
-    "resources" : ["main_packing_colony_service_plugin.py",
+    "resources" : [
+            "main_packing_colony_service_plugin.py",
             "main_packing/__init__.py",
             "main_packing/colony_service/__init__.py",
-            "main_packing/colony_service/main_packing_colony_service_system.py"]
+            "main_packing/colony_service/main_packing_colony_service_system.py",
+            "main_packing/colony_service/resources/baf.xml"]
 }

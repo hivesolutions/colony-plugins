@@ -7,12 +7,13 @@
     "description" : "Packing Manager Main Plugin",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["packing_manager"],
+    "capabilities" : ["packing_manager", "build_automation_item"],
     "capabilities_allowed" : ["packing_service"],
     "dependencies" : [],
     "main_file" : "main_packing_manager_plugin.py",
     "resources" : ["main_packing_manager_plugin.py",
             "main_packing/__init__.py", "main_packing/manager/__init__.py",
             "main_packing/manager/main_packing_manager_exceptions.py",
-            "main_packing/manager/main_packing_manager_system.py"]
+            "main_packing/manager/main_packing_manager_system.py",
+            "main_packing/manager/resources/baf.xml"]
 }
