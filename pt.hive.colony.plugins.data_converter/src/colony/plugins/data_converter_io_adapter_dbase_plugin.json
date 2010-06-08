@@ -13,7 +13,7 @@
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.main.log",
                 "version" : "1.0.0"
-            }, , ,],
+            }],
     "main_file" : "data_converter_io_adapter_dbase_plugin.py",
     "resources" : [
             "data_converter_io_adapter_dbase_plugin.py",
