@@ -13,8 +13,8 @@
                 "id" : "pt.hive.colony.plugins.misc.json",
                 "version" : "1.0.0"
             }],
-    "main_file" : "main_rest_encoder_json.py",
-    "resources" : ["main_rest_encoder_json.py",
+    "main_file" : "main_rest_encoder_json_plugin.py",
+    "resources" : ["main_rest_encoder_json_plugin.py",
             "main_remote_rest_encoder/__init__.py",
             "main_remote_rest_encoder/json/__init__.py",
             "main_remote_rest_encoder/json/main_rest_encoder_json_system.py",
