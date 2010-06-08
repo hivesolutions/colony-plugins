@@ -45,40 +45,34 @@ class WebMvcPanelItemMonitorPlugin(colony.plugins.plugin_system.Plugin):
     The main class for the Web Mvc Panel Item Monitor plugin.
     """
 
-    id = "pt.hive.colony.plugins.web.mvc.panel_item.monitor"
-    name = "Web Mvc Panel Item Monitor Plugin"
-    short_name = "Web Mvc Panel Item Monitor"
-    description = "The plugin that offers the web mvc panel item monitor"
+    id = "pt.hive.colony.plugins.web.mvc.manager.page_item.repository"
+    name = "Web Mvc Manager Page Item Repository Plugin"
+    short_name = "Web Mvc Manager Page Item Repository"
+    description = "The plugin that offers the web mvc manager page item repository"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/web_mvc_panel_item/monitor/resources/baf.xml"}
-    capabilities = ["web.mvc_service.panel_item", "build_automation_item"]
-    capabilities_allowed = ["web.mvc.monitor_item"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/web_mvc_manager_page_item/monitor/resources/baf.xml"}
+    capabilities = ["web.mvc.manager.panel_item", "build_automation_item"]
+    capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.web.mvc.utils", "1.0.0")]
-    events_handled = ["web.mvc.side_panel_reload"]
+    events_handled = []
     events_registrable = []
-    main_modules = ["web_mvc_panel_item.monitor.web_mvc_panel_item_monitor_system"]
+    main_modules = ["web_mvc_manager_page_item.repository.web_mvc_manager_page_item_repository_system"]
 
-    web_mvc_panel_item_monitor = None
-
-    web_mvc_monitor_item_plugins = []
-
-    web_mvc_utils_plugin = None
+    web_mvc_manager_page_item_repository = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
-        global web_mvc_panel_item
-        import web_mvc_panel_item.monitor.web_mvc_panel_item_monitor_system
-        self.web_mvc_panel_item_monitor = web_mvc_panel_item.monitor.web_mvc_panel_item_monitor_system.WebMvcPanelItemMonitor(self)
-
-        self.web_mvc_monitor_item_plugins = []
+        global web_mvc_manager_page_item
+        import web_mvc_manager_page_item.repository.web_mvc_manager_page_item_repository_system
+        #self.web_mvc_manager_page_item_repository = web_mvc_panel_item.monitor.web_mvc_panel_item_monitor_system.WebMvcPanelItemMonitor(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
-        self.web_mvc_panel_item_monitor.load_components()
+        #self.web_mvc_panel_item_monitor.load_components()
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
@@ -86,15 +80,13 @@ class WebMvcPanelItemMonitorPlugin(colony.plugins.plugin_system.Plugin):
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
 
-    @colony.plugins.decorators.load_allowed("pt.hive.colony.plugins.web.mvc.panel_item.monitor", "1.0.0")
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.unload_allowed("pt.hive.colony.plugins.web.mvc.panel_item.monitor", "1.0.0")
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.web.mvc.panel_item.monitor", "1.0.0")
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.web.mvc.manager.page_item.repository", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -140,16 +132,6 @@ class WebMvcPanelItemMonitorPlugin(colony.plugins.plugin_system.Plugin):
 
     def get_panel_item(self, parameters):
         return self.web_mvc_panel_item_monitor.get_panel_item(parameters)
-
-    @colony.plugins.decorators.load_allowed_capability("web.mvc.monitor_item")
-    def web_mvc_monitor_item_load_allowed(self, plugin, capability):
-        self.web_mvc_monitor_item_plugins.append(plugin)
-        self.web_mvc_panel_item_monitor.load_web_mvc_monitor_item_plugin(plugin)
-
-    @colony.plugins.decorators.unload_allowed_capability("web.mvc.monitor_item")
-    def web_mvc_monitor_item_unload_allowed(self, plugin, capability):
-        self.web_mvc_monitor_item_plugins.remove(plugin)
-        self.web_mvc_panel_item_monitor.unload_web_mvc_monitor_item_plugin(plugin)
 
     def get_web_mvc_utils_plugin(self):
         return self.web_mvc_utils_plugin
