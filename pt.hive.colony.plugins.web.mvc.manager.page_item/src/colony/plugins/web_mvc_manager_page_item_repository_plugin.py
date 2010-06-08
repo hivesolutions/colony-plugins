@@ -40,9 +40,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import colony.plugins.plugin_system
 import colony.plugins.decorators
 
-class WebMvcPanelItemMonitorPlugin(colony.plugins.plugin_system.Plugin):
+class WebMvcManagerPageItemRepositoryPlugin(colony.plugins.plugin_system.Plugin):
     """
-    The main class for the Web Mvc Panel Item Monitor plugin.
+    The main class for the Web Mvc Manager Page Item Repository plugin.
     """
 
     id = "pt.hive.colony.plugins.web.mvc.manager.page_item.repository"
@@ -54,7 +54,7 @@ class WebMvcPanelItemMonitorPlugin(colony.plugins.plugin_system.Plugin):
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/web_mvc_manager_page_item/monitor/resources/baf.xml"}
-    capabilities = ["web.mvc.manager.panel_item", "build_automation_item"]
+    capabilities = ["web.mvc.manager.panel_item_bundle", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.web.mvc.utils", "1.0.0")]
@@ -90,48 +90,8 @@ class WebMvcPanelItemMonitorPlugin(colony.plugins.plugin_system.Plugin):
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
-    def get_patterns(self):
-        """
-        Retrieves the map of regular expressions to be used as patters,
-        to the web mvc service. The map should relate the route with the handler
-        method/function.
-
-        @rtype: Dictionary
-        @return: The map of regular expressions to be used as patterns,
-        to the web mvc service.
-        """
-
-        return self.web_mvc_panel_item_monitor.get_patterns()
-
-    def get_communication_patterns(self):
-        """
-        Retrieves the map of regular expressions to be used as communication patters,
-        to the web mvc service. The map should relate the route with a tuple
-        containing the data handler, the connection changed handler and the name
-        of the connection.
-
-        @rtype: Dictionary
-        @return: The map of regular expressions to be used as communication patterns,
-        to the web mvc service.
-        """
-
-        return self.web_mvc_panel_item_monitor.get_communication_patterns()
-
-    def get_resource_patterns(self):
-        """
-        Retrieves the map of regular expressions to be used as resource patters,
-        to the web mvc service. The map should relate the route with the base
-        file system path to be used.
-
-        @rtype: Dictionary
-        @return: The map of regular expressions to be used as resource patterns,
-        to the web mvc service.
-        """
-
-        return self.web_mvc_panel_item_monitor.get_resource_patterns()
-
-    def get_panel_item(self, parameters):
-        return self.web_mvc_panel_item_monitor.get_panel_item(parameters)
+    def get_page_item_bundle(self, parameters):
+        return self.web_mvc_panel_item_monitor.get_page_item_bundle(parameters)
 
     def get_web_mvc_utils_plugin(self):
         return self.web_mvc_utils_plugin
