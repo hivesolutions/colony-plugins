@@ -54,7 +54,8 @@ class PythonResourceParserPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    capabilities = ["resource_parser"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/resources/python_resource_parser/resources/baf.xml"}
+    capabilities = ["resource_parser", "build_automation_item"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []

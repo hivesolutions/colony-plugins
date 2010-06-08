@@ -38,13 +38,13 @@
         <namespace>system.path</namespace>
         <name>workspace_home</name>
         <type>string</type>
-        <data>${WORKSPACE_HOME}</data>
+        <data>/junkdrawer</data>
     </resource>
     <resource>
         <namespace>system.path</namespace>
         <name>user_home</name>
         <type>string</type>
-        <data>${HOME}</data>
+        <data>/junkdrawer</data>
     </resource>
     <resource>
         <namespace>system.path</namespace>

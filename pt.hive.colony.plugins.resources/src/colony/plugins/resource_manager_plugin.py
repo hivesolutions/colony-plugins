@@ -55,7 +55,8 @@ class ResourceManagerPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
-    capabilities = ["startup", "resource_manager", "test_case"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/resources/resource_manager/resources/baf.xml"}
+    capabilities = ["startup", "resource_manager", "test_case", "build_automation_item"]
     capabilities_allowed = ["resource_parser"]
     dependencies = []
     events_handled = []
