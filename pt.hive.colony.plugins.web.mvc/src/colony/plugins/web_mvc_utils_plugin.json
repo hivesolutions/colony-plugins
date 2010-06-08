@@ -7,7 +7,7 @@
     "description" : "The plugin that offers the top-level abstractions for mvc processing",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["web.mvc.utils"],
+    "capabilities" : ["web.mvc.utils", "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.template_engine.manager",

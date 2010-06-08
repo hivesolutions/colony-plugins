@@ -7,7 +7,7 @@
     "description" : "Web Mvc Search Plugin",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : [],
+    "capabilities" : ["build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.data.entity_manager",
