@@ -45,7 +45,7 @@ class JsonSpecificationParserPlugin(colony.plugins.plugin_system.Plugin):
     The main class for the Json Specification Parser plugin.
     """
 
-    id = "pt.hive.colony.plugins.specification.json_specification_parser"
+    id = "pt.hive.colony.plugins.specifications.json_specification_parser"
     name = "Json Specification Parser Plugin"
     short_name = "Json Specification Parser"
     description = "A plugin to parse json specifications"
@@ -53,7 +53,8 @@ class JsonSpecificationParserPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["specification_parser"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/specifications/json_specification_parser/resources/baf.xml"}
+    capabilities = ["specification_parser", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.json", "1.0.0")]
@@ -86,7 +87,7 @@ class JsonSpecificationParserPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
-    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.specification.json_specification_parser", "1.0.0")
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.specifications.json_specification_parser", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 

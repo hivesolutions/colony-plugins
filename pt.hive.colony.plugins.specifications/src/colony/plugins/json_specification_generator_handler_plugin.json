@@ -7,7 +7,8 @@
     "description" : "A plugin to generate json specification files",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["specification_generator_handler"],
+    "capabilities" : ["specification_generator_handler",
+            "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.template_engine.manager",
@@ -19,5 +20,6 @@
             "specifications/__init__.py",
             "specifications/json_specification_generator_handler/__init__.py",
             "specifications/json_specification_generator_handler/json_specification_generator_handler_system.py",
-            "specifications/json_specification_generator_handler/resources/plugin_specification.json.tpl"]
+            "specifications/json_specification_generator_handler/resources/plugin_specification.json.tpl",
+            "specifications/json_specification_generator_handler/resources/baf.xml"]
 }

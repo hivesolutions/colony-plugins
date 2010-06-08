@@ -53,7 +53,8 @@ class JsonSpecificationGeneratorHandlerPlugin(colony.plugins.plugin_system.Plugi
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["specification_generator_handler"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/specifications/json_specification_generator_handler/resources/baf.xml"}
+    capabilities = ["specification_generator_handler", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.template_engine.manager", "1.0.0")]

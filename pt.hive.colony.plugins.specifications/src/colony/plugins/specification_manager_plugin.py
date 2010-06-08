@@ -53,7 +53,8 @@ class SpecificationManagerPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["specification_manager"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/specifications/specification_manager/resources/baf.xml"}
+    capabilities = ["specification_manager", "build_automation_item"]
     capabilities_allowed = ["specification_parser"]
     dependencies = []
     events_handled = []

@@ -46,14 +46,15 @@ class SpecificationGeneratorPlugin(colony.plugins.plugin_system.Plugin):
     """
 
     id = "pt.hive.colony.plugins.specifications.specification_generator"
-    name = "Specification Manager Plugin"
-    short_name = "Specification Manager"
+    name = "Specification Generator Plugin"
+    short_name = "Specification Generator"
     description = "Plugin used to generate specification files from the source plugin files"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["specification_generator"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/specifications/specification_generator/resources/baf.xml"}
+    capabilities = ["specification_generator", "build_automation_item"]
     capabilities_allowed = ["specification_generator_handler"]
     dependencies = []
     events_handled = []
