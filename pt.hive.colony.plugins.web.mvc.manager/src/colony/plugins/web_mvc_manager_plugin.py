@@ -55,7 +55,7 @@ class WebMvcManagerPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/web_mvc_manager/manager/resources/baf.xml"}
     capabilities = ["web.mvc_service", "build_automation_item"]
-    capabilities_allowed = ["web.mvc.panel_item"]
+    capabilities_allowed = ["web.mvc.manager.page_item_bundle", "web.mvc.panel_item"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.web.mvc.utils", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
@@ -75,6 +75,7 @@ class WebMvcManagerPlugin(colony.plugins.plugin_system.Plugin):
 
     web_mvc_manager = None
 
+    web_mvc_manager_page_item_bundle_plugins = []
     web_mvc_panel_item_plugins = []
 
     web_mvc_utils_plugin = None
@@ -158,10 +159,20 @@ class WebMvcManagerPlugin(colony.plugins.plugin_system.Plugin):
 
         return self.web_mvc_manager.get_resource_patterns()
 
+    @colony.plugins.decorators.load_allowed_capability("web.mvc.manager.page_item_bundle")
+    def web_mvc_manager_page_item_bundle_load_allowed(self, plugin, capability):
+        self.web_mvc_manager_page_item_bundle_plugins.append(plugin)
+        self.web_mvc_manager.load_web_mvc_manager_page_item_bundle_plugin(plugin)
+
     @colony.plugins.decorators.load_allowed_capability("web.mvc.panel_item")
     def web_mvc_panel_item_load_allowed(self, plugin, capability):
         self.web_mvc_panel_item_plugins.append(plugin)
         self.web_mvc_manager.load_web_mvc_panel_item_plugin(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("web.mvc.manager.page_item_bundle")
+    def web_mvc_manager_page_item_bundle_unload_allowed(self, plugin, capability):
+        self.web_mvc_manager_page_item_bundle_plugins.remove(plugin)
+        self.web_mvc_manager.unload_web_mvc_manager_page_item_bundle_plugin(plugin)
 
     @colony.plugins.decorators.unload_allowed_capability("web.mvc.panel_item")
     def web_mvc_panel_item_unload_allowed(self, plugin, capability):

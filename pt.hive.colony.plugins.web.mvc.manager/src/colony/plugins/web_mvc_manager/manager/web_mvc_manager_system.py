@@ -216,6 +216,13 @@ class WebMvcManager:
                 r"^web_mvc_manager/resources_base/.+$" : (web_mvc_resources_base_plugin_resources_path, "web_mvc_manager/resources_base"),
                 r"^web_mvc_manager/resources_ui/.+$" : (web_mvc_resources_ui_plugin_resources_path, "web_mvc_manager/resources_ui")}
 
+
+    def load_web_mvc_manager_page_item_bundle_plugin(self, web_mvc_manager_page_item_bundle_plugin):
+        print web_mvc_manager_page_item_bundle_plugin
+
+    def unload_web_mvc_manager_page_item_bundle_plugin(self, web_mvc_manager_page_item_bundle_plugin):
+        print web_mvc_manager_page_item_bundle_plugin
+
     def load_web_mvc_panel_item_plugin(self, web_mvc_panel_item_plugin):
         """
         Loads the given web mvc panel item plugin.
