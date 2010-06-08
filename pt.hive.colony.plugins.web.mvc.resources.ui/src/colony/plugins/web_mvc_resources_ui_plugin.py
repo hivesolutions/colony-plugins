@@ -52,7 +52,8 @@ class WebMvcResourcesUiPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["web.mvc_resources"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/web_mvc_resources_ui/resources_ui/resources/baf.xml"}
+    capabilities = ["web.mvc_resources", "build_automation_item"]
     capabilities_allowed = []
     dependencies = []
     events_handled = []
