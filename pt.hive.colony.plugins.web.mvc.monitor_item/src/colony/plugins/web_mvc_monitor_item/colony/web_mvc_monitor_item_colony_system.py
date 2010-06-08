@@ -59,7 +59,7 @@ class WebMvcMonitorItemColony:
         Constructor of the class.
 
         @type web_mvc_monitor_item_colony_plugin: WebMvcMonitorItemColonyPlugin
-        @param web_mvc_monitor_item_colony_plugin: The web mvc monitor item colony plugin
+        @param web_mvc_monitor_item_colony_plugin: The web mvc monitor item colony plugin.
         """
 
         self.web_mvc_monitor_item_colony_plugin = web_mvc_monitor_item_colony_plugin

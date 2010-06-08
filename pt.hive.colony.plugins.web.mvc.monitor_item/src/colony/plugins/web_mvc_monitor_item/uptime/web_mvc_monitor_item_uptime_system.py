@@ -61,7 +61,7 @@ class WebMvcMonitorItemUptime:
         Constructor of the class.
 
         @type web_mvc_monitor_item_uptime_plugin: WebMvcMonitorItemUptimePlugin
-        @param web_mvc_monitor_item_uptime_plugin: The web mvc monitor item uptime plugin
+        @param web_mvc_monitor_item_uptime_plugin: The web mvc monitor item uptime plugin.
         """
 
         self.web_mvc_monitor_item_uptime_plugin = web_mvc_monitor_item_uptime_plugin

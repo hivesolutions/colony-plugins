@@ -62,7 +62,7 @@ class WebMvcMonitorItemResources:
         Constructor of the class.
 
         @type web_mvc_monitor_item_resources_plugin: WebMvcMonitorItemResourcesPlugin
-        @param web_mvc_monitor_item_resources_plugin: The web mvc monitor item resources plugin
+        @param web_mvc_monitor_item_resources_plugin: The web mvc monitor item resources plugin.
         """
 
         self.web_mvc_monitor_item_resources_plugin = web_mvc_monitor_item_resources_plugin
