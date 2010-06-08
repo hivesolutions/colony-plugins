@@ -87,42 +87,15 @@ class WebMvcPanelItemDidYouKnow:
         # creates the web mvc panel item did you know main controller
         self.web_mvc_panel_item_did_you_know_main_controller = web_mvc_utils_plugin.create_controller(WebMvcPanelItemDidYouKnowMainController, [self.web_mvc_panel_item_did_you_know_plugin, self], {})
 
-    def get_patterns(self):
-        """
-        Retrieves the map of regular expressions to be used as patters,
-        to the web mvc service. The map should relate the route with the handler
-        method/function.
-
-        @rtype: Dictionary
-        @return: The map of regular expressions to be used as patterns,
-        to the web mvc service.
-        """
-
-        return {}
-
-    def get_communication_patterns(self):
-        """
-        Retrieves the map of regular expressions to be used as communication patters,
-        to the web mvc service. The map should relate the route with a tuple
-        containing the data handler, the connection changed handler and the name
-        of the connection.
-
-        @rtype: Dictionary
-        @return: The map of regular expressions to be used as communication patterns,
-        to the web mvc service.
-        """
-
-        return {}
-
     def get_resource_patterns(self):
         """
         Retrieves the map of regular expressions to be used as resource patters,
-        to the web mvc service. The map should relate the route with the base
+        to the web panel item. The map should relate the route with the base
         file system path to be used.
 
         @rtype: Dictionary
         @return: The map of regular expressions to be used as resource patterns,
-        to the web mvc service.
+        to the web mvc panel item.
         """
 
         return {}
