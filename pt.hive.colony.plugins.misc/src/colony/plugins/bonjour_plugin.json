@@ -12,7 +12,7 @@
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.misc.guid",
                 "version" : "1.0.0"
-            },],
+            }],
     "main_file" : "bonjour_plugin.py",
     "resources" : ["bonjour_plugin.py", "misc/__init__.py",
             "misc/bonjour/__init__.py", "misc/bonjour/bonjour_exceptions.py",
