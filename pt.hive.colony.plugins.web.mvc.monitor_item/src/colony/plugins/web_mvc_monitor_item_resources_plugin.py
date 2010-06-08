@@ -93,6 +93,17 @@ class WebMvcMonitorItemResourcesPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_monitor_item(self, parameters):
+        """
+        Retrieves the code for the monitor item for
+        the given parameters.
+
+        @type parameters: Dictionary
+        @param parameters: The parameters to retrieve the code for
+        the monitor item.
+        @rtype: String
+        @return: The code for the monitor item.
+        """
+
         return self.web_mvc_monitor_resources_system.get_monitor_item(parameters)
 
     def get_web_mvc_utils_plugin(self):

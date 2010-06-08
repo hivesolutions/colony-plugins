@@ -79,6 +79,17 @@ class WebMvcMonitorItemUptime:
         self.web_mvc_monitor_item_uptime_main_controller = web_mvc_utils_plugin.create_controller(WebMvcMonitorItemUptimeMainController, [self.web_mvc_monitor_item_uptime_plugin, self], {})
 
     def get_monitor_item(self, parameters):
+        """
+        Retrieves the code for the monitor item for
+        the given parameters.
+
+        @type parameters: Dictionary
+        @param parameters: The parameters to retrieve the code for
+        the monitor item.
+        @rtype: String
+        @return: The code for the monitor item.
+        """
+
         return self.web_mvc_monitor_item_uptime_main_controller.get_monitor_item()
 
 class WebMvcMonitorItemUptimeMainController:
