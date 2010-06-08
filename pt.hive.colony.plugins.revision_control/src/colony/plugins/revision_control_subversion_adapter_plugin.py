@@ -52,7 +52,8 @@ class RevisionControlSubversionAdapterPlugin(colony.plugins.plugin_system.Plugin
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["revision_control.adapter"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/revision_control/subversion_adapter/resources/baf.xml"}
+    capabilities = ["revision_control.adapter", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PackageDependency(
                     "PySvn", "pysvn", "1.6.2.x", "http://pysvn.tigris.org")]
