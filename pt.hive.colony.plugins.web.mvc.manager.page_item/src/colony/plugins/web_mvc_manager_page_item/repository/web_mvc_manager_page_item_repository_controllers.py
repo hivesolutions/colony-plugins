@@ -87,13 +87,13 @@ class WebMvcManagerPageItemRepositoryController:
         """
 
         # retrieves the plugin manager
-        plugin_manager = self.web_mvc_manager_plugin.manager
+        plugin_manager = self.web_mvc_manager_page_item_repository_plugin.manager
 
         # retrieves the web mvc manager plugin path
-        web_mvc_manager_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_manager_plugin.id)
+        web_mvc_manager_page_item_repository_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_manager_page_item_repository_plugin.id)
 
         # creates the templates path
-        templates_path = web_mvc_manager_plugin_path + "/" + TEMPLATES_PATH + "/repository"
+        templates_path = web_mvc_manager_page_item_repository_plugin_path + "/" + TEMPLATES_PATH + "/repository"
 
         # sets the templates path
         self.set_templates_path(templates_path)
@@ -221,7 +221,7 @@ class WebMvcManagerPageItemRepositoryController:
         # in case the encoder name is ajax
         if rest_request.encoder_name == JSON_ENCODER_NAME:
             # retrieves the json plugin
-            json_plugin = self.web_mvc_manager_plugin.json_plugin
+            json_plugin = self.web_mvc_manager_page_item_repository_plugin.json_plugin
 
             # retrieves the web mvc communication helper
             web_mvc_manager_communication_helper = self.web_mvc_manager.web_mvc_manager_communication_helper
@@ -326,7 +326,7 @@ class WebMvcManagerPageItemRepositoryController:
 
     def _get_repository(self, rest_request, index = -1):
         # retrieves the system updater plugin
-        system_updater_plugin = self.web_mvc_manager_plugin.system_updater_plugin
+        system_updater_plugin = self.web_mvc_manager_page_item_repository_plugin.system_updater_plugin
 
         # retrieves the repository index from the rest request's path list
         repository_index = int(rest_request.path_list[index])
@@ -392,7 +392,7 @@ class WebMvcManagerPageItemRepositoryController:
 
     def _get_repositories(self):
         # retrieves the system updater plugin
-        system_updater_plugin = self.web_mvc_manager_plugin.system_updater_plugin
+        system_updater_plugin = self.web_mvc_manager_page_item_repository_plugin.system_updater_plugin
 
         # retrieves all the repositories
         repositories = system_updater_plugin.get_repositories()
@@ -401,10 +401,10 @@ class WebMvcManagerPageItemRepositoryController:
 
     def _install_plugin(self, rest_request):
         # retrieves the plugin manager
-        plugin_manager = self.web_mvc_manager_plugin.manager
+        plugin_manager = self.web_mvc_manager_page_item_repository_plugin.manager
 
         # retrieves the system updater plugin
-        system_updater_plugin = self.web_mvc_manager_plugin.system_updater_plugin
+        system_updater_plugin = self.web_mvc_manager_page_item_repository_plugin.system_updater_plugin
 
         # processes the form data
         form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)

@@ -68,15 +68,15 @@ class WebMvcManagerPageItemRepository:
     web_mvc_manager_page_item_repository_plugin = None
     """ The web mvc manager page item repository plugin """
 
-    def __init__(self, web_mvc_panel_item_monitor_plugin):
+    def __init__(self, web_mvc_manager_page_item_repository_plugin):
         """
         Constructor of the class.
 
-        @type web_mvc_panel_item_monitor_plugin: WebMvcPanelItemMonitorPlugin
-        @param web_mvc_panel_item_monitor_plugin: The web mvc panel item monitor plugin
+        @type web_mvc_manager_page_item_repository_plugin: WebMvcManagerPageItemRepositoryPlugin
+        @param web_mvc_manager_page_item_repository_plugin: The web mvc manager page item repository plugin.
         """
 
-        self.web_mvc_panel_item_monitor_plugin = web_mvc_panel_item_monitor_plugin
+        self.web_mvc_manager_page_item_repository_plugin = web_mvc_manager_page_item_repository_plugin
 
     def load_components(self):
         """
@@ -85,10 +85,10 @@ class WebMvcManagerPageItemRepository:
         """
 
         # retrieves the web mvc utils plugin
-        web_mvc_utils_plugin = self.web_mvc_panel_item_monitor_plugin.web_mvc_utils_plugin
+        web_mvc_utils_plugin = self.web_mvc_manager_page_item_repository_plugin.web_mvc_utils_plugin
 
         # creates the web mvc panel item monitor main controller
-        self.web_mvc_panel_item_monitor_main_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_page_item_repository_controllers.WebMvcManagerPageItemRepositoryController, [self.web_mvc_panel_item_monitor_plugin, self], {})
+        self.web_mvc_panel_item_monitor_main_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_page_item_repository_controllers.WebMvcManagerPageItemRepositoryController, [self.web_mvc_manager_page_item_repository_plugin, self], {})
 
     def get_page_item_bundle(self):
         """

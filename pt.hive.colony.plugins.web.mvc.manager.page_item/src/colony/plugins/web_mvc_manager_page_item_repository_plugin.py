@@ -54,7 +54,7 @@ class WebMvcManagerPageItemRepositoryPlugin(colony.plugins.plugin_system.Plugin)
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/web_mvc_manager_page_item/monitor/resources/baf.xml"}
-    capabilities = ["web.mvc.manager.panel_item_bundle", "build_automation_item"]
+    capabilities = ["web.mvc.manager.page_item_bundle", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.web.mvc.utils", "1.0.0")]
@@ -92,7 +92,7 @@ class WebMvcManagerPageItemRepositoryPlugin(colony.plugins.plugin_system.Plugin)
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_page_item_bundle(self, parameters):
-        return self.web_mvc_panel_item_monitor.get_page_item_bundle(parameters)
+        return self.web_mvc_manager_page_item_repository.get_page_item_bundle(parameters)
 
     def get_web_mvc_utils_plugin(self):
         return self.web_mvc_utils_plugin
