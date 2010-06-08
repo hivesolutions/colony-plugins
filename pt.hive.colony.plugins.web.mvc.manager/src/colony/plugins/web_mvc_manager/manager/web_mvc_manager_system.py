@@ -216,12 +216,12 @@ class WebMvcManager:
                 r"^web_mvc_manager/resources_base/.+$" : (web_mvc_resources_base_plugin_resources_path, "web_mvc_manager/resources_base"),
                 r"^web_mvc_manager/resources_ui/.+$" : (web_mvc_resources_ui_plugin_resources_path, "web_mvc_manager/resources_ui")}
 
-    def load_web_mvc_service_plugin(self, web_mvc_service_panel_item_plugin):
+    def load_web_mvc_panel_item_plugin(self, web_mvc_panel_item_plugin):
         """
-        Loads the given web mvc service plugin.
+        Loads the given web mvc panel item plugin.
 
-        @type web_mvc_service_panel_item_plugin: Plugin
-        @param web_mvc_service_panel_item_plugin: The web mvc service panel item plugin to be loaded.
+        @type web_mvc_panel_item_plugin: Plugin
+        @param web_mvc_panel_item_plugin: The web mvc panel item plugin to be loaded.
         """
 
         # retrieves the serialized message
@@ -230,12 +230,12 @@ class WebMvcManager:
         # generates the communication event
         self.web_mvc_manager_plugin.generate_event("web.mvc.communication", ["web_mvc_manager/communication", serialized_message])
 
-    def unload_web_mvc_service_plugin(self, web_mvc_service_panel_item_plugin):
+    def unload_web_mvc_panel_item_plugin(self, web_mvc_panel_item_plugin):
         """
-        Unloads the given web mvc service plugin.
+        Unloads the given web mvc panel item plugin.
 
-        @type web_mvc_service_panel_item_plugin: Plugin
-        @param web_mvc_service_panel_item_plugin: The web mvc service panel item plugin to be unloaded.
+        @type web_mvc_panel_item_plugin: Plugin
+        @param web_mvc_panel_item_plugin: The web mvc panel item plugin to be unloaded.
         """
 
         # retrieves the serialized message

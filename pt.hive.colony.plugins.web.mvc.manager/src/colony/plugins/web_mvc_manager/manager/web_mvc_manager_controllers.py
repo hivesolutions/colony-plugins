@@ -182,15 +182,15 @@ class SidePanelController:
         self.__assign_panel_item_variables(template_file)
 
     def __assign_panel_item_variables(self, template_file):
-        # retrieves the web mvc service panel item plugins
-        web_mvc_service_panel_item_plugins = self.web_mvc_manager_plugin.web_mvc_service_panel_item_plugins
+        # retrieves the web mvc panel item plugins
+        web_mvc_panel_item_plugins = self.web_mvc_manager_plugin.web_mvc_panel_item_plugins
 
         # starts the panel items list
         panel_items_list = []
 
-        # iterates over all the web mvc service panel item plugins
-        for web_mvc_service_panel_item_plugin in web_mvc_service_panel_item_plugins:
-            panel_item = web_mvc_service_panel_item_plugin.get_panel_item({})
+        # iterates over all the web mvc panel item plugins
+        for web_mvc_panel_item_plugin in web_mvc_panel_item_plugins:
+            panel_item = web_mvc_panel_item_plugin.get_panel_item({})
             panel_items_list.append(panel_item)
 
         # assigns the panel items to the template
