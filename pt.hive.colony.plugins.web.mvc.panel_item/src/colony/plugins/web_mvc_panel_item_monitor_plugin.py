@@ -139,6 +139,17 @@ class WebMvcPanelItemMonitorPlugin(colony.plugins.plugin_system.Plugin):
         return self.web_mvc_panel_item_monitor.get_resource_patterns()
 
     def get_panel_item(self, parameters):
+        """
+        Retrieves the code for the panel item for
+        the given parameters.
+
+        @type parameters: Dictionary
+        @param parameters: The parameters to retrieve the code for
+        the panel item.
+        @rtype: String
+        @return: The code for the monitor item.
+        """
+
         return self.web_mvc_panel_item_monitor.get_panel_item(parameters)
 
     @colony.plugins.decorators.load_allowed_capability("web.mvc.monitor_item")

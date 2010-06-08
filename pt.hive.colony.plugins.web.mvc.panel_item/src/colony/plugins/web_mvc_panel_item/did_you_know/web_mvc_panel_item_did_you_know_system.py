@@ -128,6 +128,17 @@ class WebMvcPanelItemDidYouKnow:
         return {}
 
     def get_panel_item(self, parameters):
+        """
+        Retrieves the code for the panel item for
+        the given parameters.
+
+        @type parameters: Dictionary
+        @param parameters: The parameters to retrieve the code for
+        the panel item.
+        @rtype: String
+        @return: The code for the monitor item.
+        """
+
         return self.web_mvc_panel_item_did_you_know_main_controller.get_panel_item()
 
 class WebMvcPanelItemDidYouKnowMainController:
