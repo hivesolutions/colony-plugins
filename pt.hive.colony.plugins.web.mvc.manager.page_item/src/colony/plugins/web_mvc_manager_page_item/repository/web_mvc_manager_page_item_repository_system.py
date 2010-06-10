@@ -37,10 +37,12 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import colony.libs.map_util
+
 import web_mvc_manager_page_item_repository_controllers
 
-REPOSITORY_LIST_PAGE_ITEM_ATTRIBUTES = {"menu" : "update/repositories",
-                                        "side_panel" : "lists/repositories",
+REPOSITORY_LIST_PAGE_ITEM_ATTRIBUTES = {"menu" : "update/Repositories",
+                                        "side_panel" : "lists/Repositories",
                                         "base_address" : "web_mvc_manager/repositories",
                                         "pattern" : (r"^web_mvc_manager/repositories$", 1)}
 """ The repository list page item attributes """
@@ -90,9 +92,27 @@ class WebMvcManagerPageItemRepository:
         # creates the web mvc panel item monitor main controller
         self.web_mvc_panel_item_monitor_main_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_page_item_repository_controllers.WebMvcManagerPageItemRepositoryController, [self.web_mvc_manager_page_item_repository_plugin, self], {})
 
-    def get_page_item_bundle(self):
+    def get_page_item_bundle(self, parameters):
         """
-        Retrieves a bundle containing a combination
+        Retrieves a bundle containing all the maps with information
+        on all the page items. The maps should contain information
+        about the composition of the page item.
+
+        @type parameters: Dictionary
+        @param parameters: The parameters to retrieve the page
+        item bundle.
+        @rtype: List
+        @return: A list containing information on all page items.
         """
 
-        return {}
+        # creates the repository page item maps
+        repository_list_page_item_map = colony.libs.map_util.map_extend(REPOSITORY_LIST_PAGE_ITEM_ATTRIBUTES, {"action" : self.web_mvc_panel_item_monitor_main_controller.handle_list})
+        repository_show_page_item_map = colony.libs.map_util.map_extend(REPOSITORY_SHOW_PAGE_ITEM_ATTRIBUTES, {"action" : self.web_mvc_panel_item_monitor_main_controller.handle_show})
+        repository_partial_list_page_item_map = colony.libs.map_util.map_extend(REPOSITORY_PARTIAL_LIST_PAGE_ITEM_ATTRIBUTES, {"action" : self.web_mvc_panel_item_monitor_main_controller.handle_partial_list})
+        repository_install_plugin_page_item_map = colony.libs.map_util.map_extend(REPOSITORY_INSTALL_PLUGIN_PAGE_ITEM_ATTRIBUTES, {"action" : self.web_mvc_panel_item_monitor_main_controller.handle_install_plugin})
+        repository_plugins_partial_page_item_map = colony.libs.map_util.map_extend(REPOSITORY_PLUGINS_PARTIAL_ITEM_ATTRIBUTES, {"action" : self.web_mvc_panel_item_monitor_main_controller.handle_plugins_partial_list})
+        repository_packages_partial_page_item_map = colony.libs.map_util.map_extend(REPOSITORY_PACKAGES_PARTIAL_ITEM_ATTRIBUTES, {"action" : self.web_mvc_panel_item_monitor_main_controller.handle_packages_partial_list})
+
+        return [repository_list_page_item_map, repository_show_page_item_map,
+                repository_partial_list_page_item_map, repository_install_plugin_page_item_map,
+                repository_plugins_partial_page_item_map, repository_packages_partial_page_item_map]

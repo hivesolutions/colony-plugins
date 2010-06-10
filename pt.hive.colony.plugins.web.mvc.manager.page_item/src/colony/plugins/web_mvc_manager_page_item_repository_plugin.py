@@ -92,6 +92,18 @@ class WebMvcManagerPageItemRepositoryPlugin(colony.plugins.plugin_system.Plugin)
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def get_page_item_bundle(self, parameters):
+        """
+        Retrieves a bundle containing all the maps with information
+        on all the page items. The maps should contain information
+        about the composition of the page item.
+
+        @type parameters: Dictionary
+        @param parameters: The parameters to retrieve the page
+        item bundle.
+        @rtype: List
+        @return: A list containing information on all page items.
+        """
+
         return self.web_mvc_manager_page_item_repository.get_page_item_bundle(parameters)
 
     def get_web_mvc_utils_plugin(self):
