@@ -60,7 +60,7 @@ class WebMvcPlugin(colony.plugins.plugin_system.Plugin):
                     colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.json", "1.0.0")]
     events_handled = []
-    events_registrable = ["web.mvc.communication"]
+    events_registrable = ["web.mvc.patterns", "web.mvc.communication"]
     main_modules = ["web_mvc.mvc.web_mvc_communication_handler", "web_mvc.mvc.web_mvc_exceptions",
                     "web_mvc.mvc.web_mvc_file_handler", "web_mvc.mvc.web_mvc_system"]
 
@@ -149,6 +149,10 @@ class WebMvcPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
     def set_json_plugin(self, json_plugin):
         self.json_plugin = json_plugin
+
+    @colony.plugins.decorators.event_handler_method("web.mvc.patterns")
+    def web_mvc_patterns_handler(self, event_name, *event_args):
+        self.web_mvc.process_web_mvc_patterns_event(event_name, *event_args)
 
     @colony.plugins.decorators.event_handler_method("web.mvc.communication")
     def web_mvc_communication_handler(self, event_name, *event_args):

@@ -289,6 +289,16 @@ class WebMvc:
         # updates the resource matching regex
         self._update_resource_matching_regex()
 
+    def process_web_mvc_patterns_event(self, event_name, plugin):
+        # updates the matching regex
+        self._update_matching_regex()
+
+        # updates the communication matching regex
+        self._update_communication_matching_regex()
+
+        # updates the resource matching regex
+        self._update_resource_matching_regex()
+
     def process_web_mvc_communication_event(self, event_name, connection_name, message):
         # sends the broadcast message
         self.web_mvc_communication_handler.send_broadcast_communication_message(connection_name, message)
