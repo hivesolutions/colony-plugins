@@ -99,10 +99,6 @@ class WebMvcManagerPageItemRepositoryController:
         self.set_templates_path(templates_path)
 
     def handle_show(self, rest_request, parameters = {}):
-        # returns in case the required permissions are not set
-        if not self.web_mvc_manager.require_permissions(self, rest_request):
-            return True
-
         # in case the encoder name is ajax
         if rest_request.encoder_name == AJAX_ENCODER_NAME:
             # retrieves the template file
@@ -142,17 +138,13 @@ class WebMvcManagerPageItemRepositoryController:
         return True
 
     def handle_list(self, rest_request, parameters = {}):
-        # returns in case the required permissions are not set
-        if not self.web_mvc_manager.require_permissions(self, rest_request):
-            return True
-
         # in case the encoder name is ajax
         if rest_request.encoder_name == AJAX_ENCODER_NAME:
             # retrieves the template file
             template_file = self.retrieve_template_file("repository_list_contents.html.tpl")
         else:
-            # retrieves the template file
-            template_file = self.retrieve_template_file("../general.html.tpl")
+            # retrieves the template file from the parameters
+            template_file = parameters["template_file"]
 
             # sets the page to be included
             template_file.assign("page_include", "repository/repository_list_contents.html.tpl")
@@ -173,12 +165,8 @@ class WebMvcManagerPageItemRepositoryController:
         return True
 
     def handle_partial_list(self, rest_request, parameters = {}):
-        # returns in case the required permissions are not set
-        if not self.web_mvc_manager.require_permissions(self, rest_request):
-            return True
-
-        # retrieves the web mvc manager search helper
-        web_mvc_manager_search_helper = self.web_mvc_manager.web_mvc_manager_search_helper
+        # retrieves the web search helper
+        search_helper = parameters["search_helper"]
 
         # retrieves the template file
         template_file = self.retrieve_template_file("repository_partial_list_contents.html.tpl")
@@ -187,7 +175,7 @@ class WebMvcManagerPageItemRepositoryController:
         filtered_repositories = self._get_fitered_repositories(rest_request)
 
         # retrieves the partial filter from the filtered repositories
-        partial_filtered_repositories, start_record, number_records, total_number_records = web_mvc_manager_search_helper.partial_filter(rest_request, filtered_repositories)
+        partial_filtered_repositories, start_record, number_records, total_number_records = search_helper.partial_filter(rest_request, filtered_repositories)
 
         # assigns the repositories to the template
         template_file.assign("repositories", partial_filtered_repositories)
@@ -214,17 +202,13 @@ class WebMvcManagerPageItemRepositoryController:
         return True
 
     def handle_install_plugin(self, rest_request, parameters = {}):
-        # returns in case the required permissions are not set
-        if not self.web_mvc_manager.require_permissions(self, rest_request):
-            return True
-
         # in case the encoder name is ajax
         if rest_request.encoder_name == JSON_ENCODER_NAME:
             # retrieves the json plugin
             json_plugin = self.web_mvc_manager_page_item_repository_plugin.json_plugin
 
             # retrieves the web mvc communication helper
-            web_mvc_manager_communication_helper = self.web_mvc_manager.web_mvc_manager_communication_helper
+            web_mvc_manager_communication_helper = self.web_mvc_manager_page_item_repository_plugin.web_mvc_manager_communication_helper
 
             # install the plugin and retrieves the result
             install_plugin_result = self._install_plugin(rest_request)
@@ -243,12 +227,8 @@ class WebMvcManagerPageItemRepositoryController:
         return True
 
     def handle_plugins_partial_list(self, rest_request, parameters = {}):
-        # returns in case the required permissions are not set
-        if not self.web_mvc_manager.require_permissions(self, rest_request):
-            return True
-
-        # retrieves the web mvc manager search helper
-        web_mvc_manager_search_helper = self.web_mvc_manager.web_mvc_manager_search_helper
+        # retrieves the web search helper
+        search_helper = parameters["search_helper"]
 
         # retrieves the template file
         template_file = self.retrieve_template_file("repository_plugins_partial_list_contents.html.tpl")
@@ -257,7 +237,7 @@ class WebMvcManagerPageItemRepositoryController:
         filtered_repository_plugins = self._get_fitered_repository_plugins(rest_request)
 
         # retrieves the partial filter from the filtered repository plugins
-        partial_filtered_repository_plugins, start_record, number_records, total_number_records = web_mvc_manager_search_helper.partial_filter(rest_request, filtered_repository_plugins)
+        partial_filtered_repository_plugins, start_record, number_records, total_number_records = search_helper.partial_filter(rest_request, filtered_repository_plugins)
 
         # assigns the repositories to the template
         template_file.assign("repository_plugins", partial_filtered_repository_plugins)
@@ -284,12 +264,8 @@ class WebMvcManagerPageItemRepositoryController:
         return True
 
     def handle_packages_partial_list(self, rest_request, parameters = {}):
-        # returns in case the required permissions are not set
-        if not self.web_mvc_manager.require_permissions(self, rest_request):
-            return True
-
-        # retrieves the web mvc manager search helper
-        web_mvc_manager_search_helper = self.web_mvc_manager.web_mvc_manager_search_helper
+        # retrieves the web search helper
+        search_helper = parameters["search_helper"]
 
         # retrieves the template file
         template_file = self.retrieve_template_file("repository_partial_list_contents.html.tpl")
@@ -298,7 +274,7 @@ class WebMvcManagerPageItemRepositoryController:
         filtered_repositories = self._get_fitered_repositories(rest_request)
 
         # retrieves the partial filter from the filtered repositories
-        partial_filtered_repositories, start_record, number_records, total_number_records = web_mvc_manager_search_helper.partial_filter(rest_request, filtered_repositories)
+        partial_filtered_repositories, start_record, number_records, total_number_records = search_helper.partial_filter(rest_request, filtered_repositories)
 
         # assigns the repositories to the template
         template_file.assign("repositories", partial_filtered_repositories)

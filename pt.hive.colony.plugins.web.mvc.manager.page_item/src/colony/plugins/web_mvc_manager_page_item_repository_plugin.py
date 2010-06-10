@@ -57,13 +57,18 @@ class WebMvcManagerPageItemRepositoryPlugin(colony.plugins.plugin_system.Plugin)
     capabilities = ["web.mvc.manager.page_item_bundle", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.web.mvc.utils", "1.0.0")]
+                    "pt.hive.colony.plugins.web.mvc.utils", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.system.updater", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["web_mvc_manager_page_item.repository.web_mvc_manager_page_item_repository_controllers", "web_mvc_manager_page_item.repository.web_mvc_manager_page_item_repository_exceptions",
                     "web_mvc_manager_page_item.repository.web_mvc_manager_page_item_repository_system"]
 
     web_mvc_manager_page_item_repository = None
+
+    web_mvc_utils_plugin = None
+    system_updater_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -112,3 +117,10 @@ class WebMvcManagerPageItemRepositoryPlugin(colony.plugins.plugin_system.Plugin)
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.web.mvc.utils")
     def set_web_mvc_utils_plugin(self, web_mvc_utils_plugin):
         self.web_mvc_utils_plugin = web_mvc_utils_plugin
+
+    def get_system_updater_plugin(self):
+        return self.system_updater_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.system.updater")
+    def set_system_updater_plugin(self, system_updater_plugin):
+        self.system_updater_plugin = system_updater_plugin
