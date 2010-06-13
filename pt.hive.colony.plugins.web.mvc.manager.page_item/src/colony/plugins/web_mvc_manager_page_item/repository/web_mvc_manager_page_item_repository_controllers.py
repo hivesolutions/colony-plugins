@@ -207,8 +207,8 @@ class WebMvcManagerPageItemRepositoryController:
             # retrieves the json plugin
             json_plugin = self.web_mvc_manager_page_item_repository_plugin.json_plugin
 
-            # retrieves the web mvc communication helper
-            web_mvc_manager_communication_helper = self.web_mvc_manager_page_item_repository_plugin.web_mvc_manager_communication_helper
+            # retrieves the communication helper
+            communication_helper = parameters["communication_helper"]
 
             # install the plugin and retrieves the result
             install_plugin_result = self._install_plugin(rest_request)
@@ -220,7 +220,7 @@ class WebMvcManagerPageItemRepositoryController:
             self.set_contents(rest_request, serialized_status)
 
             # sends the serialized broadcast message
-            web_mvc_manager_communication_helper.send_serialized_broadcast_message(parameters, "web_mvc_manager/communication", "web_mvc_manager/plugin/install", serialized_status)
+            communication_helper.send_serialized_broadcast_message(parameters, "web_mvc_manager/communication", "web_mvc_manager/plugin/install", serialized_status)
 
             return True
 

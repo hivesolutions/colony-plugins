@@ -59,7 +59,9 @@ class WebMvcManagerPageItemRepositoryPlugin(colony.plugins.plugin_system.Plugin)
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.web.mvc.utils", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.system.updater", "1.0.0")]
+                    "pt.hive.colony.plugins.system.updater", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.json", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["web_mvc_manager_page_item.repository.web_mvc_manager_page_item_repository_controllers", "web_mvc_manager_page_item.repository.web_mvc_manager_page_item_repository_exceptions",
@@ -69,6 +71,7 @@ class WebMvcManagerPageItemRepositoryPlugin(colony.plugins.plugin_system.Plugin)
 
     web_mvc_utils_plugin = None
     system_updater_plugin = None
+    json_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -124,3 +127,10 @@ class WebMvcManagerPageItemRepositoryPlugin(colony.plugins.plugin_system.Plugin)
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.system.updater")
     def set_system_updater_plugin(self, system_updater_plugin):
         self.system_updater_plugin = system_updater_plugin
+
+    def get_json_plugin(self):
+        return self.json_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
+    def set_json_plugin(self, json_plugin):
+        self.json_plugin = json_plugin
