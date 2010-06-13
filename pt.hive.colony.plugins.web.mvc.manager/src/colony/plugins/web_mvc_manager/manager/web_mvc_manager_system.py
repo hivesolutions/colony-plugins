@@ -37,7 +37,10 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import colony.libs.map_util
+
 import web_mvc_manager_helpers
+import web_mvc_manager_exceptions
 import web_mvc_manager_controllers
 
 DEFAULT_ENCODING = "utf-8"
@@ -51,6 +54,9 @@ TEMPLATES_PATH = WEB_MVC_MANAGER_RESOURCES_PATH + "/templates"
 
 EXTRAS_PATH = WEB_MVC_MANAGER_RESOURCES_PATH + "/extras"
 """ The extras path """
+
+NORMAL_ENCODER_NAME = None
+""" The normal encoder name """
 
 class WebMvcManager:
     """
@@ -75,14 +81,17 @@ class WebMvcManager:
     web_mvc_manager_capability_controller = None
     """ The web mvc manager capability controller """
 
-    web_mvc_manager_repository_controller = None
-    """ The web mvc manager repository controller """
-
     web_mvc_manager_search_helper = None
     """ The web mvc manager search helper """
 
     web_mvc_manager_communication_helper = None
     """ The web mvc manager communication helper """
+
+    menu_items_map = {}
+
+    side_panel_items_map = {}
+
+    extra_patterns_map = {}
 
     def __init__(self, web_mvc_manager_plugin):
         """
@@ -93,6 +102,10 @@ class WebMvcManager:
         """
 
         self.web_mvc_manager_plugin = web_mvc_manager_plugin
+
+        self.menu_items_map = {}
+        self.side_panel_items_map = {}
+        self.extra_patterns_map = {}
 
     def load_components(self):
         """
@@ -118,9 +131,6 @@ class WebMvcManager:
         # creates the web mvc manager capability controller
         self.web_mvc_manager_capability_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_controllers.CapabilityController, [self.web_mvc_manager_plugin, self], {})
 
-        # creates the web mvc manager repository controller
-        self.web_mvc_manager_repository_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_controllers.RepositoryController, [self.web_mvc_manager_plugin, self], {})
-
         # creates the web mvc manager search helper
         self.web_mvc_manager_search_helper = web_mvc_utils_plugin.create_controller(web_mvc_manager_helpers.SearchHelper, [self.web_mvc_manager_plugin, self], {})
 
@@ -138,24 +148,25 @@ class WebMvcManager:
         to the web mvc service.
         """
 
-        return {r"^web_mvc_manager/?$" : self.web_mvc_manager_main_controller.handle_web_mvc_manager_index,
-                r"^web_mvc_manager/index$" : self.web_mvc_manager_main_controller.handle_web_mvc_manager_index,
-                r"^web_mvc_manager/side_panel/configuration$" : self.web_mvc_manager_side_panel_controller.handle_configuration,
-                r"^web_mvc_manager/side_panel/update" : self.web_mvc_manager_side_panel_controller.handle_update,
-                r"^web_mvc_manager/plugins$" : self.web_mvc_manager_plugin_controller.handle_list,
-                #r"^web_mvc_manager/plugins/[a-zA-Z0-9\._]+$" : self.web_mvc_manager_plugin_controller.handle_show,
-                r"^web_mvc_manager/plugins/partial$" : self.web_mvc_manager_plugin_controller.handle_partial_list,
-                r"^web_mvc_manager/plugins/new$" : self.web_mvc_manager_plugin_controller.handle_new,
-                r"^web_mvc_manager/plugins/change_status$" : self.web_mvc_manager_plugin_controller.handle_change_status,
-                r"^web_mvc_manager/capabilities$" : self.web_mvc_manager_capability_controller.handle_list,
-                #r"^web_mvc_manager/capabilities/[a-zA-Z0-9\._]+$" : self.web_mvc_manager_capability_controller.handle_show,
-                r"^web_mvc_manager/capabilities/partial$" : self.web_mvc_manager_capability_controller.handle_partial_list,
-                r"^web_mvc_manager/repositories$" : self.web_mvc_manager_repository_controller.handle_list,
-                r"^web_mvc_manager/repositories/[0-9]+$" : self.web_mvc_manager_repository_controller.handle_show,
-                r"^web_mvc_manager/repositories/partial$" : self.web_mvc_manager_repository_controller.handle_partial_list,
-                r"^web_mvc_manager/repositories/install_plugin$" : self.web_mvc_manager_repository_controller.handle_install_plugin,
-                r"^web_mvc_manager/repositories/[0-9]+/plugins_partial$" : self.web_mvc_manager_repository_controller.handle_plugins_partial_list,
-                r"^web_mvc_manager/repositories/[0-9]+/packages_partial$" : self.web_mvc_manager_repository_controller.handle_packages_partial_list}
+        base_patters_map = {r"^web_mvc_manager/?$" : self.web_mvc_manager_main_controller.handle_web_mvc_manager_index,
+                            r"^web_mvc_manager/index$" : self.web_mvc_manager_main_controller.handle_web_mvc_manager_index,
+                            r"^web_mvc_manager/side_panel/configuration$" : self.web_mvc_manager_side_panel_controller.handle_configuration,
+                            r"^web_mvc_manager/side_panel/update" : self.web_mvc_manager_side_panel_controller.handle_update,
+                            r"^web_mvc_manager/plugins$" : self.web_mvc_manager_plugin_controller.handle_list,
+                            #r"^web_mvc_manager/plugins/[a-zA-Z0-9\._]+$" : self.web_mvc_manager_plugin_controller.handle_show,
+                            r"^web_mvc_manager/plugins/partial$" : self.web_mvc_manager_plugin_controller.handle_partial_list,
+                            r"^web_mvc_manager/plugins/new$" : self.web_mvc_manager_plugin_controller.handle_new,
+                            r"^web_mvc_manager/plugins/change_status$" : self.web_mvc_manager_plugin_controller.handle_change_status,
+                            r"^web_mvc_manager/capabilities$" : self.web_mvc_manager_capability_controller.handle_list,
+                            #r"^web_mvc_manager/capabilities/[a-zA-Z0-9\._]+$" : self.web_mvc_manager_capability_controller.handle_show,
+                            r"^web_mvc_manager/capabilities/partial$" : self.web_mvc_manager_capability_controller.handle_partial_list}
+
+        # extends the base patterns map with the extra patterns map retrieving the result
+        # patterns map
+        result_patterns_map = colony.libs.map_util.map_extend(base_patters_map, self.extra_patterns_map)
+
+        # returns the result patterns maps
+        return result_patterns_map
 
     def get_communication_patterns(self):
         """
@@ -216,9 +227,96 @@ class WebMvcManager:
                 r"^web_mvc_manager/resources_base/.+$" : (web_mvc_resources_base_plugin_resources_path, "web_mvc_manager/resources_base"),
                 r"^web_mvc_manager/resources_ui/.+$" : (web_mvc_resources_ui_plugin_resources_path, "web_mvc_manager/resources_ui")}
 
-
     def load_web_mvc_manager_page_item_bundle_plugin(self, web_mvc_manager_page_item_bundle_plugin):
-        print web_mvc_manager_page_item_bundle_plugin
+        # retrieves the page item bundle from the web mvc manager page item bundle plugin
+        page_item_bundle = web_mvc_manager_page_item_bundle_plugin.get_page_item_bundle({})
+
+        # iterate over all the page items in the
+        # page item bundle
+        for page_item in page_item_bundle:
+            # retrieves the page item menu
+            page_item_menu = page_item.get("menu", None)
+
+            # retrieves the page item side panel
+            page_item_side_panel = page_item.get("side_panel", None)
+
+            # retrieves the base address item side panel
+            page_item_base_address = page_item.get("base_address", None)
+
+            # in case there is a menu defined for the page item
+            # and the base address is also defined
+            if page_item_menu and page_item_base_address:
+                # adds the menu item for the menu and base address
+                self.add_menu_item(page_item_menu, page_item_base_address)
+
+            # in case there is a side panel defined for the page item
+            # and the base address is also defined
+            if page_item_side_panel and page_item_base_address:
+                # adds the side panel item for the side panel and base address
+                self.add_side_panel_item(page_item_side_panel, page_item_base_address)
+
+            # retrieves the page item pattern
+            page_item_patter = page_item.get("pattern", None)
+
+            # retrieves the page item action
+            page_item_action = page_item.get("action", None)
+
+            self.extra_patterns_map[page_item_patter[0]] = self.web_mvc_manager_main_controller.generate_handle_handle_web_mvc_manager_page_item(page_item_action)
+
+        # generates the patterns event
+        self.web_mvc_manager_plugin.generate_event("web.mvc.patterns", [self.web_mvc_manager_plugin])
+
+        # retrieves the serialized message
+        serialized_message = self.web_mvc_manager_communication_helper._get_serialized_message("web_mvc_manager/side_panel/reload", "")
+
+        # generates the communication event
+        self.web_mvc_manager_plugin.generate_event("web.mvc.communication", ["web_mvc_manager/communication", serialized_message])
+
+    def add_menu_item(self, menu_item, base_address):
+        base_item, _rest_items = menu_item.split("/", 1)
+
+        _rest_items, target_item = menu_item.rsplit("/", 1)
+
+        if not base_item in self.menu_items_map:
+            self.menu_items_map[base_item] = []
+
+        base_item_list = self.menu_items_map[base_item]
+
+        target_item_tuple = (target_item, base_address)
+
+        # adds the target item tuple to the base item list
+        base_item_list.append(target_item_tuple)
+
+    def add_side_panel_item(self, side_panel_item, base_address):
+        # splits the side panel item
+        side_panel_item_splitted = side_panel_item.split("/")
+
+        # retrieves the side panel item splitted length
+        side_panel_item_splitted_length = len(side_panel_item_splitted)
+
+        # in case the side panel item splitted length is not two
+        if not side_panel_item_splitted_length == 2:
+            # raises a run time exception
+            raise web_mvc_manager_exceptions.RuntimeException("invalid side panel item length")
+
+        # upacks the side panel item splitted, retrieving
+        # the base item and the target item
+        base_item, target_item = side_panel_item_splitted
+
+        # in case the base item does not exists in the menu items map
+        if not base_item in self.menu_items_map:
+            # creates a list for the current base item in the side panel
+            # items map
+            self.side_panel_items_map[base_item] = []
+
+        # retrieves the base item list
+        base_item_list = self.side_panel_items_map[base_item]
+
+        # creates the target item tuple
+        target_item_tuple = (target_item, base_address)
+
+        # adds the target item tuple to the base item list
+        base_item_list.append(target_item_tuple)
 
     def unload_web_mvc_manager_page_item_bundle_plugin(self, web_mvc_manager_page_item_bundle_plugin):
         print web_mvc_manager_page_item_bundle_plugin
@@ -408,3 +506,44 @@ class WebMvcManagerMainController:
 
         # returns true
         return True
+
+    def generate_handle_handle_web_mvc_manager_page_item(self, original_handler):
+        """
+        Generates a composite handler from the original page item handler.
+
+        @type original_handler: Method
+        @param original_handler: The original page item handler.
+        @rtype: Method
+        @return: The generated handler method.
+        """
+
+        def handle_web_mvc_manager_page_item(rest_request, parameters = {}):
+            # returns in case the required permissions are not set
+            if not self.web_mvc_manager.require_permissions(self, rest_request):
+                return True
+
+            # in case the encoder name is normal
+            if rest_request.encoder_name == NORMAL_ENCODER_NAME:
+                # retrieves the template file
+                template_file = self.retrieve_template_file("general.html.tpl")
+
+                # assigns the configuration (side panel) variable to the template
+                self.web_mvc_manager.web_mvc_manager_side_panel_controller._assign_configuration_variables(template_file)
+            else:
+                # sets the template file to invalid
+                template_file = None
+
+            # retrieves the web mvc manager search helper
+            web_mvc_manager_search_helper = self.web_mvc_manager.web_mvc_manager_search_helper
+
+            # retrieves the web mvc manager communication helper
+            web_mvc_manager_communication_helper = self.web_mvc_manager.web_mvc_manager_communication_helper
+
+            # extens the paramters map with the template file reference
+            handler_parameters = colony.libs.map_util.map_extend(parameters, {"template_file" : template_file,
+                                                                              "search_helper" : web_mvc_manager_search_helper,
+                                                                              "communication_helper" : web_mvc_manager_communication_helper})
+            # sends the request to the original handler and returns the result
+            return original_handler(rest_request, handler_parameters)
+
+        return handle_web_mvc_manager_page_item
