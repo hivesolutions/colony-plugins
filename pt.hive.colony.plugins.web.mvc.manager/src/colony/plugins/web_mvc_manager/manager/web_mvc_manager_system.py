@@ -270,11 +270,8 @@ class WebMvcManager:
         # generates the patterns event
         self.web_mvc_manager_plugin.generate_event("web.mvc.patterns", [self.web_mvc_manager_plugin])
 
-        # retrieves the serialized message
-        serialized_message = self.web_mvc_manager_communication_helper._get_serialized_message("web_mvc_manager/side_panel/reload", "")
-
-        # generates the communication event
-        self.web_mvc_manager_plugin.generate_event("web.mvc.communication", ["web_mvc_manager/communication", serialized_message])
+        # reloads the ui in the client side
+        self._reload_ui()
 
     def unload_web_mvc_manager_page_item_bundle_plugin(self, web_mvc_manager_page_item_bundle_plugin):
         # retrieves the page item bundle from the web mvc manager page item bundle plugin
@@ -316,11 +313,8 @@ class WebMvcManager:
         # generates the patterns event
         self.web_mvc_manager_plugin.generate_event("web.mvc.patterns", [self.web_mvc_manager_plugin])
 
-        # retrieves the serialized message
-        serialized_message = self.web_mvc_manager_communication_helper._get_serialized_message("web_mvc_manager/side_panel/reload", "")
-
-        # generates the communication event
-        self.web_mvc_manager_plugin.generate_event("web.mvc.communication", ["web_mvc_manager/communication", serialized_message])
+        # reloads the ui in the client side
+        self._reload_ui()
 
     def load_web_mvc_panel_item_plugin(self, web_mvc_panel_item_plugin):
         """
@@ -330,11 +324,8 @@ class WebMvcManager:
         @param web_mvc_panel_item_plugin: The web mvc panel item plugin to be loaded.
         """
 
-        # retrieves the serialized message
-        serialized_message = self.web_mvc_manager_communication_helper._get_serialized_message("web_mvc_manager/side_panel/reload", "")
-
-        # generates the communication event
-        self.web_mvc_manager_plugin.generate_event("web.mvc.communication", ["web_mvc_manager/communication", serialized_message])
+        # reloads the ui in the client side
+        self._reload_ui()
 
     def unload_web_mvc_panel_item_plugin(self, web_mvc_panel_item_plugin):
         """
@@ -344,18 +335,12 @@ class WebMvcManager:
         @param web_mvc_panel_item_plugin: The web mvc panel item plugin to be unloaded.
         """
 
-        # retrieves the serialized message
-        serialized_message = self.web_mvc_manager_communication_helper._get_serialized_message("web_mvc_manager/side_panel/reload", "")
-
-        # generates the communication event
-        self.web_mvc_manager_plugin.generate_event("web.mvc.communication", ["web_mvc_manager/communication", serialized_message])
+        # reloads the ui in the client side
+        self._reload_ui()
 
     def process_web_mvc_side_panel_reload_event(self, event_name, validation):
-        # retrieves the serialized message
-        serialized_message = self.web_mvc_manager_communication_helper._get_serialized_message("web_mvc_manager/side_panel/reload", "")
-
-        # generates the communication event
-        self.web_mvc_manager_plugin.generate_event("web.mvc.communication", ["web_mvc_manager/communication", serialized_message])
+        # reloads the ui in the client side
+        self._reload_ui()
 
     def require_permissions(self, controller, rest_request, permissions_list = [], base_path = None):
         """
@@ -399,6 +384,19 @@ class WebMvcManager:
 
         # returns true
         return True
+
+    def _reload_ui(self):
+        # retrieves the serialized message
+        serialized_message = self.web_mvc_manager_communication_helper._get_serialized_message("web_mvc_manager/header/reload", "")
+
+        # generates the communication event
+        self.web_mvc_manager_plugin.generate_event("web.mvc.communication", ["web_mvc_manager/communication", serialized_message])
+
+        # retrieves the serialized message
+        serialized_message = self.web_mvc_manager_communication_helper._get_serialized_message("web_mvc_manager/side_panel/reload", "")
+
+        # generates the communication event
+        self.web_mvc_manager_plugin.generate_event("web.mvc.communication", ["web_mvc_manager/communication", serialized_message])
 
     def _add_menu_item(self, menu_item, base_address):
         base_item, _rest_items = menu_item.split("/", 1)

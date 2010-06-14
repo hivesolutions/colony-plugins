@@ -99,6 +99,9 @@ function messageProcessor(data) {
                         "timeout" : 5000
                     });
         });
+    } else if (messageId == "web_mvc_manager/header/reload") {
+        // reloads the header
+        $("body").page("reloadHeader");
     } else if (messageId == "web_mvc_manager/side_panel/reload") {
         // retrieves the current active menu as the target menu
         var targetMenu = $("#main-container").data("menu");
