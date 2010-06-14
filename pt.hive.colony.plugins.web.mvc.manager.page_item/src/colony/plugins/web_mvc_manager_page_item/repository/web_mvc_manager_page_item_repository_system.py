@@ -49,7 +49,7 @@ EXTRAS_PATH = WEB_MVC_MANAGER_PAGE_ITEM_REPOSITORY_RESOURCES_PATH + "/extras"
 
 REPOSITORY_LIST_PAGE_ITEM_ATTRIBUTES = {"menu" : "update/Repositories",
                                         "side_panel" : "lists/Repositories",
-                                        "base_address" : "web_mvc_manager/repositories",
+                                        "base_address" : "repositories",
                                         "pattern" : (r"^web_mvc_manager/repositories$", 1)}
 """ The repository list page item attributes """
 
