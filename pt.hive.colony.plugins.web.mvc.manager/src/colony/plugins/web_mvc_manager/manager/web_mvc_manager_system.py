@@ -244,13 +244,13 @@ class WebMvcManager:
             # and the base address is also defined
             if page_item_menu and page_item_base_address:
                 # adds the menu item for the menu and base address
-                self.add_menu_item(page_item_menu, page_item_base_address)
+                self._add_menu_item(page_item_menu, page_item_base_address)
 
             # in case there is a side panel defined for the page item
             # and the base address is also defined
             if page_item_side_panel and page_item_base_address:
                 # adds the side panel item for the side panel and base address
-                self.add_side_panel_item(page_item_side_panel, page_item_base_address)
+                self._add_side_panel_item(page_item_side_panel, page_item_base_address)
 
             # retrieves the page item pattern
             page_item_pattern = page_item.get("pattern", None)
@@ -276,55 +276,51 @@ class WebMvcManager:
         # generates the communication event
         self.web_mvc_manager_plugin.generate_event("web.mvc.communication", ["web_mvc_manager/communication", serialized_message])
 
-    def add_menu_item(self, menu_item, base_address):
-        base_item, _rest_items = menu_item.split("/", 1)
-
-        _rest_items, target_item = menu_item.rsplit("/", 1)
-
-        if not base_item in self.menu_items_map:
-            self.menu_items_map[base_item] = []
-
-        base_item_list = self.menu_items_map[base_item]
-
-        # creates the target item map
-        target_item_map = {"target" : target_item, "address" : base_address}
-
-        # adds the target item map to the base item list
-        base_item_list.append(target_item_map)
-
-    def add_side_panel_item(self, side_panel_item, base_address):
-        # splits the side panel item
-        side_panel_item_splitted = side_panel_item.split("/")
-
-        # retrieves the side panel item splitted length
-        side_panel_item_splitted_length = len(side_panel_item_splitted)
-
-        # in case the side panel item splitted length is not two
-        if not side_panel_item_splitted_length == 2:
-            # raises a run time exception
-            raise web_mvc_manager_exceptions.RuntimeException("invalid side panel item length")
-
-        # upacks the side panel item splitted, retrieving
-        # the base item and the target item
-        base_item, target_item = side_panel_item_splitted
-
-        # in case the base item does not exists in the menu items map
-        if not base_item in self.menu_items_map:
-            # creates a list for the current base item in the side panel
-            # items map
-            self.side_panel_items_map[base_item] = []
-
-        # retrieves the base item list
-        base_item_list = self.side_panel_items_map[base_item]
-
-        # creates the target item tuple
-        target_item_tuple = (target_item, base_address)
-
-        # adds the target item tuple to the base item list
-        base_item_list.append(target_item_tuple)
-
     def unload_web_mvc_manager_page_item_bundle_plugin(self, web_mvc_manager_page_item_bundle_plugin):
-        print web_mvc_manager_page_item_bundle_plugin
+        # retrieves the page item bundle from the web mvc manager page item bundle plugin
+        page_item_bundle = web_mvc_manager_page_item_bundle_plugin.get_page_item_bundle({})
+
+        # iterate over all the page items in the
+        # page item bundle
+        for page_item in page_item_bundle:
+            # retrieves the page item menu
+            page_item_menu = page_item.get("menu", None)
+
+            # retrieves the page item side panel
+            page_item_side_panel = page_item.get("side_panel", None)
+
+            # retrieves the base address item side panel
+            page_item_base_address = page_item.get("base_address", None)
+
+            # in case there is a menu defined for the page item
+            # and the base address is also defined
+            if page_item_menu and page_item_base_address:
+                # removes the menu item for the menu and base address
+                self._remove_menu_item(page_item_menu, page_item_base_address)
+
+            # in case there is a side panel defined for the page item
+            # and the base address is also defined
+            if page_item_side_panel and page_item_base_address:
+                # removes the side panel item for the side panel and base address
+                self._remove_side_panel_item(page_item_side_panel, page_item_base_address)
+
+            # retrieves the page item pattern
+            page_item_pattern = page_item.get("pattern", None)
+
+            # retrieves the page item pattern name
+            page_item_pattern_name = page_item_pattern[0]
+
+            # unsets the page item in the extra patterns map
+            del self.extra_patterns_map[page_item_pattern_name]
+
+        # generates the patterns event
+        self.web_mvc_manager_plugin.generate_event("web.mvc.patterns", [self.web_mvc_manager_plugin])
+
+        # retrieves the serialized message
+        serialized_message = self.web_mvc_manager_communication_helper._get_serialized_message("web_mvc_manager/side_panel/reload", "")
+
+        # generates the communication event
+        self.web_mvc_manager_plugin.generate_event("web.mvc.communication", ["web_mvc_manager/communication", serialized_message])
 
     def load_web_mvc_panel_item_plugin(self, web_mvc_panel_item_plugin):
         """
@@ -403,6 +399,106 @@ class WebMvcManager:
 
         # returns true
         return True
+
+    def _add_menu_item(self, menu_item, base_address):
+        base_item, _rest_items = menu_item.split("/", 1)
+
+        _rest_items, target_item = menu_item.rsplit("/", 1)
+
+        if not base_item in self.menu_items_map:
+            self.menu_items_map[base_item] = []
+
+        base_item_list = self.menu_items_map[base_item]
+
+        # creates the target item map
+        target_item_map = {"target" : target_item, "address" : base_address}
+
+        # adds the target item map to the base item list
+        base_item_list.append(target_item_map)
+
+    def _remove_menu_item(self, menu_item, base_address):
+        base_item, _rest_items = menu_item.split("/", 1)
+
+        _rest_items, target_item = menu_item.rsplit("/", 1)
+
+        if not base_item in self.menu_items_map:
+            self.menu_items_map[base_item] = []
+
+        base_item_list = self.menu_items_map[base_item]
+
+        # creates the target item map
+        target_item_map = {"target" : target_item, "address" : base_address}
+
+        # in case the target item map
+        # exists in the base item list
+        if target_item_map in base_item_list:
+            # removes the target item map from the base item list
+            base_item_list.remove(target_item_map)
+
+    def _add_side_panel_item(self, side_panel_item, base_address):
+        # splits the side panel item
+        side_panel_item_splitted = side_panel_item.split("/")
+
+        # retrieves the side panel item splitted length
+        side_panel_item_splitted_length = len(side_panel_item_splitted)
+
+        # in case the side panel item splitted length is not two
+        if not side_panel_item_splitted_length == 2:
+            # raises a run time exception
+            raise web_mvc_manager_exceptions.RuntimeException("invalid side panel item length")
+
+        # upacks the side panel item splitted, retrieving
+        # the base item and the target item
+        base_item, target_item = side_panel_item_splitted
+
+        # in case the base item does not exists in the menu items map
+        if not base_item in self.menu_items_map:
+            # creates a list for the current base item in the side panel
+            # items map
+            self.side_panel_items_map[base_item] = []
+
+        # retrieves the base item list
+        base_item_list = self.side_panel_items_map[base_item]
+
+        # creates the target item tuple
+        target_item_tuple = (target_item, base_address)
+
+        # adds the target item tuple to the base item list
+        base_item_list.append(target_item_tuple)
+
+    def _remove_side_panel_item(self, side_panel_item, base_address):
+        # splits the side panel item
+        side_panel_item_splitted = side_panel_item.split("/")
+
+        # retrieves the side panel item splitted length
+        side_panel_item_splitted_length = len(side_panel_item_splitted)
+
+        # in case the side panel item splitted length is not two
+        if not side_panel_item_splitted_length == 2:
+            # raises a run time exception
+            raise web_mvc_manager_exceptions.RuntimeException("invalid side panel item length")
+
+        # upacks the side panel item splitted, retrieving
+        # the base item and the target item
+        base_item, target_item = side_panel_item_splitted
+
+        # in case the base item does not exists in the menu items map
+        if not base_item in self.menu_items_map:
+            # creates a list for the current base item in the side panel
+            # items map
+            self.side_panel_items_map[base_item] = []
+
+        # retrieves the base item list
+        base_item_list = self.side_panel_items_map[base_item]
+
+        # creates the target item tuple
+        target_item_tuple = (target_item, base_address)
+
+        # in case the target item tuple
+        # exists in the base item list
+        if target_item_tuple in base_item_list:
+            # removes the target item tuple from the base item list
+            base_item_list.remove(target_item_tuple)
 
 class WebMvcManagerCommunicationController:
     """
