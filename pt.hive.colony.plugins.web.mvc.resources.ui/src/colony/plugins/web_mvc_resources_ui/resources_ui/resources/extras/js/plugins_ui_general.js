@@ -24,9 +24,12 @@
 // __license__   = GNU General Public License (GPL), Version 3
 
 (function($) {
-    $.fn.page = function(options) {
+    $.fn.page = function(method, options) {
         // the default values for the menu
         var defaults = {};
+
+        // sets the default method value
+        var method = method ? method : "default";
 
         // sets the default options value
         var options = options ? options : {};
@@ -86,8 +89,62 @@
         var _registerHandlers = function() {
         };
 
-        // initializes the plugin
-        initialize();
+        var _reloadHeader = function(matchedObject, options) {
+            // retrieves the base path
+            var basePath = getBasePath();
+
+            // creates the full target path by prepending the
+            // base path to the header path
+            var fullTarget = basePath + "/manager/header"
+
+            $.ajax({
+                        url : fullTarget,
+                        success : function(data) {
+                            __reloadMenuBar(matchedObject, options, data);
+                        },
+                        error : function(request, textStatus, errorThrown) {
+                        }
+                    });
+        };
+
+        var __reloadMenuBar = function(matchedObject, options, contents) {
+            // retrieves the header element
+            var header = $("#header", matchedObject);
+
+            // retrieves the menu bar element active
+            var menuBarElementActive = $("#menu-bar > ul > li.active > a",
+                    header);
+
+            // removes the menu bar element active id
+            var menuBarElementActiveId = menuBarElementActive.attr("id");
+
+            // clears the header element
+            header.empty();
+
+            // appends the contents to the header
+            header.append(contents);
+
+            // removes the active class from the current active list item
+            $("#menu-bar > ul > li.active", header).removeClass("active");
+
+            // adds the active class to the previopus acrive list item
+            $("#menu-bar > ul > li > #" + menuBarElementActiveId).parent().addClass("active");
+
+            // creates the menu bar in the menu bar component
+            $("#menu-bar", matchedObject).menubar();
+        };
+
+        // switches over the method
+        switch (method) {
+            case "reloadHeader" :
+                _reloadHeader(matchedObject, options);
+                break;
+
+            case "default" :
+                // initializes the plugin
+                initialize();
+                break;
+        }
 
         // returns the object
         return this;
