@@ -26,7 +26,9 @@
 (function($) {
     $.fn.page = function(method, options) {
         // the default values for the menu
-        var defaults = {};
+        var defaults = {
+            headerPath : "header"
+        };
 
         // sets the default method value
         var method = method ? method : "default";
@@ -90,12 +92,15 @@
         };
 
         var _reloadHeader = function(matchedObject, options) {
+            // retrieves the header path
+            var headerPath = options["headerPath"];
+
             // retrieves the base path
             var basePath = getBasePath();
 
             // creates the full target path by prepending the
             // base path to the header path
-            var fullTarget = basePath + "/manager/header"
+            var fullTarget = basePath + headerPath
 
             $.ajax({
                         url : fullTarget,
