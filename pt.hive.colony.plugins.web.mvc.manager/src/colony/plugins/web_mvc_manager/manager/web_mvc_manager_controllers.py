@@ -121,7 +121,7 @@ class SidePanelController:
         Handles the given update rest request.
 
         @type rest_request: RestRequest
-        @param rest_request: The take the bill index rest request
+        @param rest_request: The take the bill update rest request
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
@@ -149,7 +149,7 @@ class SidePanelController:
         Handles the given configuration rest request.
 
         @type rest_request: RestRequest
-        @param rest_request: The take the bill index rest request
+        @param rest_request: The take the bill configuration rest request
         to be handled.
         @type parameters: Dictionary
         @param parameters: The handler parameters.
@@ -192,6 +192,79 @@ class SidePanelController:
 
         # assigns the panel items to the template
         template_file.assign("panel_items", panel_items_list)
+
+class HeaderController:
+    """
+    The header controller.
+    """
+
+    web_mvc_manager_plugin = None
+    """ The web mvc manager plugin """
+
+    web_mvc_manager = None
+    """ The web mvc manager """
+
+    def __init__(self, web_mvc_manager_plugin, web_mvc_manager):
+        """
+        Constructor of the class.
+
+        @type web_mvc_manager_plugin: WebMvcManagerPlugin
+        @param web_mvc_manager_plugin: The web mvc manager plugin.
+        @type web_mvc_manager: WebMvcManager
+        @param web_mvc_manager: The web mvc manager.
+        """
+
+        self.web_mvc_manager_plugin = web_mvc_manager_plugin
+        self.web_mvc_manager = web_mvc_manager
+
+    def start(self):
+        """
+        Method called upon structure initialization.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_manager_plugin.manager
+
+        # retrieves the web mvc manager plugin path
+        web_mvc_manager_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_manager_plugin.id)
+
+        # creates the templates path
+        templates_path = web_mvc_manager_plugin_path + "/" + TEMPLATES_PATH
+
+        # sets the templates path
+        self.set_templates_path(templates_path)
+
+    def handle_header(self, rest_request, parameters = {}):
+        """
+        Handles the given header rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The take the bill header rest request
+        to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
+        # retrieves the template file
+        template_file = self.retrieve_template_file("header.html.tpl")
+
+        # assigns the header variables
+        self._assign_header_variables(template_file)
+
+        # applies the base path to the template file
+        self.apply_base_path_template_file(rest_request, template_file)
+
+        # processes the template file and sets the request contents
+        self.process_set_contents(rest_request, template_file)
+
+        # returns true
+        return True
+
+    def _assign_header_variables(self, template_file):
+        # assigns the menu items to the template
+        template_file.assign("menu_items", self.web_mvc_manager.menu_items_map)
 
 class PluginController:
     """
@@ -328,8 +401,11 @@ class PluginController:
             # sets the side panel to be included
             template_file.assign("side_panel_include", "side_panel/side_panel_configuration.html.tpl")
 
-            # assigns the configuration (side panel) variable to the template
+            # assigns the configuration (side panel) variables to the template
             self.web_mvc_manager.web_mvc_manager_side_panel_controller._assign_configuration_variables(template_file)
+
+            # assigns the header variables to the template
+            self.web_mvc_manager.web_mvc_manager_header_controller._assign_header_variables(template_file)
 
         # assigns the session variables to the template file
         self.assign_session_template_file(rest_request, template_file)

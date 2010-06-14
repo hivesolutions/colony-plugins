@@ -75,6 +75,9 @@ class WebMvcManager:
     web_mvc_manager_side_panel_controller = None
     """ The web mvc manager side panel controller """
 
+    web_mvc_manager_header_controller = None
+    """ The web mvc manager header controller """
+
     web_mvc_manager_plugin_controller = None
     """ The web mvc manager plugin controller """
 
@@ -125,6 +128,9 @@ class WebMvcManager:
         # creates the web mvc manager side panel controller
         self.web_mvc_manager_side_panel_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_controllers.SidePanelController, [self.web_mvc_manager_plugin, self], {})
 
+        # creates the web mvc manager header controller
+        self.web_mvc_manager_header_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_controllers.HeaderController, [self.web_mvc_manager_plugin, self], {})
+
         # creates the web mvc manager plugin controller
         self.web_mvc_manager_plugin_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_controllers.PluginController, [self.web_mvc_manager_plugin, self], {})
 
@@ -151,7 +157,8 @@ class WebMvcManager:
         base_patters_map = {r"^web_mvc_manager/?$" : self.web_mvc_manager_main_controller.handle_web_mvc_manager_index,
                             r"^web_mvc_manager/index$" : self.web_mvc_manager_main_controller.handle_web_mvc_manager_index,
                             r"^web_mvc_manager/side_panel/configuration$" : self.web_mvc_manager_side_panel_controller.handle_configuration,
-                            r"^web_mvc_manager/side_panel/update" : self.web_mvc_manager_side_panel_controller.handle_update,
+                            r"^web_mvc_manager/side_panel/update$" : self.web_mvc_manager_side_panel_controller.handle_update,
+                            r"^web_mvc_manager/header$" : self.web_mvc_manager_header_controller.handle_header,
                             r"^web_mvc_manager/plugins$" : self.web_mvc_manager_plugin_controller.handle_list,
                             #r"^web_mvc_manager/plugins/[a-zA-Z0-9\._]+$" : self.web_mvc_manager_plugin_controller.handle_show,
                             r"^web_mvc_manager/plugins/partial$" : self.web_mvc_manager_plugin_controller.handle_partial_list,
@@ -194,16 +201,6 @@ class WebMvcManager:
         @return: The map of regular expressions to be used as resource patterns,
         to the web mvc service.
         """
-
-        # estes sao os patterns para serem enviados para
-        # o file handleers
-
-        # tinha de sacar aki o plugin path
-        # e tinha de perceber para onde e ke os tinha de enviar
-
-        # tenho de mandar um evento sempre que alguma destas coisas muda
-
-        # tenho de ter sempre paths relativos a uma base (neste caso web_mvc_manager)
 
         # retrieves the plugin manager
         plugin_manager = self.web_mvc_manager_plugin.manager
@@ -256,12 +253,19 @@ class WebMvcManager:
                 self.add_side_panel_item(page_item_side_panel, page_item_base_address)
 
             # retrieves the page item pattern
-            page_item_patter = page_item.get("pattern", None)
+            page_item_pattern = page_item.get("pattern", None)
 
             # retrieves the page item action
             page_item_action = page_item.get("action", None)
 
-            self.extra_patterns_map[page_item_patter[0]] = self.web_mvc_manager_main_controller.generate_handle_handle_web_mvc_manager_page_item(page_item_action)
+            # retrieves the page item pattern name
+            page_item_pattern_name = page_item_pattern[0]
+
+            # retrieves the page item value
+            page_item_value = self.web_mvc_manager_main_controller.generate_handle_handle_web_mvc_manager_page_item(page_item_action)
+
+            # sets the page item in the extra patterns map
+            self.extra_patterns_map[page_item_pattern_name] = page_item_value
 
         # generates the patterns event
         self.web_mvc_manager_plugin.generate_event("web.mvc.patterns", [self.web_mvc_manager_plugin])
@@ -282,10 +286,11 @@ class WebMvcManager:
 
         base_item_list = self.menu_items_map[base_item]
 
-        target_item_tuple = (target_item, base_address)
+        # creates the target item map
+        target_item_map = {"target" : target_item, "address" : base_address}
 
-        # adds the target item tuple to the base item list
-        base_item_list.append(target_item_tuple)
+        # adds the target item map to the base item list
+        base_item_list.append(target_item_map)
 
     def add_side_panel_item(self, side_panel_item, base_address):
         # splits the side panel item
@@ -496,8 +501,6 @@ class WebMvcManagerMainController:
         # retrieves the template file
         template_file = self.retrieve_template_file("general.html.tpl")
 
-        # sets the page to be included
-
         # applies the base path to the template file
         self.apply_base_path_template_file(rest_request, template_file)
 
@@ -529,6 +532,9 @@ class WebMvcManagerMainController:
 
                 # assigns the configuration (side panel) variable to the template
                 self.web_mvc_manager.web_mvc_manager_side_panel_controller._assign_configuration_variables(template_file)
+
+                # assigns the header variables to the template
+                self.web_mvc_manager.web_mvc_manager_header_controller._assign_header_variables(template_file)
             else:
                 # sets the template file to invalid
                 template_file = None

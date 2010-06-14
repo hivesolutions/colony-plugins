@@ -28,8 +28,10 @@
         <ul>
             <li class="active"><a id="global">Global</a></li>
             <li><a id="reports">Reports</a></li>
-            <li><a id="update">Update</a></li>
             <li><a id="configuration">Configuration</a></li>
+            ${foreach item=menu_item_value key=menu_item_name from=menu_items}
+               <li><a id="${out_none value=menu_item_name /}">${out_none value=menu_item_name /}</a></li>
+            ${/foreach}
         </ul>
         <div id="menu-bar-search-field" class="search-field">
              <input class="text" type="text"/>
@@ -51,11 +53,6 @@
             <li><a href="">Top Users Report</a></li>
         </ul>
     </div>
-    <div id="update-menu" class="drop-menu">
-        <ul>
-            <li><a href="#repositories">Repositories</a></li>
-        </ul>
-    </div>
     <div id="configuration-menu" class="drop-menu">
         <ul>
             <li><a href="#plugins">Plugins</a></li>
@@ -68,6 +65,15 @@
             <li><a href="">API</a></li>
         </ul>
     </div>
+    ${foreach item=menu_item_value key=menu_item_name from=menu_items}
+       <div id="${out_none value=menu_item_name /}-menu" class="drop-menu">
+        <ul>
+            ${foreach item=menu_item_item from=menu_item_value}
+            <li><a href="#${out_none value=menu_item_item.address /}">${out_none value=menu_item_item.target /}</a></li>
+            ${/foreach}
+        </ul>
+    </div>
+    ${/foreach}
 </div>
 <div id="filter"></div>
 <div id="loading-message"></div>
