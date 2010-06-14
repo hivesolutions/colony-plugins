@@ -530,7 +530,7 @@ class WebMvcManagerMainController:
                 # retrieves the template file
                 template_file = self.retrieve_template_file("general.html.tpl")
 
-                # assigns the configuration (side panel) variable to the template
+                # assigns the configuration (side panel) variables to the template
                 self.web_mvc_manager.web_mvc_manager_side_panel_controller._assign_configuration_variables(template_file)
 
                 # assigns the header variables to the template
