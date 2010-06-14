@@ -261,24 +261,30 @@ class WebMvc:
 
         # iterates over all the patterns in the web mvc service plugin patterns
         for pattern_key in web_mvc_service_plugin_patterns:
-            # removes the pattern from the web mvc service patterns map
-            del self.web_mvc_service_patterns_map[pattern_key]
+            # in case the pattern key exists in the web mvc service patterns map
+            if pattern_key in self.web_mvc_service_patterns_map:
+                # removes the pattern from the web mvc service patterns map
+                del self.web_mvc_service_patterns_map[pattern_key]
 
         # retrieves the web mvc service plugin communication patterns
         web_mvc_service_plugin_communication_patterns = web_mvc_service_plugin.get_communication_patterns()
 
         # iterates over all the communication patterns in the web mvc service plugin communication patterns
         for pattern_key in web_mvc_service_plugin_communication_patterns:
-            # removes the pattern from the web mvc service communication patterns map
-            del self.web_mvc_service_communication_patterns_map[pattern_key]
+            # in case the pattern key exists in the web mvc service communication patterns map
+            if pattern_key in self.web_mvc_service_communication_patterns_map:
+                # removes the pattern from the web mvc service communication patterns map
+                del self.web_mvc_service_communication_patterns_map[pattern_key]
 
         # retrieves the web mvc service plugin resource patterns
         web_mvc_service_plugin_resource_patterns = web_mvc_service_plugin.get_resource_patterns()
 
         # iterates over all the resource patterns in the web mvc service plugin resource patterns
         for pattern_key in web_mvc_service_plugin_resource_patterns:
-            # removes the pattern from the web mvc service resource patterns map
-            del self.web_mvc_service_resource_patterns_map[pattern_key]
+            # in case the pattern key exists in the web mvc service resource patterns map
+            if pattern_key in self.web_mvc_service_resource_patterns_map:
+                # removes the pattern from the web mvc service resource patterns map
+                del self.web_mvc_service_resource_patterns_map[pattern_key]
 
         # updates the matching regex
         self._update_matching_regex()
@@ -290,14 +296,11 @@ class WebMvc:
         self._update_resource_matching_regex()
 
     def process_web_mvc_patterns_event(self, event_name, plugin):
-        # updates the matching regex
-        self._update_matching_regex()
+        # unloads the web mvc service plugin
+        self.unload_web_mvc_service_plugin(plugin)
 
-        # updates the communication matching regex
-        self._update_communication_matching_regex()
-
-        # updates the resource matching regex
-        self._update_resource_matching_regex()
+        # loads the web mvc service plugin
+        self.load_web_mvc_service_plugin(plugin)
 
     def process_web_mvc_communication_event(self, event_name, connection_name, message):
         # sends the broadcast message
