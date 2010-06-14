@@ -22,6 +22,8 @@
             "web_mvc_manager_page_item/repository/web_mvc_manager_page_item_repository_exceptions.py",
             "web_mvc_manager_page_item/repository/web_mvc_manager_page_item_repository_system.py",
             "web_mvc_manager_page_item/repository/resources/baf.xml",
+            "web_mvc_manager_page_item/repository/resources/extras/templates/repository/repository_edit_contents.js",
+            "web_mvc_manager_page_item/repository/resources/extras/templates/repository/repository_list_contents.js",
             "web_mvc_manager_page_item/repository/resources/templates/repository/repository_edit_contents.html.tpl",
             "web_mvc_manager_page_item/repository/resources/templates/repository/repository_list_contents.html.tpl",
             "web_mvc_manager_page_item/repository/resources/templates/repository/repository_partial_list_contents.html.tpl",

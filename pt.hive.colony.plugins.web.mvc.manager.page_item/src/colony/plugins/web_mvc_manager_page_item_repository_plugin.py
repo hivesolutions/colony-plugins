@@ -53,7 +53,7 @@ class WebMvcManagerPageItemRepositoryPlugin(colony.plugins.plugin_system.Plugin)
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/web_mvc_manager_page_item/monitor/resources/baf.xml"}
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/web_mvc_manager_page_item/repository/resources/baf.xml"}
     capabilities = ["web.mvc.manager.page_item_bundle", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
@@ -98,6 +98,19 @@ class WebMvcManagerPageItemRepositoryPlugin(colony.plugins.plugin_system.Plugin)
     @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.web.mvc.manager.page_item.repository", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    def get_resource_patterns(self):
+        """
+        Retrieves the map of regular expressions to be used as resource patters,
+        to the web mvc service. The map should relate the route with the base
+        file system path to be used.
+
+        @rtype: Dictionary
+        @return: The map of regular expressions to be used as resource patterns,
+        to the web mvc service.
+        """
+
+        return self.web_mvc_manager_page_item_repository.get_resource_patterns()
 
     def get_page_item_bundle(self, parameters):
         """

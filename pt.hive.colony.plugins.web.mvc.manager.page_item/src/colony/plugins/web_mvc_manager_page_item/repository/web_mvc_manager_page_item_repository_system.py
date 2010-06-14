@@ -41,6 +41,12 @@ import colony.libs.map_util
 
 import web_mvc_manager_page_item_repository_controllers
 
+WEB_MVC_MANAGER_PAGE_ITEM_REPOSITORY_RESOURCES_PATH = "web_mvc_manager_page_item/repository/resources"
+""" The web mvc manager page item repository resources path """
+
+EXTRAS_PATH = WEB_MVC_MANAGER_PAGE_ITEM_REPOSITORY_RESOURCES_PATH + "/extras"
+""" The extras path """
+
 REPOSITORY_LIST_PAGE_ITEM_ATTRIBUTES = {"menu" : "update/Repositories",
                                         "side_panel" : "lists/Repositories",
                                         "base_address" : "web_mvc_manager/repositories",
@@ -91,6 +97,25 @@ class WebMvcManagerPageItemRepository:
 
         # creates the web mvc panel item monitor main controller
         self.web_mvc_panel_item_monitor_main_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_page_item_repository_controllers.WebMvcManagerPageItemRepositoryController, [self.web_mvc_manager_page_item_repository_plugin, self], {})
+
+    def get_resource_patterns(self):
+        """
+        Retrieves the map of regular expressions to be used as resource patters,
+        to the web mvc service. The map should relate the route with the base
+        file system path to be used.
+
+        @rtype: Dictionary
+        @return: The map of regular expressions to be used as resource patterns,
+        to the web mvc service.
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_manager_page_item_repository_plugin.manager
+
+        # retrieves the web mvc manager page item repository plugin path
+        web_mvc_manager_page_item_repository_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_manager_page_item_repository_plugin.id)
+
+        return {r"^web_mvc_manager/resources_page_item_repository/.+$" : (web_mvc_manager_page_item_repository_plugin_path + "/" + EXTRAS_PATH, "web_mvc_manager/resources_page_item_repository")}
 
     def get_page_item_bundle(self, parameters):
         """
