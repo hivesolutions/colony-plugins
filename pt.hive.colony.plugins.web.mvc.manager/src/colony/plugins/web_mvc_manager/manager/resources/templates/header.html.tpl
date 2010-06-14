@@ -41,7 +41,7 @@
     <div id="global-menu" class="drop-menu">
         <ul>
             <li><a href="#dashboard">Dashboard</a></li>
-            <li><a href="#search">Pesquisa</a></li>
+            <li><a href="#search">Search</a></li>
         </ul>
     </div>
     <div id="reports-menu" class="drop-menu">
