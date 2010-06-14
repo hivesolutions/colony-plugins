@@ -48,7 +48,7 @@ import colony.libs.string_buffer_util
 import template_engine_ast
 import template_engine_exceptions
 
-FUNCTION_TYPES = [types.MethodType, types.FunctionType]
+FUNCTION_TYPES = (types.MethodType, types.FunctionType, types.BuiltinMethodType, types.BuiltinFunctionType)
 """ The function types """
 
 def _visit(ast_node_class):
