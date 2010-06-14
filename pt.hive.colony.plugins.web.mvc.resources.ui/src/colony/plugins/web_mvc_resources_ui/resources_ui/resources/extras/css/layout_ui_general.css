@@ -142,6 +142,7 @@ h2 {
 #notification-area.right {
     width: auto;
     right: 0px;
+    min-width: 1px;
 }
 
 #notification-area-contents {
