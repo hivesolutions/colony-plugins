@@ -435,6 +435,11 @@ class WebMvcManager:
             # removes the target item map from the base item list
             base_item_list.remove(target_item_map)
 
+        # in case the base item list is empty
+        if not base_item_list:
+            # removes the base item from the menu items map
+            del self.menu_items_map[base_item]
+
     def _add_side_panel_item(self, side_panel_item, base_address):
         # splits the side panel item
         side_panel_item_splitted = side_panel_item.split("/")
