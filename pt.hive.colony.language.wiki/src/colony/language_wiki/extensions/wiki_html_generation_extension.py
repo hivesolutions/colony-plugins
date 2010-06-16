@@ -370,6 +370,25 @@ class WikiHtmlGenerator(language_wiki.wiki_extension_system.WikiExtension):
             # creates the target full path
             target_full_path = target_path + "/" + file_name
 
+            # retrieves the file stat
+            file_stat = os.stat(file_path)
+
+            # retrieves the modified date
+            modified_date = file_stat[stat.ST_MTIME]
+
+            # in case the target file already exists
+            if os.path.exists(target_full_path):
+                # retrieves the file stat
+                target_file_stat = os.stat(target_full_path)
+
+                # retrieves the modified date
+                target_modified_date = target_file_stat[stat.ST_MTIME]
+
+                # in case the modified date is the same (no modification)
+                if modified_date == target_modified_date:
+                    # continues the loop
+                    continue
+
             # opens the file for reading
             file = open(file_path, "rb")
 
@@ -387,3 +406,6 @@ class WikiHtmlGenerator(language_wiki.wiki_extension_system.WikiExtension):
 
             # closes the target file
             target_file.close()
+
+            # sets the modification and access timestamps in the target file
+            os.utime(target_full_path, (modified_date, modified_date))
