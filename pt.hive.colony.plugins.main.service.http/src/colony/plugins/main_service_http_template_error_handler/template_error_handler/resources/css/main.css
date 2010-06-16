@@ -56,7 +56,7 @@ body {
 
 p {
     margin: 1.0em 0.0em 1.0em 0.0em;
-    line-height: 1.5em;
+    line-height: 1.6em;
     font-size: 9pt;
 }
 
@@ -303,13 +303,13 @@ h5:hover > a.headerlink {
 .warning {
     background: #fff9D8 url(../images/warning_note.gif) no-repeat scroll 0px 0px;
     padding: 18px 52px 18px 52px;
-    line-height: 1.5em;
+    line-height: 1.6em;
 }
 
 .error {
     background: #f9d9d8 url(../images/error_note.gif) no-repeat scroll 0px 0px;
     padding: 18px 52px 18px 52px;
-    line-height: 1.5em;
+    line-height: 1.6em;
 }
 
 .error .description-header {
@@ -317,7 +317,7 @@ h5:hover > a.headerlink {
 }
 
 .error .traceback-header {
-    margin-top: 1.5em;
+    margin-top: 1.6em;
 }
 
 .error .description {
