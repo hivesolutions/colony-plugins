@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import os
+import stat
 
 import language_wiki.wiki_parser
 import language_wiki.wiki_extension_system
@@ -208,6 +209,28 @@ class WikiHtmlGenerator(language_wiki.wiki_extension_system.WikiExtension):
                 # creates the full target name
                 full_target_name = full_target_path + "/" + partial_name
 
+                # creates the full target name extension
+                full_target_name_extension = full_target_name + ".xhtml"
+
+                # retrieves the file stat
+                file_stat = os.stat(full_file_path)
+
+                # retrieves the modified date
+                modified_date = file_stat[stat.ST_MTIME]
+
+                # in case the target file already exists
+                if os.path.exists(full_target_name_extension):
+                    # retrieves the file stat
+                    target_file_stat = os.stat(full_target_name_extension)
+
+                    # retrieves the modified date
+                    target_modified_date = target_file_stat[stat.ST_MTIME]
+
+                    # in case the modified date is the same (no modification)
+                    if modified_date == target_modified_date:
+                        # continues the loop
+                        continue
+
                 # prints an info message
                 self.info("Processing in html: %s" % full_file_path)
 
@@ -248,13 +271,16 @@ class WikiHtmlGenerator(language_wiki.wiki_extension_system.WikiExtension):
                 html_value = string_buffer.getvalue()
 
                 # opens the html file
-                html_file = open(full_target_name + ".xhtml", "w+")
+                html_file = open(full_target_name_extension, "w+")
 
                 # writes the html value to the html file
                 html_file.write(html_value)
 
                 # closes the html file
                 html_file.close()
+
+                # sets the modification and access timestamps in the target file
+                os.utime(full_target_name_extension, (modified_date, modified_date))
 
     def _copy_base_files(self, target_path):
         """
