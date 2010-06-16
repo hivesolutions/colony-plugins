@@ -44,14 +44,14 @@ import traceback
 ERROR_HANDLER_NAME = "template"
 """ The error handler name """
 
-XHTML_MIME_TYPE = "application/xhtml+xml"
-""" The xhtml mime type """
+HTML_MIME_TYPE = "text/html"
+""" The html mime type """
 
 TEMPLATE_ERROR_HANDLER_RESOURCES_PATH = "main_service_http_template_error_handler/template_error_handler/resources"
 """ The template error handler resources path """
 
-HTTP_SERVICE_ERROR_XHTML_TEMPLATE_FILE_NAME = "http_service_error.xhtml"
-""" The http service error xhtml template file name """
+HTTP_SERVICE_ERROR_HTML_TEMPLATE_FILE_NAME = "http_service_error.html"
+""" The http service error html template file name """
 
 STATUS_CODE_VALUES = {200 : "OK", 207 : "Multi-Status",
                       301 : "Moved permanently", 302 : "Found", 303 : "See Other",
@@ -88,7 +88,7 @@ class MainServiceHttpTemplateErrorHandler:
 
     def handle_error(self, request, error):
         # sets the request content type
-        request.content_type = "application/xhtml+xml"
+        request.content_type = HTML_MIME_TYPE
 
         # checks if the error contains a status code
         if hasattr(error, "status_code"):
@@ -138,7 +138,7 @@ class MainServiceHttpTemplateErrorHandler:
         main_service_http_template_error_handler_plugin_path = plugin_manager.get_plugin_path_by_id(self.main_service_http_template_error_handler_plugin.id)
 
         # creates the template file path
-        template_file_path = main_service_http_template_error_handler_plugin_path + "/" + TEMPLATE_ERROR_HANDLER_RESOURCES_PATH + "/" + HTTP_SERVICE_ERROR_XHTML_TEMPLATE_FILE_NAME
+        template_file_path = main_service_http_template_error_handler_plugin_path + "/" + TEMPLATE_ERROR_HANDLER_RESOURCES_PATH + "/" + HTTP_SERVICE_ERROR_HTML_TEMPLATE_FILE_NAME
 
         # parses the template file path
         template_file = template_engine_manager_plugin.parse_file_path(template_file_path)
@@ -166,9 +166,6 @@ class MainServiceHttpTemplateErrorHandler:
 
         # decodes the processed template file into a unicode object
         processed_template_file_decoded = processed_template_file.decode("utf-8")
-
-        # sets the request content type
-        request.content_type = XHTML_MIME_TYPE
 
         # sets the status code in the request
         request.status_code = error_code
