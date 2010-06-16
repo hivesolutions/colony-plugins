@@ -50,7 +50,7 @@ import language_wiki.wiki_exceptions
 DEFAULT_RESOURCES_PATH = "resources"
 """ The default resources path """
 
-DOCTYPE_HEADER_VALUE = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:svg=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">"
+DOCTYPE_HEADER_VALUE = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?><!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd\">"
 """ The doctype header value """
 
 META_HEADER_VALUE = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />"
@@ -87,28 +87,28 @@ INDEX_KEYS_LIST = ("Introduction", "Tutorials", "Standards &amp; Practices", "De
 """ The index keys list """
 
 INDEX_MAP = {"Introduction" : {"order" : ["What is Colony?", "What Can I Build With Colony?", "How Can I Get Started?", "How Can I Help?", "Frequently Asked Questions"],
-                               "items" : {"What is Colony?" : "documentation_what_is_colony.xhtml",
-                                          "What Can I Build With Colony?" : "documentation_what_can_i_build_with_colony.xhtml",
-                                          "How Can I Get Started?" : "documentation_how_can_i_get_started.xhtml",
-                                          "How Can I Help?" : "documentation_how_can_i_help.xhtml",
-                                          "Frequently Asked Questions" : "documentation_frequently_asked_questions.xhtml"}},
+                               "items" : {"What is Colony?" : "documentation_what_is_colony.html",
+                                          "What Can I Build With Colony?" : "documentation_what_can_i_build_with_colony.html",
+                                          "How Can I Get Started?" : "documentation_how_can_i_get_started.html",
+                                          "How Can I Help?" : "documentation_how_can_i_help.html",
+                                          "Frequently Asked Questions" : "documentation_frequently_asked_questions.html"}},
              "Tutorials" : {"order" : ["Colony Hello World Tutorial", "Colony Web Hello World Tutorial", "Colony Web MVC Hello World Tutorial"],
-                            "items" : {"Colony Hello World Tutorial" : "documentation_tutorial_colony_hello_world.xhtml",
-                                       "Colony Web Hello World Tutorial" : "documentation_tutorial_colony_web_hello_world.xhtml",
-                                       "Colony Web MVC Hello World Tutorial" : "documentation_tutorial_colony_web_mvc_hello_world.xhtml"}},
+                            "items" : {"Colony Hello World Tutorial" : "documentation_tutorial_colony_hello_world.html",
+                                       "Colony Web Hello World Tutorial" : "documentation_tutorial_colony_web_hello_world.html",
+                                       "Colony Web MVC Hello World Tutorial" : "documentation_tutorial_colony_web_mvc_hello_world.html"}},
              "Standards &amp; Practices" : {"order" : ["Colony Style Guide"],
-                                        "items" :  {"Colony Style Guide" : "documentation_colony_style_guide.xhtml"}},
+                                        "items" :  {"Colony Style Guide" : "documentation_colony_style_guide.html"}},
              "Design documents" : {"order" : ["Colony Plugin Framework", "Colony Web Plugin Framework", "Colony Web MVC Framework"],
-                                   "items" : {"Colony Plugin Framework" : "documentation_colony_plugin_framework.xhtml",
-                                              "Colony Web Plugin Framework" : "documentation_colony_web_plugin_framework.xhtml",
-                                              "Colony Web MVC Framework" : "documentation_colony_web_mvc_framework.xhtml"}},
+                                   "items" : {"Colony Plugin Framework" : "documentation_colony_plugin_framework.html",
+                                              "Colony Web Plugin Framework" : "documentation_colony_web_plugin_framework.html",
+                                              "Colony Web MVC Framework" : "documentation_colony_web_mvc_framework.html"}},
              "How-tos" : {"order" : [],
                           "items" : {}},
              "Demos" : {"order" : [],
                         "items" : {}}}
 """ The index map """
 
-INDEX_PAGE = "index.xhtml"
+INDEX_PAGE = "index.html"
 """ The index page """
 
 BASE_LEVEL_VALUE = 0
@@ -327,6 +327,9 @@ class HtmlGenerationVisitor(language_wiki.wiki_visitor.Visitor):
                 # writes the doc type header
                 self._write(DOCTYPE_HEADER_VALUE)
 
+                # writes the html
+                self._write("<html>")
+
                 # writes the head
                 self._write("<head>")
 
@@ -362,8 +365,8 @@ class HtmlGenerationVisitor(language_wiki.wiki_visitor.Visitor):
                 self._generate_menu_index()
 
                 self._write("</li>")
-                self._write("<li class=\"menu\"><a href=\"documentation_how_can_i_help.xhtml\">Contribute</a></li>")
-                self._write("<li class=\"menu\"><a href=\"documentation_credits.xhtml\">Credits</a></li>")
+                self._write("<li class=\"menu\"><a href=\"documentation_how_can_i_help.html\">Contribute</a></li>")
+                self._write("<li class=\"menu\"><a href=\"documentation_credits.html\">Credits</a></li>")
                 self._write("</ul>")
                 self._write("</div>")
                 self._write("</div>")
@@ -629,7 +632,7 @@ class HtmlGenerationVisitor(language_wiki.wiki_visitor.Visitor):
     @language_wiki.wiki_visitor._visit(language_wiki.wiki_ast.InternalLinkNode)
     def visit_internal_link_node(self, node):
         if self.visit_index == 0:
-            self._write("<a class=\"internal\" href=\"" + node.link_value + ".xhtml\">")
+            self._write("<a class=\"internal\" href=\"" + node.link_value + ".html\">")
 
             # in case the statements node is not defined
             if not node.statements_node:

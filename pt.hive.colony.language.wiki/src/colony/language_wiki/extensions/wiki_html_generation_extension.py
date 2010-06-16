@@ -210,7 +210,7 @@ class WikiHtmlGenerator(language_wiki.wiki_extension_system.WikiExtension):
                 full_target_name = full_target_path + "/" + partial_name
 
                 # creates the full target name extension
-                full_target_name_extension = full_target_name + ".xhtml"
+                full_target_name_extension = full_target_name + ".html"
 
                 # retrieves the file stat
                 file_stat = os.stat(full_file_path)
