@@ -175,7 +175,7 @@ class WebMvcWiki:
 
         partial_file_path = "/".join(rest_request.path_list[1:])
 
-        target_path = "c:/Users/joamag/workspace/pt.hive.colony.documentation.technical/generated"
+        target_path = "c:/generated"
 
         full_file_path = target_path + "/" + partial_file_path + "." + rest_request.encoder_name
 
