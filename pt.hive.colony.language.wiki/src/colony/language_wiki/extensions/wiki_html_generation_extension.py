@@ -75,6 +75,9 @@ BASE_FILES = {"resources/css/main.css" : "/css",
               "resources/images/diagram_note.gif" : "/images"}
 """ The base files """
 
+EXTRA_RESOURCES_MANIFEST_FILE = "extra_resources.manifest"
+""" The extra resources manifest file """
+
 DEFAULT_CONFIGURATION_MAP = {"auto_numbered_sections" : True, "generate_footer" : True}
 """ The default configuration map """
 
@@ -147,6 +150,9 @@ class WikiHtmlGenerator(language_wiki.wiki_extension_system.WikiExtension):
 
         # walks the file path
         os.path.walk(file_path, self.generate_wiki_file, (full_target_path, extra_resources_paths_list))
+
+        # computes the extra resouces manifest file
+        self._compute_extra_resources_manifest(file_path, extra_resources_paths_list)
 
         # copies the base files
         self._copy_base_files(full_target_path)
@@ -251,6 +257,37 @@ class WikiHtmlGenerator(language_wiki.wiki_extension_system.WikiExtension):
 
             # copies the base file to the target path
             self._copy_files((self.manager.get_base_path() + "/" + base_file_path,), target_path + base_target_path)
+
+    def _compute_extra_resources_manifest(self, base_path, extra_resources_paths_list):
+        """
+        Computes the extra resources manifest file, adding the referred file paths
+        to the extra resources paths list.
+
+        @type base_path: String
+        @param base_path: The base path.
+        @type extra_resources_paths_list: List
+        @param extra_resources_paths_list: The extra resources paths list.
+        """
+
+        # creates the complete extra resources manifest file path
+        complete_extra_resouces_manifest_file_path = base_path + "/" + EXTRA_RESOURCES_MANIFEST_FILE
+
+        # in case the complete extra resources manifest file exists
+        if os.path.exists(complete_extra_resouces_manifest_file_path):
+            # opens the extra resources manifest file
+            extra_resources_manifest_file = open(complete_extra_resouces_manifest_file_path)
+
+            # retrieves the extra resources manifest file contents
+            extra_resources_manifest_file_contents = extra_resources_manifest_file.read()
+
+            # closes the extra resources manifest file
+            extra_resources_manifest_file.close()
+
+            # splits the extra resources manifest file contents to retrieve the extra resources
+            extra_resources = extra_resources_manifest_file_contents.split("\n")
+
+            # adds the extra resources to the extra resources path list
+            extra_resources_paths_list.extend(extra_resources)
 
     def _copy_extra_files(self, base_path, target_path, extra_resources_paths_list):
         """
