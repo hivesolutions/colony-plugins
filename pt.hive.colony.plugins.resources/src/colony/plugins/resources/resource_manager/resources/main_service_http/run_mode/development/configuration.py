@@ -94,7 +94,7 @@ configuration = {
                  },
                  "contexts" : {
                      "resolution_order" : ["/colony_web/plugins", "/colony_web", "/colony_manager", "/colony_mod_python",
-                                           "/template_error_handler", "/docs", "/eclipse", "/cgi-bin", "/fastcgi-bin",
+                                           "/template_error_handler", "/eclipse", "/cgi-bin", "/fastcgi-bin",
                                            "/web_administration", "/websession_test", "/websession", "/colony/repository"],
                      "/colony_web" : {
                          "handler" : "file",
@@ -126,14 +126,6 @@ configuration = {
                          "allow_redirection" : False,
                          "request_properties" : {
                              "base_path" : "$resource{system.path.colony}/pt.hive.colony.plugins.main.service.http/src/colony/plugins/main_service_http_template_error_handler/template_error_handler/resources"
-                         }
-                     },
-                     "/docs" : {
-                         "handler" : "file",
-                         "allow_redirection" : False,
-                         "request_properties" : {
-                             "base_path" : "$resource{system.path.colony}/pt.hive.colony.documentation.technical/generated",
-                             "default_page" : "documentation_index.xhtml"
                          }
                      },
                      "/eclipse" : {
