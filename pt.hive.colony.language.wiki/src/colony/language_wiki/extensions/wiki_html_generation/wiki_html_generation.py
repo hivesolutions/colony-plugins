@@ -108,7 +108,7 @@ INDEX_MAP = {"Introduction" : {"order" : ["What is Colony?", "What Can I Build W
                         "items" : {}}}
 """ The index map """
 
-INDEX_PAGE = "documentation_index.xhtml"
+INDEX_PAGE = "index.xhtml"
 """ The index page """
 
 BASE_LEVEL_VALUE = 0

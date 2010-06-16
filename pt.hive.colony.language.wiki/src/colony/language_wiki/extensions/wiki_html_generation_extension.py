@@ -140,8 +140,13 @@ class WikiHtmlGenerator(language_wiki.wiki_extension_system.WikiExtension):
         # creates the extra resources paths list
         extra_resources_paths_list = []
 
-        # creates the full target path
-        full_target_path = file_path + "/" + target_path
+        # in case the target path exists
+        if os.path.exists(target_path):
+            # sets the full target path as the target path
+            full_target_path = target_path
+        else:
+            # creates the full target path
+            full_target_path = file_path + "/" + target_path
 
         # in case the target directory does not exist
         if not os.path.exists(full_target_path):
