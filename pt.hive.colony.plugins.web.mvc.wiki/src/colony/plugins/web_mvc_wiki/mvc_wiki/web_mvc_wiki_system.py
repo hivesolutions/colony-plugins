@@ -203,9 +203,12 @@ class WebMvcWikiController:
             # about the output of the wiki generation
             output_structure = {}
 
+            # creates the configuration map for the html generation
+            configuration_map = {"auto_numbered_sections" : True, "generate_footer" : False, "simple_parse" : True}
+
             # creates the engine properties map
             engine_properties = {"file_path" : wiki_file_path, "target_path" : base_target_path,
-                                 "output_structure" : output_structure, "simple_parse" : True}
+                                 "output_structure" : output_structure, "configuration_map" : configuration_map}
 
             # retrieves the language wiki plugin
             language_wiki_plugin = self.web_mvc_wiki_plugin.language_wiki_plugin
