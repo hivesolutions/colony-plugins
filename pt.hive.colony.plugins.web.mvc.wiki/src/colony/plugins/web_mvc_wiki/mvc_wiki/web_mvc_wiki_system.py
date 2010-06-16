@@ -66,7 +66,8 @@ class WebMvcWiki:
         to the web mvc service.
         """
 
-        return {r"^wiki/.*$" : self.handle_wiki}
+        return {r"^wiki/[a-zA-Z0-9_\.]*$" : self.handle_wiki,
+                r"^wiki/(?:js|images|css)/.*$" : self.handle_resources}
 
     def get_communication_patterns(self):
         """
@@ -95,7 +96,7 @@ class WebMvcWiki:
 
         return {}
 
-    def handle_wiki(self, rest_request):
+    def handle_wiki(self, rest_request, parameters):
         """
         Handles the given wiki rest request.
 
@@ -105,34 +106,90 @@ class WebMvcWiki:
         @return: The result of the handling.
         """
 
-        # primeiro faço import da biblioteca nativa
-        # a partir do path especificado
+        base_file_path = "c:/Users/joamag/workspace/pt.hive.colony.documentation.technical"
 
-        # segundo corro para cada pagina a cada pedido a partir do path
-        # pedido
-
-        file_path = "/Users/joamag/Documents/workspace/pt.hive.colony.documentation.technical"
-
-        target_path = "generated"
-
-        # creates the structure that will hold the information
-        # about the output of the wiki generation
-        output_structure = {}
-
-        # creates the engine properties map
-        engine_properties = {"file_path": file_path, "target_path": target_path, "output_structure": output_structure}
-
-        # retrieves the language wiki plugin
-        language_wiki_plugin = self.web_mvc_wiki_plugin.language_wiki_plugin
-
-        # generates the
-        language_wiki_plugin.generate("html", engine_properties)
+        base_target_path = "c:/generated"
 
         # sets the content type for the rest request
         rest_request.set_content_type("text/html")
 
+        # retrieves the file base path by joining the rest request path
+        file_path = "/".join(rest_request.path_list[1:])
+
+        file_path = file_path.rstrip("/")
+
+        if not file_path:
+            file_path = "index"
+
+        if rest_request.encoder_name:
+            encoder_name = rest_request.encoder_name
+        else:
+            encoder_name = "xhtml"
+
+        target_file_path = base_target_path + "/" + file_path + "." + encoder_name
+
+        if not rest_request.encoder_name or rest_request.encoder_name == "xhtml":
+            # creates the wiki file path
+            wiki_file_path = base_file_path + "/" + file_path + ".wiki"
+
+            # creates the structure that will hold the information
+            # about the output of the wiki generation
+            output_structure = {}
+
+            # creates the engine properties map
+            engine_properties = {"file_path" : wiki_file_path, "target_path" : base_target_path, "output_structure" : output_structure}
+
+            # retrieves the language wiki plugin
+            language_wiki_plugin = self.web_mvc_wiki_plugin.language_wiki_plugin
+
+            # generates the html files using the wiki engine with the given engine properties
+            language_wiki_plugin.generate("html", engine_properties)
+
+        # opens the target file
+        target_file = open(target_file_path, "rb")
+
+        # reads the target file contents
+        target_file_contents = target_file.read()
+
+        # closes the target file
+        target_file.close()
+
         # sets the result for the rest request
-        rest_request.set_result_translated("hello wiki")
+        rest_request.set_result_translated(target_file_contents)
+
+        # flushes the rest request
+        rest_request.flush()
+
+        # returns true
+        return True
+
+    def handle_resources(self, rest_request, parameters):
+        """
+        Handles the given resources rest request.
+
+        @type rest_request: RestRequest
+        @param rest_request: The resources rest request to be handled.
+        @rtype: bool
+        @return: The result of the handling.
+        """
+
+        partial_file_path = "/".join(rest_request.path_list[1:])
+
+        target_path = "c:/Users/joamag/workspace/pt.hive.colony.documentation.technical/generated"
+
+        full_file_path = target_path + "/" + partial_file_path + "." + rest_request.encoder_name
+
+        # opens the resource file
+        resource_file = open(full_file_path, "rb")
+
+        # retrieves the resource file contents
+        resource_file_contents = resource_file.read()
+
+        # closes the resource file
+        resource_file.close()
+
+        # sets the result for the rest request
+        rest_request.set_result_translated(resource_file_contents)
 
         # flushes the rest request
         rest_request.flush()
