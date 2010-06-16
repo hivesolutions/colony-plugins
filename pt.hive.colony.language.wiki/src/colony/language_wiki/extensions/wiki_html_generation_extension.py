@@ -138,6 +138,9 @@ class WikiHtmlGenerator(language_wiki.wiki_extension_system.WikiExtension):
         # retrieves the target path
         target_path = properties.get("target_path", None)
 
+        # retrieves the configuration map
+        configuration_map = properties.get("configuration_map", DEFAULT_CONFIGURATION_MAP)
+
         # creates the extra resources paths list
         extra_resources_paths_list = []
 
@@ -155,7 +158,7 @@ class WikiHtmlGenerator(language_wiki.wiki_extension_system.WikiExtension):
             file_directory_path = file_path
 
             # walks the file path
-            os.path.walk(file_path, self.generate_wiki_file, (full_target_path, extra_resources_paths_list))
+            os.path.walk(file_path, self.generate_wiki_file, (full_target_path, extra_resources_paths_list, configuration_map))
         else:
             # retrieves the file directory path
             file_directory_path = os.path.dirname(file_path)
@@ -164,7 +167,7 @@ class WikiHtmlGenerator(language_wiki.wiki_extension_system.WikiExtension):
             file_base_path = os.path.basename(file_path)
 
             # generates the wiki file
-            self.generate_wiki_file((full_target_path, extra_resources_paths_list), file_directory_path, (file_base_path,))
+            self.generate_wiki_file((full_target_path, extra_resources_paths_list, configuration_map), file_directory_path, (file_base_path,))
 
         # computes the extra resources manifest file
         self._compute_extra_resources_manifest(file_directory_path, extra_resources_paths_list)
@@ -187,8 +190,9 @@ class WikiHtmlGenerator(language_wiki.wiki_extension_system.WikiExtension):
         @param names: The list of name for the current file path.
         """
 
-        # retrieves the full target path and the extra resources paths list from the args
-        full_target_path, extra_resources_paths_list = args
+        # retrieves the full target path, the extra resources paths list
+        # and the configuration map from the args
+        full_target_path, extra_resources_paths_list, configuration_map = args
 
         # iterates over all the names
         for name in names:
@@ -253,7 +257,7 @@ class WikiHtmlGenerator(language_wiki.wiki_extension_system.WikiExtension):
                 generation_visitor = wiki_html_generation.wiki_html_generation.HtmlGenerationVisitor()
                 generation_visitor.set_parser(language_wiki.wiki_parser.parser)
                 generation_visitor.set_extension_manager(self.manager)
-                generation_visitor.set_configuration_map(DEFAULT_CONFIGURATION_MAP)
+                generation_visitor.set_configuration_map(configuration_map)
 
                 # accepts the double visit
                 parse_result.accept_double(generation_visitor)

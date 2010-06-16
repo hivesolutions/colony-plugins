@@ -56,7 +56,7 @@ body {
 
 p {
     margin: 1.0em 0.0em 1.0em 0.0em;
-    line-height: 1.5em;
+    line-height: 1.6em;
 }
 
 h1, h2, h3, h4, h5 {
@@ -237,7 +237,7 @@ h5:hover > a.headerlink {
 
 .menu-contents .menu {
     color: #ffffff;
-    padding: 0.5em 0.0em 0.5em 0.0em;
+    padding: 0.6em 0.0em 0.6em 0.0em;
     margin-left: 1.0em;
     text-shadow: 1px 1px #333333;
 }
@@ -248,7 +248,7 @@ h5:hover > a.headerlink {
 
 .menu-contents .menu-index {
     background-color: #385e9a;
-    padding: 0.5em 1.5em 0.5em 1.5em;
+    padding: 0.6em 1.6em 0.6em 1.6em;
     -moz-border-radius: 1em;
     -webkit-border-radius: 1em;
 }
@@ -272,7 +272,7 @@ h5:hover > a.headerlink {
     width: 15em;
     top: 0em;
     right: 0em;
-    padding: 1.5em 1.5em 1.5em 1.5em;
+    padding: 1.6em 1.6em 1.6em 1.6em;
     z-index: 10;
     -moz-border-radius: 1em;
     -webkit-border-radius: 1em;
@@ -295,7 +295,7 @@ h5:hover > a.headerlink {
 }
 
 #index dt {
-    margin-top: 0.5em;
+    margin-top: 0.6em;
     color: #7a94bc;
     font-size: 80%;
     font-weight: bold;
@@ -381,7 +381,7 @@ h5:hover > a.headerlink {
 .quote {
     background: #e5e5e5 url(../images/quote_note.gif) no-repeat scroll 0px 0px;
     padding: 18px 52px 18px 52px;
-    line-height: 1.5em;
+    line-height: 1.6em;
     font-family: "Hoefler Text", Constantia, Cambria, Georgia, serif;
     font-size: 115%;
     font-style: italic;
@@ -406,13 +406,13 @@ h5:hover > a.headerlink {
 .warning {
     background: #fff9D8 url(../images/warning_note.gif) no-repeat scroll 0px 0px;
     padding: 18px 52px 18px 52px;
-    line-height: 1.5em;
+    line-height: 1.6em;
 }
 
 .error {
     background: #f9d9d8 url(../images/error_note.gif) no-repeat scroll 0px 0px;
     padding: 18px 52px 18px 52px;
-    line-height: 1.5em;
+    line-height: 1.6em;
 }
 
 .video {
@@ -425,7 +425,7 @@ h5:hover > a.headerlink {
 .checkbox {
     background: #eaf2dd url(../images/checkbox_note.gif) no-repeat scroll 0px 0px;
     padding: 18px 52px 18px 52px;
-    line-height: 1.5em;
+    line-height: 1.6em;
 }
 
 .checkbox ul {
@@ -448,7 +448,7 @@ h5:hover > a.headerlink {
 .resources {
     background: #e6e6e6 url(../images/resources_note.gif) no-repeat scroll 0px 0px;
     padding: 18px 52px 18px 52px;
-    line-height: 1.5em;
+    line-height: 1.6em;
 }
 
 .resources ul {
