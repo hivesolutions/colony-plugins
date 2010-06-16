@@ -56,6 +56,8 @@ class WebMvcWikiPlugin(colony.plugins.plugin_system.Plugin):
     capabilities = ["web.mvc_service", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.web.mvc.utils", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.language.wiki", "1.0.0")]
     events_handled = []
     events_registrable = []
@@ -63,6 +65,7 @@ class WebMvcWikiPlugin(colony.plugins.plugin_system.Plugin):
 
     web_mvc_wiki = None
 
+    web_mvc_utils_plugin = None
     language_wiki_plugin = None
 
     def load_plugin(self):
@@ -73,6 +76,7 @@ class WebMvcWikiPlugin(colony.plugins.plugin_system.Plugin):
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+        self.web_mvc_wiki.load_components()
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
@@ -130,9 +134,16 @@ class WebMvcWikiPlugin(colony.plugins.plugin_system.Plugin):
 
         return self.web_mvc_wiki.get_resource_patterns()
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.language.wiki")
-    def set_language_wiki_plugin(self, language_wiki_plugin):
-        self.language_wiki_plugin = language_wiki_plugin
+    def get_web_mvc_utils_plugin(self):
+        return self.web_mvc_utils_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.web.mvc.utils")
+    def set_web_mvc_utils_plugin(self, web_mvc_utils_plugin):
+        self.web_mvc_utils_plugin = web_mvc_utils_plugin
 
     def get_language_wiki_plugin(self):
         return self.language_wiki_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.language.wiki")
+    def set_language_wiki_plugin(self, language_wiki_plugin):
+        self.language_wiki_plugin = language_wiki_plugin

@@ -37,6 +37,14 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import time
+
+WEB_MVC_WIKI_RESOURCES_PATH = "web_mvc_wiki/mvc_wiki/resources"
+""" The web mvc wiki resources path """
+
+TEMPLATES_PATH = WEB_MVC_WIKI_RESOURCES_PATH + "/templates"
+""" The templates path """
+
 class WebMvcWiki:
     """
     The web mvc wiki class.
@@ -44,6 +52,9 @@ class WebMvcWiki:
 
     web_mvc_wiki_plugin = None
     """ The web mvc wiki plugin """
+
+    web_mvc_wiki_controller = None
+    """ The web mvc wiki controller """
 
     def __init__(self, web_mvc_wiki_plugin):
         """
@@ -54,6 +65,18 @@ class WebMvcWiki:
         """
 
         self.web_mvc_wiki_plugin = web_mvc_wiki_plugin
+
+    def load_components(self):
+        """
+        Loads the main components controller, etc.
+        This load should occur only after the dependencies are loaded.
+        """
+
+        # retrieves the web mvc utils plugin
+        web_mvc_utils_plugin = self.web_mvc_wiki_plugin.web_mvc_utils_plugin
+
+        # create the web mvc wiki controller
+        self.web_mvc_wiki_controller = web_mvc_utils_plugin.create_controller(WebMvcWikiController, [self.web_mvc_wiki_plugin, self], {})
 
     def get_patterns(self):
         """
@@ -66,8 +89,8 @@ class WebMvcWiki:
         to the web mvc service.
         """
 
-        return {r"^wiki/[a-zA-Z0-9_\.]*$" : self.handle_wiki,
-                r"^wiki/(?:js|images|css)/.*$" : self.handle_resources}
+        return {r"^wiki/[a-zA-Z0-9_\.]*$" : self.web_mvc_wiki_controller.handle_wiki,
+                r"^wiki/(?:js|images|css)/.*$" : self.web_mvc_wiki_controller.handle_resources}
 
     def get_communication_patterns(self):
         """
@@ -96,6 +119,47 @@ class WebMvcWiki:
 
         return {}
 
+class WebMvcWikiController:
+    """
+    The web mvc wiki controller.
+    """
+
+    web_mvc_wiki_plugin = None
+    """ The web mvc wiki plugin """
+
+    web_mvc_wiki = None
+    """ The web mvc wiki """
+
+    def __init__(self, web_mvc_wiki_plugin, web_mvc_wiki):
+        """
+        Constructor of the class.
+
+        @type web_mvc_wiki_plugin: WebMvcWikiPlugin
+        @param web_mvc_wiki_plugin: The web vmc wiki plugin.
+        @type web_mvc_wiki: WebMvcWiki
+        @param web_mvc_wiki: The web mvc wiki.
+        """
+
+        self.web_mvc_wiki_plugin = web_mvc_wiki_plugin
+        self.web_mvc_wiki = web_mvc_wiki
+
+    def start(self):
+        """
+        Method called upon structure initialization
+        """
+
+        # retrieves the plugin manager
+        plugin_manager = self.web_mvc_wiki_plugin.manager
+
+        # retrieves the web mvc manager plugin path
+        web_mvc_manager_plugin_path = plugin_manager.get_plugin_path_by_id(self.web_mvc_wiki_plugin.id)
+
+        # creates the templates path
+        templates_path = web_mvc_manager_plugin_path + "/" + TEMPLATES_PATH
+
+        # sets the templates path
+        self.set_templates_path(templates_path)
+
     def handle_wiki(self, rest_request, parameters):
         """
         Handles the given wiki rest request.
@@ -105,6 +169,9 @@ class WebMvcWiki:
         @rtype: bool
         @return: The result of the handling.
         """
+
+        # retrieves the initial time
+        initial_time = time.clock()
 
         base_file_path = "c:/Users/joamag/workspace/pt.hive.colony.documentation.technical"
 
@@ -137,7 +204,8 @@ class WebMvcWiki:
             output_structure = {}
 
             # creates the engine properties map
-            engine_properties = {"file_path" : wiki_file_path, "target_path" : base_target_path, "output_structure" : output_structure}
+            engine_properties = {"file_path" : wiki_file_path, "target_path" : base_target_path,
+                                 "output_structure" : output_structure, "simple_parse" : True}
 
             # retrieves the language wiki plugin
             language_wiki_plugin = self.web_mvc_wiki_plugin.language_wiki_plugin
@@ -154,11 +222,39 @@ class WebMvcWiki:
         # closes the target file
         target_file.close()
 
-        # sets the result for the rest request
-        rest_request.set_result_translated(target_file_contents)
+        if not rest_request.encoder_name or rest_request.encoder_name == "html":
+            # retrieves the template file
+            template_file = self.retrieve_template_file("general.html.tpl")
 
-        # flushes the rest request
-        rest_request.flush()
+            # retrieves the final time
+            final_time = time.clock()
+
+            # calculates the generation (delta) time
+            generation_time = final_time - initial_time
+
+            # creates the generation time string
+            generation_time_string = "%.2f" % generation_time
+
+            # sets the page page contents to be loaded in the template file
+            template_file.assign("page_contents", target_file_contents)
+
+            # sets the generation time in the template file
+            template_file.assign("generation_time", generation_time_string)
+
+            # assigns the session variables to the template file
+            self.assign_session_template_file(rest_request, template_file)
+
+            # applies the base path to the template file
+            self.apply_base_path_template_file(rest_request, template_file)
+
+            # processes the template file and sets the request contents
+            self.process_set_contents(rest_request, template_file)
+        else:
+            # sets the result for the rest request
+            rest_request.set_result_translated(target_file_contents)
+
+            # flushes the rest request
+            rest_request.flush()
 
         # returns true
         return True
