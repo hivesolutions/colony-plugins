@@ -140,23 +140,29 @@ class WikiHtmlGenerator(language_wiki.wiki_extension_system.WikiExtension):
         # creates the extra resources paths list
         extra_resources_paths_list = []
 
-        # in case the target path exists
-        if os.path.exists(target_path):
-            # sets the full target path as the target path
-            full_target_path = target_path
-        else:
-            # creates the full target path
-            full_target_path = file_path + "/" + target_path
+        # sets the full target path as the target path
+        full_target_path = target_path
 
         # in case the target directory does not exist
         if not os.path.exists(full_target_path):
             # creates the directory
             os.mkdir(full_target_path)
 
-        # walks the file path
-        os.path.walk(file_path, self.generate_wiki_file, (full_target_path, extra_resources_paths_list))
+        # in case the file path is a directory
+        if os.path.isdir(file_path):
+            # walks the file path
+            os.path.walk(file_path, self.generate_wiki_file, (full_target_path, extra_resources_paths_list))
+        else:
+            # retrieves the file directory path
+            file_directory_path = os.path.dirname(file_path)
 
-        # computes the extra resouces manifest file
+            # retrieves the file base path
+            file_base_path = os.path.basename(file_path)
+
+            # generates the wiki file
+            self.generate_wiki_file((full_target_path, extra_resources_paths_list), file_directory_path, (file_base_path,))
+
+        # computes the extra resources manifest file
         self._compute_extra_resources_manifest(file_path, extra_resources_paths_list)
 
         # copies the base files

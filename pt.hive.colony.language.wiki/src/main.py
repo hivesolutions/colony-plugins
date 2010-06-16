@@ -70,7 +70,7 @@ if __name__ == "__main__":
     file_path = None
 
     # start the target path as the default target path
-    target_path = DEFAULT_TARGET_PATH
+    target_path = None
 
     # start the generation as None
     generation = None
@@ -96,6 +96,11 @@ if __name__ == "__main__":
         print "File Path not defined"
         print "Usage: " + USAGE_MESSAGE
         sys.exit(2)
+
+    # in case the target path is not defined
+    if not target_path:
+        # sets the default target path
+        target_path = file_path + "/" + DEFAULT_TARGET_PATH
 
     # creates the properties map
     properties = {"file_path" : file_path, "target_path" : target_path}
