@@ -128,7 +128,7 @@ class WikiAstGenerator(language_wiki.wiki_extension_system.WikiExtension):
         # iterates over all the names
         for name in names:
             # splits the name
-            name_splitted = name.split(".")
+            name_splitted = name.rsplit(".", 1)
 
             # retrieves the name extension
             name_extension = name_splitted[-1]
@@ -137,9 +137,6 @@ class WikiAstGenerator(language_wiki.wiki_extension_system.WikiExtension):
             if name_extension in WIKI_EXTENSIONS:
                 # creates the full file name
                 full_file_path = file_path + "/" + name
-
-                # retrieves the partial name
-                partial_name = "".join(name_splitted[:-1])
 
                 # prints an info message
                 self.info("Processing in ast: %s" % full_file_path)
