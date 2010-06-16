@@ -124,11 +124,11 @@ class WebMvcWiki:
         if rest_request.encoder_name:
             encoder_name = rest_request.encoder_name
         else:
-            encoder_name = "xhtml"
+            encoder_name = "html"
 
         target_file_path = base_target_path + "/" + file_path + "." + encoder_name
 
-        if not rest_request.encoder_name or rest_request.encoder_name == "xhtml":
+        if not rest_request.encoder_name or rest_request.encoder_name == "html":
             # creates the wiki file path
             wiki_file_path = base_file_path + "/" + file_path + ".wiki"
 
