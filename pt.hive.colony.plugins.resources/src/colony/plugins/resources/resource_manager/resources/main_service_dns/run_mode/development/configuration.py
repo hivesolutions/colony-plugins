@@ -42,7 +42,7 @@ configuration = {
                  "default_port" : 53,
                  "default_handler" : "database",
                  "handler_properties" : {
-                     "arguments" : {"entity_manager_arguments" : {"connection_parameters" : {"file_path" : "%configuration:pt.hive.colony.plugins.dns.storage%/messages.db",
+                     "arguments" : {"entity_manager_arguments" : {"connection_parameters" : {"file_path" : "%configuration:pt.hive.colony.plugins.dns.storage%/zones.db",
                                                                                              "autocommit" : False}}}
                  }
              }
