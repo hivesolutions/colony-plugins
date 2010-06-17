@@ -117,7 +117,7 @@ class MailStorageDatabaseClient:
         Constructor of the class.
 
         @type mail_storage_database: MailStorageDatabase
-        @param MailStorageDatabase: The mail storage database.
+        @param mail_storage_database: The mail storage database.
         @type entity_manager_arguments: Dictionary
         @param entity_manager_arguments: The entity manager arguments.
         """
