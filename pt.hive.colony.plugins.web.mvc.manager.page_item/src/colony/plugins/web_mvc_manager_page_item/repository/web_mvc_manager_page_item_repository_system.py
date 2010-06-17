@@ -76,6 +76,9 @@ class WebMvcManagerPageItemRepository:
     web_mvc_manager_page_item_repository_plugin = None
     """ The web mvc manager page item repository plugin """
 
+    web_mvc_manager_page_item_repository_controller = None
+    """ The web mvc page item repository controller """
+
     def __init__(self, web_mvc_manager_page_item_repository_plugin):
         """
         Constructor of the class.
@@ -95,8 +98,8 @@ class WebMvcManagerPageItemRepository:
         # retrieves the web mvc utils plugin
         web_mvc_utils_plugin = self.web_mvc_manager_page_item_repository_plugin.web_mvc_utils_plugin
 
-        # creates the web mvc panel item monitor main controller
-        self.web_mvc_panel_item_monitor_main_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_page_item_repository_controllers.WebMvcManagerPageItemRepositoryController, [self.web_mvc_manager_page_item_repository_plugin, self], {})
+        # creates the web mvc manager page item repository controller
+        self.web_mvc_manager_page_item_repository_controller = web_mvc_utils_plugin.create_controller(web_mvc_manager_page_item_repository_controllers.WebMvcManagerPageItemRepositoryController, [self.web_mvc_manager_page_item_repository_plugin, self], {})
 
     def get_resource_patterns(self):
         """
@@ -131,12 +134,12 @@ class WebMvcManagerPageItemRepository:
         """
 
         # creates the repository page item maps
-        repository_list_page_item_map = colony.libs.map_util.map_extend(REPOSITORY_LIST_PAGE_ITEM_ATTRIBUTES, {"action" : self.web_mvc_panel_item_monitor_main_controller.handle_list})
-        repository_show_page_item_map = colony.libs.map_util.map_extend(REPOSITORY_SHOW_PAGE_ITEM_ATTRIBUTES, {"action" : self.web_mvc_panel_item_monitor_main_controller.handle_show})
-        repository_partial_list_page_item_map = colony.libs.map_util.map_extend(REPOSITORY_PARTIAL_LIST_PAGE_ITEM_ATTRIBUTES, {"action" : self.web_mvc_panel_item_monitor_main_controller.handle_partial_list})
-        repository_install_plugin_page_item_map = colony.libs.map_util.map_extend(REPOSITORY_INSTALL_PLUGIN_PAGE_ITEM_ATTRIBUTES, {"action" : self.web_mvc_panel_item_monitor_main_controller.handle_install_plugin})
-        repository_plugins_partial_page_item_map = colony.libs.map_util.map_extend(REPOSITORY_PLUGINS_PARTIAL_ITEM_ATTRIBUTES, {"action" : self.web_mvc_panel_item_monitor_main_controller.handle_plugins_partial_list})
-        repository_packages_partial_page_item_map = colony.libs.map_util.map_extend(REPOSITORY_PACKAGES_PARTIAL_ITEM_ATTRIBUTES, {"action" : self.web_mvc_panel_item_monitor_main_controller.handle_packages_partial_list})
+        repository_list_page_item_map = colony.libs.map_util.map_extend(REPOSITORY_LIST_PAGE_ITEM_ATTRIBUTES, {"action" : self.web_mvc_manager_page_item_repository_controller.handle_list})
+        repository_show_page_item_map = colony.libs.map_util.map_extend(REPOSITORY_SHOW_PAGE_ITEM_ATTRIBUTES, {"action" : self.web_mvc_manager_page_item_repository_controller.handle_show})
+        repository_partial_list_page_item_map = colony.libs.map_util.map_extend(REPOSITORY_PARTIAL_LIST_PAGE_ITEM_ATTRIBUTES, {"action" : self.web_mvc_manager_page_item_repository_controller.handle_partial_list})
+        repository_install_plugin_page_item_map = colony.libs.map_util.map_extend(REPOSITORY_INSTALL_PLUGIN_PAGE_ITEM_ATTRIBUTES, {"action" : self.web_mvc_manager_page_item_repository_controller.handle_install_plugin})
+        repository_plugins_partial_page_item_map = colony.libs.map_util.map_extend(REPOSITORY_PLUGINS_PARTIAL_ITEM_ATTRIBUTES, {"action" : self.web_mvc_manager_page_item_repository_controller.handle_plugins_partial_list})
+        repository_packages_partial_page_item_map = colony.libs.map_util.map_extend(REPOSITORY_PACKAGES_PARTIAL_ITEM_ATTRIBUTES, {"action" : self.web_mvc_manager_page_item_repository_controller.handle_packages_partial_list})
 
         return [repository_list_page_item_map, repository_show_page_item_map,
                 repository_partial_list_page_item_map, repository_install_plugin_page_item_map,
