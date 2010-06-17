@@ -58,12 +58,15 @@ class MainServiceDnsDatabaseHandlerPlugin(colony.plugins.plugin_system.Plugin):
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_dns_database_handler/database_handler/resources/baf.xml"}
     capabilities = ["dns_service_handler", "build_automation_item"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.dns.storage.database", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["main_service_dns_database_handler.database_handler.main_service_dns_database_handler_system", "main_service_dns_database_handler.database_handler.main_service_dns_database_handler_exceptions"]
 
     main_service_dns_database_handler = None
+
+    dns_storage_database_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -111,3 +114,10 @@ class MainServiceDnsDatabaseHandlerPlugin(colony.plugins.plugin_system.Plugin):
         """
 
         return self.main_service_dns_database_handler.handle_request(request, arguments)
+
+    def get_dns_storage_database_plugin(self):
+        return self.dns_storage_database_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.dns.storage.database")
+    def set_dns_storage_database_plugin(self, dns_storage_database_plugin):
+        self.dns_storage_database_plugin = dns_storage_database_plugin
