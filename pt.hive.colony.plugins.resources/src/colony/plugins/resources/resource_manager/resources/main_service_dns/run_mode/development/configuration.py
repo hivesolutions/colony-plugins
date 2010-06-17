@@ -41,4 +41,8 @@ configuration = {
                  "default_socket_provider" : "datagram",
                  "default_port" : 53,
                  "default_handler" : "file",
+                 "handler_properties" : {
+                     "arguments" : {"entity_manager_arguments" : {"connection_parameters" : {"file_path" : "%configuration:pt.hive.colony.plugins.dns.storage%/messages.db",
+                                                                                             "autocommit" : False}}}
+                 }
              }
