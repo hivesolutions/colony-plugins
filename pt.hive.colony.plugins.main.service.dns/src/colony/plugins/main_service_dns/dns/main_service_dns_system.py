@@ -431,6 +431,12 @@ class DnsClientServiceTask:
             # retrieves the default handler name
             handler_name = service_configuration.get("default_handler", None)
 
+            # retrieves the handler properties
+            handler_properties = service_configuration.get("handler_properties", {})
+
+            # retrieves the handler arguments
+            handler_arguments = handler_properties.get("arguments", {})
+
             # in case no handler name is defined (request not handled)
             if not handler_name:
                 # raises an dns no handler exception
@@ -445,7 +451,7 @@ class DnsClientServiceTask:
             dns_service_handler_plugin = dns_service_handler_plugins_map[handler_name]
 
             # handles the request by the request handler
-            dns_service_handler_plugin.handle_request(request)
+            dns_service_handler_plugin.handle_request(request, handler_arguments)
 
             # sends the request to the client (response)
             self.send_request(request)

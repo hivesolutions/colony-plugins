@@ -68,12 +68,14 @@ class MainServiceDnsDatabaseHandler:
 
         return HANDLER_NAME
 
-    def handle_request(self, request):
+    def handle_request(self, request, arguments):
         """
         Handles the given dns request.
 
         @type request: DnsRequest
         @param request: The dns request to be handled.
+        @type arguments: Dictionary
+        @param arguments: The arguments to the dns handling.
         """
 
         # creates a dummy answer

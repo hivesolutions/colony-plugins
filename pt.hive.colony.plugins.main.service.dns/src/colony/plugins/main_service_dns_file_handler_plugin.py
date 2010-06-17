@@ -103,15 +103,17 @@ class MainServiceDnsFileHandlerPlugin(colony.plugins.plugin_system.Plugin):
 
         return self.main_service_dns_file_handler.get_handler_name()
 
-    def handle_request(self, request):
+    def handle_request(self, request, arguments):
         """
         Handles the given dns request.
 
         @type request: DnsRequest
         @param request: The dns request to be handled.
+        @type arguments: Dictionary
+        @param arguments: The arguments to the dns handling.
         """
 
-        return self.main_service_dns_file_handler.handle_request(request)
+        return self.main_service_dns_file_handler.handle_request(request, arguments)
 
     def get_resource_manager_plugin(self):
         return self.resource_manager_plugin
