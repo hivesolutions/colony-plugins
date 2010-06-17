@@ -44,9 +44,6 @@ import dns_storage_database_exceptions
 ENTITIES_MODULE_NAME = "dns_storage_database_entities"
 """ The entities module name """
 
-EAGER_LOADING_RELATIONS_VALUE = "eager_loading_relations"
-""" The eager loading relations value """
-
 FILTERS_VALUE = "filters"
 """ The filters value """
 
@@ -149,6 +146,108 @@ class DnsStorageDatabaseClient:
         else:
             # commits the transaction
             entity_manager.commit_transaction()
+
+    def create_record(self, zone_name, name, type, class_, time_to_live, value):
+        # retrieves the entity manager
+        entity_manager = self._get_entity_manager()
+
+        # creates a transaction
+        entity_manager.create_transaction()
+
+        try:
+            # retrieves the zone
+            zone = self.get_zone_name(zone_name)
+
+            # in case no zone is found
+            if not zone:
+                # raises the invalid zone error
+                raise dns_storage_database_exceptions.InvalidZoneError(zone)
+
+            # retrieves the record class
+            record_class = entity_manager.get_entity_class("Record")
+
+            # creates the new record instance
+            record = record_class()
+
+            # sets the initial record attributes
+            record.name = name
+            record.type = type
+            record.class_ = class_
+            record.time_to_live = time_to_live
+            record.value = value
+
+            # saves the record
+            entity_manager.save(record)
+        except:
+            # rolls back the transaction
+            entity_manager.rollback_transaction()
+
+            # re-throws the exception
+            raise
+        else:
+            # commits the transaction
+            entity_manager.commit_transaction()
+
+    def get_records_filtered(self, name, type, class_):
+        """
+        Retrieves the records for the given name, type and class.
+
+        @type name: String
+        @param name: The name of the record to be retrieved.
+        @type type: String
+        @param type: The type of the record to be retrieved.
+        @type class_: String
+        @param class_: The class of the record to be retrieved.
+        @rtype: List
+        @return: The retrieved records.
+        """
+
+        # retrieves the entity manager
+        entity_manager = self._get_entity_manager()
+
+        # retrieves the record class
+        record_class = entity_manager.get_entity_class("Record")
+
+        # defines the find options for retrieving the records
+        find_options = {FILTERS_VALUE : [{FILTER_TYPE_VALUE : "equals",
+                                          FILTER_FIELDS_VALUE : ({"field_name" : "name",
+                                                                  "field_value" : name},
+                                                                  {"field_name" : "type",
+                                                                  "field_value" : type},
+                                                                  {"field_name" : "class_",
+                                                                  "field_value" : class_})}]}
+
+        # retrieves the valid records
+        records = entity_manager._find_all_options(record_class, find_options)
+
+        return records
+
+    def get_zone_name(self, name):
+        """
+        Retrieves the zone for the given name.
+
+        @type name: String
+        @param name: The name of the zone to be retrieved.
+        @rtype: Zone
+        @requires: The retrieved zone.
+        """
+
+        # retrieves the entity manager
+        entity_manager = self._get_entity_manager()
+
+        # retrieves the zone class
+        zone_class = entity_manager.get_entity_class("Zone")
+
+        # defines the find options for retrieving the zones
+        find_options = {FILTERS_VALUE : [{FILTER_TYPE_VALUE : "equals",
+                                          FILTER_FIELDS_VALUE : ({"field_name" : "name",
+                                                                  "field_value" : name},)}]}
+
+        # retrieves the valid zones
+        zones = entity_manager._find_all_options(zone_class, find_options)
+
+        if len(zones):
+            return zones[0]
 
     def _get_entity_manager(self):
         """
