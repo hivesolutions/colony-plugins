@@ -761,6 +761,16 @@ class DnsRequest:
         self.authority_resource_records = []
         self.additional_resource_records = []
 
+    def get_queries(self):
+        """
+        Retrieves the queries.
+
+        @rtype: List
+        @return: The queries.
+        """
+
+        return self.queries
+
     def _get_query(self, data, current_index):
         # retrieves the name for the data and current index
         name_list, current_index = self._get_name(data, current_index)

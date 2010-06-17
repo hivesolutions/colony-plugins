@@ -78,8 +78,49 @@ class MainServiceDnsDatabaseHandler:
         @param arguments: The arguments to the dns handling.
         """
 
-        # creates a dummy answer
-        answer = ("www.google.com", "A", "IN", 20000, "192.168.1.11")
+        # retrieves the dns storage database plugin
+        dns_storage_database_plugin = self.main_service_dns_database_handler_plugin.dns_storage_database_plugin
+
+        # creates the dns storage database client
+        dns_storage_database_client = dns_storage_database_plugin.create_client(arguments)
+
+        # retrieves the request queries
+        queries = request.get_queries()
+
+        # creates the records list
+        records = []
+
+        # iterates over all the queries to retrieve
+        # their results
+        for query in queries:
+            # retrieves the name the type and the class
+            # from the query
+            name, type, class_ = query
+
+            # retrieves the records thall fullfill the given query
+            query_records = dns_storage_database_client.get_records_filtered(name, type, class_)
+
+            # extends the record list with the retrieved
+            # query records
+            records.extend(query_records)
+
+        # creates the record tuples list
+        record_tuples = []
+
+        # iterates over all the retrieved records
+        for record in records:
+            # retrieves the record information
+            record_name = record.get_name()
+            record_type = record.get_type()
+            record_class = record.get_class()
+            record_time_to_live = record.get_time_to_live()
+            record_value = record.get_value()
+
+            # creates the record tuple
+            record_tuple = (record_name, record_type, record_class, record_time_to_live, record_value)
+
+            # adds the record tuple to the list of record tuples
+            record_tuples.append(record_tuple)
 
         # adds a new answer to the request
-        request.answers.append(answer)
+        request.answers.extend(record_tuples)
