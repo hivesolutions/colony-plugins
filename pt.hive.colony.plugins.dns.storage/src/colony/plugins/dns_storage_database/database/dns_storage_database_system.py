@@ -176,7 +176,7 @@ class DnsStorageDatabaseClient:
         """
 
         # retrieves the entity manager helper plugin
-        entity_manager_helper_plugin = self.mail_storage_database.mail_storage_database_plugin.entity_manager_helper_plugin
+        entity_manager_helper_plugin = self.dns_storage_database.dns_storage_database_plugin.entity_manager_helper_plugin
 
         # loads the entity manager for the entities module name
         self.entity_manager = entity_manager_helper_plugin.load_entity_manager(ENTITIES_MODULE_NAME, os.path.dirname(__file__), self.entity_manager_arguments)
