@@ -1,0 +1,102 @@
+#!/usr/bin/python
+# -*- coding: Cp1252 -*-
+
+# Hive Colony Framework
+# Copyright (C) 2008 Hive Solutions Lda.
+#
+# This file is part of Hive Colony Framework.
+#
+# Hive Colony Framework is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Hive Colony Framework is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
+
+__author__ = "João Magalhães <joamag@hive.pt>"
+""" The author(s) of the module """
+
+__version__ = "1.0.0"
+""" The version of the module """
+
+__revision__ = "$LastChangedRevision: 2318 $"
+""" The revision number of the module """
+
+__date__ = "$LastChangedDate: 2009-04-01 17:29:06 +0100 (qua, 01 Abr 2009) $"
+""" The last change date of the module """
+
+__copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
+""" The copyright for the module """
+
+__license__ = "GNU General Public License (GPL), Version 3"
+""" The license for the module """
+
+import colony.plugins.plugin_system
+
+class DnsStorageDatabasePlugin(colony.plugins.plugin_system.Plugin):
+    """
+    The main class for the dns Storage Database plugin.
+    """
+
+    id = "pt.hive.colony.plugins.dns.storage.database"
+    name = "Dns Storage Database Plugin"
+    short_name = "Dns Storage Database"
+    description = "Dns Storage Database Plugin"
+    version = "1.0.0"
+    author = "Hive Solutions Lda. <development@hive.pt>"
+    loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
+    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/dns_storage_database/database/resources/baf.xml"}
+    capabilities = ["dns_storage", "build_automation_item"]
+    capabilities_allowed = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.data.entity_manager_helper", "1.0.0")]
+    events_handled = []
+    events_registrable = []
+    main_modules = ["dns_storage_database.database.dns_storage_database_entities", "dns_storage_database.database.dns_storage_database_exceptions",
+                    "dns_storage_database.database.dns_storage_database_system"]
+
+    dns_storage_database = None
+
+    entity_manager_helper_plugin = None
+
+    def load_plugin(self):
+        colony.plugins.plugin_system.Plugin.load_plugin(self)
+        global dns_storage_database
+        import dns_storage_database.database.dns_storage_database_system
+        self.dns_storage_database = dns_storage_database.database.dns_storage_database_system.DnsStorageDatabase(self)
+
+    def end_load_plugin(self):
+        colony.plugins.plugin_system.Plugin.end_load_plugin(self)
+
+    def unload_plugin(self):
+        colony.plugins.plugin_system.Plugin.unload_plugin(self)
+
+    def end_unload_plugin(self):
+        colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
+
+    def load_allowed(self, plugin, capability):
+        colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
+
+    def unload_allowed(self, plugin, capability):
+        colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
+
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.dns.storage.database", "1.0.0")
+    def dependency_injected(self, plugin):
+        colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
+
+    def create_client(self, parameters):
+        return self.dns_storage_database.create_client(parameters)
+
+    def get_entity_manager_helper_plugin(self):
+        return self.entity_manager_helper_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.data.entity_manager_helper")
+    def set_entity_manager_helper_plugin(self, entity_manager_helper_plugin):
+        self.entity_manager_helper_plugin = entity_manager_helper_plugin
