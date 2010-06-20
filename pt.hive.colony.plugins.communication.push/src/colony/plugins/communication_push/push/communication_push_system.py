@@ -115,6 +115,10 @@ class CommunicationPush:
             else:
                 self.communication_handler_name_push_notifications[communication_handler_name].append(push_notification)
 
+    def generate_notification(self, message, sender_id):
+        # returns the generated notification
+        return PushNotification(message, sender_id)
+
 class PushNotification:
     """
     The push notification class.
