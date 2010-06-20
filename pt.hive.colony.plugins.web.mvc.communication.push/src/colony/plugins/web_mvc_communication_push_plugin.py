@@ -57,7 +57,9 @@ class WebMvcCommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
     capabilities = ["web.mvc_service", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.web.mvc.utils", "1.0.0")]
+                    "pt.hive.colony.plugins.web.mvc.utils", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.communication.push", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["web_mvc_communication_push.communication_push.web_mvc_communication_push_controllers", "web_mvc_communication_push.communication_push.web_mvc_communication_push_system"]
@@ -65,6 +67,7 @@ class WebMvcCommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
     web_mvc_communication_push = None
 
     web_mvc_utils_plugin = None
+    communication_push_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -138,3 +141,10 @@ class WebMvcCommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.web.mvc.utils")
     def set_web_mvc_utils_plugin(self, web_mvc_utils_plugin):
         self.web_mvc_utils_plugin = web_mvc_utils_plugin
+
+    def get_communication_push_plugin(self):
+        return self.communication_push_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.communication.push")
+    def set_communication_push_plugin(self, communication_push_plugin):
+        self.communication_push_plugin = communication_push_plugin

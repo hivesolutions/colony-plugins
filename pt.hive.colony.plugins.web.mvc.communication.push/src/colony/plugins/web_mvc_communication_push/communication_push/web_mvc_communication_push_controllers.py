@@ -37,6 +37,9 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+DEFAULT_ENCODING = "utf-8"
+""" The default encoding value """
+
 class WebMvcCommunicationPushController:
     """
     The web mvc communication push controller.
@@ -73,5 +76,23 @@ class WebMvcCommunicationPushController:
         return True
 
     def handle_broadcast(self, rest_request, parameters = {}):
+        # sends the broadcast message for the given request
+        self._send_broadcast(rest_request)
+
         # returns true
         return True
+
+    def _send_broadcast(self, rest_request):
+        # retrieves the communication push plugin
+        communication_push_plugin = self.web_mvc_communication_push_plugin.communication_push_plugin
+
+        # processes the form data
+        form_data_map = self.process_form_data(rest_request, DEFAULT_ENCODING)
+
+        # retrieves the form data attributes
+        communication_name = form_data_map["communication_name"]
+        message = form_data_map["message"]
+
+        # sends the broadcast notification, for the communication name
+        # and notification
+        communication_push_plugin.send_broadcast_notification(communication_name, message)
