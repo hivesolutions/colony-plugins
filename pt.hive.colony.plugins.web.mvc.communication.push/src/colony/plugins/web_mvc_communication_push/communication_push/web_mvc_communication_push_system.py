@@ -86,7 +86,7 @@ class WebMvcCommunicationPush:
         return {r"^web_mvc_communication_push/?$" : self.web_mvc_communication_push_controller.handle_show,
                 r"^web_mvc_communication_push/register$" : self.web_mvc_communication_push_controller.handle_register,
                 r"^web_mvc_communication_push/unregister$" : self.web_mvc_communication_push_controller.handle_unregister,
-                r"^web_mvc_communication_push/unregister$" : self.web_mvc_communication_push_controller.handle_broadcast}
+                r"^web_mvc_communication_push/broadcast$" : self.web_mvc_communication_push_controller.handle_broadcast}
 
     def get_communication_patterns(self):
         """
