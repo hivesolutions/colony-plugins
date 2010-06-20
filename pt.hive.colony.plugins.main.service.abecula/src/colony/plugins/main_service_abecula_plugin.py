@@ -53,7 +53,8 @@ class MainServiceAbeculaPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["startup", "service.abecula"]
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_abecula/abecula/resources/baf.xml"}
+    capabilities = ["service.abecula", "build_automation_item"]
     capabilities_allowed = ["abecula_service_handler", "socket_provider"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
@@ -67,7 +68,6 @@ class MainServiceAbeculaPlugin(colony.plugins.plugin_system.Plugin):
     socket_provider_plugins = []
 
     thread_pool_manager_plugin = None
-    bencode_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -101,12 +101,6 @@ class MainServiceAbeculaPlugin(colony.plugins.plugin_system.Plugin):
 
     def stop_service(self, parameters):
         self.main_service_abecula.stop_service(parameters)
-
-    def start_torrent(self, parameters):
-        self.main_service_abecula.start_torrent(parameters)
-
-    def stop_torrent(self, parameters):
-        self.main_service_abecula.start_torrent(parameters)
 
     @colony.plugins.decorators.load_allowed_capability("abecula_service_handler")
     def abecula_service_handler_load_allowed(self, plugin, capability):
