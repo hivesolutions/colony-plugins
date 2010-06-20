@@ -530,6 +530,14 @@ class WebMvcManagerCommunicationController:
     def handle_data(self, rest_communication_request, parameters = {}):
         """
         Handles the given data communication request.
+
+        @type rest_communication_request: RestRequest
+        @param rest_communication_request: The web mvc manager data rest
+        communication request to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
         """
 
         # returns true
@@ -538,6 +546,14 @@ class WebMvcManagerCommunicationController:
     def handle_connection_changed(self, rest_communication_request, parameters = {}):
         """
         Handles the given connection changed communication request.
+
+        @type rest_communication_request: RestRequest
+        @param rest_communication_request: The web mvc manager connection changed
+        rest communication request to be handled.
+        @type parameters: Dictionary
+        @param parameters: The handler parameters.
+        @rtype: bool
+        @return: The result of the handling.
         """
 
         # returns true
