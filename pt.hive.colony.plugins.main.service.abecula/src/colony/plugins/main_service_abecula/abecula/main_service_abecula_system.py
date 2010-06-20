@@ -599,6 +599,7 @@ class AbeculaClientServiceTask:
                     # sets the start line loaded flag
                     start_line_loaded = True
 
+                    # returns the request
                     return request
 
     def retrieve_data(self, request_timeout = REQUEST_TIMEOUT, chunk_size = CHUNK_SIZE):
