@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>pt.hive.colony.communication.push</name>
+	<name>pt.hive.colony.plugins.communication.push</name>
 	<comment></comment>
 	<projects>
 		<project>pt.hive.colony</project>
