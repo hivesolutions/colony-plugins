@@ -60,7 +60,7 @@ class WebMvcCommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
                     "pt.hive.colony.plugins.web.mvc.utils", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["web_mvc_communication_push.push.web_mvc_communication_push_controllers", "web_mvc_communication_push.push.web_mvc_communication_push_system"]
+    main_modules = ["web_mvc_communication_push.communication_push.web_mvc_communication_push_controllers", "web_mvc_communication_push.communication_push.web_mvc_communication_push_system"]
 
     web_mvc_communication_push = None
 
@@ -69,8 +69,8 @@ class WebMvcCommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global web_mvc_communication_push
-        import web_mvc_communication_push.push.web_mvc_communication_push_system
-        self.web_mvc_communication_push = web_mvc_communication_push.push.web_mvc_communication_push_system.WebMvcCommunicationPush(self)
+        import web_mvc_communication_push.communication_push.web_mvc_communication_push_system
+        self.web_mvc_communication_push = web_mvc_communication_push.communication_push.web_mvc_communication_push_system.WebMvcCommunicationPush(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)

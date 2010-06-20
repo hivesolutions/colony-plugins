@@ -39,30 +39,26 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import web_mvc_communication_push_controllers
 
-class WebMvcManager:
+class WebMvcCommunicationPush:
     """
-    The web mvc manager class.
+    The web mvc communication push class.
     """
 
-    web_mvc_manager_plugin = None
+    web_mvc_communication_push_plugin = None
     """ The web mvc manager plugin """
 
     web_mvc_communication_push_controller = None
     """ The web mvc communication push controller """
 
-    def __init__(self, web_mvc_manager_plugin):
+    def __init__(self, web_mvc_communication_push_plugin):
         """
         Constructor of the class.
 
-        @type web_mvc_manager_plugin: WebMvcManagerPlugin
-        @param web_mvc_manager_plugin: The web mvc manager plugin.
+        @type web_mvc_communication_push_plugin: WebMvcCommunicationPushPlugin
+        @param web_mvc_communication_push_plugin: The web mvc communication push plugin.
         """
 
-        self.web_mvc_manager_plugin = web_mvc_manager_plugin
-
-        self.menu_items_map = {}
-        self.side_panel_items_map = {}
-        self.extra_patterns_map = {}
+        self.web_mvc_communication_push_plugin = web_mvc_communication_push_plugin
 
     def load_components(self):
         """
@@ -71,10 +67,10 @@ class WebMvcManager:
         """
 
         # retrieves the web mvc utils plugin
-        web_mvc_utils_plugin = self.web_mvc_manager_plugin.web_mvc_utils_plugin
+        web_mvc_utils_plugin = self.web_mvc_communication_push_plugin.web_mvc_utils_plugin
 
         # creates the web mvc manager communication push controller
-        self.web_mvc_communication_push_controller = web_mvc_utils_plugin.create_controller(web_mvc_communication_push_controllers.WebMvcCommunicationPushController, [self.web_mvc_manager_plugin, self], {})
+        self.web_mvc_communication_push_controller = web_mvc_utils_plugin.create_controller(web_mvc_communication_push_controllers.WebMvcCommunicationPushController, [self.web_mvc_communication_push_plugin, self], {})
 
     def get_patterns(self):
         """
@@ -87,10 +83,10 @@ class WebMvcManager:
         to the web mvc service.
         """
 
-        return {r"^web_mvc_communication_push/?$" : self.web_mvc_communication_push_controllers.handle_show,
-                r"^web_mvc_communication_push/register$" : self.web_mvc_communication_push_controllers.handle_register,
-                r"^web_mvc_communication_push/unregister$" : self.web_mvc_communication_push_controllers.handle_unregister,
-                r"^web_mvc_communication_push/unregister$" : self.web_mvc_communication_push_controllers.handle_broadcast}
+        return {r"^web_mvc_communication_push/?$" : self.web_mvc_communication_push_controller.handle_show,
+                r"^web_mvc_communication_push/register$" : self.web_mvc_communication_push_controller.handle_register,
+                r"^web_mvc_communication_push/unregister$" : self.web_mvc_communication_push_controller.handle_unregister,
+                r"^web_mvc_communication_push/unregister$" : self.web_mvc_communication_push_controller.handle_broadcast}
 
     def get_communication_patterns(self):
         """
