@@ -102,10 +102,16 @@ class CommunicationPush:
 
         # iterates over all the communication handlers
         for communication_handler in communication_handlers_list:
+            # retrieves the communication handler name and method, unpacking
+            # the communication handler tuple
             communication_handler_name, communication_handler_method = communication_handler
 
+            # in case there is a communication handler method
+            # defined use it
             if communication_handler_method:
+                # calls the communication handler method, with the push notification
                 communication_handler_method(push_notification)
+            # otherwise puts the message into the "mail box"
             else:
                 self.communication_handler_name_push_notifications[communication_handler_name].append(push_notification)
 
