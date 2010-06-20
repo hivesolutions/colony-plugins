@@ -93,6 +93,9 @@ class WebMvcCommunicationPushController:
         communication_name = form_data_map["communication_name"]
         message = form_data_map["message"]
 
+        # generates the notification
+        notification = communication_push_plugin.generate_notification(message, None)
+
         # sends the broadcast notification, for the communication name
         # and notification
-        communication_push_plugin.send_broadcast_notification(communication_name, message)
+        communication_push_plugin.send_broadcast_notification(communication_name, notification)
