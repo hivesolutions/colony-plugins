@@ -95,7 +95,7 @@ configuration = {
                  "contexts" : {
                      "resolution_order" : ["/colony_web/plugins", "/colony_web", "/colony_manager", "/colony_mod_python",
                                            "/template_error_handler", "/eclipse", "/cgi-bin", "/fastcgi-bin",
-                                           "/web_administration", "/websession_test", "/websession", "/colony/repository"],
+                                           "/web_administration", "/websession_test", "/websession", "/colony/repository", "/socket_bridge"],
                      "/colony_web" : {
                          "handler" : "file",
                          "allow_redirection" : False,
@@ -180,6 +180,13 @@ configuration = {
                          "allow_redirection" : False,
                          "request_properties" : {
                              "base_path" : "$resource{system.path.colony}/pt.hive.colony.plugin_repository"
+                         }
+                     },
+                     "/socket_bridge" : {
+                         "handler" : "file",
+                         "allow_redirection" : False,
+                         "request_properties" : {
+                             "base_path" : "$resource{system.path.colony}/hive_colony_socket_bridge"
                          }
                      }
                  }
