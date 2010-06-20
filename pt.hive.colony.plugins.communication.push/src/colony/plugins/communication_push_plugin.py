@@ -93,7 +93,7 @@ class CommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
         return self.communication_push.remove_communication_handler(communication_name, communication_handler_name)
 
     def send_broadcast_notification(self, communication_name, notification):
-        return self.communication_push.send_broadcast_message(communication_name, notification)
+        return self.communication_push.send_broadcast_notification(communication_name, notification)
 
     def generate_notification(self, message, sender_id):
         return self.communication_push.generate_notification(message, sender_id)

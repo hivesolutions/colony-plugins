@@ -97,6 +97,12 @@ class CommunicationPush:
         communication_handlers_list.remove(communication_handler_tuple)
 
     def send_broadcast_notification(self, communication_name, push_notification):
+        # in case the communication name is not defined in the communication name
+        # communication handlers map, there is no need to continue
+        if not communication_name in self.communication_name_communication_handlers_map:
+            # returns immediately
+            return
+
         # retrieves the communication handlers list for the communication name
         communication_handlers_list = self.communication_name_communication_handlers_map[communication_name]
 
