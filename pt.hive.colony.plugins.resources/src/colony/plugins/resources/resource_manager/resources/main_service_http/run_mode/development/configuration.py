@@ -62,7 +62,11 @@ configuration = {
                      }
                  },
                  "redirections" : {
-                     "resolution_order" : ["/wiki", "/manager", "/blog", "/colony_site", "/take_the_bill", "/a_la_carte", "/"],
+                     "resolution_order" : ["/push", "/wiki", "/manager", "/blog", "/colony_site", "/take_the_bill", "/a_la_carte", "/"],
+                     "/push" : {
+                         "target" : "/colony_mod_python/rest/mvc/web_mvc_communication_push/",
+                         "recursive_redirection" : True
+                     },
                      "/wiki" : {
                          "target" : "/colony_mod_python/rest/mvc/wiki/",
                          "recursive_redirection" : True
