@@ -60,13 +60,13 @@ class BencodePlugin(colony.plugins.plugin_system.Plugin):
     events_registrable = []
     main_modules = ["misc.bencode.bencode_exceptions", "misc.bencode.bencode_serializer", "misc.bencode.bencode_system"]
 
-    bencode_system = None
+    bencode = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global misc
         import misc.bencode.bencode_system
-        self.bencode_system = misc.bencode.bencode_system.Bencode(self)
+        self.bencode = misc.bencode.bencode_system.Bencode(self)
 
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
@@ -87,10 +87,10 @@ class BencodePlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def dumps(self, object):
-        return self.bencode_system.dumps(object)
+        return self.bencode.dumps(object)
 
     def loads(self, bencode_string):
-        return self.bencode_system.loads(bencode_string)
+        return self.bencode.loads(bencode_string)
 
     def load_file(self, bencode_file):
-        return self.bencode_system.load_file(bencode_file)
+        return self.bencode.load_file(bencode_file)
