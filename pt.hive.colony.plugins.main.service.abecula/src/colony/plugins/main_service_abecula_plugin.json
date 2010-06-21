@@ -1,0 +1,23 @@
+{
+    "platform" : "python",
+    "sub_platforms" : ["cpython"],
+    "id" : "pt.hive.colony.plugins.main.service.abecula",
+    "name" : "Abecula Service Main Plugin",
+    "short_name" : "Abecula Service Main",
+    "description" : "The plugin that offers the abecula service",
+    "version" : "1.0.0",
+    "author" : "Hive Solutions Lda. <development@hive.pt>",
+    "capabilities" : ["service.abecula", "build_automation_item"],
+    "capabilities_allowed" : ["abecula_service_handler", "socket_provider"],
+    "dependencies" : [{
+                "id" : "pt.hive.colony.plugins.main.threads.thread_pool_manager",
+                "version" : "1.0.0"
+            }],
+    "main_file" : "main_service_abecula_plugin.py",
+    "resources" : ["main_service_abecula_plugin.py",
+            "main_service_abecula/__init__.py",
+            "main_service_abecula/abecula/__init__.py",
+            "main_service_abecula/abecula/main_service_abecula_exceptions.py",
+            "main_service_abecula/abecula/main_service_abecula_system.py",
+            "main_service_abecula/abecula/resources/baf.xml"]
+}
