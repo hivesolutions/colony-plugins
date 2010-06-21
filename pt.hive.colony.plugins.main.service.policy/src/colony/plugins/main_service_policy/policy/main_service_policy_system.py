@@ -38,7 +38,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import socket
-import struct
 import select
 import threading
 
@@ -52,7 +51,7 @@ BIND_HOST_VALUE = ""
 CLIENT_CONNECTION_TIMEOUT = 1
 """ The client connection timeout """
 
-REQUEST_TIMEOUT = 10
+REQUEST_TIMEOUT = 5
 """ The request timeout """
 
 CHUNK_SIZE = 4096
@@ -69,6 +68,15 @@ SCHEDULING_ALGORITHM = 2
 
 DEFAULT_PORT = 843
 """ The default port """
+
+VALID_REQUEST_VALUE = "<policy-file-request/>"
+""" The valid request value """
+
+MAIN_SERVICE_POLICY_RESOURCES_PATH = "main_service_policy/policy/resources"
+""" The web mvc manager resources path """
+
+DEFAULT_POLICY_FILE = MAIN_SERVICE_POLICY_RESOURCES_PATH + "/default.policy"
+""" The default policy file """
 
 class MainServicePolicy:
     """
@@ -384,17 +392,8 @@ class PolicyClientServiceTask:
     def policy_request_handler(self, request_timeout, policy_service_handler_plugins_map):
         try:
             # retrieves the request
-            #request = self.retrieve_request(request_timeout)
-            # retrieves the data
-            request = self.retrieve_data(request_timeout)
-            print self.port
-
-            print repr(request)
-
-        except main_service_policy_exceptions.MainServicePolicyException, exception:
-            print "excepcao:" + str(exception)
-
-
+            request = self.retrieve_request(request_timeout)
+        except main_service_policy_exceptions.MainServicePolicyException:
             # prints a debug message about the connection closing
             self.main_service_policy_plugin.debug("Connection: %s closed by peer, timeout or invalid request" % str(self.policy_address))
 
@@ -404,55 +403,28 @@ class PolicyClientServiceTask:
         try:
             # prints debug message about request
             self.main_service_policy_plugin.debug("Handling request: %s" % str(request))
-#
-#            # retrieves the real service configuration,
-#            # taking the request information into account
-#            service_configuration = self._get_service_configuration(request)
-#
-#            # processes the redirection information in the request
-#            self._process_redirection(request, service_configuration)
-#
-#            # processes the handler part of the request and retrieves
-#            # the handler name
-#            handler_name = self._process_handler(request, service_configuration)
-#
-#            # in case the request was not already handled
-#            if not handler_name:
-#                # retrieves the default handler name
-#                handler_name = service_configuration.get("default_handler", None)
-#
-#                # sets the handler path
-#                request.handler_path = None
-#
-#            # in case no handler name is defined (request not handled)
-#            if not handler_name:
-#                # raises an policy no handler exception
-#                raise main_service_policy_exceptions.PolicyNoHandlerException("no handler defined for current request")
-#
-#            # in case the handler is not found in the handler plugins map
-#            if not handler_name in policy_service_handler_plugins_map:
-#                # raises an policy handler not found exception
-#                raise main_service_policy_exceptions.PolicyHandlerNotFoundException("no handler found for current request: " + handler_name)
-#
-#            # retrieves the policy service handler plugin
-#            policy_service_handler_plugin = policy_service_handler_plugins_map[handler_name]
-#
-#            # handles the request by the request handler
-#            policy_service_handler_plugin.handle_request(request)
-#
-#            # sends the request to the client (response)
+
+            # retrieves the real service configuration,
+            # taking the request information into account
+            service_configuration = self._get_service_configuration(request)
+
+            # retrieves the plugin manager
+            plugin_manager = self.main_service_policy_plugin.manager
+
+            # retrieves the main service policy path
+            main_service_policy_plugin_path = plugin_manager.get_plugin_path_by_id(self.main_service_policy_plugin.id)
+
+            # retrieves the policy file path
+            policy_file_path = service_configuration.get("policy_file", main_service_policy_plugin_path + "/" + DEFAULT_POLICY_FILE)
+
+            # sets the file path in the request
+            request.set_file_path(policy_file_path)
+
+            # sends the request to the client (response)
             self.send_request(request)
 
-            # in case the connection is meant to be kept alive
-#            if self.keep_alive(request):
-#                self.main_service_policy_plugin.debug("Connection: %s kept alive for %ss" % (str(self.policy_address), str(request_timeout)))
-#            # in case the connection is not meant to be kept alive
-#            else:
-#                self.main_service_policy_plugin.debug("Connection: %s closed" % str(self.policy_address))
-#
-#                # returns false (connection closed)
-#                return False
-
+            # prints a debug message
+            self.main_service_policy_plugin.debug("Connection: %s kept alive for %ss" % (str(self.policy_address), str(request_timeout)))
         except Exception, exception:
             # prints info message about exception
             self.main_service_policy_plugin.info("There was an exception handling the request: " + str(exception))
@@ -484,9 +456,6 @@ class PolicyClientServiceTask:
 
         # creates the header loaded flag
         header_loaded = False
-
-        # creates the message loaded flag
-        message_loaded = False
 
         # creates the message offset index, representing the
         # offset byte to the initialization of the message
@@ -528,39 +497,18 @@ class PolicyClientServiceTask:
 
             # in case the start line is not loaded
             if not start_line_loaded:
-                # finds the first new line value
-                start_line_index = message_value.find("\r\n")
+                # finds the first end of string value
+                start_line_index = message_value.find("\0")
 
                 # in case there is a new line value found
                 if not start_line_index == -1:
-                    return
-
                     # retrieves the start line
                     start_line = message_value[:start_line_index]
 
-                    # splits the start line in spaces
-                    start_line_splitted = start_line.split(" ")
-
-                    # retrieves the start line splitted length
-                    start_line_splitted_length = len(start_line_splitted)
-
-                    # in case the length of the splitted line is not three
-                    if not start_line_splitted_length == 3:
+                    # in case the start line is valid
+                    if not start_line == VALID_REQUEST_VALUE:
                         # raises the policy invalid data exception
                         raise main_service_policy_exceptions.PolicyInvalidDataException("invalid data received: " + start_line)
-
-                    # retrieve the operation type the target and the protocol version
-                    # from the start line splitted
-                    operation_type, target, protocol_version = start_line_splitted
-
-                    # sets the request operation type
-                    request.set_operation_type(operation_type)
-
-                    # sets the target
-                    request.set_target(target)
-
-                    # sets the request protocol version
-                    request.set_protocol_version(protocol_version)
 
                     # sets the start line loaded flag
                     start_line_loaded = True
@@ -604,35 +552,15 @@ class PolicyClientServiceTask:
         @param exception: The exception to be sent.
         """
 
-#        # resets the response value (deletes answers)
-#        request.reset_response()
-#
-#        # checks if the error contains a policy failure mask
-#        if hasattr(exception, "policy_failure_mask"):
-#            # sets the flags out (response) with
-#            # the policy failure mask
-#            request.flags_out |= exception.policy_failure_mask
-#        # in case there is no status code defined in the error
-#        else:
-#            # sets the flags out (response) with
-#            # the policy failure mask
-#            request.flags_out |= SERVER_FAILURE_ERROR_MASK_VALUE
-
-        print "occourre exceptcao !!!:" + str(exception)
-
         # sends the request to the client (response)
         self.send_request(request)
 
     def send_request(self, request):
         # retrieves the result from the request
-        #result = request.get_result()
-
-        result = "<cross-domain-policy><allow-access-from domain='*' to-ports='*' secure='false' /></cross-domain-policy>\0"
+        result = request.get_result()
 
         # sends the result to the policy socket
         self.policy_connection.sendall(result)
-
-        print "sent: " + repr(result)
 
     def _get_service_configuration(self, request):
         """
@@ -658,14 +586,11 @@ class PolicyRequest:
     The policy request class.
     """
 
-    operation_type = None
-    """ The operation type """
+    parameters = {}
+    """ The parameters """
 
-    target = None
-    """ The target """
-
-    protocol_version = None
-    """ The protocol version """
+    file_path = None
+    """ The file path of the policy """
 
     def __init__(self, parameters):
         """
@@ -678,34 +603,34 @@ class PolicyRequest:
         self.parameters = parameters
 
     def __repr__(self):
-        return "(%s, %s, %s)" % (self.operation_type, self.target, self.protocol_version)
+        return "(%s)" % self.file_path
 
-    def set_operation_type(self, operation_type):
+    def get_result(self):
         """
-        Sets the operation type.
+        Retrieves the result value for the current request.
 
-        @type opration_type: String
-        @param opration_type: The operation type.
-        """
-
-        self.operation_type = operation_type
-
-    def set_target(self, target):
-        """
-        Sets the target.
-
-        @type target: String
-        @param target: The target.
+        @rtype: String
+        @return: The result value for the current request.
         """
 
-        self.target = target
+        # opens the file path
+        file = open(self.file_path, "rb")
 
-    def set_protocol_version(self, protocol_version):
+        # reads the file contents
+        file_contents = file.read()
+
+        # appends the extra "zero" character
+        file_contents += "\0"
+
+        # returns the file contents as the result
+        return file_contents
+
+    def set_file_path(self, file_path):
         """
-        Sets the protocol version.
+        Sets the file path.
 
-        @type protocol_version: String
-        @param protocol_version: The protocol version.
+        @type file_path: String
+        @param file_path:  The file path.
         """
 
-        self.protocol_version = protocol_version
+        self.file_path = file_path
