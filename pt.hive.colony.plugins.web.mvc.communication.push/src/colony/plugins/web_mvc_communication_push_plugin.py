@@ -53,7 +53,7 @@ class WebMvcCommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    attributes = {"build_automation_file_path" : "$base{plugin_directory}/web_mvc_manager/manager/resources/baf.xml"}
+    attributes = {"build_automation_file_path" : "$base{plugin_directory}/web_mvc_communication_push/communication_push/resources/baf.xml"}
     capabilities = ["web.mvc_service", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
