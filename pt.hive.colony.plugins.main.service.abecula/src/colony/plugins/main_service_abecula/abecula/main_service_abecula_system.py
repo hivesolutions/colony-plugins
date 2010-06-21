@@ -17,7 +17,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Hive Colony Framework. If not, see <abecula://www.gnu.org/licenses/>.
+# along with Hive Colony Framework. If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
@@ -38,7 +38,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import socket
-import struct
 import select
 import threading
 
@@ -52,68 +51,23 @@ BIND_HOST_VALUE = ""
 CLIENT_CONNECTION_TIMEOUT = 1
 """ The client connection timeout """
 
-REQUEST_TIMEOUT = 10
+REQUEST_TIMEOUT = 100
 """ The request timeout """
 
-CHUNK_SIZE = 512
+CHUNK_SIZE = 4096
 """ The chunk size """
 
-NUMBER_THREADS = 15
+NUMBER_THREADS = 5
 """ The number of threads """
 
-MAX_NUMBER_THREADS = 30
+MAX_NUMBER_THREADS = 10
 """ The maximum number of threads """
 
 SCHEDULING_ALGORITHM = 2
 """ The scheduling algorithm """
 
-DEFAULT_PORT = 53
+DEFAULT_PORT = 7676
 """ The default port """
-
-MESSAGE_HEADER_SIZE = 12
-""" The size of the abecula message header (in bytes) """
-
-NORMAL_REQUEST_VALUE = 0x0100
-""" The normal request value """
-
-NORMAL_RESPONSE_VALUE = 0x8180
-""" The normal response value """
-
-NO_ERROR_MASK_VALUE = 0x0000
-""" The no error mask value """
-
-FORMAT_ERROR_MASK_VALUE = 0x0001
-""" The format error mask value """
-
-SERVER_FAILURE_ERROR_MASK_VALUE = 0x0002
-""" The server failure error mask value """
-
-NOT_IMPLEMENTED_ERROR_MASK_VALUE = 0x0004
-""" The not implemented error mask value """
-
-REFUSED_ERROR_MASK_VALUE = 0x0008
-""" The refused error mask value """
-
-CACHE_MASK_VALUE = 0xc000
-""" The cache mask value """
-
-TYPES_MAP = {"A" : 0x01, "NS" : 0x02, "MD" : 0x03, "MF" : 0x04, "CNAME" : 0x05,
-             "SOA" : 0x06, "MB" : 0x07, "MG" : 0x08, "MR" : 0x09, "NULL" : 0x0a,
-             "WKS" : 0x0b, "PTR" : 0x0c, "HINFO" : 0x0d, "MINFO" : 0x0e, "MX" : 0x0f,
-             "TXT" : 0x10}
-""" The map associating the type string with the integer value """
-
-TYPES_REVERSE_MAP = {0x01 : "A", 0x02 : "NS", 0x03 : "MD", 0x04 : "MF", 0x05 : "CNAME",
-                     0x06 : "SOA", 0x07 : "MB", 0x08 : "MG", 0x09 : "MR", 0x0a : "NULL",
-                     0x0b : "WKS", 0x0c : "PTR", 0x0d : "HINFO", 0x0e : "MINFO", 0x0f : "MX",
-                     0x10 : "TXT"}
-""" The map associating the type integer with the string value """
-
-CLASSES_MAP = {"IN" : 0x01, "CS" : 0x02, "CH" : 0x03, "HS" : 0x04}
-""" The map associating the class string with the integer value """
-
-CLASSES_REVERSE_MAP = {0x01 : "IN", 0x02 : "CS", 0x03 : "CH", 0x04 : "HS"}
-""" The map associating the class integer with the string value """
 
 class MainServiceAbecula:
     """
@@ -321,7 +275,7 @@ class MainServiceAbecula:
                 self.abecula_client_thread_pool.insert_task(task_descriptor)
 
                 # prints a debug message about the number of threads in pool
-                self.main_service_abecula_plugin.dabeculag("Number of threads in pool: %d" % self.abecula_client_thread_pool.current_number_threads)
+                self.main_service_abecula_plugin.debug("Number of threads in pool: %d" % self.abecula_client_thread_pool.current_number_threads)
             except Exception, exception:
                 # prints an error message about the problem accepting the connection
                 self.main_service_abecula_plugin.error("Error accepting connection: " + str(exception))
@@ -480,14 +434,14 @@ class AbeculaClientServiceTask:
             self.send_request(request)
 
             # in case the connection is meant to be kept alive
-            if self.keep_alive(request):
-                self.main_service_abecula_plugin.debug("Connection: %s kept alive for %ss" % (str(self.abecula_address), str(request_timeout)))
-            # in case the connection is not meant to be kept alive
-            else:
-                self.main_service_abecula_plugin.debug("Connection: %s closed" % str(self.abecula_address))
-
-                # returns false (connection closed)
-                return False
+#            if self.keep_alive(request):
+#                self.main_service_abecula_plugin.debug("Connection: %s kept alive for %ss" % (str(self.abecula_address), str(request_timeout)))
+#            # in case the connection is not meant to be kept alive
+#            else:
+#                self.main_service_abecula_plugin.debug("Connection: %s closed" % str(self.abecula_address))
+#
+#                # returns false (connection closed)
+#                return False
 
         except Exception, exception:
             # prints info message about exception
@@ -621,7 +575,9 @@ class AbeculaClientServiceTask:
         try:
             # receives the data in chunks
             data = self.abecula_connection.recv(chunk_size)
-        except:
+        except Exception, ex:
+            print str(ex)
+
             raise main_service_abecula_exceptions.ClientRequestTimeout("timeout")
 
         return data
@@ -630,41 +586,24 @@ class AbeculaClientServiceTask:
         """
         Sends the exception to the given request for the given exception.
 
-        @type request: abeculaRequest
+        @type request: AbeculaRequest
         @param request: The request to send the exception.
         @type exception: Exception
         @param exception: The exception to be sent.
         """
 
-        # resets the response value (deletes answers)
-        request.reset_response()
-
-        # checks if the error contains a abecula failure mask
-        if hasattr(exception, "abecula_failure_mask"):
-            # sets the flags out (response) with
-            # the abecula failure mask
-            request.flags_out |= exception.abecula_failure_mask
-        # in case there is no status code defined in the error
-        else:
-            # sets the flags out (response) with
-            # the abecula failure mask
-            request.flags_out |= SERVER_FAILURE_ERROR_MASK_VALUE
+#        # resets the response value (deletes answers)
+#        request.reset_response()
 
         # sends the request to the client (response)
         self.send_request(request)
 
     def send_request(self, request):
         # retrieves the result from the request
-        #result = request.get_result()
-
-        result = "<?xml version=\"1.0\"?>\
-<!DOCTYPE cross-domain-policy SYSTEM \"http://www.macromedia.com/xml/dtds/cross-domain-policy.dtd\">\
-<cross-domain-policy>\
-  <allow-access-from domain=\"*\" />\
-</cross-domain-policy>"
+        result = request.get_result()
 
         # sends the result to the abecula socket
-        self.abecula_connection.sebdall(result, self.abecula_address)
+        self.abecula_connection.sendall(result)
 
     def _get_service_configuration(self, request):
         """
@@ -711,6 +650,9 @@ class AbeculaRequest:
 
     def __repr__(self):
         return "(%s, %s, %s)" % (self.operation_type, self.target, self.protocol_version)
+
+    def get_result(self):
+        return "DUMMY RESPONSE"
 
     def set_operation_type(self, operation_type):
         """
