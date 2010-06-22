@@ -106,7 +106,9 @@ class ThreadPoolManager:
         Unloads the thread pool manager, stopping all the available thread pools.
         """
 
+        # iterates over all the thread pools
         for thread_pool in self.thread_pools_list:
+            # stops the thread pool
             thread_pool.stop_pool()
 
     def create_new_thread_pool(self, name, description, number_threads = DEFAULT_NUMBER_THREADS, scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM, maximum_number_threads = DEFAULT_MAXIMUM_NUMBER_THREADS):
@@ -195,7 +197,7 @@ class ThreadPoolImplementation:
 
     def __init__(self, name = "none", description = "none", number_threads = DEFAULT_NUMBER_THREADS, scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM, maximum_number_threads = DEFAULT_MAXIMUM_NUMBER_THREADS, logger = None):
         """
-        Constructor of the class
+        Constructor of the class.
 
         @type name: String
         @param name: The thread pool name.
