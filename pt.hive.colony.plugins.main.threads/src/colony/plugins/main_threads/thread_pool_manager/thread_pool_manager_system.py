@@ -80,7 +80,7 @@ TASK_PAUSED_STATUS = 3
 
 class ThreadPoolManager:
     """
-    The thread pool manager class
+    The thread pool manager class.
     """
 
     thread_pool_manager_plugin = None
@@ -91,10 +91,10 @@ class ThreadPoolManager:
 
     def __init__(self, thread_pool_manager_plugin):
         """
-        Constructor of the class
+        Constructor of the class.
 
         @type thread_pool_manager_plugin: Plugin
-        @param thread_pool_manager_plugin: The thread pool manager plugin
+        @param thread_pool_manager_plugin: The thread pool manager plugin.
         """
 
         self.thread_pool_manager_plugin = thread_pool_manager_plugin
@@ -103,7 +103,7 @@ class ThreadPoolManager:
 
     def unload(self):
         """
-        Unloads the thread pool manager, stopping all the available thread pools
+        Unloads the thread pool manager, stopping all the available thread pools.
         """
 
         for thread_pool in self.thread_pools_list:
@@ -111,20 +111,20 @@ class ThreadPoolManager:
 
     def create_new_thread_pool(self, name, description, number_threads = DEFAULT_NUMBER_THREADS, scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM, maximum_number_threads = DEFAULT_MAXIMUM_NUMBER_THREADS):
         """
-        Creates a new thread pool with the given name, description and number of threads
+        Creates a new thread pool with the given name, description and number of threads.
 
         @type name: String
-        @param name: The thread pool name
+        @param name: The thread pool name.
         @type description: String
-        @param description: The thread pool description
+        @param description: The thread pool description.
         @type number_threads: int
-        @param number_threads: The thread pool number of threads
+        @param number_threads: The thread pool number of threads.
         @type scheduling_algorithm: int
-        @param scheduling_algorithm: The thread pool scheduling algorithm
+        @param scheduling_algorithm: The thread pool scheduling algorithm.
         @type maximum_number_threads: int
-        @param maximum_number_threads: The thread pool maximum number of threads
+        @param maximum_number_threads: The thread pool maximum number of threads.
         @rtype: ThreadPoolImplementation
-        @return: The created thread pool
+        @return: The created thread pool.
         """
 
         # retrieves the logger
@@ -141,17 +141,17 @@ class ThreadPoolManager:
 
     def get_thread_task_descriptor_class(self):
         """
-        Retrieves the thread task descriptor class
+        Retrieves the thread task descriptor class.
 
         @rtype: Class
-        @return: The thread task descriptor class
+        @return: The thread task descriptor class.
         """
 
         return TaskDescriptor
 
 class ThreadPoolImplementation:
     """
-    The thread pool implementation class
+    The thread pool implementation class.
     """
 
     name = "none"
@@ -198,15 +198,15 @@ class ThreadPoolImplementation:
         Constructor of the class
 
         @type name: String
-        @param name: The thread pool name
+        @param name: The thread pool name.
         @type description: String
-        @param description: The thread pool description
+        @param description: The thread pool description.
         @type number_threads: int
-        @param number_threads: The thread pool number of threads
+        @param number_threads: The thread pool number of threads.
         @type scheduling_algorithm: int
-        @param scheduling_algorithm: The thread pool scheduling algorithm
+        @param scheduling_algorithm: The thread pool scheduling algorithm.
         @type maximum_number_threads: int
-        @param maximum_number_threads: The thread pool maximum number of threads
+        @param maximum_number_threads: The thread pool maximum number of threads.
         @type logger: Log
         @param logger: The logger used.
         """
@@ -231,17 +231,17 @@ class ThreadPoolImplementation:
 
     def start_pool(self):
         """
-        Starts the thread pool launching and starting all the threads
+        Starts the thread pool launching and starting all the threads.
         """
 
         # iterates over the number of threads for the thread pool
-        for n_thread in range(self.number_threads):
+        for _n_thread in range(self.number_threads):
             # creates a worker thread for the thread pool
             self.create_worker_thread()
 
     def stop_pool(self):
         """
-        Stops the thread pool exiting all the threads
+        Stops the thread pool exiting all the threads.
         """
 
         # creates a worker thread task to stop the thread
@@ -288,7 +288,7 @@ class ThreadPoolImplementation:
 
     def destroy_worker_thread(self):
         """
-        Destroys a worker thread for the thread pool
+        Destroys a worker thread for the thread pool.
         """
 
         # creates a worker thread task to stop a thread
@@ -299,10 +299,10 @@ class ThreadPoolImplementation:
 
     def notify_thread_destroyed(self, worker_thread):
         """
-        Notifies the thread pool about the thread destruction
+        Notifies the thread pool about the thread destruction.
 
         @type worker_thread: WorkerThread
-        @param worker_thread: The worker thread to be notified about destruction
+        @param worker_thread: The worker thread to be notified about destruction.
         """
 
         # in case the worker thread exists in the current list of threads
@@ -315,10 +315,10 @@ class ThreadPoolImplementation:
 
     def refresh_thread_pool_size(self, increment_size = True):
         """
-        Refreshes the thread pool size, growing it if necessary
+        Refreshes the thread pool size, growing it if necessary.
 
         @type increment_size: bool
-        @param increment_size: The increment of decrement thread pool size value
+        @param increment_size: The increment of decrement thread pool size value.
         """
 
         # in case the current scheduling algorithm is dynamic scheduling
@@ -374,18 +374,18 @@ class ThreadPoolImplementation:
                             number_threads_destroy = difference_threads
 
                         # destroys the defined number of threads
-                        for n_thread_destroy in range(number_threads_destroy):
+                        for _n_thread_destroy in range(number_threads_destroy):
                             # destroys a worker thread
                             self.destroy_worker_thread()
 
     def insert_task(self, task_descriptor, start_method_args = []):
         """
-        Inserts a new task into the thread pool
+        Inserts a new task into the thread pool.
 
         @type task_descriptor: TaskDescriptor
-        @param task_descriptor: The descriptor of the task to be inserted
+        @param task_descriptor: The descriptor of the task to be inserted.
         @type start_method_args: List
-        @param start_method_args: The start method arguments
+        @param start_method_args: The start method arguments.
         """
 
         # creates a worker thread task to start a task and inserts the task descriptor and arguments as arguments
@@ -396,12 +396,12 @@ class ThreadPoolImplementation:
 
     def remove_task(self, task_descriptor, stop_method_args = []):
         """
-        Removes a task from the thread pool
+        Removes a task from the thread pool.
 
         @type task_descriptor: TaskDescriptor
-        @param task_descriptor: The descriptor of the task to be removed
+        @param task_descriptor: The descriptor of the task to be removed.
         @type stop_method_args: List
-        @param stop_method_args: The stop method arguments
+        @param stop_method_args: The stop method arguments.
         """
 
         # creates a worker thread task to stop a task and inserts the task descriptor and arguments as arguments
@@ -412,12 +412,12 @@ class ThreadPoolImplementation:
 
     def pause_task(self, task_descriptor, pause_method_args = []):
         """
-        Pauses a task from the thread pool
+        Pauses a task from the thread pool.
 
         @type task_descriptor: TaskDescriptor
-        @param task_descriptor: The descriptor of the task to be paused
+        @param task_descriptor: The descriptor of the task to be paused.
         @type pause_method_args: List
-        @param pause_method_args: The pause method arguments
+        @param pause_method_args: The pause method arguments.
         """
 
         # creates a worker thread task to pause a task and inserts the task descriptor and arguments as arguments
@@ -428,12 +428,12 @@ class ThreadPoolImplementation:
 
     def resume_task(self, task_descriptor, resume_method_args = []):
         """
-        Resumes a task from the thread pool
+        Resumes a task from the thread pool.
 
         @type task_descriptor: TaskDescriptor
-        @param task_descriptor: The descriptor of the task to be resumed
+        @param task_descriptor: The descriptor of the task to be resumed.
         @type resume_method_args: List
-        @param resume_method_args: The resume method arguments
+        @param resume_method_args: The resume method arguments.
         """
 
         # creates a worker thread task to pause a task and inserts the task descriptor and arguments as arguments
@@ -444,12 +444,12 @@ class ThreadPoolImplementation:
 
     def cancel_task(self, task_descriptor, stop_method_args = []):
         """
-        Cancels a task from the thread pool
+        Cancels a task from the thread pool.
 
         @type task_descriptor: TaskDescriptor
-        @param task_descriptor: The descriptor of the task to be canceled
+        @param task_descriptor: The descriptor of the task to be canceled.
         @type stop_method_args: List
-        @param stop_method_args: The stop method arguments
+        @param stop_method_args: The stop method arguments.
         """
 
         # creates a worker thread task to stop a task and inserts the task descriptor and arguments as arguments
@@ -460,12 +460,12 @@ class ThreadPoolImplementation:
 
     def insert_worker_thread_task(self, worker_thread_task, insert_at_end = True):
         """
-        Inserts a worker thread task into the task queue
+        Inserts a worker thread task into the task queue.
 
         @type worker_thread_task: WorkerThreadTask
-        @param worker_thread_task: The worker thread task to inserted in the task queue
+        @param worker_thread_task: The worker thread task to inserted in the task queue.
         @type insert_at_end: bool
-        @param insert_at_end: If the worker thread task is to be inserted at the end of the queue or not
+        @param insert_at_end: If the worker thread task is to be inserted at the end of the queue or not.
         """
 
         # refreshes the thread pool size
@@ -481,16 +481,17 @@ class ThreadPoolImplementation:
 
     def insert_worker_thread_task_all(self, worker_thread_task, insert_at_end = True):
         """
-        Inserts n worker thread tasks into the task queue
-        (the same amount as the current number of active threads in the pool)
+        Inserts n worker thread tasks into the task queue (the same amount
+        as the current number of active threads in the pool).
 
         @type worker_thread_task: WorkerThreadTask
-        @param worker_thread_task: The worker thread task to inserted in the task queue
+        @param worker_thread_task: The worker thread task to inserted in the task queue.
         @type insert_at_end: bool
-        @param insert_at_end: If the worker thread task is to be inserted at the end of the queue or not
+        @param insert_at_end: If the worker thread task is to be inserted at the end of the queue or not.
         """
 
-        for n_thread in range(self.number_threads):
+        # iterates over the number of currently available threads
+        for _n_thread in range(self.number_threads):
             self.task_condition.acquire()
             if insert_at_end:
                 self.task_queue.append(worker_thread_task)
@@ -501,10 +502,10 @@ class ThreadPoolImplementation:
 
     def remove_worker_thread_task(self, worker_thread_task):
         """
-        Removes a worker thread task from the task queue
+        Removes a worker thread task from the task queue.
 
         @type worker_thread_task: WorkerThreadTask
-        @param worker_thread_task: The worker thread task to removed from the task queue
+        @param worker_thread_task: The worker thread task to removed from the task queue.
         """
 
         # refreshes the thread pool size
@@ -517,7 +518,7 @@ class ThreadPoolImplementation:
 
 class WorkerThread(threading.Thread):
     """
-    The worker thread class
+    The worker thread class.
     """
 
     thread_pool = None
@@ -528,7 +529,7 @@ class WorkerThread(threading.Thread):
         Constructor of the class
 
         @type thread_pool: ThreadPoolImplementation
-        @param thread_pool: The thread pool to be associated with this worker tread
+        @param thread_pool: The thread pool to be associated with this worker tread.
         """
 
         threading.Thread.__init__(self)
@@ -537,7 +538,7 @@ class WorkerThread(threading.Thread):
 
     def run(self):
         """
-        Starts the run of the thread
+        Starts the run of the thread.
         """
 
         thread_pool = self.thread_pool
@@ -618,7 +619,7 @@ class WorkerThread(threading.Thread):
 
 class WorkerThreadTask:
     """
-    The worker thread task class
+    The worker thread task class.
     """
 
     task_type = None
@@ -632,9 +633,9 @@ class WorkerThreadTask:
         Constructor of the class
 
         @type task_type: String
-        @param task_type: The type of the work thread task
+        @param task_type: The type of the work thread task.
         @type task_arguments: List
-        @param task_arguments: The arguments of the work thread task
+        @param task_arguments: The arguments of the work thread task.
         """
 
         self.task_type = task_type
@@ -642,7 +643,7 @@ class WorkerThreadTask:
 
 class TaskDescriptor:
     """
-    Class that describes a single task for a thread pool
+    Class that describes a single task for a thread pool.
     """
 
     name = "none"
@@ -674,17 +675,17 @@ class TaskDescriptor:
         Constructor of the class
 
         @type name: String
-        @param name: The name of task
+        @param name: The name of task.
         @type description: String
-        @param description: The description of the task
+        @param description: The description of the task.
         @type start_method: Method
-        @param start_method: The start method of the task
+        @param start_method: The start method of the task.
         @type start_method: Method
-        @param start_method: The stop method of the task
+        @param start_method: The stop method of the task.
         @type pause_method: Method
-        @param pause_method: The pause method of the task
+        @param pause_method: The pause method of the task.
         @type resume_method: Method
-        @param resume_method: The resume method of the task
+        @param resume_method: The resume method of the task.
         """
 
         self.name = name
@@ -698,10 +699,10 @@ class TaskDescriptor:
 
     def start_task(self, start_method_args):
         """
-        Starts the task represented by this task descriptor
+        Starts the task represented by this task descriptor.
 
         @type start_method_args: List
-        @param start_method_args: The arguments for the start method
+        @param start_method_args: The arguments for the start method.
         """
 
         # in case the task descriptor contains a valid start method
@@ -713,10 +714,10 @@ class TaskDescriptor:
 
     def stop_task(self, stop_method_args):
         """
-        Stops the task represented by this task descriptor
+        Stops the task represented by this task descriptor.
 
         @type stop_method_args: List
-        @param stop_method_args: The arguments for the stop method
+        @param stop_method_args: The arguments for the stop method.
         """
 
         # in case the task descriptor contains a valid stop method
@@ -728,10 +729,10 @@ class TaskDescriptor:
 
     def pause_task(self, pause_method_args):
         """
-        Pauses the task represented by this task descriptor
+        Pauses the task represented by this task descriptor.
 
         @type pause_method_args: List
-        @param pause_method_args: The arguments for the pause method
+        @param pause_method_args: The arguments for the pause method.
         """
 
         # in case the task descriptor contains a valid pause method
@@ -743,10 +744,10 @@ class TaskDescriptor:
 
     def resume_task(self, resume_method_args):
         """
-        Resumes the task represented by this task descriptor
+        Resumes the task represented by this task descriptor.
 
         @type resume_method_args: List
-        @param resume_method_args: The arguments for the resume method
+        @param resume_method_args: The arguments for the resume method.
         """
 
         # in case the task descriptor contains a valid resume method
@@ -758,40 +759,40 @@ class TaskDescriptor:
 
     def get_worker_thread(self):
         """
-        Retrieves the worker thread for the task descriptor
+        Retrieves the worker thread for the task descriptor.
 
         @rtype: WorkerThread
-        @return: The worker thread for the task
+        @return: The worker thread for the task.
         """
 
         return self.worker_thread
 
     def set_worker_thread(self, worker_thread):
         """
-        Sets the worker thread for the task descriptor
+        Sets the worker thread for the task descriptor.
 
         @type worker_thread: WorkerThread
-        @param worker_thread: The worker thread for the task
+        @param worker_thread: The worker thread for the task.
         """
 
         self.worker_thread = worker_thread
 
     def get_status(self):
         """
-        Retrieves the current task status for the task descriptor
+        Retrieves the current task status for the task descriptor.
 
         @rtype: int
-        @return: The current task status for the task descriptor
+        @return: The current task status for the task descriptor.
         """
 
         return self.status
 
     def set_status(self, status):
         """
-        Sets the current task status for the task descriptor
+        Sets the current task status for the task descriptor.
 
         @type status: int
-        @param status: The current task status for the task descriptor
+        @param status: The current task status for the task descriptor.
         """
 
         self.status = status
