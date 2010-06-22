@@ -254,6 +254,7 @@ class ThreadPoolImplementation:
 
         # iterates over all the threads to join them
         for thread in self.worker_threads_list:
+            # joins the thread
             thread.join()
 
     def stop_pool_tasks(self):
