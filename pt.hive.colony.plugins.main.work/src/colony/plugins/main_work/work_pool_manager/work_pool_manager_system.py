@@ -317,10 +317,8 @@ class WorkTask:
     work_counter = 0
     """ The number of work items available"""
 
-    work_access_lock = None
-    """ Lock to control the access to the work """
-
     work_access_condition = None
+    """ The condition to control the access to work """
 
     def __init__(self, work_processing_task):
         """
@@ -332,7 +330,6 @@ class WorkTask:
 
         self.work_processing_task = work_processing_task
 
-        self.work_access_lock = threading.Lock()
         self.work_access_condition = threading.Condition()
 
     def start(self):
@@ -340,10 +337,13 @@ class WorkTask:
             # acquires the work access condition
             self.work_access_condition.acquire()
 
-            # iterates while thre is no work to be done
+            # iterates while there is no work to be done
             while self.work_counter < 1:
                 # in case the stop flag is active
                 if self.stop_flag:
+                    # release the work access condition
+                    self.work_access_condition.release()
+
                     return
 
                 # waits for the work access condition

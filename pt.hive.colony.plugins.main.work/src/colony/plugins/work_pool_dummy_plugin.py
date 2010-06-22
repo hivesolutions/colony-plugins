@@ -56,7 +56,7 @@ class WorkPoolDummyPlugin(colony.plugins.plugin_system.Plugin):
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
                  colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
     attributes = {}
-    capabilities = ["main"]
+    capabilities = ["startup"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.work.work_pool_manager", "1.0.0")]
@@ -69,40 +69,22 @@ class WorkPoolDummyPlugin(colony.plugins.plugin_system.Plugin):
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
 
-        # notifies the ready semaphore
-        self.release_ready_semaphore()
-
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
         self.work_pool = self.work_pool_manager_plugin.create_new_work_pool("dummy work pool", "dummy work pool", ProcessingClass, 3, 1, 5, 10)
         self.work_pool.start_pool()
 
-        for i in range(100):
+        for _index in range(100):
             self.work_pool.insert_work("asdas")
-
-        print "!!!!acabou!!!!"
-
-        # notifies the ready semaphore
-        self.release_ready_semaphore()
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
         self.work_pool.stop_pool_tasks()
         self.work_pool.stop_pool()
 
-        # notifies the ready semaphore
-        self.release_ready_semaphore()
-
-    def insert_work(self, work_reference):
-        for i in range(100):
-            self.work_pool.insert_work(work_reference)
-
     def end_unload_plugin(self):
         colony.plugins.plugin_system.Plugin.end_unload_plugin(self)
-
-        # notifies the ready semaphore
-        self.release_ready_semaphore()
 
     def load_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.load_allowed(self, plugin, capability)
@@ -132,17 +114,13 @@ class ProcessingClass:
 
             thread_id = thread.get_ident()
 
-            #print str(work) + " " + str(thread_id)
+            print str(work) + " " + str(thread_id)
 
             # removes the work
             self.remove_work(work)
 
-            #print "processando"
-
     def work_added(self, work_reference):
         self.work_list.append(work_reference)
-
-
 
     def work_removed(self, work_reference):
         self.work_list.remove(work_reference)
