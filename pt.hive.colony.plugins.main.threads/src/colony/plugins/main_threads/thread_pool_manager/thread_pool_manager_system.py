@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import copy
 import threading
 
 DEFAULT_NUMBER_THREADS = 5
@@ -262,13 +263,19 @@ class ThreadPoolImplementation:
         Stops the thread tasks pool removing all the tasks.
         """
 
+        # creates a copy of the task queue (to remove worker thread task)
+        task_queue_copy = copy.copy(self.task_queue)
+
         # iterates over all the tasks in the task queue
-        for task in self.task_queue:
+        for task in task_queue_copy:
             # removes the task from the task queue
             self.remove_worker_thread_task(task)
 
+        # creates a copy of the task descriptor running queue (to stop the task)
+        task_descriptor_running_queue_copy = copy.copy(self.task_descriptor_running_queue)
+
         # iterates over all the task descriptors running in the task descriptor running queue
-        for task_descriptor_running in self.task_descriptor_running_queue:
+        for task_descriptor_running in task_descriptor_running_queue_copy:
             # stops the running task descriptor
             task_descriptor_running.stop_task([])
 
