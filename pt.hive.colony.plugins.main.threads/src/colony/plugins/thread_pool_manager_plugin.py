@@ -60,6 +60,7 @@ class ThreadPoolManagerPlugin(colony.plugins.plugin_system.Plugin):
     dependencies = []
     events_handled = []
     events_registrable = []
+    main_modules = ["main_threads.thread_pool_manager.thread_pool_manager_system"]
 
     thread_pool_manager = None
 
