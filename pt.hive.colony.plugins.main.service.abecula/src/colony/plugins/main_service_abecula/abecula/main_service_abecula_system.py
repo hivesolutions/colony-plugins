@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import sys
+import types
 import socket
 import select
 import threading
@@ -57,6 +59,18 @@ REQUEST_TIMEOUT = 100
 CHUNK_SIZE = 4096
 """ The chunk size """
 
+SERVER_NAME = "Hive-Colony-Abecula"
+""" The server name """
+
+SERVER_VERSION = "1.0.0"
+""" The server version """
+
+ENVIRONMENT_VERSION = str(sys.version_info[0]) + "." + str(sys.version_info[1]) + "." + str(sys.version_info[2]) + "-" + str(sys.version_info[3])
+""" The environment version """
+
+SERVER_IDENTIFIER = SERVER_NAME + "/" + SERVER_VERSION + " (Python/" + sys.platform + "/" + ENVIRONMENT_VERSION + ")"
+""" The server identifier """
+
 NUMBER_THREADS = 5
 """ The number of threads """
 
@@ -68,6 +82,20 @@ SCHEDULING_ALGORITHM = 2
 
 DEFAULT_PORT = 7676
 """ The default port """
+
+STATUS_CODE_VALUES = {100 : "Continue", 101 : "Switching Protocols",
+                      200 : "OK", 207 : "Multi-Status",
+                      301 : "Moved permanently", 302 : "Found", 303 : "See Other", 304 : "Not Modified",
+                      305 : "Use Proxy", 306 : "(Unused)", 307 : "Temporary Redirect",
+                      403 : "Forbidden", 404 : "Not Found",
+                      500 : "Internal Server Error"}
+""" The status code values map """
+
+DEFAULT_STATUS_CODE_VALUE = "Invalid"
+""" The default status code value """
+
+SERVER_VALUE = "Server"
+""" The server value """
 
 class MainServiceAbecula:
     """
@@ -394,54 +422,51 @@ class AbeculaClientServiceTask:
         try:
             # prints debug message about request
             self.main_service_abecula_plugin.debug("Handling request: %s" % str(request))
-#
-#            # retrieves the real service configuration,
-#            # taking the request information into account
-#            service_configuration = self._get_service_configuration(request)
-#
-#            # processes the redirection information in the request
-#            self._process_redirection(request, service_configuration)
-#
-#            # processes the handler part of the request and retrieves
-#            # the handler name
-#            handler_name = self._process_handler(request, service_configuration)
-#
-#            # in case the request was not already handled
-#            if not handler_name:
-#                # retrieves the default handler name
-#                handler_name = service_configuration.get("default_handler", None)
-#
-#                # sets the handler path
-#                request.handler_path = None
-#
-#            # in case no handler name is defined (request not handled)
-#            if not handler_name:
-#                # raises an abecula no handler exception
-#                raise main_service_abecula_exceptions.AbeculaNoHandlerException("no handler defined for current request")
-#
-#            # in case the handler is not found in the handler plugins map
-#            if not handler_name in abecula_service_handler_plugins_map:
-#                # raises an abecula handler not found exception
-#                raise main_service_abecula_exceptions.AbeculaHandlerNotFoundException("no handler found for current request: " + handler_name)
-#
-#            # retrieves the abecula service handler plugin
-#            abecula_service_handler_plugin = abecula_service_handler_plugins_map[handler_name]
-#
-#            # handles the request by the request handler
-#            abecula_service_handler_plugin.handle_request(request)
-#
-#            # sends the request to the client (response)
+
+            # retrieves the real service configuration,
+            # taking the request information into account
+            service_configuration = self._get_service_configuration(request)
+
+            # processes the handler part of the request and retrieves
+            # the handler name
+            handler_name = self._process_handler(request, service_configuration)
+
+            # in case the request was not already handled
+            if not handler_name:
+                # retrieves the default handler name
+                handler_name = service_configuration.get("default_handler", None)
+
+                # sets the handler path
+                request.handler_path = None
+
+            # in case no handler name is defined (request not handled)
+            if not handler_name:
+                # raises an abecula no handler exception
+                raise main_service_abecula_exceptions.AbeculaNoHandlerException("no handler defined for current request")
+
+            # in case the handler is not found in the handler plugins map
+            if not handler_name in abecula_service_handler_plugins_map:
+                # raises an abecula handler not found exception
+                raise main_service_abecula_exceptions.AbeculaHandlerNotFoundException("no handler found for current request: " + handler_name)
+
+            # retrieves the abecula service handler plugin
+            abecula_service_handler_plugin = abecula_service_handler_plugins_map[handler_name]
+
+            # handles the request by the request handler
+            abecula_service_handler_plugin.handle_request(request)
+
+            # sends the request to the client (response)
             self.send_request(request)
 
             # in case the connection is meant to be kept alive
-#            if self.keep_alive(request):
-#                self.main_service_abecula_plugin.debug("Connection: %s kept alive for %ss" % (str(self.abecula_address), str(request_timeout)))
-#            # in case the connection is not meant to be kept alive
-#            else:
-#                self.main_service_abecula_plugin.debug("Connection: %s closed" % str(self.abecula_address))
-#
-#                # returns false (connection closed)
-#                return False
+            if self.keep_alive(request):
+                self.main_service_abecula_plugin.debug("Connection: %s kept alive for %ss" % (str(self.abecula_address), str(request_timeout)))
+            # in case the connection is not meant to be kept alive
+            else:
+                self.main_service_abecula_plugin.debug("Connection: %s closed" % str(self.abecula_address))
+
+                # returns false (connection closed)
+                return False
 
         except Exception, exception:
             # prints info message about exception
@@ -605,6 +630,24 @@ class AbeculaClientServiceTask:
         # sends the result to the abecula socket
         self.abecula_connection.sendall(result)
 
+    def _process_handler(self, request, service_configuration):
+        """
+        Processes the handler stage of the abecula request.
+
+        @type request: AbeculaRequest
+        @param request: The request to be processed.
+        @type service_configuration: Dictionary
+        @param service_configuration: The service configuration map.
+        @rtype: String
+        @return: The processed handler name.
+        """
+
+        # retrieves the handler name as the target of the request
+        handler_name = request.get_target()
+
+        # returns the handler name
+        return handler_name
+
     def _get_service_configuration(self, request):
         """
         Retrieves the service configuration for the given request.
@@ -638,6 +681,24 @@ class AbeculaRequest:
     protocol_version = None
     """ The protocol version """
 
+    headers_map = {}
+    """ The headers map """
+
+    response_headers_map = {}
+    """ The response headers map """
+
+    received_message = "none"
+    """ The received message """
+
+    message_stream = None
+    """ The message stream """
+
+    status_code = None
+    """ The status code """
+
+    status_message = None
+    """ The status message """
+
     def __init__(self, parameters):
         """
         Constructor of the class.
@@ -648,11 +709,71 @@ class AbeculaRequest:
 
         self.parameters = parameters
 
+        self.headers_map = {}
+        self.response_headers_map = {}
+        self.message_stream = colony.libs.string_buffer_util.StringBuffer()
+
     def __repr__(self):
         return "(%s, %s, %s)" % (self.operation_type, self.target, self.protocol_version)
 
+    def read(self):
+        return self.received_message
+
+    def write(self, message, flush = 1, encode = True):
+        # retrieves the message type
+        message_type = type(message)
+
+        # in case the message type is unicode
+        if message_type == types.UnicodeType and encode:
+            # encodes the message with the defined content type charset
+            message = message.encode(self.content_type_charset)
+
+        # writes the message to the message stream
+        self.message_stream.write(message)
+
+    def flush(self):
+        pass
+
     def get_result(self):
-        return "DUMMY RESPONSE"
+        # retrieves the result stream
+        result = colony.libs.string_buffer_util.StringBuffer()
+
+        # retrieves the result string value
+        message = self.message_stream.get_value()
+
+        # in case the request is encoded
+        #if self.encoded:
+        #    if self.mediated:
+#                self.mediated_handler.encode_file(self.encoding_handler, self.encoding_type)
+#            elif self.chunked_encoding:
+#                self.chunk_handler.encode_file(self.encoding_handler, self.encoding_type)
+#            else:
+#                message = self.encoding_handler(message)
+
+        # retrieves the value for the status code
+        status_code_value = self.get_status_code_value()
+
+        # writes the http command in the string buffer (version, status code and status value)
+        result.write(self.protocol_version + " " + str(self.status_code) + " " + status_code_value + "\r\n")
+
+        # writes the main headers
+        result.write(SERVER_VALUE + ": " + SERVER_IDENTIFIER + "\r\n")
+
+        # iterates over all the "extra" header values to be sent
+        for header_name, header_value in self.response_headers_map.items():
+            # writes the extra header value in the result
+            result.write(header_name + ": " + header_value + "\r\n")
+
+        # writes the end of the headers and the message
+        # values into the result
+        result.write("\r\n")
+        result.write(message)
+
+        # retrieves the value from the result buffer
+        result_value = result.get_value()
+
+        # returns the result value
+        return result_value
 
     def set_operation_type(self, operation_type):
         """
@@ -663,6 +784,16 @@ class AbeculaRequest:
         """
 
         self.operation_type = operation_type
+
+    def get_target(self):
+        """
+        Retrieves the target.
+
+        @rtype: String
+        @return: The target.
+        """
+
+        return self.target
 
     def set_target(self, target):
         """
@@ -683,3 +814,25 @@ class AbeculaRequest:
         """
 
         self.protocol_version = protocol_version
+
+    def get_status_code_value(self):
+        """
+        Retrieves the current status code value.
+        The method returns the defined status code value,
+        or the default in case none is defined.
+
+        @rtype: String
+        @return: The status code value.
+        """
+
+        # in case a status message is defined
+        if self.status_message:
+            # sets the defined status message as the
+            # status code value
+            status_code_value = self.status_message
+        else:
+            # retrieves the value for the status code
+            status_code_value = STATUS_CODE_VALUES.get(self.status_code, DEFAULT_STATUS_CODE_VALUE)
+
+        # returns the status code value
+        return status_code_value
