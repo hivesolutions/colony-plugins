@@ -229,6 +229,7 @@ class WorkPoolImplementation:
             # inserts the task into the thread pool
             self._insert_task()
 
+        # creates the algorithm manager for the current work pool
         self.algorithm_manager = work_pool_manager_algorithms.RoundRobinAlgorithm(self)
 
     def stop_pool(self):
@@ -313,8 +314,13 @@ class WorkTask:
     stop_flag = False
     """ Flag to control stop """
 
+    work_counter = 0
+    """ The number of work items available"""
+
     work_access_lock = None
     """ Lock to control the access to the work """
+
+    work_access_condition = None
 
     def __init__(self, work_processing_task):
         """
@@ -327,23 +333,41 @@ class WorkTask:
         self.work_processing_task = work_processing_task
 
         self.work_access_lock = threading.Lock()
+        self.work_access_condition = threading.Condition()
 
     def start(self):
-        # iterates while the stop flag is not active
         while not self.stop_flag:
-            # acquires the work access lock
-            self.work_access_lock.acquire()
+            # acquires the work access condition
+            self.work_access_condition.acquire()
+
+            # iterates while thre is no work to be done
+            while self.work_counter < 1:
+                # in case the stop flag is active
+                if self.stop_flag:
+                    return
+
+                # waits for the work access condition
+                self.work_access_condition.wait()
 
             # calls the process method in the work
             # processing task
             self.work_processing_task.process()
 
-            # releases the work access lock
-            self.work_access_lock.release()
+            # release the work access condition
+            self.work_access_condition.release()
 
     def stop(self):
+        # acquires the work access condition
+        self.work_access_condition.acquire()
+
         # sets the stop flag
         self.stop_flag = True
+
+        # notifies the work access condition
+        self.work_access_condition.notify()
+
+        # releases the work access condition
+        self.work_access_condition.release()
 
     def pause(self):
         pass
@@ -362,24 +386,36 @@ class WorkTask:
         return self.work_processing_task
 
     def _add_work(self, work_reference):
-        # acquires the work access lock
-        self.work_access_lock.acquire()
+        # acquires the work access condition
+        self.work_access_condition.acquire()
 
         # notifies the work processing task about the new work
         self.work_processing_task.work_added(work_reference)
 
-        # releases the work access lock
-        self.work_access_lock.release()
+        # increments the work counter
+        self.work_counter += 1
+
+        # notifies the work access condition
+        self.work_access_condition.notify()
+
+        # releases the work access condition
+        self.work_access_condition.release()
 
     def _remove_work(self, work_reference):
-        # acquires the work access lock
-        self.work_access_lock.acquire()
+        # acquires the work access condition
+        self.work_access_condition.acquire()
+
+        # decrements the work counter
+        self.work_counter -= 1
 
         # notifies the work processing task about the removed work
         self.work_processing_task.work_removed(work_reference)
 
-        # releases the work access lock
-        self.work_access_lock.release()
+        # notifies the work access condition
+        self.work_access_condition.notify()
+
+        # releases the work access condition
+        self.work_access_condition.release()
 
 def remove_work(self, work_reference):
     """
@@ -390,11 +426,5 @@ def remove_work(self, work_reference):
     @param work_reference: The object used as reference for the work.
     """
 
-    # releases the work access lock
-    self.work_task.work_access_lock.release()
-
     # calls the remove work in the work task
     self.work_task._remove_work(work_reference)
-
-    # acquires the work access lock
-    self.work_task.work_access_lock.acquire()
