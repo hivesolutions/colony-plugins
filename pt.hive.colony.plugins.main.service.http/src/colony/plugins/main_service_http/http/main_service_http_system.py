@@ -1243,6 +1243,8 @@ class HttpClientServiceTask:
         @param request: The request to be processed.
         @type service_configuration: Dictionary
         @param service_configuration: The service configuration map.
+        @rtype: String
+        @return: The processed handler name.
         """
 
         # sets the default handler name
