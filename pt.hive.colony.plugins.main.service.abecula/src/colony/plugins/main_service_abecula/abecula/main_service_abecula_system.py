@@ -71,10 +71,10 @@ ENVIRONMENT_VERSION = str(sys.version_info[0]) + "." + str(sys.version_info[1]) 
 SERVER_IDENTIFIER = SERVER_NAME + "/" + SERVER_VERSION + " (Python/" + sys.platform + "/" + ENVIRONMENT_VERSION + ")"
 """ The server identifier """
 
-NUMBER_THREADS = 5
+NUMBER_THREADS = 1
 """ The number of threads """
 
-MAX_NUMBER_THREADS = 10
+MAX_NUMBER_THREADS = 2
 """ The maximum number of threads """
 
 SCHEDULING_ALGORITHM = 2
@@ -93,6 +93,12 @@ STATUS_CODE_VALUES = {100 : "Continue", 101 : "Switching Protocols",
 
 DEFAULT_STATUS_CODE_VALUE = "Invalid"
 """ The default status code value """
+
+CONTENT_LENGTH_VALUE = "Content-Length"
+""" The content length value """
+
+CONTENT_LENGTH_LOWER_VALUE = "Content-length"
+""" The content length lower value """
 
 SERVER_VALUE = "Server"
 """ The server value """
@@ -290,20 +296,8 @@ class MainServiceAbecula:
                 # accepts the connection retrieving the abecula connection object and the address
                 abecula_connection, abecula_address = self.abecula_socket.accept()
 
-                # creates a new abecula client service task, with the given abecula connection, abecula address, encoding and encoding handler
-                abecula_client_service_task = AbeculaClientServiceTask(self.main_service_abecula_plugin, abecula_connection, abecula_address, port, service_configuration)
-
-                # creates a new task descriptor
-                task_descriptor = task_descriptor_class(start_method = abecula_client_service_task.start,
-                                                        stop_method = abecula_client_service_task.stop,
-                                                        pause_method = abecula_client_service_task.pause,
-                                                        resume_method = abecula_client_service_task.resume)
-
-                # inserts the new task descriptor into the abecula client thread pool
-                self.abecula_client_thread_pool.insert_task(task_descriptor)
-
-                # prints a debug message about the number of threads in pool
-                self.main_service_abecula_plugin.debug("Number of threads in pool: %d" % self.abecula_client_thread_pool.current_number_threads)
+                # insets the connection into the pool
+                self._insert_connection_pool(abecula_connection, abecula_address, port, service_configuration, task_descriptor_class)
             except Exception, exception:
                 # prints an error message about the problem accepting the connection
                 self.main_service_abecula_plugin.error("Error accepting connection: " + str(exception))
@@ -345,6 +339,40 @@ class MainServiceAbecula:
         handler_name = abecula_service_handler_plugin.get_handler_name()
 
         del self.abecula_service_handler_plugins_map[handler_name]
+
+    def _insert_connection_pool(self, abecula_connection, abecula_address, port, service_configuration, task_descriptor_class):
+        """
+        Inserts the given abecula connection into the connection pool.
+        This process takes into account the pool usage and the current
+        available task.
+
+        @type abecula_connection: Socket
+        @param abecula_connection: The abecula connection to be inserted.
+        @type abecula_address: Tuple
+        @param abecula_address: A tuple containing the address information
+        of the connection
+        @type port: int
+        @param port: The opened port.
+        @type service_configuration: Dictionary
+        @param service_configuration: The service configuration map.
+        @type task_descriptor_class: Class
+        @param task_descriptor_class: The task descriptor class.
+        """
+
+        # creates a new abecula client service task, with the given abecula connection, abecula address, port and service configration
+        abecula_client_service_task = AbeculaClientServiceTask(self.main_service_abecula_plugin, abecula_connection, abecula_address, port, service_configuration)
+
+        # creates a new task descriptor
+        task_descriptor = task_descriptor_class(start_method = abecula_client_service_task.start,
+                                                stop_method = abecula_client_service_task.stop,
+                                                pause_method = abecula_client_service_task.pause,
+                                                resume_method = abecula_client_service_task.resume)
+
+        # inserts the new task descriptor into the abecula client thread pool
+        self.abecula_client_thread_pool.insert_task(task_descriptor)
+
+        # prints a debug message about the number of threads in pool
+        self.main_service_abecula_plugin.debug("Number of threads in pool: %d" % self.abecula_client_thread_pool.current_number_threads)
 
 class AbeculaClientServiceTask:
     """
@@ -457,17 +485,6 @@ class AbeculaClientServiceTask:
 
             # sends the request to the client (response)
             self.send_request(request)
-
-            # in case the connection is meant to be kept alive
-            if self.keep_alive(request):
-                self.main_service_abecula_plugin.debug("Connection: %s kept alive for %ss" % (str(self.abecula_address), str(request_timeout)))
-            # in case the connection is not meant to be kept alive
-            else:
-                self.main_service_abecula_plugin.debug("Connection: %s closed" % str(self.abecula_address))
-
-                # returns false (connection closed)
-                return False
-
         except Exception, exception:
             # prints info message about exception
             self.main_service_abecula_plugin.info("There was an exception handling the request: " + str(exception))
@@ -558,13 +575,16 @@ class AbeculaClientServiceTask:
                     start_line_splitted_length = len(start_line_splitted)
 
                     # in case the length of the splitted line is not three
-                    if not start_line_splitted_length == 3:
+                    if not start_line_splitted_length == 4:
                         # raises the abecula invalid data exception
                         raise main_service_abecula_exceptions.AbeculaInvalidDataException("invalid data received: " + start_line)
 
                     # retrieve the operation type the target and the protocol version
                     # from the start line splitted
-                    operation_type, target, protocol_version = start_line_splitted
+                    operation_id, operation_type, target, protocol_version = start_line_splitted
+
+                    # sets the request operation id
+                    request.set_operation_id(operation_id)
 
                     # sets the request operation type
                     request.set_operation_type(operation_type)
@@ -577,6 +597,78 @@ class AbeculaClientServiceTask:
 
                     # sets the start line loaded flag
                     start_line_loaded = True
+
+            # in case the header is not loaded
+            if not header_loaded:
+                # retrieves the end header index (two new lines)
+                end_header_index = message_value.find("\r\n\r\n")
+
+                # in case the end header index is found
+                if not end_header_index == -1:
+                    # sets the message offset index as the end header index
+                    # plus the two sequences of newlines (four characters)
+                    message_offset_index = end_header_index + 4
+
+                    # sets the header loaded flag
+                    header_loaded = True
+
+                    # retrieves the start header index
+                    start_header_index = start_line_index + 2
+
+                    # retrieves the headers part of the message
+                    headers = message_value[start_header_index:end_header_index]
+
+                    # splits the headers by line
+                    headers_splitted = headers.split("\r\n")
+
+                    # iterates over the headers lines
+                    for header_splitted in headers_splitted:
+                        # finds the header separator
+                        division_index = header_splitted.find(":")
+
+                        # retrieves the header name
+                        header_name = header_splitted[:division_index].strip()
+
+                        # retrieves the header value
+                        header_value = header_splitted[division_index + 1:].strip()
+
+                        # sets the header in the headers map
+                        request.headers_map[header_name] = header_value
+
+                    # in case the content length is defined in the headers map
+                    if CONTENT_LENGTH_VALUE in request.headers_map:
+                        # retrieves the message size
+                        message_size = int(request.headers_map[CONTENT_LENGTH_VALUE])
+                    elif CONTENT_LENGTH_LOWER_VALUE in request.headers_map:
+                        # retrieves the message size
+                        message_size = int(request.headers_map[CONTENT_LENGTH_LOWER_VALUE])
+                    # in case there is no content length defined in the headers map
+                    else:
+                        # returns the request
+                        return request
+
+            # in case the message is not loaded and the header is loaded
+            if not message_loaded and header_loaded:
+                # retrieves the start message size
+                start_message_index = end_header_index + 4
+
+                # calculates the message value message length
+                message_value_message_length = len(message_value) - start_message_index
+
+                # in case the length of the message value message is the same
+                # as the message size
+                if message_value_message_length == message_size:
+                    # retrieves the message part of the message value
+                    message_value_message = message_value[start_message_index:]
+
+                    # sets the message loaded flag
+                    message_loaded = True
+
+                    # sets the received message
+                    request.received_message = message_value_message
+
+                    # decodes the request if necessary
+                    #self.decode_request(request)
 
                     # returns the request
                     return request
@@ -667,10 +759,61 @@ class AbeculaClientServiceTask:
         # returns the service configuration
         return service_configuration
 
+class AbeculaConnection:
+    """
+    The abecula connection class.
+    """
+
+    abecula_socket = None
+    """ The abecula socket """
+
+    def __init__(self, abecula_socket):
+        """
+        Constructor of the class.
+
+        @type abecula_socket: Socket
+        @param abecula_socket: The abecula socket.
+        """
+
+        self.abecula_socket = abecula_socket
+
+    def create_response(self):
+        pass
+
+    def send_response(self):
+        pass
+
+class AbeculaResponse:
+    """
+    The abecula response class.
+    """
+
+    operation_id = None
+    """ The operation id """
+
+    operation_type = None
+    """ The operation type """
+
+    parameters = {}
+    """ The parameters """
+
+    def __init__(self, parameters):
+        """
+        Constructor of the class.
+
+        @type parameters: Dictionary
+        @param parameters: The response parameters.
+        """
+
+        self.parameters = parameters
+
 class AbeculaRequest:
     """
     The abecula request class.
     """
+
+    operation_id = None
+    """ The operation id """
 
     operation_type = None
     """ The operation type """
@@ -699,6 +842,9 @@ class AbeculaRequest:
     status_message = None
     """ The status message """
 
+    parameters = {}
+    """ The parameters """
+
     def __init__(self, parameters):
         """
         Constructor of the class.
@@ -714,7 +860,7 @@ class AbeculaRequest:
         self.message_stream = colony.libs.string_buffer_util.StringBuffer()
 
     def __repr__(self):
-        return "(%s, %s, %s)" % (self.operation_type, self.target, self.protocol_version)
+        return "(%s, %s, %s, %s)" % (self.operation_id, self.operation_type, self.target, self.protocol_version)
 
     def read(self):
         return self.received_message
@@ -754,7 +900,7 @@ class AbeculaRequest:
         status_code_value = self.get_status_code_value()
 
         # writes the http command in the string buffer (version, status code and status value)
-        result.write(self.protocol_version + " " + str(self.status_code) + " " + status_code_value + "\r\n")
+        result.write(self.protocol_version + " " + self.operation_id + " " + str(self.status_code) + " " + status_code_value + "\r\n")
 
         # writes the main headers
         result.write(SERVER_VALUE + ": " + SERVER_IDENTIFIER + "\r\n")
@@ -774,6 +920,16 @@ class AbeculaRequest:
 
         # returns the result value
         return result_value
+
+    def set_operation_id(self, operation_id):
+        """
+        Sets the operation id.
+
+        @type opration_id: String
+        @param opration_id: The operation id.
+        """
+
+        self.operation_id = operation_id
 
     def set_operation_type(self, operation_type):
         """
