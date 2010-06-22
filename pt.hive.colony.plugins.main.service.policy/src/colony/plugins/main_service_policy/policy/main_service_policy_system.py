@@ -78,6 +78,9 @@ MAIN_SERVICE_POLICY_RESOURCES_PATH = "main_service_policy/policy/resources"
 DEFAULT_POLICY_FILE = MAIN_SERVICE_POLICY_RESOURCES_PATH + "/default.policy"
 """ The default policy file """
 
+ERROR_POLICY_FILE = MAIN_SERVICE_POLICY_RESOURCES_PATH + "/error.policy"
+""" The error policy file """
+
 class MainServicePolicy:
     """
     The main service policy class.
@@ -551,6 +554,18 @@ class PolicyClientServiceTask:
         @type exception: Exception
         @param exception: The exception to be sent.
         """
+
+        # retrieves the plugin manager
+        plugin_manager = self.main_service_policy_plugin.manager
+
+        # retrieves the main service policy path
+        main_service_policy_plugin_path = plugin_manager.get_plugin_path_by_id(self.main_service_policy_plugin.id)
+
+        # retrieves the error policy file path
+        error_policy_file_path = main_service_policy_plugin_path + "/" + ERROR_POLICY_FILE
+
+        # sets the error policy file path in the request
+        request.set_file_path(error_policy_file_path)
 
         # sends the request to the client (response)
         self.send_request(request)
