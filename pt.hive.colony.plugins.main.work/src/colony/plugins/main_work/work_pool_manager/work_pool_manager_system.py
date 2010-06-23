@@ -56,6 +56,9 @@ CONSTANT_SCHEDULING_ALGORITHM = 1
 DYNAMIC_SCHEDULING_ALGORITHM = 2
 """ The dynamic size scheduling algorithm value """
 
+ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM = 1
+""" The round robin work scheduling algorithm value """
+
 class WorkPoolManager:
     """
     The work pool manager class.
@@ -89,7 +92,7 @@ class WorkPoolManager:
             # stops the work pool
             work_pool.stop_pool()
 
-    def create_new_work_pool(self, name, description, work_processing_task_class = None, number_threads = DEFAULT_NUMBER_THREADS, scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM, maximum_number_threads = DEFAULT_MAXIMUM_NUMBER_THREADS, maximum_number_works_thread = DEFAULT_MAXIMUM_NUMBER_WORKS_THREAD):
+    def create_new_work_pool(self, name, description, work_processing_task_class = None, number_threads = DEFAULT_NUMBER_THREADS, scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM, maximum_number_threads = DEFAULT_MAXIMUM_NUMBER_THREADS, maximum_number_works_thread = DEFAULT_MAXIMUM_NUMBER_WORKS_THREAD, work_scheduling_algorithm = ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM):
         """
         Creates a new work pool with the given name, description and number of works.
 
@@ -107,6 +110,8 @@ class WorkPoolManager:
         @param maximum_number_threads: The thread pool maximum number of threads.
         @type maximum_number_works_thread: int
         @param maximum_number_works_thread: The maximum number of works per thread.
+        @type work_scheduling_algorithm: int
+        @param work_scheduling_algorithm: The work pool scheduling algorithm.
         @rtype: WorkPoolImplementation
         @return: The created thread pool.
         """
@@ -121,7 +126,7 @@ class WorkPoolManager:
         task_descriptor_class = thread_pool_manager_plugin.get_thread_task_descriptor_class()
 
         # creates a new work pool
-        work_pool = WorkPoolImplementation(thread_pool_manager_plugin, name, description, work_processing_task_class, task_descriptor_class, number_threads, scheduling_algorithm, maximum_number_threads, maximum_number_works_thread, logger)
+        work_pool = WorkPoolImplementation(thread_pool_manager_plugin, name, description, work_processing_task_class, task_descriptor_class, number_threads, scheduling_algorithm, maximum_number_threads, maximum_number_works_thread, work_scheduling_algorithm, logger)
 
         # adds the new thread pool to the list of work pools
         self.work_pools_list.append(work_pool)
@@ -158,6 +163,9 @@ class WorkPoolImplementation:
     maximum_number_works_thread = DEFAULT_MAXIMUM_NUMBER_WORKS_THREAD
     """ The work pool maximum number works thread """
 
+    work_scheduling_algorithm = ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM
+    """ The work pool work scheduling algorithm """
+
     logger = None
     """ The logger used """
 
@@ -170,7 +178,7 @@ class WorkPoolImplementation:
     algorithm_manager = None
     """ The algorithm manager object reference """
 
-    def __init__(self, thread_pool_manager, name = "none", description = "none", work_processing_task_class = None, task_descriptor_class = None, number_threads = DEFAULT_NUMBER_THREADS, scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM, maximum_number_threads = DEFAULT_MAXIMUM_NUMBER_THREADS, maximum_number_works_thread = DEFAULT_MAXIMUM_NUMBER_WORKS_THREAD, logger = None):
+    def __init__(self, thread_pool_manager, name = "none", description = "none", work_processing_task_class = None, task_descriptor_class = None, number_threads = DEFAULT_NUMBER_THREADS, scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM, maximum_number_threads = DEFAULT_MAXIMUM_NUMBER_THREADS, maximum_number_works_thread = DEFAULT_MAXIMUM_NUMBER_WORKS_THREAD, work_scheduling_algorithm = ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM, logger = None):
         """
         Constructor of the class
 
@@ -192,6 +200,8 @@ class WorkPoolImplementation:
         @param maximum_number_threads: The work pool maximum number of threads.
         @type maximum_number_works_thread: int
         @param maximum_number_works_thread: The maximum number of works per thread.
+        @type work_scheduling_algorithm: int
+        @param work_scheduling_algorithm: The work pool work scheduling algorithm.
         @type logger: Log
         @param logger: The logger used.
         """
@@ -204,6 +214,7 @@ class WorkPoolImplementation:
         self.scheduling_algorithm = scheduling_algorithm
         self.maximum_number_threads = maximum_number_threads
         self.maximum_number_works_thread = maximum_number_works_thread
+        self.work_scheduling_algorithm = work_scheduling_algorithm
         self.logger = logger
 
         # creates the thread pool to be used for in the work pool
@@ -229,8 +240,10 @@ class WorkPoolImplementation:
             # inserts the task into the thread pool
             self._insert_task()
 
-        # creates the algorithm manager for the current work pool
-        self.algorithm_manager = work_pool_manager_algorithms.RoundRobinAlgorithm(self)
+        # in case the selected algorithm is the round robin
+        if self.work_scheduling_algorithm == ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM:
+            # creates the algorithm manager for the current work pool
+            self.algorithm_manager = work_pool_manager_algorithms.RoundRobinAlgorithm(self)
 
     def stop_pool(self):
         """
