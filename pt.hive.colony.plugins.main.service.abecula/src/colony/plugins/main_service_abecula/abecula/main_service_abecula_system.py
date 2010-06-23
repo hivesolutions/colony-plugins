@@ -45,7 +45,7 @@ import colony.libs.string_buffer_util
 
 import main_service_abecula_exceptions
 
-BIND_HOST_VALUE = ""
+BIND_HOST = ""
 """ The bind host value """
 
 CLIENT_CONNECTION_TIMEOUT = 1
@@ -200,21 +200,22 @@ class MainServiceAbecula:
         # retrieves the port configuration value
         port = service_configuration.get("default_port", port)
 
-        pool_configuration = {}
-        pool_configuration["name"] = "abecula pool"
-        pool_configuration["description"] = "pool to support abecula client connections"
-        pool_configuration["number_threads"] = NUMBER_THREADS
-        pool_configuration["scheduling_algorithm"] = SCHEDULING_ALGORITHM
-        pool_configuration["max_number_threads"] = MAX_NUMBER_THREADS
+        # creates the pool configuration map
+        pool_configuration = {"name" : "abecula pool",
+                              "description" : "pool to support abecula client connections",
+                              "number_threads" : NUMBER_THREADS,
+                              "scheduling_algorithm" : SCHEDULING_ALGORITHM,
+                              "max_number_threads" : MAX_NUMBER_THREADS}
 
-        parameters = {}
-        parameters["service_plugin"] = self.main_service_abecula_plugin
-        parameters["service_handling_task_class"] = AbeculaClientServiceTask
-        parameters["socket_provider"] = socket_provider
-        parameters["port"] = port
-        parameters["service_configuration"] = service_configuration
-        parameters["pool_configuration"] = pool_configuration
-        parameters["client_connection_timeout"] = CLIENT_CONNECTION_TIMEOUT
+        # creates the parameters map
+        parameters = {"service_plugin" : self.main_service_abecula_plugin,
+                      "service_handling_task_class" : AbeculaClientServiceTask,
+                      "socket_provider" : socket_provider,
+                      "bind_host" : BIND_HOST,
+                      "port" : port,
+                      "service_configuration" : service_configuration,
+                      "pool_configuration" : pool_configuration,
+                      "client_connection_timeout" : CLIENT_CONNECTION_TIMEOUT}
 
         # returns the parameters
         return parameters
