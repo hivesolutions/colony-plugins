@@ -112,10 +112,12 @@ class MainServiceUtilsPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.load_allowed_capability("socket_provider")
     def socket_provider_load_allowed(self, plugin, capability):
         self.socket_provider_plugins.append(plugin)
+        self.main_service_utils.socket_provider_load(plugin)
 
     @colony.plugins.decorators.unload_allowed_capability("socket_provider")
     def socket_provider_unload_allowed(self, plugin, capability):
         self.socket_provider_plugins.remove(plugin)
+        self.main_service_utils.socket_provider_unload(plugin)
 
     def get_thread_pool_manager_plugin(self):
         return self.thread_pool_manager_plugin

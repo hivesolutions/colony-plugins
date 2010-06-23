@@ -81,6 +81,9 @@ class MainServiceUtils:
     main_service_utils_plugin = None
     """ The main service utils plugin """
 
+    socket_provider_plugins_map = {}
+    """ The socket provider plugins map """
+
     def __init__(self, main_service_utils_plugin):
         """
         Constructor of the class.
@@ -90,6 +93,8 @@ class MainServiceUtils:
         """
 
         self.main_service_utils_plugin = main_service_utils_plugin
+
+        self.socket_provider_plugins_map = {}
 
     def generate_service(self, parameters):
         """
@@ -102,12 +107,27 @@ class MainServiceUtils:
         @return: The generated service.
         """
 
-        return AbstractService(self.main_service_utils_plugin, parameters)
+        return AbstractService(self, self.main_service_utils_plugin, parameters)
+
+    def socket_provider_load(self, socket_provider_plugin):
+        # retrieves the plugin provider name
+        provider_name = socket_provider_plugin.get_provider_name()
+
+        self.socket_provider_plugins_map[provider_name] = socket_provider_plugin
+
+    def socket_provider_unload(self, socket_provider_plugin):
+        # retrieves the plugin provider name
+        provider_name = socket_provider_plugin.get_provider_name()
+
+        del self.socket_provider_plugins_map[provider_name]
 
 class AbstractService:
     """
     The abstract service class.
     """
+
+    main_service_utils = None
+    """ The main service utils """
 
     main_service_utils_plugin = None
     """ The main service utils plugin """
@@ -151,16 +171,19 @@ class AbstractService:
     client_connection_timeout = CLIENT_CONNECTION_TIMEOUT
     """ The client connection timeout """
 
-    def __init__(self, main_service_utils_plugin, parameters = {}):
+    def __init__(self, main_service_utils, main_service_utils_plugin, parameters = {}):
         """
         Constructor of the class.
 
+        @type main_service_utils: MainServiceUtils
+        @param main_service_utils: The main service utils.
         @type main_service_utils_plugin: MainServiceUtilsPlugin
         @param main_service_utils_plugin: The main service utils plugin.
         @type parameters: Dictionary
         @param parameters: The parameters
         """
 
+        self.main_service_utils = main_service_utils
         self.main_service_utils_plugin = main_service_utils_plugin
 
         self.service_plugin = parameters.get("service_plugin", None)
@@ -259,27 +282,25 @@ class AbstractService:
     def _create_service_socket(self):
         # in case the socket provider is defined
         if self.socket_provider:
-            # retrieves the socket provider plugins
-            socket_provider_plugins = self.main_service_utils_plugin.socket_provider_plugins
+            # retrieves the socket provider plugins map
+            socket_provider_plugins_map = self.main_service_utils.socket_provider_plugins_map
 
-            # iterates over all the socket provider plugins
-            for socket_provider_plugin in socket_provider_plugins:
-                # retrieves the provider name from the socket provider plugin
-                socket_provider_plugin_provider_name = socket_provider_plugin.get_provider_name()
+            # in case the socket provider is available in the socket
+            # provider plugins map
+            if self.socket_provider in socket_provider_plugins_map:
+                # retrieves the socket provider plugin from the socket provider plugins map
+                socket_provider_plugin = socket_provider_plugins_map[self.socket_provider]
 
-                # in case the names are the same
-                if socket_provider_plugin_provider_name == self.socket_provider:
-                    # the parameters for the socket provider
-                    parameters = {SERVER_SIDE_VALUE : True, DO_HANDSHAKE_ON_CONNECT_VALUE : False}
+                # the parameters for the socket provider
+                parameters = {SERVER_SIDE_VALUE : True, DO_HANDSHAKE_ON_CONNECT_VALUE : False}
 
-                    # creates a new service socket with the socket provider plugin
-                    self.service_socket = socket_provider_plugin.provide_socket_parameters(parameters)
+                # creates a new service socket with the socket provider plugin
+                self.service_socket = socket_provider_plugin.provide_socket_parameters(parameters)
 
-                    # returns immediately
-                    return
-
-            # in case the socket was not created, no socket provider found
-            if not self.service_socket:
+                # returns immediately
+                return
+            else:
+                # raises the socket provider not found exception
                 raise main_service_utils_exceptions.SocketProviderNotFound("socket provider %s not found" % self.socket_provider)
         else:
             # creates the service socket
