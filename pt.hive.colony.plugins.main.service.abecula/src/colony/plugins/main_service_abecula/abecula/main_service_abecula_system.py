@@ -39,9 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import sys
 import types
-import socket
 import select
-import threading
 
 import colony.libs.string_buffer_util
 
@@ -108,26 +106,14 @@ class MainServiceAbecula:
     The main service abecula class.
     """
 
-    main_service_becula_plugin = None
+    main_service_abecula_plugin = None
     """ The main service abecula plugin """
 
     abecula_service_handler_plugins_map = {}
     """ The abecula service handler plugins map """
 
-    abecula_socket = None
-    """ The abecula socket """
-
-    abecula_connection_active = False
-    """ The abecula connection active flag """
-
-    abecula_client_thread_pool = None
-    """ The abecula client thread pool """
-
-    abecula_connection_close_event = None
-    """ The abecula connection close event """
-
-    abecula_connection_close_end_event = None
-    """ The abecula connection close end event """
+    abecula_service = None
+    """ The abecula service reference """
 
     def __init__(self, main_service_abecula_plugin):
         """
@@ -140,8 +126,6 @@ class MainServiceAbecula:
         self.main_service_abecula_plugin = main_service_abecula_plugin
 
         self.abecula_service_handler_plugin_map = {}
-        self.abecula_connection_close_event = threading.Event()
-        self.abecula_connection_close_end_event = threading.Event()
 
     def start_service(self, parameters):
         """
@@ -151,182 +135,28 @@ class MainServiceAbecula:
         @param parameters: The parameters to start the service.
         """
 
-        # retrieves the socket provider value
-        socket_provider = parameters.get("socket_provider", None)
+        # retrieves the main service utils plugin
+        main_service_utils_plugin = self.main_service_abecula_plugin.main_service_utils_plugin
 
-        # retrieves the port value
-        port = parameters.get("port", DEFAULT_PORT)
+        # generates the parameters
+        service_parameters = self._generate_service_parameters(parameters)
 
-        # retrieves the service configuration property
-        service_configuration_property = self.main_service_abecula_plugin.get_configuration_property("server_configuration")
+        # generates the abecula service using the given service parameters
+        self.abecula_service = main_service_utils_plugin.generate_service(service_parameters)
 
-        # in case the service configuration property is defined
-        if service_configuration_property:
-            # retrieves the service configuration
-            service_configuration = service_configuration_property.get_data()
-        else:
-            # sets the service configuration as an empty map
-            service_configuration = {}
-
-        # retrieves the socket provider configuration value
-        socket_provider = service_configuration.get("default_socket_provider", socket_provider)
-
-        # retrieves the port configuration value
-        port = service_configuration.get("default_port", port)
-
-        # start the server for the given socket provider, port and encoding
-        self.start_server(socket_provider, port, service_configuration)
-
-        # clears the abecula connection close event
-        self.abecula_connection_close_event.clear()
-
-        # sets the abecula connection close end event
-        self.abecula_connection_close_end_event.set()
+        # starts the abecula service
+        self.abecula_service.start_service()
 
     def stop_service(self, parameters):
         """
         Stops the service.
 
         @type parameters: Dictionary
-        @param parameters: The parameters to start the service.
+        @param parameters: The parameters to stop the service.
         """
 
-        self.stop_server()
-
-    def start_server(self, socket_provider, port, service_configuration):
-        """
-        Starts the server in the given port.
-
-        @type socket_provider: String
-        @param socket_provider: The name of the socket provider to be used.
-        @type port: int
-        @param port: The port to start the server.
-        @type service_configuration: Dictionary
-        @param service_configuration: The service configuration map.
-        """
-
-        # retrieves the thread pool manager plugin
-        thread_pool_manager_plugin = self.main_service_abecula_plugin.thread_pool_manager_plugin
-
-        # retrieves the task descriptor class
-        task_descriptor_class = thread_pool_manager_plugin.get_thread_task_descriptor_class()
-
-        # creates the abecula client thread pool
-        self.abecula_client_thread_pool = thread_pool_manager_plugin.create_new_thread_pool("abecula pool",
-                                                                                            "pool to support abecula client connections",
-                                                                                             NUMBER_THREADS, SCHEDULING_ALGORITHM, MAX_NUMBER_THREADS)
-
-        # starts the abecula client thread pool
-        self.abecula_client_thread_pool.start_pool()
-
-        # sets the abecula connection active flag as true
-        self.abecula_connection_active = True
-
-        # in case the socket provider is defined
-        if socket_provider:
-            # retrieves the socket provider plugins
-            socket_provider_plugins = self.main_service_abecula_plugin.socket_provider_plugins
-
-            # iterates over all the socket provider plugins
-            for socket_provider_plugin in socket_provider_plugins:
-                # retrieves the provider name from the socket provider plugin
-                socket_provider_plugin_provider_name = socket_provider_plugin.get_provider_name()
-
-                # in case the names are the same
-                if socket_provider_plugin_provider_name == socket_provider:
-                    # the parameters for the socket provider
-                    parameters = {"server_side" : True, "do_handshake_on_connect" : False}
-
-                    # creates a new abecula socket with the socket provider plugin
-                    self.abecula_socket = socket_provider_plugin.provide_socket_parameters(parameters)
-
-            # in case the socket was not created, no socket provider found
-            if not self.abecula_socket:
-                raise main_service_abecula_exceptions.SocketProviderNotFound("socket provider %s not found" % socket_provider)
-        else:
-            # creates the abecula socket
-            self.abecula_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-        # sets the socket to be able to reuse the socket
-        self.abecula_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
-        # binds the abecula socket
-        self.abecula_socket.bind((BIND_HOST_VALUE, port))
-
-        # start listening in the abecula socket
-        self.abecula_socket.listen(5)
-
-        # loops while the abecula connection is active
-        while not self.abecula_connection_close_event.isSet():
-            try:
-                # sets the socket to non blocking mode
-                self.abecula_socket.setblocking(0)
-
-                # starts the select values
-                selected_values = ([], [], [])
-
-                # iterates while there is no selected values
-                while selected_values == ([], [], []):
-                    # in case the connection is closed
-                    if self.abecula_connection_close_event.isSet():
-                        # closes the abecula socket
-                        self.abecula_socket.close()
-
-                        return
-
-                    # selects the values
-                    selected_values = select.select([self.abecula_socket], [], [], CLIENT_CONNECTION_TIMEOUT)
-
-                # sets the socket to blocking mode
-                self.abecula_socket.setblocking(1)
-            except:
-                # prints info message about connection
-                self.main_service_abecula_plugin.info("The socket is not valid for selection of the pool")
-
-                return
-
-            # in case the connection is closed
-            if self.abecula_connection_close_event.isSet():
-                # closes the abecula socket
-                self.abecula_socket.close()
-
-                return
-
-            try:
-                # accepts the connection retrieving the abecula connection object and the address
-                abecula_connection, abecula_address = self.abecula_socket.accept()
-
-                # insets the connection into the pool
-                self._insert_connection_pool(abecula_connection, abecula_address, port, service_configuration, task_descriptor_class)
-            except Exception, exception:
-                # prints an error message about the problem accepting the connection
-                self.main_service_abecula_plugin.error("Error accepting connection: " + str(exception))
-
-        # closes the abecula socket
-        self.abecula_socket.close()
-
-    def stop_server(self):
-        """
-        Stops the server.
-        """
-
-        # sets the abecula connection active flag as false
-        self.abecula_connection_active = False
-
-        # sets the abecula connection close event
-        self.abecula_connection_close_event.set()
-
-        # waits for the abecula connection close end event
-        self.abecula_connection_close_end_event.wait()
-
-        # clears the abecula connection close end event
-        self.abecula_connection_close_end_event.clear()
-
-        # stops all the pool tasks
-        self.abecula_client_thread_pool.stop_pool_tasks()
-
-        # stops the pool
-        self.abecula_client_thread_pool.stop_pool()
+        # starts the abecula service
+        self.abecula_service.stop_service()
 
     def abecula_service_handler_load(self, abecula_service_handler_plugin):
         # retrieves the plugin handler name
@@ -340,39 +170,54 @@ class MainServiceAbecula:
 
         del self.abecula_service_handler_plugins_map[handler_name]
 
-    def _insert_connection_pool(self, abecula_connection, abecula_address, port, service_configuration, task_descriptor_class):
-        """
-        Inserts the given abecula connection into the connection pool.
-        This process takes into account the pool usage and the current
-        available task.
+    def _get_service_configuration(self):
+        # retrieves the service configuration property
+        service_configuration_property = self.main_service_abecula_plugin.get_configuration_property("server_configuration")
 
-        @type abecula_connection: Socket
-        @param abecula_connection: The abecula connection to be inserted.
-        @type abecula_address: Tuple
-        @param abecula_address: A tuple containing the address information
-        of the connection
-        @type port: int
-        @param port: The opened port.
-        @type service_configuration: Dictionary
-        @param service_configuration: The service configuration map.
-        @type task_descriptor_class: Class
-        @param task_descriptor_class: The task descriptor class.
-        """
+        # in case the service configuration property is defined
+        if service_configuration_property:
+            # retrieves the service configuration
+            service_configuration = service_configuration_property.get_data()
+        else:
+            # sets the service configuration as an empty map
+            service_configuration = {}
 
-        # creates a new abecula client service task, with the given abecula connection, abecula address, port and service configration
-        abecula_client_service_task = AbeculaClientServiceTask(self.main_service_abecula_plugin, abecula_connection, abecula_address, port, service_configuration)
+        return service_configuration
 
-        # creates a new task descriptor
-        task_descriptor = task_descriptor_class(start_method = abecula_client_service_task.start,
-                                                stop_method = abecula_client_service_task.stop,
-                                                pause_method = abecula_client_service_task.pause,
-                                                resume_method = abecula_client_service_task.resume)
+    def _generate_service_parameters(self, parameters):
+        # retrieves the socket provider value
+        socket_provider = parameters.get("socket_provider", None)
 
-        # inserts the new task descriptor into the abecula client thread pool
-        self.abecula_client_thread_pool.insert_task(task_descriptor)
+        # retrieves the port value
+        port = parameters.get("port", DEFAULT_PORT)
 
-        # prints a debug message about the number of threads in pool
-        self.main_service_abecula_plugin.debug("Number of threads in pool: %d" % self.abecula_client_thread_pool.current_number_threads)
+        # retrieves the service configuration
+        service_configuration = self._get_service_configuration()
+
+        # retrieves the socket provider configuration value
+        socket_provider = service_configuration.get("default_socket_provider", socket_provider)
+
+        # retrieves the port configuration value
+        port = service_configuration.get("default_port", port)
+
+        pool_configuration = {}
+        pool_configuration["name"] = "abecula pool"
+        pool_configuration["description"] = "pool to support abecula client connections"
+        pool_configuration["number_threads"] = NUMBER_THREADS
+        pool_configuration["scheduling_algorithm"] = SCHEDULING_ALGORITHM
+        pool_configuration["max_number_threads"] = MAX_NUMBER_THREADS
+
+        parameters = {}
+        parameters["service_plugin"] = self.main_service_abecula_plugin
+        parameters["service_handling_task_class"] = AbeculaClientServiceTask
+        parameters["socket_provider"] = socket_provider
+        parameters["port"] = port
+        parameters["service_configuration"] = service_configuration
+        parameters["pool_configuration"] = pool_configuration
+        parameters["client_connection_timeout"] = CLIENT_CONNECTION_TIMEOUT
+
+        # returns the parameters
+        return parameters
 
 class AbeculaClientServiceTask:
     """
