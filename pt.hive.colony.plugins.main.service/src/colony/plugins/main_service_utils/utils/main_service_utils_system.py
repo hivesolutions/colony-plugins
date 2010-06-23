@@ -43,8 +43,11 @@ import threading
 
 import main_service_utils_exceptions
 
-BIND_HOST_VALUE = ""
-""" The bind host value """
+BIND_HOST = ""
+""" The bind host """
+
+PORT = 0
+""" The bind host """
 
 CLIENT_CONNECTION_TIMEOUT = 1
 """ The client connection timeout """
@@ -133,7 +136,10 @@ class AbstractService:
     socket_provider = None
     """ The socket provider """
 
-    port = None
+    bind_host = BIND_HOST
+    """ The bind host value """
+
+    port = PORT
     """ The service port """
 
     service_configuration = {}
@@ -160,7 +166,8 @@ class AbstractService:
         self.service_plugin = parameters.get("service_plugin", None)
         self.service_handling_task_class = parameters.get("service_handling_task_class", None)
         self.socket_provider = parameters.get("socket_provider", None)
-        self.port = parameters.get("port", None)
+        self.bind_host = parameters.get("bind_host", BIND_HOST)
+        self.port = parameters.get("port", PORT)
         self.service_configuration = parameters.get("service_configuration", {})
         self.pool_configuration = parameters.get("pool_configuration", {})
         self.client_connection_timeout = parameters.get("client_connection_timeout", CLIENT_CONNECTION_TIMEOUT)
@@ -327,7 +334,7 @@ class AbstractService:
         self.service_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
         # binds the service socket
-        self.service_socket.bind((BIND_HOST_VALUE, self.port))
+        self.service_socket.bind((self.bind_host, self.port))
 
         # start listening in the service socket
         self.service_socket.listen(5)
