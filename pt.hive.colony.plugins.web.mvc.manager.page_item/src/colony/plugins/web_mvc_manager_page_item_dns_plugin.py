@@ -57,7 +57,9 @@ class WebMvcManagerPageItemDnsPlugin(colony.plugins.plugin_system.Plugin):
     capabilities = ["web.mvc.manager.page_item_bundle", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.web.mvc.utils", "1.0.0")]
+                    "pt.hive.colony.plugins.web.mvc.utils", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.dns.storage.database", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["web_mvc_manager_page_item.dns.web_mvc_manager_page_item_dns_controllers", "web_mvc_manager_page_item.dns.web_mvc_manager_page_item_dns_exceptions",
@@ -66,6 +68,8 @@ class WebMvcManagerPageItemDnsPlugin(colony.plugins.plugin_system.Plugin):
     web_mvc_manager_page_item_dns = None
 
     web_mvc_utils_plugin = None
+
+    dns_storage_database_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -127,3 +131,10 @@ class WebMvcManagerPageItemDnsPlugin(colony.plugins.plugin_system.Plugin):
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.web.mvc.utils")
     def set_web_mvc_utils_plugin(self, web_mvc_utils_plugin):
         self.web_mvc_utils_plugin = web_mvc_utils_plugin
+
+    def get_dns_storage_database_plugin(self):
+        return self.dns_storage_database_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.dns.storage.database")
+    def set_dns_storage_database_plugin(self, dns_storage_database_plugin):
+        self.dns_storage_database_plugin = dns_storage_database_plugin
