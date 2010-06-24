@@ -55,7 +55,8 @@ class TreeVisualizerPlugin(colony.plugins.plugin_system.Plugin):
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc_gui/tree_visualizer/resources/baf.xml"}
     capabilities = ["tree_visualizer", "build_automation_item"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PackageDependency(
+                    "Wx Python", "wx", "2.8.7.x", "http://wxpython.org")]
     events_handled = []
     events_registrable = []
     main_modules = ["misc_gui.tree_visualizer.tree_visualizer_system"]

@@ -56,7 +56,9 @@ class ProgressInformationPlugin(colony.plugins.plugin_system.Plugin):
     capabilities = ["gui_progress_information", "build_automation_item"]
     capabilities_allowed = ["task_information"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.bitmap_loader", "1.0.0")]
+                    "pt.hive.colony.plugins.misc.bitmap_loader", "1.0.0"),
+                    colony.plugins.plugin_system.PackageDependency(
+                    "Wx Python", "wx", "2.8.7.x", "http://wxpython.org")]
     events_handled = ["gui_progress_information_changed"]
     events_registrable = ["task_information_changed"]
     main_modules = ["misc_gui.progress_information.progress_information_logic", "misc_gui.progress_information.progress_information_system"]

@@ -55,7 +55,8 @@ class ShellInterfacePlugin(colony.plugins.plugin_system.Plugin):
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/misc_gui/shell_interface/resources/baf.xml"}
     capabilities = ["gui_panel", "build_automation_item"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PackageDependency(
+                    "Wx Python", "wx", "2.8.7.x", "http://wxpython.org")]
     events_handled = []
     events_registrable = []
     main_modules = ["misc_gui.shell_interface.shell_interface_system"]

@@ -56,7 +56,9 @@ class PluginManagerInterfacePlugin(colony.plugins.plugin_system.Plugin):
     capabilities = ["gui_panel", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.misc.gui.tree_visualizer", "1.0.0")]
+                    "pt.hive.colony.plugins.misc.gui.tree_visualizer", "1.0.0"),
+                    colony.plugins.plugin_system.PackageDependency(
+                    "Wx Python", "wx", "2.8.7.x", "http://wxpython.org")]
     events_handled = []
     events_registrable = []
     main_modules = ["misc_gui.plugin_manager_interface.plugin_manager_interface_system"]
