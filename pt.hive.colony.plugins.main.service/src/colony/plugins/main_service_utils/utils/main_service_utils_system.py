@@ -260,6 +260,11 @@ class AbstractService:
         self.service_client_thread_pool.stop_pool()
 
     def _create_thread_pool(self):
+        """
+        Creates the thread pool according to the
+        service configuration.
+        """
+
         # retrieves the thread pool manager plugin
         thread_pool_manager_plugin = self.main_service_utils_plugin.thread_pool_manager_plugin
 
@@ -280,6 +285,11 @@ class AbstractService:
         self.service_connection_active = True
 
     def _create_service_socket(self):
+        """
+        Creates the service socket according to the
+        service configuration.
+        """
+
         # in case the socket provider is defined
         if self.socket_provider:
             # retrieves the socket provider plugins map
@@ -307,6 +317,14 @@ class AbstractService:
             self.service_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def _pool_service_socket(self):
+        """
+        Pools the service socket for changes
+        and returns the resulting value (if successful).
+
+        @rtype: bool
+        @return: If the pool was successful.
+        """
+
         try:
             # sets the socket to non blocking mode
             self.service_socket.setblocking(0)
@@ -334,23 +352,26 @@ class AbstractService:
             return False
 
     def _accept_service_socket(self):
+        """
+        Accepts the client connection in
+        the service socket.
+        """
+
         try:
-            # retrieves the thread pool manager plugin
-            thread_pool_manager_plugin = self.main_service_utils_plugin.thread_pool_manager_plugin
-
-            # retrieves the task descriptor class
-            task_descriptor_class = thread_pool_manager_plugin.get_thread_task_descriptor_class()
-
             # accepts the connection retrieving the service connection object and the address
             service_connection, service_address = self.service_socket.accept()
 
             # insets the connection into the pool
-            self._insert_connection_pool(service_connection, service_address, task_descriptor_class)
+            self._insert_connection_pool(service_connection, service_address)
         except Exception, exception:
             # prints an error message about the problem accepting the connection
             self.main_service_utils_plugin.error("Error accepting connection: " + str(exception))
 
     def _activate_service_socket(self):
+        """
+        Activates the service socket.
+        """
+
         # sets the socket to be able to reuse the socket
         self.service_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
@@ -361,10 +382,14 @@ class AbstractService:
         self.service_socket.listen(5)
 
     def _disable_service_socket(self):
+        """
+        Disables the service socket.
+        """
+
         # closes the service socket
         self.service_socket.close()
 
-    def _insert_connection_pool(self, service_connection, service_address, task_descriptor_class):
+    def _insert_connection_pool(self, service_connection, service_address):
         """
         Inserts the given service connection into the connection pool.
         This process takes into account the pool usage and the current
@@ -375,11 +400,15 @@ class AbstractService:
         @type service_address: Tuple
         @param service_address: A tuple containing the address information
         of the connection.
-        @type task_descriptor_class: Class
-        @param task_descriptor_class: The task descriptor class.
         """
 
-        # creates a new service client service task, with the given service connection, service address, port and service configration
+        # retrieves the thread pool manager plugin
+        thread_pool_manager_plugin = self.main_service_utils_plugin.thread_pool_manager_plugin
+
+        # retrieves the task descriptor class
+        task_descriptor_class = thread_pool_manager_plugin.get_thread_task_descriptor_class()
+
+        # creates a new service client service task, with the given service connection, service address, port and service configuration
         service_client_service_task = self.service_handling_task_class(self.service_plugin, service_connection, service_address, self.port, self.service_configuration)
 
         # creates a new task descriptor
