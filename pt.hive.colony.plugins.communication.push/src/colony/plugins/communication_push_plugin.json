@@ -1,6 +1,6 @@
 {
     "platform" : "python",
-    "sub_platforms" : ["cpython"],
+    "sub_platforms" : ["cpython", "jython", "iron_python"],
     "id" : "pt.hive.colony.plugins.communication.push",
     "name" : "Communication Push Plugin",
     "short_name" : "Communication Push",
