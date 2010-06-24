@@ -538,9 +538,7 @@ class PolicyClientServiceTask:
         try:
             # receives the data in chunks
             data = self.policy_connection.recv(chunk_size)
-        except Exception, ex:
-            print str(ex)
-
+        except:
             raise main_service_policy_exceptions.ClientRequestTimeout("timeout")
 
         return data
