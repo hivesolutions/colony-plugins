@@ -110,15 +110,33 @@ class MainServiceUtils:
         return AbstractService(self, self.main_service_utils_plugin, parameters)
 
     def socket_provider_load(self, socket_provider_plugin):
+        """
+        Loads a socket provider plugin.
+
+        @type socket_provider_plugin: Plugin
+        @param socket_provider_plugin: The socket provider plugin
+        to be loaded.
+        """
+
         # retrieves the plugin provider name
         provider_name = socket_provider_plugin.get_provider_name()
 
+        # sets the socket provider plugin in the socket provider plugins map
         self.socket_provider_plugins_map[provider_name] = socket_provider_plugin
 
     def socket_provider_unload(self, socket_provider_plugin):
+        """
+        Unloads a socket provider plugin.
+
+        @type socket_provider_plugin: Plugin
+        @param socket_provider_plugin: The socket provider plugin
+        to be unloaded.
+        """
+
         # retrieves the plugin provider name
         provider_name = socket_provider_plugin.get_provider_name()
 
+        # removes the socket provider plugin from the socket provider plugins map
         del self.socket_provider_plugins_map[provider_name]
 
 class AbstractService:
