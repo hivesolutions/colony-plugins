@@ -1,6 +1,6 @@
 {
     "platform" : "python",
-    "sub_platforms" : ["cpython"],
+    "sub_platforms" : ["cpython", "jython", "iron_python"],
     "id" : "pt.hive.colony.plugins.main.service.abecula",
     "name" : "Abecula Service Main Plugin",
     "short_name" : "Abecula Service Main",
