@@ -52,7 +52,9 @@ class MainServicePolicyPlugin(colony.plugins.plugin_system.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
-    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
+    platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT,
+                 colony.plugins.plugin_system.JYTHON_ENVIRONMENT,
+                 colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_policy/policy/resources/baf.xml"}
     capabilities = ["service.policy", "build_automation_item"]
     capabilities_allowed = ["policy_service_handler", "socket_provider"]
