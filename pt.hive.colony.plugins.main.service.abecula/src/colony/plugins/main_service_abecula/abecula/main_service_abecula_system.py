@@ -538,9 +538,7 @@ class AbeculaClientServiceTask:
         try:
             # receives the data in chunks
             data = self.abecula_connection.recv(chunk_size)
-        except Exception, ex:
-            print str(ex)
-
+        except:
             raise main_service_abecula_exceptions.ClientRequestTimeout("timeout")
 
         return data
