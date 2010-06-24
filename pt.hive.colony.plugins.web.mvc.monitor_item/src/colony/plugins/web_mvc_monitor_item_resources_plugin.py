@@ -57,7 +57,9 @@ class WebMvcMonitorItemResourcesPlugin(colony.plugins.plugin_system.Plugin):
     capabilities = ["web.mvc.monitor_item", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.web.mvc.utils", "1.0.0")]
+                    "pt.hive.colony.plugins.web.mvc.utils", "1.0.0"),
+                    colony.plugins.plugin_system.PackageDependency(
+                    "Process utilities module for Python", "psutil", "0.13.x", "http://code.google.com/p/psutil")]
     events_handled = []
     events_registrable = []
     main_modules = ["web_mvc_monitor_item.resources.web_mvc_monitor_item_resources_system"]
