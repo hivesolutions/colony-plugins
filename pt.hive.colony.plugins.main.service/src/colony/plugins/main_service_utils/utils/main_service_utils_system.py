@@ -232,13 +232,13 @@ class AbstractService:
 
         # loops while the service connection is active
         while not self.service_connection_close_event.isSet():
-            # pools the service socket to check if there
+            # polls the service socket to check if there
             # is a new connection available
-            pool_return_value = self._pool_service_socket()
+            poll_return_value = self._poll_service_socket()
 
-            # in case the pool return value is not valid or
+            # in case the poll return value is not valid or
             # the connection is closed
-            if not pool_return_value or self.service_connection_close_event.isSet():
+            if not poll_return_value or self.service_connection_close_event.isSet():
                 # breaks the cycle
                 break
 
@@ -334,9 +334,9 @@ class AbstractService:
             # creates the service socket
             self.service_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    def _pool_service_socket(self):
+    def _poll_service_socket(self):
         """
-        Pools the service socket for changes
+        Polls the service socket for changes
         and returns the resulting value (if successful).
 
         @rtype: bool
