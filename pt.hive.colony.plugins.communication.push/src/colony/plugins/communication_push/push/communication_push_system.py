@@ -65,6 +65,17 @@ class CommunicationPush:
         self.communication_handler_name_push_notifications = {}
 
     def add_communication_handler(self, communication_name, communication_handler_name, communication_handler_method):
+        """
+        Adds a communication handler to the communication push system.
+
+        @type communication_name: String
+        @param communication_name: The name of the communication "channel" to be used.
+        @type communication_handler_name: String
+        @param communication_handler_name: The name of the handler being added.
+        @type communication_handler_method: Method
+        @param communication_handler_method: The method to be called on communication notification.
+        """
+
         # creates the communication handler tuple with the handler name
         # and the handler method
         communication_handler_tuple = (communication_handler_name, communication_handler_method)
@@ -86,6 +97,17 @@ class CommunicationPush:
             self.communication_handler_name_push_notifications[communication_handler_name] = []
 
     def remove_communication_handler(self, communication_name, communication_handler_name, communication_handler_method):
+        """
+        Removes a communication handler from the communication push system.
+
+        @type communication_name: String
+        @param communication_name: The name of the communication "channel" to be used.
+        @type communication_handler_name: String
+        @param communication_handler_name: The name of the handler being removed.
+        @type communication_handler_method: Method
+        @param communication_handler_method: The method to be called on communication notification.
+        """
+
         # creates the communication handler tuple with the handler name
         # and the handler method
         communication_handler_tuple = (communication_handler_name, communication_handler_method)
@@ -97,6 +119,15 @@ class CommunicationPush:
         communication_handlers_list.remove(communication_handler_tuple)
 
     def send_broadcast_notification(self, communication_name, push_notification):
+        """
+        Sends a broadcast notification to all the communication handler activated.
+
+        @type communication_name: String
+        @param communication_name: The name of the communication "channel" to be used.
+        @type push_notification: PushNotification
+        @param push_notification: The push notification to be broadcasted.
+        """
+
         # in case the communication name is not defined in the communication name
         # communication handlers map, there is no need to continue
         if not communication_name in self.communication_name_communication_handlers_map:
@@ -122,6 +153,18 @@ class CommunicationPush:
                 self.communication_handler_name_push_notifications[communication_handler_name].append(push_notification)
 
     def generate_notification(self, message, sender_id):
+        """
+        Generates a push notification for the given message and
+        sender id.
+
+        @type message: String
+        @param message: The message to be used in the notification.
+        @type sender_id: String
+        @param sender_id: The id of the notification sender.
+        @rtype: PushNotification
+        @return: The generated push notification reference.
+        """
+
         # returns the generated notification
         return PushNotification(message, sender_id)
 

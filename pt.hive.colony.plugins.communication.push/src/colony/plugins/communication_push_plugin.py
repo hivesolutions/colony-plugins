@@ -89,13 +89,56 @@ class CommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
     def add_communication_handler(self, communication_name, communication_handler_name, communication_handler_method):
+        """
+        Adds a communication handler to the communication push system.
+
+        @type communication_name: String
+        @param communication_name: The name of the communication "channel" to be used.
+        @type communication_handler_name: String
+        @param communication_handler_name: The name of the handler being added.
+        @type communication_handler_method: Method
+        @param communication_handler_method: The method to be called on communication notification.
+        """
+
         return self.communication_push.add_communication_handler(communication_name, communication_handler_name, communication_handler_method)
 
-    def remove_communication_handler(self, communication_name, communication_handler_name):
-        return self.communication_push.remove_communication_handler(communication_name, communication_handler_name)
+    def remove_communication_handler(self, communication_name, communication_handler_name, communication_handler_method):
+        """
+        Removes a communication handler from the communication push system.
+
+        @type communication_name: String
+        @param communication_name: The name of the communication "channel" to be used.
+        @type communication_handler_name: String
+        @param communication_handler_name: The name of the handler being removed.
+        @type communication_handler_method: Method
+        @param communication_handler_method: The method to be called on communication notification.
+        """
+
+        return self.communication_push.remove_communication_handler(communication_name, communication_handler_name, communication_handler_method)
 
     def send_broadcast_notification(self, communication_name, notification):
+        """
+        Sends a broadcast notification to all the communication handler activated.
+
+        @type communication_name: String
+        @param communication_name: The name of the communication "channel" to be used.
+        @type push_notification: String
+        @param push_notification: The push notification to be broadcasted.
+        """
+
         return self.communication_push.send_broadcast_notification(communication_name, notification)
 
     def generate_notification(self, message, sender_id):
+        """
+        Generates a push notification for the given message and
+        sender id.
+
+        @type message: String
+        @param message: The message to be used in the notification.
+        @type sender_id: String
+        @param sender_id: The id of the notification sender.
+        @rtype: PushNotification
+        @return: The generated push notification reference.
+        """
+
         return self.communication_push.generate_notification(message, sender_id)
