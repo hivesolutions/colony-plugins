@@ -62,7 +62,7 @@ class MainServiceHttpCgiHandlerPlugin(colony.plugins.plugin_system.Plugin):
                     "pt.hive.colony.plugins.resources.resource_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["main_service_http_cgi_handler.cgi_handler.main_service_http_cgi_handler_system", "main_service_http_cgi_handler.cgi_handler.main_service_http_cgi_handler_exceptions"]
+    main_modules = ["main_service_http_cgi_handler.cgi_handler.main_service_http_cgi_handler_exceptions", "main_service_http_cgi_handler.cgi_handler.main_service_http_cgi_handler_system"]
 
     main_service_http_cgi_handler = None
 

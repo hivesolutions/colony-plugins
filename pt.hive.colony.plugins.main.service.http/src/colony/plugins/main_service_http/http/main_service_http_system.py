@@ -106,11 +106,12 @@ DEFAULT_VALUE = "default"
 """ The default value """
 
 STATUS_CODE_VALUES = {100 : "Continue", 101 : "Switching Protocols",
-                      200 : "OK", 207 : "Multi-Status",
+                      200 : "OK", 206 : "Partial Content", 207 : "Multi-Status",
                       301 : "Moved permanently", 302 : "Found", 303 : "See Other", 304 : "Not Modified",
                       305 : "Use Proxy", 306 : "(Unused)", 307 : "Temporary Redirect",
-                      403 : "Forbidden", 404 : "Not Found",
-                      500 : "Internal Server Error"}
+                      400 : "Bad Request", 401 : "Unauthorized", 402 : "Payment Required", 403 : "Forbidden", 404 : "Not Found",
+                      500 : "Internal Server Error", 501 : "Not Implemented", 502 : "Bad Gateway",
+                      503 : "Service Unavailable", 504 : "Gateway Timeout", 505 : "HTTP Version Not Supported"}
 """ The status code values map """
 
 DEFAULT_STATUS_CODE_VALUE = "Invalid"

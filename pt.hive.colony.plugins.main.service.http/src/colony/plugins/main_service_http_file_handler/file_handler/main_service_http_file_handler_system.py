@@ -71,6 +71,18 @@ RELATIVE_PATHS_REGEX_VALUE = "^\.\.|\/\.\.\/|\\\.\.\\|\.\.$"
 RELATIVE_PATHS_REGEX = re.compile(RELATIVE_PATHS_REGEX_VALUE)
 """ The relative paths regex """
 
+ACCEPT_RANGES_VALUE = "Accept-Ranges"
+""" The accept ranges value """
+
+CONTENT_RANGE_VALUE = "Content-Range"
+""" The content range value """
+
+RANGE_VALUE = "Range"
+""" The range value """
+
+BYTES_VALUE = "bytes"
+""" The bytes value """
+
 class MainServiceHttpFileHandler:
     """
     The main service http file handler class.
@@ -229,11 +241,17 @@ class MainServiceHttpFileHandler:
         # retrieves the file size
         file_size = os.path.getsize(complete_path)
 
+        # processes and retrieves the ranges to be used
+        ranges = self._process_ranges(request, file_size)
+
         # in case the file size is bigger than
         # the chunk file size limit
         if file_size > CHUNK_FILE_SIZE_LIMIT:
             # creates the chunk handler instance
-            chunk_handler = ChunkHandler(file, file_size)
+            chunk_handler = ChunkHandler(file, file_size, ranges)
+
+            # processes the ranges value in the chunk handler
+            chunk_handler.process_ranges()
 
             # sets the request as mediated
             request.mediated = True
@@ -249,6 +267,83 @@ class MainServiceHttpFileHandler:
 
             # writes the file contents
             request.write(file_contents, 1, False)
+
+    def _process_ranges(self, request, file_size):
+        """
+        Processes the ranges for the given request,
+        using the given file size.
+
+        @type request: HttpRequest
+        @param request: The http request to used in the processing.
+        @type file_size: int
+        @param file_size: The size of the file to be used.
+        """
+
+        # sets the accept ranges header
+        request.set_header(ACCEPT_RANGES_VALUE, BYTES_VALUE)
+
+        # retrieves the range header
+        range_header = request.get_header(RANGE_VALUE)
+
+        # in case there is no range header
+        if not range_header:
+            # returns immediately
+            return None
+
+        # splits the range header retrieving the key
+        # and the values
+        key, values = range_header.split("=")
+
+        # in case the key is not bytes
+        if not key == BYTES_VALUE:
+            # return immediately
+            return None
+
+        # splits the values retrieving the range values
+        range_values = values.split(",")
+
+        # creates the list of ranges in number mode
+        ranges_number_list = []
+
+        # iterates over all the range values
+        for range_value in range_values:
+            # splits the range retrieving the initial value
+            # and the end value
+            initial_value, end_value = range_value.split("-")
+
+            # converts both the initial and the end values to number
+            initial_value_number = initial_value and int(initial_value) or - 1
+            end_value_number = end_value and int(end_value) or - 1
+
+            # creates the range number tuple with both the initial and end values
+            range_number_tuple = (initial_value_number, end_value_number)
+
+            # adds the range number tuple to the ranges number list
+            ranges_number_list.append(range_number_tuple)
+
+        # retrieves the length of the ranges number list
+        ranges_number_list_length = len(ranges_number_list)
+
+        # in case the length of the ranges number list
+        # is bigger than one, the feature is not implemented
+        if ranges_number_list_length > 1:
+            # raises the not implemented exception
+            raise main_service_http_file_handler_exceptions.NotImplementedException("no support for multiple ranges", 501)
+
+        # retrieves the first range value
+        first_range_value = ranges_number_list[0]
+
+        # converts the first range value to string
+        first_range_string_value = self._range_to_string(first_range_value, file_size)
+
+        # sets the content range header value
+        request.set_header(CONTENT_RANGE_VALUE, first_range_string_value)
+
+        # sets the request status code
+        request.status_code = 206
+
+        # returns the ranges number list
+        return ranges_number_list
 
     def _compute_etag(self, file_stat, modified_timestamp):
         """
@@ -298,6 +393,49 @@ class MainServiceHttpFileHandler:
         # returns the escaped path
         return escaped_path
 
+    def _range_to_string(self, range_value, file_size):
+        """
+        Converts the given range value to a string value,
+        using the given file size as reference.
+
+        @type range_value: Tuple
+        @param range_value: The range value to be converted to string.
+        @type file_size: int
+        @param file_size: The size of the file to be used as reference.
+        @rtype: String
+        @return: The string value for the range.
+        """
+
+        # creates a string buffer to hold the range
+        range_string_buffer = colony.libs.string_buffer_util.StringBuffer()
+
+        # retrieves the range initial and end values
+        initial_value, end_value = range_value
+
+        # writes the initial part
+        range_string_buffer.write(BYTES_VALUE)
+        range_string_buffer.write(" ")
+
+        # converts both the initial and end values to string
+        initial_value_string = initial_value == -1 and "0" or str(initial_value)
+        end_value_string = end_value == -1 and str(file_size - 1) or str(end_value)
+
+        # writes the initial and end values to the range string buffer
+        range_string_buffer.write(initial_value_string)
+        range_string_buffer.write("-")
+        range_string_buffer.write(end_value_string)
+
+        # writes the final file size part in the
+        # the range string buffer
+        range_string_buffer.write("/")
+        range_string_buffer.write(str(file_size))
+
+        # retrieves the range string value
+        range_string_value = range_string_buffer.get_value()
+
+        # returns the range string value
+        return range_string_value
+
 class ChunkHandler:
     """
     The chunk handler class.
@@ -309,7 +447,10 @@ class ChunkHandler:
     file_size = None
     """ The file size """
 
-    def __init__(self, file, file_size):
+    ranges = None
+    """ The list of ranges """
+
+    def __init__(self, file, file_size, ranges):
         """
         Constructor of the class.
 
@@ -317,10 +458,22 @@ class ChunkHandler:
         @param file: The file.
         @type file_size: int
         @param file_size: The file size.
+        @type ranges: List
+        @param ranges: The list of ranges.
         """
 
         self.file = file
         self.file_size = file_size
+        self.ranges = ranges
+
+    def process_ranges(self):
+        if self.ranges:
+            first_range = self.ranges[0]
+
+            first_value = first_range[0]
+
+            if not first_value in (0, -1):
+                self.file.seek(first_value)
 
     def encode_file(self, encoding_handler, encoding_name):
         """
