@@ -338,8 +338,8 @@ class PolicyClientServiceTask:
     main_service_policy_plugin = None
     """ The main service policy plugin """
 
-    policy_socket = None
-    """ The policy socket """
+    policy_connection = None
+    """ The policy connection """
 
     policy_address = None
     """ The policy address """
