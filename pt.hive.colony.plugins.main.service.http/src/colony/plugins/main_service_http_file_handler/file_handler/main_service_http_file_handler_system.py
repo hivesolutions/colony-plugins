@@ -467,13 +467,26 @@ class ChunkHandler:
         self.ranges = ranges
 
     def process_ranges(self):
-        if self.ranges:
-            first_range = self.ranges[0]
+        """
+        Processes the ranges of the file request.
+        """
 
-            first_value = first_range[0]
+        # in case no ranges are defined
+        if not self.ranges:
+            # returns immediately
+            return
 
-            if not first_value in (0, -1):
-                self.file.seek(first_value)
+        # retrieves the first range
+        first_range = self.ranges[0]
+
+        # retrieves both the initial and end value
+        # from the first range
+        initial_value, _end_value = first_range
+
+        # in case the initial value is valid
+        if not initial_value == -1:
+            # seeks the file into the initial value
+            self.file.seek(initial_value)
 
     def encode_file(self, encoding_handler, encoding_name):
         """
