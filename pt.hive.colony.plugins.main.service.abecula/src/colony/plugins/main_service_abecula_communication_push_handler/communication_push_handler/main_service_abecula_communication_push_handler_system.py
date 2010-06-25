@@ -50,6 +50,9 @@ class MainServiceAbeculaCommunicationPushHandler:
     main_service_abecula_communication_push_handler_plugin = None
     """ The main service abecula communication push handler plugin """
 
+    service_connection_communication_handler_map = {}
+    """ The map associating a service connection with the communication handler """
+
     def __init__(self, main_service_abecula_communication_push_handler_plugin):
         """
         Constructor of the class.
@@ -59,6 +62,8 @@ class MainServiceAbeculaCommunicationPushHandler:
         """
 
         self.main_service_abecula_communication_push_handler_plugin = main_service_abecula_communication_push_handler_plugin
+
+        self.service_connection_communication_handler_map = {}
 
     def get_handler_name(self):
         """
@@ -81,9 +86,102 @@ class MainServiceAbeculaCommunicationPushHandler:
         # retrieves the communication push plugin
         communication_push_plugin = self.main_service_abecula_communication_push_handler_plugin.communication_push_plugin
 
-        request.write("communication push handled")
+        # retrieves the operation type
+        operation_type = request.get_operation_type()
 
+        # lower cases the operation type
+        operation_type = operation_type.lower()
+
+        # creates the operation handler name
+        operation_handler_name = "handle_" + operation_type
+
+        # in case the current object does not contains
+        # the operation handler
+        if not hasattr(self, operation_handler_name):
+            # raises the operation not permitted exception
+            raise main_service_abecula_communication_push_handler_exceptions.OperationNotPermitted(operation_type)
+
+        # retrieves the operation handler method
+        operation_handler_method = getattr(self, operation_handler_name)
+
+        # handles the operation
+        operation_handler_method(request, communication_push_plugin)
+
+    def handle_connect(self, request, communication_push_plugin):
+        # retrieves the service connection
+        service_connection = request.get_service_connection()
+
+        # generates a communication handler for the given service connection
+        generated_communication_handler = self.generate_handler(service_connection)
+
+        # sets the generated communication handler in the service connection communication handler map
+        self.service_connection_communication_handler_map[service_connection] = generated_communication_handler
+
+        # adds a new communication handler
+        communication_push_plugin.add_communication_handler("tobias", "nome_da_conexao", generated_communication_handler)
+
+        # sets the status code
         request.status_code = 200
 
-        # raises the request not handled exception
-        #raise main_service_abecula_communication_push_handler_exceptions.RequestNotHandled("no cgi handler could handle the request")
+        # writes the response
+        request.write("success")
+
+
+
+        service_connection.connection_closed_handlers.append(self.handle_connection_closed)
+
+    def handle_message(self, request, communication_push_plugin):
+        pass
+
+    def handle_disconnect(self, request, communication_push_plugin):
+        # retrieves the service connection
+        service_connection = request.get_service_connection()
+
+        # retrieves the generated communication handler for the service connection
+        generated_communication_handler = self.service_connection_communication_handler_map[service_connection]
+
+        # removes the communication handler
+        communication_push_plugin.remove_communication_handler("tobias", "nome_da_conexao", generated_communication_handler)
+
+        # sets the status code
+        request.status_code = 200
+
+        # writes the response
+        request.write("success")
+
+    def handle_connection_closed(self, service_connection):
+        # retrieves the communication push plugin
+        communication_push_plugin = self.main_service_abecula_communication_push_handler_plugin.communication_push_plugin
+
+        # retrieves the generated communication handler for the service connection
+        generated_communication_handler = self.service_connection_communication_handler_map[service_connection]
+
+        # removes the communication handler
+        communication_push_plugin.remove_communication_handler("tobias", "nome_da_conexao", generated_communication_handler)
+
+    def generate_handler(self, service_connection):
+        """
+        Generates a communication handler for the
+        given request.
+
+        @type service_connection: ServiceConnection
+        @param service_connection: The service connection to generate
+        a communication handler.
+        @rtype: Function
+        @return: The generated communication handler
+        """
+
+        def communication_handler(notification):
+            """
+            The "base" communication handler function.
+            to be used in the generation of the communciation handler.
+
+            @type notification: PushNotification
+            @param notification: The push notification to be sent.
+            """
+
+            # sends the notification to the abecula connection
+            service_connection.abecula_connection.sendall(notification)
+
+        # returns the communication handler
+        return communication_handler

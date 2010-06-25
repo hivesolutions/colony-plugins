@@ -185,6 +185,17 @@ class MainServiceAbecula:
         return service_configuration
 
     def _generate_service_parameters(self, parameters):
+        """
+        Retrieves the service parameters map from the base parameters
+        map.
+
+        @type parameters: Dictionary
+        @param parameters: The base parameters map to be used to build
+        the final service parameters map.
+        @rtype: Dictionary
+        @return: The final service parameters map.
+        """
+
         # retrieves the socket provider value
         socket_provider = parameters.get("socket_provider", None)
 
@@ -228,8 +239,8 @@ class AbeculaClientServiceTask:
     main_service_abecula_plugin = None
     """ The main service abecula plugin """
 
-    abecula_socket = None
-    """ The abecula socket """
+    abecula_connection = None
+    """ The abecula connection """
 
     abecula_address = None
     """ The abecula address """
@@ -252,6 +263,8 @@ class AbeculaClientServiceTask:
 
         self.current_request_handler = self.abecula_request_handler
 
+        self.connection_closed_handlers = []
+
     def start(self):
         # retrieves the abecula service handler plugins map
         abecula_service_handler_plugins_map = self.main_service_abecula_plugin.main_service_abecula.abecula_service_handler_plugins_map
@@ -269,6 +282,9 @@ class AbeculaClientServiceTask:
             if not self.current_request_handler(request_timeout, abecula_service_handler_plugins_map):
                 # breaks the cycle to close the abecula connection
                 break
+
+        for connection_closed_handler in self.connection_closed_handlers:
+            connection_closed_handler(self)
 
         # closes the abecula connection
         self.abecula_connection.close()
@@ -355,7 +371,7 @@ class AbeculaClientServiceTask:
         message = colony.libs.string_buffer_util.StringBuffer()
 
         # creates a request object
-        request = AbeculaRequest({})
+        request = AbeculaRequest({"service_connection" : self})
 
         # creates the start line loaded flag
         start_line_loaded = False
@@ -656,6 +672,9 @@ class AbeculaRequest:
     The abecula request class.
     """
 
+    service_connection = None
+    """ The service connection """
+
     operation_id = None
     """ The operation id """
 
@@ -698,6 +717,8 @@ class AbeculaRequest:
         """
 
         self.parameters = parameters
+
+        self.service_connection = parameters.get("service_connection", None)
 
         self.headers_map = {}
         self.response_headers_map = {}
@@ -765,6 +786,16 @@ class AbeculaRequest:
         # returns the result value
         return result_value
 
+    def get_service_connection(self):
+        """
+        Retrieves the service connection.
+
+        @rtype: ServiceConnection
+        @return: The service connection.
+        """
+
+        return self.service_connection
+
     def set_operation_id(self, operation_id):
         """
         Sets the operation id.
@@ -774,6 +805,16 @@ class AbeculaRequest:
         """
 
         self.operation_id = operation_id
+
+    def get_operation_type(self):
+        """
+        Retrieves the operation type.
+
+        @rtype: String
+        @return: The operation type.
+        """
+
+        return self.operation_type
 
     def set_operation_type(self, operation_type):
         """
