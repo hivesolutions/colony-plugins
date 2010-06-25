@@ -67,6 +67,12 @@ MAX_NUMBER_THREADS = 30
 SCHEDULING_ALGORITHM = 2
 """ The scheduling algorithm """
 
+REQUEST_TIMEOUT = 100
+""" The request timeout """
+
+CHUNK_SIZE = 4096
+""" The chunk size """
+
 SERVER_SIDE_VALUE = "server_side"
 """ The server side value """
 
@@ -440,3 +446,144 @@ class AbstractService:
 
         # prints a debug message about the number of threads in pool
         self.main_service_utils_plugin.debug("Number of threads in pool: %d" % self.service_client_thread_pool.current_number_threads)
+
+class AbstractServiceConnecion:
+    """
+    The abstract service connection.
+    """
+
+    service_plugin = None
+    """ The service plugin """
+
+    service_socket = None
+    """ The service socket """
+
+    service_address = None
+    """ The service address """
+
+    service_port = None
+    """ The service port """
+
+    service_configuration = None
+    """ The service configuration """
+
+    connection_opened_handlers = None
+    """ The connection opened handlers """
+
+    connection_closed_handlers = None
+    """ The connection closed handlers """
+
+    stop_flag = False
+    """ The flag to control the stop of service connection """
+
+    client_service = None
+    """ The client service reference """
+
+    def __init__(self, service_plugin, service_socket, service_address, service_port, service_configuration, client_service_class):
+        self.service_plugin = service_plugin
+        self.service_socket = service_socket
+        self.service_address = service_address
+        self.service_port = service_port
+        self.service_configuration = service_configuration
+
+        self.connection_opened_handlers = []
+        self.connection_closed_handlers = []
+
+        # creates the client service object
+        self.client_service = client_service_class(self)
+
+    def start(self):
+        # prints debug message about connection
+        self.service_plugin.debug("Connected to: %s" % str(self.service_address))
+
+        # calls the connection opened handlers
+        self._call_connection_opened_handlers()
+
+        # iterates while the stop flag is not set
+        while not self.stop_flag:
+            # handles the current request if it returns false
+            # the connection was closed or is meant to be closed
+            if not self.client_service.handle_request():
+                # breaks the cycle to close the service socket
+                break
+
+        # calls the connection closed handlers
+        self._call_connection_closed_handlers()
+
+        # prints debug message about connection
+        self.service_plugin.debug("Disconnected from: %s" % str(self.service_address))
+
+        # closes the service socket
+        self.service_socket.close()
+
+    def stop(self):
+        # sets the stop flag to true
+        self.stop_flag = True
+
+    def pause(self):
+        pass
+
+    def resume(self):
+        pass
+
+    def retrieve_data(self, request_timeout = REQUEST_TIMEOUT, chunk_size = CHUNK_SIZE):
+        """
+        Retrieves the data from the current service socket, with the
+        given timeout and with a maximum size given by the chunk size.
+
+        @type request_timeout: float
+        @param request_timeout: The timeout to be used in data retrieval.
+        @type chunk_size: int
+        @param chunk_size: The maximum size of the chunk to be retrieved.
+        @rtype: String
+        @return: The retrieved data.
+        """
+
+        try:
+            # sets the socket to non blocking mode
+            self.service_socket.setblocking(0)
+
+            # runs the select in the service socket, with timeout
+            selected_values = select.select([self.service_socket], [], [], request_timeout)
+
+            # sets the soecket to blocking mode
+            self.service_socket.setblocking(1)
+        except:
+            # raises the request closed exception
+            raise main_service_utils_exceptions.RequestClosed("invalid socket")
+
+        if selected_values == ([], [], []):
+            # closes the service socket
+            self.service_socket.close()
+
+            # raises the server request timeout exception
+            raise main_service_utils_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
+        try:
+            # receives the data in chunks
+            data = self.service_socket.recv(chunk_size)
+        except:
+            # raises the client request timeout exception
+            raise main_service_utils_exceptions.ClientRequestTimeout("timeout")
+
+        # returns the data
+        return data
+
+    def _call_connection_opened_handlers(self):
+        """
+        Calls all the connection opened handlers.
+        """
+
+        # iterates over all the connection opened handler
+        for connection_opened_handler in self.connection_opened_handlers:
+            # calls the connection opened handler
+            connection_opened_handler(self)
+
+    def _call_connection_closed_handlers(self):
+        """
+        Calls all the connection closed handlers.
+        """
+
+        # iterates over all the connection closed handler
+        for connection_closed_handler in self.connection_closed_handlers:
+            # calls the connection closed handler
+            connection_closed_handler(self)
