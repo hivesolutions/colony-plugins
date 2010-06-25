@@ -60,7 +60,7 @@ class MainServiceDnsPlugin(colony.plugins.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["main_service_dns.dns.main_service_dns_system", "main_service_dns.dns.main_service_dns_exceptions"]
+    main_modules = ["main_service_dns.dns.main_service_dns_exceptions", "main_service_dns.dns.main_service_dns_system"]
 
     main_service_dns = None
 
