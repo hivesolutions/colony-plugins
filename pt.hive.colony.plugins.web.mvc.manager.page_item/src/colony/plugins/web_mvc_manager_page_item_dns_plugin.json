@@ -13,6 +13,9 @@
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.web.mvc.utils",
                 "version" : "1.0.0"
+            }, {
+                "id" : "pt.hive.colony.plugins.dns.storage.database",
+                "version" : "1.0.0"
             }],
     "main_file" : "web_mvc_manager_page_item_dns_plugin.py",
     "resources" : [

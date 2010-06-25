@@ -1,0 +1,27 @@
+<div id="meta-data">
+    <div class="area">services</div>
+</div>
+<div id="contents">
+    <form action_target="code_execution" method="post">
+        <div class="form-field-area">
+            <h4>Command Prompt</h4>
+            <hr/>
+            <div class="form-field">
+                <label>Command:</label>
+                <div>
+                    <textarea class="text" name="command" type="text" />
+                </div>
+            </div>
+            ${if item=output_message value=None operator=neq}
+                <div class="form-field">
+                    <label>Output:</label>
+                    <div><p>${out value=output_message xml_escape=True /}</p></div>
+                </div>
+            ${/if}
+        </div>
+        <div class="form-button-area">
+            <div class="cancel button button-blue">Cancel</div>
+            <div class="submit button button-green">Execute</div>
+        </div>
+    </form>
+</div>
