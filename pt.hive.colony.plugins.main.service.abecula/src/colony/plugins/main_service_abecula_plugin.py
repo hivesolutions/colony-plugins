@@ -62,7 +62,7 @@ class MainServiceAbeculaPlugin(colony.plugins.plugin_system.Plugin):
                     "pt.hive.colony.plugins.main.service.utils", "1.0.0")]
     events_handled = []
     events_registrable = []
-    main_modules = ["main_service_abecula.abecula.main_service_abecula_system", "main_service_abecula.abecula.main_service_abecula_exceptions"]
+    main_modules = ["main_service_abecula.abecula.main_service_abecula_exceptions", "main_service_abecula.abecula.main_service_abecula_system"]
 
     main_service_abecula = None
 

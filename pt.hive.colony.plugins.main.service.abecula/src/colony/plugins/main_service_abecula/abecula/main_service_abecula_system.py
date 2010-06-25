@@ -743,7 +743,7 @@ class AbeculaRequest:
         # retrieves the value for the status code
         status_code_value = self.get_status_code_value()
 
-        # writes the http command in the string buffer (version, status code and status value)
+        # writes the abecula command in the string buffer (version, status code and status value)
         result.write(self.protocol_version + " " + self.operation_id + " " + str(self.status_code) + " " + status_code_value + "\r\n")
 
         # writes the main headers

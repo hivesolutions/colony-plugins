@@ -173,3 +173,53 @@ class AbeculaInvalidDataException(AbeculaRuntimeException):
         """
 
         return "Abecula invalid data exception: %s" % self.message
+
+class AbeculaNoHandlerException(AbeculaRuntimeException):
+    """
+    The abecula no handler exception.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        AbeculaRuntimeException.__init__(self, message)
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Abecula no handler exception: %s" % self.message
+
+class AbeculaHandlerNotFoundException(AbeculaRuntimeException):
+    """
+    The abecula handler not found exception.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        AbeculaRuntimeException.__init__(self, message)
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Abecula handler not found exception: %s" % self.message
