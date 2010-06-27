@@ -180,8 +180,11 @@ class MainServiceAbeculaCommunicationPushHandler:
             @param notification: The push notification to be sent.
             """
 
+            # retrieves the notification message
+            notification_message = notification.get_message()
+
             # sends the notification to the abecula connection
-            service_connection.abecula_connection.sendall(notification)
+            service_connection.abecula_connection.sendall(notification_message)
 
         # returns the communication handler
         return communication_handler
