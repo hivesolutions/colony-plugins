@@ -582,6 +582,36 @@ class AbeculaClientServiceTask:
         # sends the result to the abecula socket
         self.abecula_connection.sendall(result)
 
+    def create_response(self):
+        """
+        Creates a new response an returns it.
+
+        @rtype: AbeculaResponse
+        @return: The created response.
+        """
+
+        # creates a new abecula response
+        abecula_response = AbeculaResponse({})
+
+        # sets the protocol version in the abecula response
+        abecula_response.set_protocol_version("ABECULA/1.0")
+
+        return abecula_response
+
+    def send_response(self, response):
+        """
+        Sends the given response to the socket.
+
+        @type response: AbeculaResponse
+        @param response: The response to be sent.
+        """
+
+        # retrieves the result from the request
+        result = response.get_result()
+
+        # sends the result to the abecula socket
+        self.abecula_connection.sendall(result)
+
     def _process_handler(self, request, service_configuration):
         """
         Processes the handler stage of the abecula request.
@@ -638,10 +668,34 @@ class AbeculaConnection:
         self.abecula_socket = abecula_socket
 
     def create_response(self):
-        pass
+        """
+        Creates a new response an returns it.
 
-    def send_response(self):
-        pass
+        @rtype: AbeculaResponse
+        @return: The created response.
+        """
+
+        # creates a new abecula response
+        abecula_response = AbeculaResponse({})
+
+        # sets the protocol version in the abecula response
+        abecula_response.set_protocol_version("ABECULA/1.0")
+
+        return abecula_response
+
+    def send_response(self, response):
+        """
+        Sends the given response to the socket.
+
+        @type response: AbeculaResponse
+        @param response: The response to be sent.
+        """
+
+        # retrieves the result from the request
+        result = response.get_result()
+
+        # sends the result to the abecula socket
+        self.abecula_connection.sendall(result)
 
 class AbeculaResponse:
     """
@@ -653,6 +707,18 @@ class AbeculaResponse:
 
     operation_type = None
     """ The operation type """
+
+    target = None
+    """ The target """
+
+    protocol_version = None
+    """ The protocol version """
+
+    headers_map = {}
+    """ The headers map """
+
+    message_stream = None
+    """ The message stream """
 
     parameters = {}
     """ The parameters """
@@ -666,6 +732,105 @@ class AbeculaResponse:
         """
 
         self.parameters = parameters
+
+        self.headers_map = {}
+        self.message_stream = colony.libs.string_buffer_util.StringBuffer()
+
+    def __repr__(self):
+        return "(%s, %s, %s)" % (self.operation_id, self.operation_type, self.protocol_version)
+
+    def write(self, message, flush = 1, encode = True):
+        # retrieves the message type
+        message_type = type(message)
+
+        # in case the message type is unicode
+        #if message_type == types.UnicodeType and encode:
+            # encodes the message with the defined content type charset
+        #    message = message.encode(self.content_type_charset)
+
+        # writes the message to the message stream
+        self.message_stream.write(message)
+
+    def flush(self):
+        pass
+
+    def get_result(self):
+        # retrieves the result stream
+        result = colony.libs.string_buffer_util.StringBuffer()
+
+        # retrieves the result string value
+        message = self.message_stream.get_value()
+
+        # in case the request is encoded
+        #if self.encoded:
+        #    if self.mediated:
+#                self.mediated_handler.encode_file(self.encoding_handler, self.encoding_type)
+#            elif self.chunked_encoding:
+#                self.chunk_handler.encode_file(self.encoding_handler, self.encoding_type)
+#            else:
+#                message = self.encoding_handler(message)
+
+        # writes the abecula command in the string buffer (operation id, operation type, target and protocol version)
+        result.write(self.operation_id + " " + self.operation_type + " " + self.target + " " + self.protocol_version + "\r\n")
+
+        # writes the main headers
+        result.write(SERVER_VALUE + ": " + SERVER_IDENTIFIER + "\r\n")
+
+        # iterates over all the "extra" header values to be sent
+        for header_name, header_value in self.headers_map.items():
+            # writes the extra header value in the result
+            result.write(header_name + ": " + header_value + "\r\n")
+
+        # writes the end of the headers and the message
+        # values into the result
+        result.write("\r\n")
+        result.write(message)
+
+        # retrieves the value from the result buffer
+        result_value = result.get_value()
+
+        # returns the result value
+        return result_value
+
+    def set_operation_id(self, operation_id):
+        """
+        Sets the operation id.
+
+        @type opration_id: String
+        @param opration_id: The operation id.
+        """
+
+        self.operation_id = operation_id
+
+    def set_operation_type(self, operation_type):
+        """
+        Sets the operation type.
+
+        @type opration_type: String
+        @param opration_type: The operation type.
+        """
+
+        self.operation_type = operation_type
+
+    def set_target(self, target):
+        """
+        Sets the target.
+
+        @type target: String
+        @param target: The target.
+        """
+
+        self.target = target
+
+    def set_protocol_version(self, protocol_version):
+        """
+        Sets the protocol version.
+
+        @type protocol_version: String
+        @param protocol_version: The protocol version.
+        """
+
+        self.protocol_version = protocol_version
 
 class AbeculaRequest:
     """

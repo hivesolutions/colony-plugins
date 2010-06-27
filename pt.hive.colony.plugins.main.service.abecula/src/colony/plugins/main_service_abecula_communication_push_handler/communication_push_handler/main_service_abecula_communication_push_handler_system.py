@@ -174,17 +174,28 @@ class MainServiceAbeculaCommunicationPushHandler:
         def communication_handler(notification):
             """
             The "base" communication handler function.
-            to be used in the generation of the communciation handler.
+            to be used in the generation of the communication handler.
 
             @type notification: PushNotification
             @param notification: The push notification to be sent.
             """
 
+            # creates a new response
+            response = service_connection.create_response()
+
+            # sets the response properties
+            response.set_operation_id("C12")
+            response.set_operation_type("MESSAGE")
+            response.set_target(HANDLER_NAME)
+
             # retrieves the notification message
             notification_message = notification.get_message()
 
-            # sends the notification to the abecula connection
-            service_connection.abecula_connection.sendall(notification_message)
+            # writes the notification message to the response
+            response.write(notification_message)
+
+            # sends the response to the service connection
+            service_connection.send_response(response)
 
         # returns the communication handler
         return communication_handler
