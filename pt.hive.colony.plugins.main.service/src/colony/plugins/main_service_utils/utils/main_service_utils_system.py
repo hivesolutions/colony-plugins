@@ -432,14 +432,17 @@ class AbstractService:
         # retrieves the task descriptor class
         task_descriptor_class = thread_pool_manager_plugin.get_thread_task_descriptor_class()
 
-        # creates a new service client service task, with the given service connection, service address, port and service configuration
-        service_client_service_task = self.service_handling_task_class(self.service_plugin, service_connection, service_address, self.port, self.service_configuration)
+        # creates a new service connection handler task, with the given service plugin, service configuration and service handling task class
+        service_connection_handler_task = AbstractServiceConnectionHandler(self.service_plugin, self.service_configuration, self.service_handling_task_class)
+
+        # adds the initial connection
+        service_connection_handler_task.add_connection(service_connection, service_address, self.port)
 
         # creates a new task descriptor
-        task_descriptor = task_descriptor_class(start_method = service_client_service_task.start,
-                                                stop_method = service_client_service_task.stop,
-                                                pause_method = service_client_service_task.pause,
-                                                resume_method = service_client_service_task.resume)
+        task_descriptor = task_descriptor_class(start_method = service_connection_handler_task.start,
+                                                stop_method = service_connection_handler_task.stop,
+                                                pause_method = service_connection_handler_task.pause,
+                                                resume_method = service_connection_handler_task.resume)
 
         # inserts the new task descriptor into the service client thread pool
         self.service_client_thread_pool.insert_task(task_descriptor)
@@ -447,31 +450,25 @@ class AbstractService:
         # prints a debug message about the number of threads in pool
         self.main_service_utils_plugin.debug("Number of threads in pool: %d" % self.service_client_thread_pool.current_number_threads)
 
-class AbstractServiceConnecion:
+class AbstractServiceConnectionHandler:
     """
-    The abstract service connection.
+    The abstract service connection handler.
     """
 
     service_plugin = None
     """ The service plugin """
 
-    service_socket = None
-    """ The service socket """
-
-    service_address = None
-    """ The service address """
-
-    service_port = None
-    """ The service port """
-
     service_configuration = None
     """ The service configuration """
 
-    connection_opened_handlers = None
-    """ The connection opened handlers """
+    service_connections_list = []
+    """ The list of service connections """
 
-    connection_closed_handlers = None
-    """ The connection closed handlers """
+    service_connection_sockets_list = []
+    """ The list of service connection sockets """
+
+    service_connections_map = {}
+    """ The map of service connections """
 
     stop_flag = False
     """ The flag to control the stop of service connection """
@@ -479,56 +476,234 @@ class AbstractServiceConnecion:
     client_service = None
     """ The client service reference """
 
-    def __init__(self, service_plugin, service_socket, service_address, service_port, service_configuration, client_service_class):
+    def __init__(self, service_plugin, service_configuration, client_service_class):
+        """
+        Constructor of the class.
+
+        @type service_plugin: Plugin
+        @param service_plugin: The service plugin.
+        @type service_configuration: Dictionary
+        @param service_configuration: The service configuration.
+        @type client_service_class: Class
+        @param client_service_class: The client service class.
+        """
+
         self.service_plugin = service_plugin
-        self.service_socket = service_socket
-        self.service_address = service_address
-        self.service_port = service_port
         self.service_configuration = service_configuration
 
-        self.connection_opened_handlers = []
-        self.connection_closed_handlers = []
+        self.service_connections_list = []
+        self.service_connection_sockets_list = []
+        self.service_connections_map = {}
 
         # creates the client service object
-        self.client_service = client_service_class(self)
+        self.client_service = client_service_class(self.service_plugin, self, service_configuration)
 
     def start(self):
+        """
+        Starts the service connection.
+        """
+
+        # iterates while the stop flag is not set
+        while not self.stop_flag:
+            # polls the system to check for new connections
+            ready_sockets = self.poll_connections()
+
+            # iterates over all the ready sockets
+            for ready_socket in ready_sockets:
+                # retrieves the service connection
+                # that is ready for reading
+                ready_service_connection = self.service_connections_map[ready_socket]
+
+                # handles the current request if it returns false
+                # the connection was closed or is meant to be closed
+                if not self.client_service.handle_request(ready_service_connection):
+                    # removes the ready service connection
+                    self.remove_connection(ready_service_connection)
+
+    def stop(self):
+        """
+        Stops the service connection.
+        """
+
+        # sets the stop flag to true
+        self.stop_flag = True
+
+    def pause(self):
+        """
+        Pauses the service connection.
+        """
+
+        pass
+
+    def resume(self):
+        """
+        Resumes the service connection.
+        """
+
+        pass
+
+    def add_connection(self, connection_socket, connection_address, connection_port):
+        """
+        Adds a new connection to the service connection handler.
+
+        @type connection_socket: Socket
+        @param connection_socket: The connection socket.
+        @type connection_address: Tuple
+        @param connection_address: The connection address.
+        @type connection_port: int
+        @param connection_port: The connection port.
+        """
+
+        # creates the new service connection
+        service_connection = ServiceConnection(self.service_plugin, connection_socket, connection_address, connection_port)
+
+        # opens the service connection
+        service_connection.open()
+
+        # adds the service connection to the service connections list
+        self.service_connections_list.append(service_connection)
+
+        # adds the connection socket to the service connection socket list
+        self.service_connection_sockets_list.append(connection_socket)
+
+        # sets the service connection in the service connections map
+        self.service_connections_map[connection_socket] = service_connection
+
+        # returns the created service connection
+        return service_connection
+
+    def remove_connection(self, service_connection):
+        """
+        Removes the given service connection.
+
+        @type service_connection: ServiceConnection
+        @param service_connection: The service connection to be removed.
+        """
+
+        # closes the service connection
+        service_connection.open()
+
+        # retrieves the connection socket
+        connection_socket = service_connection.get_connection_socket()
+
+        # removes the connection from the service connections list
+        self.service_connections_list.remove(service_connection)
+
+        # removes the connection socket from the service connection sockets list
+        self.service_connection_sockets_list.remove(connection_socket)
+
+        # removes the service connection from the service connections map
+        del self.service_connections_map[connection_socket]
+
+    def remove_connection_socket(self, connection_socket):
+        """
+        Removes the connection with the given socket.
+
+        @type connection_socket: Socket
+        @param connection_socket: The connection socket to be used
+        in the removal of the connection.
+        """
+
+        # retrieves the service connection from the service connections map
+        service_connection = self.service_connections_map[connection_socket]
+
+        # removes the connection for the given service connection
+        self.remove_connection(service_connection)
+
+    def poll_connections(self):
+        """
+        Polls the current connection to check
+        if any contains new information to be read.
+
+        @rtype: List
+        @return: The selected values for read (ready sockets).
+        """
+
+        # in case no service connection sockets exist
+        if not self.service_connection_sockets_list:
+            # returns an empty list
+            return []
+
+        # runs the select in the connection socket, with timeout
+        selected_values = select.select(self.service_connection_sockets_list, [], [], 1.0)
+
+        # retrieves the selected values for read
+        selected_values_read = selected_values[0]
+
+        # returns the selected values for read
+        return selected_values_read
+
+class ServiceConnection:
+    """
+    The service connection class.
+    Describes a service connection.
+    """
+
+    service_plugin = None
+    """ The service plugin """
+
+    connection_socket = None
+    """ The connection socket """
+
+    connection_address = None
+    """ The connection address """
+
+    connection_port = None
+    """ The connection port """
+
+    connection_opened_handlers = []
+    """ The connection opened handlers """
+
+    connection_closed_handlers = []
+    """ The connection closed handlers """
+
+    def __init__(self, service_plugin, connection_socket, connection_address, connection_port):
+        """
+        Constructor of the class.
+
+        @type service_plugin: Plugin
+        @param service_plugin: The service plugin.
+        @type connection_socket: Socket
+        @param connection_socket: The connection socket.
+        @type connection_address: Tuple
+        @param connection_address: The connection address.
+        @type connection_port: int
+        @param connection_port: The connection port.
+        """
+
+        self.service_plugin = service_plugin
+        self.connection_socket = connection_socket
+        self.connection_address = connection_address
+        self.connection_port = connection_port
+
+    def open(self):
+        """
+        Opens the connection.
+        """
+
         # prints debug message about connection
-        self.service_plugin.debug("Connected to: %s" % str(self.service_address))
+        self.service_plugin.debug("Connected to: %s" % str(self.connection_address))
 
         # calls the connection opened handlers
         self._call_connection_opened_handlers()
 
-        # iterates while the stop flag is not set
-        while not self.stop_flag:
-            # handles the current request if it returns false
-            # the connection was closed or is meant to be closed
-            if not self.client_service.handle_request():
-                # breaks the cycle to close the service socket
-                break
+    def close(self):
+        """
+        Closes the connection.
+        """
+
+        # closes the connection socket
+        self.connection_socket.close()
 
         # calls the connection closed handlers
         self._call_connection_closed_handlers()
 
         # prints debug message about connection
-        self.service_plugin.debug("Disconnected from: %s" % str(self.service_address))
-
-        # closes the service socket
-        self.service_socket.close()
-
-    def stop(self):
-        # sets the stop flag to true
-        self.stop_flag = True
-
-    def pause(self):
-        pass
-
-    def resume(self):
-        pass
+        self.service_plugin.debug("Disconnected from: %s" % str(self.connection_address))
 
     def retrieve_data(self, request_timeout = REQUEST_TIMEOUT, chunk_size = CHUNK_SIZE):
         """
-        Retrieves the data from the current service socket, with the
+        Retrieves the data from the current connection socket, with the
         given timeout and with a maximum size given by the chunk size.
 
         @type request_timeout: float
@@ -541,32 +716,52 @@ class AbstractServiceConnecion:
 
         try:
             # sets the socket to non blocking mode
-            self.service_socket.setblocking(0)
+            self.connection_socket.setblocking(0)
 
-            # runs the select in the service socket, with timeout
-            selected_values = select.select([self.service_socket], [], [], request_timeout)
+            # runs the select in the connection socket, with timeout
+            selected_values = select.select([self.connection_socket], [], [], request_timeout)
 
             # sets the soecket to blocking mode
-            self.service_socket.setblocking(1)
+            self.connection_socket.setblocking(1)
         except:
             # raises the request closed exception
             raise main_service_utils_exceptions.RequestClosed("invalid socket")
 
         if selected_values == ([], [], []):
-            # closes the service socket
-            self.service_socket.close()
+            # closes the connection socket
+            self.connection_socket.close()
 
             # raises the server request timeout exception
             raise main_service_utils_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
         try:
             # receives the data in chunks
-            data = self.service_socket.recv(chunk_size)
+            data = self.connection_socket.recv(chunk_size)
         except:
             # raises the client request timeout exception
             raise main_service_utils_exceptions.ClientRequestTimeout("timeout")
 
         # returns the data
         return data
+
+    def get_connection_socket(self):
+        """
+        Retrieves the connection socket.
+
+        @rtype: Socket
+        @return: The connection socket.
+        """
+
+        return self.connection_socket
+
+    def send(self, message):
+        """
+        Sends the given message to the socket.
+
+        @type message: String
+        @param message: The message to be sent.
+        """
+
+        return self.connection_socket.sendall(message)
 
     def _call_connection_opened_handlers(self):
         """
