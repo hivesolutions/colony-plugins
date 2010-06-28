@@ -466,9 +466,6 @@ class AbstractServiceConnectionHandler:
     service_connections_map = {}
     """ The map of service connections """
 
-    stop_flag = False
-    """ The flag to control the stop of service connection """
-
     client_service = None
     """ The client service reference """
 
@@ -684,6 +681,9 @@ class ServiceConnection:
         self.connection_socket = connection_socket
         self.connection_address = connection_address
         self.connection_port = connection_port
+
+        self.connection_opened_handlers = []
+        self.connection_closed_handlers = []
 
     def __repr__(self):
         return "(%s, %s)" % (self.connection_address, self.connection_port)
