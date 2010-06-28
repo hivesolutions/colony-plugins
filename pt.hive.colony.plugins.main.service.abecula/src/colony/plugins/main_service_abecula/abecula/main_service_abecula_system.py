@@ -220,7 +220,7 @@ class MainServiceAbecula:
 
         # creates the parameters map
         parameters = {"service_plugin" : self.main_service_abecula_plugin,
-                      "service_handling_task_class" : AbeculaClientServiceTask,
+                      "service_handling_task_class" : AbeculaClientServiceHandler,
                       "socket_provider" : socket_provider,
                       "bind_host" : BIND_HOST,
                       "port" : port,
@@ -230,6 +230,434 @@ class MainServiceAbecula:
 
         # returns the parameters
         return parameters
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class AbeculaClientServiceHandler:
+    """
+    The abecula client service handler class.
+    """
+
+    service_plugin = None
+    """ The service plugin """
+
+    service_connection_handler = None
+    """ The service connection handler """
+
+    service_configuration = None
+    """ The service configuration """
+
+    def __init__(self, service_plugin, service_connection_handler, service_configuration):
+        """
+        Constructor of the class.
+
+        @type service_plugin: Plugin
+        @param service_plugin: The service plugin.
+        @type service_connection_handler: AbstractServiceConnectionHandler
+        @param service_connection_handler: The abstract service connection handler, that
+        handles this connection.
+        @type service_configuration: Dictionary
+        @param service_configuration: The service configuration.
+        """
+
+        self.service_plugin = service_plugin
+        self.service_connection_handler = service_connection_handler
+        self.service_configuration = service_configuration
+
+    def handle_request(self, service_connection, request_timeout = REQUEST_TIMEOUT):
+        # retrieves the abecula service handler plugins map
+        abecula_service_handler_plugins_map = self.service_plugin.main_service_abecula.abecula_service_handler_plugins_map
+
+        try:
+            # retrieves the request
+            request = self.retrieve_request(service_connection, request_timeout)
+        except main_service_abecula_exceptions.MainServiceAbeculaException:
+            # prints a debug message about the connection closing
+            self.service_plugin.debug("Connection: %s closed by peer, timeout or invalid request" % str(service_connection))
+
+            # returns false (connection closed)
+            return False
+
+        try:
+            # prints debug message about request
+            self.service_plugin.debug("Handling request: %s" % str(request))
+
+            # retrieves the real service configuration,
+            # taking the request information into account
+            service_configuration = self._get_service_configuration(request)
+
+            # processes the handler part of the request and retrieves
+            # the handler name
+            handler_name = self._process_handler(request, service_configuration)
+
+            # in case the request was not already handled
+            if not handler_name:
+                # retrieves the default handler name
+                handler_name = service_configuration.get("default_handler", None)
+
+                # sets the handler path
+                request.handler_path = None
+
+            # in case no handler name is defined (request not handled)
+            if not handler_name:
+                # raises an abecula no handler exception
+                raise main_service_abecula_exceptions.AbeculaNoHandlerException("no handler defined for current request")
+
+            # in case the handler is not found in the handler plugins map
+            if not handler_name in abecula_service_handler_plugins_map:
+                # raises an abecula handler not found exception
+                raise main_service_abecula_exceptions.AbeculaHandlerNotFoundException("no handler found for current request: " + handler_name)
+
+            # retrieves the abecula service handler plugin
+            abecula_service_handler_plugin = abecula_service_handler_plugins_map[handler_name]
+
+            # handles the request by the request handler
+            abecula_service_handler_plugin.handle_request(request)
+
+            # sends the request to the client (response)
+            self.send_request(service_connection, request)
+        except Exception, exception:
+            # prints info message about exception
+            self.service_plugin.info("There was an exception handling the request: " + str(exception))
+
+            # sends the exception
+            self.send_exception(service_connection, request, exception)
+
+        # returns true (connection remains open)
+        return True
+
+    def retrieve_request(self, service_connection, request_timeout = REQUEST_TIMEOUT):
+        """
+        Retrieves the request from the received message.
+
+        @type service_connection: ServiceConnection
+        @param service_connection: The service connection to be used.
+        @type request_timeout: int
+        @param request_timeout: The timeout for the request retrieval.
+        @rtype: AbeculaRequest
+        @return: The request from the received message.
+        """
+
+        # creates the string buffer for the message
+        message = colony.libs.string_buffer_util.StringBuffer()
+
+        # creates a request object
+        request = AbeculaRequest({"service_connection" : service_connection})
+
+        # creates the start line loaded flag
+        start_line_loaded = False
+
+        # creates the header loaded flag
+        header_loaded = False
+
+        # creates the message loaded flag
+        message_loaded = False
+
+        # creates the message offset index, representing the
+        # offset byte to the initialization of the message
+        message_offset_index = 0
+
+        # creates the message size value
+        message_size = 0
+
+        # creates the received data size (counter)
+        received_data_size = 0
+
+        # continuous loop
+        while True:
+            # retrieves the data
+            data = service_connection.retrieve_data(request_timeout)
+
+            # retrieves the data length
+            data_length = len(data)
+
+            # in case no valid data was received
+            if data_length == 0:
+                # raises the abecula invalid data exception
+                raise main_service_abecula_exceptions.AbeculaInvalidDataException("empty data received")
+
+            # increments the received data size (counter)
+            received_data_size += data_length
+
+            # writes the data to the string buffer
+            message.write(data)
+
+            # in case the header is loaded or the message contents are completely loaded
+            if not header_loaded or received_data_size - message_offset_index == message_size:
+                # retrieves the message value from the string buffer
+                message_value = message.get_value()
+            # in case there's no need to inspect the message contents
+            else:
+                # continues with the loop
+                continue
+
+            # in case the start line is not loaded
+            if not start_line_loaded:
+                # finds the first new line value
+                start_line_index = message_value.find("\r\n")
+
+                # in case there is a new line value found
+                if not start_line_index == -1:
+                    # retrieves the start line
+                    start_line = message_value[:start_line_index]
+
+                    # splits the start line in spaces
+                    start_line_splitted = start_line.split(" ")
+
+                    # retrieves the start line splitted length
+                    start_line_splitted_length = len(start_line_splitted)
+
+                    # in case the length of the splitted line is not three
+                    if not start_line_splitted_length == 4:
+                        # raises the abecula invalid data exception
+                        raise main_service_abecula_exceptions.AbeculaInvalidDataException("invalid data received: " + start_line)
+
+                    # retrieve the operation type the target and the protocol version
+                    # from the start line splitted
+                    operation_id, operation_type, target, protocol_version = start_line_splitted
+
+                    # sets the request operation id
+                    request.set_operation_id(operation_id)
+
+                    # sets the request operation type
+                    request.set_operation_type(operation_type)
+
+                    # sets the target
+                    request.set_target(target)
+
+                    # sets the request protocol version
+                    request.set_protocol_version(protocol_version)
+
+                    # sets the start line loaded flag
+                    start_line_loaded = True
+
+            # in case the header is not loaded
+            if not header_loaded:
+                # retrieves the end header index (two new lines)
+                end_header_index = message_value.find("\r\n\r\n")
+
+                # in case the end header index is found
+                if not end_header_index == -1:
+                    # sets the message offset index as the end header index
+                    # plus the two sequences of newlines (four characters)
+                    message_offset_index = end_header_index + 4
+
+                    # sets the header loaded flag
+                    header_loaded = True
+
+                    # retrieves the start header index
+                    start_header_index = start_line_index + 2
+
+                    # retrieves the headers part of the message
+                    headers = message_value[start_header_index:end_header_index]
+
+                    # splits the headers by line
+                    headers_splitted = headers.split("\r\n")
+
+                    # iterates over the headers lines
+                    for header_splitted in headers_splitted:
+                        # finds the header separator
+                        division_index = header_splitted.find(":")
+
+                        # retrieves the header name
+                        header_name = header_splitted[:division_index].strip()
+
+                        # retrieves the header value
+                        header_value = header_splitted[division_index + 1:].strip()
+
+                        # sets the header in the headers map
+                        request.headers_map[header_name] = header_value
+
+                    # in case the content length is defined in the headers map
+                    if CONTENT_LENGTH_VALUE in request.headers_map:
+                        # retrieves the message size
+                        message_size = int(request.headers_map[CONTENT_LENGTH_VALUE])
+                    elif CONTENT_LENGTH_LOWER_VALUE in request.headers_map:
+                        # retrieves the message size
+                        message_size = int(request.headers_map[CONTENT_LENGTH_LOWER_VALUE])
+                    # in case there is no content length defined in the headers map
+                    else:
+                        # returns the request
+                        return request
+
+            # in case the message is not loaded and the header is loaded
+            if not message_loaded and header_loaded:
+                # retrieves the start message size
+                start_message_index = end_header_index + 4
+
+                # calculates the message value message length
+                message_value_message_length = len(message_value) - start_message_index
+
+                # in case the length of the message value message is the same
+                # as the message size
+                if message_value_message_length == message_size:
+                    # retrieves the message part of the message value
+                    message_value_message = message_value[start_message_index:]
+
+                    # sets the message loaded flag
+                    message_loaded = True
+
+                    # sets the received message
+                    request.received_message = message_value_message
+
+                    # decodes the request if necessary
+                    #self.decode_request(request)
+
+                    # returns the request
+                    return request
+
+    def send_exception(self, service_connection, request, exception):
+        """
+        Sends the exception to the given request for the given exception.
+
+        @type service_connection: ServiceConnection
+        @param service_connection: The service connection to be used.
+        @type request: AbeculaRequest
+        @param request: The request to send the exception.
+        @type exception: Exception
+        @param exception: The exception to be sent.
+        """
+
+#        # resets the response value (deletes answers)
+#        request.reset_response()
+
+        # sends the request to the client (response)
+        self.send_request(service_connection, request)
+
+    def send_request(self, service_connection, request):
+        # retrieves the result from the request
+        result = request.get_result()
+
+        # sends the result to the service connection
+        service_connection.send(result)
+
+    def create_response(self):
+        """
+        Creates a new response an returns it.
+
+        @rtype: AbeculaResponse
+        @return: The created response.
+        """
+
+        # creates a new abecula response
+        abecula_response = AbeculaResponse({})
+
+        # sets the protocol version in the abecula response
+        abecula_response.set_protocol_version("ABECULA/1.0")
+
+        return abecula_response
+
+    def send_response(self, service_connection, response):
+        """
+        Sends the given response to the socket.
+
+        @type service_connection: ServiceConnection
+        @param service_connection: The service connection to be used.
+        @type response: AbeculaResponse
+        @param response: The response to be sent.
+        """
+
+        # retrieves the result from the request
+        result = response.get_result()
+
+        # sends the result to the service connection
+        service_connection.send(result)
+
+    def _process_handler(self, request, service_configuration):
+        """
+        Processes the handler stage of the abecula request.
+
+        @type request: AbeculaRequest
+        @param request: The request to be processed.
+        @type service_configuration: Dictionary
+        @param service_configuration: The service configuration map.
+        @rtype: String
+        @return: The processed handler name.
+        """
+
+        # retrieves the handler name as the target of the request
+        handler_name = request.get_target()
+
+        # returns the handler name
+        return handler_name
+
+    def _get_service_configuration(self, request):
+        """
+        Retrieves the service configuration for the given request.
+        This retrieval takes into account the request target and characteristics
+        to merge the virtual servers configurations.
+
+        @type request: AbeculaRequest
+        @param request: The request to be used in the resolution
+        of the service configuration.
+        @rtype: Dictionary
+        @return: The resolved service configuration.
+        """
+
+        # retrieves the base service configuration
+        service_configuration = self.service_configuration
+
+        # returns the service configuration
+        return service_configuration
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class AbeculaClientServiceTask:
     """
