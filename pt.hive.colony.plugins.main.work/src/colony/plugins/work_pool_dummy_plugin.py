@@ -72,7 +72,7 @@ class WorkPoolDummyPlugin(colony.plugins.plugin_system.Plugin):
     def end_load_plugin(self):
         colony.plugins.plugin_system.Plugin.end_load_plugin(self)
 
-        self.work_pool = self.work_pool_manager_plugin.create_new_work_pool("dummy work pool", "dummy work pool", ProcessingClass, 3, 1, 5, 10, 1)
+        self.work_pool = self.work_pool_manager_plugin.create_new_work_pool("dummy work pool", "dummy work pool", ProcessingClass, [], 3, 1, 5, 10, 1)
         self.work_pool.start_pool()
 
         for _index in range(100):

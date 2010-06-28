@@ -92,7 +92,7 @@ class WorkPoolManager:
             # stops the work pool
             work_pool.stop_pool()
 
-    def create_new_work_pool(self, name, description, work_processing_task_class = None, number_threads = DEFAULT_NUMBER_THREADS, scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM, maximum_number_threads = DEFAULT_MAXIMUM_NUMBER_THREADS, maximum_number_works_thread = DEFAULT_MAXIMUM_NUMBER_WORKS_THREAD, work_scheduling_algorithm = ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM):
+    def create_new_work_pool(self, name, description, work_processing_task_class = None, work_processing_task_arguments = [], number_threads = DEFAULT_NUMBER_THREADS, scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM, maximum_number_threads = DEFAULT_MAXIMUM_NUMBER_THREADS, maximum_number_works_thread = DEFAULT_MAXIMUM_NUMBER_WORKS_THREAD, work_scheduling_algorithm = ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM):
         """
         Creates a new work pool with the given name, description and number of works.
 
@@ -102,6 +102,8 @@ class WorkPoolManager:
         @param description: The work pool description.
         @type work_processing_task_class: Class
         @param work_processing_task_class: The work pool reference to the class to be used for work processing.
+        @type work_processing_task_arguments: List
+        @param work_processing_task_arguments: The list of arguments to be used to instantiate the work processing task class.
         @type number_threads: int
         @param number_threads: The thread pool number of threads.
         @type scheduling_algorithm: int
@@ -126,7 +128,7 @@ class WorkPoolManager:
         task_descriptor_class = thread_pool_manager_plugin.get_thread_task_descriptor_class()
 
         # creates a new work pool
-        work_pool = WorkPoolImplementation(thread_pool_manager_plugin, name, description, work_processing_task_class, task_descriptor_class, number_threads, scheduling_algorithm, maximum_number_threads, maximum_number_works_thread, work_scheduling_algorithm, logger)
+        work_pool = WorkPoolImplementation(thread_pool_manager_plugin, name, description, work_processing_task_class, work_processing_task_arguments, task_descriptor_class, number_threads, scheduling_algorithm, maximum_number_threads, maximum_number_works_thread, work_scheduling_algorithm, logger)
 
         # adds the new thread pool to the list of work pools
         self.work_pools_list.append(work_pool)
@@ -147,6 +149,9 @@ class WorkPoolImplementation:
 
     work_processing_task_class = None
     """ The work pool reference to the class to be used for work processing """
+
+    work_processing_task_arguments = None
+    """ The list of arguments to be used to instantiate the work processing task class """
 
     task_descriptor_class = None
     """ The work pool task descriptor class """
@@ -178,7 +183,7 @@ class WorkPoolImplementation:
     algorithm_manager = None
     """ The algorithm manager object reference """
 
-    def __init__(self, thread_pool_manager, name = "none", description = "none", work_processing_task_class = None, task_descriptor_class = None, number_threads = DEFAULT_NUMBER_THREADS, scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM, maximum_number_threads = DEFAULT_MAXIMUM_NUMBER_THREADS, maximum_number_works_thread = DEFAULT_MAXIMUM_NUMBER_WORKS_THREAD, work_scheduling_algorithm = ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM, logger = None):
+    def __init__(self, thread_pool_manager, name = "none", description = "none", work_processing_task_class = None, work_processing_task_arguments = [], task_descriptor_class = None, number_threads = DEFAULT_NUMBER_THREADS, scheduling_algorithm = CONSTANT_SCHEDULING_ALGORITHM, maximum_number_threads = DEFAULT_MAXIMUM_NUMBER_THREADS, maximum_number_works_thread = DEFAULT_MAXIMUM_NUMBER_WORKS_THREAD, work_scheduling_algorithm = ROUND_ROBIN_WORK_SCHEDULING_ALGORITHM, logger = None):
         """
         Constructor of the class
 
@@ -190,6 +195,8 @@ class WorkPoolImplementation:
         @param description: The work pool description.
         @type work_processing_task_class: Class
         @param work_processing_task_class: The work pool reference to the class to be used for work processing.
+        @type work_processing_task_arguments: List
+        @param work_processing_task_arguments: The list of arguments to be used to instantiate the work processing task class.
         @type task_descriptor_class: Class
         @param task_descriptor_class: The work pool task descriptor class.
         @type number_threads: int
@@ -209,6 +216,7 @@ class WorkPoolImplementation:
         self.name = name
         self.description = description
         self.work_processing_task_class = work_processing_task_class
+        self.work_processing_task_arguments = work_processing_task_arguments
         self.task_descriptor_class = task_descriptor_class
         self.number_threads = number_threads
         self.scheduling_algorithm = scheduling_algorithm
@@ -295,8 +303,9 @@ class WorkPoolImplementation:
         into  the thread pool.
         """
 
-        # creates an instance of the work processing task class
-        work_processing_task = self.work_processing_task_class()
+        # creates an instance of the work processing task class,
+        # using the work processing task arguments
+        work_processing_task = self.work_processing_task_class(*self.work_processing_task_arguments)
 
         # creates a new work task with for work processing task
         work_task = WorkTask(work_processing_task)
