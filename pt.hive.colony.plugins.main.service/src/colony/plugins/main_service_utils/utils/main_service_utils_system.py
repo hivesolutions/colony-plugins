@@ -61,11 +61,20 @@ POOL_DESCRIPTION = "pool to support service client connections"
 NUMBER_THREADS = 15
 """ The number of threads """
 
-MAX_NUMBER_THREADS = 30
+MAXIMUM_NUMBER_THREADS = 30
 """ The maximum number of threads """
 
 SCHEDULING_ALGORITHM = 2
 """ The scheduling algorithm """
+
+MAXIMUM_NUMBER_WORKS_THREAD = 10
+""" The maximum number of works per thread """
+
+WORK_SCHEDULING_ALGORITHM = 1
+""" The work scheduling algorithm """
+
+POLL_TIMEOUT = 1
+""" The poll timeout """
 
 REQUEST_TIMEOUT = 100
 """ The request timeout """
@@ -162,8 +171,8 @@ class AbstractService:
     service_connection_active = False
     """ The service connection active flag """
 
-    service_client_thread_pool = None
-    """ The service client thread pool """
+    service_client_pool = None
+    """ The service client pool """
 
     service_connection_close_event = None
     """ The service connection close event """
@@ -227,8 +236,8 @@ class AbstractService:
         Starts the service.
         """
 
-        # creates the thread pool
-        self._create_thread_pool()
+        # creates the work pool
+        self._create_pool()
 
         # creates and sets the service socket
         self._create_service_socket()
@@ -278,32 +287,37 @@ class AbstractService:
         self.service_connection_close_end_event.clear()
 
         # stops all the pool tasks
-        self.service_client_thread_pool.stop_pool_tasks()
+        self.service_client_pool.stop_pool_tasks()
 
         # stops the pool
-        self.service_client_thread_pool.stop_pool()
+        self.service_client_pool.stop_pool()
 
-    def _create_thread_pool(self):
+    def _create_pool(self):
         """
-        Creates the thread pool according to the
+        Creates the work pool according to the
         service configuration.
         """
 
-        # retrieves the thread pool manager plugin
-        thread_pool_manager_plugin = self.main_service_utils_plugin.thread_pool_manager_plugin
+        # retrieves the work pool manager plugin
+        work_pool_manager_plugin = self.main_service_utils_plugin.work_pool_manager_plugin
 
-        # retrieves the thread pool configuration parameters
+        # retrieves the work pool configuration parameters
         pool_name = self.pool_configuration.get("name", POOL_NAME)
         pool_description = self.pool_configuration.get("description", POOL_DESCRIPTION)
         number_threads = self.pool_configuration.get("number_threads", NUMBER_THREADS)
         scheduling_algorithm = self.pool_configuration.get("scheduling_algorithm", SCHEDULING_ALGORITHM)
-        max_number_threads = self.pool_configuration.get("max_number_threads", MAX_NUMBER_THREADS)
+        maximum_number_threads = self.pool_configuration.get("maximum_number_threads", MAXIMUM_NUMBER_THREADS)
+        maximum_number_works_thread = self.pool_configuration.get("maximum_number_works_thread", MAXIMUM_NUMBER_WORKS_THREAD)
+        work_scheduling_algorithm = self.pool_configuration.get("work_scheduling_algorithm", WORK_SCHEDULING_ALGORITHM)
 
-        # creates the service client thread pool
-        self.service_client_thread_pool = thread_pool_manager_plugin.create_new_thread_pool(pool_name, pool_description, number_threads, scheduling_algorithm, max_number_threads)
+        # creates the service connection handler arguments
+        service_connection_handler_arguments = (self.service_plugin, self.service_configuration, self.service_handling_task_class)
 
-        # starts the service client thread pool
-        self.service_client_thread_pool.start_pool()
+        # creates the service client pool
+        self.service_client_pool = work_pool_manager_plugin.create_new_work_pool(pool_name, pool_description, AbstractServiceConnectionHandler, service_connection_handler_arguments, number_threads, scheduling_algorithm, maximum_number_threads, maximum_number_works_thread,work_scheduling_algorithm)
+
+        # start the service client pool
+        self.service_client_pool.start_pool()
 
         # sets the service connection active flag as true
         self.service_connection_active = True
@@ -426,29 +440,11 @@ class AbstractService:
         of the connection.
         """
 
-        # retrieves the thread pool manager plugin
-        thread_pool_manager_plugin = self.main_service_utils_plugin.thread_pool_manager_plugin
+        # creates the work reference tuple
+        work_reference = (service_connection, service_address, self.port)
 
-        # retrieves the task descriptor class
-        task_descriptor_class = thread_pool_manager_plugin.get_thread_task_descriptor_class()
-
-        # creates a new service connection handler task, with the given service plugin, service configuration and service handling task class
-        service_connection_handler_task = AbstractServiceConnectionHandler(self.service_plugin, self.service_configuration, self.service_handling_task_class)
-
-        # adds the initial connection
-        service_connection_handler_task.add_connection(service_connection, service_address, self.port)
-
-        # creates a new task descriptor
-        task_descriptor = task_descriptor_class(start_method = service_connection_handler_task.start,
-                                                stop_method = service_connection_handler_task.stop,
-                                                pause_method = service_connection_handler_task.pause,
-                                                resume_method = service_connection_handler_task.resume)
-
-        # inserts the new task descriptor into the service client thread pool
-        self.service_client_thread_pool.insert_task(task_descriptor)
-
-        # prints a debug message about the number of threads in pool
-        self.main_service_utils_plugin.debug("Number of threads in pool: %d" % self.service_client_thread_pool.current_number_threads)
+        # inserts the work into the service client pool
+        self.service_client_pool.insert_work(work_reference)
 
 class AbstractServiceConnectionHandler:
     """
@@ -498,49 +494,60 @@ class AbstractServiceConnectionHandler:
         # creates the client service object
         self.client_service = client_service_class(self.service_plugin, self, service_configuration)
 
-    def start(self):
+    def process(self):
         """
-        Starts the service connection.
-        """
-
-        # iterates while the stop flag is not set
-        while not self.stop_flag:
-            # polls the system to check for new connections
-            ready_sockets = self.poll_connections()
-
-            # iterates over all the ready sockets
-            for ready_socket in ready_sockets:
-                # retrieves the service connection
-                # that is ready for reading
-                ready_service_connection = self.service_connections_map[ready_socket]
-
-                # handles the current request if it returns false
-                # the connection was closed or is meant to be closed
-                if not self.client_service.handle_request(ready_service_connection):
-                    # removes the ready service connection
-                    self.remove_connection(ready_service_connection)
-
-    def stop(self):
-        """
-        Stops the service connection.
+        Processes a work "tick".
+        The work tick consists in the polling of the connections
+        and the processing of the work.
         """
 
-        # sets the stop flag to true
-        self.stop_flag = True
+        # polls the system to check for new connections
+        ready_sockets = self.poll_connections(POLL_TIMEOUT)
 
-    def pause(self):
+        # iterates over all the ready sockets
+        for ready_socket in ready_sockets:
+            # retrieves the service connection
+            # that is ready for reading
+            ready_service_connection = self.service_connections_map[ready_socket]
+
+            # handles the current request if it returns false
+            # the connection was closed or is meant to be closed
+            if not self.client_service.handle_request(ready_service_connection):
+                # retrieves the connection tuple
+                connection_tuple = ready_service_connection.get_connection_tuple()
+
+                # removes the ready service connection (via remove work)
+                self.remove_work(connection_tuple)
+
+    def work_added(self, work_reference):
         """
-        Pauses the service connection.
+        Called when a work is added.
+
+        @type work_reference: Object
+        @param work_reference: The reference to the work to be added.
         """
 
-        pass
+        # unpacks the work reference retrieving the connection socket,
+        # address and port
+        connection_socket, connection_address, connection_port = work_reference
 
-    def resume(self):
+        # adds the connection to the current service connection handler
+        self.add_connection(connection_socket, connection_address, connection_port)
+
+    def work_removed(self, work_reference):
         """
-        Resumes the service connection.
+        Called when a work is removed.
+
+        @type work_reference: Object
+        @param work_reference: The reference to the work to be removed.
         """
 
-        pass
+        # unpacks the work reference retrieving the connection socket,
+        # address and port
+        connection_socket, _connection_address, _connection_port = work_reference
+
+        # removes the connection using the socket as reference
+        self.remove_connection_socket(connection_socket)
 
     def add_connection(self, connection_socket, connection_address, connection_port):
         """
@@ -581,7 +588,7 @@ class AbstractServiceConnectionHandler:
         """
 
         # closes the service connection
-        service_connection.open()
+        service_connection.close()
 
         # retrieves the connection socket
         connection_socket = service_connection.get_connection_socket()
@@ -610,11 +617,13 @@ class AbstractServiceConnectionHandler:
         # removes the connection for the given service connection
         self.remove_connection(service_connection)
 
-    def poll_connections(self):
+    def poll_connections(self, poll_timeout = POLL_TIMEOUT):
         """
         Polls the current connection to check
         if any contains new information to be read.
 
+        @type poll_timeout: float
+        @param poll_timeout: The timeout to be used in the polling.
         @rtype: List
         @return: The selected values for read (ready sockets).
         """
@@ -625,7 +634,7 @@ class AbstractServiceConnectionHandler:
             return []
 
         # runs the select in the connection socket, with timeout
-        selected_values = select.select(self.service_connection_sockets_list, [], [], 1.0)
+        selected_values = select.select(self.service_connection_sockets_list, [], [], poll_timeout)
 
         # retrieves the selected values for read
         selected_values_read = selected_values[0]
@@ -675,6 +684,9 @@ class ServiceConnection:
         self.connection_socket = connection_socket
         self.connection_address = connection_address
         self.connection_port = connection_port
+
+    def __repr__(self):
+        return "(%s, %s)" % (self.connection_address, self.connection_port)
 
     def open(self):
         """
@@ -742,6 +754,16 @@ class ServiceConnection:
 
         # returns the data
         return data
+
+    def get_connection_tuple(self):
+        """
+        Returns a tuple representing the connection.
+
+        @rtype: Tuple
+        @return: A tuple representing the connection.
+        """
+
+        return (self.connection_socket, self.connection_address, self.connection_port)
 
     def get_connection_socket(self):
         """
