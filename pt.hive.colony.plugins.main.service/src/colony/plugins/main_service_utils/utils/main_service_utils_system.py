@@ -755,6 +755,16 @@ class ServiceConnection:
         # returns the data
         return data
 
+    def send(self, message):
+        """
+        Sends the given message to the socket.
+
+        @type message: String
+        @param message: The message to be sent.
+        """
+
+        return self.connection_socket.sendall(message)
+
     def get_connection_tuple(self):
         """
         Returns a tuple representing the connection.
@@ -774,16 +784,6 @@ class ServiceConnection:
         """
 
         return self.connection_socket
-
-    def send(self, message):
-        """
-        Sends the given message to the socket.
-
-        @type message: String
-        @param message: The message to be sent.
-        """
-
-        return self.connection_socket.sendall(message)
 
     def _call_connection_opened_handlers(self):
         """
