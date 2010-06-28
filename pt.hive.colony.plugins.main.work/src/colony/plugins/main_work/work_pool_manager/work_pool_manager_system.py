@@ -288,7 +288,8 @@ class WorkPoolImplementation:
 
         # in case there is no space for new work tasks
         if not work_task:
-            pass
+            # returns immediately
+            return
 
         # adds the work to the work task
         work_task._add_work(work_reference)
@@ -330,6 +331,25 @@ class WorkPoolImplementation:
 
         # adds the work task to the work tasks list
         self.work_tasks_list.append(work_task)
+
+    def _check_conditions(self, work_task):
+        """
+        Verifies that the work conditions are met.
+
+        @type work_task: WorkTask
+        @param work_task: The work task to be verified.
+        @rtype: bool
+        @return: The result of the verification.
+        """
+
+        # in case the current number of works is equal or greater
+        # than the maximum number of works per thread
+        if work_task.work_counter >= self.maximum_number_works_thread:
+            # return false (invalid)
+            return False
+
+        # returns true (valid)
+        return True
 
 class WorkTask:
     """

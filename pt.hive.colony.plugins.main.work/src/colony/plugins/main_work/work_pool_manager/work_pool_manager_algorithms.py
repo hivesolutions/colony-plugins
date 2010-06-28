@@ -112,17 +112,35 @@ class RoundRobinAlgorithm(WorkPoolManagerAlgorithm):
         # retrieves the work tasks list length
         work_tasks_list_length = len(work_tasks_list)
 
-        # in case the current index contains the same
-        # value as the work tasks list length
-        if self.current_index == work_tasks_list_length:
-            # resets the value of the current index
-            self.current_index = 0
+        # retrieves the initial current index
+        initial_current_index = self.current_index
 
-        # retrieves the worker task from the worker threads list
-        work_task = self.work_pool.work_tasks_list[self.current_index]
+        # iterates continuously
+        while 1:
+            # in case the current index contains the same
+            # value as the work tasks list length
+            if self.current_index == work_tasks_list_length:
+                # resets the value of the current index
+                self.current_index = 0
 
-        # increments the current index
-        self.current_index += 1
+            # retrieves the worker task from the worker threads list
+            work_task = self.work_pool.work_tasks_list[self.current_index]
+
+            # increments the current index
+            self.current_index += 1
+
+            # in case the work task conditions are met
+            if self.work_pool._check_conditions(work_task):
+                # breaks the cycle
+                break
+
+            # in case all the task have been checked (and invalidated)
+            if self.current_index == initial_current_index:
+                # invalidates the work task (no work task available)
+                work_task = None
+
+                # breaks the cycle
+                break
 
         # releases the lock
         self.work_tasks_list_lock.release()
