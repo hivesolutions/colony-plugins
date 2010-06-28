@@ -266,6 +266,12 @@ class WorkPoolImplementation:
         Stops the work tasks pool removing all the tasks.
         """
 
+        # iterates over all the work tasks
+        for work_task in self.work_tasks_list:
+            # removes all the current work from
+            # the work task
+            work_task.remove_all_work()
+
         # stops the thread pool tasks
         self.thread_pool.stop_pool_tasks()
 
@@ -336,6 +342,9 @@ class WorkTask:
     stop_flag = False
     """ Flag to control stop """
 
+    work_list = []
+    """ The list that containing the work items """
+
     work_counter = 0
     """ The number of work items available"""
 
@@ -352,6 +361,7 @@ class WorkTask:
 
         self.work_processing_task = work_processing_task
 
+        self.work_list = []
         self.work_access_condition = threading.Condition()
 
     def start(self):
@@ -407,12 +417,28 @@ class WorkTask:
 
         return self.work_processing_task
 
+    def remove_all_work(self):
+        # acquires the work access condition
+        self.work_access_condition.acquire()
+
+        # iterates over all the work reference
+        # in the work list
+        for work_reference in self.work_list:
+            # removes the work
+            self._remove_work(work_reference)
+
+        # releases the work access condition
+        self.work_access_condition.release()
+
     def _add_work(self, work_reference):
         # acquires the work access condition
         self.work_access_condition.acquire()
 
         # notifies the work processing task about the new work
         self.work_processing_task.work_added(work_reference)
+
+        # adds the work reference to the work list
+        self.work_list.append(work_reference)
 
         # increments the work counter
         self.work_counter += 1
@@ -426,6 +452,9 @@ class WorkTask:
     def _remove_work(self, work_reference):
         # acquires the work access condition
         self.work_access_condition.acquire()
+
+        # removes the work reference from the work list
+        self.work_list.remove(work_reference)
 
         # decrements the work counter
         self.work_counter -= 1
