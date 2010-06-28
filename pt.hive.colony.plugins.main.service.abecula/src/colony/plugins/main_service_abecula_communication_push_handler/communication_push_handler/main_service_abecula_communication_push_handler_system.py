@@ -108,11 +108,14 @@ class MainServiceAbeculaCommunicationPushHandler:
         operation_handler_method(request, communication_push_plugin)
 
     def handle_connect(self, request, communication_push_plugin):
+        # retrieves the service handler
+        service_handler = request.get_service_handler()
+
         # retrieves the service connection
         service_connection = request.get_service_connection()
 
-        # generates a communication handler for the given service connection
-        generated_communication_handler = self.generate_handler(service_connection)
+        # generates a communication handler for the given service handler and service connection
+        generated_communication_handler = self.generate_handler(service_handler, service_connection)
 
         # sets the generated communication handler in the service connection communication handler map
         self.service_connection_communication_handler_map[service_connection] = generated_communication_handler
@@ -159,11 +162,14 @@ class MainServiceAbeculaCommunicationPushHandler:
         # removes the communication handler
         communication_push_plugin.remove_communication_handler("tobias", "nome_da_conexao", generated_communication_handler)
 
-    def generate_handler(self, service_connection):
+    def generate_handler(self, service_handler, service_connection):
         """
         Generates a communication handler for the
         given request.
 
+        @type service_handler: ServiceHandler
+        @param service_handler: The service handler to generate
+        a communication handler.
         @type service_connection: ServiceConnection
         @param service_connection: The service connection to generate
         a communication handler.
@@ -181,10 +187,10 @@ class MainServiceAbeculaCommunicationPushHandler:
             """
 
             # creates a new response
-            response = service_connection.create_response()
+            response = service_handler.create_response()
 
             # sets the response properties
-            response.set_operation_id("C12")
+            response.set_operation_id("C124")
             response.set_operation_type("MESSAGE")
             response.set_target(HANDLER_NAME)
 
@@ -195,7 +201,7 @@ class MainServiceAbeculaCommunicationPushHandler:
             response.write(notification_message)
 
             # sends the response to the service connection
-            service_connection.send_response(response)
+            service_handler.send_response(service_connection, response)
 
         # returns the communication handler
         return communication_handler

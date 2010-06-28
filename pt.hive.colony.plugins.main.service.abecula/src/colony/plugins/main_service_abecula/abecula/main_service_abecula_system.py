@@ -39,7 +39,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import sys
 import types
-import select
 
 import colony.libs.string_buffer_util
 
@@ -69,14 +68,20 @@ ENVIRONMENT_VERSION = str(sys.version_info[0]) + "." + str(sys.version_info[1]) 
 SERVER_IDENTIFIER = SERVER_NAME + "/" + SERVER_VERSION + " (Python/" + sys.platform + "/" + ENVIRONMENT_VERSION + ")"
 """ The server identifier """
 
-NUMBER_THREADS = 1
+NUMBER_THREADS = 10
 """ The number of threads """
 
-MAX_NUMBER_THREADS = 2
+MAXIMUM_NUMBER_THREADS = 2
 """ The maximum number of threads """
 
 SCHEDULING_ALGORITHM = 2
 """ The scheduling algorithm """
+
+MAXIMUM_NUMBER_WORKS_THREAD = 1
+""" The maximum number of works per thread """
+
+WORK_SCHEDULING_ALGORITHM = 1
+""" The work scheduling algorithm """
 
 DEFAULT_PORT = 7676
 """ The default port """
@@ -216,7 +221,9 @@ class MainServiceAbecula:
                               "description" : "pool to support abecula client connections",
                               "number_threads" : NUMBER_THREADS,
                               "scheduling_algorithm" : SCHEDULING_ALGORITHM,
-                              "max_number_threads" : MAX_NUMBER_THREADS}
+                              "maximum_number_threads" : MAXIMUM_NUMBER_THREADS,
+                              "maximum_number_works_thread" : MAXIMUM_NUMBER_WORKS_THREAD,
+                              "work_scheduling_algorithm" : WORK_SCHEDULING_ALGORITHM}
 
         # creates the parameters map
         parameters = {"service_plugin" : self.main_service_abecula_plugin,
@@ -230,45 +237,6 @@ class MainServiceAbecula:
 
         # returns the parameters
         return parameters
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 class AbeculaClientServiceHandler:
     """
@@ -379,7 +347,8 @@ class AbeculaClientServiceHandler:
         message = colony.libs.string_buffer_util.StringBuffer()
 
         # creates a request object
-        request = AbeculaRequest({"service_connection" : service_connection})
+        request = AbeculaRequest({"service_handler" : self,
+                                  "service_connection" : service_connection})
 
         # creates the start line loaded flag
         start_line_loaded = False
@@ -637,494 +606,6 @@ class AbeculaClientServiceHandler:
         # returns the service configuration
         return service_configuration
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class AbeculaClientServiceTask:
-    """
-    The abecula client service task class.
-    """
-
-    main_service_abecula_plugin = None
-    """ The main service abecula plugin """
-
-    abecula_connection = None
-    """ The abecula connection """
-
-    abecula_address = None
-    """ The abecula address """
-
-    port = None
-    """ The abecula port """
-
-    service_configuration = None
-    """ The service configuration """
-
-    current_request_handler = None
-    """ The current request handler being used """
-
-    def __init__(self, main_service_abecula_plugin, abecula_connection, abecula_address, port, service_configuration):
-        self.main_service_abecula_plugin = main_service_abecula_plugin
-        self.abecula_connection = abecula_connection
-        self.abecula_address = abecula_address
-        self.port = port
-        self.service_configuration = service_configuration
-
-        self.current_request_handler = self.abecula_request_handler
-
-        self.connection_closed_handlers = []
-
-    def start(self):
-        # retrieves the abecula service handler plugins map
-        abecula_service_handler_plugins_map = self.main_service_abecula_plugin.main_service_abecula.abecula_service_handler_plugins_map
-
-        # prints debug message about connection
-        self.main_service_abecula_plugin.debug("Connected to: %s" % str(self.abecula_address))
-
-        # sets the request timeout
-        request_timeout = REQUEST_TIMEOUT
-
-        # iterates indefinitely
-        while True:
-            # handles the current request if it returns false
-            # the connection was closed or is meant to be closed
-            if not self.current_request_handler(request_timeout, abecula_service_handler_plugins_map):
-                # breaks the cycle to close the abecula connection
-                break
-
-        for connection_closed_handler in self.connection_closed_handlers:
-            connection_closed_handler(self)
-
-        # closes the abecula connection
-        self.abecula_connection.close()
-
-    def stop(self):
-        pass
-
-    def pause(self):
-        pass
-
-    def resume(self):
-        pass
-
-    def abecula_request_handler(self, request_timeout, abecula_service_handler_plugins_map):
-        try:
-            # retrieves the request
-            request = self.retrieve_request(request_timeout)
-        except main_service_abecula_exceptions.MainServiceAbeculaException:
-            # prints a debug message about the connection closing
-            self.main_service_abecula_plugin.debug("Connection: %s closed by peer, timeout or invalid request" % str(self.abecula_address))
-
-            # returns false (connection closed)
-            return False
-
-        try:
-            # prints debug message about request
-            self.main_service_abecula_plugin.debug("Handling request: %s" % str(request))
-
-            # retrieves the real service configuration,
-            # taking the request information into account
-            service_configuration = self._get_service_configuration(request)
-
-            # processes the handler part of the request and retrieves
-            # the handler name
-            handler_name = self._process_handler(request, service_configuration)
-
-            # in case the request was not already handled
-            if not handler_name:
-                # retrieves the default handler name
-                handler_name = service_configuration.get("default_handler", None)
-
-                # sets the handler path
-                request.handler_path = None
-
-            # in case no handler name is defined (request not handled)
-            if not handler_name:
-                # raises an abecula no handler exception
-                raise main_service_abecula_exceptions.AbeculaNoHandlerException("no handler defined for current request")
-
-            # in case the handler is not found in the handler plugins map
-            if not handler_name in abecula_service_handler_plugins_map:
-                # raises an abecula handler not found exception
-                raise main_service_abecula_exceptions.AbeculaHandlerNotFoundException("no handler found for current request: " + handler_name)
-
-            # retrieves the abecula service handler plugin
-            abecula_service_handler_plugin = abecula_service_handler_plugins_map[handler_name]
-
-            # handles the request by the request handler
-            abecula_service_handler_plugin.handle_request(request)
-
-            # sends the request to the client (response)
-            self.send_request(request)
-        except Exception, exception:
-            # prints info message about exception
-            self.main_service_abecula_plugin.info("There was an exception handling the request: " + str(exception))
-
-            # sends the exception
-            self.send_exception(request, exception)
-
-        # returns true (connection remains open)
-        return True
-
-    def retrieve_request(self, request_timeout = REQUEST_TIMEOUT):
-        """
-        Retrieves the request from the received message.
-
-        @type request_timeout: int
-        @param request_timeout: The timeout for the request retrieval.
-        @rtype: AbeculaRequest
-        @return: The request from the received message.
-        """
-
-        # creates the string buffer for the message
-        message = colony.libs.string_buffer_util.StringBuffer()
-
-        # creates a request object
-        request = AbeculaRequest({"service_connection" : self})
-
-        # creates the start line loaded flag
-        start_line_loaded = False
-
-        # creates the header loaded flag
-        header_loaded = False
-
-        # creates the message loaded flag
-        message_loaded = False
-
-        # creates the message offset index, representing the
-        # offset byte to the initialization of the message
-        message_offset_index = 0
-
-        # creates the message size value
-        message_size = 0
-
-        # creates the received data size (counter)
-        received_data_size = 0
-
-        # continuous loop
-        while True:
-            # retrieves the data
-            data = self.retrieve_data(request_timeout)
-
-            # retrieves the data length
-            data_length = len(data)
-
-            # in case no valid data was received
-            if data_length == 0:
-                # raises the abecula invalid data exception
-                raise main_service_abecula_exceptions.AbeculaInvalidDataException("empty data received")
-
-            # increments the received data size (counter)
-            received_data_size += data_length
-
-            # writes the data to the string buffer
-            message.write(data)
-
-            # in case the header is loaded or the message contents are completely loaded
-            if not header_loaded or received_data_size - message_offset_index == message_size:
-                # retrieves the message value from the string buffer
-                message_value = message.get_value()
-            # in case there's no need to inspect the message contents
-            else:
-                # continues with the loop
-                continue
-
-            # in case the start line is not loaded
-            if not start_line_loaded:
-                # finds the first new line value
-                start_line_index = message_value.find("\r\n")
-
-                # in case there is a new line value found
-                if not start_line_index == -1:
-                    # retrieves the start line
-                    start_line = message_value[:start_line_index]
-
-                    # splits the start line in spaces
-                    start_line_splitted = start_line.split(" ")
-
-                    # retrieves the start line splitted length
-                    start_line_splitted_length = len(start_line_splitted)
-
-                    # in case the length of the splitted line is not three
-                    if not start_line_splitted_length == 4:
-                        # raises the abecula invalid data exception
-                        raise main_service_abecula_exceptions.AbeculaInvalidDataException("invalid data received: " + start_line)
-
-                    # retrieve the operation type the target and the protocol version
-                    # from the start line splitted
-                    operation_id, operation_type, target, protocol_version = start_line_splitted
-
-                    # sets the request operation id
-                    request.set_operation_id(operation_id)
-
-                    # sets the request operation type
-                    request.set_operation_type(operation_type)
-
-                    # sets the target
-                    request.set_target(target)
-
-                    # sets the request protocol version
-                    request.set_protocol_version(protocol_version)
-
-                    # sets the start line loaded flag
-                    start_line_loaded = True
-
-            # in case the header is not loaded
-            if not header_loaded:
-                # retrieves the end header index (two new lines)
-                end_header_index = message_value.find("\r\n\r\n")
-
-                # in case the end header index is found
-                if not end_header_index == -1:
-                    # sets the message offset index as the end header index
-                    # plus the two sequences of newlines (four characters)
-                    message_offset_index = end_header_index + 4
-
-                    # sets the header loaded flag
-                    header_loaded = True
-
-                    # retrieves the start header index
-                    start_header_index = start_line_index + 2
-
-                    # retrieves the headers part of the message
-                    headers = message_value[start_header_index:end_header_index]
-
-                    # splits the headers by line
-                    headers_splitted = headers.split("\r\n")
-
-                    # iterates over the headers lines
-                    for header_splitted in headers_splitted:
-                        # finds the header separator
-                        division_index = header_splitted.find(":")
-
-                        # retrieves the header name
-                        header_name = header_splitted[:division_index].strip()
-
-                        # retrieves the header value
-                        header_value = header_splitted[division_index + 1:].strip()
-
-                        # sets the header in the headers map
-                        request.headers_map[header_name] = header_value
-
-                    # in case the content length is defined in the headers map
-                    if CONTENT_LENGTH_VALUE in request.headers_map:
-                        # retrieves the message size
-                        message_size = int(request.headers_map[CONTENT_LENGTH_VALUE])
-                    elif CONTENT_LENGTH_LOWER_VALUE in request.headers_map:
-                        # retrieves the message size
-                        message_size = int(request.headers_map[CONTENT_LENGTH_LOWER_VALUE])
-                    # in case there is no content length defined in the headers map
-                    else:
-                        # returns the request
-                        return request
-
-            # in case the message is not loaded and the header is loaded
-            if not message_loaded and header_loaded:
-                # retrieves the start message size
-                start_message_index = end_header_index + 4
-
-                # calculates the message value message length
-                message_value_message_length = len(message_value) - start_message_index
-
-                # in case the length of the message value message is the same
-                # as the message size
-                if message_value_message_length == message_size:
-                    # retrieves the message part of the message value
-                    message_value_message = message_value[start_message_index:]
-
-                    # sets the message loaded flag
-                    message_loaded = True
-
-                    # sets the received message
-                    request.received_message = message_value_message
-
-                    # decodes the request if necessary
-                    #self.decode_request(request)
-
-                    # returns the request
-                    return request
-
-    def retrieve_data(self, request_timeout = REQUEST_TIMEOUT, chunk_size = CHUNK_SIZE):
-        try:
-            # sets the connection to non blocking mode
-            self.abecula_connection.setblocking(0)
-
-            # runs the select in the abecula connection, with timeout
-            selected_values = select.select([self.abecula_connection], [], [], request_timeout)
-
-            # sets the connection to blocking mode
-            self.abecula_connection.setblocking(1)
-        except:
-            raise main_service_abecula_exceptions.RequestClosed("invalid socket")
-
-        if selected_values == ([], [], []):
-            self.abecula_connection.close()
-            raise main_service_abecula_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
-        try:
-            # receives the data in chunks
-            data = self.abecula_connection.recv(chunk_size)
-        except:
-            raise main_service_abecula_exceptions.ClientRequestTimeout("timeout")
-
-        return data
-
-    def send_exception(self, request, exception):
-        """
-        Sends the exception to the given request for the given exception.
-
-        @type request: AbeculaRequest
-        @param request: The request to send the exception.
-        @type exception: Exception
-        @param exception: The exception to be sent.
-        """
-
-#        # resets the response value (deletes answers)
-#        request.reset_response()
-
-        # sends the request to the client (response)
-        self.send_request(request)
-
-    def send_request(self, request):
-        # retrieves the result from the request
-        result = request.get_result()
-
-        # sends the result to the abecula socket
-        self.abecula_connection.sendall(result)
-
-    def create_response(self):
-        """
-        Creates a new response an returns it.
-
-        @rtype: AbeculaResponse
-        @return: The created response.
-        """
-
-        # creates a new abecula response
-        abecula_response = AbeculaResponse({})
-
-        # sets the protocol version in the abecula response
-        abecula_response.set_protocol_version("ABECULA/1.0")
-
-        return abecula_response
-
-    def send_response(self, response):
-        """
-        Sends the given response to the socket.
-
-        @type response: AbeculaResponse
-        @param response: The response to be sent.
-        """
-
-        # retrieves the result from the request
-        result = response.get_result()
-
-        # sends the result to the abecula socket
-        self.abecula_connection.sendall(result)
-
-    def _process_handler(self, request, service_configuration):
-        """
-        Processes the handler stage of the abecula request.
-
-        @type request: AbeculaRequest
-        @param request: The request to be processed.
-        @type service_configuration: Dictionary
-        @param service_configuration: The service configuration map.
-        @rtype: String
-        @return: The processed handler name.
-        """
-
-        # retrieves the handler name as the target of the request
-        handler_name = request.get_target()
-
-        # returns the handler name
-        return handler_name
-
-    def _get_service_configuration(self, request):
-        """
-        Retrieves the service configuration for the given request.
-        This retrieval takes into account the request target and characteristics
-        to merge the virtual servers configurations.
-
-        @type request: AbeculaRequest
-        @param request: The request to be used in the resolution
-        of the service configuration.
-        @rtype: Dictionary
-        @return: The resolved service configuration.
-        """
-
-        # retrieves the base service configuration
-        service_configuration = self.service_configuration
-
-        # returns the service configuration
-        return service_configuration
-
-class AbeculaConnection:
-    """
-    The abecula connection class.
-    """
-
-    abecula_socket = None
-    """ The abecula socket """
-
-    def __init__(self, abecula_socket):
-        """
-        Constructor of the class.
-
-        @type abecula_socket: Socket
-        @param abecula_socket: The abecula socket.
-        """
-
-        self.abecula_socket = abecula_socket
-
-    def create_response(self):
-        """
-        Creates a new response an returns it.
-
-        @rtype: AbeculaResponse
-        @return: The created response.
-        """
-
-        # creates a new abecula response
-        abecula_response = AbeculaResponse({})
-
-        # sets the protocol version in the abecula response
-        abecula_response.set_protocol_version("ABECULA/1.0")
-
-        return abecula_response
-
-    def send_response(self, response):
-        """
-        Sends the given response to the socket.
-
-        @type response: AbeculaResponse
-        @param response: The response to be sent.
-        """
-
-        # retrieves the result from the request
-        result = response.get_result()
-
-        # sends the result to the abecula socket
-        self.abecula_connection.sendall(result)
-
 class AbeculaResponse:
     """
     The abecula response class.
@@ -1265,6 +746,9 @@ class AbeculaRequest:
     The abecula request class.
     """
 
+    service_handler = None
+    """ The service handler """
+
     service_connection = None
     """ The service connection """
 
@@ -1311,6 +795,7 @@ class AbeculaRequest:
 
         self.parameters = parameters
 
+        self.service_handler = parameters.get("service_handler", None)
         self.service_connection = parameters.get("service_connection", None)
 
         self.headers_map = {}
@@ -1378,6 +863,16 @@ class AbeculaRequest:
 
         # returns the result value
         return result_value
+
+    def get_service_handler(self):
+        """
+        Retrieves the service handler.
+
+        @rtype: ServiceHandler
+        @return: The service handler.
+        """
+
+        return self.service_handler
 
     def get_service_connection(self):
         """
