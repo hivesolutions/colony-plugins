@@ -252,7 +252,10 @@ class AbeculaClientServiceHandler:
     service_configuration = None
     """ The service configuration """
 
-    def __init__(self, service_plugin, service_connection_handler, service_configuration):
+    service_utils_exception_class = None
+    """" The service utils exception class """
+
+    def __init__(self, service_plugin, service_connection_handler, service_configuration, service_utils_exception_class):
         """
         Constructor of the class.
 
@@ -263,11 +266,14 @@ class AbeculaClientServiceHandler:
         handles this connection.
         @type service_configuration: Dictionary
         @param service_configuration: The service configuration.
+        @type main_service_utils_exception: Class
+        @param main_service_utils_exception: The service utils exception class.
         """
 
         self.service_plugin = service_plugin
         self.service_connection_handler = service_connection_handler
         self.service_configuration = service_configuration
+        self.service_utils_exception_class = service_utils_exception_class
 
     def handle_request(self, service_connection, request_timeout = REQUEST_TIMEOUT):
         # retrieves the abecula service handler plugins map
@@ -371,8 +377,12 @@ class AbeculaClientServiceHandler:
 
         # continuous loop
         while True:
-            # retrieves the data
-            data = service_connection.retrieve_data(request_timeout)
+            try:
+                # retrieves the data
+                data = service_connection.retrieve_data(request_timeout)
+            except self.service_utils_exception_class:
+                # raises the abecula data retrieval exception
+                raise main_service_abecula_exceptions.AbeculaDataRetrievalException("problem retrieving data")
 
             # retrieves the data length
             data_length = len(data)
