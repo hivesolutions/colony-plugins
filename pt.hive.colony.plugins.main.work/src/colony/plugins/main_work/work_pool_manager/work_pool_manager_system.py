@@ -268,15 +268,9 @@ class WorkPoolImplementation:
 
         # iterates over all the work tasks
         for work_task in self.work_tasks_list:
-            print "vai remover todo o trabalho"
-
             # removes all the current work from
             # the work task
             work_task.remove_all_work()
-
-            print "acabou de remover todo o trabalho"
-
-        print "vai fazer stop da thread pool"
 
         # stops the thread pool tasks
         self.thread_pool.stop_pool_tasks()
@@ -418,6 +412,8 @@ class WorkTask:
             # release the work access condition
             self.work_access_condition.release()
 
+            # waits for the event lock to be ready for
+            # iteration
             self.work_event_lock.acquire()
             self.work_event_lock.release()
 
@@ -508,6 +504,15 @@ class WorkTask:
         self.work_access_condition.release()
 
     def _add_work(self, work_reference):
+        """
+        Inner method to add work to the work task.
+        This method assumes that the work access condition is locked
+        and in possession of the current executing thread.
+
+        @type work_reference: Object
+        @param work_reference: The object used as reference for the work.
+        """
+
         # notifies the work processing task about the new work
         self.work_processing_task.work_added(work_reference)
 
@@ -521,6 +526,15 @@ class WorkTask:
         self.work_access_condition.notify()
 
     def _remove_work(self, work_reference):
+        """
+        Inner method to remove work from the work task.
+        This method assumes that the work access condition is locked
+        and in possession of the current executing thread.
+
+        @type work_reference: Object
+        @param work_reference: The object used as reference for the work.
+        """
+
         # removes the work reference from the work list
         self.work_list.remove(work_reference)
 
