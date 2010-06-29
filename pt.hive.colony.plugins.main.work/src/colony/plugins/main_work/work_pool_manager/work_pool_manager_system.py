@@ -377,6 +377,8 @@ class WorkTask:
     work_access_condition = None
     """ The condition to control the access to work """
 
+    work_event_lock = None
+
     def __init__(self, work_processing_task):
         """
         Constructor of the class.
@@ -389,9 +391,13 @@ class WorkTask:
 
         self.work_list = []
         self.work_access_condition = threading.Condition()
+        self.work_event_lock = threading.RLock()
 
     def start(self):
         while not self.stop_flag:
+            self.work_event_lock.acquire()
+            self.work_event_lock.release()
+
             # acquires the work access condition
             self.work_access_condition.acquire()
 
@@ -415,6 +421,8 @@ class WorkTask:
             self.work_access_condition.release()
 
     def stop(self):
+        self.work_event_lock.acquire()
+
         # acquires the work access condition
         self.work_access_condition.acquire()
 
@@ -426,6 +434,8 @@ class WorkTask:
 
         # releases the work access condition
         self.work_access_condition.release()
+
+        self.work_event_lock.release()
 
     def pause(self):
         pass
@@ -444,7 +454,7 @@ class WorkTask:
         return self.work_processing_task
 
     def remove_all_work(self):
-        print "vai tentar adquirir a condicao"
+        self.work_event_lock.acquire()
 
         # acquires the work access condition
         self.work_access_condition.acquire()
@@ -462,9 +472,11 @@ class WorkTask:
         # releases the work access condition
         self.work_access_condition.release()
 
-        print "acabou de fazer release da condicao"
+        self.work_event_lock.release()
 
     def _add_work(self, work_reference):
+        self.work_event_lock.acquire()
+
         # acquires the work access condition
         self.work_access_condition.acquire()
 
@@ -483,7 +495,14 @@ class WorkTask:
         # releases the work access condition
         self.work_access_condition.release()
 
+        self.work_event_lock.release()
+
     def _remove_work(self, work_reference):
+        # tenho de ter aki outro lock que uso para lockar o gajo no final
+        # depois no inicio da iteracao ele tem de validar
+
+        self.work_event_lock.acquire()
+
         # acquires the work access condition
         self.work_access_condition.acquire()
 
@@ -501,6 +520,8 @@ class WorkTask:
 
         # releases the work access condition
         self.work_access_condition.release()
+
+        self.work_event_lock.release()
 
 def remove_work(self, work_reference):
     """
