@@ -394,10 +394,8 @@ class WorkTask:
         self.work_event_lock = threading.RLock()
 
     def start(self):
+        # iterates while the stop flag is not set
         while not self.stop_flag:
-            self.work_event_lock.acquire()
-            self.work_event_lock.release()
-
             # acquires the work access condition
             self.work_access_condition.acquire()
 
@@ -420,13 +418,11 @@ class WorkTask:
             # release the work access condition
             self.work_access_condition.release()
 
-    def stop(self):
-        self.work_event_lock.acquire()
+            print "passou"
 
+    def stop(self):
         # acquires the work access condition
         self.work_access_condition.acquire()
-
-        self.work_event_lock.release()
 
         # sets the stop flag
         self.stop_flag = True
@@ -454,14 +450,8 @@ class WorkTask:
         return self.work_processing_task
 
     def remove_all_work(self):
-        self.work_event_lock.acquire()
-
         # acquires the work access condition
         self.work_access_condition.acquire()
-
-        self.work_event_lock.release()
-
-        print "acabou de adquirir a condicao"
 
         # iterates over all the work reference
         # in the work list
@@ -469,18 +459,12 @@ class WorkTask:
             # removes the work
             self._remove_work(work_reference)
 
-        print "vai fazer release da condicao"
-
         # releases the work access condition
         self.work_access_condition.release()
 
     def _add_work(self, work_reference):
-        self.work_event_lock.acquire()
-
         # acquires the work access condition
         self.work_access_condition.acquire()
-
-        self.work_event_lock.release()
 
         # notifies the work processing task about the new work
         self.work_processing_task.work_added(work_reference)
@@ -498,12 +482,8 @@ class WorkTask:
         self.work_access_condition.release()
 
     def _remove_work(self, work_reference):
-        self.work_event_lock.acquire()
-
         # acquires the work access condition
         self.work_access_condition.acquire()
-
-        self.work_event_lock.release()
 
         # removes the work reference from the work list
         self.work_list.remove(work_reference)
