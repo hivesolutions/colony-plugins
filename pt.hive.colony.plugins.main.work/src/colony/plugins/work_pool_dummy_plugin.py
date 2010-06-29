@@ -76,7 +76,7 @@ class WorkPoolDummyPlugin(colony.plugins.plugin_system.Plugin):
         self.work_pool.start_pool()
 
         for _index in range(100):
-            self.work_pool.insert_work("asdas")
+            self.work_pool.insert_work(_index)
 
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)

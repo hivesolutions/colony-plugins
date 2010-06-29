@@ -413,7 +413,8 @@ class WorkTask:
             self.work_access_condition.release()
 
             # waits for the event lock to be ready for
-            # iteration
+            # iteration (this avoid problems with unordered release
+            # of locks)
             self.work_event_lock.acquire()
             self.work_event_lock.release()
 
