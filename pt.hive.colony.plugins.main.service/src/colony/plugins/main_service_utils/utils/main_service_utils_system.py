@@ -495,7 +495,7 @@ class AbstractServiceConnectionHandler:
         self.service_connections_map = {}
 
         # creates the client service object
-        self.client_service = client_service_class(self.service_plugin, self, service_configuration)
+        self.client_service = client_service_class(self.service_plugin, self, service_configuration, main_service_utils_exceptions.MainServiceUtilsException)
 
     def process(self):
         """
