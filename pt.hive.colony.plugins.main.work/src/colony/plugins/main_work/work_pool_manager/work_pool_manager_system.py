@@ -268,6 +268,8 @@ class WorkPoolImplementation:
 
         # iterates over all the work tasks
         for work_task in self.work_tasks_list:
+            print "vai remover todo o trabalho"
+
             # removes all the current work from
             # the work task
             work_task.remove_all_work()
