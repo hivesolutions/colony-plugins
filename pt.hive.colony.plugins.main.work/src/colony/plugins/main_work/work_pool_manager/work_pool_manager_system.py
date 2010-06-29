@@ -444,8 +444,12 @@ class WorkTask:
         return self.work_processing_task
 
     def remove_all_work(self):
+        print "vai tentar adquirir a condicao"
+
         # acquires the work access condition
         self.work_access_condition.acquire()
+
+        print "acabou de adquirir a condicao"
 
         # iterates over all the work reference
         # in the work list
@@ -453,8 +457,12 @@ class WorkTask:
             # removes the work
             self._remove_work(work_reference)
 
+        print "vai fazer release da condicao"
+
         # releases the work access condition
         self.work_access_condition.release()
+
+        print "acabou de fazer release da condicao"
 
     def _add_work(self, work_reference):
         # acquires the work access condition
