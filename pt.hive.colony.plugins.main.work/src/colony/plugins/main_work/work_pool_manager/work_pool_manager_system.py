@@ -467,8 +467,12 @@ class WorkTask:
         self.work_access_condition.release()
 
     def _add_work(self, work_reference):
+        print "vai tentar meter trabalho"
+
         # acquires the work access condition
         self.work_access_condition.acquire()
+
+        print "conseguiu trabalho"
 
         # notifies the work processing task about the new work
         self.work_processing_task.work_added(work_reference)
