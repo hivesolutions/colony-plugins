@@ -82,7 +82,11 @@ class MainServiceAbeculaStarterPlugin(colony.plugins.plugin_system.Plugin):
     def unload_plugin(self):
         colony.plugins.plugin_system.Plugin.unload_plugin(self)
 
+        print "começou a descarregar o abecula"
+
         self.main_service_abecula_plugin.stop_service({})
+
+        print "acabou de descarregar o abecula"
 
         # notifies the ready semaphore
         self.release_ready_semaphore()
