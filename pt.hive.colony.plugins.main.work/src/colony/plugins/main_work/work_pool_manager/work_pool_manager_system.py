@@ -274,6 +274,8 @@ class WorkPoolImplementation:
             # the work task
             work_task.remove_all_work()
 
+        print "vai fazer stop da thread pool"
+
         # stops the thread pool tasks
         self.thread_pool.stop_pool_tasks()
 
