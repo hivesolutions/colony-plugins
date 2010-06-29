@@ -418,11 +418,16 @@ class WorkTask:
             # release the work access condition
             self.work_access_condition.release()
 
-            print "passou"
+            self.work_event_lock.acquire()
+            self.work_event_lock.release()
 
     def stop(self):
+        self.work_event_lock.acquire()
+
         # acquires the work access condition
         self.work_access_condition.acquire()
+
+        self.work_event_lock.release()
 
         # sets the stop flag
         self.stop_flag = True
@@ -469,8 +474,12 @@ class WorkTask:
     def _add_work(self, work_reference):
         print "vai tentar meter trabalho"
 
+        self.work_event_lock.acquire()
+
         # acquires the work access condition
         self.work_access_condition.acquire()
+
+        self.work_event_lock.release()
 
         print "conseguiu trabalho"
 
@@ -490,8 +499,17 @@ class WorkTask:
         self.work_access_condition.release()
 
     def _remove_work(self, work_reference):
-        # acquires the work access condition
-        self.work_access_condition.acquire()
+        if not self.work_access_condition._is_owned:
+            release = True
+
+            self.work_event_lock.acquire()
+
+            # acquires the work access condition
+            self.work_access_condition.acquire()
+
+            self.work_event_lock.release()
+        else:
+            release = False
 
         # removes the work reference from the work list
         self.work_list.remove(work_reference)
@@ -505,8 +523,9 @@ class WorkTask:
         # notifies the work access condition
         self.work_access_condition.notify()
 
-        # releases the work access condition
-        self.work_access_condition.release()
+        if release:
+            # releases the work access condition
+            self.work_access_condition.release()
 
 def remove_work(self, work_reference):
     """
