@@ -298,7 +298,7 @@ class WorkPoolImplementation:
             return
 
         # adds the work to the work task
-        work_task._add_work(work_reference)
+        work_task.add_work(work_reference)
 
     def get_thread_pool(self):
         """
@@ -422,11 +422,13 @@ class WorkTask:
             self.work_event_lock.release()
 
     def stop(self):
+        # acquires the work event lock
         self.work_event_lock.acquire()
 
         # acquires the work access condition
         self.work_access_condition.acquire()
 
+        # releases the work event lock
         self.work_event_lock.release()
 
         # sets the stop flag
@@ -455,12 +457,14 @@ class WorkTask:
         return self.work_processing_task
 
     def remove_all_work(self):
-        print "vai tentar trabalho"
+        # acquires the work event lock
+        self.work_event_lock.acquire()
 
         # acquires the work access condition
         self.work_access_condition.acquire()
 
-        print "vai começar a remover trabalho"
+        # releases the work event lock
+        self.work_event_lock.release()
 
         # iterates over all the work reference
         # in the work list
@@ -471,18 +475,39 @@ class WorkTask:
         # releases the work access condition
         self.work_access_condition.release()
 
-    def _add_work(self, work_reference):
-        print "vai tentar meter trabalho"
-
+    def add_work(self, work_reference):
+        # acquires the work event lock
         self.work_event_lock.acquire()
 
         # acquires the work access condition
         self.work_access_condition.acquire()
 
+        # releases the work event lock
         self.work_event_lock.release()
 
-        print "conseguiu trabalho"
+        # calls the inner add work method
+        self._add_work(work_reference)
 
+        # releases the work access condition
+        self.work_access_condition.release()
+
+    def remove_work(self, work_reference):
+        # acquires the work event lock
+        self.work_event_lock.acquire()
+
+        # acquires the work access condition
+        self.work_access_condition.acquire()
+
+        # releases the work event lock
+        self.work_event_lock.release()
+
+        # calls the inner remove work method
+        self._remove_work(work_reference)
+
+        # releases the work access condition
+        self.work_access_condition.release()
+
+    def _add_work(self, work_reference):
         # notifies the work processing task about the new work
         self.work_processing_task.work_added(work_reference)
 
@@ -495,22 +520,7 @@ class WorkTask:
         # notifies the work access condition
         self.work_access_condition.notify()
 
-        # releases the work access condition
-        self.work_access_condition.release()
-
     def _remove_work(self, work_reference):
-        if not self.work_access_condition._is_owned:
-            release = True
-
-            self.work_event_lock.acquire()
-
-            # acquires the work access condition
-            self.work_access_condition.acquire()
-
-            self.work_event_lock.release()
-        else:
-            release = False
-
         # removes the work reference from the work list
         self.work_list.remove(work_reference)
 
@@ -522,10 +532,6 @@ class WorkTask:
 
         # notifies the work access condition
         self.work_access_condition.notify()
-
-        if release:
-            # releases the work access condition
-            self.work_access_condition.release()
 
 def remove_work(self, work_reference):
     """
