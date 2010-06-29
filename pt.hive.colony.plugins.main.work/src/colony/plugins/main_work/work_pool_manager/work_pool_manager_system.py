@@ -450,8 +450,12 @@ class WorkTask:
         return self.work_processing_task
 
     def remove_all_work(self):
+        print "vai tentar trabalho"
+
         # acquires the work access condition
         self.work_access_condition.acquire()
+
+        print "vai começar a remover trabalho"
 
         # iterates over all the work reference
         # in the work list
