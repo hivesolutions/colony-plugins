@@ -426,6 +426,8 @@ class WorkTask:
         # acquires the work access condition
         self.work_access_condition.acquire()
 
+        self.work_event_lock.release()
+
         # sets the stop flag
         self.stop_flag = True
 
@@ -434,8 +436,6 @@ class WorkTask:
 
         # releases the work access condition
         self.work_access_condition.release()
-
-        self.work_event_lock.release()
 
     def pause(self):
         pass
@@ -459,6 +459,8 @@ class WorkTask:
         # acquires the work access condition
         self.work_access_condition.acquire()
 
+        self.work_event_lock.release()
+
         print "acabou de adquirir a condicao"
 
         # iterates over all the work reference
@@ -472,13 +474,13 @@ class WorkTask:
         # releases the work access condition
         self.work_access_condition.release()
 
-        self.work_event_lock.release()
-
     def _add_work(self, work_reference):
         self.work_event_lock.acquire()
 
         # acquires the work access condition
         self.work_access_condition.acquire()
+
+        self.work_event_lock.release()
 
         # notifies the work processing task about the new work
         self.work_processing_task.work_added(work_reference)
@@ -495,16 +497,13 @@ class WorkTask:
         # releases the work access condition
         self.work_access_condition.release()
 
-        self.work_event_lock.release()
-
     def _remove_work(self, work_reference):
-        # tenho de ter aki outro lock que uso para lockar o gajo no final
-        # depois no inicio da iteracao ele tem de validar
-
         self.work_event_lock.acquire()
 
         # acquires the work access condition
         self.work_access_condition.acquire()
+
+        self.work_event_lock.release()
 
         # removes the work reference from the work list
         self.work_list.remove(work_reference)
@@ -520,8 +519,6 @@ class WorkTask:
 
         # releases the work access condition
         self.work_access_condition.release()
-
-        self.work_event_lock.release()
 
 def remove_work(self, work_reference):
     """
