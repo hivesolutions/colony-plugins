@@ -286,17 +286,11 @@ class AbstractService:
         # clears the service connection close end event
         self.service_connection_close_end_event.clear()
 
-        print "vai para as pool tasks !!!"
-
         # stops all the pool tasks
         self.service_client_pool.stop_pool_tasks()
 
-        print "acabou de parar as pool tasks !!!"
-
         # stops the pool
         self.service_client_pool.stop_pool()
-
-        print "vai parar a pool !!!"
 
     def _create_pool(self):
         """
@@ -518,8 +512,6 @@ class AbstractServiceConnectionHandler:
             if not self.client_service.handle_request(ready_service_connection):
                 # retrieves the connection tuple
                 connection_tuple = ready_service_connection.get_connection_tuple()
-
-                print "Removeu trabalho !!!!"
 
                 # removes the ready service connection (via remove work)
                 self.remove_work(connection_tuple)
