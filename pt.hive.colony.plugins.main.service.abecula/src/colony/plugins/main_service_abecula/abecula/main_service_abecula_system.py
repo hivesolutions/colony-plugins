@@ -68,7 +68,7 @@ ENVIRONMENT_VERSION = str(sys.version_info[0]) + "." + str(sys.version_info[1]) 
 SERVER_IDENTIFIER = SERVER_NAME + "/" + SERVER_VERSION + " (Python/" + sys.platform + "/" + ENVIRONMENT_VERSION + ")"
 """ The server identifier """
 
-NUMBER_THREADS = 10
+NUMBER_THREADS = 1
 """ The number of threads """
 
 MAXIMUM_NUMBER_THREADS = 2
@@ -77,7 +77,7 @@ MAXIMUM_NUMBER_THREADS = 2
 SCHEDULING_ALGORITHM = 2
 """ The scheduling algorithm """
 
-MAXIMUM_NUMBER_WORKS_THREAD = 1
+MAXIMUM_NUMBER_WORKS_THREAD = 10
 """ The maximum number of works per thread """
 
 WORK_SCHEDULING_ALGORITHM = 1
