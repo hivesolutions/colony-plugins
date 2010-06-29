@@ -414,10 +414,6 @@ class WorkTask:
             # release the work access condition
             self.work_access_condition.release()
 
-            import time
-
-            time.sleep(0.3)
-
     def stop(self):
         # acquires the work access condition
         self.work_access_condition.acquire()
