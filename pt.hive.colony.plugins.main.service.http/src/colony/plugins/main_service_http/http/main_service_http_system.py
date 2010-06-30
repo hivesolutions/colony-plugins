@@ -493,7 +493,7 @@ class HttpClientServiceHandler:
                 # prints a debug message
                 self.service_plugin.debug("Connection: %s kept alive for %ss" % (str(service_connection), str(request_timeout)))
 
-                # sets the cancel to the next seconds
+                # sets the cancel in a request timeout
                 service_connection.cancel(request_timeout)
             # in case the connection is not meant to be kept alive
             else:
@@ -509,6 +509,9 @@ class HttpClientServiceHandler:
 
             # sends the exception
             self.send_exception(service_connection, request, exception)
+
+            # sets the cancel in a request timeout
+            service_connection.cancel(request_timeout)
 
         # returns true (connection remains open)
         return True
