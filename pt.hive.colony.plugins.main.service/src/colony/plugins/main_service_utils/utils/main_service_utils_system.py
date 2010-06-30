@@ -97,8 +97,18 @@ LOCAL_HOST = "127.0.0.1"
 DUMMY_MESSAGE_VALUE = "_"
 """ the dummy message value """
 
-NEW_VALUE_MASK = select.EPOLLIN | select.EPOLLPRI | select.EPOLLHUP #@UndefinedVariable
-""" The new value received mask value """
+EPOLL_VALUE = "epoll"
+""" The poll value """
+
+# in case the current system supports epoll
+if hasattr(select, "epool"):
+    EPOLL_SUPPORT = True
+else:
+    EPOLL_SUPPORT = False
+
+if EPOLL_SUPPORT:
+    NEW_VALUE_MASK = select.EPOLLIN | select.EPOLLPRI | select.EPOLLHUP #@UndefinedVariable
+    """ The new value received mask value """
 
 class MainServiceUtils:
     """
