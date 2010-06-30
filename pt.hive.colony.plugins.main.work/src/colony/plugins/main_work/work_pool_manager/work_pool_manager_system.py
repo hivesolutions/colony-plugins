@@ -372,6 +372,7 @@ class WorkTask:
     """ The condition to control the access to work """
 
     work_event_lock = None
+    """ The lock that controls the work event """
 
     def __init__(self, work_processing_task):
         """
