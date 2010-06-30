@@ -211,16 +211,6 @@ DEFAULT_CONNECTION_TYPE = INTERNET_CONNECTION_TYPE
 DEFAULT_CONNECTION_ARGUMENTS = ("127.0.0.1", 9000)
 """ The default connection arguments type """
 
-AF_UNIX_VALUE = "AF_UNIX"
-""" The af unix value """
-
-# in case the af unix value is not defined
-# in the socket module
-if not hasattr(socket, AF_UNIX_VALUE):
-    # defines the value as none to avoid undefined
-    # value problems
-    socket.AF_UNIX = None
-
 class MainServiceHttpFastCgiHandler:
     """
     The main service http fast cgi handler class.
@@ -526,7 +516,7 @@ class FastCgiConnection:
         # in case the connection is of type unix
         elif self.connection_type == UNIX_CONNECTION_TYPE:
             # creates the socket
-            self.socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            self.socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) #@UndefinedVariable
 
         # connects the socket using the connection arguments
         self.socket.connect(self.connection_arguments)
