@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import time
 import socket
 import select
 import threading
@@ -293,6 +294,9 @@ class AbstractService:
     service_configuration = {}
     """ The service configuration """
 
+    extra_parameters = {}
+    """ The extra parameters """
+
     pool_configuration = {}
     """ The pool configuration """
 
@@ -320,6 +324,7 @@ class AbstractService:
         self.bind_host = parameters.get("bind_host", BIND_HOST)
         self.port = parameters.get("port", PORT)
         self.service_configuration = parameters.get("service_configuration", {})
+        self.extra_parameters = parameters.get("extra_parameters", {})
         self.pool_configuration = parameters.get("pool_configuration", {})
         self.client_connection_timeout = parameters.get("client_connection_timeout", CLIENT_CONNECTION_TIMEOUT)
 
@@ -406,7 +411,7 @@ class AbstractService:
         work_scheduling_algorithm = self.pool_configuration.get("work_scheduling_algorithm", WORK_SCHEDULING_ALGORITHM)
 
         # creates the service connection handler arguments
-        service_connection_handler_arguments = (self, self.service_plugin, self.service_configuration, self.service_handling_task_class)
+        service_connection_handler_arguments = (self, self.service_plugin, self.service_configuration, self.service_handling_task_class, self.extra_parameters)
 
         # creates the service client pool
         self.service_client_pool = work_pool_manager_plugin.create_new_work_pool(pool_name, pool_description, AbstractServiceConnectionHandler, service_connection_handler_arguments, number_threads, scheduling_algorithm, maximum_number_threads, maximum_number_works_thread, work_scheduling_algorithm)
@@ -576,7 +581,7 @@ class AbstractServiceConnectionHandler:
     wake_file_port = None
     """ The wake file port """
 
-    def __init__(self, service, service_plugin, service_configuration, client_service_class):
+    def __init__(self, service, service_plugin, service_configuration, client_service_class, extra_parameters):
         """
         Constructor of the class.
 
@@ -588,6 +593,8 @@ class AbstractServiceConnectionHandler:
         @param service_configuration: The service configuration.
         @type client_service_class: Class
         @param client_service_class: The client service class.
+        @type extra_parameters: Dictionary
+        @param extra_parameters: The extra parameters.
         """
 
         self.service = service
@@ -600,7 +607,7 @@ class AbstractServiceConnectionHandler:
         self.connection_socket_file_descriptor_connection_socket_map = {}
 
         # creates the client service object
-        self.client_service = client_service_class(self.service_plugin, self, service_configuration, main_service_utils_exceptions.MainServiceUtilsException)
+        self.client_service = client_service_class(self.service_plugin, self, service_configuration, main_service_utils_exceptions.MainServiceUtilsException, extra_parameters)
 
     def start(self):
         self.__start_base()
@@ -673,6 +680,9 @@ class AbstractServiceConnectionHandler:
         The work tick consists in the polling of the connections
         and the processing of the work.
         """
+
+        # polls the connections for canceling (in timeout)
+        self.poll_cancel_connections()
 
         # polls the system to check for new connections
         ready_sockets = self.poll_connections(POLL_TIMEOUT)
@@ -818,6 +828,28 @@ class AbstractServiceConnectionHandler:
         # removes the connection for the given service connection
         self.remove_connection(service_connection)
 
+    def poll_cancel_connections(self):
+        """
+        Polls the current connection scheduled
+        for canceling.
+        In case a connection is found to be timed out
+        the associated work is canceled and and the
+        connection is closed.
+        """
+
+        # retrieves the current clock
+        current_clock = time.clock()
+
+        # iterates over all the service connections
+        for service_connection in self.service_connections_list:
+            # in case there is a cancel time defined and there is a timeout
+            if service_connection.cancel_time and service_connection.cancel_time < current_clock:
+                # retrieves the connection tuple
+                connection_tuple = service_connection.get_connection_tuple()
+
+                # removes the ready service connection (via remove work)
+                self.remove_work(connection_tuple)
+
     def poll_connections(self, poll_timeout = POLL_TIMEOUT):
         """
         Polls the current connection to check
@@ -947,6 +979,9 @@ class ServiceConnection:
     connection_closed_handlers = []
     """ The connection closed handlers """
 
+    cancel_time = None
+    """ The cancel time """
+
     def __init__(self, service_plugin, connection_socket, connection_address, connection_port):
         """
         Constructor of the class.
@@ -997,6 +1032,18 @@ class ServiceConnection:
         # prints debug message about connection
         self.service_plugin.debug("Disconnected from: %s" % str(self.connection_address))
 
+    def cancel(self, delta_time):
+        """
+        Cancels (closes) the given connection in
+        the given amount of seconds.
+
+        @type delta_time: float
+        @param delta_time: The amount of seconds until canceling.
+        """
+
+        # sets the cancel time
+        self.cancel_time = time.clock() + delta_time
+
     def retrieve_data(self, request_timeout = REQUEST_TIMEOUT, chunk_size = CHUNK_SIZE):
         """
         Retrieves the data from the current connection socket, with the
@@ -1017,7 +1064,7 @@ class ServiceConnection:
             # runs the select in the connection socket, with timeout
             selected_values = select.select([self.connection_socket], [], [], request_timeout)
 
-            # sets the soecket to blocking mode
+            # sets the socket to blocking mode
             self.connection_socket.setblocking(1)
         except:
             # raises the request closed exception
