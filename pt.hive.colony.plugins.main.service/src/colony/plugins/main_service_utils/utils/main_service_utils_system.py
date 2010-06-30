@@ -604,10 +604,12 @@ class AbstractServiceConnectionHandler:
 
     def start(self):
         self.__start_base()
-        self.__start_epoll()
+        if EPOLL_SUPPORT:
+            self.__start_epoll()
 
     def stop(self):
-        self.__stop_epoll()
+        if EPOLL_SUPPORT:
+            self.__stop_epoll()
         self.__stop_base()
 
     def __start_base(self):
@@ -762,8 +764,8 @@ class AbstractServiceConnectionHandler:
         # connection socket map
         self.connection_socket_file_descriptor_connection_socket_map[connection_socket_file_descriptor] = connection_socket
 
-        self.__add_connection_epoll(connection_socket, connection_address, connection_port)
-
+        if EPOLL_SUPPORT:
+            self.__add_connection_epoll(connection_socket, connection_address, connection_port)
 
         # returns the created service connection
         return service_connection
@@ -782,7 +784,8 @@ class AbstractServiceConnectionHandler:
         # retrieves the connection socket file descriptor
         connection_socket_file_descriptor = connection_socket.fileno()
 
-        self.__remove_connection_epoll(service_connection)
+        if EPOLL_SUPPORT:
+            self.__remove_connection_epoll(service_connection)
 
         # closes the service connection
         service_connection.close()
@@ -826,7 +829,10 @@ class AbstractServiceConnectionHandler:
         @return: The selected values for read (ready sockets).
         """
 
-        return self.__poll_connections_epoll(poll_timeout)
+        if EPOLL_SUPPORT:
+            return self.__poll_connections_epoll(poll_timeout)
+        else:
+            return self.__poll_connections_base(poll_timeout)
 
     def __wake_base(self):
         """
