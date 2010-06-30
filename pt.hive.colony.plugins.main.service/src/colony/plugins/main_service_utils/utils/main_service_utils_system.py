@@ -516,6 +516,8 @@ class AbstractServiceConnectionHandler:
                 # removes the ready service connection (via remove work)
                 self.remove_work(connection_tuple)
 
+        print "passou"
+
     def work_added(self, work_reference):
         """
         Called when a work is added.
@@ -630,11 +632,16 @@ class AbstractServiceConnectionHandler:
             # returns an empty list
             return []
 
+        import sys
+
         # runs the select in the connection socket, with timeout
-        selected_values = select.select(self.service_connection_sockets_list, [], [], poll_timeout)
+        selected_values = select.select(self.service_connection_sockets_list + [sys.stdout], [], [], poll_timeout)
 
         # retrieves the selected values for read
         selected_values_read = selected_values[0]
+
+        if sys.stdout in selected_values_read:
+            selected_values_read.remove(sys.stdout)
 
         # returns the selected values for read
         return selected_values_read
