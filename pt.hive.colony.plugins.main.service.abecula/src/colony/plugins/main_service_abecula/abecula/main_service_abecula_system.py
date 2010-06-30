@@ -225,6 +225,9 @@ class MainServiceAbecula:
                               "maximum_number_works_thread" : MAXIMUM_NUMBER_WORKS_THREAD,
                               "work_scheduling_algorithm" : WORK_SCHEDULING_ALGORITHM}
 
+        # creates the extra parameters map
+        extra_parameters = {}
+
         # creates the parameters map
         parameters = {"service_plugin" : self.main_service_abecula_plugin,
                       "service_handling_task_class" : AbeculaClientServiceHandler,
@@ -232,6 +235,7 @@ class MainServiceAbecula:
                       "bind_host" : BIND_HOST,
                       "port" : port,
                       "service_configuration" : service_configuration,
+                      "extra_parameters" :  extra_parameters,
                       "pool_configuration" : pool_configuration,
                       "client_connection_timeout" : CLIENT_CONNECTION_TIMEOUT}
 
@@ -255,7 +259,7 @@ class AbeculaClientServiceHandler:
     service_utils_exception_class = None
     """" The service utils exception class """
 
-    def __init__(self, service_plugin, service_connection_handler, service_configuration, service_utils_exception_class):
+    def __init__(self, service_plugin, service_connection_handler, service_configuration, service_utils_exception_class, extra_parameters):
         """
         Constructor of the class.
 
@@ -268,6 +272,8 @@ class AbeculaClientServiceHandler:
         @param service_configuration: The service configuration.
         @type main_service_utils_exception: Class
         @param main_service_utils_exception: The service utils exception class.
+        @type extra_parameters: Dictionary
+        @param extra_parameters: The extra parameters.
         """
 
         self.service_plugin = service_plugin
