@@ -604,7 +604,6 @@ class AbstractServiceConnectionHandler:
 
     def start(self):
         self.__start_base()
-
         self.__start_epoll()
 
     def stop(self):
@@ -672,8 +671,6 @@ class AbstractServiceConnectionHandler:
         The work tick consists in the polling of the connections
         and the processing of the work.
         """
-
-        print "vai fazer polling"
 
         # polls the system to check for new connections
         ready_sockets = self.poll_connections(POLL_TIMEOUT)
@@ -843,6 +840,7 @@ class AbstractServiceConnectionHandler:
         # retrieves the connection socket file descriptor
         connection_socket_file_descriptor = connection_socket.fileno()
 
+        # registers the connection socket in the epoll
         self.epoll.register(connection_socket_file_descriptor, REGISTER_MASK)
 
     def __remove_connection_epoll(self, service_connection):
@@ -852,6 +850,7 @@ class AbstractServiceConnectionHandler:
         # retrieves the connection socket file descriptor
         connection_socket_file_descriptor = connection_socket.fileno()
 
+        # unregisters the connection socket from the epoll
         self.epoll.unregister(connection_socket_file_descriptor)
 
     def __poll_connections_base(self, poll_timeout):
