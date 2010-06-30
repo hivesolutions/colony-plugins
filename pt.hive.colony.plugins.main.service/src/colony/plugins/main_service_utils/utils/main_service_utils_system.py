@@ -634,6 +634,8 @@ class AbstractServiceConnectionHandler:
         # creates a new epoll object
         self.epoll = select.epoll() #@UndefinedVariable
 
+        self.epoll.register(self.wake_file.fileno(), select.EPOLLIN | select.EPOLLPRI | select.EPOLLHUP | select.EPOLLET) #@UndefinedVariable
+
     def __stop_base(self):
         # retrieves the wake file descriptor
         wake_file_descriptor = self.wake_file.fileno()
@@ -648,6 +650,8 @@ class AbstractServiceConnectionHandler:
         self.connection_socket_file_descriptor_connection_socket_map[wake_file_descriptor]
 
     def __stop_epoll(self):
+        self.epoll.unregister(self.wake_file.fileno())
+
         # stops the epoll object
         self.epoll.close()
 
