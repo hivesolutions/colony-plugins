@@ -88,6 +88,15 @@ SERVER_SIDE_VALUE = "server_side"
 DO_HANDSHAKE_ON_CONNECT_VALUE = "do_handshake_on_connect"
 """ The do handshake on connect value """
 
+PORT_RANGES = ((38001, 39999), (40001, 42999))
+""" The ranges of port available for  """
+
+LOCAL_HOST = "127.0.0.1"
+""" The local host value """
+
+DUMMY_MESSAGE_VALUE = "_"
+""" the dummy message value """
+
 class MainServiceUtils:
     """
     The main service utils class.
@@ -98,6 +107,15 @@ class MainServiceUtils:
 
     socket_provider_plugins_map = {}
     """ The socket provider plugins map """
+
+    port_generation_lock = None
+    """ The lock to protect port generation """
+
+    current_port_range_index = 0
+    """ The current port range index being used """
+
+    current_port = None
+    """ The current port """
 
     def __init__(self, main_service_utils_plugin):
         """
@@ -110,6 +128,10 @@ class MainServiceUtils:
         self.main_service_utils_plugin = main_service_utils_plugin
 
         self.socket_provider_plugins_map = {}
+        self.port_generation_lock = threading.Lock()
+
+        # resets the port value
+        self._reset_port()
 
     def generate_service(self, parameters):
         """
@@ -123,6 +145,49 @@ class MainServiceUtils:
         """
 
         return AbstractService(self, self.main_service_utils_plugin, parameters)
+
+    def generate_service_port(self, parameters):
+        """
+        Generates a new service port for the current
+        host, avoiding collisions.
+
+        @type parameters: Dictionary
+        @param parameters: The parameters for service port generation.
+        @rtype: int
+        @return: The newly generated port.
+        """
+
+        # acquires the port generation lock
+        self.port_generation_lock.acquire()
+
+        # increments the current port number
+        self.current_port += 1
+
+        # retrieves the initial and final port of the current
+        # port range
+        _initial_port, final_port = PORT_RANGES[self.current_port_range_index]
+
+        # in case the current port is bigger than the final port
+        if self.current_port > final_port:
+            # increments the current port range index
+            self.current_port_range_index += 1
+
+            # in case the limit of port ranges has been reached
+            if self.current_port_range_index == len(PORT_RANGES):
+                # raises the port starvation reached exception
+                raise main_service_utils_exceptions.PortStarvationReached("no more ports available")
+            else:
+                # resets the current port value
+                self._reset_port()
+
+                # increments the current port value
+                self.current_port += 1
+
+        # releases the port generation lock
+        self.port_generation_lock.release()
+
+        # returns the current port
+        return self.current_port
 
     def socket_provider_load(self, socket_provider_plugin):
         """
@@ -153,6 +218,20 @@ class MainServiceUtils:
 
         # removes the socket provider plugin from the socket provider plugins map
         del self.socket_provider_plugins_map[provider_name]
+
+    def _reset_port(self):
+        """
+        Resets the current port value to the initial
+        value of the current port range.
+        """
+
+        # retrieves the initial and final port of the current
+        # port range
+        initial_port, _final_port = PORT_RANGES[self.current_port_range_index]
+
+        # sets the current port as the initial port of
+        # the port range (minus one)
+        self.current_port = initial_port - 1
 
 class AbstractService:
     """
@@ -311,7 +390,7 @@ class AbstractService:
         work_scheduling_algorithm = self.pool_configuration.get("work_scheduling_algorithm", WORK_SCHEDULING_ALGORITHM)
 
         # creates the service connection handler arguments
-        service_connection_handler_arguments = (self.service_plugin, self.service_configuration, self.service_handling_task_class)
+        service_connection_handler_arguments = (self, self.service_plugin, self.service_configuration, self.service_handling_task_class)
 
         # creates the service client pool
         self.service_client_pool = work_pool_manager_plugin.create_new_work_pool(pool_name, pool_description, AbstractServiceConnectionHandler, service_connection_handler_arguments, number_threads, scheduling_algorithm, maximum_number_threads, maximum_number_works_thread, work_scheduling_algorithm)
@@ -451,6 +530,9 @@ class AbstractServiceConnectionHandler:
     The abstract service connection handler.
     """
 
+    service = None
+    """ The service reference """
+
     service_plugin = None
     """ The service plugin """
 
@@ -469,10 +551,12 @@ class AbstractServiceConnectionHandler:
     client_service = None
     """ The client service reference """
 
-    def __init__(self, service_plugin, service_configuration, client_service_class):
+    def __init__(self, service, service_plugin, service_configuration, client_service_class):
         """
         Constructor of the class.
 
+        @type service: AbstractService
+        @param service: The service reference.
         @type service_plugin: Plugin
         @param service_plugin: The service plugin.
         @type service_configuration: Dictionary
@@ -481,6 +565,7 @@ class AbstractServiceConnectionHandler:
         @param client_service_class: The client service class.
         """
 
+        self.service = service
         self.service_plugin = service_plugin
         self.service_configuration = service_configuration
 
@@ -490,6 +575,26 @@ class AbstractServiceConnectionHandler:
 
         # creates the client service object
         self.client_service = client_service_class(self.service_plugin, self, service_configuration, main_service_utils_exceptions.MainServiceUtilsException)
+
+    def start(self):
+        # generates a new "file" port
+        self.file_port = self.service.main_service_utils.generate_service_port({})
+
+        # creates the "file" object
+        self.file = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+        # sets the socket to be able to reuse the socket
+        self.file.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+        # binds to the current host
+        self.file.bind((LOCAL_HOST, self.file_port))
+
+        # adds the file to the service connection sockets list
+        self.service_connection_sockets_list.append(self.file)
+
+    def stop(self):
+        # closes the file
+        self.file.close()
 
     def process(self):
         """
@@ -516,7 +621,13 @@ class AbstractServiceConnectionHandler:
                 # removes the ready service connection (via remove work)
                 self.remove_work(connection_tuple)
 
-        print "passou"
+    def wake(self):
+        """
+        Wakes the current task releasing the current
+        process call.
+        """
+
+        self.__wake_windows()
 
     def work_added(self, work_reference):
         """
@@ -632,19 +743,30 @@ class AbstractServiceConnectionHandler:
             # returns an empty list
             return []
 
-        import sys
-
         # runs the select in the connection socket, with timeout
-        selected_values = select.select(self.service_connection_sockets_list + [sys.stdout], [], [], poll_timeout)
+        selected_values = select.select(self.service_connection_sockets_list, [], [], poll_timeout)
 
         # retrieves the selected values for read
         selected_values_read = selected_values[0]
 
-        if sys.stdout in selected_values_read:
-            selected_values_read.remove(sys.stdout)
+        # processes the poll connections in windows
+        self.__poll_process_connections_windows(selected_values_read)
 
         # returns the selected values for read
         return selected_values_read
+
+    def __wake_windows(self):
+        """
+        The wake task windows implementation.
+        """
+
+        # sends a "dummy" message to the communication file
+        self.file.sendto(DUMMY_MESSAGE_VALUE, (LOCAL_HOST, self.file_port))
+
+    def __poll_process_connections_windows(self, selected_values_read):
+        if self.file in selected_values_read:
+            self.file.recv(1)
+            selected_values_read.remove(self.file)
 
 class ServiceConnection:
     """

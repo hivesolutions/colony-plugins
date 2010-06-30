@@ -109,6 +109,19 @@ class MainServiceUtilsPlugin(colony.plugins.plugin_system.Plugin):
 
         return self.main_service_utils.generate_service(parameters)
 
+    def generate_service_port(self, parameters):
+        """
+        Generates a new service port for the current
+        host, avoiding collisions.
+
+        @type parameters: Dictionary
+        @param parameters: The parameters for service port generation.
+        @rtype: int
+        @return: The newly generated port.
+        """
+
+        return self.main_service_utils.generate_service_port(parameters)
+
     @colony.plugins.decorators.load_allowed_capability("socket_provider")
     def socket_provider_load_allowed(self, plugin, capability):
         self.socket_provider_plugins.append(plugin)
