@@ -420,6 +420,9 @@ class WorkTask:
             self.work_event_lock.release()
 
     def stop(self):
+        # wakes the work processing task
+        self.wake()
+
         # acquires the work event lock
         self.work_event_lock.acquire()
 
@@ -444,6 +447,20 @@ class WorkTask:
     def resume(self):
         pass
 
+    def wake(self):
+        """
+        Wakes the current task.
+        """
+
+        # in case there is no work to
+        # be processed
+        if not self.work_counter:
+            # returns immediately
+            return
+
+        # wakes the work processing task
+        self.work_processing_task.wake()
+
     def get_work_processing_task(self):
         """
         Retrieves the work processing task.
@@ -455,6 +472,9 @@ class WorkTask:
         return self.work_processing_task
 
     def remove_all_work(self):
+        # wakes the work processing task
+        self.wake()
+
         # acquires the work event lock
         self.work_event_lock.acquire()
 
@@ -474,6 +494,9 @@ class WorkTask:
         self.work_access_condition.release()
 
     def add_work(self, work_reference):
+        # wakes the work processing task
+        self.wake()
+
         # acquires the work event lock
         self.work_event_lock.acquire()
 
@@ -490,6 +513,9 @@ class WorkTask:
         self.work_access_condition.release()
 
     def remove_work(self, work_reference):
+        # wakes the work processing task
+        self.wake()
+
         # acquires the work event lock
         self.work_event_lock.acquire()
 

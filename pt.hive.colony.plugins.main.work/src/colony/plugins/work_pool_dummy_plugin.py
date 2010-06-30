@@ -119,6 +119,9 @@ class ProcessingClass:
             # removes the work
             self.remove_work(work)
 
+    def wake(self):
+        pass
+
     def work_added(self, work_reference):
         self.work_list.append(work_reference)
 
