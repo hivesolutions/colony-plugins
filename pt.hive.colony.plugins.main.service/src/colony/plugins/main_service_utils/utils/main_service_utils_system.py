@@ -583,6 +583,15 @@ class AbstractServiceConnectionHandler:
         self.client_service = client_service_class(self.service_plugin, self, service_configuration, main_service_utils_exceptions.MainServiceUtilsException)
 
     def start(self):
+        self.__start_base()
+
+        self.__start_epoll()
+
+    def stop(self):
+        self.__stop_epoll()
+        self.__stop_base()
+
+    def __start_base(self):
         # generates a new wake "file" port
         self.wake_file_port = self.service.main_service_utils.generate_service_port({})
 
@@ -598,9 +607,17 @@ class AbstractServiceConnectionHandler:
         # adds the wake "file" to the service connection sockets list
         self.service_connection_sockets_list.append(self.wake_file)
 
-    def stop(self):
+    def __start_epoll(self):
+        # creates a new epoll object
+        self.epoll = select.epoll()
+
+    def __stop_base(self):
         # closes the wake "file"
         self.wake_file.close()
+
+    def __stop_epoll(self):
+        # stops the epoll object
+        self.epoll.close()
 
     def process(self):
         """
@@ -692,6 +709,12 @@ class AbstractServiceConnectionHandler:
         # sets the service connection in the service connections map
         self.service_connections_map[connection_socket] = service_connection
 
+
+        self.__add_connection_epoll(connection_socket, connection_address, connection_port)
+
+
+
+
         # returns the created service connection
         return service_connection
 
@@ -717,6 +740,8 @@ class AbstractServiceConnectionHandler:
 
         # removes the service connection from the service connections map
         del self.service_connections_map[connection_socket]
+
+        self.__remove_connection_epoll(connection_socket)
 
     def remove_connection_socket(self, connection_socket):
         """
@@ -746,13 +771,19 @@ class AbstractServiceConnectionHandler:
 
         return self.__poll_connections_base(poll_timeout)
 
-    def __wake_windows(self):
+    def __wake_base(self):
         """
-        The wake task windows implementation.
+        The wake task base implementation.
         """
 
         # sends a "dummy" message to the wake "file" (via communication channel)
         self.wake_file.sendto(DUMMY_MESSAGE_VALUE, (LOCAL_HOST, self.wake_file_port))
+
+    def __add_connection_epoll(self, connection_socket, connection_address, connection_port):
+        self.epoll.register(connection_socket)
+
+    def __remove_connection_epoll(self, connection_socket):
+        self.epoll.unregister(connection_socket)
 
     def __poll_connections_base(self, poll_timeout):
         # in case no service connection sockets exist
