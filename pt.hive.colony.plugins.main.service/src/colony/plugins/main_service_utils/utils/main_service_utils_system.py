@@ -551,6 +551,12 @@ class AbstractServiceConnectionHandler:
     client_service = None
     """ The client service reference """
 
+    wake_file = None
+    """ The wake file reference """
+
+    wake_file_port = None
+    """ The wake file port """
+
     def __init__(self, service, service_plugin, service_configuration, client_service_class):
         """
         Constructor of the class.
@@ -577,24 +583,24 @@ class AbstractServiceConnectionHandler:
         self.client_service = client_service_class(self.service_plugin, self, service_configuration, main_service_utils_exceptions.MainServiceUtilsException)
 
     def start(self):
-        # generates a new "file" port
-        self.file_port = self.service.main_service_utils.generate_service_port({})
+        # generates a new wake "file" port
+        self.wake_file_port = self.service.main_service_utils.generate_service_port({})
 
-        # creates the "file" object
-        self.file = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        # creates the wake "file" object
+        self.wake_file = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
         # sets the socket to be able to reuse the socket
-        self.file.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.wake_file.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
         # binds to the current host
-        self.file.bind((LOCAL_HOST, self.file_port))
+        self.wake_file.bind((LOCAL_HOST, self.wake_file_port))
 
-        # adds the file to the service connection sockets list
-        self.service_connection_sockets_list.append(self.file)
+        # adds the wake "file" to the service connection sockets list
+        self.service_connection_sockets_list.append(self.wake_file)
 
     def stop(self):
-        # closes the file
-        self.file.close()
+        # closes the wake "file"
+        self.wake_file.close()
 
     def process(self):
         """
@@ -738,6 +744,17 @@ class AbstractServiceConnectionHandler:
         @return: The selected values for read (ready sockets).
         """
 
+        return self.__poll_connections_base(poll_timeout)
+
+    def __wake_windows(self):
+        """
+        The wake task windows implementation.
+        """
+
+        # sends a "dummy" message to the wake "file" (via communication channel)
+        self.wake_file.sendto(DUMMY_MESSAGE_VALUE, (LOCAL_HOST, self.wake_file_port))
+
+    def __poll_connections_base(self, poll_timeout):
         # in case no service connection sockets exist
         if not self.service_connection_sockets_list:
             # returns an empty list
@@ -749,24 +766,49 @@ class AbstractServiceConnectionHandler:
         # retrieves the selected values for read
         selected_values_read = selected_values[0]
 
-        # processes the poll connections in windows
-        self.__poll_process_connections_windows(selected_values_read)
+        # processes the poll connections
+        self.__poll_connections_process(selected_values_read)
 
         # returns the selected values for read
         return selected_values_read
 
-    def __wake_windows(self):
-        """
-        The wake task windows implementation.
-        """
+    def __poll_connections_epoll(self, poll_timeout):
+        # in case no service connection sockets exist
+        if not self.service_connection_sockets_list:
+            # returns an empty list
+            return []
 
-        # sends a "dummy" message to the communication file
-        self.file.sendto(DUMMY_MESSAGE_VALUE, (LOCAL_HOST, self.file_port))
+        # polls the current epoll object
+        events = self.epoll.poll(poll_timeout)
 
-    def __poll_process_connections_windows(self, selected_values_read):
-        if self.file in selected_values_read:
-            self.file.recv(1)
-            selected_values_read.remove(self.file)
+        # creates the list of selected values for read
+        selected_values_read = []
+
+        # iterates over all the events
+        for event in events:
+            # retrieves the file descriptor
+            file_descriptor = event.data.fd
+
+            # adds the file descriptor to the selected
+            # values for read list
+            selected_values_read.append(file_descriptor)
+
+        # processes the poll connections
+        self.__poll_connections_process(selected_values_read)
+
+        # returns the selected values for read
+        return selected_values_read
+
+    def __poll_connections_process(self, selected_values_read):
+        # checks if the wake "file" exists in the selected
+        # values for read list
+        if self.wake_file in selected_values_read:
+            # receives one byte from the wake "file"
+            self.wake_file.recv(1)
+
+            # removes the wake "file" from the selected values
+            # for read list
+            selected_values_read.remove(self.wake_file)
 
 class ServiceConnection:
     """
