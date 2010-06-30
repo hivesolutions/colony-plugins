@@ -101,7 +101,7 @@ EPOLL_VALUE = "epoll"
 """ The poll value """
 
 # in case the current system supports epoll
-if hasattr(select, "epool"):
+if hasattr(select, "epoll"):
     EPOLL_SUPPORT = True
 else:
     EPOLL_SUPPORT = False
@@ -688,7 +688,7 @@ class AbstractServiceConnectionHandler:
         process call.
         """
 
-        self.__wake_windows()
+        self.__wake_base()
 
     def work_added(self, work_reference):
         """
@@ -877,6 +877,9 @@ class AbstractServiceConnectionHandler:
         for connection_socket_file_descriptor, event in events:
             # in case the event is not ready for input or hang-up
             if not event & NEW_VALUE_MASK:
+                # resets the connection socket file descriptor status
+                self.epoll.modify(connection_socket_file_descriptor, 0)
+
                 # continues the loop
                 continue
 
