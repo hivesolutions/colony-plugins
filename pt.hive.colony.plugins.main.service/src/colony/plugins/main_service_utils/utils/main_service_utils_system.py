@@ -828,7 +828,7 @@ class AbstractServiceConnectionHandler:
         # retrieves the connection socket file descriptor
         connection_socket_file_descriptor = connection_socket.fileno()
 
-        self.epoll.register(connection_socket_file_descriptor)
+        self.epoll.register(connection_socket_file_descriptor, select.EPOLLIN | select.EPOLLPRI | select.EPOLLHUP | select.EPOLLET) #@UndefinedVariable
 
     def __remove_connection_epoll(self, service_connection):
         # retrieves the connection socket
