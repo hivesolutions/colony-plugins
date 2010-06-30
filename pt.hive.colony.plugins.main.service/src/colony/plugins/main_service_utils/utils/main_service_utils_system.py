@@ -110,6 +110,9 @@ if EPOLL_SUPPORT:
     NEW_VALUE_MASK = select.EPOLLIN | select.EPOLLPRI | select.EPOLLHUP #@UndefinedVariable
     """ The new value received mask value """
 
+    REGISTER_MASK = NEW_VALUE_MASK | select.EPOLLET #@UndefinedVariable
+    """ The regsiter mask value """
+
 class MainServiceUtils:
     """
     The main service utils class.
@@ -631,10 +634,14 @@ class AbstractServiceConnectionHandler:
         self.connection_socket_file_descriptor_connection_socket_map[wake_file_descriptor] = self.wake_file
 
     def __start_epoll(self):
+        # retrieves the wake file descriptor
+        wake_file_descriptor = self.wake_file.fileno()
+
         # creates a new epoll object
         self.epoll = select.epoll() #@UndefinedVariable
 
-        self.epoll.register(self.wake_file.fileno(), select.EPOLLIN | select.EPOLLPRI | select.EPOLLHUP | select.EPOLLET) #@UndefinedVariable
+        # register the wake file in the epoll
+        self.epoll.register(wake_file_descriptor, REGISTER_MASK)
 
     def __stop_base(self):
         # retrieves the wake file descriptor
@@ -650,7 +657,11 @@ class AbstractServiceConnectionHandler:
         self.connection_socket_file_descriptor_connection_socket_map[wake_file_descriptor]
 
     def __stop_epoll(self):
-        self.epoll.unregister(self.wake_file.fileno())
+        # retrieves the wake file descriptor
+        wake_file_descriptor = self.wake_file.fileno()
+
+        # unregister the wake file from the epoll
+        self.epoll.unregister(wake_file_descriptor)
 
         # stops the epoll object
         self.epoll.close()
@@ -832,7 +843,7 @@ class AbstractServiceConnectionHandler:
         # retrieves the connection socket file descriptor
         connection_socket_file_descriptor = connection_socket.fileno()
 
-        self.epoll.register(connection_socket_file_descriptor, select.EPOLLIN | select.EPOLLPRI | select.EPOLLHUP | select.EPOLLET) #@UndefinedVariable
+        self.epoll.register(connection_socket_file_descriptor, REGISTER_MASK)
 
     def __remove_connection_epoll(self, service_connection):
         # retrieves the connection socket
