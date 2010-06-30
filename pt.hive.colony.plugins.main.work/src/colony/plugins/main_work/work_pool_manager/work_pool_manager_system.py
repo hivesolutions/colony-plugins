@@ -389,6 +389,10 @@ class WorkTask:
         self.work_event_lock = threading.RLock()
 
     def start(self):
+        # calls the start method in the work
+        # processing task
+        self.work_processing_task.start()
+
         # iterates while the stop flag is not set
         while not self.stop_flag:
             # acquires the work access condition
@@ -418,6 +422,10 @@ class WorkTask:
             # of locks)
             self.work_event_lock.acquire()
             self.work_event_lock.release()
+
+        # calls the stop method in the work
+        # processing task
+        self.work_processing_task.stop()
 
     def stop(self):
         # wakes the work processing task

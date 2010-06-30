@@ -108,6 +108,12 @@ class ProcessingClass:
     def __init__(self):
         self.work_list = []
 
+    def start(self):
+        pass
+
+    def stop(self):
+        pass
+
     def process(self):
         for work in self.work_list:
             import thread
