@@ -97,6 +97,9 @@ LOCAL_HOST = "127.0.0.1"
 DUMMY_MESSAGE_VALUE = "_"
 """ the dummy message value """
 
+NEW_VALUE_MASK = select.EPOLLIN | select.EPOLLPRI | select.EPOLLHUP
+""" The new value received mask value """
+
 class MainServiceUtils:
     """
     The main service utils class.
@@ -548,6 +551,9 @@ class AbstractServiceConnectionHandler:
     service_connections_map = {}
     """ The map of service connections """
 
+    connection_socket_file_descriptor_connection_socket_map = {}
+    """ The map associating the connection socket file descriptor with the connection socket """
+
     client_service = None
     """ The client service reference """
 
@@ -578,6 +584,7 @@ class AbstractServiceConnectionHandler:
         self.service_connections_list = []
         self.service_connection_sockets_list = []
         self.service_connections_map = {}
+        self.connection_socket_file_descriptor_connection_socket_map = {}
 
         # creates the client service object
         self.client_service = client_service_class(self.service_plugin, self, service_configuration, main_service_utils_exceptions.MainServiceUtilsException)
@@ -604,16 +611,31 @@ class AbstractServiceConnectionHandler:
         # binds to the current host
         self.wake_file.bind((LOCAL_HOST, self.wake_file_port))
 
+        # retrieves the wake file descriptor
+        wake_file_descriptor = self.wake_file.fileno()
+
         # adds the wake "file" to the service connection sockets list
         self.service_connection_sockets_list.append(self.wake_file)
+
+        # sets the wake file in the connection socket file descriptor connection socket map
+        self.connection_socket_file_descriptor_connection_socket_map[wake_file_descriptor] = self.wake_file
 
     def __start_epoll(self):
         # creates a new epoll object
         self.epoll = select.epoll()
 
     def __stop_base(self):
+        # retrieves the wake file descriptor
+        wake_file_descriptor = self.wake_file.fileno()
+
         # closes the wake "file"
         self.wake_file.close()
+
+        # removes the wake file from the service connection sockets list
+        self.service_connection_sockets_list.remove(self.wake_file)
+
+        # removes the wake file from the connection socket file descriptor connection socket map
+        self.connection_socket_file_descriptor_connection_socket_map[wake_file_descriptor]
 
     def __stop_epoll(self):
         # stops the epoll object
@@ -625,6 +647,8 @@ class AbstractServiceConnectionHandler:
         The work tick consists in the polling of the connections
         and the processing of the work.
         """
+
+        print "vai fazer polling"
 
         # polls the system to check for new connections
         ready_sockets = self.poll_connections(POLL_TIMEOUT)
@@ -700,6 +724,9 @@ class AbstractServiceConnectionHandler:
         # opens the service connection
         service_connection.open()
 
+        # retrieves the connection socket file descriptor
+        connection_socket_file_descriptor = connection_socket.fileno()
+
         # adds the service connection to the service connections list
         self.service_connections_list.append(service_connection)
 
@@ -709,10 +736,11 @@ class AbstractServiceConnectionHandler:
         # sets the service connection in the service connections map
         self.service_connections_map[connection_socket] = service_connection
 
+        # sets the connection socket in the connection socket file descriptor
+        # connection socket map
+        self.connection_socket_file_descriptor_connection_socket_map[connection_socket_file_descriptor] = connection_socket
 
         self.__add_connection_epoll(connection_socket, connection_address, connection_port)
-
-
 
 
         # returns the created service connection
@@ -726,11 +754,16 @@ class AbstractServiceConnectionHandler:
         @param service_connection: The service connection to be removed.
         """
 
-        # closes the service connection
-        service_connection.close()
-
         # retrieves the connection socket
         connection_socket = service_connection.get_connection_socket()
+
+        # retrieves the connection socket file descriptor
+        connection_socket_file_descriptor = connection_socket.fileno()
+
+        self.__remove_connection_epoll(service_connection)
+
+        # closes the service connection
+        service_connection.close()
 
         # removes the connection from the service connections list
         self.service_connections_list.remove(service_connection)
@@ -741,7 +774,9 @@ class AbstractServiceConnectionHandler:
         # removes the service connection from the service connections map
         del self.service_connections_map[connection_socket]
 
-        self.__remove_connection_epoll(connection_socket)
+        # removes the connection socket from the connection socket file descriptor
+        # connection socket map
+        del self.connection_socket_file_descriptor_connection_socket_map[connection_socket_file_descriptor]
 
     def remove_connection_socket(self, connection_socket):
         """
@@ -769,7 +804,7 @@ class AbstractServiceConnectionHandler:
         @return: The selected values for read (ready sockets).
         """
 
-        return self.__poll_connections_base(poll_timeout)
+        return self.__poll_connections_epoll(poll_timeout)
 
     def __wake_base(self):
         """
@@ -780,10 +815,19 @@ class AbstractServiceConnectionHandler:
         self.wake_file.sendto(DUMMY_MESSAGE_VALUE, (LOCAL_HOST, self.wake_file_port))
 
     def __add_connection_epoll(self, connection_socket, connection_address, connection_port):
-        self.epoll.register(connection_socket)
+        # retrieves the connection socket file descriptor
+        connection_socket_file_descriptor = connection_socket.fileno()
 
-    def __remove_connection_epoll(self, connection_socket):
-        self.epoll.unregister(connection_socket)
+        self.epoll.register(connection_socket_file_descriptor)
+
+    def __remove_connection_epoll(self, service_connection):
+        # retrieves the connection socket
+        connection_socket = service_connection.get_connection_socket()
+
+        # retrieves the connection socket file descriptor
+        connection_socket_file_descriptor = connection_socket.fileno()
+
+        self.epoll.unregister(connection_socket_file_descriptor)
 
     def __poll_connections_base(self, poll_timeout):
         # in case no service connection sockets exist
@@ -816,13 +860,18 @@ class AbstractServiceConnectionHandler:
         selected_values_read = []
 
         # iterates over all the events
-        for event in events:
-            # retrieves the file descriptor
-            file_descriptor = event.data.fd
+        for connection_socket_file_descriptor, event in events:
+            # in case the event is not ready for input or hang-up
+            if not event & NEW_VALUE_MASK:
+                # continues the loop
+                continue
 
-            # adds the file descriptor to the selected
+            # retrieves the connection socket, using the connection socket file descriptor
+            connection_socket = self.connection_socket_file_descriptor_connection_socket_map[connection_socket_file_descriptor]
+
+            # adds the connection socket to the selected
             # values for read list
-            selected_values_read.append(file_descriptor)
+            selected_values_read.append(connection_socket)
 
         # processes the poll connections
         self.__poll_connections_process(selected_values_read)
