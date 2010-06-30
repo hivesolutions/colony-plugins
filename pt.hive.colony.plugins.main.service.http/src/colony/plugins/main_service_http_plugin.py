@@ -57,9 +57,9 @@ class MainServiceHttpPlugin(colony.plugins.plugin_system.Plugin):
                  colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_http/http/resources/baf.xml"}
     capabilities = ["service.http", "build_automation_item"]
-    capabilities_allowed = ["http_service_handler", "http_service_encoding", "http_service_error_handler", "socket_provider"]
+    capabilities_allowed = ["http_service_handler", "http_service_encoding", "http_service_error_handler"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
+                    "pt.hive.colony.plugins.main.service.utils", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["main_service_http.http.main_service_http_exceptions", "main_service_http.http.main_service_http_system"]
@@ -69,9 +69,8 @@ class MainServiceHttpPlugin(colony.plugins.plugin_system.Plugin):
     http_service_handler_plugins = []
     http_service_encoding_plugins = []
     http_service_error_handler_plugins = []
-    socket_provider_plugins = []
 
-    thread_pool_manager_plugin = None
+    main_service_utils_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -119,10 +118,6 @@ class MainServiceHttpPlugin(colony.plugins.plugin_system.Plugin):
     def http_service_error_handler_load_allowed(self, plugin, capability):
         self.http_service_error_handler_plugins.append(plugin)
 
-    @colony.plugins.decorators.load_allowed_capability("socket_provider")
-    def socket_provider_load_allowed(self, plugin, capability):
-        self.socket_provider_plugins.append(plugin)
-
     @colony.plugins.decorators.unload_allowed_capability("http_service_handler")
     def http_service_handler_unload_allowed(self, plugin, capability):
         self.http_service_handler_plugins.remove(plugin)
@@ -136,13 +131,9 @@ class MainServiceHttpPlugin(colony.plugins.plugin_system.Plugin):
     def http_service_error_handler_unload_allowed(self, plugin, capability):
         self.http_service_error_handler_plugins.remove(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("socket_provider")
-    def socket_provider_unload_allowed(self, plugin, capability):
-        self.socket_provider_plugins.remove(plugin)
+    def get_main_service_utils_plugin(self):
+        return self.main_service_utils_plugin
 
-    def get_thread_pool_manager_plugin(self):
-        return self.thread_pool_manager_plugin
-
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.threads.thread_pool_manager")
-    def set_thread_pool_manager_plugin(self, thread_pool_manager_plugin):
-        self.thread_pool_manager_plugin = thread_pool_manager_plugin
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.service.utils")
+    def set_main_service_utils_plugin(self, main_service_utils_plugin):
+        self.main_service_utils_plugin = main_service_utils_plugin

@@ -71,84 +71,6 @@ class EncodingNotFound(MainServiceHttpException):
 
         return "Encoding not found: %s" % self.message
 
-class SocketProviderNotFound(MainServiceHttpException):
-    """
-    The socket provider not found class.
-    """
-
-    def __init__(self, message):
-        """
-        Constructor of the class.
-
-        @type message: String
-        @param message: The message to be printed.
-        """
-
-        MainServiceHttpException.__init__(self)
-        self.message = message
-
-    def __str__(self):
-        """
-        Returns the string representation of the class.
-
-        @rtype: String
-        @return: The string representation of the class.
-        """
-
-        return "Socket provider not found: %s" % self.message
-
-class ServerRequestTimeout(MainServiceHttpException):
-    """
-    The server request timeout class.
-    """
-
-    def __init__(self, message):
-        """
-        Constructor of the class.
-
-        @type message: String
-        @param message: The message to be printed.
-        """
-
-        MainServiceHttpException.__init__(self)
-        self.message = message
-
-    def __str__(self):
-        """
-        Returns the string representation of the class.
-
-        @rtype: String
-        @return: The string representation of the class.
-        """
-
-        return "Server request timeout: %s" % self.message
-
-class ClientRequestTimeout(MainServiceHttpException):
-    """
-    The client request timeout class.
-    """
-
-    def __init__(self, message):
-        """
-        Constructor of the class.
-
-        @type message: String
-        @param message: The message to be printed.
-        """
-
-        MainServiceHttpException.__init__(self)
-        self.message = message
-
-    def __str__(self):
-        """
-        Returns the string representation of the class.
-
-        @rtype: String
-        @return: The string representation of the class.
-        """
-
-        return "Client request timeout: %s" % self.message
-
 class ClientRequestSecurityViolation(MainServiceHttpException):
     """
     The client request security violation request timeout class.
@@ -174,32 +96,6 @@ class ClientRequestSecurityViolation(MainServiceHttpException):
         """
 
         return "Client request security violation: %s" % self.message
-
-class RequestClosed(MainServiceHttpException):
-    """
-    The request closed class.
-    """
-
-    def __init__(self, message):
-        """
-        Constructor of the class.
-
-        @type message: String
-        @param message: The message to be printed.
-        """
-
-        MainServiceHttpException.__init__(self)
-        self.message = message
-
-    def __str__(self):
-        """
-        Returns the string representation of the class.
-
-        @rtype: String
-        @return: The string representation of the class.
-        """
-
-        return "Request closed: %s" % self.message
 
 class HttpRuntimeException(MainServiceHttpException):
     """
@@ -326,3 +222,28 @@ class HttpInvalidMultipartRequestException(HttpRuntimeException):
         """
 
         return "Http invalid multipart request exception: %s" % self.message
+
+class HttpDataRetrievalException(HttpRuntimeException):
+    """
+    The http data retrieval exception.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        HttpRuntimeException.__init__(self, message)
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Http data retrieval exception: %s" % self.message

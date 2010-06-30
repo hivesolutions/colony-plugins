@@ -41,10 +41,7 @@ import sys
 import time
 import copy
 import types
-import socket
-import select
 import datetime
-import threading
 import traceback
 
 import colony.libs.string_buffer_util
@@ -63,7 +60,7 @@ MULTIPART_FORM_DATA_VALUE = "multipart/form-data"
 WWW_FORM_URLENCODED_VALUE = "application/x-www-form-urlencoded"
 """ The www form urlencoded value """
 
-BIND_HOST_VALUE = ""
+BIND_HOST = ""
 """ The bind host value """
 
 CLIENT_CONNECTION_TIMEOUT = 1
@@ -90,11 +87,17 @@ SERVER_IDENTIFIER = SERVER_NAME + "/" + SERVER_VERSION + " (Python/" + sys.platf
 NUMBER_THREADS = 15
 """ The number of threads """
 
-MAX_NUMBER_THREADS = 30
+MAXIMUM_NUMBER_THREADS = 30
 """ The maximum number of threads """
 
 SCHEDULING_ALGORITHM = 2
 """ The scheduling algorithm """
+
+MAXIMUM_NUMBER_WORKS_THREAD = 5
+""" The maximum number of works per thread """
+
+WORK_SCHEDULING_ALGORITHM = 1
+""" The work scheduling algorithm """
 
 DEFAULT_PORT = 8080
 """ The default port """
@@ -183,6 +186,12 @@ CONTENTS_VALUE = "contents"
 DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
 """ The date format """
 
+ENCODING_VALUE = "encoding"
+""" The encoding value """
+
+ENCODING_HANDLER_VALUE = "encoding_handler"
+""" The encoding handler value """
+
 DEFAULT_CONTENT_TYPE_CHARSET_VALUE = "default_content_type_charset"
 """ The default content type charset value """
 
@@ -206,20 +215,8 @@ class MainServiceHttp:
     http_service_handler_plugins_map = {}
     """ The http service handler plugins map """
 
-    http_socket = None
-    """ The http socket """
-
-    http_connection_active = False
-    """ The http connection active flag """
-
-    http_client_thread_pool = None
-    """ The http client thread pool """
-
-    http_connection_close_event = None
-    """ The http connection close event """
-
-    http_connection_close_end_event = None
-    """ The http connection close end event """
+    http_service = None
+    """ The http service reference """
 
     def __init__(self, main_service_http_plugin):
         """
@@ -232,8 +229,6 @@ class MainServiceHttp:
         self.main_service_http_plugin = main_service_http_plugin
 
         self.http_service_handler_plugin_map = {}
-        self.http_connection_close_event = threading.Event()
-        self.http_connection_close_end_event = threading.Event()
 
     def start_service(self, parameters):
         """
@@ -243,224 +238,28 @@ class MainServiceHttp:
         @param parameters: The parameters to start the service.
         """
 
-        # retrieves the socket provider value
-        socket_provider = parameters.get("socket_provider", None)
+        # retrieves the main service utils plugin
+        main_service_utils_plugin = self.main_service_http_plugin.main_service_utils_plugin
 
-        # retrieves the port value
-        port = parameters.get("port", DEFAULT_PORT)
+        # generates the parameters
+        service_parameters = self._generate_service_parameters(parameters)
 
-        # retrieves the encoding value
-        encoding = parameters.get("encoding", None)
+        # generates the http service using the given service parameters
+        self.http_service = main_service_utils_plugin.generate_service(service_parameters)
 
-        # retrieves the service configuration property
-        service_configuration_property = self.main_service_http_plugin.get_configuration_property("server_configuration")
-
-        # in case the service configuration property is defined
-        if service_configuration_property:
-            # retrieves the service configuration
-            service_configuration = service_configuration_property.get_data()
-        else:
-            # sets the service configuration as an empty map
-            service_configuration = {}
-
-        # retrieves the socket provider configuration value
-        socket_provider = service_configuration.get("default_socket_provider", socket_provider)
-
-        # retrieves the port configuration value
-        port = service_configuration.get("default_port", port)
-
-        # retrieves the encoding configuration value
-        encoding = service_configuration.get("default_encoding", encoding)
-
-        # start the server for the given socket provider, port and encoding
-        self.start_server(socket_provider, port, encoding, service_configuration)
-
-        # clears the http connection close event
-        self.http_connection_close_event.clear()
-
-        # sets the http connection close end event
-        self.http_connection_close_end_event.set()
+        # starts the http service
+        self.http_service.start_service()
 
     def stop_service(self, parameters):
         """
         Stops the service.
 
         @type parameters: Dictionary
-        @param parameters: The parameters to start the service.
+        @param parameters: The parameters to stop the service.
         """
 
-        self.stop_server()
-
-    def start_server(self, socket_provider, port, encoding, service_configuration):
-        """
-        Starts the server in the given port.
-
-        @type socket_provider: String
-        @param socket_provider: The name of the socket provider to be used.
-        @type port: int
-        @param port: The port to start the server.
-        @type encoding: String
-        @param encoding: The encoding to be used in the connection.
-        @type service_configuration: Dictionary
-        @param service_configuration: The service configuration map.
-        """
-
-        # retrieves the thread pool manager plugin
-        thread_pool_manager_plugin = self.main_service_http_plugin.thread_pool_manager_plugin
-
-        # retrieves the task descriptor class
-        task_descriptor_class = thread_pool_manager_plugin.get_thread_task_descriptor_class()
-
-        # creates the http client thread pool
-        self.http_client_thread_pool = thread_pool_manager_plugin.create_new_thread_pool("http pool",
-                                                                                         "pool to support http client connections",
-                                                                                         NUMBER_THREADS, SCHEDULING_ALGORITHM, MAX_NUMBER_THREADS)
-
-        # starts the http client thread pool
-        self.http_client_thread_pool.start_pool()
-
-        # sets the http connection active flag as true
-        self.http_connection_active = True
-
-        # sets the encoding handler as null
-        encoding_handler = None
-
-        # in case the encoding is defined
-        if encoding:
-            # retrieves the http service encoding plugins
-            http_service_encoding_plugins = self.main_service_http_plugin.http_service_encoding_plugins
-
-            # iterates over all the http service encoding plugins
-            for http_service_encoding_plugin in http_service_encoding_plugins:
-                # retrieves the encoding name from the http service encoding plugin
-                http_service_encoding_plugin_encoding_name = http_service_encoding_plugin.get_encoding_name()
-
-                # in case the names are the same
-                if http_service_encoding_plugin_encoding_name == encoding:
-                    encoding_handler = http_service_encoding_plugin.encode_contents
-                    break
-
-            # in case there is no encoding handler found
-            if not encoding_handler:
-                raise main_service_http_exceptions.EncodingNotFound("encoding %s not found" % encoding)
-
-        # in case the socket provider is defined
-        if socket_provider:
-            # retrieves the socket provider plugins
-            socket_provider_plugins = self.main_service_http_plugin.socket_provider_plugins
-
-            # iterates over all the socket provider plugins
-            for socket_provider_plugin in socket_provider_plugins:
-                # retrieves the provider name from the socket provider plugin
-                socket_provider_plugin_provider_name = socket_provider_plugin.get_provider_name()
-
-                # in case the names are the same
-                if socket_provider_plugin_provider_name == socket_provider:
-                    # the parameters for the socket provider
-                    parameters = {"server_side" : True, "do_handshake_on_connect" : False}
-
-                    # creates a new http socket with the socket provider plugin
-                    self.http_socket = socket_provider_plugin.provide_socket_parameters(parameters)
-
-            # in case the socket was not created, no socket provider found
-            if not self.http_socket:
-                raise main_service_http_exceptions.SocketProviderNotFound("socket provider %s not found" % socket_provider)
-        else:
-            # creates the http socket
-            self.http_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-        # sets the socket to be able to reuse the socket
-        self.http_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
-        # binds the http socket
-        self.http_socket.bind((BIND_HOST_VALUE, port))
-
-        # start listening in the http socket
-        self.http_socket.listen(5)
-
-        # loops while the http connection is active
-        while not self.http_connection_close_event.isSet():
-            try:
-                # sets the socket to non blocking mode
-                self.http_socket.setblocking(0)
-
-                # starts the select values
-                selected_values = ([], [], [])
-
-                # iterates while there is no selected values
-                while selected_values == ([], [], []):
-                    # in case the connection is closed
-                    if self.http_connection_close_event.isSet():
-                        # closes the http socket
-                        self.http_socket.close()
-
-                        return
-
-                    # selects the values
-                    selected_values = select.select([self.http_socket], [], [], CLIENT_CONNECTION_TIMEOUT)
-
-                # sets the socket to blocking mode
-                self.http_socket.setblocking(1)
-            except:
-                # prints info message about connection
-                self.main_service_http_plugin.info("The socket is not valid for selection of the pool")
-
-                return
-
-            # in case the connection is closed
-            if self.http_connection_close_event.isSet():
-                # closes the http socket
-                self.http_socket.close()
-
-                return
-
-            try:
-                # accepts the connection retrieving the http connection object and the address
-                http_connection, http_address = self.http_socket.accept()
-
-                # creates a new http client service task, with the given http connection, address, encoding and encoding handler
-                http_client_service_task = HttpClientServiceTask(self.main_service_http_plugin, http_connection, http_address, port, encoding, service_configuration, encoding_handler)
-
-                # creates a new task descriptor
-                task_descriptor = task_descriptor_class(start_method = http_client_service_task.start,
-                                                        stop_method = http_client_service_task.stop,
-                                                        pause_method = http_client_service_task.pause,
-                                                        resume_method = http_client_service_task.resume)
-
-                # inserts the new task descriptor into the http client thread pool
-                self.http_client_thread_pool.insert_task(task_descriptor)
-
-                # prints a debug message about the number of threads in pool
-                self.main_service_http_plugin.debug("Number of threads in pool: %d" % self.http_client_thread_pool.current_number_threads)
-            except Exception, exception:
-                # prints an error message about the problem accepting the connection
-                self.main_service_http_plugin.error("Error accepting connection: " + str(exception))
-
-        # closes the http socket
-        self.http_socket.close()
-
-    def stop_server(self):
-        """
-        Stops the server.
-        """
-
-        # sets the http connection active flag as false
-        self.http_connection_active = False
-
-        # sets the http connection close event
-        self.http_connection_close_event.set()
-
-        # waits for the http connection close end event
-        self.http_connection_close_end_event.wait()
-
-        # clears the http connection close end event
-        self.http_connection_close_end_event.clear()
-
-        # stops all the pool tasks
-        self.http_client_thread_pool.stop_pool_tasks()
-
-        # stops the pool
-        self.http_client_thread_pool.stop_pool()
+        # starts the http service
+        self.http_service.stop_service()
 
     def http_service_handler_load(self, http_service_handler_plugin):
         # retrieves the plugin handler name
@@ -474,98 +273,178 @@ class MainServiceHttp:
 
         del self.http_service_handler_plugins_map[handler_name]
 
-class HttpClientServiceTask:
+    def _get_service_configuration(self):
+        # retrieves the service configuration property
+        service_configuration_property = self.main_service_http_plugin.get_configuration_property("server_configuration")
+
+        # in case the service configuration property is defined
+        if service_configuration_property:
+            # retrieves the service configuration
+            service_configuration = service_configuration_property.get_data()
+        else:
+            # sets the service configuration as an empty map
+            service_configuration = {}
+
+        return service_configuration
+
+    def _get_encoding_handler(self, encoding):
+        # in case no encoding is defined
+        if not encoding:
+            # returns none
+            return None
+
+        # retrieves the http service encoding plugins
+        http_service_encoding_plugins = self.main_service_http_plugin.http_service_encoding_plugins
+
+        # iterates over all the http service encoding plugins
+        for http_service_encoding_plugin in http_service_encoding_plugins:
+            # retrieves the encoding name from the http service encoding plugin
+            http_service_encoding_plugin_encoding_name = http_service_encoding_plugin.get_encoding_name()
+
+            # in case the names are the same
+            if http_service_encoding_plugin_encoding_name == encoding:
+                # retrieves the encode contents method as the encoding handler
+                encoding_handler = http_service_encoding_plugin.encode_contents
+
+                # returns the encoding handler
+                return encoding_handler
+
+        # in case there is no encoding handler found
+        if not encoding_handler:
+            raise main_service_http_exceptions.EncodingNotFound("encoding %s not found" % encoding)
+
+    def _generate_service_parameters(self, parameters):
+        """
+        Retrieves the service parameters map from the base parameters
+        map.
+
+        @type parameters: Dictionary
+        @param parameters: The base parameters map to be used to build
+        the final service parameters map.
+        @rtype: Dictionary
+        @return: The final service parameters map.
+        """
+
+        # retrieves the socket provider value
+        socket_provider = parameters.get("socket_provider", None)
+
+        # retrieves the port value
+        port = parameters.get("port", DEFAULT_PORT)
+
+        # retrieves the encoding value
+        encoding = parameters.get("encoding", None)
+
+        # retrieves the service configuration
+        service_configuration = self._get_service_configuration()
+
+        # retrieves the socket provider configuration value
+        socket_provider = service_configuration.get("default_socket_provider", socket_provider)
+
+        # retrieves the port configuration value
+        port = service_configuration.get("default_port", port)
+
+        # retrieves the encoding configuration value
+        encoding = service_configuration.get("default_encoding", encoding)
+
+        # retrieves the encoding handler for the given encoding
+        encoding_handler = self._get_encoding_handler(encoding)
+
+        # creates the pool configuration map
+        pool_configuration = {"name" : "http pool",
+                              "description" : "pool to support http client connections",
+                              "number_threads" : NUMBER_THREADS,
+                              "scheduling_algorithm" : SCHEDULING_ALGORITHM,
+                              "maximum_number_threads" : MAXIMUM_NUMBER_THREADS,
+                              "maximum_number_works_thread" : MAXIMUM_NUMBER_WORKS_THREAD,
+                              "work_scheduling_algorithm" : WORK_SCHEDULING_ALGORITHM}
+
+        # creates the extra parameters map
+        extra_parameters = {"encoding" : encoding,
+                            "encoding_handler" : encoding_handler}
+
+        # creates the parameters map
+        parameters = {"service_plugin" : self.main_service_http_plugin,
+                      "service_handling_task_class" : HttpClientServiceHandler,
+                      "socket_provider" : socket_provider,
+                      "bind_host" : BIND_HOST,
+                      "port" : port,
+                      "service_configuration" : service_configuration,
+                      "extra_parameters" :  extra_parameters,
+                      "pool_configuration" : pool_configuration,
+                      "client_connection_timeout" : CLIENT_CONNECTION_TIMEOUT}
+
+        # returns the parameters
+        return parameters
+
+class HttpClientServiceHandler:
     """
-    The http client service task class.
+    The http client service handler class.
     """
 
-    main_service_http_plugin = None
-    """ The main service http plugin """
+    service_plugin = None
+    """ The service plugin """
 
-    http_connection = None
-    """ The http connection """
-
-    http_address = None
-    """ The http address """
-
-    port = None
-    """ The http port """
-
-    encoding = None
-    """ The encoding """
+    service_connection_handler = None
+    """ The service connection handler """
 
     service_configuration = None
     """ The service configuration """
 
+    service_utils_exception_class = None
+    """" The service utils exception class """
+
+    encoding = None
+    """ The encoding """
+
     encoding_handler = None
     """ The encoding handler """
-
-    current_request_handler = None
-    """ The current request handler being used """
 
     content_type_charset = DEFAULT_CHARSET
     """ The content type charset """
 
-    def __init__(self, main_service_http_plugin, http_connection, http_address, port, encoding, service_configuration, encoding_handler):
-        self.main_service_http_plugin = main_service_http_plugin
-        self.http_connection = http_connection
-        self.http_address = http_address
-        self.port = port
-        self.encoding = encoding
+    def __init__(self, service_plugin, service_connection_handler, service_configuration, service_utils_exception_class, extra_parameters):
+        """
+        Constructor of the class.
+
+        @type service_plugin: Plugin
+        @param service_plugin: The service plugin.
+        @type service_connection_handler: AbstractServiceConnectionHandler
+        @param service_connection_handler: The abstract service connection handler, that
+        handles this connection.
+        @type service_configuration: Dictionary
+        @param service_configuration: The service configuration.
+        @type main_service_utils_exception: Class
+        @param main_service_utils_exception: The service utils exception class.
+        @type extra_parameters: Dictionary
+        @param extra_parameters: The extra parameters.
+        """
+
+        self.service_plugin = service_plugin
+        self.service_connection_handler = service_connection_handler
         self.service_configuration = service_configuration
-        self.encoding_handler = encoding_handler
+        self.service_utils_exception_class = service_utils_exception_class
 
-        self.current_request_handler = self.http_request_handler
+        self.encoding = extra_parameters.get(ENCODING_VALUE, None)
+        self.encoding_handler = extra_parameters.get(ENCODING_HANDLER_VALUE, None)
+        self.content_type_charset = self.service_configuration.get(DEFAULT_CONTENT_TYPE_CHARSET_VALUE, DEFAULT_CHARSET)
 
-        if DEFAULT_CONTENT_TYPE_CHARSET_VALUE in service_configuration:
-            # sets the content type charset to be used in the responses
-            self.content_type_charset = self.service_configuration[DEFAULT_CONTENT_TYPE_CHARSET_VALUE]
-
-    def start(self):
+    def handle_request(self, service_connection, request_timeout = REQUEST_TIMEOUT):
         # retrieves the http service handler plugins map
-        http_service_handler_plugins_map = self.main_service_http_plugin.main_service_http.http_service_handler_plugins_map
+        http_service_handler_plugins_map = self.service_plugin.main_service_http.http_service_handler_plugins_map
 
-        # prints debug message about connection
-        self.main_service_http_plugin.debug("Connected to: %s" % str(self.http_address))
-
-        # sets the request timeout
-        request_timeout = REQUEST_TIMEOUT
-
-        # iterates indefinitely
-        while True:
-            # handles the current request if it returns false
-            # the connection was closed or is meant to be closed
-            if not self.current_request_handler(request_timeout, http_service_handler_plugins_map):
-                # breaks the cycle to close the http connection
-                break
-
-        # closes the http connection
-        self.http_connection.close()
-
-    def stop(self):
-        # closes the http connection
-        self.http_connection.close()
-
-    def pause(self):
-        pass
-
-    def resume(self):
-        pass
-
-    def http_request_handler(self, request_timeout, http_service_handler_plugins_map):
         try:
             # retrieves the request
-            request = self.retrieve_request(request_timeout)
+            request = self.retrieve_request(service_connection, request_timeout)
         except main_service_http_exceptions.MainServiceHttpException:
             # prints a debug message about the connection closing
-            self.main_service_http_plugin.debug("Connection: %s closed by peer, timeout or invalid request" % str(self.http_address))
+            self.service_plugin.debug("Connection: %s closed by peer, timeout or invalid request" % str(service_connection))
 
             # returns false (connection closed)
             return False
 
         try:
             # prints debug message about request
-            self.main_service_http_plugin.debug("Handling request: %s" % str(request))
+            self.service_plugin.debug("Handling request: %s" % str(request))
 
             # verifies the request information, tries to find any possible
             # security problem in it
@@ -607,32 +486,39 @@ class HttpClientServiceTask:
             http_service_handler_plugin.handle_request(request)
 
             # sends the request to the client (response)
-            self.send_request(request)
+            self.send_request(service_connection, request)
 
             # in case the connection is meant to be kept alive
             if self.keep_alive(request):
-                self.main_service_http_plugin.debug("Connection: %s kept alive for %ss" % (str(self.http_address), str(request_timeout)))
+                # prints a debug message
+                self.service_plugin.debug("Connection: %s kept alive for %ss" % (str(service_connection), str(request_timeout)))
+
+                # sets the cancel to the next seconds
+                service_connection.cancel(request_timeout)
             # in case the connection is not meant to be kept alive
             else:
-                self.main_service_http_plugin.debug("Connection: %s closed" % str(self.http_address))
+                # prints a debug message
+                self.service_plugin.debug("Connection: %s closed" % str(service_connection))
 
                 # returns false (connection closed)
                 return False
 
         except Exception, exception:
             # prints info message about exception
-            self.main_service_http_plugin.info("There was an exception handling the request: " + str(exception))
+            self.service_plugin.info("There was an exception handling the request: " + str(exception))
 
             # sends the exception
-            self.send_exception(request, exception)
+            self.send_exception(service_connection, request, exception)
 
         # returns true (connection remains open)
         return True
 
-    def retrieve_request(self, request_timeout = REQUEST_TIMEOUT):
+    def retrieve_request(self, service_connection, request_timeout = REQUEST_TIMEOUT):
         """
         Retrieves the request from the received message.
 
+        @type service_connection: ServiceConnection
+        @param service_connection: The service connection to be used.
         @type request_timeout: int
         @param request_timeout: The timeout for the request retrieval.
         @rtype: HttpRequest
@@ -666,8 +552,12 @@ class HttpClientServiceTask:
 
         # continuous loop
         while True:
-            # retrieves the data
-            data = self.retrieve_data(request_timeout)
+            try:
+                # retrieves the data
+                data = service_connection.retrieve_data(request_timeout)
+            except self.service_utils_exception_class:
+                # raises the http data retrieval exception
+                raise main_service_http_exceptions.HttpDataRetrievalException("problem retrieving data")
 
             # retrieves the data length
             data_length = len(data)
@@ -884,34 +774,12 @@ class HttpClientServiceTask:
             # sets the received message as the original one (fallback procedure)
             request.received_message = received_message_value
 
-    def retrieve_data(self, request_timeout = REQUEST_TIMEOUT, chunk_size = CHUNK_SIZE):
-        try:
-            # sets the connection to non blocking mode
-            self.http_connection.setblocking(0)
-
-            # runs the select in the http connection, with timeout
-            selected_values = select.select([self.http_connection], [], [], request_timeout)
-
-            # sets the connection to blocking mode
-            self.http_connection.setblocking(1)
-        except:
-            raise main_service_http_exceptions.RequestClosed("invalid socket")
-
-        if selected_values == ([], [], []):
-            self.http_connection.close()
-            raise main_service_http_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
-        try:
-            # receives the data in chunks
-            data = self.http_connection.recv(chunk_size)
-        except:
-            raise main_service_http_exceptions.ClientRequestTimeout("timeout")
-
-        return data
-
-    def send_exception(self, request, exception):
+    def send_exception(self, service_connection, request, exception):
         """
         Sends the exception to the given request for the given exception.
 
+        @type service_connection: ServiceConnection
+        @param service_connection: The service connection to be used.
         @type request: HttpRequest
         @param request: The request to send the exception.
         @type exception: Exception
@@ -922,7 +790,7 @@ class HttpClientServiceTask:
         preferred_error_handlers_list = self.service_configuration.get("preferred_error_handlers", (DEFAULT_VALUE,))
 
         # retrieves the http service error handler plugins
-        http_service_error_handler_plugins = self.main_service_http_plugin.http_service_error_handler_plugins
+        http_service_error_handler_plugins = self.service_plugin.http_service_error_handler_plugins
 
         # iterates over all the preferred error handlers
         for preferred_error_handler in preferred_error_handlers_list:
@@ -959,9 +827,9 @@ class HttpClientServiceTask:
                     break
 
         # sends the request to the client (response)
-        self.send_request(request)
+        self.send_request(service_connection, request)
 
-    def send_request(self, request):
+    def send_request(self, service_connection, request):
         # in case the encoding is defined
         if self.encoding:
             # sets the encoded flag
@@ -973,37 +841,38 @@ class HttpClientServiceTask:
             # sets the encoding name
             request.set_encoding_name(self.encoding)
 
+        # in case the reques is mediated
         if request.is_mediated():
-            self.send_request_mediated(request)
+            self.send_request_mediated(service_connection, request)
         elif request.is_chunked_encoded():
-            self.send_request_chunked(request)
+            self.send_request_chunked(service_connection, request)
         else:
-            self.send_request_simple(request)
+            self.send_request_simple(service_connection, request)
 
-    def send_request_simple(self, request):
+    def send_request_simple(self, service_connection, request):
         # retrieves the result value
         result_value = request.get_result()
 
         try:
             # sends the result value to the client
-            self.http_connection.sendall(result_value)
+            service_connection.send(result_value)
         except:
             # error in the client side
-            self.main_service_http_plugin.error("Problem sending request simple")
+            self.service_plugin.error("Problem sending request simple")
 
             # returns immediately
             return
 
-    def send_request_mediated(self, request):
+    def send_request_mediated(self, service_connection, request):
         # retrieves the result value
         result_value = request.get_result()
 
         try:
             # sends the result value to the client
-            self.http_connection.sendall(result_value)
+            service_connection.send(result_value)
         except:
             # error in the client side
-            self.main_service_http_plugin.error("Problem sending request mediated")
+            self.service_plugin.error("Problem sending request mediated")
 
             # returns immediately
             return
@@ -1023,24 +892,24 @@ class HttpClientServiceTask:
 
             try:
                 # sends the mediated value to the client
-                self.http_connection.sendall(mediated_value)
+                service_connection.send(mediated_value)
             except:
                 # error in the client side
-                self.main_service_http_plugin.error("Problem sending request mediated")
+                self.service_plugin.error("Problem sending request mediated")
 
                 # returns immediately
                 return
 
-    def send_request_chunked(self, request):
+    def send_request_chunked(self, service_connection, request):
         # retrieves the result value
         result_value = request.get_result()
 
         try:
             # sends the result value to the client
-            self.http_connection.sendall(result_value)
+            service_connection.send(result_value)
         except:
             # error in the client side
-            self.main_service_http_plugin.error("Problem sending request chunked")
+            self.service_plugin.error("Problem sending request chunked")
 
             # returns immediately
             return
@@ -1053,7 +922,7 @@ class HttpClientServiceTask:
             # in case the read is complete
             if not chunk_value:
                 # sends the final empty chunk
-                self.http_connection.sendall("0\r\n\r\n")
+                service_connection.send("0\r\n\r\n")
 
                 # returns immediately
                 return
@@ -1069,10 +938,10 @@ class HttpClientServiceTask:
                 message_value = length_chunk_value_hexadecimal_string + chunk_value + "\r\n"
 
                 # sends the message value to the client
-                self.http_connection.sendall(message_value)
+                service_connection.send(message_value)
             except:
                 # error in the client side
-                self.main_service_http_plugin.error("Problem sending request chunked")
+                self.service_plugin.error("Problem sending request chunked")
 
                 # returns immediately
                 return
@@ -1517,8 +1386,11 @@ class HttpRequest:
     The http request class.
     """
 
-    http_client_service_task = None
-    """ The http client service task """
+    http_client_service_handler = None
+    """ The http client service handler """
+
+    service_connection = None
+    """ The service connection """
 
     operation_type = "none"
     """ The operation type """
@@ -1640,8 +1512,9 @@ class HttpRequest:
     properties = {}
     """ The properties """
 
-    def __init__(self, http_client_service_task = None, content_type_charset = DEFAULT_CHARSET):
-        self.http_client_service_task = http_client_service_task
+    def __init__(self, http_client_service_handler = None, service_connection = None, content_type_charset = DEFAULT_CHARSET):
+        self.http_client_service_handler = http_client_service_handler
+        self.service_connection = service_connection
         self.content_type_charset = content_type_charset
 
         self.request_time = time.time()
@@ -2034,17 +1907,16 @@ class HttpRequest:
         # returns the result value
         return result_value
 
-    def get_connection_information(self):
+    def get_service_connection(self):
         """
-        Returns a tuple containing the host address and
-        the host port for the connection.
+        Returns a the service connection object, that
+        contains the connection information.
 
-        @rtype: Tuple
-        @return: A tuple containing the host address and
-        the host port for the connection.
+        @rtype: ServiceConnection
+        @return: The service connection to be used.
         """
 
-        return self.http_client_service_task.http_address
+        return self.service_connection
 
     def get_attributes_list(self):
         """
@@ -2231,7 +2103,7 @@ class HttpRequest:
                     return False
             except:
                 # prints a warning for not being able to check the modification date
-                self.http_client_service_task.main_service_http_plugin.warning("Problem while checking modification date")
+                self.http_client_service_handler.service_plugin.warning("Problem while checking modification date")
 
         # retrieves the if none match value
         if_none_match_header = self.get_header(IF_NONE_MATCH_VALUE)
