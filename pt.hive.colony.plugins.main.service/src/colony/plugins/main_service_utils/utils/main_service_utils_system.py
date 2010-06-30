@@ -89,7 +89,7 @@ DO_HANDSHAKE_ON_CONNECT_VALUE = "do_handshake_on_connect"
 """ The do handshake on connect value """
 
 PORT_RANGES = ((38001, 39999), (40001, 42999))
-""" The ranges of port available for  """
+""" The ranges of port available for services """
 
 LOCAL_HOST = "127.0.0.1"
 """ The local host value """
