@@ -97,7 +97,7 @@ LOCAL_HOST = "127.0.0.1"
 DUMMY_MESSAGE_VALUE = "_"
 """ the dummy message value """
 
-NEW_VALUE_MASK = select.EPOLLIN | select.EPOLLPRI | select.EPOLLHUP
+NEW_VALUE_MASK = select.EPOLLIN | select.EPOLLPRI | select.EPOLLHUP #@UndefinedVariable
 """ The new value received mask value """
 
 class MainServiceUtils:
@@ -622,7 +622,7 @@ class AbstractServiceConnectionHandler:
 
     def __start_epoll(self):
         # creates a new epoll object
-        self.epoll = select.epoll()
+        self.epoll = select.epoll() #@UndefinedVariable
 
     def __stop_base(self):
         # retrieves the wake file descriptor
