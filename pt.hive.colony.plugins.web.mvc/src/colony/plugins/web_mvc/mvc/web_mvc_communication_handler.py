@@ -50,8 +50,8 @@ class WebMvcCommunicationHandler:
     connection_name_connections_map = {}
     """ The map associating the connection name with the connections """
 
-    connection_information_connections_map = {}
-    """ The map associating the connection information with the connections """
+    service_connection_connections_map = {}
+    """ The map associating the service connection with the connections """
 
     connection_complete_information_connection_map = {}
     """ The map associating the connection complete information with the connection """
@@ -67,7 +67,7 @@ class WebMvcCommunicationHandler:
         self.web_mvc_plugin = web_mvc_plugin
 
         self.connection_name_connections_map = {}
-        self.connection_information_connections_map = {}
+        self.service_connection_connections_map = {}
         self.connection_complete_information_connection_map = {}
 
     def handle_request(self, request, data_handler_method, connection_changed_handler_method, connection_name):
@@ -111,14 +111,14 @@ class WebMvcCommunicationHandler:
         # retrieves the random plugin
         random_plugin = self.web_mvc_plugin.random_plugin
 
-        # retrieves the connection information
-        connection_information = request.get_connection_information()
+        # retrieves the service connection
+        service_connection = request.get_service_connection()
 
         # generates a new connection id
         connection_id = random_plugin.generate_random_md5_string()
 
-        # creates a new communication connection from the connection information
-        communication_connection = CommunicationConnection(connection_id, connection_name, connection_information)
+        # creates a new communication connection from the service connection
+        communication_connection = CommunicationConnection(connection_id, connection_name, service_connection)
 
         # adds the communication connection
         self._add_communication_connection(communication_connection)
@@ -215,7 +215,7 @@ class WebMvcCommunicationHandler:
 
     def _add_communication_connection(self, communication_connection):
         self.__add_communication_connection_name_map(communication_connection)
-        self.__add_communication_connection_information_map(communication_connection)
+        self.__add_communication_service_connection_map(communication_connection)
         self.__set_communication_connection_complete_information_map(communication_connection)
 
     def _remove_communication_connection(self, communication_connection):
@@ -234,15 +234,15 @@ class WebMvcCommunicationHandler:
         # adds the communication connection to the connections list
         connections_list.append(communication_connection)
 
-    def __add_communication_connection_information_map(self, communication_connection):
-        # retrieves the connection information
-        connection_information = communication_connection.get_connection_information()
+    def __add_communication_service_connection_map(self, communication_connection):
+        # retrieves the service connection
+        service_connection = communication_connection.get_service_connection()
 
-        if not connection_information in self.connection_information_connections_map:
-            self.connection_information_connections_map[connection_information] = []
+        if not service_connection in self.service_connection_connections_map:
+            self.service_connection_connections_map[service_connection] = []
 
-        # retrieves the connection list from the connection information connections map
-        connections_list = self.connection_information_connections_map[connection_information]
+        # retrieves the connection list from the service connection connections map
+        connections_list = self.service_connection_connections_map[service_connection]
 
         # adds the communication connection to the connections list
         connections_list.append(communication_connection)
@@ -265,13 +265,13 @@ class CommunicationConnection:
     connection_name = None
     """ The connection name """
 
-    connection_information = None
-    """ The connection information for the connection """
+    service_connection = None
+    """ The service connection for the connection """
 
     message_queue = []
     """ The queue of messages pending to be sent """
 
-    def __init__(self, connection_id, connection_name, connection_information):
+    def __init__(self, connection_id, connection_name, service_connection):
         """
         Constructor of the class.
 
@@ -279,14 +279,13 @@ class CommunicationConnection:
         @param connection_id: The identifier of the connection.
         @type connection_name: String
         @param connection_name: The name of the connection.
-        @type connection_information: Tuple
-        @param connection_information: A tuple containing both the host
-        address and the host port of the connection.
+        @type service_connection: ServiceConnection
+        @param service_connection: The service connection for the connection.
         """
 
         self.connection_id = connection_id
         self.connection_name = connection_name
-        self.connection_information = connection_information
+        self.service_connection = service_connection
 
         self.message_queue = []
 
@@ -397,22 +396,22 @@ class CommunicationConnection:
 
         self.connection_name = connection_name
 
-    def get_connection_information(self):
+    def get_service_connection(self):
         """
-        Retrieves the connection information.
+        Retrieves the service connection.
 
-        @rtype: Tuple
-        @return: The connection information.
-        """
-
-        return self.connection_information
-
-    def set_connection_information(self, connection_information):
-        """
-        Sets the connection information.
-
-        @type connection_information: Tuple
-        @param connection_information: The connection information.
+        @rtype: ServiceConnection
+        @return: The service connection.
         """
 
-        self.connection_information = connection_information
+        return self.service_connection
+
+    def set_service_connection(self, service_connection):
+        """
+        Sets the service connection.
+
+        @type service_connection: ServiceConnection
+        @param service_connection: The service connection.
+        """
+
+        self.service_connection = service_connection
