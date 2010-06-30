@@ -522,7 +522,8 @@ class ThreadPoolImplementation:
         self.refresh_thread_pool_size()
 
         self.task_condition.acquire()
-        self.task_queue.remove(worker_thread_task)
+        if worker_thread_task in self.task_queue:
+            self.task_queue.remove(worker_thread_task)
         self.task_condition.notify()
         self.task_condition.release()
 
