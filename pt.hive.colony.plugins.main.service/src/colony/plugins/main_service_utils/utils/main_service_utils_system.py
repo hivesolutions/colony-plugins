@@ -80,6 +80,9 @@ POLL_TIMEOUT = 1
 REQUEST_TIMEOUT = 100
 """ The request timeout """
 
+CONNECTION_TIMEOUT = 600
+""" The connection timeout """
+
 CHUNK_SIZE = 4096
 """ The chunk size """
 
@@ -303,6 +306,9 @@ class AbstractService:
     client_connection_timeout = CLIENT_CONNECTION_TIMEOUT
     """ The client connection timeout """
 
+    connection_timeout = CONNECTION_TIMEOUT
+    """ The connection timeout """
+
     def __init__(self, main_service_utils, main_service_utils_plugin, parameters = {}):
         """
         Constructor of the class.
@@ -327,6 +333,7 @@ class AbstractService:
         self.extra_parameters = parameters.get("extra_parameters", {})
         self.pool_configuration = parameters.get("pool_configuration", {})
         self.client_connection_timeout = parameters.get("client_connection_timeout", CLIENT_CONNECTION_TIMEOUT)
+        self.connection_timeout = parameters.get("connection_timeout", CONNECTION_TIMEOUT)
 
         self.service_connection_close_event = threading.Event()
         self.service_connection_close_end_event = threading.Event()
@@ -411,7 +418,7 @@ class AbstractService:
         work_scheduling_algorithm = self.pool_configuration.get("work_scheduling_algorithm", WORK_SCHEDULING_ALGORITHM)
 
         # creates the service connection handler arguments
-        service_connection_handler_arguments = (self, self.service_plugin, self.service_configuration, self.service_handling_task_class, self.extra_parameters)
+        service_connection_handler_arguments = (self, self.service_plugin, self.service_configuration, self.connection_timeout, self.service_handling_task_class, self.extra_parameters)
 
         # creates the service client pool
         self.service_client_pool = work_pool_manager_plugin.create_new_work_pool(pool_name, pool_description, AbstractServiceConnectionHandler, service_connection_handler_arguments, number_threads, scheduling_algorithm, maximum_number_threads, maximum_number_works_thread, work_scheduling_algorithm)
@@ -572,6 +579,9 @@ class AbstractServiceConnectionHandler:
     connection_socket_file_descriptor_connection_socket_map = {}
     """ The map associating the connection socket file descriptor with the connection socket """
 
+    connection_timeout = CONNECTION_TIMEOUT
+    """ The connection timeout """
+
     client_service = None
     """ The client service reference """
 
@@ -581,7 +591,7 @@ class AbstractServiceConnectionHandler:
     wake_file_port = None
     """ The wake file port """
 
-    def __init__(self, service, service_plugin, service_configuration, client_service_class, extra_parameters):
+    def __init__(self, service, service_plugin, service_configuration, connection_timeout, client_service_class, extra_parameters):
         """
         Constructor of the class.
 
@@ -591,6 +601,8 @@ class AbstractServiceConnectionHandler:
         @param service_plugin: The service plugin.
         @type service_configuration: Dictionary
         @param service_configuration: The service configuration.
+        @type connection_timeout: float
+        @param connection_timeout: The connection timeout.
         @type client_service_class: Class
         @param client_service_class: The client service class.
         @type extra_parameters: Dictionary
@@ -600,6 +612,7 @@ class AbstractServiceConnectionHandler:
         self.service = service
         self.service_plugin = service_plugin
         self.service_configuration = service_configuration
+        self.connection_timeout = connection_timeout
 
         self.service_connections_list = []
         self.service_connection_sockets_list = []
@@ -693,9 +706,13 @@ class AbstractServiceConnectionHandler:
             # that is ready for reading
             ready_service_connection = self.service_connections_map[ready_socket]
 
-            # handles the current request if it returns false
-            # the connection was closed or is meant to be closed
-            if not self.client_service.handle_request(ready_service_connection):
+            # handles the current request if it returns true
+            # the connection is meant to remain open
+            if self.client_service.handle_request(ready_service_connection):
+                # sets the new cancel timeout
+                ready_service_connection.cancel(self.connection_timeout)
+            # otherwise the connection is meant to be closed
+            else:
                 # retrieves the connection tuple
                 connection_tuple = ready_service_connection.get_connection_tuple()
 
