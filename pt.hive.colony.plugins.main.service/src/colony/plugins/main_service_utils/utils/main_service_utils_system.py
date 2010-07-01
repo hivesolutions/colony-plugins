@@ -579,6 +579,9 @@ class AbstractServiceConnectionHandler:
     connection_socket_file_descriptor_connection_socket_map = {}
     """ The map associating the connection socket file descriptor with the connection socket """
 
+    connection_socket_connection_socket_file_descriptor_map = {}
+    """ The map associating the connection socket with the connection socket file descriptor """
+
     connection_timeout = CONNECTION_TIMEOUT
     """ The connection timeout """
 
@@ -618,6 +621,7 @@ class AbstractServiceConnectionHandler:
         self.service_connection_sockets_list = []
         self.service_connections_map = {}
         self.connection_socket_file_descriptor_connection_socket_map = {}
+        self.connection_socket_connection_socket_file_descriptor_map = {}
 
         # creates the client service object
         self.client_service = client_service_class(self.service_plugin, self, service_configuration, main_service_utils_exceptions.MainServiceUtilsException, extra_parameters)
@@ -739,8 +743,12 @@ class AbstractServiceConnectionHandler:
         # address and port
         connection_socket, connection_address, connection_port = work_reference
 
-        # adds the connection to the current service connection handler
-        self.add_connection(connection_socket, connection_address, connection_port)
+        try:
+            # adds the connection to the current service connection handler
+            self.add_connection(connection_socket, connection_address, connection_port)
+        except Exception, exception:
+            # prints an error for not being able to add connection
+            self.service.main_service_utils_plugin.error("Problem while adding connection to service connection handler: %s" % str(exception))
 
     def work_removed(self, work_reference):
         """
@@ -754,8 +762,12 @@ class AbstractServiceConnectionHandler:
         # address and port
         connection_socket, _connection_address, _connection_port = work_reference
 
-        # removes the connection using the socket as reference
-        self.remove_connection_socket(connection_socket)
+        try:
+            # removes the connection using the socket as reference
+            self.remove_connection_socket(connection_socket)
+        except Exception, exception:
+            # prints an error for not being able to remove connection
+            self.service.main_service_utils_plugin.error("Problem while removing connection from service connection handler: %s" % str(exception))
 
     def add_connection(self, connection_socket, connection_address, connection_port):
         """
@@ -791,6 +803,10 @@ class AbstractServiceConnectionHandler:
         # connection socket map
         self.connection_socket_file_descriptor_connection_socket_map[connection_socket_file_descriptor] = connection_socket
 
+        # sets the connection socket file descriptor in the connection socket connection
+        # socket file descriptor map
+        self.connection_socket_connection_socket_file_descriptor_map[connection_socket] = connection_socket_file_descriptor
+
         if EPOLL_SUPPORT:
             self.__add_connection_epoll(connection_socket, connection_address, connection_port)
 
@@ -809,7 +825,7 @@ class AbstractServiceConnectionHandler:
         connection_socket = service_connection.get_connection_socket()
 
         # retrieves the connection socket file descriptor
-        connection_socket_file_descriptor = connection_socket.fileno()
+        connection_socket_file_descriptor = self.__get_connection_socket_file_descriptor(connection_socket)
 
         if EPOLL_SUPPORT:
             self.__remove_connection_epoll(service_connection)
@@ -829,6 +845,10 @@ class AbstractServiceConnectionHandler:
         # removes the connection socket from the connection socket file descriptor
         # connection socket map
         del self.connection_socket_file_descriptor_connection_socket_map[connection_socket_file_descriptor]
+
+        # removes the connection socket file descriptor from the connection socket connection
+        # socket file descriptor map
+        del self.connection_socket_connection_socket_file_descriptor_map[connection_socket]
 
     def remove_connection_socket(self, connection_socket):
         """
@@ -893,7 +913,7 @@ class AbstractServiceConnectionHandler:
 
     def __add_connection_epoll(self, connection_socket, connection_address, connection_port):
         # retrieves the connection socket file descriptor
-        connection_socket_file_descriptor = connection_socket.fileno()
+        connection_socket_file_descriptor = self.__get_connection_socket_file_descriptor(connection_socket)
 
         # registers the connection socket in the epoll
         self.epoll.register(connection_socket_file_descriptor, REGISTER_MASK)
@@ -903,7 +923,7 @@ class AbstractServiceConnectionHandler:
         connection_socket = service_connection.get_connection_socket()
 
         # retrieves the connection socket file descriptor
-        connection_socket_file_descriptor = connection_socket.fileno()
+        connection_socket_file_descriptor = self.__get_connection_socket_file_descriptor(connection_socket)
 
         # unregisters the connection socket from the epoll
         self.epoll.unregister(connection_socket_file_descriptor)
@@ -971,6 +991,28 @@ class AbstractServiceConnectionHandler:
             # removes the wake "file" from the selected values
             # for read list
             selected_values_read.remove(self.wake_file)
+
+    def __get_connection_socket_file_descriptor(self, connection_socket):
+        """
+        Retrieves the connection socket file descriptor from
+        the given connection socket.
+
+        @type connection_socket: Socket
+        @param connection_socket: The connection socket to retrieve the
+        connection socket file descriptor.
+        @rtype: int
+        @return: The connection socket file descriptor.
+        """
+
+        try:
+            # retrieves the connection socket file descriptor
+            connection_socket_file_descriptor = connection_socket.fileno()
+        except:
+            # retrieves the connection socket file descriptor from the map
+            connection_socket_file_descriptor = self.connection_socket_connection_socket_file_descriptor_map[connection_socket]
+
+        # returns the connection socket file descriptor
+        return connection_socket_file_descriptor
 
 class ServiceConnection:
     """
