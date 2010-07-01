@@ -959,18 +959,20 @@ class HttpClientServiceHandler:
             # retrieves the connection type
             connection_type = request.headers_map[CONNECTION_VALUE]
 
-            # in case the connection is meant to be kept alive
-            # or in case is of type upgrade
-            if connection_type.lower() in ["keep-alive", "upgrade"]:
-                # returns true
-                return True
-            else:
-                # returns false
-                return False
-        # in case no connection header is defined
-        else:
-            # returns false
-            return False
+            # retrieves the connection type fields, by splitting
+            # the connection type and stripping the values
+            connection_type_fields = [value.strip() for value in connection_type.split(",")]
+
+            # iterates over all the connection type fields
+            for connection_type_field in connection_type_fields:
+                # in case the connection is meant to be kept alive
+                # or in case is of type upgrade
+                if connection_type_field.lower() in ("keep-alive", "upgrade"):
+                    # returns true
+                    return True
+
+        # returns false
+        return False
 
     def default_error_handler(self, request, error):
         """
