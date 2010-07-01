@@ -175,7 +175,7 @@ CACHE_CONTROL_VALUE = "Cache-Control"
 """ The cache control value """
 
 CONTENT_DISPOSITION_VALUE = "Content-Disposition"
-""" The content dispotion value """
+""" The content disposition value """
 
 NAME_VALUE = "name"
 """ The name value """
@@ -371,7 +371,8 @@ class MainServiceHttp:
                       "service_configuration" : service_configuration,
                       "extra_parameters" :  extra_parameters,
                       "pool_configuration" : pool_configuration,
-                      "client_connection_timeout" : CLIENT_CONNECTION_TIMEOUT}
+                      "client_connection_timeout" : CLIENT_CONNECTION_TIMEOUT,
+                      "connection_timeout" : REQUEST_TIMEOUT}
 
         # returns the parameters
         return parameters
@@ -492,9 +493,6 @@ class HttpClientServiceHandler:
             if self.keep_alive(request):
                 # prints a debug message
                 self.service_plugin.debug("Connection: %s kept alive for %ss" % (str(service_connection), str(request_timeout)))
-
-                # sets the cancel in a request timeout
-                service_connection.cancel(request_timeout)
             # in case the connection is not meant to be kept alive
             else:
                 # prints a debug message
@@ -509,9 +507,6 @@ class HttpClientServiceHandler:
 
             # sends the exception
             self.send_exception(service_connection, request, exception)
-
-            # sets the cancel in a request timeout
-            service_connection.cancel(request_timeout)
 
         # returns true (connection remains open)
         return True
