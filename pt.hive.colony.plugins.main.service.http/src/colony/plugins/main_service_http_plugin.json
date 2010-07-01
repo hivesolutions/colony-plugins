@@ -9,9 +9,9 @@
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["service.http", "build_automation_item"],
     "capabilities_allowed" : ["http_service_handler", "http_service_encoding",
-            "http_service_error_handler", "socket_provider"],
+            "http_service_error_handler"],
     "dependencies" : [{
-                "id" : "pt.hive.colony.plugins.main.threads.thread_pool_manager",
+                "id" : "pt.hive.colony.plugins.main.service.utils",
                 "version" : "1.0.0"
             }],
     "main_file" : "main_service_http_plugin.py",
