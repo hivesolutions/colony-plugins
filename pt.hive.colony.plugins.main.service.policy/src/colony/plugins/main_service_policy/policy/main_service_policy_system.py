@@ -37,15 +37,11 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import socket
-import select
-import threading
-
 import colony.libs.string_buffer_util
 
 import main_service_policy_exceptions
 
-BIND_HOST_VALUE = ""
+BIND_HOST = ""
 """ The bind host value """
 
 CLIENT_CONNECTION_TIMEOUT = 1
@@ -60,11 +56,17 @@ CHUNK_SIZE = 4096
 NUMBER_THREADS = 2
 """ The number of threads """
 
-MAX_NUMBER_THREADS = 4
+MAXIMUM_NUMBER_THREADS = 4
 """ The maximum number of threads """
 
 SCHEDULING_ALGORITHM = 2
 """ The scheduling algorithm """
+
+MAXIMUM_NUMBER_WORKS_THREAD = 5
+""" The maximum number of works per thread """
+
+WORK_SCHEDULING_ALGORITHM = 1
+""" The work scheduling algorithm """
 
 DEFAULT_PORT = 843
 """ The default port """
@@ -86,26 +88,14 @@ class MainServicePolicy:
     The main service policy class.
     """
 
-    main_service_becula_plugin = None
+    main_service_policy_plugin = None
     """ The main service policy plugin """
 
     policy_service_handler_plugins_map = {}
     """ The policy service handler plugins map """
 
-    policy_socket = None
-    """ The policy socket """
-
-    policy_connection_active = False
-    """ The policy connection active flag """
-
-    policy_client_thread_pool = None
-    """ The policy client thread pool """
-
-    policy_connection_close_event = None
-    """ The policy connection close event """
-
-    policy_connection_close_end_event = None
-    """ The policy connection close end event """
+    policy_service = None
+    """ The policy service reference """
 
     def __init__(self, main_service_policy_plugin):
         """
@@ -118,8 +108,6 @@ class MainServicePolicy:
         self.main_service_policy_plugin = main_service_policy_plugin
 
         self.policy_service_handler_plugin_map = {}
-        self.policy_connection_close_event = threading.Event()
-        self.policy_connection_close_end_event = threading.Event()
 
     def start_service(self, parameters):
         """
@@ -129,194 +117,28 @@ class MainServicePolicy:
         @param parameters: The parameters to start the service.
         """
 
-        # retrieves the socket provider value
-        socket_provider = parameters.get("socket_provider", None)
+        # retrieves the main service utils plugin
+        main_service_utils_plugin = self.main_service_policy_plugin.main_service_utils_plugin
 
-        # retrieves the port value
-        port = parameters.get("port", DEFAULT_PORT)
+        # generates the parameters
+        service_parameters = self._generate_service_parameters(parameters)
 
-        # retrieves the service configuration property
-        service_configuration_property = self.main_service_policy_plugin.get_configuration_property("server_configuration")
+        # generates the policy service using the given service parameters
+        self.policy_service = main_service_utils_plugin.generate_service(service_parameters)
 
-        # in case the service configuration property is defined
-        if service_configuration_property:
-            # retrieves the service configuration
-            service_configuration = service_configuration_property.get_data()
-        else:
-            # sets the service configuration as an empty map
-            service_configuration = {}
-
-        # retrieves the socket provider configuration value
-        socket_provider = service_configuration.get("default_socket_provider", socket_provider)
-
-        # retrieves the port configuration value
-        port = service_configuration.get("default_port", port)
-
-        # start the server for the given socket provider, port and encoding
-        self.start_server(socket_provider, port, service_configuration)
-
-        # clears the policy connection close event
-        self.policy_connection_close_event.clear()
-
-        # sets the policy connection close end event
-        self.policy_connection_close_end_event.set()
+        # starts the policy service
+        self.policy_service.start_service()
 
     def stop_service(self, parameters):
         """
         Stops the service.
 
         @type parameters: Dictionary
-        @param parameters: The parameters to start the service.
+        @param parameters: The parameters to stop the service.
         """
 
-        self.stop_server()
-
-    def start_server(self, socket_provider, port, service_configuration):
-        """
-        Starts the server in the given port.
-
-        @type socket_provider: String
-        @param socket_provider: The name of the socket provider to be used.
-        @type port: int
-        @param port: The port to start the server.
-        @type service_configuration: Dictionary
-        @param service_configuration: The service configuration map.
-        """
-
-        # retrieves the thread pool manager plugin
-        thread_pool_manager_plugin = self.main_service_policy_plugin.thread_pool_manager_plugin
-
-        # retrieves the task descriptor class
-        task_descriptor_class = thread_pool_manager_plugin.get_thread_task_descriptor_class()
-
-        # creates the policy client thread pool
-        self.policy_client_thread_pool = thread_pool_manager_plugin.create_new_thread_pool("policy pool",
-                                                                                           "pool to support policy client connections",
-                                                                                            NUMBER_THREADS, SCHEDULING_ALGORITHM, MAX_NUMBER_THREADS)
-
-        # starts the policy client thread pool
-        self.policy_client_thread_pool.start_pool()
-
-        # sets the policy connection active flag as true
-        self.policy_connection_active = True
-
-        # in case the socket provider is defined
-        if socket_provider:
-            # retrieves the socket provider plugins
-            socket_provider_plugins = self.main_service_policy_plugin.socket_provider_plugins
-
-            # iterates over all the socket provider plugins
-            for socket_provider_plugin in socket_provider_plugins:
-                # retrieves the provider name from the socket provider plugin
-                socket_provider_plugin_provider_name = socket_provider_plugin.get_provider_name()
-
-                # in case the names are the same
-                if socket_provider_plugin_provider_name == socket_provider:
-                    # the parameters for the socket provider
-                    parameters = {"server_side" : True, "do_handshake_on_connect" : False}
-
-                    # creates a new policy socket with the socket provider plugin
-                    self.policy_socket = socket_provider_plugin.provide_socket_parameters(parameters)
-
-            # in case the socket was not created, no socket provider found
-            if not self.policy_socket:
-                raise main_service_policy_exceptions.SocketProviderNotFound("socket provider %s not found" % socket_provider)
-        else:
-            # creates the policy socket
-            self.policy_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-        # sets the socket to be able to reuse the socket
-        self.policy_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
-        # binds the policy socket
-        self.policy_socket.bind((BIND_HOST_VALUE, port))
-
-        # start listening in the policy socket
-        self.policy_socket.listen(5)
-
-        # loops while the policy connection is active
-        while not self.policy_connection_close_event.isSet():
-            try:
-                # sets the socket to non blocking mode
-                self.policy_socket.setblocking(0)
-
-                # starts the select values
-                selected_values = ([], [], [])
-
-                # iterates while there is no selected values
-                while selected_values == ([], [], []):
-                    # in case the connection is closed
-                    if self.policy_connection_close_event.isSet():
-                        # closes the policy socket
-                        self.policy_socket.close()
-
-                        return
-
-                    # selects the values
-                    selected_values = select.select([self.policy_socket], [], [], CLIENT_CONNECTION_TIMEOUT)
-
-                # sets the socket to blocking mode
-                self.policy_socket.setblocking(1)
-            except:
-                # prints info message about connection
-                self.main_service_policy_plugin.info("The socket is not valid for selection of the pool")
-
-                return
-
-            # in case the connection is closed
-            if self.policy_connection_close_event.isSet():
-                # closes the policy socket
-                self.policy_socket.close()
-
-                return
-
-            try:
-                # accepts the connection retrieving the policy connection object and the address
-                policy_connection, policy_address = self.policy_socket.accept()
-
-                # creates a new policy client service task, with the given policy connection, policy address, encoding and encoding handler
-                policy_client_service_task = PolicyClientServiceTask(self.main_service_policy_plugin, policy_connection, policy_address, port, service_configuration)
-
-                # creates a new task descriptor
-                task_descriptor = task_descriptor_class(start_method = policy_client_service_task.start,
-                                                        stop_method = policy_client_service_task.stop,
-                                                        pause_method = policy_client_service_task.pause,
-                                                        resume_method = policy_client_service_task.resume)
-
-                # inserts the new task descriptor into the policy client thread pool
-                self.policy_client_thread_pool.insert_task(task_descriptor)
-
-                # prints a debug message about the number of threads in pool
-                self.main_service_policy_plugin.debug("Number of threads in pool: %d" % self.policy_client_thread_pool.current_number_threads)
-            except Exception, exception:
-                # prints an error message about the problem accepting the connection
-                self.main_service_policy_plugin.error("Error accepting connection: " + str(exception))
-
-        # closes the policy socket
-        self.policy_socket.close()
-
-    def stop_server(self):
-        """
-        Stops the server.
-        """
-
-        # sets the policy connection active flag as false
-        self.policy_connection_active = False
-
-        # sets the policy connection close event
-        self.policy_connection_close_event.set()
-
-        # waits for the policy connection close end event
-        self.policy_connection_close_end_event.wait()
-
-        # clears the policy connection close end event
-        self.policy_connection_close_end_event.clear()
-
-        # stops all the pool tasks
-        self.policy_client_thread_pool.stop_pool_tasks()
-
-        # stops the pool
-        self.policy_client_thread_pool.stop_pool()
+        # starts the policy service
+        self.policy_service.stop_service()
 
     def policy_service_handler_load(self, policy_service_handler_plugin):
         # retrieves the plugin handler name
@@ -330,118 +152,165 @@ class MainServicePolicy:
 
         del self.policy_service_handler_plugins_map[handler_name]
 
-class PolicyClientServiceTask:
+    def _get_service_configuration(self):
+        # retrieves the service configuration property
+        service_configuration_property = self.main_service_policy_plugin.get_configuration_property("server_configuration")
+
+        # in case the service configuration property is defined
+        if service_configuration_property:
+            # retrieves the service configuration
+            service_configuration = service_configuration_property.get_data()
+        else:
+            # sets the service configuration as an empty map
+            service_configuration = {}
+
+        return service_configuration
+
+    def _generate_service_parameters(self, parameters):
+        """
+        Retrieves the service parameters map from the base parameters
+        map.
+
+        @type parameters: Dictionary
+        @param parameters: The base parameters map to be used to build
+        the final service parameters map.
+        @rtype: Dictionary
+        @return: The final service parameters map.
+        """
+
+        # retrieves the socket provider value
+        socket_provider = parameters.get("socket_provider", None)
+
+        # retrieves the port value
+        port = parameters.get("port", DEFAULT_PORT)
+
+        # retrieves the service configuration
+        service_configuration = self._get_service_configuration()
+
+        # retrieves the socket provider configuration value
+        socket_provider = service_configuration.get("default_socket_provider", socket_provider)
+
+        # retrieves the port configuration value
+        port = service_configuration.get("default_port", port)
+
+        # creates the pool configuration map
+        pool_configuration = {"name" : "policy pool",
+                              "description" : "pool to support policy client connections",
+                              "number_threads" : NUMBER_THREADS,
+                              "scheduling_algorithm" : SCHEDULING_ALGORITHM,
+                              "maximum_number_threads" : MAXIMUM_NUMBER_THREADS,
+                              "maximum_number_works_thread" : MAXIMUM_NUMBER_WORKS_THREAD,
+                              "work_scheduling_algorithm" : WORK_SCHEDULING_ALGORITHM}
+
+        # creates the extra parameters map
+        extra_parameters = {}
+
+        # creates the parameters map
+        parameters = {"service_plugin" : self.main_service_policy_plugin,
+                      "service_handling_task_class" : PolicyClientServiceHandler,
+                      "socket_provider" : socket_provider,
+                      "bind_host" : BIND_HOST,
+                      "port" : port,
+                      "service_configuration" : service_configuration,
+                      "extra_parameters" :  extra_parameters,
+                      "pool_configuration" : pool_configuration,
+                      "client_connection_timeout" : CLIENT_CONNECTION_TIMEOUT,
+                      "connection_timeout" : REQUEST_TIMEOUT}
+
+        # returns the parameters
+        return parameters
+
+class PolicyClientServiceHandler:
     """
-    The policy client service task class.
+    The policy client service handler class.
     """
 
-    main_service_policy_plugin = None
-    """ The main service policy plugin """
+    service_plugin = None
+    """ The service plugin """
 
-    policy_connection = None
-    """ The policy connection """
-
-    policy_address = None
-    """ The policy address """
-
-    port = None
-    """ The policy port """
+    service_connection_handler = None
+    """ The service connection handler """
 
     service_configuration = None
     """ The service configuration """
 
-    current_request_handler = None
-    """ The current request handler being used """
+    service_utils_exception_class = None
+    """" The service utils exception class """
 
-    def __init__(self, main_service_policy_plugin, policy_connection, policy_address, port, service_configuration):
-        self.main_service_policy_plugin = main_service_policy_plugin
-        self.policy_connection = policy_connection
-        self.policy_address = policy_address
-        self.port = port
+    def __init__(self, service_plugin, service_connection_handler, service_configuration, service_utils_exception_class, extra_parameters):
+        """
+        Constructor of the class.
+
+        @type service_plugin: Plugin
+        @param service_plugin: The service plugin.
+        @type service_connection_handler: AbstractServiceConnectionHandler
+        @param service_connection_handler: The abstract service connection handler, that
+        handles this connection.
+        @type service_configuration: Dictionary
+        @param service_configuration: The service configuration.
+        @type main_service_utils_exception: Class
+        @param main_service_utils_exception: The service utils exception class.
+        @type extra_parameters: Dictionary
+        @param extra_parameters: The extra parameters.
+        """
+
+        self.service_plugin = service_plugin
+        self.service_connection_handler = service_connection_handler
         self.service_configuration = service_configuration
+        self.service_utils_exception_class = service_utils_exception_class
 
-        self.current_request_handler = self.policy_request_handler
-
-    def start(self):
-        # retrieves the policy service handler plugins map
-        policy_service_handler_plugins_map = self.main_service_policy_plugin.main_service_policy.policy_service_handler_plugins_map
-
-        # prints debug message about connection
-        self.main_service_policy_plugin.debug("Connected to: %s" % str(self.policy_address))
-
-        # sets the request timeout
-        request_timeout = REQUEST_TIMEOUT
-
-        # iterates indefinitely
-        while True:
-            # handles the current request if it returns false
-            # the connection was closed or is meant to be closed
-            if not self.current_request_handler(request_timeout, policy_service_handler_plugins_map):
-                # breaks the cycle to close the policy connection
-                break
-
-        # closes the policy connection
-        self.policy_connection.close()
-
-    def stop(self):
-        pass
-
-    def pause(self):
-        pass
-
-    def resume(self):
-        pass
-
-    def policy_request_handler(self, request_timeout, policy_service_handler_plugins_map):
+    def handle_request(self, service_connection, request_timeout = REQUEST_TIMEOUT):
         try:
             # retrieves the request
-            request = self.retrieve_request(request_timeout)
+            request = self.retrieve_request(service_connection, request_timeout)
         except main_service_policy_exceptions.MainServicePolicyException:
             # prints a debug message about the connection closing
-            self.main_service_policy_plugin.debug("Connection: %s closed by peer, timeout or invalid request" % str(self.policy_address))
+            self.service_plugin.debug("Connection: %s closed by peer, timeout or invalid request" % str(service_connection))
 
             # returns false (connection closed)
             return False
 
         try:
             # prints debug message about request
-            self.main_service_policy_plugin.debug("Handling request: %s" % str(request))
+            self.service_plugin.debug("Handling request: %s" % str(request))
 
             # retrieves the real service configuration,
             # taking the request information into account
             service_configuration = self._get_service_configuration(request)
 
             # retrieves the plugin manager
-            plugin_manager = self.main_service_policy_plugin.manager
+            plugin_manager = self.service_plugin.manager
 
-            # retrieves the main service policy path
-            main_service_policy_plugin_path = plugin_manager.get_plugin_path_by_id(self.main_service_policy_plugin.id)
+            # retrieves the service plugin path
+            service_plugin_path = plugin_manager.get_plugin_path_by_id(self.service_plugin.id)
 
             # retrieves the policy file path
-            policy_file_path = service_configuration.get("policy_file", main_service_policy_plugin_path + "/" + DEFAULT_POLICY_FILE)
+            policy_file_path = service_configuration.get("policy_file", service_plugin_path + "/" + DEFAULT_POLICY_FILE)
 
             # sets the file path in the request
             request.set_file_path(policy_file_path)
 
             # sends the request to the client (response)
-            self.send_request(request)
+            self.send_request(service_connection, request)
 
             # prints a debug message
-            self.main_service_policy_plugin.debug("Connection: %s kept alive for %ss" % (str(self.policy_address), str(request_timeout)))
+            self.service_plugin.debug("Connection: %s kept alive for %ss" % (str(service_connection), str(request_timeout)))
         except Exception, exception:
             # prints info message about exception
-            self.main_service_policy_plugin.info("There was an exception handling the request: " + str(exception))
+            self.service_plugin.info("There was an exception handling the request: " + str(exception))
 
             # sends the exception
-            self.send_exception(request, exception)
+            self.send_exception(service_connection, request, exception)
 
         # returns true (connection remains open)
         return True
 
-    def retrieve_request(self, request_timeout = REQUEST_TIMEOUT):
+    def retrieve_request(self, service_connection, request_timeout = REQUEST_TIMEOUT):
         """
         Retrieves the request from the received message.
 
+        @type service_connection: ServiceConnection
+        @param service_connection: The service connection to be used.
         @type request_timeout: int
         @param request_timeout: The timeout for the request retrieval.
         @rtype: PolicyRequest
@@ -472,8 +341,12 @@ class PolicyClientServiceTask:
 
         # continuous loop
         while True:
-            # retrieves the data
-            data = self.retrieve_data(request_timeout)
+            try:
+                # retrieves the data
+                data = service_connection.retrieve_data(request_timeout)
+            except self.service_utils_exception_class:
+                # raises the policy data retrieval exception
+                raise main_service_policy_exceptions.PolicyDataRetrievalException("problem retrieving data")
 
             # retrieves the data length
             data_length = len(data)
@@ -519,34 +392,12 @@ class PolicyClientServiceTask:
                     # returns the request
                     return request
 
-    def retrieve_data(self, request_timeout = REQUEST_TIMEOUT, chunk_size = CHUNK_SIZE):
-        try:
-            # sets the connection to non blocking mode
-            self.policy_connection.setblocking(0)
-
-            # runs the select in the policy connection, with timeout
-            selected_values = select.select([self.policy_connection], [], [], request_timeout)
-
-            # sets the connection to blocking mode
-            self.policy_connection.setblocking(1)
-        except:
-            raise main_service_policy_exceptions.RequestClosed("invalid socket")
-
-        if selected_values == ([], [], []):
-            self.policy_connection.close()
-            raise main_service_policy_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
-        try:
-            # receives the data in chunks
-            data = self.policy_connection.recv(chunk_size)
-        except:
-            raise main_service_policy_exceptions.ClientRequestTimeout("timeout")
-
-        return data
-
-    def send_exception(self, request, exception):
+    def send_exception(self, service_connection, request, exception):
         """
         Sends the exception to the given request for the given exception.
 
+        @type service_connection: ServiceConnection
+        @param service_connection: The service connection to be used.
         @type request: PolicyRequest
         @param request: The request to send the exception.
         @type exception: Exception
@@ -554,26 +405,26 @@ class PolicyClientServiceTask:
         """
 
         # retrieves the plugin manager
-        plugin_manager = self.main_service_policy_plugin.manager
+        plugin_manager = self.service_plugin.manager
 
-        # retrieves the main service policy path
-        main_service_policy_plugin_path = plugin_manager.get_plugin_path_by_id(self.main_service_policy_plugin.id)
+        # retrieves the service plugin path
+        service_plugin_path = plugin_manager.get_plugin_path_by_id(self.service_plugin.id)
 
         # retrieves the error policy file path
-        error_policy_file_path = main_service_policy_plugin_path + "/" + ERROR_POLICY_FILE
+        error_policy_file_path = service_plugin_path + "/" + ERROR_POLICY_FILE
 
         # sets the error policy file path in the request
         request.set_file_path(error_policy_file_path)
 
         # sends the request to the client (response)
-        self.send_request(request)
+        self.send_request(service_connection, request)
 
-    def send_request(self, request):
+    def send_request(self, service_connection, request):
         # retrieves the result from the request
         result = request.get_result()
 
-        # sends the result to the policy socket
-        self.policy_connection.sendall(result)
+        # sends the result to the service connection
+        service_connection.send(result)
 
     def _get_service_configuration(self, request):
         """
@@ -629,8 +480,12 @@ class PolicyRequest:
         # opens the file path
         file = open(self.file_path, "rb")
 
-        # reads the file contents
-        file_contents = file.read()
+        try:
+            # reads the file contents
+            file_contents = file.read()
+        finally:
+            # closes the file
+            file.close()
 
         # appends the extra "zero" character
         file_contents += "\0"

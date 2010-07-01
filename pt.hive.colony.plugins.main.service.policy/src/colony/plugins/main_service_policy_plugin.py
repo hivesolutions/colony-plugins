@@ -59,7 +59,7 @@ class MainServicePolicyPlugin(colony.plugins.plugin_system.Plugin):
     capabilities = ["service.policy", "build_automation_item"]
     capabilities_allowed = ["policy_service_handler", "socket_provider"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
+                    "pt.hive.colony.plugins.main.service.utils", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["main_service_policy.policy.main_service_policy_exceptions", "main_service_policy.policy.main_service_policy_system"]
@@ -69,7 +69,7 @@ class MainServicePolicyPlugin(colony.plugins.plugin_system.Plugin):
     policy_service_handler_plugins = []
     socket_provider_plugins = []
 
-    thread_pool_manager_plugin = None
+    main_service_utils_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -122,9 +122,9 @@ class MainServicePolicyPlugin(colony.plugins.plugin_system.Plugin):
     def socket_provider_unload_allowed(self, plugin, capability):
         self.socket_provider_plugins.remove(plugin)
 
-    def get_thread_pool_manager_plugin(self):
-        return self.thread_pool_manager_plugin
+    def get_main_service_utils_plugin(self):
+        return self.main_service_utils_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.threads.thread_pool_manager")
-    def set_thread_pool_manager_plugin(self, thread_pool_manager_plugin):
-        self.thread_pool_manager_plugin = thread_pool_manager_plugin
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.service.utils")
+    def set_main_service_utils_plugin(self, main_service_utils_plugin):
+        self.main_service_utils_plugin = main_service_utils_plugin
