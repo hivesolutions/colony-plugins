@@ -326,16 +326,6 @@ class PolicyClientServiceHandler:
         # creates the start line loaded flag
         start_line_loaded = False
 
-        # creates the header loaded flag
-        header_loaded = False
-
-        # creates the message offset index, representing the
-        # offset byte to the initialization of the message
-        message_offset_index = 0
-
-        # creates the message size value
-        message_size = 0
-
         # creates the received data size (counter)
         received_data_size = 0
 
@@ -362,14 +352,8 @@ class PolicyClientServiceHandler:
             # writes the data to the string buffer
             message.write(data)
 
-            # in case the header is loaded or the message contents are completely loaded
-            if not header_loaded or received_data_size - message_offset_index == message_size:
-                # retrieves the message value from the string buffer
-                message_value = message.get_value()
-            # in case there's no need to inspect the message contents
-            else:
-                # continues with the loop
-                continue
+            # retrieves the message value from the string buffer
+            message_value = message.get_value()
 
             # in case the start line is not loaded
             if not start_line_loaded:
