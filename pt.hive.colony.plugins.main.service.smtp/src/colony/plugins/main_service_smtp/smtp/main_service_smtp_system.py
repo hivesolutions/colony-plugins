@@ -484,12 +484,6 @@ class SmtpClientServiceHandler:
             return False
 
         try:
-            # retrieves the socket upgrader plugin for the socket upgrader name
-            socket_upgrader_plugin = self._get_socket_upgrader_plugin(SOCKET_UPGRADER_NAME)
-
-            # sets the upgrader handler in the session
-            session.upgrader_handler = socket_upgrader_plugin.upgrade_socket_parameters
-
             # retrieves the real service configuration,
             # taking the request information into account
             service_configuration = self._get_service_configuration(request)
@@ -618,8 +612,8 @@ class SmtpClientServiceHandler:
 
             # in case the upgrade flag is set
             if upgrade:
-                # upgrades the session connection
-                session.upgrade_connection()
+                # upgrades the session connection (service connection)
+                session.upgrade_connection(service_connection)
 
                 # unsets the upgrade flag
                 session.set_upgrade(False)
@@ -699,19 +693,6 @@ class SmtpClientServiceHandler:
 
         # returns the service configuration
         return service_configuration
-
-    def _get_socket_upgrader_plugin(self, socket_upgrader_name):
-        # retrieves the socket upgrader plugins
-        socket_upgrader_plugins = self.service_plugin.socket_upgrader_plugins
-
-        # iterates over all the socket upgrader plugins
-        for socket_upgrader_plugin in socket_upgrader_plugins:
-            # retrieves the upgrader name from the socket upgrader plugin
-            socket_upgrader_plugin_upgrader_name = socket_upgrader_plugin.get_upgrader_name()
-
-            # in case the names are the same
-            if socket_upgrader_plugin_upgrader_name == socket_upgrader_name:
-                return socket_upgrader_plugin
 
 class SmtpRequest:
     """
@@ -1037,9 +1018,6 @@ class SmtpSession:
     session_handler = None
     """ The session handler object """
 
-    upgrader_handler = None
-    """ The upgrader handler """
-
     authentication_properties = {}
     """ The authentication properties """
 
@@ -1133,21 +1111,20 @@ class SmtpSession:
         # handles the session with the session handler
         self.session_handler.handle_session(self, self.session_properties)
 
-    def upgrade_connection(self):
+    def upgrade_connection(self, service_connection):
         """
         Upgrades the connection associated with the
         current session.
+
+        @type service_connection: ServiceConnection
+        @param service_connection: The current service connection.
         """
 
-        # in case no upgrader handler is set
-        if not self.upgrader_handler:
-            raise main_service_smtp_exceptions.SmtpRuntimeException("no upgrader handler defined")
-
-        # the parameters for the upgrader handler
+        # the parameters for the "upgrading" of the service connection
         parameters = {"server_side" : True, "do_handshake_on_connect" : False}
 
-        # upgrades the smtp client service task with the current upgrader handler
-        self.smtp_client_service_task.smtp_connection = self.upgrader_handler(self.smtp_client_service_task.smtp_connection, parameters)
+        # upgrades the current service connection
+        service_connection.upgrade(SOCKET_UPGRADER_NAME, parameters)
 
     def reset_end_token(self):
         """
@@ -1436,26 +1413,6 @@ class SmtpSession:
         """
 
         self.session_handler = session_handler
-
-    def get_upgrader_handler(self):
-        """
-        Retrieves the upgrader handler.
-
-        @rtype: UpgraderHandler
-        @return: The upgrader handler.
-        """
-
-        return self.upgrader_handler
-
-    def set_upgrader_handler(self, upgrader_handler):
-        """
-        Sets the upgrader handler.
-
-        @type upgrader_handler: UpgraderHandler
-        @param upgrader_handler: The upgrader handler.
-        """
-
-        self.upgrader_handler = upgrader_handler
 
     def get_authentication_properties(self):
         """

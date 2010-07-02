@@ -10,10 +10,9 @@
     "capabilities" : ["service.smtp", "build_automation_item"],
     "capabilities_allowed" : ["smtp_service_handler",
             "smtp_service_authentication_handler",
-            "smtp_service_session_handler", "socket_provider",
-            "socket_upgrader"],
+            "smtp_service_session_handler"],
     "dependencies" : [{
-                "id" : "pt.hive.colony.plugins.main.threads.thread_pool_manager",
+                "id" : "pt.hive.colony.plugins.main.service.utils",
                 "version" : "1.0.0"
             }],
     "main_file" : "main_service_smtp_plugin.py",

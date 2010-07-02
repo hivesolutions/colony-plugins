@@ -56,7 +56,7 @@ class MainServiceSmtpPlugin(colony.plugins.plugin_system.Plugin):
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_smtp/smtp/resources/baf.xml"}
     capabilities = ["service.smtp", "build_automation_item"]
-    capabilities_allowed = ["smtp_service_handler", "smtp_service_authentication_handler", "smtp_service_session_handler", "socket_upgrader"]
+    capabilities_allowed = ["smtp_service_handler", "smtp_service_authentication_handler", "smtp_service_session_handler"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.service.utils", "1.0.0")]
     events_handled = []
@@ -68,8 +68,6 @@ class MainServiceSmtpPlugin(colony.plugins.plugin_system.Plugin):
     smtp_service_handler_plugins = []
     smtp_service_authentication_handler_plugins = []
     smtp_service_session_handler_plugins = []
-    socket_provider_plugins = []
-    socket_upgrader_plugins = []
 
     main_service_utils_plugin = None
 
@@ -121,10 +119,6 @@ class MainServiceSmtpPlugin(colony.plugins.plugin_system.Plugin):
         self.smtp_service_session_handler_plugins.append(plugin)
         self.main_service_smtp.smtp_service_session_handler_load(plugin)
 
-    @colony.plugins.decorators.load_allowed_capability("socket_upgrader")
-    def socket_upgrader_load_allowed(self, plugin, capability):
-        self.socket_upgrader_plugins.append(plugin)
-
     @colony.plugins.decorators.unload_allowed_capability("smtp_service_handler")
     def smtp_service_handler_unload_allowed(self, plugin, capability):
         self.smtp_service_handler_plugins.remove(plugin)
@@ -139,10 +133,6 @@ class MainServiceSmtpPlugin(colony.plugins.plugin_system.Plugin):
     def smtp_service_session_handler_unload_allowed(self, plugin, capability):
         self.smtp_service_session_handler_plugins.remove(plugin)
         self.main_service_smtp.smtp_service_session_handler_unload(plugin)
-
-    @colony.plugins.decorators.unload_allowed_capability("socket_upgrader")
-    def socket_upgrader_unload_allowed(self, plugin, capability):
-        self.socket_upgrader_plugins.remove(plugin)
 
     def get_main_service_utils_plugin(self):
         return self.main_service_utils_plugin
