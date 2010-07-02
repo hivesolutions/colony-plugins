@@ -43,6 +43,9 @@ import colony.libs.string_buffer_util
 
 import main_service_dns_exceptions
 
+CONNECTION_TYPE = "connectionless"
+""" The connection type """
+
 BIND_HOST = ""
 """ The bind host value """
 
@@ -241,12 +244,13 @@ class MainServiceDns:
         extra_parameters = {}
 
         # creates the parameters map
-        parameters = {"type" : "connectionless",
+        parameters = {"type" : CONNECTION_TYPE,
                       "service_plugin" : self.main_service_dns_plugin,
                       "service_handling_task_class" : DnsClientServiceHandler,
                       "socket_provider" : socket_provider,
                       "bind_host" : BIND_HOST,
                       "port" : port,
+                      "chunk_size" : MESSAGE_MAXIMUM_SIZE,
                       "service_configuration" : service_configuration,
                       "extra_parameters" :  extra_parameters,
                       "pool_configuration" : pool_configuration,
