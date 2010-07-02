@@ -60,6 +60,9 @@ MULTIPART_FORM_DATA_VALUE = "multipart/form-data"
 WWW_FORM_URLENCODED_VALUE = "application/x-www-form-urlencoded"
 """ The www form urlencoded value """
 
+CONNECTION_TYPE = "connection"
+""" The connection type """
+
 BIND_HOST = ""
 """ The bind host value """
 
@@ -363,11 +366,13 @@ class MainServiceHttp:
                             "encoding_handler" : encoding_handler}
 
         # creates the parameters map
-        parameters = {"service_plugin" : self.main_service_http_plugin,
+        parameters = {"type" : CONNECTION_TYPE,
+                      "service_plugin" : self.main_service_http_plugin,
                       "service_handling_task_class" : HttpClientServiceHandler,
                       "socket_provider" : socket_provider,
                       "bind_host" : BIND_HOST,
                       "port" : port,
+                      "chunk_size" : CHUNK_SIZE,
                       "service_configuration" : service_configuration,
                       "extra_parameters" :  extra_parameters,
                       "pool_configuration" : pool_configuration,
