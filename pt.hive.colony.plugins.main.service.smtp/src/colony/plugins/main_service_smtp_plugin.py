@@ -56,9 +56,9 @@ class MainServiceSmtpPlugin(colony.plugins.plugin_system.Plugin):
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_smtp/smtp/resources/baf.xml"}
     capabilities = ["service.smtp", "build_automation_item"]
-    capabilities_allowed = ["smtp_service_handler", "smtp_service_authentication_handler", "smtp_service_session_handler", "socket_provider", "socket_upgrader"]
+    capabilities_allowed = ["smtp_service_handler", "smtp_service_authentication_handler", "smtp_service_session_handler", "socket_upgrader"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
+                    "pt.hive.colony.plugins.main.service.utils", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["main_service_smtp.smtp.main_service_smtp_exceptions", "main_service_smtp.smtp.main_service_smtp_system"]
@@ -71,7 +71,7 @@ class MainServiceSmtpPlugin(colony.plugins.plugin_system.Plugin):
     socket_provider_plugins = []
     socket_upgrader_plugins = []
 
-    thread_pool_manager_plugin = None
+    main_service_utils_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -121,10 +121,6 @@ class MainServiceSmtpPlugin(colony.plugins.plugin_system.Plugin):
         self.smtp_service_session_handler_plugins.append(plugin)
         self.main_service_smtp.smtp_service_session_handler_load(plugin)
 
-    @colony.plugins.decorators.load_allowed_capability("socket_provider")
-    def socket_provider_load_allowed(self, plugin, capability):
-        self.socket_provider_plugins.append(plugin)
-
     @colony.plugins.decorators.load_allowed_capability("socket_upgrader")
     def socket_upgrader_load_allowed(self, plugin, capability):
         self.socket_upgrader_plugins.append(plugin)
@@ -144,17 +140,13 @@ class MainServiceSmtpPlugin(colony.plugins.plugin_system.Plugin):
         self.smtp_service_session_handler_plugins.remove(plugin)
         self.main_service_smtp.smtp_service_session_handler_unload(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("socket_provider")
-    def socket_provider_unload_allowed(self, plugin, capability):
-        self.socket_provider_plugins.remove(plugin)
-
     @colony.plugins.decorators.unload_allowed_capability("socket_upgrader")
     def socket_upgrader_unload_allowed(self, plugin, capability):
         self.socket_upgrader_plugins.remove(plugin)
 
-    def get_thread_pool_manager_plugin(self):
-        return self.thread_pool_manager_plugin
+    def get_main_service_utils_plugin(self):
+        return self.main_service_utils_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.threads.thread_pool_manager")
-    def set_thread_pool_manager_plugin(self, thread_pool_manager_plugin):
-        self.thread_pool_manager_plugin = thread_pool_manager_plugin
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.service.utils")
+    def set_main_service_utils_plugin(self, main_service_utils_plugin):
+        self.main_service_utils_plugin = main_service_utils_plugin
