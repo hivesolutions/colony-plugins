@@ -56,7 +56,7 @@ class MainServiceUtilsPlugin(colony.plugins.plugin_system.Plugin):
                  colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_utils/utils/resources/baf.xml"}
     capabilities = []
-    capabilities_allowed = ["socket_provider"]
+    capabilities_allowed = ["socket_provider", "socket_upgrader"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.work.work_pool_manager", "1.0.0")]
     events_handled = []
@@ -66,6 +66,7 @@ class MainServiceUtilsPlugin(colony.plugins.plugin_system.Plugin):
     main_service_utils = None
 
     socket_provider_plugins = []
+    socket_upgrader_plugins = []
 
     work_pool_manager_plugin = None
 
@@ -127,10 +128,20 @@ class MainServiceUtilsPlugin(colony.plugins.plugin_system.Plugin):
         self.socket_provider_plugins.append(plugin)
         self.main_service_utils.socket_provider_load(plugin)
 
+    @colony.plugins.decorators.load_allowed_capability("socket_upgrader")
+    def socket_upgrader_load_allowed(self, plugin, capability):
+        self.socket_upgrader_plugins.append(plugin)
+        self.main_service_utils.socket_upgrader_load(plugin)
+
     @colony.plugins.decorators.unload_allowed_capability("socket_provider")
     def socket_provider_unload_allowed(self, plugin, capability):
         self.socket_provider_plugins.remove(plugin)
         self.main_service_utils.socket_provider_unload(plugin)
+
+    @colony.plugins.decorators.unload_allowed_capability("socket_upgrader")
+    def socket_upgrader_unload_allowed(self, plugin, capability):
+        self.socket_upgrader_plugins.remove(plugin)
+        self.main_service_utils.socket_upgrader_unload(plugin)
 
     def get_work_pool_manager_plugin(self):
         return self.work_pool_manager_plugin

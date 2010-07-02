@@ -137,6 +137,9 @@ class MainServiceUtils:
     socket_provider_plugins_map = {}
     """ The socket provider plugins map """
 
+    socket_upgrader_plugins_map = {}
+    """ The socket upgrader plugins map """
+
     port_generation_lock = None
     """ The lock to protect port generation """
 
@@ -157,6 +160,7 @@ class MainServiceUtils:
         self.main_service_utils_plugin = main_service_utils_plugin
 
         self.socket_provider_plugins_map = {}
+        self.socket_upgrader_plugins_map = {}
         self.port_generation_lock = threading.Lock()
 
         # resets the port value
@@ -247,6 +251,36 @@ class MainServiceUtils:
 
         # removes the socket provider plugin from the socket provider plugins map
         del self.socket_provider_plugins_map[provider_name]
+
+    def socket_upgrader_load(self, socket_upgrader_plugin):
+        """
+        Loads a socket upgrader plugin.
+
+        @type socket_upgrader_plugin: Plugin
+        @param socket_upgrader_plugin: The socket upgrader plugin
+        to be loaded.
+        """
+
+        # retrieves the plugin upgrader name
+        upgrader_name = socket_upgrader_plugin.get_upgrader_name()
+
+        # sets the socket upgrader plugin in the socket upgrader plugins map
+        self.socket_upgrader_plugins_map[upgrader_name] = socket_upgrader_plugin
+
+    def socket_upgrader_unload(self, socket_upgrader_plugin):
+        """
+        Unloads a socket upgrader plugin.
+
+        @type socket_upgrader_plugin: Plugin
+        @param socket_upgrader_plugin: The socket upgrader plugin
+        to be unloaded.
+        """
+
+        # retrieves the plugin upgrader name
+        upgrader_name = socket_upgrader_plugin.get_upgrader_name()
+
+        # removes the socket upgrader plugin from the socket upgrader plugins map
+        del self.socket_upgrader_plugins_map[upgrader_name]
 
     def _reset_port(self):
         """
@@ -894,7 +928,7 @@ class AbstractServiceConnectionHandler:
         """
 
         # creates the new service connection
-        service_connection = ServiceConnection(self.service_plugin, connection_socket, connection_address, connection_port, self.chunk_size)
+        service_connection = ServiceConnection(self.service_plugin, self, connection_socket, connection_address, connection_port, self.chunk_size)
 
         # opens the service connection
         service_connection.open()
@@ -1273,7 +1307,7 @@ class AbstractServiceConnectionlessHandler:
         """
 
         # creates the new service connection
-        service_connection = ServiceConnectionless(self.service_plugin, connection_socket, connection_address, connection_port, connection_data, self.chunk_size)
+        service_connection = ServiceConnectionless(self.service_plugin, self, connection_socket, connection_address, connection_port, connection_data, self.chunk_size)
 
         # creates the connection tuple
         connection_tuple = (connection_socket, connection_address)
@@ -1346,6 +1380,9 @@ class ServiceConnection:
     service_plugin = None
     """ The service plugin """
 
+    service_connection_handler = None
+    """ The service connection handler """
+
     connection_socket = None
     """ The connection socket """
 
@@ -1370,12 +1407,14 @@ class ServiceConnection:
     cancel_time = None
     """ The cancel time """
 
-    def __init__(self, service_plugin, connection_socket, connection_address, connection_port, connection_chunk_size):
+    def __init__(self, service_plugin, service_connection_handler, connection_socket, connection_address, connection_port, connection_chunk_size):
         """
         Constructor of the class.
 
         @type service_plugin: Plugin
         @param service_plugin: The service plugin.
+        @type service_connection_handler: AbstractServiceConnectionHandler
+        @param service_connection_handler: The service connection handler.
         @type connection_socket: Socket
         @param connection_socket: The connection socket.
         @type connection_address: Tuple
@@ -1387,6 +1426,7 @@ class ServiceConnection:
         """
 
         self.service_plugin = service_plugin
+        self.service_connection_handler = service_connection_handler
         self.connection_socket = connection_socket
         self.connection_address = connection_address
         self.connection_port = connection_port
@@ -1435,6 +1475,34 @@ class ServiceConnection:
 
         # sets the cancel time
         self.cancel_time = time.clock() + delta_time
+
+    def upgrade(self, socket_upgrader, parameters):
+        """
+        Upgrades the current connection socket, using
+        the the upgrader with the given name and the given parameters.
+
+        @type socket_upgrader: String
+        @param socket_upgrader: The name of the socket upgrader.
+        @type parameters: Dictionary
+        @param parameters: The parameters to the upgrade process.
+        """
+
+        # retrieves the main service utils
+        main_service_utils = self.service_connection_handler.service.main_service_utils
+
+        # retrieves the socket upgrader plugins map
+        socket_upgrader_plugins_map = main_service_utils.socket_upgrader_plugins_map
+
+        # in case the upgrader handler is not found in the handler plugins map
+        if not socket_upgrader in socket_upgrader_plugins_map:
+            # raises the socket upgrader not found exception
+            raise main_service_utils_exceptions.SocketUpgraderNotFound("socket upgrader %s not found" % self.socket_upgrader)
+
+        # retrieves the socket upgrader plugin
+        socket_upgrader_plugin = main_service_utils.socket_upgrader_plugins_map[socket_upgrader]
+
+        # upgrades the current connection socket using the socket upgrader plugin
+        self.connection_socket = socket_upgrader_plugin.upgrade_socket_parameters(self.connection_socket, parameters)
 
     def retrieve_data(self, request_timeout = REQUEST_TIMEOUT, chunk_size = None):
         """
@@ -1587,12 +1655,14 @@ class ServiceConnectionless(ServiceConnection):
     connection_data = None
     """ The connection data """
 
-    def __init__(self, service_plugin, connection_socket, connection_address, connection_port, connection_data, connection_chunk_size):
+    def __init__(self, service_plugin, service_connection_handler, connection_socket, connection_address, connection_port, connection_data, connection_chunk_size):
         """
         Constructor of the class.
 
         @type service_plugin: Plugin
         @param service_plugin: The service plugin.
+        @type service_connection_handler: AbstractServiceConnectionHandler
+        @param service_connection_handler: The service connection handler.
         @type connection_socket: Socket
         @param connection_socket: The connection socket.
         @type connection_address: Tuple
@@ -1605,7 +1675,7 @@ class ServiceConnectionless(ServiceConnection):
         @param connection_chunk_size: The connection chunk size.
         """
 
-        ServiceConnection.__init__(self, service_plugin, connection_socket, connection_address, connection_port, connection_chunk_size)
+        ServiceConnection.__init__(self, service_connection_handler, service_plugin, connection_socket, connection_address, connection_port, connection_chunk_size)
 
         self.connection_data = connection_data
 

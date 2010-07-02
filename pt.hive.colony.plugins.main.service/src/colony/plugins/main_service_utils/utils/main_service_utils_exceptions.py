@@ -71,6 +71,32 @@ class SocketProviderNotFound(MainServiceUtilsException):
 
         return "Socket provider not found: %s" % self.message
 
+class SocketUpgraderNotFound(MainServiceUtilsException):
+    """
+    The socket upgrader not found class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        MainServiceUtilsException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Socket upgrader not found: %s" % self.message
+
 class ServerRequestTimeout(MainServiceUtilsException):
     """
     The server request timeout class.
