@@ -55,9 +55,9 @@ class MainServiceDnsPlugin(colony.plugins.plugin_system.Plugin):
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_dns/dns/resources/baf.xml"}
     capabilities = ["service.dns", "build_automation_item"]
-    capabilities_allowed = ["dns_service_handler", "socket_provider"]
+    capabilities_allowed = ["dns_service_handler"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
+                    "pt.hive.colony.plugins.main.service.utils", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["main_service_dns.dns.main_service_dns_exceptions", "main_service_dns.dns.main_service_dns_system"]
@@ -65,9 +65,8 @@ class MainServiceDnsPlugin(colony.plugins.plugin_system.Plugin):
     main_service_dns = None
 
     dns_service_handler_plugins = []
-    socket_provider_plugins = []
 
-    thread_pool_manager_plugin = None
+    main_service_utils_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -107,22 +106,14 @@ class MainServiceDnsPlugin(colony.plugins.plugin_system.Plugin):
         self.dns_service_handler_plugins.append(plugin)
         self.main_service_dns.dns_service_handler_load(plugin)
 
-    @colony.plugins.decorators.load_allowed_capability("socket_provider")
-    def socket_provider_load_allowed(self, plugin, capability):
-        self.socket_provider_plugins.append(plugin)
-
     @colony.plugins.decorators.unload_allowed_capability("dns_service_handler")
     def dns_service_handler_unload_allowed(self, plugin, capability):
         self.dns_service_handler_plugins.remove(plugin)
         self.main_service_dns.dns_service_handler_unload(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("socket_provider")
-    def socket_provider_unload_allowed(self, plugin, capability):
-        self.socket_provider_plugins.remove(plugin)
+    def get_main_service_utils_plugin(self):
+        return self.main_service_utils_plugin
 
-    def get_thread_pool_manager_plugin(self):
-        return self.thread_pool_manager_plugin
-
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.threads.thread_pool_manager")
-    def set_thread_pool_manager_plugin(self, thread_pool_manager_plugin):
-        self.thread_pool_manager_plugin = thread_pool_manager_plugin
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.service.utils")
+    def set_main_service_utils_plugin(self, main_service_utils_plugin):
+        self.main_service_utils_plugin = main_service_utils_plugin
