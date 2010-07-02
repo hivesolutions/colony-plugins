@@ -1407,6 +1407,9 @@ class ServiceConnection:
     cancel_time = None
     """ The cancel time """
 
+    _connection_socket = None
+    """ The original connection socket """
+
     def __init__(self, service_plugin, service_connection_handler, connection_socket, connection_address, connection_port, connection_chunk_size):
         """
         Constructor of the class.
@@ -1431,6 +1434,8 @@ class ServiceConnection:
         self.connection_address = connection_address
         self.connection_port = connection_port
         self.connection_chunk_size = connection_chunk_size
+
+        self._connection_socket = connection_socket
 
         self.connection_opened_handlers = []
         self.connection_closed_handlers = []
@@ -1604,7 +1609,7 @@ class ServiceConnection:
         @return: A tuple representing the connection.
         """
 
-        return (self.connection_socket, self.connection_address, self.connection_port)
+        return (self._connection_socket, self.connection_address, self.connection_port)
 
     def get_connection_socket(self):
         """
