@@ -264,6 +264,12 @@ class PolicyClientServiceHandler:
         self.service_configuration = service_configuration
         self.service_utils_exception_class = service_utils_exception_class
 
+    def handle_opened(self, service_connection):
+        pass
+
+    def handle_closed(self, service_connection):
+        pass
+
     def handle_request(self, service_connection, request_timeout = REQUEST_TIMEOUT):
         try:
             # retrieves the request
