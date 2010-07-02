@@ -45,110 +45,6 @@ class MainServiceSmtpException(Exception):
     message = None
     """ The exception's message """
 
-class SocketProviderNotFound(MainServiceSmtpException):
-    """
-    The socket provider not found class.
-    """
-
-    def __init__(self, message):
-        """
-        Constructor of the class.
-
-        @type message: String
-        @param message: The message to be printed.
-        """
-
-        MainServiceSmtpException.__init__(self)
-        self.message = message
-
-    def __str__(self):
-        """
-        Returns the string representation of the class.
-
-        @rtype: String
-        @return: The string representation of the class.
-        """
-
-        return "Socket provider not found: %s" % self.message
-
-class ServerRequestTimeout(MainServiceSmtpException):
-    """
-    The server request timeout class.
-    """
-
-    def __init__(self, message):
-        """
-        Constructor of the class.
-
-        @type message: String
-        @param message: The message to be printed.
-        """
-
-        MainServiceSmtpException.__init__(self)
-        self.message = message
-
-    def __str__(self):
-        """
-        Returns the string representation of the class.
-
-        @rtype: String
-        @return: The string representation of the class.
-        """
-
-        return "Server request timeout: %s" % self.message
-
-class ClientRequestTimeout(MainServiceSmtpException):
-    """
-    The client request timeout class.
-    """
-
-    def __init__(self, message):
-        """
-        Constructor of the class.
-
-        @type message: String
-        @param message: The message to be printed.
-        """
-
-        MainServiceSmtpException.__init__(self)
-        self.message = message
-
-    def __str__(self):
-        """
-        Returns the string representation of the class.
-
-        @rtype: String
-        @return: The string representation of the class.
-        """
-
-        return "Client request timeout: %s" % self.message
-
-class RequestClosed(MainServiceSmtpException):
-    """
-    The request closed class.
-    """
-
-    def __init__(self, message):
-        """
-        Constructor of the class.
-
-        @type message: String
-        @param message: The message to be printed.
-        """
-
-        MainServiceSmtpException.__init__(self)
-        self.message = message
-
-    def __str__(self):
-        """
-        Returns the string representation of the class.
-
-        @rtype: String
-        @return: The string representation of the class.
-        """
-
-        return "Request closed: %s" % self.message
-
 class SmtpRuntimeException(MainServiceSmtpException):
     """
     The smtp runtime exception class.
@@ -249,3 +145,28 @@ class SmtpHandlerNotFoundException(SmtpRuntimeException):
         """
 
         return "Smtp handler not found exception: %s" % self.message
+
+class SmtpDataRetrievalException(SmtpRuntimeException):
+    """
+    The smtp data retrieval exception.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        SmtpRuntimeException.__init__(self, message)
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Smtp data retrieval exception: %s" % self.message
