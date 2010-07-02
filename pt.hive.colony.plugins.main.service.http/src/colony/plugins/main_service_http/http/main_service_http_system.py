@@ -434,6 +434,12 @@ class HttpClientServiceHandler:
         self.encoding_handler = extra_parameters.get(ENCODING_HANDLER_VALUE, None)
         self.content_type_charset = self.service_configuration.get(DEFAULT_CONTENT_TYPE_CHARSET_VALUE, DEFAULT_CHARSET)
 
+    def handle_opened(self, service_connection):
+        pass
+
+    def handle_closed(self, service_connection):
+        pass
+
     def handle_request(self, service_connection, request_timeout = REQUEST_TIMEOUT):
         # retrieves the http service handler plugins map
         http_service_handler_plugins_map = self.service_plugin.main_service_http.http_service_handler_plugins_map
