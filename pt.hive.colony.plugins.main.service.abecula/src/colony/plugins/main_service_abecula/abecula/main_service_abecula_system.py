@@ -286,6 +286,12 @@ class AbeculaClientServiceHandler:
         self.service_configuration = service_configuration
         self.service_utils_exception_class = service_utils_exception_class
 
+    def handle_opened(self, service_connection):
+        pass
+
+    def handle_closed(self, service_connection):
+        pass
+
     def handle_request(self, service_connection, request_timeout = REQUEST_TIMEOUT):
         # retrieves the abecula service handler plugins map
         abecula_service_handler_plugins_map = self.service_plugin.main_service_abecula.abecula_service_handler_plugins_map
