@@ -41,6 +41,9 @@ import colony.libs.string_buffer_util
 
 import main_service_policy_exceptions
 
+CONNECTION_TYPE = "connection"
+""" The connection type """
+
 BIND_HOST = ""
 """ The bind host value """
 
@@ -206,11 +209,13 @@ class MainServicePolicy:
         extra_parameters = {}
 
         # creates the parameters map
-        parameters = {"service_plugin" : self.main_service_policy_plugin,
+        parameters = {"type" : CONNECTION_TYPE,
+                      "service_plugin" : self.main_service_policy_plugin,
                       "service_handling_task_class" : PolicyClientServiceHandler,
                       "socket_provider" : socket_provider,
                       "bind_host" : BIND_HOST,
                       "port" : port,
+                      "chunk_size" : CHUNK_SIZE,
                       "service_configuration" : service_configuration,
                       "extra_parameters" :  extra_parameters,
                       "pool_configuration" : pool_configuration,
