@@ -922,6 +922,9 @@ class AbstractServiceConnectionHandler:
         if EPOLL_SUPPORT:
             self.__add_connection_epoll(connection_socket, connection_address, connection_port)
 
+        # handles the opened service connection
+        self.client_service.handle_opened(service_connection)
+
         # returns the created service connection
         return service_connection
 
@@ -938,6 +941,9 @@ class AbstractServiceConnectionHandler:
 
         # retrieves the connection socket file descriptor
         connection_socket_file_descriptor = self.__get_connection_socket_file_descriptor(connection_socket)
+
+        # handles the closed service connection
+        self.client_service.handle_closed(service_connection)
 
         if EPOLL_SUPPORT:
             self.__remove_connection_epoll(service_connection)
@@ -1278,6 +1284,9 @@ class AbstractServiceConnectionlessHandler:
         # sets the service connection in the service connections map
         self.service_connections_map[connection_tuple] = service_connection
 
+        # handles the opened service connection
+        self.client_service.handle_opened(service_connection)
+
         # returns the created service connection
         return service_connection
 
@@ -1297,6 +1306,9 @@ class AbstractServiceConnectionlessHandler:
 
         # creates the connection tuple
         connection_tuple = (connection_socket, connection_address)
+
+        # handles the closed service connection
+        self.client_service.handle_closed(service_connection)
 
         # removes the connection from the service connections list
         self.service_connections_list.remove(service_connection)
@@ -1352,6 +1364,9 @@ class ServiceConnection:
     connection_closed_handlers = []
     """ The connection closed handlers """
 
+    connection_properties = {}
+    """ The connection properties map """
+
     cancel_time = None
     """ The cancel time """
 
@@ -1379,6 +1394,7 @@ class ServiceConnection:
 
         self.connection_opened_handlers = []
         self.connection_closed_handlers = []
+        self.connection_properties = {}
 
     def __repr__(self):
         return "(%s, %s)" % (self.connection_address, self.connection_port)
@@ -1474,6 +1490,43 @@ class ServiceConnection:
         """
 
         return self.connection_socket.sendall(message)
+
+    def get_connection_property(self, property_name):
+        """
+        Retrieves the connection property for the given name.
+
+        @type property_name: String
+        @param property_name: The name of the property to
+        be retrieved.
+        @rtype: Object
+        @return: The value of the retrieved property.
+        """
+
+        return self.connection_properties.get(property_name, None)
+
+    def set_connection_property(self, property_name, property_value):
+        """
+        Sets a connection property, associating the given name
+        with the given value.
+
+        @type property_name: String
+        @param property_name: The name of the property to set.
+        @type property_value: Object
+        @param property_value: The value of the property to set.
+        """
+
+        self.connection_properties[property_name] = property_value
+
+    def unset_connection_property(self, property_name):
+        """
+        Unsets a connection property, removing it from the internal
+        structures.
+
+        @type property_name: String
+        @param property_name: The name of the property to unset.
+        """
+
+        del self.connection_properties[property_name]
 
     def get_connection_tuple(self):
         """
