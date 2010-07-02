@@ -57,7 +57,7 @@ class MainServicePolicyPlugin(colony.plugins.plugin_system.Plugin):
                  colony.plugins.plugin_system.IRON_PYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_policy/policy/resources/baf.xml"}
     capabilities = ["service.policy", "build_automation_item"]
-    capabilities_allowed = ["policy_service_handler", "socket_provider"]
+    capabilities_allowed = ["policy_service_handler"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.service.utils", "1.0.0")]
     events_handled = []
@@ -67,7 +67,6 @@ class MainServicePolicyPlugin(colony.plugins.plugin_system.Plugin):
     main_service_policy = None
 
     policy_service_handler_plugins = []
-    socket_provider_plugins = []
 
     main_service_utils_plugin = None
 
@@ -109,18 +108,10 @@ class MainServicePolicyPlugin(colony.plugins.plugin_system.Plugin):
         self.policy_service_handler_plugins.append(plugin)
         self.main_service_policy.policy_service_handler_load(plugin)
 
-    @colony.plugins.decorators.load_allowed_capability("socket_provider")
-    def socket_provider_load_allowed(self, plugin, capability):
-        self.socket_provider_plugins.append(plugin)
-
     @colony.plugins.decorators.unload_allowed_capability("policy_service_handler")
     def policy_service_handler_unload_allowed(self, plugin, capability):
         self.policy_service_handler_plugins.remove(plugin)
         self.main_service_policy.policy_service_handler_unload(plugin)
-
-    @colony.plugins.decorators.unload_allowed_capability("socket_provider")
-    def socket_provider_unload_allowed(self, plugin, capability):
-        self.socket_provider_plugins.remove(plugin)
 
     def get_main_service_utils_plugin(self):
         return self.main_service_utils_plugin
