@@ -124,7 +124,7 @@ if EPOLL_SUPPORT:
     """ The new value received mask value """
 
     REGISTER_MASK = NEW_VALUE_MASK | select.EPOLLET #@UndefinedVariable
-    """ The regsiter mask value """
+    """ The register mask value """
 
 class MainServiceUtils:
     """
