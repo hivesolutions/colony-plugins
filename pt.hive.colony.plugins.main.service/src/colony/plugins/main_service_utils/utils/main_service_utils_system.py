@@ -104,6 +104,15 @@ DUMMY_MESSAGE_VALUE = "_"
 EPOLL_VALUE = "epoll"
 """ The poll value """
 
+CONNECTION_TYPE_VALUE = "connection"
+""" The connection type value """
+
+CONNECTIONLESS_TYPE_VALUE = "connectionless"
+""" The connectionless type value """
+
+DEFAULT_TYPE = CONNECTION_TYPE_VALUE
+""" The default type service """
+
 # in case the current system supports epoll
 if hasattr(select, "epoll"):
     EPOLL_SUPPORT = True
@@ -279,6 +288,9 @@ class AbstractService:
     service_connection_close_end_event = None
     """ The service connection close end event """
 
+    service_type = None
+    """ The service type """
+
     service_plugin = None
     """ The service plugin """
 
@@ -324,6 +336,7 @@ class AbstractService:
         self.main_service_utils = main_service_utils
         self.main_service_utils_plugin = main_service_utils_plugin
 
+        self.service_type = parameters.get("type", DEFAULT_TYPE)
         self.service_plugin = parameters.get("service_plugin", None)
         self.service_handling_task_class = parameters.get("service_handling_task_class", None)
         self.socket_provider = parameters.get("socket_provider", None)
@@ -352,20 +365,14 @@ class AbstractService:
         # activates and listens the service socket
         self._activate_service_socket()
 
-        # loops while the service connection is active
-        while not self.service_connection_close_event.isSet():
-            # polls the service socket to check if there
-            # is a new connection available
-            poll_return_value = self._poll_service_socket()
-
-            # in case the poll return value is not valid or
-            # the connection is closed
-            if not poll_return_value or self.service_connection_close_event.isSet():
-                # breaks the cycle
-                break
-
-            # accepts the new client connection
-            self._accept_service_socket()
+        # in case the service type is connection
+        if self.service_type == CONNECTION_TYPE_VALUE:
+            # runs the loop for connection type
+            self._loop_connection()
+        # in case the service type is connectionless
+        elif self.service_type == CONNECTIONLESS_TYPE_VALUE:
+            # runs the loop for connectionless type
+            self._loop_connectionless()
 
         # disables the service socket
         self._disable_service_socket()
@@ -417,11 +424,14 @@ class AbstractService:
         maximum_number_works_thread = self.pool_configuration.get("maximum_number_works_thread", MAXIMUM_NUMBER_WORKS_THREAD)
         work_scheduling_algorithm = self.pool_configuration.get("work_scheduling_algorithm", WORK_SCHEDULING_ALGORITHM)
 
+        # retrieves the current service handler class
+        service_handler_class = self._get_service_handler_class()
+
         # creates the service connection handler arguments
         service_connection_handler_arguments = (self, self.service_plugin, self.service_configuration, self.connection_timeout, self.service_handling_task_class, self.extra_parameters)
 
         # creates the service client pool
-        self.service_client_pool = work_pool_manager_plugin.create_new_work_pool(pool_name, pool_description, AbstractServiceConnectionHandler, service_connection_handler_arguments, number_threads, scheduling_algorithm, maximum_number_threads, maximum_number_works_thread, work_scheduling_algorithm)
+        self.service_client_pool = work_pool_manager_plugin.create_new_work_pool(pool_name, pool_description, service_handler_class, service_connection_handler_arguments, number_threads, scheduling_algorithm, maximum_number_threads, maximum_number_works_thread, work_scheduling_algorithm)
 
         # start the service client pool
         self.service_client_pool.start_pool()
@@ -460,6 +470,39 @@ class AbstractService:
         else:
             # creates the service socket
             self.service_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    def _loop_connection(self):
+        # loops while the service connection is active
+        while not self.service_connection_close_event.isSet():
+            # polls the service socket to check if there
+            # is a new connection available
+            poll_return_value = self._poll_service_socket()
+
+            # in case the poll return value is not valid or
+            # the connection is closed
+            if not poll_return_value or self.service_connection_close_event.isSet():
+                # breaks the cycle
+                break
+
+            # accepts the new client connection
+            self._accept_service_socket()
+
+    def _loop_connectionless(self):
+        # loops while the service connection is active
+        while not self.service_connection_close_event.isSet():
+            # polls the service socket to check if there
+            # is a new connection available
+            poll_return_value = self._poll_service_socket()
+
+            # in case the poll return value is not valid or
+            # the connection is closed
+            if not poll_return_value or self.service_connection_close_event.isSet():
+                # breaks the cycle
+                break
+
+            # reads from the service socket and creates
+            # the client connection
+            self._read_service_socket()
 
     def _poll_service_socket(self):
         """
@@ -506,11 +549,27 @@ class AbstractService:
             # accepts the connection retrieving the service connection object and the address
             service_connection, service_address = self.service_socket.accept()
 
-            # insets the connection into the pool
+            # inserts the connection and address into the pool
             self._insert_connection_pool(service_connection, service_address)
         except Exception, exception:
-            # prints an error message about the problem accepting the connection
-            self.main_service_utils_plugin.error("Error accepting connection: " + str(exception))
+            # prints an error message about the problem accepting the socket
+            self.main_service_utils_plugin.error("Error accepting socket: " + str(exception))
+
+    def _read_service_socket(self):
+        """
+        Reads data from the client connection
+        in the service socket.
+        """
+
+        try:
+            # reads some data from the service socke
+            service_data, service_address = self.service_socket.recvfrom(512)
+
+            # inserts the data and address into the pool
+            self._insert_data_pool(service_data, service_address)
+        except Exception, exception:
+            # prints an error message about the problem reading from socket
+            self.main_service_utils_plugin.error("Error reading from socket: " + str(exception))
 
     def _activate_service_socket(self):
         """
@@ -523,8 +582,10 @@ class AbstractService:
         # binds the service socket
         self.service_socket.bind((self.bind_host, self.port))
 
-        # start listening in the service socket
-        self.service_socket.listen(5)
+        # in case the service type is connection
+        if self.service_type == CONNECTION_TYPE_VALUE:
+            # start listening in the service socket
+            self.service_socket.listen(5)
 
     def _disable_service_socket(self):
         """
@@ -552,6 +613,45 @@ class AbstractService:
 
         # inserts the work into the service client pool
         self.service_client_pool.insert_work(work_reference)
+
+    def _insert_data_pool(self, service_data, service_address):
+        """
+        Inserts the given data in to the connection pool.
+        This process takes into account the pool usage and the current
+        available task.
+
+        @type service_data: String
+        @param service_data: The data to be inserted.
+        @type service_address: Tuple
+        @param service_address: A tuple containing the address information
+        of the connection.
+        """
+
+        # creates the work reference tuple
+        work_reference = (service_data, self.service_socket, service_address, self.port)
+
+        # inserts the work into the service client pool
+        self.service_client_pool.insert_work(work_reference)
+
+    def _get_service_handler_class(self):
+        """
+        Retrieves the service handler class for
+        the current configuration.
+
+        @rtype: Class
+        @return: The service handler class for
+        the current configuration.
+        """
+
+        # in case the current service type is connection
+        if self.service_type == CONNECTION_TYPE_VALUE:
+            service_handler_class = AbstractServiceConnectionHandler
+        # in case the current service type is connectionless
+        elif self.service_type == CONNECTIONLESS_TYPE_VALUE:
+            service_handler_class = AbstractServiceConnectionlessHandler
+
+        # returns the service handler class
+        return service_handler_class
 
 class AbstractServiceConnectionHandler:
     """
@@ -779,6 +879,8 @@ class AbstractServiceConnectionHandler:
         @param connection_address: The connection address.
         @type connection_port: int
         @param connection_port: The connection port.
+        @rtype: ServiceConnection
+        @return: The created service connection.
         """
 
         # creates the new service connection
@@ -1014,6 +1116,199 @@ class AbstractServiceConnectionHandler:
         # returns the connection socket file descriptor
         return connection_socket_file_descriptor
 
+class AbstractServiceConnectionlessHandler:
+    """
+    The abstract service connectionless handler.
+    """
+
+    service = None
+    """ The service reference """
+
+    service_plugin = None
+    """ The service plugin """
+
+    service_configuration = None
+    """ The service configuration """
+
+    service_connections_list = []
+    """ The list of service connections """
+
+    service_connections_map = {}
+    """ The map of service connections """
+
+    connection_timeout = CONNECTION_TIMEOUT
+    """ The connection timeout """
+
+    client_service = None
+    """ The client service reference """
+
+    def __init__(self, service, service_plugin, service_configuration, connection_timeout, client_service_class, extra_parameters):
+        """
+        Constructor of the class.
+
+        @type service: AbstractService
+        @param service: The service reference.
+        @type service_plugin: Plugin
+        @param service_plugin: The service plugin.
+        @type service_configuration: Dictionary
+        @param service_configuration: The service configuration.
+        @type connection_timeout: float
+        @param connection_timeout: The connection timeout.
+        @type client_service_class: Class
+        @param client_service_class: The client service class.
+        @type extra_parameters: Dictionary
+        @param extra_parameters: The extra parameters.
+        """
+
+        self.service = service
+        self.service_plugin = service_plugin
+        self.service_configuration = service_configuration
+        self.connection_timeout = connection_timeout
+
+        self.service_data_list = []
+        self.service_connections_map = {}
+
+        # creates the client service object
+        self.client_service = client_service_class(self.service_plugin, self, service_configuration, main_service_utils_exceptions.MainServiceUtilsException, extra_parameters)
+
+    def start(self):
+        pass
+
+    def stop(self):
+        pass
+
+    def process(self):
+        """
+        Processes a work "tick".
+        The work tick consists in the processing of the currently
+        available data.
+        """
+
+        # iterates over all the available service
+        # connections
+        for service_connection in self.service_connections_list:
+            # handles the current request
+            self.client_service.handle_request(service_connection)
+
+            # retrieves the connection tuple
+            connection_tuple = service_connection.get_connection_tuple()
+
+            # removes the ready service connection (via remove work)
+            self.remove_work(connection_tuple)
+
+    def wake(self):
+        """
+        Wakes the current task releasing the current
+        process call.
+        """
+
+        pass
+
+    def work_added(self, work_reference):
+        """
+        Called when a work is added.
+
+        @type work_reference: Object
+        @param work_reference: The reference to the work to be added.
+        """
+
+        # unpacks the work reference retrieving the connection data, socket,
+        # address and port
+        connection_data, connection_socket, connection_address, connection_port = work_reference
+
+        # adds the connection to the current service connectionless handler
+        self.add_connection(connection_data, connection_socket, connection_address, connection_port)
+
+    def work_removed(self, work_reference):
+        """
+        Called when a work is removed.
+
+        @type work_reference: Object
+        @param work_reference: The reference to the work to be removed.
+        """
+
+        # unpacks the work reference retrieving the connection data, socket,
+        # address and port
+        _connection_data, connection_socket, connection_address, _connection_port = work_reference
+
+        # removes the connection using the socket and address as reference
+        self.remove_connection_socket_address(connection_socket, connection_address)
+
+    def add_connection(self, connection_data, connection_socket, connection_address, connection_port):
+        """
+        Adds a new connection to the service connection handler.
+
+        @type connection_data: String
+        @param connection_data: The connection data.
+        @type connection_socket: Socket
+        @param connection_socket: The connection socket.
+        @type connection_address: Tuple
+        @param connection_address: The connection address.
+        @type connection_port: int
+        @param connection_port: The connection port.
+        @rtype: ServiceConnection
+        @return: The created service connection.
+        """
+
+        # creates the new service connection
+        service_connection = ServiceConnectionless(self.service_plugin, connection_socket, connection_address, connection_port, connection_data)
+
+        # creates the connection tuple
+        connection_tuple = (connection_socket, connection_address)
+
+        # adds the service connection to the service connections list
+        self.service_connections_list.append(service_connection)
+
+        # sets the service connection in the service connections map
+        self.service_connections_map[connection_tuple] = service_connection
+
+        # returns the created service connection
+        return service_connection
+
+    def remove_connection(self, service_connection):
+        """
+        Removes the given service connection.
+
+        @type service_connection: ServiceConnection
+        @param service_connection: The service connection to be removed.
+        """
+
+        # retrieves the connection socket
+        connection_socket = service_connection.get_connection_socket()
+
+        # retrieves the connection address
+        connection_address = service_connection.get_connection_address()
+
+        # creates the connection tuple
+        connection_tuple = (connection_socket, connection_address)
+
+        # removes the connection from the service connections list
+        self.service_connections_list.remove(service_connection)
+
+        # removes the service connection from the service connections map
+        del self.service_connections_map[connection_tuple]
+
+    def remove_connection_socket_address(self, connection_socket, connection_address):
+        """
+        Removes the connection with the given socket and address.
+
+        @type connection_socket: Socket
+        @param connection_socket: The connection socket to be used
+        in the removal of the connection.
+        @type connection_address: Tuple
+        @param connection_address: The connection address tuple to be
+        used in the removal of the connection.
+        """
+
+        # creates the connection tuple
+        connection_tuple = (connection_socket, connection_address)
+
+        # retrieves the service connection from the service connections map
+        service_connection = self.service_connections_map[connection_tuple]
+
+        # removes the connection for the given service connection
+        self.remove_connection(service_connection)
+
 class ServiceConnection:
     """
     The service connection class.
@@ -1175,6 +1470,16 @@ class ServiceConnection:
 
         return self.connection_socket
 
+    def get_connection_address(self):
+        """
+        Retrieves the connection address.
+
+        @rtype: Tuple
+        @return: The connection address.
+        """
+
+        return self.connection_address
+
     def _call_connection_opened_handlers(self):
         """
         Calls all the connection opened handlers.
@@ -1194,3 +1499,65 @@ class ServiceConnection:
         for connection_closed_handler in self.connection_closed_handlers:
             # calls the connection closed handler
             connection_closed_handler(self)
+
+class ServiceConnectionless(ServiceConnection):
+    """
+    The service connection for information
+    flow based in connectionless mechanisms.
+    """
+
+    connection_data = None
+    """ The connection data """
+
+    def __init__(self, service_plugin, connection_socket, connection_address, connection_port, connection_data):
+        """
+        Constructor of the class.
+
+        @type service_plugin: Plugin
+        @param service_plugin: The service plugin.
+        @type connection_socket: Socket
+        @param connection_socket: The connection socket.
+        @type connection_address: Tuple
+        @param connection_address: The connection address.
+        @type connection_port: int
+        @param connection_port: The connection port.
+        @type connection_data: String
+        @param connection_data: The connection data.
+        """
+
+        ServiceConnection.__init__(self, service_plugin, connection_socket, connection_address, connection_port)
+
+        self.connection_data = connection_data
+
+    def retrieve_data(self, request_timeout = REQUEST_TIMEOUT):
+        """
+        Retrieves the data from the current connection socket.
+
+        @type request_timeout: float
+        @param request_timeout: The timeout to be used in data retrieval.
+        @rtype: String
+        @return: The retrieved data.
+        """
+
+        # returns the connection data
+        return self.connection_data
+
+    def send(self, message):
+        """
+        Sends the given message to the socket.
+
+        @type message: String
+        @param message: The message to be sent.
+        """
+
+        return self.connection_socket.sendto(message, self.connection_address)
+
+    def get_connection_tuple(self):
+        """
+        Returns a tuple representing the connection.
+
+        @rtype: Tuple
+        @return: A tuple representing the connection.
+        """
+
+        return (self.connection_data, self.connection_socket, self.connection_address, self.connection_port)
