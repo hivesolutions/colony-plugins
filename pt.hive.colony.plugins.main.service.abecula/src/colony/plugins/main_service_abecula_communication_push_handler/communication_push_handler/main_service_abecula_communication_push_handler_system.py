@@ -108,6 +108,15 @@ class MainServiceAbeculaCommunicationPushHandler:
         operation_handler_method(request, communication_push_plugin)
 
     def handle_connect(self, request, communication_push_plugin):
+        """
+        Handles the abecula connect command.
+
+        @type request: AbeculaRequest
+        @param request: The abecula request for the command.
+        @type communication_push_plugin: Plugin
+        @param communication_push_plugin: The communication push plugin.
+        """
+
         # retrieves the service handler
         service_handler = request.get_service_handler()
 
@@ -133,10 +142,16 @@ class MainServiceAbeculaCommunicationPushHandler:
 
         service_connection.connection_closed_handlers.append(self.handle_connection_closed)
 
-    def handle_message(self, request, communication_push_plugin):
-        pass
-
     def handle_disconnect(self, request, communication_push_plugin):
+        """
+        Handles the abecula disconnect command.
+
+        @type request: AbeculaRequest
+        @param request: The abecula request for the command.
+        @type communication_push_plugin: Plugin
+        @param communication_push_plugin: The communication push plugin.
+        """
+
         # retrieves the service connection
         service_connection = request.get_service_connection()
 
@@ -152,7 +167,32 @@ class MainServiceAbeculaCommunicationPushHandler:
         # writes the response
         request.write("success")
 
+    def handle_message(self, request, communication_push_plugin):
+        """
+        Handles the abecula message command.
+
+        @type request: AbeculaRequest
+        @param request: The abecula request for the command.
+        @type communication_push_plugin: Plugin
+        @param communication_push_plugin: The communication push plugin.
+        """
+
+        # generates a new notification for the message
+        notification = communication_push_plugin.generate_notification("tobias", "matias")
+
+        communication_push_plugin.send_broadcast_notification("tobias", notification)
+
     def handle_connection_closed(self, service_connection):
+        """
+        The connection closed handler.
+        The handler is called upon the closing of the
+        connection.
+
+        @type service_connection: ServiceConnection
+        @param service_connection: The service connection
+        that is being closed.
+        """
+
         # retrieves the communication push plugin
         communication_push_plugin = self.main_service_abecula_communication_push_handler_plugin.communication_push_plugin
 
