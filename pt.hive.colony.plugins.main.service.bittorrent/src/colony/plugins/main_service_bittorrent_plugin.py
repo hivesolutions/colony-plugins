@@ -53,10 +53,10 @@ class MainServiceBittorrentPlugin(colony.plugins.plugin_system.Plugin):
     author = "Hive Solutions Lda. <development@hive.pt>"
     loading_type = colony.plugins.plugin_system.EAGER_LOADING_TYPE
     platforms = [colony.plugins.plugin_system.CPYTHON_ENVIRONMENT]
-    capabilities = ["startup", "service.bittorrent"]
-    capabilities_allowed = ["bittorrent_service_handler", "socket_provider"]
+    capabilities = ["service.bittorrent"]
+    capabilities_allowed = ["bittorrent_service_handler"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0"),
+                    "pt.hive.colony.plugins.main.service.utils", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.misc.bencode", "1.0.0")]
     events_handled = []
@@ -66,9 +66,8 @@ class MainServiceBittorrentPlugin(colony.plugins.plugin_system.Plugin):
     main_service_bittorrent = None
 
     bittorrent_service_handler_plugins = []
-    socket_provider_plugins = []
 
-    thread_pool_manager_plugin = None
+    main_service_utils_plugin = None
     bencode_plugin = None
 
     def load_plugin(self):
@@ -116,25 +115,17 @@ class MainServiceBittorrentPlugin(colony.plugins.plugin_system.Plugin):
         self.bittorrent_service_handler_plugins.append(plugin)
         self.main_service_bittorrent.bittorrent_service_handler_load(plugin)
 
-    @colony.plugins.decorators.load_allowed_capability("socket_provider")
-    def socket_provider_load_allowed(self, plugin, capability):
-        self.socket_provider_plugins.append(plugin)
-
     @colony.plugins.decorators.unload_allowed_capability("bittorrent_service_handler")
     def bittorrent_service_handler_unload_allowed(self, plugin, capability):
         self.bittorrent_service_handler_plugins.remove(plugin)
         self.main_service_bittorrent.bittorrent_service_handler_unload(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("socket_provider")
-    def socket_provider_unload_allowed(self, plugin, capability):
-        self.socket_provider_plugins.remove(plugin)
+    def get_main_service_utils_plugin(self):
+        return self.main_service_utils_plugin
 
-    def get_thread_pool_manager_plugin(self):
-        return self.thread_pool_manager_plugin
-
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.threads.thread_pool_manager")
-    def set_thread_pool_manager_plugin(self, thread_pool_manager_plugin):
-        self.thread_pool_manager_plugin = thread_pool_manager_plugin
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.service.utils")
+    def set_main_service_utils_plugin(self, main_service_utils_plugin):
+        self.main_service_utils_plugin = main_service_utils_plugin
 
     def get_bencode_plugin(self):
         return self.bencode_plugin
