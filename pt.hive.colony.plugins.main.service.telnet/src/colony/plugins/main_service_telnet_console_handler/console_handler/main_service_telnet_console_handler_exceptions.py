@@ -44,3 +44,29 @@ class MainServiceTelnetConsoleHandlerException(Exception):
 
     message = None
     """ The exception's message """
+
+class WriteFunctionCreationError(MainServiceTelnetConsoleHandlerException):
+    """
+    The socket provider not found class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        MainServiceTelnetConsoleHandlerException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Write function creation error: %s" % self.message

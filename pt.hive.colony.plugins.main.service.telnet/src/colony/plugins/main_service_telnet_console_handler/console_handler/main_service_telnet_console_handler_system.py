@@ -67,8 +67,15 @@ class MainServiceTelnetConsoleHandler:
         # retrieves the request method
         message = request.get_message()
 
+        try:
+            # creates the write function for the given request
+            write_function = self.create_write(request)
+        except Exception, exception:
+            # raises the write function creation error
+            raise main_service_telnet_console_handler_exceptions.WriteFunctionCreationError("problem creating write function: " + str(exception))
+
         # processes the command line
-        self.main_service_telnet_console_handler_plugin.main_console_plugin.process_command_line(message, self.create_write(request))
+        self.main_service_telnet_console_handler_plugin.main_console_plugin.process_command_line(message, write_function)
 
         # writes the caret
         request.write(">> ")
@@ -78,6 +85,16 @@ class MainServiceTelnetConsoleHandler:
         request.write(">> ")
 
     def create_write(self, request):
+        """
+        Create a write function for the given request.
+
+        @type request: IrcRequest
+        @param request: The irc request to be used in the
+        created write function.
+        @rtype: Function
+        @return: The created write function.
+        """
+
         def write(text, new_line = True):
             # replaces the newlines to newlines with carriage return
             raw_text = text.replace("\n", "\r\n")
@@ -88,4 +105,5 @@ class MainServiceTelnetConsoleHandler:
             else:
                 request.write(raw_text)
 
+        # returns the created write function
         return write
