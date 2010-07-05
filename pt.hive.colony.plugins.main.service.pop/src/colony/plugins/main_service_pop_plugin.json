@@ -9,10 +9,9 @@
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["service.pop", "build_automation_item"],
     "capabilities_allowed" : ["pop_service_handler",
-            "pop_service_authentication_handler",
-            "pop_service_session_handler", "socket_provider", "socket_upgrader"],
+            "pop_service_authentication_handler", "pop_service_session_handler"],
     "dependencies" : [{
-                "id" : "pt.hive.colony.plugins.main.threads.thread_pool_manager",
+                "id" : "pt.hive.colony.plugins.main.service.utils",
                 "version" : "1.0.0"
             }],
     "main_file" : "main_service_pop_plugin.py",

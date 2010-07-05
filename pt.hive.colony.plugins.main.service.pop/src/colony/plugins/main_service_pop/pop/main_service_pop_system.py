@@ -38,16 +38,16 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import sys
-import socket
-import select
-import threading
 import traceback
 
 import colony.libs.string_buffer_util
 
 import main_service_pop_exceptions
 
-BIND_HOST_VALUE = ""
+CONNECTION_TYPE = "connection"
+""" The connection type """
+
+BIND_HOST = ""
 """ The host value """
 
 CLIENT_CONNECTION_TIMEOUT = 1
@@ -62,11 +62,17 @@ CHUNK_SIZE = 4096
 NUMBER_THREADS = 15
 """ The number of threads """
 
-MAX_NUMBER_THREADS = 30
+MAXIMUM_NUMBER_THREADS = 30
 """ The maximum number of threads """
 
 SCHEDULING_ALGORITHM = 2
 """ The scheduling algorithm """
+
+MAXIMUM_NUMBER_WORKS_THREAD = 5
+""" The maximum number of works per thread """
+
+WORK_SCHEDULING_ALGORITHM = 1
+""" The work scheduling algorithm """
 
 DEFAULT_PORT = 110
 """ The default port """
@@ -97,20 +103,8 @@ class MainServicePop:
     pop_service_session_handler_plugins_map = {}
     """ The pop service session handler plugins map """
 
-    pop_socket = None
-    """ The pop socket """
-
-    pop_connection_active = False
-    """ The pop connection active flag """
-
-    pop_client_thread_pool = None
-    """ The pop client thread pool """
-
-    pop_connection_close_event = None
-    """ The pop connection close event """
-
-    pop_connection_close_end_event = None
-    """ The pop connection close end event """
+    pop_service = None
+    """ The pop service reference """
 
     def __init__(self, main_service_pop_plugin):
         """
@@ -125,8 +119,6 @@ class MainServicePop:
         self.pop_service_handler_plugins_map = {}
         self.pop_service_authentication_handler_plugins_map = {}
         self.pop_service_session_handler_plugins_map = {}
-        self.pop_connection_close_event = threading.Event()
-        self.pop_connection_close_end_event = threading.Event()
 
     def start_service(self, parameters):
         """
@@ -136,185 +128,28 @@ class MainServicePop:
         @param parameters: The parameters to start the service.
         """
 
-        # retrieves the socket provider value
-        socket_provider = parameters.get("socket_provider", None)
+        # retrieves the main service utils plugin
+        main_service_utils_plugin = self.main_service_pop_plugin.main_service_utils_plugin
 
-        # retrieves the port value
-        port = parameters.get("port", DEFAULT_PORT)
+        # generates the parameters
+        service_parameters = self._generate_service_parameters(parameters)
 
-        # retrieves the service configuration
-        service_configuration_property = self.main_service_pop_plugin.get_configuration_property("server_configuration")
+        # generates the pop service using the given service parameters
+        self.pop_service = main_service_utils_plugin.generate_service(service_parameters)
 
-        # in case the service configuration property is defined
-        if service_configuration_property:
-            # retrieves the service configuration
-            service_configuration = service_configuration_property.get_data()
-        else:
-            # sets the service configuration as an empty map
-            service_configuration = {}
-
-        # retrieves the socket provider configuration value
-        socket_provider = service_configuration.get("default_socket_provider", socket_provider)
-
-        # retrieves the port configuration value
-        port = service_configuration.get("default_port", port)
-
-        # start the server for the given socket provider, port and encoding
-        self.start_server(socket_provider, port, service_configuration)
-
-        # clears the pop connection close event
-        self.pop_connection_close_event.clear()
-
-        # sets the pop connection close end event
-        self.pop_connection_close_end_event.set()
+        # starts the pop service
+        self.pop_service.start_service()
 
     def stop_service(self, parameters):
         """
         Stops the service.
 
         @type parameters: Dictionary
-        @param parameters: The parameters to start the service.
+        @param parameters: The parameters to stop the service.
         """
 
-        # sets the pop connection active flag as false
-        self.pop_connection_active = False
-
-        # sets the pop connection close event
-        self.pop_connection_close_event.set()
-
-        # waits for the pop connection close end event
-        self.pop_connection_close_end_event.wait()
-
-        # clears the pop connection close end event
-        self.pop_connection_close_end_event.clear()
-
-        # stops all the pool tasks
-        self.pop_client_thread_pool.stop_pool_tasks()
-
-        # stops the pool
-        self.pop_client_thread_pool.stop_pool()
-
-    def start_server(self, socket_provider, port, service_configuration):
-        """
-        Starts the server in the given port.
-
-        @type socket_provider: String
-        @param socket_provider: The name of the socket provider to be used.
-        @type port: int
-        @param port: The port to start the server.
-        @type service_configuration: Dictionary
-        @param service_configuration: The service configuration map.
-        """
-
-        # retrieves the thread pool manager plugin
-        thread_pool_manager_plugin = self.main_service_pop_plugin.thread_pool_manager_plugin
-
-        # retrieves the task descriptor class
-        task_descriptor_class = thread_pool_manager_plugin.get_thread_task_descriptor_class()
-
-        # creates the pop client thread pool
-        self.pop_client_thread_pool = thread_pool_manager_plugin.create_new_thread_pool("pop pool",
-                                                                                         "pool to support pop client connections",
-                                                                                         NUMBER_THREADS, SCHEDULING_ALGORITHM, MAX_NUMBER_THREADS)
-
-        # starts the pop client thread pool
-        self.pop_client_thread_pool.start_pool()
-
-        # sets the pop connection active flag as true
-        self.pop_connection_active = True
-
-        # in case the socket provider is defined
-        if socket_provider:
-            # retrieves the socket provider plugins
-            socket_provider_plugins = self.main_service_pop_plugin.socket_provider_plugins
-
-            # iterates over all the socket provider plugins
-            for socket_provider_plugin in socket_provider_plugins:
-                # retrieves the provider name from the socket provider plugin
-                socket_provider_plugin_provider_name = socket_provider_plugin.get_provider_name()
-
-                # in case the names are the same
-                if socket_provider_plugin_provider_name == socket_provider:
-                    # the parameters for the socket provider
-                    parameters = {"server_side" : True, "do_handshake_on_connect" : False}
-
-                    # creates a new pop socket with the socket provider plugin
-                    self.pop_socket = socket_provider_plugin.provide_socket_parameters(parameters)
-
-            # in case the socket was not created, no socket provider found
-            if not self.pop_socket:
-                raise main_service_pop_exceptions.SocketProviderNotFound("socket provider %s not found" % socket_provider)
-        else:
-            # creates the pop socket
-            self.pop_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-        # sets the socket to be able to reuse the socket
-        self.pop_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
-        # binds the pop socket
-        self.pop_socket.bind((BIND_HOST_VALUE, port))
-
-        # start listening in the pop socket
-        self.pop_socket.listen(5)
-
-        # loops while the pop connection is active
-        while not self.pop_connection_close_event.isSet():
-            try:
-                # sets the socket to non blocking mode
-                self.pop_socket.setblocking(0)
-
-                # starts the select values
-                selected_values = ([], [], [])
-
-                # iterates while there is no selected values
-                while selected_values == ([], [], []):
-                    # in case the connection is closed
-                    if self.pop_connection_close_event.isSet():
-                        # closes the pop socket
-                        self.pop_socket.close()
-
-                        return
-
-                    # selects the values
-                    selected_values = select.select([self.pop_socket], [], [], CLIENT_CONNECTION_TIMEOUT)
-
-                # sets the socket to blocking mode
-                self.pop_socket.setblocking(1)
-            except:
-                # prints debug message about connection
-                self.main_service_pop_plugin.info("The socket is not valid for selection of the pool")
-
-                return
-
-            # in case the connection is closed
-            if self.pop_connection_close_event.isSet():
-                # closes the pop socket
-                self.pop_socket.close()
-
-                return
-
-            try:
-                # accepts the connection retrieving the pop connection object and the address
-                pop_connection, pop_address = self.pop_socket.accept()
-
-                # creates a new pop client service task, with the given pop connection, address, encoding and encoding handler
-                pop_client_service_task = PopClientServiceTask(self.main_service_pop_plugin, pop_connection, pop_address, service_configuration)
-
-                # creates a new task descriptor
-                task_descriptor = task_descriptor_class(start_method = pop_client_service_task.start,
-                                                        stop_method = pop_client_service_task.stop,
-                                                        pause_method = pop_client_service_task.pause,
-                                                        resume_method = pop_client_service_task.resume)
-
-                # inserts the new task descriptor into the pop client thread pool
-                self.pop_client_thread_pool.insert_task(task_descriptor)
-
-                self.main_service_pop_plugin.debug("Number of threads in pool: %d" % self.pop_client_thread_pool.current_number_threads)
-            except Exception, exception:
-                self.main_service_pop_plugin.error("Error accepting connection: " + str(exception))
-
-        # closes the pop socket
-        self.pop_socket.close()
+        # starts the pop service
+        self.pop_service.stop_service()
 
     def pop_service_handler_load(self, pop_service_handler_plugin):
         # retrieves the plugin handler name
@@ -352,184 +187,139 @@ class MainServicePop:
 
         del self.pop_service_session_handler_plugins_map[session_handler_name]
 
-class PopClientServiceTask:
+    def _get_service_configuration(self):
+        # retrieves the service configuration property
+        service_configuration_property = self.main_service_pop_plugin.get_configuration_property("server_configuration")
+
+        # in case the service configuration property is defined
+        if service_configuration_property:
+            # retrieves the service configuration
+            service_configuration = service_configuration_property.get_data()
+        else:
+            # sets the service configuration as an empty map
+            service_configuration = {}
+
+        return service_configuration
+
+    def _generate_service_parameters(self, parameters):
+        """
+        Retrieves the service parameters map from the base parameters
+        map.
+
+        @type parameters: Dictionary
+        @param parameters: The base parameters map to be used to build
+        the final service parameters map.
+        @rtype: Dictionary
+        @return: The final service parameters map.
+        """
+
+        # retrieves the socket provider value
+        socket_provider = parameters.get("socket_provider", None)
+
+        # retrieves the port value
+        port = parameters.get("port", DEFAULT_PORT)
+
+        # retrieves the service configuration
+        service_configuration = self._get_service_configuration()
+
+        # retrieves the socket provider configuration value
+        socket_provider = service_configuration.get("default_socket_provider", socket_provider)
+
+        # retrieves the port configuration value
+        port = service_configuration.get("default_port", port)
+
+        # creates the pool configuration map
+        pool_configuration = {"name" : "pop pool",
+                              "description" : "pool to support pop client connections",
+                              "number_threads" : NUMBER_THREADS,
+                              "scheduling_algorithm" : SCHEDULING_ALGORITHM,
+                              "maximum_number_threads" : MAXIMUM_NUMBER_THREADS,
+                              "maximum_number_works_thread" : MAXIMUM_NUMBER_WORKS_THREAD,
+                              "work_scheduling_algorithm" : WORK_SCHEDULING_ALGORITHM}
+
+        # creates the extra parameters map
+        extra_parameters = {}
+
+        # creates the parameters map
+        parameters = {"type" : CONNECTION_TYPE,
+                      "service_plugin" : self.main_service_pop_plugin,
+                      "service_handling_task_class" : PopClientServiceHandler,
+                      "socket_provider" : socket_provider,
+                      "bind_host" : BIND_HOST,
+                      "port" : port,
+                      "chunk_size" : CHUNK_SIZE,
+                      "service_configuration" : service_configuration,
+                      "extra_parameters" :  extra_parameters,
+                      "pool_configuration" : pool_configuration,
+                      "client_connection_timeout" : CLIENT_CONNECTION_TIMEOUT}
+
+        # returns the parameters
+        return parameters
+
+class PopClientServiceHandler:
     """
-    The pop client service task class.
+    The pop client service handler class.
     """
 
-    main_service_pop_plugin = None
-    """ The main service pop plugin """
+    service_plugin = None
+    """ The service plugin """
 
-    pop_connection = None
-    """ The pop connection """
-
-    pop_address = None
-    """ The pop address """
+    service_connection_handler = None
+    """ The service connection handler """
 
     service_configuration = None
     """ The service configuration """
 
-    encoding_handler = None
-    """ The encoding handler """
+    service_utils_exception_class = None
+    """" The service utils exception class """
 
-    def __init__(self, main_service_pop_plugin, pop_connection, pop_address, service_configuration):
-        self.main_service_pop_plugin = main_service_pop_plugin
-        self.pop_connection = pop_connection
-        self.pop_address = pop_address
+    def __init__(self, service_plugin, service_connection_handler, service_configuration, service_utils_exception_class, extra_parameters):
+        """
+        Constructor of the class.
+
+        @type service_plugin: Plugin
+        @param service_plugin: The service plugin.
+        @type service_connection_handler: AbstractServiceConnectionHandler
+        @param service_connection_handler: The abstract service connection handler, that
+        handles this connection.
+        @type service_configuration: Dictionary
+        @param service_configuration: The service configuration.
+        @type main_service_utils_exception: Class
+        @param main_service_utils_exception: The service utils exception class.
+        @type extra_parameters: Dictionary
+        @param extra_parameters: The extra parameters.
+        """
+
+        self.service_plugin = service_plugin
+        self.service_connection_handler = service_connection_handler
         self.service_configuration = service_configuration
+        self.service_utils_exception_class = service_utils_exception_class
 
-    def start(self):
-        # prints debug message about connection
-        self.main_service_pop_plugin.debug("Connected to: %s" % str(self.pop_address))
+    def handle_opened(self, service_connection):
+        # retrieves the service connection session
+        session = self._get_session(service_connection)
 
-        # sets the request timeout
-        request_timeout = REQUEST_TIMEOUT
+        # handles the request as a start session request
+        self._handle_start_session_request(session, service_connection, REQUEST_TIMEOUT)
 
-        # creates the session object
-        session = PopSession(self)
-
-        # retrieves the socket upgrader plugin for the socket upgrader name
-        socket_upgrader_plugin = self._get_socket_upgrader_plugin(SOCKET_UPGRADER_NAME)
-
-        # sets the upgrader handler in the session
-        session.upgrader_handler = socket_upgrader_plugin.upgrade_socket_parameters
-
-        # retrieves the initial request
-        request = self.retrieve_initial_request(session, request_timeout)
-
-        # retrieves the real service configuration,
-        # taking the request information into account
-        service_configuration = self._get_service_configuration(request)
-
-        # retrieves the default authentication handler name
-        authentication_handler_name = service_configuration.get("default_authentication_handler", None)
-
-        # retrieves the pop service authentication handler plugins map
-        pop_service_authentication_handler_plugins_map = self.main_service_pop_plugin.main_service_pop.pop_service_authentication_handler_plugins_map
-
-        # in case the authentication handler is not found in the handler plugins map
-        if not authentication_handler_name in pop_service_authentication_handler_plugins_map:
-            # raises an pop handler not found exception
-            raise main_service_pop_exceptions.PopHandlerNotFoundException("no authentication handler found for current request: " + authentication_handler_name)
-
-        # retrieves the pop service authentication handler plugin
-        pop_service_authentication_handler_plugin = pop_service_authentication_handler_plugins_map[authentication_handler_name]
-
-        # sets the authentication handler (plugin) in the session
-        session.set_authentication_handler(pop_service_authentication_handler_plugin)
-
-        # retrieves the authentication properties
-        authentication_properties = service_configuration.get("authentication_properties", {})
-
-        # sets the authentication properties in the session
-        session.set_authentication_properties(authentication_properties)
-
-        # retrieves the default session handler name
-        session_handler_name = service_configuration.get("default_session_handler", None)
-
-        # retrieves the pop service session handler plugins map
-        pop_service_session_handler_plugins_map = self.main_service_pop_plugin.main_service_pop.pop_service_session_handler_plugins_map
-
-        # in case the session handler is not found in the handler plugins map
-        if not session_handler_name in pop_service_session_handler_plugins_map:
-            # raises an pop handler not found exception
-            raise main_service_pop_exceptions.PopHandlerNotFoundException("no session handler found for current request: " + session_handler_name)
-
-        # retrieves the pop service session handler plugin
-        pop_service_session_handler_plugin = pop_service_session_handler_plugins_map[session_handler_name]
-
-        # sets the session handler (plugin) in the session
-        session.set_session_handler(pop_service_session_handler_plugin)
-
-        # retrieves the session properties
-        session_properties = service_configuration.get("session_properties", {})
-
-        # sets the session properties in the session
-        session.set_session_properties(session_properties)
-
-        # retrieves the default handler name
-        handler_name = service_configuration.get("default_handler", None)
-
-        # in case no handler name is defined (request not handled)
-        if not handler_name:
-            # raises an pop no handler exception
-            raise main_service_pop_exceptions.PopNoHandlerException("no handler defined for current request")
-
-        # retrieves the pop service handler plugins map
-        pop_service_handler_plugins_map = self.main_service_pop_plugin.main_service_pop.pop_service_handler_plugins_map
-
-        # in case the handler is not found in the handler plugins map
-        if not handler_name in pop_service_handler_plugins_map:
-            # raises an pop handler not found exception
-            raise main_service_pop_exceptions.PopHandlerNotFoundException("no handler found for current request: " + handler_name)
-
-        # retrieves the pop service handler plugin
-        pop_service_handler_plugin = pop_service_handler_plugins_map[handler_name]
-
-        # handles the initial request by the request handler
-        pop_service_handler_plugin.handle_initial_request(request)
-
-        # sends the initial request to the client (initial response)
-        self.send_request(request)
-
-        while True:
-            try:
-                # retrieves the request
-                request = self.retrieve_request(session, request_timeout)
-            except main_service_pop_exceptions.MainServicePopException:
-                self.main_service_pop_plugin.debug("Connection: %s closed" % str(self.pop_address))
-                return
-
-            try:
-                # prints debug message about request
-                self.main_service_pop_plugin.debug("Handling request: %s" % str(request))
-
-                # handles the request by the request handler
-                pop_service_handler_plugin.handle_request(request)
-
-                # sends the request to the client (response)
-                self.send_request(request)
-
-                # retrieves the value of the upgrade flag
-                upgrade = session.get_upgrade()
-
-                # in case the upgrade flag is set
-                if upgrade:
-                    # upgrades the session connection
-                    session.upgrade_connection()
-
-                    # unsets the upgrade flag
-                    session.set_upgrade(False)
-
-                # in case the session is closed
-                if session.get_closed():
-                    # prints debug message about session
-                    self.main_service_pop_plugin.debug("Session closed: %s" % str(session))
-
-                    break
-
-            except Exception, exception:
-                self.send_exception(request, exception)
-
-        # closes the pop connection
-        self.pop_connection.close()
-
-    def stop(self):
-        # closes the pop connection
-        self.pop_connection.close()
-
-    def pause(self):
+    def handle_closed(self, service_connection):
         pass
 
-    def resume(self):
-        pass
+    def handle_request(self, service_connection, request_timeout = REQUEST_TIMEOUT):
+        # retrieves the service connection session
+        session = self._get_session(service_connection)
 
-    def retrieve_initial_request(self, session, request_timeout = REQUEST_TIMEOUT):
+        # handles the request as a normal session request
+        return self._handle_normal_session_request(session, service_connection, request_timeout)
+
+    def retrieve_initial_request(self, session, service_connection, request_timeout = REQUEST_TIMEOUT):
         """
         Retrieves the initial request from the received message.
 
         @type session: PopSession
         @param session: The current pop session.
+        @type service_connection: ServiceConnection
+        @param service_connection: The service connection to be used.
         @type request_timeout: int
         @param request_timeout: The timeout for the request retrieval.
         @rtype: PopRequest
@@ -545,12 +335,14 @@ class PopClientServiceTask:
         # returns the initial request
         return request
 
-    def retrieve_request(self, session, request_timeout = REQUEST_TIMEOUT):
+    def retrieve_request(self, session, service_connection, request_timeout = REQUEST_TIMEOUT):
         """
         Retrieves the request from the received message.
 
         @type session: PopSession
         @param session: The current pop session.
+        @type service_connection: ServiceConnection
+        @param service_connection: The service connection to be used.
         @type request_timeout: int
         @param request_timeout: The timeout for the request retrieval.
         @rtype: PopRequest
@@ -565,8 +357,12 @@ class PopClientServiceTask:
 
         # continuous loop
         while True:
-            # retrieves the data
-            data = self.retrieve_data(request_timeout)
+            try:
+                # retrieves the data
+                data = service_connection.retrieve_data(request_timeout)
+            except self.service_utils_exception_class:
+                # raises the pop data retrieval exception
+                raise main_service_pop_exceptions.PopDataRetrievalException("problem retrieving data")
 
             # in case no valid data was received
             if data == "":
@@ -615,34 +411,12 @@ class PopClientServiceTask:
                 # returns the request
                 return request
 
-    def retrieve_data(self, request_timeout = REQUEST_TIMEOUT, chunk_size = CHUNK_SIZE):
-        try:
-            # sets the connection to non blocking mode
-            self.pop_connection.setblocking(0)
-
-            # runs the select in the pop connection, with timeout
-            selected_values = select.select([self.pop_connection], [], [], request_timeout)
-
-            # sets the connection to blocking mode
-            self.pop_connection.setblocking(1)
-        except:
-            raise main_service_pop_exceptions.RequestClosed("invalid socket")
-
-        if selected_values == ([], [], []):
-            self.pop_connection.close()
-            raise main_service_pop_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
-        try:
-            # receives the data in chunks
-            data = self.pop_connection.recv(chunk_size)
-        except:
-            raise main_service_pop_exceptions.ClientRequestTimeout("timeout")
-
-        return data
-
-    def send_exception(self, request, exception):
+    def send_exception(self, service_connection, request, exception):
         """
         Sends the exception to the given request for the given exception.
 
+        @type service_connection: ServiceConnection
+        @param service_connection: The service connection to be used.
         @type request: PopRequest
         @param request: The request to send the exception.
         @type exception: Exception
@@ -675,21 +449,226 @@ class PopClientServiceTask:
             request.write(formated_traceback_line)
 
         # sends the request to the client (response)
-        self.send_request(request)
+        self.send_request(service_connection, request)
 
-    def send_request(self, request):
-        self.send_request_simple(request)
+    def send_request(self, service_connection, request):
+        # retrieves the result from the request
+        result = request.get_result()
 
-    def send_request_simple(self, request):
-        # retrieves the result value
-        result_value = request.get_result()
+        # sends the result to the service connection
+        service_connection.send(result)
+
+    def _handle_start_session_request(self, session, service_connection, request_timeout = REQUEST_TIMEOUT):
+        # retrieves the pop service authentication handler plugins map
+        pop_service_authentication_handler_plugins_map = self.service_plugin.main_service_pop.pop_service_authentication_handler_plugins_map
+
+        # retrieves the pop service session handler plugins map
+        pop_service_session_handler_plugins_map = self.service_plugin.main_service_pop.pop_service_session_handler_plugins_map
+
+        # retrieves the pop service handler plugins map
+        pop_service_handler_plugins_map = self.service_plugin.main_service_pop.pop_service_handler_plugins_map
 
         try:
-            # sends the result value to the client
-            self.pop_connection.sendall(result_value)
-        except:
-            # error in the client side
-            return
+            # retrieves the initial request
+            request = self.retrieve_initial_request(session, service_connection, request_timeout)
+        except main_service_pop_exceptions.MainServicePopException:
+            # prints a debug message about the connection closing
+            self.service_plugin.debug("Connection: %s closed by peer, timeout or invalid request" % str(service_connection))
+
+            # returns false (connection closed)
+            return False
+
+        try:
+            # retrieves the real service configuration,
+            # taking the request information into account
+            service_configuration = self._get_service_configuration(request)
+
+            # retrieves the default authentication handler name
+            authentication_handler_name = service_configuration.get("default_authentication_handler", None)
+
+            # in case the authentication handler is not found in the handler plugins map
+            if not authentication_handler_name in pop_service_authentication_handler_plugins_map:
+                # raises an pop handler not found exception
+                raise main_service_pop_exceptions.PopHandlerNotFoundException("no authentication handler found for current request: " + authentication_handler_name)
+
+            # retrieves the pop service authentication handler plugin
+            pop_service_authentication_handler_plugin = pop_service_authentication_handler_plugins_map[authentication_handler_name]
+
+            # sets the authentication handler (plugin) in the session
+            session.set_authentication_handler(pop_service_authentication_handler_plugin)
+
+            # retrieves the authentication properties
+            authentication_properties = service_configuration.get("authentication_properties", {})
+
+            # sets the authentication properties in the session
+            session.set_authentication_properties(authentication_properties)
+
+            # retrieves the default session handler name
+            session_handler_name = service_configuration.get("default_session_handler", None)
+
+            # in case the session handler is not found in the handler plugins map
+            if not session_handler_name in pop_service_session_handler_plugins_map:
+                # raises an pop handler not found exception
+                raise main_service_pop_exceptions.PopHandlerNotFoundException("no session handler found for current request: " + session_handler_name)
+
+            # retrieves the pop service session handler plugin
+            pop_service_session_handler_plugin = pop_service_session_handler_plugins_map[session_handler_name]
+
+            # sets the session handler (plugin) in the session
+            session.set_session_handler(pop_service_session_handler_plugin)
+
+            # retrieves the session properties
+            session_properties = service_configuration.get("session_properties", {})
+
+            # sets the session properties in the session
+            session.set_session_properties(session_properties)
+
+            # retrieves the default handler name
+            handler_name = service_configuration.get("default_handler", None)
+
+            # in case no handler name is defined (request not handled)
+            if not handler_name:
+                # raises an pop no handler exception
+                raise main_service_pop_exceptions.PopNoHandlerException("no handler defined for current request")
+
+            # in case the handler is not found in the handler plugins map
+            if not handler_name in pop_service_handler_plugins_map:
+                # raises an pop handler not found exception
+                raise main_service_pop_exceptions.PopHandlerNotFoundException("no handler found for current request: " + handler_name)
+
+            # retrieves the pop service handler plugin
+            pop_service_handler_plugin = pop_service_handler_plugins_map[handler_name]
+
+            # handles the initial request by the request handler
+            pop_service_handler_plugin.handle_initial_request(request)
+
+            # sends the initial request to the client (initial response)
+            self.send_request(service_connection, request)
+
+            # sets the session as started
+            session.set_started(True)
+
+        except Exception, exception:
+            # prints info message about exception
+            self.service_plugin.info("There was an exception handling the request: " + str(exception))
+
+            # sends the exception
+            self.send_exception(service_connection, request, exception)
+
+        # returns true (connection remains open)
+        return True
+
+    def _handle_normal_session_request(self, session, service_connection, request_timeout = REQUEST_TIMEOUT):
+        # retrieves the pop service handler plugins map
+        pop_service_handler_plugins_map = self.service_plugin.main_service_pop.pop_service_handler_plugins_map
+
+        try:
+            # retrieves the request
+            request = self.retrieve_request(session, service_connection, request_timeout)
+        except main_service_pop_exceptions.MainServicePopException:
+            # prints a debug message about the connection closing
+            self.service_plugin.debug("Connection: %s closed by peer, timeout or invalid request" % str(service_connection))
+
+            # returns false (connection closed)
+            return False
+
+        try:
+            # prints debug message about request
+            self.service_plugin.debug("Handling request: %s" % str(request))
+
+            # retrieves the real service configuration,
+            # taking the request information into account
+            service_configuration = self._get_service_configuration(request)
+
+            # retrieves the default handler name
+            handler_name = service_configuration.get("default_handler", None)
+
+            # in case no handler name is defined (request not handled)
+            if not handler_name:
+                # raises an pop no handler exception
+                raise main_service_pop_exceptions.PopNoHandlerException("no handler defined for current request")
+
+            # in case the handler is not found in the handler plugins map
+            if not handler_name in pop_service_handler_plugins_map:
+                # raises an pop handler not found exception
+                raise main_service_pop_exceptions.PopHandlerNotFoundException("no handler found for current request: " + handler_name)
+
+            # retrieves the pop service handler plugin
+            pop_service_handler_plugin = pop_service_handler_plugins_map[handler_name]
+
+            # handles the request by the request handler
+            pop_service_handler_plugin.handle_request(request)
+
+            # sends the request to the client (response)
+            self.send_request(service_connection, request)
+
+            # retrieves the value of the upgrade flag
+            upgrade = session.get_upgrade()
+
+            # in case the upgrade flag is set
+            if upgrade:
+                # upgrades the session connection (service connection)
+                session.upgrade_connection(service_connection)
+
+                # unsets the upgrade flag
+                session.set_upgrade(False)
+
+            # in case the session is closed
+            if session.get_closed():
+                # prints debug message about session
+                self.service_plugin.debug("Session closed: %s" % str(session))
+
+                # returns false (connection closed)
+                return False
+
+        except Exception, exception:
+            # prints info message about exception
+            self.service_plugin.info("There was an exception handling the request: " + str(exception))
+
+            # sends the exception
+            self.send_exception(service_connection, request, exception)
+
+        # returns true (connection remains open)
+        return True
+
+    def _get_session(self, service_connection):
+        """
+        Retrieves the current pop session using
+        the service connection.
+
+        @type service_connection: ServiceConnection
+        @param service_connection: The service connection
+        to be used to retrieve the session.
+        @rtype: PopSession
+        @return: The current pop session
+        """
+
+        # tries to retrieve session from the service connection
+        session = service_connection.get_connection_property("session")
+
+        # in case no session is available
+        if not session:
+            # creates a new session
+            session = self._create_session()
+
+            # sets the session as a connection property
+            service_connection.set_connection_property("session", session)
+
+        # returns the session
+        return session
+
+    def _create_session(self):
+        """
+        Creates a new pop session.
+
+        @rtype: PopSession
+        @return: The created pop session.
+        """
+
+        # creates the session object
+        session = PopSession(self)
+
+        return session
 
     def _get_service_configuration(self, request):
         """
@@ -709,19 +688,6 @@ class PopClientServiceTask:
 
         # returns the service configuration
         return service_configuration
-
-    def _get_socket_upgrader_plugin(self, socket_upgrader_name):
-        # retrieves the socket upgrader plugins
-        socket_upgrader_plugins = self.main_service_pop_plugin.socket_upgrader_plugins
-
-        # iterates over all the socket upgrader plugins
-        for socket_upgrader_plugin in socket_upgrader_plugins:
-            # retrieves the upgrader name from the socket upgrader plugin
-            socket_upgrader_plugin_upgrader_name = socket_upgrader_plugin.get_upgrader_name()
-
-            # in case the names are the same
-            if socket_upgrader_plugin_upgrader_name == socket_upgrader_name:
-                return socket_upgrader_plugin
 
 class PopRequest:
     """
@@ -1035,9 +1001,6 @@ class PopSession:
     session_handler = None
     """ The session handler object """
 
-    upgrader_handler = None
-    """ The upgrader handler """
-
     message_client = None
     """ The message client """
 
@@ -1115,21 +1078,20 @@ class PopSession:
         # handles the session with the session handler
         self.session_handler.handle_session(self, self.session_properties)
 
-    def upgrade_connection(self):
+    def upgrade_connection(self, service_connection):
         """
         Upgrades the connection associated with the
         current session.
+
+        @type service_connection: ServiceConnection
+        @param service_connection: The current service connection.
         """
 
-        # in case no upgrader handler is set
-        if not self.upgrader_handler:
-            raise main_service_pop_exceptions.PopRuntimeException("no upgrader handler defined")
-
-        # the parameters for the upgrader handler
+        # the parameters for the "upgrading" of the service connection
         parameters = {"server_side" : True, "do_handshake_on_connect" : False}
 
-        # upgrades the pop client service task with the current upgrader handler
-        self.pop_client_service_task.pop_connection = self.upgrader_handler(self.pop_client_service_task.pop_connection, parameters)
+        # upgrades the current service connection
+        service_connection.upgrade(SOCKET_UPGRADER_NAME, parameters)
 
     def get_mailbox(self, name = None):
         """
@@ -1421,26 +1383,6 @@ class PopSession:
         """
 
         self.session_handler = session_handler
-
-    def get_upgrader_handler(self):
-        """
-        Retrieves the upgrader handler.
-
-        @rtype: UpgraderHandler
-        @return: The upgrader handler.
-        """
-
-        return self.upgrader_handler
-
-    def set_upgrader_handler(self, upgrader_handler):
-        """
-        Sets the upgrader handler.
-
-        @type upgrader_handler: UpgraderHandler
-        @param upgrader_handler: The upgrader handler.
-        """
-
-        self.upgrader_handler = upgrader_handler
 
     def get_message_client(self):
         """
