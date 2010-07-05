@@ -68,8 +68,6 @@ class MainServicePopPlugin(colony.plugins.plugin_system.Plugin):
     pop_service_handler_plugins = []
     pop_service_authentication_handler_plugins = []
     pop_service_session_handler_plugins = []
-    socket_provider_plugins = []
-    socket_upgrader_plugins = []
 
     main_service_utils_plugin = None
 
