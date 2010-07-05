@@ -38,16 +38,16 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import sys
-import socket
-import select
-import threading
 import traceback
 
 import colony.libs.string_buffer_util
 
 import main_service_xmpp_exceptions
 
-BIND_HOST_VALUE = ""
+CONNECTION_TYPE = "connection"
+""" The connection type """
+
+BIND_HOST = ""
 """ The bind host value """
 
 CLIENT_CONNECTION_TIMEOUT = 1
@@ -62,11 +62,17 @@ CHUNK_SIZE = 4096
 NUMBER_THREADS = 15
 """ The number of threads """
 
-MAX_NUMBER_THREADS = 30
+MAXIMUM_NUMBER_THREADS = 30
 """ The maximum number of threads """
 
 SCHEDULING_ALGORITHM = 2
 """ The scheduling algorithm """
+
+MAXIMUM_NUMBER_WORKS_THREAD = 5
+""" The maximum number of works per thread """
+
+WORK_SCHEDULING_ALGORITHM = 1
+""" The work scheduling algorithm """
 
 DEFAULT_PORT = 5222
 """ The default port """
@@ -98,20 +104,11 @@ class MainServiceXmpp:
     main_service_xmpp_plugin = None
     """ The main service xmpp plugin """
 
-    xmpp_socket = None
-    """ The xmpp socket """
+    xmpp_service_handler_plugins_map = {}
+    """ The xmpp service handler plugins map """
 
-    xmpp_connection_active = False
-    """ The xmpp connection active flag """
-
-    xmpp_client_thread_pool = None
-    """ The xmpp client thread pool """
-
-    xmpp_connection_close_event = None
-    """ The xmpp connection close event """
-
-    xmpp_connection_close_end_event = None
-    """ The xmpp connection close end event """
+    xmpp_service = None
+    """ The xmpp service reference """
 
     def __init__(self, main_service_xmpp_plugin):
         """
@@ -123,8 +120,7 @@ class MainServiceXmpp:
 
         self.main_service_xmpp_plugin = main_service_xmpp_plugin
 
-        self.xmpp_connection_close_event = threading.Event()
-        self.xmpp_connection_close_end_event = threading.Event()
+        self.xmpp_service_handler_plugin_map = {}
 
     def start_service(self, parameters):
         """
@@ -134,6 +130,67 @@ class MainServiceXmpp:
         @param parameters: The parameters to start the service.
         """
 
+        # retrieves the main service utils plugin
+        main_service_utils_plugin = self.main_service_xmpp_plugin.main_service_utils_plugin
+
+        # generates the parameters
+        service_parameters = self._generate_service_parameters(parameters)
+
+        # generates the xmpp service using the given service parameters
+        self.xmpp_service = main_service_utils_plugin.generate_service(service_parameters)
+
+        # starts the xmpp service
+        self.xmpp_service.start_service()
+
+    def stop_service(self, parameters):
+        """
+        Stops the service.
+
+        @type parameters: Dictionary
+        @param parameters: The parameters to stop the service.
+        """
+
+        # starts the xmpp service
+        self.xmpp_service.stop_service()
+
+    def xmpp_service_handler_load(self, xmpp_service_handler_plugin):
+        # retrieves the plugin handler name
+        handler_name = xmpp_service_handler_plugin.get_handler_name()
+
+        self.xmpp_service_handler_plugins_map[handler_name] = xmpp_service_handler_plugin
+
+    def xmpp_service_handler_unload(self, xmpp_service_handler_plugin):
+        # retrieves the plugin handler name
+        handler_name = xmpp_service_handler_plugin.get_handler_name()
+
+        del self.xmpp_service_handler_plugins_map[handler_name]
+
+    def _get_service_configuration(self):
+        # retrieves the service configuration property
+        service_configuration_property = self.main_service_xmpp_plugin.get_configuration_property("server_configuration")
+
+        # in case the service configuration property is defined
+        if service_configuration_property:
+            # retrieves the service configuration
+            service_configuration = service_configuration_property.get_data()
+        else:
+            # sets the service configuration as an empty map
+            service_configuration = {}
+
+        return service_configuration
+
+    def _generate_service_parameters(self, parameters):
+        """
+        Retrieves the service parameters map from the base parameters
+        map.
+
+        @type parameters: Dictionary
+        @param parameters: The base parameters map to be used to build
+        the final service parameters map.
+        @rtype: Dictionary
+        @return: The final service parameters map.
+        """
+
         # retrieves the socket provider value
         socket_provider = parameters.get("socket_provider", None)
 
@@ -141,266 +198,147 @@ class MainServiceXmpp:
         port = parameters.get("port", DEFAULT_PORT)
 
         # retrieves the service configuration
-        #service_configuration = self.main_service_xmpp_plugin.get_configuration_property("server_configuration").get_data()
-
-        service_configuration = {}
+        service_configuration = self._get_service_configuration()
 
         # retrieves the socket provider configuration value
-        #socket_provider = service_configuration.get("default_socket_provider", socket_provider)
+        socket_provider = service_configuration.get("default_socket_provider", socket_provider)
 
         # retrieves the port configuration value
-        #port = service_configuration.get("default_port", port)
+        port = service_configuration.get("default_port", port)
 
-        # start the server for the given socket provider, port and encoding
-        self.start_server(socket_provider, port, service_configuration)
+        # creates the pool configuration map
+        pool_configuration = {"name" : "xmpp pool",
+                              "description" : "pool to support xmpp client connections",
+                              "number_threads" : NUMBER_THREADS,
+                              "scheduling_algorithm" : SCHEDULING_ALGORITHM,
+                              "maximum_number_threads" : MAXIMUM_NUMBER_THREADS,
+                              "maximum_number_works_thread" : MAXIMUM_NUMBER_WORKS_THREAD,
+                              "work_scheduling_algorithm" : WORK_SCHEDULING_ALGORITHM}
 
-        # clears the xmpp connection close event
-        self.xmpp_connection_close_event.clear()
+        # creates the extra parameters map
+        extra_parameters = {}
 
-        # sets the xmpp connection close end event
-        self.xmpp_connection_close_end_event.set()
+        # creates the parameters map
+        parameters = {"type" : CONNECTION_TYPE,
+                      "service_plugin" : self.main_service_xmpp_plugin,
+                      "service_handling_task_class" : XmppClientServiceHandler,
+                      "socket_provider" : socket_provider,
+                      "bind_host" : BIND_HOST,
+                      "port" : port,
+                      "chunk_size" : CHUNK_SIZE,
+                      "service_configuration" : service_configuration,
+                      "extra_parameters" :  extra_parameters,
+                      "pool_configuration" : pool_configuration,
+                      "client_connection_timeout" : CLIENT_CONNECTION_TIMEOUT,
+                      "connection_timeout" : REQUEST_TIMEOUT}
 
-    def stop_service(self, parameters):
-        """
-        Stops the service.
+        # returns the parameters
+        return parameters
 
-        @type parameters: Dictionary
-        @param parameters: The parameters to start the service.
-        """
-
-        # sets the xmpp connection active flag as false
-        self.xmpp_connection_active = False
-
-        # sets the xmpp connection close event
-        self.xmpp_connection_close_event.set()
-
-        # waits for the xmpp connection close end event
-        self.xmpp_connection_close_end_event.wait()
-
-        # clears the xmpp connection close end event
-        self.xmpp_connection_close_end_event.clear()
-
-        # stops all the pool tasks
-        self.xmpp_client_thread_pool.stop_pool_tasks()
-
-        # stops the pool
-        self.xmpp_client_thread_pool.stop_pool()
-
-    def start_server(self, socket_provider, port, service_configuration):
-        """
-        Starts the server in the given port.
-
-        @type socket_provider: String
-        @param socket_provider: The name of the socket provider to be used.
-        @type port: int
-        @param port: The port to start the server.
-        @type service_configuration: Dictionary
-        @param service_configuration: The service configuration map.
-        """
-
-        # retrieves the thread pool manager plugin
-        thread_pool_manager_plugin = self.main_service_xmpp_plugin.thread_pool_manager_plugin
-
-        # retrieves the task descriptor class
-        task_descriptor_class = thread_pool_manager_plugin.get_thread_task_descriptor_class()
-
-        # creates the xmpp client thread pool
-        self.xmpp_client_thread_pool = thread_pool_manager_plugin.create_new_thread_pool("xmpp pool",
-                                                                                         "pool to support xmpp client connections",
-                                                                                         NUMBER_THREADS, SCHEDULING_ALGORITHM, MAX_NUMBER_THREADS)
-
-        # starts the xmpp client thread pool
-        self.xmpp_client_thread_pool.start_pool()
-
-        # sets the xmpp connection active flag as true
-        self.xmpp_connection_active = True
-
-        # in case the socket provider is defined
-        if socket_provider:
-            # retrieves the socket provider plugins
-            socket_provider_plugins = self.main_service_xmpp_plugin.socket_provider_plugins
-
-            # iterates over all the socket provider plugins
-            for socket_provider_plugin in socket_provider_plugins:
-                # retrieves the provider name from the socket provider plugin
-                socket_provider_plugin_provider_name = socket_provider_plugin.get_provider_name()
-
-                # in case the names are the same
-                if socket_provider_plugin_provider_name == socket_provider:
-                    # the parameters for the socket provider
-                    parameters = {"server_side" : True, "do_handshake_on_connect" : False}
-
-                    # creates a new xmpp socket with the socket provider plugin
-                    self.xmpp_socket = socket_provider_plugin.provide_socket_parameters(parameters)
-
-            # in case the socket was not created, no socket provider found
-            if not self.xmpp_socket:
-                raise main_service_xmpp_exceptions.SocketProviderNotFound("socket provider %s not found" % socket_provider)
-        else:
-            # creates the xmpp socket
-            self.xmpp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-        # sets the socket to be able to reuse the socket
-        self.xmpp_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
-        # binds the xmpp socket
-        self.xmpp_socket.bind((BIND_HOST_VALUE, port))
-
-        # start listening in the xmpp socket
-        self.xmpp_socket.listen(5)
-
-        # loops while the xmpp connection is active
-        while not self.xmpp_connection_close_event.isSet():
-            try:
-                # sets the socket to non blocking mode
-                self.xmpp_socket.setblocking(0)
-
-                # starts the select values
-                selected_values = ([], [], [])
-
-                # iterates while there is no selected values
-                while selected_values == ([], [], []):
-                    # in case the connection is closed
-                    if self.xmpp_connection_close_event.isSet():
-                        # closes the xmpp socket
-                        self.xmpp_socket.close()
-
-                        return
-
-                    # selects the values
-                    selected_values = select.select([self.xmpp_socket], [], [], CLIENT_CONNECTION_TIMEOUT)
-
-                # sets the socket to blocking mode
-                self.xmpp_socket.setblocking(1)
-            except:
-                # prints debug message about connection
-                self.main_service_xmpp_plugin.info("The socket is not valid for selection of the pool")
-
-                return
-
-            # in case the connection is closed
-            if self.xmpp_connection_close_event.isSet():
-                # closes the xmpp socket
-                self.xmpp_socket.close()
-
-                return
-
-            try:
-                # accepts the connection retrieving the xmpp connection object and the address
-                xmpp_connection, xmpp_address = self.xmpp_socket.accept()
-
-                # creates a new xmpp client service task, with the given xmpp connection, address, encoding and encoding handler
-                xmpp_client_service_task = XmppClientServiceTask(self.main_service_xmpp_plugin, xmpp_connection, xmpp_address, service_configuration)
-
-                # creates a new task descriptor
-                task_descriptor = task_descriptor_class(start_method = xmpp_client_service_task.start,
-                                                        stop_method = xmpp_client_service_task.stop,
-                                                        pause_method = xmpp_client_service_task.pause,
-                                                        resume_method = xmpp_client_service_task.resume)
-
-                # inserts the new task descriptor into the xmpp client thread pool
-                self.xmpp_client_thread_pool.insert_task(task_descriptor)
-
-                self.main_service_xmpp_plugin.debug("Number of threads in pool: %d" % self.xmpp_client_thread_pool.current_number_threads)
-            except Exception, exception:
-                # prints an error message about the problem accepting the connection
-                self.main_service_xmpp_plugin.error("Error accepting connection: " + str(exception))
-
-        # closes the xmpp socket
-        self.xmpp_socket.close()
-
-class XmppClientServiceTask:
+class XmppClientServiceHandler:
     """
-    The xmpp client service task class.
+    The xmpp client service handler class.
     """
 
-    main_service_xmpp_plugin = None
-    """ The main service xmpp plugin """
+    service_plugin = None
+    """ The service plugin """
 
-    xmpp_connection = None
-    """ The xmpp connection """
-
-    xmpp_address = None
-    """ The xmpp address """
+    service_connection_handler = None
+    """ The service connection handler """
 
     service_configuration = None
     """ The service configuration """
 
-    encoding_handler = None
-    """ The encoding handler """
+    service_utils_exception_class = None
+    """" The service utils exception class """
 
-    def __init__(self, main_service_xmpp_plugin, xmpp_connection, xmpp_address, service_configuration):
-        self.main_service_xmpp_plugin = main_service_xmpp_plugin
-        self.xmpp_connection = xmpp_connection
-        self.xmpp_address = xmpp_address
+    def __init__(self, service_plugin, service_connection_handler, service_configuration, service_utils_exception_class, extra_parameters):
+        """
+        Constructor of the class.
+
+        @type service_plugin: Plugin
+        @param service_plugin: The service plugin.
+        @type service_connection_handler: AbstractServiceConnectionHandler
+        @param service_connection_handler: The abstract service connection handler, that
+        handles this connection.
+        @type service_configuration: Dictionary
+        @param service_configuration: The service configuration.
+        @type main_service_utils_exception: Class
+        @param main_service_utils_exception: The service utils exception class.
+        @type extra_parameters: Dictionary
+        @param extra_parameters: The extra parameters.
+        """
+
+        self.service_plugin = service_plugin
+        self.service_connection_handler = service_connection_handler
         self.service_configuration = service_configuration
+        self.service_utils_exception_class = service_utils_exception_class
 
-    def start(self):
-        # prints debug message about connection
-        self.main_service_xmpp_plugin.debug("Connected to: %s" % str(self.xmpp_address))
-
-        # sets the request timeout
-        request_timeout = REQUEST_TIMEOUT
-
-        # creates the session object
-        session = XmppSession()
+    def handle_opened(self, service_connection):
+        # retrieves the service connection session
+        session = self._get_session(service_connection)
 
         # retrieves the initial request
-        request = self.retrieve_initial_request(session, request_timeout)
+        request = self.retrieve_initial_request(session, service_connection)
 
         # handles the request by the request handler
-        self.main_service_xmpp_plugin.xmpp_service_handler_plugins[0].handle_initial_request(request)
+        self.service_plugin.xmpp_service_handler_plugins[0].handle_initial_request(request)
 
         # sends the initial request to the client (initial response)
-        self.send_request(request)
+        self.send_request(service_connection, request)
 
-        while True:
-            try:
-                # retrieves the request
-                request = self.retrieve_request(session, request_timeout)
-
-                # in case a close message is received
-                if request.get_message() == "close":
-                    break
-
-            except main_service_xmpp_exceptions.MainServiceXmppException:
-                self.main_service_xmpp_plugin.debug("Connection: %s closed" % str(self.xmpp_address))
-                return
-
-            try:
-                # prints debug message about request
-                self.main_service_xmpp_plugin.debug("Handling request: %s" % str(request))
-
-                # parses the request
-                parsed_request = self.main_service_xmpp_plugin.main_service_xmpp_helper_plugin.parse_request(request)
-
-                # handles the request by the request handler
-                self.main_service_xmpp_plugin.xmpp_service_handler_plugins[0].handle_request(request)
-
-                # sends the request to the client (response)
-                self.send_request(request)
-            except Exception, exception:
-                self.send_exception(request, exception)
-
-        # closes the xmpp connection
-        self.xmpp_connection.close()
-
-    def stop(self):
-        # closes the xmpp connection
-        self.xmpp_connection.close()
-
-    def pause(self):
+    def handle_closed(self, service_connection):
         pass
 
-    def resume(self):
-        pass
+    def handle_request(self, service_connection, request_timeout = REQUEST_TIMEOUT):
+        # retrieves the service connection session
+        session = self._get_session(service_connection)
 
-    def retrieve_initial_request(self, session, request_timeout = REQUEST_TIMEOUT):
+        try:
+            # retrieves the request
+            request = self.retrieve_request(session, service_connection, request_timeout)
+        except main_service_xmpp_exceptions.MainServiceXmppException:
+            # prints a debug message about the connection closing
+            self.service_plugin.debug("Connection: %s closed by peer, timeout or invalid request" % str(service_connection))
+
+            # returns false (connection closed)
+            return False
+
+        try:
+            # prints debug message about request
+            self.service_plugin.debug("Handling request: %s" % str(request))
+
+            # in case a close message is received
+            if request.get_message() == "close":
+                # returns false (connection closed)
+                return False
+
+            # parses the request, using the xmpp helper plugin
+            parsed_request = self.main_service_plugin.main_service_xmpp_helper_plugin.parse_request(request)
+
+            # handles the request by the request handler
+            self.service_plugin.xmpp_service_handler_plugins[0].handle_request(request)
+
+            # sends the request to the client (response)
+            self.send_request(request)
+        except Exception, exception:
+            # prints info message about exception
+            self.service_plugin.info("There was an exception handling the request: " + str(exception))
+
+            # sends the exception
+            self.send_exception(service_connection, request, exception)
+
+        # returns true (connection remains open)
+        return True
+
+    def retrieve_initial_request(self, session, service_connection, request_timeout = REQUEST_TIMEOUT):
         """
         Retrieves the initial request from the received message.
 
         @type session: XmppSession
         @param session: The current xmpp session.
+        @type service_connection: ServiceConnection
+        @param service_connection: The service connection to be used.
         @type request_timeout: int
         @param request_timeout: The timeout for the request retrieval.
         @rtype: XmppRequest
@@ -415,8 +353,12 @@ class XmppClientServiceTask:
 
         # continuous loop
         while True:
-            # retrieves the data
-            data = self.retrieve_data(request_timeout)
+            try:
+                # retrieves the data
+                data = service_connection.retrieve_data(request_timeout)
+            except self.service_utils_exception_class:
+                # raises the xmpp data retrieval exception
+                raise main_service_xmpp_exceptions.XmppDataRetrievalException("problem retrieving data")
 
             # in case no valid data was received
             if data == "":
@@ -436,15 +378,20 @@ class XmppClientServiceTask:
                 # sets the xmpp message in the request
                 request.set_message(message_value)
 
+                # sets the session object in the request
+                request.set_session(session)
+
                 # returns the request
                 return request
 
-    def retrieve_request(self, session, request_timeout = REQUEST_TIMEOUT):
+    def retrieve_request(self, session, service_connection, request_timeout = REQUEST_TIMEOUT):
         """
         Retrieves the request from the received message.
 
         @type session: XmppSession
         @param session: The current xmpp session.
+        @type service_connection: ServiceConnection
+        @param service_connection: The service connection to be used.
         @type request_timeout: int
         @param request_timeout: The timeout for the request retrieval.
         @rtype: XmppRequest
@@ -459,8 +406,12 @@ class XmppClientServiceTask:
 
         # continuous loop
         while True:
-            # retrieves the data
-            data = self.retrieve_data(request_timeout)
+            try:
+                # retrieves the data
+                data = service_connection.retrieve_data(request_timeout)
+            except self.service_utils_exception_class:
+                # raises the xmpp data retrieval exception
+                raise main_service_xmpp_exceptions.XmppDataRetrievalException("problem retrieving data")
 
             # in case no valid data was received
             if data == "":
@@ -495,38 +446,19 @@ class XmppClientServiceTask:
                     # sets the xmpp message in the request
                     request.set_message(message_value)
 
+                    # sets the session object in the request
+                    request.set_session(session)
+
                     # returns the request
                     return request
 
-    def retrieve_data(self, request_timeout = REQUEST_TIMEOUT, chunk_size = CHUNK_SIZE):
-        try:
-            # sets the connection to non blocking mode
-            self.xmpp_connection.setblocking(0)
-
-            # runs the select in the xmpp connection, with timeout
-            selected_values = select.select([self.xmpp_connection], [], [], request_timeout)
-
-            # sets the connection to blocking mode
-            self.xmpp_connection.setblocking(1)
-        except:
-            raise main_service_xmpp_exceptions.RequestClosed("invalid socket")
-
-        if selected_values == ([], [], []):
-            self.xmpp_connection.close()
-            raise main_service_xmpp_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
-        try:
-            # receives the data in chunks
-            data = self.xmpp_connection.recv(chunk_size)
-        except:
-            raise main_service_xmpp_exceptions.ClientRequestTimeout("timeout")
-
-        return data
-
-    def send_exception(self, request, exception):
+    def send_exception(self, service_connection, request, exception):
         """
         Sends the exception to the given request for the given exception.
 
-        @type request: XmppRequest
+        @type service_connection: ServiceConnection
+        @param service_connection: The service connection to be used.
+        @type request: PolicyRequest
         @param request: The request to send the exception.
         @type exception: Exception
         @param exception: The exception to be sent.
@@ -552,21 +484,72 @@ class XmppClientServiceTask:
             request.write(formated_traceback_line)
 
         # sends the request to the client (response)
-        self.send_request(request)
+        self.send_request(service_connection, request)
 
-    def send_request(self, request):
-        self.send_request_simple(request)
+    def send_request(self, service_connection, request):
+        # retrieves the result from the request
+        result = request.get_result()
 
-    def send_request_simple(self, request):
-        # retrieves the result value
-        result_value = request.get_result()
+        # sends the result to the service connection
+        service_connection.send(result)
 
-        try:
-            # sends the result value to the client
-            self.xmpp_connection.sendall(result_value)
-        except:
-            # error in the client side
-            return
+    def _get_session(self, service_connection):
+        """
+        Retrieves the current xmpp session using
+        the service connection.
+
+        @type service_connection: ServiceConnection
+        @param service_connection: The service connection
+        to be used to retrieve the session.
+        @rtype: XmppSession
+        @return: The current xmpp session
+        """
+
+        # tries to retrieve session from the service connection
+        session = service_connection.get_connection_property("session")
+
+        # in case no session is available
+        if not session:
+            # creates a new session
+            session = self._create_session()
+
+            # sets the session as a connection property
+            service_connection.set_connection_property("session", session)
+
+        # returns the session
+        return session
+
+    def _create_session(self):
+        """
+        Creates a new xmpp session.
+
+        @rtype: XmppSession
+        @return: The created xmpp session.
+        """
+
+        # creates the session object
+        session = XmppSession()
+
+        return session
+
+    def _get_service_configuration(self, request):
+        """
+        Retrieves the service configuration for the given request.
+        This retrieval takes into account the request target and characteristics
+        to merge the virtual servers configurations.
+
+        @type request: PolicyRequest
+        @param request: The request to be used in the resolution
+        of the service configuration.
+        @rtype: Dictionary
+        @return: The resolved service configuration.
+        """
+
+        # retrieves the base service configuration
+        service_configuration = self.service_configuration
+
+        # returns the service configuration
+        return service_configuration
 
 class XmppRequest:
     """
@@ -581,6 +564,9 @@ class XmppRequest:
 
     operation_type = "none"
     """ The operation type """
+
+    session = None
+    """ The session """
 
     message_stream = None
     """ The message stream """
@@ -609,16 +595,64 @@ class XmppRequest:
         return message
 
     def get_message(self):
+        """
+        Retrieves the message.
+
+        @rtype: String
+        @return: The message.
+        """
+
         return self.message
 
     def set_message(self, message):
+        """
+        Sets the message.
+
+        @type message: String
+        @param message: The message.
+        """
+
         self.message = message
 
     def get_element_type(self):
+        """
+        Retrieves the element type.
+
+        @rtype: int
+        @return: The element type.
+        """
+
         return self.element_type
 
     def set_element_type(self, element_type):
+        """
+        Sets the element type.
+
+        @type element_type: int
+        @param element_type: The element type.
+        """
+
         self.element_type = element_type
+
+    def get_session(self):
+        """
+        Retrieves the session.
+
+        @rtype: Session
+        @return: The session.
+        """
+
+        return self.session
+
+    def set_session(self, session):
+        """
+        Sets the session.
+
+        @type session: Session
+        @param session: The session.
+        """
+
+        self.session = session
 
 class XmppSession:
     """

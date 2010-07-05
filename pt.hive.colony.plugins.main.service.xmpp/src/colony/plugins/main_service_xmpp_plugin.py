@@ -56,9 +56,9 @@ class MainServiceXmppPlugin(colony.plugins.plugin_system.Plugin):
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_xmpp/xmpp/resources/baf.xml"}
     capabilities = ["service.xmpp", "build_automation_item"]
-    capabilities_allowed = ["xmpp_service_handler", "socket_provider"]
+    capabilities_allowed = ["xmpp_service_handler"]
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0"),
+                    "pt.hive.colony.plugins.main.service.utils", "1.0.0"),
                     colony.plugins.plugin_system.PluginDependency(
                     "pt.hive.colony.plugins.main.service.xmpp_helper", "1.0.0")]
     events_handled = []
@@ -68,9 +68,8 @@ class MainServiceXmppPlugin(colony.plugins.plugin_system.Plugin):
     main_service_xmpp = None
 
     xmpp_service_handler_plugins = []
-    socket_provider_plugins = []
 
-    thread_pool_manager_plugin = None
+    main_service_utils_plugin = None
     main_service_xmpp_helper_plugin = None
 
     def load_plugin(self):
@@ -110,24 +109,16 @@ class MainServiceXmppPlugin(colony.plugins.plugin_system.Plugin):
     def xmpp_service_handler_load_allowed(self, plugin, capability):
         self.xmpp_service_handler_plugins.append(plugin)
 
-    @colony.plugins.decorators.load_allowed_capability("socket_provider")
-    def socket_provider_load_allowed(self, plugin, capability):
-        self.socket_provider_plugins.append(plugin)
-
     @colony.plugins.decorators.unload_allowed_capability("xmpp_service_handler")
     def xmpp_service_handler_unload_allowed(self, plugin, capability):
         self.xmpp_service_handler_plugins.remove(plugin)
 
-    @colony.plugins.decorators.unload_allowed_capability("socket_provider")
-    def socket_provider_unload_allowed(self, plugin, capability):
-        self.socket_provider_plugins.remove(plugin)
+    def get_main_service_utils_plugin(self):
+        return self.main_service_utils_plugin
 
-    def get_thread_pool_manager_plugin(self):
-        return self.thread_pool_manager_plugin
-
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.threads.thread_pool_manager")
-    def set_thread_pool_manager_plugin(self, thread_pool_manager_plugin):
-        self.thread_pool_manager_plugin = thread_pool_manager_plugin
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.service.utils")
+    def set_main_service_utils_plugin(self, main_service_utils_plugin):
+        self.main_service_utils_plugin = main_service_utils_plugin
 
     def get_main_service_xmpp_helper_plugin(self):
         return self.main_service_xmpp_helper_plugin
