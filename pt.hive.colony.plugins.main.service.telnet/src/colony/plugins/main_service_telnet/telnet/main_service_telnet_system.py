@@ -38,16 +38,16 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import sys
-import socket
-import select
-import threading
 import traceback
 
 import colony.libs.string_buffer_util
 
 import main_service_telnet_exceptions
 
-BIND_HOST_VALUE = ""
+CONNECTION_TYPE = "connection"
+""" The connection type """
+
+BIND_HOST = ""
 """ The bind host value """
 
 CLIENT_CONNECTION_TIMEOUT = 1
@@ -62,11 +62,17 @@ CHUNK_SIZE = 4096
 NUMBER_THREADS = 15
 """ The number of threads """
 
-MAX_NUMBER_THREADS = 30
+MAXIMUM_NUMBER_THREADS = 30
 """ The maximum number of threads """
 
 SCHEDULING_ALGORITHM = 2
 """ The scheduling algorithm """
+
+MAXIMUM_NUMBER_WORKS_THREAD = 5
+""" The maximum number of works per thread """
+
+WORK_SCHEDULING_ALGORITHM = 1
+""" The work scheduling algorithm """
 
 DEFAULT_PORT = 23
 """ The default port """
@@ -79,20 +85,11 @@ class MainServiceTelnet:
     main_service_telnet_plugin = None
     """ The main service telnet plugin """
 
-    telnet_socket = None
-    """ The telnet socket """
+    telnet_service_handler_plugins_map = {}
+    """ The telnet service handler plugins map """
 
-    telnet_connection_active = False
-    """ The telnet connection active flag """
-
-    telnet_client_thread_pool = None
-    """ The telnet client thread pool """
-
-    telnet_connection_close_event = None
-    """ The telnet connection close event """
-
-    telnet_connection_close_end_event = None
-    """ The telnet connection close end event """
+    telnet_service = None
+    """ The telnet service reference """
 
     def __init__(self, main_service_telnet_plugin):
         """
@@ -104,8 +101,7 @@ class MainServiceTelnet:
 
         self.main_service_telnet_plugin = main_service_telnet_plugin
 
-        self.telnet_connection_close_event = threading.Event()
-        self.telnet_connection_close_end_event = threading.Event()
+        self.telnet_service_handler_plugin_map = {}
 
     def start_service(self, parameters):
         """
@@ -115,6 +111,67 @@ class MainServiceTelnet:
         @param parameters: The parameters to start the service.
         """
 
+        # retrieves the main service utils plugin
+        main_service_utils_plugin = self.main_service_telnet_plugin.main_service_utils_plugin
+
+        # generates the parameters
+        service_parameters = self._generate_service_parameters(parameters)
+
+        # generates the telnet service using the given service parameters
+        self.telnet_service = main_service_utils_plugin.generate_service(service_parameters)
+
+        # starts the telnet service
+        self.telnet_service.start_service()
+
+    def stop_service(self, parameters):
+        """
+        Stops the service.
+
+        @type parameters: Dictionary
+        @param parameters: The parameters to stop the service.
+        """
+
+        # starts the telnet service
+        self.telnet_service.stop_service()
+
+    def telnet_service_handler_load(self, telnet_service_handler_plugin):
+        # retrieves the plugin handler name
+        handler_name = telnet_service_handler_plugin.get_handler_name()
+
+        self.telnet_service_handler_plugins_map[handler_name] = telnet_service_handler_plugin
+
+    def telnet_service_handler_unload(self, telnet_service_handler_plugin):
+        # retrieves the plugin handler name
+        handler_name = telnet_service_handler_plugin.get_handler_name()
+
+        del self.telnet_service_handler_plugins_map[handler_name]
+
+    def _get_service_configuration(self):
+        # retrieves the service configuration property
+        service_configuration_property = self.main_service_telnet_plugin.get_configuration_property("server_configuration")
+
+        # in case the service configuration property is defined
+        if service_configuration_property:
+            # retrieves the service configuration
+            service_configuration = service_configuration_property.get_data()
+        else:
+            # sets the service configuration as an empty map
+            service_configuration = {}
+
+        return service_configuration
+
+    def _generate_service_parameters(self, parameters):
+        """
+        Retrieves the service parameters map from the base parameters
+        map.
+
+        @type parameters: Dictionary
+        @param parameters: The base parameters map to be used to build
+        the final service parameters map.
+        @rtype: Dictionary
+        @return: The final service parameters map.
+        """
+
         # retrieves the socket provider value
         socket_provider = parameters.get("socket_provider", None)
 
@@ -122,261 +179,139 @@ class MainServiceTelnet:
         port = parameters.get("port", DEFAULT_PORT)
 
         # retrieves the service configuration
-        #service_configuration = self.main_service_telnet_plugin.get_configuration_property("server_configuration").get_data()
-
-        service_configuration = {}
+        service_configuration = self._get_service_configuration()
 
         # retrieves the socket provider configuration value
-        #socket_provider = service_configuration.get("default_socket_provider", socket_provider)
+        socket_provider = service_configuration.get("default_socket_provider", socket_provider)
 
         # retrieves the port configuration value
-        #port = service_configuration.get("default_port", port)
+        port = service_configuration.get("default_port", port)
 
-        # start the server for the given socket provider, port and encoding
-        self.start_server(socket_provider, port, service_configuration)
+        # creates the pool configuration map
+        pool_configuration = {"name" : "telnet pool",
+                              "description" : "pool to support telnet client connections",
+                              "number_threads" : NUMBER_THREADS,
+                              "scheduling_algorithm" : SCHEDULING_ALGORITHM,
+                              "maximum_number_threads" : MAXIMUM_NUMBER_THREADS,
+                              "maximum_number_works_thread" : MAXIMUM_NUMBER_WORKS_THREAD,
+                              "work_scheduling_algorithm" : WORK_SCHEDULING_ALGORITHM}
 
-        # clears the telnet connection close event
-        self.telnet_connection_close_event.clear()
+        # creates the extra parameters map
+        extra_parameters = {}
 
-        # sets the telnet connection close end event
-        self.telnet_connection_close_end_event.set()
+        # creates the parameters map
+        parameters = {"type" : CONNECTION_TYPE,
+                      "service_plugin" : self.main_service_telnet_plugin,
+                      "service_handling_task_class" : TelnetClientServiceHandler,
+                      "socket_provider" : socket_provider,
+                      "bind_host" : BIND_HOST,
+                      "port" : port,
+                      "chunk_size" : CHUNK_SIZE,
+                      "service_configuration" : service_configuration,
+                      "extra_parameters" :  extra_parameters,
+                      "pool_configuration" : pool_configuration,
+                      "client_connection_timeout" : CLIENT_CONNECTION_TIMEOUT,
+                      "connection_timeout" : REQUEST_TIMEOUT}
 
-    def stop_service(self, parameters):
-        """
-        Stops the service.
+        # returns the parameters
+        return parameters
 
-        @type parameters: Dictionary
-        @param parameters: The parameters to start the service.
-        """
-
-        # sets the telnet connection active flag as false
-        self.telnet_connection_active = False
-
-        # sets the telnet connection close event
-        self.telnet_connection_close_event.set()
-
-        # waits for the telnet connection close end event
-        self.telnet_connection_close_end_event.wait()
-
-        # clears the telnet connection close end event
-        self.telnet_connection_close_end_event.clear()
-
-        # stops all the pool tasks
-        self.telnet_client_thread_pool.stop_pool_tasks()
-
-        # stops the pool
-        self.telnet_client_thread_pool.stop_pool()
-
-    def start_server(self, socket_provider, port, service_configuration):
-        """
-        Starts the server in the given port.
-
-        @type socket_provider: String
-        @param socket_provider: The name of the socket provider to be used.
-        @type port: int
-        @param port: The port to start the server.
-        @type service_configuration: Dictionary
-        @param service_configuration: The service configuration map.
-        """
-
-        # retrieves the thread pool manager plugin
-        thread_pool_manager_plugin = self.main_service_telnet_plugin.thread_pool_manager_plugin
-
-        # retrieves the task descriptor class
-        task_descriptor_class = thread_pool_manager_plugin.get_thread_task_descriptor_class()
-
-        # creates the telnet client thread pool
-        self.telnet_client_thread_pool = thread_pool_manager_plugin.create_new_thread_pool("telnet pool",
-                                                                                           "pool to support telnet client connections",
-                                                                                           NUMBER_THREADS, SCHEDULING_ALGORITHM, MAX_NUMBER_THREADS)
-
-        # starts the telnet client thread pool
-        self.telnet_client_thread_pool.start_pool()
-
-        # sets the telnet connection active flag as true
-        self.telnet_connection_active = True
-
-        # in case the socket provider is defined
-        if socket_provider:
-            # retrieves the socket provider plugins
-            socket_provider_plugins = self.main_service_telnet_plugin.socket_provider_plugins
-
-            # iterates over all the socket provider plugins
-            for socket_provider_plugin in socket_provider_plugins:
-                # retrieves the provider name from the socket provider plugin
-                socket_provider_plugin_provider_name = socket_provider_plugin.get_provider_name()
-
-                # in case the names are the same
-                if socket_provider_plugin_provider_name == socket_provider:
-                    # the parameters for the socket provider
-                    parameters = {"server_side" : True, "do_handshake_on_connect" : False}
-
-                    # creates a new telnet socket with the socket provider plugin
-                    self.telnet_socket = socket_provider_plugin.provide_socket_parameters(parameters)
-
-            # in case the socket was not created, no socket provider found
-            if not self.telnet_socket:
-                raise main_service_telnet_exceptions.SocketProviderNotFound("socket provider %s not found" % socket_provider)
-        else:
-            # creates the telnet socket
-            self.telnet_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-        # sets the socket to be able to reuse the socket
-        self.telnet_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
-        # binds the telnet socket
-        self.telnet_socket.bind((BIND_HOST_VALUE, port))
-
-        # start listening in the telnet socket
-        self.telnet_socket.listen(5)
-
-        # loops while the telnet connection is active
-        while not self.telnet_connection_close_event.isSet():
-            try:
-                # sets the socket to non blocking mode
-                self.telnet_socket.setblocking(0)
-
-                # starts the select values
-                selected_values = ([], [], [])
-
-                # iterates while there is no selected values
-                while selected_values == ([], [], []):
-                    # in case the connection is closed
-                    if self.telnet_connection_close_event.isSet():
-                        # closes the telnet socket
-                        self.telnet_socket.close()
-
-                        return
-
-                    # selects the values
-                    selected_values = select.select([self.telnet_socket], [], [], CLIENT_CONNECTION_TIMEOUT)
-
-                # sets the socket to blocking mode
-                self.telnet_socket.setblocking(1)
-            except:
-                # prints debug message about connection
-                self.main_service_telnet_plugin.info("The socket is not valid for selection of the pool")
-
-                return
-
-            # in case the connection is closed
-            if self.telnet_connection_close_event.isSet():
-                # closes the telnet socket
-                self.telnet_socket.close()
-
-                return
-
-            try:
-                # accepts the connection retrieving the telnet connection object and the address
-                telnet_connection, telnet_address = self.telnet_socket.accept()
-
-                # creates a new telnet client service task, with the given telnet connection, address, encoding and encoding handler
-                telnet_client_service_task = TelnetClientServiceTask(self.main_service_telnet_plugin, telnet_connection, telnet_address, service_configuration)
-
-                # creates a new task descriptor
-                task_descriptor = task_descriptor_class(start_method = telnet_client_service_task.start,
-                                                        stop_method = telnet_client_service_task.stop,
-                                                        pause_method = telnet_client_service_task.pause,
-                                                        resume_method = telnet_client_service_task.resume)
-
-                # inserts the new task descriptor into the telnet client thread pool
-                self.telnet_client_thread_pool.insert_task(task_descriptor)
-
-                self.main_service_telnet_plugin.debug("Number of threads in pool: %d" % self.telnet_client_thread_pool.current_number_threads)
-            except Exception, exception:
-                # prints an error message about the problem accepting the connection
-                self.main_service_telnet_plugin.error("Error accepting connection: " + str(exception))
-
-        # closes the telnet socket
-        self.telnet_socket.close()
-
-class TelnetClientServiceTask:
+class TelnetClientServiceHandler:
     """
-    The telnet client service task class.
+    The telnet client service handler class.
     """
 
-    main_service_telnet_plugin = None
-    """ The main service telnet plugin """
+    service_plugin = None
+    """ The service plugin """
 
-    telnet_connection = None
-    """ The telnet connection """
-
-    telnet_address = None
-    """ The telnet address """
+    service_connection_handler = None
+    """ The service connection handler """
 
     service_configuration = None
     """ The service configuration """
 
-    encoding_handler = None
-    """ The encoding handler """
+    service_utils_exception_class = None
+    """" The service utils exception class """
 
-    def __init__(self, main_service_telnet_plugin, telnet_connection, telnet_address, service_configuration):
-        self.main_service_telnet_plugin = main_service_telnet_plugin
-        self.telnet_connection = telnet_connection
-        self.telnet_address = telnet_address
+    def __init__(self, service_plugin, service_connection_handler, service_configuration, service_utils_exception_class, extra_parameters):
+        """
+        Constructor of the class.
+
+        @type service_plugin: Plugin
+        @param service_plugin: The service plugin.
+        @type service_connection_handler: AbstractServiceConnectionHandler
+        @param service_connection_handler: The abstract service connection handler, that
+        handles this connection.
+        @type service_configuration: Dictionary
+        @param service_configuration: The service configuration.
+        @type main_service_utils_exception: Class
+        @param main_service_utils_exception: The service utils exception class.
+        @type extra_parameters: Dictionary
+        @param extra_parameters: The extra parameters.
+        """
+
+        self.service_plugin = service_plugin
+        self.service_connection_handler = service_connection_handler
         self.service_configuration = service_configuration
+        self.service_utils_exception_class = service_utils_exception_class
 
-    def start(self):
-        # prints debug message about connection
-        self.main_service_telnet_plugin.debug("Connected to: %s" % str(self.telnet_address))
-
-        # sends the welcome message
-        self.telnet_connection.sendall("Welcome to colony telnet server\r\n")
+    def handle_opened(self, service_connection):
+        # sends the result to the service connection
+        service_connection.send("Welcome to colony telnet server\r\n")
 
         # creates the initial request object
         request = TelnetRequest()
 
         # handles the initial request by the request handler
-        self.main_service_telnet_plugin.telnet_service_handler_plugins[0].handle_initial_request(request)
+        self.service_plugin.telnet_service_handler_plugins[0].handle_initial_request(request)
 
         # sends the initial request to the client (initial response)
-        self.send_request(request)
+        self.send_request(service_connection, request)
 
-        # sets the request timeout
-        request_timeout = REQUEST_TIMEOUT
-
-        while True:
-            try:
-                # retrieves the request
-                request = self.retrieve_request(request_timeout)
-
-                # in case a close message is received
-                if request.get_message() == "close":
-                    break
-
-            except main_service_telnet_exceptions.MainServiceTelnetException:
-                self.main_service_telnet_plugin.debug("Connection: %s closed" % str(self.telnet_address))
-                return
-
-            try:
-                # prints debug message about request
-                self.main_service_telnet_plugin.debug("Handling request: %s" % str(request))
-
-                # handles the request by the request handler
-                self.main_service_telnet_plugin.telnet_service_handler_plugins[0].handle_request(request)
-
-                # sends the request to the client (response)
-                self.send_request(request)
-            except Exception, exception:
-                self.send_exception(request, exception)
-
-        # closes the telnet connection
-        self.telnet_connection.close()
-
-    def stop(self):
-        # closes the telnet connection
-        self.telnet_connection.close()
-
-    def pause(self):
+    def handle_closed(self, service_connection):
         pass
 
-    def resume(self):
-        pass
+    def handle_request(self, service_connection, request_timeout = REQUEST_TIMEOUT):
+        try:
+            # retrieves the request
+            request = self.retrieve_request(service_connection, request_timeout)
+        except main_service_telnet_exceptions.MainServiceTelnetException:
+            # prints a debug message about the connection closing
+            self.service_plugin.debug("Connection: %s closed by peer, timeout or invalid request" % str(service_connection))
 
-    def retrieve_request(self, request_timeout = REQUEST_TIMEOUT):
+            # returns false (connection closed)
+            return False
+
+        try:
+            # prints debug message about request
+            self.service_plugin.debug("Handling request: %s" % str(request))
+
+            # in case a close message is received
+            if request.get_message() == "close":
+                # returns false (connection closed)
+                return False
+
+            # handles the request by the request handler
+            self.service_plugin.telnet_service_handler_plugins[0].handle_request(request)
+
+            # sends the request to the client (response)
+            self.send_request(service_connection, request)
+        except Exception, exception:
+            # prints info message about exception
+            self.service_plugin.info("There was an exception handling the request: " + str(exception))
+
+            # sends the exception
+            self.send_exception(service_connection, request, exception)
+
+        # returns true (connection remains open)
+        return True
+
+    def retrieve_request(self, service_connection, request_timeout = REQUEST_TIMEOUT):
         """
         Retrieves the request from the received message.
 
+        @type service_connection: ServiceConnection
+        @param service_connection: The service connection to be used.
         @type request_timeout: int
         @param request_timeout: The timeout for the request retrieval.
         @rtype: TelnetRequest
@@ -391,8 +326,12 @@ class TelnetClientServiceTask:
 
         # continuous loop
         while True:
-            # retrieves the data
-            data = self.retrieve_data(request_timeout)
+            try:
+                # retrieves the data
+                data = service_connection.retrieve_data(request_timeout)
+            except self.service_utils_exception_class:
+                # raises the telnet data retrieval exception
+                raise main_service_telnet_exceptions.TelnetDataRetrievalException("problem retrieving data")
 
             # in case no valid data was received
             if data == "":
@@ -418,35 +357,13 @@ class TelnetClientServiceTask:
                 # returns the request
                 return request
 
-    def retrieve_data(self, request_timeout = REQUEST_TIMEOUT, chunk_size = CHUNK_SIZE):
-        try:
-            # sets the connection to non blocking mode
-            self.telnet_connection.setblocking(0)
-
-            # runs the select in the telnet connection, with timeout
-            selected_values = select.select([self.telnet_connection], [], [], request_timeout)
-
-            # sets the connection to blocking mode
-            self.telnet_connection.setblocking(1)
-        except:
-            raise main_service_telnet_exceptions.RequestClosed("invalid socket")
-
-        if selected_values == ([], [], []):
-            self.telnet_connection.close()
-            raise main_service_telnet_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
-        try:
-            # receives the data in chunks
-            data = self.telnet_connection.recv(chunk_size)
-        except:
-            raise main_service_telnet_exceptions.ClientRequestTimeout("timeout")
-
-        return data
-
-    def send_exception(self, request, exception):
+    def send_exception(self, service_connection, request, exception):
         """
         Sends the exception to the given request for the given exception.
 
-        @type request: TelnetRequest
+        @type service_connection: ServiceConnection
+        @param service_connection: The service connection to be used.
+        @type request: PolicyRequest
         @param request: The request to send the exception.
         @type exception: Exception
         @param exception: The exception to be sent.
@@ -472,21 +389,33 @@ class TelnetClientServiceTask:
             request.write(formated_traceback_line)
 
         # sends the request to the client (response)
-        self.send_request(request)
+        self.send_request(service_connection, request)
 
-    def send_request(self, request):
-        self.send_request_simple(request)
+    def send_request(self, service_connection, request):
+        # retrieves the result from the request
+        result = request.get_result()
 
-    def send_request_simple(self, request):
-        # retrieves the result value
-        result_value = request.get_result()
+        # sends the result to the service connection
+        service_connection.send(result)
 
-        try:
-            # sends the result value to the client
-            self.telnet_connection.sendall(result_value)
-        except:
-            # error in the client side
-            return
+    def _get_service_configuration(self, request):
+        """
+        Retrieves the service configuration for the given request.
+        This retrieval takes into account the request target and characteristics
+        to merge the virtual servers configurations.
+
+        @type request: PolicyRequest
+        @param request: The request to be used in the resolution
+        of the service configuration.
+        @rtype: Dictionary
+        @return: The resolved service configuration.
+        """
+
+        # retrieves the base service configuration
+        service_configuration = self.service_configuration
+
+        # returns the service configuration
+        return service_configuration
 
 class TelnetRequest:
     """

@@ -45,110 +45,6 @@ class MainServiceTelnetException(Exception):
     message = None
     """ The exception's message """
 
-class SocketProviderNotFound(MainServiceTelnetException):
-    """
-    The socket provider not found class.
-    """
-
-    def __init__(self, message):
-        """
-        Constructor of the class.
-
-        @type message: String
-        @param message: The message to be printed.
-        """
-
-        MainServiceTelnetException.__init__(self)
-        self.message = message
-
-    def __str__(self):
-        """
-        Returns the string representation of the class.
-
-        @rtype: String
-        @return: The string representation of the class.
-        """
-
-        return "Socket provider not found: %s" % self.message
-
-class ServerRequestTimeout(MainServiceTelnetException):
-    """
-    The server request timeout class.
-    """
-
-    def __init__(self, message):
-        """
-        Constructor of the class.
-
-        @type message: String
-        @param message: The message to be printed.
-        """
-
-        MainServiceTelnetException.__init__(self)
-        self.message = message
-
-    def __str__(self):
-        """
-        Returns the string representation of the class.
-
-        @rtype: String
-        @return: The string representation of the class.
-        """
-
-        return "Server request timeout: %s" % self.message
-
-class ClientRequestTimeout(MainServiceTelnetException):
-    """
-    The client request timeout class.
-    """
-
-    def __init__(self, message):
-        """
-        Constructor of the class.
-
-        @type message: String
-        @param message: The message to be printed.
-        """
-
-        MainServiceTelnetException.__init__(self)
-        self.message = message
-
-    def __str__(self):
-        """
-        Returns the string representation of the class.
-
-        @rtype: String
-        @return: The string representation of the class.
-        """
-
-        return "Client request timeout: %s" % self.message
-
-class RequestClosed(MainServiceTelnetException):
-    """
-    The request closed class.
-    """
-
-    def __init__(self, message):
-        """
-        Constructor of the class.
-
-        @type message: String
-        @param message: The message to be printed.
-        """
-
-        MainServiceTelnetException.__init__(self)
-        self.message = message
-
-    def __str__(self):
-        """
-        Returns the string representation of the class.
-
-        @rtype: String
-        @return: The string representation of the class.
-        """
-
-        return "Request closed: %s" % self.message
-
 class TelnetRuntimeException(MainServiceTelnetException):
     """
     The telnet runtime exception class.
@@ -199,3 +95,28 @@ class TelnetInvalidDataException(TelnetRuntimeException):
         """
 
         return "Telnet invalid data exception: %s" % self.message
+
+class TelnetDataRetrievalException(TelnetRuntimeException):
+    """
+    The telnet data retrieval exception.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        TelnetRuntimeException.__init__(self, message)
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Telnet data retrieval exception: %s" % self.message
