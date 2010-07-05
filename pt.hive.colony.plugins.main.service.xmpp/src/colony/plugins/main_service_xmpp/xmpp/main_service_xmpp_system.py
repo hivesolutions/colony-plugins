@@ -321,6 +321,9 @@ class XmppClientServiceHandler:
 
             # sends the request to the client (response)
             self.send_request(request)
+
+            # prints a debug message
+            self.service_plugin.debug("Connection: %s kept alive for %ss" % (str(service_connection), str(request_timeout)))
         except Exception, exception:
             # prints info message about exception
             self.service_plugin.info("There was an exception handling the request: " + str(exception))
