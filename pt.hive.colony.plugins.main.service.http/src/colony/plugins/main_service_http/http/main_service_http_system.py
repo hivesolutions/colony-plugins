@@ -500,18 +500,16 @@ class HttpClientServiceHandler:
             # sends the request to the client (response)
             self.send_request(service_connection, request)
 
-            # in case the connection is meant to be kept alive
-            if self.keep_alive(request):
-                # prints a debug message
-                self.service_plugin.debug("Connection: %s kept alive for %ss" % (str(service_connection), str(request_timeout)))
             # in case the connection is not meant to be kept alive
-            else:
+            if not self.keep_alive(request):
                 # prints a debug message
                 self.service_plugin.debug("Connection: %s closed" % str(service_connection))
 
                 # returns false (connection closed)
                 return False
 
+            # prints a debug message
+            self.service_plugin.debug("Connection: %s kept alive for %ss" % (str(service_connection), str(request_timeout)))
         except Exception, exception:
             # prints info message about exception
             self.service_plugin.info("There was an exception handling the request: " + str(exception))
