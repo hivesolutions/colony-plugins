@@ -971,7 +971,7 @@ class AbstractServiceConnectionHandler:
         """
 
         # retrieves the connection socket
-        connection_socket = service_connection.get_connection_socket()
+        connection_socket = service_connection.get_base_connection_socket()
 
         # retrieves the connection socket file descriptor
         connection_socket_file_descriptor = self.__get_connection_socket_file_descriptor(connection_socket)
@@ -1072,7 +1072,7 @@ class AbstractServiceConnectionHandler:
 
     def __remove_connection_epoll(self, service_connection):
         # retrieves the connection socket
-        connection_socket = service_connection.get_connection_socket()
+        connection_socket = service_connection.get_base_connection_socket()
 
         # retrieves the connection socket file descriptor
         connection_socket_file_descriptor = self.__get_connection_socket_file_descriptor(connection_socket)
@@ -1333,7 +1333,7 @@ class AbstractServiceConnectionlessHandler:
         """
 
         # retrieves the connection socket
-        connection_socket = service_connection.get_connection_socket()
+        connection_socket = service_connection.get_base_connection_socket()
 
         # retrieves the connection address
         connection_address = service_connection.get_connection_address()
@@ -1630,6 +1630,16 @@ class ServiceConnection:
         """
 
         return self.connection_address
+
+    def get_base_connection_socket(self):
+        """
+        Retrieves the base connection socket.
+
+        @rtype: Socket
+        @return: The base connection socket.
+        """
+
+        return self._connection_socket
 
     def _call_connection_opened_handlers(self):
         """
