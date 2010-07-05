@@ -45,58 +45,6 @@ class MainServiceIrcException(Exception):
     message = None
     """ The exception's message """
 
-class SocketProviderNotFound(MainServiceIrcException):
-    """
-    The socket provider not found class.
-    """
-
-    def __init__(self, message):
-        """
-        Constructor of the class.
-
-        @type message: String
-        @param message: The message to be printed.
-        """
-
-        MainServiceIrcException.__init__(self)
-        self.message = message
-
-    def __str__(self):
-        """
-        Returns the string representation of the class.
-
-        @rtype: String
-        @return: The string representation of the class.
-        """
-
-        return "Socket provider not found: %s" % self.message
-
-class RequestClosed(MainServiceIrcException):
-    """
-    The request closed class.
-    """
-
-    def __init__(self, message):
-        """
-        Constructor of the class.
-
-        @type message: String
-        @param message: The message to be printed.
-        """
-
-        MainServiceIrcException.__init__(self)
-        self.message = message
-
-    def __str__(self):
-        """
-        Returns the string representation of the class.
-
-        @rtype: String
-        @return: The string representation of the class.
-        """
-
-        return "Request closed: %s" % self.message
-
 class IrcRuntimeException(MainServiceIrcException):
     """
     The irc runtime exception class.
@@ -136,8 +84,7 @@ class IrcInvalidDataException(IrcRuntimeException):
         @param message: The message to be printed.
         """
 
-        IrcRuntimeException.__init__(self)
-        self.message = message
+        IrcRuntimeException.__init__(self, message)
 
     def __str__(self):
         """
@@ -148,3 +95,28 @@ class IrcInvalidDataException(IrcRuntimeException):
         """
 
         return "Irc invalid data exception: %s" % self.message
+
+class IrcDataRetrievalException(IrcRuntimeException):
+    """
+    The irc data retrieval exception.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        IrcRuntimeException.__init__(self, message)
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Irc data retrieval exception: %s" % self.message

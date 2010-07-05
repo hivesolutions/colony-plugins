@@ -56,23 +56,20 @@ class MainServiceIrcPlugin(colony.plugins.plugin_system.Plugin):
                  colony.plugins.plugin_system.JYTHON_ENVIRONMENT]
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_service_irc/irc/resources/baf.xml"}
     capabilities = ["service.irc", "build_automation_item"]
-    capabilities_allowed = ["socket_provider"]
+    capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.threads.thread_pool_manager", "1.0.0")]
+                    "pt.hive.colony.plugins.main.service.utils", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["main_service_irc.irc.main_service_irc_system", "main_service_irc.irc.main_service_irc_exceptions"]
 
     main_service_irc = None
 
-    socket_provider_plugins = []
-
-    thread_pool_manager_plugin = None
+    main_service_utils_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
         global main_service_irc
-        import main_service_irc.irc.main_service_irc_exceptions
         import main_service_irc.irc.main_service_irc_system
         self.main_service_irc = main_service_irc.irc.main_service_irc_system.MainServiceIrc(self)
 
@@ -111,9 +108,9 @@ class MainServiceIrcPlugin(colony.plugins.plugin_system.Plugin):
     def socket_provider_unload_allowed(self, plugin, capability):
         self.socket_provider_plugins.remove(plugin)
 
-    def get_thread_pool_manager_plugin(self):
-        return self.thread_pool_manager_plugin
+    def get_main_service_utils_plugin(self):
+        return self.main_service_utils_plugin
 
-    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.threads.thread_pool_manager")
-    def set_thread_pool_manager_plugin(self, thread_pool_manager_plugin):
-        self.thread_pool_manager_plugin = thread_pool_manager_plugin
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.service.utils")
+    def set_main_service_utils_plugin(self, main_service_utils_plugin):
+        self.main_service_utils_plugin = main_service_utils_plugin

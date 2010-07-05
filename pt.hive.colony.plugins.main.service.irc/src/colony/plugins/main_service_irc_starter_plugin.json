@@ -7,7 +7,7 @@
     "description" : "The plugin that starts the irc service",
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
-    "capabilities" : ["build_automation_item"],
+    "capabilities" : ["main", "build_automation_item"],
     "capabilities_allowed" : [],
     "dependencies" : [{
                 "id" : "pt.hive.colony.plugins.main.service.irc",

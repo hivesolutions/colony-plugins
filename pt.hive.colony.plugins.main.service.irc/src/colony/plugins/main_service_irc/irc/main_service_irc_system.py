@@ -37,32 +37,39 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import sys
-import socket
-import select
-import traceback
-
 import colony.libs.string_buffer_util
 
 import main_service_irc_exceptions
 
-BIND_HOST_VALUE = ""
+CONNECTION_TYPE = "connection"
+""" The connection type """
+
+BIND_HOST = ""
 """ The bind host value """
 
-REQUEST_TIMEOUT = 3
+CLIENT_CONNECTION_TIMEOUT = 1
+""" The client connection timeout """
+
+REQUEST_TIMEOUT = 5
 """ The request timeout """
 
 CHUNK_SIZE = 4096
 """ The chunk size """
 
-NUMBER_THREADS = 15
+NUMBER_THREADS = 2
 """ The number of threads """
 
-MAX_NUMBER_THREADS = 30
+MAXIMUM_NUMBER_THREADS = 4
 """ The maximum number of threads """
 
 SCHEDULING_ALGORITHM = 2
 """ The scheduling algorithm """
+
+MAXIMUM_NUMBER_WORKS_THREAD = 5
+""" The maximum number of works per thread """
+
+WORK_SCHEDULING_ALGORITHM = 1
+""" The work scheduling algorithm """
 
 DEFAULT_PORT = 6667
 """ The default port """
@@ -75,6 +82,12 @@ class MainServiceIrc:
     main_service_irc_plugin = None
     """ The main service irc plugin """
 
+    irc_service_handler_plugins_map = {}
+    """ The irc service handler plugins map """
+
+    irc_service = None
+    """ The irc service reference """
+
     def __init__(self, main_service_irc_plugin):
         """
         Constructor of the class.
@@ -85,6 +98,8 @@ class MainServiceIrc:
 
         self.main_service_irc_plugin = main_service_irc_plugin
 
+        self.irc_service_handler_plugin_map = {}
+
     def start_service(self, parameters):
         """
         Starts the service with the given parameters.
@@ -93,277 +108,192 @@ class MainServiceIrc:
         @param parameters: The parameters to start the service.
         """
 
-        # retrieves the socket provider value
-        #socket_provider = parameters.get("socket_provider", None)
+        # retrieves the main service utils plugin
+        main_service_utils_plugin = self.main_service_irc_plugin.main_service_utils_plugin
 
-        # retrieves the port value
-        #port = parameters.get("port", DEFAULT_PORT)
+        # generates the parameters
+        service_parameters = self._generate_service_parameters(parameters)
 
-        # retrieves the service configuration
-        #service_configuration = self.main_service_irc_plugin.get_configuration_property("server_configuration").get_data()
+        # generates the irc service using the given service parameters
+        self.irc_service = main_service_utils_plugin.generate_service(service_parameters)
 
-        # retrieves the socket provider configuration value
-        #socket_provider = service_configuration.get("default_socket_provider", socket_provider)
-
-        # retrieves the port configuration value
-        #port = service_configuration.get("default_port", port)
-
-        # start the server for the given socket provider, port and encoding
-        #self.start_server(socket_provider, port, service_configuration)
-
-        # clears the irc connection close event
-        #self.irc_connection_close_event.clear()
-
-        # sets the irc connection close end event
-        #self.irc_connection_close_end_event.set()
+        # starts the irc service
+        self.irc_service.start_service()
 
     def stop_service(self, parameters):
         """
         Stops the service.
 
         @type parameters: Dictionary
-        @param parameters: The parameters to start the service.
+        @param parameters: The parameters to stop the service.
         """
 
-        pass
+        # starts the irc service
+        self.irc_service.stop_service()
 
-    def start_server(self, socket_provider, port, service_configuration):
-        """
-        Starts the server in the given port.
+    def irc_service_handler_load(self, irc_service_handler_plugin):
+        # retrieves the plugin handler name
+        handler_name = irc_service_handler_plugin.get_handler_name()
 
-        @type socket_provider: String
-        @param socket_provider: The name of the socket provider to be used.
-        @type port: int
-        @param port: The port to start the server.
-        @type service_configuration: Dictionary
-        @param service_configuration: The service configuration map.
-        """
+        self.irc_service_handler_plugins_map[handler_name] = irc_service_handler_plugin
 
-        # retrieves the thread pool manager plugin
-        thread_pool_manager_plugin = self.main_service_irc_plugin.thread_pool_manager_plugin
+    def irc_service_handler_unload(self, irc_service_handler_plugin):
+        # retrieves the plugin handler name
+        handler_name = irc_service_handler_plugin.get_handler_name()
 
-        # retrieves the task descriptor class
-        task_descriptor_class = thread_pool_manager_plugin.get_thread_task_descriptor_class()
+        del self.irc_service_handler_plugins_map[handler_name]
 
-        # creates the irc client thread pool
-        self.irc_client_thread_pool = thread_pool_manager_plugin.create_new_thread_pool("irc pool",
-                                                                                        "pool to support irc client connections",
-                                                                                        NUMBER_THREADS, SCHEDULING_ALGORITHM, MAX_NUMBER_THREADS)
+    def _get_service_configuration(self):
+        # retrieves the service configuration property
+        service_configuration_property = self.main_service_irc_plugin.get_configuration_property("server_configuration")
 
-        # starts the irc client thread pool
-        self.irc_client_thread_pool.start_pool()
-
-        # sets the irc connection active flag as true
-        self.irc_connection_active = True
-
-        # in case the socket provider is defined
-        if socket_provider:
-            # retrieves the socket provider plugins
-            socket_provider_plugins = self.main_service_irc_plugin.socket_provider_plugins
-
-            # iterates over all the socket provider plugins
-            for socket_provider_plugin in socket_provider_plugins:
-                # retrieves the provider name from the socket provider plugin
-                socket_provider_plugin_provider_name = socket_provider_plugin.get_provider_name()
-
-                # in case the names are the same
-                if socket_provider_plugin_provider_name == socket_provider:
-                    # the parameters for the socket provider
-                    parameters = {"server_side" : True, "do_handshake_on_connect" : False}
-
-                    # creates a new irc socket with the socket provider plugin
-                    self.irc_socket = socket_provider_plugin.provide_socket_parameters(parameters)
-
-            # in case the socket was not created, no socket provider found
-            if not self.irc_socket:
-                raise main_service_irc_exceptions.SocketProviderNotFound("socket provider %s not found" % socket_provider)
+        # in case the service configuration property is defined
+        if service_configuration_property:
+            # retrieves the service configuration
+            service_configuration = service_configuration_property.get_data()
         else:
-            # creates the irc socket
-            self.irc_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            # sets the service configuration as an empty map
+            service_configuration = {}
 
-        # sets the socket to be able to reuse the socket
-        self.irc_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        return service_configuration
 
-        # binds the irc socket
-        self.irc_socket.bind((BIND_HOST_VALUE, port))
+    def _generate_service_parameters(self, parameters):
+        """
+        Retrieves the service parameters map from the base parameters
+        map.
 
-        # start listening in the irc socket
-        self.irc_socket.listen(5)
+        @type parameters: Dictionary
+        @param parameters: The base parameters map to be used to build
+        the final service parameters map.
+        @rtype: Dictionary
+        @return: The final service parameters map.
+        """
 
-        # loops while the irc connection is active
-        while not self.irc_connection_close_event.isSet():
-            try:
-                # sets the socket to non blocking mode
-                self.irc_socket.setblocking(0)
+        # retrieves the socket provider value
+        socket_provider = parameters.get("socket_provider", None)
 
-                # starts the select values
-                selected_values = ([], [], [])
+        # retrieves the port value
+        port = parameters.get("port", DEFAULT_PORT)
 
-                # iterates while there is no selected values
-                while selected_values == ([], [], []):
-                    # in case the connection is closed
-                    if self.irc_connection_close_event.isSet():
-                        # closes the irc socket
-                        self.irc_socket.close()
+        # retrieves the service configuration
+        service_configuration = self._get_service_configuration()
 
-                        return
+        # retrieves the socket provider configuration value
+        socket_provider = service_configuration.get("default_socket_provider", socket_provider)
 
-                    # selects the values
-                    selected_values = select.select([self.irc_socket], [], [], CLIENT_CONNECTION_TIMEOUT)
+        # retrieves the port configuration value
+        port = service_configuration.get("default_port", port)
 
-                # sets the socket to blocking mode
-                self.irc_socket.setblocking(1)
-            except:
-                # prints debug message about connection
-                self.main_service_irc_plugin.info("The socket is not valid for selection of the pool")
+        # creates the pool configuration map
+        pool_configuration = {"name" : "irc pool",
+                              "description" : "pool to support irc client connections",
+                              "number_threads" : NUMBER_THREADS,
+                              "scheduling_algorithm" : SCHEDULING_ALGORITHM,
+                              "maximum_number_threads" : MAXIMUM_NUMBER_THREADS,
+                              "maximum_number_works_thread" : MAXIMUM_NUMBER_WORKS_THREAD,
+                              "work_scheduling_algorithm" : WORK_SCHEDULING_ALGORITHM}
 
-                return
+        # creates the extra parameters map
+        extra_parameters = {}
 
-            # in case the connection is closed
-            if self.irc_connection_close_event.isSet():
-                # closes the irc socket
-                self.irc_socket.close()
+        # creates the parameters map
+        parameters = {"type" : CONNECTION_TYPE,
+                      "service_plugin" : self.main_service_irc_plugin,
+                      "service_handling_task_class" : IrcClientServiceHandler,
+                      "socket_provider" : socket_provider,
+                      "bind_host" : BIND_HOST,
+                      "port" : port,
+                      "chunk_size" : CHUNK_SIZE,
+                      "service_configuration" : service_configuration,
+                      "extra_parameters" :  extra_parameters,
+                      "pool_configuration" : pool_configuration,
+                      "client_connection_timeout" : CLIENT_CONNECTION_TIMEOUT,
+                      "connection_timeout" : REQUEST_TIMEOUT}
 
-                return
+        # returns the parameters
+        return parameters
 
-            try:
-                # accepts the connection retrieving the irc connection object and the address
-                irc_connection, irc_address = self.irc_socket.accept()
-
-                # creates a new irc client service task, with the given irc connection, address, encoding and encoding handler
-                irc_client_service_task = IrcClientServiceTask(self.main_service_irc_plugin, irc_connection, irc_address, encoding, service_configuration, encoding_handler)
-
-                # creates a new task descriptor
-                task_descriptor = task_descriptor_class(start_method = irc_client_service_task.start,
-                                                        stop_method = irc_client_service_task.stop,
-                                                        pause_method = irc_client_service_task.pause,
-                                                        resume_method = irc_client_service_task.resume)
-
-                # inserts the new task descriptor into the irc client thread pool
-                self.irc_client_thread_pool.insert_task(task_descriptor)
-
-                self.main_service_irc_plugin.debug("Number of threads in pool: %d" % self.irc_client_thread_pool.current_number_threads)
-            except Exception, exception:
-                # prints an error message about the problem accepting the connection
-                self.main_service_irc_plugin.error("Error accepting connection: " + str(exception))
-
-        # closes the irc socket
-        self.irc_socket.close()
-
-class IrcClientServiceTask:
+class IrcClientServiceHandler:
     """
-    The irc client service task class.
+    The irc client service handler class.
     """
 
-    main_service_irc_plugin = None
-    """ The main service irc plugin """
+    service_plugin = None
+    """ The service plugin """
 
-    irc_connection = None
-    """ The irc connection """
-
-    irc_address = None
-    """ The irc address """
+    service_connection_handler = None
+    """ The service connection handler """
 
     service_configuration = None
     """ The service configuration """
 
-    encoding_handler = None
-    """ The encoding handler """
+    service_utils_exception_class = None
+    """" The service utils exception class """
 
-    def __init__(self, main_service_irc_plugin, irc_connection, irc_address, service_configuration, encoding_handler):
-        self.main_service_irc_plugin = main_service_irc_plugin
-        self.irc_connection = irc_connection
-        self.irc_address = irc_address
+    def __init__(self, service_plugin, service_connection_handler, service_configuration, service_utils_exception_class, extra_parameters):
+        """
+        Constructor of the class.
+
+        @type service_plugin: Plugin
+        @param service_plugin: The service plugin.
+        @type service_connection_handler: AbstractServiceConnectionHandler
+        @param service_connection_handler: The abstract service connection handler, that
+        handles this connection.
+        @type service_configuration: Dictionary
+        @param service_configuration: The service configuration.
+        @type main_service_utils_exception: Class
+        @param main_service_utils_exception: The service utils exception class.
+        @type extra_parameters: Dictionary
+        @param extra_parameters: The extra parameters.
+        """
+
+        self.service_plugin = service_plugin
+        self.service_connection_handler = service_connection_handler
         self.service_configuration = service_configuration
-        self.encoding_handler = encoding_handler
+        self.service_utils_exception_class = service_utils_exception_class
 
-    def start(self):
-        # retrieves the irc service handler plugins map
-        irc_service_handler_plugins_map = self.main_service_irc_plugin.main_service_irc.irc_service_handler_plugins_map
-
-        # prints debug message about connection
-        self.main_service_irc_plugin.debug("Connected to: %s" % str(self.irc_address))
-
-        # sets the request timeout
-        request_timeout = REQUEST_TIMEOUT
-
-        while True:
-            try:
-                request = self.retrieve_request(request_timeout)
-            except main_service_irc_exceptions.MainServiceIrcException:
-                self.main_service_irc_plugin.debug("Connection: %s closed" % str(self.irc_address))
-                return
-
-            try:
-                # prints debug message about request
-                self.main_service_irc_plugin.debug("Handling request: %s" % str(request))
-
-                # retrieves the service configuration contexts
-                service_configuration_contexts = self.service_configuration["contexts"]
-
-                # starts the request handled
-                request_handled = False
-
-                # iterates over the service configuration context names
-                for service_configuration_context_name, service_configuration_context in service_configuration_contexts.items():
-                    if request.path.find(service_configuration_context_name) == 0:
-                        # sets the request properties
-                        request.properties = service_configuration_context.get("request_properties", {})
-
-                        # sets the handler path
-                        request.handler_path = service_configuration_context_name
-
-                        # retrieves the handler name
-                        handler_name = service_configuration_context["handler"]
-
-                        # sets the request handled flag
-                        request_handled = True
-
-                        # breaks the loop
-                        break
-
-                # in case the request was not already handled
-                if not request_handled:
-                    # retrieves the default handler name
-                    handler_name = self.service_configuration["default_handler"]
-
-                    # sets the handler path
-                    request.handler_path = None
-
-                # handles the request by the request handler
-                irc_service_handler_plugins_map[handler_name].handle_request(request)
-
-                # sends the request to the client (response)
-                self.send_request(request)
-
-                # in case the connection is meant to be kept alive
-                if self.keep_alive(request):
-                    self.main_service_irc_plugin.debug("Connection: %s kept alive for %ss" % (str(self.irc_address), str(request_timeout)))
-                # in case the connection is not meant to be kept alive
-                else:
-                    self.main_service_irc_plugin.debug("Connection: %s closed" % str(self.irc_address))
-                    break
-
-            except Exception, exception:
-                self.send_exception(request, exception)
-
-        # closes the irc connection
-        self.irc_connection.close()
-
-    def stop(self):
-        # closes the irc connection
-        self.irc_connection.close()
-
-    def pause(self):
+    def handle_opened(self, service_connection):
         pass
 
-    def resume(self):
+    def handle_closed(self, service_connection):
         pass
 
-    def retrieve_request(self, request_timeout = REQUEST_TIMEOUT):
+    def handle_request(self, service_connection, request_timeout = REQUEST_TIMEOUT):
+        try:
+            # retrieves the request
+            request = self.retrieve_request(service_connection, request_timeout)
+        except main_service_irc_exceptions.MainServiceIrcException:
+            # prints a debug message about the connection closing
+            self.service_plugin.debug("Connection: %s closed by peer, timeout or invalid request" % str(service_connection))
+
+            # returns false (connection closed)
+            return False
+
+        try:
+            # prints debug message about request
+            self.service_plugin.debug("Handling request: %s" % str(request))
+
+            # sends the request to the client (response)
+            self.send_request(service_connection, request)
+
+            # prints a debug message
+            self.service_plugin.debug("Connection: %s kept alive for %ss" % (str(service_connection), str(request_timeout)))
+        except Exception, exception:
+            # prints info message about exception
+            self.service_plugin.info("There was an exception handling the request: " + str(exception))
+
+            # sends the exception
+            self.send_exception(service_connection, request, exception)
+
+        # returns true (connection remains open)
+        return True
+
+    def retrieve_request(self, service_connection, request_timeout = REQUEST_TIMEOUT):
         """
         Retrieves the request from the received message.
 
+        @type service_connection: ServiceConnection
+        @param service_connection: The service connection to be used.
         @type request_timeout: int
         @param request_timeout: The timeout for the request retrieval.
         @rtype: IrcRequest
@@ -374,28 +304,33 @@ class IrcClientServiceTask:
         message = colony.libs.string_buffer_util.StringBuffer()
 
         # creates a request object
-        request = IrcRequest()
+        request = IrcRequest({})
 
         # creates the start line loaded flag
         start_line_loaded = False
 
-        # creates the header loaded flag
-        header_loaded = False
-
-        # creates the message loaded flag
-        message_loaded = False
-
-        # creates the message size value
-        message_size = 0
+        # creates the received data size (counter)
+        received_data_size = 0
 
         # continuous loop
         while True:
-            # retrieves the data
-            data = self.retrieve_data(request_timeout)
+            try:
+                # retrieves the data
+                data = service_connection.retrieve_data(request_timeout)
+            except self.service_utils_exception_class:
+                # raises the irc data retrieval exception
+                raise main_service_irc_exceptions.IrcDataRetrievalException("problem retrieving data")
+
+            # retrieves the data length
+            data_length = len(data)
 
             # in case no valid data was received
-            if data == "":
+            if data_length == 0:
+                # raises the irc invalid data exception
                 raise main_service_irc_exceptions.IrcInvalidDataException("empty data received")
+
+            # increments the received data size (counter)
+            received_data_size += data_length
 
             # writes the data to the string buffer
             message.write(data)
@@ -405,348 +340,85 @@ class IrcClientServiceTask:
 
             # in case the start line is not loaded
             if not start_line_loaded:
-                # finds the first new line value
-                start_line_index = message_value.find("\r\n")
+                # finds the first end of string value
+                start_line_index = message_value.find("\n")
 
                 # in case there is a new line value found
                 if not start_line_index == -1:
-                    # retrieves the start line
-                    start_line = message_value[:start_line_index]
-
-                    # splits the start line to retrieve the operation type the path
-                    # and the protocol version
-                    operation_type, path, protocol_version = start_line.split(" ")
-
-                    # sets the request  operation type
-                    request.set_operation_type(operation_type)
-
-                    # sets the request path
-                    request.set_path(path)
-
-                    # sets the request protocol version
-                    request.set_protocol_version(protocol_version)
-
                     # sets the start line loaded flag
                     start_line_loaded = True
-
-            # in case the header is not loaded
-            if not header_loaded:
-                # retrieves the end header index (two new lines)
-                end_header_index = message_value.find("\r\n\r\n")
-
-                # in case the end header index is found
-                if not end_header_index == -1:
-                    # sets the header loaded flag
-                    header_loaded = True
-
-                    # retrieves the start header index
-                    start_header_index = start_line_index + 2
-
-                    # retrieves the headers part of the message
-                    headers = message_value[start_header_index:end_header_index]
-
-                    # splits the headers by line
-                    headers_splitted = headers.split("\r\n")
-
-                    # iterates over the headers lines
-                    for header_splitted in headers_splitted:
-                        # finds the header separator
-                        division_index = header_splitted.find(":")
-
-                        # retrieves the header name
-                        header_name = header_splitted[:division_index].strip()
-
-                        # retrieves the header value
-                        header_value = header_splitted[division_index + 1:].strip()
-
-                        # sets the header in the headers map
-                        request.headers_map[header_name] = header_value
-
-                    # in case the operation type is get
-                    if request.operation_type == GET_METHOD_VALUE:
-                        # parses the get attributes
-                        request.__parse_get_attributes__()
-
-                        # returns the request
-                        return request
-                    # in case the operation type is post
-                    elif request.operation_type == POST_METHOD_VALUE:
-                        # in case the content length is defined in the headers map
-                        if CONTENT_LENGTH_VALUE in request.headers_map:
-                            # retrieves the message size
-                            message_size = int(request.headers_map[CONTENT_LENGTH_VALUE])
-                        elif CONTENT_LENGTH_LOWER_VALUE in request.headers_map:
-                            # retrieves the message size
-                            message_size = int(request.headers_map[CONTENT_LENGTH_LOWER_VALUE])
-                        # in case there is no content length defined in the headers map
-                        else:
-                            # returns the request
-                            return request
-
-            # in case the message is not loaded and the header is loaded
-            if not message_loaded and header_loaded:
-                # retrieves the start message size
-                start_message_index = end_header_index + 4
-
-                # retrieves the message part of the message value
-                message_value_message = message_value[start_message_index:]
-
-                # in case the length of the message value message is the same
-                # as the message size
-                if len(message_value_message) == message_size:
-                    # sets the message loaded flag
-                    message_loaded = True
-
-                    # sets the received message
-                    request.received_message = message_value_message
-
-                    # decodes the request if necessary
-                    self.decode_request(request)
 
                     # returns the request
                     return request
 
-    def decode_request(self, request):
-        """
-        Decodes the request message for the encoding
-        specified in the request.
-
-        @type request: IrcRequest
-        @param request: The request to be decoded.
-        """
-
-        # start the valid charset flag
-        valid_charset = False
-
-        # in case the content type is not defined
-        if "Content-Type" in request.headers_map:
-            # retrieves the content type
-            content_type = request.headers_map["Content-Type"]
-
-            # splits the content type
-            content_type_splited = content_type.split(";")
-
-            # iterates over all the items in the content type splited
-            for content_type_item in content_type_splited:
-                # strips the content type item
-                content_type_item_stripped = content_type_item.strip()
-
-                # in case the content is of type multipart form data
-                if content_type_item_stripped.startswith(MULTIPART_FORM_DATA_VALUE):
-                    return
-
-                # in case the item is the charset definition
-                if content_type_item_stripped.startswith("charset"):
-                    # splits the content type item stripped
-                    content_type_item_stripped_splited = content_type_item_stripped.split("=")
-
-                    # retrieves the content type charset
-                    content_type_charset = content_type_item_stripped_splited[1].lower()
-
-                    # sets the valid charset flag
-                    valid_charset = True
-
-                    # breaks the cycle
-                    break
-
-        # in case there is no valid charset defined
-        if not valid_charset:
-            # sets the default content type charset
-            content_type_charset = DEFAULT_CHARSET
-
-        # retrieves the received message value
-        received_message_value = request.received_message
-
-        # re-encodes the message value in the current default encoding
-        request.received_message = received_message_value.decode(content_type_charset)
-
-    def retrieve_data(self, request_timeout = REQUEST_TIMEOUT, chunk_size = CHUNK_SIZE):
-        try:
-            # sets the connection to non blocking mode
-            self.irc_connection.setblocking(0)
-
-            # runs the select in the irc connection, with timeout
-            selected_values = select.select([self.irc_connection], [], [], request_timeout)
-
-            # sets the connection to blocking mode
-            self.irc_connection.setblocking(1)
-        except:
-            raise main_service_irc_exceptions.RequestClosed("invalid socket")
-
-        if selected_values == ([], [], []):
-            self.irc_connection.close()
-            raise main_service_irc_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
-        try:
-            # receives the data in chunks
-            data = self.irc_connection.recv(chunk_size)
-        except:
-            raise main_service_irc_exceptions.ClientRequestTimeout("timeout")
-
-        return data
-
-    def send_exception(self, request, exception):
+    def send_exception(self, service_connection, request, exception):
         """
         Sends the exception to the given request for the given exception.
 
+        @type service_connection: ServiceConnection
+        @param service_connection: The service connection to be used.
         @type request: IrcRequest
         @param request: The request to send the exception.
         @type exception: Exception
         @param exception: The exception to be sent.
         """
 
-        # sets the request content type
-        request.content_type = "text/plain"
-
-        # checks if the exception contains a status code
-        if hasattr(exception, "status_code"):
-            # sets the status code in the request
-            request.status_code = exception.status_code
-        # in case there is no status code defined in the exception
-        else:
-            # sets the internal server error status code
-            request.status_code = 500
-
-        # retrieves the value for the status code
-        status_code_value = STATUS_CODE_VALUES[request.status_code]
-
-        # writes the header message in the message
-        request.write("colony web server - " + str(request.status_code) + " " + status_code_value + "\n")
-
-        # writes the exception message
-        request.write("error: '" + str(exception) + "'\n")
-
-        # writes the traceback message in the request
-        request.write("traceback:\n")
-
-        # retrieves the execution information
-        _type, _value, traceback_list = sys.exc_info()
-
-        # in case the traceback list is valid
-        if traceback_list:
-            formated_traceback = traceback.format_tb(traceback_list)
-        else:
-            formated_traceback = ()
-
-        # iterates over the traceback lines
-        for formated_traceback_line in formated_traceback:
-            request.write(formated_traceback_line)
-
         # sends the request to the client (response)
-        self.send_request(request)
+        self.send_request(service_connection, request)
 
-    def send_request(self, request):
-        # in case the encoding is defined
-        if self.encoding:
-            # sets the encoded flag
-            request.encoded = True
+    def send_request(self, service_connection, request):
+        # retrieves the result from the request
+        result = request.get_result()
 
-            # sets the encoding handler
-            request.set_encoding_handler(self.encoding_handler)
+        # sends the result to the service connection
+        service_connection.send(result)
 
-            # sets the encoding name
-            request.set_encoding_name(self.encoding)
-
-        if request.is_mediated():
-            self.send_request_mediated(request)
-        elif request.is_chunked_encoded():
-            self.send_request_chunked(request)
-        else:
-            self.send_request_simple(request)
-
-    def send_request_simple(self, request):
-        # retrieves the result value
-        result_value = request.get_result()
-
-        try:
-            # sends the result value to the client
-            self.irc_connection.sendall(result_value)
-        except:
-            # error in the client side
-            return
-
-    def send_request_mediated(self, request):
-        # retrieves the result value
-        result_value = request.get_result()
-
-        try:
-            # sends the result value to the client
-            self.irc_connection.sendall(result_value)
-        except:
-            # error in the client side
-            return
-
-        # continuous loop
-        while True:
-            # retrieves the mediated value
-            mediated_value = request.mediated_handler.get_chunk(CHUNK_SIZE)
-
-            # in case the read is complete
-            if not mediated_value:
-                # closes the mediated file
-                request.mediated_handler.close_file()
-                return
-
-            try:
-                # sends the mediated value to the client
-                self.irc_connection.sendall(mediated_value)
-            except:
-                # error in the client side
-                return
-
-    def send_request_chunked(self, request):
-        # retrieves the result value
-        result_value = request.get_result()
-
-        try:
-            # sends the result value to the client
-            self.irc_connection.sendall(result_value)
-        except:
-            # error in the client side
-            return
-
-        # continuous loop
-        while True:
-            # retrieves the chunk value
-            chunk_value = request.chunk_handler.get_chunk(CHUNK_SIZE)
-
-            # in case the read is complete
-            if not chunk_value:
-                # sends the final empty chunk
-                self.irc_connection.sendall("0\r\n\r\n")
-                return
-
-            try:
-                # retrieves the length of the chunk value
-                length_chunk_value = len(chunk_value)
-
-                # sets the value for the hexadecimal length part of the chunk
-                length_chunk_value_hexadecimal_string = "%X\r\n" % length_chunk_value
-
-                # sets the message value
-                message_value = length_chunk_value_hexadecimal_string + chunk_value + "\r\n"
-
-                # sends the message value to the client
-                self.irc_connection.sendall(message_value)
-            except:
-                # error in the client side
-                return
-
-    def keep_alive(self, request):
+    def _get_service_configuration(self, request):
         """
-        Retrieves the value of the keep alive for the given request.
+        Retrieves the service configuration for the given request.
+        This retrieval takes into account the request target and characteristics
+        to merge the virtual servers configurations.
 
         @type request: IrcRequest
-        @param request: The request to retrieve the keep alive value.
-        @rtype: bool
-        @return: The value of the keep alive for the given request.
+        @param request: The request to be used in the resolution
+        of the service configuration.
+        @rtype: Dictionary
+        @return: The resolved service configuration.
         """
 
-        if "Connection" in request.headers_map:
-            connection_type = request.headers_map["Connection"]
+        # retrieves the base service configuration
+        service_configuration = self.service_configuration
 
-            if connection_type.lower() == "keep-alive":
-                return True
-            else:
-                return False
-        else:
-            return False
+        # returns the service configuration
+        return service_configuration
+
+class IrcRequest:
+    """
+    The irc request class.
+    """
+
+    parameters = {}
+    """ The parameters """
+
+    def __init__(self, parameters):
+        """
+        Constructor of the class.
+
+        @type parameters: Dictionary
+        @param parameters: The request parameters.
+        """
+
+        self.parameters = parameters
+
+    def __repr__(self):
+        return ""
+
+    def get_result(self):
+        """
+        Retrieves the result value for the current request.
+
+        @rtype: String
+        @return: The result value for the current request.
+        """
+
+        return ""

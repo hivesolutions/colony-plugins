@@ -8,9 +8,9 @@
     "version" : "1.0.0",
     "author" : "Hive Solutions Lda. <development@hive.pt>",
     "capabilities" : ["service.irc", "build_automation_item"],
-    "capabilities_allowed" : ["socket_provider"],
+    "capabilities_allowed" : [],
     "dependencies" : [{
-                "id" : "pt.hive.colony.plugins.main.threads.thread_pool_manager",
+                "id" : "pt.hive.colony.plugins.main.service.utils",
                 "version" : "1.0.0"
             }],
     "main_file" : "main_service_irc_plugin.py",
