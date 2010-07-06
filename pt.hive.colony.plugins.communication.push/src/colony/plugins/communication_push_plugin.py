@@ -168,6 +168,25 @@ class CommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
 
         return self.communication_push.get_communication_handler_information(communication_handler_name)
 
+    def get_communication_handler_property(self, communication_handler_name, property_name):
+        """
+        Retrieves a communication handler property for the
+        given communication handler name and property name.
+
+        @type communication_handler_name: String
+        @param communication_handler_name: The name of the communication
+        handler to retrieve the property.
+        @type property_name: String
+        @param property_name: The name of the property to retrieve.
+        @rtype: Object
+        @return: The retrieved property.
+        """
+
+        return self.communication_push.get_communication_handler_property(communication_handler_name, property_name)
+
+    def set_communication_handler_property(self, communication_handler_name, property_name, property_value):
+        return self.set_communication_handler_property(communication_handler_name, property_name, property_value)
+
     def generate_notification(self, message, sender_id):
         """
         Generates a push notification for the given message and
