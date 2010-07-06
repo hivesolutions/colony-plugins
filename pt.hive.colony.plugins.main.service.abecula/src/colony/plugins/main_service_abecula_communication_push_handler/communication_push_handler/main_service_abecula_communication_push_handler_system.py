@@ -37,10 +37,30 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import threading
+
 import main_service_abecula_communication_push_handler_exceptions
 
 HANDLER_NAME = "communication_push"
 """ The handler name """
+
+RESULT_VALUE = "result"
+""" The result value """
+
+SUCCESS_VALUE = "success"
+""" The success value """
+
+MESSAGE_CONTENTS_VALUE = "message_contents"
+""" The message contents value """
+
+MESSAGE_VALUE = "MESSAGE"
+""" The message value """
+
+COMMUNICATION_CLIENT_ID_VALUE = "communication_client_id"
+""" The communication client id value """
+
+COMMUNICATION_HANDLER_VALUE = "communication_handler"
+""" The communication handler value """
 
 class MainServiceAbeculaCommunicationPushHandler:
     """
@@ -53,6 +73,15 @@ class MainServiceAbeculaCommunicationPushHandler:
     service_connection_communication_handler_map = {}
     """ The map associating a service connection with the communication handler """
 
+    service_connection_communication_client_id_map = {}
+    """ The map associating a service connection with the communication client id """
+
+    communication_client_id = 0
+    """ The communication client id """
+
+    communication_client_id_lock = None
+    """ The lock to control communication client id creation """
+
     def __init__(self, main_service_abecula_communication_push_handler_plugin):
         """
         Constructor of the class.
@@ -64,6 +93,9 @@ class MainServiceAbeculaCommunicationPushHandler:
         self.main_service_abecula_communication_push_handler_plugin = main_service_abecula_communication_push_handler_plugin
 
         self.service_connection_communication_handler_map = {}
+        self.service_connection_communication_client_id_map = {}
+
+        self.communication_client_id_lock = threading.RLock()
 
     def get_handler_name(self):
         """
@@ -117,11 +149,70 @@ class MainServiceAbeculaCommunicationPushHandler:
         @param communication_push_plugin: The communication push plugin.
         """
 
+        # retrieves the service connection
+        service_connection = request.get_service_connection()
+
+        # generates a new communication client id
+        communication_client_id = self._generate_communication_client_id()
+
+        # sets the communication client id for the service connection
+        self.service_connection_communication_client_id_map[service_connection] = communication_client_id
+
+        # sets the encoded request contents
+        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE, COMMUNICATION_CLIENT_ID_VALUE : communication_client_id})
+
+        # adds the handle connection closed to the connection closed handlers
+        service_connection.connection_closed_handlers.append(self.handle_connection_closed)
+
+    def handle_disconnect(self, request, communication_push_plugin):
+        """
+        Handles the abecula disconnect command.
+
+        @type request: AbeculaRequest
+        @param request: The abecula request for the command.
+        @type communication_push_plugin: Plugin
+        @param communication_push_plugin: The communication push plugin.
+        """
+
+        # retrieves the communication push plugin
+        communication_push_plugin = self.main_service_abecula_communication_push_handler_plugin.communication_push_plugin
+
+        # retrieves the service connection
+        service_connection = request.get_service_connection()
+
+        # retrieves the communication client id for the service connection
+        communication_client_id = self.service_connection_communication_client_id_map[service_connection]
+
+        # removes all the communication handlers for the communication client id
+        communication_push_plugin.remove_all_communication_handler(communication_client_id)
+
+        # sets the encoded request contents
+        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE})
+
+    def handle_register(self, request, communication_push_plugin):
+        """
+        Handles the abecula register command.
+
+        @type request: AbeculaRequest
+        @param request: The abecula request for the command.
+        @type communication_push_plugin: Plugin
+        @param communication_push_plugin: The communication push plugin.
+        """
+
         # retrieves the service handler
         service_handler = request.get_service_handler()
 
         # retrieves the service connection
         service_connection = request.get_service_connection()
+
+        # retrieves the decoded request contents from the request
+        decoded_request_contents = self._get_decoded_request_contents(request)
+
+        # tries to retrieve the communication client id
+        communication_client_id = decoded_request_contents.get(COMMUNICATION_CLIENT_ID_VALUE, None)
+
+        # tries to retrieve the communication handler
+        communication_handler = decoded_request_contents.get(COMMUNICATION_HANDLER_VALUE, None)
 
         # generates a communication handler for the given service handler and service connection
         generated_communication_handler = self.generate_handler(service_handler, service_connection)
@@ -130,21 +221,14 @@ class MainServiceAbeculaCommunicationPushHandler:
         self.service_connection_communication_handler_map[service_connection] = generated_communication_handler
 
         # adds a new communication handler
-        communication_push_plugin.add_communication_handler("tobias", "nome_da_conexao", generated_communication_handler)
+        communication_push_plugin.add_communication_handler(communication_handler, communication_client_id, generated_communication_handler)
 
-        # sets the status code
-        request.status_code = 200
+        # sets the encoded request contents
+        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE})
 
-        # writes the response
-        request.write("success")
-
-
-
-        service_connection.connection_closed_handlers.append(self.handle_connection_closed)
-
-    def handle_disconnect(self, request, communication_push_plugin):
+    def handle_unregister(self, request, communication_push_plugin):
         """
-        Handles the abecula disconnect command.
+        Handles the abecula register command.
 
         @type request: AbeculaRequest
         @param request: The abecula request for the command.
@@ -158,14 +242,20 @@ class MainServiceAbeculaCommunicationPushHandler:
         # retrieves the generated communication handler for the service connection
         generated_communication_handler = self.service_connection_communication_handler_map[service_connection]
 
+        # retrieves the decoded request contents from the request
+        decoded_request_contents = self._get_decoded_request_contents(request)
+
+        # tries to retrieve the communication client id
+        communication_client_id = decoded_request_contents.get(COMMUNICATION_CLIENT_ID_VALUE, None)
+
+        # tries to retrieve the communication handler
+        communication_handler = decoded_request_contents.get(COMMUNICATION_HANDLER_VALUE, None)
+
         # removes the communication handler
-        communication_push_plugin.remove_communication_handler("tobias", "nome_da_conexao", generated_communication_handler)
+        communication_push_plugin.remove_communication_handler(communication_handler, communication_client_id, generated_communication_handler)
 
-        # sets the status code
-        request.status_code = 200
-
-        # writes the response
-        request.write("success")
+        # sets the encoded request contents
+        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE})
 
     def handle_message(self, request, communication_push_plugin):
         """
@@ -177,10 +267,32 @@ class MainServiceAbeculaCommunicationPushHandler:
         @param communication_push_plugin: The communication push plugin.
         """
 
-        # generates a new notification for the message
-        notification = communication_push_plugin.generate_notification("tobias", "matias")
+        # retrieves the decoded request contents from the request
+        decoded_request_contents = self._get_decoded_request_contents(request)
 
-        communication_push_plugin.send_broadcast_notification("tobias", notification)
+        # tries to retrieve the communication client id
+        communication_client_id = decoded_request_contents.get(COMMUNICATION_CLIENT_ID_VALUE, None)
+
+        # tries to retrieve the communication handler
+        communication_handler = decoded_request_contents.get(COMMUNICATION_HANDLER_VALUE, None)
+
+        # tries to retrieve the message contents
+        message_contents = decoded_request_contents.get(MESSAGE_CONTENTS_VALUE, None)
+
+        # creates the complete message contents from the original message contents
+        complete_message_contents = {COMMUNICATION_HANDLER_VALUE : communication_handler, MESSAGE_CONTENTS_VALUE : message_contents}
+
+        # encodes the complete message contents
+        complete_message_contents_encoded = self._encode(complete_message_contents)
+
+        # generates a new notification for the message contents and the communication client id
+        notification = communication_push_plugin.generate_notification(complete_message_contents_encoded, communication_client_id)
+
+        # sends the notification in broadcast mode
+        communication_push_plugin.send_broadcast_notification(communication_handler, notification)
+
+        # sets the encoded request contents
+        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE})
 
     def handle_connection_closed(self, service_connection):
         """
@@ -196,11 +308,11 @@ class MainServiceAbeculaCommunicationPushHandler:
         # retrieves the communication push plugin
         communication_push_plugin = self.main_service_abecula_communication_push_handler_plugin.communication_push_plugin
 
-        # retrieves the generated communication handler for the service connection
-        generated_communication_handler = self.service_connection_communication_handler_map[service_connection]
+        # retrieves the communication client id for the service connection
+        communication_client_id = self.service_connection_communication_client_id_map[service_connection]
 
-        # removes the communication handler
-        communication_push_plugin.remove_communication_handler("tobias", "nome_da_conexao", generated_communication_handler)
+        # removes all the communication handlers for the communication client id
+        communication_push_plugin.remove_all_communication_handler(communication_client_id)
 
     def generate_handler(self, service_handler, service_connection):
         """
@@ -231,7 +343,7 @@ class MainServiceAbeculaCommunicationPushHandler:
 
             # sets the response properties
             response.set_operation_id("C124")
-            response.set_operation_type("MESSAGE")
+            response.set_operation_type(MESSAGE_VALUE)
             response.set_target(HANDLER_NAME)
 
             # retrieves the notification message
@@ -245,3 +357,91 @@ class MainServiceAbeculaCommunicationPushHandler:
 
         # returns the communication handler
         return communication_handler
+
+    def _generate_communication_client_id(self):
+        """
+        Generates a new communication client id.
+
+        @rtype: int
+        @return: The generated communication client id.
+        """
+
+        # acquires the communication client id lock
+        self.communication_client_id_lock.acquire()
+
+        # retrieves the current communication client id
+        communication_client_id = self.communication_client_id
+
+        # increment the communication client id
+        self.communication_client_id += 1
+
+        # releases the communication client id lock
+        self.communication_client_id_lock.release()
+
+        # returns the communication client id
+        return communication_client_id
+
+    def _get_decoded_request_contents(self, request):
+        """
+        Retrieves the decoded request contents from the original
+        request.
+
+        @type request: AbeculaRequest
+        @param request: The request to be used in the decoding.
+        @rtype: String
+        @return: The decoded request contents.
+        """
+
+        # reads the contents of the request
+        request_contents = request.read()
+
+        # decodes the request contents, retrieving the decoded
+        # request contents
+        decoded_request_contents = self._decode(request_contents)
+
+        # returns the decoded request contents
+        return decoded_request_contents
+
+    def _set_encoded_request_contents(self, request, request_contents, status_code = 200):
+        """
+        Sets the encoded request contents into the request.
+
+        @type request: AbeculaRequest
+        @param request: The request to be used in the encoding.
+        @type request_contents: String
+        @param request_contents: The decoded request contents.
+        @type status_code: int
+        @param status_code: The status code to be set in the request.
+        """
+
+        # encodes the request contents, retrieving the encoded
+        # request contents
+        encoded_request_contents = self._encode(request_contents)
+
+        # sets the status code
+        request.status_code = status_code
+
+        # writes the response
+        request.write(encoded_request_contents)
+
+    def _encode(self, value):
+        # retrieves the json plugin
+        json_plugin = self.main_service_abecula_communication_push_handler_plugin.json_plugin
+
+        # dumps the json from the value contents, retrieving
+        # the encoded value
+        encoded_value = json_plugin.dumps(value)
+
+        # returns the encoded value
+        return encoded_value
+
+    def _decode(self, value):
+        # retrieves the json plugin
+        json_plugin = self.main_service_abecula_communication_push_handler_plugin.json_plugin
+
+        # loads the json from the value, retrieving
+        # the decoded value
+        decoded_value = json_plugin.loads(value)
+
+        # returns the decoded value
+        return decoded_value

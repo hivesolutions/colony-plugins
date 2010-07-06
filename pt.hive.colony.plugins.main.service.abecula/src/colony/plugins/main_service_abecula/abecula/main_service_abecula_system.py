@@ -38,7 +38,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import sys
-import types
 
 import colony.libs.string_buffer_util
 
@@ -816,17 +815,16 @@ class AbeculaRequest:
         return "(%s, %s, %s, %s)" % (self.operation_id, self.operation_type, self.target, self.protocol_version)
 
     def read(self):
+        """
+        Reads the contents of the request.
+
+        @rtype: String
+        @return: The contents of the request.
+        """
+
         return self.received_message
 
-    def write(self, message, flush = 1, encode = True):
-        # retrieves the message type
-        message_type = type(message)
-
-        # in case the message type is unicode
-        if message_type == types.UnicodeType and encode:
-            # encodes the message with the defined content type charset
-            message = message.encode(self.content_type_charset)
-
+    def write(self, message, flush = 1):
         # writes the message to the message stream
         self.message_stream.write(message)
 
@@ -839,15 +837,6 @@ class AbeculaRequest:
 
         # retrieves the result string value
         message = self.message_stream.get_value()
-
-        # in case the request is encoded
-        #if self.encoded:
-        #    if self.mediated:
-#                self.mediated_handler.encode_file(self.encoding_handler, self.encoding_type)
-#            elif self.chunked_encoding:
-#                self.chunk_handler.encode_file(self.encoding_handler, self.encoding_type)
-#            else:
-#                message = self.encoding_handler(message)
 
         # retrieves the value for the status code
         status_code_value = self.get_status_code_value()

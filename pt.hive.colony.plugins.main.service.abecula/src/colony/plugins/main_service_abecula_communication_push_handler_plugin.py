@@ -59,7 +59,9 @@ class MainServiceAbeculaCommunicationPushHandlerPlugin(colony.plugins.plugin_sys
     capabilities = ["abecula_service_handler", "build_automation_item"]
     capabilities_allowed = []
     dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.communication.push", "1.0.0")]
+                    "pt.hive.colony.plugins.communication.push", "1.0.0"),
+                    colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.misc.json", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["main_service_abecula_communication_push_handler.communication_push_handler.main_service_abecula_communication_push_handler_exceptions", "main_service_abecula_communication_push_handler.communication_push_handler.main_service_abecula_communication_push_handler_system"]
@@ -67,6 +69,7 @@ class MainServiceAbeculaCommunicationPushHandlerPlugin(colony.plugins.plugin_sys
     main_service_abecula_communication_push_handler = None
 
     communication_push_plugin = None
+    json_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -119,3 +122,10 @@ class MainServiceAbeculaCommunicationPushHandlerPlugin(colony.plugins.plugin_sys
     @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.communication.push")
     def set_communication_push_plugin(self, communication_push_plugin):
         self.communication_push_plugin = communication_push_plugin
+
+    def get_json_plugin(self):
+        return self.json_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.misc.json")
+    def set_json_plugin(self, json_plugin):
+        self.json_plugin = json_plugin
