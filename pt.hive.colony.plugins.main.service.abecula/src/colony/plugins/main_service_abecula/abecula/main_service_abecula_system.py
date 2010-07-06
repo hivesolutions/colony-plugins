@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import sys
+import traceback
 
 import colony.libs.string_buffer_util
 
@@ -550,8 +551,40 @@ class AbeculaClientServiceHandler:
         @param exception: The exception to be sent.
         """
 
-#        # resets the response value (deletes answers)
-#        request.reset_response()
+        # checks if the error contains a status code
+        if hasattr(exception, "status_code"):
+            # sets the status code in the request
+            request.status_code = exception.status_code
+        # in case there is no status code defined in the error
+        else:
+            # sets the internal server error status code
+            request.status_code = 500
+
+        # retrieves the value for the status code
+        status_code_value = request.get_status_code_value()
+
+        # writes the header message in the message
+        request.write("colony abecula server - " + str(request.status_code) + " " + status_code_value + "\n")
+
+        # writes the error message
+        request.write("error: '" + str(exception) + "'\n")
+
+        # writes the traceback message in the request
+        request.write("traceback:\n")
+
+        # retrieves the execution information
+        _type, _value, traceback_list = sys.exc_info()
+
+        # in case the traceback list is valid
+        if traceback_list:
+            formated_traceback = traceback.format_tb(traceback_list)
+        else:
+            formated_traceback = ()
+
+        # iterates over the traceback lines
+        for formated_traceback_line in formated_traceback:
+            # writes the traceback line in the request
+            request.write(formated_traceback_line)
 
         # sends the request to the client (response)
         self.send_request(service_connection, request)

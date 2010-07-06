@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import types
 import threading
 
 import main_service_abecula_communication_push_handler_exceptions
@@ -70,8 +71,8 @@ class MainServiceAbeculaCommunicationPushHandler:
     main_service_abecula_communication_push_handler_plugin = None
     """ The main service abecula communication push handler plugin """
 
-    service_connection_communication_handler_map = {}
-    """ The map associating a service connection with the communication handler """
+    service_connection_name_communication_handler_map = {}
+    """ The map associating a service connection and communication name tuple with the communication handler """
 
     service_connection_communication_client_id_map = {}
     """ The map associating a service connection with the communication client id """
@@ -92,7 +93,7 @@ class MainServiceAbeculaCommunicationPushHandler:
 
         self.main_service_abecula_communication_push_handler_plugin = main_service_abecula_communication_push_handler_plugin
 
-        self.service_connection_communication_handler_map = {}
+        self.service_connection_name_communication_handler_map = {}
         self.service_connection_communication_client_id_map = {}
 
         self.communication_client_id_lock = threading.RLock()
@@ -214,14 +215,23 @@ class MainServiceAbeculaCommunicationPushHandler:
         # tries to retrieves the communication name
         communication_name = decoded_request_contents.get(COMMUNICATION_NAME_VALUE, None)
 
+        # retrieves the communication names for the communication name
+        communication_names = self._get_communication_names(communication_name)
+
         # generates a communication handler for the given service handler and service connection
         generated_communication_handler = self.generate_handler(service_handler, service_connection)
 
-        # sets the generated communication handler in the service connection communication handler map
-        self.service_connection_communication_handler_map[service_connection] = generated_communication_handler
+        # iterates over all the communication names to register
+        # them in the communication push plugin
+        for communication_name in communication_names:
+            # creates the service connection name tuple
+            service_connection_name_tuple = (service_connection, communication_name)
 
-        # adds a new communication handler
-        communication_push_plugin.add_communication_handler(communication_name, communication_client_id, generated_communication_handler)
+            # sets the generated communication handler in the service connection name communication handler map
+            self.service_connection_name_communication_handler_map[service_connection_name_tuple] = generated_communication_handler
+
+            # adds a new communication handler
+            communication_push_plugin.add_communication_handler(communication_name, communication_client_id, generated_communication_handler)
 
         # sets the encoded request contents
         self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE})
@@ -239,9 +249,6 @@ class MainServiceAbeculaCommunicationPushHandler:
         # retrieves the service connection
         service_connection = request.get_service_connection()
 
-        # retrieves the generated communication handler for the service connection
-        generated_communication_handler = self.service_connection_communication_handler_map[service_connection]
-
         # retrieves the decoded request contents from the request
         decoded_request_contents = self._get_decoded_request_contents(request)
 
@@ -251,8 +258,23 @@ class MainServiceAbeculaCommunicationPushHandler:
         # tries to retrieves the communication name
         communication_name = decoded_request_contents.get(COMMUNICATION_NAME_VALUE, None)
 
-        # removes the communication handler
-        communication_push_plugin.remove_communication_handler(communication_name, communication_client_id, generated_communication_handler)
+        # retrieves the communication names for the communication name
+        communication_names = self._get_communication_names(communication_name)
+
+        # iterates over all the communication names to unregister
+        # them in the communication push plugin
+        for communication_name in communication_names:
+            # creates the service connection name tuple
+            service_connection_name_tuple = (service_connection, communication_name)
+
+            # retrieves the generated communication handler for the service connection and communication name
+            generated_communication_handler = self.service_connection_name_communication_handler_map[service_connection_name_tuple]
+
+            # removes the communication handler
+            communication_push_plugin.remove_communication_handler(communication_name, communication_client_id, generated_communication_handler)
+
+            # removes the service connection name from the service connection name communication handler map
+            del self.service_connection_name_communication_handler_map[service_connection_name_tuple]
 
         # sets the encoded request contents
         self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE})
@@ -425,6 +447,34 @@ class MainServiceAbeculaCommunicationPushHandler:
 
         # writes the response
         request.write(encoded_request_contents)
+
+    def _get_communication_names(self, communication_name):
+        """
+        Retrieves a list of communication names for the
+        given communication name.
+
+        @type communication_name: String
+        @param communication_name: The name of the communication.
+        @rtype: List
+        @return: The list of communication names for the given
+        communication name.
+        """
+
+        # retrieves the communication name type
+        communication_name_type = type(communication_name)
+
+        # in case the communication name is of type list
+        if communication_name_type == types.ListType:
+            # sets the communication names as the
+            # communication names
+            communication_names = communication_name
+        else:
+            # sets the communication names as a list
+            # with the communication name item
+            communication_names = [communication_name]
+
+        # returns the communication names
+        return communication_names
 
     def _encode(self, value):
         # retrieves the json plugin
