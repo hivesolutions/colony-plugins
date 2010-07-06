@@ -119,6 +119,8 @@ class CommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
     def remove_all_communication_handler(self, communication_handler_name):
         """
         Removes the communication handler from all the communication "channels".
+        It also removes the extra meta information associated with the
+        communication handler.
 
         @type communication_handler_name: String
         @param communication_handler_name: The name of the handler to have the
@@ -185,7 +187,20 @@ class CommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
         return self.communication_push.get_communication_handler_property(communication_handler_name, property_name)
 
     def set_communication_handler_property(self, communication_handler_name, property_name, property_value):
-        return self.set_communication_handler_property(communication_handler_name, property_name, property_value)
+        """
+        Sets a communication handler property for the given
+        communication handler name, property name and property value.
+
+        @type communication_handler_name: String
+        @param communication_handler_name: The name of the communication
+        handler to set the property.
+        @type property_name: String
+        @param property_name: The name of the property to set.
+        @type property_value: Object
+        @param property_value: The value of the property to set.
+        """
+
+        return self.communication_push.set_communication_handler_property(communication_handler_name, property_name, property_value)
 
     def generate_notification(self, message, sender_id):
         """
