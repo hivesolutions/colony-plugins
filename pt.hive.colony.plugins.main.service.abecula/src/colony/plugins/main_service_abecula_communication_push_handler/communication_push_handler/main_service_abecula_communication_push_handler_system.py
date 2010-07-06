@@ -369,11 +369,8 @@ class MainServiceAbeculaCommunicationPushHandler:
             # raises the invalid information item exception
             raise main_service_abecula_communication_push_handler_exceptions.InvalidInformationItem(information_item)
 
-        # encodes the information
-        information_encoded = self._encode(information)
-
         # sets the encoded request contents
-        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE, INFORMATION_VALUE : information_encoded})
+        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE, INFORMATION_VALUE : information})
 
     def handle_connection_closed(self, service_connection):
         """
