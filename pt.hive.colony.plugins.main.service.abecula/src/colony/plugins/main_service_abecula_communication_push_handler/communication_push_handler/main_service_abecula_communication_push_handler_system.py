@@ -81,6 +81,12 @@ COMMUNICATION_VALUE = "communication"
 COMMUNICATION_HANDLER_VALUE = "communication_handler"
 """ The communication handler value """
 
+PROPERTY_NAME_VALUE = "property_name"
+""" The property name value """
+
+PROPERTY_VALUE_VALUE = "property_value"
+""" The property value value """
+
 class MainServiceAbeculaCommunicationPushHandler:
     """
     The main service abecula communication push handler class.
@@ -388,25 +394,30 @@ class MainServiceAbeculaCommunicationPushHandler:
         # tries to retrieve the communication client id
         communication_client_id = decoded_request_contents.get(COMMUNICATION_CLIENT_ID_VALUE, None)
 
-        # tries to retrieve the information item
-        information_item = decoded_request_contents.get(INFORMATION_ITEM_VALUE, None)
+        # tries to retrieve the property name
+        property_name = decoded_request_contents.get(PROPERTY_NAME_VALUE, None)
 
-        # tries to retrieve the information key
-        information_key = decoded_request_contents.get(INFORMATION_KEY_VALUE, None)
+        # tries to retrieve the property value
+        property_value = decoded_request_contents.get(PROPERTY_VALUE_VALUE, None)
 
-        # in case the requested information is of type communication
-        if information_item == COMMUNICATION_VALUE:
-            information = communication_push_plugin.get_communication_information(information_key)
-        # in case the requested information is of type communication handler
-        elif information_item == COMMUNICATION_HANDLER_VALUE:
-            information = communication_push_plugin.get_communication_handler_information(information_key)
-        # in case the requested information is not valid
-        else:
-            # raises the invalid information item exception
-            raise main_service_abecula_communication_push_handler_exceptions.InvalidInformationItem(information_item)
+        # sets the communication handler property
+        communication_push_plugin.set_communication_handler_property(communication_client_id, property_name, property_value)
 
         # sets the encoded request contents
-        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE, INFORMATION_VALUE : information})
+        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE})
+
+    def handle_ping(self, request, communication_push_plugin):
+        """
+        Handles the abecula ping command.
+
+        @type request: AbeculaRequest
+        @param request: The abecula request for the command.
+        @type communication_push_plugin: Plugin
+        @param communication_push_plugin: The communication push plugin.
+        """
+
+        # sets the encoded request contents
+        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE})
 
     def handle_connection_closed(self, service_connection):
         """
