@@ -721,11 +721,15 @@ class AbeculaResponse:
         # retrieves the result string value
         message = self.message_stream.get_value()
 
+        # retrieves the content length from the message content
+        content_length = len(message)
+
         # writes the abecula command in the string buffer (operation id, operation type, target and protocol version)
         result.write(self.operation_id + " " + self.operation_type + " " + self.target + " " + self.protocol_version + "\r\n")
 
         # writes the main headers
         result.write(SERVER_VALUE + ": " + SERVER_IDENTIFIER + "\r\n")
+        result.write(CONTENT_LENGTH_VALUE + ": " + str(content_length) + "\r\n")
 
         # iterates over all the "extra" header values to be sent
         for header_name, header_value in self.headers_map.items():
@@ -871,6 +875,9 @@ class AbeculaRequest:
         # retrieves the result string value
         message = self.message_stream.get_value()
 
+        # retrieves the content length from the message content
+        content_length = len(message)
+
         # retrieves the value for the status code
         status_code_value = self.get_status_code_value()
 
@@ -879,6 +886,7 @@ class AbeculaRequest:
 
         # writes the main headers
         result.write(SERVER_VALUE + ": " + SERVER_IDENTIFIER + "\r\n")
+        result.write(CONTENT_LENGTH_VALUE + ": " + str(content_length) + "\r\n")
 
         # iterates over all the "extra" header values to be sent
         for header_name, header_value in self.response_headers_map.items():
