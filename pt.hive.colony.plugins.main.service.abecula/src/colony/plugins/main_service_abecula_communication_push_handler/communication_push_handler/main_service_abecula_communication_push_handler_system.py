@@ -63,6 +63,9 @@ COMMUNICATION_CLIENT_ID_VALUE = "communication_client_id"
 COMMUNICATION_NAME_VALUE = "communication_name"
 """ The communication name value """
 
+COMMUNICATION_NAMES_VALUE = "communication_names"
+""" The communication names value """
+
 class MainServiceAbeculaCommunicationPushHandler:
     """
     The main service abecula communication push handler class.
@@ -183,6 +186,9 @@ class MainServiceAbeculaCommunicationPushHandler:
 
         # retrieves the communication client id for the service connection
         communication_client_id = self.service_connection_communication_client_id_map[service_connection]
+
+        # removes the service connection structure (using the communication client id)
+        self._remove_service_connection_structures(service_connection)
 
         # removes all the communication handlers for the communication client id
         communication_push_plugin.remove_all_communication_handler(communication_client_id)
@@ -335,6 +341,9 @@ class MainServiceAbeculaCommunicationPushHandler:
         # retrieves the communication client id for the service connection
         communication_client_id = self.service_connection_communication_client_id_map[service_connection]
 
+        # removes the service connection structure (using the communication client id)
+        self._remove_service_connection_structures(service_connection)
+
         # removes all the communication handlers for the communication client id
         communication_push_plugin.remove_all_communication_handler(communication_client_id)
 
@@ -475,6 +484,40 @@ class MainServiceAbeculaCommunicationPushHandler:
 
         # returns the communication names
         return communication_names
+
+    def _remove_service_connection_structures(self, service_connection):
+        """
+        Removes the internal structures referring the
+        given service connection.
+
+        @type service_connection: ServiceConnection
+        @param service_connection: The service connection to be used
+        in the "removal".
+        """
+
+        # retrieves the communication push plugin
+        communication_push_plugin = self.main_service_abecula_communication_push_handler_plugin.communication_push_plugin
+
+        # retrieves the communication client id for the service connection
+        communication_client_id = self.service_connection_communication_client_id_map[service_connection]
+
+        # retrieves the communication handler information
+        communication_handler_information = communication_push_plugin.get_communication_handler_information(communication_client_id)
+
+        # retrieves the communication names from the communication handler information
+        communication_names = communication_handler_information[COMMUNICATION_NAMES_VALUE]
+
+        # iterates over all the communication names to remove
+        # the service connection information
+        for communication_name in communication_names:
+            # creates the service connection name tuple
+            service_connection_name_tuple = (service_connection, communication_name)
+
+            # removes the service connection name from the service connection name communication handler map
+            del self.service_connection_name_communication_handler_map[service_connection_name_tuple]
+
+        # removes the service connection from the service connection communication client id map
+        del self.service_connection_communication_client_id_map[service_connection]
 
     def _encode(self, value):
         # retrieves the json plugin
