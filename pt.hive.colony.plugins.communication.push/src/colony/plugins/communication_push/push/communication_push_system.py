@@ -39,6 +39,15 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import copy
 
+COMMUNICATION_NAMES_VALUE = "communication_names"
+""" The communication names value """
+
+COMMUNICATION_HANDLER_COUNT_VALUE = "communication_handler_count"
+""" The communication handler count value """
+
+COMMUNICATION_HANDLER_NAMES_VALUE = "communication_handler_names"
+""" The communication handler names value """
+
 class CommunicationPush:
     """
     The communication push plugin.
@@ -237,6 +246,66 @@ class CommunicationPush:
             # otherwise puts the message into the "mail box"
             else:
                 self.communication_handler_name_push_notifications[communication_handler_name].append(push_notification)
+
+    def get_communication_information(self, communication_handler_name):
+        """
+        Retrieves an information structure on the communication
+        with the given name.
+
+        @type communication_name: String
+        @param communication_name: The name of the communication
+        to retrieve the information structure.
+        @rtype: Dictionary
+        @return: The information structure on the communication.
+        """
+
+        # creates the communication handler names list
+        communication_handler_names_list = []
+
+        # retrieves the communication handlers list from the communication name communication handlers map
+        communication_handlers_list = self.communication_name_communication_handlers_map.get(communication_handler_name, [])
+
+        # iterates over all the communication handler in the communication
+        # handlers list
+        for communication_handler in communication_handlers_list:
+            # retrieves the communication handler name and method, unpacking
+            # the communication handler tuple
+            communication_handler_name, _communication_handler_method = communication_handler
+
+            # adds the communication handler name to the list of communication handler names
+            communication_handler_names_list.append(communication_handler_name)
+
+        # retrieves the communication handler names list length
+        communication_handler_names_list_length = len(communication_handler_names_list)
+
+        # creates the communication information
+        communication_information = {COMMUNICATION_HANDLER_COUNT_VALUE : communication_handler_names_list_length,
+                                     COMMUNICATION_HANDLER_NAMES_VALUE : communication_handler_names_list}
+
+        # returns the communication information
+        return communication_information
+
+    def get_communication_handler_information(self, communication_handler_name):
+        """
+        Retrieves an information structure on the communication
+        handler with the given name.
+
+        @type communication_handler_name: String
+        @param communication_handler_name: The name of the communication
+        handler to retrieve the information structure.
+        @rtype: Dictionary
+        @return: The information structure on the communication
+        handler.
+        """
+
+        # retrieves the communication names list for the communication handler name
+        communication_names_list = self.communication_handler_communication_names.get(communication_handler_name, [])
+
+        # creates the communication handler information
+        communication_handler_information = {COMMUNICATION_NAMES_VALUE : communication_names_list}
+
+        # returns the communication handler information
+        return communication_handler_information
 
     def generate_notification(self, message, sender_id):
         """

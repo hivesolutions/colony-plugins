@@ -139,6 +139,35 @@ class CommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
 
         return self.communication_push.send_broadcast_notification(communication_name, notification)
 
+    def get_communication_information(self, communication_handler_name):
+        """
+        Retrieves an information structure on the communication
+        with the given name.
+
+        @type communication_name: String
+        @param communication_name: The name of the communication
+        to retrieve the information structure.
+        @rtype: Dictionary
+        @return: The information structure on the communication.
+        """
+
+        return self.communication_push.get_communication_information(communication_handler_name)
+
+    def get_communication_handler_information(self, communication_handler_name):
+        """
+        Retrieves an information structure on the communication
+        handler with the given name.
+
+        @type communication_handler_name: String
+        @param communication_handler_name: The name of the communication
+        handler to retrieve the information structure.
+        @rtype: Dictionary
+        @return: The information structure on the communication
+        handler.
+        """
+
+        return self.communication_push.get_communication_handler_information(communication_handler_name)
+
     def generate_notification(self, message, sender_id):
         """
         Generates a push notification for the given message and
