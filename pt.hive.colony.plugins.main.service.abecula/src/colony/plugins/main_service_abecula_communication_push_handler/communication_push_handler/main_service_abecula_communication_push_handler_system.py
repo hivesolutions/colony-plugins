@@ -372,6 +372,42 @@ class MainServiceAbeculaCommunicationPushHandler:
         # sets the encoded request contents
         self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE, INFORMATION_VALUE : information})
 
+    def handle_prop(self, request, communication_push_plugin):
+        """
+        Handles the abecula prop command.
+
+        @type request: AbeculaRequest
+        @param request: The abecula request for the command.
+        @type communication_push_plugin: Plugin
+        @param communication_push_plugin: The communication push plugin.
+        """
+
+        # retrieves the decoded request contents from the request
+        decoded_request_contents = self._get_decoded_request_contents(request)
+
+        # tries to retrieve the communication client id
+        communication_client_id = decoded_request_contents.get(COMMUNICATION_CLIENT_ID_VALUE, None)
+
+        # tries to retrieve the information item
+        information_item = decoded_request_contents.get(INFORMATION_ITEM_VALUE, None)
+
+        # tries to retrieve the information key
+        information_key = decoded_request_contents.get(INFORMATION_KEY_VALUE, None)
+
+        # in case the requested information is of type communication
+        if information_item == COMMUNICATION_VALUE:
+            information = communication_push_plugin.get_communication_information(information_key)
+        # in case the requested information is of type communication handler
+        elif information_item == COMMUNICATION_HANDLER_VALUE:
+            information = communication_push_plugin.get_communication_handler_information(information_key)
+        # in case the requested information is not valid
+        else:
+            # raises the invalid information item exception
+            raise main_service_abecula_communication_push_handler_exceptions.InvalidInformationItem(information_item)
+
+        # sets the encoded request contents
+        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE, INFORMATION_VALUE : information})
+
     def handle_connection_closed(self, service_connection):
         """
         The connection closed handler.
