@@ -59,8 +59,8 @@ MESSAGE_VALUE = "MESSAGE"
 COMMUNICATION_CLIENT_ID_VALUE = "communication_client_id"
 """ The communication client id value """
 
-COMMUNICATION_HANDLER_VALUE = "communication_handler"
-""" The communication handler value """
+COMMUNICATION_NAME_VALUE = "communication_name"
+""" The communication name value """
 
 class MainServiceAbeculaCommunicationPushHandler:
     """
@@ -208,11 +208,11 @@ class MainServiceAbeculaCommunicationPushHandler:
         # retrieves the decoded request contents from the request
         decoded_request_contents = self._get_decoded_request_contents(request)
 
-        # tries to retrieve the communication client id
+        # tries to retrieves the communication client id
         communication_client_id = decoded_request_contents.get(COMMUNICATION_CLIENT_ID_VALUE, None)
 
-        # tries to retrieve the communication handler
-        communication_handler = decoded_request_contents.get(COMMUNICATION_HANDLER_VALUE, None)
+        # tries to retrieves the communication name
+        communication_name = decoded_request_contents.get(COMMUNICATION_NAME_VALUE, None)
 
         # generates a communication handler for the given service handler and service connection
         generated_communication_handler = self.generate_handler(service_handler, service_connection)
@@ -221,7 +221,7 @@ class MainServiceAbeculaCommunicationPushHandler:
         self.service_connection_communication_handler_map[service_connection] = generated_communication_handler
 
         # adds a new communication handler
-        communication_push_plugin.add_communication_handler(communication_handler, communication_client_id, generated_communication_handler)
+        communication_push_plugin.add_communication_handler(communication_name, communication_client_id, generated_communication_handler)
 
         # sets the encoded request contents
         self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE})
@@ -245,14 +245,14 @@ class MainServiceAbeculaCommunicationPushHandler:
         # retrieves the decoded request contents from the request
         decoded_request_contents = self._get_decoded_request_contents(request)
 
-        # tries to retrieve the communication client id
+        # tries to retrieves the communication client id
         communication_client_id = decoded_request_contents.get(COMMUNICATION_CLIENT_ID_VALUE, None)
 
-        # tries to retrieve the communication handler
-        communication_handler = decoded_request_contents.get(COMMUNICATION_HANDLER_VALUE, None)
+        # tries to retrieves the communication name
+        communication_name = decoded_request_contents.get(COMMUNICATION_NAME_VALUE, None)
 
         # removes the communication handler
-        communication_push_plugin.remove_communication_handler(communication_handler, communication_client_id, generated_communication_handler)
+        communication_push_plugin.remove_communication_handler(communication_name, communication_client_id, generated_communication_handler)
 
         # sets the encoded request contents
         self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE})
@@ -273,14 +273,16 @@ class MainServiceAbeculaCommunicationPushHandler:
         # tries to retrieve the communication client id
         communication_client_id = decoded_request_contents.get(COMMUNICATION_CLIENT_ID_VALUE, None)
 
-        # tries to retrieve the communication handler
-        communication_handler = decoded_request_contents.get(COMMUNICATION_HANDLER_VALUE, None)
+        # tries to retrieves the communication name
+        communication_name = decoded_request_contents.get(COMMUNICATION_NAME_VALUE, None)
 
-        # tries to retrieve the message contents
+        # tries to retrieves the message contents
         message_contents = decoded_request_contents.get(MESSAGE_CONTENTS_VALUE, None)
 
         # creates the complete message contents from the original message contents
-        complete_message_contents = {COMMUNICATION_HANDLER_VALUE : communication_handler, MESSAGE_CONTENTS_VALUE : message_contents}
+        complete_message_contents = {COMMUNICATION_NAME_VALUE : communication_name,
+                                     COMMUNICATION_CLIENT_ID_VALUE : communication_client_id,
+                                     MESSAGE_CONTENTS_VALUE : message_contents}
 
         # encodes the complete message contents
         complete_message_contents_encoded = self._encode(complete_message_contents)
@@ -289,7 +291,7 @@ class MainServiceAbeculaCommunicationPushHandler:
         notification = communication_push_plugin.generate_notification(complete_message_contents_encoded, communication_client_id)
 
         # sends the notification in broadcast mode
-        communication_push_plugin.send_broadcast_notification(communication_handler, notification)
+        communication_push_plugin.send_broadcast_notification(communication_name, notification)
 
         # sets the encoded request contents
         self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE})
