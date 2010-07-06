@@ -116,6 +116,17 @@ class CommunicationPushPlugin(colony.plugins.plugin_system.Plugin):
 
         return self.communication_push.remove_communication_handler(communication_name, communication_handler_name, communication_handler_method)
 
+    def remove_all_communication_handler(self, communication_handler_name):
+        """
+        Removes the communication handler from all the communication "channels".
+
+        @type communication_handler_name: String
+        @param communication_handler_name: The name of the handler to have the
+        communications removed.
+        """
+
+        return self.communication_push.remove_all_communication_handler(communication_handler_name)
+
     def send_broadcast_notification(self, communication_name, notification):
         """
         Sends a broadcast notification to all the communication handler activated.
