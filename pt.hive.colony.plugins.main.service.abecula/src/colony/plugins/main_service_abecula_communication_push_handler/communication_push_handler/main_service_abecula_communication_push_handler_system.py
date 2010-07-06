@@ -615,6 +615,15 @@ class MainServiceAbeculaCommunicationPushHandler:
         del self.service_connection_communication_client_id_map[service_connection]
 
     def _encode(self, value):
+        """
+        Encodes the given value into json notation.
+
+        @type value: Object
+        @param value: The value to be encoded into json notation.
+        @rtype: String
+        @return: The value encoded in json notation.
+        """
+
         # retrieves the json plugin
         json_plugin = self.main_service_abecula_communication_push_handler_plugin.json_plugin
 
@@ -626,6 +635,15 @@ class MainServiceAbeculaCommunicationPushHandler:
         return encoded_value
 
     def _decode(self, value):
+        """
+        Decodes the given json value into an object.
+
+        @type value: String
+        @param value: The value to be decoded from json notation.
+        @rtype: Object
+        @return: The decoded object value.
+        """
+
         # retrieves the json plugin
         json_plugin = self.main_service_abecula_communication_push_handler_plugin.json_plugin
 
