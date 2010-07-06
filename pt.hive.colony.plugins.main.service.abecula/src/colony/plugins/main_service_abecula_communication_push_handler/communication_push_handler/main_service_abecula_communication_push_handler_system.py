@@ -66,6 +66,21 @@ COMMUNICATION_NAME_VALUE = "communication_name"
 COMMUNICATION_NAMES_VALUE = "communication_names"
 """ The communication names value """
 
+INFORMATION_VALUE = "information"
+""" The information value """
+
+INFORMATION_ITEM_VALUE = "information_item"
+""" The information item value """
+
+INFORMATION_KEY_VALUE = "information_key"
+""" The information key value """
+
+COMMUNICATION_VALUE = "communication"
+""" The communication value """
+
+COMMUNICATION_HANDLER_VALUE = "communication_handler"
+""" The communication handler value """
+
 class MainServiceAbeculaCommunicationPushHandler:
     """
     The main service abecula communication push handler class.
@@ -215,10 +230,10 @@ class MainServiceAbeculaCommunicationPushHandler:
         # retrieves the decoded request contents from the request
         decoded_request_contents = self._get_decoded_request_contents(request)
 
-        # tries to retrieves the communication client id
+        # tries to retrieve the communication client id
         communication_client_id = decoded_request_contents.get(COMMUNICATION_CLIENT_ID_VALUE, None)
 
-        # tries to retrieves the communication name
+        # tries to retrieve the communication name
         communication_name = decoded_request_contents.get(COMMUNICATION_NAME_VALUE, None)
 
         # retrieves the communication names for the communication name
@@ -258,10 +273,10 @@ class MainServiceAbeculaCommunicationPushHandler:
         # retrieves the decoded request contents from the request
         decoded_request_contents = self._get_decoded_request_contents(request)
 
-        # tries to retrieves the communication client id
+        # tries to retrieve the communication client id
         communication_client_id = decoded_request_contents.get(COMMUNICATION_CLIENT_ID_VALUE, None)
 
-        # tries to retrieves the communication name
+        # tries to retrieve the communication name
         communication_name = decoded_request_contents.get(COMMUNICATION_NAME_VALUE, None)
 
         # retrieves the communication names for the communication name
@@ -301,10 +316,10 @@ class MainServiceAbeculaCommunicationPushHandler:
         # tries to retrieve the communication client id
         communication_client_id = decoded_request_contents.get(COMMUNICATION_CLIENT_ID_VALUE, None)
 
-        # tries to retrieves the communication name
+        # tries to retrieve the communication name
         communication_name = decoded_request_contents.get(COMMUNICATION_NAME_VALUE, None)
 
-        # tries to retrieves the message contents
+        # tries to retrieve the message contents
         message_contents = decoded_request_contents.get(MESSAGE_CONTENTS_VALUE, None)
 
         # creates the complete message contents from the original message contents
@@ -323,6 +338,42 @@ class MainServiceAbeculaCommunicationPushHandler:
 
         # sets the encoded request contents
         self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE})
+
+    def handle_stat(self, request, communication_push_plugin):
+        """
+        Handles the abecula stat command.
+
+        @type request: AbeculaRequest
+        @param request: The abecula request for the command.
+        @type communication_push_plugin: Plugin
+        @param communication_push_plugin: The communication push plugin.
+        """
+
+        # retrieves the decoded request contents from the request
+        decoded_request_contents = self._get_decoded_request_contents(request)
+
+        # tries to retrieve the information item
+        information_item = decoded_request_contents.get(INFORMATION_ITEM_VALUE, None)
+
+        # tries to retrieve the information key
+        information_key = decoded_request_contents.get(INFORMATION_KEY_VALUE, None)
+
+        # in case the requested information is of type communication
+        if information_item == COMMUNICATION_VALUE:
+            information = communication_push_plugin.get_communication_information(information_key)
+        # in case the requested information is of type communication handler
+        elif information_item == COMMUNICATION_HANDLER_VALUE:
+            information = communication_push_plugin.get_communication_handler_information(information_key)
+        # in case the requested information is not valid
+        else:
+            # raises the invalid information item exception
+            raise main_service_abecula_communication_push_handler_exceptions.InvalidInformationItem(information_item)
+
+        # encodes the information
+        information_encoded = self._encode(information)
+
+        # sets the encoded request contents
+        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE, INFORMATION_VALUE : information_encoded})
 
     def handle_connection_closed(self, service_connection):
         """

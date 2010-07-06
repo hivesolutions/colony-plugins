@@ -70,3 +70,29 @@ class OperationNotPermitted(MainServiceAbeculaCommunicationPushHandlerException)
         """
 
         return "Operation not permitted: %s" % self.message
+
+class InvalidInformationItem(MainServiceAbeculaCommunicationPushHandlerException):
+    """
+    The invalid information item class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        MainServiceAbeculaCommunicationPushHandlerException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Invalid information item: %s" % self.message
