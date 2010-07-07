@@ -243,7 +243,7 @@ class MainServiceAbeculaCommunicationPushHandler:
         communication_name = decoded_request_contents.get(COMMUNICATION_NAME_VALUE, None)
 
         # retrieves the communication names for the communication name
-        communication_names = self._get_communication_names(communication_name)
+        communication_names = self._get_values(communication_name)
 
         # generates a communication handler for the given service handler and service connection
         generated_communication_handler = self.generate_handler(service_handler, service_connection)
@@ -286,7 +286,7 @@ class MainServiceAbeculaCommunicationPushHandler:
         communication_name = decoded_request_contents.get(COMMUNICATION_NAME_VALUE, None)
 
         # retrieves the communication names for the communication name
-        communication_names = self._get_communication_names(communication_name)
+        communication_names = self._get_values(communication_name)
 
         # iterates over all the communication names to unregister
         # them in the communication push plugin
@@ -364,19 +364,37 @@ class MainServiceAbeculaCommunicationPushHandler:
         # tries to retrieve the information key
         information_key = decoded_request_contents.get(INFORMATION_KEY_VALUE, None)
 
+        # retrieves the information keys for the information key
+        information_keys = self._get_values(information_key)
+
         # in case the requested information is of type communication
         if information_item == COMMUNICATION_VALUE:
-            information = communication_push_plugin.get_communication_information(information_key)
+            # sets the information method as the communication information retriever
+            information_method = communication_push_plugin.get_communication_information
         # in case the requested information is of type communication handler
         elif information_item == COMMUNICATION_HANDLER_VALUE:
-            information = communication_push_plugin.get_communication_handler_information(information_key)
+            # sets the information method as the communication handler information retriever
+            information_method = communication_push_plugin.get_communication_handler_information
         # in case the requested information is not valid
         else:
             # raises the invalid information item exception
             raise main_service_abecula_communication_push_handler_exceptions.InvalidInformationItem(information_item)
 
+        # creates the list to hold the information values
+        information_values_list = []
+
+        # iterates over all the information keys to retrieve
+        # the various information values
+        for information_key in information_keys:
+            # retrieves the information value for the information key
+            # using the selected information method
+            information_value = information_method(information_key)
+
+            # adds the information value to the information values list
+            information_values_list.append(information_value)
+
         # sets the encoded request contents
-        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE, INFORMATION_VALUE : information})
+        self._set_encoded_request_contents(request, {RESULT_VALUE : SUCCESS_VALUE, INFORMATION_VALUE : information_values_list})
 
     def handle_prop(self, request, communication_push_plugin):
         """
@@ -552,33 +570,33 @@ class MainServiceAbeculaCommunicationPushHandler:
         # writes the response
         request.write(encoded_request_contents)
 
-    def _get_communication_names(self, communication_name):
+    def _get_values(self, base_value):
         """
-        Retrieves a list of communication names for the
-        given communication name.
+        Retrieves a list of values for the given value.
+        It takes into account if the current value is
+        a list or a single value.
 
-        @type communication_name: String
-        @param communication_name: The name of the communication.
+        @type base_value: Object
+        @param base_value: The base value to be used to retrieve
+        the list of values.
         @rtype: List
-        @return: The list of communication names for the given
-        communication name.
+        @return: The list of values, retrieved from the base value.
         """
 
-        # retrieves the communication name type
-        communication_name_type = type(communication_name)
+        # retrieves the base value type
+        base_value_type = type(base_value)
 
-        # in case the communication name is of type list
-        if communication_name_type == types.ListType:
-            # sets the communication names as the
-            # communication names
-            communication_names = communication_name
+        # in case the base value is of type list
+        if base_value_type == types.ListType:
+            # sets the values as the base value
+            values = base_value
         else:
-            # sets the communication names as a list
-            # with the communication name item
-            communication_names = [communication_name]
+            # sets the values as a list with the
+            # base value being the only element
+            values = [base_value]
 
-        # returns the communication names
-        return communication_names
+        # returns the values
+        return values
 
     def _remove_service_connection_structures(self, service_connection):
         """
