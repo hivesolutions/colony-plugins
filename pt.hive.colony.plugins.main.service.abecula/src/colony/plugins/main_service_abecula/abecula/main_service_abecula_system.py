@@ -89,6 +89,9 @@ WORK_SCHEDULING_ALGORITHM = 1
 DEFAULT_PORT = 7676
 """ The default port """
 
+DEFAULT_CHARSET = "iso-8859-1"
+""" The default charset """
+
 STATUS_CODE_VALUES = {100 : "Continue", 101 : "Switching Protocols",
                       200 : "OK", 207 : "Multi-Status",
                       301 : "Moved permanently", 302 : "Found", 303 : "See Other", 304 : "Not Modified",
@@ -105,6 +108,9 @@ CONTENT_LENGTH_VALUE = "Content-Length"
 
 CONTENT_LENGTH_LOWER_VALUE = "Content-length"
 """ The content length lower value """
+
+CONTENT_CHARSET_VALUE = "Content-Charset"
+""" The content charser value """
 
 SERVER_VALUE = "Server"
 """ The server value """
@@ -534,10 +540,45 @@ class AbeculaClientServiceHandler:
                     request.received_message = message_value_message
 
                     # decodes the request if necessary
-                    #self.decode_request(request)
+                    self.decode_request(request)
 
                     # returns the request
                     return request
+
+    def decode_request(self, request):
+        """
+        Decodes the request message for the encoding
+        specified in the request.
+
+        @type request: AbeculaRequest
+        @param request: The request to be decoded.
+        """
+
+        # start the valid charset flag
+        valid_charset = False
+
+        # in case the content charset is defined
+        if CONTENT_CHARSET_VALUE in request.headers_map:
+            # retrieves the content type charset
+            content_type_charset = request.headers_map[CONTENT_CHARSET_VALUE]
+
+            # sets the valid charset flag
+            valid_charset = True
+
+        # in case there is no valid charset defined
+        if not valid_charset:
+            # sets the default content type charset
+            content_type_charset = DEFAULT_CHARSET
+
+        # retrieves the received message value
+        received_message_value = request.received_message
+
+        try:
+            # decodes the message value into unicode using the given charset
+            request.received_message = received_message_value.decode(content_type_charset)
+        except Exception, exception:
+            # sets the received message as the original one (fallback procedure)
+            request.received_message = received_message_value
 
     def send_exception(self, service_connection, request, exception):
         """
@@ -593,6 +634,11 @@ class AbeculaClientServiceHandler:
         # retrieves the result from the request
         result = request.get_result()
 
+        import types
+
+        if type(result) == types.UnicodeType:
+            result = result.encode(DEFAULT_CHARSET)
+
         # sends the result to the service connection
         service_connection.send(result)
 
@@ -624,6 +670,11 @@ class AbeculaClientServiceHandler:
 
         # retrieves the result from the request
         result = response.get_result()
+
+        import types
+
+        if type(result) == types.UnicodeType:
+            result = result.encode(DEFAULT_CHARSET)
 
         # sends the result to the service connection
         service_connection.send(result)
