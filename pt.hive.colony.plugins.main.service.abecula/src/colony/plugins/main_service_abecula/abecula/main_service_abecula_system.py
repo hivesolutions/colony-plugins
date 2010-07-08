@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import sys
+import types
 import traceback
 
 import colony.libs.string_buffer_util
@@ -89,7 +90,7 @@ WORK_SCHEDULING_ALGORITHM = 1
 DEFAULT_PORT = 7676
 """ The default port """
 
-DEFAULT_CHARSET = "iso-8859-1"
+DEFAULT_CHARSET = "utf-8"
 """ The default charset """
 
 STATUS_CODE_VALUES = {100 : "Continue", 101 : "Switching Protocols",
@@ -576,7 +577,7 @@ class AbeculaClientServiceHandler:
         try:
             # decodes the message value into unicode using the given charset
             request.received_message = received_message_value.decode(content_type_charset)
-        except Exception, exception:
+        except:
             # sets the received message as the original one (fallback procedure)
             request.received_message = received_message_value
 
@@ -634,11 +635,6 @@ class AbeculaClientServiceHandler:
         # retrieves the result from the request
         result = request.get_result()
 
-        import types
-
-        if type(result) == types.UnicodeType:
-            result = result.encode(DEFAULT_CHARSET)
-
         # sends the result to the service connection
         service_connection.send(result)
 
@@ -670,11 +666,6 @@ class AbeculaClientServiceHandler:
 
         # retrieves the result from the request
         result = response.get_result()
-
-        import types
-
-        if type(result) == types.UnicodeType:
-            result = result.encode(DEFAULT_CHARSET)
 
         # sends the result to the service connection
         service_connection.send(result)
@@ -739,6 +730,9 @@ class AbeculaResponse:
     message_stream = None
     """ The message stream """
 
+    content_charset = None
+    """ The content charset """
+
     parameters = {}
     """ The parameters """
 
@@ -752,6 +746,8 @@ class AbeculaResponse:
 
         self.parameters = parameters
 
+        self.content_charset = parameters.get("content_charset", DEFAULT_CHARSET)
+
         self.headers_map = {}
         self.message_stream = colony.libs.string_buffer_util.StringBuffer()
 
@@ -759,6 +755,14 @@ class AbeculaResponse:
         return "(%s, %s, %s)" % (self.operation_id, self.operation_type, self.protocol_version)
 
     def write(self, message, flush = 1, encode = True):
+        # retrieves the message type
+        message_type = type(message)
+
+        # in case the message type is unicode
+        if message_type == types.UnicodeType and encode:
+            # encodes the message with the defined content charset
+            message = message.encode(self.content_charset)
+
         # writes the message to the message stream
         self.message_stream.write(message)
 
@@ -879,6 +883,9 @@ class AbeculaRequest:
     status_message = None
     """ The status message """
 
+    content_charset = None
+    """ The content charset """
+
     parameters = {}
     """ The parameters """
 
@@ -894,6 +901,7 @@ class AbeculaRequest:
 
         self.service_handler = parameters.get("service_handler", None)
         self.service_connection = parameters.get("service_connection", None)
+        self.content_charset = parameters.get("content_charset", DEFAULT_CHARSET)
 
         self.headers_map = {}
         self.response_headers_map = {}
@@ -912,7 +920,15 @@ class AbeculaRequest:
 
         return self.received_message
 
-    def write(self, message, flush = 1):
+    def write(self, message, flush = 1, encode = True):
+        # retrieves the message type
+        message_type = type(message)
+
+        # in case the message type is unicode
+        if message_type == types.UnicodeType and encode:
+            # encodes the message with the defined content charset
+            message = message.encode(self.content_charset)
+
         # writes the message to the message stream
         self.message_stream.write(message)
 
