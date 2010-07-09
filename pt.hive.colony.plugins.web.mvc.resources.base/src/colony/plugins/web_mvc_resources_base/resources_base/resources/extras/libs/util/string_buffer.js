@@ -18,25 +18,85 @@
 
 // __author__    = João Magalhães <joamag@hive.pt>
 // __version__   = 1.0.0
-// __revision__  = $LastChangedRevision: 7693 $
-// __date__      = $LastChangedDate: 2010-03-25 08:40:31 +0000 (qui, 25 Mar 2010) $
+// __revision__  = $LastChangedRevision: 9229 $
+// __date__      = $LastChangedDate: 2010-07-08 18:07:05 +0100 (qui, 08 Jul 2010) $
 // __copyright__ = Copyright (c) 2008 Hive Solutions Lda.
 // __license__   = GNU General Public License (GPL), Version 3
 
+/**
+ * Constructor of the class.
+ */
 function StringBuffer() {
+    // creates the buffer to hold the (partial) strings
     this.buffer = [];
 }
 
+/**
+ * Clears the current string buffer
+ *
+ * @return {Object} The current context.
+ */
+StringBuffer.prototype.clear = function(string) {
+    // creates a new buffer, simulating the clearing of the previous
+    this.buffer = [];
+
+    // returns the context
+    return this;
+}
+
+/**
+ * Adds a string to the string buffer.
+ *
+ * @param {String}
+ *            string The string to be added to the buffer.
+ * @return {Object} The current context.
+ */
 StringBuffer.prototype.append = function(string) {
+    // adds the string to the buffer
     this.buffer.push(string);
+
+    // returns the context
     return this;
 }
 
-StringBuffer.prototype.removeLastAppend = function(string) {
+/**
+ * Updates the buffer to a "new" buffer with the given value.
+ *
+ * @param {String}
+ *            string The string to be used in the creation of the "new" buffer.
+ * @return {Object} The current context.
+ */
+StringBuffer.prototype.replace = function(string) {
+    // clears the read buffer
+    this.clear();
+
+    // adds the string to the read buffer
+    this.append(string);
+
+    // returns the context
+    return this;
+}
+
+/**
+ * Removes the last added string.
+ *
+ * @return {Object} The current context.
+ */
+StringBuffer.prototype.removeLastAppend = function() {
+    // sets the last element as not valid (empty)
     this.buffer[this.buffer.size() - 1] = "";
+
+    // returns the context
     return this;
 }
 
+/**
+ * Converts the internal string buffer to a string.
+ *
+ * @return {String} The converted string value.
+ */
 StringBuffer.prototype.toString = function() {
+    // returns the joined value of the strings
+    // in the buffer
     return this.buffer.join("");
 }
