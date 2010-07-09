@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import settler_ast
 
-from settler_lexer import *
+from settler_lexer import * #@UnusedWildImport
 
 COLONY_PARSER_VALUE = "colony"
 """ The colony parser value """
