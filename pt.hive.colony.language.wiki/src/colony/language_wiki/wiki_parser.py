@@ -41,7 +41,7 @@ import re
 
 import wiki_ast
 
-from wiki_lexer import *
+from wiki_lexer import * #@UnusedWildImport
 
 COLONY_PARSER_VALUE = "colony"
 """ The colony parser value """
