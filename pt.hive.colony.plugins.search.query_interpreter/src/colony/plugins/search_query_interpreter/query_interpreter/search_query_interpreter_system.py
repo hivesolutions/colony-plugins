@@ -69,7 +69,7 @@ class SearchQueryInterpreter:
         @return: A search query object created according to the search interpreter adapters available.
         """
 
-        root_query_node = search_query_interpreter_parser.query_parser.parse(query_string)
+        root_query_node = search_query_interpreter_parser.query_parser.parse(query_string) #@UndefinedVariable
 
         search_query = SearchQuery()
 

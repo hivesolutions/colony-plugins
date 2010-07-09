@@ -41,7 +41,7 @@ import ply.yacc
 
 import search_query_interpreter_ast
 
-from search_query_interpreter_lexer import *
+from search_query_interpreter_lexer import * #@UnusedWildImport
 
 precedence = (("left", "OR"),
               ("left", "AND"),)
