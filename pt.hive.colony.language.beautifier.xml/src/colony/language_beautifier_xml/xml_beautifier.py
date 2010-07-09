@@ -39,7 +39,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import sys
 
-from xml_lexer import *
+from xml_lexer import * #@UnusedWildImport
 
 COLONY_GENERATOR_PATH = "../../../../../pt.hive.colony.language.generator/src/colony"
 """ The colony generator path """
