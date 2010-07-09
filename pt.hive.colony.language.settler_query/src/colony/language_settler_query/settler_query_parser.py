@@ -43,7 +43,7 @@ import ply.yacc
 
 import settler_query_ast
 
-from settler_query_lexer import *
+from settler_query_lexer import * #@UnusedWildImport
 
 # parsing rules
 # precedence of operators
