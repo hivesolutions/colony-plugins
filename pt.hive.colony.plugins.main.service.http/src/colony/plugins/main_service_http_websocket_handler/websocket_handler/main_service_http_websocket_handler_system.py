@@ -93,11 +93,11 @@ class WebSocketConnection:
     request = None
     """ The http request object """
 
-    http_client_service_task = None
-    """ The http client service task """
+    http_client_service_handler = None
+    """ The http client service handler """
 
-    http_connection = None
-    """ The http connection """
+    service_connection = None
+    """ The service connection """
 
     def __init__(self, request):
         """
@@ -110,8 +110,8 @@ class WebSocketConnection:
 
         self.request = request
 
-        self.http_client_service_task = request.http_client_service_task
-        self.http_connection = request.http_client_service_task.http_connection
+        self.http_client_service_handler = request.http_client_service_handler
+        self.service_connection = request.service_connection
 
     def open(self):
         """
@@ -125,6 +125,7 @@ class WebSocketConnection:
 
         # in case the host, origin or base path is not available
         if not host or not origin or not base_path:
+            # raises the invalid handshake data exception
             raise main_service_http_websocket_handler_exceptions.InvalidHandshakeData("not enough handshake data available")
 
         # sets the upgrade mode in the request
@@ -145,23 +146,23 @@ class WebSocketConnection:
         self.request.status_code = 101
         self.request.status_message = "Web Socket Protocol Handshake"
 
-        # sets the request handler for the http client service task
+        # sets the request handler for the http client service handler
         # this step upgrades the protocol interpretation
-        self.http_client_service_task.set_current_request_handler(self.websocket_request_handler)
+        self.http_client_service_handler.set_service_connection_request_handler(self.service_connection, self.websocket_request_handler)
 
     def close(self):
         """
         Closes the websocket, cleaning the remaining changes.
         """
 
-        # sets the request handler for the http client service task
+        # sets the request handler for the http client service handler
         # as the original (http) request handler, this step downgrades
         # the protocol interpretation (back to http)
-        self.http_client_service_task.set_current_request_handler(self.http_client_service_task.http_request_handler)
+        self.http_client_service_handler.unset_service_connection_request_handler(self.service_connection)
 
-    def websocket_request_handler(self, request_timeout, http_service_handler_plugins_map):
-        # tries to receive the data
-        data = self.http_connection.recv(1024)
+    def websocket_request_handler(self, service_connection, request_timeout):
+        # retrieves the data
+        data = service_connection.retrieve_data(request_timeout)
 
         # prints the data
         print(data)

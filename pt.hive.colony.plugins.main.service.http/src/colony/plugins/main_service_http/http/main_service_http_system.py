@@ -408,6 +408,9 @@ class HttpClientServiceHandler:
     content_type_charset = DEFAULT_CHARSET
     """ The content type charset """
 
+    service_connection_request_handler_map = {}
+    """ The map associating the service connection with the request handler (method) """
+
     def __init__(self, service_plugin, service_connection_handler, service_configuration, service_utils_exception_class, extra_parameters):
         """
         Constructor of the class.
@@ -430,6 +433,8 @@ class HttpClientServiceHandler:
         self.service_configuration = service_configuration
         self.service_utils_exception_class = service_utils_exception_class
 
+        self.service_connection_request_handler_map = {}
+
         self.encoding = extra_parameters.get(ENCODING_VALUE, None)
         self.encoding_handler = extra_parameters.get(ENCODING_HANDLER_VALUE, None)
         self.content_type_charset = self.service_configuration.get(DEFAULT_CONTENT_TYPE_CHARSET_VALUE, DEFAULT_CHARSET)
@@ -441,6 +446,13 @@ class HttpClientServiceHandler:
         pass
 
     def handle_request(self, service_connection, request_timeout = REQUEST_TIMEOUT):
+        # retrieves the request handler using the service connection request handler map
+        request_handler = self.service_connection_request_handler_map.get(service_connection, self.default_request_handler)
+
+        # handles the service connection with the request handler
+        return request_handler(service_connection, request_timeout)
+
+    def default_request_handler(self, service_connection, request_timeout = REQUEST_TIMEOUT):
         # retrieves the http service handler plugins map
         http_service_handler_plugins_map = self.service_plugin.main_service_http.http_service_handler_plugins_map
 
@@ -1050,6 +1062,31 @@ class HttpClientServiceHandler:
         """
 
         self.current_request_handler = current_request_handler
+
+    def set_service_connection_request_handler(self, service_connection, request_handler_method):
+        """
+        Sets a "custom" request handler method for the given service connection.
+
+        @type service_connection: ServiceConnection
+        @param service_connection: The service connection to have the
+        "custom" request handler method associated.
+        @type request_handler_method: Method
+        @param request_handler_method: The method to be used in the handling
+        of the request.
+        """
+
+        self.service_connection_request_handler_map[service_connection] = request_handler_method
+
+    def unset_service_connection_request_handler(self, service_connection, request_handler_method):
+        """
+        Unsets a "custom" request handler method for the given service connection.
+
+        @type service_connection: ServiceConnection
+        @param service_connection: The service connection to have the "custom"
+        request handler method association removed.
+        """
+
+        del self.service_connection_request_handler_map[service_connection]
 
     def _process_redirection(self, request, service_configuration):
         """
