@@ -536,7 +536,7 @@ class HttpClientServiceHandler:
         message = colony.libs.string_buffer_util.StringBuffer()
 
         # creates a request object
-        request = HttpRequest(self, self.content_type_charset)
+        request = HttpRequest(self, service_connection, self.content_type_charset)
 
         # creates the start line loaded flag
         start_line_loaded = False
