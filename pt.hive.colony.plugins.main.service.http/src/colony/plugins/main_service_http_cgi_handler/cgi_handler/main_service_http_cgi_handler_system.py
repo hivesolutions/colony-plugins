@@ -173,8 +173,8 @@ class MainServiceHttpCgiHandler:
         # retrieves the request file name
         request_filename = request.filename
 
-        # retrieves the request http client service task
-        request_http_client_service_task = request.http_client_service_task
+        # retrieves the request http service connection
+        request_service_connection = request.service_connection
 
         # retrieves the request operation type
         request_operation_type = request.operation_type
@@ -185,14 +185,14 @@ class MainServiceHttpCgiHandler:
         # retrieves the request query string
         request_query_string = request.query_string
 
-        # retrieves the request http address
-        request_http_address = request_http_client_service_task.http_address
+        # retrieves the request connection address
+        request_connection_address = request_service_connection.connection_address
 
-        # retrieves the request port
-        request_port = request_http_client_service_task.port
+        # retrieves the request connection port
+        request_connection_port = request_service_connection.connection_port
 
         # retrieves the client hostname and port
-        client_http_address, _client_http_port = request_http_address
+        client_http_address, _client_http_port = request_connection_address
 
         # retrieves the operative system name
         os_name = os.name
@@ -230,7 +230,7 @@ class MainServiceHttpCgiHandler:
             environment_map[SERVER_NAME_VALUE] = ""
             environment_map[GATEWAY_INTERFACE_VALUE] = GATEWAY_INTERFACE
             environment_map[SERVER_PROTOCOL_VALUE] = request_protocol_version
-            environment_map[SERVER_PORT_VALUE] = str(request_port)
+            environment_map[SERVER_PORT_VALUE] = str(request_connection_port)
             environment_map[REQUEST_METHOD_VALUE] = request_operation_type
             environment_map[PATH_INFO_VALUE] = request_filename
             environment_map[PATH_TRANSLATED_VALUE] = request_filename
