@@ -956,6 +956,9 @@ class AbstractServiceConnectionHandler:
         if EPOLL_SUPPORT:
             self.__add_connection_epoll(connection_socket, connection_address, connection_port)
 
+        # sets the initial cancel timeout
+        service_connection.cancel(self.connection_timeout)
+
         # handles the opened service connection
         self.client_service.handle_opened(service_connection)
 
