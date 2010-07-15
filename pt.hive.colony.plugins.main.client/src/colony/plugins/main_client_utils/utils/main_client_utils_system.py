@@ -162,18 +162,6 @@ class MainClientUtils:
         # removes the socket upgrader plugin from the socket upgrader plugins map
         del self.socket_upgrader_plugins_map[upgrader_name]
 
-
-
-
-
-
-
-
-
-
-
-
-
 class AbstractClient:
     """
     The abstract client class.
@@ -190,9 +178,6 @@ class AbstractClient:
 
     client_plugin = None
     """ The client plugin """
-
-    client_handling_task_class = None
-    """ The client handling task class """
 
     chunk_size = CHUNK_SIZE
     """ The chunk size """
@@ -245,7 +230,10 @@ class AbstractClient:
         Stops the client.
         """
 
-        pass
+        # iterates over all the client connections, to closes them
+        for _connection_tuple, client_connection in self.client_connections_map:
+            # closes the client connection
+            client_connection.close()
 
     def get_client_connection(self, connection_tuple):
         """
@@ -327,17 +315,14 @@ class ClientConnection:
     client_plugin = None
     """ The client plugin """
 
-    client_connection_handler = None
-    """ The client connection handler """
+    client = None
+    """ The client """
 
     connection_socket = None
     """ The connection socket """
 
     connection_address = None
     """ The connection address """
-
-    connection_port = None
-    """ The connection port """
 
     connection_chunk_size = None
     """ The connection chunk size """
@@ -357,14 +342,14 @@ class ClientConnection:
     _connection_socket = None
     """ The original connection socket """
 
-    def __init__(self, client_plugin, client_connection_handler, connection_socket, connection_address, connection_chunk_size):
+    def __init__(self, client_plugin, client, connection_socket, connection_address, connection_chunk_size):
         """
         Constructor of the class.
 
         @type client_plugin: Plugin
         @param client_plugin: The client plugin.
-        @type client_connection_handler: AbstractClientConnectionHandler
-        @param client_connection_handler: The client connection handler.
+        @type client: AbstractClient
+        @param client: The client.
         @type connection_socket: Socket
         @param connection_socket: The connection socket.
         @type connection_address: Tuple
@@ -374,7 +359,7 @@ class ClientConnection:
         """
 
         self.client_plugin = client_plugin
-        self.client_connection_handler = client_connection_handler
+        self.client = client
         self.connection_socket = connection_socket
         self.connection_address = connection_address
         self.connection_chunk_size = connection_chunk_size
@@ -440,7 +425,7 @@ class ClientConnection:
         """
 
         # retrieves the main client utils
-        main_client_utils = self.client_connection_handler.client.main_client_utils
+        main_client_utils = self.client.main_client_utils
 
         # retrieves the socket upgrader plugins map
         socket_upgrader_plugins_map = main_client_utils.socket_upgrader_plugins_map
@@ -617,14 +602,14 @@ class ClientConnectionless(ClientConnection):
     connection_data = None
     """ The connection data """
 
-    def __init__(self, client_plugin, client_connection_handler, connection_socket, connection_address, connection_port, connection_data, connection_chunk_size):
+    def __init__(self, client_plugin, client, connection_socket, connection_address, connection_port, connection_data, connection_chunk_size):
         """
         Constructor of the class.
 
         @type client_plugin: Plugin
         @param client_plugin: The client plugin.
-        @type client_connection_handler: AbstractClientConnectionHandler
-        @param client_connection_handler: The client connection handler.
+        @type client: AbstractClient
+        @param client: The client.
         @type connection_socket: Socket
         @param connection_socket: The connection socket.
         @type connection_address: Tuple
@@ -637,7 +622,7 @@ class ClientConnectionless(ClientConnection):
         @param connection_chunk_size: The connection chunk size.
         """
 
-        ClientConnection.__init__(self, client_connection_handler, client_plugin, connection_socket, connection_address, connection_port, connection_chunk_size)
+        ClientConnection.__init__(self, client, client_plugin, connection_socket, connection_address, connection_port, connection_chunk_size)
 
         self.connection_data = connection_data
 
