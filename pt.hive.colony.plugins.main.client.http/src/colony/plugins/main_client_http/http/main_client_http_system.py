@@ -40,6 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import sys
 import socket
 import select
+import base64
 
 import colony.libs.string_buffer_util
 
@@ -107,11 +108,35 @@ CONTENT_LENGTH_VALUE = "Content-Length"
 CONTENT_TYPE_VALUE = "Content-Type"
 """ The content type value """
 
+ACCEPT_VALUE = "Accept"
+""" The accept value """
+
+ACCEPT_LANGUAGE_VALUE = "Accept-Language"
+""" The accept language value """
+
+ACCEPT_CHARSET_VALUE = "Accept-Charset"
+""" The accept charset value """
+
+KEEP_ALIVE_VALUE = "Keep-Alive"
+""" The keep alive value """
+
+CONNECITON_VALUE = "Connection"
+""" The connection value """
+
+CACHE_CONTROL_VALUE = "Cache-Control"
+""" The cache control value """
+
+AUTHORIZATION_VALUE = "Authorization"
+""" The authorization value """
+
 TRANSFER_ENCODING_VALUE = "Transfer-Encoding"
 """ The transfer encoding value """
 
 LOCATION_VALUE = "Location"
 """ The location value """
+
+BASIC_VALUE = "Basic"
+""" The basic value """
 
 DEFAULT_PORTS = (80, 443)
 """ The tuple of default ports """
@@ -187,6 +212,15 @@ class HttpClient:
     content_type_charset = None
     """ The content type charset """
 
+    authentication = False
+    """ The authentication flag """
+
+    username = "none"
+    """ The username to be used in authentication """
+
+    password = "none"
+    """ The password to be used in authentication """
+
     def __init__(self, main_client_http, protocol_version, content_type_charset = DEFAULT_CHARSET):
         """
         Constructor of the class.
@@ -204,19 +238,38 @@ class HttpClient:
         self.protocol_version = protocol_version
         self.content_type_charset = content_type_charset
 
-    def fetch_url(self, url, method, parameters = {}):
+    def fetch_url(self, url, method, parameters = {}, protocol_version = HTTP_1_1_VERSION, content_type_charset = DEFAULT_CHARSET):
+        """
+        Fetches the url for the given url, method and (http) parameters.
+
+        @type url: String
+        @param url: The url to be fetched.
+        @type method: String
+        @param method: The method to be used.
+        @type parameters: Dictionary
+        @param parameters: The (http) parameters to be used in the fetching.
+        @type protocol_version: String
+        @param protocol_version: The version of the protocol to be used.
+        @type content_type_charset: String
+        @param content_type_charset: The content type charset to be used.
+        @rtype: String
+        @return: The retrieved fetched url contents.
+        """
+
         # parses the url retrieving the protocol the host the port and the path
         protocol, host, port, path = self._parse_url(url)
 
         # retrieves the socket name from the protocol socket map
         socket_name = PROTOCOL_SOCKET_NAME_MAP.get(protocol, None)
 
+        # creates a new connection and connects
         self.http_connection = self._get_socket(socket_name)
         self.http_connection.connect((host, port))
 
-        # sends the request for the host, port, path and
-        # parameters, and retrieves the request
-        request = self.send_request(host, port, path, parameters)
+        # sends the request for the host, port, path,
+        # parameters, method, protocol version and content type
+        # charset and retrieves the request
+        request = self.send_request(host, port, path, parameters, method, protocol_version, content_type_charset)
 
         # retrieves the response
         response = self.retrieve_response(request)
@@ -275,7 +328,7 @@ class HttpClient:
         # return the built url
         return url
 
-    def send_request(self, host, port, path, parameters):
+    def send_request(self, host, port, path, parameters, operation_type, protocol_version, content_type_charset):
         """
         Sends the request for the given parameters.
 
@@ -287,13 +340,24 @@ class HttpClient:
         @param path: The path to be retrieve via http.
         @type parameters: Dictionary
         @param parameters: The parameters to the request.
+        @type operation_type: String
+        @param operation_type: The operation type for the request.
+        @type protocol_version: String
+        @param protocol_version: The protocol version of the request.
+        @type content_type_charset: String
+        @param content_type_charset: The content type charset.
         @rtype: HttpRequest
-        @return: The sent request for the given parameters..
+        @return: The sent request for the given parameters.
         """
 
-        # creates the http request with the host, the port, the path
-        # and the parameters
-        request = HttpRequest(host, port, path, parameters)
+        # creates the http request with the host, the port, the path, the parameters,
+        # operation type, the protocol version and the content type charset
+        request = HttpRequest(host, port, path, parameters, operation_type, protocol_version, content_type_charset)
+
+        # in case authentication is set
+        if self.authentication:
+            # sets the authentication in the request
+            request.set_authentication(self.username, self.password)
 
         # retrieves the result value from the request
         result_value = request.get_result()
@@ -666,6 +730,96 @@ class HttpClient:
         # returns the data
         return data
 
+    def set_authentication(self, username, password):
+        """
+        Sets the authentication values, to be used in the request.
+
+        @type username: String
+        @param username: The username to be used in the authentication.
+        @type password: String
+        @param password: The password to be used in the authentication.
+        """
+
+        # sets the authentication flag
+        self.authentication = True
+
+        # sets the authentication values
+        self.username = username
+        self.password = password
+
+    def quote(self, string_value, safe = "/"):
+        """
+        Quotes the given string value according to
+        the url encoding specification.
+        The implementation is based on the python base library.
+
+        @type string_value: String
+        @param string_value: The string value to be quoted.
+        @rtype: String
+        @return: The quoted string value.
+        """
+
+        # creates the cache key tuple
+        cache_key = (safe, QUOTE_SAFE_CHAR)
+
+        try:
+            # in case the cache key is not defined
+            # in the quote sage maps creates a new entry
+            safe_map = QUOTE_SAFE_MAPS[cache_key]
+        except KeyError:
+            # adds the "base" quote safe characters to the
+            # "safe list"
+            safe += QUOTE_SAFE_CHAR
+
+            # starts the safe map
+            safe_map = {}
+
+            # iterates over all the ascii values
+            for index in range(256):
+                # retrieves the character for the
+                # given index
+                character = chr(index)
+
+                # adds the "valid" character ot the safe mao entry
+                safe_map[character] = (character in safe) and character or ("%%%02X" % index)
+
+            # sets the safe map in the cache quote safe maps
+            QUOTE_SAFE_MAPS[cache_key] = safe_map
+
+        # maps the getitem method of the map to all the string
+        # value to retrieve the valid items
+        resolution_list = map(safe_map.__getitem__, string_value)
+
+        # joins the resolution list to retrieve the quoted value
+        return "".join(resolution_list)
+
+    def quote_plus(self, string_value, safe = ""):
+        """
+        Quotes the given string value according to
+        the url encoding specification. This kind of quote
+        takes into account the plus and the space relation.
+        The implementation is based on the python base library.
+
+        @type string_value: String
+        @param string_value: The string value to be quoted.
+        @rtype: String
+        @return: The quoted string value.
+        """
+
+        # in case there is at least one white
+        # space in the string value
+        if " " in string_value:
+            # quotes the string value adding the white space
+            # to the "safe list"
+            string_value = self.quote(string_value, safe + " ")
+
+            # replaces the white spaces with plus signs and
+            # returns the result
+            return string_value.replace(" ", "+")
+
+        # returns the quoted string value
+        return self.quote(string_value, safe)
+
     def _get_socket(self, socket_name = "normal"):
         """
         Retrieves the socket for the given socket name
@@ -711,26 +865,36 @@ class HttpClient:
         # parses the url retrieving the structure
         url_structure = url_parser_plugin.parse_url(url)
 
+        # in case the url structure contains the protocol
         if url_structure.protocol:
+            # convert the protocol to lower case
             protocol = url_structure.protocol.lower()
         else:
             # raises the http invalid url data exception
             raise main_client_http_exceptions.HttpInvalidUrlData("missing protocol information: " + url)
 
+        # in case the url structure contains the base name
         if url_structure.base_name:
+            # retrieves the base name as the host
             host = url_structure.base_name
         else:
             # raises the http invalid url data exception
             raise main_client_http_exceptions.HttpInvalidUrlData("missing host information: " + url)
 
+        # in case the url structure contains the port
         if url_structure.port:
+            # retrieves the port
             port = url_structure.port
         else:
+            # sets the port retrieving it from the default port map
             port = PROTOCOL_DEFAULT_PORT_MAP.get(protocol, None)
 
+        # in case the url structure contains the resource reference
         if url_structure.resource_reference:
+            # retrieves the resource reference as the path
             path = url_structure.resource_reference
         else:
+            # sets the default path (root)
             path = "/"
 
         # returns the tuple containing the protocol, the host, the port
@@ -760,6 +924,18 @@ class HttpRequest:
     protocol_version = "none"
     """ The protocol version """
 
+    authentication = False
+    """ The authentication flag """
+
+    username = "none"
+    """ The username of the authentication """
+
+    password = "none"
+    """ The password of the authentication """
+
+    authentication_token = "none"
+    """ The authentication used in authentication """
+
     attributes_map = {}
     """ The attributes map """
 
@@ -776,6 +952,25 @@ class HttpRequest:
     """ The content type charset """
 
     def __init__(self, host = "none", port = None, path = "none", attributes_map = {}, operation_type = GET_METHOD_VALUE, protocol_version = HTTP_1_1_VERSION, content_type_charset = DEFAULT_CHARSET):
+        """
+        Constructor of the class.
+
+        @type host: String
+        @param host: The host value.
+        @type port: int
+        @param port: The port value.
+        @type path: String
+        @param path: The path.
+        @type attributes_map: Dictionary
+        @param attributes_map: The attributes map.
+        @type operation_type: String
+        @param operation_type: The operation type.
+        @type protocol_version: String
+        @param protocol_version: The protocol version.
+        @type content_type_charset: String
+        @param content_type_charset: The content type charset.
+        """
+
         self.host = host
         self.port = port
         self.path = path
@@ -837,15 +1032,18 @@ class HttpRequest:
         if content_length > 0:
             result.write(CONTENT_LENGTH_VALUE + ": " + str(content_length) + "\r\n")
 
+        # in case authentication is set
+        if self.authentication:
+            result.write(AUTHORIZATION_VALUE + ": " + self.authentication_token + "\r\n")
+
         result.write(HOST_VALUE + ": " + real_host + "\r\n")
         result.write(USER_AGENT_VALUE + ": " + USER_AGENT_IDENTIFIER + "\r\n")
-        result.write("Accept" + ": " + "text/html,application/xhtml+xml,application/xml;q=0.7,*;q=0.7" + "\r\n")
-        result.write("Accept-Language" + ": " + "en-us,en;q=0.5" + "\r\n")
-        #result.write("Accept-Encoding" + ": " + "gzip,deflate" + "\r\n")
-        result.write("Accept-Charset" + ": " + "iso-8859-1,utf-8;q=0.7,*;q=0.7" + "\r\n")
-        result.write("Keep-Alive" + ": " + "115" + "\r\n")
-        result.write("Connection" + ": " + "keep-alive" + "\r\n")
-        result.write("Cache-Control" + ": " + "max-age=0" + "\r\n")
+        result.write(ACCEPT_VALUE + ": " + "text/html,application/xhtml+xml,application/xml;q=0.7,*;q=0.7" + "\r\n")
+        result.write(ACCEPT_LANGUAGE_VALUE + ": " + "en-us,en;q=0.5" + "\r\n")
+        result.write(ACCEPT_CHARSET_VALUE + ": " + "iso-8859-1,utf-8;q=0.7,*;q=0.7" + "\r\n")
+        result.write(KEEP_ALIVE_VALUE + ": " + "115" + "\r\n")
+        result.write(CONNECITON_VALUE + ": " + "keep-alive" + "\r\n")
+        result.write(CACHE_CONTROL_VALUE + ": " + "max-age=0" + "\r\n")
 
         # iterates over all the header values to be sent
         for header_name, header_value in self.headers_map.items():
@@ -862,6 +1060,27 @@ class HttpRequest:
 
         # returns the result value
         return result_value
+
+    def set_authentication(self, username, password):
+        """
+        Sets the authentication values, to be used in the request.
+
+        @type username: String
+        @param username: The username to be used in the authentication.
+        @type password: String
+        @param password: The password to be used in the authentication.
+        """
+
+        # sets the authentication flag
+        self.authentication = True
+
+        # sets the authentication values
+        self.username = username
+        self.password = password
+
+        # creates the authentication token encoding the username
+        # and password in base 64
+        self.authentication_token = BASIC_VALUE + " " + base64.b64encode(username + ":" + password)
 
     def _get_real_host(self):
         """
