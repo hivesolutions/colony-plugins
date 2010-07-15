@@ -258,13 +258,16 @@ class AbstractClient:
         @return: The retrieved client connection.
         """
 
-        # retrieve the address and the socket name
+        # retrieve the host, the port and the socket name
         # from the connection tuple
-        address, socket_name = connection_tuple
+        host, port, socket_name = connection_tuple
 
         # in case the connection tuple is not present in the
         # client connections map
         if not connection_tuple in self.client_connections_map:
+            # creates the address tuple
+            address = (host, port)
+
             # creates a socket for the client with
             # the given socket name
             client_connection_socket = self._get_socket(socket_name)
@@ -382,7 +385,7 @@ class ClientConnection:
         self.connection_properties = {}
 
     def __repr__(self):
-        return "(%s)" % self.connection_address
+        return "(%s)" % (self.connection_address,)
 
     def open(self):
         """
