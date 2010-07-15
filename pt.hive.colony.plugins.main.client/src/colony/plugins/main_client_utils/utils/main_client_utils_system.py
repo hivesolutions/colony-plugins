@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import time
 import select
 
 import main_client_utils_exceptions
@@ -489,13 +490,13 @@ class ClientConnection:
             self.connection_socket.close()
 
             # raises the server request timeout exception
-            raise main_client_utils_exceptions.ServerRequestTimeout("%is timeout" % request_timeout)
+            raise main_client_utils_exceptions.ClientRequestTimeout("%is timeout" % request_timeout)
         try:
             # receives the data in chunks
             data = self.connection_socket.recv(chunk_size)
         except:
             # raises the client request timeout exception
-            raise main_client_utils_exceptions.ClientRequestTimeout("timeout")
+            raise main_client_utils_exceptions.ServerRequestTimeout("timeout")
 
         # returns the data
         return data

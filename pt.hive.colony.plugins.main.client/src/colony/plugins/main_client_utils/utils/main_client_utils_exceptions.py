@@ -96,3 +96,81 @@ class SocketUpgraderNotFound(MainClientUtilsException):
         """
 
         return "Socket upgrader not found: %s" % self.message
+
+class ClientRequestTimeout(MainClientUtilsException):
+    """
+    The client request timeout class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        MainClientUtilsException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Client request timeout: %s" % self.message
+
+class ServerRequestTimeout(MainClientUtilsException):
+    """
+    The server request timeout class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        MainClientUtilsException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Server request timeout: %s" % self.message
+
+class RequestClosed(MainClientUtilsException):
+    """
+    The request closed class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        @type message: String
+        @param message: The message to be printed.
+        """
+
+        MainClientUtilsException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        @rtype: String
+        @return: The string representation of the class.
+        """
+
+        return "Request closed: %s" % self.message
