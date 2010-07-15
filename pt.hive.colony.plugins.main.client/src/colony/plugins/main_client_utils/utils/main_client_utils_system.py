@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import select
+
 import main_client_utils_exceptions
 
 CLIENT_CONNECTION_TIMEOUT = 1
@@ -256,8 +258,61 @@ class AbstractClient:
         @return: The retrieved client connection.
         """
 
-        ##if not connection_tuple in self.client_connections_map:
-        ##    client_connection =
+        # retrieve the address and the socket name
+        # from the connection tuple
+        address, socket_name = connection_tuple
+
+        # in case the connection tuple is not present in the
+        # client connections map
+        if not connection_tuple in self.client_connections_map:
+            # creates a socket for the client with
+            # the given socket name
+            client_connection_socket = self._get_socket(socket_name)
+
+            # retrieves the client connection
+            client_connection = ClientConnection(self.client_plugin, self, client_connection_socket, address, self.chunk_size)
+
+            # sets the client connection in the client connections map
+            self.client_connections_map[connection_tuple] = client_connection
+
+        # retrieves the client connection for the client
+        # connections map
+        client_connection = self.client_connections_map[connection_tuple]
+
+        # returns the client connection
+        return client_connection
+
+    def _get_socket(self, socket_name = "normal"):
+        """
+        Retrieves the socket for the given socket name
+        using the socket provider plugins.
+
+        @type socket_name: String
+        @param socket_name: The name of the socket to be retrieved.
+        @rtype: Socket
+        @return: The socket for the given socket name.
+        """
+
+        # retrieves the socket provider plugins map
+        socket_provider_plugins_map = self.main_client_utils.socket_provider_plugins_map
+
+        # in case the socket name is available in the socket
+        # provider plugins map
+        if socket_name in socket_provider_plugins_map:
+            # retrieves the socket provider plugin from the socket provider plugins map
+            socket_provider_plugin = socket_provider_plugins_map[socket_name]
+
+            # the parameters for the socket provider
+            parameters = {}
+
+            # creates a new socket with the socket provider plugin
+            socket = socket_provider_plugin.provide_socket_parameters(parameters)
+
+            # returns the created socket
+            return socket
+        else:
+            # raises the socket provider not found exception
+            raise main_client_utils_exceptions.SocketProviderNotFound("socket provider %s not found" % self.socket_provider)
 
 class ClientConnection:
     """
@@ -298,7 +353,7 @@ class ClientConnection:
     _connection_socket = None
     """ The original connection socket """
 
-    def __init__(self, client_plugin, client_connection_handler, connection_socket, connection_address, connection_port, connection_chunk_size):
+    def __init__(self, client_plugin, client_connection_handler, connection_socket, connection_address, connection_chunk_size):
         """
         Constructor of the class.
 
@@ -310,8 +365,6 @@ class ClientConnection:
         @param connection_socket: The connection socket.
         @type connection_address: Tuple
         @param connection_address: The connection address.
-        @type connection_port: int
-        @param connection_port: The connection port.
         @type connection_chunk_size: int
         @param connection_chunk_size: The connection chunk size.
         """
@@ -320,7 +373,6 @@ class ClientConnection:
         self.client_connection_handler = client_connection_handler
         self.connection_socket = connection_socket
         self.connection_address = connection_address
-        self.connection_port = connection_port
         self.connection_chunk_size = connection_chunk_size
 
         self._connection_socket = connection_socket
@@ -330,12 +382,15 @@ class ClientConnection:
         self.connection_properties = {}
 
     def __repr__(self):
-        return "(%s, %s)" % (self.connection_address, self.connection_port)
+        return "(%s)" % self.connection_address
 
     def open(self):
         """
         Opens the connection.
         """
+
+        # connects the connection socket to the connection address
+        self.connection_socket.connect(self.connection_address)
 
         # prints debug message about connection
         self.client_plugin.debug("Connected to: %s" % str(self.connection_address))
