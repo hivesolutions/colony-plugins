@@ -39,12 +39,8 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import hmac
 import time
-import base64
 import random
-import urllib
-import urllib2
 import hashlib
-import urlparse
 
 import service_twitter_exceptions
 
@@ -93,6 +89,9 @@ BASE_REST_URL = "http://twitter.com/"
 BASE_REST_SECURE_URL = "https://twitter.com/"
 """ The base rest secure url to be used """
 
+DEFAULT_ENCODING = "utf-8"
+""" The default encoding """
+
 class ServiceTwitter:
     """
     The service twitter class.
@@ -121,6 +120,9 @@ class ServiceTwitter:
         @return: The created remote client.
         """
 
+        # retrieves the main client http plugin
+        main_client_http_plugin = self.service_twitter_plugin.main_client_http_plugin
+
         # retrieves the json plugin
         json_plugin = self.service_twitter_plugin.json_plugin
 
@@ -137,7 +139,7 @@ class ServiceTwitter:
         oauth_structure = service_attributes.get("oauth_structure", None)
 
         # creates a new twitter client with the given options
-        twitter_client = TwitterClient(json_plugin, urllib2, username, password, encoding, oauth_structure)
+        twitter_client = TwitterClient(json_plugin, main_client_http_plugin, username, password, encoding, oauth_structure)
 
         # returns the twitter client
         return twitter_client
@@ -150,8 +152,8 @@ class TwitterClient:
     json_plugin = None
     """ The json plugin """
 
-    http_client_plugin = None
-    """ The http client plugin """
+    main_client_http_plugin = None
+    """ The main client http plugin """
 
     username = None
     """ The username """
@@ -168,14 +170,17 @@ class TwitterClient:
     oauth_structure = None
     """ The oauth structure """
 
-    def __init__(self, json_plugin = None, http_client_plugin = None, username = None, password = None, encoding = None, oauth_structure = None):
+    http_client = None
+    """ The http client for the connection """
+
+    def __init__(self, json_plugin = None, main_client_http_plugin = None, username = None, password = None, encoding = None, oauth_structure = None):
         """
         Constructor of the class.
 
         @type json_plugin: JsonPlugin
         @param json_plugin: The json plugin.
-        @type http_client_plugin: HttpClientPlugin
-        @param http_client_plugin: The http client plugin.
+        @type main_client_http_plugin: MainClientHttpPlugin
+        @param main_client_http_plugin: The main client http plugin.
         @type username: String
         @param username: The username.
         @type password: String
@@ -187,7 +192,7 @@ class TwitterClient:
         """
 
         self.json_plugin = json_plugin
-        self.http_client_plugin = http_client_plugin
+        self.main_client_http_plugin = main_client_http_plugin
         self.username = username
         self.password = password
         self.encoding = encoding
@@ -280,7 +285,7 @@ class TwitterClient:
             oauth_consumer_secret_escaped = "%s&" % self._escape_url(self.oauth_structure.oauth_consumer_secret)
 
             # creates the parameters tuple
-            parameters_tuple = ["%s=%s" % (self._escape_url(key), self._escape_url(parameters[key])) for key in sorted(parameters)]
+            parameters_tuple = ["%s=%s" % (self._escape_url(key), self._escape_url(unicode(parameters[key]).encode(DEFAULT_ENCODING))) for key in sorted(parameters)]
 
             # creates the message
             message = "&".join(map(self._escape_url, [GET_METHOD_VALUE, retrieval_url, "&".join(parameters_tuple)]))
@@ -360,7 +365,7 @@ class TwitterClient:
             oauth_consumer_secret_escaped = "%s&%s" % (self._escape_url(self.oauth_structure.oauth_consumer_secret), self._escape_url(self.oauth_structure.oauth_token_secret))
 
             # creates the parameters tuple
-            parameters_tuple = ["%s=%s" % (self._escape_url(key), self._escape_url(parameters[key])) for key in sorted(parameters)]
+            parameters_tuple = ["%s=%s" % (self._escape_url(key), self._escape_url(unicode(parameters[key]).encode(DEFAULT_ENCODING))) for key in sorted(parameters)]
 
             # creates the message
             message = "&".join(map(self._escape_url, [GET_METHOD_VALUE, retrieval_url, "&".join(parameters_tuple)]))
@@ -770,16 +775,16 @@ class TwitterClient:
             raise service_twitter_exceptions.StatusUpdateProblem("text must be less than or equal to %d characters" % TWITTER_CHARACTER_LIMIT_VALUE)
 
         # sets the status in the post data
-        post_data = {"status" : status}
+        parameters = {"status" : status}
 
         if in_reply_to_status_id:
-            post_data["in_reply_to_status_id"] = in_reply_to_status_id
+            parameters["in_reply_to_status_id"] = in_reply_to_status_id
 
         # sets the retrieval url
         retrieval_url = BASE_REST_URL + "statuses/update.json"
 
         # fetches the retrieval url retrieving the json
-        json = self._fetch_url(retrieval_url, post_data = post_data, method = POST_METHOD_VALUE)
+        json = self._fetch_url(retrieval_url, parameters, POST_METHOD_VALUE)
 
         # loads json retrieving the data
         data = self.json_plugin.loads(json)
@@ -793,9 +798,13 @@ class TwitterClient:
     def require_authentication(self):
         """
         Tests if authentication is enabled.
+        Raising an exception in case no authentication values
+        are available.
         """
 
+        # in case the username and the password are not defined and the oauth access token is not available
         if (not self.username or not self.password) and not self.oauth_structure.oauth_access_token:
+            # raises the invalid authentication exception
             raise service_twitter_exceptions.InvalidAuthentication("user not authenticated")
 
     def get_oauth_structure(self):
@@ -818,64 +827,14 @@ class TwitterClient:
 
         self.oauth_structure = oauth_structure
 
-    def _add_authorization_header(self):
+    def _fetch_url(self, url, parameters = None, method = GET_METHOD_VALUE):
         """
-        Adds the authorization handler to the request headers.
-        """
-
-        if self.username and self.password:
-            # constructs the basic authentication string
-            basic_authentication = base64.encodestring("%s:%s" % (self.username, self.password))[:-1]
-
-            # sets the request header authorization
-            self.request_headers["Authorization"] = "Basic %s" % basic_authentication
-
-    def _get_opener(self, url):
-        """
-        Retrieves the opener to the connection.
-
-        @type url: String
-        @param url: The url to create the opener.
-        @rtype: Opener
-        @return: The opener to the connection.
-        """
-
-        # in case the username and the password are defined
-        if self.username and self.password:
-            # adds the authorization header
-            self._add_authorization_header()
-
-            # creates the http basic auth handler
-            authentication_handler = urllib2.HTTPBasicAuthHandler()
-
-            # parses the url
-            _scheme, net_localization, _path, _parameters, _query, _fragment = urlparse.urlparse(url)
-
-            # adds the password to the url structure
-            authentication_handler.add_password(TWITTER_API_REALM_VALUE, net_localization, self.username, self.password)
-
-            # builds the opener with the authentication handler
-            opener = urllib2.build_opener(authentication_handler)
-        else:
-            # builds the opener
-            opener = urllib2.build_opener()
-
-        # adds the request header to the opener
-        opener.addheaders = self.request_headers.items()
-
-        # returns the opener
-        return opener
-
-    def _fetch_url(self, url, parameters = None, post_data = None, method = GET_METHOD_VALUE):
-        """
-        Fetches the given url for the given parameters, post data and using the given method.
+        Fetches the given url for the given parameters and using the given method.
 
         @type url: String
         @param url: The url to be fetched.
         @type parameters: Dictionary
         @param parameters: The parameters to be used the fetch.
-        @type post_data: Dictionary
-        @param post_data: The post data to be used the fetch.
         @type method: String
         @param method: The method to be used in the fetch.
         @rtype: String
@@ -887,40 +846,32 @@ class TwitterClient:
             # creates a new parameters map
             parameters = {}
 
-        # in case post data is not defined
-        if not post_data:
-            # creates a new post data map
-            post_data = {}
+        # retrieves the http client
+        http_client = self._get_http_client()
+
+        # in case the username and the password are defined
+        if self.username and self.password:
+            # sets the authentication in the http client
+            http_client.set_authentication(self.username, self.password)
 
         # retrieves the current authentication type
         authentication_type = self._get_authentication_type()
 
-        # in case oauth is in use
+        # in case oauth authentication is in use
         if authentication_type == OAUTH_AUTHENTICATION_TYPE:
-            if method == GET_METHOD_VALUE:
-                self._build_oauth_arguments(url, parameters, method)
-            elif method == POST_METHOD_VALUE:
-                self._build_oauth_arguments(url, post_data, method)
+            # builds the oauth arguments, for authentication
+            self._build_oauth_arguments(url, parameters, method)
 
-        # builds the url
-        url = self._build_url(url, parameters)
+        # fetches the url retrieving the http response
+        http_response = http_client.fetch_url(url, method, parameters)
 
-        # encodes the post data
-        encoded_post_data = self._encode_post_data(post_data)
-
-        # retrieves the opener for the given url
-        opener = self._get_opener(url)
-
-        # opens the url with the given encoded post data
-        url_structure = opener.open(url, encoded_post_data)
-
-        # reads the contents from the url structure
-        contents = url_structure.read()
+        # retrieves the contents from the http response
+        contents = http_response.received_message
 
         # returns the contents
         return contents
 
-    def _build_url(self, url, parameters):
+    def _build_url(self, base_url, parameters):
         """
         Builds the url for the given url and parameters.
 
@@ -932,14 +883,11 @@ class TwitterClient:
         @return: The built url for the given parameters.
         """
 
-        # in case the parameters are valid and the length
-        # of them is greater than zero
-        if parameters and len(parameters) > 0:
-            # retrieves the extra query
-            extra_query = self._encode_parameters(parameters)
+        # retrieves the http client
+        http_client = self._get_http_client()
 
-            # adds it to the url
-            url += "?" + extra_query
+        # build the url from the base urtl
+        url = http_client.build_url(base_url, GET_METHOD_VALUE, parameters)
 
         # returns the url
         return url
@@ -990,61 +938,13 @@ class TwitterClient:
             oauth_consumer_secret_escaped = "%s&%s" % (self._escape_url(self.oauth_structure.oauth_consumer_secret), self._escape_url(self.oauth_structure.oauth_token_secret))
 
             # creates the parameters tuple
-            parameters_tuple = ["%s=%s" % (self._escape_url(key), self._escape_url(parameters[key])) for key in sorted(parameters)]
+            parameters_tuple = ["%s=%s" % (self._escape_url(key), self._escape_url(unicode(parameters[key]).encode(DEFAULT_ENCODING))) for key in sorted(parameters)]
 
             # creates the message
             message = "&".join(map(self._escape_url, [method, url, "&".join(parameters_tuple)]))
 
             # sets the signature
             parameters["oauth_signature"] = hmac.new(oauth_consumer_secret_escaped, message, hashlib.sha1).digest().encode("base64")[:-1]
-
-    def _encode_parameters(self, parameters):
-        """
-        Encodes the given parameters into url encoding.
-
-        @type parameters: Dictionary
-        @param parameters: The parameters map to be encoded.
-        @rtype: String
-        @return: The encoded parameters.
-        """
-
-        # in case the parameters are defined
-        if parameters:
-            # returns the encoded parameters
-            return urllib.urlencode(dict([(parameter_key, self._encode(parameter_value)) for parameter_key, parameter_value in parameters.items() if parameter_value is not None]))
-        else:
-            # returns none
-            return None
-
-    def _encode_post_data(self, post_data):
-        """
-        Encodes the post data into url encoding.
-
-        @type post_data: Dictionary
-        @param post_data: The post data map to be encoded.
-        @rtype: String
-        @return: The encoded post data.
-        """
-
-        # in case the post data is defined
-        if post_data:
-            # returns the encoded post data
-            return urllib.urlencode(dict([(post_data_key, self._encode(post_data_value)) for post_data_key, post_data_value in post_data.items()]))
-        else:
-            # returns none
-            return None
-
-    def _encode(self, string_value):
-        """
-        Encodes the given string value to the current encoding.
-
-        @type string_value: String
-        @param string_value: The string value to be encoded.
-        @rtype: String
-        @return: The given string value encoded in the current encoding.
-        """
-
-        return unicode(string_value).encode("utf-8")
 
     def _escape_url(self, url_text):
         """
@@ -1054,7 +954,11 @@ class TwitterClient:
         @return: the given url text in a valid http get request string.
         """
 
-        return urllib.quote(str(url_text), "")
+        # retrieves the http client
+        http_client = self._get_http_client()
+
+        # returns the quoted version of the url text
+        return http_client.quote_plus(str(url_text), "")
 
     def _check_twitter_errors(self, data):
         """
@@ -1132,6 +1036,23 @@ class TwitterClient:
         elif authentication_type == BASIC_AUTHENTICATION_TYPE:
             # returns the username
             return self.username
+
+    def _get_http_client(self):
+        """
+        Retrieves the http client currently in use (in case it's created)
+        if not created creates the http client.
+
+        @rtype: HttpClient
+        @return: The retrieved http client.
+        """
+
+        # in case no http client exists
+        #if not self.http_client:
+            # creates the http client
+        #    self.http_client = self.main_client_http_plugin.create_client({})
+
+        # returns the http client
+        return self.main_client_http_plugin.create_client({})
 
 class OauthStructure:
     """
