@@ -144,6 +144,9 @@ class MainXmlrpcManager:
                     result = rpc_method(*parameters)
                     error = None
                 except Exception, exception:
+                    # prints info message about exception
+                    self.main_xmlrpc_manager_plugin.info("There was an exception handling xml rpc the request: " + str(exception))
+
                     result = None
                     error = exception
         # in case the method name is not valid
