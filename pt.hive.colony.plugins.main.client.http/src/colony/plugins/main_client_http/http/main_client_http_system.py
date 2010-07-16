@@ -565,7 +565,7 @@ class HttpClient:
                         start_message_value = message_value[start_message_index:]
 
                         # retrieves the response in chunked mode
-                        self.retrieve_response_chunked(response, start_message_value, response_timeout)
+                        self.retrieve_response_chunked(client_connection, response, start_message_value, response_timeout)
 
                         # returns the response
                         return response
@@ -667,7 +667,7 @@ class HttpClient:
             # than the octet size plus the extra end of chunk characters
             while message_size < octet_end:
                 # retrieves the data
-                data = self.retrieve_data(response_timeout)
+                data = client_connection.retrieve_data(response_timeout)
 
                 # retrieves the data length
                 data_length = len(data)
