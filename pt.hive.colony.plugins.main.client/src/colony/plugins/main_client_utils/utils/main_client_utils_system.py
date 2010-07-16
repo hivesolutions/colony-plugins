@@ -681,6 +681,9 @@ class ClientConnection:
         # reconnects the socket to the connection address
         self.connection_socket.connect(self.connection_address)
 
+        # prints debug message about reconnection
+        self.client_plugin.debug("Reconnected to: %s" % str(self.connection_address))
+
     def _call_connection_opened_handlers(self):
         """
         Calls all the connection opened handlers.
