@@ -129,12 +129,14 @@ class ServiceOpenid:
 
         self.nonce_values_map = {}
 
-    def create_remote_client(self, service_attributes):
+    def create_remote_client(self, service_attributes, open_client = True):
         """
         Creates a remote client, with the given service attributes.
 
         @type service_attributes: Dictionary
         @param service_attributes: The service attributes to be used.
+        @type open_client: bool
+        @param open_client: If the client should be opened.
         @rtype: OpenidClient
         @return: The created remote client.
         """
@@ -150,6 +152,10 @@ class ServiceOpenid:
 
         # creates the openid client
         openid_client = OpenidClient(self.service_openid_plugin, main_client_http_plugin, service_yadis_plugin, self, openid_structure)
+
+        # in case the client is meant to be open
+        # open the client
+        open_client and openid_client.open()
 
         # returns the openid client
         return openid_client
@@ -265,6 +271,9 @@ class OpenidClient:
     openid_structure = None
     """ The openid structure """
 
+    http_client = None
+    """ The http client for the connection """
+
     def __init__(self, service_openid_plugin = None, main_client_http_plugin = None, service_yadis_plugin = None, service_openid = None, openid_structure = None):
         """
         Constructor of the class.
@@ -286,6 +295,23 @@ class OpenidClient:
         self.service_yadis_plugin = service_yadis_plugin
         self.service_openid = service_openid
         self.openid_structure = openid_structure
+
+    def open(self):
+        """
+        Opens the twitter client.
+        """
+
+        pass
+
+    def close(self):
+        """
+        Closes the twitter client.
+        """
+
+        # in case an http client is defined
+        if self.http_client:
+            # closes the http client
+            self.http_client.close({})
 
     def generate_openid_structure(self, provider_url, claimed_id, identity, return_to, realm, association_type = DEFAULT_OPENID_ASSOCIATE_TYPE, session_type = DEFAULT_OPENID_SESSION_TYPE, set_structure = True):
         # creates a new openid structure
@@ -689,8 +715,8 @@ class OpenidClient:
         @return: The built url for the given parameters.
         """
 
-        # creates the http client
-        http_client = self.main_client_http_plugin.create_client({})
+        # retrieves the http client
+        http_client = self._get_http_client()
 
         # build the url from the base urtl
         url = http_client.build_url(base_url, GET_METHOD_VALUE, parameters)
@@ -719,8 +745,8 @@ class OpenidClient:
             # creates a new parameters map
             parameters = {}
 
-        # creates the http client
-        http_client = self.main_client_http_plugin.create_client({})
+        # retrieves the http client
+        http_client = self._get_http_client()
 
         # fetches the url retrieving the http response
         http_response = http_client.fetch_url(url, method, parameters)
@@ -738,6 +764,26 @@ class OpenidClient:
         else:
             # returns the contents
             return contents
+
+    def _get_http_client(self):
+        """
+        Retrieves the http client currently in use (in case it's created)
+        if not created creates the http client.
+
+        @rtype: HttpClient
+        @return: The retrieved http client.
+        """
+
+        # in case no http client exists
+        if not self.http_client:
+            # creates the http client
+            self.http_client = self.main_client_http_plugin.create_client({})
+
+            # opens the http client
+            self.http_client.open({})
+
+        # returns the http client
+        return self.http_client
 
 class OpenidStructure:
     """
