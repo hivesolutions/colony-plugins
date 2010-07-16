@@ -922,8 +922,18 @@ class HttpClient:
             # sets the default path (root)
             path = "/"
 
-        # returns the tuple containing the protocol, the host, the port
-        # and the path of the url
+        # in case the url structure contains the options
+        if url_structure.options:
+            # adds the options to the path
+            path += "?" + url_structure.options
+
+        # in case the url structure contains the location
+        if url_structure.location:
+            # adds the location to the path
+            path += "#" + url_structure.location
+
+        # returns the tuple containing the protocol, the host, the port,
+        # and the path
         return (protocol, host, port, path)
 
 class HttpRequest:
