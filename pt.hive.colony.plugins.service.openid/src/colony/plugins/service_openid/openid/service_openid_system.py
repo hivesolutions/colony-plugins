@@ -274,6 +274,9 @@ class OpenidClient:
     http_client = None
     """ The http client for the connection """
 
+    yadis_remote_client = None
+    """ The yadis remote client for the connection """
+
     def __init__(self, service_openid_plugin = None, main_client_http_plugin = None, service_yadis_plugin = None, service_openid = None, openid_structure = None):
         """
         Constructor of the class.
@@ -312,6 +315,11 @@ class OpenidClient:
         if self.http_client:
             # closes the http client
             self.http_client.close({})
+
+        # in case an yadis remote client is defined
+        if self.yadis_remote_client:
+            # closes the yadis remote client
+            self.yadis_remote_client.close()
 
     def generate_openid_structure(self, provider_url, claimed_id, identity, return_to, realm, association_type = DEFAULT_OPENID_ASSOCIATE_TYPE, session_type = DEFAULT_OPENID_SESSION_TYPE, set_structure = True):
         # creates a new openid structure
@@ -376,8 +384,8 @@ class OpenidClient:
         # retrieves the yadis provider url
         yadis_provider_url = self._get_yadis_provider_url()
 
-        # creates a new yadis remote client
-        yadis_remote_client = self.service_yadis_plugin.create_remote_client({})
+        # retrieves the yadis remote client
+        yadis_remote_client = self._get_yadis_remote_client()
 
         # generates the yadis structure
         yadis_remote_client.generate_yadis_structure(yadis_provider_url)
@@ -784,6 +792,23 @@ class OpenidClient:
 
         # returns the http client
         return self.http_client
+
+    def _get_yadis_remote_client(self):
+        """
+        Retrieves the yadis remote client currently in use (in case it's created)
+        if not created creates the yadis remote client.
+
+        @rtype: YadisClient
+        @return: The retrieved yadis remote client.
+        """
+
+        # in case no yadis remote client exists
+        if not self.yadis_remote_client:
+            # creates the yadis remote client
+            self.yadis_remote_client = self.service_yadis_plugin.create_remote_client({})
+
+        # returns the yadis remote client
+        return self.yadis_remote_client
 
 class OpenidStructure:
     """
