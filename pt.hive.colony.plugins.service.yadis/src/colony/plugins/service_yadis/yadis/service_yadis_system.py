@@ -37,9 +37,6 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import urllib
-import urllib2
-
 import service_yadis_parser
 
 GET_METHOD_VALUE = "GET"
@@ -66,21 +63,30 @@ class ServiceYadis:
 
         self.service_yadis_plugin = service_yadis_plugin
 
-    def create_remote_client(self, service_attributes):
+    def create_remote_client(self, service_attributes, open_client = True):
         """
         Creates a remote client, with the given service attributes.
 
         @type service_attributes: Dictionary
         @param service_attributes: The service attributes to be used.
+        @type open_client: bool
+        @param open_client: If the client should be opened.
         @rtype: YadisClient
         @return: The created remote client.
         """
+
+        # retrieves the main client http plugin
+        main_client_http_plugin = self.service_yadis_plugin.main_client_http_plugin
 
         # retrieves the yadis structure (if available)
         yadis_structure = service_attributes.get("yadis_structure", None)
 
         # creates a new yadis client with the given options
-        yadis_client = YadisClient(urllib2, yadis_structure)
+        yadis_client = YadisClient(main_client_http_plugin, yadis_structure)
+
+        # in case the client is meant to be open
+        # open the client
+        open_client and yadis_client.open()
 
         # returns the yadis client
         return yadis_client
@@ -90,24 +96,44 @@ class YadisClient:
     The class that represents a yadis client connection.
     """
 
-    http_client_plugin = None
-    """ The http client plugin """
+    main_client_http_plugin = None
+    """ The main client http plugin """
 
     yadis_structure = None
     """ The yadis structure """
 
-    def __init__(self, http_client_plugin = None, yadis_structure = None):
+    http_client = None
+    """ The http client for the connection """
+
+    def __init__(self, main_client_http_plugin = None, yadis_structure = None):
         """
         Constructor of the class.
 
-        @type http_client_plugin: HttpClientPlugin
-        @param http_client_plugin: The http client plugin.
+        @type main_client_http_plugin: MainClientHttpPlugin
+        @param main_client_http_plugin: The main client http plugin.
         @type yadis_structure: YadisStructure
         @param yadis_structure: The yadis structure.
         """
 
-        self.http_client_plugin = http_client_plugin
+        self.main_client_http_plugin = main_client_http_plugin
         self.yadis_structure = yadis_structure
+
+    def open(self):
+        """
+        Opens the twitter client.
+        """
+
+        pass
+
+    def close(self):
+        """
+        Closes the twitter client.
+        """
+
+        # in case an http client is defined
+        if self.http_client:
+            # closes the http client
+            self.http_client.close({})
 
     def generate_yadis_structure(self, provider_url, set_structure = True):
         """
@@ -182,32 +208,35 @@ class YadisClient:
 
         self.yadis_structure = yadis_structure
 
-    def _get_opener(self, url):
+    def _build_url(self, base_url, parameters):
         """
-        Retrieves the opener to the connection.
+        Builds the url for the given url and parameters.
 
-        @type url: String
-        @param url: The url to create the opener.
-        @rtype: Opener
-        @return: The opener to the connection.
+        @type base_url: String
+        @param base_url: The base url to be used.
+        @type parameters: Dictionary
+        @param parameters: The parameters to be used for url construction.
+        @rtype: String
+        @return: The built url for the given parameters.
         """
 
-        # builds the opener
-        opener = urllib2.build_opener()
+        # retrieves the http client
+        http_client = self._get_http_client()
 
-        # returns the opener
-        return opener
+        # build the url from the base urtl
+        url = http_client.build_url(base_url, GET_METHOD_VALUE, parameters)
 
-    def _fetch_url(self, url, parameters = None, post_data = None, method = GET_METHOD_VALUE):
+        # returns the built url
+        return url
+
+    def _fetch_url(self, url, parameters = None, method = GET_METHOD_VALUE):
         """
-        Fetches the given url for the given parameters, post data and using the given method.
+        Fetches the given url for the given parameters and using the given method.
 
         @type url: String
         @param url: The url to be fetched.
         @type parameters: Dictionary
         @param parameters: The parameters to be used the fetch.
-        @type post_data: Dictionary
-        @param post_data: The post data to be used the fetch.
         @type method: String
         @param method: The method to be used in the fetch.
         @rtype: String
@@ -219,105 +248,39 @@ class YadisClient:
             # creates a new parameters map
             parameters = {}
 
-        # in case post data is not defined
-        if not post_data:
-            # creates a new post data map
-            post_data = {}
+        # retrieves the http client
+        http_client = self._get_http_client()
 
-        if method == GET_METHOD_VALUE:
-            pass
-        elif method == POST_METHOD_VALUE:
-            post_data = parameters
+        # fetches the url retrieving the http response
+        http_response = http_client.fetch_url(url, method, parameters)
 
-        # builds the url
-        url = self._build_url(url, parameters)
+        # retrieves the contents from the http response
+        contents = http_response.received_message
 
-        # encodes the post data
-        encoded_post_data = self._encode_post_data(post_data)
-
-        # retrieves the opener for the given url
-        opener = self._get_opener(url)
-
-        # opens the url with the given encoded post data
-        url_structure = opener.open(url, encoded_post_data)
-
-        # reads the contents from the url structure
-        contents = url_structure.read()
+        print repr(contents)
 
         # returns the contents
         return contents
 
-    def _build_url(self, url, parameters):
+    def _get_http_client(self):
         """
-        Builds the url for the given url and parameters.
+        Retrieves the http client currently in use (in case it's created)
+        if not created creates the http client.
 
-        @type url: String
-        @param url: The base url to be used.
-        @type parameters: Dictionary
-        @param parameters: The parameters to be used for url construction.
-        @rtype: String
-        @return: The built url for the given parameters.
+        @rtype: HttpClient
+        @return: The retrieved http client.
         """
 
-        # in case the parameters are valid and the length
-        # of them is greater than zero
-        if parameters and len(parameters) > 0:
-            # retrieves the extra query
-            extra_query = self._encode_parameters(parameters)
+        # in case no http client exists
+        if not self.http_client:
+            # creates the http client
+            self.http_client = self.main_client_http_plugin.create_client({})
 
-            # adds it to the url
-            url += "?" + extra_query
+            # opens the http client
+            self.http_client.open({})
 
-        # returns the url
-        return url
-
-    def _encode_parameters(self, parameters):
-        """
-        Encodes the given parameters into url encoding.
-
-        @type parameters: Dictionary
-        @param parameters: The parameters map to be encoded.
-        @rtype: String
-        @return: The encoded parameters.
-        """
-
-        # in case the parameters are defined
-        if parameters:
-            # returns the encoded parameters
-            return urllib.urlencode(dict([(parameter_key, self._encode(parameter_value)) for parameter_key, parameter_value in parameters.items() if parameter_value is not None]))
-        else:
-            # returns none
-            return None
-
-    def _encode_post_data(self, post_data):
-        """
-        Encodes the post data into url encoding.
-
-        @type post_data: Dictionary
-        @param post_data: The post data map to be encoded.
-        @rtype: String
-        @return: The encoded post data.
-        """
-
-        # in case the post data is defined
-        if post_data:
-            # returns the encoded post data
-            return urllib.urlencode(dict([(post_data_key, self._encode(post_data_value)) for post_data_key, post_data_value in post_data.items()]))
-        else:
-            # returns none
-            return None
-
-    def _encode(self, string_value):
-        """
-        Encodes the given string value to the current encoding.
-
-        @type string_value: String
-        @param string_value: The string value to be encoded.
-        @rtype: String
-        @return: The given string value encoded in the current encoding.
-        """
-
-        return unicode(string_value).encode("utf-8")
+        # returns the http client
+        return self.http_client
 
 class YadisStructure:
     """

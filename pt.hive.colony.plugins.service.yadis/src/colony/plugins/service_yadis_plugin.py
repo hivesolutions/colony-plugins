@@ -38,6 +38,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 import colony.plugins.plugin_system
+import colony.plugins.decorators
 
 class ServiceYadisPlugin(colony.plugins.plugin_system.Plugin):
     """
@@ -55,13 +56,16 @@ class ServiceYadisPlugin(colony.plugins.plugin_system.Plugin):
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/service_yadis/yadis/resources/baf.xml"}
     capabilities = ["service.yadis", "build_automation_item"]
     capabilities_allowed = []
-    dependencies = []
+    dependencies = [colony.plugins.plugin_system.PluginDependency(
+                    "pt.hive.colony.plugins.main.client.http", "1.0.0")]
     events_handled = []
     events_registrable = []
     main_modules = ["service_yadis.yadis.service_yadis_exceptions", "service_yadis.yadis.service_yadis_parser",
                     "service_yadis.yadis.service_yadis_system"]
 
     service_yadis = None
+
+    main_client_http_plugin = None
 
     def load_plugin(self):
         colony.plugins.plugin_system.Plugin.load_plugin(self)
@@ -84,6 +88,7 @@ class ServiceYadisPlugin(colony.plugins.plugin_system.Plugin):
     def unload_allowed(self, plugin, capability):
         colony.plugins.plugin_system.Plugin.unload_allowed(self, plugin, capability)
 
+    @colony.plugins.decorators.inject_dependencies("pt.hive.colony.plugins.service.yadis", "1.0.0")
     def dependency_injected(self, plugin):
         colony.plugins.plugin_system.Plugin.dependency_injected(self, plugin)
 
@@ -98,3 +103,10 @@ class ServiceYadisPlugin(colony.plugins.plugin_system.Plugin):
         """
 
         return self.service_yadis.create_remote_client(service_attributes)
+
+    def get_main_client_http_plugin(self):
+        return self.main_client_http_plugin
+
+    @colony.plugins.decorators.plugin_inject("pt.hive.colony.plugins.main.client.http")
+    def set_main_client_http_plugin(self, main_client_http_plugin):
+        self.main_client_http_plugin = main_client_http_plugin
