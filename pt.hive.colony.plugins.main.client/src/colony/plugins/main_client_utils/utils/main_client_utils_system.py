@@ -37,8 +37,11 @@ __copyright__ = "Copyright (c) 2008 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import os
 import time
 import select
+
+import colony.libs.string_buffer_util
 
 import main_client_utils_exceptions
 
@@ -235,7 +238,7 @@ class AbstractClient:
             # closes the client connection
             client_connection.close()
 
-    def get_client_connection(self, connection_tuple):
+    def get_client_connection(self, connection_tuple, open_connection = True):
         """
         Retrieves the client connection for the given
         connection tuple.
@@ -243,6 +246,9 @@ class AbstractClient:
         @type connection_tuple: Tuple
         @param connection_tuple: The tuple containing
         the connection reference.
+        @type open_connection: bool
+        @param open_connection: If the connection should be opened
+        in case the connection is going to be created.
         @rtype: ClientConnection
         @return: The retrieved client connection.
         """
@@ -262,10 +268,15 @@ class AbstractClient:
             client_connection_socket = self._get_socket(socket_name)
 
             # retrieves the client connection
-            client_connection = ClientConnection(self.client_plugin, self, client_connection_socket, address, self.chunk_size)
+            client_connection = ClientConnection(self.client_plugin, self, client_connection_socket, address, socket_name, self.chunk_size)
 
             # sets the client connection in the client connections map
             self.client_connections_map[connection_tuple] = client_connection
+
+            # in case the connection should be opened
+            if open_connection:
+                # opens the client connection
+                client_connection.open()
 
         # retrieves the client connection for the client
         # connections map
@@ -324,6 +335,9 @@ class ClientConnection:
     connection_address = None
     """ The connection address """
 
+    connection_socket_name = None
+    """ The connection socket name """
+
     connection_chunk_size = None
     """ The connection chunk size """
 
@@ -342,7 +356,10 @@ class ClientConnection:
     _connection_socket = None
     """ The original connection socket """
 
-    def __init__(self, client_plugin, client, connection_socket, connection_address, connection_chunk_size):
+    _returned_data_buffer = None
+    """ The buffer of returned data """
+
+    def __init__(self, client_plugin, client, connection_socket, connection_address, connection_socket_name, connection_chunk_size):
         """
         Constructor of the class.
 
@@ -354,6 +371,8 @@ class ClientConnection:
         @param connection_socket: The connection socket.
         @type connection_address: Tuple
         @param connection_address: The connection address.
+        @type connection_socket_name: String
+        @param connection_socket_name: The connection socket name.
         @type connection_chunk_size: int
         @param connection_chunk_size: The connection chunk size.
         """
@@ -362,6 +381,7 @@ class ClientConnection:
         self.client = client
         self.connection_socket = connection_socket
         self.connection_address = connection_address
+        self.connection_socket_name = connection_socket_name
         self.connection_chunk_size = connection_chunk_size
 
         self._connection_socket = connection_socket
@@ -370,8 +390,10 @@ class ClientConnection:
         self.connection_closed_handlers = []
         self.connection_properties = {}
 
+        self._returned_data_buffer = colony.libs.string_buffer_util.StringBuffer(False)
+
     def __repr__(self):
-        return "(%s)" % (self.connection_address,)
+        return "(%s, %s)" % (self.connection_address, self.connection_socket_name)
 
     def open(self):
         """
@@ -457,6 +479,20 @@ class ClientConnection:
         # retrieves the chunk size
         chunk_size = chunk_size and chunk_size or self.connection_chunk_size
 
+        # in case the returned data buffer is not empty
+        if not self._returned_data_buffer.is_empty():
+            # returns the data buffer value
+            data_buffer_value = self._returned_data_buffer.read(chunk_size)
+
+            # in case the returned data buffer has reached the
+            # end of file
+            if self._returned_data_buffer.eof():
+                # resets the returned data buffer
+                self._returned_data_buffer.reset()
+
+            # returns the data buffer value
+            return data_buffer_value
+
         try:
             # sets the socket to non blocking mode
             self.connection_socket.setblocking(0)
@@ -486,6 +522,25 @@ class ClientConnection:
         # returns the data
         return data
 
+    def return_data(self, data):
+        """
+        Returns the given data to the connection
+        internal buffer.
+
+        @type data: String
+        @param data: The data to be returned to the
+        connection internal buffer.
+        """
+
+        # retrieves the data length
+        data_length = len(data)
+
+        # adds the data to the returned data buffer
+        self._returned_data_buffer.write(data)
+
+        # returns the buffer to the previous position
+        self._returned_data_buffer.seek(data_length * -1, os.SEEK_CUR)
+
     def send(self, message):
         """
         Sends the given message to the socket.
@@ -494,7 +549,45 @@ class ClientConnection:
         @param message: The message to be sent.
         """
 
-        return self.connection_socket.sendall(message)
+        try:
+            # sets the socket to non blocking mode
+            self.connection_socket.setblocking(0)
+
+            # runs the select in the connection socket, with timeout
+            selected_values = select.select([self.connection_socket], [self.connection_socket], [self.connection_socket], 1)
+
+            # sets the socket to blocking mode
+            self.connection_socket.setblocking(1)
+        except:
+            # raises the request closed exception
+            raise main_client_utils_exceptions.RequestClosed("invalid socket2")
+
+        if not selected_values[0] == []:
+            # receives the data from the socket
+            data = self.connection_socket.recv(1024)
+
+            # in case the data is empty
+            if not len(data):
+                # reconnects the connection socket
+                self._reconnect_connection_socket()
+            else:
+                # returns the data back into the queue
+                self.return_data(data)
+
+        if selected_values == ([], [], []):
+            # closes the connection socket
+            self.connection_socket.close()
+
+            # raises the server request timeout exception
+            raise main_client_utils_exceptions.ClientRequestTimeout("%is timeout" % 1)
+        try:
+            # sends the message using the connection socket
+            send_result = self.connection_socket.sendall(message)
+        except:
+            # raises the client request timeout exception
+            raise main_client_utils_exceptions.ServerRequestTimeout("timeout")
+
+        return send_result
 
     def get_connection_property(self, property_name):
         """
@@ -572,6 +665,21 @@ class ClientConnection:
         """
 
         return self._connection_socket
+
+    def _reconnect_connection_socket(self):
+        """
+        Reconnects the current connection socket.
+        """
+
+        # closes the connection socket
+        self.connection_socket.close()
+
+        # creates a socket for the client with
+        # the given socket name
+        self.connection_socket = self.client._get_socket(self.connection_socket_name)
+
+        # reconnects the socket to the connection address
+        self.connection_socket.connect(self.connection_address)
 
     def _call_connection_opened_handlers(self):
         """

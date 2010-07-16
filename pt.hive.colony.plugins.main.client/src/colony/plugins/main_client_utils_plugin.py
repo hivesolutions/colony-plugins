@@ -57,8 +57,7 @@ class MainClientUtilsPlugin(colony.plugins.plugin_system.Plugin):
     attributes = {"build_automation_file_path" : "$base{plugin_directory}/main_client_utils/utils/resources/baf.xml"}
     capabilities = []
     capabilities_allowed = ["socket_provider", "socket_upgrader"]
-    dependencies = [colony.plugins.plugin_system.PluginDependency(
-                    "pt.hive.colony.plugins.main.work.work_pool_manager", "1.0.0")]
+    dependencies = []
     events_handled = []
     events_registrable = []
     main_modules = ["main_client_utils.utils.main_client_utils_exceptions", "main_client_utils.utils.main_client_utils_system"]
